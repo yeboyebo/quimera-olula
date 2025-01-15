@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "extends": ["eslint-config-codely/typescript"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parserOptions": {
+        "project": ["./tsconfig.json"]
+      }
+    },
+    {
+      "files": "**/index.js",
+      "rules": {
+        "import/no-unresolved": "off"
+      }
+    }
+  ],
+  "rules": {
+    "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
+
+    "radix": "warn",
+
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-argument": "off"
+  },
+  "ignorePatterns": ["**/node_modules/**", "**/dist/**"]
+}

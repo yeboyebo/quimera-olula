@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-python.python",
+    "usernamehw.errorlens",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "redhat.vscode-yaml",
+    "docsmsft.docs-yaml",
+    "firsttris.vscode-jest-runner"
+  ],
+  "unwantedRecommendations": []
+}
