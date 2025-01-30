@@ -1,5 +1,0 @@
-.buttongroup__root {
-  display: grid;
-  gap: 0.5rem 1rem;
-  grid-template-columns: repeat(3, 1fr);
-}
