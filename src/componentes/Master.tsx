@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 
-type MasterProps = {
+type Entidad = {
+  id: string;
+  [clave: string]: string;
+};
+
+type MasterProps<T> = {
   acciones: {
-    obtenerTodos: () => Promise<any[]>;
+    obtenerTodos: () => Promise<T[]>;
   };
 };
 
-export const Master = ({ acciones }: MasterProps) => {
+export const Master = <T extends Entidad>({ acciones }: MasterProps<T>) => {
   const { obtenerTodos } = acciones;
 
-  const [datos, setDatos] = useState<any[]>([]);
+  const [datos, setDatos] = useState<T[]>([]);
 
   useEffect(() => {
-    obtenerTodos().then((datos) => setDatos(datos));
-  }, []);
+    obtenerTodos().then((datos) => setDatos(datos as T[]));
+  }, [obtenerTodos]);
 
   return (
     <ul>

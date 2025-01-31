@@ -1,3 +1,3 @@
 export type API = {
-  get: (url: string) => Promise<any>;
+  get: <T>(url: string) => Promise<T>;
 };
