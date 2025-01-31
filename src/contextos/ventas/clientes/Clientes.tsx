@@ -18,9 +18,25 @@ const obtenerUnCliente = async (id: string) =>
     () => clientesFake.find((cliente) => cliente.id === id) ?? null
   );
 
+const crearCliente = async (cliente: Cliente) =>
+  RestAPI.post(`/quimera/ventas/cliente/${cliente.id}`, cliente).catch(
+    () => {}
+  );
+
+const actualizarCliente = async (cliente: Cliente) =>
+  RestAPI.patch(`/quimera/ventas/cliente/${cliente.id}`, cliente).catch(
+    () => {}
+  );
+
+const eliminarCliente = async (id: string) =>
+  RestAPI.delete(`/quimera/ventas/cliente/${id}`).catch(() => {});
+
 const accionesCliente = {
   obtenerTodos: obtenerTodosLosClientes,
   obtenerUno: obtenerUnCliente,
+  crearUno: crearCliente,
+  actualizarUno: actualizarCliente,
+  eliminarUno: eliminarCliente,
 };
 
 export const Clientes = () => {

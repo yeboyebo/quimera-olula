@@ -9,22 +9,25 @@ type MasterProps<T> = {
   acciones: {
     obtenerTodos: () => Promise<T[]>;
     obtenerUno: (id: string) => Promise<T | null>;
+    crearUno: (entidad: T) => Promise<void>;
+    actualizarUno: (entidad: T) => Promise<void>;
+    eliminarUno: (id: string) => Promise<void>;
   };
 };
 
 export const Master = <T extends Entidad>({ acciones }: MasterProps<T>) => {
   const { obtenerTodos } = acciones;
 
-  const [datos, setDatos] = useState<T[]>([]);
+  const [entidades, setEntidades] = useState<T[]>([]);
 
   useEffect(() => {
-    obtenerTodos().then((datos) => setDatos(datos as T[]));
+    obtenerTodos().then((entidades) => setEntidades(entidades as T[]));
   }, [obtenerTodos]);
 
   return (
     <ul>
-      {datos.map((dato) => {
-        const { id, ...resto } = dato;
+      {entidades.map((entidad) => {
+        const { id, ...resto } = entidad;
         return (
           <li key={id} style={{ display: "flex", flexDirection: "column" }}>
             <span>Cliente: {id}</span>
