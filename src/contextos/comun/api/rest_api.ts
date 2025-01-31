@@ -16,7 +16,7 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
 const comando = async <T>(
   method: string,
   url: string,
-  body?: T
+  body?: Partial<T>
 ): Promise<void> => {
   await fetch(`http://localhost:8000${url}`, {
     method,
@@ -31,6 +31,6 @@ export const RestAPI: API = {
   get: <T>(url: string) => consulta<T>("GET", url),
   post: <T>(url: string, body: T) => comando<T>("POST", url, body),
   put: <T>(url: string, body: T) => comando<T>("PUT", url, body),
-  patch: <T>(url: string, body: T) => comando<T>("PATCH", url, body),
+  patch: <T>(url: string, body: Partial<T>) => comando<T>("PATCH", url, body),
   delete: (url: string) => comando("DELETE", url),
 };
