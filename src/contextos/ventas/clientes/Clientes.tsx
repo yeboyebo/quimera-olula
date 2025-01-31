@@ -13,8 +13,14 @@ const obtenerTodosLosClientes = async () =>
     .then((respuesta) => respuesta.clientes)
     .catch(() => clientesFake);
 
+const obtenerUnCliente = async (id: string) =>
+  RestAPI.get<Cliente>(`/quimera/ventas/cliente/${id}`).catch(
+    () => clientesFake.find((cliente) => cliente.id === id) ?? null
+  );
+
 const accionesCliente = {
   obtenerTodos: obtenerTodosLosClientes,
+  obtenerUno: obtenerUnCliente,
 };
 
 export const Clientes = () => {

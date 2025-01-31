@@ -8,6 +8,7 @@ type Entidad = {
 type MasterProps<T> = {
   acciones: {
     obtenerTodos: () => Promise<T[]>;
+    obtenerUno: (id: string) => Promise<T | null>;
   };
 };
 
