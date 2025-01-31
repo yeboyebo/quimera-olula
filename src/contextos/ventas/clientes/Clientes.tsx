@@ -23,7 +23,7 @@ const crearCliente = async (cliente: Cliente) =>
     () => {}
   );
 
-const actualizarCliente = async (cliente: Cliente) =>
+const actualizarCliente = async (cliente: Partial<Cliente>) =>
   RestAPI.patch(`/quimera/ventas/cliente/${cliente.id}`, cliente).catch(
     () => {}
   );

@@ -10,7 +10,7 @@ type MasterProps<T> = {
     obtenerTodos: () => Promise<T[]>;
     obtenerUno: (id: string) => Promise<T | null>;
     crearUno: (entidad: T) => Promise<void>;
-    actualizarUno: (entidad: T) => Promise<void>;
+    actualizarUno: (entidad: Partial<T>) => Promise<void>;
     eliminarUno: (id: string) => Promise<void>;
   };
 };
