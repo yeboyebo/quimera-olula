@@ -23,9 +23,19 @@ export const Master = <T extends Entidad>({ acciones }: MasterProps<T>) => {
 
   return (
     <ul>
-      {datos.map((dato) => (
-        <li key={dato.id}>{dato.nombre}</li>
-      ))}
+      {datos.map((dato) => {
+        const { id, ...resto } = dato;
+        return (
+          <li key={id} style={{ display: "flex", flexDirection: "column" }}>
+            <span>Cliente: {id}</span>
+            {Object.entries(resto).map(([clave, valor]) => (
+              <span style={{ marginLeft: "1rem" }} key={clave}>
+                {clave}: {valor}
+              </span>
+            ))}
+          </li>
+        );
+      })}
     </ul>
   );
 };
