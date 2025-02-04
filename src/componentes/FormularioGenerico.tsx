@@ -13,6 +13,7 @@ type FormularioGenericoProps<T> = {
   id?: string;
   valoresIniciales?: T;
   onSubmit: (data: T) => void;
+  onChange?: (name: string, value: any) => void;
   validacion?: (name: keyof T, value: string) => string | null;
   obtenerUno:(id: string) => Promise<T | null>;
 }
@@ -22,6 +23,7 @@ export const FormularioGenerico = <T extends Record<string, any>>({
   id,
   valoresIniciales,
   onSubmit,
+  onChange,
   validacion,
   obtenerUno,
 }: FormularioGenericoProps<T>) => {
@@ -48,6 +50,9 @@ export const FormularioGenerico = <T extends Record<string, any>>({
       ...formData,
       [name]: value,
     });
+    if (onChange) {
+      onChange(name, value); 
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

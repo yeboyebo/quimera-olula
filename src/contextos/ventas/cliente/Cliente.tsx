@@ -1,5 +1,5 @@
 import { FormularioGenerico } from "../../../componentes/FormularioGenerico";
-import { Cliente as ClienteType } from '../clientes/types/Cliente';
+import { Cliente as ClienteType } from '../clientes/Clientes';
 import { clientesFake } from "../clientes/clientesFake.ts";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { useParams } from 'react-router';
@@ -39,6 +39,10 @@ const Cliente = () => {
     console.log('Cliente editado:', data);
   };
 
+  const handleChange= (name: string, value: any) => {
+    console.log(name, ' editado con: ', value);
+  };
+
   // Validación para el nombre (debe estar en mayúsculas)
   const validacion = (name: string, value: string) => {
     if (name === 'nombre' && value !== value.toUpperCase()) {
@@ -57,6 +61,7 @@ const Cliente = () => {
         obtenerUno={obtenerUnCliente}
         // valoresIniciales={valoresInicialesCliente}
         onSubmit={handleSubmit}
+        onChange={handleChange}
         validacion={validacion}
       />
     </div>
