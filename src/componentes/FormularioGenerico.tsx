@@ -61,6 +61,10 @@ export const FormularioGenerico = <T extends Record<string, any>>({
     onSubmit(formData); 
   };
 
+  if (!formData) {
+    return <>No encontrado</>;
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       {campos
