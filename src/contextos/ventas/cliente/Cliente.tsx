@@ -1,18 +1,11 @@
-import { FormularioGenerico } from "../../../componentes/FormularioGenerico";
+import { FormularioGenerico, CampoFormularioGenerico } from "../../../componentes/FormularioGenerico";
 import { Cliente as ClienteType } from '../clientes/Clientes';
 import { clientesFake } from "../clientes/clientesFake.ts";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { useParams } from 'react-router';
+import { DireccionesCliente } from "../direcciones_cliente/DireccionesCliente.tsx"
 
-type CampoFormularioGenerico = {
-  name: string; 
-  label: string; 
-  type: 'text' | 'email' | 'number' | 'date' | 'password'; //Tipo de input
-  readOnly?: boolean;
-  hidden?: boolean;
-};
-
-const Cliente = () => {
+export const Cliente = () => {
   const { id } = useParams();
   if (!id) {
     return <>No se encuentra</>
@@ -51,7 +44,7 @@ const Cliente = () => {
     return null;
   };
   
-
+  console.log(id);
   return (
     <div>
       <h1>Cliente</h1>
@@ -64,8 +57,7 @@ const Cliente = () => {
         onChange={handleChange}
         validacion={validacion}
       />
+      <DireccionesCliente codCliente={id}/>
     </div>
   );
 };
-
-export default Cliente;

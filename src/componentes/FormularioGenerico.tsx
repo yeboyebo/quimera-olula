@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-type CampoFormularioGenerico = {
+export type CampoFormularioGenerico = {
   name: string; 
   label: string; 
   type: 'text' | 'email' | 'number' | 'date' | 'password'; //Tipo de input
   readOnly?: boolean;
   hidden?: boolean;
+  required?: boolean;
 };
 
 type FormularioGenericoProps<T> = {
@@ -15,7 +16,7 @@ type FormularioGenericoProps<T> = {
   onSubmit: (data: T) => void;
   onChange?: (name: string, value: any) => void;
   validacion?: (name: keyof T, value: string) => string | null;
-  obtenerUno:(id: string) => Promise<T | null>;
+  obtenerUno?:(id: string) => Promise<T | null>;
 }
 
 export const FormularioGenerico = <T extends Record<string, any>>({
@@ -84,6 +85,7 @@ export const FormularioGenerico = <T extends Record<string, any>>({
               value={formData[campo.name]}
               onChange={handleChange}
               readOnly={campo.readOnly} 
+              required={campo.required}
             />
             {error && campo.name === 'nombre' && (
               <p style={{ color: 'red' }}>{error}</p>
