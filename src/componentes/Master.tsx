@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch } from "react";
+import { MasterAcciones } from "./MasterAcciones/MasterAcciones";
+import { MasterEntidad } from "./MasterEntidad/MasterEntidad";
+import { MasterFiltros } from "./MasterFiltros/MasterFiltros";
 
-type Entidad = {
+export type Entidad = {
   id: string;
   [clave: string]: string;
 };
 
-type MasterProps<T> = {
+export type MasterProps<T> = {
   acciones: {
     obtenerTodos: () => Promise<T[]>;
     obtenerUno: (id: string) => Promise<T | null>;
@@ -15,79 +18,37 @@ type MasterProps<T> = {
   };
 };
 
+type MasterContextType<T> = {
+  entidades: T[];
+  setEntidades: React.Dispatch<React.SetStateAction<T[]>>;
+}
+
+export const MasterContext = React.createContext<MasterContextType<any> | null>(null);
+
 export const Master = <T extends Entidad>({ acciones }: MasterProps<T>) => {
-  const { obtenerTodos, crearUno, actualizarUno } = acciones;
+  const { obtenerTodos } = acciones;
 
   const [entidades, setEntidades] = useState<T[]>([]);
 
-  const onCrearNuevo = () => {
-    const nuevaEntidad = {
-      id: (entidades.length + 1).toString().padStart(6, "0"),
-      nombre: [
-        "Michel Jordan",
-        "Lebron James",
-        "Kobe Bryant",
-        "Stephen Curry",
-        "Kevin Durant",
-        "James Harden",
-        "Anthony Davis",
-        "Giannis Antetokounmpo",
-        "Luka Doncic",
-        "Damian Lillard",
-      ][entidades.length % 10],
-      id_fiscal: "53631867F",
-    } as unknown as T;
-
-    crearUno(nuevaEntidad).then(() => {
-      setEntidades([nuevaEntidad, ...entidades]);
-    });
-  };
-
-  const onActualizarPrimero = () => {
-    const primeraEntidad = entidades[0];
-
-    const nuevaEntidad = {
-      id: primeraEntidad.id,
-      nombre: primeraEntidad.nombre + " (actualizado)",
-      nada: "",
-    } as unknown as Partial<T>;
-
-    actualizarUno(nuevaEntidad).then(() => {
-      setEntidades([
-        { ...primeraEntidad, nombre: nuevaEntidad.nombre },
-        ...entidades.slice(1),
-      ]);
-    });
-  };
-
-  const onEliminarPrimero = () => {
-    acciones.eliminarUno(entidades[0].id).then(() => {
-      setEntidades(entidades.slice(1));
-    });
-  };
 
   useEffect(() => {
     obtenerTodos().then((entidades) => setEntidades(entidades as T[]));
   }, [obtenerTodos]);
 
   return (
-    <ul>
-      <button onClick={onCrearNuevo}>Crear nuevo</button>
-      <button onClick={onActualizarPrimero}>Actualizar primero</button>
-      <button onClick={onEliminarPrimero}>Eliminar primero</button>
-      {entidades.map((entidad) => {
-        const { id, ...resto } = entidad;
-        return (
-          <li key={id} style={{ display: "flex", flexDirection: "column" }}>
-            <span>Cliente: {id}</span>
-            {Object.entries(resto).map(([clave, valor]) => (
-              <span style={{ marginLeft: "1rem" }} key={clave}>
-                {clave}: {valor}
-              </span>
-            ))}
-          </li>
-        );
-      })}
-    </ul>
+    <MasterContext.Provider value={{ entidades, setEntidades } as MasterContextType<T>}>
+      <div className="Master">
+        <MasterAcciones acciones={acciones} />
+        <MasterFiltros acciones={acciones} />
+        <ul className="MasterEntidades" style={{ float: "left", width: "100%" }}>
+          {entidades.map((entidad) => {
+            const { id, ...resto } = entidad;
+            return (
+              <MasterEntidad key={id} entidad={entidad} />
+            );
+          })}
+        </ul>
+      </div>
+    </MasterContext.Provider>
   );
 };
