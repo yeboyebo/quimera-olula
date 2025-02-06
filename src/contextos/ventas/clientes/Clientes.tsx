@@ -37,6 +37,7 @@ const accionesCliente = {
   crearUno: crearCliente,
   actualizarUno: actualizarCliente,
   eliminarUno: eliminarCliente,
+  buscar: undefined,
 };
 
 export const Clientes = () => {
