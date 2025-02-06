@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 export type CampoFormularioGenerico = {
-  name: string; 
-  label: string; 
-  type: 'text' | 'email' | 'number' | 'date' | 'password'; //Tipo de input
+  name: string;
+  label: string;
+  type: "text" | "email" | "number" | "date" | "password"; //Tipo de input
   readOnly?: boolean;
   hidden?: boolean;
   required?: boolean;
@@ -16,8 +16,8 @@ type FormularioGenericoProps<T> = {
   onSubmit: (data: T) => void;
   onChange?: (name: string, value: any) => void;
   validacion?: (name: keyof T, value: string) => string | null;
-  obtenerUno?:(id: string) => Promise<T | null>;
-}
+  obtenerUno?: (id: string) => Promise<T | null>;
+};
 
 export const FormularioGenerico = <T extends Record<string, any>>({
   campos,
@@ -28,16 +28,17 @@ export const FormularioGenerico = <T extends Record<string, any>>({
   validacion,
   obtenerUno,
 }: FormularioGenericoProps<T>) => {
-
   const [formData, setFormData] = useState<T>(valoresIniciales || ({} as T));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log(valoresIniciales);
     if (id && obtenerUno && !valoresIniciales) {
       obtenerUno(id).then((entidades) => setFormData(entidades as T));
-    };
+    } else if (valoresIniciales) {
+      setFormData(valoresIniciales);
+    }
   }, [id, obtenerUno, valoresIniciales]);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,7 +53,7 @@ export const FormularioGenerico = <T extends Record<string, any>>({
       [name]: value,
     });
     if (onChange) {
-      onChange(name, value); 
+      onChange(name, value);
     }
   };
 
@@ -64,7 +65,7 @@ export const FormularioGenerico = <T extends Record<string, any>>({
       return;
     }
 
-    onSubmit(formData); 
+    onSubmit(formData);
   };
 
   if (!formData) {
@@ -74,7 +75,7 @@ export const FormularioGenerico = <T extends Record<string, any>>({
   return (
     <form onSubmit={handleSubmit}>
       {campos
-        .filter((campo) => !campo.hidden) 
+        .filter((campo) => !campo.hidden)
         .map((campo) => (
           <div key={campo.name.toString()}>
             <label htmlFor={campo.name.toString()}>{campo.label}:</label>
@@ -84,11 +85,11 @@ export const FormularioGenerico = <T extends Record<string, any>>({
               name={campo.name.toString()}
               value={formData[campo.name]}
               onChange={handleChange}
-              readOnly={campo.readOnly} 
+              readOnly={campo.readOnly}
               required={campo.required}
             />
-            {error && campo.name === 'nombre' && (
-              <p style={{ color: 'red' }}>{error}</p>
+            {error && campo.name === "nombre" && (
+              <p style={{ color: "red" }}>{error}</p>
             )}
           </div>
         ))}

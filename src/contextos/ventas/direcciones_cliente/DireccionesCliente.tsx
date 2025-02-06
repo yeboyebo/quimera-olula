@@ -1,6 +1,5 @@
-import { FormularioGenerico, CampoFormularioGenerico } from "../../../componentes/FormularioGenerico";
 import { Direccion, DireccionType } from "../../shared/direccion/Direccion";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { direccionesFake } from "./direccionesFake.ts";
 
 export type DireccionCliente = {
@@ -16,21 +15,31 @@ export type DireccionesCliente = {
 };
 
 export const DireccionesCliente = ({ codCliente }: { codCliente: string }) => {
-
   const [dirCliente, setDirCliente] = useState<DireccionesCliente | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const [selectedItem, setSelectedItem] = useState<DireccionType | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (codCliente) {
-      const dirCliente = direccionesFake.find((d) => d.codigo_cliente === codCliente) ?? null;
-      if (dirCliente){
+      const dirCliente =
+        direccionesFake.find((d) => d.codigo_cliente === codCliente) ?? null;
+      if (dirCliente) {
         setDirCliente(dirCliente);
       } else {
         setError("No se encontraron direcciones para el cliente.");
       }
-    };
+    }
   }, [codCliente]);
+
+  const editarDireccion = (dir: DireccionType) => {
+    setSelectedItem(dir);
+    setModalOpen(true);
+  };
+
+  const cerrarModal = () => {
+    setModalOpen(false);
+  };
 
   if (error) {
     return <div>{error}</div>;
@@ -45,12 +54,22 @@ export const DireccionesCliente = ({ codCliente }: { codCliente: string }) => {
       <h2>Direcciones del Cliente: {codCliente}</h2>
       <ul>
         {dirCliente.direcciones.map((dir) => (
-          <li key={dirCliente.codigo_cliente}>
-            { dir.direccion.nombre_via }
+          <li
+            onClick={() => editarDireccion(dir.direccion)}
+            key={dirCliente.codigo_cliente}
+          >
+            {dir.direccion.nombre_via}
           </li>
         ))}
       </ul>
+      {selectedItem && isModalOpen && (
+        <div>
+          <div>
+            <Direccion direccion={selectedItem} />
+            <button onClick={cerrarModal}>Cerrar</button>
+          </div>
+        </div>
+      )}
     </div>
-  )
-
-}
+  );
+};
