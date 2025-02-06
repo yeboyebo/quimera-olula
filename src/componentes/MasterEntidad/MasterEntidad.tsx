@@ -1,8 +1,12 @@
-import { useEffect, useState, useContext } from "react";
-import {type Entidad } from "../Master";
+import { Entidad } from "../../contextos/comun/diseño.ts";
 
+type MasterEntidadProps<T extends Entidad> = {
+  entidad: T;
+};
 
-export const MasterEntidad = <T extends Entidad>({ entidad }: { entidad: T }) => {
+export const MasterEntidad = <T extends Entidad>({
+  entidad,
+}: MasterEntidadProps<T>) => {
   const { id, ...resto } = entidad;
 
   return (

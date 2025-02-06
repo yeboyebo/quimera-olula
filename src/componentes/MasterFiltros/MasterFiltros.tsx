@@ -1,9 +1,9 @@
-import { useEffect, useState, useContext } from "react";
-import {type Entidad, MasterContext, type MasterProps } from "../Master";
-import './MasterFiltros.css';
+import { useContext, useEffect, useState } from "react";
+import { Entidad } from "../../contextos/comun/diseño.ts";
+import { MasterContext } from "../Master";
+import "./MasterFiltros.css";
 
-
-export const MasterFiltros = <T extends Entidad>({ acciones }: MasterProps<T>) => {
+export const MasterFiltros = <T extends Entidad>() => {
   // const { crearUno, actualizarUno } = acciones;
   const [originalEntidades, setOriginalEntidades] = useState<T[]>([]);
   const context = useContext(MasterContext);
@@ -16,15 +16,19 @@ export const MasterFiltros = <T extends Entidad>({ acciones }: MasterProps<T>) =
     setOriginalEntidades(entidades);
   }, []);
 
-  const onBuscar = (formData: { get: (arg0: string) => any; }) => {
+  const onBuscar = (formData: { get: (arg0: string) => any }) => {
     const nombre = formData.get("nombre");
     const id = formData.get("id");
-    if(nombre && nombre != ""){
-      const entidadesFiltradas = entidades.filter(entidad => entidad.nombre.includes(nombre));
+    if (nombre && nombre != "") {
+      const entidadesFiltradas = entidades.filter((entidad) =>
+        entidad.nombre.includes(nombre)
+      );
       setEntidades(entidadesFiltradas);
-    }else if(id && id != ""){
+    } else if (id && id != "") {
       console.log(id);
-      const entidadesFiltradas = entidades.filter(entidad => entidad.id.includes(id));
+      const entidadesFiltradas = entidades.filter((entidad) =>
+        entidad.id.includes(id)
+      );
       setEntidades(entidadesFiltradas);
     }
   };

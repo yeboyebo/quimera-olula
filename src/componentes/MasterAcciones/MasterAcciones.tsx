@@ -1,9 +1,11 @@
-import { useEffect, useState, useContext } from "react";
-import { type MasterProps, type Entidad, MasterContext } from "../Master";
-import './MasterAcciones.css';
+import { useContext } from "react";
+import { Entidad } from "../../contextos/comun/diseño.ts";
+import { type MasterProps, MasterContext } from "../Master";
+import "./MasterAcciones.css";
 
-
-export const MasterAcciones = <T extends Entidad>({ acciones }: MasterProps<T>) => {
+export const MasterAcciones = <T extends Entidad>({
+  acciones,
+}: MasterProps<T>) => {
   const { crearUno, actualizarUno } = acciones;
   const context = useContext(MasterContext);
   if (!context) {
@@ -56,7 +58,6 @@ export const MasterAcciones = <T extends Entidad>({ acciones }: MasterProps<T>) 
       setEntidades(entidades.slice(1));
     });
   };
-
 
   return (
     <div className="MasterAcciones">
