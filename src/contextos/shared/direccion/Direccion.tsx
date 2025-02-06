@@ -52,11 +52,12 @@ export const Direccion = ({ direccion }: { direccion: DireccionType }) => {
     console.log("Direccion editada:", data);
   };
 
-  const handleChange = (name: string, value: any) => {
+  const handleChange = (name: string, value: unknown) => {
     console.log(name, " editado con: ", value);
   };
 
   const validacion = (name: string, value: string) => {
+    console.log("validacion", name, value);
     return null;
   };
   return (

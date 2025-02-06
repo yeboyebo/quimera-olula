@@ -14,12 +14,12 @@ type FormularioGenericoProps<T> = {
   id?: string;
   valoresIniciales?: T;
   onSubmit: (data: T) => void;
-  onChange?: (name: string, value: any) => void;
+  onChange?: (name: string, value: unknown) => void;
   validacion?: (name: keyof T, value: string) => string | null;
   obtenerUno?: (id: string) => Promise<T | null>;
 };
 
-export const FormularioGenerico = <T extends Record<string, any>>({
+export const FormularioGenerico = <T extends Record<string, unknown>>({
   campos,
   id,
   valoresIniciales,
@@ -83,7 +83,13 @@ export const FormularioGenerico = <T extends Record<string, any>>({
               type={campo.type}
               id={campo.name.toString()}
               name={campo.name.toString()}
-              value={formData[campo.name]}
+              value={
+                formData[campo.name] as
+                  | string
+                  | number
+                  | readonly string[]
+                  | undefined
+              }
               onChange={handleChange}
               readOnly={campo.readOnly}
               required={campo.required}

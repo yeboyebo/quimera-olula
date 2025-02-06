@@ -15,14 +15,6 @@ export const Cliente = () => {
     nombre: "",
     id_fiscal: "",
   });
-  if (!id) {
-    return <>No se encuentra</>;
-  }
-
-  const obtenerUnCliente = async (id: string) =>
-    RestAPI.get<ClienteType>(`/quimera/ventas/cliente/${id}`).catch(
-      () => clientesFake.find((cliente) => cliente.id === id) ?? null
-    );
 
   useEffect(() => {
     if (id) {
@@ -32,19 +24,28 @@ export const Cliente = () => {
     }
   }, [id]);
 
+  if (!id) {
+    return <>No se encuentra</>;
+  }
+
+  const obtenerUnCliente = async (id: string) =>
+    RestAPI.get<ClienteType>(`/quimera/ventas/cliente/${id}`).catch(
+      () => clientesFake.find((cliente) => cliente.id === id) ?? null
+    );
+
   const camposCliente: CampoFormularioGenerico[] = [
     { name: "id", label: "Código", type: "text", hidden: true },
     { name: "nombre", label: "Nombre", type: "text" },
     { name: "id_fiscal", label: "CIF/NIF", type: "text" },
   ];
 
-  const camposRelatedItems: CampoFormularioGenerico[] | undefined = [];
+  // const camposRelatedItems: CampoFormularioGenerico[] | undefined = [];
 
-  const relatedEntity: ClienteType[] | undefined = [];
+  // const relatedEntity: ClienteType[] | undefined = [];
 
-  const actualizarUnRelacionado = (data: ClienteType[]) => {
-    console.log("Cliente editado:", data);
-  };
+  // const actualizarUnRelacionado = (data: ClienteType[]) => {
+  //   console.log("Cliente editado:", data);
+  // };
 
   const actualizarUno = async (entidad: Partial<ClienteType>) => {
     console.log("Cliente editado", entidad);
@@ -59,12 +60,12 @@ export const Cliente = () => {
   };
 
   // Validación para el nombre (debe estar en mayúsculas)
-  const validacion = (name: string, value: string) => {
-    if (name === "nombre" && value !== value.toUpperCase()) {
-      return "El nombre del  debe estar en mayúsculas.";
-    }
-    return null;
-  };
+  // const validacion = (name: string, value: string) => {
+  //   if (name === "nombre" && value !== value.toUpperCase()) {
+  //     return "El nombre del  debe estar en mayúsculas.";
+  //   }
+  //   return null;
+  // };
 
   return (
     <div>
