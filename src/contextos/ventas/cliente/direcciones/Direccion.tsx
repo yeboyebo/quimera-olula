@@ -1,24 +1,11 @@
-import {
-  FormularioGenerico,
-  CampoFormularioGenerico,
-} from "../../../componentes/FormularioGenerico.tsx";
 import { useParams } from "react-router";
+import {
+  CampoFormularioGenerico,
+  FormularioGenerico,
+} from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { DireccionCliente } from "../diseño.ts";
 
-export type DireccionType = {
-  nombre_via: string;
-  tipo_via: string;
-  numero: string;
-  otros: string;
-  cod_postal: string;
-  ciudad: string;
-  provincia_id: string;
-  provincia: string;
-  pais_id: string;
-  apartado: string;
-  telefono: string;
-};
-
-export const Direccion = ({ direccion }: { direccion: DireccionType }) => {
+export const Direccion = ({ direccion }: { direccion: DireccionCliente }) => {
   const { id } = useParams();
   if (!id) {
     return <>No se encuentra</>;
@@ -48,16 +35,12 @@ export const Direccion = ({ direccion }: { direccion: DireccionType }) => {
     { name: "telefono", label: "Teléfono", type: "text" },
   ];
 
-  const handleSubmit = (data: DireccionType) => {
+  const handleSubmit = (data: DireccionCliente) => {
     console.log("Direccion editada:", data);
   };
 
-  const handleChange = (name: string, value: unknown) => {
-    console.log(name, " editado con: ", value);
-  };
-
-  const validacion = (name: string, value: string) => {
-    console.log("validacion", name, value);
+  const validacion = (direccion: DireccionCliente) => {
+    console.log("validacion", direccion);
     return null;
   };
   return (
@@ -65,10 +48,8 @@ export const Direccion = ({ direccion }: { direccion: DireccionType }) => {
       <h1>Direccion</h1>
       <FormularioGenerico
         campos={camposDireccion}
-        // id={id}
         valoresIniciales={direccion}
         onSubmit={handleSubmit}
-        onChange={handleChange}
         validacion={validacion}
       />
     </div>
