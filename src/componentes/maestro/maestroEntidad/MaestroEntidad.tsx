@@ -1,12 +1,12 @@
-import { Entidad } from "../../contextos/comun/diseño.ts";
+import { Entidad } from "../../../contextos/comun/diseño.ts";
 
-type MasterEntidadProps<T extends Entidad> = {
+type MaestroEntidadProps<T extends Entidad> = {
   entidad: T;
 };
 
-export const MasterEntidad = <T extends Entidad>({
+export const MaestroEntidad = <T extends Entidad>({
   entidad,
-}: MasterEntidadProps<T>) => {
+}: MaestroEntidadProps<T>) => {
   const { id, ...resto } = entidad;
 
   return (

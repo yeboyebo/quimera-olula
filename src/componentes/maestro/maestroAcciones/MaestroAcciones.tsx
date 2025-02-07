@@ -1,19 +1,19 @@
 import { useContext } from "react";
-import { Entidad, Acciones } from "../../contextos/comun/diseño.ts";
-import { MasterContext } from "../Master";
-import "./MasterAcciones.css";
+import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
+import { MaestroContext } from "../Maestro.tsx";
+import "./MaestroAcciones.css";
 
-type MasterProps<T extends Entidad> = {
+type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
 };
 
-export const MasterAcciones = <T extends Entidad>({
+export const MaestroAcciones = <T extends Entidad>({
   acciones,
-}: MasterProps<T>) => {
+}: MaestroProps<T>) => {
   const { crearUno, actualizarUno } = acciones;
-  const context = useContext(MasterContext);
+  const context = useContext(MaestroContext);
   if (!context) {
-    throw new Error("MasterContext is null");
+    throw new Error("MaestroContext is null");
   }
   const { entidades, setEntidades } = context;
 
@@ -64,7 +64,7 @@ export const MasterAcciones = <T extends Entidad>({
   };
 
   return (
-    <div className="MasterAcciones">
+    <div className="MaestroAcciones">
       <button onClick={onCrearNuevo}>Crear nuevo</button>
       <button onClick={onActualizarPrimero}>Actualizar primero</button>
       <button onClick={onEliminarPrimero}>Eliminar primero</button>
