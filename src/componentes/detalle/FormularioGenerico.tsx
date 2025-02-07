@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Entidad } from "../../contextos/comun/diseño.ts";
 
 export type CampoFormularioGenerico = {
   name: string;
@@ -14,17 +15,15 @@ type FormularioGenericoProps<T> = {
   id?: string;
   valoresIniciales?: T;
   onSubmit: (data: T) => void;
-  onChange?: (name: string, value: unknown) => void;
-  validacion?: (name: keyof T, value: string) => string | null;
+  validacion?: (entidad: T) => string | null;
   obtenerUno?: (id: string) => Promise<T | null>;
 };
 
-export const FormularioGenerico = <T extends Record<string, unknown>>({
+export const FormularioGenerico = <T extends Entidad>({
   campos,
   id,
   valoresIniciales,
   onSubmit,
-  onChange,
   validacion,
   obtenerUno,
 }: FormularioGenericoProps<T>) => {
@@ -32,29 +31,25 @@ export const FormularioGenerico = <T extends Record<string, unknown>>({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(valoresIniciales);
     if (id && obtenerUno && !valoresIniciales) {
       obtenerUno(id).then((entidades) => setFormData(entidades as T));
-    } else if (valoresIniciales) {
-      setFormData(valoresIniciales);
     }
   }, [id, obtenerUno, valoresIniciales]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
+    const nuevaEntidad = {
+      ...formData,
+      [name]: value,
+    };
+
     if (validacion) {
-      const errorMsg = validacion(name as keyof T, value);
+      const errorMsg = validacion(nuevaEntidad);
       setError(errorMsg);
     }
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    if (onChange) {
-      onChange(name, value);
-    }
+    setFormData(nuevaEntidad);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

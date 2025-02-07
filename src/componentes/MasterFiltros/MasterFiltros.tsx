@@ -1,7 +1,11 @@
-import { useEffect, useState, useContext } from "react";
-import {type Entidad, MasterContext, type MasterProps } from "../Master";
-import './MasterFiltros.css';
+import { useContext, useEffect, useState } from "react";
+import { Entidad, Acciones } from "../../contextos/comun/diseño.ts";
+import { MasterContext } from "../Master";
+import "./MasterFiltros.css";
 
+type MasterProps<T extends Entidad> = {
+  acciones: Acciones<T>;
+};
 
 export const MasterFiltros = <T extends Entidad>({ acciones }: MasterProps<T>) => {
    const { buscar } = acciones;
