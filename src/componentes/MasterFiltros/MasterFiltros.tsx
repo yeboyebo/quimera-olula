@@ -1,10 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { Entidad } from "../../contextos/comun/diseño.ts";
+import { Entidad, Acciones } from "../../contextos/comun/diseño.ts";
 import { MasterContext } from "../Master";
 import "./MasterFiltros.css";
 
-export const MasterFiltros = <T extends Entidad>() => {
-  // const { crearUno, actualizarUno } = acciones;
+type MasterProps<T extends Entidad> = {
+  acciones: Acciones<T>;
+};
+
+export const MasterFiltros = <T extends Entidad>({ acciones }: MasterProps<T>) => {
+   const { buscar } = acciones;
   const [originalEntidades, setOriginalEntidades] = useState<T[]>([]);
   const context = useContext(MasterContext);
   if (!context) {
@@ -13,34 +17,47 @@ export const MasterFiltros = <T extends Entidad>() => {
   const { entidades, setEntidades } = context;
 
   useEffect(() => {
-    setOriginalEntidades(entidades);
-  }, []);
-
-  const onBuscar = (formData: { get: (arg0: string) => any }) => {
-    const nombre = formData.get("nombre");
-    const id = formData.get("id");
-    if (nombre && nombre != "") {
-      const entidadesFiltradas = entidades.filter((entidad) =>
-        entidad.nombre.includes(nombre)
-      );
-      setEntidades(entidadesFiltradas);
-    } else if (id && id != "") {
-      console.log(id);
-      const entidadesFiltradas = entidades.filter((entidad) =>
-        entidad.id.includes(id)
-      );
-      setEntidades(entidadesFiltradas);
+    if(originalEntidades.length < entidades.length){
+      setOriginalEntidades(entidades);
     }
+  }, [entidades, originalEntidades]);
+
+  const onBuscar = (formData: FormData): void => {
+
+    const campo = formData.get("campo") as string;
+    const valor = formData.get("valor") as string;
+    if(buscar !== undefined) {
+      // Busco en el servidor
+      buscar(campo, valor).then((entidades) => setEntidades(entidades as T[]));
+      return;
+    }
+    // Busco de forma local
+    const entidadesFiltradas = entidades.filter(entidad => entidad[campo].includes(valor));
+    setEntidades(entidadesFiltradas);
   };
+  
   const onLimpiar = () => {
     setEntidades(originalEntidades);
+  };
+
+  const obtenerCampos = () => {
+    if(originalEntidades.length === 0){
+      return [];
+    }
+    return Object.keys(originalEntidades[0]);
   };
 
   return (
     <div className="MasterFiltros">
       <form action={onBuscar}>
-        <input type="text" name="nombre" placeholder="Nombre" />
-        <input type="text" name="id" placeholder="Id Fiscal" />
+        <select name="campo">
+          {obtenerCampos().map((campo) => (
+            <option key={campo} value={campo}>
+              {campo}
+            </option>
+          ))}
+        </select>
+        <input type="text" name="valor" placeholder="Valor" />
         <button>Buscar</button>
       </form>
       <form action={onLimpiar}>

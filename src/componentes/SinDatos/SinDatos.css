@@ -1,0 +1,19 @@
+.SinDatos{
+    width: 100%;
+    display: block;
+    float: left;
+    background: #fff;
+    padding: 15px 0px;
+
+    .documentIcon{
+        width: 60px;
+        margin: 0 auto;
+        display: block;
+    }
+    span {
+        color: #333;
+        margin: 0 auto;
+        display: block;
+        width: max-content;;
+    }
+}

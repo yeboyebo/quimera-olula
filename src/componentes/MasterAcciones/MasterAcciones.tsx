@@ -1,7 +1,11 @@
 import { useContext } from "react";
-import { Entidad } from "../../contextos/comun/diseño.ts";
-import { type MasterProps, MasterContext } from "../Master";
+import { Entidad, Acciones } from "../../contextos/comun/diseño.ts";
+import { MasterContext } from "../Master";
 import "./MasterAcciones.css";
+
+type MasterProps<T extends Entidad> = {
+  acciones: Acciones<T>;
+};
 
 export const MasterAcciones = <T extends Entidad>({
   acciones,
