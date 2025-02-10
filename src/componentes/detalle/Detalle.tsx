@@ -26,13 +26,13 @@ export function Detalle<T extends Entidad>({
   useEffect(() => {
     obtenerUno(id ?? "0").then((entidad) => setEntidad(entidad as T));
   }, [id, obtenerUno]);
-
-  if (!entidad.id) {
+  console.log("Detalle", entidad);
+  if (!entidad || !entidad.id) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
 
   return (
-    <div className="Detalle">
+    <div className="Detalle" style={{ width: "max-content", margin: "0 auto" }}>
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
       <FormularioGenerico
         campos={camposEntidad}
