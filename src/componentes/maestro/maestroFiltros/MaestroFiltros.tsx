@@ -33,9 +33,14 @@ export const MaestroFiltros = <T extends Entidad>({
       return;
     }
     // Busco de forma local
-    const entidadesFiltradas = entidades.filter((entidad) =>
-      entidad[campo].includes(valor)
-    );
+    const entidadesFiltradas = entidades.filter((entidad) => {
+      if (!campo.includes(".")) {
+        return entidad[campo].includes(valor);
+      }
+
+      const [clave, claveInterna] = campo.split(".");
+      return entidad[clave][claveInterna].includes(valor);
+    });
     setEntidades(entidadesFiltradas);
   };
 
@@ -47,7 +52,14 @@ export const MaestroFiltros = <T extends Entidad>({
     if (originalEntidades.length === 0) {
       return [];
     }
-    return Object.keys(originalEntidades[0]);
+
+    return Object.entries(originalEntidades[0]).flatMap(([clave, valor]) => {
+      if (valor?.constructor !== Object) return [clave];
+
+      return Object.keys(valor).map(
+        (claveInterna) => clave + "." + claveInterna
+      );
+    });
   };
 
   return (
