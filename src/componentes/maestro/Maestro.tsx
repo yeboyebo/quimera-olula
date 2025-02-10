@@ -41,10 +41,8 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
       <ul
         className="MaestroEntidades"
         style={{
-          float: "left",
           width: "100%",
-          listStyle: "none",
-          paddingLeft: 0,
+          overflow: "auto",
         }}
       >
         {entidades.map((entidad) => {
