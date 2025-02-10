@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
 
 export type CampoFormularioGenerico = {
@@ -12,35 +12,26 @@ export type CampoFormularioGenerico = {
 
 type FormularioGenericoProps<T> = {
   campos: CampoFormularioGenerico[];
-  id?: string;
-  valoresIniciales?: T;
+  entidad: T;
+  setEntidad: (entidad: T) => void;
   onSubmit: (data: T) => void;
   validacion?: (entidad: T) => string | null;
-  obtenerUno?: (id: string) => Promise<T | null>;
 };
 
 export const FormularioGenerico = <T extends Entidad>({
   campos,
-  id,
-  valoresIniciales,
+  entidad,
+  setEntidad,
   onSubmit,
   validacion,
-  obtenerUno,
 }: FormularioGenericoProps<T>) => {
-  const [formData, setFormData] = useState<T>(valoresIniciales || ({} as T));
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (id && obtenerUno && !valoresIniciales) {
-      obtenerUno(id).then((entidades) => setFormData(entidades as T));
-    }
-  }, [id, obtenerUno, valoresIniciales]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     const nuevaEntidad = {
-      ...formData,
+      ...entidad,
       [name]: value,
     };
 
@@ -49,7 +40,7 @@ export const FormularioGenerico = <T extends Entidad>({
       setError(errorMsg);
     }
 
-    setFormData(nuevaEntidad);
+    setEntidad(nuevaEntidad);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -60,10 +51,10 @@ export const FormularioGenerico = <T extends Entidad>({
       return;
     }
 
-    onSubmit(formData);
+    onSubmit(entidad);
   };
 
-  if (!formData) {
+  if (!entidad) {
     return <>No encontrado</>;
   }
 
@@ -79,7 +70,7 @@ export const FormularioGenerico = <T extends Entidad>({
               id={campo.name.toString()}
               name={campo.name.toString()}
               value={
-                formData[campo.name] as
+                entidad[campo.name] as
                   | string
                   | number
                   | readonly string[]
