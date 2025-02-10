@@ -1,8 +1,9 @@
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
-import { DireccionesCliente } from "../direcciones/DireccionesCliente.tsx";
-import { Cliente } from "../diseño.ts";
+import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
+import { direccionesFake } from "../direcciones/direccionesFake.ts";
+import { Cliente, DireccionCliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
 
 export const DetalleCliente = () => {
@@ -17,7 +18,16 @@ export const DetalleCliente = () => {
   ];
 
   const MaestroDirecciones = () => {
-    return <DireccionesCliente codCliente={id!} />;
+    const acciones = {
+      obtenerTodos: async () =>
+        direccionesFake.find((d) => d.codigo_cliente === id)?.direcciones ?? [],
+      obtenerUno: async () => ({} as DireccionCliente),
+      crearUno: async () => {},
+      actualizarUno: async () => {},
+      eliminarUno: async () => {},
+    };
+
+    return <Maestro acciones={acciones} />;
   };
 
   return (
@@ -26,6 +36,7 @@ export const DetalleCliente = () => {
       acciones={accionesCliente}
       obtenerTitulo={titulo}
     >
+      <h2>Direcciones</h2>
       <MaestroDirecciones />
     </Detalle>
   );
