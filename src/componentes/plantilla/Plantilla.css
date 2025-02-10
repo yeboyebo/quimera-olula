@@ -15,9 +15,10 @@ section[role=main] {
 }
 
 footer {
-    align-self: flex-end;
+    color: #fff;
+    background-color: #141414;
     width: 100%;
     text-align: center;
     padding: 2rem;
-    background-color: #141414;
+    align-self: flex-end;
 }
