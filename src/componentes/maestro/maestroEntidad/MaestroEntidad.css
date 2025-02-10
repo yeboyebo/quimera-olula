@@ -1,0 +1,14 @@
+.maestroEntidad {
+    display: flex;
+    flex-direction: row;
+    background: #f2f2f2;
+    padding: 3px;
+    &:nth-child(odd) {
+        background: #e6e6e6;
+    }
+    &:hover {
+        background: #d9d9d9;
+        cursor: pointer;
+        padding: 5px;
+    }
+}

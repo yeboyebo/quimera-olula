@@ -1,6 +1,6 @@
 import type { API } from "./diseño.ts";
 
-const urlAPI = "http://localhost:8005";
+const urlAPI = "http://localhost:8000";
 
 const consulta = async <T>(method: string, url: string): Promise<T> => {
   const response = await fetch(`${urlAPI}${url}`, {
