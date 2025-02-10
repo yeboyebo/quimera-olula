@@ -1,7 +1,9 @@
 import type { API } from "./diseño.ts";
 
+const urlAPI = "http://localhost:8005";
+
 const consulta = async <T>(method: string, url: string): Promise<T> => {
-  const response = await fetch(`http://localhost:8000${url}`, {
+  const response = await fetch(`${urlAPI}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -18,7 +20,7 @@ const comando = async <T>(
   url: string,
   body?: Partial<T>
 ): Promise<void> => {
-  await fetch(`http://localhost:8000${url}`, {
+  await fetch(`${urlAPI}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
