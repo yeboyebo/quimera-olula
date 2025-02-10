@@ -1,4 +1,5 @@
 import { Entidad } from "../../../contextos/comun/diseño.ts";
+import "./MaestroEntidad.css";
 
 type MaestroEntidadProps<T extends Entidad> = {
   entidad: T;
@@ -14,7 +15,7 @@ export const MaestroEntidad = <T extends Entidad>({
   return (
     <li
       key={id}
-      style={{ display: "flex", flexDirection: "column" }}
+      className="maestroEntidad"
       onClick={() => onClick && onClick(entidad)}
     >
       <span>ID: {id}</span>

@@ -1,0 +1,22 @@
+.Detalle{
+    &>h2{
+        margin-top:0;
+        border-bottom: 1px solid #ccc;
+    }
+    form{
+        >div{
+            margin-bottom: 15px;
+        }
+        input{
+            width: 35%;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+        label{
+            display: inline-block;
+            width: 15%;
+        }
+    }
+}

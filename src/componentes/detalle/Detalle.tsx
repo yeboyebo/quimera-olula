@@ -1,6 +1,7 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
+import "./Detalle.css";
 import {
   CampoFormularioGenerico,
   FormularioGenerico,
@@ -32,7 +33,7 @@ export function Detalle<T extends Entidad>({
   }
 
   return (
-    <div className="Detalle" style={{ width: "max-content", margin: "0 auto" }}>
+    <div className="Detalle">
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
       <FormularioGenerico
         campos={camposEntidad}

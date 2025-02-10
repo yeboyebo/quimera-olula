@@ -41,10 +41,7 @@ export const DireccionesCliente = ({ codCliente }: { codCliente: string }) => {
   }
 
   return (
-    <div
-      className="DireccionesCliente"
-      style={{ width: "max-content", margin: "0 auto" }}
-    >
+    <div className="DireccionesCliente">
       <h2>Direcciones del Cliente: {codCliente}</h2>
       <ul>
         {direcciones?.map((direccion) => (
