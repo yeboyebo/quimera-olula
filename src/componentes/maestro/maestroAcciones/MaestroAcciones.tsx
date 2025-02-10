@@ -1,10 +1,6 @@
 import { useContext } from "react";
-import {
-  Acciones,
-  Entidad,
-  MaestroContext,
-  type MaestroContextType,
-} from "../../../contextos/comun/diseño.ts";
+import { Contexto } from "../../../contextos/comun/contexto.ts";
+import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
 import "./MaestroAcciones.css";
 
 type MaestroProps<T extends Entidad> = {
@@ -15,9 +11,9 @@ export const MaestroAcciones = <T extends Entidad>({
   acciones,
 }: MaestroProps<T>) => {
   const { crearUno, actualizarUno } = acciones;
-  const context = useContext(MaestroContext) as MaestroContextType<Entidad>;
+  const context = useContext(Contexto);
   if (!context) {
-    throw new Error("MaestroContext is null");
+    throw new Error("Contexto es nulo");
   }
   const { entidades, setEntidades } = context;
 
