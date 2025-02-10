@@ -1,6 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
-import { MaestroContext } from "../Maestro.tsx";
+import {
+  Acciones,
+  Entidad,
+  MaestroContext,
+  type MaestroContextType,
+} from "../../../contextos/comun/diseño.ts";
 import "./MaestroFiltros.css";
 
 type MaestroProps<T extends Entidad> = {
@@ -12,7 +16,7 @@ export const MaestroFiltros = <T extends Entidad>({
 }: MaestroProps<T>) => {
   const { buscar } = acciones;
   const [originalEntidades, setOriginalEntidades] = useState<T[]>([]);
-  const context = useContext(MaestroContext);
+  const context = useContext(MaestroContext) as MaestroContextType<Entidad>;
   if (!context) {
     throw new Error("MaestroContext is null");
   }
@@ -20,7 +24,7 @@ export const MaestroFiltros = <T extends Entidad>({
 
   useEffect(() => {
     if (originalEntidades.length < entidades.length) {
-      setOriginalEntidades(entidades);
+      setOriginalEntidades(entidades as T[]);
     }
   }, [entidades, originalEntidades]);
 

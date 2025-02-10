@@ -2,15 +2,21 @@ import { Entidad } from "../../../contextos/comun/diseño.ts";
 
 type MaestroEntidadProps<T extends Entidad> = {
   entidad: T;
+  onClick?: (e: Entidad) => void;
 };
 
 export const MaestroEntidad = <T extends Entidad>({
   entidad,
+  onClick,
 }: MaestroEntidadProps<T>) => {
   const { id, ...resto } = entidad;
 
   return (
-    <li key={id} style={{ display: "flex", flexDirection: "column" }}>
+    <li
+      key={id}
+      style={{ display: "flex", flexDirection: "column" }}
+      onClick={() => onClick && onClick(entidad)}
+    >
       <span>ID: {id}</span>
       {Object.entries(resto)
         .filter(([, valor]) => !Array.isArray(valor))

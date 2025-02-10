@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
+import { useContext, useEffect, useState } from "react";
+import {
+  Acciones,
+  Entidad,
+  MaestroContext,
+  type MaestroContextType,
+} from "../../contextos/comun/diseño.ts";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
@@ -10,20 +15,14 @@ export type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
 };
 
-type MaestroContextType<T> = {
-  entidades: T[];
-  setEntidades: React.Dispatch<React.SetStateAction<T[]>>;
-};
-
-export const MaestroContext = (<T extends Entidad>() =>
-  React.createContext<MaestroContextType<T> | null | object>(null))();
-
 export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
-  const { obtenerTodos } = acciones;
-
-  const [entidades, setEntidades] = useState<T[]>([]);
+  const { obtenerTodos, seleccionarEntidad } = acciones;
   const [isLoading, setIsLoading] = useState(true);
-
+  const context = useContext(MaestroContext) as MaestroContextType<T>;
+  if (!context) {
+    throw new Error("MaestroContext is null");
+  }
+  const { entidades, setEntidades } = context;
   useEffect(() => {
     obtenerTodos().then((entidades) => {
       setEntidades(entidades as T[]);
@@ -44,7 +43,13 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
       <ul className="MaestroEntidades" style={{ float: "left", width: "100%" }}>
         {entidades.map((entidad) => {
           const { id } = entidad;
-          return <MaestroEntidad key={id} entidad={entidad} />;
+          return (
+            <MaestroEntidad
+              key={id}
+              entidad={entidad}
+              onClick={seleccionarEntidad}
+            />
+          );
         })}
       </ul>
     );
