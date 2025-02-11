@@ -18,7 +18,7 @@ export const MaestroEntidad = <T extends Entidad>({
       className="maestroEntidad"
       onClick={() => onClick && onClick(entidad)}
     >
-      <span>ID: {id}</span>
+      <span className="id">{id}</span>
       {Object.entries(resto)
         .filter(([, valor]) => !Array.isArray(valor))
         .flatMap(([clave, valor]) => {
@@ -31,7 +31,7 @@ export const MaestroEntidad = <T extends Entidad>({
         })
         .map(([clave, valor]) => (
           <span key={clave} style={{ marginLeft: "1rem" }}>
-            {clave}: {valor}
+            {valor}
           </span>
         ))}
     </li>
