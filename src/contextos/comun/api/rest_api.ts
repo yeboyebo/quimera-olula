@@ -1,9 +1,9 @@
 import type { API } from "./diseño.ts";
 
-const urlAPI = "http://localhost:8000";
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:8005";
 
 const consulta = async <T>(method: string, url: string): Promise<T> => {
-  const response = await fetch(`${urlAPI}${url}`, {
+  const response = await fetch(`${BASE}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -20,7 +20,7 @@ const comando = async <T>(
   url: string,
   body?: Partial<T>
 ): Promise<void> => {
-  await fetch(`${urlAPI}${url}`, {
+  await fetch(`${BASE}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
