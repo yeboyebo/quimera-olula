@@ -1,5 +1,4 @@
 import { PropsWithChildren, useEffect, useState } from "react";
-import { useParams } from "react-router";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
 import "./Detalle.css";
 import {
@@ -8,26 +7,27 @@ import {
 } from "./FormularioGenerico";
 
 interface DetalleProps<T extends Entidad> {
+  id: string;
   acciones: Acciones<T>;
   obtenerTitulo?: (entidad: T) => string;
   camposEntidad: CampoFormularioGenerico[];
 }
 
 export function Detalle<T extends Entidad>({
+  id,
   camposEntidad,
   acciones,
   obtenerTitulo,
   children,
 }: PropsWithChildren<DetalleProps<T>>) {
-  const { actualizarUno, obtenerUno } = acciones;
-
-  const { id } = useParams();
   const [entidad, setEntidad] = useState<T>({} as T);
 
+  const { actualizarUno, obtenerUno } = acciones;
+
   useEffect(() => {
-    obtenerUno(id ?? "0").then((entidad) => setEntidad(entidad as T));
+    obtenerUno(id).then((entidad) => setEntidad(entidad as T));
   }, [id, obtenerUno]);
-  console.log("Detalle", entidad);
+
   if (!entidad || !entidad.id) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
@@ -37,7 +37,8 @@ export function Detalle<T extends Entidad>({
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
       <FormularioGenerico
         campos={camposEntidad}
-        valoresIniciales={entidad}
+        entidad={entidad}
+        setEntidad={setEntidad}
         onSubmit={actualizarUno}
       />
       {children}

@@ -1,10 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  Acciones,
-  Entidad,
-  MaestroContext,
-  type MaestroContextType,
-} from "../../contextos/comun/diseño.ts";
+import { Contexto } from "../../contextos/comun/contexto.ts";
+import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
@@ -16,19 +12,21 @@ export type MaestroProps<T extends Entidad> = {
 };
 
 export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
-  const { obtenerTodos, seleccionarEntidad } = acciones;
+  const { obtenerTodos } = acciones;
   const [isLoading, setIsLoading] = useState(true);
-  const context = useContext(MaestroContext) as MaestroContextType<T>;
+
+  const context = useContext(Contexto);
   if (!context) {
-    throw new Error("MaestroContext is null");
+    throw new Error("Contexto nulo");
   }
-  const { entidades, setEntidades } = context;
+  const { entidades, setEntidades, setSeleccionada } = context;
+
   useEffect(() => {
     obtenerTodos().then((entidades) => {
       setEntidades(entidades as T[]);
       setIsLoading(false);
     });
-  }, [obtenerTodos]);
+  }, [obtenerTodos, setEntidades]);
 
   const renderEntidades = () => {
     if (isLoading) {
@@ -43,10 +41,8 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
       <ul
         className="MaestroEntidades"
         style={{
-          float: "left",
           width: "100%",
-          listStyle: "none",
-          paddingLeft: 0,
+          overflow: "auto",
         }}
       >
         {entidades.map((entidad) => {
@@ -55,7 +51,7 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
             <MaestroEntidad
               key={id}
               entidad={entidad}
-              onClick={seleccionarEntidad}
+              onClick={setSeleccionada}
             />
           );
         })}
@@ -64,14 +60,10 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
   };
 
   return (
-    <MaestroContext.Provider
-      value={{ entidades, setEntidades } as MaestroContextType<T>}
-    >
-      <div className="Maestro">
-        <MaestroAcciones acciones={acciones} />
-        <MaestroFiltros acciones={acciones} />
-        {renderEntidades()}
-      </div>
-    </MaestroContext.Provider>
+    <div className="Maestro">
+      <MaestroAcciones acciones={acciones} />
+      <MaestroFiltros acciones={acciones} />
+      {renderEntidades()}
+    </div>
   );
 };

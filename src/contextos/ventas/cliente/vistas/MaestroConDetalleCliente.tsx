@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
-import {
-  Entidad,
-  MaestroContext,
-  type MaestroContextType,
-} from "../../../comun/diseño.ts";
-import { DireccionesCliente } from "../direcciones/DireccionesCliente.tsx";
-import { Cliente, ClienteConDirecciones } from "../diseño.ts";
+import { Vista } from "../../../../componentes/vista/Vista.tsx";
+import { Contexto } from "../../../comun/contexto.ts";
+import { Cliente, ClienteConDirecciones, DireccionCliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
 
-export const MaestroConDetalleCliente = <T extends Entidad>() => {
-  const [entidades, setEntidades] = useState<T[]>([]);
-  const [entidadSeleccionada, setEntidadSeleccionada] =
-    useState<ClienteConDirecciones | null>(null);
+export const MaestroConDetalleCliente = () => {
+  const context = useContext(Contexto);
+  if (!context) {
+    throw new Error("Contexto is null");
+  }
+  const { seleccionada } = context;
+
   const titulo = (cliente: Cliente) => cliente.nombre;
 
   const camposCliente: CampoFormularioGenerico[] = [
@@ -23,62 +22,50 @@ export const MaestroConDetalleCliente = <T extends Entidad>() => {
     { name: "id_fiscal", label: "CIF/NIF", type: "text" },
   ];
 
-  const obtenerUno = async (
-    id: string
-  ): Promise<ClienteConDirecciones | null> => {
-    if (!id || id === "0") {
-      return entidadSeleccionada as ClienteConDirecciones;
-    }
-    return accionesCliente.obtenerUno(id);
-  };
-  const seleccionarEntidad = (e: Entidad) => {
-    setEntidadSeleccionada(e as ClienteConDirecciones);
+  const obtenerUno = async () => {
+    return seleccionada as ClienteConDirecciones;
   };
 
   const AccionesClienteMaestroConDetalle = {
     ...accionesCliente,
     obtenerUno,
-    seleccionarEntidad,
   };
 
   const MaestroDirecciones = () => {
-    if (!entidadSeleccionada) {
+    if (!seleccionada) {
       return null;
     }
-    return <DireccionesCliente codCliente={entidadSeleccionada.id!} />;
+
+    const acciones = {
+      obtenerTodos: async () =>
+        (seleccionada.direcciones ?? []) as DireccionCliente[],
+      obtenerUno: async () => ({} as DireccionCliente),
+      crearUno: async () => {},
+      actualizarUno: async () => {},
+      eliminarUno: async () => {},
+    };
+
+    return <Maestro acciones={acciones} />;
   };
 
   return (
-    <MaestroContext.Provider
-      value={
-        {
-          entidades,
-          setEntidades,
-          entidadSeleccionada,
-          setEntidadSeleccionada,
-        } as MaestroContextType<T>
-      }
-    >
-      <div className="MaestroConDetalle">
-        <div className="Maestro" style={{ width: "50%", float: "left" }}>
-          <Maestro acciones={AccionesClienteMaestroConDetalle} />
-        </div>
-        <div
-          className="Detalle"
-          style={{
-            width: "calc( 50% - 10px)",
-            float: "left",
-            paddingLeft: "10px",
-          }}
-        >
-          <Detalle
-            acciones={AccionesClienteMaestroConDetalle}
-            obtenerTitulo={titulo}
-            camposEntidad={camposCliente}
-          />
-          <MaestroDirecciones />
-        </div>
+    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
+      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
+        <Maestro acciones={AccionesClienteMaestroConDetalle} />
       </div>
-    </MaestroContext.Provider>
+      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
+        <Detalle
+          id={seleccionada?.id ?? "0"}
+          camposEntidad={camposCliente}
+          acciones={accionesCliente}
+          obtenerTitulo={titulo}
+        >
+          <h2>Direcciones</h2>
+          <Vista>
+            <MaestroDirecciones slot="contenido" />
+          </Vista>
+        </Detalle>
+      </div>
+    </div>
   );
 };

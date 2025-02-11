@@ -3,7 +3,6 @@ import { Link } from "react-router";
 export const Indice = () => {
   return (
     <>
-      <h1>Quimera Olula</h1>
       <ul>
         <li>
           <Link to="/ventas/cliente">Maestro de clientes</Link>

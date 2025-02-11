@@ -1,0 +1,24 @@
+header {
+    flex-grow: 0;
+    background-color: #141414;
+    font-size: 1.5rem;
+    padding: 1.5rem;
+
+    & a:visited {
+        color: #fff;
+    }
+}
+
+section[role=main] {
+    flex-grow: 1;
+    padding: 2rem;
+}
+
+footer {
+    color: #fff;
+    background-color: #141414;
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+    align-self: flex-end;
+}
