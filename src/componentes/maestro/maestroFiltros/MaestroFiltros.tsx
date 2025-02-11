@@ -35,11 +35,13 @@ export const MaestroFiltros = <T extends Entidad>({
     // Busco de forma local
     const entidadesFiltradas = entidades.filter((entidad) => {
       if (!campo.includes(".")) {
-        return entidad[campo].includes(valor);
+        return (entidad[campo] as string).includes(valor);
       }
 
       const [clave, claveInterna] = campo.split(".");
-      return entidad[clave][claveInterna].includes(valor);
+      return (entidad[clave] as Record<string, string>)[claveInterna].includes(
+        valor
+      );
     });
     setEntidades(entidadesFiltradas);
   };
