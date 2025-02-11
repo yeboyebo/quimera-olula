@@ -1,5 +1,5 @@
 .maestroEntidad {
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     background: #f2f2f2;
     padding: 3px;
@@ -11,4 +11,29 @@
         cursor: pointer;
         padding: 5px;
     }
+    span{
+        display: inline-block;
+        width: 150px;
+        min-width: 150px;
+    }
+    .id{
+        width: 60px;
+        min-width: 60px;
+    }
+}
+.MaestroEntidades .CabeceraMaestroEntidad{
+    display: inline-flex;
+    flex-direction: row;
+    text-transform: capitalize;
+}
+.MaestroEntidades .CabeceraMaestroEntidad span{
+    font-weight: bold;
+    display: inline-block;
+    width:150px;
+    min-width: 150px;
+    overflow: hidden;
+}
+.MaestroEntidades .CabeceraMaestroEntidad .id{
+    width: 60px;
+    min-width: 60px;
 }

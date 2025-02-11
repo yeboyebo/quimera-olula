@@ -28,6 +28,32 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
     });
   }, [obtenerTodos, setEntidades]);
 
+  const renderCabecera = () => {
+    const { id, ...resto } = entidades[0];
+    return (
+      <li className="CabeceraMaestroEntidad">
+        <span className="id" data-id={id}>
+          ID
+        </span>
+        {Object.entries(resto)
+          .filter(([, valor]) => !Array.isArray(valor))
+          .flatMap(([clave, valor]) => {
+            if (valor?.constructor !== Object) return [[clave, valor]];
+
+            return Object.entries(valor).map(([claveInterna, valor]) => [
+              claveInterna,
+              valor,
+            ]);
+          })
+          .map(([clave]) => (
+            <span key={clave} style={{ marginLeft: "1rem" }}>
+              {clave}
+            </span>
+          ))}
+      </li>
+    );
+  };
+
   const renderEntidades = () => {
     if (isLoading) {
       return <MaestroCargando />;
@@ -43,8 +69,12 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
         style={{
           width: "100%",
           overflow: "auto",
+          maxHeight: "70vh",
+          flexDirection: "column",
+          display: "flex",
         }}
       >
+        {renderCabecera()}
         {entidades.map((entidad) => {
           const { id } = entidad;
           return (
