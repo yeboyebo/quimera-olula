@@ -22,7 +22,7 @@ export const MaestroEntidad = <T extends Entidad>({
       {Object.entries(resto)
         .filter(([, valor]) => !Array.isArray(valor))
         .flatMap(([clave, valor]) => {
-          if (valor.constructor !== Object) return [[clave, valor]];
+          if (valor?.constructor !== Object) return [[clave, valor]];
 
           return Object.entries(valor).map(([claveInterna, valor]) => [
             clave + "." + claveInterna,

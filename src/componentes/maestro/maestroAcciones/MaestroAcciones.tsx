@@ -35,8 +35,20 @@ export const MaestroAcciones = <T extends Entidad>({
       id_fiscal: "53631867F",
     } as unknown as T;
 
-    crearUno(nuevaEntidad).then(() => {
-      setEntidades([nuevaEntidad, ...entidades]);
+    console.log("nuevaEntidad = ", nuevaEntidad);
+
+    crearUno(
+      // nuevaEntidad
+      {
+      // id: nuevaEntidad.id,
+      nombre: nuevaEntidad.nombre,
+      id_fiscal: nuevaEntidad.id_fiscal,
+      tipo_id_fiscal: "NIF",
+      empresa_id: "1",
+    }
+  ).then((entidadCreada) => {
+    console.log('entidadCreada = ', entidadCreada);
+      setEntidades([entidadCreada, ...entidades]);
     });
   };
 

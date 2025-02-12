@@ -23,6 +23,7 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
 
   useEffect(() => {
     obtenerTodos().then((entidades) => {
+      console.log('entidades = ', entidades);
       setEntidades(entidades as T[]);
       setIsLoading(false);
     });
