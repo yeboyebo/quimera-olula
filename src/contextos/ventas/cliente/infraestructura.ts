@@ -21,7 +21,15 @@ export const crearCliente = async (cliente: Cliente) =>
 
 export const actualizarCliente = async (
   cliente: Partial<ClienteConDirecciones>
-) => RestAPI.patch(`/quimera/ventas/cliente/${cliente.id}`, cliente);
+) => {
+  console.log('patch', cliente)
+  return RestAPI.patch(`/ventas/cliente/${cliente.id}`, cliente);
+}
+  
+
+
+
+
 
 export const eliminarCliente = async (id: string) =>
   RestAPI.delete(`/quimera/ventas/cliente/${id}`);
