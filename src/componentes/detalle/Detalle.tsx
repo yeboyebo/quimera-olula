@@ -1,6 +1,6 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
-import "./Detalle.css";
+import estilos from "./detalle.module.css";
 import {
   CampoFormularioGenerico,
   FormularioGenerico,
@@ -20,6 +20,8 @@ export function Detalle<T extends Entidad>({
   obtenerTitulo,
   children,
 }: PropsWithChildren<DetalleProps<T>>) {
+  const { detalle } = estilos;
+
   const [entidad, setEntidad] = useState<T>({} as T);
 
   const { actualizarUno, obtenerUno } = acciones;
@@ -33,7 +35,7 @@ export function Detalle<T extends Entidad>({
   }
 
   return (
-    <div className="Detalle">
+    <div className={detalle}>
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
       <FormularioGenerico
         campos={camposEntidad}
