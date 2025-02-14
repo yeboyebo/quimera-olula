@@ -9,9 +9,10 @@ import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
 export type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
+  Acciones?: any;
 };
 
-export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
+export const Maestro = <T extends Entidad>({ acciones, Acciones=null }: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -92,7 +93,9 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
 
   return (
     <div className="Maestro">
-      <MaestroAcciones acciones={acciones} />
+      {
+        Acciones ? <Acciones acciones={acciones}/> : <MaestroAcciones acciones={acciones} />
+      }
       <MaestroFiltros acciones={acciones} />
       {renderEntidades()}
     </div>

@@ -11,7 +11,7 @@ export const Vista = <T extends Entidad>({
 
   const [entidades, setEntidades] = useState<T[]>([]);
   const [seleccionada, setSeleccionada] = useState<T | null>(null);
-
+  
   return (
     <Contexto.Provider
       value={{
@@ -26,6 +26,30 @@ export const Vista = <T extends Entidad>({
       <Slot nombre="contenido" {...slots}>
         <Plantilla>{children}</Plantilla>
       </Slot>
+    </Contexto.Provider>
+  );
+};
+
+// ¿Usar param sufijo? ['entidades' + sufijo]: entidades
+export const SubVista = <T extends Entidad>({
+  children,
+}: PropsWithChildren<object>) => {
+  // const slots = { hijos: children };
+
+  const [entidades, setEntidades] = useState<T[]>([]);
+  const [seleccionada, setSeleccionada] = useState<T | null>(null);
+  
+  return (
+    <Contexto.Provider
+      value={{
+        entidades,
+        setEntidades: setEntidades as (entidades: Entidad[]) => void,
+        seleccionada,
+        setSeleccionada: setSeleccionada as (
+          seleccionada: Entidad | null
+        ) => void,
+      }}
+    >{children}
     </Contexto.Provider>
   );
 };

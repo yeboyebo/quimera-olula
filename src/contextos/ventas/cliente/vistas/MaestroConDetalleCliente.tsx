@@ -2,17 +2,19 @@ import { useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
-import { Vista } from "../../../../componentes/vista/Vista.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Cliente, ClienteConDirecciones, DireccionCliente } from "../diseño.ts";
-import { accionesCliente } from "../infraestructura.ts";
+import { Cliente, ClienteConDirecciones } from "../diseño.ts";
+import {
+  accionesCliente
+} from "../infraestructura.ts";
+import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
 
 export const MaestroConDetalleCliente = () => {
   const context = useContext(Contexto);
   if (!context) {
     throw new Error("Contexto is null");
   }
-  const { seleccionada } = context;
+  const { seleccionada, entidades, setEntidades } = context;
 
   const titulo = (cliente: Cliente) => cliente.nombre;
 
@@ -22,6 +24,12 @@ export const MaestroConDetalleCliente = () => {
     { name: "id_fiscal", label: "CIF/NIF", type: "text" },
   ];
 
+  const actualizarCliente = (cliente: Cliente) => {
+    setEntidades([
+      ...entidades.map((c) => c.id !== cliente.id ? c : cliente),
+    ])
+  }
+
   const obtenerUno = async () => {
     return seleccionada as ClienteConDirecciones;
   };
@@ -30,23 +38,15 @@ export const MaestroConDetalleCliente = () => {
     ...accionesCliente,
     obtenerUno,
   };
+  // console.log('seleccionada', seleccionada);
 
-  const MaestroDirecciones = () => {
-    if (!seleccionada) {
-      return null;
-    }
+  // const MaestroDireccionesComp = () => {
+  //   if (!seleccionada) {
+  //     return null;
+  //   }
 
-    const acciones = {
-      obtenerTodos: async () =>
-        (seleccionada.direcciones ?? []) as DireccionCliente[],
-      obtenerUno: async () => ({} as DireccionCliente),
-      crearUno: async () => {},
-      actualizarUno: async () => {},
-      eliminarUno: async () => {},
-    };
-
-    return <Maestro acciones={acciones} />;
-  };
+  //   return <MaestroDirecciones id={seleccionada.id} />;
+  // };
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
@@ -57,13 +57,21 @@ export const MaestroConDetalleCliente = () => {
         <Detalle
           id={seleccionada?.id ?? "0"}
           camposEntidad={camposCliente}
-          acciones={accionesCliente}
+          acciones={{
+            ...accionesCliente,
+            actualizarUno: async (cliente) => {
+              accionesCliente.actualizarUno(cliente).then(() => {
+                cliente.id &&
+                accionesCliente.obtenerUno(cliente.id).then((cliente) => {
+                  actualizarCliente(cliente);
+                });
+              });
+            } ,
+          }}
           obtenerTitulo={titulo}
         >
           <h2>Direcciones</h2>
-          <Vista>
-            <MaestroDirecciones slot="contenido" />
-          </Vista>
+            <MaestroDirecciones id={seleccionada?.id} />
         </Detalle>
       </div>
     </div>
