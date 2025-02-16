@@ -1,11 +1,7 @@
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
-import { DireccionCliente } from "../diseño.ts";
 import {
-  cambiarDireccionCliente,
-  crearDireccionCliente,
-  obtenerDireccionCliente,
-  obtenerDireccionesCliente,
+  accionesDirCliente,
 } from "../infraestructura.ts";
 import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
 
@@ -19,13 +15,12 @@ export const MaestroDirecciones = ({ id }: MaestroProps) => {
   }
 
   const acciones = {
-    obtenerTodos: async () => obtenerDireccionesCliente(id),
-    obtenerUno: obtenerDireccionCliente(id),
-    crearUno: async () => ({} as DireccionCliente),
-    actualizarUno: async () => {},
-    eliminarUno: async () => {},
-    crearDireccion: crearDireccionCliente(id),
-    cambiarDireccion: cambiarDireccionCliente(id),
+    obtenerTodos: async () => accionesDirCliente.obtenerTodos(id),
+    obtenerUno: accionesDirCliente.obtenerUno(id),
+    crearUno: accionesDirCliente.crearUno(id),
+    actualizarUno: accionesDirCliente.actualizarUno(id),
+    eliminarUno: accionesDirCliente.eliminarUno(id),
+    marcarFacturacion: accionesDirCliente.marcarFacturacion(id),
   };
 
   return <SubVista>

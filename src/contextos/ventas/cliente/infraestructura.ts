@@ -33,67 +33,70 @@ export const actualizarCliente = async (
   
 
 export const obtenerDireccionesCliente = async (clienteId: string) =>
-  RestAPI.get<{ direcciones_cliente: ClienteConDirecciones }>(
-    // `/ventas/cliente/${clienteId}/direcciones`
-    `/ventas/direcciones_cliente/${clienteId}`
+  RestAPI.get<{ direcciones: ClienteConDirecciones }>(
+    `/ventas/cliente/${clienteId}/direcciones`
   ).then(
     (respuesta) => {
-      console.log('respuesta get direcciones', respuesta);
-      return respuesta.direcciones_cliente.direcciones
+      return respuesta.direcciones
     });
 
 export const obtenerDireccionCliente = (clienteId: string) =>
   async (dirClienteId: string) =>
   RestAPI.get<{ direccion: DireccionCliente }>(
-    // `/ventas/cliente/${id}/direcciones`
-    `/ventas/cliente/${clienteId}/direccion/${dirClienteId}`
+    `/ventas/cliente/${clienteId}/direcciones/${dirClienteId}`
   ).then(
     (respuesta) => {
-      console.log('respuesta get direccion', respuesta);
       return respuesta.direccion
     });
 
 export const crearDireccionCliente = (clienteId: string) =>
   async (direccion: Direccion) =>
-    RestAPI.patch(
-    // `/ventas/cliente/${id}/direcciones` ??
-    `/ventas/direcciones_cliente/${clienteId}/crear_direccion`,
+    RestAPI.post(
+    `/ventas/cliente/${clienteId}/direcciones`,
     {direccion},
   )
 
 export const cambiarDireccionCliente =  (clienteId: string) =>
-  async (dirCliente: DireccionCliente) =>
+  async (
+    dirClienteId: string,
+    direccion: Direccion,
+  ) =>
     RestAPI.patch(
-    `/ventas/cliente/${clienteId}/direccion/${dirCliente.id}`,
+    `/ventas/cliente/${clienteId}/direcciones/${dirClienteId}`,
     {
       direccion: {
-        nombre_via: dirCliente.direccion.nombre_via,
-        tipo_via: dirCliente.direccion.tipo_via,
-        numero: dirCliente.direccion.numero,
-        otros: dirCliente.direccion.otros,
-        cod_postal: dirCliente.direccion.cod_postal,
-        ciudad: dirCliente.direccion.ciudad,
-        provincia_id: dirCliente.direccion.provincia_id,
-        provincia: dirCliente.direccion.provincia,
-        pais_id: dirCliente.direccion.pais_id,
-        apartado: dirCliente.direccion.apartado,
-        telefono: dirCliente.direccion.telefono,
+        nombre_via: direccion.nombre_via,
+        tipo_via: direccion.tipo_via,
+        numero: direccion.numero,
+        otros: direccion.otros,
+        cod_postal: direccion.cod_postal,
+        ciudad: direccion.ciudad,
+        provincia_id: direccion.provincia_id,
+        provincia: direccion.provincia,
+        pais_id: direccion.pais_id,
+        apartado: direccion.apartado,
+        telefono: direccion.telefono,
+        // Quitamos el nombre del país
       }
     }
   )
 
-  // nombre_via: str
-  //   tipo_via: str | None
-  //   numero: str | None
-  //   otros: str | None
-  //   cod_postal: str | None
-  //   ciudad: str
-  //   provincia_id: str | None
-  //   provincia: str | None
-  //   pais_id: str | None
-  //   pais: str | None
-  //   apartado: str | None
-  //   telefono: str | None
+  export const marcarDireccionFacturacion =  (clienteId: string) =>
+    async (
+      dirClienteId: string,
+    ) =>
+      RestAPI.patch(
+      `/ventas/cliente/${clienteId}/direcciones/${dirClienteId}/facturacion`,
+      {}
+    )
+
+export const borrarDireccionCliente =  (clienteId: string) =>
+  async (dirClienteId: string) =>
+    RestAPI.delete(
+    `/ventas/cliente/${clienteId}/direcciones/${dirClienteId}`,
+  )
+
+
 export const eliminarCliente = async (id: string) =>
   RestAPI.delete(`/quimera/ventas/cliente/${id}`);
 
@@ -103,4 +106,13 @@ export const accionesCliente = {
   crearUno: crearCliente,
   actualizarUno: actualizarCliente,
   eliminarUno: eliminarCliente,
+};
+
+export const accionesDirCliente = {
+  obtenerTodos: obtenerDireccionesCliente,
+  obtenerUno: obtenerDireccionCliente,
+  crearUno: crearDireccionCliente,
+  actualizarUno: cambiarDireccionCliente,
+  eliminarUno: borrarDireccionCliente,
+  marcarFacturacion: marcarDireccionFacturacion,
 };

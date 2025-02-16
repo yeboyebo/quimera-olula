@@ -1,29 +1,32 @@
 import { useContext } from "react";
 import { Contexto } from "../../../../contextos/comun/contexto.ts";
-import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { Direccion, DireccionCliente } from "../../cliente/diseño.ts";
 // import "./MaestroAcciones.css";
 
-export type Acciones<T extends Entidad> = {
-  obtenerTodos: () => Promise<T[]>;
-  obtenerUno: (direccionId: string) => Promise<T>;
-  crearDireccion: (direccion: Direccion) => Promise<void>;
-  cambiarDireccion: (direccion: DireccionCliente) => Promise<void>;
+export type Acciones = {
+  obtenerTodos: () => Promise<DireccionCliente[]>;
+  obtenerUno: (direccionId: string) => Promise<DireccionCliente>;
+  crearUno: (direccion: Direccion) => Promise<void>;
+  actualizarUno: (dirClienteId: string, direccion: Direccion) => Promise<void>;
+  eliminarUno: (direccionId: string) => Promise<void>;
+  marcarFacturacion: (direccionId: string) => Promise<void>;
 };
 
-type MaestroProps<T extends Entidad> = {
-  acciones: Acciones<T>;
+type MaestroProps = {
+  acciones: Acciones;
 };
 
-export const MaestroDireccionesAcciones = <T extends Entidad>({
+export const MaestroDireccionesAcciones = ({
   acciones,
-}: MaestroProps<T>) => {
+}: MaestroProps) => {
 
   const {
-    cambiarDireccion,
-    crearDireccion,
+    actualizarUno,
+    crearUno,
     obtenerTodos,
     obtenerUno,
+    eliminarUno,
+    marcarFacturacion,
   } = acciones;
   
   const context = useContext(Contexto);
@@ -48,14 +51,18 @@ export const MaestroDireccionesAcciones = <T extends Entidad>({
     );
   }
 
+  const quitarDireccion = (direccionId: string) => {
+    setEntidades(entidades.filter((entidad) => entidad.id !== direccionId));
+  }
+  
   const onCrearDireccion = () => {
     const direccion: Direccion = direccionEjemplo;
 
-    crearDireccion(direccion)
+    crearUno(direccion)
       .then(() => {
         obtenerTodos()
         .then((direcciones) => {
-          setEntidades(direcciones as T[]);
+          setEntidades(direcciones);
         });
     });
   }
@@ -67,7 +74,7 @@ export const MaestroDireccionesAcciones = <T extends Entidad>({
     const original = buscarPorId(seleccionada.id) as DireccionCliente
     const cambiada = hacerCambioDireccion(original);
     
-    cambiarDireccion(cambiada)
+    actualizarUno(cambiada.id, cambiada.direccion)
       .then(() => {
         obtenerUno(cambiada.id)
         .then((direccion) => {
@@ -76,10 +83,40 @@ export const MaestroDireccionesAcciones = <T extends Entidad>({
     });
   }
 
+  const onMarcarFacturacion = () => {
+    if (!seleccionada) {
+      return;
+    }
+    const dirClienteId = seleccionada.id
+    
+    marcarFacturacion(dirClienteId)
+      .then(() => {
+        obtenerTodos()
+        .then((direcciones) => {
+          setEntidades(direcciones);
+        });
+    });
+  }
+
+
+  const onBorrarDireccion = () => {
+    if (!seleccionada) {
+      return;
+    }
+    const dirClienteId = seleccionada.id
+    
+    eliminarUno(dirClienteId)
+      .then(() => {
+        quitarDireccion(dirClienteId);
+    });
+  }
+
   return (
     <div className="MaestroAcciones">
       <button onClick={onCrearDireccion}>Crear</button>
       <button onClick={onCambiarDireccion}>Cambiar</button>
+      <button onClick={onBorrarDireccion}>Borrar</button>
+      <button onClick={onMarcarFacturacion}>Facturación</button>
     </div>
   );
 };
