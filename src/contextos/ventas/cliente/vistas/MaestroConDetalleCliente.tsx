@@ -38,15 +38,6 @@ export const MaestroConDetalleCliente = () => {
     ...accionesCliente,
     obtenerUno,
   };
-  // console.log('seleccionada', seleccionada);
-
-  // const MaestroDireccionesComp = () => {
-  //   if (!seleccionada) {
-  //     return null;
-  //   }
-
-  //   return <MaestroDirecciones id={seleccionada.id} />;
-  // };
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
@@ -59,10 +50,10 @@ export const MaestroConDetalleCliente = () => {
           camposEntidad={camposCliente}
           acciones={{
             ...accionesCliente,
-            actualizarUno: async (cliente) => {
-              accionesCliente.actualizarUno(cliente).then(() => {
+            actualizarUno: async (id, cliente) => {
+              accionesCliente.actualizarUno(id, cliente).then(() => {
                 cliente.id &&
-                accionesCliente.obtenerUno(cliente.id).then((cliente) => {
+                accionesCliente.obtenerUno(id).then((cliente) => {
                   actualizarCliente(cliente);
                 });
               });

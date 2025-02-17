@@ -1,9 +1,8 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import {
   Cliente,
-  ClienteConDirecciones,
   Direccion,
-  DireccionCliente,
+  DireccionCliente
 } from "./diseño.ts";
 
 export const obtenerTodosLosClientes = async () =>
@@ -25,15 +24,16 @@ export const crearCliente = async (cliente: Cliente) =>
   });
 
 export const actualizarCliente = async (
+  id: string,
   cliente: Partial<Cliente>
 ) => {
   console.log('patch', cliente)
-  return RestAPI.patch(`/ventas/cliente/${cliente.id}`, cliente);
+  return RestAPI.patch(`/ventas/cliente/${id}`, cliente);
 }
   
 
 export const obtenerDireccionesCliente = async (clienteId: string) =>
-  RestAPI.get<{ direcciones: ClienteConDirecciones }>(
+  RestAPI.get<{ direcciones: DireccionCliente[] }>(
     `/ventas/cliente/${clienteId}/direcciones`
   ).then(
     (respuesta) => {
@@ -50,7 +50,7 @@ export const obtenerDireccionCliente = (clienteId: string) =>
     });
 
 export const crearDireccionCliente = (clienteId: string) =>
-  async (direccion: Direccion) =>
+  async (direccion: DireccionCliente) =>
     RestAPI.post(
     `/ventas/cliente/${clienteId}/direcciones`,
     {direccion},
