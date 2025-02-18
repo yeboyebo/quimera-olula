@@ -13,6 +13,7 @@ export type Entidad = {
 //   // seleccionarEntidad?: (e: Entidad) => void;
 // };
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export type Acciones<T extends Entidad> = {
   obtenerUno: (id: string) => Promise<T | null>;
   obtenerTodos: () => Promise<T[]>;

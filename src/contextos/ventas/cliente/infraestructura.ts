@@ -20,7 +20,7 @@ export const obtenerUnCliente = async (id: string) =>
 export const crearCliente = async (cliente: Cliente) =>
   RestAPI.post(`/ventas/cliente`, cliente).then((respuesta) => {
     console.log('respuesta', respuesta);
-    return respuesta.entidad as Cliente
+    // return respuesta.entidad as Cliente
   });
 
 export const actualizarCliente = async (

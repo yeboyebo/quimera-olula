@@ -7,6 +7,7 @@ import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
 import { MaestroEntidad } from "./maestroEntidad/MaestroEntidad.tsx";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
   Acciones?: any;

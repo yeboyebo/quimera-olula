@@ -52,10 +52,11 @@ export const MaestroConDetalleCliente = () => {
             ...accionesCliente,
             actualizarUno: async (id, cliente) => {
               accionesCliente.actualizarUno(id, cliente).then(() => {
-                cliente.id &&
-                accionesCliente.obtenerUno(id).then((cliente) => {
-                  actualizarCliente(cliente);
-                });
+                if (cliente.id) {
+                  accionesCliente.obtenerUno(id).then((cliente) => {
+                    actualizarCliente(cliente);
+                  });
+                }
               });
             } ,
           }}

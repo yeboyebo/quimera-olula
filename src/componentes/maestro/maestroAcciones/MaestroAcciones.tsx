@@ -58,7 +58,7 @@ export const MaestroAcciones = <T extends Entidad>({
       nada: "",
     } as unknown as Partial<T>;
 
-    actualizarUno(nuevaEntidad).then(() => {
+    actualizarUno(primeraEntidad.id, nuevaEntidad).then(() => {
       setEntidades([
         { ...primeraEntidad, nombre: nuevaEntidad.nombre },
         ...entidades.slice(1),
