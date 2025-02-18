@@ -8,5 +8,7 @@ export type Contexto<T> = {
   setSeleccionada: (_: T | null) => void;
 };
 
-export const Contexto = (<T extends Entidad>() =>
-  React.createContext<Contexto<T> | null>(null))();
+// export const Contexto = (<T extends Entidad>() =>
+//   React.createContext<Contexto<T> | null>(null))();
+
+export const Contexto = React.createContext<Contexto<Entidad> | null>(null);

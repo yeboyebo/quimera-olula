@@ -2,19 +2,25 @@ import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
-import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Cliente, DireccionCliente } from "../diseño.ts";
-import { accionesCliente } from "../infraestructura.ts";
+import { Cliente } from "../diseño.ts";
+import {
+  accionesCliente
+} from "../infraestructura.ts";
+import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
 
 export const DetalleCliente = () => {
   const { id } = useParams();
-
+  
   const context = useContext(Contexto);
   if (!context) {
     throw new Error("Contexto is null");
   }
   const { seleccionada, setSeleccionada } = context;
+  // const { seleccionada, setSeleccionada } = {
+  //   seleccionada: null,
+  //   setSeleccionada: () => {},
+  // }
 
   const { obtenerUno } = accionesCliente;
 
@@ -33,19 +39,24 @@ export const DetalleCliente = () => {
     { name: "nombre", label: "Nombre", type: "text" },
     { name: "id_fiscal", label: "CIF/NIF", type: "text" },
   ];
+  console.log('refrescando');
 
-  const MaestroDirecciones = () => {
-    const acciones = {
-      obtenerTodos: async () =>
-        (seleccionada?.direcciones ?? []) as DireccionCliente[],
-      obtenerUno: async () => ({} as DireccionCliente),
-      crearUno: async () => {},
-      actualizarUno: async () => {},
-      eliminarUno: async () => {},
-    };
+  // const MaestroDireccionesComp = () => {
+  //   if (!id) {
+  //     return null;
+  //   }
+  //   // const acciones = {
+  //   //   obtenerTodos: async () => obtenerDireccionesCliente(id),
+  //   //   obtenerUno: async () => ({} as DireccionCliente),
+  //   //   crearUno: async () => {},
+  //   //   actualizarUno: async () => {},
+  //   //   eliminarUno: async () => {},
+  //   // };
 
-    return <Maestro acciones={acciones} />;
-  };
+  //   return <SubVista>
+  //     <MaestroDirecciones id={id} />
+  //     </SubVista>;
+  // };
 
   return (
     <Detalle
@@ -55,7 +66,7 @@ export const DetalleCliente = () => {
       obtenerTitulo={titulo}
     >
       <h2>Direcciones</h2>
-      <MaestroDirecciones />
+      <MaestroDirecciones id={id} />
     </Detalle>
   );
 };

@@ -20,13 +20,15 @@ const comando = async <T>(
   url: string,
   body?: Partial<T>
 ): Promise<void> => {
-  await fetch(`${BASE}${url}`, {
+  const response = await fetch(`${BASE}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body ?? {}),
   });
+  const json = await response.json();
+  return json;
 };
 
 export const RestAPI: API = {
