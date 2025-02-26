@@ -4,14 +4,12 @@ import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
 import { Cliente } from "../diseño.ts";
-import {
-  accionesCliente
-} from "../infraestructura.ts";
+import { accionesCliente } from "../infraestructura.ts";
 import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
 
 export const DetalleCliente = () => {
   const { id } = useParams();
-  
+
   const context = useContext(Contexto);
   if (!context) {
     throw new Error("Contexto is null");
@@ -35,11 +33,22 @@ export const DetalleCliente = () => {
   const titulo = (cliente: Cliente) => cliente.nombre;
 
   const camposCliente: CampoFormularioGenerico[] = [
-    { name: "id", label: "Código", type: "text", hidden: true },
-    { name: "nombre", label: "Nombre", type: "text" },
-    { name: "id_fiscal", label: "CIF/NIF", type: "text" },
+    { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
+    { nombre: "nombre", etiqueta: "Nombre", tipo: "text" },
+    { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
+    { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
+    { nombre: "divisa_id", etiqueta: "Divisa", tipo: "text" },
+    { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
+    { nombre: "serie_id", etiqueta: "Serie", tipo: "text" },
+    { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
+    {
+      nombre: "grupo_iva_negocio_id",
+      etiqueta: "Grupo IVA Negocio",
+      tipo: "text",
+    },
+    { nombre: "eventos", etiqueta: "Eventos", tipo: "text" },
   ];
-  console.log('refrescando');
+  console.log("refrescando");
 
   // const MaestroDireccionesComp = () => {
   //   if (!id) {

@@ -21,16 +21,36 @@ export function Detalle<T extends Entidad>({
   children,
 }: PropsWithChildren<DetalleProps<T>>) {
   const [entidad, setEntidad] = useState<T>({} as T);
+  const [isNew, setIsNew] = useState<boolean>(false);
 
-  const { actualizarUno, obtenerUno } = acciones;
+  const { actualizarUno, obtenerUno, crearUno } = acciones;
 
   useEffect(() => {
-    obtenerUno(id).then((entidad) => setEntidad(entidad as T));
-  }, [id, obtenerUno]);
+    if (!id || id === "") {
+      const nuevaEntidad = camposEntidad.reduce((acc, campo) => {
+        return { ...acc, [campo.nombre]: campo.valorInicial || "" };
+      }, {} as Partial<T>) as T;
+      setEntidad(nuevaEntidad);
+      setIsNew(true);
+    } else {
+      obtenerUno(id).then((entidad) => {
+        setIsNew(false);
+        setEntidad(entidad as T);
+      });
+    }
+  }, [id, obtenerUno, camposEntidad]);
 
-  if (!entidad || !entidad.id) {
+  if (!entidad || !Object.keys(entidad).length) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
+
+  const handleSubmit = async (id: string, data: T) => {
+    if (isNew) {
+      await crearUno(data);
+    } else {
+      await actualizarUno(id, data);
+    }
+  };
 
   return (
     <div className="Detalle">
@@ -39,7 +59,7 @@ export function Detalle<T extends Entidad>({
         campos={camposEntidad}
         entidad={entidad}
         setEntidad={setEntidad}
-        onSubmit={actualizarUno}
+        onSubmit={handleSubmit}
       />
       {children}
     </div>

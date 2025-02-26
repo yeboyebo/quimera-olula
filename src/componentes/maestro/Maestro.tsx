@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Contexto } from "../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
+import { CampoFormularioGenerico } from "../detalle/FormularioGenerico.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
@@ -11,9 +12,14 @@ import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 export type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
   Acciones?: any;
+  camposEntidad: CampoFormularioGenerico[];
 };
 
-export const Maestro = <T extends Entidad>({ acciones, Acciones=null }: MaestroProps<T>) => {
+export const Maestro = <T extends Entidad>({
+  acciones,
+  Acciones = null,
+  camposEntidad,
+}: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,7 +31,7 @@ export const Maestro = <T extends Entidad>({ acciones, Acciones=null }: MaestroP
 
   useEffect(() => {
     obtenerTodos().then((entidades) => {
-      console.log('entidades = ', entidades);
+      console.log("entidades = ", entidades);
       setEntidades(entidades as T[]);
       setIsLoading(false);
     });
@@ -94,9 +100,11 @@ export const Maestro = <T extends Entidad>({ acciones, Acciones=null }: MaestroP
 
   return (
     <div className="Maestro">
-      {
-        Acciones ? <Acciones acciones={acciones}/> : <MaestroAcciones acciones={acciones} />
-      }
+      {Acciones ? (
+        <Acciones acciones={acciones} camposEntidad={camposEntidad} />
+      ) : (
+        <MaestroAcciones acciones={acciones} camposEntidad={camposEntidad} />
+      )}
       <MaestroFiltros acciones={acciones} />
       {renderEntidades()}
     </div>
