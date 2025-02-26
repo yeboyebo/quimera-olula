@@ -15,11 +15,6 @@ export const DetalleCliente = () => {
     throw new Error("Contexto is null");
   }
   const { seleccionada, setSeleccionada } = context;
-  // const { seleccionada, setSeleccionada } = {
-  //   seleccionada: null,
-  //   setSeleccionada: () => {},
-  // }
-
   const { obtenerUno } = accionesCliente;
 
   useEffect(() => {
@@ -33,39 +28,27 @@ export const DetalleCliente = () => {
   const titulo = (cliente: Cliente) => cliente.nombre;
 
   const camposCliente: CampoFormularioGenerico[] = [
-    { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
-    { nombre: "nombre", etiqueta: "Nombre", tipo: "text" },
+    {
+      nombre: "id",
+      etiqueta: "Código",
+      tipo: "text",
+      oculto: true,
+    },
+    { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%" },
     { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
     { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
-    { nombre: "divisa_id", etiqueta: "Divisa", tipo: "text" },
+    { nombre: "divisa_id", etiqueta: "Divisa", tipo: "label" },
     { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
-    { nombre: "serie_id", etiqueta: "Serie", tipo: "text" },
+    { nombre: "serie_id", etiqueta: "Serie", tipo: "label" },
     { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
     {
       nombre: "grupo_iva_negocio_id",
       etiqueta: "Grupo IVA Negocio",
       tipo: "text",
     },
-    { nombre: "eventos", etiqueta: "Eventos", tipo: "text" },
+    { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
+    { nombre: "espacio", etiqueta: "", tipo: "space" },
   ];
-  console.log("refrescando");
-
-  // const MaestroDireccionesComp = () => {
-  //   if (!id) {
-  //     return null;
-  //   }
-  //   // const acciones = {
-  //   //   obtenerTodos: async () => obtenerDireccionesCliente(id),
-  //   //   obtenerUno: async () => ({} as DireccionCliente),
-  //   //   crearUno: async () => {},
-  //   //   actualizarUno: async () => {},
-  //   //   eliminarUno: async () => {},
-  //   // };
-
-  //   return <SubVista>
-  //     <MaestroDirecciones id={id} />
-  //     </SubVista>;
-  // };
 
   return (
     <Detalle
