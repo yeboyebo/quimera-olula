@@ -10,6 +10,14 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
     },
   });
 
+  if (response.status === 404) {
+    return {} as T;
+  }
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
   const json = await response.json();
 
   return json;

@@ -4,9 +4,7 @@ import { CampoFormularioGenerico } from "../../../../componentes/detalle/Formula
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
 import { Cliente, ClienteConDirecciones } from "../diseño.ts";
-import {
-  accionesCliente
-} from "../infraestructura.ts";
+import { accionesCliente } from "../infraestructura.ts";
 import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
 
 export const MaestroConDetalleCliente = () => {
@@ -19,16 +17,22 @@ export const MaestroConDetalleCliente = () => {
   const titulo = (cliente: Cliente) => cliente.nombre;
 
   const camposCliente: CampoFormularioGenerico[] = [
-    { name: "id", label: "Código", type: "text", hidden: true },
-    { name: "nombre", label: "Nombre", type: "text" },
-    { name: "id_fiscal", label: "CIF/NIF", type: "text" },
+    { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
+    { nombre: "nombre", etiqueta: "Nombre", tipo: "text" },
+    { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
+    { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
+    {
+      nombre: "grupo_iva_negocio_id",
+      etiqueta: "Grupo IVA Negocio",
+      tipo: "text",
+    },
   ];
 
   const actualizarCliente = (cliente: Cliente) => {
     setEntidades([
-      ...entidades.map((c) => c.id !== cliente.id ? c : cliente),
-    ])
-  }
+      ...entidades.map((c) => (c.id !== cliente.id ? c : cliente)),
+    ]);
+  };
 
   const obtenerUno = async () => {
     return seleccionada as ClienteConDirecciones;
@@ -42,7 +46,10 @@ export const MaestroConDetalleCliente = () => {
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <Maestro acciones={AccionesClienteMaestroConDetalle} />
+        <Maestro
+          acciones={AccionesClienteMaestroConDetalle}
+          camposEntidad={camposCliente}
+        />
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <Detalle
@@ -52,18 +59,25 @@ export const MaestroConDetalleCliente = () => {
             ...accionesCliente,
             actualizarUno: async (id, cliente) => {
               accionesCliente.actualizarUno(id, cliente).then(() => {
-                if (cliente.id) {
+                if (!cliente.id) {
                   accionesCliente.obtenerUno(id).then((cliente) => {
                     actualizarCliente(cliente);
                   });
                 }
               });
-            } ,
+            },
+            crearUno: async (cliente) => {
+              accionesCliente.crearUno(cliente).then(() => {
+                accionesCliente.obtenerUno(cliente.id).then((cliente) => {
+                  actualizarCliente(cliente);
+                });
+              });
+            },
           }}
           obtenerTitulo={titulo}
         >
           <h2>Direcciones</h2>
-            <MaestroDirecciones id={seleccionada?.id} />
+          <MaestroDirecciones id={seleccionada?.id} />
         </Detalle>
       </div>
     </div>
