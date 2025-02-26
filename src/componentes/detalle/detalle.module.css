@@ -6,12 +6,18 @@
     }
 
     form {
-        div {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+
+        >div {
             margin-bottom: 15px;
+            padding-right: 15px;
         }
 
         input {
-            width: 35%;
+            width: calc(100% - 125px);
             border: 1px solid #ccc;
             padding: 5px;
             border-radius: 5px;
@@ -20,7 +26,7 @@
 
         label {
             display: inline-block;
-            width: 15%;
+            width: 120px;
         }
     }
 
