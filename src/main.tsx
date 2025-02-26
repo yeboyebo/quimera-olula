@@ -6,6 +6,7 @@ import { Indice } from "./contextos/comun/Indice.tsx";
 import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente.tsx";
 import { MaestroCliente } from "./contextos/ventas/cliente/vistas/MaestroCliente.tsx";
 import { MaestroConDetalleCliente } from "./contextos/ventas/cliente/vistas/MaestroConDetalleCliente.tsx";
+import { MaestroConDetallePresupuesto } from "./contextos/ventas/presupuesto/vistas/MaestroConDetallePresupuesto.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -43,6 +44,16 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Vista>
                   <DetalleCliente />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="presupuesto">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetallePresupuesto />
                 </Vista>
               }
             />

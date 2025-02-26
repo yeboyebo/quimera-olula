@@ -11,10 +11,7 @@ export const Indice = () => {
           <Link to="/ventas/cliente/000001">Cliente #1</Link>
         </li>
         <li>
-          <Link to="/ventas/cliente/000002">Cliente #2</Link>
-        </li>
-        <li>
-          <Link to="/ventas/cliente/000003">Cliente #3</Link>
+          <Link to="/ventas/presupuesto">Maestro de presupuestos</Link>
         </li>
       </ul>
     </>

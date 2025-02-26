@@ -1,5 +1,7 @@
 import { Entidad } from "../../comun/diseño.ts";
-import { Direccion } from "../cliente/diseño.ts";
+import { Direccion as DireccionCliente } from "../cliente/diseño.ts";
+
+export type Direccion = DireccionCliente;
 
 export type Presupuesto = Entidad & {
   id: string;
