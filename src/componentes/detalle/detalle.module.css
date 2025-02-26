@@ -1,26 +1,30 @@
-.Detalle{
-    &>h2{
-        margin-top:0;
+.detalle {
+    h2 {
+        margin-top: 0;
         margin-bottom: 15px;
         border-bottom: 1px solid #ccc;
     }
-    form{
-        >div{
+
+    form {
+        div {
             margin-bottom: 15px;
         }
-        input{
+
+        input {
             width: 35%;
             border: 1px solid #ccc;
             padding: 5px;
             border-radius: 5px;
             margin-left: 5px;
         }
-        label{
+
+        label {
             display: inline-block;
             width: 15%;
         }
     }
-    .MaestroEntidades{
+
+    .MaestroEntidades {
         display: block !important;
     }
 }
