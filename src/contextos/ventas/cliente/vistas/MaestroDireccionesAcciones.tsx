@@ -118,7 +118,7 @@ export const MaestroDireccionesAcciones = ({
   };
 
   const handleCrearDireccion = async (id: string, data: Direccion) => {
-    console.log("Creando dirección", data);
+    console.log("Creando dirección", data, id);
     crearUno(data).then(() => {
       obtenerTodos().then((direcciones) => {
         setEntidades(direcciones);
