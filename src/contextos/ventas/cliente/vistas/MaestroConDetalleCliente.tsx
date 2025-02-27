@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
 import { Cliente, ClienteConDirecciones } from "../diseño.ts";
@@ -87,8 +88,50 @@ export const MaestroConDetalleCliente = () => {
           }}
           obtenerTitulo={titulo}
         >
-          <h2>Direcciones</h2>
-          <MaestroDirecciones id={seleccionada?.id} />
+          <Tabs
+            children={[
+              <Tab
+                key="tab-1"
+                label="Comercial"
+                children={<div> Comercial contenido </div>}
+              />,
+              <Tab
+                key="tab-2"
+                label="Direcciones"
+                children={<MaestroDirecciones id={seleccionada?.id} />}
+              />,
+              <Tab
+                key="tab-3"
+                label="Cuentas Bancarias"
+                children={<div> Cuentas Bancarias Master contenido </div>}
+              />,
+              <Tab
+                key="tab-4"
+                label="Agenda"
+                children={<div> Agenda contenido </div>}
+              />,
+              <Tab
+                key="tab-5"
+                label="Descuentos"
+                children={<div> Descuentos contenido</div>}
+              />,
+              <Tab
+                key="tab-6"
+                label="Documentos"
+                children={<div> Documentos contenido</div>}
+              />,
+              <Tab
+                key="tab-7"
+                label="Contabilidad"
+                children={<div> Contabilidad contenido</div>}
+              />,
+              <Tab
+                key="tab-8"
+                label="Factura-e"
+                children={<div> Factura-e contenido</div>}
+              />,
+            ]}
+          ></Tabs>
         </Detalle>
       </div>
     </div>
