@@ -3,7 +3,7 @@ import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Cliente, ClienteConDirecciones } from "../diseño.ts";
+import { Cliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
 import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
 
@@ -45,22 +45,10 @@ export const MaestroConDetalleCliente = () => {
     ]);
   };
 
-  const obtenerUno = async () => {
-    return seleccionada as ClienteConDirecciones;
-  };
-
-  const AccionesClienteMaestroConDetalle = {
-    ...accionesCliente,
-    obtenerUno,
-  };
-
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <Maestro
-          acciones={AccionesClienteMaestroConDetalle}
-          camposEntidad={camposCliente}
-        />
+        <Maestro acciones={accionesCliente} camposEntidad={camposCliente} />
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <Detalle

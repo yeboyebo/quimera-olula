@@ -64,6 +64,7 @@ export const Maestro = <T extends Entidad>({
   };
 
   const renderEntidades = () => {
+    console.log("entidades = ", entidades);
     if (isLoading) {
       return <MaestroCargando />;
     }

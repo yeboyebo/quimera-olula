@@ -13,3 +13,12 @@ export type Presupuesto = Entidad & {
   direccion_id: string;
   direccion: Direccion;
 };
+
+export type LineaPresupuesto = {
+  id: string;
+  referencia: string;
+  descripcion: string;
+  cantidad: number;
+  pvp_unitario: number;
+  pvp_total: number;
+};
