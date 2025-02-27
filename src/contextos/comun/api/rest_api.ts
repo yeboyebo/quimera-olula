@@ -10,7 +10,7 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
     },
   });
 
-  if (response.status === 404) {
+  if (response.status === 500) {
     return {} as T;
   }
 

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Contexto } from "../../../contextos/comun/contexto.ts";
-import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
+import { AccionesFiltros, Entidad } from "../../../contextos/comun/diseño.ts";
 import "./MaestroFiltros.css";
 
 type MaestroProps<T extends Entidad> = {
-  acciones: Acciones<T>;
+  acciones: AccionesFiltros<T>;
 };
 
 export const MaestroFiltros = <T extends Entidad>({
