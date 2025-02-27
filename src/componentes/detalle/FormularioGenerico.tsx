@@ -86,7 +86,7 @@ export const FormularioGenerico = <T extends Entidad>({
           id={campo.nombre.toString()}
           name={campo.nombre.toString()}
           value={
-            entidad[campo.nombre] as
+            (entidad[campo.nombre] ?? "") as
               | string
               | number
               | readonly string[]
