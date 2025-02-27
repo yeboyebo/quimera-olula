@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
@@ -43,8 +43,38 @@ export const MaestroConDetallePresupuesto = () => {
     ]);
   };
 
+  const actualizarUno = useCallback(
+    async (id: string, presupuesto: Presupuesto) => {
+      await accionesPresupuesto.actualizarUno(id, presupuesto);
+      actualizarPresupuesto(presupuesto);
+    },
+    [accionesPresupuesto, actualizarPresupuesto]
+  );
+
+  const crearUno = useCallback(
+    async (presupuesto: Presupuesto) => {
+      await accionesPresupuesto.crearUno(presupuesto);
+      const nuevoPresupuesto = await accionesPresupuesto.obtenerUno(
+        presupuesto.id
+      );
+      setEntidades([...entidades, nuevoPresupuesto]);
+    },
+    [accionesPresupuesto, setEntidades]
+  );
+
+  const obtenerUno = useCallback(
+    async (id: string) => {
+      const entidadAccion = await accionesPresupuesto.obtenerUno(id);
+      return entidadAccion as Presupuesto | null;
+    },
+    [accionesPresupuesto]
+  );
+
   const AccionesPresupuestoMaestroConDetalle = {
     ...accionesPresupuesto,
+    actualizarUno,
+    crearUno,
+    obtenerUno,
   };
 
   return (
@@ -59,23 +89,7 @@ export const MaestroConDetallePresupuesto = () => {
         <Detalle
           id={seleccionada?.id ?? "0"}
           camposEntidad={camposPresupuesto}
-          acciones={{
-            ...accionesPresupuesto,
-            actualizarUno: async (id, presupuesto) => {
-              accionesPresupuesto.actualizarUno(id, presupuesto).then(() => {
-                actualizarPresupuesto(presupuesto);
-              });
-            },
-            crearUno: async (presupuesto) => {
-              accionesPresupuesto.crearUno(presupuesto).then(() => {
-                accionesPresupuesto
-                  .obtenerUno(presupuesto.id)
-                  .then((nuevoPresupuesto: Presupuesto) => {
-                    setEntidades([...entidades, nuevoPresupuesto]);
-                  });
-              });
-            },
-          }}
+          acciones={AccionesPresupuestoMaestroConDetalle}
           obtenerTitulo={titulo}
         >
           <h2>Direcciones</h2>
