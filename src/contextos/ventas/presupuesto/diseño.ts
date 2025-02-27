@@ -3,7 +3,7 @@ import { Direccion as DireccionCliente } from "../cliente/diseño.ts";
 
 export type Direccion = DireccionCliente;
 
-export type Presupuesto = Entidad & {
+export interface Presupuesto extends Entidad {
   id: string;
   codigo: string;
   fecha: string;

@@ -1,6 +1,7 @@
 import { useCallback, useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
@@ -57,7 +58,9 @@ export const MaestroConDetallePresupuesto = () => {
       const nuevoPresupuesto = await accionesPresupuesto.obtenerUno(
         presupuesto.id
       );
-      setEntidades([...entidades, nuevoPresupuesto]);
+      if (nuevoPresupuesto) {
+        setEntidades([...entidades, nuevoPresupuesto]);
+      }
     },
     [accionesPresupuesto, setEntidades]
   );
@@ -70,12 +73,21 @@ export const MaestroConDetallePresupuesto = () => {
     [accionesPresupuesto]
   );
 
+  const obtenerTodos = useCallback(async () => {
+    const entidades = await accionesPresupuesto.obtenerTodos();
+    return entidades as Presupuesto[];
+  }, [accionesPresupuesto]);
+
   const AccionesPresupuestoMaestroConDetalle = {
     ...accionesPresupuesto,
     actualizarUno,
     crearUno,
     obtenerUno,
+    obtenerTodos,
   };
+
+  const clienteId =
+    seleccionada && "cliente_id" in seleccionada ? seleccionada.cliente_id : "";
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
@@ -92,17 +104,47 @@ export const MaestroConDetallePresupuesto = () => {
           acciones={AccionesPresupuestoMaestroConDetalle}
           obtenerTitulo={titulo}
         >
-          <h2>Direcciones</h2>
-          <SubVista>
-            <Maestro
-              acciones={crearAccionesRelacionadas<EntidadAccion>(
-                "presupuesto",
-                "linea",
-                seleccionada?.id ?? ""
-              )}
-              camposEntidad={camposLineasPresupuesto}
-            />
-          </SubVista>
+          <Tabs
+            children={[
+              <Tab
+                key="tab-1"
+                label="Cliente"
+                children={
+                  <SubVista>
+                    <Maestro
+                      acciones={crearAccionesRelacionadas<EntidadAccion>(
+                        "cliente",
+                        "direcciones",
+                        clienteId as string
+                      )}
+                      camposEntidad={camposLineasPresupuesto}
+                    />
+                  </SubVista>
+                }
+              />,
+              <Tab
+                key="tab-2"
+                label="Lineas"
+                children={
+                  <SubVista>
+                    <Maestro
+                      acciones={crearAccionesRelacionadas<EntidadAccion>(
+                        "presupuesto",
+                        "linea",
+                        seleccionada?.id || ""
+                      )}
+                      camposEntidad={camposLineasPresupuesto}
+                    />
+                  </SubVista>
+                }
+              />,
+              <Tab
+                key="tab-3"
+                label="Observaciones"
+                children={<div> Observaciones contenido </div>}
+              />,
+            ]}
+          ></Tabs>
         </Detalle>
       </div>
     </div>

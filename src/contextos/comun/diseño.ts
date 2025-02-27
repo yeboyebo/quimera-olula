@@ -23,6 +23,6 @@ export type Acciones<T extends Entidad> = {
   crearUno: (entidad: T) => Promise<any>;
   actualizarUno: (id: string, entidad: any) => Promise<void>;
   eliminarUno: (id: string) => Promise<void>;
-  buscar?: (campo: string, valor: string) => Promise<T[]>;
-  seleccionarEntidad?: (e: Entidad) => void;
+  // buscar?: (campo: string, valor: string) => Promise<T[]>;
+  // seleccionarEntidad?: (e: Entidad) => void;
 };
