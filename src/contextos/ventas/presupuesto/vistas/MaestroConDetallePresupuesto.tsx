@@ -78,12 +78,21 @@ export const MaestroConDetallePresupuesto = () => {
     return entidades as Presupuesto[];
   }, [accionesPresupuesto]);
 
+  const buscar = async (campo: string, valor: string) => {
+    if (accionesPresupuesto.buscar) {
+      const resultados = await accionesPresupuesto.buscar(campo, valor);
+      return resultados as Presupuesto[];
+    }
+    return [];
+  };
+
   const AccionesPresupuestoMaestroConDetalle = {
     ...accionesPresupuesto,
     actualizarUno,
     crearUno,
     obtenerUno,
     obtenerTodos,
+    buscar: buscar,
   };
 
   const clienteId =

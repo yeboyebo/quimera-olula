@@ -45,7 +45,7 @@ export function Detalle<T extends Entidad>({
   if (!entidad || !Object.keys(entidad).length) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
-  console.log(entidad);
+
   const handleSubmit = async (id: string, data: T) => {
     if (isNew) {
       await crearUno(data);

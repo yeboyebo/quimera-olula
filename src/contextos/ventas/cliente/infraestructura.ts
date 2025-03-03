@@ -3,26 +3,21 @@ import { Cliente, Direccion, DireccionCliente } from "./diseño.ts";
 
 export const obtenerTodosLosClientes = async () =>
   RestAPI.get<{ clientes: Cliente[] }>("/ventas/cliente").then((respuesta) => {
-    console.log("respuesta get", respuesta);
     return respuesta.clientes;
   });
 
 export const obtenerUnCliente = async (id: string) =>
   RestAPI.get<Cliente>(`/ventas/cliente/${id}`);
 
-// export const crearCliente = async (cliente: Cliente) =>
-//   RestAPI.post(`/quimera/ventas/cliente/${cliente.id}`, cliente);
 export const crearCliente = async (cliente: Cliente) =>
   RestAPI.post(`/ventas/cliente`, cliente).then((respuesta) => {
-    console.log("respuesta", respuesta);
-    // return respuesta.entidad as Cliente
+    return respuesta;
   });
 
 export const actualizarCliente = async (
   id: string,
   cliente: Partial<Cliente>
 ) => {
-  console.log("patch", cliente);
   return RestAPI.patch(`/ventas/cliente/${id}`, cliente);
 };
 

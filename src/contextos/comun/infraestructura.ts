@@ -6,7 +6,6 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
 
     const obtenerTodos = async (): Promise<T[]> =>
         RestAPI.get<{ [key: string]: T[] }>(baseUrl).then((respuesta) => {
-            console.log("respuesta get", respuesta);
             return respuesta[`${entidad}s`];
         });
 
@@ -15,17 +14,25 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
 
     const crearUno = async (data: T): Promise<void> =>
         RestAPI.post(baseUrl, data).then((respuesta) => {
-            console.log("respuesta", respuesta);
             return respuesta;
         });
 
     const actualizarUno = async (id: string, data: Partial<T>): Promise<void> => {
-        console.log("patch", data);
         return RestAPI.patch(`${baseUrl}/${id}`, data);
     };
 
     const eliminarUno = async (id: string): Promise<void> =>
         RestAPI.delete(`${baseUrl}/${id}`);
+
+
+    const buscar = async (_campo: string, valor: string): Promise<T[]> => {
+        return [{ campo: valor } as unknown as T];
+    };
+
+    const seleccionarEntidad = (e: Entidad): void => {
+        // Implement select entity logic here
+        console.log(e);
+    };
 
     return {
         obtenerTodos,
@@ -33,6 +40,8 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
         crearUno,
         actualizarUno,
         eliminarUno,
+        buscar,
+        seleccionarEntidad,
     };
 };
 
@@ -62,11 +71,22 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
     const eliminarUno = async (relatedId: string): Promise<void> =>
         RestAPI.delete(`${baseUrl}/${relatedId}`);
 
+    const buscar = async (_campo: string, valor: string): Promise<T[]> => {
+        return [{ campo: valor } as unknown as T];
+    };
+
+    const seleccionarEntidad = (e: Entidad): void => {
+        // Implement select entity logic here
+        console.log(e);
+    };
+
     return {
         obtenerTodos,
         obtenerUno,
         crearUno,
         actualizarUno,
         eliminarUno,
+        buscar,
+        seleccionarEntidad,
     };
 };
