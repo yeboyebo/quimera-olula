@@ -6,11 +6,13 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
 
     const obtenerTodos = async (): Promise<T[]> =>
         RestAPI.get<{ [key: string]: T[] }>(baseUrl).then((respuesta) => {
-            return respuesta[`${entidad}s`];
+            return respuesta['datos'];
         });
 
     const obtenerUno = async (id: string): Promise<T> =>
-        RestAPI.get<T>(`${baseUrl}/${id}`);
+        RestAPI.get<{ datos: T }>(`${baseUrl}/${id}`).then((respuesta) => {
+            return respuesta.datos;
+        });
 
     const crearUno = async (data: T): Promise<void> =>
         RestAPI.post(baseUrl, data).then((respuesta) => {
@@ -50,16 +52,12 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
 
     const obtenerTodos = async (): Promise<T[]> =>
         RestAPI.get<{ [key: string]: T[] }>(baseUrl).then((respuesta) => {
-            let path = `${relatedPath}s`;
-            if (relatedPath === "direcciones") {
-                path = "direcciones";
-            }
-            return respuesta[path];
+            return respuesta['datos'];
         });
 
     const obtenerUno = async (relatedId: string): Promise<T> =>
         RestAPI.get<{ [key: string]: T }>(`${baseUrl}/${relatedId}`).then((respuesta) => {
-            return respuesta[relatedPath];
+            return respuesta['datos'];
         });
 
     const crearUno = async (data: T): Promise<void> =>

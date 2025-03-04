@@ -4,6 +4,7 @@ import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
+import { Entidad } from "../../../comun/diseño.ts";
 import { Cliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
 import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
@@ -23,10 +24,12 @@ export const DetalleCliente = () => {
       return;
     }
 
-    obtenerUno(id ?? "0").then((entidad) => setSeleccionada(entidad));
+    obtenerUno(id ?? "0").then((entidad) =>
+      setSeleccionada(entidad as Cliente)
+    );
   }, [id, obtenerUno, seleccionada, setSeleccionada]);
 
-  const titulo = (cliente: Cliente) => cliente.nombre;
+  const titulo = (cliente: Entidad) => cliente.nombre as string;
 
   const camposCliente: CampoFormularioGenerico[] = [
     {
