@@ -4,6 +4,7 @@ import { CampoFormularioGenerico } from "../../../../componentes/detalle/Formula
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
+import { Entidad } from "../../../comun/diseño.ts";
 import { Cliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
 import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
@@ -15,7 +16,7 @@ export const MaestroConDetalleCliente = () => {
   }
   const { seleccionada, entidades, setEntidades } = context;
 
-  const titulo = (cliente: Cliente) => cliente.nombre;
+  const titulo = (cliente: Entidad) => cliente.nombre as string;
 
   const camposCliente: CampoFormularioGenerico[] = [
     {
@@ -57,21 +58,16 @@ export const MaestroConDetalleCliente = () => {
           camposEntidad={camposCliente}
           acciones={{
             ...accionesCliente,
-            actualizarUno: async (id, cliente) => {
-              accionesCliente.actualizarUno(id, cliente).then(() => {
-                if (!cliente.id) {
-                  accionesCliente.obtenerUno(id).then((cliente) => {
-                    actualizarCliente(cliente);
-                  });
-                }
-              });
+            actualizarUno: async (id: string, cliente: Cliente) => {
+              await accionesCliente.actualizarUno(id, cliente);
+              actualizarCliente(cliente);
             },
-            crearUno: async (cliente) => {
-              accionesCliente.crearUno(cliente).then(() => {
-                accionesCliente.obtenerUno(cliente.id).then((cliente) => {
-                  actualizarCliente(cliente);
-                });
-              });
+            crearUno: async (cliente: Entidad) => {
+              await accionesCliente.crearUno(cliente);
+              const nuevoCliente = await accionesCliente.obtenerUno(cliente.id);
+              if (nuevoCliente) {
+                setEntidades([...entidades, nuevoCliente]);
+              }
             },
           }}
           obtenerTitulo={titulo}

@@ -1,39 +1,25 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Cliente, Direccion, DireccionCliente } from "./diseño.ts";
+import { crearAcciones } from "../../comun/infraestructura.ts";
+import { Direccion, DireccionCliente } from "./diseño.ts";
 
-export const obtenerTodosLosClientes = async () =>
-  RestAPI.get<{ clientes: Cliente[] }>("/ventas/cliente").then((respuesta) => {
-    return respuesta.clientes;
-  });
 
-export const obtenerUnCliente = async (id: string) =>
-  RestAPI.get<Cliente>(`/ventas/cliente/${id}`);
+export const accionesBaseCliente = crearAcciones("cliente");
 
-export const crearCliente = async (cliente: Cliente) =>
-  RestAPI.post(`/ventas/cliente`, cliente).then((respuesta) => {
-    return respuesta;
-  });
 
-export const actualizarCliente = async (
-  id: string,
-  cliente: Partial<Cliente>
-) => {
-  return RestAPI.patch(`/ventas/cliente/${id}`, cliente);
-};
 
 export const obtenerDireccionesCliente = async (clienteId: string) =>
-  RestAPI.get<{ direcciones: DireccionCliente[] }>(
+  RestAPI.get<{ datos: DireccionCliente[] }>(
     `/ventas/cliente/${clienteId}/direcciones`
   ).then((respuesta) => {
-    return respuesta.direcciones;
+    return respuesta.datos;
   });
 
 export const obtenerDireccionCliente =
   (clienteId: string) => async (dirClienteId: string) =>
-    RestAPI.get<{ direccion: DireccionCliente }>(
+    RestAPI.get<{ datos: DireccionCliente }>(
       `/ventas/cliente/${clienteId}/direcciones/${dirClienteId}`
     ).then((respuesta) => {
-      return respuesta.direccion;
+      return respuesta.datos;
     });
 
 export const crearDireccionCliente =
@@ -74,10 +60,7 @@ export const eliminarCliente = async (id: string) =>
   RestAPI.delete(`/quimera/ventas/cliente/${id}`);
 
 export const accionesCliente = {
-  obtenerTodos: obtenerTodosLosClientes,
-  obtenerUno: obtenerUnCliente,
-  crearUno: crearCliente,
-  actualizarUno: actualizarCliente,
+  ...accionesBaseCliente,
   eliminarUno: eliminarCliente,
 };
 

@@ -17,7 +17,7 @@ export const MaestroConDetallePresupuesto = () => {
   }
   const { seleccionada, entidades, setEntidades } = context;
 
-  const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
+  const titulo = (presupuesto: Presupuesto) => presupuesto.codigo as string;
 
   const camposPresupuesto: CampoFormularioGenerico[] = [
     { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },

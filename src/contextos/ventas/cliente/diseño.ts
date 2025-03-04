@@ -1,6 +1,6 @@
 import { Entidad } from "../../comun/diseño.ts";
 
-export type Cliente = Entidad & {
+export interface Cliente extends Entidad {
   id: string;
   nombre: string;
   id_fiscal: string;
@@ -13,7 +13,7 @@ export type Cliente = Entidad & {
   eventos: [];
 };
 
-export type ClienteConDirecciones = Cliente & {
+export interface ClienteConDirecciones {
   id: string;
   direcciones: DireccionCliente[];
 };
@@ -33,7 +33,7 @@ export type Direccion = {
   telefono: string;
 };
 
-export type DireccionCliente = Entidad & {
+export type DireccionCliente = {
   id: string;
   direccion: Direccion;
   dir_envio: boolean;
