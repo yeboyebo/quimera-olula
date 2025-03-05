@@ -3,11 +3,12 @@ import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
+import { SubVista } from "../../../../componentes/vista/Vista.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Entidad } from "../../../comun/diseño.ts";
+import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
+import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import { Cliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
-import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
 
 export const MaestroConDetalleCliente = () => {
   const context = useContext(Contexto);
@@ -39,6 +40,21 @@ export const MaestroConDetalleCliente = () => {
     },
     { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
     { nombre: "espacio", etiqueta: "", tipo: "space" },
+  ];
+
+  const camposDireccion: CampoFormularioGenerico[] = [
+    { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
+    { nombre: "nombre_via", etiqueta: "Nombre de la Vía", tipo: "text" },
+    { nombre: "tipo_via", etiqueta: "Tipo de Vía", tipo: "text" },
+    { nombre: "numero", etiqueta: "Número", tipo: "text" },
+    { nombre: "otros", etiqueta: "Otros", tipo: "text" },
+    { nombre: "cod_postal", etiqueta: "Código Postal", tipo: "text" },
+    { nombre: "ciudad", etiqueta: "Ciudad", tipo: "text" },
+    { nombre: "provincia_id", etiqueta: "ID de Provincia", tipo: "number" },
+    { nombre: "provincia", etiqueta: "Provincia", tipo: "text" },
+    { nombre: "pais_id", etiqueta: "ID de País", tipo: "text" },
+    { nombre: "apartado", etiqueta: "Apartado", tipo: "text" },
+    { nombre: "telefono", etiqueta: "Teléfono", tipo: "text" },
   ];
 
   const actualizarCliente = (cliente: Cliente) => {
@@ -82,7 +98,18 @@ export const MaestroConDetalleCliente = () => {
               <Tab
                 key="tab-2"
                 label="Direcciones"
-                children={<MaestroDirecciones id={seleccionada?.id} />}
+                children={
+                  <SubVista>
+                    <Maestro
+                      acciones={crearAccionesRelacionadas<EntidadAccion>(
+                        "cliente",
+                        "direcciones",
+                        seleccionada?.id ?? ("0" as string)
+                      )}
+                      camposEntidad={camposDireccion}
+                    />
+                  </SubVista>
+                }
               />,
               <Tab
                 key="tab-3"

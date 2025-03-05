@@ -48,6 +48,10 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
 };
 
 export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, relatedPath: string, id: string): Acciones<T> => {
+    if (!id) {
+        throw new Error("Se necesita un id para las acciones relacionadas");
+    }
+
     const baseUrl = `/ventas/${entidad}/${id}/${relatedPath}`;
 
     const obtenerTodos = async (): Promise<T[]> =>
