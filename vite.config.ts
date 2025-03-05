@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "quimera-boton": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-boton/quimera-boton.min.js",
-      "quimera-input": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-input/quimera-input.min.js",
+      "quimera-boton": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-boton/quimera-boton.js",
+      "quimera-input": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-input/quimera-input.js",
     },
   }
 });
