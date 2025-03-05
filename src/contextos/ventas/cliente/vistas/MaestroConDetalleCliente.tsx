@@ -17,9 +17,31 @@ export const MaestroConDetalleCliente = () => {
   const titulo = (cliente: Cliente) => cliente.nombre;
 
   const camposCliente: CampoFormularioGenerico[] = [
-    { name: "id", label: "Código", type: "text", hidden: true },
-    { name: "nombre", label: "Nombre", type: "text" },
-    { name: "id_fiscal", label: "CIF/NIF", type: "text" },
+    {
+      nombre: "id",
+      etiqueta: "Código",
+      tipo: "text",
+      oculto: true,
+    },
+    { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%" },
+    { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
+    { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
+    {
+      nombre: "divisa_id",
+      etiqueta: "Divisa",
+      tipo: "text",
+      soloLectura: true,
+    },
+    { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
+    { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
+    { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
+    {
+      nombre: "grupo_iva_negocio_id",
+      etiqueta: "Grupo IVA Negocio",
+      tipo: "text",
+    },
+    { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
+    { nombre: "espacio", etiqueta: "", tipo: "space" },
   ];
 
   const obtenerUno = async () => {

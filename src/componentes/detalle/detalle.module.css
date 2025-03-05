@@ -1,26 +1,19 @@
 .detalle {
-    h2 {
+    & h2 {
         margin-top: 0;
         margin-bottom: 15px;
         border-bottom: 1px solid #ccc;
     }
 
-    form {
-        div {
-            margin-bottom: 15px;
-        }
+    &>form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+        row-gap: 0;
+        column-gap: 2.5rem;
 
-        input {
-            width: 35%;
-            border: 1px solid #ccc;
-            padding: 5px;
-            border-radius: 5px;
-            margin-left: 5px;
-        }
-
-        label {
-            display: inline-block;
-            width: 15%;
+        *[todo-ancho="true"] {
+            grid-column: 1 / -1;
         }
     }
 

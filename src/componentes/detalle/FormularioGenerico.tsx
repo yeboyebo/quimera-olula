@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
 
 export type CampoFormularioGenerico = {
-  name: string;
-  label: string;
-  type: "text" | "email" | "number" | "date" | "password"; //Tipo de input
-  readOnly?: boolean;
-  hidden?: boolean;
-  required?: boolean;
+  nombre: string;
+  etiqueta: string;
+  tipo: "text" | "email" | "number" | "date" | "password" | "space";
+  soloLectura?: boolean;
+  oculto?: boolean;
+  requerido?: boolean;
+  valorInicial?: string;
+  ancho?: string;
 };
 
 type FormularioGenericoProps<T> = {
@@ -58,33 +60,30 @@ export const FormularioGenerico = <T extends Entidad>({
     return <>No encontrado</>;
   }
 
+  const renderInput = (campo: CampoFormularioGenerico) => {
+    const props = {
+      label: campo.etiqueta,
+      name: campo.nombre,
+      placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
+      valor: entidad[campo.nombre],
+      opcional: !campo.requerido ? "true" : undefined,
+      deshabilitado: campo.soloLectura ? "true" : undefined,
+      "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
+    };
+    return <quimera-input {...props}></quimera-input>;
+  };
+
+  const renderSpace = () => {
+    return <div style={{ height: "1rem", width: "100%" }}></div>;
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       {campos
-        .filter((campo) => !campo.hidden)
-        .map((campo) => (
-          <div key={campo.name.toString()}>
-            <label htmlFor={campo.name.toString()}>{campo.label}:</label>
-            <input
-              type={campo.type}
-              id={campo.name.toString()}
-              name={campo.name.toString()}
-              value={
-                entidad[campo.name] as
-                  | string
-                  | number
-                  | readonly string[]
-                  | undefined
-              }
-              onChange={handleChange}
-              readOnly={campo.readOnly}
-              required={campo.required}
-            />
-            {error && campo.name === "nombre" && (
-              <p style={{ color: "red" }}>{error}</p>
-            )}
-          </div>
-        ))}
+        .filter((campo) => !campo.oculto)
+        .map((campo) =>
+          campo.tipo === "space" ? renderSpace() : renderInput(campo)
+        )}
       <button type="submit">Enviar</button>
     </form>
   );
