@@ -44,7 +44,7 @@ export const MaestroConDetalleCliente = () => {
       opciones: opcionesDivisa,
     },
     { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
-    { nombre: "serie_id", etiqueta: "Serie", tipo: "label" },
+    { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
     { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
     {
       nombre: "grupo_iva_negocio_id",

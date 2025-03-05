@@ -43,4 +43,10 @@ export default defineConfig({
       },
     })
   ],
+  resolve: {
+    alias: {
+      "quimera-boton": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-boton/quimera-boton.js",
+      "quimera-input": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-input/quimera-input.js",
+    },
+  }
 });

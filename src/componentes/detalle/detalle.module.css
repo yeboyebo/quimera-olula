@@ -1,35 +1,31 @@
 .detalle {
-    h2 {
+    & h2 {
         margin-top: 0;
         margin-bottom: 15px;
         border-bottom: 1px solid #ccc;
     }
 
-    >form {
-        display: flex;
-        flex-wrap: wrap;
+    &>form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         align-items: center;
-        justify-content: flex-start;
+        row-gap: 0;
+        column-gap: 2.5rem;
 
-        >div {
-            margin-bottom: 15px;
-            padding-right: 15px;
+        *[todo-ancho="true"] {
+            grid-column: 1 / -1;
         }
 
-        input,
         select {
-            width: calc(100% - 125px);
-            border: 1px solid #ccc;
-            padding: 5px;
-            border-radius: 5px;
-            margin-left: 5px;
-            background-color: white;
-            color: black;
-        }
-
-        label {
-            display: inline-block;
-            width: 120px;
+            --color-borde: var(--color-texto-secundario);
+            outline: 0;
+            color: var(--color-texto-primario);
+            border: var(--tamaño-borde-s) solid var(--color-borde);
+            border-radius: var(--redondeo-borde-s);
+            padding: var(--espaciado-m);
+            font-size: var(--tamaño-letra-m);
+            background-color: transparent;
+            width: 100%;
         }
     }
 
