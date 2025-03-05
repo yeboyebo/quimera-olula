@@ -59,9 +59,18 @@ export const borrarDireccionCliente =
 export const eliminarCliente = async (id: string) =>
   RestAPI.delete(`/quimera/ventas/cliente/${id}`);
 
+export const obtenerOpcionesSelector =
+  (path: string) => async () =>
+    RestAPI.get<{ datos: [] }>(
+      `/cache/comun/${path}`
+    ).then((respuesta) => {
+      return respuesta.datos;
+    });
+
 export const accionesCliente = {
   ...accionesBaseCliente,
   eliminarUno: eliminarCliente,
+  obtenerOpcionesSelector,
 };
 
 export const accionesDirCliente = {

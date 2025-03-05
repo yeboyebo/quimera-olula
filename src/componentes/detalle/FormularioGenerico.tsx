@@ -3,12 +3,13 @@ import { Entidad } from "../../contextos/comun/diseño.ts";
 export type CampoFormularioGenerico = {
   nombre: string;
   etiqueta: string;
-  tipo: "text" | "email" | "number" | "date" | "password" | "space";
+  tipo: "text" | "email" | "number" | "date" | "password" | "space" | "select";
   soloLectura?: boolean;
   oculto?: boolean;
   requerido?: boolean;
   valorInicial?: string;
   ancho?: string;
+  opciones?: [];
 };
 
 type FormularioGenericoProps<T> = {
@@ -45,6 +46,22 @@ export const FormularioGenerico = <T extends Entidad>({
     return <>No encontrado</>;
   }
 
+  const renderSelect = (campo: CampoFormularioGenerico) => {
+    console.log(campo);
+    return (
+      <div>
+        <label htmlFor={campo.nombre.toString()}>{campo.etiqueta}:</label>
+        <select>
+          {campo.opciones?.map((opcion) => (
+            <option key={opcion[campo.nombre]} value={opcion[campo.nombre]}>
+              {opcion["descripcion"]}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
   const renderInput = (campo: CampoFormularioGenerico) => {
     const props = {
       nombre: campo.nombre,
@@ -67,7 +84,11 @@ export const FormularioGenerico = <T extends Entidad>({
       {campos
         .filter((campo) => !campo.oculto)
         .map((campo) =>
-          campo.tipo === "space" ? renderSpace() : renderInput(campo)
+          campo.tipo === "space"
+            ? renderSpace()
+            : campo.tipo === "select"
+            ? renderSelect(campo)
+            : renderInput(campo)
         )}
       <button type="submit">Enviar</button>
     </form>
