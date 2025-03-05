@@ -16,7 +16,7 @@ type FormularioGenericoProps<T> = {
   campos: CampoFormularioGenerico[];
   entidad: T;
   setEntidad: (entidad: T) => void;
-  onSubmit: (data: T) => void;
+  onSubmit: (id: string, data: T) => void;
   validacion?: (entidad: T) => string | null;
 };
 
@@ -53,7 +53,7 @@ export const FormularioGenerico = <T extends Entidad>({
       return;
     }
 
-    onSubmit(entidad);
+    onSubmit(entidad.id, entidad);
   };
 
   if (!entidad) {

@@ -1,73 +1,55 @@
 import { useContext } from "react";
 import { Contexto } from "../../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
-import "./MaestroAcciones.css";
+import { CampoFormularioGenerico } from "../../detalle/FormularioGenerico.tsx";
 
 type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
+  camposEntidad: CampoFormularioGenerico[];
+};
+
+const crearEntidadVacia = <T extends Entidad>(
+  camposEntidad: CampoFormularioGenerico[]
+): T => {
+  return camposEntidad.reduce((acc, campo) => {
+    return { ...acc, [campo.nombre]: campo.valorInicial || "" };
+  }, {} as Partial<T>) as T;
 };
 
 export const MaestroAcciones = <T extends Entidad>({
   acciones,
+  camposEntidad,
 }: MaestroProps<T>) => {
-  const { crearUno, actualizarUno } = acciones;
+  const { eliminarUno } = acciones;
   const context = useContext(Contexto);
   if (!context) {
     throw new Error("Contexto es nulo");
   }
-  const { entidades, setEntidades } = context;
+  const { entidades, setEntidades, setSeleccionada, seleccionada } = context;
 
   const onCrearNuevo = () => {
-    const nuevaEntidad = {
-      id: (entidades.length + 1).toString().padStart(6, "0"),
-      nombre: [
-        "Michel Jordan",
-        "Lebron James",
-        "Kobe Bryant",
-        "Stephen Curry",
-        "Kevin Durant",
-        "James Harden",
-        "Anthony Davis",
-        "Giannis Antetokounmpo",
-        "Luka Doncic",
-        "Damian Lillard",
-      ][entidades.length % 10],
-      id_fiscal: "53631867F",
-    } as unknown as T;
-
-    crearUno(nuevaEntidad).then(() => {
-      setEntidades([nuevaEntidad, ...entidades]);
-    });
+    const entidadVacia = crearEntidadVacia<T>(camposEntidad);
+    setSeleccionada(entidadVacia);
   };
 
-  const onActualizarPrimero = () => {
-    const primeraEntidad = entidades[0];
+  const onEliminarSeleccionado = () => {
+    if (!seleccionada) {
+      return;
+    }
 
-    const nuevaEntidad = {
-      id: primeraEntidad.id,
-      nombre: primeraEntidad.nombre + " (actualizado)",
-      nada: "",
-    } as unknown as Partial<T>;
-
-    actualizarUno(nuevaEntidad).then(() => {
-      setEntidades([
-        { ...primeraEntidad, nombre: nuevaEntidad.nombre },
-        ...entidades.slice(1),
-      ]);
-    });
-  };
-
-  const onEliminarPrimero = () => {
-    acciones.eliminarUno(entidades[0].id).then(() => {
-      setEntidades(entidades.slice(1));
+    eliminarUno(seleccionada.id).then(() => {
+      setEntidades(
+        (entidades as T[]).filter(
+          (entidad: T) => entidad.id !== seleccionada.id
+        )
+      );
     });
   };
 
   return (
     <div className="MaestroAcciones">
-      <button onClick={onCrearNuevo}>Crear nuevo</button>
-      <button onClick={onActualizarPrimero}>Actualizar primero</button>
-      <button onClick={onEliminarPrimero}>Eliminar primero</button>
+      <button onClick={onCrearNuevo}>Crear</button>
+      <button onClick={onEliminarSeleccionado}>Borrar</button>
     </div>
   );
 };

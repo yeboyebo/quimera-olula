@@ -1,17 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import { Contexto } from "../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
+import { CampoFormularioGenerico } from "../detalle/FormularioGenerico.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
 import { MaestroEntidad } from "./maestroEntidad/MaestroEntidad.tsx";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
+  Acciones?: any;
+  camposEntidad: CampoFormularioGenerico[];
 };
 
-export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
+export const Maestro = <T extends Entidad>({
+  acciones,
+  Acciones = null,
+  camposEntidad,
+}: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -91,7 +99,11 @@ export const Maestro = <T extends Entidad>({ acciones }: MaestroProps<T>) => {
 
   return (
     <div className="Maestro">
-      <MaestroAcciones acciones={acciones} />
+      {Acciones ? (
+        <Acciones acciones={acciones} camposEntidad={camposEntidad} />
+      ) : (
+        <MaestroAcciones acciones={acciones} camposEntidad={camposEntidad} />
+      )}
       <MaestroFiltros acciones={acciones} />
       {renderEntidades()}
     </div>

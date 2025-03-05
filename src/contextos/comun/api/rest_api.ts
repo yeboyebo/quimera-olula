@@ -10,6 +10,14 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
     },
   });
 
+  if (response.status === 500) {
+    return {} as T;
+  }
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
   const json = await response.json();
 
   return json;
@@ -20,13 +28,15 @@ const comando = async <T>(
   url: string,
   body?: Partial<T>
 ): Promise<void> => {
-  await fetch(`${BASE}${url}`, {
+  const response = await fetch(`${BASE}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body ?? {}),
   });
+  const json = await response.json();
+  return json;
 };
 
 export const RestAPI: API = {

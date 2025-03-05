@@ -37,5 +37,5 @@ pnpm install
 - `pnpm dev`. Levantar la aplicación en desarrollo
 - `pnpm lint`. Lanzar el linter
 - `pnpm type-check`. Lanzar el type-checker
-- `pnpm ci`. Lanzar todos los comprobadores de CI
+- `pnpm run ci`. Lanzar todos los comprobadores de CI
 - `pnpm build`. Crear un desplegable
