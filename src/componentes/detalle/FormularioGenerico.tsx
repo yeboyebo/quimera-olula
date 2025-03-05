@@ -4,12 +4,21 @@ import { Entidad } from "../../contextos/comun/diseño.ts";
 export type CampoFormularioGenerico = {
   nombre: string;
   etiqueta: string;
-  tipo: "text" | "email" | "number" | "date" | "password" | "label" | "space"; //Tipo de input
+  tipo:
+    | "text"
+    | "email"
+    | "number"
+    | "date"
+    | "password"
+    | "label"
+    | "select"
+    | "space"; //Tipo de input
   soloLectura?: boolean;
   oculto?: boolean;
   requerido?: boolean;
   valorInicial?: string;
   ancho?: string;
+  opciones?: [];
 };
 
 type FormularioGenericoProps<T> = {
@@ -103,6 +112,22 @@ export const FormularioGenerico = <T extends Entidad>({
     return <div style={{ height: "1rem", width: "100%" }}></div>;
   };
 
+  const renderSelect = (campo: CampoFormularioGenerico) => {
+    console.log(campo);
+    return (
+      <div>
+        <label htmlFor={campo.nombre.toString()}>{campo.etiqueta}:</label>
+        <select>
+          {campo.opciones?.map((opcion) => (
+            <option key={opcion[campo.nombre]} value={opcion[campo.nombre]}>
+              {opcion["descripcion"]}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       {campos
@@ -116,6 +141,8 @@ export const FormularioGenerico = <T extends Entidad>({
               ? renderLabel(campo)
               : campo.tipo === "space"
               ? renderSpace()
+              : campo.tipo === "select"
+              ? renderSelect(campo)
               : renderInput(campo)}
             {error && campo.nombre === "nombre" && (
               <p style={{ color: "red" }}>{error}</p>
