@@ -28,9 +28,14 @@ export const MaestroConDetalleCliente = () => {
     { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%" },
     { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
     { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
-    { nombre: "divisa_id", etiqueta: "Divisa", tipo: "label" },
+    {
+      nombre: "divisa_id",
+      etiqueta: "Divisa",
+      tipo: "text",
+      soloLectura: true,
+    },
     { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
-    { nombre: "serie_id", etiqueta: "Serie", tipo: "label" },
+    { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
     { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
     {
       nombre: "grupo_iva_negocio_id",

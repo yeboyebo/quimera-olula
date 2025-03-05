@@ -35,10 +35,14 @@ export function Detalle<T extends Entidad>({
       setEntidad(nuevaEntidad);
       setIsNew(true);
     } else {
-      obtenerUno(id).then((entidad) => {
-        setIsNew(false);
-        setEntidad(entidad as T);
-      });
+      setIsNew(false);
+      obtenerUno(id)
+        .then((entidad) => {
+          setEntidad(entidad as T);
+        })
+        .catch(() => {
+          setEntidad({} as T);
+        });
     }
   }, [id, obtenerUno, camposEntidad]);
 
@@ -46,13 +50,8 @@ export function Detalle<T extends Entidad>({
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
 
-  const handleSubmit = async (id: string, data: T) => {
-    if (isNew) {
-      await crearUno(data);
-    } else {
-      await actualizarUno(id, data);
-    }
-  };
+  const handleSubmit = async (id: string, data: T) =>
+    isNew ? crearUno(data) : actualizarUno(id, data);
 
   return (
     <div className={detalle}>
