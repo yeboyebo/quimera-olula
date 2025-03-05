@@ -10,10 +10,6 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
     },
   });
 
-  if (response.status === 500) {
-    return {} as T;
-  }
-
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
