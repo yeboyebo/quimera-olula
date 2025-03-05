@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
 
 export type CampoFormularioGenerico = {
@@ -16,7 +15,7 @@ type FormularioGenericoProps<T> = {
   campos: CampoFormularioGenerico[];
   entidad: T;
   setEntidad: (entidad: T) => void;
-  onSubmit: (id: string, data: T) => void;
+  onSubmit: (id: string, data: T) => Promise<void>;
   validacion?: (entidad: T) => string | null;
 };
 
@@ -27,33 +26,19 @@ export const FormularioGenerico = <T extends Entidad>({
   onSubmit,
   validacion,
 }: FormularioGenericoProps<T>) => {
-  const [error, setError] = useState<string | null>(null);
+  const handleAction = (formData: FormData) => {
+    const data = Object.fromEntries(formData);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const nuevaEntidad = { ...entidad, ...data };
 
-    const nuevaEntidad = {
-      ...entidad,
-      [name]: value,
-    };
-
-    if (validacion) {
-      const errorMsg = validacion(nuevaEntidad);
-      setError(errorMsg);
-    }
-
-    setEntidad(nuevaEntidad);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    const error = validacion ? validacion(nuevaEntidad) : null;
 
     if (error) {
       alert(error);
       return;
     }
 
-    onSubmit(entidad.id, entidad);
+    onSubmit(entidad.id, nuevaEntidad).then(() => setEntidad(nuevaEntidad));
   };
 
   if (!entidad) {
@@ -62,23 +47,23 @@ export const FormularioGenerico = <T extends Entidad>({
 
   const renderInput = (campo: CampoFormularioGenerico) => {
     const props = {
+      nombre: campo.nombre,
       label: campo.etiqueta,
-      name: campo.nombre,
       placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
       valor: entidad[campo.nombre],
       opcional: !campo.requerido ? "true" : undefined,
       deshabilitado: campo.soloLectura ? "true" : undefined,
       "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
     };
-    return <quimera-input {...props}></quimera-input>;
+    return <quimera-input key={campo.nombre} {...props}></quimera-input>;
   };
 
   const renderSpace = () => {
-    return <div style={{ height: "1rem", width: "100%" }}></div>;
+    return <div key="space" style={{ height: "1rem", width: "100%" }}></div>;
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={handleAction}>
       {campos
         .filter((campo) => !campo.oculto)
         .map((campo) =>
