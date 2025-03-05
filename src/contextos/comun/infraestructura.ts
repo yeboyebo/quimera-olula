@@ -5,19 +5,13 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
     const baseUrl = `/ventas/${entidad}`;
 
     const obtenerTodos = async (): Promise<T[]> =>
-        RestAPI.get<{ [key: string]: T[] }>(baseUrl).then((respuesta) => {
-            return respuesta['datos'];
-        });
+        RestAPI.get<{ [key: string]: T[] }>(baseUrl).then((respuesta) => respuesta.datos);
 
     const obtenerUno = async (id: string): Promise<T> =>
-        RestAPI.get<{ datos: T }>(`${baseUrl}/${id}`).then((respuesta) => {
-            return respuesta.datos;
-        });
+        RestAPI.get<{ datos: T }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
 
     const crearUno = async (data: T): Promise<void> =>
-        RestAPI.post(baseUrl, data).then((respuesta) => {
-            return respuesta;
-        });
+        RestAPI.post(baseUrl, data).then((respuesta) => respuesta);
 
     const actualizarUno = async (id: string, data: Partial<T>): Promise<void> => {
         return RestAPI.patch(`${baseUrl}/${id}`, data);
@@ -27,8 +21,8 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
         RestAPI.delete(`${baseUrl}/${id}`);
 
 
-    const buscar = async (_campo: string, valor: string): Promise<T[]> => {
-        return [{ campo: valor } as unknown as T];
+    const buscar = async (campo: string, valor: string): Promise<T[]> => {
+        return [{ [campo]: valor } as unknown as T];
     };
 
     const seleccionarEntidad = (e: Entidad): void => {
