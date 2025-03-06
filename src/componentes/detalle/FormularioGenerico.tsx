@@ -1,3 +1,4 @@
+import React from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
 
 export type CampoFormularioGenerico = {
@@ -63,16 +64,20 @@ export const FormularioGenerico = <T extends Entidad>({
   };
 
   const renderInput = (campo: CampoFormularioGenerico) => {
-    const props = {
+    const attrs = {
       nombre: campo.nombre,
       label: campo.etiqueta,
       placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
-      valor: entidad[campo.nombre],
-      opcional: !campo.requerido ? "true" : undefined,
-      deshabilitado: campo.soloLectura ? "true" : undefined,
+      valor: entidad[campo.nombre] as string,
+      opcional: !campo.requerido,
+      deshabilitado: campo.soloLectura,
       "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
     };
-    return <quimera-input key={campo.nombre} {...props}></quimera-input>;
+    return (
+      <React.Fragment key={campo.nombre}>
+        <quimera-input {...attrs}></quimera-input>
+      </React.Fragment>
+    );
   };
 
   const renderSpace = () => {
@@ -90,7 +95,7 @@ export const FormularioGenerico = <T extends Entidad>({
             ? renderSelect(campo)
             : renderInput(campo)
         )}
-      <button type="submit">Enviar</button>
+      <quimera-boton tipo="submit">Enviar</quimera-boton>
     </form>
   );
 };

@@ -22,7 +22,7 @@ export const DetalleCliente = () => {
 
   useEffect(() => {
     obtenerOpcionesSelector("divisa")().then(setOpcionesDivisa);
-  }, []);
+  }, [obtenerOpcionesSelector]);
 
   useEffect(() => {
     if (seleccionada && seleccionada.id === id) {
