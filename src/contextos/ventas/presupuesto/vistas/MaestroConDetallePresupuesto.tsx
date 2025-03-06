@@ -38,18 +38,18 @@ export const MaestroConDetallePresupuesto = () => {
     { nombre: "pvp_total", etiqueta: "PVP Total", tipo: "number" },
   ];
 
-  const actualizarPresupuesto = (presupuesto: Presupuesto) => {
-    setEntidades([
-      ...entidades.map((p) => (p.id !== presupuesto.id ? p : presupuesto)),
-    ]);
-  };
-
   const actualizarUno = useCallback(
     async (id: string, presupuesto: Presupuesto) => {
+      const actualizarPresupuesto = (presupuesto: Presupuesto) => {
+        setEntidades([
+          ...entidades.map((p) => (p.id !== presupuesto.id ? p : presupuesto)),
+        ]);
+      };
+
       await accionesPresupuesto.actualizarUno(id, presupuesto);
       actualizarPresupuesto(presupuesto);
     },
-    [accionesPresupuesto, actualizarPresupuesto]
+    [entidades, setEntidades]
   );
 
   const crearUno = useCallback(
@@ -62,21 +62,18 @@ export const MaestroConDetallePresupuesto = () => {
         setEntidades([...entidades, nuevoPresupuesto]);
       }
     },
-    [accionesPresupuesto, setEntidades]
+    [entidades, setEntidades]
   );
 
-  const obtenerUno = useCallback(
-    async (id: string) => {
-      const entidadAccion = await accionesPresupuesto.obtenerUno(id);
-      return entidadAccion as Presupuesto | null;
-    },
-    [accionesPresupuesto]
-  );
+  const obtenerUno = useCallback(async (id: string) => {
+    const entidadAccion = await accionesPresupuesto.obtenerUno(id);
+    return entidadAccion as Presupuesto | null;
+  }, []);
 
   const obtenerTodos = useCallback(async () => {
     const entidades = await accionesPresupuesto.obtenerTodos();
     return entidades as Presupuesto[];
-  }, [accionesPresupuesto]);
+  }, []);
 
   const buscar = async (campo: string, valor: string) => {
     if (accionesPresupuesto.buscar) {
