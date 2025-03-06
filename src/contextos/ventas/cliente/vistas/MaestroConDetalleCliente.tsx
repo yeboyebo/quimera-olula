@@ -24,8 +24,7 @@ export const MaestroConDetalleCliente = () => {
 
   useEffect(() => {
     obtenerOpcionesSelector("divisa")().then(setOpcionesDivisa);
-    console.log("opcionesDivisa", opcionesDivisa);
-  }, [opcionesDivisa]);
+  }, []);
 
   const camposCliente: CampoFormularioGenerico[] = [
     {
