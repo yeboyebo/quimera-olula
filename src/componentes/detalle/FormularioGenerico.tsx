@@ -63,7 +63,7 @@ export const FormularioGenerico = <T extends Entidad>({
   };
 
   const renderInput = (campo: CampoFormularioGenerico) => {
-    const props = {
+    const attrs = {
       nombre: campo.nombre,
       label: campo.etiqueta,
       placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
@@ -72,7 +72,7 @@ export const FormularioGenerico = <T extends Entidad>({
       deshabilitado: campo.soloLectura ? "true" : undefined,
       "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
     };
-    return <quimera-input key={campo.nombre} {...props}></quimera-input>;
+    return <quimera-input key={campo.nombre} {...attrs}></quimera-input>;
   };
 
   const renderSpace = () => {
@@ -90,7 +90,7 @@ export const FormularioGenerico = <T extends Entidad>({
             ? renderSelect(campo)
             : renderInput(campo)
         )}
-      <button type="submit">Enviar</button>
+      <quimera-boton tipo="submit">Enviar</quimera-boton>
     </form>
   );
 };
