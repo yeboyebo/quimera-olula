@@ -1,14 +1,16 @@
+import React from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
 
 export type CampoFormularioGenerico = {
   nombre: string;
   etiqueta: string;
-  tipo: "text" | "email" | "number" | "date" | "password" | "space";
+  tipo: "text" | "email" | "number" | "date" | "password" | "space" | "select";
   soloLectura?: boolean;
   oculto?: boolean;
   requerido?: boolean;
   valorInicial?: string;
   ancho?: string;
+  opciones?: [];
 };
 
 type FormularioGenericoProps<T> = {
@@ -45,17 +47,37 @@ export const FormularioGenerico = <T extends Entidad>({
     return <>No encontrado</>;
   }
 
+  const renderSelect = (campo: CampoFormularioGenerico) => {
+    console.log(campo);
+    return (
+      <div>
+        <label htmlFor={campo.nombre.toString()}>{campo.etiqueta}:</label>
+        <select>
+          {campo.opciones?.map((opcion) => (
+            <option key={opcion[campo.nombre]} value={opcion[campo.nombre]}>
+              {opcion["descripcion"]}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
   const renderInput = (campo: CampoFormularioGenerico) => {
-    const props = {
+    const attrs = {
       nombre: campo.nombre,
       label: campo.etiqueta,
       placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
-      valor: entidad[campo.nombre],
-      opcional: !campo.requerido ? "true" : undefined,
-      deshabilitado: campo.soloLectura ? "true" : undefined,
+      valor: entidad[campo.nombre] as string,
+      opcional: !campo.requerido,
+      deshabilitado: campo.soloLectura,
       "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
     };
-    return <quimera-input key={campo.nombre} {...props}></quimera-input>;
+    return (
+      <React.Fragment key={campo.nombre}>
+        <quimera-input {...attrs}></quimera-input>
+      </React.Fragment>
+    );
   };
 
   const renderSpace = () => {
@@ -67,9 +89,13 @@ export const FormularioGenerico = <T extends Entidad>({
       {campos
         .filter((campo) => !campo.oculto)
         .map((campo) =>
-          campo.tipo === "space" ? renderSpace() : renderInput(campo)
+          campo.tipo === "space"
+            ? renderSpace()
+            : campo.tipo === "select"
+            ? renderSelect(campo)
+            : renderInput(campo)
         )}
-      <button type="submit">Enviar</button>
+      <quimera-boton tipo="submit">Enviar</quimera-boton>
     </form>
   );
 };

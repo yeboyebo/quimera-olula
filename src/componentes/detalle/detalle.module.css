@@ -15,6 +15,18 @@
         *[todo-ancho="true"] {
             grid-column: 1 / -1;
         }
+
+        select {
+            --color-borde: var(--color-texto-secundario);
+            outline: 0;
+            color: var(--color-texto-primario);
+            border: var(--tamaño-borde-s) solid var(--color-borde);
+            border-radius: var(--redondeo-borde-s);
+            padding: var(--espaciado-m);
+            font-size: var(--tamaño-letra-m);
+            background-color: transparent;
+            width: 100%;
+        }
     }
 
     .MaestroEntidades {

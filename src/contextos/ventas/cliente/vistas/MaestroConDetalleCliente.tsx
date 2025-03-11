@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
@@ -8,7 +8,10 @@ import { Contexto } from "../../../comun/contexto.ts";
 import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import { Cliente } from "../diseño.ts";
-import { accionesCliente } from "../infraestructura.ts";
+import {
+  accionesCliente,
+  obtenerOpcionesSelector,
+} from "../infraestructura.ts";
 import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
 
 export const MaestroConDetalleCliente = () => {
@@ -19,6 +22,11 @@ export const MaestroConDetalleCliente = () => {
   const { seleccionada, entidades, setEntidades } = context;
 
   const titulo = (cliente: Entidad) => cliente.nombre as string;
+  const [opcionesDivisa, setOpcionesDivisa] = useState<[]>([]);
+
+  useEffect(() => {
+    obtenerOpcionesSelector("divisa")().then(setOpcionesDivisa);
+  }, []);
 
   const camposCliente: CampoFormularioGenerico[] = [
     {
@@ -33,8 +41,8 @@ export const MaestroConDetalleCliente = () => {
     {
       nombre: "divisa_id",
       etiqueta: "Divisa",
-      tipo: "text",
-      soloLectura: true,
+      tipo: "select",
+      opciones: opcionesDivisa,
     },
     { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
     { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
