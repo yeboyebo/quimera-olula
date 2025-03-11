@@ -9,6 +9,7 @@ import { EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import { Presupuesto } from "../diseño.ts";
 import { accionesPresupuesto } from "../infraestructura.ts";
+import { MaestroAccionesLineasPresupuesto } from "./MaestroAccionesLineasPresupuesto.tsx";
 
 export const MaestroConDetallePresupuesto = () => {
   const context = useContext(Contexto);
@@ -96,7 +97,9 @@ export const MaestroConDetallePresupuesto = () => {
   };
 
   const clienteId =
-    seleccionada && "cliente_id" in seleccionada ? seleccionada.cliente_id : "";
+    seleccionada && "cliente_id" in seleccionada
+      ? seleccionada.cliente_id
+      : "0";
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
@@ -116,6 +119,23 @@ export const MaestroConDetallePresupuesto = () => {
           <Tabs
             children={[
               <Tab
+                key="tab-2"
+                label="Lineas"
+                children={
+                  <SubVista>
+                    <Maestro
+                      Acciones={MaestroAccionesLineasPresupuesto}
+                      acciones={crearAccionesRelacionadas<EntidadAccion>(
+                        "presupuesto",
+                        "linea",
+                        seleccionada?.id || "0"
+                      )}
+                      camposEntidad={camposLineasPresupuesto}
+                    />
+                  </SubVista>
+                }
+              />,
+              <Tab
                 key="tab-1"
                 label="Cliente"
                 children={
@@ -125,22 +145,6 @@ export const MaestroConDetallePresupuesto = () => {
                         "cliente",
                         "direcciones",
                         clienteId as string
-                      )}
-                      camposEntidad={camposLineasPresupuesto}
-                    />
-                  </SubVista>
-                }
-              />,
-              <Tab
-                key="tab-2"
-                label="Lineas"
-                children={
-                  <SubVista>
-                    <Maestro
-                      acciones={crearAccionesRelacionadas<EntidadAccion>(
-                        "presupuesto",
-                        "linea",
-                        seleccionada?.id || ""
                       )}
                       camposEntidad={camposLineasPresupuesto}
                     />

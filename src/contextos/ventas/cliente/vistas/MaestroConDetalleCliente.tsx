@@ -9,6 +9,7 @@ import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import { Cliente } from "../diseño.ts";
 import { accionesCliente } from "../infraestructura.ts";
+import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
 
 export const MaestroConDetalleCliente = () => {
   const context = useContext(Contexto);
@@ -106,6 +107,7 @@ export const MaestroConDetalleCliente = () => {
                 children={
                   <SubVista>
                     <Maestro
+                      Acciones={MaestroDireccionesAcciones}
                       acciones={crearAccionesRelacionadas<EntidadAccion>(
                         "cliente",
                         "direcciones",
