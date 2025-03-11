@@ -81,9 +81,6 @@ export const DetalleCliente = () => {
     { nombre: "telefono", etiqueta: "Teléfono", tipo: "text" },
   ];
 
-  const clienteId =
-    seleccionada && "cliente_id" in seleccionada ? seleccionada.cliente_id : "";
-
   return (
     <Detalle
       id={id ?? "0"}
@@ -107,7 +104,7 @@ export const DetalleCliente = () => {
                   acciones={crearAccionesRelacionadas<EntidadAccion>(
                     "cliente",
                     "direcciones",
-                    clienteId as string
+                    seleccionada?.id ?? ("0" as string)
                   )}
                   camposEntidad={camposDireccion}
                 />
