@@ -31,6 +31,9 @@ const comando = async <T>(
     },
     body: JSON.stringify(body ?? {}),
   });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
   const json = await response.json();
   return json;
 };
