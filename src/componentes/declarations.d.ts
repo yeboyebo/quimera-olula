@@ -1,5 +1,6 @@
 declare module 'quimera-boton';
 declare module 'quimera-input';
+declare module 'quimera-select';
 
 interface NodoComun {
     id?: string;
@@ -29,11 +30,14 @@ interface QuimeraInput extends NodoComun {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
+type QuimeraSelect = QuimeraInput;
+
 declare namespace React {
     namespace JSX {
         interface IntrinsicElements {
             'quimera-boton': QuimeraBoton;
             'quimera-input': QuimeraInput;
+            'quimera-select': QuimeraSelect;
         }
     }
 }
