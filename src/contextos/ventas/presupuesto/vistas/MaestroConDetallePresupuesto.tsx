@@ -1,6 +1,5 @@
 import { useCallback, useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
@@ -8,7 +7,12 @@ import { Contexto } from "../../../comun/contexto.ts";
 import { EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import { Presupuesto } from "../diseño.ts";
-import { accionesPresupuesto } from "../infraestructura.ts";
+import {
+  accionesPresupuesto,
+  camposLineasPresupuesto,
+  camposLineasPresupuestoAlta,
+  camposPresupuesto,
+} from "../infraestructura.ts";
 import { MaestroAccionesLineasPresupuesto } from "./MaestroAccionesLineasPresupuesto.tsx";
 
 export const MaestroConDetallePresupuesto = () => {
@@ -19,25 +23,6 @@ export const MaestroConDetallePresupuesto = () => {
   const { seleccionada, entidades, setEntidades } = context;
 
   const titulo = (presupuesto: Presupuesto) => presupuesto.codigo as string;
-
-  const camposPresupuesto: CampoFormularioGenerico[] = [
-    { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
-    { nombre: "codigo", etiqueta: "Código", tipo: "text" },
-    { nombre: "fecha", etiqueta: "Fecha", tipo: "date" },
-    { nombre: "cliente_id", etiqueta: "ID Cliente", tipo: "text" },
-    { nombre: "nombre_cliente", etiqueta: "Nombre Cliente", tipo: "text" },
-    { nombre: "id_fiscal", etiqueta: "ID Fiscal", tipo: "text" },
-    { nombre: "direccion_id", etiqueta: "ID Dirección", tipo: "text" },
-  ];
-
-  const camposLineasPresupuesto: CampoFormularioGenerico[] = [
-    { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
-    { nombre: "referencia", etiqueta: "Referencia", tipo: "text" },
-    { nombre: "descripcion", etiqueta: "Descripción", tipo: "text" },
-    { nombre: "cantidad", etiqueta: "Cantidad", tipo: "number" },
-    { nombre: "pvp_unitario", etiqueta: "PVP Unitario", tipo: "number" },
-    { nombre: "pvp_total", etiqueta: "PVP Total", tipo: "number" },
-  ];
 
   const actualizarUno = useCallback(
     async (id: string, presupuesto: Presupuesto) => {
@@ -127,7 +112,7 @@ export const MaestroConDetallePresupuesto = () => {
                         "linea",
                         seleccionada?.id || "0"
                       )}
-                      camposEntidad={camposLineasPresupuesto}
+                      camposEntidad={camposLineasPresupuestoAlta}
                     />
                   </SubVista>
                 }
