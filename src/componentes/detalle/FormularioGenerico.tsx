@@ -1,5 +1,6 @@
 import React from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
+import { Select } from "../wrappers/select.tsx";
 
 export type CampoFormularioGenerico = {
   nombre: string;
@@ -48,19 +49,21 @@ export const FormularioGenerico = <T extends Entidad>({
   }
 
   const renderSelect = (campo: CampoFormularioGenerico) => {
-    console.log(campo);
-    return (
-      <div>
-        <label htmlFor={campo.nombre.toString()}>{campo.etiqueta}:</label>
-        <select>
-          {campo.opciones?.map((opcion) => (
-            <option key={opcion[campo.nombre]} value={opcion[campo.nombre]}>
-              {opcion["descripcion"]}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
+    const attrs = {
+      nombre: campo.nombre,
+      label: campo.etiqueta,
+      placeholder: `Selecciona un/a ${campo.etiqueta.toLowerCase()}`,
+      opcional: !campo.requerido,
+      deshabilitado: campo.soloLectura,
+      valor: entidad[campo.nombre] as string,
+      opciones: campo.opciones?.map((opcion) => ({
+        valor: opcion[campo.nombre],
+        descripcion: opcion["descripcion"],
+      })),
+      "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
+    };
+
+    return <Select key={campo.nombre} {...attrs} />;
   };
 
   const renderInput = (campo: CampoFormularioGenerico) => {
