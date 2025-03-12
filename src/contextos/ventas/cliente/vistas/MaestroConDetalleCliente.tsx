@@ -1,58 +1,31 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
+import { SubVista } from "../../../../componentes/vista/Vista.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Entidad } from "../../../comun/diseño.ts";
+import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
+import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import { Cliente } from "../diseño.ts";
 import {
   accionesCliente,
-  obtenerOpcionesSelector,
+  camposCliente,
+  camposDireccion,
 } from "../infraestructura.ts";
-import { MaestroDirecciones } from "./MaestroDirecciones.tsx";
+import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
 
 export const MaestroConDetalleCliente = () => {
   const context = useContext(Contexto);
   if (!context) {
     throw new Error("Contexto is null");
   }
-  const { seleccionada, entidades, setEntidades } = context;
+  const { seleccionada, entidades, setEntidades } = context as {
+    seleccionada: Entidad | null;
+    entidades: Entidad[];
+    setEntidades: (entidades: Entidad[]) => void;
+  };
 
   const titulo = (cliente: Entidad) => cliente.nombre as string;
-  const [opcionesDivisa, setOpcionesDivisa] = useState<[]>([]);
-
-  useEffect(() => {
-    obtenerOpcionesSelector("divisa")().then(setOpcionesDivisa);
-  }, []);
-
-  const camposCliente: CampoFormularioGenerico[] = [
-    {
-      nombre: "id",
-      etiqueta: "Código",
-      tipo: "text",
-      oculto: true,
-    },
-    { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%" },
-    { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
-    { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
-    {
-      nombre: "divisa_id",
-      etiqueta: "Divisa",
-      tipo: "select",
-      opciones: opcionesDivisa,
-    },
-    { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
-    { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
-    { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
-    {
-      nombre: "grupo_iva_negocio_id",
-      etiqueta: "Grupo IVA Negocio",
-      tipo: "text",
-    },
-    { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
-    { nombre: "espacio", etiqueta: "", tipo: "space" },
-  ];
 
   const actualizarCliente = (cliente: Cliente) => {
     setEntidades([
@@ -95,7 +68,19 @@ export const MaestroConDetalleCliente = () => {
               <Tab
                 key="tab-2"
                 label="Direcciones"
-                children={<MaestroDirecciones id={seleccionada?.id} />}
+                children={
+                  <SubVista>
+                    <Maestro
+                      Acciones={MaestroDireccionesAcciones}
+                      acciones={crearAccionesRelacionadas<EntidadAccion>(
+                        "cliente",
+                        "direcciones",
+                        seleccionada?.id ?? ("0" as string)
+                      )}
+                      camposEntidad={camposDireccion}
+                    />
+                  </SubVista>
+                }
               />,
               <Tab
                 key="tab-3"

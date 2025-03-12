@@ -17,6 +17,9 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
         return RestAPI.patch(`${baseUrl}/${id}`, data);
     };
 
+    const actualizarUnElemento = async (id: string, data: Partial<T>, nombreAccion: string): Promise<void> =>
+        RestAPI.patch(`${baseUrl}/${id}/${nombreAccion}`, data);
+
     const eliminarUno = async (id: string): Promise<void> =>
         RestAPI.delete(`${baseUrl}/${id}`);
 
@@ -35,6 +38,7 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
         obtenerUno,
         crearUno,
         actualizarUno,
+        actualizarUnElemento,
         eliminarUno,
         buscar,
         seleccionarEntidad,
@@ -42,6 +46,10 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
 };
 
 export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, relatedPath: string, id: string): Acciones<T> => {
+    if (!id) {
+        throw new Error("Se necesita un id para las acciones relacionadas");
+    }
+
     const baseUrl = `/ventas/${entidad}/${id}/${relatedPath}`;
 
     const obtenerTodos = async (): Promise<T[]> =>
@@ -60,6 +68,9 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
     const actualizarUno = async (relatedId: string, data: Partial<T>): Promise<void> =>
         RestAPI.patch(`${baseUrl}/${relatedId}`, data);
 
+    const actualizarUnElemento = async (relatedId: string, data: Partial<T>, nombreAccion: string): Promise<void> =>
+        RestAPI.patch(`${baseUrl}/${relatedId}/${nombreAccion}`, data);
+
     const eliminarUno = async (relatedId: string): Promise<void> =>
         RestAPI.delete(`${baseUrl}/${relatedId}`);
 
@@ -77,6 +88,7 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
         obtenerUno,
         crearUno,
         actualizarUno,
+        actualizarUnElemento,
         eliminarUno,
         buscar,
         seleccionarEntidad,
