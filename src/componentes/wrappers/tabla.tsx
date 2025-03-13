@@ -7,11 +7,12 @@ export type TablaProps = {
   onSeleccion?: (entidad: Entidad) => void;
 };
 
-const filtroSoloPrimitivas = ([, valor]: [string, unknown]) =>
-  !Array.isArray(valor) && valor?.constructor !== Object;
-
-const cabeceras = (datosCabecera: string[]) =>
-  datosCabecera
+const cabecera = (entidad: Entidad) =>
+  Object.entries(entidad)
+    .filter(([, valor]) => !Array.isArray(valor))
+    .flatMap(([clave, valor]) =>
+      valor?.constructor !== Object ? [clave] : Object.keys(valor)
+    )
     .map((clave) => clave.replaceAll("_", " "))
     .map((clave) => (
       <th key={clave} data-modo="columna">
@@ -21,8 +22,15 @@ const cabeceras = (datosCabecera: string[]) =>
 
 const restoFila = (entidad: Entidad) =>
   Object.entries(entidad)
-    .filter(filtroSoloPrimitivas)
-    .filter(([clave]) => clave !== "id")
+    .filter(([clave, valor]) => clave !== "id" && !Array.isArray(valor))
+    .flatMap(([clave, valor]) => {
+      if (valor?.constructor !== Object) return [[clave, valor]];
+
+      return Object.entries(valor).map(([claveInterna, valor]) => [
+        clave + "." + claveInterna,
+        valor,
+      ]);
+    })
     .map(([clave, valor]) => (
       <td key={[entidad.id, clave].join("-")}>
         {valor === false ? "No" : valor === true ? "Sí" : valor?.toString()}
@@ -30,15 +38,11 @@ const restoFila = (entidad: Entidad) =>
     ));
 
 export const Tabla = ({ datos, seleccionadaId, onSeleccion }: TablaProps) => {
-  const datosCabecera = Object.entries(datos[0])
-    .filter(filtroSoloPrimitivas)
-    .map(([clave]) => clave);
-
   return (
     <quimera-tabla>
       <table>
         <thead>
-          <tr>{cabeceras(datosCabecera)}</tr>
+          <tr>{cabecera(datos[0])}</tr>
         </thead>
         <tbody>
           {datos.map((entidad) => (
