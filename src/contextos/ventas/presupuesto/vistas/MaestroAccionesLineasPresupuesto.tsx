@@ -4,19 +4,21 @@ import {
   FormularioGenerico,
 } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Contexto } from "../../../../contextos/comun/contexto.ts";
-import { Acciones, Entidad } from "../../../comun/diseño.ts";
-import { LineaPresupuesto } from "../../presupuesto/diseño.ts";
+import {
+  AccionesLineaPresupuesto,
+  LineaPresupuesto,
+} from "../../presupuesto/diseño.ts";
 import { useAccionesLineaPresupuesto } from "./accionesLineaPresupuesto.ts";
 
-type MaestroProps<T extends Entidad> = {
-  acciones: Acciones<T>;
+type MaestroAccionesLineasPresupuestoProps = {
+  acciones: AccionesLineaPresupuesto;
   camposEntidad: CampoFormularioGenerico[];
 };
 
 export const MaestroAccionesLineasPresupuesto = ({
   acciones,
   camposEntidad,
-}: MaestroProps<LineaPresupuesto>) => {
+}: MaestroAccionesLineasPresupuestoProps) => {
   const context = useContext(Contexto);
   if (!context) {
     throw new Error("Contexto es nulo");

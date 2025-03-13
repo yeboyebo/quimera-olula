@@ -1,12 +1,16 @@
-import { useCallback, useContext } from "react";
+import { useContext } from "react";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { EntidadAccion } from "../../../comun/diseño.ts";
+import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
-import { Presupuesto } from "../diseño.ts";
+import {
+  AccionesLineaPresupuesto,
+  LineaPresupuesto,
+  Presupuesto,
+} from "../diseño.ts";
 import {
   accionesPresupuesto,
   camposLineasPresupuesto,
@@ -20,62 +24,61 @@ export const MaestroConDetallePresupuesto = () => {
   if (!context) {
     throw new Error("Contexto is null");
   }
-  const { seleccionada, entidades, setEntidades } = context;
+  const { seleccionada, setSeleccionada, entidades, setEntidades } = context;
 
-  const titulo = (presupuesto: Presupuesto) => presupuesto.codigo as string;
+  const titulo = (presupuesto: Entidad) =>
+    (presupuesto as Presupuesto).codigo as string;
 
-  const actualizarUno = useCallback(
-    async (id: string, presupuesto: Presupuesto) => {
-      const actualizarPresupuesto = (presupuesto: Presupuesto) => {
-        setEntidades([
-          ...entidades.map((p) => (p.id !== presupuesto.id ? p : presupuesto)),
-        ]);
+  const onCambiarCantidadLinea = async (
+    id: string,
+    linea: LineaPresupuesto
+  ) => {
+    if (seleccionada) {
+      const objCambioLinea = {
+        lineas: [{ linea_id: id, cantidad: linea.cantidad }],
       };
-
-      await accionesPresupuesto.actualizarUno(id, presupuesto);
-      actualizarPresupuesto(presupuesto);
-    },
-    [entidades, setEntidades]
-  );
-
-  const crearUno = useCallback(
-    async (presupuesto: Presupuesto) => {
-      await accionesPresupuesto.crearUno(presupuesto);
-      const nuevoPresupuesto = await accionesPresupuesto.obtenerUno(
-        presupuesto.id
-      );
-      if (nuevoPresupuesto) {
-        setEntidades([...entidades, nuevoPresupuesto]);
-      }
-    },
-    [entidades, setEntidades]
-  );
-
-  const obtenerUno = useCallback(async (id: string) => {
-    const entidadAccion = await accionesPresupuesto.obtenerUno(id);
-    return entidadAccion as Presupuesto | null;
-  }, []);
-
-  const obtenerTodos = useCallback(async () => {
-    const entidades = await accionesPresupuesto.obtenerTodos();
-    return entidades as Presupuesto[];
-  }, []);
-
-  const buscar = async (campo: string, valor: string) => {
-    if (accionesPresupuesto.buscar) {
-      const resultados = await accionesPresupuesto.buscar(campo, valor);
-      return resultados as Presupuesto[];
+      accionesPresupuesto
+        .actualizarUnElemento(
+          seleccionada.id,
+          objCambioLinea,
+          "cambiar_cantidad_lineas"
+        )
+        .then(() => {
+          accionesPresupuesto
+            .obtenerUno(seleccionada.id)
+            .then((presupuesto) => {
+              if (presupuesto) {
+                setSeleccionada(presupuesto);
+                setEntidades(
+                  entidades.map((entidad) => {
+                    if (entidad.id === presupuesto.id) {
+                      return presupuesto;
+                    }
+                    return entidad;
+                  })
+                );
+              }
+            });
+        })
+        .catch((error) => {
+          console.error("Error al actualizar la línea de presupuesto:", error);
+        });
+    } else {
+      console.error("Error: no hay seleccionada");
     }
-    return [];
   };
 
-  const AccionesPresupuestoMaestroConDetalle = {
+  const accionesPresupuestoMaestroConDetalle = {
     ...accionesPresupuesto,
-    actualizarUno,
-    crearUno,
-    obtenerUno,
-    obtenerTodos,
-    buscar: buscar,
+  };
+
+  const accionesLineasPresupuesto: AccionesLineaPresupuesto = {
+    ...crearAccionesRelacionadas(
+      "presupuesto",
+      "linea",
+      seleccionada?.id || "0"
+    ),
+    onCambiarCantidadLinea,
   };
 
   const clienteId =
@@ -87,7 +90,7 @@ export const MaestroConDetallePresupuesto = () => {
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
         <Maestro
-          acciones={AccionesPresupuestoMaestroConDetalle}
+          acciones={accionesPresupuestoMaestroConDetalle}
           camposEntidad={camposPresupuesto}
         />
       </div>
@@ -95,9 +98,56 @@ export const MaestroConDetallePresupuesto = () => {
         <Detalle
           id={seleccionada?.id ?? "0"}
           camposEntidad={camposPresupuesto}
-          acciones={AccionesPresupuestoMaestroConDetalle}
+          acciones={accionesPresupuestoMaestroConDetalle}
           obtenerTitulo={titulo}
         >
+          <div
+            style={{
+              marginTop: "1rem",
+              padding: "1rem",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9",
+              marginBottom: "1rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
+                Neto:
+              </label>
+              <span>
+                {new Intl.NumberFormat("es-ES", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(Number(seleccionada?.neto ?? 0))}
+              </span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
+                Total IVA:
+              </label>
+              <span>
+                {new Intl.NumberFormat("es-ES", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(Number(seleccionada?.total_iva ?? 0))}
+              </span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
+                Total:
+              </label>
+              <span>
+                {new Intl.NumberFormat("es-ES", {
+                  style: "currency",
+                  currency: (seleccionada?.coddivisa as string) ?? "EUR",
+                }).format(Number(seleccionada?.total ?? 0))}
+              </span>
+            </div>
+          </div>
           <Tabs
             children={[
               <Tab
@@ -107,11 +157,7 @@ export const MaestroConDetallePresupuesto = () => {
                   <SubVista>
                     <Maestro
                       Acciones={MaestroAccionesLineasPresupuesto}
-                      acciones={crearAccionesRelacionadas<EntidadAccion>(
-                        "presupuesto",
-                        "linea",
-                        seleccionada?.id || "0"
-                      )}
+                      acciones={accionesLineasPresupuesto}
                       camposEntidad={camposLineasPresupuestoAlta}
                     />
                   </SubVista>
