@@ -38,6 +38,7 @@ declare namespace React {
             'quimera-boton': QuimeraBoton;
             'quimera-input': QuimeraInput;
             'quimera-select': QuimeraSelect;
+            'quimera-tabla': NodoComun;
         }
     }
 }
