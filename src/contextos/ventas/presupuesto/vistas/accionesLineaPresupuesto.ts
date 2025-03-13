@@ -1,16 +1,15 @@
 import { useContext } from "react";
 import { Contexto } from "../../../../contextos/comun/contexto.ts";
-import { Acciones } from "../../../../contextos/comun/diseño.ts";
-import { LineaPresupuesto } from "../../presupuesto/diseño.ts";
+import { AccionesLineaPresupuesto, LineaPresupuesto } from "../../presupuesto/diseño.ts";
 
-export const useAccionesLineaPresupuesto = (acciones: Acciones<LineaPresupuesto>) => {
+export const useAccionesLineaPresupuesto = (acciones: AccionesLineaPresupuesto) => {
     const {
-        actualizarUnElemento,
         actualizarUno,
         crearUno,
         obtenerTodos,
         obtenerUno,
         eliminarUno,
+        onCambiarCantidadLinea
     } = acciones;
 
     const context = useContext(Contexto);
@@ -65,14 +64,12 @@ export const useAccionesLineaPresupuesto = (acciones: Acciones<LineaPresupuesto>
             ...original,
             cantidad: original.cantidad + 1,
         };
-        console.log(cambiada);
-        actualizarUnElemento(cambiada.id, cambiada, "cambiar_cantidad_lineas")
+        onCambiarCantidadLinea(cambiada.id, cambiada)
             .then(() => {
                 actualizarLineaPresupuesto(cambiada as LineaPresupuesto);
             })
-            .catch((error) => {
+            .catch((error: Error) => {
                 console.error("Error al actualizar la línea de presupuesto:", error);
-                console.log(cambiada);
                 actualizarLineaPresupuesto(cambiada as LineaPresupuesto);
             });
     };

@@ -62,8 +62,12 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
             return respuesta['datos'];
         });
 
-    const crearUno = async (data: T): Promise<void> =>
-        RestAPI.post(baseUrl, data);
+    const crearUno = async (data: T): Promise<void> => {
+        const payload = {
+            lineas: [data]
+        }
+        return RestAPI.post(baseUrl, payload);
+    }
 
     const actualizarUno = async (relatedId: string, data: Partial<T>): Promise<void> =>
         RestAPI.patch(`${baseUrl}/${relatedId}`, data);
