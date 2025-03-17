@@ -42,7 +42,9 @@ export const MaestroFiltros = <T extends Entidad>({
       return;
     }
 
-    buscar(campo, valor).then((entidades) => setEntidades(entidades as T[]));
+    buscar(campo, valor)
+      .then((entidades) => setEntidades(entidades as T[]))
+      .catch(() => setFiltro({ [campo]: valor }));
   };
 
   const onLimpiar = () => {
