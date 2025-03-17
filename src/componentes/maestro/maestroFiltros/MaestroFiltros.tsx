@@ -35,6 +35,8 @@ export const MaestroFiltros = <T extends Entidad>({
     const campo = formData.get("campo") as string;
     const valor = formData.get("valor") as string;
 
+    if (!campo) return;
+
     if (!buscar) {
       setFiltro({ [campo]: valor });
       return;
