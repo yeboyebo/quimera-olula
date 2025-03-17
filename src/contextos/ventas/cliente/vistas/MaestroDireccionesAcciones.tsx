@@ -117,8 +117,8 @@ export const MaestroDireccionesAcciones = ({
     setMostrarModal(false);
   };
 
-  const handleCrearDireccion = async (id: string, data: Direccion) => {
-    if (!id) {
+  const handleCrearDireccion = async (data: Direccion) => {
+    if (!data.id) {
       //Si no hay id, creamos una nueva dirección
       crearUno(data).then(() => {
         obtenerTodos().then((direcciones) => {
