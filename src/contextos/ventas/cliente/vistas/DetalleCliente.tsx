@@ -1,40 +1,20 @@
-import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { CampoFormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
-import { Contexto } from "../../../comun/contexto.ts";
 import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
-import { Cliente } from "../diseño.ts";
-import { accionesCliente } from "../infraestructura.ts";
+import {
+  accionesCliente,
+  obtenerOpcionesSelector,
+} from "../infraestructura.ts";
+
+const opcionesDivisa = await obtenerOpcionesSelector("divisa")();
 
 export const DetalleCliente = () => {
   const { id } = useParams();
-
-  const context = useContext(Contexto);
-  if (!context) {
-    throw new Error("Contexto is null");
-  }
-  const { seleccionada, setSeleccionada } = context;
-  const { obtenerUno, obtenerOpcionesSelector } = accionesCliente;
-  const [opcionesDivisa, setOpcionesDivisa] = useState<[]>([]);
-
-  useEffect(() => {
-    obtenerOpcionesSelector("divisa")().then(setOpcionesDivisa);
-  }, [obtenerOpcionesSelector]);
-
-  useEffect(() => {
-    if (seleccionada && seleccionada.id === id) {
-      return;
-    }
-
-    obtenerUno(id ?? "0").then((entidad) =>
-      setSeleccionada(entidad as Cliente)
-    );
-  }, [id, obtenerUno, seleccionada, setSeleccionada]);
 
   const titulo = (cliente: Entidad) => cliente.nombre as string;
 
@@ -104,7 +84,7 @@ export const DetalleCliente = () => {
                   acciones={crearAccionesRelacionadas<EntidadAccion>(
                     "cliente",
                     "direcciones",
-                    seleccionada?.id ?? ("0" as string)
+                    id ?? ("0" as string)
                   )}
                   camposEntidad={camposDireccion}
                 />

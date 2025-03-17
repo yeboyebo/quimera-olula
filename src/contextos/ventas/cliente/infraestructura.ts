@@ -13,9 +13,7 @@ export const obtenerOpcionesSelector =
   (path: string) => async () =>
     RestAPI.get<{ datos: [] }>(
       `/cache/comun/${path}`
-    ).then((respuesta) => {
-      return respuesta.datos;
-    });
+    ).then((respuesta) => respuesta.datos);
 
 export const accionesCliente = {
   ...accionesBaseCliente,

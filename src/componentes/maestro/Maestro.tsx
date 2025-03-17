@@ -21,7 +21,7 @@ export const Maestro = <T extends Entidad>({
   camposEntidad,
 }: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
-  const [isLoading, setIsLoading] = useState(true);
+  const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<{ [campo: string]: string } | null>(
     null
   );
@@ -33,10 +33,18 @@ export const Maestro = <T extends Entidad>({
   const { entidades, setEntidades, seleccionada, setSeleccionada } = context;
 
   useEffect(() => {
+    let hecho = false;
+
     obtenerTodos().then((entidades) => {
-      setEntidades(entidades as T[]);
-      setIsLoading(false);
+      if (!hecho) {
+        setEntidades(entidades as T[]);
+        setCargando(false);
+      }
     });
+
+    return () => {
+      hecho = true;
+    };
   }, [obtenerTodos, setEntidades]);
 
   const entidadesFiltradas = entidades.filter((entidad) => {
@@ -57,7 +65,7 @@ export const Maestro = <T extends Entidad>({
   });
 
   const renderEntidades = () => {
-    if (isLoading) return <MaestroCargando />;
+    if (cargando) return <MaestroCargando />;
     if (entidadesFiltradas.length === 0) return <SinDatos />;
 
     return (
