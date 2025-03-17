@@ -1,5 +1,5 @@
 
-import { CampoFormularioGenerico } from "../../../componentes/detalle/FormularioGenerico.tsx";
+import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
 
@@ -9,9 +9,9 @@ export const obtenerOpcionesSelector =
   (path: string) => async () =>
     RestAPI.get<{ datos: [] }>(
       `/cache/comun/${path}`
-    ).then((respuesta) => respuesta.datos);
+    ).then((respuesta) => respuesta.datos.map(({ descripcion, ...resto }: Record<string, string>) => [Object.values(resto).at(0), descripcion] as OpcionCampo));
 
-const opcionesDivisa = await obtenerOpcionesSelector("divisa")()
+const opcionesDivisa = await obtenerOpcionesSelector("divisa")();
 
 export const camposDireccion: CampoFormularioGenerico[] = [
   { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },

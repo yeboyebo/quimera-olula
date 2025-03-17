@@ -1,6 +1,8 @@
 import { Entidad } from "../../contextos/comun/diseño.ts";
 import { renderInput, renderSelect, renderSpace } from "./helpers.tsx";
 
+export type OpcionCampo = [string, string];
+
 export type CampoFormularioGenerico = {
   nombre: string;
   etiqueta: string;
@@ -12,7 +14,7 @@ export type CampoFormularioGenerico = {
   valorInicial?: string;
   ancho?: string;
   condensado?: boolean;
-  opciones?: { [campo: string]: string; descripcion: string }[];
+  opciones?: OpcionCampo[];
 };
 
 type FormularioGenericoProps<T> = {

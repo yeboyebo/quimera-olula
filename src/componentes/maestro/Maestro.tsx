@@ -6,6 +6,7 @@ import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { Tabla } from "../wrappers/tabla.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
+import { Filtro, filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
@@ -22,9 +23,7 @@ export const Maestro = <T extends Entidad>({
 }: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [cargando, setCargando] = useState(true);
-  const [filtro, setFiltro] = useState<{ [campo: string]: string } | null>(
-    null
-  );
+  const [filtro, setFiltro] = useState<Filtro>(null);
 
   const context = useContext(Contexto);
   if (!context) {
@@ -47,22 +46,9 @@ export const Maestro = <T extends Entidad>({
     };
   }, [obtenerTodos, setEntidades]);
 
-  const entidadesFiltradas = entidades.filter((entidad) => {
-    if (!filtro) return true;
-
-    return Object.entries(filtro).every(([campo, valor]) => {
-      if (!campo.includes(".")) {
-        return (entidad[campo] as string)
-          .toLowerCase()
-          .includes(valor.toLocaleLowerCase());
-      }
-
-      const [clave, claveInterna] = campo.split(".");
-      return (entidad[clave] as Record<string, string>)[claveInterna]
-        .toLocaleLowerCase()
-        .includes(valor.toLocaleLowerCase());
-    });
-  });
+  const entidadesFiltradas = entidades.filter((entidad) =>
+    filtrarEntidad(entidad, filtro)
+  );
 
   const renderEntidades = () => {
     if (cargando) return <MaestroCargando />;
@@ -84,7 +70,11 @@ export const Maestro = <T extends Entidad>({
       ) : (
         <MaestroAcciones acciones={acciones} camposEntidad={camposEntidad} />
       )}
-      <MaestroFiltros acciones={acciones} setFiltro={setFiltro} />
+      <MaestroFiltros
+        acciones={acciones}
+        filtro={filtro}
+        setFiltro={setFiltro}
+      />
       {renderEntidades()}
     </div>
   );

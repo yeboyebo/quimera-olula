@@ -1,7 +1,10 @@
 import { FormEvent, useContext } from "react";
 import { Contexto } from "../../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
-import { CampoFormularioGenerico } from "../../detalle/FormularioGenerico.tsx";
+import {
+  CampoFormularioGenerico,
+  OpcionCampo,
+} from "../../detalle/FormularioGenerico.tsx";
 import {
   expandirEntidad,
   formatearClave,
@@ -9,14 +12,50 @@ import {
   renderSelect,
 } from "../../detalle/helpers.tsx";
 import "./MaestroFiltros.css";
+import { Filtro } from "./filtro.ts";
+
+const obtenerCampos = (entidad: Entidad | null): OpcionCampo[] => {
+  if (!entidad) return [];
+
+  const entidadExpandida = expandirEntidad(entidad);
+
+  return entidadExpandida.map(([clave]) => [clave, formatearClave(clave)]);
+};
+
+const selectorCampo = (campos: OpcionCampo[]) => {
+  const attrsCampo: CampoFormularioGenerico = {
+    nombre: "campo",
+    etiqueta: "Filtro",
+    tipo: "select",
+    requerido: true,
+    opciones: campos,
+    condensado: true,
+  };
+
+  return renderSelect(attrsCampo, {} as Entidad);
+};
+
+const inputFiltro = () => {
+  const attrsValor: CampoFormularioGenerico = {
+    nombre: "valor",
+    etiqueta: "&nbsp;",
+    placeholder: "Valor a filtrar",
+    tipo: "text",
+    requerido: true,
+    condensado: true,
+  };
+  return renderInput(attrsValor, {} as Entidad);
+};
 
 type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
-  setFiltro: (filtro: { [campo: string]: string } | null) => void;
+  filtro: Filtro;
+  setFiltro: (filtro: Filtro) => void;
 };
 
 export const MaestroFiltros = <T extends Entidad>({
   acciones,
+  filtro,
   setFiltro,
 }: MaestroProps<T>) => {
   const { buscar } = acciones;
@@ -28,6 +67,26 @@ export const MaestroFiltros = <T extends Entidad>({
 
   const { entidades, setEntidades } = context;
 
+  const campos = obtenerCampos(entidades[0]);
+
+  const filtrosActuales = Object.entries(filtro ?? {}).map(([clave, valor]) => {
+    const etiqueta = campos.find((campo) => campo[0] === clave)?.[1];
+    const valorMostrado = valor.like;
+
+    return (
+      <div
+        key={clave}
+        onClick={() => {
+          const { [clave]: _, ...resto } = filtro ?? {};
+          setFiltro(resto);
+        }}
+      >
+        <span>{etiqueta}:</span>
+        <span>{valorMostrado}</span>
+      </div>
+    );
+  });
+
   const onBuscar = (event: FormEvent): void => {
     event.preventDefault();
 
@@ -37,61 +96,21 @@ export const MaestroFiltros = <T extends Entidad>({
 
     if (!campo) return;
 
-    if (!buscar) {
-      setFiltro({ [campo]: valor });
-      return;
-    }
+    setFiltro({ ...(filtro ?? {}), [campo]: { like: valor } });
 
-    buscar(campo, valor)
-      .then((entidades) => setEntidades(entidades as T[]))
-      .catch(() => setFiltro({ [campo]: valor }));
+    if (!buscar) return;
+
+    buscar(campo, valor).then((entidades) => setEntidades(entidades as T[]));
   };
 
   const onLimpiar = () => {
     setFiltro(null);
   };
 
-  const obtenerCampos = () => {
-    const entidad = entidades[0];
-    if (!entidad) return [];
-
-    const entidadExpandida = expandirEntidad(entidad);
-
-    return entidadExpandida.map(([clave]) => ({
-      campo: clave,
-      descripcion: formatearClave(clave),
-    }));
-  };
-
-  const selectorCampo = () => {
-    const attrsCampo: CampoFormularioGenerico = {
-      nombre: "campo",
-      etiqueta: "Filtro",
-      tipo: "select",
-      requerido: true,
-      opciones: obtenerCampos(),
-      condensado: true,
-    };
-
-    return renderSelect(attrsCampo, {} as Entidad);
-  };
-
-  const inputFiltro = () => {
-    const attrsValor: CampoFormularioGenerico = {
-      nombre: "valor",
-      etiqueta: "&nbsp;",
-      placeholder: "Valor a filtrar",
-      tipo: "text",
-      requerido: true,
-      condensado: true,
-    };
-    return renderInput(attrsValor, {} as Entidad);
-  };
-
   return (
     <div className="MaestroFiltros">
       <form onSubmit={onBuscar} onReset={onLimpiar}>
-        {selectorCampo()}
+        {selectorCampo(campos)}
         {inputFiltro()}
         <quimera-boton tipo="submit" tamaño="pequeño">
           Buscar
@@ -100,6 +119,7 @@ export const MaestroFiltros = <T extends Entidad>({
           Limpiar
         </quimera-boton>
       </form>
+      <etiquetas-filtro>{filtrosActuales}</etiquetas-filtro>
     </div>
   );
 };
