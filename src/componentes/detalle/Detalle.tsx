@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
 import estilos from "./detalle.module.css";
 import {
@@ -22,36 +22,39 @@ export function Detalle<T extends Entidad>({
 }: PropsWithChildren<DetalleProps<T>>) {
   const { detalle } = estilos;
 
-  const [entidad, setEntidad] = useState<T>({} as T);
-  const [isNew, setIsNew] = useState<boolean>(false);
+  const [entidad, setEntidad] = useState<T | null>(null);
+
+  const esNuevo = id === "";
+  const existe = id !== "0";
 
   const { actualizarUno, obtenerUno, crearUno } = acciones;
 
-  useEffect(() => {
-    if (!id || id === "") {
+  if (!entidad || id !== entidad.id) {
+    if (!existe) return;
+
+    if (esNuevo) {
       const nuevaEntidad = camposEntidad.reduce((acc, campo) => {
         return { ...acc, [campo.nombre]: campo.valorInicial || "" };
-      }, {} as Partial<T>) as T;
+      }, {}) as T;
       setEntidad(nuevaEntidad);
-      setIsNew(true);
-    } else {
-      setIsNew(false);
-      obtenerUno(id)
-        .then((entidad) => {
-          setEntidad(entidad as T);
-        })
-        .catch(() => {
-          setEntidad({} as T);
-        });
+      return;
     }
-  }, [id, obtenerUno, camposEntidad]);
 
-  if (!entidad || !Object.keys(entidad).length) {
+    obtenerUno(id)
+      .then((entidad) => {
+        setEntidad(entidad as T);
+      })
+      .catch(() => {
+        setEntidad({} as T);
+      });
+  }
+
+  if (!entidad) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
 
   const handleSubmit = async (id: string, data: T) =>
-    isNew ? crearUno(data) : actualizarUno(id, data);
+    esNuevo ? crearUno(data) : actualizarUno(id, data);
 
   return (
     <div className={detalle}>
