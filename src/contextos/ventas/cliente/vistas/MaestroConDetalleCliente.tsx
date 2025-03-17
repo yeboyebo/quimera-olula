@@ -64,62 +64,64 @@ export const MaestroConDetalleCliente = () => {
           }}
           obtenerTitulo={titulo}
         >
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Comercial"
-                children={<div> Comercial contenido </div>}
-              />,
-              <Tab
-                key="tab-2"
-                label="Direcciones"
-                children={
-                  <SubVista>
-                    <Maestro
-                      Acciones={MaestroDireccionesAcciones}
-                      acciones={crearAccionesRelacionadas<EntidadAccion>(
-                        "cliente",
-                        "direcciones",
-                        seleccionada?.id ?? ("0" as string)
-                      )}
-                      camposEntidad={camposDireccion}
-                    />
-                  </SubVista>
-                }
-              />,
-              <Tab
-                key="tab-3"
-                label="Cuentas Bancarias"
-                children={<div> Cuentas Bancarias Master contenido </div>}
-              />,
-              <Tab
-                key="tab-4"
-                label="Agenda"
-                children={<div> Agenda contenido </div>}
-              />,
-              <Tab
-                key="tab-5"
-                label="Descuentos"
-                children={<div> Descuentos contenido</div>}
-              />,
-              <Tab
-                key="tab-6"
-                label="Documentos"
-                children={<div> Documentos contenido</div>}
-              />,
-              <Tab
-                key="tab-7"
-                label="Contabilidad"
-                children={<div> Contabilidad contenido</div>}
-              />,
-              <Tab
-                key="tab-8"
-                label="Factura-e"
-                children={<div> Factura-e contenido</div>}
-              />,
-            ]}
-          ></Tabs>
+          {!!seleccionada?.id && (
+            <Tabs
+              children={[
+                <Tab
+                  key="tab-1"
+                  label="Comercial"
+                  children={<div> Comercial contenido </div>}
+                />,
+                <Tab
+                  key="tab-2"
+                  label="Direcciones"
+                  children={
+                    <SubVista>
+                      <Maestro
+                        Acciones={MaestroDireccionesAcciones}
+                        acciones={crearAccionesRelacionadas<EntidadAccion>(
+                          "cliente",
+                          "direcciones",
+                          seleccionada?.id ?? ("0" as string)
+                        )}
+                        camposEntidad={camposDireccion}
+                      />
+                    </SubVista>
+                  }
+                />,
+                <Tab
+                  key="tab-3"
+                  label="Cuentas Bancarias"
+                  children={<div> Cuentas Bancarias Master contenido </div>}
+                />,
+                <Tab
+                  key="tab-4"
+                  label="Agenda"
+                  children={<div> Agenda contenido </div>}
+                />,
+                <Tab
+                  key="tab-5"
+                  label="Descuentos"
+                  children={<div> Descuentos contenido</div>}
+                />,
+                <Tab
+                  key="tab-6"
+                  label="Documentos"
+                  children={<div> Documentos contenido</div>}
+                />,
+                <Tab
+                  key="tab-7"
+                  label="Contabilidad"
+                  children={<div> Contabilidad contenido</div>}
+                />,
+                <Tab
+                  key="tab-8"
+                  label="Factura-e"
+                  children={<div> Factura-e contenido</div>}
+                />,
+              ]}
+            ></Tabs>
+          )}
         </Detalle>
       </div>
     </div>
