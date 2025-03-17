@@ -1,3 +1,9 @@
-.MaestroFiltros{
+.MaestroFiltros {
     float: right;
+
+    form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
 }
