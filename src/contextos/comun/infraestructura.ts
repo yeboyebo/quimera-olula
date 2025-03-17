@@ -13,9 +13,7 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
     const crearUno = async (data: T): Promise<void> =>
         RestAPI.post(baseUrl, data).then((respuesta) => respuesta);
 
-    const actualizarUno = async (id: string, data: Partial<T>): Promise<void> => {
-        return RestAPI.patch(`${baseUrl}/${id}`, data);
-    };
+    const actualizarUno = async (id: string, data: Partial<T>): Promise<void> => RestAPI.patch(`${baseUrl}/${id}`, data);
 
     const actualizarUnElemento = async (id: string, data: Partial<T>, nombreAccion: string): Promise<void> =>
         RestAPI.patch(`${baseUrl}/${id}/${nombreAccion}`, data);
@@ -24,14 +22,9 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
         RestAPI.delete(`${baseUrl}/${id}`);
 
 
-    const buscar = async (campo: string, valor: string): Promise<T[]> => {
-        return [{ [campo]: valor } as unknown as T];
-    };
-
-    const seleccionarEntidad = (e: Entidad): void => {
-        // Implement select entity logic here
-        console.log(e);
-    };
+    // const buscar = async (campo: string, valor: string): Promise<T[]> => {
+    //     return [{ [campo]: valor } as unknown as T];
+    // };
 
     return {
         obtenerTodos,
@@ -40,8 +33,7 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
         actualizarUno,
         actualizarUnElemento,
         eliminarUno,
-        buscar,
-        seleccionarEntidad,
+        // buscar,
     };
 };
 
@@ -78,14 +70,9 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
     const eliminarUno = async (relatedId: string): Promise<void> =>
         RestAPI.delete(`${baseUrl}/${relatedId}`);
 
-    const buscar = async (_campo: string, valor: string): Promise<T[]> => {
-        return [{ campo: valor } as unknown as T];
-    };
-
-    const seleccionarEntidad = (e: Entidad): void => {
-        // Implement select entity logic here
-        console.log(e);
-    };
+    // const buscar = async (_campo: string, valor: string): Promise<T[]> => {
+    //     return [{ campo: valor } as unknown as T];
+    // };
 
     return {
         obtenerTodos,
@@ -94,7 +81,6 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
         actualizarUno,
         actualizarUnElemento,
         eliminarUno,
-        buscar,
-        seleccionarEntidad,
+        // buscar,
     };
 };
