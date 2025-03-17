@@ -19,7 +19,7 @@ type FormularioGenericoProps<T> = {
   campos: CampoFormularioGenerico[];
   entidad: T;
   setEntidad: (entidad: T) => void;
-  onSubmit: (id: string, data: T) => Promise<void>;
+  onSubmit: (data: T) => Promise<void>;
   validacion?: (entidad: T) => string | null;
 };
 
@@ -42,7 +42,7 @@ export const FormularioGenerico = <T extends Entidad>({
       return;
     }
 
-    onSubmit(entidad.id, nuevaEntidad).then(() => setEntidad(nuevaEntidad));
+    onSubmit(nuevaEntidad).then(() => setEntidad(nuevaEntidad));
   };
 
   if (!entidad) {

@@ -1,4 +1,5 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useContext, useState } from "react";
+import { Contexto } from "../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
 import estilos from "./detalle.module.css";
 import {
@@ -21,6 +22,12 @@ export function Detalle<T extends Entidad>({
   children,
 }: PropsWithChildren<DetalleProps<T>>) {
   const { detalle } = estilos;
+
+  const context = useContext(Contexto);
+  if (!context) {
+    throw new Error("Contexto is null");
+  }
+  const { entidades, setEntidades } = context;
 
   const [entidad, setEntidad] = useState<T | null>(null);
 
@@ -53,8 +60,23 @@ export function Detalle<T extends Entidad>({
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
 
-  const handleSubmit = async (id: string, data: T) =>
-    esNuevo ? crearUno(data) : actualizarUno(id, data);
+  const crear = (data: T) =>
+    crearUno(data).then(({ id }) => {
+      obtenerUno(id).then((entidad: T | null) => {
+        if (!entidad) return;
+        setEntidades([...entidades, entidad]);
+      });
+    });
+
+  const actualizar = (data: T) =>
+    actualizarUno(id, data).then(() => {
+      const indice = entidades.findIndex((e) => e.id === id);
+      if (indice === -1) return;
+      setEntidades(entidades.with(indice, data));
+    });
+
+  const handleSubmit = async (data: T) =>
+    esNuevo ? crear(data) : actualizar(data);
 
   return (
     <div className={detalle}>
