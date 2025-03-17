@@ -1,4 +1,5 @@
 import { Entidad } from "../../contextos/comun/diseño.ts";
+import { expandirEntidad, formatearClave } from "../detalle/helpers.tsx";
 import "./tabla.css";
 
 export type TablaProps = {
@@ -7,30 +8,19 @@ export type TablaProps = {
   onSeleccion?: (entidad: Entidad) => void;
 };
 
+const datosCabecera = (entidad: Entidad) =>
+  expandirEntidad(entidad).map(([clave]) => formatearClave(clave));
+
 const cabecera = (entidad: Entidad) =>
-  Object.entries(entidad)
-    .filter(([, valor]) => !Array.isArray(valor))
-    .flatMap(([clave, valor]) =>
-      valor?.constructor !== Object ? [clave] : Object.keys(valor)
-    )
-    .map((clave) => clave.replaceAll("_", " "))
-    .map((clave) => (
-      <th key={clave} data-modo="columna">
-        {clave}
-      </th>
-    ));
+  datosCabecera(entidad).map((clave) => (
+    <th key={clave} data-modo="columna">
+      {clave}
+    </th>
+  ));
 
 const restoFila = (entidad: Entidad) =>
-  Object.entries(entidad)
-    .filter(([clave, valor]) => clave !== "id" && !Array.isArray(valor))
-    .flatMap(([clave, valor]) => {
-      if (valor?.constructor !== Object) return [[clave, valor]];
-
-      return Object.entries(valor).map(([claveInterna, valor]) => [
-        clave + "." + claveInterna,
-        valor,
-      ]);
-    })
+  expandirEntidad(entidad)
+    .filter(([clave]) => clave !== "id")
     .map(([clave, valor]) => (
       <td key={[entidad.id, clave].join("-")}>
         {valor === false ? "No" : valor === true ? "Sí" : valor?.toString()}

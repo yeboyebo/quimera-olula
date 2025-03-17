@@ -1,56 +1,18 @@
-import React from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
-import { Select } from "../wrappers/select.tsx";
-
-const renderSelect = (campo: CampoFormularioGenerico, entidad: Entidad) => {
-  const attrs = {
-    nombre: campo.nombre,
-    label: campo.etiqueta,
-    placeholder: `Selecciona un/a ${campo.etiqueta.toLowerCase()}`,
-    opcional: !campo.requerido,
-    deshabilitado: campo.soloLectura,
-    valor: entidad[campo.nombre] as string,
-    opciones: campo.opciones?.map((opcion) => ({
-      valor: opcion[campo.nombre],
-      descripcion: opcion["descripcion"],
-    })),
-    "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
-  };
-
-  return <Select key={campo.nombre} {...attrs} />;
-};
-
-const renderInput = (campo: CampoFormularioGenerico, entidad: Entidad) => {
-  const attrs = {
-    nombre: campo.nombre,
-    label: campo.etiqueta,
-    placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
-    valor: entidad[campo.nombre] as string,
-    opcional: !campo.requerido,
-    deshabilitado: campo.soloLectura,
-    "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
-  };
-  return (
-    <React.Fragment key={campo.nombre}>
-      <quimera-input {...attrs}></quimera-input>
-    </React.Fragment>
-  );
-};
-
-const renderSpace = () => {
-  return <div key="space" style={{ height: "1rem", width: "100%" }}></div>;
-};
+import { renderInput, renderSelect, renderSpace } from "./helpers.tsx";
 
 export type CampoFormularioGenerico = {
   nombre: string;
   etiqueta: string;
+  placeholder?: string;
   tipo: "text" | "email" | "number" | "date" | "password" | "space" | "select";
   soloLectura?: boolean;
   oculto?: boolean;
   requerido?: boolean;
   valorInicial?: string;
   ancho?: string;
-  opciones?: [];
+  condensado?: boolean;
+  opciones?: { [campo: string]: string; descripcion: string }[];
 };
 
 type FormularioGenericoProps<T> = {
