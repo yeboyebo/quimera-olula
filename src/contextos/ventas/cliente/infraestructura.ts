@@ -3,7 +3,6 @@ import { CampoFormularioGenerico } from "../../../componentes/detalle/Formulario
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
 
-
 export const accionesBaseCliente = crearAcciones("cliente");
 
 export const eliminarCliente = async (id: string) =>
@@ -14,6 +13,8 @@ export const obtenerOpcionesSelector =
     RestAPI.get<{ datos: [] }>(
       `/cache/comun/${path}`
     ).then((respuesta) => respuesta.datos);
+
+const opcionesDivisa = await obtenerOpcionesSelector("divisa")()
 
 export const accionesCliente = {
   ...accionesBaseCliente,
@@ -51,7 +52,7 @@ export const camposCliente: CampoFormularioGenerico[] = [
     nombre: "divisa_id",
     etiqueta: "Divisa",
     tipo: "select",
-    opciones: await obtenerOpcionesSelector("divisa")(),
+    opciones: opcionesDivisa,
   },
   { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
   { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
