@@ -3,10 +3,7 @@ import { CampoFormularioGenerico } from "../../../componentes/detalle/Formulario
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
 
-export const accionesBaseCliente = crearAcciones("cliente");
-
-export const eliminarCliente = async (id: string) =>
-  RestAPI.delete(`/quimera/ventas/cliente/${id}`);
+export const accionesCliente = crearAcciones("cliente");
 
 export const obtenerOpcionesSelector =
   (path: string) => async () =>
@@ -15,12 +12,6 @@ export const obtenerOpcionesSelector =
     ).then((respuesta) => respuesta.datos);
 
 const opcionesDivisa = await obtenerOpcionesSelector("divisa")()
-
-export const accionesCliente = {
-  ...accionesBaseCliente,
-  eliminarCliente,
-  obtenerOpcionesSelector,
-};
 
 export const camposDireccion: CampoFormularioGenerico[] = [
   { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
