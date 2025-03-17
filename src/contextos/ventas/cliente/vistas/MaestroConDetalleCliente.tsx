@@ -35,10 +35,16 @@ export const MaestroConDetalleCliente = () => {
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
+      <div
+        className="Maestro"
+        style={{
+          width: "50%",
+          overflowX: "hidden",
+        }}
+      >
         <Maestro acciones={accionesCliente} camposEntidad={camposCliente} />
       </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
+      <div className="Detalle" style={{ width: "50%", overflowX: "hidden" }}>
         <Detalle
           id={seleccionada?.id ?? "0"}
           camposEntidad={camposCliente}
