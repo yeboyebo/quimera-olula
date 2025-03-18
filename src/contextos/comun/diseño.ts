@@ -8,7 +8,7 @@ export type EntidadAccion = {
 }
 
 type ValorFiltro = { LIKE: string };
-export type Filtro = { [campo: string]: ValorFiltro } | null;
+export type Filtro = { [campo: string]: ValorFiltro };
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export type Acciones<T extends Entidad> = {

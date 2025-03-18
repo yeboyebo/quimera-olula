@@ -5,7 +5,7 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
     const baseUrl = `/ventas/${entidad}`;
 
     const obtenerTodos = async (filtro?: Filtro): Promise<T[]> => {
-        const q = filtro ? "?q=" + btoa(JSON.stringify({ filtro })) : "";
+        const q = filtro && Object.keys(filtro).length ? "?q=" + btoa(JSON.stringify({ filtro })) : "";
 
         return RestAPI.get<{ [key: string]: T[] }>(baseUrl + q).then((respuesta) => respuesta.datos);
     }
@@ -42,7 +42,7 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
     const baseUrl = `/ventas/${entidad}/${id}/${relatedPath}`;
 
     const obtenerTodos = async (filtro?: Filtro): Promise<T[]> => {
-        const q = filtro ? "?q=" + btoa(JSON.stringify({ filtro })) : "";
+        const q = filtro && Object.keys(filtro).length ? "?q=" + btoa(JSON.stringify({ filtro })) : "";
 
         return RestAPI.get<{ [key: string]: T[] }>(baseUrl + q).then((respuesta) => respuesta.datos);
     }

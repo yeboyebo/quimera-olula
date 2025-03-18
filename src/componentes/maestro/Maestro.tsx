@@ -30,7 +30,7 @@ export const Maestro = <T extends Entidad>({
 }: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [cargando, setCargando] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>(null);
+  const [filtro, setFiltro] = useState<Filtro>({});
 
   const context = useContext(Contexto);
   if (!context) {
