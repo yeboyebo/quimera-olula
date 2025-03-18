@@ -1,26 +1,15 @@
-import { FormEvent, useContext } from "react";
-import { Contexto } from "../../../contextos/comun/contexto.ts";
-import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
+import { FormEvent } from "react";
+import { Entidad, Filtro } from "../../../contextos/comun/diseño.ts";
 import {
   CampoFormularioGenerico,
   OpcionCampo,
 } from "../../detalle/FormularioGenerico.tsx";
 import {
-  expandirEntidad,
   formatearClave,
   renderInput,
   renderSelect,
 } from "../../detalle/helpers.tsx";
 import "./MaestroFiltros.css";
-import { Filtro } from "./filtro.ts";
-
-const obtenerCampos = (entidad: Entidad | null): OpcionCampo[] => {
-  if (!entidad) return [];
-
-  const entidadExpandida = expandirEntidad(entidad);
-
-  return entidadExpandida.map(([clave]) => [clave, formatearClave(clave)]);
-};
 
 const selectorCampo = (campos: OpcionCampo[]) => {
   const attrsCampo: CampoFormularioGenerico = {
@@ -47,31 +36,21 @@ const inputFiltro = () => {
   return renderInput(attrsValor, {} as Entidad);
 };
 
-type MaestroProps<T extends Entidad> = {
-  acciones: Acciones<T>;
+type MaestroProps = {
+  campos: string[];
   filtro: Filtro;
   setFiltro: (filtro: Filtro) => void;
 };
 
-export const MaestroFiltros = <T extends Entidad>({
-  acciones,
-  filtro,
-  setFiltro,
-}: MaestroProps<T>) => {
-  const { buscar } = acciones;
-
-  const context = useContext(Contexto);
-  if (!context) {
-    throw new Error("Contexto is null");
-  }
-
-  const { entidades, setEntidades } = context;
-
-  const campos = obtenerCampos(entidades[0]);
+export const MaestroFiltros = ({ campos, filtro, setFiltro }: MaestroProps) => {
+  const camposFormateados: OpcionCampo[] = campos.map((clave) => [
+    clave,
+    formatearClave(clave),
+  ]);
 
   const filtrosActuales = Object.entries(filtro ?? {}).map(([clave, valor]) => {
-    const etiqueta = campos.find((campo) => campo[0] === clave)?.[1];
-    const valorMostrado = valor.like;
+    const etiqueta = camposFormateados.find((campo) => campo[0] === clave)?.[1];
+    const valorMostrado = valor.LIKE;
 
     return (
       <div
@@ -96,11 +75,7 @@ export const MaestroFiltros = <T extends Entidad>({
 
     if (!campo) return;
 
-    setFiltro({ ...(filtro ?? {}), [campo]: { like: valor } });
-
-    if (!buscar) return;
-
-    buscar(campo, valor).then((entidades) => setEntidades(entidades as T[]));
+    setFiltro({ ...(filtro ?? {}), [campo]: { LIKE: valor } });
   };
 
   const onLimpiar = () => {
@@ -110,7 +85,7 @@ export const MaestroFiltros = <T extends Entidad>({
   return (
     <div className="MaestroFiltros">
       <form onSubmit={onBuscar} onReset={onLimpiar}>
-        {selectorCampo(campos)}
+        {selectorCampo(camposFormateados)}
         {inputFiltro()}
         <quimera-boton tipo="submit" tamaño="pequeño">
           Buscar

@@ -1,13 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { Contexto } from "../../contextos/comun/contexto.ts";
-import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
+import { Acciones, Entidad, Filtro } from "../../contextos/comun/diseño.ts";
 import { CampoFormularioGenerico } from "../detalle/FormularioGenerico.tsx";
+import { expandirEntidad } from "../detalle/helpers.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { Tabla } from "../wrappers/tabla.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
-import { Filtro, filtrarEntidad } from "./maestroFiltros/filtro.ts";
+import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
+
+const obtenerCampos = (entidad: Entidad | null): string[] => {
+  if (!entidad) return [];
+
+  return expandirEntidad(entidad).map(([clave]) => clave);
+};
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export type MaestroProps<T extends Entidad> = {
@@ -34,17 +41,17 @@ export const Maestro = <T extends Entidad>({
   useEffect(() => {
     let hecho = false;
 
-    obtenerTodos().then((entidades) => {
-      if (!hecho) {
-        setEntidades(entidades as T[]);
-        setCargando(false);
-      }
+    obtenerTodos(filtro).then((entidades) => {
+      if (hecho) return;
+
+      setEntidades(entidades as T[]);
+      setCargando(false);
     });
 
     return () => {
       hecho = true;
     };
-  }, [obtenerTodos, setEntidades]);
+  }, [filtro, obtenerTodos, setEntidades]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
@@ -71,7 +78,7 @@ export const Maestro = <T extends Entidad>({
         <MaestroAcciones acciones={acciones} camposEntidad={camposEntidad} />
       )}
       <MaestroFiltros
-        acciones={acciones}
+        campos={obtenerCampos(entidades[0])}
         filtro={filtro}
         setFiltro={setFiltro}
       />
