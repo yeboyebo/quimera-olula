@@ -16,11 +16,9 @@ export const Vista = <T extends Entidad>({
     <Contexto.Provider
       value={{
         entidades,
-        setEntidades: setEntidades as (_: ContextoSet<Entidad[]>) => void,
+        setEntidades: setEntidades as ContextoSet<Entidad[]>,
         seleccionada,
-        setSeleccionada: setSeleccionada as (
-          _: ContextoSet<Entidad | null>
-        ) => void,
+        setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
       }}
     >
       <Slot nombre="contenido" {...slots}>
@@ -43,11 +41,9 @@ export const SubVista = <T extends Entidad>({
     <Contexto.Provider
       value={{
         entidades,
-        setEntidades: setEntidades as (_: ContextoSet<Entidad[]>) => void,
+        setEntidades: setEntidades as ContextoSet<Entidad[]>,
         seleccionada,
-        setSeleccionada: setSeleccionada as (
-          _: ContextoSet<Entidad | null>
-        ) => void,
+        setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
       }}
     >
       {children}
