@@ -27,7 +27,7 @@ export function Detalle<T extends Entidad>({
   if (!context) {
     throw new Error("Contexto is null");
   }
-  const { entidades, setEntidades } = context;
+  const { setEntidades } = context;
 
   const [entidad, setEntidad] = useState<T | null>(null);
 
@@ -64,15 +64,18 @@ export function Detalle<T extends Entidad>({
     crearUno(data).then(({ id }) => {
       obtenerUno(id).then((entidad: T | null) => {
         if (!entidad) return;
-        setEntidades([...entidades, entidad]);
+        setEntidades((entidades) => [...entidades, entidad]);
       });
     });
 
   const actualizar = (data: T) =>
     actualizarUno(id, data).then(() => {
-      const indice = entidades.findIndex((e) => e.id === id);
-      if (indice === -1) return;
-      setEntidades(entidades.with(indice, data));
+      setEntidades((entidades) => {
+        const indice = entidades.findIndex((e) => e.id === id);
+        if (indice === -1) return entidades;
+
+        return entidades.with(indice, data);
+      });
     });
 
   const handleSubmit = async (data: T) =>
