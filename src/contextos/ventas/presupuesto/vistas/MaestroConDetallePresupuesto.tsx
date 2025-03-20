@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Entidad } from "../../../comun/diseño.ts";
-import { AccionesPresupuesto, Presupuesto } from "../diseño.ts";
+import { Acciones, Entidad } from "../../../comun/diseño.ts";
+import { Presupuesto } from "../diseño.ts";
 import {
   accionesPresupuesto,
   camposPresupuestoNuevo,
@@ -36,7 +36,7 @@ export const MaestroConDetallePresupuesto = () => {
     });
   };
 
-  const accionesPresupuestoMaestroConDetalle: AccionesPresupuesto = {
+  const accionesPresupuestoMaestroConDetalle: Acciones<Presupuesto> = {
     ...accionesPresupuesto,
     crearUno: onCrearPresupuesto,
   };

@@ -4,10 +4,10 @@ import { FormularioGenerico } from "../../../../componentes/detalle/FormularioGe
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
+import { Acciones } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import {
   AccionesLineaPresupuesto,
-  AccionesPresupuesto,
   LineaPresupuesto,
   Presupuesto,
 } from "../diseño.ts";
@@ -20,7 +20,7 @@ import { MaestroAccionesLineasPresupuesto } from "./MaestroAccionesLineasPresupu
 
 interface DetallePresupuestoProps {
   id: string | null;
-  acciones: AccionesPresupuesto;
+  acciones: Acciones<Presupuesto>;
   obtenerTitulo?: (entidad: Presupuesto) => string;
 }
 
