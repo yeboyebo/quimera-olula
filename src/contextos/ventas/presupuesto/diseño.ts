@@ -26,3 +26,5 @@ export type LineaPresupuesto = {
 export type AccionesLineaPresupuesto = Acciones<LineaPresupuesto> & {
   onCambiarCantidadLinea: (id: string, linea: LineaPresupuesto) => Promise<void>;
 };
+
+export type AccionesPresupuesto = Acciones<Presupuesto>;

@@ -34,3 +34,9 @@ export const camposLineasPresupuesto: CampoFormularioGenerico[] = [
   { nombre: "pvp_unitario", etiqueta: "PVP Unitario", tipo: "number" },
   { nombre: "pvp_total", etiqueta: "PVP Total", tipo: "number" },
 ];
+
+export const camposPresupuestoNuevo: CampoFormularioGenerico[] = [
+  { nombre: "cliente_id", etiqueta: "ID Cliente", tipo: "text" },
+  { nombre: "direccion_id", etiqueta: "ID Dirección", tipo: "text" },
+  { nombre: "empresa_id", etiqueta: "ID Empresa", tipo: "text" },
+];

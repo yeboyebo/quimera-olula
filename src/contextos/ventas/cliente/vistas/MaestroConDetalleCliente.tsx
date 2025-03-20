@@ -10,6 +10,7 @@ import { Cliente } from "../diseño.ts";
 import {
   accionesCliente,
   camposCliente,
+  camposClienteNuevo,
   camposDireccion,
 } from "../infraestructura.ts";
 import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
@@ -36,7 +37,10 @@ export const MaestroConDetalleCliente = () => {
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <Maestro acciones={accionesCliente} camposEntidad={camposCliente} />
+        <Maestro
+          acciones={accionesCliente}
+          camposEntidad={camposClienteNuevo}
+        />
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <Detalle
