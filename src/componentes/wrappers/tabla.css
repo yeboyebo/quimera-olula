@@ -67,6 +67,7 @@ quimera-tabla {
             vertical-align: middle;
             color: var(--color-texto-secundario);
             white-space: nowrap;
+            cursor: pointer;
         }
 
         &[data-orden="ASC"]::after {
