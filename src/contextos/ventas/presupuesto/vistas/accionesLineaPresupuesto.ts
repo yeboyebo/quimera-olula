@@ -86,10 +86,9 @@ export const useAccionesLineaPresupuesto = (acciones: AccionesLineaPresupuesto) 
     };
 
     const handleCrearLineaPresupuesto = async (
-        id: string,
         data: LineaPresupuesto
     ) => {
-        if (!id) {
+        if (!data.id) {
             crearUno(data).then(() => {
                 obtenerTodos().then((lineasPresupuesto) => {
                     setEntidades(lineasPresupuesto);

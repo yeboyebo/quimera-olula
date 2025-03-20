@@ -8,7 +8,7 @@ export interface MenuItemInterface {
 export const elementosDelMenu: MenuItemInterface[] = [
   { nombre: "Inicio", url: "/", icono: "inicio", subMenuItems: [] },
   {
-    nombre: "Facturación",
+    nombre: "Ventas",
     url: "#",
     icono: "documentos",
     subMenuItems: [

@@ -1,4 +1,5 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useContext, useState } from "react";
+import { Contexto } from "../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
 import estilos from "./detalle.module.css";
 import {
@@ -22,36 +23,63 @@ export function Detalle<T extends Entidad>({
 }: PropsWithChildren<DetalleProps<T>>) {
   const { detalle } = estilos;
 
-  const [entidad, setEntidad] = useState<T>({} as T);
-  const [isNew, setIsNew] = useState<boolean>(false);
+  const context = useContext(Contexto);
+  if (!context) {
+    throw new Error("Contexto is null");
+  }
+  const { setEntidades } = context;
+
+  const [entidad, setEntidad] = useState<T | null>(null);
+
+  const esNuevo = id === "";
+  const existe = id !== "0";
 
   const { actualizarUno, obtenerUno, crearUno } = acciones;
 
-  useEffect(() => {
-    if (!id || id === "") {
+  if (!entidad || id !== entidad.id) {
+    if (!existe) return;
+
+    if (esNuevo) {
       const nuevaEntidad = camposEntidad.reduce((acc, campo) => {
         return { ...acc, [campo.nombre]: campo.valorInicial || "" };
-      }, {} as Partial<T>) as T;
+      }, {}) as T;
       setEntidad(nuevaEntidad);
-      setIsNew(true);
-    } else {
-      setIsNew(false);
-      obtenerUno(id)
-        .then((entidad) => {
-          setEntidad(entidad as T);
-        })
-        .catch(() => {
-          setEntidad({} as T);
-        });
+      return;
     }
-  }, [id, obtenerUno, camposEntidad]);
 
-  if (!entidad || !Object.keys(entidad).length) {
+    obtenerUno(id)
+      .then((entidad) => {
+        setEntidad(entidad as T);
+      })
+      .catch(() => {
+        setEntidad({} as T);
+      });
+  }
+
+  if (!entidad) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
   }
 
-  const handleSubmit = async (id: string, data: T) =>
-    isNew ? crearUno(data) : actualizarUno(id, data);
+  const crear = (data: T) =>
+    crearUno(data).then(({ id }) => {
+      obtenerUno(id).then((entidad: T | null) => {
+        if (!entidad) return;
+        setEntidades((entidades) => [...entidades, entidad]);
+      });
+    });
+
+  const actualizar = (data: T) =>
+    actualizarUno(id, data).then(() => {
+      setEntidades((entidades) => {
+        const indice = entidades.findIndex((e) => e.id === id);
+        if (indice === -1) return entidades;
+
+        return entidades.with(indice, data);
+      });
+    });
+
+  const handleSubmit = async (data: T) =>
+    esNuevo ? crear(data) : actualizar(data);
 
   return (
     <div className={detalle}>

@@ -5,6 +5,7 @@ declare module 'quimera-select';
 interface NodoComun {
     id?: string;
     children?: ReactNode;
+    key?: string;
 }
 
 interface QuimeraBoton extends NodoComun {
@@ -39,6 +40,7 @@ declare namespace React {
             'quimera-input': QuimeraInput;
             'quimera-select': QuimeraSelect;
             'quimera-tabla': NodoComun;
+            'etiquetas-filtro': NodoComun;
         }
     }
 }

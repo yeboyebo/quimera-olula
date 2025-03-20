@@ -1,14 +1,13 @@
 import React from "react";
 import { Entidad } from "./diseño.ts";
 
+export type ContextoSet<T> = (_: (T) | ((_: T) => T)) => void;
+
 export type Contexto<T> = {
   entidades: T[];
-  setEntidades: (_: T[]) => void;
+  setEntidades: ContextoSet<T[]>;
   seleccionada: T | null;
-  setSeleccionada: (_: T | null) => void;
+  setSeleccionada: ContextoSet<T | null>;
 };
-
-// export const Contexto = (<T extends Entidad>() =>
-//   React.createContext<Contexto<T> | null>(null))();
 
 export const Contexto = React.createContext<Contexto<Entidad> | null>(null);

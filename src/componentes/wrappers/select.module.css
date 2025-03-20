@@ -106,3 +106,21 @@ label {
     cursor: inherit;
     pointer-events: none;
 }
+
+.condensado {
+    & .etiqueta {
+        font-size: var(--tamaño-letra-s);
+    }
+
+    & .etiquetaOpcional {
+        font-size: var(--tamaño-letra-xxs);
+    }
+
+    select {
+        padding: var(--espaciado-xs);
+    }
+
+    & .validacion {
+        font-size: var(--tamaño-letra-xs);
+    }
+}

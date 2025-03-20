@@ -1,85 +1,100 @@
-import { useContext, useEffect, useState } from "react";
-import { Contexto } from "../../../contextos/comun/contexto.ts";
-import { Acciones, Entidad } from "../../../contextos/comun/diseño.ts";
+import { FormEvent } from "react";
+import { Entidad, Filtro } from "../../../contextos/comun/diseño.ts";
+import {
+  CampoFormularioGenerico,
+  OpcionCampo,
+} from "../../detalle/FormularioGenerico.tsx";
+import {
+  formatearClave,
+  renderInput,
+  renderSelect,
+} from "../../detalle/helpers.tsx";
 import "./MaestroFiltros.css";
 
-type MaestroProps<T extends Entidad> = {
-  acciones: Acciones<T>;
+const selectorCampo = (campos: OpcionCampo[]) => {
+  const attrsCampo: CampoFormularioGenerico = {
+    nombre: "campo",
+    etiqueta: "Filtro",
+    tipo: "select",
+    requerido: true,
+    opciones: campos,
+    condensado: true,
+  };
+
+  return renderSelect(attrsCampo, {} as Entidad);
 };
 
-export const MaestroFiltros = <T extends Entidad>({
-  acciones,
-}: MaestroProps<T>) => {
-  const { buscar } = acciones;
-  const [originalEntidades, setOriginalEntidades] = useState<T[]>([]);
-  const context = useContext(Contexto);
-  if (!context) {
-    throw new Error("Contexto is null");
-  }
-  const { entidades, setEntidades } = context;
+const inputFiltro = () => {
+  const attrsValor: CampoFormularioGenerico = {
+    nombre: "valor",
+    etiqueta: "&nbsp;",
+    placeholder: "Valor a filtrar",
+    tipo: "text",
+    requerido: true,
+    condensado: true,
+  };
+  return renderInput(attrsValor, {} as Entidad);
+};
 
-  useEffect(() => {
-    if (originalEntidades.length < entidades.length) {
-      setOriginalEntidades(entidades as T[]);
-    }
-  }, [entidades, originalEntidades]);
+type MaestroProps = {
+  campos: string[];
+  filtro: Filtro;
+  setFiltro: (filtro: Filtro) => void;
+};
 
-  const onBuscar = (formData: FormData): void => {
+export const MaestroFiltros = ({ campos, filtro, setFiltro }: MaestroProps) => {
+  const camposFormateados: OpcionCampo[] = campos.map((clave) => [
+    clave,
+    formatearClave(clave),
+  ]);
+
+  const filtrosActuales = Object.entries(filtro).map(([clave, valor]) => {
+    const etiqueta = camposFormateados.find((campo) => campo[0] === clave)?.[1];
+    const valorMostrado = valor.LIKE;
+
+    return (
+      <div
+        key={clave}
+        onClick={() => {
+          const { [clave]: _, ...resto } = filtro;
+          setFiltro(resto);
+        }}
+      >
+        <span>{etiqueta}:</span>
+        <span>{valorMostrado}</span>
+      </div>
+    );
+  });
+
+  const onBuscar = (event: FormEvent): void => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target as HTMLFormElement);
     const campo = formData.get("campo") as string;
     const valor = formData.get("valor") as string;
-    if (buscar !== undefined) {
-      // Busco en el servidor
-      buscar(campo, valor).then((entidades) => setEntidades(entidades as T[]));
-      return;
-    }
-    // Busco de forma local
-    const entidadesFiltradas = entidades.filter((entidad) => {
-      if (!campo.includes(".")) {
-        return (entidad[campo] as string).includes(valor);
-      }
 
-      const [clave, claveInterna] = campo.split(".");
-      return (entidad[clave] as Record<string, string>)[claveInterna].includes(
-        valor
-      );
-    });
-    setEntidades(entidadesFiltradas);
+    if (!campo) return;
+
+    setFiltro({ ...filtro, [campo]: { LIKE: valor } });
   };
 
   const onLimpiar = () => {
-    setEntidades(originalEntidades);
-  };
-
-  const obtenerCampos = () => {
-    if (originalEntidades.length === 0) {
-      return [];
-    }
-
-    return Object.entries(originalEntidades[0]).flatMap(([clave, valor]) => {
-      if (valor?.constructor !== Object) return [clave];
-
-      return Object.keys(valor).map(
-        (claveInterna) => clave + "." + claveInterna
-      );
-    });
+    setFiltro({});
   };
 
   return (
     <div className="MaestroFiltros">
-      <form action={onBuscar}>
-        <select name="campo">
-          {obtenerCampos().map((campo) => (
-            <option key={campo} value={campo}>
-              {campo}
-            </option>
-          ))}
-        </select>
-        <input type="text" name="valor" placeholder="Valor" />
-        <button>Buscar</button>
+      <form onSubmit={onBuscar} onReset={onLimpiar}>
+        {selectorCampo(camposFormateados)}
+        {inputFiltro()}
+        <quimera-boton tipo="submit" tamaño="pequeño">
+          Buscar
+        </quimera-boton>
+        <quimera-boton tipo="reset" variante="texto" tamaño="pequeño">
+          Limpiar
+        </quimera-boton>
       </form>
-      <form action={onLimpiar}>
-        <button>Limpiar</button>
-      </form>
+      <etiquetas-filtro>{filtrosActuales}</etiquetas-filtro>
     </div>
   );
 };
