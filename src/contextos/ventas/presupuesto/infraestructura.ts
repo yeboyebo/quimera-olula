@@ -2,14 +2,10 @@
 
 import { CampoFormularioGenerico } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { crearAcciones } from "../../comun/infraestructura.ts";
+import { Presupuesto } from "./diseño.ts";
 
 
-export const accionesBasePresupuesto = crearAcciones("presupuesto");
-
-
-export const accionesPresupuesto = {
-  ...accionesBasePresupuesto,
-};
+export const accionesPresupuesto = crearAcciones<Presupuesto>("presupuesto");
 
 export const camposLineasPresupuestoAlta: CampoFormularioGenerico[] = [
   { nombre: "articulo_id", etiqueta: "Referencia", tipo: "text" },
