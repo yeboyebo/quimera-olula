@@ -1,30 +1,40 @@
-export interface MenuItemInterface {
+export interface ElementoMenuPadre {
   nombre: string;
-  url: string;
-  icono: string;
-  subMenuItems: MenuItemInterface[];
-  mostrarDesplegado?: boolean;
+  icono?: string;
+  subelementos: ElementoMenu[];
 }
-export const elementosDelMenu: MenuItemInterface[] = [
-  { nombre: "Inicio", url: "/", icono: "inicio", subMenuItems: [] },
+
+export interface ElementoMenuHijo {
+  nombre: string;
+  icono?: string;
+  url: string;
+}
+
+export type ElementoMenu = ElementoMenuPadre | ElementoMenuHijo;
+
+export const elementosDelMenu: ElementoMenu[] = [
+  { nombre: "Inicio", url: "/", icono: "home" },
   {
     nombre: "Ventas",
-    url: "#",
-    icono: "documentos",
-    subMenuItems: [
+    icono: "file",
+    subelementos: [
       {
         nombre: "Clientes",
         url: "/ventas/cliente",
         icono: "",
-        subMenuItems: [],
       },
       {
         nombre: "Presupuestos",
         url: "/ventas/presupuesto",
         icono: "",
-        subMenuItems: [],
       },
     ],
   },
-  { nombre: "Financiera", url: "#", icono: "graficos", subMenuItems: [] },
+  {
+    nombre: "Financiera", icono: "bar-chart-alt-2", subelementos: [{
+      nombre: "Cuentas",
+      url: "/financiera/cuenta",
+      icono: "",
+    }]
+  },
 ];
