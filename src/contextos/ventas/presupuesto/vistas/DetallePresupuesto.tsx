@@ -1,9 +1,9 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import estilos from "../../../../componentes/detalle/detalle.module.css";
+import { FormularioGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { SubVista } from "../../../../componentes/vista/Vista.tsx";
-import { EntidadAccion } from "../../../comun/diseño.ts";
 import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
 import {
   AccionesLineaPresupuesto,
@@ -13,8 +13,8 @@ import {
 } from "../diseño.ts";
 import {
   accionesPresupuesto,
-  camposLineasPresupuesto,
   camposLineasPresupuestoAlta,
+  camposPresupuesto,
 } from "../infraestructura.ts";
 import { MaestroAccionesLineasPresupuesto } from "./MaestroAccionesLineasPresupuesto.tsx";
 
@@ -71,15 +71,15 @@ export function DetallePresupuesto({
         .then(() => {
           accionesPresupuesto.obtenerUno(entidad.id).then((presupuesto) => {
             if (presupuesto) {
-              setSeleccionada(presupuesto);
-              setEntidades(
-                entidades.map((entidad) => {
-                  if (entidad.id === presupuesto.id) {
-                    return presupuesto;
-                  }
-                  return entidad;
-                })
-              );
+              setEntidad(presupuesto as Presupuesto);
+              //   setEntidades(
+              //     entidades.map((entidad) => {
+              //       if (entidad.id === presupuesto.id) {
+              //         return presupuesto;
+              //       }
+              //       return entidad;
+              //     })
+              //   );
             }
           });
         })
@@ -96,9 +96,35 @@ export function DetallePresupuesto({
     onCambiarCantidadLinea,
   };
 
+  const actualizar = (data: Presupuesto) =>
+    accionesPresupuesto.actualizarUno(id, data).then(() => {
+      setEntidad(data as Presupuesto);
+    });
+
   return (
     <div className={detalle}>
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
+      <Tabs
+        children={[
+          <Tab
+            key="tab-1"
+            label="Cliente"
+            children={
+              <FormularioGenerico
+                campos={camposPresupuesto}
+                entidad={entidad}
+                setEntidad={setEntidad}
+                onSubmit={actualizar}
+              />
+            }
+          />,
+          <Tab
+            key="tab-3"
+            label="Observaciones"
+            children={<div> Observaciones contenido </div>}
+          />,
+        ]}
+      ></Tabs>
       <div
         style={{
           marginTop: "1rem",
@@ -146,44 +172,13 @@ export function DetallePresupuesto({
           </span>
         </div>
       </div>
-      <Tabs
-        children={[
-          <Tab
-            key="tab-2"
-            label="Lineas"
-            children={
-              <SubVista>
-                <Maestro
-                  Acciones={MaestroAccionesLineasPresupuesto}
-                  acciones={accionesLineasPresupuesto}
-                  camposEntidad={camposLineasPresupuestoAlta}
-                />
-              </SubVista>
-            }
-          />,
-          <Tab
-            key="tab-1"
-            label="Cliente"
-            children={
-              <SubVista>
-                <Maestro
-                  acciones={crearAccionesRelacionadas<EntidadAccion>(
-                    "cliente",
-                    "direcciones",
-                    entidad.cliente_id as string
-                  )}
-                  camposEntidad={camposLineasPresupuesto}
-                />
-              </SubVista>
-            }
-          />,
-          <Tab
-            key="tab-3"
-            label="Observaciones"
-            children={<div> Observaciones contenido </div>}
-          />,
-        ]}
-      ></Tabs>
+      <SubVista>
+        <Maestro
+          Acciones={MaestroAccionesLineasPresupuesto}
+          acciones={accionesLineasPresupuesto}
+          camposEntidad={camposLineasPresupuestoAlta}
+        />
+      </SubVista>
     </div>
   );
 }

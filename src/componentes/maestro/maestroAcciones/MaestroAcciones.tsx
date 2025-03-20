@@ -20,7 +20,7 @@ export const MaestroAcciones = <T extends Entidad>({
   if (!context) {
     throw new Error("Contexto es nulo");
   }
-  const { entidades, setEntidades, seleccionada } = context;
+  const { entidades, setEntidades, seleccionada, setSeleccionada } = context;
   const [mostrarModal, setMostrarModal] = useState(false);
   const [entidadNueva, setEntidadNueva] = useState({} as T);
 
@@ -39,8 +39,8 @@ export const MaestroAcciones = <T extends Entidad>({
     });
   };
 
-  const handleCrear = async (id: string, data: T) => {
-    if (!id) {
+  const handleCrear = async (data: T) => {
+    if (!data.id) {
       crearUno(data).then(() => {
         obtenerTodos().then((lineasPresupuesto) => {
           setEntidades(lineasPresupuesto);

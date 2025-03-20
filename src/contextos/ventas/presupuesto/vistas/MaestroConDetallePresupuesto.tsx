@@ -14,15 +14,14 @@ export const MaestroConDetallePresupuesto = () => {
   if (!context) {
     throw new Error("Contexto is null");
   }
-  const { seleccionada, setSeleccionada, entidades, setEntidades } = context;
+  const { seleccionada, setEntidades } = context;
 
   const titulo = (presupuesto: Entidad) =>
     (presupuesto as Presupuesto).codigo as string;
 
   const onCrearPresupuesto = async (
-    presupuesto: Presupuesto
+    presupuesto: Partial<Presupuesto>
   ): Promise<void> => {
-    console.log(presupuesto);
     const objPresupuestoNuevo = {
       cliente: {
         cliente_id: presupuesto.cliente_id,
@@ -52,7 +51,7 @@ export const MaestroConDetallePresupuesto = () => {
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <DetallePresupuesto
-          id={seleccionada?.id}
+          id={seleccionada?.id ?? null}
           acciones={accionesPresupuestoMaestroConDetalle}
           obtenerTitulo={titulo}
         />
