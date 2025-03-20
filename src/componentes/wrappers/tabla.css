@@ -1,3 +1,13 @@
+@keyframes moving-gradient {
+    0% {
+        background-position: -600px 0;
+    }
+
+    100% {
+        background-position: 600px 0;
+    }
+}
+
 quimera-tabla {
     :root {
         --transicion-basica: 0.12 ease-in-out;
@@ -30,6 +40,17 @@ quimera-tabla {
         }
     }
 
+    tbody[data-cargando="true"] tr {
+        background: linear-gradient(to right, var(--color-fondo) 20%, var(--color-deshabilitado) 50%, var(--color-fondo) 80%);
+        background-size: 120%;
+        animation-name: moving-gradient;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+        color: transparent;
+    }
+
     th {
         border-bottom: var(--tamaño-borde-s) solid var(--gris-4);
         transition: background-color var(--transicion-basica), color var(--transicion-basica);
@@ -46,6 +67,20 @@ quimera-tabla {
             vertical-align: middle;
             color: var(--color-texto-secundario);
             white-space: nowrap;
+        }
+
+        &[data-orden="ASC"]::after {
+            content: "▲";
+            float: right;
+            width: 1em;
+            margin-right: -1em;
+        }
+
+        &[data-orden="DESC"]::after {
+            content: "▼";
+            float: right;
+            width: 1em;
+            margin-right: -1em;
         }
 
         &:first-child {

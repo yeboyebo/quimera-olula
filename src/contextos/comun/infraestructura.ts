@@ -1,11 +1,11 @@
 import { RestAPI } from "./api/rest_api.ts";
-import { Acciones, Entidad, Filtro } from "./diseño.ts";
+import { Acciones, Entidad, Filtro, Orden } from "./diseño.ts";
 
 export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> => {
     const baseUrl = `/ventas/${entidad}`;
 
-    const obtenerTodos = async (filtro?: Filtro): Promise<T[]> => {
-        const q = filtro && Object.keys(filtro).length ? "?q=" + btoa(JSON.stringify({ filtro })) : "";
+    const obtenerTodos = async (filtro?: Filtro, orden?: Orden): Promise<T[]> => {
+        const q = filtro || orden ? "?q=" + btoa(JSON.stringify({ filtro, orden })) : "";
 
         return RestAPI.get<{ [key: string]: T[] }>(baseUrl + q).then((respuesta) => respuesta.datos);
     }
@@ -41,8 +41,8 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
 
     const baseUrl = `/ventas/${entidad}/${id}/${relatedPath}`;
 
-    const obtenerTodos = async (filtro?: Filtro): Promise<T[]> => {
-        const q = filtro && Object.keys(filtro).length ? "?q=" + btoa(JSON.stringify({ filtro })) : "";
+    const obtenerTodos = async (filtro?: Filtro, orden?: Orden): Promise<T[]> => {
+        const q = filtro || orden ? "?q=" + btoa(JSON.stringify({ filtro, orden })) : "";
 
         return RestAPI.get<{ [key: string]: T[] }>(baseUrl + q).then((respuesta) => respuesta.datos);
     }

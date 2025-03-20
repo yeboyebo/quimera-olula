@@ -39,10 +39,18 @@ const inputFiltro = () => {
 type MaestroProps = {
   campos: string[];
   filtro: Filtro;
-  setFiltro: (filtro: Filtro) => void;
+  cambiarFiltro: (clave: string, valor: string) => void;
+  borrarFiltro: (clave: string) => void;
+  resetearFiltro: () => void;
 };
 
-export const MaestroFiltros = ({ campos, filtro, setFiltro }: MaestroProps) => {
+export const MaestroFiltros = ({
+  campos,
+  filtro,
+  cambiarFiltro,
+  borrarFiltro,
+  resetearFiltro,
+}: MaestroProps) => {
   const camposFormateados: OpcionCampo[] = campos.map((clave) => [
     clave,
     formatearClave(clave),
@@ -53,13 +61,7 @@ export const MaestroFiltros = ({ campos, filtro, setFiltro }: MaestroProps) => {
     const valorMostrado = valor.LIKE;
 
     return (
-      <div
-        key={clave}
-        onClick={() => {
-          const { [clave]: _, ...resto } = filtro;
-          setFiltro(resto);
-        }}
-      >
+      <div key={clave} onClick={() => borrarFiltro(clave)}>
         <span>{etiqueta}:</span>
         <span>{valorMostrado}</span>
       </div>
@@ -75,16 +77,12 @@ export const MaestroFiltros = ({ campos, filtro, setFiltro }: MaestroProps) => {
 
     if (!campo) return;
 
-    setFiltro({ ...filtro, [campo]: { LIKE: valor } });
-  };
-
-  const onLimpiar = () => {
-    setFiltro({});
+    cambiarFiltro(campo, valor);
   };
 
   return (
     <div className="MaestroFiltros">
-      <form onSubmit={onBuscar} onReset={onLimpiar}>
+      <form onSubmit={onBuscar} onReset={resetearFiltro}>
         {selectorCampo(camposFormateados)}
         {inputFiltro()}
         <quimera-boton tipo="submit" tamaño="pequeño">
