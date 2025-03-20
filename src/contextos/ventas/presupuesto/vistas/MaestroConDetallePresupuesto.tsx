@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
-import { Acciones, Entidad } from "../../../comun/diseño.ts";
+import { Acciones, Entidad, Filtro } from "../../../comun/diseño.ts";
 import { Presupuesto } from "../diseño.ts";
 import {
   accionesPresupuesto,
@@ -39,6 +39,17 @@ export const MaestroConDetallePresupuesto = () => {
   const accionesPresupuestoMaestroConDetalle: Acciones<Presupuesto> = {
     ...accionesPresupuesto,
     crearUno: onCrearPresupuesto,
+    obtenerUno: async (id: string): Promise<Presupuesto | null> => {
+      const entidad = await accionesPresupuesto.obtenerUno(id);
+      if (!entidad) {
+        return null;
+      }
+      return entidad as Presupuesto;
+    },
+    obtenerTodos: async (filtro?: Filtro): Promise<Presupuesto[]> => {
+      const entidades = await accionesPresupuesto.obtenerTodos(filtro);
+      return entidades.map((entidad) => entidad as Presupuesto);
+    },
   };
 
   return (
