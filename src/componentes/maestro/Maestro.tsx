@@ -1,14 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import { Contexto } from "../../contextos/comun/contexto.ts";
-import { Acciones, Entidad, Filtro } from "../../contextos/comun/diseño.ts";
+import {
+  Acciones,
+  Criteria,
+  Entidad,
+  Filtro,
+  Orden,
+} from "../../contextos/comun/diseño.ts";
 import { CampoFormularioGenerico } from "../detalle/FormularioGenerico.tsx";
-import { expandirEntidad } from "../detalle/helpers.tsx";
+import { expandirEntidad, formatearClave } from "../detalle/helpers.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import { Tabla } from "../wrappers/tabla.tsx";
 import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
-import { MaestroCargando } from "./maestroCargando/MaestroCargando.tsx";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
+
+const datosCargando = () =>
+  new Array(10).fill(null).map((_, i) => ({
+    id: i.toString(),
+    ...Object.fromEntries(new Array(10).fill(null).map((_, j) => [j, "U00A0"])),
+  }));
 
 const obtenerCampos = (entidad: Entidad | null): string[] => {
   if (!entidad) return [];
@@ -21,16 +32,19 @@ export type MaestroProps<T extends Entidad> = {
   acciones: Acciones<T>;
   Acciones?: any;
   camposEntidad: CampoFormularioGenerico[];
+  criteria?: Criteria;
 };
 
 export const Maestro = <T extends Entidad>({
   acciones,
   Acciones = null,
   camposEntidad,
+  criteria = { filtro: {}, orden: { id: "DESC" } },
 }: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [cargando, setCargando] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>({});
+  const [filtro, setFiltro] = useState<Filtro>(criteria.filtro);
+  const [orden, setOrden] = useState<Orden>(criteria.orden);
 
   const context = useContext(Contexto);
   if (!context) {
@@ -40,8 +54,9 @@ export const Maestro = <T extends Entidad>({
 
   useEffect(() => {
     let hecho = false;
+    setCargando(true);
 
-    obtenerTodos(filtro).then((entidades) => {
+    obtenerTodos(filtro, orden).then((entidades) => {
       if (hecho) return;
 
       setEntidades(entidades as T[]);
@@ -51,21 +66,39 @@ export const Maestro = <T extends Entidad>({
     return () => {
       hecho = true;
     };
-  }, [filtro, obtenerTodos, setEntidades]);
+  }, [filtro, orden, obtenerTodos, setEntidades]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
   );
 
+  const cabeceras = entidadesFiltradas.length
+    ? (Object.fromEntries(
+        expandirEntidad(entidadesFiltradas[0]).map(([clave]) => [
+          formatearClave(clave),
+          clave,
+        ])
+      ) as Record<string, string>)
+    : {};
+
   const renderEntidades = () => {
-    if (cargando) return <MaestroCargando />;
-    if (entidadesFiltradas.length === 0) return <SinDatos />;
+    if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
+
+    const datos = entidadesFiltradas.length
+      ? entidadesFiltradas
+      : datosCargando();
 
     return (
       <Tabla
-        datos={entidadesFiltradas}
+        cabeceras={cabeceras}
+        datos={datos}
+        cargando={cargando}
         seleccionadaId={seleccionada?.id}
         onSeleccion={setSeleccionada}
+        orden={orden}
+        onOrdenar={(clave) =>
+          setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
+        }
       />
     );
   };
@@ -80,7 +113,14 @@ export const Maestro = <T extends Entidad>({
       <MaestroFiltros
         campos={obtenerCampos(entidades[0])}
         filtro={filtro}
-        setFiltro={setFiltro}
+        cambiarFiltro={(clave, valor) =>
+          setFiltro({ ...filtro, [clave]: { LIKE: valor } })
+        }
+        borrarFiltro={(clave) => {
+          const { [clave]: _, ...resto } = filtro;
+          setFiltro(resto);
+        }}
+        resetearFiltro={() => setFiltro(criteria.filtro)}
       />
       {renderEntidades()}
     </div>
