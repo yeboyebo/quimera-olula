@@ -31,7 +31,7 @@ export function DetallePresupuesto({
 }: PropsWithChildren<DetallePresupuestoProps>) {
   const { detalle } = estilos;
 
-  const [entidad, setEntidad] = useState<Presupuesto | null>(null);
+  const [entidad, setEntidad] = useState<Presupuesto>({} as Presupuesto);
 
   const { obtenerUno } = acciones;
 
