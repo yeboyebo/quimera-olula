@@ -15,6 +15,12 @@ import { MaestroAcciones } from "./maestroAcciones/MaestroAcciones.tsx";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
+const datosCargando = () =>
+  new Array(10).fill(null).map((_, i) => ({
+    id: i.toString(),
+    ...Object.fromEntries(new Array(10).fill(null).map((_, j) => [j, "U00A0"])),
+  }));
+
 const obtenerCampos = (entidad: Entidad | null): string[] => {
   if (!entidad) return [];
 
@@ -76,12 +82,16 @@ export const Maestro = <T extends Entidad>({
     : {};
 
   const renderEntidades = () => {
-    if (entidadesFiltradas.length === 0) return <SinDatos />;
+    if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
+
+    const datos = entidadesFiltradas.length
+      ? entidadesFiltradas
+      : datosCargando();
 
     return (
       <Tabla
         cabeceras={cabeceras}
-        datos={entidadesFiltradas}
+        datos={datos}
         cargando={cargando}
         seleccionadaId={seleccionada?.id}
         onSeleccion={setSeleccionada}
