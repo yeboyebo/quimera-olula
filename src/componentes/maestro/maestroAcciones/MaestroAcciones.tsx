@@ -35,6 +35,7 @@ export const MaestroAcciones = <T extends Entidad>({
           (entidad: T) => entidad.id !== seleccionada.id
         )
       );
+      setSeleccionada(null);
     });
   };
 

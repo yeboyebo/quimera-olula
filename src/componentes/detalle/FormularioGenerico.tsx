@@ -1,24 +1,27 @@
-import React from "react";
 import { Entidad } from "../../contextos/comun/diseño.ts";
-import { Select } from "../wrappers/select.tsx";
+import { renderInput, renderSelect, renderSpace } from "./helpers.tsx";
+
+export type OpcionCampo = [string, string];
 
 export type CampoFormularioGenerico = {
   nombre: string;
   etiqueta: string;
+  placeholder?: string;
   tipo: "text" | "email" | "number" | "date" | "password" | "space" | "select";
   soloLectura?: boolean;
   oculto?: boolean;
   requerido?: boolean;
   valorInicial?: string;
   ancho?: string;
-  opciones?: [];
+  condensado?: boolean;
+  opciones?: OpcionCampo[];
 };
 
 type FormularioGenericoProps<T> = {
   campos: CampoFormularioGenerico[];
   entidad: T;
   setEntidad: (entidad: T) => void;
-  onSubmit: (id: string, data: T) => Promise<void>;
+  onSubmit: (data: T) => Promise<void>;
   validacion?: (entidad: T) => string | null;
 };
 
@@ -41,51 +44,12 @@ export const FormularioGenerico = <T extends Entidad>({
       return;
     }
 
-    onSubmit(entidad.id, nuevaEntidad).then(() => setEntidad(nuevaEntidad));
+    onSubmit(nuevaEntidad).then(() => setEntidad(nuevaEntidad));
   };
 
   if (!entidad) {
     return <>No encontrado</>;
   }
-
-  const renderSelect = (campo: CampoFormularioGenerico) => {
-    const attrs = {
-      nombre: campo.nombre,
-      label: campo.etiqueta,
-      placeholder: `Selecciona un/a ${campo.etiqueta.toLowerCase()}`,
-      opcional: !campo.requerido,
-      deshabilitado: campo.soloLectura,
-      valor: entidad[campo.nombre] as string,
-      opciones: campo.opciones?.map((opcion) => ({
-        valor: opcion[campo.nombre],
-        descripcion: opcion["descripcion"],
-      })),
-      "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
-    };
-
-    return <Select key={campo.nombre} {...attrs} />;
-  };
-
-  const renderInput = (campo: CampoFormularioGenerico) => {
-    const attrs = {
-      nombre: campo.nombre,
-      label: campo.etiqueta,
-      placeholder: `Introduce el valor de ${campo.etiqueta.toLowerCase()}`,
-      valor: entidad[campo.nombre] as string,
-      opcional: !campo.requerido,
-      deshabilitado: campo.soloLectura,
-      "todo-ancho": campo.ancho === "100%" ? "true" : undefined,
-    };
-    return (
-      <React.Fragment key={campo.nombre}>
-        <quimera-input {...attrs}></quimera-input>
-      </React.Fragment>
-    );
-  };
-
-  const renderSpace = () => {
-    return <div key="space" style={{ height: "1rem", width: "100%" }}></div>;
-  };
 
   return (
     <form action={handleAction}>
@@ -95,8 +59,8 @@ export const FormularioGenerico = <T extends Entidad>({
           campo.tipo === "space"
             ? renderSpace()
             : campo.tipo === "select"
-            ? renderSelect(campo)
-            : renderInput(campo)
+            ? renderSelect(campo, entidad)
+            : renderInput(campo, entidad)
         )}
       <quimera-boton tipo="submit">Enviar</quimera-boton>
     </form>

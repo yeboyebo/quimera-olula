@@ -1,27 +1,17 @@
 
-import { CampoFormularioGenerico } from "../../../componentes/detalle/FormularioGenerico.tsx";
+import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
 
-
-export const accionesBaseCliente = crearAcciones("cliente");
-
-export const eliminarCliente = async (id: string) =>
-  RestAPI.delete(`/quimera/ventas/cliente/${id}`);
+export const accionesCliente = crearAcciones("cliente");
 
 export const obtenerOpcionesSelector =
   (path: string) => async () =>
     RestAPI.get<{ datos: [] }>(
       `/cache/comun/${path}`
-    ).then((respuesta) => {
-      return respuesta.datos;
-    });
+    ).then((respuesta) => respuesta.datos.map(({ descripcion, ...resto }: Record<string, string>) => [Object.values(resto).at(0), descripcion] as OpcionCampo));
 
-export const accionesCliente = {
-  ...accionesBaseCliente,
-  eliminarCliente,
-  obtenerOpcionesSelector,
-};
+const opcionesDivisa = await obtenerOpcionesSelector("divisa")();
 
 export const camposDireccion: CampoFormularioGenerico[] = [
   { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
@@ -53,7 +43,7 @@ export const camposCliente: CampoFormularioGenerico[] = [
     nombre: "divisa_id",
     etiqueta: "Divisa",
     tipo: "select",
-    opciones: await obtenerOpcionesSelector("divisa")(),
+    opciones: opcionesDivisa,
   },
   { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
   { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },

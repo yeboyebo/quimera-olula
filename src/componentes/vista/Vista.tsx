@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { Contexto } from "../../contextos/comun/contexto.ts";
+import { Contexto, ContextoSet } from "../../contextos/comun/contexto.ts";
 import { Entidad } from "../../contextos/comun/diseño.ts";
 import { Plantilla } from "../plantilla/Plantilla.tsx";
 import { Slot } from "../slot/Slot.tsx";
@@ -11,16 +11,14 @@ export const Vista = <T extends Entidad>({
 
   const [entidades, setEntidades] = useState<T[]>([]);
   const [seleccionada, setSeleccionada] = useState<T | null>(null);
-  
+
   return (
     <Contexto.Provider
       value={{
         entidades,
-        setEntidades: setEntidades as (entidades: Entidad[]) => void,
+        setEntidades: setEntidades as ContextoSet<Entidad[]>,
         seleccionada,
-        setSeleccionada: setSeleccionada as (
-          seleccionada: Entidad | null
-        ) => void,
+        setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
       }}
     >
       <Slot nombre="contenido" {...slots}>
@@ -38,18 +36,17 @@ export const SubVista = <T extends Entidad>({
 
   const [entidades, setEntidades] = useState<T[]>([]);
   const [seleccionada, setSeleccionada] = useState<T | null>(null);
-  
+
   return (
     <Contexto.Provider
       value={{
         entidades,
-        setEntidades: setEntidades as (entidades: Entidad[]) => void,
+        setEntidades: setEntidades as ContextoSet<Entidad[]>,
         seleccionada,
-        setSeleccionada: setSeleccionada as (
-          seleccionada: Entidad | null
-        ) => void,
+        setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
       }}
-    >{children}
+    >
+      {children}
     </Contexto.Provider>
   );
 };

@@ -1,3 +1,28 @@
-.MaestroFiltros{
+.MaestroFiltros {
     float: right;
+
+    form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+}
+
+etiquetas-filtro {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: var(--espaciado-s);
+
+    &>div {
+        min-width: 125px;
+        display: flex;
+        justify-content: space-between;
+        color: var(--color-fondo);
+        font-weight: var(--grosor-letra-4);
+        border-radius: var(--redondeo-borde-s);
+        padding: var(--espaciado-xxs) var(--espaciado-xs);
+        background-color: var(--color-primario);
+    }
 }

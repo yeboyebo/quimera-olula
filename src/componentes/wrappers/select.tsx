@@ -12,6 +12,7 @@ type SelectProps = {
   advertido?: boolean;
   valido?: boolean;
   opcional?: boolean;
+  condensado?: boolean;
 };
 
 export const Select = ({
@@ -26,6 +27,7 @@ export const Select = ({
   advertido,
   valido,
   opcional,
+  condensado,
 }: SelectProps) => {
   const options = opciones.map((opcion) => (
     <option key={opcion.valor} value={opcion.valor}>
@@ -42,6 +44,7 @@ export const Select = ({
     advertido ? estilos.advertido : "",
     valido ? estilos.valido : "",
     opcional ? estilos.opcional : "",
+    condensado ? estilos.condensado : "",
   ]
     .filter(Boolean)
     .join(" ");
