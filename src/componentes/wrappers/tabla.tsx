@@ -1,48 +1,72 @@
-import { Entidad } from "../../contextos/comun/diseño.ts";
-import { expandirEntidad, formatearClave } from "../detalle/helpers.tsx";
+import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
+import { expandirEntidad } from "../detalle/helpers.tsx";
 import "./tabla.css";
 
-export type TablaProps = {
-  datos: Entidad[];
-  seleccionadaId?: string;
-  onSeleccion?: (entidad: Entidad) => void;
-};
-
-const datosCabecera = (entidad: Entidad) =>
-  expandirEntidad(entidad).map(([clave]) => formatearClave(clave));
-
-const cabecera = (entidad: Entidad) =>
-  datosCabecera(entidad).map((clave) => (
-    <th key={clave} data-modo="columna">
+const cabecera = (
+  cabeceras: Record<string, string>,
+  orden: Orden,
+  onOrdenar?: (clave: string) => void
+) => {
+  return Object.keys(cabeceras).map((clave) => (
+    <th
+      key={clave}
+      data-modo="columna"
+      data-orden={orden[cabeceras[clave]] ?? ""}
+      onClick={() => onOrdenar && onOrdenar(cabeceras[clave])}
+    >
       {clave}
     </th>
   ));
+};
 
-const restoFila = (entidad: Entidad) =>
-  expandirEntidad(entidad)
-    .filter(([clave]) => clave !== "id")
-    .map(([clave, valor]) => (
+const fila = (entidad: Entidad) => {
+  const [[clave, valor], ...resto] = expandirEntidad(entidad);
+
+  return [
+    <th key={[entidad.id, clave].join("-")} data-modo="fila">
+      {valor}
+    </th>,
+    ...resto.map(([clave, valor]) => (
       <td key={[entidad.id, clave].join("-")}>
         {valor === false ? "No" : valor === true ? "Sí" : valor?.toString()}
       </td>
-    ));
+    )),
+  ];
+};
 
-export const Tabla = ({ datos, seleccionadaId, onSeleccion }: TablaProps) => {
+export type TablaProps = {
+  cabeceras: Record<string, string>;
+  datos: Entidad[];
+  cargando: boolean;
+  seleccionadaId?: string;
+  onSeleccion?: (entidad: Entidad) => void;
+  orden: Orden;
+  onOrdenar?: (clave: string) => void;
+};
+
+export const Tabla = ({
+  cabeceras,
+  datos,
+  cargando,
+  seleccionadaId,
+  onSeleccion,
+  orden,
+  onOrdenar,
+}: TablaProps) => {
   return (
     <quimera-tabla>
       <table>
         <thead>
-          <tr>{cabecera(datos[0])}</tr>
+          <tr>{cabecera(cabeceras, orden, onOrdenar)}</tr>
         </thead>
-        <tbody>
+        <tbody data-cargando={cargando}>
           {datos.map((entidad) => (
             <tr
               key={entidad.id}
               onClick={() => onSeleccion && onSeleccion(entidad)}
               data-seleccionada={entidad.id === seleccionadaId}
             >
-              <th data-modo="fila">{entidad.id}</th>
-              {restoFila(entidad)}
+              {fila(entidad)}
             </tr>
           ))}
         </tbody>
