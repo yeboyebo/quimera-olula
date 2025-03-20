@@ -56,3 +56,11 @@ export const camposCliente: CampoFormularioGenerico[] = [
   { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
   { nombre: "espacio", etiqueta: "", tipo: "space" },
 ];
+
+export const camposClienteNuevo: CampoFormularioGenerico[] = [
+  { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%", requerido: true },
+  { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text", requerido: true },
+  { nombre: "empresa_id", etiqueta: "Empresa", tipo: "text", requerido: true },
+  { nombre: "tipo_id_fiscal", etiqueta: "Tipo id fiscal", tipo: "text", requerido: true },
+  { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
+];

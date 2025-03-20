@@ -13,7 +13,7 @@ export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> =
     const obtenerUno = async (id: string): Promise<T> =>
         RestAPI.get<{ datos: T }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
 
-    const crearUno = async (data: T): Promise<void> =>
+    const crearUno = async (data: Partial<T>): Promise<void> =>
         RestAPI.post(baseUrl, data).then((respuesta) => respuesta);
 
     const actualizarUno = async (id: string, data: Partial<T>): Promise<void> => RestAPI.patch(`${baseUrl}/${id}`, data);
@@ -50,7 +50,7 @@ export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, re
     const obtenerUno = async (relatedId: string): Promise<T> =>
         RestAPI.get<{ [key: string]: T }>(`${baseUrl}/${relatedId}`).then((respuesta) => respuesta.datos);
 
-    const crearUno = async (data: T): Promise<void> => {
+    const crearUno = async (data: Partial<T>): Promise<void> => {
         const payload = {
             lineas: [data]
         }
