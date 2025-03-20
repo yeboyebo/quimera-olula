@@ -1,22 +1,32 @@
 header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
     flex-grow: 0;
-    background-color: #141414;
+    background-color: var(--color-texto-primario);
     font-size: 1.5rem;
     padding: 1.5rem;
+    color: var(--color-fondo);
 
     & a:visited {
-        color: #fff;
+        color: var(--color-fondo);
     }
 }
 
 section[role=main] {
+    display: flex;
     flex-grow: 1;
-    padding: 2rem;
+    gap: 1rem;
+
+    &>*:not(menu-lateral) {
+        padding: 1rem;
+        flex-grow: 1;
+    }
 }
 
 footer {
-    color: #fff;
-    background-color: #141414;
+    color: var(--color-fondo);
+    background-color: var(--color-texto-primario);
     width: 100%;
     text-align: center;
     padding: 2rem;

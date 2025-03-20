@@ -1,11 +1,13 @@
 import { Link } from "react-router";
-import { MenuPrincipal } from "../menuPrincipal/MenuPrincipal";
 
 export const Cabecera = () => {
   return (
-    <header style={{ display: "flex" }}>
-      <MenuPrincipal key="menuPrincipalCabecera" />
-      <Link to="/">Quimera Olula</Link>
-    </header>
+    <>
+      <header>
+        <input type="checkbox" id="menu-abierto" name="menu-abierto" />
+        <label htmlFor="menu-abierto" id="etiqueta-menu-abierto" />
+        <Link to="/">Quimera Olula</Link>
+      </header>
+    </>
   );
 };
