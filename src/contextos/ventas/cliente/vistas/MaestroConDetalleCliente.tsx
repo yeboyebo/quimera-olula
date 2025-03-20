@@ -4,7 +4,7 @@ import { DetalleCliente } from "./DetalleCliente.tsx";
 
 export const MaestroConDetalleCliente = () => {
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
+    <>
       <div
         className="Maestro"
         style={{
@@ -17,6 +17,6 @@ export const MaestroConDetalleCliente = () => {
       <div className="Detalle" style={{ width: "50%", overflowX: "hidden" }}>
         <DetalleCliente />
       </div>
-    </div>
+    </>
   );
 };

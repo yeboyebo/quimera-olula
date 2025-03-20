@@ -1,4 +1,4 @@
-.menuItem {
+/* .menuItem {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -45,4 +45,4 @@
 .iconoMenu {
     position: absolute;
     left: var(--espaciado-m);
-}
+} */
