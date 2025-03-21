@@ -1,6 +1,15 @@
+import { useContext } from "react";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
+import { Contexto } from "../contexto.ts";
 import { accionesCliente } from "../infraestructura.ts";
 
 export const MaestroCliente = () => {
-  return <Maestro acciones={accionesCliente} camposEntidad={[]} />;
+  const contexto = useContext(Contexto);
+  if (!contexto) {
+    return null;
+    throw new Error("Contexto is null");
+  }
+  console.log("Contexto", contexto);
+
+  return <Maestro acciones={accionesCliente} camposEntidad={[]} contextParam={contexto} />;
 };

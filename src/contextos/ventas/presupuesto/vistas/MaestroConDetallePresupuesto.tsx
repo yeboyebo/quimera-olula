@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Contexto } from "../../../comun/contexto.ts";
 import { Acciones, Entidad } from "../../../comun/diseño.ts";
@@ -14,7 +14,23 @@ export const MaestroConDetallePresupuesto = () => {
   if (!context) {
     throw new Error("Contexto is null");
   }
-  const { seleccionada, setEntidades } = context;
+  const { seleccionada, setSeleccionada, setEntidades } = context;
+
+  console.log("Seleccionada presup id", seleccionada?.id);
+
+  useEffect(
+    () => {
+      setSeleccionada(null);
+      setEntidades([]);
+      return () => {
+        setEntidades([]);
+        setSeleccionada(null);
+        console.log("Presupuesto cleanup");
+      }
+    }
+    , []
+    
+  );
 
   const titulo = (presupuesto: Entidad) =>
     (presupuesto as Presupuesto).codigo as string;

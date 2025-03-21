@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { Contexto } from "../../contextos/comun/contexto.ts";
+import { useEffect, useState } from "react";
 import {
   Acciones,
   Criteria,
@@ -40,17 +39,24 @@ export const Maestro = <T extends Entidad>({
   Acciones = null,
   camposEntidad,
   criteria = { filtro: {}, orden: { id: "DESC" } },
+  entidades,
+  setEntidades,
+  seleccionada,
+  setSeleccionada,
 }: MaestroProps<T>) => {
   const { obtenerTodos } = acciones;
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtro);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
 
-  const context = useContext(Contexto);
-  if (!context) {
-    throw new Error("Contexto nulo");
-  }
-  const { entidades, setEntidades, seleccionada, setSeleccionada } = context;
+  // const context = useContext(Contexto);
+  // if (!context) {
+  //   throw new Error("Contexto nulo");
+  // }
+  // const { entidades, setEntidades, seleccionada, setSeleccionada } = context;
+  // print("contextParam", contextParam);
+  
+  // const { entidades, setEntidades, seleccionada, setSeleccionada } = contextParam;
 
   useEffect(() => {
     let hecho = false;

@@ -1,4 +1,4 @@
-import { PropsWithChildren, useContext, useState } from "react";
+import { PropsWithChildren, useContext } from "react";
 import { Contexto } from "../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
 import estilos from "./detalle.module.css";
@@ -10,8 +10,11 @@ import {
 interface DetalleProps<T extends Entidad> {
   id: string;
   acciones: Acciones<T>;
+  onCampoCambiado?: (campo: string) => void;
   obtenerTitulo?: (entidad: T) => string;
   camposEntidad: CampoFormularioGenerico[];
+  entidad: T | null;
+  setEntidad: (entidad: T) => void;
 }
 
 export function Detalle<T extends Entidad>({
@@ -20,6 +23,9 @@ export function Detalle<T extends Entidad>({
   acciones,
   obtenerTitulo,
   children,
+  onCampoCambiado,
+  entidad,
+  setEntidad,
 }: PropsWithChildren<DetalleProps<T>>) {
   const { detalle } = estilos;
 
@@ -29,7 +35,7 @@ export function Detalle<T extends Entidad>({
   }
   const { setEntidades } = context;
 
-  const [entidad, setEntidad] = useState<T | null>(null);
+  // const [entidad, setEntidad] = useState<T | null>(null);
 
   const esNuevo = id === "";
   const existe = id !== "0";
@@ -81,6 +87,10 @@ export function Detalle<T extends Entidad>({
   const handleSubmit = async (data: T) =>
     esNuevo ? crear(data) : actualizar(data);
 
+  // const onCampoCambiado= (campo: string) => {
+  //   console.log(`Campo cambiado: ${campo}`);
+  // };
+
   return (
     <div className={detalle}>
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
@@ -89,6 +99,7 @@ export function Detalle<T extends Entidad>({
         entidad={entidad}
         setEntidad={setEntidad}
         onSubmit={handleSubmit}
+        onCampoCambiado={onCampoCambiado}
       />
       {children}
     </div>

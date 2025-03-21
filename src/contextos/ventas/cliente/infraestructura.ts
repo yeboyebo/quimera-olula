@@ -1,4 +1,6 @@
 
+// ¿Contexto propio para cada vista? (entidades, seleccionada, etc.)
+
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
@@ -36,8 +38,8 @@ export const camposCliente: CampoFormularioGenerico[] = [
     tipo: "text",
     oculto: true,
   },
-  { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%" },
-  { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text" },
+  { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%", xtipo: "no controlado", },
+  { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text", xtipo: "controlado", },
   { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
   {
     nombre: "divisa_id",
@@ -45,7 +47,7 @@ export const camposCliente: CampoFormularioGenerico[] = [
     tipo: "select",
     opciones: opcionesDivisa,
   },
-  { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text" },
+  { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text", xtipo: "controlado" },
   { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
   { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
   {

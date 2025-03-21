@@ -12,6 +12,7 @@ export const Vista = <T extends Entidad>({
   const [entidades, setEntidades] = useState<T[]>([]);
   const [seleccionada, setSeleccionada] = useState<T | null>(null);
 
+
   return (
     <Contexto.Provider
       value={{
@@ -28,7 +29,6 @@ export const Vista = <T extends Entidad>({
   );
 };
 
-// ¿Usar param sufijo? ['entidades' + sufijo]: entidades
 export const SubVista = <T extends Entidad>({
   children,
 }: PropsWithChildren<object>) => {
