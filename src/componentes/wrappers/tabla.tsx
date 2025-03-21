@@ -34,17 +34,17 @@ const fila = (entidad: Entidad) => {
   ];
 };
 
-export type TablaProps = {
+export type TablaProps<T extends Entidad> = {
   cabeceras: Record<string, string>;
-  datos: Entidad[];
+  datos: T[];
   cargando: boolean;
   seleccionadaId?: string;
-  onSeleccion?: (entidad: Entidad) => void;
+  onSeleccion?: (entidad: T) => void;
   orden: Orden;
   onOrdenar?: (clave: string) => void;
 };
 
-export const Tabla = ({
+export const Tabla = <T extends Entidad>({
   cabeceras,
   datos,
   cargando,
@@ -52,7 +52,7 @@ export const Tabla = ({
   onSeleccion,
   orden,
   onOrdenar,
-}: TablaProps) => {
+}: TablaProps<T>) => {
   return (
     <quimera-tabla>
       <table>
@@ -60,7 +60,7 @@ export const Tabla = ({
           <tr>{cabecera(cabeceras, orden, onOrdenar)}</tr>
         </thead>
         <tbody data-cargando={cargando}>
-          {datos.map((entidad) => (
+          {datos.map((entidad: T) => (
             <tr
               key={entidad.id}
               onClick={() => onSeleccion && onSeleccion(entidad)}

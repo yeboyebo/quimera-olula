@@ -1,10 +1,51 @@
-
-// ¿Contexto propio para cada vista? (entidades, seleccionada, etc.)
-
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
+import { Cliente, Direccion } from "./diseño.ts";
 
+const baseUrl = `/ventas/cliente`;
+
+export type DireccionAPI = {
+  // id: string;
+  nombre_via: string;
+  tipo_via: string;
+  numero: string;
+  otros: string;
+  cod_postal: string;
+  ciudad: string;
+  provincia_id: number;
+  provincia: string;
+  pais_id: string;
+  apartado: string;
+  telefono: string;
+};
+
+export type DireccionClienteAPI = {
+  id: string;
+  direccion: DireccionAPI;
+  dir_envio: boolean;
+  dir_facturacion: boolean;
+};
+
+
+export const getPorId = async (id: string): Promise<Cliente> =>
+  RestAPI.get<{ datos: Cliente }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
+
+export const getDirecciones = async (id: string): Promise<Direccion[]> =>
+  RestAPI.get<{ datos: DireccionClienteAPI[] }>(`${baseUrl}/${id}/direcciones`).then((respuesta) => {
+    const direcciones = respuesta.datos.map((d) => (
+      {
+        id: d.id,
+        dir_facturacion: d.dir_facturacion,
+        dir_envio: d.dir_envio,
+        ...d.direccion,
+      }));
+    return direcciones
+  });
+
+export const setDirFacturacion = async (clienteId: string, direccionId: string): Promise<void> =>
+  RestAPI.patch(`${baseUrl}/${clienteId}/direcciones/${direccionId}/facturacion`, {});
+// /ventas/cliente/<cliente_id>/direcciones/<direccion_id>/facturacion
 export const accionesCliente = crearAcciones("cliente");
 
 export const obtenerOpcionesSelector =

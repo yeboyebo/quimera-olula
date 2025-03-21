@@ -119,18 +119,26 @@ const InputNoControlado = ({
       // defaultValue={entidad[campo.nombre]}
       onBlur={(e) => valido && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
       onInput={(e) => onInput(e.target.value)}
+      onKeyUp={(e) => e.code === 'Escape' && setValor(valorEntidad || "")}
       // onKeyUp={(e) => e.code === 'Enter' && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
     />
     </label>
   );
 }
 
-export const CampoGenerico = ({
-  campo,
-  onCampoCambiado,
-  entidad,
-  validador,
-}) => {
+export const CampoGenerico = (
+  {
+    campo,
+    onCampoCambiado,
+    entidad,
+    validador,
+  } : {
+    campo: CampoFormularioGenerico,
+    onCampoCambiado?: (campo: string, valor: any) => void,
+    entidad: any,
+    validador?: (valor: string) => boolean,
+  }
+) => {
   
   return (
     <div > 
@@ -148,23 +156,6 @@ export const CampoGenerico = ({
               valorEntidad={entidad[campo.nombre]}
               validador={validador}
             />
-          // <>
-          //   <label>{campo.etiqueta}:
-          //   <input
-          //     type="text"
-          //     value={entidad[campo.nombre]}
-          //     onInput={(e) => onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
-          //   />
-          //   </label>
-          // </>
-          // : campo?.xtipo === "no controlado" || campo?.xtipo === "controlado"
-          //   ? <Input
-          //     campo={campo}
-          //     controlado={campo.xtipo === "controlado"}
-          //     onCampoCambiado={onCampoCambiado}
-          //     valorEntidad={entidad[campo.nombre]}
-          //     validador={validador}
-          //   />
             : <>{renderInput(campo, entidad)}</>
       }
       </div>

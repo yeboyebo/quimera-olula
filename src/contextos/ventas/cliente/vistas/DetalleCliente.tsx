@@ -1,26 +1,26 @@
 import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
+import { CampoGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
-import { SubVista } from "../../../../componentes/vista/Vista.tsx";
-// import { Contexto } from "../../../comun/contexto.ts";
-import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
-import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
+import { Entidad } from "../../../comun/diseño.ts";
 import { Contexto } from "../contexto.ts";
+import { Cliente } from "../diseño.ts";
+import { guardar } from "../dominio.ts";
 import {
   accionesCliente,
-  camposCliente,
-  camposDireccion,
+  camposCliente
 } from "../infraestructura.ts";
 import { IdFiscal } from "./IdFiscal.tsx";
-import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
+import { TabDirecciones } from "./TabDirecciones.tsx";
 
-export const DetalleCliente = <T extends Entidad>({
-  onEntidadActualizada,
-}): {
-  onEntidadActualizada: (entidad: T) => void;
-} => {
+export const DetalleCliente = (
+  {
+    onEntidadActualizada,
+  }: {
+    onEntidadActualizada: (entidad: Cliente) => void;
+  }
+) => {
   const params = useParams();
 
   const context = useContext(Contexto);
@@ -29,51 +29,14 @@ export const DetalleCliente = <T extends Entidad>({
   }
   const { seleccionada } = context;
 
+  const [guardando, setGuardando] = useState(false);
+
   const clienteId = seleccionada?.id ?? params.id ?? "0";
 
-  const titulo = (cliente: Entidad) => cliente.nombre as string;
+  const sufijoTitulo = guardando ? " (Guardando...)" : "";
+  const titulo = (cliente: Entidad) => `${cliente.nombre} ${sufijoTitulo}` as string;
 
-  const [entidad, setEntidad] = useState<T | null>(null);
-  // const [idFiscal, setIdFiscal] = useState({
-  //   id_fiscal: entidad?.id_fiscal ?? "",
-  //   tipo_id_fiscal: entidad?.tipo_id_fiscal ?? "",
-  // });
-
-  // useEffect(() => {
-  //   if (!entidad) {
-  //     return;
-  //   }
-  //   setIdFiscal({
-  //     id_fiscal: entidad.id_fiscal,
-  //     tipo_id_fiscal: entidad.tipo_id_fiscal,
-  //   });
-  // }, [entidad]);
-
-  // const idFiscalValido = (tipo: string) => (valor: string) => {
-  //   if (tipo === "NIF") {
-  //     return valor.length === 9;
-  //   }
-  //   if (tipo === "NAF") {
-  //     return valor.length === 11 && valor[0] === "E" && valor[1] === "S";
-  //   }
-  //   return false;
-  // }
-  // const tipoIdFiscalValido = (tipo: string) => {
-  //   return tipo === "NIF" || tipo === "NAF";
-  // }
-  // const idFiscalValidoGeneral = (tipo: string, valor: string) => {
-  //   return idFiscalValido(tipo)(valor) && tipoIdFiscalValido(tipo);
-  // }
-
-  // const onIdFiscalCambiado = (campo: string, valor: any) => {
-  //   const idFiscalNuevo = {
-  //     ...idFiscal,
-  //     [campo]: valor,
-  //   };
-    
-  //   console.log("campo cambiado", campo, 'valor = ', valor);
-  //   setIdFiscal(idFiscalNuevo);
-  // }
+  const [entidad, setEntidad] = useState<Cliente | null>(null);
 
   const onIdFiscalCambiadoCallback = (idFiscal: any) => {
     const nuevaEntidad = { ...entidad, ...idFiscal };
@@ -81,56 +44,59 @@ export const DetalleCliente = <T extends Entidad>({
     onEntidadActualizada && onEntidadActualizada(nuevaEntidad);
   }
 
-  // const guardarIdFiscal = async() => {
-  //   if (!entidad) {
-  //     return;
-  //   }
-  //   await simularApi();
-    
-  //   const nuevaEntidad = { ...entidad, ...idFiscal };
-  //   setEntidad(nuevaEntidad);
-  //   onEntidadActualizada && onEntidadActualizada(nuevaEntidad);
-  // }
-
-  // const simularApi = async () => {
-  //   const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-  //   console.log("Simulando API");
-  //   await delay(500);
-  //   console.log("Simulando API terminado");
-  // }
-
-  // const [entidad, setEntidad] = useState(null);
-  const onCampoCambiado = (campo: string, valor: any) => {
+  const onCampoCambiado = async (campo: string, valor: any) => {
     console.log("campo cambiado", campo, 'valor = ', valor);
-    const campoDestino = campo === "id_fiscal2" ? "agente_id" : campo;
-    const nuevaEntidad = entidad ? { ...entidad, [campoDestino]: valor } : null;
+    setGuardando(true);
+    await guardar(clienteId,{
+      [campo]: valor
+    })
+    setGuardando(false);
+    const nuevaEntidad = entidad ? { ...entidad, [campo]: valor } : null;
     setEntidad(nuevaEntidad);
-    // setEntidad((entidad) => {
-    //   if (!entidad) {
-    //     return null;
-    //   }
-    //   return { ...entidad, [campoDestino]: valor };
-    // });
-
     onEntidadActualizada && onEntidadActualizada(nuevaEntidad);
   };
-  // const campoIdFiscal = camposCliente.find((c) => c.nombre === "id_fiscal");
-  // const campoTipoIdFiscal = camposCliente.find((c) => c.nombre === "tipo_id_fiscal");
+  const campoAgenteId = camposCliente.find((c) => c.nombre === "agente_id");
+  const campoNombre = camposCliente.find((c) => c.nombre === "nombre");
+
+  const existe = clienteId !== "0";
+
+  // useEffect(() => {
+  //   if (!entidad || clienteId !== entidad.id) {
+  //     if (!existe) return;
+  //     const load = async () => {
+  //       const cliente = await buscar(clienteId);
+  //       setEntidad(cliente);
+  //     }
+  //     load();
+  //   }
+  // }, [clienteId, entidad, existe]);
+
 
   return (
-    <Detalle
-      id={clienteId ?? "0"}
-      camposEntidad={camposCliente}
-      acciones={accionesCliente}
-      obtenerTitulo={titulo}
-      onCampoCambiado={onCampoCambiado}
-      setEntidad={setEntidad}
-      entidad={entidad}
-    >
+     <Detalle
+       id={clienteId ?? "0"}
+       camposEntidad={[]}
+       acciones={accionesCliente}
+       obtenerTitulo={titulo}
+       onCampoCambiado={onCampoCambiado}
+       setEntidad={setEntidad}
+       entidad={entidad}
+     >
+       <CampoGenerico
+        key='nombre'
+        campo={campoNombre}
+        onCampoCambiado={onCampoCambiado}
+        entidad={entidad}
+      />
       <IdFiscal
         cliente={entidad}
-        // onIdFiscalCambiado={onIdFiscalCambiado}
         onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}
+      />
+      <CampoGenerico
+        key='agente_id'
+        campo={campoAgenteId}
+        onCampoCambiado={onCampoCambiado}
+        entidad={entidad}
       />
       {/* <CampoGenerico
         key={campoTipoIdFiscal.nombre}
@@ -169,17 +135,7 @@ export const DetalleCliente = <T extends Entidad>({
               key="tab-2"
               label="Direcciones"
               children={
-                <SubVista>
-                  <Maestro
-                    Acciones={MaestroDireccionesAcciones}
-                    acciones={crearAccionesRelacionadas<EntidadAccion>(
-                      "cliente",
-                      "direcciones",
-                      clienteId
-                    )}
-                    camposEntidad={camposDireccion}
-                  />
-                </SubVista>
+                <TabDirecciones clienteId={clienteId} />
               }
             />,
             <Tab

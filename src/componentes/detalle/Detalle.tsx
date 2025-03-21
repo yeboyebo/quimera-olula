@@ -1,6 +1,7 @@
-import { PropsWithChildren, useContext } from "react";
+import { PropsWithChildren, useContext, useEffect } from "react";
 import { Contexto } from "../../contextos/comun/contexto.ts";
 import { Acciones, Entidad } from "../../contextos/comun/diseño.ts";
+// import { buscar } from "../../contextos/ventas/cliente/dominio.ts";
 import estilos from "./detalle.module.css";
 import {
   CampoFormularioGenerico,
@@ -10,11 +11,12 @@ import {
 interface DetalleProps<T extends Entidad> {
   id: string;
   acciones: Acciones<T>;
-  onCampoCambiado?: (campo: string) => void;
+  onCampoCambiado?: (campo: string, valor: string) => Promise<void>;
   obtenerTitulo?: (entidad: T) => string;
   camposEntidad: CampoFormularioGenerico[];
   entidad: T | null;
   setEntidad: (entidad: T) => void;
+  buscar?: (id: string) => Promise<T>;
 }
 
 export function Detalle<T extends Entidad>({
@@ -26,6 +28,7 @@ export function Detalle<T extends Entidad>({
   onCampoCambiado,
   entidad,
   setEntidad,
+  buscar,
 }: PropsWithChildren<DetalleProps<T>>) {
   const { detalle } = estilos;
 
@@ -42,25 +45,40 @@ export function Detalle<T extends Entidad>({
 
   const { actualizarUno, obtenerUno, crearUno } = acciones;
 
-  if (!entidad || id !== entidad.id) {
-    if (!existe) return;
-
-    if (esNuevo) {
-      const nuevaEntidad = camposEntidad.reduce((acc, campo) => {
-        return { ...acc, [campo.nombre]: campo.valorInicial || "" };
-      }, {}) as T;
-      setEntidad(nuevaEntidad);
-      return;
+  useEffect(() => {
+    if (!entidad || id !== entidad.id) {
+      if (!existe) return;
+      const load = async () => {
+        const cliente = buscar
+          ? await buscar(id)
+          : await obtenerUno(id);
+        if(cliente) {
+          setEntidad(cliente);
+        }
+      }
+      load();
     }
+  }, [id, entidad, existe]);
 
-    obtenerUno(id)
-      .then((entidad) => {
-        setEntidad(entidad as T);
-      })
-      .catch(() => {
-        setEntidad({} as T);
-      });
-  }
+  // if (!entidad || id !== entidad.id) {
+  //   if (!existe) return;
+
+  //   if (esNuevo) {
+  //     const nuevaEntidad = camposEntidad.reduce((acc, campo) => {
+  //       return { ...acc, [campo.nombre]: campo.valorInicial || "" };
+  //     }, {}) as T;
+  //     setEntidad(nuevaEntidad);
+  //     return;
+  //   }
+
+  //   obtenerUno(id)
+  //     .then((entidad) => {
+  //       setEntidad(entidad as T);
+  //     })
+  //     .catch(() => {
+  //       setEntidad({} as T);
+  //     });
+  // }
 
   if (!entidad) {
     return <>No se ha encontrado la entidad con Id: {id}</>;
@@ -94,13 +112,16 @@ export function Detalle<T extends Entidad>({
   return (
     <div className={detalle}>
       {obtenerTitulo && <h2>{obtenerTitulo(entidad)}</h2>}
-      <FormularioGenerico
-        campos={camposEntidad}
-        entidad={entidad}
-        setEntidad={setEntidad}
-        onSubmit={handleSubmit}
-        onCampoCambiado={onCampoCambiado}
-      />
+      {
+        camposEntidad && camposEntidad.length > 0 &&
+        <FormularioGenerico
+          campos={camposEntidad}
+          entidad={entidad}
+          setEntidad={setEntidad}
+          onSubmit={handleSubmit}
+          onCampoCambiado={onCampoCambiado}
+        />
+      }
       {children}
     </div>
   );

@@ -36,7 +36,6 @@ export function DetallePresupuesto({
   const { obtenerUno } = acciones;
 
   useEffect(() => {
-    console.log("DetallePresupuesto id", id);
     if (id && id !== "") {
       obtenerUno(id)
         .then((entidad) => {

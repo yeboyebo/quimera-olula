@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { Contexto, ContextoSet } from "../contexto.ts";
-
+import { Cliente } from "../diseño.ts";
 import { accionesCliente, camposCliente } from "../infraestructura.ts";
 import { DetalleCliente } from "./DetalleCliente.tsx";
 
@@ -17,8 +17,8 @@ export const MaestroConDetalleCliente = <T extends Entidad>() => {
 
   // console.log("Seleccionada cliente id", seleccionada?.id);
  
-  const [entidades, setEntidades] = useState<T[]>([]);
-  const [seleccionada, setSeleccionada] = useState<T | null>(null);
+  const [entidades, setEntidades] = useState<Cliente[]>([]);
+  const [seleccionada, setSeleccionada] = useState<Cliente | null>(null);
   
   console.log("MaestroConDetalleCliente", entidades, seleccionada);
 
@@ -34,7 +34,7 @@ export const MaestroConDetalleCliente = <T extends Entidad>() => {
   //   }
   //   , []
   // );
-  const actualizarEntidad = (entidad: T) => {
+  const actualizarEntidad = (entidad: Cliente) => {
     setEntidades((entidades) => {
       const index = entidades.findIndex((e) => e.id === entidad.id);
       if (index === -1) {
@@ -48,9 +48,9 @@ export const MaestroConDetalleCliente = <T extends Entidad>() => {
     <Contexto.Provider
           value={{
             entidades,
-            setEntidades: setEntidades as ContextoSet<Entidad[]>,
+            setEntidades: setEntidades as ContextoSet<Cliente[]>,
             seleccionada,
-            setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
+            setSeleccionada: setSeleccionada as ContextoSet<Cliente | null>,
           }}
         >
       <div

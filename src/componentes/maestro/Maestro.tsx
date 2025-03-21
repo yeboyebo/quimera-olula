@@ -32,6 +32,10 @@ export type MaestroProps<T extends Entidad> = {
   Acciones?: any;
   camposEntidad: CampoFormularioGenerico[];
   criteria?: Criteria;
+  entidades: T[];
+  setEntidades: (entidades: T[]) => void;
+  seleccionada: T | null;
+  setSeleccionada: (seleccionada: T | null) => void;
 };
 
 export const Maestro = <T extends Entidad>({
@@ -86,7 +90,7 @@ export const Maestro = <T extends Entidad>({
         ])
       ) as Record<string, string>)
     : {};
-
+  
   const renderEntidades = () => {
     if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
 
