@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { CampoGenerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { Contexto } from "../contexto.ts";
 import { Cliente } from "../diseño.ts";
-import { guardar } from "../dominio.ts";
+import { clienteVacio, guardar } from "../dominio.ts";
 import {
   accionesCliente,
   camposCliente
@@ -36,12 +36,12 @@ export const DetalleCliente = (
   const sufijoTitulo = guardando ? " (Guardando...)" : "";
   const titulo = (cliente: Entidad) => `${cliente.nombre} ${sufijoTitulo}` as string;
 
-  const [entidad, setEntidad] = useState<Cliente | null>(null);
+  const [cliente, setCliente] = useState<Cliente>(clienteVacio());
 
   const onIdFiscalCambiadoCallback = (idFiscal: any) => {
-    const nuevaEntidad = { ...entidad, ...idFiscal };
-    setEntidad(nuevaEntidad);
-    onEntidadActualizada && onEntidadActualizada(nuevaEntidad);
+    const nuevoCliente = { ...cliente, ...idFiscal };
+    setCliente(nuevoCliente);
+    onEntidadActualizada && onEntidadActualizada(nuevoCliente);
   }
 
   const onCampoCambiado = async (campo: string, valor: any) => {
@@ -51,77 +51,40 @@ export const DetalleCliente = (
       [campo]: valor
     })
     setGuardando(false);
-    const nuevaEntidad = entidad ? { ...entidad, [campo]: valor } : null;
-    setEntidad(nuevaEntidad);
-    onEntidadActualizada && onEntidadActualizada(nuevaEntidad);
+    const nuevoCliente: Cliente = { ...cliente, [campo]: valor };
+    setCliente(nuevoCliente);
+    onEntidadActualizada && onEntidadActualizada(nuevoCliente);
   };
-  const campoAgenteId = camposCliente.find((c) => c.nombre === "agente_id");
-  const campoNombre = camposCliente.find((c) => c.nombre === "nombre");
-
-  const existe = clienteId !== "0";
-
-  // useEffect(() => {
-  //   if (!entidad || clienteId !== entidad.id) {
-  //     if (!existe) return;
-  //     const load = async () => {
-  //       const cliente = await buscar(clienteId);
-  //       setEntidad(cliente);
-  //     }
-  //     load();
-  //   }
-  // }, [clienteId, entidad, existe]);
-
 
   return (
+
      <Detalle
        id={clienteId ?? "0"}
        camposEntidad={[]}
        acciones={accionesCliente}
        obtenerTitulo={titulo}
        onCampoCambiado={onCampoCambiado}
-       setEntidad={setEntidad}
-       entidad={entidad}
+       setEntidad={(c) => setCliente(c as Cliente)}
+       entidad={cliente}
      >
-       <CampoGenerico
-        key='nombre'
-        campo={campoNombre}
+     <Input
+        controlado={false}            
+        key='tipo_via'
+        campo={camposCliente.nombre}
         onCampoCambiado={onCampoCambiado}
-        entidad={entidad}
-      />
+        valorEntidad={cliente?.nombre ?? ''}
+    />
       <IdFiscal
-        cliente={entidad}
+        cliente={cliente}
         onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}
       />
-      <CampoGenerico
+      <Input
+        controlado={false}
         key='agente_id'
-        campo={campoAgenteId}
+        campo={camposCliente.agente_id}
         onCampoCambiado={onCampoCambiado}
-        entidad={entidad}
+        valorEntidad={cliente?.agente_id ?? ''}
       />
-      {/* <CampoGenerico
-        key={campoTipoIdFiscal.nombre}
-        campo={campoTipoIdFiscal}
-        onCampoCambiado={onIdFiscalCambiado}
-        entidad={{
-          tipo_id_fiscal: idFiscal.tipo_id_fiscal
-        }}
-        validador={tipoIdFiscalValido}
-      />
-      <CampoGenerico
-        key={campoIdFiscal.nombre}
-        campo={campoIdFiscal}
-        onCampoCambiado={onIdFiscalCambiado}
-        entidad={{
-          id_fiscal: idFiscal.id_fiscal
-        }}
-        validador={idFiscalValido(idFiscal.tipo_id_fiscal)}
-      />
-      <button
-        disabled={!idFiscalValidoGeneral(idFiscal.tipo_id_fiscal, idFiscal.id_fiscal)}
-        onClick={guardarIdFiscal}
-      >
-        Guardar Id Fiscal
-      </button> */}
 
       {!!clienteId && (
         <Tabs

@@ -1,7 +1,7 @@
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
-import { Cliente, Direccion } from "./diseño.ts";
+import { Cliente, Direccion, NuevaDireccion } from "./diseño.ts";
 
 const baseUrl = `/ventas/cliente`;
 
@@ -31,21 +31,41 @@ export type DireccionClienteAPI = {
 export const getPorId = async (id: string): Promise<Cliente> =>
   RestAPI.get<{ datos: Cliente }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
 
+export const getDireccion = async (clienteId: string, direccionId: string): Promise<Direccion> =>
+  RestAPI.get<{ datos: DireccionClienteAPI }>(`${baseUrl}/${clienteId}/direcciones/${direccionId}`).then((respuesta) =>
+    direccionClienteApiADireccion(respuesta.datos)
+  );
+
 export const getDirecciones = async (id: string): Promise<Direccion[]> =>
   RestAPI.get<{ datos: DireccionClienteAPI[] }>(`${baseUrl}/${id}/direcciones`).then((respuesta) => {
-    const direcciones = respuesta.datos.map((d) => (
-      {
-        id: d.id,
-        dir_facturacion: d.dir_facturacion,
-        dir_envio: d.dir_envio,
-        ...d.direccion,
-      }));
+    const direcciones = respuesta.datos.map((d) => direccionClienteApiADireccion(d));
     return direcciones
   });
 
+const direccionClienteApiADireccion = (d: DireccionClienteAPI): Direccion => (
+  {
+    id: d.id,
+    dir_facturacion: d.dir_facturacion,
+    dir_envio: d.dir_envio,
+    ...d.direccion,
+  }
+)
+
+
 export const setDirFacturacion = async (clienteId: string, direccionId: string): Promise<void> =>
   RestAPI.patch(`${baseUrl}/${clienteId}/direcciones/${direccionId}/facturacion`, {});
-// /ventas/cliente/<cliente_id>/direcciones/<direccion_id>/facturacion
+
+
+export const postDireccion = async (clienteId: string, direccion: NuevaDireccion): Promise<string> => {
+  const payload = {
+    direccion: {
+      ...direccion,
+    }
+  }
+  return RestAPI.post(`${baseUrl}/${clienteId}/direcciones`, payload).then((respuesta) => respuesta.id);
+}
+
+
 export const accionesCliente = crearAcciones("cliente");
 
 export const obtenerOpcionesSelector =
@@ -56,9 +76,9 @@ export const obtenerOpcionesSelector =
 
 const opcionesDivisa = await obtenerOpcionesSelector("divisa")();
 
-export const camposDireccion: CampoFormularioGenerico[] = [
+export const camposDireccion2: CampoFormularioGenerico[] = [
   { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
-  { nombre: "nombre_via", etiqueta: "Nombre de la Vía", tipo: "text" },
+  { nombre: "nombre_via", etiqueta: "Nombre de la Vía", tipo: "text", xtipo: "no controlado" },
   { nombre: "tipo_via", etiqueta: "Tipo de Vía", tipo: "text" },
   { nombre: "numero", etiqueta: "Número", tipo: "text" },
   { nombre: "otros", etiqueta: "Otros", tipo: "text" },
@@ -71,8 +91,23 @@ export const camposDireccion: CampoFormularioGenerico[] = [
   { nombre: "telefono", etiqueta: "Teléfono", tipo: "text" },
 ];
 
+export const camposDireccion: Record<string, CampoFormularioGenerico> = {
+  id: { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
+  nombre_via: { nombre: "nombre_via", etiqueta: "Nombre de la Vía", tipo: "text", xtipo: "no controlado" },
+  tipo_via: { nombre: "tipo_via", etiqueta: "Tipo de Vía", tipo: "text" },
+  numero: { nombre: "numero", etiqueta: "Número", tipo: "text" },
+  otros: { nombre: "otros", etiqueta: "Otros", tipo: "text" },
+  cod_postal: { nombre: "cod_postal", etiqueta: "Código Postal", tipo: "text" },
+  ciudad: { nombre: "ciudad", etiqueta: "Ciudad", tipo: "text" },
+  provincia_id: { nombre: "provincia_id", etiqueta: "ID de Provincia", tipo: "number" },
+  provincia: { nombre: "provincia", etiqueta: "Provincia", tipo: "text" },
+  pais_id: { nombre: "pais_id", etiqueta: "ID de País", tipo: "text" },
+  apartado: { nombre: "apartado", etiqueta: "Apartado", tipo: "text" },
+  telefono: { nombre: "telefono", etiqueta: "Teléfono", tipo: "text" },
+}
 
-export const camposCliente: CampoFormularioGenerico[] = [
+
+export const camposCliente2: CampoFormularioGenerico[] = [
   {
     nombre: "id",
     etiqueta: "Código",
@@ -99,6 +134,25 @@ export const camposCliente: CampoFormularioGenerico[] = [
   { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
   { nombre: "espacio", etiqueta: "", tipo: "space" },
 ];
+
+export const camposCliente: Record<string, CampoFormularioGenerico> = {
+  id: { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
+  nombre: { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%", xtipo: "no controlado", },
+  id_fiscal: { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text", xtipo: "controlado", },
+  agente_id: { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
+  divisa_id: {
+    nombre: "divisa_id",
+    etiqueta: "Divisa",
+    tipo: "select",
+    opciones: opcionesDivisa,
+  },
+  tipo_id_fiscal: { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text", xtipo: "controlado" },
+  serie_id: { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
+  forma_pago_id: { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
+  grupo_iva_negocio_id: { nombre: "grupo_iva_negocio_id", etiqueta: "Grupo IVA Negocio", tipo: "text" },
+  eventos: { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
+  espacio: { nombre: "espacio", etiqueta: "", tipo: "space" },
+}
 
 export const camposClienteNuevo: CampoFormularioGenerico[] = [
   { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%", requerido: true },

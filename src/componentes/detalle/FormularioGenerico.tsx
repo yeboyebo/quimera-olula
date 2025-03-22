@@ -28,49 +28,36 @@ type FormularioGenericoProps<T> = {
   validacion?: (entidad: T) => string | null;
 };
 
-const Input = ({controlado, ...props}) => {
+export const Input = (
+  {
+    controlado,
+    ...props
+  }: {
+    controlado: boolean,
+    campo: CampoFormularioGenerico,
+    onCampoCambiado?: (campo: string, valor: any) => void,
+    valorEntidad: any,
+    validador?: (valor: string) => boolean,
+  }) => {
 
   return controlado
     ? <InputControlado {...props} />
     : <InputNoControlado {...props} />
   
-  // const [valor, setValor] = useState<string | undefined>(undefined);
-  // const [valido, setValido] = useState<boolean>(true);
-
-  // useEffect(() => {
-  //   !controlado &&
-  //   setValor(valorEntidad || "");
-  // }
-  // , [valorEntidad]);
-
-  // const onInput = (valor: string) => {
-  //   if (controlado) {
-  //     onCampoCambiado && onCampoCambiado(campo.nombre, valor);
-  //   } else {
-  //     setValor(valor); 
-  //   }
-  //   setValido(validador ? validador(valor) : true);
-  // }
-
-  // return (
-  //   <label>{campo.etiqueta + " " + (valido ? "OK" : "KO")} :
-  //   <input
-  //     type="text"
-  //     value={valor || ""}
-  //     onBlur={(e) => !controlado && valido && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
-  //     onInput={(e) => onInput(e.target.value)}
-  //     // onKeyUp={(e) => e.code === 'Enter' && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
-  //   />
-  //   </label>
-  // );
 }
 
-const InputControlado = ({
-  campo,
-  onCampoCambiado,
-  valorEntidad,
-  validador,
-}) => {
+const InputControlado = (
+  {
+    campo,
+    onCampoCambiado,
+    valorEntidad,
+    validador,
+  } : {
+    campo: CampoFormularioGenerico,
+    onCampoCambiado?: (campo: string, valor: any) => void,
+    valorEntidad: any,
+    validador?: (valor: string) => boolean,
+  }) => {
   
   const [valido, setValido] = useState<boolean>(true);
 
@@ -79,23 +66,34 @@ const InputControlado = ({
     setValido(validador ? validador(valor) : true);
   }
 
+  useEffect(() => {
+    setValido(validador ? validador(valorEntidad) : true);
+  }
+  , [valorEntidad]);
+
   return (
-    <label>{campo.etiqueta + " " + (valido ? "OK" : "KO")} :
+    <label>{campo.etiqueta + " " + (valido ? "OK" : "(Inválido)")} :
     <input
       type="text"
       value={valorEntidad || ""}
-      onInput={(e) => onInput(e.target.value)}
+      onInput={(e) => onInput((e.target as HTMLInputElement).value)}
     />
     </label>
   );
 }
 
-const InputNoControlado = ({
-  campo,
-  onCampoCambiado,
-  valorEntidad,
-  validador,
-}) => {
+const InputNoControlado = (
+  {
+    campo,
+    onCampoCambiado,
+    valorEntidad,
+    validador,
+  }: {
+    campo: CampoFormularioGenerico,
+    onCampoCambiado?: (campo: string, valor: any) => void,
+    valorEntidad: any,
+    validador?: (valor: string) => boolean,
+  }) => {
   
   const [valor, setValor] = useState<string | undefined>(undefined);
   const [valido, setValido] = useState<boolean>(true);
@@ -112,13 +110,13 @@ const InputNoControlado = ({
   const prefijoCambiado = valor !== valorEntidad ? "!" : "";
 
   return (
-    <label>{prefijoCambiado + campo.etiqueta + " " + (valido ? "OK" : "KO")} :
+    <label>{prefijoCambiado + campo.etiqueta + " " + (valido ? "OK" : "(Inválido)")} :
     <input
       type="text"
       value={valor || ""}
       // defaultValue={entidad[campo.nombre]}
       onBlur={(e) => valido && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
-      onInput={(e) => onInput(e.target.value)}
+      onInput={(e) => onInput((e.target as HTMLInputElement).value)}
       onKeyUp={(e) => e.code === 'Escape' && setValor(valorEntidad || "")}
       // onKeyUp={(e) => e.code === 'Enter' && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
     />
