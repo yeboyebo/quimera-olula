@@ -16,7 +16,8 @@ export const TabDirecciones = ({
     const [seleccionada, setSeleccionada] = useState<Direccion | null>(null);
     
     const actualizarDireccion = (direccion: Direccion) => {
-        actualizarDireccionEnLista(direcciones, direccion);
+        setDirecciones(actualizarDireccionEnLista(direcciones, direccion));
+        setSeleccionada(direccion);
     }
 
     const añadirDireccion = (direccion: Direccion) => {

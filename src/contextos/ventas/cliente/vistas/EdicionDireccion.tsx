@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Direccion } from "../diseño.ts";
-import { cambiarDireccion } from "../dominio.ts";
+import { cambiarDireccion, validadoresDireccion } from "../dominio.ts";
 import { camposDireccion } from "../infraestructura.ts";
 
 export const EdicionDireccion = (
@@ -23,11 +23,9 @@ export const EdicionDireccion = (
     const onCampoCambiado = async (campo: string, valor: any) => {
         console.log("campo cambiado", campo, 'valor = ', valor);
         setGuardando(true);
-        await cambiarDireccion(clienteId, direccion.id, {
-            [campo]: valor
-        });
-        setGuardando(false);
         const nuevaDireccion = { ...direccion, [campo]: valor };
+        await cambiarDireccion(clienteId, nuevaDireccion);
+        setGuardando(false);
         onDireccionActualizada && onDireccionActualizada(nuevaDireccion);
     };
     return (
@@ -39,6 +37,7 @@ export const EdicionDireccion = (
                 campo={camposDireccion.tipo_via}
                 onCampoCambiado={onCampoCambiado}
                 valorEntidad={direccion.tipo_via}
+                validador={validadoresDireccion.tipo_via}
             />
             <Input
                 controlado={false}            
@@ -46,6 +45,7 @@ export const EdicionDireccion = (
                 campo={camposDireccion.nombre_via}
                 onCampoCambiado={onCampoCambiado}
                 valorEntidad={direccion.nombre_via}
+                validador={validadoresDireccion.nombre_via}
             />
             <Input
                 controlado={false}            
@@ -53,6 +53,7 @@ export const EdicionDireccion = (
                 campo={camposDireccion.ciudad}
                 onCampoCambiado={onCampoCambiado}
                 valorEntidad={direccion.ciudad}
+                validador={validadoresDireccion.ciudad}
             />
             <button onClick={onCancelar}>
                 Listo

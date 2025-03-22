@@ -1,5 +1,5 @@
 import { Cliente, Direccion, NuevaDireccion } from "./diseño.ts";
-import { getDireccion, getDirecciones, getPorId, postDireccion, setDirFacturacion } from "./infraestructura.ts";
+import { actualizarDireccion, deleteDireccion, getDireccion, getDirecciones, getPorId, postDireccion, setDirFacturacion } from "./infraestructura.ts";
 
 export const idFiscalValido = (tipo: string) => (valor: string) => {
     if (tipo === "NIF") {
@@ -49,8 +49,9 @@ export const validadoresDireccion = {
     ciudad: (valor: string) => noVacio(valor),
 }
 
-export const cambiarDireccion = async (clienteId: string, direccionId: string, cambios: Partial<Direccion>) => {
-    await simularApi();
+export const cambiarDireccion = async (clienteId: string, direccion: Direccion) => {
+    console.log('cambiando direccion = ', direccion);
+    await actualizarDireccion(clienteId, direccion);
 }
 
 export const guardarNuevaDireccion = async (clienteId: string, direccion: NuevaDireccion): Promise<string> => {
@@ -59,6 +60,10 @@ export const guardarNuevaDireccion = async (clienteId: string, direccion: NuevaD
 
 export const buscarDireccion = async (clienteId: string, direccionId: string): Promise<Direccion> => {
     return await getDireccion(clienteId, direccionId);
+}
+
+export const borrarDireccion = async (clienteId: string, direccionId: string) => {
+    return await deleteDireccion(clienteId, direccionId);
 }
 
 export const buscar = async (idCliente: string): Promise<Cliente> => {

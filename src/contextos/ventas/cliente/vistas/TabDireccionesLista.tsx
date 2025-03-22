@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
-import { Tabla } from "../../../../componentes/wrappers/tabla.tsx";
+import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
+import { Entidad } from "../../../comun/diseño.ts";
 import { Direccion } from "../diseño.ts";
-import { buscarDirecciones, marcarDireccionFacturacion } from "../dominio.ts";
+import { borrarDireccion, buscarDirecciones, marcarDireccionFacturacion } from "../dominio.ts";
+
+const boolAString = (valor: boolean) => valor ? "Sí" : "No";    
+const direccionCompleta = (valor: Direccion) => `${valor.tipo_via ? (valor.tipo_via + ' ') : ''} ${valor.nombre_via}, ${valor.ciudad}`;
+
+const metaTablaDirecciones = [
+    { id: "direccion", cabecera: "Dirección", get: (direccion: Direccion) => direccionCompleta(direccion) },
+    { id: "dir_facturacion", cabecera: "D. Facturación", get: (direccion: Direccion) => boolAString(direccion.dir_facturacion) },
+    { id: "dir_envio", cabecera: "D. Envío", get: (direccion: Direccion) => boolAString(direccion.dir_envio) },
+  ]
 
 export const TabDireccionesLista = ({
     clienteId,
@@ -30,13 +40,25 @@ export const TabDireccionesLista = ({
 
     const [cargando, setCargando] = useState(true);
 
-    const cargar = () => {
+    const cargar = async() => {
         setCargando(true);
-        buscarDirecciones(clienteId).then((direcciones) => {
-            setDirecciones(direcciones);
-            refrescarSeleccionada();
-        });
+        direcciones = await buscarDirecciones(clienteId);
+        setDirecciones(direcciones);
+        refrescarSeleccionada();
         setCargando(false);
+    }
+
+    const onBorrarDireccion = async() => {
+        if (!seleccionada) {
+            return;
+        }
+        setDirecciones(quitarElemento(direcciones, seleccionada));
+        setSeleccionada(null);
+        await borrarDireccion(clienteId, seleccionada.id);
+    }
+
+    const quitarElemento = <T extends Entidad>(lista: T[], elemento: T): T[] => {
+        return lista.filter((e) => e.id !== elemento.id);
     }
 
     const refrescarSeleccionada = () => {
@@ -63,9 +85,8 @@ export const TabDireccionesLista = ({
       
     return (<>
             <button
-                onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
-                disabled={!seleccionada || seleccionada.dir_facturacion}
-            > Facturación
+                onClick={onCrearDireccion}
+            > Nueva
             </button>
             <button
                 onClick={() => seleccionada && onEditarDireccion(seleccionada)}
@@ -73,11 +94,17 @@ export const TabDireccionesLista = ({
             > Editar
             </button>
             <button
-                onClick={onCrearDireccion}
-            > Nueva
+                disabled={!seleccionada}
+                onClick={onBorrarDireccion}
+            > Borrar
+            </button>
+            <button
+                onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
+                disabled={!seleccionada || seleccionada.dir_facturacion}
+            > Facturación
             </button>
         <Tabla
-            cabeceras={cabeceras}
+            metaTabla={metaTablaDirecciones}
             datos={direcciones}
             cargando={cargando}
             seleccionadaId={seleccionada?.id}

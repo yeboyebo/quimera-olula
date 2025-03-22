@@ -103,9 +103,10 @@ const InputNoControlado = (
   }
   , [valorEntidad]);
 
+
   const onInput = (valor: string) => {
     setValor(valor); 
-    setValido(validador ? validador(valor) : true);
+    setValido(validador ? validador(valor || "") : true);
   }
   const prefijoCambiado = valor !== valorEntidad ? "!" : "";
 
@@ -114,10 +115,9 @@ const InputNoControlado = (
     <input
       type="text"
       value={valor || ""}
-      // defaultValue={entidad[campo.nombre]}
-      onBlur={(e) => valido && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
+      onBlur={(e) => valido && (valor !== valorEntidad) && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
       onInput={(e) => onInput((e.target as HTMLInputElement).value)}
-      onKeyUp={(e) => e.code === 'Escape' && setValor(valorEntidad || "")}
+      onKeyUp={(e) => e.code === 'Escape' && onInput(valorEntidad || "")}
       // onKeyUp={(e) => e.code === 'Enter' && onCampoCambiado && onCampoCambiado(campo.nombre, e.target.value)}
     />
     </label>

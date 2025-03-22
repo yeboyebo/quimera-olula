@@ -6,9 +6,8 @@ import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { Contexto } from "../contexto.ts";
 import { Cliente } from "../diseño.ts";
-import { clienteVacio, guardar } from "../dominio.ts";
+import { buscar, clienteVacio, guardar } from "../dominio.ts";
 import {
-  accionesCliente,
   camposCliente
 } from "../infraestructura.ts";
 import { IdFiscal } from "./IdFiscal.tsx";
@@ -31,7 +30,7 @@ export const DetalleCliente = (
 
   const [guardando, setGuardando] = useState(false);
 
-  const clienteId = seleccionada?.id ?? params.id ?? "0";
+  const clienteId = seleccionada?.id ?? params.id;
 
   const sufijoTitulo = guardando ? " (Guardando...)" : "";
   const titulo = (cliente: Entidad) => `${cliente.nombre} ${sufijoTitulo}` as string;
@@ -45,6 +44,9 @@ export const DetalleCliente = (
   }
 
   const onCampoCambiado = async (campo: string, valor: any) => {
+    if (!clienteId) {
+      return;
+    }
     console.log("campo cambiado", campo, 'valor = ', valor);
     setGuardando(true);
     await guardar(clienteId,{
@@ -59,13 +61,14 @@ export const DetalleCliente = (
   return (
 
      <Detalle
-       id={clienteId ?? "0"}
-       camposEntidad={[]}
-       acciones={accionesCliente}
+       id={clienteId}
+      //  camposEntidad={[]}
+      //  acciones={accionesCliente}
        obtenerTitulo={titulo}
-       onCampoCambiado={onCampoCambiado}
+      //  onCampoCambiado={onCampoCambiado}
        setEntidad={(c) => setCliente(c as Cliente)}
        entidad={cliente}
+       cargar={buscar}
      >
      <Input
         controlado={false}            
@@ -73,7 +76,7 @@ export const DetalleCliente = (
         campo={camposCliente.nombre}
         onCampoCambiado={onCampoCambiado}
         valorEntidad={cliente?.nombre ?? ''}
-    />
+      />
       <IdFiscal
         cliente={cliente}
         onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}

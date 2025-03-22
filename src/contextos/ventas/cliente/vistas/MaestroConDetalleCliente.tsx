@@ -1,39 +1,25 @@
 import { useState } from "react";
-import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
+import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { Contexto, ContextoSet } from "../contexto.ts";
 import { Cliente } from "../diseño.ts";
-import { accionesCliente, camposCliente } from "../infraestructura.ts";
+import { getClientes } from "../infraestructura.ts";
 import { DetalleCliente } from "./DetalleCliente.tsx";
 
-export const MaestroConDetalleCliente = <T extends Entidad>() => {
+
+
+const metaTablaCliente = [
+  { id: "id", cabecera: "Id", get: (entidad: Entidad) => entidad.id },
+  { id: "nombre", cabecera: "Nombre", get: (entidad: Entidad) => entidad.nombre },
+  { id: "id_fiscal", cabecera: "Id Fiscal", get: (entidad: Entidad) => `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}` },
+]
+
+export const MaestroConDetalleCliente = () => {
   
-  // const context = useContext(Contexto);
-  // if (!context) {
-  //   throw new Error("Contexto is null");
-  // }
-
-  // const { setSeleccionada, seleccionada, setEntidades } = context;
-
-  // console.log("Seleccionada cliente id", seleccionada?.id);
  
   const [entidades, setEntidades] = useState<Cliente[]>([]);
   const [seleccionada, setSeleccionada] = useState<Cliente | null>(null);
   
-  console.log("MaestroConDetalleCliente", entidades, seleccionada);
-
-  // useEffect(
-  //   () => {
-  //     setSeleccionada(null);
-  //     setEntidades([]);
-  //     return () => {
-  //       setEntidades([]);
-  //       setSeleccionada(null);
-  //       console.log("Cliente cleanup");
-  //     }
-  //   }
-  //   , []
-  // );
   const actualizarEntidad = (entidad: Cliente) => {
     setEntidades((entidades) => {
       const index = entidades.findIndex((e) => e.id === entidad.id);
@@ -60,14 +46,13 @@ export const MaestroConDetalleCliente = <T extends Entidad>() => {
           overflowX: "hidden",
         }}
       >
-        {/* entidades, setEntidades, seleccionada, setSeleccionada */}
-        <Maestro
-          acciones={accionesCliente}
-          camposEntidad={camposCliente}
+        <Listado
+          metaTabla={metaTablaCliente}
           entidades={entidades}
           setEntidades={setEntidades}
           seleccionada={seleccionada}
           setSeleccionada={setSeleccionada}
+          cargar={getClientes}
         />
       </div>
       <div className="Detalle" style={{ width: "50%", overflowX: "hidden" }}>
