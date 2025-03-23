@@ -4,7 +4,7 @@ import "./tabla.css";
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
-  get: (entidad: T) => any;
+  render?: (entidad: T) => any;
 };
 
 export type MetaTabla<T extends Entidad> = MetaColumna<T>[];
@@ -29,7 +29,7 @@ const cabecera = <T extends Entidad>(
   
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>, onSeleccion: ((entidad: T) => void) | undefined) => {
-  const datosFila = metaTabla.map(({ get }) => get(entidad as T));
+  const datosFila = metaTabla.map(({ id, render }) => render ? render(entidad as T) : entidad[id]);
 
   return [
     datosFila.map((valorCelda, columna) => (

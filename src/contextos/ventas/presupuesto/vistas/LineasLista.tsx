@@ -1,20 +1,46 @@
 import { useEffect, useState } from "react";
+import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { LineaPresupuesto as Linea } from "../diseño.ts";
-import { deleteLinea, getLineas } from "../infraestructura.ts";
+import { camposLinea, deleteLinea, getLineas, patchCantidadLinea } from "../infraestructura.ts";
 
+const EditarCantidad = ({
+    linea,
+    onCantidadEditada,
+  }: {
+    linea: Linea;
+    onCantidadEditada: (linea: Linea, cantidad: number) => void;
+  }) => {
+    return (
+      <Input
+        controlado={false}
+        campo={camposLinea.cantidad}
+        onCampoCambiado={(_, valor) => onCantidadEditada(linea, valor)}
+        valorEntidad={linea.cantidad}
+      />
+    );
+  }
 
-const metaTablaLineas = [
-    { id: "linea", cabecera: "Línea", get: (linea: Linea) => `${linea.referencia}: ${linea.descripcion}` },
-    { id: "total", cabecera: "Total", get: (linea: Linea) => `${linea.pvp_total}` },
-  ]
+const getMetaTablaLineas = (cambiarCantidad: (linea: Linea, cantidad: number) => void) => {
+    return [
+        { id: "linea", cabecera: "Línea", render: (linea: Linea) => `${linea.referencia}: ${linea.descripcion}` },
+        { id: "cantidad", cabecera: "Cantidad", render: (linea: Linea) => EditarCantidad({
+            linea,
+            onCantidadEditada: cambiarCantidad
+        })},
+        { id: "pvp_unitario", cabecera: "P. Unitario" },
+        { id: "pvp_total", cabecera: "Total" },
+    ]
+}
+
 
 export const LineasLista = ({
     presupuestoId,
     onEditarLinea,
     onCrearLinea,
     onLineaBorrada,
+    onLineaCambiada,
     lineas,
     setLineas,
     seleccionada,
@@ -24,6 +50,7 @@ export const LineasLista = ({
     onEditarLinea: (linea: Linea) => void;
     onCrearLinea: () => void;
     onLineaBorrada: () => void;
+    onLineaCambiada: (linea: Linea) => void;
     lineas: Linea[];
     setLineas: (lineas: Linea[]) => void;
     seleccionada: Linea | null;
@@ -47,6 +74,14 @@ export const LineasLista = ({
         setLineas(quitarElemento(lineas, seleccionada));
         await deleteLinea(presupuestoId, seleccionada.id);
         onLineaBorrada();
+    }
+
+    const cambiarCantidad = async(linea: Linea, cantidad: number) => {
+        await patchCantidadLinea(presupuestoId, linea.id, cantidad);
+        onLineaCambiada(linea);
+        // const lineas = await getLineas(presupuestoId);
+        // setLineas(lineas);
+        // refrescarSeleccionada();
     }
 
     const quitarElemento = <T extends Entidad>(lista: T[], elemento: T): T[] => {
@@ -87,7 +122,7 @@ export const LineasLista = ({
             </button>
            
             <Tabla
-                metaTabla={metaTablaLineas}
+                metaTabla={getMetaTablaLineas(cambiarCantidad)}
                 datos={lineas}
                 cargando={cargando}
                 seleccionadaId={seleccionada?.id}

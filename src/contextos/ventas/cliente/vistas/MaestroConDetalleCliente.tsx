@@ -9,9 +9,9 @@ import { DetalleCliente } from "./DetalleCliente.tsx";
 
 
 const metaTablaCliente = [
-  { id: "id", cabecera: "Id", get: (entidad: Entidad) => entidad.id },
-  { id: "nombre", cabecera: "Nombre", get: (entidad: Entidad) => entidad.nombre },
-  { id: "id_fiscal", cabecera: "Id Fiscal", get: (entidad: Entidad) => `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}` },
+  { id: "id", cabecera: "Id" },
+  { id: "nombre", cabecera: "Nombre" },
+  { id: "id_fiscal", cabecera: "Id Fiscal", render: (entidad: Entidad) => `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}` },
 ]
 
 export const MaestroConDetalleCliente = () => {

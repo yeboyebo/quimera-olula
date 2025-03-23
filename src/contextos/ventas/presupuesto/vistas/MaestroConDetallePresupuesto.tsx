@@ -9,9 +9,9 @@ import {
 import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
 
 const metaTablaPresupuesto = [
-  { id: "codigo", cabecera: "Código", get: (entidad: Entidad) => entidad.codigo },
-  { id: "cliente", cabecera: "Cliente", get: (entidad: Entidad) => entidad.nombre_cliente },
-  { id: "total", cabecera: "Total", get: (entidad: Entidad) => entidad.total },
+  { id: "codigo", cabecera: "Código", render: (entidad: Entidad) => entidad.codigo },
+  { id: "cliente", cabecera: "Cliente", render: (entidad: Entidad) => entidad.nombre_cliente },
+  { id: "total", cabecera: "Total", render: (entidad: Entidad) => entidad.total },
 ]
 
 

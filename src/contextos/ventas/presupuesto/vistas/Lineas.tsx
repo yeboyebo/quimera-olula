@@ -13,12 +13,6 @@ export const Lineas = ({
     presupuestoId: string;
   }) => {
 
-    // const context = useContext(Contexto);
-    //   if (!context) {
-    //     return null;
-    //   }
-    //   const { set } = context;
-
     const [modo, setModo] = useState("lista");
     const [lineas, setLineas] = useState<Linea[]>([]);
     const [seleccionada, setSeleccionada] = useState<Linea | null>(null);
@@ -46,6 +40,7 @@ export const Lineas = ({
                 onEditarLinea={() => setModo("edicion")}
                 onCrearLinea={() => setModo("alta")}
                 onLineaBorrada={onCabeceraModificada}
+                onLineaCambiada={actualizarLinea}
                 lineas={lineas}
                 setLineas={setLineas}
                 seleccionada={seleccionada}

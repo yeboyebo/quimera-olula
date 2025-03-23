@@ -8,9 +8,9 @@ const boolAString = (valor: boolean) => valor ? "Sí" : "No";
 const direccionCompleta = (valor: Direccion) => `${valor.tipo_via ? (valor.tipo_via + ' ') : ''} ${valor.nombre_via}, ${valor.ciudad}`;
 
 const metaTablaDirecciones = [
-    { id: "direccion", cabecera: "Dirección", get: (direccion: Direccion) => direccionCompleta(direccion) },
-    { id: "dir_facturacion", cabecera: "D. Facturación", get: (direccion: Direccion) => boolAString(direccion.dir_facturacion) },
-    { id: "dir_envio", cabecera: "D. Envío", get: (direccion: Direccion) => boolAString(direccion.dir_envio) },
+    { id: "direccion", cabecera: "Dirección", render: (direccion: Direccion) => direccionCompleta(direccion) },
+    { id: "dir_facturacion", cabecera: "D. Facturación", render: (direccion: Direccion) => boolAString(direccion.dir_facturacion) },
+    { id: "dir_envio", cabecera: "D. Envío", render: (direccion: Direccion) => boolAString(direccion.dir_envio) },
   ]
 
 export const TabDireccionesLista = ({
@@ -30,13 +30,6 @@ export const TabDireccionesLista = ({
     seleccionada: Direccion | null;
     setSeleccionada: (direccion: Direccion | null) => void;
   }) => {
-
-    const cabeceras = {
-        "Id": "id",
-        "Facturación": "dir_facturacion",
-        "Envío": "dir_envio",
-        "Dirección": "nombre_via",
-    }
 
     const [cargando, setCargando] = useState(true);
 

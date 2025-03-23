@@ -3,7 +3,7 @@
 import { CampoFormularioGenerico } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { crearAcciones } from "../../comun/infraestructura.ts";
-import { CambiarArticuloLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PostLinea, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PostLinea, Presupuesto } from "./diseño.ts";
 
 const baseUrl = `/ventas/presupuesto`;
 
@@ -63,6 +63,12 @@ export const postLinea: PostLinea = async (id, linea) => {
 export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, referencia) => {
   await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}/cambiar_articulo`, {
     articulo_id: referencia
+  });
+}
+
+export const patchCantidadLinea: CambiarCantidadLinea = async (id, lineaId, cantidad) => {
+  await RestAPI.patch(`${baseUrl}/${id}/cambiar_cantidad_lineas`, {
+    lineas: [{ linea_id: lineaId, cantidad: cantidad }]
   });
 }
 

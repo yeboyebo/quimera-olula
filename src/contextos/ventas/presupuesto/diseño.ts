@@ -40,6 +40,8 @@ export type GetPresupuesto = (id: string) => Promise<Presupuesto>;
 
 export type CambiarArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;
 
+export type CambiarCantidadLinea = (id: string, lineaId: string, cantidad: number) => Promise<void>;
+
 export type PostLinea = (id: string, linea: LineaPresupuestoNueva) => Promise<string>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
