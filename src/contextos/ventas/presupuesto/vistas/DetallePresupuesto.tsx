@@ -13,8 +13,11 @@ import {
 import { presupuestoVacio } from "../dominio.ts";
 import {
   camposPresupuesto,
-  getPresupuesto
+  getPresupuesto,
+  patchCambiarAgente
 } from "../infraestructura.ts";
+import { Cliente } from "./Cliente.tsx";
+import { Lineas } from "./Lineas.tsx";
 
 // interface DetallePresupuestoProps {
 //   id: string | null;
@@ -60,6 +63,43 @@ export const DetallePresupuesto = (
       setPresupuesto(nuevoPresupuesto);
       onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
     };
+
+    const onAgenteIdCambiado = async (_: string, valor: any) => {
+      setGuardando(true);
+      if (!presupuestoId) {
+        return;
+      }
+      await patchCambiarAgente(presupuestoId, valor)
+      const nuevoPresupuesto = await getPresupuesto(presupuestoId)
+      setGuardando(false);
+      setPresupuesto(nuevoPresupuesto);
+      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+    };
+
+    const onClienteCambiadoCallback = async (_: any) => {
+      const nuevoPresupuesto = await getPresupuesto(presupuesto.id)
+      setPresupuesto(nuevoPresupuesto);
+      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+    }
+
+    const recargarCabecera = async () => {
+      const nuevoPresupuesto = await getPresupuesto(presupuesto.id)
+      setPresupuesto(nuevoPresupuesto);
+      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+    }
+
+    // const onClienteIdCambiado = async (_: string, valor: any) => {
+    //   setGuardando(true);
+    //   if (!presupuestoId) {
+    //     return;
+    //   }
+    //   const nuevoPresupuesto =  await patchCambiarCliente(presupuestoId, valor)
+      
+    //   setGuardando(false);
+    //   // const nuevoPresupuesto: Presupuesto = { ...presupuesto, [campo]: valor };
+    //   setPresupuesto(nuevoPresupuesto);
+    //   onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+    // };
 
   // useEffect(() => {
   //   if (id && id !== "") {
@@ -131,7 +171,7 @@ export const DetallePresupuesto = (
   return (
     <div className={detalle}>
       <Detalle
-        id={presupuestoId ?? "0"}
+        id={presupuestoId}
         obtenerTitulo={titulo}
         setEntidad={(p) => setPresupuesto(p as Presupuesto)}
         entidad={presupuesto}
@@ -144,18 +184,22 @@ export const DetallePresupuesto = (
               label="Cliente"
               children={
                 <>
-                  <Input
-                      controlado={false}            
-                      campo={camposPresupuesto.codigo}
-                      onCampoCambiado={onCampoCambiado}
-                      valorEntidad={presupuesto.codigo}
+                  <Cliente
+                    presupuesto={presupuesto}
+                    onClienteCambiadoCallback={onClienteCambiadoCallback}
                   />
-                  <Input
+                  {/* <Input
                       controlado={false}            
                       campo={camposPresupuesto.cliente_id}
                       onCampoCambiado={onCampoCambiado}
                       valorEntidad={presupuesto.cliente_id}
-                  />
+                  /> */}
+                  {/* <Input
+                      controlado={false}            
+                      campo={camposPresupuesto.direccion_id}
+                      onCampoCambiado={onCampoCambiado}
+                      valorEntidad={presupuesto.direccion_id}
+                  /> */}
                   <Input
                       controlado={false}            
                       campo={camposPresupuesto.nombre_cliente}
@@ -170,10 +214,11 @@ export const DetallePresupuesto = (
                   />
                   <Input
                       controlado={false}            
-                      campo={camposPresupuesto.direccion_id}
-                      onCampoCambiado={onCampoCambiado}
-                      valorEntidad={presupuesto.direccion_id}
+                      campo={camposPresupuesto.agente_id}
+                      onCampoCambiado={onAgenteIdCambiado}
+                      valorEntidad={presupuesto.agente_id}
                   />
+                  <label>{presupuesto.nombre_agente}</label>
                 </>
               }
             />,
@@ -231,7 +276,10 @@ export const DetallePresupuesto = (
             </span>
           </div>
         </div>
-        (lineas presupuesto)
+        <Lineas
+          presupuestoId={presupuesto.id}
+          onCabeceraModificada={recargarCabecera}
+        />
         {/* <SubVista>
           <Maestro
             Acciones={MaestroAccionesLineasPresupuesto}

@@ -110,7 +110,7 @@ export const TabDireccionesLista = ({
             seleccionadaId={seleccionada?.id}
             onSeleccion={setSeleccionada}
             orden={{ id: 'ASC'}}
-            onOrdenar={(clave: string) =>
+            onOrdenar={(_: string) =>
                 null
             //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
             }

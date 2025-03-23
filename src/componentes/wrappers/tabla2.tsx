@@ -1,17 +1,17 @@
 import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
 import "./tabla.css";
 
-type MetaColumna = {
+type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
-  get: (entidad: Entidad) => any;
+  get: (entidad: T) => any;
 };
 
-export type MetaTabla = MetaColumna[];
+export type MetaTabla<T extends Entidad> = MetaColumna<T>[];
 
 
-const cabecera = (
-  metaTabla: MetaTabla,
+const cabecera = <T extends Entidad>(
+  metaTabla: MetaTabla<T>,
   orden: Orden,
   onOrdenar?: (clave: string) => void
 ) => {
@@ -28,8 +28,8 @@ const cabecera = (
 };
   
 
-const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla, onSeleccion: ((entidad: T) => void) | undefined) => {
-  const datosFila = metaTabla.map(({ get }) => get(entidad));
+const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>, onSeleccion: ((entidad: T) => void) | undefined) => {
+  const datosFila = metaTabla.map(({ get }) => get(entidad as T));
 
   return [
     datosFila.map((valorCelda, columna) => (
@@ -44,7 +44,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla, onSelec
 };
 
 export type TablaProps<T extends Entidad> = {
-  metaTabla: MetaTabla;
+  metaTabla: MetaTabla<T>;
   datos: T[];
   cargando: boolean;
   seleccionadaId?: string;

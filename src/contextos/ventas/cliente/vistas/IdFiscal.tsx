@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-    CampoGenerico,
+    Input
 } from "../../../../componentes/detalle/FormularioGenerico";
 import {
     guardar,
@@ -9,6 +9,7 @@ import {
     tipoIdFiscalValido
 } from "../dominio.ts";
 
+import { Cliente } from "../diseño.ts";
 import {
     camposCliente
 } from "../infraestructura.ts";
@@ -22,10 +23,7 @@ interface IdFiscal {
   tipo_id_fiscal: string;
 }
 
-interface Cliente {
-    id_fiscal: string;
-    tipo_id_fiscal: string;
-  }
+
 
 
 export const IdFiscal = ({
@@ -119,7 +117,6 @@ const IdFiscalEdicion = (
     const guardarIdFiscalClicked = async() => {
         setGuardando(true);
         await guardar(cliente.id, {
-            // id: cliente.id,
             id_fiscal: idFiscal.id_fiscal,
             tipo_id_fiscal: idFiscal.tipo_id_fiscal
         });
@@ -127,29 +124,24 @@ const IdFiscalEdicion = (
         onIdFiscalCambiadoCallback(idFiscal)
     }
     
-    const campoIdFiscal = camposCliente.find((c) => c.nombre === "id_fiscal");
-    const campoTipoIdFiscal = camposCliente.find((c) => c.nombre === "tipo_id_fiscal");
 
     return (
         <>
-            <CampoGenerico
-                key='tipo_id_fiscal'
-                campo={campoTipoIdFiscal}
+            <Input
+                controlado={true}
+                campo={camposCliente.tipo_id_fiscal}
                 onCampoCambiado={onIdFiscalCambiado}
-                entidad={{
-                    tipo_id_fiscal: idFiscal.tipo_id_fiscal
-                }}
+                valorEntidad={idFiscal.tipo_id_fiscal}
                 validador={tipoIdFiscalValido}
             />
-            <CampoGenerico
-                key='id_fiscal'
-                campo={campoIdFiscal}
+            <Input
+                controlado={true}
+                campo={camposCliente.id_fiscal}
                 onCampoCambiado={onIdFiscalCambiado}
-                entidad={{
-                    id_fiscal: idFiscal.id_fiscal
-                }}
+                valorEntidad={idFiscal.id_fiscal}
                 validador={idFiscalValido(idFiscal.tipo_id_fiscal)}
             />
+
             <button
                 disabled={guardando || !idFiscalValidoGeneral(idFiscal.tipo_id_fiscal, idFiscal.id_fiscal)}
                 onClick={guardarIdFiscalClicked}

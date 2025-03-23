@@ -32,7 +32,7 @@ export type DireccionClienteAPI = {
 type ClienteApi = Cliente;
 
 export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente[]> =>
-  RestAPI.get<{ datos: ClienteApi[] }>(`${baseUrl}`).then((respuesta) => {
+  await RestAPI.get<{ datos: ClienteApi[] }>(`${baseUrl}`).then((respuesta) => {
     const clientes = respuesta.datos.map((d) => clienteApiACliente(d));
     return clientes
   });
@@ -40,15 +40,15 @@ export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente
 export const clienteApiACliente = (c: ClienteApi): Cliente => c;
 
 export const getPorId = async (id: string): Promise<Cliente> =>
-  RestAPI.get<{ datos: Cliente }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
+  await RestAPI.get<{ datos: Cliente }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
 
 export const getDireccion = async (clienteId: string, direccionId: string): Promise<Direccion> =>
-  RestAPI.get<{ datos: DireccionClienteAPI }>(`${baseUrl}/${clienteId}/direcciones/${direccionId}`).then((respuesta) =>
+  await RestAPI.get<{ datos: DireccionClienteAPI }>(`${baseUrl}/${clienteId}/direcciones/${direccionId}`).then((respuesta) =>
     direccionClienteApiADireccion(respuesta.datos)
   );
 
 export const getDirecciones = async (id: string): Promise<Direccion[]> =>
-  RestAPI.get<{ datos: DireccionClienteAPI[] }>(`${baseUrl}/${id}/direcciones`).then((respuesta) => {
+  await RestAPI.get<{ datos: DireccionClienteAPI[] }>(`${baseUrl}/${id}/direcciones`).then((respuesta) => {
     const direcciones = respuesta.datos.map((d) => direccionClienteApiADireccion(d));
     return direcciones
   });
@@ -96,10 +96,10 @@ export const postDireccion = async (clienteId: string, direccion: NuevaDireccion
       ...direccion,
     }
   }
-  return RestAPI.post(`${baseUrl}/${clienteId}/direcciones`, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${baseUrl}/${clienteId}/direcciones`, payload).then((respuesta) => respuesta.id);
 }
 export const deleteDireccion = async (clienteId: string, direccionId: string): Promise<void> =>
-  RestAPI.delete(`${baseUrl}/${clienteId}/direcciones/${direccionId}`);
+  await RestAPI.delete(`${baseUrl}/${clienteId}/direcciones/${direccionId}`);
 
 
 export const accionesCliente = crearAcciones("cliente");
