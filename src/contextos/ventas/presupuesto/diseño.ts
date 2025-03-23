@@ -1,7 +1,4 @@
-import { Acciones, Entidad, Filtro, Orden } from "../../comun/diseño.ts";
-import { Direccion as DireccionCliente } from "../cliente/diseño.ts";
-
-export type Direccion = DireccionCliente;
+import { Direccion, Entidad, Filtro, Orden } from "../../comun/diseño.ts";
 
 export interface Presupuesto extends Entidad {
   id: string;
@@ -28,10 +25,6 @@ export interface LineaPresupuesto extends Entidad {
 export interface LineaPresupuestoNueva {
   referencia: string;
   cantidad: number;
-};
-
-export type AccionesLineaPresupuesto = Acciones<LineaPresupuesto> & {
-  onCambiarCantidadLinea: (id: string, linea: LineaPresupuesto) => Promise<void>;
 };
 
 export type GetPresupuestos = (filtro: Filtro, orden: Orden) => Promise<Presupuesto[]>;

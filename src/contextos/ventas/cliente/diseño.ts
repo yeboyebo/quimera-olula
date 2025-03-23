@@ -10,7 +10,6 @@ export interface Cliente extends Entidad {
   serie_id: string;
   forma_pago_id: string;
   grupo_iva_negocio_id: string;
-  // eventos: [];
 };
 
 export interface IdFiscal {
@@ -18,14 +17,7 @@ export interface IdFiscal {
   tipo_id_fiscal: string;
 }
 
-// export interface ClienteConDirecciones {
-//   id: string;
-//   direcciones: DireccionCliente[];
-// };
-
-
-
-export type Direccion = {
+export type DirCliente = {
   id: string;
   dir_envio: boolean;
   dir_facturacion: boolean;

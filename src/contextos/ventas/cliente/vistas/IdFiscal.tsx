@@ -128,14 +128,14 @@ const IdFiscalEdicion = (
     return (
         <>
             <Input
-                controlado={true}
+                controlado
                 campo={camposCliente.tipo_id_fiscal}
                 onCampoCambiado={onIdFiscalCambiado}
                 valorEntidad={idFiscal.tipo_id_fiscal}
                 validador={tipoIdFiscalValido}
             />
             <Input
-                controlado={true}
+                controlado
                 campo={camposCliente.id_fiscal}
                 onCampoCambiado={onIdFiscalCambiado}
                 valorEntidad={idFiscal.id_fiscal}

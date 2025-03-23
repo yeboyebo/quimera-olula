@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router";
 import estilos from "../../../../componentes/detalle/detalle.module.css";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
@@ -6,7 +6,6 @@ import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { guardar } from "../../cliente/dominio.ts";
-import { Contexto } from "../contexto.ts";
 import {
   Presupuesto
 } from "../diseño.ts";
@@ -19,32 +18,22 @@ import {
 import { Cliente } from "./Cliente.tsx";
 import { Lineas } from "./Lineas.tsx";
 
-// interface DetallePresupuestoProps {
-//   id: string | null;
-//   acciones: Acciones<Presupuesto>;
-//   obtenerTitulo?: (entidad: Presupuesto) => string;
-// }
-
 export const DetallePresupuesto = (
   {
+    presupuestoInicial=null,
     onEntidadActualizada,
   }: {
+    presupuestoInicial?: Presupuesto | null;
     onEntidadActualizada: (entidad: Presupuesto) => void;
   }
 ) => {
   const { detalle } = estilos;
 
   const params = useParams();
-
-  const context = useContext(Contexto);
-  if (!context) {
-    return null;
-  }
-  const { seleccionada } = context;
   
   const [guardando, setGuardando] = useState(false);
   
-  const presupuestoId = seleccionada?.id ?? params.id;
+  const presupuestoId = presupuestoInicial?.id ?? params.id;
 
   const sufijoTitulo = guardando ? " (Guardando...)" : "";
   const titulo = (presupuesto: Entidad) => `${presupuesto.codigo} ${sufijoTitulo}` as string;
@@ -88,86 +77,6 @@ export const DetallePresupuesto = (
       onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
     }
 
-    // const onClienteIdCambiado = async (_: string, valor: any) => {
-    //   setGuardando(true);
-    //   if (!presupuestoId) {
-    //     return;
-    //   }
-    //   const nuevoPresupuesto =  await patchCambiarCliente(presupuestoId, valor)
-      
-    //   setGuardando(false);
-    //   // const nuevoPresupuesto: Presupuesto = { ...presupuesto, [campo]: valor };
-    //   setPresupuesto(nuevoPresupuesto);
-    //   onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
-    // };
-
-  // useEffect(() => {
-  //   if (id && id !== "") {
-  //     obtenerUno(id)
-  //       .then((entidad) => {
-  //         setEntidad(entidad as Presupuesto);
-  //       })
-  //       .catch(() => {
-  //         setEntidad({} as Presupuesto);
-  //       });
-  //   }
-  // }, [id, obtenerUno]);
-
-  // if (!id) {
-  //   return <></>;
-  // }
-  // if (!entidad) {
-  //   return <>No se ha encontrado el presupuesto</>;
-  // }
-
-  // const onCambiarCantidadLinea = async (
-  //   id: string,
-  //   linea: LineaPresupuesto
-  // ) => {
-  //   if (entidad) {
-  //     const objCambioLinea = {
-  //       lineas: [{ linea_id: id, cantidad: linea.cantidad }],
-  //     };
-  //     accionesPresupuesto
-  //       .actualizarUnElemento(
-  //         entidad.id,
-  //         objCambioLinea,
-  //         "cambiar_cantidad_lineas"
-  //       )
-  //       .then(() => {
-  //         accionesPresupuesto.obtenerUno(entidad.id).then((presupuesto) => {
-  //           if (presupuesto) {
-  //             setEntidad(presupuesto as Presupuesto);
-  //             //   setEntidades(
-  //             //     entidades.map((entidad) => {
-  //             //       if (entidad.id === presupuesto.id) {
-  //             //         return presupuesto;
-  //             //       }
-  //             //       return entidad;
-  //             //     })
-  //             //   );
-  //           }
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error al actualizar la línea de presupuesto:", error);
-  //       });
-  //   } else {
-  //     console.error("Error: no hay entidad");
-  //   }
-  // };
-
-  // const accionesLineasPresupuesto: AccionesLineaPresupuesto = {
-  //   ...crearAccionesRelacionadas("presupuesto", "linea", presupuesto?.id || "0"),
-  //   onCambiarCantidadLinea,
-  // };
-
-  // const actualizar = (data: Presupuesto) =>
-  //   accionesPresupuesto.actualizarUno(id, data).then(() => {
-  //     setEntidad(data as Presupuesto);
-  //   });
-
-
   return (
     <div className={detalle}>
       <Detalle
@@ -188,32 +97,17 @@ export const DetallePresupuesto = (
                     presupuesto={presupuesto}
                     onClienteCambiadoCallback={onClienteCambiadoCallback}
                   />
-                  {/* <Input
-                      controlado={false}            
-                      campo={camposPresupuesto.cliente_id}
-                      onCampoCambiado={onCampoCambiado}
-                      valorEntidad={presupuesto.cliente_id}
-                  /> */}
-                  {/* <Input
-                      controlado={false}            
-                      campo={camposPresupuesto.direccion_id}
-                      onCampoCambiado={onCampoCambiado}
-                      valorEntidad={presupuesto.direccion_id}
-                  /> */}
                   <Input
-                      controlado={false}            
                       campo={camposPresupuesto.nombre_cliente}
                       onCampoCambiado={onCampoCambiado}
                       valorEntidad={presupuesto.nombre_cliente}
                   />
                   <Input
-                      controlado={false}            
                       campo={camposPresupuesto.id_fiscal}
                       onCampoCambiado={onCampoCambiado}
                       valorEntidad={presupuesto.id_fiscal}
                   />
                   <Input
-                      controlado={false}            
                       campo={camposPresupuesto.agente_id}
                       onCampoCambiado={onAgenteIdCambiado}
                       valorEntidad={presupuesto.agente_id}
@@ -280,13 +174,6 @@ export const DetallePresupuesto = (
           presupuestoId={presupuesto.id}
           onCabeceraModificada={recargarCabecera}
         />
-        {/* <SubVista>
-          <Maestro
-            Acciones={MaestroAccionesLineasPresupuesto}
-            acciones={accionesLineasPresupuesto}
-            camposEntidad={camposLineasPresupuestoAlta}
-          />
-        </SubVista> */}
       </Detalle>
     </div>
   );

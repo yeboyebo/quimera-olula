@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
-import { Contexto, ContextoSet } from "../contexto.ts";
+import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { Cliente } from "../diseño.ts";
 import { getClientes } from "../infraestructura.ts";
 import { DetalleCliente } from "./DetalleCliente.tsx";
-
-
 
 const metaTablaCliente = [
   { id: "id", cabecera: "Id" },
@@ -15,30 +13,16 @@ const metaTablaCliente = [
 ]
 
 export const MaestroConDetalleCliente = () => {
-  
  
   const [entidades, setEntidades] = useState<Cliente[]>([]);
   const [seleccionada, setSeleccionada] = useState<Cliente | null>(null);
-  
-  const actualizarEntidad = (entidad: Cliente) => {
-    setEntidades((entidades) => {
-      const index = entidades.findIndex((e) => e.id === entidad.id);
-      if (index === -1) {
-        return [...entidades, entidad];
-      }
-      return entidades.map((e) => (e.id === entidad.id ? entidad : e));
-    });
-  };
 
+  const actualizarEntidad = (entidad: Cliente) => {
+    setEntidades(actualizarEntidadEnLista<Cliente>(entidades, entidad));
+  };
+  
   return (
-    <Contexto.Provider
-          value={{
-            entidades,
-            setEntidades: setEntidades as ContextoSet<Cliente[]>,
-            seleccionada,
-            setSeleccionada: setSeleccionada as ContextoSet<Cliente | null>,
-          }}
-        >
+    <>
       <div
         className="Maestro"
         style={{
@@ -46,6 +30,7 @@ export const MaestroConDetalleCliente = () => {
           overflowX: "hidden",
         }}
       >
+        <h2>Clientes</h2>
         <Listado
           metaTabla={metaTablaCliente}
           entidades={entidades}
@@ -56,8 +41,11 @@ export const MaestroConDetalleCliente = () => {
         />
       </div>
       <div className="Detalle" style={{ width: "50%", overflowX: "hidden" }}>
-        <DetalleCliente onEntidadActualizada={actualizarEntidad}/>
+        <DetalleCliente
+          clienteInicial={seleccionada}
+          onEntidadActualizada={actualizarEntidad}
+        />
       </div>
-    </Contexto.Provider>
+    </>
   );
 };

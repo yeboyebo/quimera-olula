@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Direccion, NuevaDireccion } from "../diseño.ts";
-import { buscarDireccion, guardarNuevaDireccion, validadoresDireccion } from "../dominio.ts";
-import { camposDireccion } from "../infraestructura.ts";
+import { validadoresDireccion } from "../dominio.ts";
+import { camposDireccion, getDireccion, postDireccion } from "../infraestructura.ts";
 
 export const AltaDireccion = (
     {
@@ -29,8 +29,8 @@ export const AltaDireccion = (
     };
     const onGuardarClicked = async () => {
         setGuardando(true);
-        const id = await guardarNuevaDireccion(clienteId, direccion);
-        const nuevaDireccion = await buscarDireccion(clienteId, id);
+        const id = await postDireccion(clienteId, direccion);
+        const nuevaDireccion = await getDireccion(clienteId, id);
         setGuardando(false);
         onDireccionCreada(nuevaDireccion);
     };

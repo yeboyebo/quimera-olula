@@ -2,7 +2,6 @@
 
 import { CampoFormularioGenerico } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { crearAcciones } from "../../comun/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PostLinea, Presupuesto } from "./diseño.ts";
 
 const baseUrl = `/ventas/presupuesto`;
@@ -10,7 +9,13 @@ const baseUrl = `/ventas/presupuesto`;
 type PresupuestoAPI = Presupuesto
 type LineaPresupuestoAPI = LineaPresupuesto
 
-export const accionesPresupuesto = crearAcciones<Presupuesto>("presupuesto");
+export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => p;
+export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => l;
+
+export const getPresupuesto: GetPresupuesto = async (id) =>
+  RestAPI.get<{ datos: Presupuesto }>(`${baseUrl}/${id}`).then((respuesta) => {
+    return presupuestoFromAPI(respuesta.datos);
+  });
 
 export const getPresupuestos: GetPresupuestos = async (filtro, orden) => {
   (filtro && orden) ? 'usar' : 'params'
@@ -18,13 +23,6 @@ export const getPresupuestos: GetPresupuestos = async (filtro, orden) => {
     return respuesta.datos.map((d) => presupuestoFromAPI(d));
   });
 }
-
-export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => p;
-
-export const getPresupuesto: GetPresupuesto = async (id) =>
-  RestAPI.get<{ datos: Presupuesto }>(`${baseUrl}/${id}`).then((respuesta) => {
-    return presupuestoFromAPI(respuesta.datos);
-  });
 
 export const patchCambiarAgente = async (id: string, agenteId: string) => {
   await RestAPI.patch(`${baseUrl}/${id}/cambiar_agente`, { agente_id: agenteId });
@@ -39,7 +37,6 @@ export const patchCambiarCliente = async (id: string, clienteId: string, dirClie
   });
 }
 
-export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => l;
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
   await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) => {
@@ -49,13 +46,12 @@ export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  const payload = {
+  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
     lineas: [{
       articulo_id: linea.referencia,
       cantidad: linea.cantidad
     }]
-  }
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, payload).then((respuesta) => {
+  }).then((respuesta) => {
     return respuesta.id;
   });
 }
@@ -73,18 +69,10 @@ export const patchCantidadLinea: CambiarCantidadLinea = async (id, lineaId, cant
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
-  const payload = {
+  await RestAPI.patch(`${baseUrl}/${id}/borrar_lineas`, {
     lineas: [lineaId]
-  };
-  await RestAPI.patch(`${baseUrl}/${id}/borrar_lineas`, payload);
+  });
 }
-
-
-export const camposLineasPresupuestoAlta: CampoFormularioGenerico[] = [
-  { nombre: "articulo_id", etiqueta: "Referencia", tipo: "text" },
-  { nombre: "cantidad", etiqueta: "Cantidad", tipo: "number" },
-];
-
 
 export const camposPresupuesto: Record<string, CampoFormularioGenerico> = {
   "id": { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
@@ -106,9 +94,3 @@ export const camposLinea: Record<string, CampoFormularioGenerico> = {
   "pvp_total": { nombre: "pvp_total", etiqueta: "PVP Total", tipo: "number" },
 };
 
-
-export const camposPresupuestoNuevo: CampoFormularioGenerico[] = [
-  { nombre: "cliente_id", etiqueta: "ID Cliente", tipo: "text" },
-  { nombre: "direccion_id", etiqueta: "ID Dirección", tipo: "text" },
-  { nombre: "empresa_id", etiqueta: "ID Empresa", tipo: "text" },
-];

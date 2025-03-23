@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Direccion } from "../diseño.ts";
-import { actualizarDireccionEnLista } from "../dominio.ts";
+import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
+import { DirCliente } from "../diseño.ts";
 import { AltaDireccion } from "./AltaDireccion.tsx";
 import { EdicionDireccion } from "./EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
@@ -9,18 +9,19 @@ export const TabDirecciones = ({
     clienteId,
   }: {
     clienteId: string;
-  }) => {
+  }
+) => {
 
     const [modo, setModo] = useState("lista");
-    const [direcciones, setDirecciones] = useState<Direccion[]>([]);
-    const [seleccionada, setSeleccionada] = useState<Direccion | null>(null);
+    const [direcciones, setDirecciones] = useState<DirCliente[]>([]);
+    const [seleccionada, setSeleccionada] = useState<DirCliente | null>(null);
     
-    const actualizarDireccion = (direccion: Direccion) => {
-        setDirecciones(actualizarDireccionEnLista(direcciones, direccion));
+    const actualizarDireccion = (direccion: DirCliente) => {
+        setDirecciones(actualizarEntidadEnLista<DirCliente>(direcciones, direccion));
         setSeleccionada(direccion);
     }
 
-    const añadirDireccion = (direccion: Direccion) => {
+    const añadirDireccion = (direccion: DirCliente) => {
         setDirecciones([direccion, ...direcciones]);
         setSeleccionada(direccion);
         setModo("lista");
@@ -54,4 +55,4 @@ export const TabDirecciones = ({
             }
         </>
     );
-  }
+}

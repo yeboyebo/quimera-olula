@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-    Input
-} from "../../../../componentes/detalle/FormularioGenerico";
-
+import { Input } from "../../../../componentes/detalle/FormularioGenerico";
 import { Presupuesto } from "../diseño.ts";
 import { camposPresupuesto, patchCambiarCliente } from "../infraestructura.ts";
 interface ClienteProps {
@@ -14,8 +11,6 @@ interface Cliente {
     cliente_id: string;
     direccion_id: string;
 }
-
-
 
 
 export const Cliente = ({
@@ -106,7 +101,6 @@ const ClienteEdicion = (
         setCliente(clienteNuevo);
     }
 
-
     const guardarClienteClicked = async() => {
         setGuardando(true);
         await patchCambiarCliente(presupuesto.id, cliente.cliente_id, cliente.direccion_id);
@@ -117,20 +111,18 @@ const ClienteEdicion = (
     return (
         <>
             <Input
-                controlado={true}
+                controlado
                 campo={camposPresupuesto.cliente_id}
                 onCampoCambiado={onClienteCambiado}
                 valorEntidad={cliente.cliente_id}
-                // validador={tipoClienteValido}
             />
             <Input
-                controlado={true}
+                controlado
                 campo={camposPresupuesto.direccion_id}
                 onCampoCambiado={onClienteCambiado}
                 valorEntidad={cliente.direccion_id}
             />
             <button
-                // disabled={guardando || !ClienteValidoGeneral(Cliente.tipo_id_fiscal, Cliente.id_fiscal)}
                 onClick={guardarClienteClicked}
             >
                 { guardando ? 'Guardando' : 'Guardar' }

@@ -30,10 +30,10 @@ type FormularioGenericoProps<T> = {
 
 export const Input = (
   {
-    controlado,
+    controlado=false,
     ...props
   }: {
-    controlado: boolean,
+    controlado?: boolean,
     campo: CampoFormularioGenerico,
     onCampoCambiado?: (campo: string, valor: any) => void,
     valorEntidad: any,

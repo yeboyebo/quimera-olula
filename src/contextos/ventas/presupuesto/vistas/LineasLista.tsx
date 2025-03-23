@@ -14,7 +14,6 @@ const EditarCantidad = ({
   }) => {
     return (
       <Input
-        controlado={false}
         campo={camposLinea.cantidad}
         onCampoCambiado={(_, valor) => onCantidadEditada(linea, valor)}
         valorEntidad={linea.cantidad}
@@ -79,9 +78,6 @@ export const LineasLista = ({
     const cambiarCantidad = async(linea: Linea, cantidad: number) => {
         await patchCantidadLinea(presupuestoId, linea.id, cantidad);
         onLineaCambiada(linea);
-        // const lineas = await getLineas(presupuestoId);
-        // setLineas(lineas);
-        // refrescarSeleccionada();
     }
 
     const quitarElemento = <T extends Entidad>(lista: T[], elemento: T): T[] => {
@@ -99,7 +95,6 @@ export const LineasLista = ({
             setSeleccionada(null);
         }
     }
-
 
     useEffect(() => {
         presupuestoId && cargar();

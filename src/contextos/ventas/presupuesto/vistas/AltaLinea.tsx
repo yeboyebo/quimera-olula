@@ -28,7 +28,6 @@ export const AltaLinea = (
     const onGuardarClicked = async () => {
         setGuardando(true);
         const id = await postLinea(presupuestoId, linea);
-        // const nuevaLinea = await buscarLinea(presupuestoId, id);
         setGuardando(false);
         onLineaCreada(linea, id);
     };
@@ -40,7 +39,6 @@ export const AltaLinea = (
                 campo={camposLinea.referencia}
                 onCampoCambiado={onCambio}
                 valorEntidad={linea.referencia}
-                // validador={validadoresLinea.referencia}
             />
             <Input
                 controlado
@@ -48,9 +46,7 @@ export const AltaLinea = (
                 onCampoCambiado={onCambio}
                 valorEntidad={linea.cantidad}
             />
-            <button onClick={onGuardarClicked}
-                // disabled={validadoresLinea.nuevaLinea(linea) !== true}
-            >
+            <button onClick={onGuardarClicked}>
                 Guardar
             </button>
             <button onClick={onCancelar}>

@@ -31,7 +31,6 @@ export const Lineas = ({
         refrescarSeleccionada(lineas, id, setSeleccionada);
         setModo("lista");
     }
-
     
     return (
         <>

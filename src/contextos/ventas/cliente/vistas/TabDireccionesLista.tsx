@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
-import { Direccion } from "../diseño.ts";
-import { borrarDireccion, buscarDirecciones, marcarDireccionFacturacion } from "../dominio.ts";
-
-const boolAString = (valor: boolean) => valor ? "Sí" : "No";    
-const direccionCompleta = (valor: Direccion) => `${valor.tipo_via ? (valor.tipo_via + ' ') : ''} ${valor.nombre_via}, ${valor.ciudad}`;
+import { boolAString, direccionCompleta, quitarEntidadDeLista } from "../../../comun/dominio.ts";
+import { Direccion } from "../../presupuesto/diseño.ts";
+import { DirCliente } from "../diseño.ts";
+import { puedoMarcarDireccionFacturacion } from "../dominio.ts";
+import { deleteDireccion, getDirecciones, setDirFacturacion } from "../infraestructura.ts";
 
 const metaTablaDirecciones = [
-    { id: "direccion", cabecera: "Dirección", render: (direccion: Direccion) => direccionCompleta(direccion) },
-    { id: "dir_facturacion", cabecera: "D. Facturación", render: (direccion: Direccion) => boolAString(direccion.dir_facturacion) },
-    { id: "dir_envio", cabecera: "D. Envío", render: (direccion: Direccion) => boolAString(direccion.dir_envio) },
+    { id: "direccion", cabecera: "Dirección", render: (direccion: DirCliente) => direccionCompleta(direccion) },
+    { id: "dir_facturacion", cabecera: "Facturación", render: (direccion: DirCliente) => boolAString(direccion.dir_facturacion) },
+    { id: "dir_envio", cabecera: "Envío", render: (direccion: DirCliente) => boolAString(direccion.dir_envio) },
   ]
 
 export const TabDireccionesLista = ({
@@ -35,7 +34,7 @@ export const TabDireccionesLista = ({
 
     const cargar = async() => {
         setCargando(true);
-        direcciones = await buscarDirecciones(clienteId);
+        direcciones = await getDirecciones(clienteId);
         setDirecciones(direcciones);
         refrescarSeleccionada();
         setCargando(false);
@@ -45,13 +44,9 @@ export const TabDireccionesLista = ({
         if (!seleccionada) {
             return;
         }
-        setDirecciones(quitarElemento(direcciones, seleccionada));
+        setDirecciones(quitarEntidadDeLista<Direccion>(direcciones, seleccionada));
         setSeleccionada(null);
-        await borrarDireccion(clienteId, seleccionada.id);
-    }
-
-    const quitarElemento = <T extends Entidad>(lista: T[], elemento: T): T[] => {
-        return lista.filter((e) => e.id !== elemento.id);
+        await deleteDireccion(clienteId, seleccionada.id);
     }
 
     const refrescarSeleccionada = () => {
@@ -68,7 +63,7 @@ export const TabDireccionesLista = ({
     
     const onMarcarFacturacionClicked = async(direccionId: string | undefined) => {
         if (!direccionId) return;
-        await marcarDireccionFacturacion(clienteId, direccionId)
+        await setDirFacturacion(clienteId, direccionId)
         cargar();
     }
 
@@ -93,7 +88,7 @@ export const TabDireccionesLista = ({
             </button>
             <button
                 onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
-                disabled={!seleccionada || seleccionada.dir_facturacion}
+                disabled={!seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)}
             > Facturación
             </button>
         <Tabla

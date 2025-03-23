@@ -1,5 +1,5 @@
-import { Cliente, Direccion, NuevaDireccion } from "./diseño.ts";
-import { actualizarDireccion, deleteDireccion, getDireccion, getDirecciones, getPorId, postDireccion, setDirFacturacion } from "./infraestructura.ts";
+import { stringNoVacio } from "../../comun/dominio.ts";
+import { Cliente, DirCliente, NuevaDireccion } from "./diseño.ts";
 
 export const idFiscalValido = (tipo: string) => (valor: string) => {
     if (tipo === "NIF") {
@@ -18,13 +18,14 @@ export const idFiscalValidoGeneral = (tipo: string, valor: string) => {
     return idFiscalValido(tipo)(valor) && tipoIdFiscalValido(tipo);
 }
 
-export const guardar = async (idCliente: string, cambios: Partial<Cliente>) => {
+export const guardar = async (_: string, __: Partial<Cliente>) => {
     await simularApi();
 }
 
-export const actualizarDireccionEnLista = (direcciones: Direccion[], direccion: Direccion) => {
-    return direcciones.map(d => d.id === direccion.id ? direccion : d);
+export const puedoMarcarDireccionFacturacion = (direccion: DirCliente) => {
+    return !direccion.dir_facturacion;
 }
+
 
 export const clienteVacio = (): Cliente => ({
     id: '',
@@ -40,45 +41,20 @@ export const clienteVacio = (): Cliente => ({
     grupo_iva_negocio_id: '',
 })
 
-const noVacio = (valor: string) => valor.length > 0;
 
 export const validadoresDireccion = {
-    nuevaDireccion: (valor: NuevaDireccion) => validadoresDireccion.tipo_via(valor.tipo_via) && validadoresDireccion.nombre_via(valor.nombre_via) && validadoresDireccion.ciudad(valor.ciudad),
-    tipo_via: (valor: string) => noVacio(valor),
-    nombre_via: (valor: string) => noVacio(valor),
-    ciudad: (valor: string) => noVacio(valor),
+    nuevaDireccion: (valor: NuevaDireccion) => (
+        validadoresDireccion.tipo_via(valor.tipo_via) &&
+        validadoresDireccion.nombre_via(valor.nombre_via) &&
+        validadoresDireccion.ciudad(valor.ciudad)
+    ),
+    tipo_via: (valor: string) => stringNoVacio(valor),
+    nombre_via: (valor: string) => stringNoVacio(valor),
+    ciudad: (valor: string) => stringNoVacio(valor),
 }
 
-export const cambiarDireccion = async (clienteId: string, direccion: Direccion) => {
-    console.log('cambiando direccion = ', direccion);
-    await actualizarDireccion(clienteId, direccion);
-}
 
-export const guardarNuevaDireccion = async (clienteId: string, direccion: NuevaDireccion): Promise<string> => {
-    return await postDireccion(clienteId, direccion);
-}
 
-export const buscarDireccion = async (clienteId: string, direccionId: string): Promise<Direccion> => {
-    return await getDireccion(clienteId, direccionId);
-}
-
-export const borrarDireccion = async (clienteId: string, direccionId: string) => {
-    return await deleteDireccion(clienteId, direccionId);
-}
-
-export const buscar = async (idCliente: string): Promise<Cliente> => {
-    return await getPorId(idCliente);
-}
-
-export const buscarDirecciones = async (idCliente: string): Promise<Direccion[]> => {
-    const direcciones = await getDirecciones(idCliente);
-    console.log('direcciones = ', direcciones);
-    return direcciones;
-}
-
-export const marcarDireccionFacturacion = async (idCliente: string, idDireccion: string) => {
-    await setDirFacturacion(idCliente, idDireccion);
-}
 
 const simularApi = async () => {
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));

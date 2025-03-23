@@ -1,36 +1,32 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
-import { Contexto } from "../contexto.ts";
 import { Cliente } from "../diseño.ts";
-import { buscar, clienteVacio, guardar } from "../dominio.ts";
+import { clienteVacio, guardar } from "../dominio.ts";
 import {
-  camposCliente
+  camposCliente,
+  getCliente
 } from "../infraestructura.ts";
 import { IdFiscal } from "./IdFiscal.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
 export const DetalleCliente = (
   {
-    onEntidadActualizada,
+    clienteInicial=null,
+    onEntidadActualizada=()=>{},
   }: {
-    onEntidadActualizada: (entidad: Cliente) => void;
+    clienteInicial?: Cliente | null;
+    onEntidadActualizada?: (entidad: Cliente) => void;
   }
 ) => {
   const params = useParams();
 
-  const context = useContext(Contexto);
-  if (!context) {
-    return null;
-  }
-  const { seleccionada } = context;
-
   const [guardando, setGuardando] = useState(false);
 
-  const clienteId = seleccionada?.id ?? params.id;
+  const clienteId = clienteInicial?.id ?? params.id;
 
   const sufijoTitulo = guardando ? " (Guardando...)" : "";
   const titulo = (cliente: Entidad) => `${cliente.nombre} ${sufijoTitulo}` as string;
@@ -40,14 +36,13 @@ export const DetalleCliente = (
   const onIdFiscalCambiadoCallback = (idFiscal: any) => {
     const nuevoCliente = { ...cliente, ...idFiscal };
     setCliente(nuevoCliente);
-    onEntidadActualizada && onEntidadActualizada(nuevoCliente);
+    onEntidadActualizada(nuevoCliente);
   }
 
   const onCampoCambiado = async (campo: string, valor: any) => {
     if (!clienteId) {
       return;
     }
-    console.log("campo cambiado", campo, 'valor = ', valor);
     setGuardando(true);
     await guardar(clienteId,{
       [campo]: valor
@@ -62,17 +57,12 @@ export const DetalleCliente = (
 
      <Detalle
        id={clienteId}
-      //  camposEntidad={[]}
-      //  acciones={accionesCliente}
        obtenerTitulo={titulo}
-      //  onCampoCambiado={onCampoCambiado}
        setEntidad={(c) => setCliente(c as Cliente)}
        entidad={cliente}
-       cargar={buscar}
+       cargar={getCliente}
      >
      <Input
-        controlado={false}            
-        key='tipo_via'
         campo={camposCliente.nombre}
         onCampoCambiado={onCampoCambiado}
         valorEntidad={cliente?.nombre ?? ''}
@@ -82,8 +72,6 @@ export const DetalleCliente = (
         onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}
       />
       <Input
-        controlado={false}
-        key='agente_id'
         campo={camposCliente.agente_id}
         onCampoCambiado={onCampoCambiado}
         valorEntidad={cliente?.agente_id ?? ''}

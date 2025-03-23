@@ -9,23 +9,26 @@ export const Vista = <T extends Entidad>({
 }: PropsWithChildren<object>) => {
   const slots = { hijos: children };
 
-  const [entidades, setEntidades] = useState<T[]>([]);
-  const [seleccionada, setSeleccionada] = useState<T | null>(null);
+  // const [entidades, setEntidades] = useState<T[]>([]);
+  // const [seleccionada, setSeleccionada] = useState<T | null>(null);
 
 
   return (
-    <Contexto.Provider
-      value={{
-        entidades,
-        setEntidades: setEntidades as ContextoSet<Entidad[]>,
-        seleccionada,
-        setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
-      }}
-    >
+    
+    // <Contexto.Provider
+    //   value={{
+    //     entidades,
+    //     setEntidades: setEntidades as ContextoSet<Entidad[]>,
+    //     seleccionada,
+    //     setSeleccionada: setSeleccionada as ContextoSet<Entidad | null>,
+    //   }}
+    // >
+    <>
       <Slot nombre="contenido" {...slots}>
         <Plantilla>{children}</Plantilla>
       </Slot>
-    </Contexto.Provider>
+    </>
+    // </Contexto.Provider> 
   );
 };
 

@@ -1,7 +1,7 @@
-import { Direccion, Presupuesto } from "./diseño.ts";
+import { Direccion } from "../../comun/diseño.ts";
+import { Presupuesto } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
-    id: '',
     dir_envio: false,
     dir_facturacion: false,
     nombre_via: '',
@@ -27,6 +27,8 @@ export const presupuestoVacio = (): Presupuesto => ({
     id_fiscal: '',
     direccion_id: '',
     direccion: direccionVacia(),
+    agente_id: '',
+    nombre_agente: '',
 })
 
 
