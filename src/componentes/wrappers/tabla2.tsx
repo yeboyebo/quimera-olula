@@ -4,6 +4,7 @@ import "./tabla.css";
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   render?: (entidad: T) => any;
 };
 

@@ -105,7 +105,7 @@ const IdFiscalEdicion = (
         [cliente]
     );
 
-    const onIdFiscalCambiado = (campo: string, valor: any) => {
+    const onIdFiscalCambiado = (campo: string, valor: string) => {
         const idFiscalNuevo = {
             ...idFiscal,
             [campo]: valor,

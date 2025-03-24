@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { Input } from "../../../../componentes/detalle/FormularioGenerico";
-import { Presupuesto } from "../diseño.ts";
+import { Presupuesto, Cliente as TipoCliente } from "../diseño.ts";
 import { camposPresupuesto, patchCambiarCliente } from "../infraestructura.ts";
+
 interface ClienteProps {
     presupuesto: Presupuesto;
-    onClienteCambiadoCallback: (cliente: Cliente) => void;
+    onClienteCambiadoCallback: (cliente: TipoCliente) => void;
 }
-
-interface Cliente {
-    cliente_id: string;
-    direccion_id: string;
-}
-
 
 export const Cliente = ({
     presupuesto,
@@ -71,12 +66,12 @@ const ClienteEdicion = (
         canceladoCallback,
     }: {
         presupuesto: Presupuesto;
-        onClienteCambiadoCallback: (cliente: Cliente) => void;
+        onClienteCambiadoCallback: (cliente: TipoCliente) => void;
         canceladoCallback: () => void;
     }
 ) => {
     
-    const [cliente, setCliente] = useState<Cliente>({
+    const [cliente, setCliente] = useState<TipoCliente>({
         cliente_id: presupuesto.cliente_id,
         direccion_id: presupuesto.direccion_id,
     });
@@ -90,10 +85,10 @@ const ClienteEdicion = (
                 direccion_id: cliente.direccion_id,
             });
         },
-        [presupuesto]
+        [cliente.cliente_id, cliente.direccion_id]
     );
 
-    const onClienteCambiado = (campo: string, valor: any) => {
+    const onClienteCambiado = (campo: string, valor: string) => {
         const clienteNuevo = {
             ...cliente,
             [campo]: valor,

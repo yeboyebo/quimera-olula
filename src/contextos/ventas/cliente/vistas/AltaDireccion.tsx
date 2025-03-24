@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
-import { Direccion, NuevaDireccion } from "../diseño.ts";
+import { DirCliente, NuevaDireccion } from "../diseño.ts";
 import { validadoresDireccion } from "../dominio.ts";
 import { camposDireccion, getDireccion, postDireccion } from "../infraestructura.ts";
 
 export const AltaDireccion = (
     {
         clienteId,
-        onDireccionCreada,
+        onDireccionCreada=()=>{},
         onCancelar,
     }: {
         clienteId: string;
-        onDireccionCreada: (direccion: Direccion) => void;
+        onDireccionCreada?: (direccion: DirCliente) => void;
         onCancelar: () => void;
     }
 ) => {
@@ -23,7 +23,7 @@ export const AltaDireccion = (
         ciudad: ''
     });
 
-    const onCambio = async (campo: string, valor: any) => {
+    const onCambio = async (campo: string, valor: string) => {
         const nuevaDireccion = { ...direccion, [campo]: valor };
         setDireccion(nuevaDireccion);
     };

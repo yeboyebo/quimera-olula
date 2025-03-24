@@ -6,9 +6,7 @@ import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { guardar } from "../../cliente/dominio.ts";
-import {
-  Presupuesto
-} from "../diseño.ts";
+import { Presupuesto, Cliente as TipoCliente } from "../diseño.ts";
 import { presupuestoVacio } from "../dominio.ts";
 import {
   camposPresupuesto,
@@ -21,10 +19,10 @@ import { Lineas } from "./Lineas.tsx";
 export const DetallePresupuesto = (
   {
     presupuestoInicial=null,
-    onEntidadActualizada,
+    onEntidadActualizada: onEntidadActualizada=()=>{},
   }: {
     presupuestoInicial?: Presupuesto | null;
-    onEntidadActualizada: (entidad: Presupuesto) => void;
+    onEntidadActualizada?: (entidad: Presupuesto) => void;
   }
 ) => {
   const { detalle } = estilos;
@@ -40,7 +38,7 @@ export const DetallePresupuesto = (
 
   const [presupuesto, setPresupuesto] = useState<Presupuesto>(presupuestoVacio());
 
-  const onCampoCambiado = async (campo: string, valor: any) => {
+  const onCampoCambiado = async (campo: string, valor: string) => {
       setGuardando(true);
       if (presupuestoId) {
         await guardar(presupuestoId,{
@@ -50,10 +48,10 @@ export const DetallePresupuesto = (
       setGuardando(false);
       const nuevoPresupuesto: Presupuesto = { ...presupuesto, [campo]: valor };
       setPresupuesto(nuevoPresupuesto);
-      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+      onEntidadActualizada(nuevoPresupuesto);
     };
 
-    const onAgenteIdCambiado = async (_: string, valor: any) => {
+    const onAgenteIdCambiado = async (_: string, valor: string) => {
       setGuardando(true);
       if (!presupuestoId) {
         return;
@@ -62,19 +60,19 @@ export const DetallePresupuesto = (
       const nuevoPresupuesto = await getPresupuesto(presupuestoId)
       setGuardando(false);
       setPresupuesto(nuevoPresupuesto);
-      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+      onEntidadActualizada(nuevoPresupuesto);
     };
 
-    const onClienteCambiadoCallback = async (_: any) => {
+    const onClienteCambiadoCallback = async (_: TipoCliente) => {
       const nuevoPresupuesto = await getPresupuesto(presupuesto.id)
       setPresupuesto(nuevoPresupuesto);
-      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+      onEntidadActualizada(nuevoPresupuesto);
     }
 
     const recargarCabecera = async () => {
       const nuevoPresupuesto = await getPresupuesto(presupuesto.id)
       setPresupuesto(nuevoPresupuesto);
-      onEntidadActualizada && onEntidadActualizada(nuevoPresupuesto);
+      onEntidadActualizada(nuevoPresupuesto);
     }
 
   return (

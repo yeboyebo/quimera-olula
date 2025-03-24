@@ -11,8 +11,10 @@ export const quitarEntidadDeLista = <T extends Entidad>(lista: T[], elemento: T)
 }
 
 
-export const refrescarSeleccionada = <T extends Entidad>(entidades: T[], id: string, setSeleccionada: (e: T | null) => void) => {
-    const nuevaSeleccionada = entidades.find((e) => e.id === id);
+export const refrescarSeleccionada = <T extends Entidad>(entidades: T[], id: string | undefined, setSeleccionada: (e: T | null) => void) => {
+    const nuevaSeleccionada = id
+        ? entidades.find((e) => e.id === id)
+        : null
     setSeleccionada(nuevaSeleccionada ? nuevaSeleccionada : null);
 }
 

@@ -17,8 +17,7 @@ export const getPresupuesto: GetPresupuesto = async (id) =>
     return presupuestoFromAPI(respuesta.datos);
   });
 
-export const getPresupuestos: GetPresupuestos = async (filtro, orden) => {
-  (filtro && orden) ? 'usar' : 'params'
+export const getPresupuestos: GetPresupuestos = async (_, __) => {
   return RestAPI.get<{ datos: Presupuesto[] }>(`${baseUrl}`).then((respuesta) => {
     return respuesta.datos.map((d) => presupuestoFromAPI(d));
   });
@@ -36,7 +35,6 @@ export const patchCambiarCliente = async (id: string, clienteId: string, dirClie
     }
   });
 }
-
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
   await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) => {

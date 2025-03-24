@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
-import { boolAString, direccionCompleta, quitarEntidadDeLista } from "../../../comun/dominio.ts";
-import { Direccion } from "../../presupuesto/diseño.ts";
+import { boolAString, direccionCompleta, quitarEntidadDeLista, refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { DirCliente } from "../diseño.ts";
 import { puedoMarcarDireccionFacturacion } from "../dominio.ts";
 import { deleteDireccion, getDirecciones, setDirFacturacion } from "../infraestructura.ts";
@@ -22,45 +21,33 @@ export const TabDireccionesLista = ({
     setSeleccionada,
   }: {
     clienteId: string;
-    onEditarDireccion: (direccion: Direccion) => void;
+    onEditarDireccion: (direccion: DirCliente) => void;
     onCrearDireccion: () => void;
-    direcciones: Direccion[];
-    setDirecciones: (direcciones: Direccion[]) => void;
-    seleccionada: Direccion | null;
-    setSeleccionada: (direccion: Direccion | null) => void;
+    direcciones: DirCliente[];
+    setDirecciones: (direcciones: DirCliente[]) => void;
+    seleccionada: DirCliente | null;
+    setSeleccionada: (direccion: DirCliente | null) => void;
   }) => {
 
     const [cargando, setCargando] = useState(true);
 
-    const cargar = async() => {
+    const cargar = useCallback(async() => {
         setCargando(true);
-        direcciones = await getDirecciones(clienteId);
+        const direcciones = await getDirecciones(clienteId);
         setDirecciones(direcciones);
-        refrescarSeleccionada();
+        refrescarSeleccionada(direcciones, seleccionada?.id, setSeleccionada);
         setCargando(false);
-    }
+    }, [clienteId, setDirecciones, seleccionada, setSeleccionada]);
 
     const onBorrarDireccion = async() => {
         if (!seleccionada) {
             return;
         }
-        setDirecciones(quitarEntidadDeLista<Direccion>(direcciones, seleccionada));
+        setDirecciones(quitarEntidadDeLista<DirCliente>(direcciones, seleccionada));
         setSeleccionada(null);
         await deleteDireccion(clienteId, seleccionada.id);
     }
 
-    const refrescarSeleccionada = () => {
-        if (!seleccionada) {
-            return;
-        }
-        const nuevaSeleccionada = direcciones.find((d) => d.id === seleccionada.id);
-        if (nuevaSeleccionada) {
-            setSeleccionada(nuevaSeleccionada);
-        } else {
-            setSeleccionada(null);
-        }
-    }
-    
     const onMarcarFacturacionClicked = async(direccionId: string | undefined) => {
         if (!direccionId) return;
         await setDirFacturacion(clienteId, direccionId)
@@ -68,8 +55,8 @@ export const TabDireccionesLista = ({
     }
 
     useEffect(() => {
-        clienteId && cargar();
-    }, [clienteId]);
+        if (clienteId) cargar();
+    }, [clienteId, cargar]);
       
     return (<>
             <button

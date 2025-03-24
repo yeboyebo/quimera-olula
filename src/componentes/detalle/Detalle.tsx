@@ -30,7 +30,7 @@ export function Detalle<T extends Entidad>({
       }
       load();
     }
-  }, [id, entidad]);
+  }, [id, entidad, cargar, setEntidad]);
 
   if (!entidad) {
     return <>No se ha encontrado la entidad con Id: {id}</>;

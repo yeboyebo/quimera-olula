@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { Input, InputNumerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { LineaPresupuestoNueva } from "../diseño.ts";
 import { camposLinea, postLinea } from "../infraestructura.ts";
 
@@ -21,7 +21,11 @@ export const AltaLinea = (
         cantidad: 1,
     });
 
-    const onCambio = async (campo: string, valor: any) => {
+    const onCambio = async (campo: string, valor: string) => {
+        const nuevaLinea = { ...linea, [campo]: valor };
+        setLinea(nuevaLinea);
+    };
+    const onCambioCantidad = async (campo: string, valor: number) => {
         const nuevaLinea = { ...linea, [campo]: valor };
         setLinea(nuevaLinea);
     };
@@ -40,10 +44,10 @@ export const AltaLinea = (
                 onCampoCambiado={onCambio}
                 valorEntidad={linea.referencia}
             />
-            <Input
+            <InputNumerico
                 controlado
                 campo={camposLinea.cantidad}
-                onCampoCambiado={onCambio}
+                onCampoCambiado={onCambioCantidad}
                 valorEntidad={linea.cantidad}
             />
             <button onClick={onGuardarClicked}>

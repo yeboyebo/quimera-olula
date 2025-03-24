@@ -4,12 +4,9 @@ import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
-import { Cliente } from "../diseño.ts";
+import { Cliente, IdFiscal as TipoIdFiscal } from "../diseño.ts";
 import { clienteVacio, guardar } from "../dominio.ts";
-import {
-  camposCliente,
-  getCliente
-} from "../infraestructura.ts";
+import { camposCliente, getCliente } from "../infraestructura.ts";
 import { IdFiscal } from "./IdFiscal.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
@@ -33,13 +30,13 @@ export const DetalleCliente = (
 
   const [cliente, setCliente] = useState<Cliente>(clienteVacio());
 
-  const onIdFiscalCambiadoCallback = (idFiscal: any) => {
+  const onIdFiscalCambiadoCallback = (idFiscal: TipoIdFiscal) => {
     const nuevoCliente = { ...cliente, ...idFiscal };
     setCliente(nuevoCliente);
     onEntidadActualizada(nuevoCliente);
   }
 
-  const onCampoCambiado = async (campo: string, valor: any) => {
+  const onCampoCambiado = async (campo: string, valor: string) => {
     if (!clienteId) {
       return;
     }
@@ -50,7 +47,7 @@ export const DetalleCliente = (
     setGuardando(false);
     const nuevoCliente: Cliente = { ...cliente, [campo]: valor };
     setCliente(nuevoCliente);
-    onEntidadActualizada && onEntidadActualizada(nuevoCliente);
+    onEntidadActualizada(nuevoCliente);
   };
 
   return (

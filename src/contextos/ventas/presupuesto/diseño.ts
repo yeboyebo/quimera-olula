@@ -27,6 +27,11 @@ export interface LineaPresupuestoNueva {
   cantidad: number;
 };
 
+export type Cliente = {
+  cliente_id: string;
+  direccion_id: string;
+}
+
 export type GetPresupuestos = (filtro: Filtro, orden: Orden) => Promise<Presupuesto[]>;
 
 export type GetPresupuesto = (id: string) => Promise<Presupuesto>;

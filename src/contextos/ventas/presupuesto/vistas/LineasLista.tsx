@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { useCallback, useEffect, useState } from "react";
+import { InputNumerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
+import { refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { LineaPresupuesto as Linea } from "../diseño.ts";
 import { camposLinea, deleteLinea, getLineas, patchCantidadLinea } from "../infraestructura.ts";
 
@@ -13,7 +14,7 @@ const EditarCantidad = ({
     onCantidadEditada: (linea: Linea, cantidad: number) => void;
   }) => {
     return (
-      <Input
+      <InputNumerico
         campo={camposLinea.cantidad}
         onCampoCambiado={(_, valor) => onCantidadEditada(linea, valor)}
         valorEntidad={linea.cantidad}
@@ -58,14 +59,6 @@ export const LineasLista = ({
 
     const [cargando, setCargando] = useState(true);
 
-    const cargar = async() => {
-        setCargando(true);
-        lineas = await getLineas(presupuestoId);
-        setLineas(lineas);
-        refrescarSeleccionada();
-        setCargando(false);
-    }
-
     const borrarLinea = async() => {
         if (!seleccionada) {
             return;
@@ -84,21 +77,17 @@ export const LineasLista = ({
         return lista.filter((e) => e.id !== elemento.id);
     }
 
-    const refrescarSeleccionada = () => {
-        if (!seleccionada) {
-            return;
-        }
-        const nuevaSeleccionada = lineas.find((d) => d.id === seleccionada.id);
-        if (nuevaSeleccionada) {
-            setSeleccionada(nuevaSeleccionada);
-        } else {
-            setSeleccionada(null);
-        }
-    }
+    const cargar = useCallback(async() => {
+        setCargando(true);
+        const lineas = await getLineas(presupuestoId);
+        setLineas(lineas);
+        refrescarSeleccionada(lineas, seleccionada?.id, setSeleccionada);
+        setCargando(false);
+    }, [presupuestoId, setLineas, seleccionada, setSeleccionada]);
 
     useEffect(() => {
-        presupuestoId && cargar();
-    }, [presupuestoId]);
+        if (presupuestoId) cargar();
+    }, [presupuestoId, cargar]);
       
     return (<>
             <button

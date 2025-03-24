@@ -11,11 +11,11 @@ import { MetaTabla, Tabla } from "../wrappers/tabla2.tsx";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
-const datosCargando = () =>
+const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map((_, i) => ({
     id: i.toString(),
     ...Object.fromEntries(new Array(10).fill(null).map((_, j) => [j, "U00A0"])),
-  }));
+  } as T));
 
 const obtenerCampos = (entidad: Entidad | null): string[] => {
   if (!entidad) return [];
@@ -24,9 +24,8 @@ const obtenerCampos = (entidad: Entidad | null): string[] => {
 };
 
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 export type MaestroProps<T extends Entidad> = {
-  metaTabla: MetaTabla;
+  metaTabla: MetaTabla<T>;
   criteria?: Criteria;
   entidades: T[];
   setEntidades: (entidades: T[]) => void;
@@ -68,21 +67,12 @@ export const Listado = <T extends Entidad>({
     filtrarEntidad(entidad, filtro)
   );
 
-  // const cabeceras = entidadesFiltradas.length
-  //   ? (Object.fromEntries(
-  //       expandirEntidad(entidadesFiltradas[0]).map(([clave]) => [
-  //         formatearClave(clave),
-  //         clave,
-  //       ])
-  //     ) as Record<string, string>)
-  //   : {};
-  
   const renderEntidades = () => {
     if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
 
     const datos = entidadesFiltradas.length
       ? entidadesFiltradas
-      : datosCargando();
+      : datosCargando<T>();
 
     return (
       <Tabla

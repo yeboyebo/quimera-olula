@@ -19,11 +19,11 @@ export const EdicionLinea = (
 
     const [_, setGuardando] = useState(false);
 
-    const onReferenciaCambiada = async (_: string, valor: any) => {
+    const onReferenciaCambiada = async (_: string, valor: string) => {
         setGuardando(true);
         await patchArticuloLinea(presupuestoId, linea.id, valor);
         setGuardando(false);
-        onLineaActualizada && onLineaActualizada(linea);
+        if (onLineaActualizada) onLineaActualizada(linea);
     };
  
     return (

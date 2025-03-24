@@ -39,3 +39,6 @@ export type NuevaDireccion = {
   tipo_via: string;
   ciudad: string;
 };
+
+
+export type GetCliente = (id: string) => Promise<Cliente>;
