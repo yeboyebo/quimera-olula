@@ -1,59 +1,44 @@
-import { useContext } from "react";
-import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
-import { Contexto } from "../../../comun/contexto.ts";
-import { Acciones, Entidad } from "../../../comun/diseño.ts";
+import { useState } from "react";
+import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { Entidad } from "../../../comun/diseño.ts";
+import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { Presupuesto } from "../diseño.ts";
-import {
-  accionesPresupuesto,
-  camposPresupuestoNuevo,
-} from "../infraestructura.ts";
+import { getPresupuestos } from "../infraestructura.ts";
 import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
 
+const metaTablaPresupuesto = [
+  { id: "codigo", cabecera: "Código", render: (entidad: Entidad) => entidad.codigo },
+  { id: "cliente", cabecera: "Cliente", render: (entidad: Entidad) => entidad.nombre_cliente },
+  { id: "total", cabecera: "Total", render: (entidad: Entidad) => entidad.total },
+]
+
 export const MaestroConDetallePresupuesto = () => {
-  const context = useContext(Contexto);
-  if (!context) {
-    throw new Error("Contexto is null");
-  }
-  const { seleccionada, setEntidades } = context;
 
-  const titulo = (presupuesto: Entidad) =>
-    (presupuesto as Presupuesto).codigo as string;
+  const [entidades, setEntidades] = useState<Presupuesto[]>([]);
+  const [seleccionada, setSeleccionada] = useState<Presupuesto | null>(null);
 
-  const onCrearPresupuesto = async (
-    presupuesto: Partial<Presupuesto>
-  ): Promise<void> => {
-    const objPresupuestoNuevo = {
-      cliente: {
-        cliente_id: presupuesto.cliente_id,
-        direccion_id: presupuesto.direccion_id,
-      },
-      empresa_id: presupuesto.empresa_id,
-    };
-    accionesPresupuesto.crearUno(objPresupuestoNuevo).then(() => {
-      accionesPresupuesto.obtenerTodos().then((presupuestos) => {
-        setEntidades(presupuestos);
-      });
-    });
+  const actualizarEntidad = (entidad: Presupuesto) => {
+    setEntidades(actualizarEntidadEnLista<Presupuesto>(entidades, entidad));
   };
-
-  const accionesPresupuestoMaestroConDetalle: Acciones<Presupuesto> = {
-    ...accionesPresupuesto,
-    crearUno: onCrearPresupuesto,
-  };
+  
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <Maestro
-          acciones={accionesPresupuestoMaestroConDetalle}
-          camposEntidad={camposPresupuestoNuevo}
-        />
+          <h2>Presupuestos</h2>
+          <Listado
+            metaTabla={metaTablaPresupuesto}
+            entidades={entidades}
+            setEntidades={setEntidades}
+            seleccionada={seleccionada}
+            setSeleccionada={setSeleccionada}
+            cargar={getPresupuestos}
+          />
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <DetallePresupuesto
-          id={seleccionada?.id ?? null}
-          acciones={accionesPresupuestoMaestroConDetalle}
-          obtenerTitulo={titulo}
+          presupuestoInicial={seleccionada}
+          onEntidadActualizada={actualizarEntidad}
         />
       </div>
     </div>

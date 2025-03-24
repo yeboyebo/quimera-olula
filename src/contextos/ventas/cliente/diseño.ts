@@ -10,16 +10,17 @@ export interface Cliente extends Entidad {
   serie_id: string;
   forma_pago_id: string;
   grupo_iva_negocio_id: string;
-  eventos: [];
 };
 
-export interface ClienteConDirecciones {
-  id: string;
-  direcciones: DireccionCliente[];
-};
+export interface IdFiscal {
+  id_fiscal: string;
+  tipo_id_fiscal: string;
+}
 
-export type Direccion = {
+export type DirCliente = {
   id: string;
+  dir_envio: boolean;
+  dir_facturacion: boolean;
   nombre_via: string;
   tipo_via: string;
   numero: string;
@@ -33,9 +34,11 @@ export type Direccion = {
   telefono: string;
 };
 
-export type DireccionCliente = {
-  id: string;
-  direccion: Direccion;
-  dir_envio: boolean;
-  dir_facturacion: boolean;
+export type NuevaDireccion = {
+  nombre_via: string;
+  tipo_via: string;
+  ciudad: string;
 };
+
+
+export type GetCliente = (id: string) => Promise<Cliente>;

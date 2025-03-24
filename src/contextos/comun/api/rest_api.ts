@@ -38,9 +38,29 @@ const comando = async <T>(
   return json;
 };
 
+const comandoPost = async <T>(
+  method: string,
+  url: string,
+  body?: Partial<T>
+): Promise<{ id: string }> => {
+  const response = await fetch(`${BASE}${url}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body ?? {}),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const json = await response.json();
+  return json;
+};
+
+
 export const RestAPI: API = {
   get: <T>(url: string) => consulta<T>("GET", url),
-  post: <T>(url: string, body: T) => comando<T>("POST", url, body),
+  post: <T>(url: string, body: T) => comandoPost<T>("POST", url, body),
   put: <T>(url: string, body: T) => comando<T>("PUT", url, body),
   patch: <T>(url: string, body: Partial<T>) => comando<T>("PATCH", url, body),
   delete: (url: string) => comando("DELETE", url),

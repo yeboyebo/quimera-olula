@@ -34,7 +34,7 @@ createRoot(document.getElementById("root")!).render(
               path=":id"
               element={
                 <Vista>
-                  <DetalleCliente />
+                  <DetalleCliente/>
                 </Vista>
               }
             />

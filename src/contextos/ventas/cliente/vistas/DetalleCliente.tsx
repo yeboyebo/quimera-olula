@@ -1,39 +1,79 @@
-import { useContext } from "react";
+import { useState } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
+import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { Maestro } from "../../../../componentes/maestro/Maestro.tsx";
-import { SubVista } from "../../../../componentes/vista/Vista.tsx";
-import { Contexto } from "../../../comun/contexto.ts";
-import { Entidad, EntidadAccion } from "../../../comun/diseño.ts";
-import { crearAccionesRelacionadas } from "../../../comun/infraestructura.ts";
-import {
-  accionesCliente,
-  camposCliente,
-  camposDireccion,
-} from "../infraestructura.ts";
-import { MaestroDireccionesAcciones } from "./MaestroDireccionesAcciones.tsx";
+import { Entidad } from "../../../comun/diseño.ts";
+import { Cliente, IdFiscal as TipoIdFiscal } from "../diseño.ts";
+import { clienteVacio, guardar } from "../dominio.ts";
+import { camposCliente, getCliente } from "../infraestructura.ts";
+import { IdFiscal } from "./IdFiscal.tsx";
+import { TabDirecciones } from "./TabDirecciones.tsx";
 
-export const DetalleCliente = () => {
+export const DetalleCliente = (
+  {
+    clienteInicial=null,
+    onEntidadActualizada=()=>{},
+  }: {
+    clienteInicial?: Cliente | null;
+    onEntidadActualizada?: (entidad: Cliente) => void;
+  }
+) => {
   const params = useParams();
 
-  const context = useContext(Contexto);
-  if (!context) {
-    throw new Error("Contexto is null");
+  const [guardando, setGuardando] = useState(false);
+
+  const clienteId = clienteInicial?.id ?? params.id;
+
+  const sufijoTitulo = guardando ? " (Guardando...)" : "";
+  const titulo = (cliente: Entidad) => `${cliente.nombre} ${sufijoTitulo}` as string;
+
+  const [cliente, setCliente] = useState<Cliente>(clienteVacio());
+
+  const onIdFiscalCambiadoCallback = (idFiscal: TipoIdFiscal) => {
+    const nuevoCliente = { ...cliente, ...idFiscal };
+    setCliente(nuevoCliente);
+    onEntidadActualizada(nuevoCliente);
   }
-  const { seleccionada } = context;
 
-  const clienteId = seleccionada?.id ?? params.id ?? "0";
-
-  const titulo = (cliente: Entidad) => cliente.nombre as string;
+  const onCampoCambiado = async (campo: string, valor: string) => {
+    if (!clienteId) {
+      return;
+    }
+    setGuardando(true);
+    await guardar(clienteId,{
+      [campo]: valor
+    })
+    setGuardando(false);
+    const nuevoCliente: Cliente = { ...cliente, [campo]: valor };
+    setCliente(nuevoCliente);
+    onEntidadActualizada(nuevoCliente);
+  };
 
   return (
-    <Detalle
-      id={clienteId ?? "0"}
-      camposEntidad={camposCliente}
-      acciones={accionesCliente}
-      obtenerTitulo={titulo}
-    >
+
+     <Detalle
+       id={clienteId}
+       obtenerTitulo={titulo}
+       setEntidad={(c) => setCliente(c as Cliente)}
+       entidad={cliente}
+       cargar={getCliente}
+     >
+     <Input
+        campo={camposCliente.nombre}
+        onCampoCambiado={onCampoCambiado}
+        valorEntidad={cliente?.nombre ?? ''}
+      />
+      <IdFiscal
+        cliente={cliente}
+        onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}
+      />
+      <Input
+        campo={camposCliente.agente_id}
+        onCampoCambiado={onCampoCambiado}
+        valorEntidad={cliente?.agente_id ?? ''}
+      />
+
       {!!clienteId && (
         <Tabs
           children={[
@@ -46,17 +86,7 @@ export const DetalleCliente = () => {
               key="tab-2"
               label="Direcciones"
               children={
-                <SubVista>
-                  <Maestro
-                    Acciones={MaestroDireccionesAcciones}
-                    acciones={crearAccionesRelacionadas<EntidadAccion>(
-                      "cliente",
-                      "direcciones",
-                      clienteId
-                    )}
-                    camposEntidad={camposDireccion}
-                  />
-                </SubVista>
+                <TabDirecciones clienteId={clienteId} />
               }
             />,
             <Tab
