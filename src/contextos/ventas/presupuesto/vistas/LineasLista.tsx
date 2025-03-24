@@ -83,12 +83,12 @@ export const LineasLista = ({
         setLineas(lineas);
         refrescarSeleccionada(lineas, seleccionada?.id, setSeleccionada);
         setCargando(false);
-    }, [presupuestoId, setLineas, seleccionada, setSeleccionada]);
+    }, [presupuestoId, setLineas, seleccionada?.id, setSeleccionada]);
 
     useEffect(() => {
         if (presupuestoId) cargar();
     }, [presupuestoId, cargar]);
-      
+    
     return (<>
             <button
                 onClick={onCrearLinea}

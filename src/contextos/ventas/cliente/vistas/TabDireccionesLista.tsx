@@ -37,7 +37,7 @@ export const TabDireccionesLista = ({
         setDirecciones(direcciones);
         refrescarSeleccionada(direcciones, seleccionada?.id, setSeleccionada);
         setCargando(false);
-    }, [clienteId, setDirecciones, seleccionada, setSeleccionada]);
+    }, [clienteId, setDirecciones, seleccionada?.id, setSeleccionada]);
 
     const onBorrarDireccion = async() => {
         if (!seleccionada) {
