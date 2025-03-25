@@ -5,20 +5,18 @@ import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { Cliente, IdFiscal as TipoIdFiscal } from "../diseño.ts";
-import { clienteVacio, guardar } from "../dominio.ts";
-import { camposCliente, getCliente } from "../infraestructura.ts";
+import { clienteVacio } from "../dominio.ts";
+import { camposCliente, getCliente, patchCliente } from "../infraestructura.ts";
 import { IdFiscal } from "./IdFiscal.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
-export const DetalleCliente = (
-  {
-    clienteInicial=null,
-    onEntidadActualizada=()=>{},
-  }: {
-    clienteInicial?: Cliente | null;
-    onEntidadActualizada?: (entidad: Cliente) => void;
-  }
-) => {
+export const DetalleCliente = ({
+  clienteInicial = null,
+  onEntidadActualizada = () => {},
+}: {
+  clienteInicial?: Cliente | null;
+  onEntidadActualizada?: (entidad: Cliente) => void;
+}) => {
   const params = useParams();
 
   const [guardando, setGuardando] = useState(false);
@@ -26,7 +24,8 @@ export const DetalleCliente = (
   const clienteId = clienteInicial?.id ?? params.id;
 
   const sufijoTitulo = guardando ? " (Guardando...)" : "";
-  const titulo = (cliente: Entidad) => `${cliente.nombre} ${sufijoTitulo}` as string;
+  const titulo = (cliente: Entidad) =>
+    `${cliente.nombre} ${sufijoTitulo}` as string;
 
   const [cliente, setCliente] = useState<Cliente>(clienteVacio());
 
@@ -34,35 +33,32 @@ export const DetalleCliente = (
     const nuevoCliente = { ...cliente, ...idFiscal };
     setCliente(nuevoCliente);
     onEntidadActualizada(nuevoCliente);
-  }
+  };
 
   const onCampoCambiado = async (campo: string, valor: string) => {
     if (!clienteId) {
       return;
     }
     setGuardando(true);
-    await guardar(clienteId,{
-      [campo]: valor
-    })
-    setGuardando(false);
     const nuevoCliente: Cliente = { ...cliente, [campo]: valor };
+    await patchCliente(clienteId, nuevoCliente);
+    setGuardando(false);
     setCliente(nuevoCliente);
     onEntidadActualizada(nuevoCliente);
   };
 
   return (
-
-     <Detalle
-       id={clienteId}
-       obtenerTitulo={titulo}
-       setEntidad={(c) => setCliente(c as Cliente)}
-       entidad={cliente}
-       cargar={getCliente}
-     >
-     <Input
+    <Detalle
+      id={clienteId}
+      obtenerTitulo={titulo}
+      setEntidad={(c) => setCliente(c as Cliente)}
+      entidad={cliente}
+      cargar={getCliente}
+    >
+      <Input
         campo={camposCliente.nombre}
         onCampoCambiado={onCampoCambiado}
-        valorEntidad={cliente?.nombre ?? ''}
+        valorEntidad={cliente?.nombre ?? ""}
       />
       <IdFiscal
         cliente={cliente}
@@ -71,7 +67,7 @@ export const DetalleCliente = (
       <Input
         campo={camposCliente.agente_id}
         onCampoCambiado={onCampoCambiado}
-        valorEntidad={cliente?.agente_id ?? ''}
+        valorEntidad={cliente?.agente_id ?? ""}
       />
 
       {!!clienteId && (
@@ -85,9 +81,7 @@ export const DetalleCliente = (
             <Tab
               key="tab-2"
               label="Direcciones"
-              children={
-                <TabDirecciones clienteId={clienteId} />
-              }
+              children={<TabDirecciones clienteId={clienteId} />}
             />,
             <Tab
               key="tab-3"

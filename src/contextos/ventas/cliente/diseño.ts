@@ -42,3 +42,4 @@ export type NuevaDireccion = {
 
 
 export type GetCliente = (id: string) => Promise<Cliente>;
+export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;
