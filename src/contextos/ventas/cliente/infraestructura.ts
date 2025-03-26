@@ -1,7 +1,7 @@
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
-import { Cliente, DirCliente, GetCliente, NuevaDireccion } from "./diseño.ts";
+import { Cliente, DirCliente, GetCliente, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
 
 const baseUrl = `/ventas/cliente`;
 
@@ -64,6 +64,24 @@ export const getClientes = async (_: Filtro, __: Orden): Promise<Cliente[]> =>
     return clientes
   });
 
+export const patchCliente: PatchCliente = async (id, cliente) =>
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    nombre: cliente.nombre,
+    id_fiscal: cliente.id_fiscal,
+  });
+
+export const deleteCliente = async (id: string): Promise<void> =>
+  await RestAPI.delete(`${baseUrl}/${id}`);
+
+export const postCliente: PostCliente = async (cliente) => {
+  const payload = {
+    cliente: {
+      ...cliente,
+    }
+  }
+  return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
+}
+
 export const getDireccion = async (clienteId: string, direccionId: string): Promise<DirCliente> =>
   await RestAPI.get<{ datos: DirClienteAPI }>(`${baseUrl}/${clienteId}/direcciones/${direccionId}`).then((respuesta) =>
     dirClienteFromAPI(respuesta.datos)
@@ -124,7 +142,9 @@ export const camposDireccion: Record<string, CampoFormularioGenerico> = {
 export const camposCliente: Record<string, CampoFormularioGenerico> = {
   id: { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
   nombre: { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%", xtipo: "no controlado", },
-  id_fiscal: { nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text", xtipo: "controlado", },
+  id_fiscal: {
+    nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text", xtipo: "controlado"
+  },
   agente_id: { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
   divisa_id: {
     nombre: "divisa_id",
@@ -132,7 +152,17 @@ export const camposCliente: Record<string, CampoFormularioGenerico> = {
     tipo: "select",
     opciones: opcionesDivisa,
   },
-  tipo_id_fiscal: { nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text", xtipo: "controlado" },
+  empresa_id: { nombre: "empresa_id", etiqueta: "Empresa", tipo: "text" },
+  tipo_id_fiscal: {
+    nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text", xtipo: "controlado", opciones: [
+      ["NIF", "NIF"],
+      ["NIF/IVA", "NIF/IVA"],
+      ["Pasaporte", "Pasaporte"],
+      ["Doc.Oficial País", "Doc.Oficial País"],
+      ["Cert.Residencia", "Cert.Residencia"],
+      ["Otro", "Otro"],
+    ]
+  },
   serie_id: { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
   forma_pago_id: { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
   grupo_iva_negocio_id: { nombre: "grupo_iva_negocio_id", etiqueta: "Grupo IVA Negocio", tipo: "text" },

@@ -11,6 +11,15 @@ export interface Presupuesto extends Entidad {
   direccion: Direccion;
   agente_id: string;
   nombre_agente: string;
+  divisa_id: string;
+  aprobado: boolean;
+};
+
+export type NuevoPresupuesto = {
+  cliente_id: string;
+  direccion_id: string;
+  fecha: string;
+  empresa_id: string;
 };
 
 export interface LineaPresupuesto extends Entidad {
@@ -36,6 +45,8 @@ export type GetPresupuestos = (filtro: Filtro, orden: Orden) => Promise<Presupue
 
 export type GetPresupuesto = (id: string) => Promise<Presupuesto>;
 
+export type PostPresupuesto = (presupuesto: NuevoPresupuesto) => Promise<string>;
+
 export type CambiarArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;
 
 export type CambiarCantidadLinea = (id: string, lineaId: string, cantidad: number) => Promise<void>;
@@ -43,3 +54,6 @@ export type CambiarCantidadLinea = (id: string, lineaId: string, cantidad: numbe
 export type PostLinea = (id: string, linea: LineaPresupuestoNueva) => Promise<string>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>;
+
