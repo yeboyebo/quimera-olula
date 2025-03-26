@@ -1,5 +1,5 @@
 import { Direccion } from "../../comun/diseño.ts";
-import { Presupuesto } from "./diseño.ts";
+import { NuevoPresupuesto, Presupuesto } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     dir_envio: false,
@@ -29,6 +29,20 @@ export const presupuestoVacio = (): Presupuesto => ({
     direccion: direccionVacia(),
     agente_id: '',
     nombre_agente: '',
+    divisa_id: '',
+    aprobado: false,
 })
+
+export const validadoresPresupuesto = {
+    cliente_id: (valor: string) => valor.trim() !== "",
+    direccion_id: (valor: string) => valor.trim() !== "",
+    fecha: (valor: string) => !isNaN(Date.parse(valor)),
+    empresa_id: (valor: string) => valor.trim() !== "",
+    nuevoPresupuesto: (presupuesto: NuevoPresupuesto) =>
+        validadoresPresupuesto.cliente_id(presupuesto.cliente_id) &&
+        validadoresPresupuesto.direccion_id(presupuesto.direccion_id) &&
+        validadoresPresupuesto.fecha(presupuesto.fecha) &&
+        validadoresPresupuesto.empresa_id(presupuesto.empresa_id),
+};
 
 

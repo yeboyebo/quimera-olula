@@ -2,7 +2,7 @@
 
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PostLinea, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 const baseUrl = `/ventas/presupuesto`;
 
@@ -21,6 +21,19 @@ export const getPresupuestos: GetPresupuestos = async (_, __) => {
   return RestAPI.get<{ datos: Presupuesto[] }>(`${baseUrl}`).then((respuesta) => {
     return respuesta.datos.map((d) => presupuestoFromAPI(d));
   });
+}
+
+export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<string> => {
+  const payload = {
+    cliente: {
+      cliente_id: presupuesto.cliente_id,
+      direccion_id: presupuesto.direccion_id
+    },
+    fecha: presupuesto.fecha,
+    empresa_id: presupuesto.empresa_id
+
+  }
+  return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
 }
 
 export const patchCambiarAgente = async (id: string, agenteId: string) => {
@@ -93,6 +106,7 @@ export const camposPresupuesto: Record<string, CampoFormularioGenerico> = {
   "direccion_id": { nombre: "direccion_id", etiqueta: "ID Dirección", tipo: "text" },
   "agente_id": { nombre: "agente_id", etiqueta: "ID Agente", tipo: "text" },
   "divisa_id": { nombre: "divisa_id", etiqueta: "Divisa", tipo: "text", opciones: opcionesDivisa },
+  "empresa_id": { nombre: "empresa_id", etiqueta: "ID Empresa", tipo: "text" },
 };
 
 export const camposLinea: Record<string, CampoFormularioGenerico> = {
