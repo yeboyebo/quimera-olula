@@ -7,6 +7,7 @@ import { Entidad } from "../../../comun/diseño.ts";
 import { Cliente, IdFiscal as TipoIdFiscal } from "../diseño.ts";
 import { clienteVacio } from "../dominio.ts";
 import { camposCliente, getCliente, patchCliente } from "../infraestructura.ts";
+import "./DetalleCliente.css";
 import { IdFiscal } from "./IdFiscal.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
@@ -54,7 +55,9 @@ export const DetalleCliente = ({
       setEntidad={(c) => setCliente(c as Cliente)}
       entidad={cliente}
       cargar={getCliente}
+      className="detalle-cliente"
     >
+      {/* <h2 className="detalle-cliente-titulo">{titulo(cliente)}</h2> */}
       <Input
         campo={camposCliente.nombre}
         onCampoCambiado={onCampoCambiado}
@@ -72,46 +75,79 @@ export const DetalleCliente = ({
 
       {!!clienteId && (
         <Tabs
+          className="detalle-cliente-tabs"
           children={[
             <Tab
               key="tab-1"
               label="Comercial"
-              children={<div> Comercial contenido </div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Comercial contenido
+                </div>
+              }
             />,
             <Tab
               key="tab-2"
               label="Direcciones"
-              children={<TabDirecciones clienteId={clienteId} />}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  <TabDirecciones clienteId={clienteId} />
+                </div>
+              }
             />,
             <Tab
               key="tab-3"
               label="Cuentas Bancarias"
-              children={<div> Cuentas Bancarias Master contenido </div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Cuentas Bancarias Master contenido
+                </div>
+              }
             />,
             <Tab
               key="tab-4"
               label="Agenda"
-              children={<div> Agenda contenido </div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Agenda contenido
+                </div>
+              }
             />,
             <Tab
               key="tab-5"
               label="Descuentos"
-              children={<div> Descuentos contenido</div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Descuentos contenido
+                </div>
+              }
             />,
             <Tab
               key="tab-6"
               label="Documentos"
-              children={<div> Documentos contenido</div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Documentos contenido
+                </div>
+              }
             />,
             <Tab
               key="tab-7"
               label="Contabilidad"
-              children={<div> Contabilidad contenido</div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Contabilidad contenido
+                </div>
+              }
             />,
             <Tab
               key="tab-8"
               label="Factura-e"
-              children={<div> Factura-e contenido</div>}
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  Factura-e contenido
+                </div>
+              }
             />,
           ]}
         ></Tabs>

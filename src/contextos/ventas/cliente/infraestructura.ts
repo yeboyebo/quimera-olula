@@ -83,12 +83,12 @@ export const postCliente: PostCliente = async (cliente) => {
 }
 
 export const getDireccion = async (clienteId: string, direccionId: string): Promise<DirCliente> =>
-  await RestAPI.get<{ datos: DirClienteAPI }>(`${baseUrl}/${clienteId}/direcciones/${direccionId}`).then((respuesta) =>
+  await RestAPI.get<{ datos: DirClienteAPI }>(`${baseUrl}/${clienteId}/direccion/${direccionId}`).then((respuesta) =>
     dirClienteFromAPI(respuesta.datos)
   );
 
 export const getDirecciones = async (id: string): Promise<DirCliente[]> =>
-  await RestAPI.get<{ datos: DirClienteAPI[] }>(`${baseUrl}/${id}/direcciones`).then((respuesta) => {
+  await RestAPI.get<{ datos: DirClienteAPI[] }>(`${baseUrl}/${id}/direccion`).then((respuesta) => {
     const direcciones = respuesta.datos.map((d) => dirClienteFromAPI(d));
     return direcciones
   });
@@ -99,21 +99,21 @@ export const postDireccion = async (clienteId: string, direccion: NuevaDireccion
       ...direccion,
     }
   }
-  return await RestAPI.post(`${baseUrl}/${clienteId}/direcciones`, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${baseUrl}/${clienteId}/direccion`, payload).then((respuesta) => respuesta.id);
 }
 
 export const setDirFacturacion = async (clienteId: string, direccionId: string): Promise<void> =>
-  RestAPI.patch(`${baseUrl}/${clienteId}/direcciones/${direccionId}/facturacion`, {});
+  RestAPI.patch(`${baseUrl}/${clienteId}/direccion/${direccionId}/facturacion`, {});
 
 
 export const actualizarDireccion = async (clienteId: string, direccion: DirCliente): Promise<void> =>
   RestAPI.patch(
-    `${baseUrl}/${clienteId}/direcciones/${direccion.id}`
+    `${baseUrl}/${clienteId}/direccion/${direccion.id}`
     , { direccion: dirClienteToAPI(direccion) }
   );
 
 export const deleteDireccion = async (clienteId: string, direccionId: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrl}/${clienteId}/direcciones/${direccionId}`);
+  await RestAPI.delete(`${baseUrl}/${clienteId}/direccion/${direccionId}`);
 
 
 export const obtenerOpcionesSelector =

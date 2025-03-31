@@ -6,6 +6,7 @@ import { Cliente } from "../diseño.ts";
 import { deleteCliente, getClientes } from "../infraestructura.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente.tsx";
+import "./MaestroConDetalleCliente.css";
 
 const metaTablaCliente = [
   { id: "id", cabecera: "Id" },
@@ -50,20 +51,15 @@ export const MaestroConDetalleCliente = () => {
   };
 
   return (
-    <>
-      <div
-        className="Maestro"
-        style={{
-          width: "50%",
-          overflowX: "hidden",
-        }}
-      >
+    <div className="maestro-con-detalle">
+      <div className="maestro">
         <h2>Clientes</h2>
-        <button onClick={onCrearCliente}> Nuevo</button>
-        <button disabled={!seleccionada} onClick={onBorrarCliente}>
-          {" "}
-          Borrar
-        </button>
+        <div className="maestro-botones">
+          <button onClick={onCrearCliente}>Nuevo</button>
+          <button disabled={!seleccionada} onClick={onBorrarCliente}>
+            Borrar
+          </button>
+        </div>
         <Listado
           metaTabla={metaTablaCliente}
           entidades={entidades}
@@ -73,7 +69,7 @@ export const MaestroConDetalleCliente = () => {
           cargar={getClientes}
         />
       </div>
-      <div className="Detalle" style={{ width: "50%", overflowX: "hidden" }}>
+      <div className="detalle">
         <DetalleCliente
           clienteInicial={seleccionada}
           onEntidadActualizada={actualizarEntidad}
@@ -93,6 +89,6 @@ export const MaestroConDetalleCliente = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
