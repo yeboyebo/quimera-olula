@@ -49,7 +49,7 @@ export type PostPresupuesto = (presupuesto: NuevoPresupuesto) => Promise<string>
 
 export type CambiarArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;
 
-export type CambiarCantidadLinea = (id: string, lineaId: string, cantidad: number) => Promise<void>;
+export type CambiarCantidadLinea = (id: string, linea: LineaPresupuesto, cantidad: number) => Promise<void>;
 
 export type PostLinea = (id: string, linea: LineaPresupuestoNueva) => Promise<string>;
 
