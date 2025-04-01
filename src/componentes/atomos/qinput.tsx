@@ -12,7 +12,14 @@ type QInputProps = {
   valido?: boolean;
   opcional?: boolean;
   condensado?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (
+    valor: string,
+    evento?: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+  onBlur?: (
+    valor: string,
+    evento?: React.ChangeEvent<HTMLInputElement>
+  ) => void;
 };
 
 export const QInput = ({
@@ -28,6 +35,7 @@ export const QInput = ({
   opcional,
   condensado,
   onChange,
+  onBlur,
 }: QInputProps) => {
   const attrs = { erroneo, advertido, valido, opcional, condensado };
 
@@ -45,7 +53,8 @@ export const QInput = ({
           value={onChange ? valor : undefined}
           defaultValue={onChange ? undefined : valor}
           disabled={deshabilitado}
-          onChange={onChange}
+          onChange={onChange ? (e) => onChange(e.target.value, e) : undefined}
+          onBlur={onBlur ? (e) => onBlur(e.target.value, e) : undefined}
         />
         <span className="texto-validacion">{textoValidacion}</span>
       </label>
