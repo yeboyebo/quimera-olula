@@ -29,26 +29,27 @@ export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<str
       cliente_id: presupuesto.cliente_id,
       direccion_id: presupuesto.direccion_id
     },
-    fecha: presupuesto.fecha,
+    // fecha: presupuesto.fecha,
     empresa_id: presupuesto.empresa_id
-
   }
   return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
 }
 
 export const patchCambiarAgente = async (id: string, agenteId: string) => {
-  await RestAPI.patch(`${baseUrl}/${id}/cambiar_agente`, { agente_id: agenteId });
+  await RestAPI.patch(`${baseUrl}/${id}`, { cambios: { agente_id: agenteId } });
 }
 
 export const patchCambiarDivisa: PatchCambiarDivisa = async (id, divisaId) => {
-  await RestAPI.patch(`${baseUrl}/${id}/cambiar_divisa`, { divisa_id: divisaId });
+  await RestAPI.patch(`${baseUrl}/${id}`, { cambios: { divisa_id: divisaId } });
 }
 
 export const patchCambiarCliente = async (id: string, clienteId: string, dirClienteId: string): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}/cambiar_cliente`, {
-    cliente: {
-      id: clienteId,
-      direccion_id: dirClienteId
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      cliente: {
+        id: clienteId,
+        direccion_id: dirClienteId
+      }
     }
   });
 }
@@ -79,19 +80,30 @@ export const postLinea: PostLinea = async (id, linea) => {
 }
 
 export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, referencia) => {
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}/cambiar_articulo`, {
-    articulo_id: referencia
-  });
+  const payload = {
+    cambios: {
+      articulo: {
+        articulo_id: referencia
+      },
+    },
+  }
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload);
 }
 
-export const patchCantidadLinea: CambiarCantidadLinea = async (id, lineaId, cantidad) => {
-  await RestAPI.patch(`${baseUrl}/${id}/cambiar_cantidad_lineas`, {
-    lineas: [{ linea_id: lineaId, cantidad: cantidad }]
-  });
+export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantidad) => {
+  const payload = {
+    cambios: {
+      articulo: {
+        articulo_id: linea.referencia
+      },
+      cantidad: cantidad,
+    },
+  }
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}/borrar_lineas`, {
+  await RestAPI.patch(`${baseUrl}/${id}/borrar`, {
     lineas: [lineaId]
   });
 }
