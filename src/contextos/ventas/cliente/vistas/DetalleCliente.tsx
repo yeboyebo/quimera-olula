@@ -14,9 +14,11 @@ import { TabDirecciones } from "./TabDirecciones.tsx";
 export const DetalleCliente = ({
   clienteInicial = null,
   onEntidadActualizada = () => {},
+  cancelarSeleccionada,
 }: {
   clienteInicial?: Cliente | null;
   onEntidadActualizada?: (entidad: Cliente) => void;
+  cancelarSeleccionada?: () => void;
 }) => {
   const params = useParams();
 
@@ -56,6 +58,7 @@ export const DetalleCliente = ({
       entidad={cliente}
       cargar={getCliente}
       className="detalle-cliente"
+      cerrarDetalle={cancelarSeleccionada}
     >
       {/* <h2 className="detalle-cliente-titulo">{titulo(cliente)}</h2> */}
       <Input
