@@ -15,7 +15,6 @@ quimera-tabla {
 
     table {
         width: 100%;
-        display: block;
         overflow-x: scroll;
         border-spacing: 0;
         border-collapse: separate;

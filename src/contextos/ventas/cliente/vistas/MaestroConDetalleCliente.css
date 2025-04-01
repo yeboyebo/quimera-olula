@@ -1,13 +1,16 @@
 .maestro-con-detalle {
-    display: flex;
-    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
     overflow-x: hidden;
-}
 
-.maestro {
-    width: 50%;
-    overflow-x: hidden;
-    padding: 1rem;
+    @media only screen and (max-width: 1350px) {
+        grid-template-columns: 1fr;
+
+        .solo-una-vista {
+            display: none;
+        }
+    }
 }
 
 .maestro h2 {
@@ -25,12 +28,6 @@
     padding: 0.5rem 1rem;
     font-size: 1rem;
     cursor: pointer;
-}
-
-.detalle {
-    width: 50%;
-    overflow-x: hidden;
-    padding: 1rem;
 }
 
 .modal {
