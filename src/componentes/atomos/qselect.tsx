@@ -5,7 +5,7 @@ type QSelectProps = {
   nombre: string;
   deshabilitado?: boolean;
   placeholder?: string;
-  opciones?: { valor: string; descripcion: string }[];
+  opciones: { valor: string; descripcion: string }[];
   valor?: string;
   textoValidacion?: string;
   erroneo?: boolean;
@@ -13,7 +13,14 @@ type QSelectProps = {
   valido?: boolean;
   opcional?: boolean;
   condensado?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange?: (
+    valor: string,
+    evento?: React.ChangeEvent<HTMLSelectElement>
+  ) => void;
+  onBlur?: (
+    valor: string,
+    evento?: React.ChangeEvent<HTMLSelectElement>
+  ) => void;
 };
 
 export const QSelect = ({
@@ -21,7 +28,7 @@ export const QSelect = ({
   nombre,
   deshabilitado,
   placeholder,
-  opciones = [],
+  opciones,
   valor = "",
   textoValidacion = "",
   erroneo,
@@ -30,6 +37,7 @@ export const QSelect = ({
   opcional,
   condensado,
   onChange,
+  onBlur,
 }: QSelectProps) => {
   const attrs = { erroneo, advertido, valido, opcional, condensado };
 
@@ -51,7 +59,8 @@ export const QSelect = ({
           defaultValue={onChange ? undefined : valor}
           value={onChange ? valor : undefined}
           disabled={deshabilitado}
-          onChange={onChange}
+          onChange={onChange ? (e) => onChange(e.target.value, e) : undefined}
+          onBlur={onBlur ? (e) => onBlur(e.target.value, e) : undefined}
         >
           <option hidden value="">
             -{placeholder}-
