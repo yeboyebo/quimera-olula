@@ -18,7 +18,6 @@ export interface Presupuesto extends Entidad {
 export type NuevoPresupuesto = {
   cliente_id: string;
   direccion_id: string;
-  fecha: string;
   empresa_id: string;
 };
 

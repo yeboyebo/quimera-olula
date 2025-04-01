@@ -41,7 +41,6 @@ export const validadoresPresupuesto = {
     nuevoPresupuesto: (presupuesto: NuevoPresupuesto) =>
         validadoresPresupuesto.cliente_id(presupuesto.cliente_id) &&
         validadoresPresupuesto.direccion_id(presupuesto.direccion_id) &&
-        validadoresPresupuesto.fecha(presupuesto.fecha) &&
         validadoresPresupuesto.empresa_id(presupuesto.empresa_id),
 };
 
