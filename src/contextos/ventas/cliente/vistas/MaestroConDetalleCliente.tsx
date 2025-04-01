@@ -50,9 +50,12 @@ export const MaestroConDetalleCliente = () => {
     setSeleccionada(null);
   };
 
+  const clasesMaestro = "maestro" + (seleccionada ? " solo-una-vista" : "");
+  const clasesDetalle = "detalle" + (seleccionada ? "" : " solo-una-vista");
+
   return (
-    <div className="maestro-con-detalle">
-      <div className="maestro">
+    <section className="maestro-con-detalle">
+      <section className={clasesMaestro}>
         <h2>Clientes</h2>
         <div className="maestro-botones">
           <button onClick={onCrearCliente}>Nuevo</button>
@@ -68,13 +71,14 @@ export const MaestroConDetalleCliente = () => {
           setSeleccionada={setSeleccionada}
           cargar={getClientes}
         />
-      </div>
-      <div className="detalle">
+      </section>
+      <section className={clasesDetalle}>
         <DetalleCliente
           clienteInicial={seleccionada}
           onEntidadActualizada={actualizarEntidad}
+          cancelarSeleccionada={() => setSeleccionada(null)}
         />
-      </div>
+      </section>
 
       {mostrarModal && (
         <div className="modal">
@@ -89,6 +93,6 @@ export const MaestroConDetalleCliente = () => {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 };
