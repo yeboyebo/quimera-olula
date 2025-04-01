@@ -1,15 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
-import { InputNumerico } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { QForm } from "../../../../componentes/atomos/qform.tsx";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { LineaPresupuesto as Linea } from "../diseño.ts";
 import {
-  camposLinea,
   deleteLinea,
   getLineas,
   patchCantidadLinea,
 } from "../infraestructura.ts";
+
+const validacion = (cantidadRaw: string) => {
+  const cantidad = parseInt(cantidadRaw);
+
+  return isNaN(cantidad) || cantidad < 0
+    ? "Debe tener una cantidad mayor que cero."
+    : "";
+};
 
 const EditarCantidad = ({
   linea,
@@ -18,12 +26,28 @@ const EditarCantidad = ({
   linea: Linea;
   onCantidadEditada: (linea: Linea, cantidad: number) => void;
 }) => {
+  const [estado, setEstado] = useState("");
+
+  const submit = ({ cantidad }: Record<string, string>) => {
+    const nuevoEstado = validacion(cantidad);
+    setEstado(nuevoEstado);
+
+    if (nuevoEstado.length > 0) return;
+
+    onCantidadEditada(linea, parseInt(cantidad));
+  };
+
   return (
-    <InputNumerico
-      campo={camposLinea.cantidad}
-      onCampoCambiado={(_, valor) => onCantidadEditada(linea, valor)}
-      valorEntidad={linea.cantidad}
-    />
+    <QForm onSubmit={submit}>
+      <QInput
+        label="Cantidad"
+        nombre="cantidad"
+        valor={linea.cantidad.toString()}
+        erroneo={!!estado && estado.length > 0}
+        textoValidacion={estado}
+        condensado
+      />
+    </QForm>
   );
 };
 
