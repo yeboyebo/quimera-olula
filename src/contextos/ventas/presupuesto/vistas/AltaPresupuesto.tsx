@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QForm } from "../../../../componentes/atomos/qform.tsx";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { NuevoPresupuesto, Presupuesto } from "../diseño.ts";
 import { validadoresPresupuesto } from "../dominio.ts";
-import {
-  camposPresupuesto,
-  getPresupuesto,
-  postPresupuesto,
-} from "../infraestructura.ts";
+import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
 
 export const AltaPresupuesto = ({
   onPresupuestoCreado = () => {},
@@ -15,70 +13,68 @@ export const AltaPresupuesto = ({
   onPresupuestoCreado?: (presupuesto: Presupuesto) => void;
   onCancelar: () => void;
 }) => {
-  const [guardando, setGuardando] = useState(false);
-  const [presupuesto, setPresupuesto] = useState<NuevoPresupuesto>({
-    cliente_id: "",
-    direccion_id: "",
-    fecha: "",
-    empresa_id: "1", // Valor por defecto
-  });
+  const [estado, setEstado] = useState({} as Record<string, string>);
 
-  const onCambio = (campo: string, valor: string) => {
-    const nuevoPresupuesto = { ...presupuesto, [campo]: valor };
-    setPresupuesto(nuevoPresupuesto);
-  };
+  const onGuardar = async (datos: Record<string, string>) => {
+    const nuevoEstado = {
+      cliente_id: validadoresPresupuesto.cliente_id(datos.cliente_id)
+        ? ""
+        : "El cliente es obligatorio.",
+      direccion_id: validadoresPresupuesto.direccion_id(datos.direccion_id)
+        ? ""
+        : "La dirección es obligatoria.",
+      empresa_id: validadoresPresupuesto.empresa_id(datos.empresa_id)
+        ? ""
+        : "La empresa es obligatoria.",
+    };
 
-  const onGuardarClicked = async () => {
-    setGuardando(true);
-    const id = await postPresupuesto(presupuesto);
-    const nuevoPresupuesto = await getPresupuesto(id);
-    setGuardando(false);
-    onPresupuestoCreado(nuevoPresupuesto);
+    setEstado(nuevoEstado);
+
+    if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
+
+    const nuevoPresupuesto: NuevoPresupuesto = {
+      cliente_id: datos.cliente_id,
+      direccion_id: datos.direccion_id,
+      empresa_id: datos.empresa_id,
+    };
+
+    const id = await postPresupuesto(nuevoPresupuesto);
+    const presupuestoCreado = await getPresupuesto(id);
+    onPresupuestoCreado(presupuestoCreado);
   };
 
   return (
     <>
       <h2>Nuevo Presupuesto</h2>
-      <Input
-        controlado
-        key="cliente_id"
-        campo={camposPresupuesto.cliente_id}
-        onCampoCambiado={onCambio}
-        valorEntidad={presupuesto.cliente_id}
-        validador={validadoresPresupuesto.cliente_id}
-      />
-      <Input
-        controlado
-        key="direccion_id"
-        campo={camposPresupuesto.direccion_id}
-        onCampoCambiado={onCambio}
-        valorEntidad={presupuesto.direccion_id}
-        validador={validadoresPresupuesto.direccion_id}
-      />
-      <Input
-        controlado
-        key="fecha"
-        campo={camposPresupuesto.fecha}
-        onCampoCambiado={onCambio}
-        valorEntidad={presupuesto.fecha}
-        validador={validadoresPresupuesto.fecha}
-      />
-      <Input
-        controlado
-        key="empresa_id"
-        campo={camposPresupuesto.empresa_id}
-        onCampoCambiado={onCambio}
-        valorEntidad={presupuesto.empresa_id}
-      />
-      <button
-        onClick={onGuardarClicked}
-        disabled={
-          !validadoresPresupuesto.nuevoPresupuesto(presupuesto) || guardando
-        }
-      >
-        Guardar
-      </button>
-      <button onClick={onCancelar}>Cancelar</button>
+      <QForm onSubmit={onGuardar} onReset={onCancelar}>
+        <section>
+          <QInput
+            label="Cliente"
+            nombre="cliente_id"
+            erroneo={!!estado.cliente_id && estado.cliente_id.length > 0}
+            textoValidacion={estado.cliente_id}
+          />
+          <QInput
+            label="Dirección"
+            nombre="direccion_id"
+            erroneo={!!estado.direccion_id && estado.direccion_id.length > 0}
+            textoValidacion={estado.direccion_id}
+          />
+          <QInput
+            label="Empresa"
+            nombre="empresa_id"
+            valor="1"
+            erroneo={!!estado.empresa_id && estado.empresa_id.length > 0}
+            textoValidacion={estado.empresa_id}
+          />
+        </section>
+        <section>
+          <QBoton tipo="submit">Guardar</QBoton>
+          <QBoton tipo="reset" variante="texto">
+            Cancelar
+          </QBoton>
+        </section>
+      </QForm>
     </>
   );
 };
