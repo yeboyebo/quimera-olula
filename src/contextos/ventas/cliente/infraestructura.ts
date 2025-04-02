@@ -1,7 +1,7 @@
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
-import { Cliente, DirCliente, GetCliente, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
+import { Cliente, CuentaBanco, DirCliente, GetCliente, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
 
 const baseUrl = `/ventas/cliente`;
 
@@ -169,3 +169,29 @@ export const camposCliente: Record<string, CampoFormularioGenerico> = {
   eventos: { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
   espacio: { nombre: "espacio", etiqueta: "", tipo: "space" },
 }
+
+export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]> =>
+  await RestAPI.get<{ datos: CuentaBanco[] }>(`${baseUrl}/${clienteId}/cuenta_banco`).then((respuesta) => respuesta.datos);
+
+export const postCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {
+  const payload = {
+    cuenta: {
+      iban: cuenta.iban,
+      bic: cuenta.bic,
+    },
+  };
+  await RestAPI.post(`${baseUrl}/${clienteId}/cuenta_banco`, payload);
+};
+
+export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {
+  const payload = {
+    cuenta: {
+      iban: cuenta.iban,
+      bic: cuenta.bic,
+    },
+  };
+  await RestAPI.patch(`${baseUrl}/${clienteId}/cuenta_banco/${cuenta.id}`, payload);
+};
+
+export const deleteCuentaBanco = async (clienteId: string, cuentaId: string): Promise<void> =>
+  await RestAPI.delete(`${baseUrl}/${clienteId}/cuenta_banco/${cuentaId}`);

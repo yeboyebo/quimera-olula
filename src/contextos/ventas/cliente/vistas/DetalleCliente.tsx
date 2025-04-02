@@ -9,6 +9,7 @@ import { clienteVacio } from "../dominio.ts";
 import { camposCliente, getCliente, patchCliente } from "../infraestructura.ts";
 import "./DetalleCliente.css";
 import { IdFiscal } from "./IdFiscal.tsx";
+import { TabCuentasBanco } from "./TabCuentasBanco.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
 export const DetalleCliente = ({
@@ -103,7 +104,7 @@ export const DetalleCliente = ({
               label="Cuentas Bancarias"
               children={
                 <div className="detalle-cliente-tab-contenido">
-                  Cuentas Bancarias Master contenido
+                  <TabCuentasBanco clienteId={clienteId} />
                 </div>
               }
             />,

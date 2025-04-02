@@ -48,6 +48,12 @@ export type NuevaDireccion = {
   ciudad: string;
 };
 
+export type CuentaBanco = {
+  id: string;
+  iban: string;
+  bic: string;
+};
+
 
 export type GetCliente = (id: string) => Promise<Cliente>;
 export type PostCliente = (cliente: NuevoCliente) => Promise<string>;
