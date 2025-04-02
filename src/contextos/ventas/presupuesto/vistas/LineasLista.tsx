@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
+import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { LineaPresupuesto as Linea } from "../diseño.ts";
@@ -142,7 +142,7 @@ export const LineasLista = ({
         Borrar
       </button>
 
-      <Tabla
+      <QTabla
         metaTabla={getMetaTablaLineas(cambiarCantidad)}
         datos={lineas}
         cargando={cargando}
