@@ -18,7 +18,6 @@ export const AltaDireccion = ({
   const [estado, setEstado] = useState({} as Record<string, string>);
 
   const onGuardar = async (datos: Record<string, string>) => {
-    // Validar los datos usando validadoresDireccion
     const nuevoEstado = {
       tipo_via: validadoresDireccion.tipo_via(datos.tipo_via)
         ? ""
