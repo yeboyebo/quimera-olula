@@ -58,11 +58,11 @@ const dirClienteToAPI = (d: DirCliente): DireccionAPI => (
 export const getCliente: GetCliente = async (id) =>
   await RestAPI.get<{ datos: Cliente }>(`${baseUrl}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
-export const getClientes = async (_: Filtro, __: Orden): Promise<Cliente[]> =>
-  await RestAPI.get<{ datos: ClienteApi[] }>(`${baseUrl}`).then((respuesta) => {
-    const clientes = respuesta.datos.map((d) => clienteFromAPI(d));
-    return clientes
-  });
+export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente[]> => {
+  const q = filtro || orden ? "?q=" + btoa(JSON.stringify({ filtro, orden })) : "";
+
+  return RestAPI.get<{ datos: ClienteApi[] }>(baseUrl + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
+}
 
 export const patchCliente: PatchCliente = async (id, cliente) =>
   await RestAPI.patch(`${baseUrl}/${id}`, {

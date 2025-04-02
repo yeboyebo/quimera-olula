@@ -12,17 +12,17 @@ const metaTablaPresupuesto = [
   {
     id: "codigo",
     cabecera: "Código",
-    render: (entidad: Entidad) => entidad.codigo,
+    render: (entidad: Entidad) => entidad.codigo as string,
   },
   {
     id: "cliente",
     cabecera: "Cliente",
-    render: (entidad: Entidad) => entidad.nombre_cliente,
+    render: (entidad: Entidad) => entidad.nombre_cliente as string,
   },
   {
     id: "total",
     cabecera: "Total",
-    render: (entidad: Entidad) => entidad.total,
+    render: (entidad: Entidad) => entidad.total as string,
   },
 ];
 
