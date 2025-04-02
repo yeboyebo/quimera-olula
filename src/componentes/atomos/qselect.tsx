@@ -1,26 +1,8 @@
+import { FormInputProps } from "./qinput.tsx";
 import "./qselect.css";
 
-type QSelectProps = {
-  label: string;
-  nombre: string;
-  deshabilitado?: boolean;
-  placeholder?: string;
+type QSelectProps = FormInputProps & {
   opciones: { valor: string; descripcion: string }[];
-  valor?: string;
-  textoValidacion?: string;
-  erroneo?: boolean;
-  advertido?: boolean;
-  valido?: boolean;
-  opcional?: boolean;
-  condensado?: boolean;
-  onChange?: (
-    valor: string,
-    evento?: React.ChangeEvent<HTMLSelectElement>
-  ) => void;
-  onBlur?: (
-    valor: string,
-    evento?: React.ChangeEvent<HTMLSelectElement>
-  ) => void;
 };
 
 export const QSelect = ({

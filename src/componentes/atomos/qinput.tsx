@@ -1,6 +1,6 @@
 import "./qinput.css";
 
-type QInputProps = {
+export type FormInputProps = {
   label: string;
   nombre: string;
   deshabilitado?: boolean;
@@ -12,15 +12,11 @@ type QInputProps = {
   valido?: boolean;
   opcional?: boolean;
   condensado?: boolean;
-  onChange?: (
-    valor: string,
-    evento?: React.ChangeEvent<HTMLInputElement>
-  ) => void;
-  onBlur?: (
-    valor: string,
-    evento?: React.ChangeEvent<HTMLInputElement>
-  ) => void;
+  onChange?: (valor: string, evento?: React.ChangeEvent<HTMLElement>) => void;
+  onBlur?: (valor: string, evento?: React.ChangeEvent<HTMLElement>) => void;
 };
+
+type QInputProps = FormInputProps & {};
 
 export const QInput = ({
   label,
