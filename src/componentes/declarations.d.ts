@@ -16,6 +16,7 @@ declare namespace React {
             'quimera-boton': NodoComun;
             'quimera-input': NodoComun;
             'quimera-select': NodoComun;
+            'quimera-autocompletar': NodoComun;
             'quimera-tabla': NodoComun;
             'etiquetas-filtro': NodoComun;
             'menu-lateral': NodoComun;
