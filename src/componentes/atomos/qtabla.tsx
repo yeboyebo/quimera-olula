@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
-import "./tabla.css";
+import "./qtabla.css";
 
 type MetaColumna<T extends Entidad> = {
   id: string;
