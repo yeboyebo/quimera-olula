@@ -1,19 +1,28 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { FormInputProps, QInput } from "../atomos/qinput.tsx";
 
+type Opciones = { valor: string; descripcion: string }[];
+
 type QAutocompletarProps = FormInputProps & {
-  opciones: { valor: string; descripcion: string }[];
+  tiempoEspera?: number;
+  longitudMinima?: number;
+  obtenerOpciones: (valor: string) => Promise<Opciones>;
 };
 
 export const QAutocompletar = ({
   nombre,
   valor,
-  opciones,
+  tiempoEspera = 250,
+  longitudMinima = 2,
+  obtenerOpciones,
   onBlur,
   onChange,
   ...props
 }: QAutocompletarProps) => {
+  const [opciones, setOpciones] = useState<Opciones>([]);
+
   const valorReal = useRef<HTMLInputElement>(null);
+  const temporizador = useRef<number | undefined>(undefined);
 
   const renderOpciones = opciones.map((opcion) => (
     <option key={opcion.valor} value={opcion.valor}>
@@ -23,7 +32,23 @@ export const QAutocompletar = ({
 
   const listaId = nombre + "-datalist";
 
-  const input = (valor: string, e: React.FormEvent<HTMLInputElement>) => {
+  const regenerarOpciones = async (valor: string) => {
+    clearTimeout(temporizador.current);
+
+    if (valor.length < longitudMinima) return;
+
+    temporizador.current = setTimeout(
+      async () => setOpciones(await obtenerOpciones(valor)),
+      tiempoEspera
+    );
+  };
+
+  const inputCallback = (
+    valor: string,
+    e: React.FormEvent<HTMLInputElement>
+  ) => {
+    regenerarOpciones(valor);
+
     const opcion = opciones.find((opcion) => opcion.valor === valor);
     if (!opcion) {
       valorReal.current!.value = "";
@@ -36,7 +61,7 @@ export const QAutocompletar = ({
     valorReal.current!.value = opcion.valor;
   };
 
-  const blur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
+  const blurCallback = (valor: string, e: React.FocusEvent<HTMLElement>) => {
     const opcion = opciones.find((opcion) => opcion.descripcion === valor);
     if (opcion) return;
 
@@ -55,6 +80,7 @@ export const QAutocompletar = ({
         name={nombre}
         value={valor}
         defaultValue={undefined}
+        required={!props.opcional}
         onChange={(e) => onChange?.(e.target.value, e)}
         onBlur={(e) => onBlur?.(e.target.value, e)}
       />
@@ -63,8 +89,8 @@ export const QAutocompletar = ({
         nombre=""
         lista={listaId}
         autocompletar="off"
-        onInput={input}
-        onBlur={blur}
+        onInput={inputCallback}
+        onBlur={blurCallback}
       />
     </quimera-autocompletar>
   );
