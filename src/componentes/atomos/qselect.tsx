@@ -40,6 +40,7 @@ export const QSelect = ({
           name={nombre}
           defaultValue={onChange ? undefined : valor}
           value={onChange ? valor : undefined}
+          required={!opcional}
           disabled={deshabilitado}
           onChange={onChange ? (e) => onChange(e.target.value, e) : undefined}
           onBlur={onBlur ? (e) => onBlur(e.target.value, e) : undefined}
