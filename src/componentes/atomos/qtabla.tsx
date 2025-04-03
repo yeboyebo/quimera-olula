@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
-import "./tabla.css";
+import "./qtabla.css";
 
 type MetaColumna<T extends Entidad> = {
   id: string;
@@ -15,8 +15,6 @@ const cabecera = <T extends Entidad>(
   orden: Orden,
   onOrdenar?: (clave: string) => void
 ) => {
-  const clavePrincipal = "id";
-
   const renderCabecera = ({ id, cabecera }: MetaColumna<T>) => (
     <th
       key={id}
@@ -28,35 +26,24 @@ const cabecera = <T extends Entidad>(
     </th>
   );
 
-  const cabeceraPrincipal = metaTabla.find(({ id }) => id === clavePrincipal)!;
-  const cabeceras = metaTabla.filter(({ id }) => id !== clavePrincipal);
-
-  return [cabeceraPrincipal, ...cabeceras].map(renderCabecera);
+  return metaTabla.map(renderCabecera);
 };
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
-  const clavePrincipal = "id";
+  const renderColumna = ({ id, render }: MetaColumna<T>, idx: number) => {
+    const Tag = idx === 0 ? "th" : "td";
 
-  const renderColumna = ({ id, render }: MetaColumna<T>) => [
-    render ? render(entidad as T) : (entidad[id] as string),
-    id,
-  ];
+    const attrs = {
+      key: [entidad.id, id].join("-"),
+      "data-modo": idx === 0 ? "fila" : undefined,
+    };
 
-  const datosPrincipal = renderColumna(
-    metaTabla.find(({ id }) => id === clavePrincipal)!
-  );
-  const datosFila = metaTabla
-    .filter(({ id }) => id !== clavePrincipal)
-    .map(renderColumna);
+    const datos = render?.(entidad as T) ?? (entidad[id] as string);
 
-  return [
-    <th key={[entidad.id, clavePrincipal].join("-")} data-modo="fila">
-      {datosPrincipal[0]}
-    </th>,
-    ...datosFila.map(([valorCelda, columna]) => (
-      <td key={[entidad.id, columna].join("-")}>{valorCelda}</td>
-    )),
-  ];
+    return <Tag {...attrs}>{datos}</Tag>;
+  };
+
+  return metaTabla.map(renderColumna);
 };
 
 export type QTablaProps<T extends Entidad> = {
