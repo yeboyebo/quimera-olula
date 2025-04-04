@@ -38,4 +38,5 @@ pnpm install
 - `pnpm lint`. Lanzar el linter
 - `pnpm type-check`. Lanzar el type-checker
 - `pnpm run ci`. Lanzar todos los comprobadores de CI
+- `pnpm test`. Lanza los tests en modo continuo
 - `pnpm build`. Crear un desplegable
