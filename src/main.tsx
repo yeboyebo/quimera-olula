@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
 import { Indice } from "./contextos/comun/Indice.tsx";
 import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente.tsx";
@@ -34,7 +35,7 @@ createRoot(document.getElementById("root")!).render(
               path=":id"
               element={
                 <Vista>
-                  <DetalleCliente/>
+                  <DetalleCliente />
                 </Vista>
               }
             />
@@ -50,6 +51,7 @@ createRoot(document.getElementById("root")!).render(
             />
           </Route>
         </Route>
+        <Route path="docs/componentes" element={<Historias />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
