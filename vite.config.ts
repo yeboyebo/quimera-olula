@@ -1,9 +1,10 @@
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from 'vite-plugin-pwa';
 
-
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -43,11 +44,8 @@ export default defineConfig({
       },
     })
   ],
-  resolve: {
-    alias: {
-      "quimera-boton": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-boton/quimera-boton.js",
-      "quimera-input": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-input/quimera-input.js",
-      "quimera-select": "https://cdn.jsdelivr.net/gh/yeboyebo/quimera-componentes@main/src/atomos/quimera-select/quimera-select.js",
-    },
+  test: {
+    globals: true,
+    environment: 'jsdom',
   }
 });
