@@ -15,6 +15,7 @@ import {
 } from "../infraestructura.ts";
 
 const metaTablaDirecciones = [
+  { id: "id", cabecera: "id" },
   {
     id: "direccion",
     cabecera: "Dirección",

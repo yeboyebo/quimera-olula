@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { Tabla } from "../../../../componentes/wrappers/tabla2.tsx";
+import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import {
   quitarEntidadDeLista,
   refrescarSeleccionada,
@@ -16,8 +16,10 @@ import {
 } from "../infraestructura.ts";
 
 const metaTablaCuentasBanco = [
+  { id: "id", cabecera: "id" },
   { id: "iban", cabecera: "IBAN" },
   { id: "bic", cabecera: "BIC" },
+  { id: "cuenta", cabecera: "Cuenta" },
 ];
 
 export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
@@ -45,6 +47,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
     return {
       iban: datos.iban.trim() === "" ? "El IBAN es obligatorio." : "",
       bic: datos.bic.trim() === "" ? "El BIC es obligatorio." : "",
+      cuenta: datos.cuenta.trim() === "" ? "Nombre es obligatorio." : "",
     };
   };
 
@@ -54,14 +57,8 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
 
     if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
 
-    const nuevaCuenta: CuentaBanco = {
-      id: crypto.randomUUID(),
-      iban: datos.iban,
-      bic: datos.bic,
-    };
-
-    await postCuentaBanco(clienteId, nuevaCuenta);
-    setCuentas([nuevaCuenta, ...cuentas]);
+    await postCuentaBanco(clienteId, datos.cuenta);
+    // setCuentas([nuevaCuenta, ...cuentas]);
     setModo("lista");
   };
 
@@ -104,30 +101,30 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
 
   return (
     <>
-      {modo === "lista" && (
-        <>
-          <h2>Cuentas Bancarias</h2>
-          <button onClick={() => setModo("alta")}>Nueva</button>
-          <button
-            onClick={() => seleccionada && setModo("edicion")}
-            disabled={!seleccionada}
-          >
-            Editar
-          </button>
-          <button onClick={onBorrarCuenta} disabled={!seleccionada}>
-            Borrar
-          </button>
-          <Tabla
-            metaTabla={metaTablaCuentasBanco}
-            datos={cuentas}
-            cargando={cargando}
-            seleccionadaId={seleccionada?.id}
-            onSeleccion={setSeleccionada}
-            orden={{ id: "ASC" }}
-            onOrdenar={() => null}
-          />
-        </>
-      )}
+      <>
+        <button onClick={() => setModo("alta")}>Nueva</button>
+        <button
+          onClick={() => seleccionada && setModo("edicion")}
+          disabled={!seleccionada}
+        >
+          Editar
+        </button>
+        <button onClick={onBorrarCuenta} disabled={!seleccionada}>
+          Borrar
+        </button>
+        <QTabla
+          metaTabla={metaTablaCuentasBanco}
+          datos={cuentas}
+          cargando={cargando}
+          seleccionadaId={seleccionada?.id}
+          onSeleccion={setSeleccionada}
+          orden={{ id: "ASC" }}
+          onOrdenar={
+            (_: string) => null
+            //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
+          }
+        />
+      </>
 
       {modo === "alta" && (
         <div className="modal">
@@ -139,16 +136,10 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
             <QForm onSubmit={onGuardarNuevaCuenta} onReset={onCancelar}>
               <section>
                 <QInput
-                  label="IBAN"
-                  nombre="iban"
-                  erroneo={!!estado.iban && estado.iban.length > 0}
-                  textoValidacion={estado.iban}
-                />
-                <QInput
-                  label="BIC"
-                  nombre="bic"
-                  erroneo={!!estado.bic && estado.bic.length > 0}
-                  textoValidacion={estado.bic}
+                  label="Cuenta"
+                  nombre="cuenta"
+                  erroneo={!!estado.cuenta && estado.cuenta.length > 0}
+                  textoValidacion={estado.cuenta}
                 />
               </section>
               <section>

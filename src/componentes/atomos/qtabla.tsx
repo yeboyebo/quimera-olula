@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
-import "./tabla.css";
+import "./qtabla.css";
 
 type MetaColumna<T extends Entidad> = {
   id: string;
@@ -30,6 +30,7 @@ const cabecera = <T extends Entidad>(
 
   const cabeceraPrincipal = metaTabla.find(({ id }) => id === clavePrincipal)!;
   const cabeceras = metaTabla.filter(({ id }) => id !== clavePrincipal);
+  console.log(cabeceraPrincipal, cabeceras);
 
   return [cabeceraPrincipal, ...cabeceras].map(renderCabecera);
 };

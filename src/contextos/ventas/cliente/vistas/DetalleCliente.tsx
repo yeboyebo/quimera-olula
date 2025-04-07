@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useParams } from "react-router";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QForm } from "../../../../componentes/atomos/qform.tsx";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { Cliente, IdFiscal as TipoIdFiscal } from "../diseño.ts";
 import { clienteVacio } from "../dominio.ts";
-import { camposCliente, getCliente, patchCliente } from "../infraestructura.ts";
+import { getCliente, patchCliente } from "../infraestructura.ts";
 import "./DetalleCliente.css";
 import { IdFiscal } from "./IdFiscal.tsx";
+import { TabCrmContactos } from "./TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./TabCuentasBanco.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
@@ -39,14 +42,25 @@ export const DetalleCliente = ({
     onEntidadActualizada(nuevoCliente);
   };
 
-  const onCampoCambiado = async (campo: string, valor: string) => {
+  const onGuardar = async (datos: Record<string, string>) => {
     if (!clienteId) {
       return;
     }
+
+    const cambios = Object.keys(datos).reduce((acc, key) => {
+      if (datos[key] !== cliente[key as keyof Cliente]) {
+        acc[key] = datos[key];
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    if (Object.keys(cambios).length === 0) return;
+
     setGuardando(true);
-    const nuevoCliente: Cliente = { ...cliente, [campo]: valor };
-    await patchCliente(clienteId, nuevoCliente);
+    await patchCliente(clienteId, cambios);
     setGuardando(false);
+
+    const nuevoCliente = { ...cliente, ...cambios };
     setCliente(nuevoCliente);
     onEntidadActualizada(nuevoCliente);
   };
@@ -61,21 +75,30 @@ export const DetalleCliente = ({
       className="detalle-cliente"
       cerrarDetalle={cancelarSeleccionada}
     >
-      {/* <h2 className="detalle-cliente-titulo">{titulo(cliente)}</h2> */}
-      <Input
-        campo={camposCliente.nombre}
-        onCampoCambiado={onCampoCambiado}
-        valorEntidad={cliente?.nombre ?? ""}
-      />
       <IdFiscal
         cliente={cliente}
         onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}
       />
-      <Input
-        campo={camposCliente.agente_id}
-        onCampoCambiado={onCampoCambiado}
-        valorEntidad={cliente?.agente_id ?? ""}
-      />
+      <QForm onSubmit={onGuardar}>
+        <section>
+          <QInput
+            label="Nombre"
+            nombre="nombre"
+            valor={cliente?.nombre ?? ""}
+          />
+          <QInput
+            label="Agente"
+            nombre="agente_id"
+            valor={cliente?.agente_id ?? ""}
+          />
+        </section>
+        <section>
+          <QBoton tipo="submit">Guardar</QBoton>
+          <QBoton tipo="reset" variante="texto" onClick={cancelarSeleccionada}>
+            Cancelar
+          </QBoton>
+        </section>
+      </QForm>
 
       {!!clienteId && (
         <Tabs
@@ -113,7 +136,7 @@ export const DetalleCliente = ({
               label="Agenda"
               children={
                 <div className="detalle-cliente-tab-contenido">
-                  Agenda contenido
+                  <TabCrmContactos clienteId={clienteId} />
                 </div>
               }
             />,
