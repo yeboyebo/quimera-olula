@@ -21,7 +21,7 @@ const transformarFiltro = (filtro: Filtro): string => {
 }
 
 const transformarOrden = (orden: Orden): string => {
-    return "sort:" + Object.entries(orden).map(([campo, valor]) => `${campo}-${valor}`).join(",");
+    return "orden:" + Object.entries(orden).map(([campo, valor]) => `${campo}-${valor}`).join(",");
 }
 
 const transformarValorFiltro = (valor: ValorFiltro): string => {
