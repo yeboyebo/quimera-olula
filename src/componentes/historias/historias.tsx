@@ -46,7 +46,14 @@ const renderCode = (atributos: AtributosHistoria[], meta: MetaHistorias) => {
   const atributosTexto = (atributos: AtributosHistoria) =>
     Object.entries(atributos).map(([k, v]) => (
       <div className="attribute">
-        <span className="key">{k}</span>=<span className="value">"{v}"</span>
+        {v === "true" ? (
+          <span className="key">{k}</span>
+        ) : (
+          <>
+            <span className="key">{k}</span>=
+            <span className="value">"{v}"</span>
+          </>
+        )}
       </div>
     ));
 
