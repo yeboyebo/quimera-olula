@@ -34,13 +34,16 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     const Tag = idx === 0 ? "th" : "td";
 
     const attrs = {
-      key: [entidad.id, id].join("-"),
       "data-modo": idx === 0 ? "fila" : undefined,
     };
 
     const datos = render?.(entidad as T) ?? (entidad[id] as string);
 
-    return <Tag {...attrs}>{datos}</Tag>;
+    return (
+      <Tag key={[entidad.id, id].join("-")} {...attrs}>
+        {datos}
+      </Tag>
+    );
   };
 
   return metaTabla.map(renderColumna);
