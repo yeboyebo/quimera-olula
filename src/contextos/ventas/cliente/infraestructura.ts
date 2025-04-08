@@ -1,6 +1,7 @@
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Cliente, DirCliente, GetCliente, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
 
 const baseUrl = `/ventas/cliente`;
@@ -59,7 +60,7 @@ export const getCliente: GetCliente = async (id) =>
   await RestAPI.get<{ datos: Cliente }>(`${baseUrl}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
 export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente[]> => {
-  const q = filtro || orden ? "?q=" + btoa(JSON.stringify({ filtro, orden })) : "";
+  const q = criteriaQuery(filtro, orden);
 
   return RestAPI.get<{ datos: ClienteApi[] }>(baseUrl + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
 }
