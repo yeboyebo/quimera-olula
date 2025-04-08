@@ -61,7 +61,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       email: datos.email,
     };
 
-    await postCrmContacto(clienteId, nuevoContacto);
+    await postCrmContacto(nuevoContacto);
     setContactos([nuevoContacto, ...contactos]);
     setModo("lista");
   };
@@ -79,7 +79,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         email: datos.email,
       };
 
-      await patchCrmContacto(clienteId, contactoActualizado);
+      await patchCrmContacto(contactoActualizado);
       setContactos(
         contactos.map((contacto) =>
           contacto.id === seleccionada.id ? contactoActualizado : contacto
@@ -93,7 +93,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
   const onBorrarContacto = async () => {
     if (!seleccionada) return;
 
-    await deleteCrmContacto(clienteId, seleccionada.id);
+    await deleteCrmContacto(seleccionada.id);
     setContactos(quitarEntidadDeLista<CrmContacto>(contactos, seleccionada));
     setSeleccionada(null);
   };

@@ -2,8 +2,6 @@ import { Direccion } from "../../comun/diseño.ts";
 import { NuevoPresupuesto, Presupuesto } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
-    dir_envio: false,
-    dir_facturacion: false,
     nombre_via: '',
     tipo_via: '',
     numero: '',

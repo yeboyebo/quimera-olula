@@ -1,4 +1,4 @@
-quimera-input {
+quimera-checkbox {
     label {
         display: flex;
         flex-direction: column;
@@ -30,16 +30,29 @@ quimera-input {
             /* padding-top: var(--espaciado-xxs); */
             font-size: var(--tamaño-letra-m);
             background-color: transparent;
+            width: 24px;
+            /* display: flex;
+            align-items: left; */
 
             &:focus {
+                /* box-shadow: inset 0 0 0 var(--tamaño-borde-m) var(--color-borde); */
+                /* background-color: yellow; */
+                /* border-top: var(--tamaño-borde-m) solid green; */
+                /* border-bottom: var(--tamaño-borde-m) solid green;
+                border-right: var(--tamaño-borde-m) solid green;
+                border-left: var(--tamaño-borde-m) solid green; */
                 background-color: lightblue;
                 border-bottom: var(--tamaño-borde-s) solid transparent;
                 border: var(--tamaño-borde-m) solid transparent;
                 border-radius: var(--redondeo-borde-xs);
+
+                /* border: var(--tamaño-borde-m) solid green; */
+                /* border-radius: var(--redondeo-borde-xs); */
             }
 
             &:disabled {
                 border: var(--tamaño-borde-m) transparent solid;
+                /* border-radius: var(--redondeo-borde-xs); */
             }
 
             &::placeholder {
