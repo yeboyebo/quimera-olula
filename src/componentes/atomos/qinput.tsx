@@ -40,7 +40,14 @@ export const QInput = ({
   onBlur,
   onInput,
 }: QInputProps) => {
-  const attrs = { erroneo, advertido, valido, opcional, condensado };
+  const attrs = {
+    erroneo,
+    advertido,
+    valido,
+    opcional,
+    condensado,
+    deshabilitado,
+  };
 
   return (
     <quimera-input {...attrs}>

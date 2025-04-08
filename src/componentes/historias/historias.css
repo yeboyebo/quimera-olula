@@ -1,0 +1,63 @@
+quimera-historias {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 1.5rem;
+}
+
+qhistorias-componente {
+    display: flex;
+    justify-content: center;
+
+    section {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+qhistorias-historia {
+    article {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+
+        section {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+
+            background-color: var(--color-fondo);
+            box-shadow: var(--gris-4) 0px 3px 5px 2px;
+            border-radius: 4px;
+            padding: 30px 20px;
+        }
+
+        aside pre {
+            background-color: var(--gris-9);
+            color: var(--gris-1);
+            padding: 1rem;
+            border-radius: 4px;
+
+            .tag {
+                color: var(--lima-4);
+            }
+
+            .attribute {
+                margin-left: 1rem;
+
+                .key {
+                    color: var(--azul-4);
+                }
+
+                .value {
+                    color: var(--uva-4);
+                }
+            }
+        }
+    }
+}
