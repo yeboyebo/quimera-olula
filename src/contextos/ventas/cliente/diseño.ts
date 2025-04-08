@@ -4,12 +4,23 @@ export interface Cliente extends Entidad {
   id: string;
   nombre: string;
   id_fiscal: string;
-  agente_id: string;
-  divisa_id: string;
-  tipo_id_fiscal: string;
-  serie_id: string;
+  grupo_id: string;
+  telefono1: string;
+  telefono2: string;
+  email: string;
+  web: string;
+  observaciones: string;
+  copiasfactura: number;
+  fechabaja: string;
+  contacto_id: string;
   forma_pago_id: string;
+  divisa_id: string;
+  serie_id: string;
   grupo_iva_negocio_id: string;
+  agente_id: string;
+  tipo_id_fiscal: string;
+  de_baja: boolean;
+  cuenta_domiciliada: string;
 };
 
 export interface IdFiscal {
@@ -50,6 +61,7 @@ export type NuevaDireccion = {
 
 export interface CuentaBanco extends Entidad {
   id: string;
+  descripcion: string;
   iban: string;
   bic: string;
 };

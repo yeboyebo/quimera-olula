@@ -18,28 +18,33 @@ export const idFiscalValidoGeneral = (tipo: string, valor: string) => {
     return idFiscalValido(tipo)(valor) && tipoIdFiscalValido(tipo);
 }
 
-export const guardar = async (_: string, __: Partial<Cliente>) => {
-    await simularApi();
-}
-
 export const puedoMarcarDireccionFacturacion = (direccion: DirCliente) => {
     return !direccion.dir_facturacion;
 }
 
 
 export const clienteVacio = (): Cliente => ({
-    id: '',
-    nombre: '',
-    id_fiscal: '',
-    tipo_id_fiscal: '',
-    email: '',
-    telefono: '',
-    agente_id: '',
-    divisa_id: '',
-    serie_id: '',
-    forma_pago_id: '',
-    grupo_iva_negocio_id: '',
-})
+    id: "",
+    nombre: "",
+    id_fiscal: "",
+    grupo_id: "",
+    telefono1: "",
+    telefono2: "",
+    email: "",
+    web: "",
+    observaciones: "",
+    copiasfactura: 0,
+    fechabaja: "",
+    contacto_id: "",
+    forma_pago_id: "",
+    divisa_id: "",
+    serie_id: "",
+    grupo_iva_negocio_id: "",
+    agente_id: "",
+    tipo_id_fiscal: "",
+    de_baja: false,
+    cuenta_domiciliada: "",
+});
 
 
 export const validadoresDireccion = {
@@ -56,12 +61,19 @@ export const validadoresDireccion = {
 export const validadoresCliente = {
     nombre: (valor: string) => stringNoVacio(valor),
     id_fiscal: (valor: string) => stringNoVacio(valor),
-    nuevoCliente: (cliente: NuevoCliente) =>
-        cliente.nombre && cliente.id_fiscal,
+    agente_id: (_: string) => true,
+    divisa_id: (_: string) => true,
+    tipo_id_fiscal: (_: string) => true,
+    serie_id: (_: string) => true,
+    forma_pago_id: (_: string) => true,
+    grupo_iva_negocio_id: (_: string) => true,
+    email: (_: string) => true,
+    telefono: (_: string) => true,
 };
 
-
-const simularApi = async () => {
-    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-    await delay(700);
-}
+export const validarNuevoCliente = (cliente: NuevoCliente): boolean => {
+    return (
+        validadoresCliente.nombre(cliente.nombre) &&
+        validadoresCliente.id_fiscal(cliente.id_fiscal)
+    );
+};

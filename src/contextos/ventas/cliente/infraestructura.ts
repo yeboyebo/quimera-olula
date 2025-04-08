@@ -66,7 +66,7 @@ export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente
 }
 
 export const patchCliente: PatchCliente = async (id, cambios) => {
-  const payload = { cambios }; // Enviar los cambios directamente en el formato esperado
+  const payload = { cambios };
   await RestAPI.patch(`${baseUrlVentas}/${id}`, payload);
 };
 
@@ -81,6 +81,9 @@ export const postCliente: PostCliente = async (cliente) => {
   }
   return await RestAPI.post(baseUrlVentas, payload).then((respuesta) => respuesta.id);
 }
+
+export const desmarcarCuentaDomiciliacion = async (clienteId: string): Promise<void> =>
+  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/desmarcar_domiciliada`, {});
 
 export const getDireccion = async (clienteId: string, direccionId: string): Promise<DirCliente> =>
   await RestAPI.get<{ datos: DirClienteAPI }>(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}`).then((respuesta) =>
@@ -198,18 +201,29 @@ export const deleteCuentaBanco = async (clienteId: string, cuentaId: string): Pr
 export type CuentaBancoAPI = {
   id: string;
   cuenta: {
+    descripcion: string;
     iban: string;
     bic: string;
   };
 };
 
+export type CuentaBancoAPIPatch = {
+  id: string;
+  cuenta: {
+    iban: string;
+    bic: string;
+  };
+};
+
+
 export const cuentaBancoFromAPI = (c: CuentaBancoAPI): CuentaBanco => ({
   id: c.id,
+  descripcion: c.cuenta.descripcion,
   iban: c.cuenta.iban,
   bic: c.cuenta.bic,
 });
 
-export const cuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPI => ({
+export const cuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
   id: c.id,
   cuenta: {
     iban: c.iban,

@@ -14,12 +14,13 @@ import {
   patchCuentaBanco,
   postCuentaBanco,
 } from "../infraestructura.ts";
+import "./DetalleCliente.css";
 
 const metaTablaCuentasBanco = [
-  { id: "id", cabecera: "id" },
+  { id: "descripcion", cabecera: "Descripcion" },
+  { id: "id", cabecera: "id", visible: false },
   { id: "iban", cabecera: "IBAN" },
   { id: "bic", cabecera: "BIC" },
-  { id: "cuenta", cabecera: "Cuenta" },
 ];
 
 export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
@@ -50,6 +51,8 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
       cuenta: datos.cuenta.trim() === "" ? "Nombre es obligatorio." : "",
     };
   };
+
+  const onDomiciliarCuenta = async () => {};
 
   const onGuardarNuevaCuenta = async (datos: Record<string, string>) => {
     const nuevoEstado = validarCuenta(datos);
@@ -101,17 +104,26 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
 
   return (
     <>
-      <>
-        <button onClick={() => setModo("alta")}>Nueva</button>
-        <button
-          onClick={() => seleccionada && setModo("edicion")}
-          disabled={!seleccionada}
-        >
-          Editar
-        </button>
-        <button onClick={onBorrarCuenta} disabled={!seleccionada}>
-          Borrar
-        </button>
+      <div className="CuentasBanco">
+        <div className="CuentasBancoAcciones">
+          <div className="CuentasBancoBotonesIzquierda">
+            <button onClick={() => setModo("alta")}>Nueva</button>
+            <button
+              onClick={() => seleccionada && setModo("edicion")}
+              disabled={!seleccionada}
+            >
+              Editar
+            </button>
+            <button onClick={onBorrarCuenta} disabled={!seleccionada}>
+              Borrar
+            </button>
+          </div>
+          <div className="CuentasBancoBotonDerecha">
+            <button onClick={onDomiciliarCuenta}>
+              Cuenta de domiciliación
+            </button>
+          </div>
+        </div>
         <QTabla
           metaTabla={metaTablaCuentasBanco}
           datos={cuentas}
@@ -124,7 +136,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
             //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
           }
         />
-      </>
+      </div>
 
       {modo === "alta" && (
         <div className="modal">

@@ -8,7 +8,6 @@ import {
 } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
-import { guardar } from "../../cliente/dominio.ts";
 import { Presupuesto, Cliente as TipoCliente } from "../diseño.ts";
 import { presupuestoVacio } from "../dominio.ts";
 import {
@@ -46,11 +45,11 @@ export const DetallePresupuesto = ({
   const onCampoCambiado = async (campo: string, valor: string) => {
     setGuardando(true);
 
-    if (presupuestoId) {
-      await guardar(presupuestoId, {
-        [campo]: valor,
-      });
-    }
+    // if (presupuestoId) {
+    //   await guardar(presupuestoId, {
+    //     [campo]: valor,
+    //   });
+    // }
     setGuardando(false);
     const nuevoPresupuesto: Presupuesto = { ...presupuesto, [campo]: valor };
     setPresupuesto(nuevoPresupuesto);
