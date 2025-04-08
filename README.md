@@ -40,3 +40,7 @@ pnpm install
 - `pnpm run ci`. Lanzar todos los comprobadores de CI
 - `pnpm test`. Lanza los tests en modo continuo
 - `pnpm build`. Crear un desplegable
+
+## URLs
+
+- `/docs/componentes`. Página de revisión de componentes
