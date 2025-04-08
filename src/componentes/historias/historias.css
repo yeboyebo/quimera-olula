@@ -2,6 +2,18 @@ quimera-historias {
     display: grid;
     grid-template-columns: 1fr 4fr;
     gap: 1.5rem;
+
+    &>ul {
+        a {
+            display: inline-block;
+            margin-bottom: 10px;
+            margin-left: -10px;
+
+            &::before {
+                content: "☀︎ / ☾"
+            }
+        }
+    }
 }
 
 qhistorias-componente {
@@ -21,10 +33,10 @@ qhistorias-historia {
     article {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
         align-items: stretch;
 
         section {
+            position: relative;
             display: flex;
             flex-direction: row;
             gap: 1rem;
@@ -32,30 +44,50 @@ qhistorias-historia {
             align-items: center;
 
             background-color: var(--color-fondo);
-            box-shadow: var(--gris-4) 0px 3px 5px 2px;
-            border-radius: 4px;
+            box-shadow: var(--gris-5) 0px 0px 4px 1px;
+            border-radius: 4px 4px 0px 0px;
             padding: 30px 20px;
         }
 
-        aside pre {
-            background-color: var(--gris-9);
-            color: var(--gris-1);
-            padding: 1rem;
-            border-radius: 4px;
+        quimera-boton:has(button[type="submit"]) {
+            --color-primario: light-dark(var(--gris-3), var(--gris-9));
+            --color-primario-claro: light-dark(var(--gris-4), var(--gris-7));
+            --color-primario-oscuro: var(--color-texto-primario);
+            --redondeo-borde-xs: 0px;
+            --blanco: var(--color-texto-primario);
 
-            .tag {
-                color: var(--lima-4);
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        aside {
+            display: none;
+
+            &[data-codigo="true"] {
+                display: block;
             }
 
-            .attribute {
-                margin-left: 1rem;
+            pre {
+                background-color: var(--gris-9);
+                color: var(--gris-1);
+                padding: 1rem;
+                border-radius: 0px 0px 4px 4px;
 
-                .key {
-                    color: var(--azul-4);
+                .tag {
+                    color: var(--lima-4);
                 }
 
-                .value {
-                    color: var(--uva-4);
+                .attribute {
+                    margin-left: 1rem;
+
+                    .key {
+                        color: var(--azul-4);
+                    }
+
+                    .value {
+                        color: var(--uva-4);
+                    }
                 }
             }
         }
