@@ -13,7 +13,7 @@ export type Criteria = {
 }
 
 
-type ValorFiltro = { LIKE: string };
+export type ValorFiltro = { LIKE: string };
 export type Orden = { [campo: string]: "ASC" | "DESC" }
 export type Filtro = { [campo: string]: ValorFiltro };
 

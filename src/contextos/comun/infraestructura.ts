@@ -1,75 +1,32 @@
+import { Filtro, Orden, ValorFiltro } from "./diseño.ts";
 
-// export const crearAcciones = <T extends Entidad>(entidad: string): Acciones<T> => {
-//     const baseUrl = `/ventas/${entidad}`;
+export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
+    if (!filtro && !orden) {
+        return "";
+    }
 
-//     const obtenerTodos = async (filtro?: Filtro, orden?: Orden): Promise<T[]> => {
-//         const q = filtro || orden ? "?q=" + btoa(JSON.stringify({ filtro, orden })) : "";
+    const criteria = transformarCriteria(filtro, orden);
+    return `?q=${btoa(criteria)}`;
+}
 
-//         return RestAPI.get<{ [key: string]: T[] }>(baseUrl + q).then((respuesta) => respuesta.datos);
-//     }
+export const transformarCriteria = (filtro?: Filtro, orden?: Orden): string => {
+    const filtroString = filtro ? transformarFiltro(filtro) : "";
+    const ordenString = orden ? transformarOrden(orden) : "";
 
-//     const obtenerUno = async (id: string): Promise<T> =>
-//         RestAPI.get<{ datos: T }>(`${baseUrl}/${id}`).then((respuesta) => respuesta.datos);
+    return [filtroString, ordenString].filter(Boolean).join(" ");
+}
 
-//     const crearUno = async (data: Partial<T>): Promise<void> =>
-//         RestAPI.post(baseUrl, data).then((respuesta) => respuesta);
+const transformarFiltro = (filtro: Filtro): string => {
+    return Object.entries(filtro).map(([campo, valor]) => `${campo}:${transformarValorFiltro(valor)}`).join(" ");
+}
 
-//     const actualizarUno = async (id: string, data: Partial<T>): Promise<void> => RestAPI.patch(`${baseUrl}/${id}`, data);
+const transformarOrden = (orden: Orden): string => {
+    return "sort:" + Object.entries(orden).map(([campo, valor]) => `${campo}-${valor}`).join(",");
+}
 
-//     const actualizarUnElemento = async (id: string, data: Partial<T>, nombreAccion: string): Promise<void> =>
-//         RestAPI.patch(`${baseUrl}/${id}/${nombreAccion}`, data);
-
-//     const eliminarUno = async (id: string): Promise<void> =>
-//         RestAPI.delete(`${baseUrl}/${id}`);
-
-//     return {
-//         obtenerTodos,
-//         obtenerUno,
-//         crearUno,
-//         actualizarUno,
-//         actualizarUnElemento,
-//         eliminarUno,
-//     };
-// };
-
-// export const crearAccionesRelacionadas = <T extends Entidad>(entidad: string, relatedPath: string, id: string): Acciones<T> => {
-//     if (!id) {
-//         throw new Error("Se necesita un id para las acciones relacionadas");
-//     }
-
-//     const baseUrl = `/ventas/${entidad}/${id}/${relatedPath}`;
-
-//     const obtenerTodos = async (filtro?: Filtro, orden?: Orden): Promise<T[]> => {
-//         const q = filtro || orden ? "?q=" + btoa(JSON.stringify({ filtro, orden })) : "";
-
-//         return RestAPI.get<{ [key: string]: T[] }>(baseUrl + q).then((respuesta) => respuesta.datos);
-//     }
-
-//     const obtenerUno = async (relatedId: string): Promise<T> =>
-//         RestAPI.get<{ [key: string]: T }>(`${baseUrl}/${relatedId}`).then((respuesta) => respuesta.datos);
-
-//     const crearUno = async (data: Partial<T>): Promise<void> => {
-//         const payload = {
-//             lineas: [data]
-//         }
-//         return RestAPI.post(baseUrl, payload);
-//     }
-
-//     const actualizarUno = async (relatedId: string, data: Partial<T>): Promise<void> =>
-//         RestAPI.patch(`${baseUrl}/${relatedId}`, data);
-
-//     const actualizarUnElemento = async (relatedId: string, data: Partial<T>, nombreAccion: string): Promise<void> =>
-//         RestAPI.patch(`${baseUrl}/${relatedId}/${nombreAccion}`, data);
-
-//     const eliminarUno = async (relatedId: string): Promise<void> =>
-//         RestAPI.delete(`${baseUrl}/${relatedId}`);
-
-//     return {
-//         obtenerTodos,
-//         obtenerUno,
-//         crearUno,
-//         actualizarUno,
-//         actualizarUnElemento,
-//         eliminarUno,
-//     };
-// };
+const transformarValorFiltro = (valor: ValorFiltro): string => {
+    if ("LIKE" in valor) {
+        return `~${valor.LIKE}`;
+    }
+    return valor;
+}
