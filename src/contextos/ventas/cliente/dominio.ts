@@ -39,6 +39,14 @@ export const clienteVacio = (): Cliente => ({
     cuenta_domiciliada: '',
 })
 
+export const nuevoClienteVacio: NuevoCliente = {
+    nombre: '',
+    id_fiscal: '',
+    empresa_id: '1',
+    tipo_id_fiscal: '',
+    agente_id: '',
+}
+
 export const nuevaDireccionVacia: NuevaDireccion = {
     nombre_via: '',
     tipo_via: '',
@@ -171,6 +179,16 @@ export const metaCliente: MetaObjetoValor<Cliente> = {
         'id_fiscal'
     ],
     validador: makeValidadorCliente(validacionesCliente),
+};
+
+export const metaNuevoCliente: MetaObjetoValor<NuevoCliente> = {
+    bloqueados: [],
+    requeridos: [
+        'nombre',
+        'tipo_id_fiscal',
+        'id_fiscal'
+    ],
+    validador: makeValidador({}),
 };
 
 export const metaDireccion: MetaObjetoValor<DirCliente> = {

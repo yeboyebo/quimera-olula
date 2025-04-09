@@ -97,12 +97,7 @@ export const deleteCliente = async (id: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlVentas}/${id}`);
 
 export const postCliente: PostCliente = async (cliente) => {
-  const payload = {
-    cliente: {
-      ...cliente,
-    }
-  }
-  return await RestAPI.post(baseUrlVentas, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(baseUrlVentas, cliente).then((respuesta) => respuesta.id);
 }
 
 export const desmarcarCuentaDomiciliacion = async (clienteId: string): Promise<void> =>
