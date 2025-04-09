@@ -1,6 +1,7 @@
 quimera-input,
 quimera-select,
-quimera-date {
+quimera-date,
+quimera-checkbox {
     --color-borde: var(--color-texto-secundario);
     --color-focus: var(--color-primario-claro);
     --color-validacion: var(--color-texto-deshabilitado);
