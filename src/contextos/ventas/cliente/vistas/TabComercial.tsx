@@ -41,24 +41,20 @@ export const TabComercial = ({
   };
 
   return (
-    <div className="container">
-      <div style={{ gridColumn: "span 12" }}>
+    <>
+      <div className="formulario">
         <QInput
           nombre="nombre"
           label="Nombre"
           onChange={setCampo("nombre")}
           {...getProps("nombre")}
         />
-      </div>
-      <div style={{ gridColumn: "span 12" }}>
         <QInput
           nombre="nombre_comercial"
           label="Nombre Comercial"
           onChange={setCampo("nombre_comercial")}
           {...getProps("nombre_comercial")}
         />
-      </div>
-      <div style={{ gridColumn: "span 1" }}>
         <QSelect
           nombre="tipo_id_fiscal"
           label="Tipo Id Fiscal"
@@ -66,40 +62,30 @@ export const TabComercial = ({
           onChange={setCampo("tipo_id_fiscal")}
           {...getProps("tipo_id_fiscal")}
         />
-      </div>
-      <div style={{ gridColumn: "span 2" }}>
         <QInput
           nombre="id_fiscal"
           label="Id Fiscal"
           onChange={setCampo("id_fiscal")}
           {...getProps("id_fiscal")}
         />
-      </div>
-      <div style={{ gridColumn: "span 8" }}></div>
-      <div style={{ gridColumn: "span 2" }}>
+        <div style={{ gridColumn: "span 8" }}></div>
         <QInput
           nombre="agente_id"
           label="Agente"
           onChange={setCampo("agente_id")}
           {...getProps("agente_id")}
         />
-      </div>
-      <div style={{ gridColumn: "span 10" }}>
         <QInput
           nombre="nombre_agente"
           label="Nombre"
           {...getProps("nombre_agente")}
         />
-      </div>
-      <div style={{ gridColumn: "span 1" }}>
         <QInput
           nombre="divisa_id"
           label="Divisa"
           onChange={setCampo("divisa_id")}
           {...getProps("divisa_id")}
         />
-      </div>
-      <div style={{ gridColumn: "span 3" }}>
         <QDate
           nombre="fecha_baja"
           label="Fecha Baja"
@@ -107,38 +93,27 @@ export const TabComercial = ({
           {...getProps("fecha_baja")}
         />
       </div>
-      {/* <div style={{ gridColumn: "span 3" }}>
-        <QCheckbox
-          label="De Baja"
-          nombre="de_baja"
-          onChange={setCampo("de_baja")}
-          {...getProps("de_baja")}
-        />
-      </div> */}
-      <div style={{ gridColumn: "span 5" }}></div>
-      <div style={{ gridColumn: "span 12" }}>
-        <div className="botones">
-          <QBoton
-            onClick={onGuardarClicked}
-            deshabilitado={!puedoGuardarObjetoValor(cliente)}
-          >
-            Guardar
-          </QBoton>
-          <QBoton
-            tipo="reset"
-            variante="texto"
-            onClick={() => {
-              dispatch({
-                type: "init",
-                payload: { entidad: cliente.valor_inicial },
-              });
-            }}
-            deshabilitado={!entidadModificada(cliente)}
-          >
-            Cancelar
-          </QBoton>
-        </div>
+      <div className="botones">
+        <QBoton
+          onClick={onGuardarClicked}
+          deshabilitado={!puedoGuardarObjetoValor(cliente)}
+        >
+          Guardar
+        </QBoton>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => {
+            dispatch({
+              type: "init",
+              payload: { entidad: cliente.valor_inicial },
+            });
+          }}
+          deshabilitado={!entidadModificada(cliente)}
+        >
+          Cancelar
+        </QBoton>
       </div>
-    </div>
+    </>
   );
 };

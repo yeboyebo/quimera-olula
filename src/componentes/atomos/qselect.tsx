@@ -22,6 +22,7 @@ export const QSelect = ({
   onBlur,
 }: QSelectProps) => {
   const attrs = {
+    nombre,
     erroneo,
     advertido,
     valido,
