@@ -14,6 +14,16 @@ export interface Cliente extends Entidad {
   grupo_iva_negocio_id: string;
   de_baja: boolean;
   fecha_baja: string | null;
+  grupo_id: string;
+  telefono1: string;
+  telefono2: string;
+  email: string;
+  web: string;
+  observaciones: string;
+  copiasfactura: number;
+  fechabaja: string;
+  contacto_id: string;
+  cuenta_domiciliada: string;
 };
 
 export interface IdFiscal {

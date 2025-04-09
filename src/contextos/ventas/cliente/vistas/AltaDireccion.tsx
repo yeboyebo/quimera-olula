@@ -40,40 +40,10 @@ export const AltaDireccion = ({
     const direccionCreada = await getDireccion(clienteId, id);
     onDireccionCreada(direccionCreada);
   };
-  // const [estado, setEstado] = useState({} as Record<string, string>);
-
-  // const onGuardar = async (datos: Record<string, string>) => {
-  //   const nuevoEstado = {
-  //     tipo_via: validadoresDireccion.tipo_via(datos.tipo_via)
-  //       ? ""
-  //       : "El tipo de vía es obligatorio.",
-  //     nombre_via: validadoresDireccion.nombre_via(datos.nombre_via)
-  //       ? ""
-  //       : "El nombre de la vía es obligatorio.",
-  //     ciudad: validadoresDireccion.ciudad(datos.ciudad)
-  //       ? ""
-  //       : "La ciudad es obligatoria.",
-  //   };
-
-  //   setEstado(nuevoEstado);
-
-  //   if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
-
-  //   const nuevaDireccion: NuevaDireccion = {
-  //     tipo_via: datos.tipo_via,
-  //     nombre_via: datos.nombre_via,
-  //     ciudad: datos.ciudad,
-  //   };
-
-  //   const id = await postDireccion(clienteId, nuevaDireccion);
-  //   const direccionCreada = await getDireccion(clienteId, id);
-  //   onDireccionCreada(direccionCreada);
-  // };
 
   return (
     <>
       <h2>Nueva Dirección</h2>
-      {/* <QForm onSubmit={onGuardar} onReset={onCancelar}> */}
       <section>
         <QInput
           label="Tipo de Vía"
@@ -98,11 +68,7 @@ export const AltaDireccion = ({
         >
           Guardar
         </QBoton>
-        {/* <QBoton tipo="reset" variante="texto">
-            Cancelar
-          </QBoton> */}
       </section>
-      {/* </QForm> */}
     </>
   );
 };
