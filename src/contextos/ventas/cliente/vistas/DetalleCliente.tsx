@@ -9,9 +9,14 @@ import {
 } from "../../../comun/dominio.ts";
 import { Cliente } from "../diseño.ts";
 import { initEstadoClienteVacio, metaCliente } from "../dominio.ts";
-import { getCliente } from "../infraestructura.ts";
+import {
+  desmarcarCuentaDomiciliacion,
+  getCliente,
+} from "../infraestructura.ts";
 import "./DetalleCliente.css";
 import { TabComercial } from "./TabComercial.tsx";
+import { TabCrmContactos } from "./TabCrmContactos.tsx";
+import { TabCuentasBanco } from "./TabCuentasBanco.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
 export const DetalleCliente = ({
@@ -44,6 +49,12 @@ export const DetalleCliente = ({
     return campoObjetoValorAInput(cliente, campo);
   };
 
+  const desmarcarCuentaDomiciliada = async () => {
+    if (!clienteId) return;
+
+    await desmarcarCuentaDomiciliacion(clienteId);
+  };
+  console.log(cliente);
   return (
     <Detalle
       id={clienteId}
@@ -89,7 +100,13 @@ export const DetalleCliente = ({
               label="Cuentas Bancarias"
               children={
                 <div className="detalle-cliente-tab-contenido">
-                  Cuentas Bancarias Master contenido
+                  <div className="CuentaBancoDomiciliacion">
+                    <span>Domiciliar: {cliente.valor.cuenta_domiciliada}</span>
+                    <button onClick={() => desmarcarCuentaDomiciliada()}>
+                      Desmarcar
+                    </button>
+                  </div>
+                  <TabCuentasBanco clienteId={clienteId} />
                 </div>
               }
             />,
@@ -98,7 +115,7 @@ export const DetalleCliente = ({
               label="Agenda"
               children={
                 <div className="detalle-cliente-tab-contenido">
-                  Agenda contenido
+                  <TabCrmContactos clienteId={clienteId} />
                 </div>
               }
             />,

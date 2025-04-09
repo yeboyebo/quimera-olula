@@ -6,7 +6,7 @@ import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaDirecci
 
 
 const baseUrlVentas = `/ventas/cliente`;
-const baseUrlCrm = `/crm/contacto`;
+const baseUrlCrm = `/crm`;
 
 type ClienteApi = Cliente;
 
@@ -255,14 +255,21 @@ export const cuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
 });
 
 export const getCrmContactos = async (clienteId: string): Promise<CrmContacto[]> =>
-  await RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/${clienteId}/crm_contactos`).then((respuesta) => respuesta.datos);
+  await RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/cliente/${clienteId}/contactos`).then((respuesta) => respuesta.datos);
 
-export const postCrmContacto = async (contacto: CrmContacto): Promise<void> => {
+export const postCrmContacto = async (contacto: CrmContacto): Promise<string> => {
   const payload = {
     nombre: contacto.nombre,
     email: contacto.email,
   };
-  await RestAPI.post(`${baseUrlCrm}`, payload);
+  return await RestAPI.post(`${baseUrlCrm}/contacto`, payload).then((respuesta) => respuesta.id);
+};
+
+export const vincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
+  const payload = {
+    contacto_id: contactoId,
+  };
+  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/vincular_contacto`, payload);
 };
 
 export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => {
