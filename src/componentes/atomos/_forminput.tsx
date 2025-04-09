@@ -30,6 +30,7 @@ export type FormInputProps = FormFieldProps & {
 };
 
 type InputProps = Omit<FormInputProps, "label"> & {
+  checked?: boolean;
   tipo?: keyof typeof tiposFormInput;
 };
 
@@ -39,6 +40,7 @@ export const FormInput = ({
   placeholder,
   tipo = "texto",
   valor = "",
+  checked,
   opcional,
   lista,
   autocompletar,
@@ -53,6 +55,8 @@ export const FormInput = ({
       placeholder={placeholder}
       value={onChange ? valor : undefined}
       defaultValue={onChange ? undefined : valor}
+      checked={onChange ? checked : undefined}
+      defaultChecked={onChange ? undefined : checked}
       disabled={deshabilitado}
       required={!opcional}
       list={lista}
@@ -78,5 +82,7 @@ export const Validacion = ({
 }: {
   textoValidacion: string;
 }) => {
+  if (!textoValidacion) return null;
+
   return <span className="texto-validacion">{textoValidacion}</span>;
 };
