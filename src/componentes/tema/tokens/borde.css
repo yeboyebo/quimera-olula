@@ -1,0 +1,15 @@
+:root {
+    /* border-size */
+    --tamaño-borde-s: 1px;
+    --tamaño-borde-m: 2px;
+    --tamaño-borde-l: 5px;
+    --tamaño-borde-xl: 10px;
+    --tamaño-borde-xxl: 25px;
+
+    /* border-radius */
+    --redondeo-borde-xs: 0.25rem;
+    --redondeo-borde-s: 0.5rem;
+    --redondeo-borde-m: 0.75rem;
+    --redondeo-borde-l: 1rem;
+    --redondeo-borde-xl: 1.5rem;
+}

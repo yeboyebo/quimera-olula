@@ -1,3 +1,9 @@
+@import "./tokens/letra.css";
+@import "./tokens/espaciado.css";
+@import "./tokens/borde.css";
+@import "./tokens/ratio.css";
+@import "./tokens/color.css";
+
 :root {
     color-scheme: light dark;
 
