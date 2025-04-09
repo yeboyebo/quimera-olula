@@ -13,6 +13,7 @@ import {
   getCrmContactos,
   patchCrmContacto,
   postCrmContacto,
+  vincularContactoCliente,
 } from "../infraestructura.ts";
 
 const metaTablaCrmContactos = [
@@ -61,7 +62,10 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       email: datos.email,
     };
 
-    await postCrmContacto(nuevoContacto);
+    const contactoId = await postCrmContacto(nuevoContacto);
+
+    await vincularContactoCliente(contactoId, clienteId);
+
     setContactos([nuevoContacto, ...contactos]);
     setModo("lista");
   };
