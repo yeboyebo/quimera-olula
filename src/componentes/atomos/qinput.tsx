@@ -1,20 +1,5 @@
-import "./qinput.css";
-
-export type FormInputProps = {
-  label: string;
-  nombre: string;
-  deshabilitado?: boolean;
-  placeholder?: string;
-  valor?: string;
-  textoValidacion?: string;
-  erroneo?: boolean;
-  advertido?: boolean;
-  valido?: boolean;
-  opcional?: boolean;
-  condensado?: boolean;
-  onChange?: (valor: string, evento: React.ChangeEvent<HTMLElement>) => void;
-  onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
-};
+import "./_forminput.css";
+import { FormInputProps } from "./_forminput.tsx";
 
 type QInputProps = FormInputProps & {
   lista?: string;
@@ -53,7 +38,7 @@ export const QInput = ({
     <quimera-input {...attrs}>
       <label>
         <span className="etiqueta">
-          {label}&nbsp;
+          {label}
           <span className="etiqueta-opcional">(opcional)</span>
         </span>
         <input

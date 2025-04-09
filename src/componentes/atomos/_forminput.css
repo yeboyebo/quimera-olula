@@ -1,3 +1,4 @@
+quimera-input,
 quimera-select {
     --color-borde: var(--color-texto-secundario);
     --color-focus: var(--color-primario-claro);
@@ -13,12 +14,14 @@ quimera-select {
             padding-left: var(--espaciado-xxs);
 
             .etiqueta-opcional {
+                margin-left: var(--espaciado-xxs);
                 color: var(--color-texto-deshabilitado);
                 font-size: var(--tamaño-letra-xs);
                 display: none;
             }
         }
 
+        input,
         select {
             outline: 0;
             color: var(--color-texto-primario);
@@ -90,6 +93,7 @@ quimera-select {
             color: var(--color-texto-deshabilitado);
         }
 
+        input,
         select {
             background-color: var(--color-deshabilitado);
             color: var(--negro);
@@ -110,6 +114,7 @@ quimera-select {
             }
         }
 
+        input,
         select {
             font-size: var(--tamaño-letra-s);
         }

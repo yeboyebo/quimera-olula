@@ -1,5 +1,5 @@
-import { FormInputProps } from "./qinput.tsx";
-import "./qselect.css";
+import "./_forminput.css";
+import { FormInputProps } from "./_forminput.tsx";
 
 type QSelectProps = FormInputProps & {
   opciones: { valor: string; descripcion: string }[];
@@ -33,7 +33,7 @@ export const QSelect = ({
     <quimera-select {...attrs}>
       <label>
         <span className="etiqueta">
-          {label}&nbsp;
+          {label}
           <span className="etiqueta-opcional">(opcional)</span>
         </span>
         <select

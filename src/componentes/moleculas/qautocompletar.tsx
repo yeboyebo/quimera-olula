@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { FormInputProps, QInput } from "../atomos/qinput.tsx";
+import { FormInputProps } from "../atomos/_forminput.tsx";
+import { QInput } from "../atomos/qinput.tsx";
 
 type Opciones = { valor: string; descripcion: string }[];
 
