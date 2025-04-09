@@ -1,33 +1,33 @@
-import { Historia, MetaHistorias } from "../historias/diseño.tsx";
-import { QInput } from "./qinput.tsx";
+import { Historia, MetaHistorias } from "../historias/diseño.ts";
+import { QDate } from "./qdate.tsx";
 
 export default {
   grupo: "atomos",
-  titulo: "qinput",
+  titulo: "qdate",
   attrs: {
-    nombre: "nombre",
-    label: "Nombre",
-    placeholder: "Introduce tu nombre",
-    textoValidacion: "Mínimo 8 caracteres",
+    nombre: "fecha_inicio",
+    label: "Fecha inicio",
+    placeholder: "Introduce la fecha de inicio",
+    textoValidacion: "Preferible a partir de 2026",
   },
-  Componente: QInput,
+  Componente: QDate,
 } as unknown as MetaHistorias;
 
 export const Base: Historia = {};
 
 export const Validaciones: Historia = [
   {
-    textoValidacion: "Este campo es requerido",
+    textoValidacion: "Debes elegir una fecha",
     erroneo: "true",
   },
   {
-    valor: "Joze Baría",
+    valor: "2025-10-23",
     textoValidacion: "Vamos, puedes hacerlo mejor",
     advertido: "true",
   },
   {
-    valor: "Jose María",
-    textoValidacion: "Bien! Nombre correcto",
+    valor: "2026-04-14",
+    textoValidacion: "Bien! Bonito día",
     valido: "true",
   },
 ];

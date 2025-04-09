@@ -87,6 +87,7 @@ qhistorias-historia {
 
                     .value {
                         color: var(--uva-4);
+                        white-space: pre-wrap;
                     }
                 }
             }

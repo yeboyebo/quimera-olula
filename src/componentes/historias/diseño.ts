@@ -9,7 +9,7 @@ export type HistoriasComponente = {
 export type Historia = AtributosHistoria | Historia[];
 
 export type ComponenteHistoria = (_: Record<string, unknown>) => ReactNode;
-export type AtributosHistoria = Record<string, string>;
+export type AtributosHistoria = Record<string, unknown>;
 
 export interface MetaHistorias {
   grupo: string;

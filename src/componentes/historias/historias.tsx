@@ -28,12 +28,12 @@ const renderComponente = (componente: HistoriasComponente, tema: string) => {
   const clave = meta.grupo + "/" + meta.titulo;
 
   return (
-    <qhistorias-componente style={{ colorScheme: tema }}>
-      <section key={clave}>
+    <qhistorias-componente style={{ colorScheme: tema }} key={clave}>
+      <section>
         <h2>{clave}</h2>
         <section>
           {Object.entries(historias).map((historia) => (
-            <RenderHistoria historia={historia} meta={meta} />
+            <RenderHistoria key={historia[0]} historia={historia} meta={meta} />
           ))}
         </section>
       </section>
@@ -44,22 +44,42 @@ const renderComponente = (componente: HistoriasComponente, tema: string) => {
 const renderCode = (atributos: AtributosHistoria[], meta: MetaHistorias) => {
   const comp = meta.Componente.name;
 
+  const valorTexto = (valor: unknown) => {
+    if (typeof valor === "string") {
+      return valor;
+    }
+
+    if (typeof valor === "boolean") {
+      return valor ? "true" : "false";
+    }
+
+    if (typeof valor === "number") {
+      return valor.toString();
+    }
+
+    return JSON.stringify(valor);
+  };
+
   const atributosTexto = (atributos: AtributosHistoria) =>
-    Object.entries(atributos).map(([k, v]) => (
-      <div className="attribute">
-        {v === "true" ? (
-          <span className="key">{k}</span>
-        ) : (
-          <>
-            <span className="key">{k}</span>=
-            <span className="value">"{v}"</span>
-          </>
-        )}
-      </div>
-    ));
+    Object.entries(atributos).map(([k, v]) => {
+      const valor = valorTexto(v);
+
+      return (
+        <div className="attribute" key={k + valor}>
+          {v === "true" ? (
+            <span className="key">{k}</span>
+          ) : (
+            <>
+              <span className="key">{k}</span>=
+              <span className="value">"{valor}"</span>
+            </>
+          )}
+        </div>
+      );
+    });
 
   const texto = atributos.map((attrs) => (
-    <div className="component">
+    <div className="component" key={Object.values(attrs).toString()}>
       {"<"}
       <span className="tag">{comp}</span>
       {atributosTexto(attrs)}
@@ -114,7 +134,7 @@ const renderContenidoHistoria = (
   Componente: ComponenteHistoria,
   attrs: AtributosHistoria
 ) => {
-  return <Componente {...attrs} />;
+  return <Componente key={Object.values(attrs).toString()} {...attrs} />;
 };
 
 export const Historias = () => {

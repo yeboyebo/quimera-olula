@@ -1,4 +1,11 @@
-quimera-select {
+quimera-input,
+quimera-select,
+quimera-date,
+quimera-checkbox {
+    --color-borde: var(--color-texto-secundario);
+    --color-focus: var(--color-primario-claro);
+    --color-validacion: var(--color-texto-deshabilitado);
+
     label {
         display: flex;
         flex-direction: column;
@@ -6,30 +13,29 @@ quimera-select {
 
         .etiqueta {
             font-size: var(--tamaño-letra-s);
+            padding-left: var(--espaciado-xxs);
 
             .etiqueta-opcional {
+                margin-left: var(--espaciado-xxs);
                 color: var(--color-texto-deshabilitado);
                 font-size: var(--tamaño-letra-xs);
                 display: none;
             }
         }
 
+        input,
         select {
-            --color-borde: var(--color-texto-secundario);
-
             outline: 0;
             color: var(--color-texto-primario);
-            border: var(--tamaño-borde-s) solid transparent;
+            border: none;
             border-bottom: var(--tamaño-borde-s) solid var(--color-borde);
-            border-radius: 0;
+            padding: var(--espaciado-xxs);
             font-size: var(--tamaño-letra-m);
             background-color: transparent;
 
             &:focus {
-                /* box-shadow: inset 0 0 0 var(--tamaño-borde-m) var(--color-borde); */
-                background-color: lightblue;
-                border-bottom: var(--tamaño-borde-s) solid transparent;
-                border: var(--tamaño-borde-m) solid transparent;
+                background-color: var(--color-focus);
+                border-color: transparent;
                 border-radius: var(--redondeo-borde-xs);
             }
 
@@ -40,7 +46,7 @@ quimera-select {
 
         .texto-validacion {
             margin-top: var(--espaciado-xxs);
-            color: var(--color-texto-deshabilitado);
+            color: var(--color-validacion);
             font-size: var(--tamaño-letra-s);
 
             &::before {
@@ -51,49 +57,32 @@ quimera-select {
     }
 
     &[erroneo] {
-        select {
-            --color-borde: var(--color-error);
-        }
+        --color-borde: var(--color-error);
+        --color-focus: var(--color-error-claro);
+        --color-validacion: var(--color-error);
 
-        & .texto-validacion {
-            color: var(--color-error);
-
-            &::before {
-                content: "❌";
-            }
+        & .texto-validacion::before {
+            content: "❌";
         }
     }
 
     &[advertido] {
-        select {
-            --color-borde: var(--color-advertencia);
-        }
+        --color-borde: var(--color-advertencia);
+        --color-focus: var(--color-advertencia-claro);
+        --color-validacion: var(--color-advertencia);
 
-        & .texto-validacion {
-            color: var(--color-advertencia);
-
-            &::before {
-                content: "⚠️";
-            }
+        & .texto-validacion::before {
+            content: "⚠️";
         }
     }
 
     &[valido] {
-        select {
-            /* --color-borde: var(--color-exito); */
-            border-bottom: var(--tamaño-borde-m) solid green;
+        --color-borde: var(--color-exito);
+        --color-focus: var(--color-exito-claro);
+        --color-validacion: var(--color-exito);
 
-            &:focus {
-                background-color: lightgreen;
-            }
-        }
-
-        & .texto-validacion {
-            color: var(--color-exito);
-
-            &::before {
-                content: "✅";
-            }
+        & .texto-validacion::before {
+            content: "✅";
         }
     }
 
@@ -106,10 +95,12 @@ quimera-select {
             color: var(--color-texto-deshabilitado);
         }
 
+        input,
         select {
             background-color: var(--color-deshabilitado);
             color: var(--negro);
-            border-color: var(--negro);
+            border-color: transparent;
+            border-radius: var(--redondeo-borde-xs);
         }
 
         cursor: inherit;
@@ -118,15 +109,16 @@ quimera-select {
 
     &[condensado] {
         .etiqueta {
-            font-size: var(--tamaño-letra-s);
+            font-size: var(--tamaño-letra-xs);
 
             .etiqueta-opcional {
                 font-size: var(--tamaño-letra-xxs);
             }
         }
 
+        input,
         select {
-            padding: var(--espaciado-xxs);
+            font-size: var(--tamaño-letra-s);
         }
 
         .texto-validacion {

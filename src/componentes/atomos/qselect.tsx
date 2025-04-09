@@ -1,7 +1,7 @@
-import { FormInputProps } from "./qinput.tsx";
-import "./qselect.css";
+import "./_forminput.css";
+import { Etiqueta, FormFieldProps, Validacion } from "./_forminput.tsx";
 
-type QSelectProps = FormInputProps & {
+type QSelectProps = FormFieldProps & {
   opciones: { valor: string; descripcion: string }[];
 };
 
@@ -21,7 +21,14 @@ export const QSelect = ({
   onChange,
   onBlur,
 }: QSelectProps) => {
-  const attrs = { erroneo, advertido, valido, opcional, condensado };
+  const attrs = {
+    erroneo,
+    advertido,
+    valido,
+    opcional,
+    condensado,
+    deshabilitado,
+  };
 
   const renderOpciones = opciones.map((opcion) => (
     <option key={opcion.valor} value={opcion.valor}>
@@ -32,10 +39,7 @@ export const QSelect = ({
   return (
     <quimera-select {...attrs}>
       <label>
-        <span className="etiqueta">
-          {label}&nbsp;
-          <span className="etiqueta-opcional">(opcional)</span>
-        </span>
+        <Etiqueta label={label} />
         <select
           name={nombre}
           defaultValue={onChange ? undefined : valor}
@@ -50,7 +54,7 @@ export const QSelect = ({
           </option>
           {renderOpciones}
         </select>
-        <span className="texto-validacion">{textoValidacion}</span>
+        <Validacion textoValidacion={textoValidacion} />
       </label>
     </quimera-select>
   );
