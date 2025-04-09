@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { QBoton } from "../atomos/qboton.tsx";
 import { Plantilla } from "../plantilla/Plantilla.tsx";
 import {
   AtributosHistoria,
@@ -31,9 +32,9 @@ const renderComponente = (componente: HistoriasComponente, tema: string) => {
       <section key={clave}>
         <h2>{clave}</h2>
         <section>
-          {Object.entries(historias).map((historia) =>
-            renderHistoria(historia, meta)
-          )}
+          {Object.entries(historias).map((historia) => (
+            <RenderHistoria historia={historia} meta={meta} />
+          ))}
         </section>
       </section>
     </qhistorias-componente>
@@ -46,7 +47,14 @@ const renderCode = (atributos: AtributosHistoria[], meta: MetaHistorias) => {
   const atributosTexto = (atributos: AtributosHistoria) =>
     Object.entries(atributos).map(([k, v]) => (
       <div className="attribute">
-        <span className="key">{k}</span>=<span className="value">"{v}"</span>
+        {v === "true" ? (
+          <span className="key">{k}</span>
+        ) : (
+          <>
+            <span className="key">{k}</span>=
+            <span className="value">"{v}"</span>
+          </>
+        )}
       </div>
     ));
 
@@ -62,10 +70,14 @@ const renderCode = (atributos: AtributosHistoria[], meta: MetaHistorias) => {
   return <pre>{texto}</pre>;
 };
 
-const renderHistoria = (
-  [titulo, attrs]: [string, Historia],
-  meta: MetaHistorias
-) => {
+const RenderHistoria = ({
+  historia: [titulo, attrs],
+  meta,
+}: {
+  historia: [string, Historia];
+  meta: MetaHistorias;
+}) => {
+  const [mostrarCodigo, setMostrarCodigo] = useState(false);
   const atributos = Array.isArray(attrs)
     ? (attrs as AtributosHistoria[])
     : [attrs];
@@ -82,8 +94,17 @@ const renderHistoria = (
           {atributosCompletos.map((attrs) =>
             renderContenidoHistoria(meta.Componente, attrs)
           )}
+          <QBoton
+            tipo="submit"
+            tamaño="pequeño"
+            onClick={() => setMostrarCodigo(!mostrarCodigo)}
+          >
+            {mostrarCodigo ? "Ocultar código" : "Mostrar código"}
+          </QBoton>
         </section>
-        <aside>{renderCode(atributosCompletos, meta)}</aside>
+        <aside data-codigo={mostrarCodigo.toString()}>
+          {renderCode(atributosCompletos, meta)}
+        </aside>
       </article>
     </qhistorias-historia>
   );
