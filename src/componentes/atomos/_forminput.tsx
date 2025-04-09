@@ -13,3 +13,20 @@ export type FormInputProps = {
   onChange?: (valor: string, evento: React.ChangeEvent<HTMLElement>) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
 };
+
+export const Etiqueta = ({ label }: { label: string }) => {
+  return (
+    <span className="etiqueta">
+      {label}
+      <span className="etiqueta-opcional">(opcional)</span>
+    </span>
+  );
+};
+
+export const Validacion = ({
+  textoValidacion,
+}: {
+  textoValidacion: string;
+}) => {
+  return <span className="texto-validacion">{textoValidacion}</span>;
+};

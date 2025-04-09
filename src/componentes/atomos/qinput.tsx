@@ -1,5 +1,5 @@
 import "./_forminput.css";
-import { FormInputProps } from "./_forminput.tsx";
+import { Etiqueta, FormInputProps, Validacion } from "./_forminput.tsx";
 
 type QInputProps = FormInputProps & {
   lista?: string;
@@ -37,10 +37,7 @@ export const QInput = ({
   return (
     <quimera-input {...attrs}>
       <label>
-        <span className="etiqueta">
-          {label}
-          <span className="etiqueta-opcional">(opcional)</span>
-        </span>
+        <Etiqueta label={label} />
         <input
           type="text"
           name={nombre}
@@ -55,7 +52,7 @@ export const QInput = ({
           onBlur={(e) => onBlur?.(e.target.value, e)}
           onInput={(e) => onInput?.((e.target as HTMLInputElement).value, e)}
         />
-        <span className="texto-validacion">{textoValidacion}</span>
+        <Validacion textoValidacion={textoValidacion} />
       </label>
     </quimera-input>
   );

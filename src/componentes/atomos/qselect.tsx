@@ -1,5 +1,5 @@
 import "./_forminput.css";
-import { FormInputProps } from "./_forminput.tsx";
+import { Etiqueta, FormInputProps, Validacion } from "./_forminput.tsx";
 
 type QSelectProps = FormInputProps & {
   opciones: { valor: string; descripcion: string }[];
@@ -39,10 +39,7 @@ export const QSelect = ({
   return (
     <quimera-select {...attrs}>
       <label>
-        <span className="etiqueta">
-          {label}
-          <span className="etiqueta-opcional">(opcional)</span>
-        </span>
+        <Etiqueta label={label} />
         <select
           name={nombre}
           defaultValue={onChange ? undefined : valor}
@@ -57,7 +54,7 @@ export const QSelect = ({
           </option>
           {renderOpciones}
         </select>
-        <span className="texto-validacion">{textoValidacion}</span>
+        <Validacion textoValidacion={textoValidacion} />
       </label>
     </quimera-select>
   );
