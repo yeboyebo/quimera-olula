@@ -21,7 +21,14 @@ export const QSelect = ({
   onChange,
   onBlur,
 }: QSelectProps) => {
-  const attrs = { erroneo, advertido, valido, opcional, condensado };
+  const attrs = {
+    erroneo,
+    advertido,
+    valido,
+    opcional,
+    condensado,
+    deshabilitado,
+  };
 
   const renderOpciones = opciones.map((opcion) => (
     <option key={opcion.valor} value={opcion.valor}>
