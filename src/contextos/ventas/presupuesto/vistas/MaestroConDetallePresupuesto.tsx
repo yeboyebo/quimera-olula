@@ -10,6 +10,11 @@ import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
 
 const metaTablaPresupuesto = [
   {
+    id: "id",
+    cabecera: "ID",
+    render: (entidad: Entidad) => entidad.id as string,
+  },
+  {
     id: "codigo",
     cabecera: "Código",
     render: (entidad: Entidad) => entidad.codigo as string,

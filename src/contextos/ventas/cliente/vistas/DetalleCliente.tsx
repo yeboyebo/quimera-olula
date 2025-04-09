@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { useParams } from "react-router";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { Input } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
-import { Cliente, IdFiscal as TipoIdFiscal } from "../diseño.ts";
-import { clienteVacio } from "../dominio.ts";
-import { camposCliente, getCliente, patchCliente } from "../infraestructura.ts";
+import {
+  campoObjetoValorAInput,
+  makeReductor,
+} from "../../../comun/dominio.ts";
+import { Cliente } from "../diseño.ts";
+import { initEstadoClienteVacio, metaCliente } from "../dominio.ts";
+import { getCliente } from "../infraestructura.ts";
 import "./DetalleCliente.css";
-import { IdFiscal } from "./IdFiscal.tsx";
+import { TabComercial } from "./TabComercial.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
 
 export const DetalleCliente = ({
@@ -22,60 +25,37 @@ export const DetalleCliente = ({
 }) => {
   const params = useParams();
 
-  const [guardando, setGuardando] = useState(false);
-
   const clienteId = clienteInicial?.id ?? params.id;
+  const titulo = (cliente: Entidad) => cliente.nombre as string;
 
-  const sufijoTitulo = guardando ? " (Guardando...)" : "";
-  const titulo = (cliente: Entidad) =>
-    `${cliente.nombre} ${sufijoTitulo}` as string;
+  const [cliente, dispatch] = useReducer(
+    makeReductor(metaCliente),
+    initEstadoClienteVacio()
+  );
 
-  const [cliente, setCliente] = useState<Cliente>(clienteVacio());
-
-  const onIdFiscalCambiadoCallback = (idFiscal: TipoIdFiscal) => {
-    const nuevoCliente = { ...cliente, ...idFiscal };
-    setCliente(nuevoCliente);
-    onEntidadActualizada(nuevoCliente);
+  const setCampo = (campo: string) => (valor: unknown) => {
+    dispatch({
+      type: "set_campo",
+      payload: { campo, valor: valor as string },
+    });
   };
 
-  const onCampoCambiado = async (campo: string, valor: string) => {
-    if (!clienteId) {
-      return;
-    }
-    setGuardando(true);
-    const nuevoCliente: Cliente = { ...cliente, [campo]: valor };
-    await patchCliente(clienteId, nuevoCliente);
-    setGuardando(false);
-    setCliente(nuevoCliente);
-    onEntidadActualizada(nuevoCliente);
+  const getProps = (campo: string) => {
+    return campoObjetoValorAInput(cliente, campo);
   };
 
   return (
     <Detalle
       id={clienteId}
       obtenerTitulo={titulo}
-      setEntidad={(c) => setCliente(c as Cliente)}
-      entidad={cliente}
+      setEntidad={(c) =>
+        dispatch({ type: "init", payload: { entidad: c as Cliente } })
+      }
+      entidad={cliente.valor}
       cargar={getCliente}
       className="detalle-cliente"
       cerrarDetalle={cancelarSeleccionada}
     >
-      {/* <h2 className="detalle-cliente-titulo">{titulo(cliente)}</h2> */}
-      <Input
-        campo={camposCliente.nombre}
-        onCampoCambiado={onCampoCambiado}
-        valorEntidad={cliente?.nombre ?? ""}
-      />
-      <IdFiscal
-        cliente={cliente}
-        onIdFiscalCambiadoCallback={onIdFiscalCambiadoCallback}
-      />
-      <Input
-        campo={camposCliente.agente_id}
-        onCampoCambiado={onCampoCambiado}
-        valorEntidad={cliente?.agente_id ?? ""}
-      />
-
       {!!clienteId && (
         <Tabs
           className="detalle-cliente-tabs"
@@ -85,7 +65,13 @@ export const DetalleCliente = ({
               label="Comercial"
               children={
                 <div className="detalle-cliente-tab-contenido">
-                  Comercial contenido
+                  <TabComercial
+                    getProps={getProps}
+                    setCampo={setCampo}
+                    cliente={cliente}
+                    dispatch={dispatch}
+                    onEntidadActualizada={onEntidadActualizada}
+                  />
                 </div>
               }
             />,

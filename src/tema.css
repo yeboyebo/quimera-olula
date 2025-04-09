@@ -1,0 +1,32 @@
+:root {
+    color-scheme: light dark;
+
+    --color-fondo: light-dark(var(--gris-1), var(--gris-8));
+
+    --color-texto-primario: light-dark(var(--negro), var(--blanco));
+    --color-texto-secundario: light-dark(var(--gris-8), var(--gris-5));
+    --color-texto-deshabilitado: light-dark(var(--gris-6), var(--gris-6));
+
+    --color-primario: light-dark(var(--azul-7), var(--azul-6));
+    --color-error: light-dark(var(--rojo-7), var(--rojo-6));
+    --color-advertencia: light-dark(var(--naranja-7), var(--naranja-6));
+    --color-exito: light-dark(var(--verde-7), var(--verde-6));
+    --color-deshabilitado: light-dark(var(--gris-3), var(--gris-7));
+
+    --color-primario-claro: light-dark(var(--azul-3), var(--azul-3));
+    --color-primario-oscuro: light-dark(var(--azul-9), var(--azul-9));
+
+    --color-error-claro: light-dark(var(--rojo-3), var(--rojo-3));
+    --color-error-oscuro: light-dark(var(--rojo-9), var(--rojo-9));
+
+    --color-advertencia-claro: light-dark(var(--naranja-3), var(--naranja-3));
+    --color-advertencia-oscuro: light-dark(var(--naranja-9), var(--naranja-9));
+
+    --color-exito-claro: light-dark(var(--verde-3), var(--verde-3));
+    --color-exito-oscuro: light-dark(var(--verde-9), var(--verde-9));
+
+    --color-deshabilitado-claro: light-dark(var(--gris-1), var(--gris-5));
+    --color-deshabilitado-oscuro: light-dark(var(--gris-5), var(--gris-9));
+
+    font-family: var(--font-system-ui);
+}

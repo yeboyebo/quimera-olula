@@ -3,13 +3,17 @@ import { Entidad } from "../../comun/diseño.ts";
 export interface Cliente extends Entidad {
   id: string;
   nombre: string;
+  nombre_comercial: string | null;
   id_fiscal: string;
-  agente_id: string;
+  agente_id: string | null;
+  nombre_agente: string | null;
   divisa_id: string;
   tipo_id_fiscal: string;
   serie_id: string;
   forma_pago_id: string;
   grupo_iva_negocio_id: string;
+  de_baja: boolean;
+  fecha_baja: string | null;
 };
 
 export interface IdFiscal {
@@ -48,6 +52,18 @@ export type NuevaDireccion = {
   ciudad: string;
 };
 
+export interface CuentaBanco extends Entidad {
+  id: string;
+  descripcion: string;
+  iban: string;
+  bic: string;
+};
+
+export interface CrmContacto extends Entidad {
+  id: string;
+  nombre: string;
+  email: string;
+};
 
 export type GetCliente = (id: string) => Promise<Cliente>;
 export type PostCliente = (cliente: NuevoCliente) => Promise<string>;
