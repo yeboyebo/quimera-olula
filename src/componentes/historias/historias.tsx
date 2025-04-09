@@ -66,7 +66,7 @@ const renderCode = (atributos: AtributosHistoria[], meta: MetaHistorias) => {
 
       return (
         <div className="attribute" key={k + valor}>
-          {valor === "true" ? (
+          {v === "true" ? (
             <span className="key">{k}</span>
           ) : (
             <>
