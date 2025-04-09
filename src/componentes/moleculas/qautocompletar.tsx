@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import { FormInputProps } from "../atomos/_forminput.tsx";
+import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 
 type Opciones = { valor: string; descripcion: string }[];
 
-type QAutocompletarProps = FormInputProps & {
+type QAutocompletarProps = FormFieldProps & {
   tiempoEspera?: number;
   longitudMinima?: number;
   obtenerOpciones: (valor: string) => Promise<Opciones>;
