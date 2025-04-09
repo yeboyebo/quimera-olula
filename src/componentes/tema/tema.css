@@ -27,6 +27,24 @@
 
     --color-deshabilitado-claro: light-dark(var(--gris-1), var(--gris-5));
     --color-deshabilitado-oscuro: light-dark(var(--gris-5), var(--gris-9));
+}
 
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
     font-family: var(--font-system-ui);
+
+    color: var(--color-texto-primario);
+    background-color: var(--color-fondo);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    font-weight: 400;
 }
