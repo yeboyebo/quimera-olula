@@ -1,28 +1,51 @@
-.flex-container>div {
-    background-color: DodgerBlue;
-    color: white;
-    margin: 10px;
-    text-align: center;
-    /* line-height: 75px; */
-    font-size: 30px;
-}
-
-.botones {
-    display: flex;
-    width: 100%;
-    justify-content: right;
-}
-
-.container {
+.formulario {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    padding: 0px;
-    gap: 10px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1rem;
+    place-items: center stretch;
+
+    quimera-input,
+    quimera-select {
+        grid-column: 1 / span 12;
+
+        input {
+            width: 100%;
+        }
+    }
+
+    quimera-date {
+        grid-column: 1 / span 3;
+    }
 }
 
-/* .container>div {
-    background-color: #f1f1f1;
-    border: 0px solid black;
-    padding: 4px;
-    font-size: 30px;
-} */
+quimera-input[nombre="nombre"] {
+    grid-column: span 12;
+}
+
+quimera-input[nombre="nombre_comercial"] {
+    grid-column: span 12;
+}
+
+quimera-select[nombre="tipo_id_fiscal"] {
+    grid-column: 1 / span 3;
+}
+
+quimera-input[nombre="id_fiscal"] {
+    grid-column: span 3;
+}
+
+quimera-input[nombre="agente_id"] {
+    grid-column: 1 / span 3;
+}
+
+quimera-input[nombre="nombre_agente"] {
+    grid-column: span 7;
+}
+
+quimera-input[nombre="divisa_id"] {
+    grid-column: 1 / span 3;
+}
+
+quimera-date[nombre="fecha_baja"] {
+    grid-column: span 8;
+}
