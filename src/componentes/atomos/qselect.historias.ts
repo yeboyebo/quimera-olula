@@ -1,4 +1,4 @@
-import { Historia, MetaHistorias } from "../historias/diseño.tsx";
+import { Historia, MetaHistorias } from "../historias/diseño.ts";
 import { QSelect } from "./qselect.tsx";
 
 const opciones = [

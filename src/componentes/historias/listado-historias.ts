@@ -1,9 +1,9 @@
-import * as HistoriasBoton from "../atomos/qboton.stories.tsx";
-import * as HistoriasCheckbox from "../atomos/qcheckbox.stories.tsx";
-import * as HistoriasDate from "../atomos/qdate.stories.tsx";
-import * as HistoriasInput from "../atomos/qinput.stories.tsx";
-import * as HistoriasSelect from "../atomos/qselect.stories.tsx";
-import { HistoriasComponente } from "./diseño.tsx";
+import * as HistoriasBoton from "../atomos/qboton.historias.ts";
+import * as HistoriasCheckbox from "../atomos/qcheckbox.historias.ts";
+import * as HistoriasDate from "../atomos/qdate.historias.ts";
+import * as HistoriasInput from "../atomos/qinput.historias.ts";
+import * as HistoriasSelect from "../atomos/qselect.historias.ts";
+import { HistoriasComponente } from "./diseño.ts";
 
 export const listadoHistorias = [
     HistoriasBoton,

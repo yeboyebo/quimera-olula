@@ -1,16 +1,15 @@
-import { Historia, MetaHistorias } from "../historias/diseño.tsx";
-import { QInput } from "./qinput.tsx";
+import { Historia, MetaHistorias } from "../historias/diseño.ts";
+import { QCheckbox } from "./qcheckbox.tsx";
 
 export default {
   grupo: "atomos",
-  titulo: "qinput",
+  titulo: "qcheckbox",
   attrs: {
-    nombre: "nombre",
-    label: "Nombre",
-    placeholder: "Introduce tu nombre",
-    textoValidacion: "Mínimo 8 caracteres",
+    nombre: "privacidad",
+    label: "He leído y acepto la política de privacidad",
+    textoValidacion: "Debe aceptar la política de privacidad",
   },
-  Componente: QInput,
+  Componente: QCheckbox,
 } as unknown as MetaHistorias;
 
 export const Base: Historia = {};
@@ -21,13 +20,12 @@ export const Validaciones: Historia = [
     erroneo: "true",
   },
   {
-    valor: "Joze Baría",
-    textoValidacion: "Vamos, puedes hacerlo mejor",
+    textoValidacion: "Vamos, es recomendable que lo aceptes",
     advertido: "true",
   },
   {
-    valor: "Jose María",
-    textoValidacion: "Bien! Nombre correcto",
+    valor: true,
+    textoValidacion: "Bien! Te hemos engañado",
     valido: "true",
   },
 ];
@@ -38,6 +36,8 @@ export const Opcional: Historia = {
 
 export const Deshabilitado: Historia = {
   deshabilitado: "true",
+  valor: true,
+  textoValidacion: "",
 };
 
 export const Condensado: Historia = {

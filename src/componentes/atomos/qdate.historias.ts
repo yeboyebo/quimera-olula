@@ -1,4 +1,4 @@
-import { Historia, MetaHistorias } from "../historias/diseño.tsx";
+import { Historia, MetaHistorias } from "../historias/diseño.ts";
 import { QDate } from "./qdate.tsx";
 
 export default {
