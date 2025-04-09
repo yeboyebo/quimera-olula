@@ -1,31 +1,27 @@
 import "./_forminput.css";
-import { Etiqueta, FormInputProps, Validacion } from "./_forminput.tsx";
+import {
+  Etiqueta,
+  FormInput,
+  FormInputProps,
+  Validacion,
+} from "./_forminput.tsx";
 
-type QInputProps = FormInputProps & {
-  lista?: string;
-  autocompletar?: "off" | "on";
-  onInput?: (valor: string, evento: React.FormEvent<HTMLInputElement>) => void;
-};
+type QInputProps = FormInputProps;
 
 export const QInput = ({
   label,
   nombre,
   deshabilitado,
-  placeholder,
-  valor = "",
   textoValidacion = "",
   erroneo,
   advertido,
   valido,
   opcional,
   condensado,
-  lista,
-  autocompletar,
-  onChange,
-  onBlur,
-  onInput,
+  ...props
 }: QInputProps) => {
   const attrs = {
+    nombre,
     erroneo,
     advertido,
     valido,
@@ -34,24 +30,19 @@ export const QInput = ({
     deshabilitado,
   };
 
+  const inputAttrs = {
+    nombre,
+    deshabilitado,
+    opcional,
+    tipo: "texto" as const,
+    ...props,
+  };
+
   return (
     <quimera-input {...attrs}>
       <label>
         <Etiqueta label={label} />
-        <input
-          type="text"
-          name={nombre}
-          placeholder={placeholder}
-          value={onChange ? valor : undefined}
-          defaultValue={onChange ? undefined : valor}
-          disabled={deshabilitado}
-          required={!opcional}
-          list={lista}
-          autoComplete={autocompletar}
-          onChange={(e) => onChange?.(e.target.value, e)}
-          onBlur={(e) => onBlur?.(e.target.value, e)}
-          onInput={(e) => onInput?.((e.target as HTMLInputElement).value, e)}
-        />
+        <FormInput {...inputAttrs} />
         <Validacion textoValidacion={textoValidacion} />
       </label>
     </quimera-input>

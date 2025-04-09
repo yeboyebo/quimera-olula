@@ -1,7 +1,7 @@
 import "./_forminput.css";
-import { Etiqueta, FormInputProps, Validacion } from "./_forminput.tsx";
+import { Etiqueta, FormFieldProps, Validacion } from "./_forminput.tsx";
 
-type QSelectProps = FormInputProps & {
+type QSelectProps = FormFieldProps & {
   opciones: { valor: string; descripcion: string }[];
 };
 
