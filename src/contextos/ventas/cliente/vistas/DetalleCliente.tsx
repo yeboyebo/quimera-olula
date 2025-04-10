@@ -18,6 +18,7 @@ import { TabComercial } from "./TabComercial.tsx";
 import { TabCrmContactos } from "./TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./TabCuentasBanco.tsx";
 import { TabDirecciones } from "./TabDirecciones.tsx";
+import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,
@@ -71,6 +72,21 @@ export const DetalleCliente = ({
         <Tabs
           className="detalle-cliente-tabs"
           children={[
+            <Tab
+              key="tab-1"
+              label="General"
+              children={
+                <div className="detalle-cliente-tab-contenido">
+                  <TabGeneral
+                    getProps={getProps}
+                    setCampo={setCampo}
+                    cliente={cliente}
+                    dispatch={dispatch}
+                    onEntidadActualizada={onEntidadActualizada}
+                  />
+                </div>
+              }
+            />,
             <Tab
               key="tab-1"
               label="Comercial"

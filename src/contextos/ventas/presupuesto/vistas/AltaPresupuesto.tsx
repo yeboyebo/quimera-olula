@@ -1,14 +1,17 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
+import { Orden } from "../../../comun/diseño.ts";
 import {
   campoObjetoValorAInput,
   initEstadoObjetoValor,
   makeReductor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
+import { getClientes, getDirecciones } from "../../cliente/infraestructura.ts";
 import { Presupuesto } from "../diseño.ts";
 import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
@@ -20,11 +23,14 @@ export const AltaPresupuesto = ({
   onPresupuestoCreado?: (presupuesto: Presupuesto) => void;
   onCancelar: () => void;
 }) => {
-  // Reducer para manejar el estado del presupuesto
   const [estado, dispatch] = useReducer(
     makeReductor(metaNuevoPresupuesto),
     initEstadoObjetoValor(presupuestoNuevoVacio(), metaNuevoPresupuesto)
   );
+
+  const [opcionesDireccion, setOpcionesDireccion] = useState<
+    { valor: string; descripcion: string }[]
+  >([]);
 
   const setCampo = (campo: string) => (valor: string) => {
     dispatch({
@@ -43,19 +49,28 @@ export const AltaPresupuesto = ({
     onPresupuestoCreado(presupuestoCreado);
   };
 
-  const obtenerOpcionesCliente = async () => [
-    { valor: "1", descripcion: "Antonio 1" },
-    { valor: "2", descripcion: "Juanma 2" },
-    { valor: "3", descripcion: "Pozu 3" },
-  ];
+  const obtenerOpcionesCliente = async () => {
+    const criteria = { filtro: {}, orden: { id: "DESC" } };
+    const clientes = await getClientes(
+      criteria.filtro,
+      criteria.orden as Orden
+    );
+    return clientes.map((cliente) => ({
+      valor: cliente.id,
+      descripcion: cliente.nombre,
+    }));
+  };
 
-  const onClienteChange = async (
-    clienteId: string,
-    evento: React.ChangeEvent<HTMLElement>
-  ) => {
-    console.log("Cliente cambiado", clienteId);
-    console.log(evento);
+  const onClienteChange = async (clienteId: string) => {
+    if (!clienteId) return;
     setCampo("cliente_id")(clienteId);
+
+    const direcciones = await getDirecciones(clienteId);
+    const opciones = direcciones.map((direccion) => ({
+      valor: direccion.id,
+      descripcion: `${direccion.tipo_via} ${direccion.nombre_via}, ${direccion.ciudad}`,
+    }));
+    setOpcionesDireccion(opciones);
   };
 
   return (
@@ -66,13 +81,14 @@ export const AltaPresupuesto = ({
           <QAutocompletar
             label="Cliente"
             nombre="cliente_id"
-            onChange={onClienteChange}
+            // onChange={onClienteChange}
             onBlur={onClienteChange}
             valor={estado.valor.cliente_id}
             obtenerOpciones={obtenerOpcionesCliente}
           />
-          <QInput
+          <QSelect
             label="Dirección"
+            opciones={opcionesDireccion}
             onChange={setCampo("direccion_id")}
             {...getProps("direccion_id")}
           />
