@@ -4,12 +4,15 @@ import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import {
+  Accion,
+  EstadoObjetoValor,
   quitarEntidadDeLista,
   refrescarSeleccionada,
 } from "../../../comun/dominio.ts";
-import { CuentaBanco } from "../diseño.ts";
+import { Cliente, CuentaBanco } from "../diseño.ts";
 import {
   deleteCuentaBanco,
+  desmarcarCuentaDomiciliacion,
   getCuentasBanco,
   patchCuentaBanco,
   postCuentaBanco,
@@ -23,7 +26,13 @@ const metaTablaCuentasBanco = [
   { id: "bic", cabecera: "BIC" },
 ];
 
-export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
+interface TabCuentasBancoProps {
+  cliente: EstadoObjetoValor<Cliente>;
+  dispatch: (action: Accion<Cliente>) => void;
+  onEntidadActualizada: (entidad: Cliente) => void;
+}
+
+export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   const [modo, setModo] = useState<"lista" | "alta" | "edicion">("lista");
   const [cuentas, setCuentas] = useState<CuentaBanco[]>([]);
   const [seleccionada, setSeleccionada] = useState<CuentaBanco | null>(null);
@@ -32,17 +41,17 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
 
   const cargarCuentas = useCallback(async () => {
     setCargando(true);
-    const cuentas = await getCuentasBanco(clienteId);
+    const cuentas = await getCuentasBanco(cliente.valor.id);
     setCuentas(cuentas);
     refrescarSeleccionada(cuentas, seleccionada?.id, (e) =>
       setSeleccionada(e as CuentaBanco | null)
     );
     setCargando(false);
-  }, [clienteId, seleccionada?.id]);
+  }, [cliente.valor.id, seleccionada?.id]);
 
   useEffect(() => {
-    if (clienteId) cargarCuentas();
-  }, [clienteId, cargarCuentas]);
+    if (cliente.valor.id) cargarCuentas();
+  }, [cliente.valor.id, cargarCuentas]);
 
   const validarCuenta = (datos: Record<string, string>) => {
     return {
@@ -60,7 +69,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
 
     if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
 
-    await postCuentaBanco(clienteId, datos.cuenta);
+    await postCuentaBanco(cliente.valor.id, datos.cuenta);
     // setCuentas([nuevaCuenta, ...cuentas]);
     setModo("lista");
   };
@@ -78,7 +87,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
         bic: datos.bic,
       };
 
-      await patchCuentaBanco(clienteId, cuentaActualizada);
+      await patchCuentaBanco(cliente.valor.id, cuentaActualizada);
       setCuentas(
         cuentas.map((cuenta) =>
           cuenta.id === seleccionada.id ? cuentaActualizada : cuenta
@@ -92,7 +101,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
   const onBorrarCuenta = async () => {
     if (!seleccionada) return;
 
-    await deleteCuentaBanco(clienteId, seleccionada.id);
+    await deleteCuentaBanco(cliente.valor.id, seleccionada.id);
     setCuentas(quitarEntidadDeLista<CuentaBanco>(cuentas, seleccionada));
     setSeleccionada(null);
   };
@@ -102,8 +111,22 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
     setModo("lista");
   };
 
+  const desmarcarCuentaDomiciliada = async () => {
+    if (!cliente.valor.id) return;
+
+    await desmarcarCuentaDomiciliacion(cliente.valor.id);
+  };
+
   return (
     <>
+      <div className="detalle-cliente-tab-contenido">
+        <div className="CuentaBancoDomiciliacion">
+          <span>Domiciliar: {cliente.valor.cuenta_domiciliada}</span>
+          <button onClick={() => desmarcarCuentaDomiciliada()}>
+            Desmarcar
+          </button>
+        </div>
+      </div>
       <div className="CuentasBanco">
         <div className="CuentasBancoAcciones">
           <div className="CuentasBancoBotonesIzquierda">

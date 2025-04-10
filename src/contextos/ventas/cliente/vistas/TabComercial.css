@@ -1,4 +1,24 @@
-quimera-autocompletar {
+/* .formulario {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1rem;
+    place-items: center stretch;
+
+    quimera-input,
+    quimera-select {
+        grid-column: 1 / span 12;
+
+        input {
+            width: 100%;
+        }
+    }
+
+    quimera-date {
+        grid-column: 1 / span 3;
+    }
+} */
+
+quimera-autocompletar[nombre="agente_id"] {
     grid-column: 1 / span 3;
 }
 
