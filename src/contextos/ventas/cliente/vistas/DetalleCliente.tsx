@@ -54,7 +54,7 @@ export const DetalleCliente = ({
 
     await desmarcarCuentaDomiciliacion(clienteId);
   };
-  console.log(cliente);
+
   return (
     <Detalle
       id={clienteId}

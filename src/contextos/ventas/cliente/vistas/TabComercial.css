@@ -34,7 +34,7 @@ quimera-input[nombre="id_fiscal"] {
     grid-column: span 3;
 }
 
-quimera-input[nombre="agente_id"] {
+quimera-autocompletar {
     grid-column: 1 / span 3;
 }
 
