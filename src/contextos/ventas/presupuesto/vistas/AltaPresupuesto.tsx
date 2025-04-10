@@ -4,7 +4,7 @@ import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Orden } from "../../../comun/diseño.ts";
+import { Filtro, Orden } from "../../../comun/diseño.ts";
 import {
   campoObjetoValorAInput,
   initEstadoObjetoValor,
@@ -49,10 +49,17 @@ export const AltaPresupuesto = ({
     onPresupuestoCreado(presupuestoCreado);
   };
 
-  const obtenerOpcionesCliente = async () => {
-    const criteria = { filtro: {}, orden: { id: "DESC" } };
+  const obtenerOpcionesCliente = async (valor: string) => {
+    const criteria = {
+      filtro: {
+        nombre: {
+          LIKE: valor,
+        },
+      },
+      orden: { id: "DESC" },
+    };
     const clientes = await getClientes(
-      criteria.filtro,
+      criteria.filtro as Filtro,
       criteria.orden as Orden
     );
     return clientes.map((cliente) => ({
@@ -61,7 +68,7 @@ export const AltaPresupuesto = ({
     }));
   };
 
-  const onClienteChange = async (clienteId: string) => {
+  const onClienteBlurred = async (clienteId: string) => {
     if (!clienteId) return;
     setCampo("cliente_id")(clienteId);
 
@@ -81,8 +88,7 @@ export const AltaPresupuesto = ({
           <QAutocompletar
             label="Cliente"
             nombre="cliente_id"
-            // onChange={onClienteChange}
-            onBlur={onClienteChange}
+            onBlur={onClienteBlurred}
             valor={estado.valor.cliente_id}
             obtenerOpciones={obtenerOpcionesCliente}
           />

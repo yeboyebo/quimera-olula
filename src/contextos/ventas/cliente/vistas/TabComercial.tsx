@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import {
@@ -57,73 +56,71 @@ export const TabComercial = ({
 
   return (
     <>
-      <QForm onSubmit={onGuardarClicked}>
-        <section className="formulario">
-          <QAutocompletar
-            label="Agente"
-            nombre="agente_id"
-            onBlur={onAgenteChange}
-            obtenerOpciones={obtenerOpcionesAgente}
-            {...getProps("agente_id")}
-          />
-          <QInput
-            nombre="nombre_agente"
-            label="Nombre"
-            {...getProps("nombre_agente")}
-          />
-          <QInput
-            nombre="divisa_id"
-            label="Divisa"
-            onChange={setCampo("divisa_id")}
-            {...getProps("divisa_id")}
-          />
-          <QInput
-            nombre="serie_id"
-            label="Serie"
-            onChange={setCampo("serie_id")}
-            {...getProps("serie_id")}
-          />
-          <QInput
-            nombre="forma_pago_id"
-            label="Forma de Pago"
-            onChange={setCampo("forma_pago_id")}
-            {...getProps("forma_pago_id")}
-          />
-          <QInput
-            nombre="grupo_iva_negocio_id"
-            label="Grupo IVA Negocio"
-            onChange={setCampo("grupo_iva_negocio_id")}
-            {...getProps("grupo_iva_negocio_id")}
-          />
-          {/* <QInput
+      <quimera-formulario>
+        <QAutocompletar
+          label="Agente"
+          nombre="agente_id"
+          onBlur={onAgenteChange}
+          obtenerOpciones={obtenerOpcionesAgente}
+          {...getProps("agente_id")}
+        />
+        <QInput
+          nombre="nombre_agente"
+          label="Nombre"
+          {...getProps("nombre_agente")}
+        />
+        <QInput
+          nombre="divisa_id"
+          label="Divisa"
+          onChange={setCampo("divisa_id")}
+          {...getProps("divisa_id")}
+        />
+        <QInput
+          nombre="serie_id"
+          label="Serie"
+          onChange={setCampo("serie_id")}
+          {...getProps("serie_id")}
+        />
+        <QInput
+          nombre="forma_pago_id"
+          label="Forma de Pago"
+          onChange={setCampo("forma_pago_id")}
+          {...getProps("forma_pago_id")}
+        />
+        <QInput
+          nombre="grupo_iva_negocio_id"
+          label="Grupo IVA Negocio"
+          onChange={setCampo("grupo_iva_negocio_id")}
+          {...getProps("grupo_iva_negocio_id")}
+        />
+        {/* <QInput
             nombre="copiasfactura"
             label="Copias Factura"
             onChange={setCampo("copiasfactura")}
             {...getProps("copiasfactura")}
           /> */}
-        </section>
-        <section>
-          <QBoton
-            deshabilitado={!puedoGuardarObjetoValor(cliente)}
-            tipo="submit"
-          >
-            Guardar
-          </QBoton>
-          <QBoton
-            tipo="reset"
-            variante="texto"
-            deshabilitado={!entidadModificada(cliente)}
-            onClick={() => {
-              dispatch({
-                type: "init",
-                payload: { entidad: cliente.valor_inicial },
-              });
-            }}
-          >
-            Cancelar
-          </QBoton>
-        </section>
-      </QForm>
+      </quimera-formulario>
+      <div className="botones">
+        <QBoton
+          onClick={onGuardarClicked}
+          deshabilitado={!puedoGuardarObjetoValor(cliente)}
+        >
+          Guardar
+        </QBoton>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => {
+            dispatch({
+              type: "init",
+              payload: { entidad: cliente.valor_inicial },
+            });
+          }}
+          deshabilitado={!entidadModificada(cliente)}
+        >
+          Cancelar
+        </QBoton>
+      </div>
     </>
   );
 };
