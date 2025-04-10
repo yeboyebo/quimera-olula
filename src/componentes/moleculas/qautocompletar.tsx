@@ -20,13 +20,16 @@ export const QAutocompletar = ({
   onChange,
   ...props
 }: QAutocompletarProps) => {
+  const attrs = {
+    nombre,
+  };
   const [opciones, setOpciones] = useState<Opciones>([]);
 
   const valorReal = useRef<HTMLInputElement>(null);
   const temporizador = useRef<number | undefined>(undefined);
 
   const renderOpciones = opciones.map((opcion) => (
-    <option key={opcion.valor} value={opcion.valor}>
+    <option key={opcion.valor} value={opcion.descripcion}>
       {opcion.descripcion}
     </option>
   ));
@@ -66,6 +69,7 @@ export const QAutocompletar = ({
 
   const blurCallback = (valor: string, e: React.FocusEvent<HTMLElement>) => {
     const opcion = opciones.find((opcion) => opcion.descripcion === valor);
+
     if (opcion) {
       onBlur?.(opcion.valor, e);
       return;
@@ -79,7 +83,7 @@ export const QAutocompletar = ({
   };
 
   return (
-    <quimera-autocompletar>
+    <quimera-autocompletar {...attrs}>
       <datalist id={listaId}>{renderOpciones}</datalist>
       <input
         ref={valorReal}
