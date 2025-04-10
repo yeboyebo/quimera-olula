@@ -4,9 +4,8 @@ quimera-checkbox {
         flex-wrap: wrap;
 
         .texto-validacion {
-            margin-top: 0;
             flex: 0 0 100%;
-            margin-left: var(--espaciado-m);
+            margin-left: calc(var(--espaciado-s) * 1.6);
             font-size: var(--tamaño-letra-xs);
         }
     }

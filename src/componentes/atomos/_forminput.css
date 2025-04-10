@@ -48,11 +48,7 @@ quimera-checkbox {
             margin-top: var(--espaciado-xxs);
             color: var(--color-validacion);
             font-size: var(--tamaño-letra-s);
-
-            &::before {
-                content: "";
-                margin-right: var(--espaciado-xxs);
-            }
+            margin-left: var(--espaciado-xxs);
         }
     }
 
@@ -60,30 +56,18 @@ quimera-checkbox {
         --color-borde: var(--color-error);
         --color-focus: var(--color-error-claro);
         --color-validacion: var(--color-error);
-
-        & .texto-validacion::before {
-            content: "❌";
-        }
     }
 
     &[advertido] {
         --color-borde: var(--color-advertencia);
         --color-focus: var(--color-advertencia-claro);
         --color-validacion: var(--color-advertencia);
-
-        & .texto-validacion::before {
-            content: "⚠️";
-        }
     }
 
     &[valido] {
         --color-borde: var(--color-exito);
         --color-focus: var(--color-exito-claro);
         --color-validacion: var(--color-exito);
-
-        & .texto-validacion::before {
-            content: "✅";
-        }
     }
 
     &[opcional] label .etiqueta .etiqueta-opcional {
