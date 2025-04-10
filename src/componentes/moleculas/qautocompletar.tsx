@@ -53,6 +53,7 @@ export const QAutocompletar = ({
     const opcion = opciones.find((opcion) => opcion.valor === valor);
     if (!opcion) {
       valorReal.current!.value = "";
+      onChange?.("", e as unknown as React.ChangeEvent<HTMLElement>);
       return;
     }
 
@@ -60,16 +61,21 @@ export const QAutocompletar = ({
     objetivo.value = opcion.descripcion;
 
     valorReal.current!.value = opcion.valor;
+    onChange?.(opcion.valor, e as unknown as React.ChangeEvent<HTMLElement>);
   };
 
   const blurCallback = (valor: string, e: React.FocusEvent<HTMLElement>) => {
     const opcion = opciones.find((opcion) => opcion.descripcion === valor);
-    if (opcion) return;
+    if (opcion) {
+      onBlur?.(opcion.valor, e);
+      return;
+    }
 
     const objetivo = e.target as HTMLInputElement;
     objetivo.value = "";
 
     valorReal.current!.value = "";
+    onBlur?.("", e);
   };
 
   return (
@@ -82,8 +88,6 @@ export const QAutocompletar = ({
         value={valor}
         defaultValue={undefined}
         required={!props.opcional}
-        onChange={(e) => onChange?.(e.target.value, e)}
-        onBlur={(e) => onBlur?.(e.target.value, e)}
       />
       <QInput
         {...props}

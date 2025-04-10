@@ -3,6 +3,7 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
+import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import {
   Accion,
   entidadModificada,
@@ -40,6 +41,22 @@ export const TabComercial = ({
     onEntidadActualizada(cliente.valor);
   };
 
+  const onAgenteChange = async (
+    agenteId: string,
+    evento: React.ChangeEvent<HTMLElement>
+  ) => {
+    console.log("Agente cambiado", agenteId);
+    console.log(evento);
+    setCampo("agente_id")(agenteId);
+    setCampo("nombre_agente")((evento.target as HTMLInputElement).value);
+  };
+
+  const obtenerOpcionesAgente = async () => [
+    { valor: "1", descripcion: "Antonio 1" },
+    { valor: "2", descripcion: "Juanma 2" },
+    { valor: "3", descripcion: "Pozu 3" },
+  ];
+
   return (
     <>
       <div className="formulario">
@@ -69,10 +86,17 @@ export const TabComercial = ({
           {...getProps("id_fiscal")}
         />
         <div style={{ gridColumn: "span 8" }}></div>
-        <QInput
+        {/* <QInput
           nombre="agente_id"
           label="Agente"
           onChange={setCampo("agente_id")}
+          {...getProps("agente_id")}
+        /> */}
+        <QAutocompletar
+          label="Agente"
+          nombre="agente_id"
+          onBlur={onAgenteChange}
+          obtenerOpciones={obtenerOpcionesAgente}
           {...getProps("agente_id")}
         />
         <QInput

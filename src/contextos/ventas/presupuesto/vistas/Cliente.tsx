@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import { Presupuesto, Cliente as TipoCliente } from "../diseño.ts";
 import { patchCambiarCliente } from "../infraestructura.ts";
 
@@ -73,21 +72,21 @@ const ClienteEdicion = ({
     });
   };
 
-  const obtenerOpcionesCliente = async () => [
-    { valor: "1", descripcion: "Antonio 1" },
-    { valor: "2", descripcion: "Juanma 2" },
-    { valor: "3", descripcion: "Pozu 3" },
-  ];
+  // const obtenerOpcionesCliente = async () => [
+  //   { valor: "1", descripcion: "Antonio 1" },
+  //   { valor: "2", descripcion: "Juanma 2" },
+  //   { valor: "3", descripcion: "Pozu 3" },
+  // ];
 
   return (
     <QForm onSubmit={guardarClienteClicked} onReset={canceladoCallback}>
       <section>
-        <QAutocompletar
+        {/* <QAutocompletar
           label="ID Cliente"
           nombre="cliente_id"
           valor={presupuesto.cliente_id}
           obtenerOpciones={obtenerOpcionesCliente}
-        />
+        /> */}
         <QInput
           label="ID Dirección"
           nombre="direccion_id"
