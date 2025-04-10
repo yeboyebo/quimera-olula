@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
+import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
   Accion,
   entidadModificada,
   EstadoObjetoValor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
+import { opcionesTipoIdFiscal } from "../../../valores/idfiscal.ts";
 import { Cliente } from "../diseño.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
-import "./TabComercial.css";
+import "./TabGeneral.css";
 
-interface TabComercialProps {
+interface TabGeneralProps {
   getProps: (campo: string) => Record<string, unknown>;
   setCampo: (campo: string) => (valor: unknown) => void;
   cliente: EstadoObjetoValor<Cliente>;
@@ -21,13 +23,13 @@ interface TabComercialProps {
   onEntidadActualizada: (entidad: Cliente) => void;
 }
 
-export const TabComercial = ({
+export const TabGeneral = ({
   getProps,
   setCampo,
   cliente,
   dispatch,
   onEntidadActualizada,
-}: TabComercialProps) => {
+}: TabGeneralProps) => {
   const [_, setGuardando] = useState<boolean>(false);
 
   const onGuardarClicked = async () => {
@@ -39,68 +41,71 @@ export const TabComercial = ({
     onEntidadActualizada(cliente.valor);
   };
 
-  const onAgenteChange = async (
-    agenteId: string,
-    evento: React.ChangeEvent<HTMLElement>
-  ) => {
-    console.log("Agente cambiado", agenteId);
-    console.log(evento);
-    setCampo("agente_id")(agenteId);
-    // setCampo("nombre_agente")((evento.target as HTMLInputElement).value);
-  };
-
-  const obtenerOpcionesAgente = async () => [
-    { valor: "1", descripcion: "Antonio 1" },
-    { valor: "2", descripcion: "Juanma 2" },
-    { valor: "3", descripcion: "Pozu 3" },
-  ];
-
   return (
     <>
       <QForm onSubmit={onGuardarClicked}>
         <section className="formulario">
-          <QAutocompletar
-            label="Agente"
-            nombre="agente_id"
-            onBlur={onAgenteChange}
-            obtenerOpciones={obtenerOpcionesAgente}
-            {...getProps("agente_id")}
-          />
           <QInput
-            nombre="nombre_agente"
+            nombre="nombre"
             label="Nombre"
-            {...getProps("nombre_agente")}
+            onChange={setCampo("nombre")}
+            {...getProps("nombre")}
           />
           <QInput
-            nombre="divisa_id"
-            label="Divisa"
-            onChange={setCampo("divisa_id")}
-            {...getProps("divisa_id")}
+            nombre="nombre_comercial"
+            label="Nombre Comercial"
+            onChange={setCampo("nombre_comercial")}
+            {...getProps("nombre_comercial")}
+          />
+          <QSelect
+            nombre="tipo_id_fiscal"
+            label="Tipo Id Fiscal"
+            opciones={opcionesTipoIdFiscal}
+            onChange={setCampo("tipo_id_fiscal")}
+            {...getProps("tipo_id_fiscal")}
           />
           <QInput
-            nombre="serie_id"
-            label="Serie"
-            onChange={setCampo("serie_id")}
-            {...getProps("serie_id")}
+            nombre="id_fiscal"
+            label="Id Fiscal"
+            onChange={setCampo("id_fiscal")}
+            {...getProps("id_fiscal")}
           />
           <QInput
-            nombre="forma_pago_id"
-            label="Forma de Pago"
-            onChange={setCampo("forma_pago_id")}
-            {...getProps("forma_pago_id")}
+            nombre="telefono1"
+            label="Teléfono 1"
+            onChange={setCampo("telefono1")}
+            {...getProps("telefono1")}
           />
           <QInput
-            nombre="grupo_iva_negocio_id"
-            label="Grupo IVA Negocio"
-            onChange={setCampo("grupo_iva_negocio_id")}
-            {...getProps("grupo_iva_negocio_id")}
+            nombre="telefono2"
+            label="Teléfono 2"
+            onChange={setCampo("telefono2")}
+            {...getProps("telefono2")}
           />
-          {/* <QInput
-            nombre="copiasfactura"
-            label="Copias Factura"
-            onChange={setCampo("copiasfactura")}
-            {...getProps("copiasfactura")}
-          /> */}
+          <QInput
+            nombre="email"
+            label="Email"
+            onChange={setCampo("email")}
+            {...getProps("email")}
+          />
+          <QInput
+            nombre="web"
+            label="Web"
+            onChange={setCampo("web")}
+            {...getProps("web")}
+          />
+          <QInput
+            nombre="observaciones"
+            label="Observaciones"
+            onChange={setCampo("observaciones")}
+            {...getProps("observaciones")}
+          />
+          <QDate
+            nombre="fecha_baja"
+            label="Fecha Baja"
+            onChange={setCampo("fecha_baja")}
+            {...getProps("fecha_baja")}
+          />
         </section>
         <section>
           <QBoton
