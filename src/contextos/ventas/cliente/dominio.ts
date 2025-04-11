@@ -1,6 +1,6 @@
 import { EstadoObjetoValor, initEstadoObjetoValor, makeValidador, MetaObjetoValor, stringNoVacio, ValidacionCampo, ValidadorCampos, validarCampo } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
-import { Cliente, DirCliente, NuevaDireccion, NuevoCliente } from "./diseño.ts";
+import { Cliente, CrmContacto, CuentaBanco, DirCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 
 
 
@@ -53,7 +53,16 @@ export const nuevaDireccionVacia: NuevaDireccion = {
     ciudad: '',
 }
 
+export const nuevaCuentaBancoVacia: NuevaCuentaBanco = {
+    descripcion: '',
+    iban: '',
+    bic: '',
+}
 
+export const nuevoCrmContactoVacio: NuevoCrmContacto = {
+    nombre: '',
+    email: '',
+}
 
 export const validadoresDireccion = {
     nuevaDireccion: (valor: NuevaDireccion) => (
@@ -207,6 +216,30 @@ export const metaNuevaDireccion: MetaObjetoValor<NuevaDireccion> = {
         'nombre_via',
         'ciudad'
     ],
+    validador: makeValidador({}),
+};
+
+export const metaCuentaBanco: MetaObjetoValor<CuentaBanco> = {
+    bloqueados: [],
+    requeridos: ["iban", "bic"],
+    validador: makeValidador({}),
+};
+
+export const metaNuevaCuentaBanco: MetaObjetoValor<NuevaCuentaBanco> = {
+    bloqueados: [],
+    requeridos: ["cuenta"],
+    validador: makeValidador({}),
+};
+
+export const metaCrmContacto: MetaObjetoValor<CrmContacto> = {
+    bloqueados: [],
+    requeridos: ["nombre", "email"],
+    validador: makeValidador({}),
+};
+
+export const metaNuevoCrmContacto: MetaObjetoValor<NuevoCrmContacto> = {
+    bloqueados: [],
+    requeridos: ["nombre", "email"],
     validador: makeValidador({}),
 };
 
