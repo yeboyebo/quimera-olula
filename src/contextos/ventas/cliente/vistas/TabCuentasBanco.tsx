@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QForm } from "../../../../componentes/atomos/qform.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import {
   Accion,
@@ -14,10 +12,9 @@ import {
   deleteCuentaBanco,
   desmarcarCuentaDomiciliacion,
   getCuentasBanco,
-  patchCuentaBanco,
-  postCuentaBanco,
 } from "../infraestructura.ts";
-import "./DetalleCliente.css";
+import { AltaCuentaBanco } from "./AltaCuentaBanco.tsx";
+import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
 
 const metaTablaCuentasBanco = [
   { id: "descripcion", cabecera: "Descripcion" },
@@ -36,7 +33,6 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   const [modo, setModo] = useState<"lista" | "alta" | "edicion">("lista");
   const [cuentas, setCuentas] = useState<CuentaBanco[]>([]);
   const [seleccionada, setSeleccionada] = useState<CuentaBanco | null>(null);
-  const [estado, setEstado] = useState({} as Record<string, string>);
   const [cargando, setCargando] = useState(true);
 
   const cargarCuentas = useCallback(async () => {
@@ -53,49 +49,20 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
     if (cliente.valor.id) cargarCuentas();
   }, [cliente.valor.id, cargarCuentas]);
 
-  const validarCuenta = (datos: Record<string, string>) => {
-    return {
-      iban: datos.iban.trim() === "" ? "El IBAN es obligatorio." : "",
-      bic: datos.bic.trim() === "" ? "El BIC es obligatorio." : "",
-      cuenta: datos.cuenta.trim() === "" ? "Nombre es obligatorio." : "",
-    };
-  };
-
   const onDomiciliarCuenta = async () => {};
 
-  const onGuardarNuevaCuenta = async (datos: Record<string, string>) => {
-    const nuevoEstado = validarCuenta(datos);
-    setEstado(nuevoEstado);
+  const onGuardarNuevaCuenta = async () => {
+    // if (!puedoGuardarObjetoValor(estado)) return;
 
-    if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
-
-    await postCuentaBanco(cliente.valor.id, datos.cuenta);
-    // setCuentas([nuevaCuenta, ...cuentas]);
+    // await postCuentaBanco(cliente.valor.id, estado.valor);
     setModo("lista");
   };
 
-  const onGuardarEdicionCuenta = async (datos: Record<string, string>) => {
-    const nuevoEstado = validarCuenta(datos);
-    setEstado(nuevoEstado);
+  const onGuardarEdicionCuenta = async () => {
+    // if (!puedoGuardarObjetoValor(estado)) return;
 
-    if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
-
-    if (seleccionada) {
-      const cuentaActualizada: CuentaBanco = {
-        ...seleccionada,
-        iban: datos.iban,
-        bic: datos.bic,
-      };
-
-      await patchCuentaBanco(cliente.valor.id, cuentaActualizada);
-      setCuentas(
-        cuentas.map((cuenta) =>
-          cuenta.id === seleccionada.id ? cuentaActualizada : cuenta
-        )
-      );
-      setSeleccionada(null);
-      setModo("lista");
-    }
+    // await patchCuentaBanco(cliente.valor.id, estado.valor);
+    setModo("lista");
   };
 
   const onBorrarCuenta = async () => {
@@ -104,11 +71,6 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
     await deleteCuentaBanco(cliente.valor.id, seleccionada.id);
     setCuentas(quitarEntidadDeLista<CuentaBanco>(cuentas, seleccionada));
     setSeleccionada(null);
-  };
-
-  const onCancelar = () => {
-    setSeleccionada(null);
-    setModo("lista");
   };
 
   const desmarcarCuentaDomiciliada = async () => {
@@ -122,29 +84,29 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
       <div className="detalle-cliente-tab-contenido">
         <div className="CuentaBancoDomiciliacion">
           <span>Domiciliar: {cliente.valor.cuenta_domiciliada}</span>
-          <button onClick={() => desmarcarCuentaDomiciliada()}>
+          <QBoton onClick={() => desmarcarCuentaDomiciliada()}>
             Desmarcar
-          </button>
+          </QBoton>
         </div>
       </div>
       <div className="CuentasBanco">
         <div className="CuentasBancoAcciones">
           <div className="CuentasBancoBotonesIzquierda">
-            <button onClick={() => setModo("alta")}>Nueva</button>
-            <button
+            <QBoton onClick={() => setModo("alta")}>Nueva</QBoton>
+            <QBoton
               onClick={() => seleccionada && setModo("edicion")}
-              disabled={!seleccionada}
+              deshabilitado={!seleccionada}
             >
               Editar
-            </button>
-            <button onClick={onBorrarCuenta} disabled={!seleccionada}>
+            </QBoton>
+            <QBoton onClick={onBorrarCuenta} deshabilitado={!seleccionada}>
               Borrar
-            </button>
+            </QBoton>
           </div>
           <div className="CuentasBancoBotonDerecha">
-            <button onClick={onDomiciliarCuenta}>
+            <QBoton onClick={onDomiciliarCuenta}>
               Cuenta de domiciliación
-            </button>
+            </QBoton>
           </div>
         </div>
         <QTabla
@@ -154,36 +116,21 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
           seleccionadaId={seleccionada?.id}
           onSeleccion={setSeleccionada}
           orden={{ id: "ASC" }}
-          onOrdenar={
-            (_: string) => null
-            //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
-          }
+          onOrdenar={(_: string) => null}
         />
       </div>
 
       {modo === "alta" && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={onCancelar}>
+            <span className="close" onClick={() => setModo("lista")}>
               &times;
             </span>
-            <h2>Nueva Cuenta Bancaria</h2>
-            <QForm onSubmit={onGuardarNuevaCuenta} onReset={onCancelar}>
-              <section>
-                <QInput
-                  label="Cuenta"
-                  nombre="cuenta"
-                  erroneo={!!estado.cuenta && estado.cuenta.length > 0}
-                  textoValidacion={estado.cuenta}
-                />
-              </section>
-              <section>
-                <QBoton tipo="submit">Guardar</QBoton>
-                <QBoton tipo="reset" variante="texto">
-                  Cancelar
-                </QBoton>
-              </section>
-            </QForm>
+            <AltaCuentaBanco
+              clienteId={cliente.valor.id}
+              onCuentaCreada={onGuardarNuevaCuenta}
+              onCancelar={() => setModo("lista")}
+            />
           </div>
         </div>
       )}
@@ -191,34 +138,15 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
       {modo === "edicion" && seleccionada && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={onCancelar}>
+            <span className="close" onClick={() => setModo("lista")}>
               &times;
             </span>
-            <h2>Editar Cuenta Bancaria</h2>
-            <QForm onSubmit={onGuardarEdicionCuenta} onReset={onCancelar}>
-              <section>
-                <QInput
-                  label="IBAN"
-                  nombre="iban"
-                  valor={seleccionada.iban}
-                  erroneo={!!estado.iban && estado.iban.length > 0}
-                  textoValidacion={estado.iban}
-                />
-                <QInput
-                  label="BIC"
-                  nombre="bic"
-                  valor={seleccionada.bic}
-                  erroneo={!!estado.bic && estado.bic.length > 0}
-                  textoValidacion={estado.bic}
-                />
-              </section>
-              <section>
-                <QBoton tipo="submit">Guardar</QBoton>
-                <QBoton tipo="reset" variante="texto">
-                  Cancelar
-                </QBoton>
-              </section>
-            </QForm>
+            <EdicionCuentaBanco
+              clienteId={cliente.valor.id}
+              cuenta={seleccionada}
+              onCuentaActualizada={onGuardarEdicionCuenta}
+              onCancelar={() => setModo("lista")}
+            />
           </div>
         </div>
       )}

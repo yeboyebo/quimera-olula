@@ -1,6 +1,6 @@
 import { EstadoObjetoValor, initEstadoObjetoValor, makeValidador, MetaObjetoValor, stringNoVacio, ValidacionCampo, ValidadorCampos, validarCampo } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
-import { Cliente, DirCliente, NuevaDireccion, NuevoCliente } from "./diseño.ts";
+import { Cliente, CuentaBanco, DirCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCliente } from "./diseño.ts";
 
 
 
@@ -51,6 +51,12 @@ export const nuevaDireccionVacia: NuevaDireccion = {
     nombre_via: '',
     tipo_via: '',
     ciudad: '',
+}
+
+export const nuevaCuentaBancoVacia: NuevaCuentaBanco = {
+    descripcion: '',
+    iban: '',
+    bic: '',
 }
 
 
@@ -207,6 +213,18 @@ export const metaNuevaDireccion: MetaObjetoValor<NuevaDireccion> = {
         'nombre_via',
         'ciudad'
     ],
+    validador: makeValidador({}),
+};
+
+export const metaCuentaBanco: MetaObjetoValor<CuentaBanco> = {
+    bloqueados: [],
+    requeridos: ["iban", "bic"],
+    validador: makeValidador({}),
+};
+
+export const metaNuevaCuentaBanco: MetaObjetoValor<NuevaCuentaBanco> = {
+    bloqueados: [],
+    requeridos: ["cuenta"],
     validador: makeValidador({}),
 };
 

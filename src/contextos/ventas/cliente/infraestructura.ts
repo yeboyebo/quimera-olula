@@ -2,7 +2,7 @@ import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detal
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
-import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
+import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
 
 
 const baseUrlVentas = `/ventas/cliente`;
@@ -196,11 +196,16 @@ export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]>
     respuesta.datos.map(cuentaBancoFromAPI)
   );
 
-export const postCuentaBanco = async (clienteId: string, cuenta: string): Promise<void> => {
+export const getCuentaBanco = async (clienteId: string, cuentaId: string): Promise<CuentaBanco> =>
+  await RestAPI.get<{ datos: CuentaBancoAPI }>(`${baseUrlVentas}/${clienteId}/cuenta_banco/${cuentaId}`).then((respuesta) =>
+    cuentaBancoFromAPI(respuesta.datos)
+  );
+
+export const postCuentaBanco = async (clienteId: string, cuenta: NuevaCuentaBanco): Promise<string> => {
   const payload = {
     cuenta: cuenta,
   };
-  await RestAPI.post(`${baseUrlVentas}/${clienteId}/cuenta_banco`, payload);
+  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/cuenta_banco`, payload).then((respuesta) => respuesta.id);;
 };
 
 export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {

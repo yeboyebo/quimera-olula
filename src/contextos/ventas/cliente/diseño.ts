@@ -69,6 +69,12 @@ export interface CuentaBanco extends Entidad {
   bic: string;
 };
 
+export type NuevaCuentaBanco = {
+  descripcion: string;
+  iban: string;
+  bic: string;
+};
+
 export interface CrmContacto extends Entidad {
   id: string;
   nombre: string;
