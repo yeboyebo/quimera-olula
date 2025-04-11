@@ -2,7 +2,7 @@ import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detal
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
-import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, PatchCliente, PostCliente } from "./diseño.ts";
+import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCrmContacto, PatchCliente, PostCliente } from "./diseño.ts";
 
 
 const baseUrlVentas = `/ventas/cliente`;
@@ -205,7 +205,7 @@ export const postCuentaBanco = async (clienteId: string, cuenta: NuevaCuentaBanc
   const payload = {
     cuenta: cuenta,
   };
-  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/cuenta_banco`, payload).then((respuesta) => respuesta.id);;
+  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/cuenta_banco`, payload).then((respuesta) => respuesta.id);
 };
 
 export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {
@@ -257,7 +257,7 @@ export const cuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
 export const getCrmContactos = async (clienteId: string): Promise<CrmContacto[]> =>
   await RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/cliente/${clienteId}/contactos`).then((respuesta) => respuesta.datos);
 
-export const postCrmContacto = async (contacto: CrmContacto): Promise<string> => {
+export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<string> => {
   const payload = {
     nombre: contacto.nombre,
     email: contacto.email,

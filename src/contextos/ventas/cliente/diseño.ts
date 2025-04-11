@@ -81,6 +81,12 @@ export interface CrmContacto extends Entidad {
   email: string;
 };
 
+export type NuevoCrmContacto = {
+  nombre: string;
+  email: string;
+};
+
+
 export type GetCliente = (id: string) => Promise<Cliente>;
 export type PostCliente = (cliente: NuevoCliente) => Promise<string>;
 export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;

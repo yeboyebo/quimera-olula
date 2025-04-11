@@ -34,7 +34,7 @@ quimera-date[nombre="fecha_baja"] {
     grid-column: span 8;
 }
 
-quimera-input,
+/* quimera-input,
 quimera-select {
     grid-column: 1 / span 12;
 
@@ -45,4 +45,4 @@ quimera-select {
 
 quimera-date {
     grid-column: 1 / span 3;
-}
+} */
