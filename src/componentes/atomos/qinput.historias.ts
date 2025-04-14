@@ -43,3 +43,12 @@ export const Deshabilitado: Historia = {
 export const Condensado: Historia = {
   condensado: "true",
 };
+
+export const AutoSeleccion: Historia = [{
+  valor: "Jose Luis Martínez",
+  textoValidacion: "Sin autoselección",
+}, {
+  valor: "Jose Luis Martínez",
+  textoValidacion: "Con autoselección",
+  autoSeleccion: "true",
+}];
