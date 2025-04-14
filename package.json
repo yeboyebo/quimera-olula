@@ -1,6 +1,6 @@
 {
-  "name": "quimera-olula",
-  "version": "0.0.4",
+  "name": "@yeboyebo/quimera-olula",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
