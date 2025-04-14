@@ -1,4 +1,7 @@
-name: CI
+name: testeo
+
+permissions:
+  contents: read
 
 on:
   push:
@@ -9,7 +12,7 @@ on:
       - main
 
 jobs:
-  build:
+  testeo:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
