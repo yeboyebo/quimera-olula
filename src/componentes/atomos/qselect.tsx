@@ -1,8 +1,18 @@
 import "./_forminput.css";
 import { Etiqueta, FormFieldProps, Validacion } from "./_forminput.tsx";
 
-type QSelectProps = FormFieldProps & {
-  opciones: { valor: string; descripcion: string }[];
+type Opcion = { valor: string; descripcion: string };
+
+type QSelectProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
+  opciones: Opcion[];
+  onChange?: (
+    opcion: Opcion | null,
+    evento: React.ChangeEvent<HTMLElement>
+  ) => void;
+  onBlur?: (
+    opcion: Opcion | null,
+    evento: React.FocusEvent<HTMLElement>
+  ) => void;
 };
 
 export const QSelect = ({
@@ -37,6 +47,26 @@ export const QSelect = ({
     </option>
   ));
 
+  const majerarChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const opcion = opciones.find((opcion) => opcion.valor === e.target.value);
+    if (!opcion) {
+      onChange?.(null, e);
+      return;
+    }
+
+    onChange?.(opcion, e);
+  };
+
+  const manejarBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
+    const opcion = opciones.find((opcion) => opcion.valor === e.target.value);
+    if (!opcion) {
+      onBlur?.(null, e);
+      return;
+    }
+
+    onBlur?.(opcion, e);
+  };
+
   return (
     <quimera-select {...attrs}>
       <label>
@@ -47,8 +77,8 @@ export const QSelect = ({
           value={onChange ? valor : undefined}
           required={!opcional}
           disabled={deshabilitado}
-          onChange={onChange ? (e) => onChange(e.target.value, e) : undefined}
-          onBlur={onBlur ? (e) => onBlur(e.target.value, e) : undefined}
+          onChange={majerarChange}
+          onBlur={manejarBlur}
         >
           <option hidden value="">
             -{placeholder}-

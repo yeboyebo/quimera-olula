@@ -100,7 +100,7 @@ export const AltaPresupuesto = ({
           <QSelect
             label="Dirección"
             opciones={opcionesDireccion}
-            onChange={setCampo("direccion_id")}
+            onChange={(o) => setCampo("direccion_id")(o?.valor ?? "")}
             {...getProps("direccion_id")}
           />
           <QInput
