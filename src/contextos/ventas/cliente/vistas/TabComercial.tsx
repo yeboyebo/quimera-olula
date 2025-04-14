@@ -39,13 +39,11 @@ export const TabComercial = ({
   };
 
   const onAgenteChange = async (
-    agenteId: string,
-    evento: React.ChangeEvent<HTMLElement>
+    agenteId: { valor: string; descripcion: string } | null
   ) => {
-    console.log("Agente cambiado", agenteId);
-    console.log(evento);
-    setCampo("agente_id")(agenteId);
-    // setCampo("nombre_agente")((evento.target as HTMLInputElement).value);
+    if (!agenteId) return;
+
+    setCampo("agente_id")(agenteId.valor);
   };
 
   const obtenerOpcionesAgente = async () => [

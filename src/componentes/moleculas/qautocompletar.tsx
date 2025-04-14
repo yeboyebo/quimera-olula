@@ -2,12 +2,20 @@ import { useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 
-type Opciones = { valor: string; descripcion: string }[];
+type Opcion = { valor: string; descripcion: string };
 
-type QAutocompletarProps = FormFieldProps & {
+type QAutocompletarProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
   tiempoEspera?: number;
   longitudMinima?: number;
-  obtenerOpciones: (valor: string) => Promise<Opciones>;
+  obtenerOpciones: (valor: string) => Promise<Opcion[]>;
+  onChange?: (
+    opcion: Opcion | null,
+    evento: React.ChangeEvent<HTMLElement>
+  ) => void;
+  onBlur?: (
+    opcion: Opcion | null,
+    evento: React.FocusEvent<HTMLElement>
+  ) => void;
 };
 
 export const QAutocompletar = ({
@@ -23,7 +31,7 @@ export const QAutocompletar = ({
   const attrs = {
     nombre,
   };
-  const [opciones, setOpciones] = useState<Opciones>([]);
+  const [opciones, setOpciones] = useState<Opcion[]>([]);
 
   const valorReal = useRef<HTMLInputElement>(null);
   const temporizador = useRef<number | undefined>(undefined);
@@ -47,7 +55,7 @@ export const QAutocompletar = ({
     );
   };
 
-  const inputCallback = (
+  const manejarInput = (
     valor: string,
     e: React.FormEvent<HTMLInputElement>
   ) => {
@@ -56,7 +64,7 @@ export const QAutocompletar = ({
     const opcion = opciones.find((opcion) => opcion.valor === valor);
     if (!opcion) {
       valorReal.current!.value = "";
-      onChange?.("", e as unknown as React.ChangeEvent<HTMLElement>);
+      onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
       return;
     }
 
@@ -64,14 +72,14 @@ export const QAutocompletar = ({
     objetivo.value = opcion.descripcion;
 
     valorReal.current!.value = opcion.valor;
-    onChange?.(opcion.valor, e as unknown as React.ChangeEvent<HTMLElement>);
+    onChange?.(opcion, e as unknown as React.ChangeEvent<HTMLElement>);
   };
 
-  const blurCallback = (valor: string, e: React.FocusEvent<HTMLElement>) => {
+  const manejarBlur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
     const opcion = opciones.find((opcion) => opcion.descripcion === valor);
 
     if (opcion) {
-      onBlur?.(opcion.valor, e);
+      onBlur?.(opcion, e);
       return;
     }
 
@@ -79,7 +87,7 @@ export const QAutocompletar = ({
     objetivo.value = "";
 
     valorReal.current!.value = "";
-    onBlur?.("", e);
+    onBlur?.(null, e);
   };
 
   return (
@@ -98,8 +106,8 @@ export const QAutocompletar = ({
         nombre=""
         lista={listaId}
         autocompletar="off"
-        onInput={inputCallback}
-        onBlur={blurCallback}
+        onInput={manejarInput}
+        onBlur={manejarBlur}
       />
     </quimera-autocompletar>
   );

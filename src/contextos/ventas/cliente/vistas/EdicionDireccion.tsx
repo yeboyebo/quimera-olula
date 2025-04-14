@@ -61,7 +61,7 @@ export const EdicionDireccion = ({
           <QSelect
             label="Tipo de Vía"
             opciones={opciones}
-            onChange={setCampo("tipo_via")}
+            onChange={(o) => setCampo("tipo_via")(o?.valor ?? "")}
             {...getProps("tipo_via")}
           />
         </div>

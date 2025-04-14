@@ -68,11 +68,16 @@ export const AltaPresupuesto = ({
     }));
   };
 
-  const onClienteBlurred = async (clienteId: string) => {
+  const onClienteBlurred = async (
+    clienteId: {
+      valor: string;
+      descripcion: string;
+    } | null
+  ) => {
     if (!clienteId) return;
-    setCampo("cliente_id")(clienteId);
+    setCampo("cliente_id")(clienteId.valor);
 
-    const direcciones = await getDirecciones(clienteId);
+    const direcciones = await getDirecciones(clienteId.valor);
     const opciones = direcciones.map((direccion) => ({
       valor: direccion.id,
       descripcion: `${direccion.tipo_via} ${direccion.nombre_via}, ${direccion.ciudad}`,
@@ -95,7 +100,7 @@ export const AltaPresupuesto = ({
           <QSelect
             label="Dirección"
             opciones={opcionesDireccion}
-            onChange={setCampo("direccion_id")}
+            onChange={(o) => setCampo("direccion_id")(o?.valor ?? "")}
             {...getProps("direccion_id")}
           />
           <QInput
