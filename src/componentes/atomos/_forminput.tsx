@@ -10,6 +10,7 @@ export type FormFieldProps = {
   valido?: boolean;
   opcional?: boolean;
   condensado?: boolean;
+  autoSeleccion?: boolean;
   onChange?: (valor: string, evento: React.ChangeEvent<HTMLElement>) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
 };
@@ -44,10 +45,29 @@ export const FormInput = ({
   opcional,
   lista,
   autocompletar,
+  autoSeleccion,
   onChange,
   onBlur,
   onInput,
 }: InputProps) => {
+  const manejarFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (autoSeleccion) {
+      e.target.select();
+    }
+  };
+
+  const manejarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value, e);
+  };
+
+  const manejarBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    onBlur?.(e.target.value, e);
+  };
+
+  const manejarInput = (e: React.FormEvent<HTMLInputElement>) => {
+    onInput?.((e.target as HTMLInputElement).value, e);
+  };
+
   return (
     <input
       type={tiposFormInput[tipo] ?? "text"}
@@ -61,9 +81,10 @@ export const FormInput = ({
       required={!opcional}
       list={lista}
       autoComplete={autocompletar}
-      onChange={(e) => onChange?.(e.target.value, e)}
-      onBlur={(e) => onBlur?.(e.target.value, e)}
-      onInput={(e) => onInput?.((e.target as HTMLInputElement).value, e)}
+      onChange={manejarChange}
+      onBlur={manejarBlur}
+      onFocus={manejarFocus}
+      onInput={manejarInput}
     />
   );
 };

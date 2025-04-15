@@ -59,7 +59,7 @@ export const TabGeneral = ({
           nombre="tipo_id_fiscal"
           label="Tipo Id Fiscal"
           opciones={opcionesTipoIdFiscal}
-          onChange={setCampo("tipo_id_fiscal")}
+          onChange={(o) => setCampo("tipo_id_fiscal")(o?.valor ?? "")}
           {...getProps("tipo_id_fiscal")}
         />
         <QInput
