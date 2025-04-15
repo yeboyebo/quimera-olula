@@ -27,7 +27,9 @@ export function Detalle<T extends Entidad>({
   const { detalle } = estilos;
 
   useEffect(() => {
+    console.log("Detalle useEffect", id, entidad);
     if (id && (!entidad || id !== entidad.id)) {
+      console.log("Detalle useEffect cargar", id, entidad);
       const load = async () => {
         const cliente = await cargar(id);
         if (cliente) {

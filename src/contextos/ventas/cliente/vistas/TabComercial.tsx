@@ -33,7 +33,7 @@ export const TabComercial = ({
   dispatch,
   onEntidadActualizada,
 }: TabComercialProps) => {
-  const [guardando, setGuardando] = useState<boolean>(false);
+  const [_, setGuardando] = useState<boolean>(false);
   const [opcionesDivisa, setOpcionesDivisa] = useState<
     { valor: string; descripcion: string }[]
   >([]);

@@ -1,10 +1,12 @@
 import { Direccion } from "../../comun/diseño.ts";
 import {
+    initEstadoObjetoValor,
     makeValidador,
     MetaObjetoValor,
     stringNoVacio
 } from "../../comun/dominio.ts";
 import { NuevoPresupuesto, Presupuesto } from "./diseño.ts";
+
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -63,6 +65,10 @@ export const metaPresupuesto: MetaObjetoValor<Presupuesto> = {
     bloqueados: ["codigo"],
     requeridos: ["nombre_cliente", "id_fiscal", "divisa_id"],
     validador: makeValidador({}),
+};
+
+export const initEstadoPresupuestoVacio = () => {
+    return initEstadoObjetoValor(presupuestoVacio(), metaPresupuesto);
 };
 
 
