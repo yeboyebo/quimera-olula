@@ -133,7 +133,7 @@ export const DetallePresupuesto = ({
               <span>
                 {new Intl.NumberFormat("es-ES", {
                   style: "currency",
-                  currency: presupuesto.valor.coddivisa ?? "EUR",
+                  currency: String(presupuesto.valor.coddivisa ?? "EUR"),
                 }).format(Number(presupuesto.valor.total ?? 0))}
               </span>
             </div>

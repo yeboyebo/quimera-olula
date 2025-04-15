@@ -54,7 +54,7 @@ export const AltaCliente = ({
         <QSelect
           label="Tipo Id Fiscal"
           opciones={opcionesTipoIdFiscal}
-          onChange={setCampo("tipo_id_fiscal")}
+          onChange={(opcion) => setCampo("tipo_id_fiscal")(opcion?.valor || "")}
           {...getProps("tipo_id_fiscal")}
         />
         <QInput
