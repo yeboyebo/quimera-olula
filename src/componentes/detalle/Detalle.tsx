@@ -49,7 +49,6 @@ export function Detalle<T extends Entidad>({
   return (
     <div className={`${detalle} ${className || ""}`.trim()}>
       {" "}
-      {/* Combinar clases */}
       {obtenerTitulo && (
         <h2>
           <span>{obtenerTitulo(entidad)}</span>

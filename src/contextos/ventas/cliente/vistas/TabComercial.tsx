@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
+import { OpcionCampo } from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import {
   Accion,
@@ -9,7 +11,11 @@ import {
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
 import { Cliente } from "../diseño.ts";
-import { getCliente, patchCliente } from "../infraestructura.ts";
+import {
+  getCliente,
+  obtenerOpcionesSelector,
+  patchCliente,
+} from "../infraestructura.ts";
 import "./TabComercial.css";
 
 interface TabComercialProps {
@@ -28,12 +34,28 @@ export const TabComercial = ({
   onEntidadActualizada,
 }: TabComercialProps) => {
   const [_, setGuardando] = useState<boolean>(false);
+  const [opcionesDivisa, setOpcionesDivisa] = useState<
+    { valor: string; descripcion: string }[]
+  >([]);
+
+  useEffect(() => {
+    const cargarOpcionesDivisa = async () => {
+      const opciones = await obtenerOpcionesSelector("divisa")();
+      const opcionesMapeadas = opciones.map((opcion: OpcionCampo) => ({
+        valor: opcion[0],
+        descripcion: opcion[1],
+      }));
+      setOpcionesDivisa(opcionesMapeadas);
+    };
+
+    cargarOpcionesDivisa();
+  }, []);
 
   const onGuardarClicked = async () => {
     setGuardando(true);
     await patchCliente(cliente.valor.id, cliente.valor);
-    const cliente_guardado = await getCliente(cliente.valor.id);
-    dispatch({ type: "init", payload: { entidad: cliente_guardado } });
+    const clienteGuardado = await getCliente(cliente.valor.id);
+    dispatch({ type: "init", payload: { entidad: clienteGuardado } });
     setGuardando(false);
     onEntidadActualizada(cliente.valor);
   };
@@ -62,15 +84,11 @@ export const TabComercial = ({
           obtenerOpciones={obtenerOpcionesAgente}
           {...getProps("agente_id")}
         />
-        <QInput
-          nombre="nombre_agente"
-          label="Nombre"
-          {...getProps("nombre_agente")}
-        />
-        <QInput
+        <QSelect
           nombre="divisa_id"
           label="Divisa"
-          onChange={setCampo("divisa_id")}
+          onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
+          opciones={opcionesDivisa}
           {...getProps("divisa_id")}
         />
         <QInput
@@ -91,12 +109,6 @@ export const TabComercial = ({
           onChange={setCampo("grupo_iva_negocio_id")}
           {...getProps("grupo_iva_negocio_id")}
         />
-        {/* <QInput
-            nombre="copiasfactura"
-            label="Copias Factura"
-            onChange={setCampo("copiasfactura")}
-            {...getProps("copiasfactura")}
-          /> */}
       </quimera-formulario>
       <div className="botones">
         <QBoton

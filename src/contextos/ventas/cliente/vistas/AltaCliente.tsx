@@ -1,12 +1,14 @@
 import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
   campoObjetoValorAInput,
   initEstadoObjetoValor,
   makeReductor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
+import { opcionesTipoIdFiscal } from "../../../valores/idfiscal.ts";
 import { Cliente } from "../diseño.ts";
 import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
 import { getCliente, postCliente } from "../infraestructura.ts";
@@ -43,11 +45,17 @@ export const AltaCliente = ({
   return (
     <>
       <h2>Nuevo Cliente</h2>
-      <section>
+      <quimera-formulario>
         <QInput
           label="Nombre"
           onChange={setCampo("nombre")}
           {...getProps("nombre")}
+        />
+        <QSelect
+          label="Tipo Id Fiscal"
+          opciones={opcionesTipoIdFiscal}
+          onChange={(opcion) => setCampo("tipo_id_fiscal")(opcion?.valor || "")}
+          {...getProps("tipo_id_fiscal")}
         />
         <QInput
           label="ID Fiscal"
@@ -59,18 +67,14 @@ export const AltaCliente = ({
           onChange={setCampo("empresa_id")}
           {...getProps("empresa_id")}
         />
-        <QInput
-          label="Tipo ID Fiscal"
-          onChange={setCampo("tipo_id_fiscal")}
-          {...getProps("tipo_id_fiscal")}
-        />
+
         <QInput
           label="Agente"
           onChange={setCampo("agente_id")}
           {...getProps("agente_id")}
         />
-      </section>
-      <section>
+      </quimera-formulario>
+      <div className="botones">
         <QBoton
           onClick={guardar}
           deshabilitado={!puedoGuardarObjetoValor(estado)}
@@ -80,7 +84,7 @@ export const AltaCliente = ({
         <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
           Cancelar
         </QBoton>
-      </section>
+      </div>
     </>
   );
 };

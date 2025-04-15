@@ -1,0 +1,3 @@
+quimera-input[nombre="nombre_cliente"] {
+    grid-column: 1 / span 3;
+}

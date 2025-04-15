@@ -141,7 +141,6 @@ const cambiarCampo = <T extends ObjetoValor>(
     valor: string
 ): EstadoObjetoValor<T> => {
 
-    console.log('cambiarCampo', campo, valor, typeof valor);
     return {
         ...estado,
         valor: {

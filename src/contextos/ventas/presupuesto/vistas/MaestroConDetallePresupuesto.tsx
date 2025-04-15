@@ -4,6 +4,7 @@ import { Entidad } from "../../../comun/diseño.ts";
 import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
+import "./MaestroConDetallePresupuesto.css";
 
 import { AltaPresupuesto } from "./AltaPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
