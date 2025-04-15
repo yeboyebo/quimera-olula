@@ -1,6 +1,5 @@
 import { useReducer, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
@@ -83,39 +82,37 @@ export const AltaPresupuesto = ({
   return (
     <>
       <h2>Nuevo Presupuesto</h2>
-      <QForm onSubmit={guardar} onReset={onCancelar}>
-        <section>
-          <QAutocompletar
-            label="Cliente"
-            nombre="cliente_id"
-            onBlur={onClienteBlurred}
-            valor={estado.valor.cliente_id}
-            obtenerOpciones={obtenerOpcionesCliente}
-          />
-          <QSelect
-            label="Dirección"
-            opciones={opcionesDireccion}
-            onChange={setCampo("direccion_id")}
-            {...getProps("direccion_id")}
-          />
-          <QInput
-            label="Empresa"
-            onChange={setCampo("empresa_id")}
-            {...getProps("empresa_id")}
-          />
-        </section>
-        <section>
-          <QBoton
-            tipo="submit"
-            deshabilitado={!puedoGuardarObjetoValor(estado)}
-          >
-            Guardar
-          </QBoton>
-          <QBoton tipo="reset" variante="texto">
-            Cancelar
-          </QBoton>
-        </section>
-      </QForm>
+      <quimera-formulario>
+        <QAutocompletar
+          label="Cliente"
+          nombre="cliente_id"
+          onBlur={onClienteBlurred}
+          valor={estado.valor.cliente_id}
+          obtenerOpciones={obtenerOpcionesCliente}
+        />
+        <QSelect
+          label="Dirección"
+          opciones={opcionesDireccion}
+          onChange={setCampo("direccion_id")}
+          {...getProps("direccion_id")}
+        />
+        <QInput
+          label="Empresa"
+          onChange={setCampo("empresa_id")}
+          {...getProps("empresa_id")}
+        />
+      </quimera-formulario>
+      <div className="botones">
+        <QBoton
+          onClick={guardar}
+          deshabilitado={!puedoGuardarObjetoValor(estado)}
+        >
+          Guardar
+        </QBoton>
+        <QBoton onClick={onCancelar} variante="texto">
+          Cancelar
+        </QBoton>
+      </div>
     </>
   );
 };

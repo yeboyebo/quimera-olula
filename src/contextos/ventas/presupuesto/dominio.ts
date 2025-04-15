@@ -41,6 +41,12 @@ export const presupuestoNuevoVacio = (): NuevoPresupuesto => ({
     empresa_id: "1",
 });
 
+// {
+//     nombre_cliente: (valor: string) => valor.trim() !== "",
+//     id_fiscal: (valor: string) => valor.trim() !== "",
+//     divisa_id: (valor: string) => valor.trim() !== "",
+//   }
+
 export const validadoresPresupuesto = {
     cliente_id: (valor: string) => stringNoVacio(valor),
     direccion_id: (valor: string) => stringNoVacio(valor),
@@ -50,6 +56,12 @@ export const validadoresPresupuesto = {
 export const metaNuevoPresupuesto: MetaObjetoValor<NuevoPresupuesto> = {
     bloqueados: [],
     requeridos: ["cliente_id", "direccion_id", "empresa_id"],
+    validador: makeValidador({}),
+};
+
+export const metaPresupuesto: MetaObjetoValor<Presupuesto> = {
+    bloqueados: ["codigo"],
+    requeridos: ["nombre_cliente", "id_fiscal", "divisa_id"],
     validador: makeValidador({}),
 };
 

@@ -1,104 +1,72 @@
-import { useState } from "react";
-import { useParams } from "react-router";
+import { useReducer } from "react";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import estilos from "../../../../componentes/detalle/detalle.module.css";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import {
-  Input,
-  InputSelect,
-} from "../../../../componentes/detalle/FormularioGenerico.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
-import { Presupuesto, Cliente as TipoCliente } from "../diseño.ts";
-import { presupuestoVacio } from "../dominio.ts";
+import { initEstadoObjetoValor, makeReductor } from "../../../comun/dominio.ts";
+import { Presupuesto } from "../diseño.ts";
+import { metaPresupuesto } from "../dominio.ts";
 import {
-  camposPresupuesto,
   getPresupuesto,
   patchCambiarAgente,
   patchCambiarDivisa,
 } from "../infraestructura.ts";
-import { Cliente } from "./Cliente.tsx";
-import { Lineas } from "./Lineas.tsx";
+import "./DetallePresupuesto.css";
 
 export const DetallePresupuesto = ({
   presupuestoInicial = null,
-  onEntidadActualizada: onEntidadActualizada = () => {},
+  onEntidadActualizada = () => {},
 }: {
   presupuestoInicial?: Presupuesto | null;
   onEntidadActualizada?: (entidad: Presupuesto) => void;
 }) => {
   const { detalle } = estilos;
 
-  const params = useParams();
-
-  const [guardando, setGuardando] = useState(false);
-
-  const presupuestoId = presupuestoInicial?.id ?? params.id;
-
-  const sufijoTitulo = guardando ? " (Guardando...)" : "";
-  const titulo = (presupuesto: Entidad) =>
-    `${presupuesto.codigo} ${sufijoTitulo}` as string;
-
-  const [presupuesto, setPresupuesto] = useState<Presupuesto>(
-    presupuestoVacio()
+  const [estado, dispatch] = useReducer(
+    makeReductor(metaPresupuesto),
+    initEstadoObjetoValor(
+      presupuestoInicial ?? { id: "", codigo: "" },
+      metaPresupuesto
+    )
   );
 
-  const onCampoCambiado = async (campo: string, valor: string) => {
-    setGuardando(true);
+  const setCampo = (campo: string) => (valor: string) => {
+    dispatch({
+      type: "set_campo",
+      payload: { campo, valor },
+    });
+  };
 
-    // if (presupuestoId) {
-    //   await guardar(presupuestoId, {
-    //     [campo]: valor,
-    //   });
-    // }
-    setGuardando(false);
-    const nuevoPresupuesto: Presupuesto = { ...presupuesto, [campo]: valor };
-    setPresupuesto(nuevoPresupuesto);
+  const getProps = (campo: string) => {
+    return {
+      valor: estado.valor[campo],
+      error: estado.validacion[campo]?.textoValidacion,
+      bloqueado: estado.bloqueados.includes(campo),
+    };
+  };
+
+  const guardarAgente = async (valor: string) => {
+    await patchCambiarAgente(estado.valor.id, valor);
+    const nuevoPresupuesto = await getPresupuesto(estado.valor.id);
+    dispatch({ type: "init", payload: { entidad: nuevoPresupuesto } });
     onEntidadActualizada(nuevoPresupuesto);
   };
 
-  const onAgenteIdCambiado = async (_: string, valor: string) => {
-    setGuardando(true);
-    if (!presupuestoId) {
-      return;
-    }
-    await patchCambiarAgente(presupuestoId, valor);
-    const nuevoPresupuesto = await getPresupuesto(presupuestoId);
-    setGuardando(false);
-    setPresupuesto(nuevoPresupuesto);
-    onEntidadActualizada(nuevoPresupuesto);
-  };
-
-  const onDivisaIdCambiado = async (_: string, valor: string) => {
-    setGuardando(true);
-    if (!presupuestoId) {
-      return;
-    }
-    await patchCambiarDivisa(presupuestoId, valor);
-    const nuevoPresupuesto = await getPresupuesto(presupuestoId);
-    setGuardando(false);
-    setPresupuesto(nuevoPresupuesto);
-    onEntidadActualizada(nuevoPresupuesto);
-  };
-
-  const onClienteCambiadoCallback = async (_: TipoCliente) => {
-    const nuevoPresupuesto = await getPresupuesto(presupuesto.id);
-    setPresupuesto(nuevoPresupuesto);
-    onEntidadActualizada(nuevoPresupuesto);
-  };
-
-  const recargarCabecera = async () => {
-    const nuevoPresupuesto = await getPresupuesto(presupuesto.id);
-    setPresupuesto(nuevoPresupuesto);
+  const guardarDivisa = async (valor: string) => {
+    await patchCambiarDivisa(estado.valor.id, valor);
+    const nuevoPresupuesto = await getPresupuesto(estado.valor.id);
+    dispatch({ type: "init", payload: { entidad: nuevoPresupuesto } });
     onEntidadActualizada(nuevoPresupuesto);
   };
 
   return (
     <div className={detalle}>
       <Detalle
-        id={presupuestoId}
-        obtenerTitulo={titulo}
-        setEntidad={(p) => setPresupuesto(p as Presupuesto)}
-        entidad={presupuesto}
+        id={estado.valor.id}
+        obtenerTitulo={(presupuesto) => `${presupuesto.codigo}`}
+        setEntidad={(p) => dispatch({ type: "init", payload: { entidad: p } })}
+        entidad={estado.valor}
         cargar={getPresupuesto}
       >
         <Tabs
@@ -108,19 +76,17 @@ export const DetallePresupuesto = ({
               label="Cliente"
               children={
                 <>
-                  <Cliente
-                    presupuesto={presupuesto}
-                    onClienteCambiadoCallback={onClienteCambiadoCallback}
+                  <QInput
+                    label="Nombre Cliente"
+                    nombre="nombre_cliente"
+                    onChange={setCampo("nombre_cliente")}
+                    {...getProps("nombre_cliente")}
                   />
-                  <Input
-                    campo={camposPresupuesto.nombre_cliente}
-                    onCampoCambiado={onCampoCambiado}
-                    valorEntidad={presupuesto.nombre_cliente}
-                  />
-                  <Input
-                    campo={camposPresupuesto.id_fiscal}
-                    onCampoCambiado={onCampoCambiado}
-                    valorEntidad={presupuesto.id_fiscal}
+                  <QInput
+                    label="ID Fiscal"
+                    nombre="id_fiscal"
+                    onChange={setCampo("id_fiscal")}
+                    {...getProps("id_fiscal")}
                   />
                 </>
               }
@@ -130,77 +96,34 @@ export const DetallePresupuesto = ({
               label="Datos"
               children={
                 <>
-                  <InputSelect
-                    campo={camposPresupuesto.divisa_id}
-                    onCampoCambiado={onDivisaIdCambiado}
-                    valorEntidad={presupuesto.divisa_id}
+                  <QSelect
+                    label="Divisa"
+                    nombre="divisa_id"
+                    onChange={guardarDivisa}
+                    {...getProps("divisa_id")}
                   />
-                  <Input
-                    campo={camposPresupuesto.agente_id}
-                    onCampoCambiado={onAgenteIdCambiado}
-                    valorEntidad={presupuesto.agente_id}
+                  <QInput
+                    label="Agente"
+                    nombre="agente_id"
+                    onChange={guardarAgente}
+                    {...getProps("agente_id")}
                   />
-                  <label>{presupuesto.nombre_agente}</label>
                 </>
               }
             />,
             <Tab
               key="tab-3"
               label="Observaciones"
-              children={<div> Observaciones contenido </div>}
+              children={
+                <QInput
+                  label="Observaciones"
+                  nombre="observaciones"
+                  onChange={setCampo("observaciones")}
+                  {...getProps("observaciones")}
+                />
+              }
             />,
           ]}
-        ></Tabs>
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "1rem",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            backgroundColor: "#f9f9f9",
-            marginBottom: "1rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.5rem",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-              Neto:
-            </label>
-            <span>
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-              }).format(Number(presupuesto?.neto ?? 0))}
-            </span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-              Total IVA:
-            </label>
-            <span>
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-              }).format(Number(presupuesto?.total_iva ?? 0))}
-            </span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-              Total:
-            </label>
-            <span>
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: (presupuesto?.coddivisa as string) ?? "EUR",
-              }).format(Number(presupuesto?.total ?? 0))}
-            </span>
-          </div>
-        </div>
-        <Lineas
-          presupuestoId={presupuesto.id}
-          onCabeceraModificada={recargarCabecera}
         />
       </Detalle>
     </div>
