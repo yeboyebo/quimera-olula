@@ -87,7 +87,7 @@ export const TabComercial = ({
         <QSelect
           nombre="divisa_id"
           label="Divisa"
-          onChange={setCampo("divisa_id")}
+          onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
           opciones={opcionesDivisa}
           {...getProps("divisa_id")}
         />

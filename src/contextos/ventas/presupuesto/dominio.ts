@@ -35,6 +35,10 @@ export const presupuestoVacio = (): Presupuesto => ({
     nombre_agente: '',
     divisa_id: '',
     aprobado: false,
+    total: 0,
+    neto: 0,
+    total_iva: 0,
+    total_irpf: 0,
 })
 
 export const presupuestoNuevoVacio = (): NuevoPresupuesto => ({
@@ -42,12 +46,6 @@ export const presupuestoNuevoVacio = (): NuevoPresupuesto => ({
     direccion_id: "",
     empresa_id: "1",
 });
-
-// {
-//     nombre_cliente: (valor: string) => valor.trim() !== "",
-//     id_fiscal: (valor: string) => valor.trim() !== "",
-//     divisa_id: (valor: string) => valor.trim() !== "",
-//   }
 
 export const validadoresPresupuesto = {
     cliente_id: (valor: string) => stringNoVacio(valor),

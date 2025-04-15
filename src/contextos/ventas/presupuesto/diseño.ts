@@ -12,8 +12,12 @@ export interface Presupuesto extends Entidad {
   agente_id: string;
   nombre_agente: string;
   divisa_id: string;
+  total: number;
+  neto: number;
+  total_iva: number;
+  total_irpf: number;
   aprobado: boolean;
-};
+}
 
 export type NuevoPresupuesto = {
   cliente_id: string;

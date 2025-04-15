@@ -36,7 +36,7 @@ export const TabDatos = ({ getProps, setCampo }: TabDatosProps) => {
       <QSelect
         label="Divisa"
         nombre="divisa_id"
-        onChange={setCampo("divisa_id")}
+        onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
         opciones={opcionesDivisa}
         {...getProps("divisa_id")}
       />

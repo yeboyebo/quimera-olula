@@ -158,37 +158,6 @@ export const camposDireccion: Record<string, CampoFormularioGenerico> = {
   telefono: { nombre: "telefono", etiqueta: "Teléfono", tipo: "text" },
 }
 
-// export const camposCliente: Record<string, CampoFormularioGenerico> = {
-//   id: { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
-//   nombre: { nombre: "nombre", etiqueta: "Nombre", tipo: "text", ancho: "100%", xtipo: "no controlado", },
-//   id_fiscal: {
-//     nombre: "id_fiscal", etiqueta: "CIF/NIF", tipo: "text", xtipo: "controlado"
-//   },
-//   agente_id: { nombre: "agente_id", etiqueta: "Agente", tipo: "text" },
-//   divisa_id: {
-//     nombre: "divisa_id",
-//     etiqueta: "Divisa",
-//     tipo: "select",
-//     opciones: opcionesDivisa,
-//   },
-//   empresa_id: { nombre: "empresa_id", etiqueta: "Empresa", tipo: "text" },
-//   tipo_id_fiscal: {
-//     nombre: "tipo_id_fiscal", etiqueta: "Tipo ID Fiscal", tipo: "text", xtipo: "controlado", opciones: [
-//       ["NIF", "NIF"],
-//       ["NIF/IVA", "NIF/IVA"],
-//       ["Pasaporte", "Pasaporte"],
-//       ["Doc.Oficial País", "Doc.Oficial País"],
-//       ["Cert.Residencia", "Cert.Residencia"],
-//       ["Otro", "Otro"],
-//     ]
-//   },
-//   serie_id: { nombre: "serie_id", etiqueta: "Serie", tipo: "text", soloLectura: true },
-//   forma_pago_id: { nombre: "forma_pago_id", etiqueta: "Forma de Pago", tipo: "text" },
-//   grupo_iva_negocio_id: { nombre: "grupo_iva_negocio_id", etiqueta: "Grupo IVA Negocio", tipo: "text" },
-//   eventos: { nombre: "eventos", etiqueta: "Eventos", tipo: "text", oculto: true },
-//   espacio: { nombre: "espacio", etiqueta: "", tipo: "space" },
-// }
-
 export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]> =>
   await RestAPI.get<{ datos: CuentaBancoAPI[] }>(`${baseUrlVentas}/${clienteId}/cuenta_banco`).then((respuesta) =>
     respuesta.datos.map(cuentaBancoFromAPI)
