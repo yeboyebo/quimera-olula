@@ -34,12 +34,9 @@ quimera-tabla {
             background-color: var(--color-deshabilitado);
         }
 
-        &[data-seleccionada="true"] {
-
-            th,
-            td {
-                font-weight: var(--grosor-letra-6);
-            }
+        &[data-seleccionada="true"] th,
+        &[data-seleccionada="true"] td {
+            font-weight: var(--grosor-letra-6);
         }
     }
 
@@ -85,14 +82,6 @@ quimera-tabla {
             float: right;
             width: 1em;
             margin-right: -1em;
-        }
-
-        &:first-child {
-            position: sticky;
-            left: 0;
-            overflow-wrap: break-word;
-            background-color: inherit;
-            min-width: 100px;
         }
     }
 
