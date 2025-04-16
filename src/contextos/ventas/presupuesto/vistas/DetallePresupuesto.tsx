@@ -90,7 +90,6 @@ export const DetallePresupuesto = ({
             ]}
           ></Tabs>
 
-          {/* Información adicional */}
           <div
             style={{
               marginTop: "1rem",
