@@ -81,6 +81,7 @@ export const TabComercial = ({
           label="Agente"
           nombre="agente_id"
           onBlur={onAgenteChange}
+          valor={"1"}
           obtenerOpciones={obtenerOpcionesAgente}
           {...getProps("agente_id")}
         />
