@@ -19,20 +19,27 @@ const tiposFormInput = {
   texto: "text",
   numero: "number",
   fecha: "date",
+  hora: "time",
   contraseña: "password",
   email: "email",
   checkbox: "checkbox",
+  radio: "radio",
+  telefono: "tel",
+  color: "color",
+  fichero: "file",
+  url: "url",
+  rango: "range",
 } as const;
 
 export type FormInputProps = FormFieldProps & {
   lista?: string;
   autocompletar?: "off" | "on";
   onInput?: (valor: string, evento: React.FormEvent<HTMLInputElement>) => void;
+  tipo?: keyof typeof tiposFormInput;
 };
 
 type InputProps = Omit<FormInputProps, "label"> & {
   checked?: boolean;
-  tipo?: keyof typeof tiposFormInput;
 };
 
 export const FormInput = ({

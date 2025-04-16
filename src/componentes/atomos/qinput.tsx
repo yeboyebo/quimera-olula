@@ -34,7 +34,6 @@ export const QInput = ({
     nombre,
     deshabilitado,
     opcional,
-    tipo: "texto" as const,
     ...props,
   };
 
