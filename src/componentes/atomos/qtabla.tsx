@@ -30,20 +30,10 @@ const cabecera = <T extends Entidad>(
 };
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
-  const renderColumna = ({ id, render }: MetaColumna<T>, idx: number) => {
-    const Tag = idx === 0 ? "th" : "td";
-
-    const attrs = {
-      "data-modo": idx === 0 ? "fila" : undefined,
-    };
-
+  const renderColumna = ({ id, render }: MetaColumna<T>) => {
     const datos = render?.(entidad as T) ?? (entidad[id] as string);
 
-    return (
-      <Tag key={[entidad.id, id].join("-")} {...attrs}>
-        {datos}
-      </Tag>
-    );
+    return <td key={[entidad.id, id].join("-")}>{datos}</td>;
   };
 
   return metaTabla.map(renderColumna);
