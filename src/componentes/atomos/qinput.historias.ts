@@ -52,3 +52,29 @@ export const AutoSeleccion: Historia = [{
   textoValidacion: "Con autoselección",
   autoSeleccion: "true",
 }];
+
+export const Tipos: Historia = [{
+  nombre: "numero",
+  tipo: "numero",
+  label: "Número",
+  textoValidacion: undefined,
+  placeholder: "Introduce un número",
+}, {
+  nombre: "contraseña",
+  tipo: "contraseña",
+  label: "Contraseña",
+  textoValidacion: undefined,
+  placeholder: "Introduce tu contraseña",
+}, {
+  nombre: "color",
+  tipo: "color",
+  label: "Color",
+  textoValidacion: undefined,
+  placeholder: undefined,
+}, {
+  nombre: "fichero",
+  tipo: "fichero",
+  label: "Fichero",
+  textoValidacion: undefined,
+  placeholder: undefined,
+},];
