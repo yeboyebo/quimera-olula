@@ -64,6 +64,8 @@ const renderCode = (atributos: AtributosHistoria[], meta: MetaHistorias) => {
     Object.entries(atributos).map(([k, v]) => {
       const valor = valorTexto(v);
 
+      if (valor === undefined) return null;
+
       return (
         <div className="attribute" key={k + valor}>
           {v === "true" ? (
