@@ -6,6 +6,7 @@ import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
 import "./MaestroConDetallePresupuesto.css";
 
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { AltaPresupuesto } from "./AltaPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
 
@@ -74,19 +75,13 @@ export const MaestroConDetallePresupuesto = () => {
           onEntidadActualizada={actualizarEntidad}
         />
       </div>
-      {mostrarModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={onCancelar}>
-              &times;
-            </span>
-            <AltaPresupuesto
-              onPresupuestoCreado={onPresupuestoCreado}
-              onCancelar={onCancelar}
-            />
-          </div>
-        </div>
-      )}
+
+      <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
+        <AltaPresupuesto
+          onPresupuestoCreado={onPresupuestoCreado}
+          onCancelar={onCancelar}
+        />
+      </QModal>
     </div>
   );
 };

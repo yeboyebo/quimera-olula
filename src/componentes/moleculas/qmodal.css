@@ -1,0 +1,46 @@
+quimera-modal {
+    position: fixed;
+
+    dialog {
+        border: none;
+        border-radius: var(--redondeo-borde-s);
+        max-width: 1280px;
+        min-width: 400px;
+        margin: auto;
+        box-shadow: var(--gris-5) 3px 3px 10px 2px;
+
+        &::backdrop {
+            backdrop-filter: blur(1.5px);
+        }
+
+        main {
+            padding: var(--espaciado-l);
+            width: 100%;
+            min-height: 300px;
+        }
+
+        header form quimera-boton {
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            button {
+                --color-primario: var(--color-texto-primario);
+                --color-primario-oscuro: var(--color-texto-primario);
+                --color-primario-claro: transparent;
+
+                transition: all 0.3s ease-in-out;
+
+                &:hover {
+                    font-size: 2.5rem;
+                    filter: drop-shadow(2px 2px 2.5px var(--color-texto-secundario));
+                }
+
+                &:focus-visible {
+                    outline: none;
+                    filter: drop-shadow(1px 1px 1px var(--color-texto-secundario));
+                }
+            }
+        }
+    }
+}

@@ -113,9 +113,6 @@ const RenderHistoria = ({
       <article key={titulo}>
         <h3>{titulo}</h3>
         <section>
-          {atributosCompletos.map((attrs) =>
-            renderContenidoHistoria(meta.Componente, attrs)
-          )}
           <QBoton
             tipo="submit"
             tamaño="pequeño"
@@ -123,6 +120,9 @@ const RenderHistoria = ({
           >
             {mostrarCodigo ? "Ocultar código" : "Mostrar código"}
           </QBoton>
+          {atributosCompletos.map((attrs) =>
+            renderContenidoHistoria(meta.Componente, attrs)
+          )}
         </section>
         <aside data-codigo={mostrarCodigo.toString()}>
           {renderCode(atributosCompletos, meta)}
