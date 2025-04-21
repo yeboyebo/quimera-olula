@@ -7,7 +7,7 @@ type Opcion = { valor: string; descripcion: string };
 type QAutocompletarProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
   tiempoEspera?: number;
   longitudMinima?: number;
-  obtenerOpciones: (valor: string, id?: string) => Promise<Opcion[]>;
+  obtenerOpciones: (valor: string) => Promise<Opcion[]>;
   onChange?: (
     opcion: Opcion | null,
     evento: React.ChangeEvent<HTMLElement>
@@ -16,6 +16,7 @@ type QAutocompletarProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
     opcion: Opcion | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
+  descripcion?: string;
 };
 
 export const QAutocompletar = ({
@@ -26,6 +27,7 @@ export const QAutocompletar = ({
   obtenerOpciones,
   onBlur,
   onChange,
+  descripcion = "",
   ...props
 }: QAutocompletarProps) => {
   const attrs = {
@@ -56,17 +58,14 @@ export const QAutocompletar = ({
     );
   };
 
-  const manejarInput = (
-    valor: string,
-    e: React.FormEvent<HTMLInputElement>
-  ) => {
+  const manejarInput = (valor: string, e: React.ChangeEvent<HTMLElement>) => {
     regenerarOpciones(valor);
     setValorOpcion(valor);
 
-    const opcion = opciones.find((opcion) => opcion.valor === valor);
+    const opcion = opciones.find((opcion) => opcion.descripcion === valor);
     if (!opcion) {
       valorReal.current!.value = "";
-      onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
+      // onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
       return;
     }
 
@@ -93,14 +92,11 @@ export const QAutocompletar = ({
   };
 
   useEffect(() => {
-    const setOpcionesPorId = async (id: string) => {
-      const opciones = await obtenerOpciones("", id);
-      setOpciones(opciones);
-      setValorOpcion(opciones[0]?.descripcion || "");
-    };
-
-    if (valor) setOpcionesPorId(valor);
-  }, [valor, obtenerOpciones]);
+    if (valor && descripcion) {
+      setOpciones([{ valor, descripcion }]);
+      setValorOpcion(descripcion);
+    }
+  }, [descripcion, valor]);
 
   return (
     <quimera-autocompletar {...attrs}>
@@ -118,7 +114,7 @@ export const QAutocompletar = ({
         nombre=""
         lista={listaId}
         autocompletar="off"
-        onInput={manejarInput}
+        onChange={manejarInput}
         onBlur={manejarBlur}
         valor={valorOpcion}
       />

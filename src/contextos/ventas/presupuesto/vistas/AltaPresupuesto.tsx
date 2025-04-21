@@ -2,15 +2,14 @@ import { useReducer, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
-import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
 import {
   campoObjetoValorAInput,
   initEstadoObjetoValor,
   makeReductor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
-import { getClientes, getDirecciones } from "../../cliente/infraestructura.ts";
+import { getDirecciones } from "../../cliente/infraestructura.ts";
+import { Clientes } from "../../comun/componentes/cliente.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
@@ -48,24 +47,24 @@ export const AltaPresupuesto = ({
     onPresupuestoCreado(presupuestoCreado);
   };
 
-  const obtenerOpcionesCliente = async (valor: string) => {
-    const criteria = {
-      filtro: {
-        nombre: {
-          LIKE: valor,
-        },
-      },
-      orden: { id: "DESC" },
-    };
-    const clientes = await getClientes(
-      criteria.filtro as Filtro,
-      criteria.orden as Orden
-    );
-    return clientes.map((cliente) => ({
-      valor: cliente.id,
-      descripcion: cliente.nombre,
-    }));
-  };
+  // const obtenerOpcionesCliente = async (valor: string) => {
+  //   const criteria = {
+  //     filtro: {
+  //       nombre: {
+  //         LIKE: valor,
+  //       },
+  //     },
+  //     orden: { id: "DESC" },
+  //   };
+  //   const clientes = await getClientes(
+  //     criteria.filtro as Filtro,
+  //     criteria.orden as Orden
+  //   );
+  //   return clientes.map((cliente) => ({
+  //     valor: cliente.id,
+  //     descripcion: cliente.nombre,
+  //   }));
+  // };
 
   const onClienteBlurred = async (
     clienteId: {
@@ -88,12 +87,9 @@ export const AltaPresupuesto = ({
     <>
       <h2>Nuevo Presupuesto</h2>
       <quimera-formulario>
-        <QAutocompletar
-          label="Cliente"
-          nombre="cliente_id"
-          onBlur={onClienteBlurred}
-          valor={estado.valor.cliente_id}
-          obtenerOpciones={obtenerOpcionesCliente}
+        <Clientes
+          cliente_id={estado.valor.cliente_id}
+          onClienteChanged={onClienteBlurred}
         />
         <QSelect
           label="Dirección"
