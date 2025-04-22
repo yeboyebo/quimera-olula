@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 
@@ -34,7 +34,6 @@ export const QAutocompletar = ({
     nombre,
   };
   const [opciones, setOpciones] = useState<Opcion[]>([]);
-  const [valorOpcion, setValorOpcion] = useState("");
 
   const valorReal = useRef<HTMLInputElement>(null);
   const temporizador = useRef<number | undefined>(undefined);
@@ -58,14 +57,13 @@ export const QAutocompletar = ({
     );
   };
 
-  const manejarInput = (valor: string, e: React.ChangeEvent<HTMLElement>) => {
+  const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
     regenerarOpciones(valor);
-    setValorOpcion(valor);
 
-    const opcion = opciones.find((opcion) => opcion.descripcion === valor);
+    const opcion = opciones.find((opcion) => opcion.valor === valor);
     if (!opcion) {
       valorReal.current!.value = "";
-      // onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
+      onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
       return;
     }
 
@@ -91,13 +89,6 @@ export const QAutocompletar = ({
     onBlur?.(null, e);
   };
 
-  useEffect(() => {
-    if (valor && descripcion) {
-      setOpciones([{ valor, descripcion }]);
-      setValorOpcion(descripcion);
-    }
-  }, [descripcion, valor]);
-
   return (
     <quimera-autocompletar {...attrs}>
       <datalist id={listaId}>{renderOpciones}</datalist>
@@ -114,9 +105,9 @@ export const QAutocompletar = ({
         nombre=""
         lista={listaId}
         autocompletar="off"
-        onChange={manejarInput}
+        onInput={manejarInput}
         onBlur={manejarBlur}
-        valor={valorOpcion}
+        valor={descripcion}
       />
     </quimera-autocompletar>
   );
