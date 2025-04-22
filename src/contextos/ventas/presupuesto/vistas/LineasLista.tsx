@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { QForm } from "../../../../componentes/atomos/qform.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { refrescarSeleccionada } from "../../../comun/dominio.ts";
@@ -10,46 +8,7 @@ import {
   getLineas,
   patchCantidadLinea,
 } from "../infraestructura.ts";
-
-const validacion = (cantidadRaw: string) => {
-  const cantidad = parseInt(cantidadRaw);
-
-  return isNaN(cantidad) || cantidad < 0
-    ? "Debe tener una cantidad mayor que cero."
-    : "";
-};
-
-const EditarCantidad = ({
-  linea,
-  onCantidadEditada,
-}: {
-  linea: Linea;
-  onCantidadEditada: (linea: Linea, cantidad: number) => void;
-}) => {
-  const [estado, setEstado] = useState("");
-
-  const submit = ({ cantidad }: Record<string, string>) => {
-    const nuevoEstado = validacion(cantidad);
-    setEstado(nuevoEstado);
-
-    if (nuevoEstado.length > 0) return;
-
-    onCantidadEditada(linea, parseInt(cantidad));
-  };
-
-  return (
-    <QForm onSubmit={submit}>
-      <QInput
-        label="Cantidad"
-        nombre="cantidad"
-        valor={linea.cantidad.toString()}
-        erroneo={!!estado && estado.length > 0}
-        textoValidacion={estado}
-        condensado
-      />
-    </QForm>
-  );
-};
+import { EditarCantidadLineaPresupuesto } from "./EditarCantidadLineaPresupuesto.tsx";
 
 const getMetaTablaLineas = (
   cambiarCantidad: (linea: Linea, cantidad: number) => void
@@ -63,11 +22,12 @@ const getMetaTablaLineas = (
     {
       id: "cantidad",
       cabecera: "Cantidad",
-      render: (linea: Linea) =>
-        EditarCantidad({
-          linea,
-          onCantidadEditada: cambiarCantidad,
-        }),
+      render: (linea: Linea) => (
+        <EditarCantidadLineaPresupuesto
+          linea={linea}
+          onCantidadEditada={cambiarCantidad}
+        />
+      ),
     },
     { id: "pvp_unitario", cabecera: "P. Unitario" },
     { id: "pvp_total", cabecera: "Total" },
