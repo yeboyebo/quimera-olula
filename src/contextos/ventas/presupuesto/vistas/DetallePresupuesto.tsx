@@ -69,7 +69,6 @@ export const DetallePresupuesto = ({
                     getProps={getProps}
                     setCampo={setCampo}
                     presupuesto={presupuesto}
-                    dispatch={dispatch}
                     onEntidadActualizada={onEntidadActualizada}
                   />
                 }
@@ -90,7 +89,6 @@ export const DetallePresupuesto = ({
             ]}
           ></Tabs>
 
-          {/* Información adicional */}
           <div
             style={{
               marginTop: "1rem",

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 
@@ -7,6 +7,7 @@ type Opcion = { valor: string; descripcion: string };
 type QAutocompletarProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
   tiempoEspera?: number;
   longitudMinima?: number;
+  descripcion?: string;
   obtenerOpciones: (valor: string) => Promise<Opcion[]>;
   onChange?: (
     opcion: Opcion | null,
@@ -26,12 +27,14 @@ export const QAutocompletar = ({
   obtenerOpciones,
   onBlur,
   onChange,
+  descripcion = "",
   ...props
 }: QAutocompletarProps) => {
   const attrs = {
     nombre,
   };
   const [opciones, setOpciones] = useState<Opcion[]>([]);
+  const [valorDescrito, setValorDescrito] = useState<string>("");
 
   const valorReal = useRef<HTMLInputElement>(null);
   const temporizador = useRef<number | undefined>(undefined);
@@ -55,13 +58,20 @@ export const QAutocompletar = ({
     );
   };
 
-  const manejarInput = (
-    valor: string,
-    e: React.FormEvent<HTMLInputElement>
-  ) => {
+  useEffect(() => {
+    setValorDescrito(descripcion);
+  }, [descripcion]);
+
+  const manejarChange = (valor: string) => {
+    if (valor === valorDescrito) return;
+
+    setValorDescrito(valor);
+  };
+
+  const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
     regenerarOpciones(valor);
 
-    const opcion = opciones.find((opcion) => opcion.valor === valor);
+    const opcion = opciones.find((opcion) => opcion.descripcion === valor);
     if (!opcion) {
       valorReal.current!.value = "";
       onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
@@ -108,6 +118,8 @@ export const QAutocompletar = ({
         autocompletar="off"
         onInput={manejarInput}
         onBlur={manejarBlur}
+        onChange={manejarChange}
+        valor={valorDescrito}
       />
     </quimera-autocompletar>
   );
