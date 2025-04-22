@@ -69,6 +69,7 @@ export const DetallePresupuesto = ({
                     getProps={getProps}
                     setCampo={setCampo}
                     presupuesto={presupuesto}
+                    dispatch={dispatch}
                     onEntidadActualizada={onEntidadActualizada}
                   />
                 }

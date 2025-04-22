@@ -47,26 +47,7 @@ export const AltaPresupuesto = ({
     onPresupuestoCreado(presupuestoCreado);
   };
 
-  // const obtenerOpcionesCliente = async (valor: string) => {
-  //   const criteria = {
-  //     filtro: {
-  //       nombre: {
-  //         LIKE: valor,
-  //       },
-  //     },
-  //     orden: { id: "DESC" },
-  //   };
-  //   const clientes = await getClientes(
-  //     criteria.filtro as Filtro,
-  //     criteria.orden as Orden
-  //   );
-  //   return clientes.map((cliente) => ({
-  //     valor: cliente.id,
-  //     descripcion: cliente.nombre,
-  //   }));
-  // };
-
-  const onClienteBlurred = async (
+  const onClienteChanged = async (
     clienteId: {
       valor: string;
       descripcion: string;
@@ -89,7 +70,7 @@ export const AltaPresupuesto = ({
       <quimera-formulario>
         <Clientes
           cliente_id={estado.valor.cliente_id}
-          onClienteChanged={onClienteBlurred}
+          onClienteChanged={onClienteChanged}
         />
         <QSelect
           label="Dirección"

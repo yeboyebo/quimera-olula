@@ -60,3 +60,5 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>;
 
+export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
+
