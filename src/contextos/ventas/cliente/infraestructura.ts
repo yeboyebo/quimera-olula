@@ -90,6 +90,13 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       forma_pago_id: cliente.forma_pago_id,
       grupo_iva_negocio_id: cliente.grupo_iva_negocio_id,
       nombre_comercial: cliente.nombre_comercial,
+      web: cliente.web,
+      telefono1: cliente.telefono1,
+      telefono2: cliente.telefono2,
+      email: cliente.email,
+      observaciones: cliente.observaciones,
+      copiasfactura: cliente.copiasfactura,
+      grupo_id: cliente.grupo_id,
     }
   });
 
