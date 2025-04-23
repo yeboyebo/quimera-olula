@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
   Accion,
   entidadModificada,
   EstadoObjetoValor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
+import { Divisas } from "../../comun/componentes/Divisas.tsx";
 import { Presupuesto } from "../diseño.ts";
-import {
-  getPresupuesto,
-  obtenerOpcionesSelector,
-  patchPresupuesto,
-} from "../infraestructura.ts";
+import { getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
 
 interface TabDatosProps {
   getProps: (campo: string) => Record<string, unknown>;
@@ -30,23 +26,7 @@ export const TabDatos = ({
   onEntidadActualizada,
   dispatch,
 }: TabDatosProps) => {
-  const [opcionesDivisa, setOpcionesDivisa] = useState<
-    { valor: string; descripcion: string }[]
-  >([]);
   const [_, setGuardando] = useState<boolean>(false);
-
-  useEffect(() => {
-    const cargarOpcionesDivisa = async () => {
-      const opciones = await obtenerOpcionesSelector("divisa")();
-      const opcionesMapeadas = opciones.map((opcion) => ({
-        valor: opcion[0],
-        descripcion: opcion[1],
-      }));
-      setOpcionesDivisa(opcionesMapeadas);
-    };
-
-    cargarOpcionesDivisa();
-  }, []);
 
   const onGuardarClicked = async () => {
     setGuardando(true);
@@ -60,12 +40,10 @@ export const TabDatos = ({
   return (
     <>
       <quimera-formulario>
-        <QSelect
-          label="Divisa"
-          nombre="divisa_id"
+        <Divisas
+          valor={presupuesto.valor.divisa_id}
           onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
-          opciones={opcionesDivisa}
-          {...getProps("divisa_id")}
+          getProps={getProps}
         />
         <QInput
           label="Agente"
