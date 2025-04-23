@@ -12,6 +12,7 @@ import { Cliente, CuentaBanco } from "../diseño.ts";
 import {
   deleteCuentaBanco,
   desmarcarCuentaDomiciliacion,
+  domiciliarCuenta,
   getCuentasBanco,
 } from "../infraestructura.ts";
 import { AltaCuentaBanco } from "./AltaCuentaBanco.tsx";
@@ -19,7 +20,6 @@ import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
 
 const metaTablaCuentasBanco = [
   { id: "descripcion", cabecera: "Descripcion" },
-  { id: "id", cabecera: "id", visible: false },
   { id: "iban", cabecera: "IBAN" },
   { id: "bic", cabecera: "BIC" },
 ];
@@ -27,10 +27,14 @@ const metaTablaCuentasBanco = [
 interface TabCuentasBancoProps {
   cliente: EstadoObjetoValor<Cliente>;
   dispatch: (action: Accion<Cliente>) => void;
+  setCampo: (campo: string) => (valor: unknown) => void;
   onEntidadActualizada: (entidad: Cliente) => void;
 }
 
-export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
+export const TabCuentasBanco = ({
+  cliente,
+  setCampo,
+}: TabCuentasBancoProps) => {
   const [modo, setModo] = useState<"lista" | "alta" | "edicion">("lista");
   const [cuentas, setCuentas] = useState<CuentaBanco[]>([]);
   const [seleccionada, setSeleccionada] = useState<CuentaBanco | null>(null);
@@ -50,7 +54,13 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
     if (cliente.valor.id) cargarCuentas();
   }, [cliente.valor.id, cargarCuentas]);
 
-  const onDomiciliarCuenta = async () => {};
+  const onDomiciliarCuenta = async () => {
+    if (!seleccionada) return;
+
+    await domiciliarCuenta(cliente.valor.id, seleccionada.id);
+    setCampo("cuenta_domiciliada")(seleccionada.id);
+    setSeleccionada(null);
+  };
 
   const onGuardarNuevaCuenta = async () => {
     // if (!puedoGuardarObjetoValor(estado)) return;
@@ -83,7 +93,7 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   return (
     <>
       <div className="detalle-cliente-tab-contenido">
-        <div className="CuentaBancoDomiciliacion">
+        <div className="CuentaBancoDomiciliacion maestro-botones">
           <span>Domiciliar: {cliente.valor.cuenta_domiciliada}</span>
           <QBoton onClick={() => desmarcarCuentaDomiciliada()}>
             Desmarcar
@@ -92,7 +102,7 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
       </div>
       <div className="CuentasBanco">
         <div className="CuentasBancoAcciones">
-          <div className="CuentasBancoBotonesIzquierda">
+          <div className="CuentasBancoBotonesIzquierda maestro-botones">
             <QBoton onClick={() => setModo("alta")}>Nueva</QBoton>
             <QBoton
               onClick={() => seleccionada && setModo("edicion")}
@@ -104,7 +114,7 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
               Borrar
             </QBoton>
           </div>
-          <div className="CuentasBancoBotonDerecha">
+          <div className="CuentasBancoBotonDerecha maestro-botones">
             <QBoton onClick={onDomiciliarCuenta}>
               Cuenta de domiciliación
             </QBoton>

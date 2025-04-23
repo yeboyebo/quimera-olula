@@ -108,6 +108,7 @@ export const DetalleCliente = ({
               children={
                 <TabCuentasBanco
                   cliente={cliente}
+                  setCampo={setCampo}
                   dispatch={dispatch}
                   onEntidadActualizada={onEntidadActualizada}
                 />

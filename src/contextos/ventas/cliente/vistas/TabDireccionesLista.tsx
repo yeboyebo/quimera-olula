@@ -84,24 +84,27 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <QBoton onClick={onCrearDireccion}>Nueva</QBoton>
-      <QBoton
-        onClick={() => seleccionada && onEditarDireccion(seleccionada)}
-        deshabilitado={!seleccionada}
-      >
-        Editar
-      </QBoton>
-      <QBoton deshabilitado={!seleccionada} onClick={onBorrarDireccion}>
-        Borrar
-      </QBoton>
-      <QBoton
-        onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
-        deshabilitado={
-          !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
-        }
-      >
-        Facturación
-      </QBoton>
+      <div className="acciones maestro-botones">
+        <QBoton onClick={onCrearDireccion}>Nueva</QBoton>
+        <QBoton
+          onClick={() => seleccionada && onEditarDireccion(seleccionada)}
+          deshabilitado={!seleccionada}
+        >
+          Editar
+        </QBoton>
+        <QBoton deshabilitado={!seleccionada} onClick={onBorrarDireccion}>
+          Borrar
+        </QBoton>
+        <div className="maestro-botones"></div>
+        <QBoton
+          onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
+          deshabilitado={
+            !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
+          }
+        >
+          Facturación
+        </QBoton>
+      </div>
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}

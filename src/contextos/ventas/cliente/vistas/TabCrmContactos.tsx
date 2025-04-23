@@ -64,7 +64,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     <>
       <>
         <h2>Contactos CRM</h2>
-        <div className="acciones">
+        <div className="acciones maestro-botones">
           <QBoton onClick={() => setModo("alta")}>Nuevo</QBoton>
           <QBoton
             onClick={() => seleccionada && setModo("edicion")}
