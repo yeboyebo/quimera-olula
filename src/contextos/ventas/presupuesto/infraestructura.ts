@@ -1,5 +1,3 @@
-
-
 import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
@@ -107,6 +105,24 @@ export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Pro
     lineas: [lineaId]
   });
 }
+
+export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => {
+  const payload = {
+    cambios: {
+      agente_id: presupuesto.agente_id,
+      divisa: {
+        divisa_id: presupuesto.divisa_id,
+      },
+      fecha: presupuesto.fecha,
+      cliente_id: presupuesto.cliente_id,
+      nombre_cliente: presupuesto.nombre_cliente,
+      id_fiscal: presupuesto.id_fiscal,
+      direccion_id: presupuesto.direccion_id,
+    },
+  };
+
+  await RestAPI.patch(`${baseUrl}/${id}`, payload);
+};
 
 export const camposPresupuesto: Record<string, CampoFormularioGenerico> = {
   "id": { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },

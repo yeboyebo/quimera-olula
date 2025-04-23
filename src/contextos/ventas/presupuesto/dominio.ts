@@ -61,7 +61,7 @@ export const metaNuevoPresupuesto: MetaObjetoValor<NuevoPresupuesto> = {
 
 export const metaPresupuesto: MetaObjetoValor<Presupuesto> = {
     bloqueados: ["codigo"],
-    requeridos: ["nombre_cliente", "id_fiscal", "divisa_id"],
+    requeridos: ["cliente_id", "id_fiscal", "divisa_id"],
     validador: makeValidador({}),
 };
 
