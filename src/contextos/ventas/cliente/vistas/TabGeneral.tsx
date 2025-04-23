@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
@@ -29,14 +28,10 @@ export const TabGeneral = ({
   dispatch,
   onEntidadActualizada,
 }: TabGeneralProps) => {
-  const [_, setGuardando] = useState<boolean>(false);
-
   const onGuardarClicked = async () => {
-    setGuardando(true);
     await patchCliente(cliente.valor.id, cliente.valor);
     const cliente_guardado = await getCliente(cliente.valor.id);
     dispatch({ type: "init", payload: { entidad: cliente_guardado } });
-    setGuardando(false);
     onEntidadActualizada(cliente.valor);
   };
 

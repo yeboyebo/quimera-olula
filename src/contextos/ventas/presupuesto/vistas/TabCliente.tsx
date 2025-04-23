@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import {
@@ -27,8 +26,6 @@ export const TabCliente = ({
   onEntidadActualizada,
   dispatch,
 }: TabClienteProps) => {
-  const [_, setGuardando] = useState<boolean>(false);
-
   const onClienteChanged = async (
     clienteId: {
       valor: string;
@@ -47,11 +44,9 @@ export const TabCliente = ({
   };
 
   const onGuardarClicked = async () => {
-    setGuardando(true);
     await patchPresupuesto(presupuesto.valor.id, presupuesto.valor);
     const presupuesto_guardado = await getPresupuesto(presupuesto.valor.id);
     dispatch({ type: "init", payload: { entidad: presupuesto_guardado } });
-    setGuardando(false);
     onEntidadActualizada(presupuesto.valor);
   };
 
