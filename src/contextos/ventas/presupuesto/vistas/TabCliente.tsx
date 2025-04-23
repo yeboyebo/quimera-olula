@@ -37,7 +37,7 @@ export const TabCliente = ({
   ) => {
     if (!clienteId) return;
     setCampo("cliente_id")(clienteId.valor);
-    setCampo("direccion_id")("");
+    setCampo("nombre_cliente")(clienteId.descripcion);
   };
 
   const onDireccionChanged = (
