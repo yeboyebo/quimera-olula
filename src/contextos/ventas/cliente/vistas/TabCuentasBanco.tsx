@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import {
   Accion,
   EstadoObjetoValor,
@@ -120,36 +121,32 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
         />
       </div>
 
-      {modo === "alta" && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setModo("lista")}>
-              &times;
-            </span>
-            <AltaCuentaBanco
-              clienteId={cliente.valor.id}
-              onCuentaCreada={onGuardarNuevaCuenta}
-              onCancelar={() => setModo("lista")}
-            />
-          </div>
-        </div>
-      )}
+      <QModal
+        nombre="altaCuentaBanco"
+        abierto={modo === "alta"}
+        onCerrar={() => setModo("lista")}
+      >
+        <AltaCuentaBanco
+          clienteId={cliente.valor.id}
+          onCuentaCreada={onGuardarNuevaCuenta}
+          onCancelar={() => setModo("lista")}
+        />
+      </QModal>
 
-      {modo === "edicion" && seleccionada && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setModo("lista")}>
-              &times;
-            </span>
-            <EdicionCuentaBanco
-              clienteId={cliente.valor.id}
-              cuenta={seleccionada}
-              onCuentaActualizada={onGuardarEdicionCuenta}
-              onCancelar={() => setModo("lista")}
-            />
-          </div>
-        </div>
-      )}
+      <QModal
+        nombre="edicionCuentaBanco"
+        abierto={modo === "edicion"}
+        onCerrar={() => setModo("lista")}
+      >
+        {seleccionada && (
+          <EdicionCuentaBanco
+            clienteId={cliente.valor.id}
+            cuenta={seleccionada}
+            onCuentaActualizada={onGuardarEdicionCuenta}
+            onCancelar={() => setModo("lista")}
+          />
+        )}
+      </QModal>
     </>
   );
 };

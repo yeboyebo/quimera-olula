@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import {
   boolAString,
@@ -83,27 +84,24 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <button onClick={onCrearDireccion}> Nueva</button>
-      <button
+      <QBoton onClick={onCrearDireccion}>Nueva</QBoton>
+      <QBoton
         onClick={() => seleccionada && onEditarDireccion(seleccionada)}
-        disabled={!seleccionada}
+        deshabilitado={!seleccionada}
       >
-        {" "}
         Editar
-      </button>
-      <button disabled={!seleccionada} onClick={onBorrarDireccion}>
-        {" "}
+      </QBoton>
+      <QBoton deshabilitado={!seleccionada} onClick={onBorrarDireccion}>
         Borrar
-      </button>
-      <button
+      </QBoton>
+      <QBoton
         onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
-        disabled={
+        deshabilitado={
           !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
         }
       >
-        {" "}
         Facturación
-      </button>
+      </QBoton>
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}
