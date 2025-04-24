@@ -1,6 +1,6 @@
 import { EstadoObjetoValor, initEstadoObjetoValor, makeValidador, MetaObjetoValor, stringNoVacio, ValidacionCampo, ValidadorCampos, validarCampo } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
-import { Cliente, CrmContacto, CuentaBanco, DirCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
+import { Cliente, CrmContacto, CuentaBanco, DirCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 
 
 
@@ -249,6 +249,15 @@ export const metaNuevoCrmContacto: MetaObjetoValor<NuevoCrmContacto> = {
     requeridos: ["nombre", "email"],
     validador: makeValidador({}),
 };
+
+export const metaDarDeBaja: MetaObjetoValor<FormBaja> = {
+    bloqueados: [],
+    requeridos: [
+        'fecha_baja',
+    ],
+    validador: makeValidador({}),
+};
+
 
 export const initEstadoClienteVacio = () => initEstadoCliente(clienteVacio())
 

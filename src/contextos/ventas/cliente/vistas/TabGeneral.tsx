@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import {
   Accion,
   entidadModificada,
@@ -10,6 +12,7 @@ import {
 import { IdFiscal } from "../../comun/componentes/idfiscal.tsx";
 import { Cliente } from "../diseño.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
+import { BajaCliente } from "./BajaCliente.tsx";
 import "./TabGeneral.css";
 
 interface TabGeneralProps {
@@ -18,6 +21,7 @@ interface TabGeneralProps {
   cliente: EstadoObjetoValor<Cliente>;
   dispatch: (action: Accion<Cliente>) => void;
   onEntidadActualizada: (entidad: Cliente) => void;
+  recargarCliente: () => void;
 }
 
 export const TabGeneral = ({
@@ -26,12 +30,28 @@ export const TabGeneral = ({
   cliente,
   dispatch,
   onEntidadActualizada,
+  recargarCliente,
 }: TabGeneralProps) => {
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  const onCancelar = () => {
+    setMostrarModal(false);
+  };
+
   const onGuardarClicked = async () => {
     await patchCliente(cliente.valor.id, cliente.valor);
     const cliente_guardado = await getCliente(cliente.valor.id);
     dispatch({ type: "init", payload: { entidad: cliente_guardado } });
     onEntidadActualizada(cliente.valor);
+  };
+
+  const onDarDeBajaClicked = async () => {
+    setMostrarModal(true);
+  };
+
+  const onBajaRealizada = async () => {
+    setMostrarModal(false);
+    recargarCliente();
   };
 
   return (
@@ -90,12 +110,16 @@ export const TabGeneral = ({
           onChange={setCampo("observaciones")}
           {...getProps("observaciones")}
         />
-        <QDate
-          nombre="fecha_baja"
-          label="Fecha Baja"
-          onChange={setCampo("fecha_baja")}
-          {...getProps("fecha_baja")}
-        />
+        {cliente.valor.de_baja ? (
+          <QDate
+            nombre="fecha_baja"
+            label="Fecha Baja"
+            onChange={setCampo("fecha_baja")}
+            {...getProps("fecha_baja")}
+          />
+        ) : (
+          <QBoton onClick={onDarDeBajaClicked}>Dar de baja</QBoton>
+        )}
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
@@ -117,6 +141,10 @@ export const TabGeneral = ({
         >
           Cancelar
         </QBoton>
+        <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
+          <h2>Dar de baja</h2>
+          <BajaCliente cliente={cliente} onBajaRealizada={onBajaRealizada} />
+        </QModal>
       </div>
     </>
   );

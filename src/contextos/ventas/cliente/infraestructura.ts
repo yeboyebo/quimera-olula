@@ -11,8 +11,6 @@ type ClienteApi = Cliente;
 
 const clienteFromAPI = (c: ClienteApi): Cliente => ({
   ...c,
-  de_baja: false,
-  fecha_baja: '',
 });
 
 export type DireccionAPI = {
@@ -91,7 +89,14 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       observaciones: cliente.observaciones,
       copiasfactura: cliente.copiasfactura,
       grupo_id: cliente.grupo_id,
-      debaja: cliente.debaja,
+    },
+  });
+
+export const darDeBajaCliente = async (id: string, fecha: string) =>
+  await RestAPI.patch(`${baseUrlVentas}/${id}`, {
+    cambios: {
+      de_baja: true,
+      fecha_baja: fecha,
     },
   });
 

@@ -21,11 +21,9 @@ export interface Cliente extends Entidad {
   web: string;
   observaciones: string;
   copiasfactura: number;
-  fechabaja: string;
   contacto_id: string;
   cuenta_domiciliada: string;
   descripcion_cuenta: string;
-  debaja: boolean;
   forma_pago: string;
   divisa: string;
   serie: string;
@@ -67,6 +65,10 @@ export type NuevaDireccion = {
   tipo_via: string;
   ciudad: string;
 };
+
+export type FormBaja = {
+  fecha_baja: string;
+}
 
 export interface CuentaBanco extends Entidad {
   id: string;

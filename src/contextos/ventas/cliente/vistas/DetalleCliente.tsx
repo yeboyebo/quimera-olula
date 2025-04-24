@@ -47,6 +47,12 @@ export const DetalleCliente = ({
     return campoObjetoValorAInput(cliente, campo);
   };
 
+  const onRecargarCliente = async () => {
+    const clienteRecargado = await getCliente(cliente.valor.id);
+    dispatch({ type: "init", payload: { entidad: clienteRecargado } });
+    onEntidadActualizada(clienteRecargado);
+  };
+
   return (
     <Detalle
       id={clienteId}
@@ -73,6 +79,7 @@ export const DetalleCliente = ({
                     cliente={cliente}
                     dispatch={dispatch}
                     onEntidadActualizada={onEntidadActualizada}
+                    recargarCliente={onRecargarCliente}
                   />
                 </div>
               }
