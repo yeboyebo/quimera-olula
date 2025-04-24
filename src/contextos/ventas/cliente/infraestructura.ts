@@ -1,4 +1,3 @@
-import { OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
@@ -92,7 +91,8 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       observaciones: cliente.observaciones,
       copiasfactura: cliente.copiasfactura,
       grupo_id: cliente.grupo_id,
-    }
+      debaja: cliente.debaja,
+    },
   });
 
 export const deleteCliente = async (id: string): Promise<void> =>
@@ -134,13 +134,6 @@ export const actualizarDireccion = async (clienteId: string, direccion: DirClien
 
 export const deleteDireccion = async (clienteId: string, direccionId: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}`);
-
-
-export const obtenerOpcionesSelector =
-  (path: string) => async () =>
-    RestAPI.get<{ datos: [] }>(
-      `/cache/comun/${path}`
-    ).then((respuesta) => respuesta.datos.map(({ descripcion, ...resto }: Record<string, string>) => [Object.values(resto).at(0), descripcion] as OpcionCampo));
 
 
 export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]> =>

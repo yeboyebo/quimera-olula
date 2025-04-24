@@ -1,14 +1,13 @@
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
   Accion,
   entidadModificada,
   EstadoObjetoValor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
-import { opcionesTipoIdFiscal } from "../../../valores/idfiscal.ts";
+import { IdFiscal } from "../../comun/componentes/idfiscal.tsx";
 import { Cliente } from "../diseño.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
 import "./TabGeneral.css";
@@ -50,12 +49,10 @@ export const TabGeneral = ({
           onChange={setCampo("nombre_comercial")}
           {...getProps("nombre_comercial")}
         />
-        <QSelect
-          nombre="tipo_id_fiscal"
-          label="Tipo Id Fiscal"
-          opciones={opcionesTipoIdFiscal}
-          onChange={(o) => setCampo("tipo_id_fiscal")(o?.valor ?? "")}
-          {...getProps("tipo_id_fiscal")}
+        <IdFiscal
+          valor={cliente.valor.tipo_id_fiscal}
+          onChange={(opcion) => setCampo("tipo_id_fiscal")(opcion?.valor ?? "")}
+          getProps={getProps}
         />
         <QInput
           nombre="id_fiscal"
@@ -100,7 +97,7 @@ export const TabGeneral = ({
           {...getProps("fecha_baja")}
         />
       </quimera-formulario>
-      <div className="botones">
+      <div className="botones maestro-botones ">
         <QBoton
           onClick={onGuardarClicked}
           deshabilitado={!puedoGuardarObjetoValor(cliente)}

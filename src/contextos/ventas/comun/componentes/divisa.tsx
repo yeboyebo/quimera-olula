@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
-import { obtenerOpcionesSelector } from "../../presupuesto/infraestructura.ts";
+import { obtenerOpcionesSelector } from "../../../comun/infraestructura.ts";
 
 interface DivisasProps {
   valor: string;

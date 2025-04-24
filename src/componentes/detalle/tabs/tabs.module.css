@@ -15,7 +15,11 @@
             cursor: pointer;
             padding: 14px 16px;
             transition: 0.3s;
-            color: black
+            color: black;
+        }
+
+        button.active {
+            color: var(--color-primario) !important;
         }
     }
 }

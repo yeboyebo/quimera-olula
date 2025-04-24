@@ -7,7 +7,8 @@ import {
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
 import { Agentes } from "../../comun/componentes/agente.tsx";
-import { Divisas } from "../../comun/componentes/Divisas.tsx";
+import { Divisas } from "../../comun/componentes/divisa.tsx";
+import { FormaPago } from "../../comun/componentes/formapago.tsx";
 import { Cliente } from "../diseño.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
 import "./TabComercial.css";
@@ -60,11 +61,11 @@ export const TabComercial = ({
           onChange={setCampo("serie_id")}
           {...getProps("serie_id")}
         />
-        <QInput
-          nombre="forma_pago_id"
-          label="Forma de Pago"
-          onChange={setCampo("forma_pago_id")}
-          {...getProps("forma_pago_id")}
+        <FormaPago
+          forma_pago_id={cliente.valor.forma_pago_id}
+          forma_pago={cliente.valor.forma_pago}
+          onChange={(opcion) => setCampo("forma_pago_id")(opcion?.valor)}
+          getProps={getProps}
         />
         <QInput
           nombre="grupo_iva_negocio_id"

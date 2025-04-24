@@ -19,6 +19,11 @@ const metaTablaCliente = [
     render: (entidad: Entidad) =>
       `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}`,
   },
+  { id: "telefono1", cabecera: "Teléfono" },
+  { id: "email", cabecera: "Email" },
+  { id: "nombre_agente", cabecera: "Nombre del Agente" },
+  { id: "forma_pago", cabecera: "Forma de Pago" },
+  { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
 ];
 
 export const MaestroConDetalleCliente = () => {
