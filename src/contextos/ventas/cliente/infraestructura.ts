@@ -1,4 +1,3 @@
-import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
@@ -71,11 +70,6 @@ export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente
   return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentas + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
 }
 
-export const patchClienteOld: PatchCliente = async (id, cambios) => {
-  const payload = { cambios };
-  await RestAPI.patch(`${baseUrlVentas}/${id}`, payload);
-};
-
 export const patchCliente: PatchCliente = async (id, cliente) =>
   await RestAPI.patch(`${baseUrlVentas}/${id}`, {
     cambios: {
@@ -97,7 +91,8 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       observaciones: cliente.observaciones,
       copiasfactura: cliente.copiasfactura,
       grupo_id: cliente.grupo_id,
-    }
+      debaja: cliente.debaja,
+    },
   });
 
 export const deleteCliente = async (id: string): Promise<void> =>
@@ -106,9 +101,6 @@ export const deleteCliente = async (id: string): Promise<void> =>
 export const postCliente: PostCliente = async (cliente) => {
   return await RestAPI.post(baseUrlVentas, cliente).then((respuesta) => respuesta.id);
 }
-
-export const desmarcarCuentaDomiciliacion = async (clienteId: string): Promise<void> =>
-  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/desmarcar_domiciliada`, {});
 
 export const getDireccion = async (clienteId: string, direccionId: string): Promise<DirCliente> =>
   await RestAPI.get<{ datos: DirClienteAPI }>(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}`).then((respuesta) =>
@@ -144,27 +136,6 @@ export const deleteDireccion = async (clienteId: string, direccionId: string): P
   await RestAPI.delete(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}`);
 
 
-export const obtenerOpcionesSelector =
-  (path: string) => async () =>
-    RestAPI.get<{ datos: [] }>(
-      `/cache/comun/${path}`
-    ).then((respuesta) => respuesta.datos.map(({ descripcion, ...resto }: Record<string, string>) => [Object.values(resto).at(0), descripcion] as OpcionCampo));
-
-export const camposDireccion: Record<string, CampoFormularioGenerico> = {
-  id: { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
-  nombre_via: { nombre: "nombre_via", etiqueta: "Nombre de la Vía", tipo: "text", xtipo: "no controlado" },
-  tipo_via: { nombre: "tipo_via", etiqueta: "Tipo de Vía", tipo: "text" },
-  numero: { nombre: "numero", etiqueta: "Número", tipo: "text" },
-  otros: { nombre: "otros", etiqueta: "Otros", tipo: "text" },
-  cod_postal: { nombre: "cod_postal", etiqueta: "Código Postal", tipo: "text" },
-  ciudad: { nombre: "ciudad", etiqueta: "Ciudad", tipo: "text" },
-  provincia_id: { nombre: "provincia_id", etiqueta: "ID de Provincia", tipo: "number" },
-  provincia: { nombre: "provincia", etiqueta: "Provincia", tipo: "text" },
-  pais_id: { nombre: "pais_id", etiqueta: "ID de País", tipo: "text" },
-  apartado: { nombre: "apartado", etiqueta: "Apartado", tipo: "text" },
-  telefono: { nombre: "telefono", etiqueta: "Teléfono", tipo: "text" },
-}
-
 export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]> =>
   await RestAPI.get<{ datos: CuentaBancoAPI[] }>(`${baseUrlVentas}/${clienteId}/cuenta_banco`).then((respuesta) =>
     respuesta.datos.map(cuentaBancoFromAPI)
@@ -194,6 +165,16 @@ export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): 
 
 export const deleteCuentaBanco = async (clienteId: string, cuentaId: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlVentas}/${clienteId}/cuenta_banco/${cuentaId}`);
+
+export const desmarcarCuentaDomiciliacion = async (clienteId: string): Promise<void> =>
+  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_domiciliacion`, { "cuenta_id": null });
+
+export const domiciliarCuenta = async (clienteId: string, cuentaId: string): Promise<void> => {
+  const payload = {
+    cuenta_id: cuentaId,
+  };
+  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_domiciliacion`, payload);
+};
 
 export type CuentaBancoAPI = {
   id: string;

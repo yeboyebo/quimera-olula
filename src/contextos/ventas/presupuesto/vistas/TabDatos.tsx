@@ -6,7 +6,7 @@ import {
   EstadoObjetoValor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
-import { Divisas } from "../../comun/componentes/Divisas.tsx";
+import { Divisas } from "../../comun/componentes/divisa.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
 

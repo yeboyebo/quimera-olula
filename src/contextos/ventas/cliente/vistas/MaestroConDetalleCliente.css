@@ -23,6 +23,7 @@
 
 .maestro-botones {
     display: flex;
+    margin-top: 1rem;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }

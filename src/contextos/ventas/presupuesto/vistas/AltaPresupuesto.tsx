@@ -1,15 +1,14 @@
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
   campoObjetoValorAInput,
   initEstadoObjetoValor,
   makeReductor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
-import { getDirecciones } from "../../cliente/infraestructura.ts";
 import { Clientes } from "../../comun/componentes/cliente.tsx";
+import { Direcciones } from "../../comun/componentes/dirCliente.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
@@ -25,10 +24,6 @@ export const AltaPresupuesto = ({
     makeReductor(metaNuevoPresupuesto),
     initEstadoObjetoValor(presupuestoNuevoVacio(), metaNuevoPresupuesto)
   );
-
-  const [opcionesDireccion, setOpcionesDireccion] = useState<
-    { valor: string; descripcion: string }[]
-  >([]);
 
   const setCampo = (campo: string) => (valor: string) => {
     dispatch({
@@ -55,13 +50,6 @@ export const AltaPresupuesto = ({
   ) => {
     if (!clienteId) return;
     setCampo("cliente_id")(clienteId.valor);
-
-    const direcciones = await getDirecciones(clienteId.valor);
-    const opciones = direcciones.map((direccion) => ({
-      valor: direccion.id,
-      descripcion: `${direccion.tipo_via} ${direccion.nombre_via}, ${direccion.ciudad}`,
-    }));
-    setOpcionesDireccion(opciones);
   };
 
   return (
@@ -72,11 +60,12 @@ export const AltaPresupuesto = ({
           cliente_id={estado.valor.cliente_id}
           onClienteChanged={onClienteChanged}
         />
-        <QSelect
-          label="Dirección"
-          opciones={opcionesDireccion}
-          onChange={(opcion) => setCampo("direccion_id")(opcion?.valor || "")}
-          {...getProps("direccion_id")}
+        <Direcciones
+          clienteId={estado.valor.cliente_id}
+          direccion_id={estado.valor.direccion_id}
+          onDireccionChanged={(opcion) =>
+            setCampo("direccion_id")(opcion?.valor || "")
+          }
         />
         <QInput
           label="Empresa"

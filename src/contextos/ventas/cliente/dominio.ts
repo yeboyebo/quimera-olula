@@ -37,6 +37,13 @@ export const clienteVacio = (): Cliente => ({
     fechabaja: '',
     contacto_id: '',
     cuenta_domiciliada: '',
+    descripcion_cuenta: '',
+    debaja: false,
+    forma_pago: '',
+    divisa: '',
+    grupo_iva_negocio: '',
+    serie: '',
+    grupo: '',
 })
 
 export const nuevoClienteVacio: NuevoCliente = {

@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { Cliente } from "../diseño.ts";
@@ -17,6 +19,11 @@ const metaTablaCliente = [
     render: (entidad: Entidad) =>
       `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}`,
   },
+  { id: "telefono1", cabecera: "Teléfono" },
+  { id: "email", cabecera: "Email" },
+  { id: "nombre_agente", cabecera: "Nombre del Agente" },
+  { id: "forma_pago", cabecera: "Forma de Pago" },
+  { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
 ];
 
 export const MaestroConDetalleCliente = () => {
@@ -58,10 +65,10 @@ export const MaestroConDetalleCliente = () => {
       <section className={clasesMaestro}>
         <h2>Clientes</h2>
         <div className="maestro-botones">
-          <button onClick={onCrearCliente}>Nuevo</button>
-          <button disabled={!seleccionada} onClick={onBorrarCliente}>
+          <QBoton onClick={onCrearCliente}>Nuevo</QBoton>
+          <QBoton deshabilitado={!seleccionada} onClick={onBorrarCliente}>
             Borrar
-          </button>
+          </QBoton>
         </div>
         <Listado
           metaTabla={metaTablaCliente}
@@ -80,19 +87,12 @@ export const MaestroConDetalleCliente = () => {
         />
       </section>
 
-      {mostrarModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={onCancelar}>
-              &times;
-            </span>
-            <AltaCliente
-              onClienteCreado={onClienteCreado}
-              onCancelar={onCancelar}
-            />
-          </div>
-        </div>
-      )}
+      <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
+        <AltaCliente
+          onClienteCreado={onClienteCreado}
+          onCancelar={onCancelar}
+        />
+      </QModal>
     </section>
   );
 };

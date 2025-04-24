@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { CrmContacto } from "../diseño.ts";
 import {
   deleteCrmContacto,
@@ -62,8 +63,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
   return (
     <>
       <>
-        <h2>Contactos CRM</h2>
-        <div className="acciones">
+        <div className="acciones maestro-botones">
           <QBoton onClick={() => setModo("alta")}>Nuevo</QBoton>
           <QBoton
             onClick={() => seleccionada && setModo("edicion")}
@@ -86,36 +86,32 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         />
       </>
 
-      {modo === "alta" && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={onCancelar}>
-              &times;
-            </span>
-            <AltaCrmContactos
-              clienteId={clienteId}
-              onContactoCreado={onGuardarNuevoContacto}
-              onCancelar={onCancelar}
-            />
-          </div>
-        </div>
-      )}
+      <QModal
+        nombre="altaCrmContacto"
+        abierto={modo === "alta"}
+        onCerrar={onCancelar}
+      >
+        <AltaCrmContactos
+          clienteId={clienteId}
+          onContactoCreado={onGuardarNuevoContacto}
+          onCancelar={onCancelar}
+        />
+      </QModal>
 
-      {modo === "edicion" && seleccionada && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={onCancelar}>
-              &times;
-            </span>
-            <EdicionCrmContactos
-              clienteId={clienteId}
-              contacto={seleccionada}
-              onContactoActualizado={onGuardarEdicionContacto}
-              onCancelar={onCancelar}
-            />
-          </div>
-        </div>
-      )}
+      <QModal
+        nombre="edicionCrmContacto"
+        abierto={modo === "edicion"}
+        onCerrar={onCancelar}
+      >
+        {seleccionada && (
+          <EdicionCrmContactos
+            clienteId={clienteId}
+            contacto={seleccionada}
+            onContactoActualizado={onGuardarEdicionContacto}
+            onCancelar={onCancelar}
+          />
+        )}
+      </QModal>
     </>
   );
 };

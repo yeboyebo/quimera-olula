@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import {
   boolAString,
@@ -83,27 +84,27 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <button onClick={onCrearDireccion}> Nueva</button>
-      <button
-        onClick={() => seleccionada && onEditarDireccion(seleccionada)}
-        disabled={!seleccionada}
-      >
-        {" "}
-        Editar
-      </button>
-      <button disabled={!seleccionada} onClick={onBorrarDireccion}>
-        {" "}
-        Borrar
-      </button>
-      <button
-        onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
-        disabled={
-          !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
-        }
-      >
-        {" "}
-        Facturación
-      </button>
+      <div className="acciones maestro-botones">
+        <QBoton onClick={onCrearDireccion}>Nueva</QBoton>
+        <QBoton
+          onClick={() => seleccionada && onEditarDireccion(seleccionada)}
+          deshabilitado={!seleccionada}
+        >
+          Editar
+        </QBoton>
+        <QBoton deshabilitado={!seleccionada} onClick={onBorrarDireccion}>
+          Borrar
+        </QBoton>
+        <div className="maestro-botones"></div>
+        <QBoton
+          onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
+          deshabilitado={
+            !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
+          }
+        >
+          Facturación
+        </QBoton>
+      </div>
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}

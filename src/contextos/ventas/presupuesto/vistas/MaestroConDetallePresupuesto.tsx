@@ -6,6 +6,7 @@ import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
 import "./MaestroConDetallePresupuesto.css";
 
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { AltaPresupuesto } from "./AltaPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
@@ -62,7 +63,7 @@ export const MaestroConDetallePresupuesto = () => {
           setSeleccionada={setSeleccionada}
           cargar={getPresupuestos}
         />
-        <button onClick={onCrearPresupuesto}>Crear Presupuesto</button>
+        <QBoton onClick={onCrearPresupuesto}>Crear Presupuesto</QBoton>
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <DetallePresupuesto

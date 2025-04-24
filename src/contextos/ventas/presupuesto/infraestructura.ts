@@ -1,4 +1,3 @@
-import { CampoFormularioGenerico, OpcionCampo } from "../../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
@@ -51,13 +50,6 @@ export const patchCambiarCliente = async (id: string, clienteId: string, dirClie
     }
   });
 }
-export const obtenerOpcionesSelector =
-  (path: string) => async () =>
-    RestAPI.get<{ datos: [] }>(
-      `/cache/comun/${path}`
-    ).then((respuesta) => respuesta.datos.map(({ descripcion, ...resto }: Record<string, string>) => [Object.values(resto).at(0), descripcion] as OpcionCampo));
-
-const opcionesDivisa = await obtenerOpcionesSelector("divisa")();
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
   await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) => {
@@ -122,27 +114,5 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
   };
 
   await RestAPI.patch(`${baseUrl}/${id}`, payload);
-};
-
-export const camposPresupuesto: Record<string, CampoFormularioGenerico> = {
-  "id": { nombre: "id", etiqueta: "Código", tipo: "text", oculto: true },
-  "codigo": { nombre: "codigo", etiqueta: "Código", tipo: "text" },
-  "fecha": { nombre: "fecha", etiqueta: "Fecha", tipo: "date" },
-  "cliente_id": { nombre: "cliente_id", etiqueta: "ID Cliente", tipo: "text" },
-  "nombre_cliente": { nombre: "nombre_cliente", etiqueta: "Nombre Cliente", tipo: "text" },
-  "id_fiscal": { nombre: "id_fiscal", etiqueta: "ID Fiscal", tipo: "text" },
-  "direccion_id": { nombre: "direccion_id", etiqueta: "ID Dirección", tipo: "text" },
-  "agente_id": { nombre: "agente_id", etiqueta: "ID Agente", tipo: "text" },
-  "divisa_id": { nombre: "divisa_id", etiqueta: "Divisa", tipo: "text", opciones: opcionesDivisa },
-  "empresa_id": { nombre: "empresa_id", etiqueta: "ID Empresa", tipo: "text" },
-};
-
-export const camposLinea: Record<string, CampoFormularioGenerico> = {
-  "id": { nombre: "id", etiqueta: "ID", tipo: "text", oculto: true },
-  "referencia": { nombre: "referencia", etiqueta: "Referencia", tipo: "text" },
-  "descripcion": { nombre: "descripcion", etiqueta: "Descripción", tipo: "text" },
-  "cantidad": { nombre: "cantidad", etiqueta: "Cantidad", tipo: "number" },
-  "pvp_unitario": { nombre: "pvp_unitario", etiqueta: "PVP Unitario", tipo: "number" },
-  "pvp_total": { nombre: "pvp_total", etiqueta: "PVP Total", tipo: "number" },
 };
 

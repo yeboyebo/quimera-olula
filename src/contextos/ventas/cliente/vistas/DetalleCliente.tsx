@@ -61,7 +61,6 @@ export const DetalleCliente = ({
     >
       {!!clienteId && (
         <Tabs
-          className="detalle-cliente-tabs"
           children={[
             <Tab
               key="tab-1"
@@ -108,6 +107,7 @@ export const DetalleCliente = ({
               children={
                 <TabCuentasBanco
                   cliente={cliente}
+                  setCampo={setCampo}
                   dispatch={dispatch}
                   onEntidadActualizada={onEntidadActualizada}
                 />
@@ -119,42 +119,6 @@ export const DetalleCliente = ({
               children={
                 <div className="detalle-cliente-tab-contenido">
                   <TabCrmContactos clienteId={clienteId} />
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-5"
-              label="Descuentos"
-              children={
-                <div className="detalle-cliente-tab-contenido">
-                  Descuentos contenido
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-6"
-              label="Documentos"
-              children={
-                <div className="detalle-cliente-tab-contenido">
-                  Documentos contenido
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-7"
-              label="Contabilidad"
-              children={
-                <div className="detalle-cliente-tab-contenido">
-                  Contabilidad contenido
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-8"
-              label="Factura-e"
-              children={
-                <div className="detalle-cliente-tab-contenido">
-                  Factura-e contenido
                 </div>
               }
             />,

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { DirCliente } from "../diseño.ts";
 import { AltaDireccion } from "./AltaDireccion.tsx";
@@ -35,35 +36,31 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         seleccionada={seleccionada}
         setSeleccionada={setSeleccionada}
       />
-      {modo === "edicion" && seleccionada && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setModo("lista")}>
-              &times;
-            </span>
-            <EdicionDireccion
-              clienteId={clienteId}
-              direccion={seleccionada}
-              onDireccionActualizada={actualizarDireccion}
-              onCancelar={() => setModo("lista")}
-            />
-          </div>
-        </div>
-      )}
-      {modo === "alta" && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setModo("lista")}>
-              &times;
-            </span>
-            <AltaDireccion
-              clienteId={clienteId}
-              onDireccionCreada={añadirDireccion}
-              onCancelar={() => setModo("lista")}
-            />
-          </div>
-        </div>
-      )}
+      <QModal
+        nombre="edicionDireccion"
+        abierto={modo === "edicion"}
+        onCerrar={() => setModo("lista")}
+      >
+        {seleccionada && (
+          <EdicionDireccion
+            clienteId={clienteId}
+            direccion={seleccionada}
+            onDireccionActualizada={actualizarDireccion}
+            onCancelar={() => setModo("lista")}
+          />
+        )}
+      </QModal>
+      <QModal
+        nombre="altaDireccion"
+        abierto={modo === "alta"}
+        onCerrar={() => setModo("lista")}
+      >
+        <AltaDireccion
+          clienteId={clienteId}
+          onDireccionCreada={añadirDireccion}
+          onCancelar={() => setModo("lista")}
+        />
+      </QModal>
     </>
   );
 };

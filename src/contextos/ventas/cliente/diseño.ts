@@ -24,6 +24,12 @@ export interface Cliente extends Entidad {
   fechabaja: string;
   contacto_id: string;
   cuenta_domiciliada: string;
+  descripcion_cuenta: string;
+  debaja: boolean;
+  forma_pago: string;
+  divisa: string;
+  serie: string;
+  grupo: string;
 };
 
 export interface IdFiscal {

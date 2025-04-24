@@ -1,3 +1,5 @@
+import { OpcionCampo } from "../../componentes/detalle/FormularioGenerico.tsx";
+import { RestAPI } from "./api/rest_api.ts";
 import { Filtro, Orden, ValorFiltro } from "./diseño.ts";
 
 export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
@@ -30,3 +32,9 @@ const transformarValorFiltro = (valor: ValorFiltro): string => {
     }
     return valor;
 }
+
+export const obtenerOpcionesSelector =
+    (path: string) => async () =>
+        RestAPI.get<{ datos: [] }>(
+            `/cache/comun/${path}`
+        ).then((respuesta) => respuesta.datos.map(({ descripcion, ...resto }: Record<string, string>) => [Object.values(resto).at(0), descripcion] as OpcionCampo));
