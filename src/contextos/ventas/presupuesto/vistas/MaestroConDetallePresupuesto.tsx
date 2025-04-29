@@ -4,7 +4,6 @@ import { Entidad } from "../../../comun/diseño.ts";
 import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
-import "./MaestroConDetallePresupuesto.css";
 
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
