@@ -4,22 +4,24 @@ import { getClientes } from "../../cliente/infraestructura.ts";
 
 interface ClienteProps {
   descripcion?: string;
-  cliente_id: string;
+  valor: string;
+  nombre?: string;
   onClienteChanged: (
     opcion: { valor: string; descripcion: string } | null
   ) => void;
 }
 
-export const Clientes = ({
+export const Cliente = ({
   descripcion = "",
-  cliente_id,
+  valor,
+  nombre = "cliente_id",
   onClienteChanged,
 }: ClienteProps) => {
-  const obtenerOpcionesCliente = async (valor: string) => {
+  const obtenerOpcionesCliente = async (texto: string) => {
     const criteria = {
       filtro: {
         nombre: {
-          LIKE: valor,
+          LIKE: texto,
         },
       },
       orden: { id: "DESC" },
@@ -39,9 +41,9 @@ export const Clientes = ({
   return (
     <QAutocompletar
       label="Cliente"
-      nombre="cliente_id"
+      nombre={nombre}
       onChange={onClienteChanged}
-      valor={cliente_id}
+      valor={valor}
       obtenerOpciones={obtenerOpcionesCliente}
       descripcion={descripcion}
     />

@@ -86,18 +86,18 @@ export const QAutocompletar = ({
   };
 
   const manejarBlur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
-    const opcion = opciones.find((opcion) => opcion.descripcion === valor);
+    // const opcion = opciones.find((opcion) => opcion.descripcion === valor);
 
-    if (opcion) {
-      onBlur?.(opcion, e);
-      return;
-    }
+    // if (opcion) {
+    //   onBlur?.(opcion, e);
+    //   return;
+    // }
 
-    const objetivo = e.target as HTMLInputElement;
-    objetivo.value = "";
+    // const objetivo = e.target as HTMLInputElement;
+    // objetivo.value = "";
 
-    valorReal.current!.value = "";
-    onBlur?.(null, e);
+    // valorReal.current!.value = "";
+    // onBlur?.(null, e);
   };
 
   return (

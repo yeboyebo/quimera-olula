@@ -44,7 +44,7 @@ export const patchCambiarCliente = async (id: string, clienteId: string, dirClie
   await RestAPI.patch(`${baseUrl}/${id}`, {
     cambios: {
       cliente: {
-        id: clienteId,
+        cliente_id: clienteId,
         direccion_id: dirClienteId
       }
     }

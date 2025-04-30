@@ -6,7 +6,7 @@ import {
   EstadoObjetoValor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
-import { Agentes } from "../../comun/componentes/agente.tsx";
+import { Agente } from "../../comun/componentes/agente.tsx";
 import { Divisas } from "../../comun/componentes/divisa.tsx";
 import { FormaPago } from "../../comun/componentes/formapago.tsx";
 import { Cliente } from "../diseño.ts";
@@ -46,9 +46,9 @@ export const TabComercial = ({
   return (
     <>
       <quimera-formulario>
-        <Agentes
-          agente_id={cliente.valor.agente_id ?? ""}
-          onAgenteChanged={onAgenteChange}
+        <Agente
+          valor={cliente.valor.agente_id ?? ""}
+          onChange={onAgenteChange}
         />
         <Divisas
           valor={cliente.valor.divisa_id}

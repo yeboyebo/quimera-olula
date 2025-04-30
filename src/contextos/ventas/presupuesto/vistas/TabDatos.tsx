@@ -1,14 +1,15 @@
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import {
   Accion,
   entidadModificada,
   EstadoObjetoValor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
+import { Agente } from "../../comun/componentes/agente.tsx";
 import { Divisas } from "../../comun/componentes/divisa.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
+import "./TabDatos.css";
 
 interface TabDatosProps {
   getProps: (campo: string) => Record<string, unknown>;
@@ -40,14 +41,13 @@ export const TabDatos = ({
           onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
           getProps={getProps}
         />
-        <QInput
-          label="Agente"
-          nombre="agente_id"
+        <Agente
+          valor={presupuesto.valor.agente_id ?? ""}
+          descripcion={presupuesto.valor.nombre_agente}
           onChange={setCampo("agente_id")}
-          {...getProps("agente_id")}
         />
       </quimera-formulario>
-      <div className="botones">
+      <div className="botones maestro-botones ">
         <QBoton
           onClick={onGuardarClicked}
           deshabilitado={!puedoGuardarObjetoValor(presupuesto)}

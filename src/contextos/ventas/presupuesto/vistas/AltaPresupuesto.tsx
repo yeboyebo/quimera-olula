@@ -7,7 +7,7 @@ import {
   makeReductor,
   puedoGuardarObjetoValor,
 } from "../../../comun/dominio.ts";
-import { Clientes } from "../../comun/componentes/cliente.tsx";
+import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { Direcciones } from "../../comun/componentes/dirCliente.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
@@ -56,8 +56,8 @@ export const AltaPresupuesto = ({
     <>
       <h2>Nuevo Presupuesto</h2>
       <quimera-formulario>
-        <Clientes
-          cliente_id={estado.valor.cliente_id}
+        <Cliente
+          valor={estado.valor.cliente_id}
           onClienteChanged={onClienteChanged}
         />
         <Direcciones

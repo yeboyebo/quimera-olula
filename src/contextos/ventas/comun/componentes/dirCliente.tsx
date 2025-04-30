@@ -21,7 +21,9 @@ export const Direcciones = ({
 
   useEffect(() => {
     const fetchDirecciones = async () => {
+      console.log("direcciones", clienteId);
       if (!clienteId) {
+        console.log("direcciones vacias");
         setOpcionesDireccion([]);
         return;
       }

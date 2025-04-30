@@ -25,6 +25,12 @@ export type NuevoPresupuesto = {
   empresa_id: string;
 };
 
+export type CambioCliente = {
+  cliente_id: string;
+  nombre_cliente: string;
+  direccion_id: string;
+};
+
 export interface LineaPresupuesto extends Entidad {
   id: string;
   referencia: string;

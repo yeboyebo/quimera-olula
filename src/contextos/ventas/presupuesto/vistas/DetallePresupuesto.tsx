@@ -32,7 +32,11 @@ export const DetallePresupuesto = ({
     initEstadoPresupuestoVacio()
   );
 
-  const setCampo = (campo: string) => (valor: unknown) => {
+  const setCampo = (campo: string) => (_valor: unknown) => {
+    
+    const valor = (typeof _valor === "object" && _valor && 'valor' in _valor) ? _valor.valor : _valor;
+
+
     dispatch({
       type: "set_campo",
       payload: { campo, valor: valor as string },
