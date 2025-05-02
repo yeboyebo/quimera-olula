@@ -18,6 +18,7 @@ export const QInput = ({
   valido,
   opcional,
   condensado,
+  tipo,
   ...props
 }: QInputProps) => {
   const attrs = {
@@ -28,12 +29,14 @@ export const QInput = ({
     opcional,
     condensado,
     deshabilitado,
+    tipo,
   };
 
   const inputAttrs = {
     nombre,
     deshabilitado,
     opcional,
+    tipo,
     ...props,
   };
 
