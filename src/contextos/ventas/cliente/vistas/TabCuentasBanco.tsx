@@ -3,17 +3,17 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import {
-  Accion,
-  EstadoObjetoValor,
-  quitarEntidadDeLista,
-  refrescarSeleccionada,
+    Accion,
+    EstadoModelo,
+    quitarEntidadDeLista,
+    refrescarSeleccionada,
 } from "../../../comun/dominio.ts";
 import { Cliente, CuentaBanco } from "../diseño.ts";
 import {
-  deleteCuentaBanco,
-  desmarcarCuentaDomiciliacion,
-  domiciliarCuenta,
-  getCuentasBanco,
+    deleteCuentaBanco,
+    desmarcarCuentaDomiciliacion,
+    domiciliarCuenta,
+    getCuentasBanco,
 } from "../infraestructura.ts";
 import { AltaCuentaBanco } from "./AltaCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
@@ -25,7 +25,7 @@ const metaTablaCuentasBanco = [
 ];
 
 interface TabCuentasBancoProps {
-  cliente: EstadoObjetoValor<Cliente>;
+  cliente: EstadoModelo<Cliente>;
   dispatch: (action: Accion<Cliente>) => void;
   setCampo: (campo: string) => (valor: unknown) => void;
   onEntidadActualizada: (entidad: Cliente) => void;
@@ -63,14 +63,14 @@ export const TabCuentasBanco = ({
   };
 
   const onGuardarNuevaCuenta = async () => {
-    // if (!puedoGuardarObjetoValor(estado)) return;
+    // if (!modeloEsValido(estado)) return;
 
     // await postCuentaBanco(cliente.valor.id, estado.valor);
     setModo("lista");
   };
 
   const onGuardarEdicionCuenta = async () => {
-    // if (!puedoGuardarObjetoValor(estado)) return;
+    // if (!modeloEsValido(estado)) return;
 
     // await patchCuentaBanco(cliente.valor.id, estado.valor);
     setModo("lista");

@@ -1,11 +1,11 @@
 import { Direccion } from "../../comun/diseño.ts";
 import {
-    initEstadoObjetoValor,
+    initEstadoModelo,
     makeValidador,
-    MetaObjetoValor,
+    MetaModelo,
     stringNoVacio
 } from "../../comun/dominio.ts";
-import { CambioCliente, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
 
 
 export const direccionVacia = (): Direccion => ({
@@ -34,11 +34,17 @@ export const presupuestoVacio = (): Presupuesto => ({
     agente_id: '',
     nombre_agente: '',
     divisa_id: '',
+    tasa_conversion: 1,
     aprobado: false,
     total: 0,
+    total_divisa_empresa: 0,
     neto: 0,
     total_iva: 0,
     total_irpf: 0,
+    forma_pago_id: '',
+    nombre_forma_pago: '',
+    grupo_iva_negocio_id: '',
+    observaciones: '',
 })
 
 export const presupuestoNuevoVacio = (): NuevoPresupuesto => ({
@@ -48,9 +54,14 @@ export const presupuestoNuevoVacio = (): NuevoPresupuesto => ({
 });
 
 export const cambioClienteVacio = (): CambioCliente => ({
-    cliente_id: "1",
-    nombre_cliente: "Juan",
+    cliente_id: "",
+    nombre_cliente: "",
     direccion_id: "",
+});
+
+export const nuevaLineaVacia = (): NuevaLinea => ({
+    referencia: "",
+    cantidad: 1,
 });
 
 export const validadoresPresupuesto = {
@@ -59,26 +70,48 @@ export const validadoresPresupuesto = {
     empresa_id: (valor: string) => stringNoVacio(valor),
 };
 
-export const metaNuevoPresupuesto: MetaObjetoValor<NuevoPresupuesto> = {
+export const metaNuevoPresupuesto: MetaModelo<NuevoPresupuesto> = {
     bloqueados: [],
     requeridos: ["cliente_id", "direccion_id", "empresa_id"],
     validador: makeValidador({}),
 };
 
-export const metaCambioCliente: MetaObjetoValor<CambioCliente> = {
+export const metaCambioCliente: MetaModelo<CambioCliente> = {
     bloqueados: [],
     requeridos: ["cliente_id", "direccion_id"],
     validador: makeValidador({}),
 };
 
-export const metaPresupuesto: MetaObjetoValor<Presupuesto> = {
-    bloqueados: ["codigo", "id_fiscal"],
+export const metaPresupuesto: MetaModelo<Presupuesto> = {
+    bloqueados: ["codigo", "id_fiscal", "cliente_id", 'total_divisa_empresa'],
     requeridos: ["cliente_id", "id_fiscal", "divisa_id"],
     validador: makeValidador({}),
+    campos: {
+        tasa_conversion: { tipo: "number", requerido: true },
+        total_divisa_empresa: { tipo: "number" },
+    }
+};
+
+export const metaLinea: MetaModelo<LineaPresupuesto> = {
+    bloqueados: [],
+    requeridos: ["referencia", "cantidad"],
+    validador: makeValidador({}),
+    campos: {
+        cantidad: { tipo: "number", requerido: true },
+    }
+};
+
+export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
+    bloqueados: [],
+    requeridos: ["referencia", "cantidad"],
+    validador: makeValidador({}),
+    campos: {
+        cantidad: { tipo: "number", requerido: true },
+    }
 };
 
 export const initEstadoPresupuestoVacio = () => {
-    return initEstadoObjetoValor(presupuestoVacio(), metaPresupuesto);
+    return initEstadoModelo(presupuestoVacio(), metaPresupuesto);
 };
 
 

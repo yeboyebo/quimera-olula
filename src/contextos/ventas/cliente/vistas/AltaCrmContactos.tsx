@@ -2,10 +2,10 @@ import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import {
-  campoObjetoValorAInput,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
+    campoModeloAInput,
+    initEstadoModelo,
+    makeReductor,
+    modeloEsValido,
 } from "../../../comun/dominio.ts";
 import { CrmContacto } from "../diseño.ts";
 import { metaNuevoCrmContacto, nuevoCrmContactoVacio } from "../dominio.ts";
@@ -24,7 +24,7 @@ export const AltaCrmContactos = ({
 }: AltaCrmContactosProps) => {
   const [estado, dispatch] = useReducer(
     makeReductor(metaNuevoCrmContacto),
-    initEstadoObjetoValor(nuevoCrmContactoVacio, metaNuevoCrmContacto)
+    initEstadoModelo(nuevoCrmContactoVacio, metaNuevoCrmContacto)
   );
 
   const setCampo = (campo: string) => (valor: string) => {
@@ -35,7 +35,7 @@ export const AltaCrmContactos = ({
   };
 
   const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
+    return campoModeloAInput(estado, campo);
   };
 
   const guardar = async () => {
@@ -61,7 +61,7 @@ export const AltaCrmContactos = ({
       <div className="botones">
         <QBoton
           onClick={guardar}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
+          deshabilitado={!modeloEsValido(estado)}
         >
           Guardar
         </QBoton>

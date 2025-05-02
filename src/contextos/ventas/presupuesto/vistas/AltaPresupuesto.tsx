@@ -2,13 +2,13 @@ import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import {
-  campoObjetoValorAInput,
-  initEstadoObjetoValor,
+  campoModeloAInput,
+  initEstadoModelo,
   makeReductor,
-  puedoGuardarObjetoValor,
+  modeloEsValido,
 } from "../../../comun/dominio.ts";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
-import { Direcciones } from "../../comun/componentes/dirCliente.tsx";
+import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
@@ -22,7 +22,7 @@ export const AltaPresupuesto = ({
 }) => {
   const [estado, dispatch] = useReducer(
     makeReductor(metaNuevoPresupuesto),
-    initEstadoObjetoValor(presupuestoNuevoVacio(), metaNuevoPresupuesto)
+    initEstadoModelo(presupuestoNuevoVacio(), metaNuevoPresupuesto)
   );
 
   const setCampo = (campo: string) => (valor: string) => {
@@ -33,7 +33,7 @@ export const AltaPresupuesto = ({
   };
 
   const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
+    return campoModeloAInput(estado, campo);
   };
 
   const guardar = async () => {
@@ -58,12 +58,12 @@ export const AltaPresupuesto = ({
       <quimera-formulario>
         <Cliente
           valor={estado.valor.cliente_id}
-          onClienteChanged={onClienteChanged}
+          onChange={onClienteChanged}
         />
-        <Direcciones
+        <DirCliente
           clienteId={estado.valor.cliente_id}
-          direccion_id={estado.valor.direccion_id}
-          onDireccionChanged={(opcion) =>
+          valor={estado.valor.direccion_id}
+          onChange={(opcion) =>
             setCampo("direccion_id")(opcion?.valor || "")
           }
         />
@@ -76,7 +76,7 @@ export const AltaPresupuesto = ({
       <div className="botones">
         <QBoton
           onClick={guardar}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
+          deshabilitado={!modeloEsValido(estado)}
         >
           Guardar
         </QBoton>

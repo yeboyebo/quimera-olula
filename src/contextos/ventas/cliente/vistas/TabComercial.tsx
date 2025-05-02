@@ -2,12 +2,12 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import {
   Accion,
-  entidadModificada,
-  EstadoObjetoValor,
-  puedoGuardarObjetoValor,
+  EstadoModelo,
+  modeloEsValido,
+  modeloModificado,
 } from "../../../comun/dominio.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
-import { Divisas } from "../../comun/componentes/divisa.tsx";
+import { Divisa } from "../../comun/componentes/divisa.tsx";
 import { FormaPago } from "../../comun/componentes/formapago.tsx";
 import { Cliente } from "../diseño.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
@@ -16,7 +16,7 @@ import "./TabComercial.css";
 interface TabComercialProps {
   getProps: (campo: string) => Record<string, unknown>;
   setCampo: (campo: string) => (valor: unknown) => void;
-  cliente: EstadoObjetoValor<Cliente>;
+  cliente: EstadoModelo<Cliente>;
   dispatch: (action: Accion<Cliente>) => void;
   onEntidadActualizada: (entidad: Cliente) => void;
 }
@@ -49,8 +49,9 @@ export const TabComercial = ({
         <Agente
           valor={cliente.valor.agente_id ?? ""}
           onChange={onAgenteChange}
+          {...getProps("agente_id")}
         />
-        <Divisas
+        <Divisa
           valor={cliente.valor.divisa_id}
           onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
           getProps={getProps}
@@ -77,7 +78,7 @@ export const TabComercial = ({
       <div className="botones">
         <QBoton
           onClick={onGuardarClicked}
-          deshabilitado={!puedoGuardarObjetoValor(cliente)}
+          deshabilitado={!modeloEsValido(cliente)}
         >
           Guardar
         </QBoton>
@@ -90,7 +91,7 @@ export const TabComercial = ({
               payload: { entidad: cliente.valor_inicial },
             });
           }}
-          deshabilitado={!entidadModificada(cliente)}
+          deshabilitado={!modeloModificado(cliente)}
         >
           Cancelar
         </QBoton>

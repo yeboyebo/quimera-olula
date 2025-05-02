@@ -8,7 +8,7 @@ interface DivisasProps {
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const Divisas = ({ valor, onChange, getProps }: DivisasProps) => {
+export const Divisa = ({ valor, onChange, ...props }: DivisasProps) => {
   const [opcionesDivisa, setOpcionesDivisa] = useState<
     { valor: string; descripcion: string }[]
   >([]);
@@ -33,7 +33,7 @@ export const Divisas = ({ valor, onChange, getProps }: DivisasProps) => {
       valor={valor}
       onChange={onChange}
       opciones={opcionesDivisa}
-      {...(getProps ? getProps("divisa_id") : {})}
+      {...props}
     />
   );
 };

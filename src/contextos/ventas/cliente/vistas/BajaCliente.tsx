@@ -2,11 +2,11 @@ import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import {
-  campoObjetoValorAInput,
-  EstadoObjetoValor,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
+    campoModeloAInput,
+    EstadoModelo,
+    initEstadoModelo,
+    makeReductor,
+    modeloEsValido,
 } from "../../../comun/dominio.ts";
 
 import { Cliente } from "../diseño.ts";
@@ -14,7 +14,7 @@ import { metaDarDeBaja } from "../dominio.ts";
 import { darDeBajaCliente } from "../infraestructura.ts";
 
 interface BajaClienteProps {
-  cliente: EstadoObjetoValor<Cliente>;
+  cliente: EstadoModelo<Cliente>;
   onBajaRealizada: () => void;
 }
 
@@ -26,7 +26,7 @@ export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
 
   const [estado, dispatch] = useReducer(
     makeReductor(metaDarDeBaja),
-    initEstadoObjetoValor({ fecha_baja: "" }, metaDarDeBaja)
+    initEstadoModelo({ fecha_baja: "" }, metaDarDeBaja)
   );
 
   const setCampo = (campo: string) => (valor: string) => {
@@ -37,7 +37,7 @@ export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
   };
 
   const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
+    return campoModeloAInput(estado, campo);
   };
 
   return (
@@ -52,7 +52,7 @@ export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
       <div className="botones">
         <QBoton
           onClick={onGuardarClicked}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
+          deshabilitado={!modeloEsValido(estado)}
         >
           Guardar
         </QBoton>

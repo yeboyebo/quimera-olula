@@ -7,7 +7,7 @@ interface FormaPagoProps {
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
-export const FormaPago = ({
+export const GrupoIvaNegocio = ({
   valor,
   onChange,
   ...props
@@ -18,7 +18,7 @@ export const FormaPago = ({
 
   useEffect(() => {
     const cargarOpciones = async () => {
-      const opciones = await obtenerOpcionesSelector("formapago")();
+      const opciones = await obtenerOpcionesSelector("grupo_iva_negocio")();
       const opcionesMapeadas = opciones.map((opcion) => ({
         valor: opcion[0],
         descripcion: opcion[1],
@@ -32,8 +32,8 @@ export const FormaPago = ({
   return (
     <QSelect
       {...props}
-      label="Forma de Pago"
-      nombre="forma_pago_id"
+      label="Grupo IVA"
+      nombre="grupo_iva_negocio_id"
       valor={valor}
       onChange={onChange}
       opciones={opciones}

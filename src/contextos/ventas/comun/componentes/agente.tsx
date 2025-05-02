@@ -10,6 +10,11 @@ interface AgenteProps {
   onChange: (
     opcion: { valor: string; descripcion: string } | null
   ) => void;
+  // textoValidacion?: string;
+  // deshabilitado?: boolean;
+  // erroneo?: boolean;
+  // advertido?: boolean;
+  // valido?: boolean;
 }
 
 export const Agente = ({
@@ -17,40 +22,42 @@ export const Agente = ({
   valor,
   nombre = "agente_id",
   label = "Agente",
-  onChange 
+  onChange,
+  ...props
 }: AgenteProps) => {
   const obtenerOpciones = async (valor: string) => {
-      if (valor.length < 3) return [];
-      
-      const criteria = {
-        filtro: {
-          nombre: {
-            LIKE: valor,
-          },
-        },
-        orden: { id: "DESC" },
-      };
-  
-      const agentes = await getAgentes(
-        criteria.filtro as unknown as Filtro,
-        criteria.orden as Orden
-      );
-  
-      return agentes.map((agente) => ({
-        valor: agente.id,
-        descripcion: agente.nombre,
-      }));
-    };
-  
+    if (valor.length < 3) return [];
 
-    return (
-      <QAutocompletar
-        label={label}
-        nombre={nombre}
-        onChange={onChange}
-        valor={valor}
-        obtenerOpciones={obtenerOpciones}
-        descripcion={descripcion}
-      />
+    const criteria = {
+      filtro: {
+        nombre: {
+          LIKE: valor,
+        },
+      },
+      orden: { id: "DESC" },
+    };
+
+    const agentes = await getAgentes(
+      criteria.filtro as unknown as Filtro,
+      criteria.orden as Orden
     );
+
+    return agentes.map((agente) => ({
+      valor: agente.id,
+      descripcion: agente.nombre,
+    }));
+  };
+
+
+  return (
+    <QAutocompletar
+      label={label}
+      nombre={nombre}
+      onChange={onChange}
+      valor={valor}
+      obtenerOpciones={obtenerOpciones}
+      descripcion={descripcion}
+      {...props}
+    />
+  );
 };

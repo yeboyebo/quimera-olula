@@ -3,10 +3,10 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
-  campoObjetoValorAInput,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
+    campoModeloAInput,
+    initEstadoModelo,
+    makeReductor,
+    modeloEsValido,
 } from "../../../comun/dominio.ts";
 import { DirCliente } from "../diseño.ts";
 import { metaDireccion } from "../dominio.ts";
@@ -25,7 +25,7 @@ export const EdicionDireccion = ({
 }) => {
   const [estado, dispatch] = useReducer(
     makeReductor(metaDireccion),
-    initEstadoObjetoValor(direccion, metaDireccion)
+    initEstadoModelo(direccion, metaDireccion)
   );
 
   const setCampo = (campo: string) => (valor: string) => {
@@ -36,7 +36,7 @@ export const EdicionDireccion = ({
   };
 
   const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
+    return campoModeloAInput(estado, campo);
   };
 
   const guardar = async () => {
@@ -81,7 +81,7 @@ export const EdicionDireccion = ({
         </div>
         <div style={{ gridColumn: "span 12" }} className="botones">
           <QBoton
-            deshabilitado={!puedoGuardarObjetoValor(estado)}
+            deshabilitado={!modeloEsValido(estado)}
             onClick={guardar}
           >
             Guardar

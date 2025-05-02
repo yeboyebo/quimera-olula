@@ -93,7 +93,7 @@ export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantid
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}/borrar`, {
+  await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
     lineas: [lineaId]
   });
 }
@@ -104,12 +104,16 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       agente_id: presupuesto.agente_id,
       divisa: {
         divisa_id: presupuesto.divisa_id,
+        tasa_conversion: presupuesto.tasa_conversion,
       },
       fecha: presupuesto.fecha,
       cliente_id: presupuesto.cliente_id,
       nombre_cliente: presupuesto.nombre_cliente,
       id_fiscal: presupuesto.id_fiscal,
       direccion_id: presupuesto.direccion_id,
+      forma_pago_id: presupuesto.forma_pago_id,
+      grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
+      observaciones: presupuesto.observaciones,
     },
   };
 

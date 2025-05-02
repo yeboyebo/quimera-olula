@@ -4,8 +4,8 @@ import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import {
-  campoObjetoValorAInput,
-  makeReductor,
+    campoModeloAInput,
+    makeReductor,
 } from "../../../comun/dominio.ts";
 import { Cliente } from "../diseño.ts";
 import { initEstadoClienteVacio, metaCliente } from "../dominio.ts";
@@ -44,7 +44,7 @@ export const DetalleCliente = ({
   };
 
   const getProps = (campo: string) => {
-    return campoObjetoValorAInput(cliente, campo);
+    return campoModeloAInput(cliente, campo);
   };
 
   const onRecargarCliente = async () => {

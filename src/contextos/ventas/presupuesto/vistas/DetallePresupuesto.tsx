@@ -1,19 +1,25 @@
-import { useReducer } from "react";
 import { useParams } from "react-router";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
-import {
-  campoObjetoValorAInput,
-  makeReductor,
-} from "../../../comun/dominio.ts";
+import { modeloEsValido, modeloModificado } from "../../../comun/dominio.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { Presupuesto } from "../diseño.ts";
-import { initEstadoPresupuestoVacio, metaPresupuesto } from "../dominio.ts";
-import { getPresupuesto } from "../infraestructura.ts";
+import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
+import { getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas.tsx";
 import { TabCliente } from "./TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
+import { TabObservaciones } from "./TabObservaciones.tsx";
+
+
+type ParamOpcion = {
+  valor: string;
+  descripcion?: string
+};
+export type ValorControl = null | string | ParamOpcion;
 
 export const DetallePresupuesto = ({
   presupuestoInicial = null,
@@ -27,29 +33,56 @@ export const DetallePresupuesto = ({
   const presupuestoId = presupuestoInicial?.id ?? params.id;
   const titulo = (presupuesto: Entidad) => presupuesto.codigo as string;
 
-  const [presupuesto, dispatch] = useReducer(
-    makeReductor(metaPresupuesto),
-    initEstadoPresupuestoVacio()
+  // const [presupuesto, dispatch] = useReducer(
+  //   makeReductor(metaPresupuesto),
+  //   initEstadoPresupuestoVacio()
+  // );
+  const ctxPresupuesto = useModelo(
+    metaPresupuesto,
+    presupuestoVacio()
   );
+  const [presupuesto, _, init] = ctxPresupuesto;
 
-  const setCampo = (campo: string) => (_valor: unknown) => {
+  const onGuardarClicked = async () => {
+      await patchPresupuesto(presupuesto.valor.id, presupuesto.valor);
+      const presupuesto_guardado = await getPresupuesto(presupuesto.valor.id);
+      init(presupuesto_guardado);
+      onEntidadActualizada(presupuesto.valor);
+    };
+    console.log("TabDatos", presupuesto.valor_inicial.tasa_conversion, presupuesto.valor.tasa_conversion);
+
+  // const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
     
-    const valor = (typeof _valor === "object" && _valor && 'valor' in _valor) ? _valor.valor : _valor;
+  //   let valor = _valor;
+  //   let descripcion: string | undefined = undefined;
+  //   if (typeof _valor === "object" && _valor && 'valor' in _valor) {
+  //     valor = _valor.valor;
+  //     if (segundo) {
+  //       descripcion = _valor.descripcion;
+  //     }
+  //   }
 
+  //   dispatch({
+  //     type: "set_campo",
+  //     payload: { campo, valor: valor as string },
+  //   });
 
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor: valor as string },
-    });
-  };
+  //   if (segundo && descripcion) {
+  //     dispatch({
+  //       type: "set_campo",
+  //       payload: { campo: segundo, valor: descripcion },
+  //     });
+  //   }
+  // };
 
-  const getProps = (campo: string) => {
-    return campoObjetoValorAInput(presupuesto, campo);
-  };
+  // const getProps = (campo: string) => {
+  //   return campoModeloAInput(presupuesto, campo);
+  // };
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(presupuesto.valor.id);
-    dispatch({ type: "init", payload: { entidad: nuevoPresupuesto } });
+    // dispatch({ type: "init", payload: { entidad: nuevoPresupuesto } });
+    init(nuevoPresupuesto);
     onEntidadActualizada(nuevoPresupuesto);
   };
 
@@ -57,7 +90,8 @@ export const DetallePresupuesto = ({
     <Detalle
       id={presupuestoId}
       obtenerTitulo={titulo}
-      setEntidad={(p) => dispatch({ type: "init", payload: { entidad: p } })}
+      // setEntidad={(p) => dispatch({ type: "init", payload: { entidad: p } })}
+      setEntidad={(p) => init(p)}
       entidad={presupuesto.valor}
       cargar={getPresupuesto}
     >
@@ -70,10 +104,7 @@ export const DetallePresupuesto = ({
                 label="Cliente"
                 children={
                   <TabCliente
-                    getProps={getProps}
-                    setCampo={setCampo}
-                    presupuesto={presupuesto}
-                    dispatch={dispatch}
+                    ctxPresupuesto={ctxPresupuesto}
                     onEntidadActualizada={onEntidadActualizada}
                   />
                 }
@@ -83,16 +114,41 @@ export const DetallePresupuesto = ({
                 label="Datos"
                 children={
                   <TabDatos
-                    getProps={getProps}
-                    setCampo={setCampo}
-                    presupuesto={presupuesto}
-                    dispatch={dispatch}
+                    ctxPresupuesto={ctxPresupuesto}
+                    onEntidadActualizada={onEntidadActualizada}
+                  />
+                }
+              />,
+              <Tab
+                key="tab-3"
+                label="Observaciones"
+                children={
+                  <TabObservaciones 
+                    ctxPresupuesto={ctxPresupuesto}
                     onEntidadActualizada={onEntidadActualizada}
                   />
                 }
               />,
             ]}
           ></Tabs>
+          { modeloModificado(presupuesto) && (
+            <div className="botones maestro-botones ">
+              <QBoton
+                onClick={onGuardarClicked}
+                deshabilitado={!modeloEsValido(presupuesto)}
+              >
+                Guardar
+              </QBoton>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => init()}
+                // deshabilitado={!modeloModificado(presupuesto)}
+              >
+                Cancelar
+              </QBoton>
+            </div>
+          )}
 
           <div
             style={{

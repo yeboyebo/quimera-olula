@@ -4,10 +4,10 @@ import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import {
-  Accion,
-  entidadModificada,
-  EstadoObjetoValor,
-  puedoGuardarObjetoValor,
+    Accion,
+    EstadoModelo,
+    modeloEsValido,
+    modeloModificado,
 } from "../../../comun/dominio.ts";
 import { IdFiscal } from "../../comun/componentes/idfiscal.tsx";
 import { Cliente } from "../diseño.ts";
@@ -18,7 +18,7 @@ import "./TabGeneral.css";
 interface TabGeneralProps {
   getProps: (campo: string) => Record<string, unknown>;
   setCampo: (campo: string) => (valor: unknown) => void;
-  cliente: EstadoObjetoValor<Cliente>;
+  cliente: EstadoModelo<Cliente>;
   dispatch: (action: Accion<Cliente>) => void;
   onEntidadActualizada: (entidad: Cliente) => void;
   recargarCliente: () => void;
@@ -124,7 +124,7 @@ export const TabGeneral = ({
       <div className="botones maestro-botones ">
         <QBoton
           onClick={onGuardarClicked}
-          deshabilitado={!puedoGuardarObjetoValor(cliente)}
+          deshabilitado={!modeloEsValido(cliente)}
         >
           Guardar
         </QBoton>
@@ -137,7 +137,7 @@ export const TabGeneral = ({
               payload: { entidad: cliente.valor_inicial },
             });
           }}
-          deshabilitado={!entidadModificada(cliente)}
+          deshabilitado={!modeloModificado(cliente)}
         >
           Cancelar
         </QBoton>

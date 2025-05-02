@@ -1,4 +1,4 @@
-import { EstadoObjetoValor, initEstadoObjetoValor, makeValidador, MetaObjetoValor, stringNoVacio, ValidacionCampo, ValidadorCampos, validarCampo } from "../../comun/dominio.ts";
+import { EstadoModelo, initEstadoModelo, makeValidador, MetaModelo, stringNoVacio, ValidacionCampo, ValidadorCampos, validarCampo } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 
@@ -90,16 +90,16 @@ export const validadoresCliente = {
 };
 
 
-export const initEstadoCliente = (cliente: Cliente): EstadoObjetoValor<Cliente> => {
-    return initEstadoObjetoValor(cliente, metaCliente);
+export const initEstadoCliente = (cliente: Cliente): EstadoModelo<Cliente> => {
+    return initEstadoModelo(cliente, metaCliente);
 }
 
-export const initEstadoDireccion = (direccion: DirCliente): EstadoObjetoValor<DirCliente> => {
-    return initEstadoObjetoValor(direccion, metaDireccion);
+export const initEstadoDireccion = (direccion: DirCliente): EstadoModelo<DirCliente> => {
+    return initEstadoModelo(direccion, metaDireccion);
 }
 
 const validacionesCliente: ValidadorCampos<Cliente> = {
-    tipo_id_fiscal: (cliente: EstadoObjetoValor<Cliente>): ValidacionCampo => {
+    tipo_id_fiscal: (cliente: EstadoModelo<Cliente>): ValidacionCampo => {
         const valido = tipoIdFiscalValido(cliente.valor.tipo_id_fiscal);
         return {
             ...cliente.validacion.tipo_id_fiscal,
@@ -107,7 +107,7 @@ const validacionesCliente: ValidadorCampos<Cliente> = {
             textoValidacion: typeof valido === "string" ? valido : "",
         }
     },
-    id_fiscal: (cliente: EstadoObjetoValor<Cliente>): ValidacionCampo => {
+    id_fiscal: (cliente: EstadoModelo<Cliente>): ValidacionCampo => {
         const tipoValido = tipoIdFiscalValido(cliente.valor.tipo_id_fiscal);
         const valido = tipoValido
             ? idFiscalValido(cliente.valor.tipo_id_fiscal)(cliente.valor.id_fiscal)
@@ -118,7 +118,7 @@ const validacionesCliente: ValidadorCampos<Cliente> = {
             textoValidacion: typeof valido === "string" ? valido : "",
         }
     },
-    fecha_baja: (estado: EstadoObjetoValor<Cliente>): ValidacionCampo => {
+    fecha_baja: (estado: EstadoModelo<Cliente>): ValidacionCampo => {
         const cliente = estado.valor;
         const deBajaSinFecha = cliente.de_baja && cliente.fecha_baja === '';
         const activoConFecha = !cliente.de_baja && cliente.fecha_baja !== '';
@@ -133,7 +133,7 @@ const validacionesCliente: ValidadorCampos<Cliente> = {
                     : "",
         }
     },
-    fecha_baja_segun_de_baja: (estado: EstadoObjetoValor<Cliente>): ValidacionCampo => {
+    fecha_baja_segun_de_baja: (estado: EstadoModelo<Cliente>): ValidacionCampo => {
         const cliente = estado.valor;
         // const deBajaSinFecha = cliente.de_baja && cliente.fecha_baja === '';
         // const activoConFecha = !cliente.de_baja && cliente.fecha_baja !== '';
@@ -153,7 +153,7 @@ const validacionesCliente: ValidadorCampos<Cliente> = {
 
 const makeValidadorCliente = (validadorCampos: ValidadorCampos<Cliente>) =>
 
-    (estado: EstadoObjetoValor<Cliente>, campo: string) => {
+    (estado: EstadoModelo<Cliente>, campo: string) => {
 
         const validacion = estado.validacion;
 
@@ -187,7 +187,7 @@ const makeValidadorCliente = (validadorCampos: ValidadorCampos<Cliente>) =>
         }
     }
 
-export const metaCliente: MetaObjetoValor<Cliente> = {
+export const metaCliente: MetaModelo<Cliente> = {
     bloqueados: ['nombre_agente'],
     requeridos: [
         'nombre',
@@ -197,7 +197,7 @@ export const metaCliente: MetaObjetoValor<Cliente> = {
     validador: makeValidadorCliente(validacionesCliente),
 };
 
-export const metaNuevoCliente: MetaObjetoValor<NuevoCliente> = {
+export const metaNuevoCliente: MetaModelo<NuevoCliente> = {
     bloqueados: [],
     requeridos: [
         'nombre',
@@ -207,7 +207,7 @@ export const metaNuevoCliente: MetaObjetoValor<NuevoCliente> = {
     validador: makeValidador({}),
 };
 
-export const metaDireccion: MetaObjetoValor<DirCliente> = {
+export const metaDireccion: MetaModelo<DirCliente> = {
     bloqueados: [],
     requeridos: [
         'tipo_via',
@@ -217,7 +217,7 @@ export const metaDireccion: MetaObjetoValor<DirCliente> = {
     validador: makeValidador({}),
 };
 
-export const metaNuevaDireccion: MetaObjetoValor<NuevaDireccion> = {
+export const metaNuevaDireccion: MetaModelo<NuevaDireccion> = {
     bloqueados: [],
     requeridos: [
         'nombre_via',
@@ -226,31 +226,31 @@ export const metaNuevaDireccion: MetaObjetoValor<NuevaDireccion> = {
     validador: makeValidador({}),
 };
 
-export const metaCuentaBanco: MetaObjetoValor<CuentaBanco> = {
+export const metaCuentaBanco: MetaModelo<CuentaBanco> = {
     bloqueados: [],
     requeridos: ["iban", "bic"],
     validador: makeValidador({}),
 };
 
-export const metaNuevaCuentaBanco: MetaObjetoValor<NuevaCuentaBanco> = {
+export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
     bloqueados: [],
     requeridos: ["cuenta"],
     validador: makeValidador({}),
 };
 
-export const metaCrmContacto: MetaObjetoValor<CrmContacto> = {
+export const metaCrmContacto: MetaModelo<CrmContacto> = {
     bloqueados: [],
     requeridos: ["nombre", "email"],
     validador: makeValidador({}),
 };
 
-export const metaNuevoCrmContacto: MetaObjetoValor<NuevoCrmContacto> = {
+export const metaNuevoCrmContacto: MetaModelo<NuevoCrmContacto> = {
     bloqueados: [],
     requeridos: ["nombre", "email"],
     validador: makeValidador({}),
 };
 
-export const metaDarDeBaja: MetaObjetoValor<FormBaja> = {
+export const metaDarDeBaja: MetaModelo<FormBaja> = {
     bloqueados: [],
     requeridos: [
         'fecha_baja',

@@ -6,7 +6,8 @@ interface ClienteProps {
   descripcion?: string;
   valor: string;
   nombre?: string;
-  onClienteChanged: (
+  label?: string;
+  onChange: (
     opcion: { valor: string; descripcion: string } | null
   ) => void;
 }
@@ -15,9 +16,11 @@ export const Cliente = ({
   descripcion = "",
   valor,
   nombre = "cliente_id",
-  onClienteChanged,
+  label = "Cliente",
+  onChange,
+  ...props
 }: ClienteProps) => {
-  const obtenerOpcionesCliente = async (texto: string) => {
+  const obtenerOpciones = async (texto: string) => {
     const criteria = {
       filtro: {
         nombre: {
@@ -40,12 +43,13 @@ export const Cliente = ({
 
   return (
     <QAutocompletar
-      label="Cliente"
+      label={label}
       nombre={nombre}
-      onChange={onClienteChanged}
+      onChange={onChange}
       valor={valor}
-      obtenerOpciones={obtenerOpcionesCliente}
+      obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      {...props}
     />
   );
 };

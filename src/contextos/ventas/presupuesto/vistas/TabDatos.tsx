@@ -1,73 +1,61 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import {
-  Accion,
-  entidadModificada,
-  EstadoObjetoValor,
-  puedoGuardarObjetoValor,
-} from "../../../comun/dominio.ts";
+import { QDate } from "../../../../componentes/atomos/qdate.tsx";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { HookModelo } from "../../../comun/useModelo.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
-import { Divisas } from "../../comun/componentes/divisa.tsx";
+import { Divisa } from "../../comun/componentes/divisa.tsx";
+import { FormaPago } from "../../comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
 import { Presupuesto } from "../diseño.ts";
-import { getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
-  getProps: (campo: string) => Record<string, unknown>;
-  setCampo: (campo: string) => (valor: unknown) => void;
-  presupuesto: EstadoObjetoValor<Presupuesto>;
-  dispatch: (action: Accion<Presupuesto>) => void;
+  ctxPresupuesto: HookModelo<Presupuesto>; 
   onEntidadActualizada: (entidad: Presupuesto) => void;
 }
 
 export const TabDatos = ({
-  getProps,
-  setCampo,
-  presupuesto,
+  ctxPresupuesto,
   onEntidadActualizada,
-  dispatch,
 }: TabDatosProps) => {
-  const onGuardarClicked = async () => {
-    await patchPresupuesto(presupuesto.valor.id, presupuesto.valor);
-    const presupuesto_guardado = await getPresupuesto(presupuesto.valor.id);
-    dispatch({ type: "init", payload: { entidad: presupuesto_guardado } });
-    onEntidadActualizada(presupuesto.valor);
-  };
+
+  const [presupuesto, uiProps, init] = ctxPresupuesto;
+
+  
 
   return (
     <>
       <quimera-formulario>
-        <Divisas
-          valor={presupuesto.valor.divisa_id}
-          onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
-          getProps={getProps}
+        <QDate
+          label="Fecha"
+          {...uiProps("fecha")}
+        />
+        <div id="espacio_fecha"/>
+        <Divisa
+          {...uiProps("divisa_id")}
+        />
+        <QInput
+          tipo='numero'
+          label="T. Conversión"
+          {...uiProps("tasa_conversion")}
+        />
+        <QInput
+          tipo='numero'
+          {...uiProps("total_divisa_empresa")}
+          label="Total €"
         />
         <Agente
-          valor={presupuesto.valor.agente_id ?? ""}
-          descripcion={presupuesto.valor.nombre_agente}
-          onChange={setCampo("agente_id")}
+          {...uiProps("agente_id", "nombre_agente")}
+        />
+        <div id="espacio_agente"/>
+        <FormaPago
+          {...uiProps("forma_pago_id", "nombre_forma_pago")}
+        />
+        <GrupoIvaNegocio
+          // label='Grupo IVA'
+          {...uiProps("grupo_iva_negocio_id")}
         />
       </quimera-formulario>
-      <div className="botones maestro-botones ">
-        <QBoton
-          onClick={onGuardarClicked}
-          deshabilitado={!puedoGuardarObjetoValor(presupuesto)}
-        >
-          Guardar
-        </QBoton>
-        <QBoton
-          tipo="reset"
-          variante="texto"
-          onClick={() => {
-            dispatch({
-              type: "init",
-              payload: { entidad: presupuesto.valor_inicial },
-            });
-          }}
-          deshabilitado={!entidadModificada(presupuesto)}
-        >
-          Cancelar
-        </QBoton>
-      </div>
+      
     </>
   );
 };

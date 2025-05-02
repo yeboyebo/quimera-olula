@@ -1,4 +1,4 @@
-import { Direccion, Entidad, Filtro, Orden } from "../../comun/diseño.ts";
+import { Direccion, Entidad, Filtro, Modelo, Orden } from "../../comun/diseño.ts";
 
 export interface Presupuesto extends Entidad {
   id: string;
@@ -12,11 +12,17 @@ export interface Presupuesto extends Entidad {
   agente_id: string;
   nombre_agente: string;
   divisa_id: string;
+  tasa_conversion: number;
   total: number;
   neto: number;
   total_iva: number;
   total_irpf: number;
+  total_divisa_empresa: number;
+  forma_pago_id: string;
+  nombre_forma_pago: string;
+  grupo_iva_negocio_id: string;
   aprobado: boolean;
+  observaciones: string;
 }
 
 export type NuevoPresupuesto = {
@@ -40,7 +46,7 @@ export interface LineaPresupuesto extends Entidad {
   pvp_total: number;
 };
 
-export interface LineaPresupuestoNueva {
+export interface NuevaLinea extends Modelo {
   referencia: string;
   cantidad: number;
 };
@@ -60,7 +66,7 @@ export type CambiarArticuloLinea = (id: string, lineaId: string, referencia: str
 
 export type CambiarCantidadLinea = (id: string, linea: LineaPresupuesto, cantidad: number) => Promise<void>;
 
-export type PostLinea = (id: string, linea: LineaPresupuestoNueva) => Promise<string>;
+export type PostLinea = (id: string, linea: NuevaLinea) => Promise<string>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 

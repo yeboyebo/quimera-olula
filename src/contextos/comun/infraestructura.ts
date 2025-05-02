@@ -8,7 +8,6 @@ export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     }
 
     const criteria = transformarCriteria(filtro, orden);
-    console.log("criteria", criteria);
     return `?q=${btoa(criteria)}`;
 }
 

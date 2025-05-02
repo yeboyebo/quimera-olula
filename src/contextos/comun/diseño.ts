@@ -1,4 +1,4 @@
-export type ObjetoValor = {
+export type Modelo = {
   [clave: string]: unknown;
 };
 
