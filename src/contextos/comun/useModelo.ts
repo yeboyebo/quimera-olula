@@ -1,45 +1,21 @@
 import { useCallback, useReducer } from "react";
 import { Modelo } from "./diseño.ts";
-import { Accion, EstadoModelo, initEstadoModelo, makeReductor, MetaModelo } from "./dominio.ts";
+import { Accion, campoModeloEsValido, initEstadoModelo, makeReductor, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado } from "./dominio.ts";
 
-const initReducer = <T extends Modelo>(meta: MetaModelo<T>) => (estadoInicial: T) => {
-    return initEstadoModelo(estadoInicial, meta);
-}
 
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     estadoInicial: T
 ): HookModelo<T> {
 
-    // const getEstadoInicial = useCallback(() => {
-    //     console.log("getEstadoInicial", estadoInicial);
-    //     return initEstadoModelo(estadoInicial, meta);
-    // }, [estadoInicial, meta]);
-
-    // console.log('useModelo')
-
     const [entidad, dispatch] = useReducer(
         makeReductor(meta),
-        // estadoInicial,
-        // initReducer(meta)
-        initEstadoModelo(estadoInicial, meta)
-        // getEstadoInicial()
+        initEstadoModelo(estadoInicial)
+        // initEstadoModelo(estadoInicial, meta)
     );
-    // console.log('useModelo estadoInicial', estadoInicial);
-    // console.log('useModelo entidadusto=', entidad);
-    // console.log('useModelo func=', initEstadoModelo(estadoInicial, meta));
-    // useEffect(() => {
-    //     dispatch({
-    //         type: 'init',
-    //         payload: {
-    //             entidad: estadoInicial
-    //         }
-    //     });
-    // }, [estadoInicial])
 
     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
 
-        // console.log("setCampo", campo, segundo, _valor);
         let valor = _valor || '';
         let descripcion: string | undefined = undefined;
         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
@@ -62,17 +38,21 @@ export function useModelo<T extends Modelo>(
         }
     };
     const uiProps = (campo: string, secundario?: string) => {
-        const validacion = entidad.validacion[campo];
+        const validacion = campoModeloEsValido(meta)(entidad.valor, campo);
+        const valido = validacion === true;
+        const textoValidacion = typeof validacion === "string" ? validacion : "";
+        const editable = modeloEsEditable<T>(meta)(entidad.valor, campo);
         const valor = entidad.valor[campo] as string;
+
         const cambiado = valor !== entidad.valor_inicial[campo];
         return {
             nombre: campo,
             valor: valor,
-            deshabilitado: validacion.bloqueado,
-            valido: cambiado && validacion.valido,
-            erroneo: !validacion.valido,
+            deshabilitado: !editable,
+            valido: cambiado && valido,
+            erroneo: !valido,
             advertido: false,
-            textoValidacion: validacion.textoValidacion,
+            textoValidacion: textoValidacion,
             onChange: setCampo(campo, secundario),
             descripcion: secundario ? entidad.valor[secundario] as string : undefined,
         }
@@ -83,20 +63,35 @@ export function useModelo<T extends Modelo>(
             entidad: modelo || entidad.valor_inicial
         }
     }), [entidad]);
-    // console.log('useModelo entidad=', entidad);
 
-    return [entidad, uiProps, init, dispatch] as const;
+    return {
+        modelo: entidad.valor,
+        modelo_inicial: entidad.valor_inicial,
+        uiProps,
+        init,
+        dispatch,
+        modificado: modeloModificado(entidad),
+        valido: modeloEsValido(meta)(entidad),
+        editable: modeloEsEditable<T>(meta)(entidad.valor),
+    } as const;
 }
-export type HookModelo<T extends Modelo> = [
-    EstadoModelo<T>,
-    (campo: string, secundario?: string) => UiProps,
-    (entidad?: T) => void,
-    (action: Accion<T>) => void
-]
+
+export type HookModelo<T extends Modelo> = {
+    modelo: T,
+    modelo_inicial: T,
+    uiProps: (campo: string, secundario?: string) => UiProps,
+    init: (entidad?: T) => void,
+    dispatch: (action: Accion<T>) => void
+    modificado: boolean,
+    valido: boolean,
+    editable: boolean,
+}
+
 type ParamOpcion = {
     valor: string;
     descripcion?: string
 };
+
 export type ValorControl = null | string | ParamOpcion;
 
 export type UiProps = {
@@ -111,3 +106,42 @@ export type UiProps = {
     descripcion?: string;
 }
 
+// export const initModelo = <T extends Entidad>(setPresupuesto: ((modelo: T) => void), valorInicial: T) => (valor?: T) =>
+//     setPresupuesto(valor || valorInicial);
+
+// export const getUiProps = <T extends Modelo>(meta: MetaModelo<T>, modelo: T, modelo_inicial: T, setModelo: ((modelo: T) => void)) => (campo: string, secundario?: string) => {
+
+//     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
+
+//         let valor = _valor || '';
+//         let descripcion: string | undefined = undefined;
+//         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
+//             valor = _valor.valor;
+//             if (segundo) {
+//                 descripcion = _valor.descripcion;
+//             }
+//         }
+//         const nuevoModelo = (segundo && descripcion)
+//             ? { ...modelo, [campo]: valor, [segundo]: descripcion }
+//             : { ...modelo, [campo]: valor };
+//         setModelo(nuevoModelo);
+//     };
+//     const validacion = campoModeloEsValido(meta)(modelo, campo);
+//     const valido = validacion === true;
+//     const textoValidacion = typeof validacion === "string" ? validacion : "";
+//     const valor = modelo[campo] as string;
+//     const editable = modeloEsEditable<T>(meta)(modelo, campo);
+
+//     const cambiado = valor !== modelo_inicial[campo];
+//     return {
+//         nombre: campo,
+//         valor: valor,
+//         deshabilitado: !editable,
+//         valido: cambiado && valido,
+//         erroneo: !valido,
+//         advertido: false,
+//         textoValidacion: textoValidacion,
+//         onChange: setCampo(campo, secundario),
+//         descripcion: secundario ? modelo[secundario] as string : undefined,
+//     }
+// }

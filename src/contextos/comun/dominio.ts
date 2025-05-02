@@ -49,41 +49,30 @@ export type Validacion = Record<string, ValidacionCampo>;
 export type EstadoModelo<T extends Modelo> = {
     valor: T;
     valor_inicial: T;
-    validacion: Validacion;
+    // validacion: Validacion;
+    // editable: (campo?: string) => boolean;
 }
 
-export const modeloEsValido = <T extends Modelo>(estado: EstadoModelo<T>) => {
-    return modeloModificado(estado) && entidadValida(estado);
-}
 
-export const entidadValida = <T extends Modelo>(estado: EstadoModelo<T>) =>
-    Object.values(estado.validacion).every((v) => v.valido)
-
-
-export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
-    const valor_inicial = estado.valor_inicial;
-    const valor = estado.valor;
-    return (
-        Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
-    )
-}
 
 export type Validador<T extends Modelo> = (estado: EstadoModelo<T>, campo: string) => Validacion;
 type PropTipoCampo = 'string' | 'boolean' | 'number'
-type Campo = {
+type Campo<T extends Modelo> = {
     nombre?: string;
-    tipo: PropTipoCampo;
+    tipo?: PropTipoCampo;
     requerido?: boolean;
     bloqueado?: boolean;
+    validacion?: (modelo: T) => string | boolean;
 }
 type TipoCampo = string | boolean | number;
 
 export type MetaModelo<T extends Modelo> = {
-    bloqueados: string[];
-    requeridos: string[];
-    validador: Validador<T>;
-    campos?: Record<string, Campo>;
+    // validador: Validador<T>;
+    campos?: Record<string, Campo<T>>;
+    editable?: (modelo: T, campo?: string) => boolean;
+    validacion?: (modelo: T) => string | boolean;
 }
+
 
 export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
 
@@ -94,12 +83,12 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
             case "init": {
                 return initEstadoModelo<T>(
                     accion.payload.entidad,
-                    meta
+                    // meta
                 );
             }
 
             case "set_campo": {
-                const valor = convertirValorCampo(
+                const valor = convertirValorCampo<T>(
                     accion.payload.valor,
                     accion.payload.campo,
                     meta.campos
@@ -108,7 +97,7 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
                     estado,
                     accion.payload.campo,
                     valor,
-                    meta.validador,
+                    // meta.validador,
                 );
             }
 
@@ -119,7 +108,7 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
     }
 }
 
-const convertirValorCampo = (valor: string, campo: string, campos?: Record<string, Campo>) => {
+const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, Campo<T>>) => {
     if (!campos) return valor;
     if (!(campo in campos)) return valor;
 
@@ -134,21 +123,35 @@ const convertirValorCampo = (valor: string, campo: string, campos?: Record<strin
     }
 }
 
-export const initEstadoModelo = <T extends Modelo>(modelo: T, meta: MetaModelo<T>) => {
-    const validacion: Validacion = {}
-    for (const k in modelo) {
-        const requerido = meta.requeridos.includes(k);
-        validacion[k] = {
-            valido: requerido && modelo[k] === '' ? false : true,
-            textoValidacion: "",
-            bloqueado: meta.bloqueados.includes(k),
-            requerido: requerido,
-        };
-    }
+export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
+    // export const initEstadoModelo = <T extends Modelo>(modelo: T, meta: MetaModelo<T>) => {
+    // const validacion: Validacion = {}
+    // const metaCampos = meta.campos || {};
+    // for (const k in modelo) {
+    //     const requerido = metaCampos[k]?.requerido || false;
+    //     const bloqueado = metaCampos[k]?.bloqueado || false;
+    //     validacion[k] = {
+    //         valido: requerido && modelo[k] === '' ? false : true,
+    //         textoValidacion: "",
+    //         bloqueado,
+    //         requerido,
+    //     };
+    // }
+    // const editable = (modelo: T) => (campo?: string) => {
+    //     return (campo)
+    //         ? meta.editable
+    //             ? meta.editable(modelo, campo) && !validacion[campo].bloqueado
+    //             : !validacion[campo].bloqueado
+    //         : meta.editable
+    //             ? meta.editable(modelo)
+    //             : true;
+    // }
+
     const estado = {
         valor: { ...modelo },
         valor_inicial: { ...modelo },
-        validacion
+        // validacion,
+        // get editable() { return editable(this.valor) },
     }
     return estado;
 }
@@ -157,13 +160,21 @@ export const cambiarEstadoModelo = <T extends Modelo>(
     estado: EstadoModelo<T>,
     campo: string,
     valor: TipoCampo,
-    validador: Validador<T>,
+    // validador: Validador<T>,
 ): EstadoModelo<T> => {
 
-    return validarCambio(
-        cambiarCampo<T>(estado, campo, valor),
-        campo, validador
-    );
+    return {
+        ...estado,
+        valor: {
+            ...estado.valor,
+            [campo]: valor
+        }
+    }
+
+    // return validarCambio(
+    //     cambiarCampo<T>(estado, campo, valor),
+    //     campo, validador
+    // );
 }
 
 const cambiarCampo = <T extends Modelo>(
@@ -181,16 +192,16 @@ const cambiarCampo = <T extends Modelo>(
     }
 }
 
-const validarCambio = <T extends Modelo>(estado: EstadoModelo<T>,
-    campo: string,
-    validador: Validador<T>
-): EstadoModelo<T> => {
+// const validarCambio = <T extends Modelo>(estado: EstadoModelo<T>,
+//     campo: string,
+//     validador: Validador<T>
+// ): EstadoModelo<T> => {
 
-    return {
-        ...estado,
-        validacion: validador(estado, campo)
-    }
-}
+//     return {
+//         ...estado,
+//         validacion: validador(estado, campo)
+//     }
+// }
 
 export type Accion<T extends Modelo> = {
     type: 'init';
@@ -219,7 +230,13 @@ export const campoModeloAInput = <T extends Modelo>(
     campo: string
 ): EstadoInput => {
 
-    const validacion = estado.validacion[campo];
+    // const validacion = estado.validacion[campo];
+    const validacion = {
+        valido: true,
+        textoValidacion: "",
+        bloqueado: false,
+        requerido: false,
+    }
     const valor = estado.valor[campo] as string;
     const cambiado = valor !== estado.valor_inicial[campo];
     return {
@@ -245,52 +262,123 @@ export const validacionDefecto = (validacion: ValidacionCampo, valor: string): V
 export type ValidadorCampo<T extends Modelo> = (estado: EstadoModelo<T>) => ValidacionCampo;
 export type ValidadorCampos<T extends Modelo> = Record<string, ValidadorCampo<T>>;
 
-export const makeValidador = <T extends Modelo>(
-    validadorCampos: ValidadorCampos<T>
-) => (
-    estado: EstadoModelo<T>, campo: string
-) => {
 
-        const validacion = estado.validacion;
-
-        return (campo in validadorCampos)
-            ? {
-                ...validacion,
-                [campo]: validarCampo(estado, campo, validadorCampos[campo]),
-            }
-            : {
-                ...validacion,
-                [campo]: validarCampo(estado, campo),
-            }
-
-    }
-
-export const validarCampo = <T extends Modelo>(
-    estado: EstadoModelo<T>,
-    campo: string, validador?: ValidadorCampo<T>
-): ValidacionCampo => {
-
-    const entidad = estado.valor;
-    const validacion = estado.validacion;
-    const valor = entidad[campo] as string;
-    const valido = !validacion[campo].requerido || stringNoVacio(valor.toString());
-    if (valido !== true) {
-        return {
-            ...validacion[campo],
-            valido: false,
-            textoValidacion: "Campo requerido",
-        }
-    }
-    if (validador) {
-        const validacionCampo = validador(estado);
-        return {
-            ...validacion[campo],
-            ...validacionCampo,
-        }
-    }
-    return {
-        ...validacion[campo],
-        valido: true,
-        textoValidacion: "",
-    }
+export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo?: string) => {
+    const campos = meta.campos || {};
+    const bloqueado = campo
+        ? campo in campos && campos[campo]?.bloqueado
+        : false
+    return (campo)
+        ? meta.editable
+            ? meta.editable(modelo, campo) && !bloqueado
+            : !bloqueado
+        : meta.editable
+            ? meta.editable(modelo)
+            : true;
 }
+
+
+export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
+    const campos = meta.campos || {};
+    const requerido = campo in campos && campos[campo]?.requerido
+    const valor = modelo[campo];
+    if (requerido && valor === '') {
+        return "Campo requerido";
+    }
+    const validacion = campos[campo]?.validacion
+    return validacion
+        ? validacion(modelo)
+        : true;
+
+}
+export const campoModeloEsValido = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) =>
+    validacionCampoModelo(meta)(modelo, campo) === true;
+
+export const entidadValida = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T) => {
+    // Object.keys(modelo).forEach((k) => {
+    //     if (campoModeloEsValido(meta)(modelo, k) !== true) {
+    //         console.log("Campo inválido", k, modelo[k], campoModeloEsValido(meta)(modelo, k));
+    //     }
+    //     // console.log("Campo", k, modelo[k], campoModeloEsValido(meta)(modelo, k));
+    // })
+    // console.log("Valido ", Object.keys(modelo).every((k) => {
+    //     campoModeloEsValido(meta)(modelo, k) === true;
+    // }))
+    const camposValidos = Object.keys(modelo).every((k) =>
+        campoModeloEsValido(meta)(modelo, k) === true
+    )
+    const validacionGeneral = meta.validacion
+        ? meta.validacion(modelo) === true
+        : true;
+
+    return camposValidos && validacionGeneral;
+}
+export const modeloEsValido = <T extends Modelo>(meta: MetaModelo<T>) => (estado: EstadoModelo<T>) => {
+    // console.log("MOdelo modificado", modeloModificado(estado));
+    // console.log("Entidad válida", entidadValida(meta)(estado.valor));
+    return modeloModificado(estado) && entidadValida(meta)(estado.valor);
+}
+
+// export const entidadValida = <T extends Modelo>(estado: EstadoModelo<T>) =>
+//     true;
+// TO DO
+// Object.values(estado.validacion).every((v) => v.valido)
+
+
+export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
+    const valor_inicial = estado.valor_inicial;
+    const valor = estado.valor;
+    // console.log("Modelo modificado = ", Object.keys(valor).some((k) => valor[k] !== valor_inicial[k]));
+    return (
+        Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
+    )
+}
+// export const makeValidador = <T extends Modelo>(
+//     validadorCampos: ValidadorCampos<T>
+// ) => (
+//     estado: EstadoModelo<T>, campo: string
+// ) => {
+
+//         const validacion = estado.validacion;
+
+//         return (campo in validadorCampos)
+//             ? {
+//                 ...validacion,
+//                 [campo]: validarCampo(estado, campo, validadorCampos[campo]),
+//             }
+//             : {
+//                 ...validacion,
+//                 [campo]: validarCampo(estado, campo),
+//             }
+
+//     }
+
+// export const validarCampo = <T extends Modelo>(
+//     estado: EstadoModelo<T>,
+//     campo: string, validador?: ValidadorCampo<T>
+// ): ValidacionCampo => {
+
+//     const entidad = estado.valor;
+//     const validacion = estado.validacion;
+//     const valor = entidad[campo] as string;
+//     const valido = !validacion[campo].requerido || stringNoVacio(valor.toString());
+//     if (valido !== true) {
+//         return {
+//             ...validacion[campo],
+//             valido: false,
+//             textoValidacion: "Campo requerido",
+//         }
+//     }
+//     if (validador) {
+//         const validacionCampo = validador(estado);
+//         return {
+//             ...validacion[campo],
+//             ...validacionCampo,
+//         }
+//     }
+//     return {
+//         ...validacion[campo],
+//         valido: true,
+//         textoValidacion: "",
+//     }
+// }

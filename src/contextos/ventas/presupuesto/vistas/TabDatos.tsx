@@ -18,9 +18,7 @@ export const TabDatos = ({
   onEntidadActualizada,
 }: TabDatosProps) => {
 
-  const [presupuesto, uiProps, init] = ctxPresupuesto;
-
-  
+  const {uiProps} = ctxPresupuesto;
 
   return (
     <>

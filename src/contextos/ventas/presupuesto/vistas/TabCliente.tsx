@@ -6,7 +6,9 @@ import { HookModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import { Presupuesto, CambioCliente as TipoCambioCliente } from "../diseño.ts";
-import { getPresupuesto, patchCambiarCliente, patchPresupuesto } from "../infraestructura.ts";
+import { editable } from "../dominio.ts";
+import { getPresupuesto, patchCambiarCliente } from "../infraestructura.ts";
+
 import { CambioCliente } from "./CambioCliente.tsx";
 import "./TabCliente.css";
 
@@ -14,6 +16,7 @@ import "./TabCliente.css";
 interface TabClienteProps {
   ctxPresupuesto: HookModelo<Presupuesto>; 
   onEntidadActualizada: (entidad: Presupuesto) => void;
+  presupuesto?: Presupuesto;
 }
 
 export const TabCliente = ({
@@ -23,25 +26,20 @@ export const TabCliente = ({
 
   const [mostrarModalCambioCliente, setMostrarModalCambioCliente] = useState(false);
 
-  const [presupuesto, uiProps, init] = ctxPresupuesto;
-
-  const onGuardarClicked = async () => {
-    await patchPresupuesto(presupuesto.valor.id, presupuesto.valor);
-    refrescar();
-  };
-
+  const {modelo, uiProps, init} = ctxPresupuesto;
+  
   const cambiarCliente = async (nuevoCliente: TipoCambioCliente) => {
     setMostrarModalCambioCliente(false);
-    await patchCambiarCliente(presupuesto.valor.id, 
+    await patchCambiarCliente(modelo.id, 
       nuevoCliente.cliente_id,
       nuevoCliente.direccion_id);
     await refrescar();
   };
 
   const refrescar = async () => {
-    const presupuesto_guardado = await getPresupuesto(presupuesto.valor.id);
+    const presupuesto_guardado = await getPresupuesto(modelo.id);
     init(presupuesto_guardado);
-    onEntidadActualizada(presupuesto.valor);
+    onEntidadActualizada(modelo);
   }
 
   const onCambiarClienteClicked = async () => {
@@ -60,30 +58,15 @@ export const TabCliente = ({
         />
         <div id='cambiar_cliente' className="botones maestro-botones">
         <QBoton
+          deshabilitado={!editable(modelo)}
           onClick={onCambiarClienteClicked}
         >C</QBoton>
         </div>
         <DirCliente
-          clienteId={presupuesto.valor.cliente_id}
+          clienteId={modelo.cliente_id}
           {...uiProps("direccion_id")}
         />
       </quimera-formulario>
-      {/* <div className="botones maestro-botones">
-        <QBoton
-          onClick={onGuardarClicked}
-          deshabilitado={!modeloEsValido(presupuesto)}
-        >
-          Guardar
-        </QBoton>
-        <QBoton
-          tipo="reset"
-          variante="texto"
-          onClick={() => init(presupuesto.valor_inicial)}
-          deshabilitado={!modeloModificado(presupuesto)}
-        >
-          Cancelar
-        </QBoton>
-      </div> */}
       <QModal nombre="modal" abierto={mostrarModalCambioCliente} onCerrar={() => setMostrarModalCambioCliente(false)}>
         <CambioCliente onListo={cambiarCliente} 
           />

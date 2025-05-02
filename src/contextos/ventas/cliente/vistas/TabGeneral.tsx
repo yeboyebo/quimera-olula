@@ -4,13 +4,13 @@ import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import {
-    Accion,
-    EstadoModelo,
-    modeloEsValido,
-    modeloModificado,
+  Accion,
+  EstadoModelo,
+  modeloModificado
 } from "../../../comun/dominio.ts";
 import { IdFiscal } from "../../comun/componentes/idfiscal.tsx";
 import { Cliente } from "../diseño.ts";
+import { clienteEsValido } from "../dominio.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
 import { BajaCliente } from "./BajaCliente.tsx";
 import "./TabGeneral.css";
@@ -124,7 +124,7 @@ export const TabGeneral = ({
       <div className="botones maestro-botones ">
         <QBoton
           onClick={onGuardarClicked}
-          deshabilitado={!modeloEsValido(cliente)}
+          deshabilitado={!clienteEsValido(cliente)}
         >
           Guardar
         </QBoton>

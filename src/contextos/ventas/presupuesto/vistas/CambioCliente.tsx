@@ -1,7 +1,4 @@
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import {
-  modeloEsValido
-} from "../../../comun/dominio.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
@@ -15,13 +12,13 @@ export const CambioCliente = ({
   onListo: (cliente: TipoCambioCliente) => void;
 }) => {
 
-  const [cliente, uiProps] = useModelo(
+  const {modelo, uiProps, valido} = useModelo(
     metaCambioCliente,
     cambioClienteVacio()
   );
 
   const guardar = async () => {
-    onListo(cliente.valor);
+    onListo(modelo);
   };
 
   return (
@@ -33,14 +30,14 @@ export const CambioCliente = ({
           nombre='cambiar_cliente_presupuesto'
         />
         <DirCliente
-          clienteId={cliente.valor.cliente_id}
+          clienteId={modelo.cliente_id}
           {...uiProps("direccion_id")}
         />
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
           onClick={guardar}
-          deshabilitado={!modeloEsValido(cliente)}
+          deshabilitado={!valido}
         >
           Guardar
         </QBoton>

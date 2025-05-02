@@ -42,17 +42,6 @@ export const LineasLista = ({
 
   return (
     <>
-      <button onClick={() => publicar('crear_linea')}> Nueva</button>
-      <button
-        onClick={() => seleccionada && publicar('editar_linea')}
-        disabled={!seleccionada}
-      >
-        Editar
-      </button>
-      <button disabled={!seleccionada} onClick={() => seleccionada && publicar('borrar_linea')}>
-        Borrar
-      </button>
-
       <QTabla
         metaTabla={getMetaTablaLineas(cambiarCantidad)}
         datos={lineas}

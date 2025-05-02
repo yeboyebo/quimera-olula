@@ -1,8 +1,10 @@
 import { Direccion } from "../../comun/diseño.ts";
 import {
     initEstadoModelo,
-    makeValidador,
+    // makeValidador,
     MetaModelo,
+    modeloEsEditable,
+    modeloEsValido,
     stringNoVacio
 } from "../../comun/dominio.ts";
 import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
@@ -71,47 +73,60 @@ export const validadoresPresupuesto = {
 };
 
 export const metaNuevoPresupuesto: MetaModelo<NuevoPresupuesto> = {
-    bloqueados: [],
-    requeridos: ["cliente_id", "direccion_id", "empresa_id"],
-    validador: makeValidador({}),
-};
-
-export const metaCambioCliente: MetaModelo<CambioCliente> = {
-    bloqueados: [],
-    requeridos: ["cliente_id", "direccion_id"],
-    validador: makeValidador({}),
-};
-
-export const metaPresupuesto: MetaModelo<Presupuesto> = {
-    bloqueados: ["codigo", "id_fiscal", "cliente_id", 'total_divisa_empresa'],
-    requeridos: ["cliente_id", "id_fiscal", "divisa_id"],
-    validador: makeValidador({}),
+    // validador: makeValidador({}),
     campos: {
-        tasa_conversion: { tipo: "number", requerido: true },
-        total_divisa_empresa: { tipo: "number" },
+        cliente_id: { requerido: true },
+        direccion_id: { requerido: true },
+        empresa_id: { requerido: true },
     }
 };
 
+export const metaCambioCliente: MetaModelo<CambioCliente> = {
+    // validador: makeValidador({}),
+    campos: {
+        cliente_id: { requerido: true },
+        direccion_id: { requerido: true },
+    }
+};
+
+export const metaPresupuesto: MetaModelo<Presupuesto> = {
+    campos: {
+        tasa_conversion: { tipo: "number", requerido: true },
+        total_divisa_empresa: { tipo: "number", bloqueado: true },
+        codigo: { bloqueado: true },
+        id_fiscal: { bloqueado: true, requerido: true },
+        cliente_id: { bloqueado: true, requerido: true },
+        divisa_id: { requerido: true },
+    },
+    editable: (presupuesto: Presupuesto, _?: string) => {
+        return !presupuesto.aprobado;
+    },
+};
+
+export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
+export const presupuestoValido = modeloEsValido<Presupuesto>(metaPresupuesto);
+
+
 export const metaLinea: MetaModelo<LineaPresupuesto> = {
-    bloqueados: [],
-    requeridos: ["referencia", "cantidad"],
-    validador: makeValidador({}),
+    // validador: makeValidador({}),
     campos: {
         cantidad: { tipo: "number", requerido: true },
+        referencia: { requerido: true },
     }
 };
 
 export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
-    bloqueados: [],
-    requeridos: ["referencia", "cantidad"],
-    validador: makeValidador({}),
+    // validador: makeValidador({}),
     campos: {
         cantidad: { tipo: "number", requerido: true },
+        referencia: { requerido: true },
     }
 };
 
 export const initEstadoPresupuestoVacio = () => {
-    return initEstadoModelo(presupuestoVacio(), metaPresupuesto);
+    return initEstadoModelo(presupuestoVacio());
+    // return initEstadoModelo(presupuestoVacio(), metaPresupuesto);
 };
+
 
 

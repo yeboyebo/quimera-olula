@@ -1,6 +1,5 @@
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { modeloEsValido } from "../../../comun/dominio.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { metaNuevaLinea, nuevaLineaVacia } from "../dominio.ts";
 
@@ -10,7 +9,7 @@ export const AltaLinea = ({
   publicar: (evento: string, payload: unknown) => void;
 }) => {
 
-  const [linea, uiProps] = useModelo(
+  const {modelo, uiProps, valido} = useModelo(
     metaNuevaLinea,
     nuevaLineaVacia()
   );
@@ -30,8 +29,8 @@ export const AltaLinea = ({
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
-          onClick={() => publicar('nueva_linea_lista', linea.valor)}
-          deshabilitado={!modeloEsValido(linea)}
+          onClick={() => publicar('nueva_linea_lista', modelo)}
+          deshabilitado={!valido}
         >
           Guardar
         </QBoton>

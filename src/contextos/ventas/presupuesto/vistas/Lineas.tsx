@@ -1,26 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
 import { refrescarSeleccionada } from "../../../comun/dominio.ts";
-import { LineaPresupuesto as Linea, LineaPresupuesto, NuevaLinea } from "../diseño.ts";
+import { HookModelo } from "../../../comun/useModelo.ts";
+import { LineaPresupuesto as Linea, LineaPresupuesto, NuevaLinea, Presupuesto } from "../diseño.ts";
 import { deleteLinea, getLineas, patchArticuloLinea, patchCantidadLinea, postLinea } from "../infraestructura.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 export const Lineas = ({
   onCabeceraModificada,
-  presupuestoId,
+  presupuesto,
 }: {
   onCabeceraModificada: () => void;
-  presupuestoId: string;
+  presupuesto: HookModelo<Presupuesto>;
 }) => {
   const [modo, setModo] = useState("lista");
   const [lineas, setLineas] = useState<Linea[]>([]);
   const [seleccionada, setSeleccionada] = useState<string | undefined>(undefined);
+  const presupuestoId = presupuesto?.modelo?.id ;
   
-  const quitarElemento = <T extends Entidad>(lista: T[], id: string): T[] => {
-    return lista.filter((e) => e.id !== id);
-  };
   const getElemento = <T extends Entidad>(lista: T[], id: string): T => {
     const elementos = lista.filter((e) => e.id === id);
     if (elementos.length === 1) {
@@ -29,12 +29,14 @@ export const Lineas = ({
     throw new Error(`No se encontró el elemento con id ${id}`);
   };
 
-  const refrescarLineas = async (idSeleccionada: string) => {
+  const refrescarLineas = async (idSeleccionada?: string) => {
     const lineas = await getLineas(presupuestoId);
     setLineas(lineas);
     onCabeceraModificada();
     refrescarSeleccionada(lineas, idSeleccionada, setSeleccionada);
-    // setModo("lista");
+    if (idSeleccionada) {
+      refrescarSeleccionada(lineas, idSeleccionada, setSeleccionada);
+    }
   };
 
   const cargar = useCallback(async () => {
@@ -47,7 +49,7 @@ export const Lineas = ({
     if (presupuestoId) cargar();
   }, [presupuestoId, cargar]);
   
-  const publicar = async (evento: string, payload: unknown) => {
+  const publicar = async (evento: string, payload?: unknown) => {
     console.log("publicar", evento, payload, 'estado actual', modo);
 
     switch(modo) {
@@ -99,11 +101,9 @@ export const Lineas = ({
             if (!seleccionada) {
               return;
             }
-            const lineaId = seleccionada
             setSeleccionada(undefined);
-            setLineas(quitarElemento(lineas, lineaId));
             await deleteLinea(presupuestoId, seleccionada);
-            onCabeceraModificada();
+            refrescarLineas();
             break;
           }
         }
@@ -114,6 +114,22 @@ export const Lineas = ({
 
   return (
     <>
+      {presupuesto.editable && (
+        <div className="botones maestro-botones ">
+          <QBoton onClick={() => publicar('crear_linea')}>
+            Nueva
+          </QBoton>
+          <QBoton
+            onClick={() => seleccionada && publicar('editar_linea')}
+            deshabilitado={!seleccionada}
+          >
+            Editar
+          </QBoton>
+          <QBoton deshabilitado={!seleccionada} onClick={() => seleccionada && publicar('borrar_linea')}>
+            Borrar
+          </QBoton>
+        </div>
+      )}
       <LineasLista
         lineas={lineas}
         seleccionada={seleccionada}

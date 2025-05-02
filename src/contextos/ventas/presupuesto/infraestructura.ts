@@ -120,3 +120,7 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
   await RestAPI.patch(`${baseUrl}/${id}`, payload);
 };
 
+
+export const aprobarPresupuesto = async (id: string) => {
+  await RestAPI.patch(`${baseUrl}/${id}/aprobar`, {});
+};

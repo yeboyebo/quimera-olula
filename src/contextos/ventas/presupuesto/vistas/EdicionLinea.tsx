@@ -1,6 +1,5 @@
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { modeloEsValido } from "../../../comun/dominio.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { LineaPresupuesto } from "../diseño.ts";
 import { metaLinea } from "../dominio.ts";
@@ -23,11 +22,11 @@ export const EdicionLinea = ({
 //   onCancelar: () => void;
 // }) => {
   // const [estado, setEstado] = useState({} as Record<string, string>);
-  const [linea, uiProps, init] = useModelo(metaLinea, lineaInicial);
+  const {modelo, uiProps, valido} = useModelo(metaLinea, lineaInicial);
   // useEffect(() => {
   //   init(lineaInicial);
   // }, [lineaInicial, init]);
-  console.log('linea', lineaInicial, linea.valor);
+  console.log('linea', lineaInicial, modelo);
 
   // const onGuardar = async (datos: Record<string, string>) => {
   //   const nuevoEstado = {
@@ -79,8 +78,8 @@ export const EdicionLinea = ({
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
-          onClick={() => publicar('linea_edicion_lista', linea.valor)}
-          deshabilitado={!modeloEsValido(linea)}
+          onClick={() => publicar('linea_edicion_lista', modelo)}
+          deshabilitado={!valido}
         >
           Guardar
         </QBoton>
