@@ -21,7 +21,13 @@ const getMetaTablaLineas = (
         />
       ),
     },
-    { id: "pvp_unitario", cabecera: "P. Unitario" },
+    { id: "pvp_unitario", cabecera: "Precio" },
+    { id: "grupo_iva_producto_id", cabecera: "IVA" },
+    { id: "dto_porcentual", cabecera: "% Dto.",
+      render: (linea: Linea) => linea.dto_porcentual ? 
+        `${linea.dto_porcentual}%`
+        : ""
+     },
     { id: "pvp_total", cabecera: "Total" },
   ];
 };
@@ -29,15 +35,15 @@ const getMetaTablaLineas = (
 export const LineasLista = ({
   lineas,
   seleccionada,
-  publicar
+  emitir
 }: {
   lineas: Linea[];
   seleccionada?: string;
-  publicar: (evento: string, payload?: unknown) => void;
+  emitir: (evento: string, payload?: unknown) => void;
 }) => {
 
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    publicar("cambiar_cantidad", { linea, cantidad });
+    emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
   };
 
   return (
@@ -47,7 +53,7 @@ export const LineasLista = ({
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
-        onSeleccion={(linea) => publicar('linea_seleccionada', linea.id)}
+        onSeleccion={(linea) => emitir('LINEA_SELECCIONADA', linea.id)}
         orden={{ id: "ASC" }}
         onOrdenar={
           (_: string) => null

@@ -50,11 +50,11 @@ export const QTextArea = ({
   };
 
   const manejarChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange?.(e.target.value, e);
+    onChange?.(e.target.value || '', e);
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    onBlur?.(e.target.value, e);
+    onBlur?.(e.target.value || '', e);
   };
 
   const manejarInput = (e: React.FormEvent<HTMLTextAreaElement>) => {

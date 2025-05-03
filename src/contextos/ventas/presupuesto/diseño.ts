@@ -43,7 +43,9 @@ export interface LineaPresupuesto extends Entidad {
   descripcion: string;
   cantidad: number;
   pvp_unitario: number;
+  dto_porcentual: number;
   pvp_total: number;
+  grupo_iva_producto_id: string;
 };
 
 export interface NuevaLinea extends Modelo {
@@ -63,6 +65,8 @@ export type GetPresupuesto = (id: string) => Promise<Presupuesto>;
 export type PostPresupuesto = (presupuesto: NuevoPresupuesto) => Promise<string>;
 
 export type CambiarArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;
+
+export type PatchLinea = (id: string, linea: LineaPresupuesto) => Promise<void>;
 
 export type CambiarCantidadLinea = (id: string, linea: LineaPresupuesto, cantidad: number) => Promise<void>;
 

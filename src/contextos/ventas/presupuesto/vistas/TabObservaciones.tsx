@@ -14,7 +14,7 @@ export const TabObservaciones = ({
   onEntidadActualizada,
 }: TabClienteProps) => {
 
-  const [_, uiProps] = ctxPresupuesto;
+  const {uiProps} = ctxPresupuesto;
 
   return (
     <>

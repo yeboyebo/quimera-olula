@@ -4,9 +4,9 @@ import { useModelo } from "../../../comun/useModelo.ts";
 import { metaNuevaLinea, nuevaLineaVacia } from "../dominio.ts";
 
 export const AltaLinea = ({
-  publicar,
+  emitir,
 }: {
-  publicar: (evento: string, payload: unknown) => void;
+  emitir: (evento: string, payload: unknown) => void;
 }) => {
 
   const {modelo, uiProps, valido} = useModelo(
@@ -29,7 +29,7 @@ export const AltaLinea = ({
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
-          onClick={() => publicar('nueva_linea_lista', modelo)}
+          onClick={() => emitir('ALTA_LISTA', modelo)}
           deshabilitado={!valido}
         >
           Guardar

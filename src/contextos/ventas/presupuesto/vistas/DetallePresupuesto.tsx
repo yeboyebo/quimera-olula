@@ -36,15 +36,14 @@ export const DetallePresupuesto = ({
     metaPresupuesto,
     presupuestoVacio()
   );
-  const { modelo, modelo_inicial, init } = ctxPresupuesto;
+  const { modelo, modeloInicial, init } = ctxPresupuesto;
 
   const onGuardarClicked = async () => {
-      await patchPresupuesto(modelo.id, modelo);
-      const presupuesto_guardado = await getPresupuesto(modelo.id);
-      init(presupuesto_guardado);
-      onEntidadActualizada(modelo);
-    };
-    console.log("TabDatos", modelo_inicial.tasa_conversion, modelo.tasa_conversion);
+    await patchPresupuesto(modelo.id, modelo);
+    const presupuesto_guardado = await getPresupuesto(modelo.id);
+    init(presupuesto_guardado);
+    onEntidadActualizada(modelo);
+  };
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);

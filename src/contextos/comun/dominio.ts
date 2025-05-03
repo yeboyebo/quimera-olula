@@ -108,6 +108,41 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
     }
 }
 
+export const makeReductor2 = <T extends Modelo>(meta: MetaModelo<T>) => {
+
+    return (estado: T, accion: Accion<T>): T => {
+
+        switch (accion.type) {
+
+            case "init": {
+                return accion.payload.entidad;
+            }
+
+            case "set_campo": {
+                const valor = convertirValorCampo<T>(
+                    accion.payload.valor,
+                    accion.payload.campo,
+                    meta.campos
+                );
+                return {
+                    ...estado,
+                    [accion.payload.campo]: valor
+                }
+                // return cambiarEstadoModelo<T>(
+                //     estado,
+                //     accion.payload.campo,
+                //     valor,
+                //     // meta.validador,
+                // );
+            }
+
+            default: {
+                return { ...estado };
+            }
+        }
+    }
+}
+
 const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, Campo<T>>) => {
     if (!campos) return valor;
     if (!(campo in campos)) return valor;
@@ -124,34 +159,12 @@ const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, cam
 }
 
 export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
-    // export const initEstadoModelo = <T extends Modelo>(modelo: T, meta: MetaModelo<T>) => {
-    // const validacion: Validacion = {}
-    // const metaCampos = meta.campos || {};
-    // for (const k in modelo) {
-    //     const requerido = metaCampos[k]?.requerido || false;
-    //     const bloqueado = metaCampos[k]?.bloqueado || false;
-    //     validacion[k] = {
-    //         valido: requerido && modelo[k] === '' ? false : true,
-    //         textoValidacion: "",
-    //         bloqueado,
-    //         requerido,
-    //     };
-    // }
-    // const editable = (modelo: T) => (campo?: string) => {
-    //     return (campo)
-    //         ? meta.editable
-    //             ? meta.editable(modelo, campo) && !validacion[campo].bloqueado
-    //             : !validacion[campo].bloqueado
-    //         : meta.editable
-    //             ? meta.editable(modelo)
-    //             : true;
-    // }
-
+    if ('referencia' in modelo) {
+        console.log("init modelo y modelo_inicial");
+    }
     const estado = {
         valor: { ...modelo },
-        valor_inicial: { ...modelo },
-        // validacion,
-        // get editable() { return editable(this.valor) },
+        valor_inicial: modelo,
     }
     return estado;
 }

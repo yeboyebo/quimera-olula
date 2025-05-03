@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 const baseUrl = `/ventas/presupuesto`;
 
@@ -65,7 +65,7 @@ export const postLinea: PostLinea = async (id, linea) => {
       cantidad: linea.cantidad
     }]
   }).then((respuesta) => {
-    return respuesta.id;
+    return respuesta.ids[0];
   });
 }
 
@@ -79,6 +79,22 @@ export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, refe
   }
   await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload);
 }
+
+export const patchLinea: PatchLinea = async (id, linea) => {
+  const payload = {
+    cambios: {
+      articulo: {
+        articulo_id: linea.referencia
+      },
+      cantidad: linea.cantidad,
+      pvp_unitario: linea.pvp_unitario,
+      dto_porcentual: linea.dto_porcentual,
+      grupo_iva_producto_id: linea.grupo_iva_producto_id,
+    },
+  }
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+}
+
 
 export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantidad) => {
   const payload = {

@@ -5,7 +5,7 @@ import { Entidad } from "../../../comun/diseño.ts";
 import { refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { HookModelo } from "../../../comun/useModelo.ts";
 import { LineaPresupuesto as Linea, LineaPresupuesto, NuevaLinea, Presupuesto } from "../diseño.ts";
-import { deleteLinea, getLineas, patchArticuloLinea, patchCantidadLinea, postLinea } from "../infraestructura.ts";
+import { deleteLinea, getLineas, patchCantidadLinea, patchLinea, postLinea } from "../infraestructura.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
@@ -42,20 +42,21 @@ export const Lineas = ({
   const cargar = useCallback(async () => {
     const lineas = await getLineas(presupuestoId);
     setLineas(lineas);
-    refrescarSeleccionada(lineas, seleccionada, setSeleccionada);
+    const lineaSeleccionada = seleccionada ? seleccionada : lineas.length > 0 ? lineas[0].id : undefined
+    refrescarSeleccionada(lineas, lineaSeleccionada, setSeleccionada);
   }, [presupuestoId, setLineas, seleccionada, setSeleccionada]);
 
   useEffect(() => {
     if (presupuestoId) cargar();
   }, [presupuestoId, cargar]);
   
-  const publicar = async (evento: string, payload?: unknown) => {
-    console.log("publicar", evento, payload, 'estado actual', modo);
+  const procesarEvento = async (evento: string, payload?: unknown) => {
+    console.log("procesarEvento", evento, payload, 'estado actual', modo);
 
     switch(modo) {
       case 'alta': {
         switch(evento) {
-          case 'nueva_linea_lista': {
+          case 'ALTA_LISTA': {
             const idLinea = await postLinea(presupuestoId, payload as NuevaLinea);
             refrescarLineas(idLinea);
             setModo("lista");
@@ -66,10 +67,14 @@ export const Lineas = ({
       }
       case 'edicion': {
         switch(evento) {
-          case 'linea_edicion_lista': {
+          case 'EDICION_LISTA': {
             const linea = payload as LineaPresupuesto;
-            await patchArticuloLinea(presupuestoId, linea.id, linea.referencia);
+            await patchLinea(presupuestoId, linea);
             refrescarLineas(linea.id);
+            setModo("lista");
+            break;
+          }
+          case 'EDICION_CANCELADA': {
             setModo("lista");
             break;
           }
@@ -78,26 +83,26 @@ export const Lineas = ({
       }
       case 'lista': {
         switch(evento) {
-          case 'linea_seleccionada': {
+          case 'LINEA_SELECCIONADA': {
             const idLinea = payload as string;
             setSeleccionada(idLinea);
             break;
           }
-          case 'crear_linea': {
+          case 'ALTA_SOLICITADA': {
             setModo("alta");
             break;
           }
-          case 'editar_linea': {
+          case 'EDICION_SOLICITADA': {
             setModo("edicion");
             break;
           }
-          case "cambiar_cantidad": {
+          case "CAMBIO_CANTIDAD_SOLICITADO": {
             const { linea, cantidad } = payload as { linea: LineaPresupuesto; cantidad: number };
             await patchCantidadLinea(presupuestoId, linea, cantidad);
             refrescarLineas(linea.id);
             break
           }
-          case 'borrar_linea': {
+          case 'BORRADO_SOLICITADO': {
             if (!seleccionada) {
               return;
             }
@@ -111,39 +116,42 @@ export const Lineas = ({
       }
     }
   }
+  const emitir = procesarEvento
 
   return (
     <>
-      {presupuesto.editable && (
-        <div className="botones maestro-botones ">
-          <QBoton onClick={() => publicar('crear_linea')}>
-            Nueva
-          </QBoton>
-          <QBoton
-            onClick={() => seleccionada && publicar('editar_linea')}
-            deshabilitado={!seleccionada}
-          >
-            Editar
-          </QBoton>
-          <QBoton deshabilitado={!seleccionada} onClick={() => seleccionada && publicar('borrar_linea')}>
-            Borrar
-          </QBoton>
-        </div>
-      )}
+      {presupuesto.editable && 
+        (
+          <div className="botones maestro-botones ">
+            <QBoton onClick={() => emitir('ALTA_SOLICITADA')}>
+              Nueva
+            </QBoton>
+            <QBoton
+              onClick={() => seleccionada && emitir('EDICION_SOLICITADA')}
+              deshabilitado={!seleccionada}
+            >
+              Editar
+            </QBoton>
+            <QBoton deshabilitado={!seleccionada} onClick={() => seleccionada && emitir('BORRADO_SOLICITADO')}>
+              Borrar
+            </QBoton>
+          </div>
+        )
+      }
       <LineasLista
         lineas={lineas}
         seleccionada={seleccionada}
-        publicar={publicar}
+        emitir={emitir}
       />
       {
         seleccionada && (
-          <QModal nombre="modal" abierto={modo==='edicion'} onCerrar={() => setModo("lista")}>
-            <EdicionLinea publicar={publicar} lineaInicial={getElemento(lineas, seleccionada)}/>
+          <QModal nombre="modal" abierto={modo==='edicion'} onCerrar={() => emitir("EDICION_CANCELADA")}>
+            <EdicionLinea emitir={emitir} lineaInicial={getElemento(lineas, seleccionada)}/>
           </QModal>
         )
       }
       <QModal nombre="modal" abierto={modo==='alta'} onCerrar={() => setModo("lista")}>
-        <AltaLinea publicar={publicar} />
+        <AltaLinea emitir={emitir} />
       </QModal>
     </>
   );
