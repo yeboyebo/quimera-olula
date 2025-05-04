@@ -1,15 +1,12 @@
-import { useReducer } from "react";
 import { useParams } from "react-router";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Entidad } from "../../../comun/diseño.ts";
-import {
-    campoModeloAInput,
-    makeReductor,
-} from "../../../comun/dominio.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../diseño.ts";
-import { initEstadoClienteVacio, metaCliente } from "../dominio.ts";
-import { getCliente } from "../infraestructura.ts";
+import { clienteVacio, metaCliente } from "../dominio.ts";
+import { getCliente, patchCliente } from "../infraestructura.ts";
 import "./DetalleCliente.css";
 import { TabComercial } from "./TabComercial.tsx";
 import { TabCrmContactos } from "./TabCrmContactos.tsx";
@@ -31,25 +28,39 @@ export const DetalleCliente = ({
   const clienteId = clienteInicial?.id ?? params.id;
   const titulo = (cliente: Entidad) => cliente.nombre as string;
 
-  const [cliente, dispatch] = useReducer(
-    makeReductor(metaCliente),
-    initEstadoClienteVacio()
+  // const [cliente, dispatch] = useReducer(
+  //   makeReductor(metaCliente),
+  //   initEstadoClienteVacio()
+  // );
+  const cliente = useModelo(
+    metaCliente,
+    clienteVacio()
   );
+  const { modelo, init, modificado, valido } = cliente;
 
-  const setCampo = (campo: string) => (valor: unknown) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor: valor as string },
-    });
+  const onGuardarClicked = async () => {
+    await patchCliente(modelo.id, modelo);
+    const cliente_guardado = await getCliente(modelo.id);
+    init(cliente_guardado);
+    onEntidadActualizada(modelo);
   };
 
-  const getProps = (campo: string) => {
-    return campoModeloAInput(cliente, campo);
-  };
+
+  // const setCampo = (campo: string) => (valor: unknown) => {
+  //   dispatch({
+  //     type: "set_campo",
+  //     payload: { campo, valor: valor as string },
+  //   });
+  // };
+
+  // const getProps = (campo: string) => {
+  //   return campoModeloAInput(cliente, campo);
+  // };
 
   const onRecargarCliente = async () => {
-    const clienteRecargado = await getCliente(cliente.valor.id);
-    dispatch({ type: "init", payload: { entidad: clienteRecargado } });
+    const clienteRecargado = await getCliente(modelo.id);
+    // dispatch({ type: "init", payload: { entidad: clienteRecargado } });
+    init(clienteRecargado);
     onEntidadActualizada(clienteRecargado);
   };
 
@@ -57,80 +68,72 @@ export const DetalleCliente = ({
     <Detalle
       id={clienteId}
       obtenerTitulo={titulo}
-      setEntidad={(c) =>
-        dispatch({ type: "init", payload: { entidad: c as Cliente } })
-      }
-      entidad={cliente.valor}
+      setEntidad={(c) => init(c as Cliente) }
+      entidad={modelo}
       cargar={getCliente}
       className="detalle-cliente"
       cerrarDetalle={cancelarSeleccionada}
     >
       {!!clienteId && (
-        <Tabs
-          children={[
-            <Tab
-              key="tab-1"
-              label="General"
-              children={
-                <div className="detalle-cliente-tab-contenido">
+        <>
+          <Tabs
+            children={[
+              <Tab key="tab-1" label="General" children={
                   <TabGeneral
-                    getProps={getProps}
-                    setCampo={setCampo}
                     cliente={cliente}
-                    dispatch={dispatch}
                     onEntidadActualizada={onEntidadActualizada}
                     recargarCliente={onRecargarCliente}
                   />
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-1"
-              label="Comercial"
-              children={
-                <div className="detalle-cliente-tab-contenido">
+                }
+              />,
+              <Tab key="tab-1" label="Comercial" children={
                   <TabComercial
-                    getProps={getProps}
-                    setCampo={setCampo}
                     cliente={cliente}
-                    dispatch={dispatch}
                     onEntidadActualizada={onEntidadActualizada}
                   />
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-2"
-              label="Direcciones"
-              children={
-                <div className="detalle-cliente-tab-contenido">
+                }
+              />,
+              <Tab key="tab-2" label="Direcciones" children={
                   <TabDirecciones clienteId={clienteId} />
-                </div>
-              }
-            />,
-            <Tab
-              key="tab-3"
-              label="Cuentas Bancarias"
-              children={
-                <TabCuentasBanco
-                  cliente={cliente}
-                  setCampo={setCampo}
-                  dispatch={dispatch}
-                  onEntidadActualizada={onEntidadActualizada}
-                />
-              }
-            />,
-            <Tab
-              key="tab-4"
-              label="Agenda"
-              children={
-                <div className="detalle-cliente-tab-contenido">
-                  <TabCrmContactos clienteId={clienteId} />
-                </div>
-              }
-            />,
-          ]}
-        ></Tabs>
+                }
+              />,
+              <Tab key="tab-3" label="Cuentas Bancarias" children={
+                  <TabCuentasBanco
+                    cliente={cliente}
+                    onEntidadActualizada={onEntidadActualizada}
+                  />
+                }
+              />,
+              <Tab
+                key="tab-4"
+                label="Agenda"
+                children={
+                  <div className="detalle-cliente-tab-contenido">
+                    <TabCrmContactos clienteId={clienteId} />
+                  </div>
+                }
+              />,
+            ]}
+          />
+          { cliente.modificado && (
+            <div className="botones maestro-botones ">
+              <QBoton
+                onClick={onGuardarClicked}
+                deshabilitado={!valido}
+              >
+                Guardar
+              </QBoton>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => init()}
+                deshabilitado={!modificado}
+              >
+                Cancelar
+              </QBoton>
+            </div>
+          )}
+        </>
       )}
     </Detalle>
   );

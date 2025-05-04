@@ -6,16 +6,13 @@ import "./TabDatos.css";
 
 interface TabDatosProps {
   ctxPresupuesto: HookModelo<Presupuesto>; 
-  onEntidadActualizada: (entidad: Presupuesto) => void;
 }
 
 export const TabDatos = ({
   ctxPresupuesto,
-  onEntidadActualizada,
 }: TabDatosProps) => {
   return appFactory().PresupuestoTabDatos({
     ctxPresupuesto,
-    onEntidadActualizada,
   })
 };
 

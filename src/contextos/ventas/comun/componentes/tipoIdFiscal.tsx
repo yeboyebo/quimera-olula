@@ -7,7 +7,7 @@ interface IdFiscalProps {
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const IdFiscal = ({ valor, onChange, getProps }: IdFiscalProps) => {
+export const TipoIdFiscal = ({ valor, onChange, getProps }: IdFiscalProps) => {
   return (
     <QSelect
       label="Tipo Id Fiscal"

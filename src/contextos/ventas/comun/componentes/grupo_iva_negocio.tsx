@@ -4,11 +4,15 @@ import { obtenerOpcionesSelector } from "../../../comun/infraestructura.ts";
 
 interface FormaPagoProps {
   valor: string;
+  label?: string;
+  nombre?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const GrupoIvaNegocio = ({
   valor,
+  label = "Grupo IVA",
+  nombre = "grupo_iva_id",
   onChange,
   ...props
 }: FormaPagoProps) => {
@@ -32,8 +36,8 @@ export const GrupoIvaNegocio = ({
   return (
     <QSelect
       {...props}
-      label="Grupo IVA"
-      nombre="grupo_iva_negocio_id"
+      label={label}
+      nombre={nombre}
       valor={valor}
       onChange={onChange}
       opciones={opciones}

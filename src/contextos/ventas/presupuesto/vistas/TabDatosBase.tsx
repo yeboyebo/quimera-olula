@@ -11,12 +11,10 @@ import "./TabDatos.css";
 
 interface TabDatosProps {
   ctxPresupuesto: HookModelo<Presupuesto>; 
-  onEntidadActualizada: (entidad: Presupuesto) => void;
 }
 
 export const TabDatosBase = ({
   ctxPresupuesto,
-  onEntidadActualizada,
 }: TabDatosProps) => {
 
   const {uiProps} = ctxPresupuesto;

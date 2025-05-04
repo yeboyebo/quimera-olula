@@ -4,11 +4,13 @@ import { obtenerOpcionesSelector } from "../../../comun/infraestructura.ts";
 
 interface FormaPagoProps {
   valor: string;
+  nombre?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const FormaPago = ({
   valor,
+  nombre = "forma_pago_id",
   onChange,
   ...props
 }: FormaPagoProps) => {
@@ -33,7 +35,7 @@ export const FormaPago = ({
     <QSelect
       {...props}
       label="Forma de Pago"
-      nombre="forma_pago_id"
+      nombre={nombre}
       valor={valor}
       onChange={onChange}
       opciones={opciones}

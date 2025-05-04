@@ -6,12 +6,10 @@ import "./TabObservaciones.css";
 
 interface TabClienteProps {
   ctxPresupuesto: HookModelo<Presupuesto>; 
-  onEntidadActualizada: (entidad: Presupuesto) => void;
 }
 
 export const TabObservaciones = ({
   ctxPresupuesto,
-  onEntidadActualizada,
 }: TabClienteProps) => {
 
   const {uiProps} = ctxPresupuesto;

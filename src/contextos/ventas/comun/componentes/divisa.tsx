@@ -4,11 +4,17 @@ import { obtenerOpcionesSelector } from "../../../comun/infraestructura.ts";
 
 interface DivisasProps {
   valor: string;
+  nombre?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const Divisa = ({ valor, onChange, ...props }: DivisasProps) => {
+export const Divisa = ({
+  valor,
+  nombre = "divisa_id",
+  onChange,
+  ...props
+}: DivisasProps) => {
   const [opcionesDivisa, setOpcionesDivisa] = useState<
     { valor: string; descripcion: string }[]
   >([]);
@@ -29,7 +35,7 @@ export const Divisa = ({ valor, onChange, ...props }: DivisasProps) => {
   return (
     <QSelect
       label="Divisa"
-      nombre="divisa_id"
+      nombre={nombre}
       valor={valor}
       onChange={onChange}
       opciones={opcionesDivisa}

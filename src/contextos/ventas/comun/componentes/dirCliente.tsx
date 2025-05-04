@@ -5,6 +5,7 @@ import { getDirecciones } from "../../cliente/infraestructura.ts";
 interface DireccionesProps {
   clienteId: string | null;
   valor?: string;
+  nombre?: string;
   onChange: (
     opcion: { valor: string; descripcion: string } | null
   ) => void;
@@ -13,6 +14,7 @@ interface DireccionesProps {
 export const DirCliente = ({
   clienteId,
   valor,
+  nombre = "direccion_id",
   onChange,
   ...props
 }: DireccionesProps) => {
@@ -44,7 +46,7 @@ export const DirCliente = ({
     <QSelect
       {...props}
       label="Dirección"
-      nombre="direccion_id"
+      nombre={nombre}
       valor={valor}
       opciones={opcionesDireccion}
       onChange={onChange}

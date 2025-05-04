@@ -11,12 +11,10 @@ quimera-select[nombre="divisa_id"] {
 }
 
 quimera-input[nombre="tasa_conversion"] {
-    text-align: right;
     grid-column: span 2;
 }
 
 quimera-input[nombre="total_divisa_empresa"] {
-    text-align: right;
     grid-column: span 2;
 }
 

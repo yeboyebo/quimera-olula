@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
-import { refrescarSeleccionada } from "../../../comun/dominio.ts";
+import { getElemento, refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { HookModelo } from "../../../comun/useModelo.ts";
 import { LineaPresupuesto as Linea, LineaPresupuesto, NuevaLinea, Presupuesto } from "../diseño.ts";
 import { deleteLinea, getLineas, patchCantidadLinea, patchLinea, postLinea } from "../infraestructura.ts";
@@ -21,14 +20,6 @@ export const Lineas = ({
   const [seleccionada, setSeleccionada] = useState<string | undefined>(undefined);
   const presupuestoId = presupuesto?.modelo?.id ;
   
-  const getElemento = <T extends Entidad>(lista: T[], id: string): T => {
-    const elementos = lista.filter((e) => e.id === id);
-    if (elementos.length === 1) {
-      return elementos[0];
-    }
-    throw new Error(`No se encontró el elemento con id ${id}`);
-  };
-
   const refrescarLineas = async (idSeleccionada?: string) => {
     const lineas = await getLineas(presupuestoId);
     setLineas(lineas);

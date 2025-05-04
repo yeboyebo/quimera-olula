@@ -1,12 +1,6 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import {
-    campoModeloAInput,
-    initEstadoModelo,
-    makeReductor,
-    modeloEsValido,
-} from "../../../comun/dominio.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { CuentaBanco } from "../diseño.ts";
 import { metaCuentaBanco } from "../dominio.ts";
 import { patchCuentaBanco } from "../infraestructura.ts";
@@ -25,25 +19,27 @@ export const EdicionCuentaBanco = ({
   onCuentaActualizada = () => {},
   onCancelar,
 }: EdicionCuentaBancoProps) => {
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaCuentaBanco),
-    initEstadoModelo(cuenta, metaCuentaBanco)
-  );
+  // const [estado, dispatch] = useReducer(
+  //   makeReductor(metaCuentaBanco),
+  //   initEstadoModelo(cuenta, metaCuentaBanco)
+  // );
 
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
+  const {modelo, uiProps, valido, } = useModelo(metaCuentaBanco, cuenta);
 
-  const getProps = (campo: string) => {
-    return campoModeloAInput(estado, campo);
-  };
+  // const setCampo = (campo: string) => (valor: string) => {
+  //   dispatch({
+  //     type: "set_campo",
+  //     payload: { campo, valor },
+  //   });
+  // };
+
+  // const getProps = (campo: string) => {
+  //   return campoModeloAInput(estado, campo);
+  // };
 
   const guardar = async () => {
-    await patchCuentaBanco(clienteId, estado.valor);
-    onCuentaActualizada(estado.valor);
+    await patchCuentaBanco(clienteId, modelo);
+    onCuentaActualizada(modelo);
   };
 
   return (
@@ -51,15 +47,17 @@ export const EdicionCuentaBanco = ({
       <quimera-formulario>
         <QInput
           label="IBAN"
-          onChange={setCampo("iban")}
-          {...getProps("iban")}
+          {...uiProps("iban")}
         />
-        <QInput label="BIC" onChange={setCampo("bic")} {...getProps("bic")} />
+        <QInput
+          label="BIC"
+          {...uiProps("bic")}
+        />
       </quimera-formulario>
       <div className="botones">
         <QBoton
           onClick={guardar}
-          deshabilitado={!modeloEsValido(estado)}
+          deshabilitado={!valido}
         >
           Guardar
         </QBoton>

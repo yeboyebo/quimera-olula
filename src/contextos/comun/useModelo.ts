@@ -1,6 +1,6 @@
 import { useCallback, useReducer, useState } from "react";
 import { Modelo } from "./diseño.ts";
-import { Accion, campoModeloEsValido, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado } from "./dominio.ts";
+import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
 
 
 export function useModelo<T extends Modelo>(
@@ -68,15 +68,18 @@ export function useModelo<T extends Modelo>(
         }
     };
     const uiProps = (campo: string, secundario?: string) => {
-        const validacion = campoModeloEsValido(meta)(modelo, campo);
+        const validacion = validacionCampoModelo(meta)(modelo, campo);
         const valido = validacion === true;
-        const textoValidacion = typeof validacion === "string" ? validacion : "";
-        const editable = modeloEsEditable<T>(meta)(modelo, campo);
+        // console.log('validacion', campo, validacion, valido);
         const valor = modelo[campo] as string;
-
+        const textoValidacion = valor === modeloInicial[campo]
+            ? ''
+            : typeof validacion === "string"
+                ? validacion
+                : '';
+        const editable = modeloEsEditable<T>(meta)(modelo, campo);
         const cambiado = valor !== modeloInicial[campo];
-        console.log('modeloInicial', modeloInicial);
-        console.log('cambiado', cambiado, campo, valor, modeloInicial[campo]);
+
         return {
             nombre: campo,
             valor: valor,

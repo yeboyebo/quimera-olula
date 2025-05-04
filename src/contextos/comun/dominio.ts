@@ -6,8 +6,8 @@ export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], enti
     });
 }
 
-export const quitarEntidadDeLista = <T extends Entidad>(lista: T[], elemento: T): T[] => {
-    return lista.filter((e) => e.id !== elemento.id);
+export const quitarEntidadDeLista = <T extends Entidad>(lista: T[], id: string): T[] => {
+    return lista.filter((e) => e.id !== id);
 }
 
 export const refrescarSeleccionada = <T extends Entidad>(entidades: T[], id: string | undefined, setSeleccionada: (e?: string) => void) => {
@@ -16,6 +16,14 @@ export const refrescarSeleccionada = <T extends Entidad>(entidades: T[], id: str
         : null
     setSeleccionada(nuevaSeleccionada ? nuevaSeleccionada.id : undefined);
 }
+
+export const getElemento = <T extends Entidad>(lista: T[], id: string): T => {
+    const elementos = lista.filter((e) => e.id === id);
+    if (elementos.length === 1) {
+        return elementos[0];
+    }
+    throw new Error(`No se encontró el elemento con id ${id}`);
+};
 
 export const direccionCompleta = (valor: Direccion) => `${valor.tipo_via ? (valor.tipo_via + ' ') : ''} ${valor.nombre_via}, ${valor.ciudad}`;
 export const direccionVacia: Direccion = {
@@ -295,6 +303,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     const campos = meta.campos || {};
     const requerido = campo in campos && campos[campo]?.requerido
     const valor = modelo[campo];
+    // console.log("validacionCampoModelo", campo, requerido, valor === '', valor === null, valor === undefined);
     if (requerido && valor === '') {
         return "Campo requerido";
     }

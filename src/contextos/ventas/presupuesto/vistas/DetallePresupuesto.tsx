@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
+import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Presupuesto } from "../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
@@ -22,10 +22,10 @@ export type ValorControl = null | string | ParamOpcion;
 
 export const DetallePresupuesto = ({
   presupuestoInicial = null,
-  onEntidadActualizada = () => {},
+  emitir = () => {},
 }: {
   presupuestoInicial?: Presupuesto | null;
-  onEntidadActualizada?: (entidad: Presupuesto) => void;
+  emitir?: EmitirEvento
 }) => {
   const params = useParams();
 
@@ -36,26 +36,26 @@ export const DetallePresupuesto = ({
     metaPresupuesto,
     presupuestoVacio()
   );
-  const { modelo, modeloInicial, init } = ctxPresupuesto;
+  const { modelo, init } = ctxPresupuesto;
 
   const onGuardarClicked = async () => {
     await patchPresupuesto(modelo.id, modelo);
     const presupuesto_guardado = await getPresupuesto(modelo.id);
     init(presupuesto_guardado);
-    onEntidadActualizada(modelo);
+    emitir('PRESUPUESTO_CAMBIADO', presupuesto_guardado);
   };
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
     init(nuevoPresupuesto);
-    onEntidadActualizada(nuevoPresupuesto);
+    emitir('PRESUPUESTO_CAMBIADO', nuevoPresupuesto);
   };
 
   const aprobarClicked = async () => {
     await aprobarPresupuesto(modelo.id);
     const presupuesto_aprobado = await getPresupuesto(modelo.id);
     init(presupuesto_aprobado);
-    onEntidadActualizada(presupuesto_aprobado);
+    emitir('PRESUPUESTO_CAMBIADO', presupuesto_aprobado);
   };
 
   return (
@@ -82,21 +82,19 @@ export const DetallePresupuesto = ({
               <Tab key="tab-1"label="Cliente" children={
                   <TabCliente
                     ctxPresupuesto={ctxPresupuesto}
-                    onEntidadActualizada={onEntidadActualizada}
+                    emitir={emitir}
                   />
                 }
               />,
               <Tab key="tab-2" label="Datos" children={
                   <TabDatos
                     ctxPresupuesto={ctxPresupuesto}
-                    onEntidadActualizada={onEntidadActualizada}
                   />
                 }
               />,
               <Tab key="tab-3" label="Observaciones" children={
                   <TabObservaciones 
                     ctxPresupuesto={ctxPresupuesto}
-                    onEntidadActualizada={onEntidadActualizada}
                   />
                 }
               />,

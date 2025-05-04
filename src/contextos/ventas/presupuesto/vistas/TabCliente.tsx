@@ -9,19 +9,20 @@ import { Presupuesto, CambioCliente as TipoCambioCliente } from "../diseño.ts";
 import { editable } from "../dominio.ts";
 import { getPresupuesto, patchCambiarCliente } from "../infraestructura.ts";
 
+import { EmitirEvento } from "../../../comun/diseño.ts";
 import { CambioCliente } from "./CambioCliente.tsx";
 import "./TabCliente.css";
 
 
 interface TabClienteProps {
   ctxPresupuesto: HookModelo<Presupuesto>; 
-  onEntidadActualizada: (entidad: Presupuesto) => void;
+  emitir?: EmitirEvento
   presupuesto?: Presupuesto;
 }
 
 export const TabCliente = ({
   ctxPresupuesto,
-  onEntidadActualizada,
+  emitir = () => {},
 }: TabClienteProps) => {
 
   const [mostrarModalCambioCliente, setMostrarModalCambioCliente] = useState(false);
@@ -39,7 +40,7 @@ export const TabCliente = ({
   const refrescar = async () => {
     const presupuesto_guardado = await getPresupuesto(modelo.id);
     init(presupuesto_guardado);
-    onEntidadActualizada(modelo);
+    emitir('PRESUPUESTO_CAMBIADO', modelo);
   }
 
   const onCambiarClienteClicked = async () => {
