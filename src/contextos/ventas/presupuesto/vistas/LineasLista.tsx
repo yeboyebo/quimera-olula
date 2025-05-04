@@ -53,7 +53,7 @@ export const LineasLista = ({
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
-        onSeleccion={(linea) => emitir('LINEA_SELECCIONADA', linea.id)}
+        onSeleccion={(linea) => emitir('LINEA_SELECCIONADA', linea)}
         orden={{ id: "ASC" }}
         onOrdenar={
           (_: string) => null

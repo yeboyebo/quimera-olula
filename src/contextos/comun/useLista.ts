@@ -4,47 +4,70 @@ import { Entidad } from "./diseño.ts";
 type HookLista<E extends Entidad> = {
     lista: E[],
     setLista: (lista: E[]) => void,
+    refrescar: (lista: E[], id?: string) => void,
     añadir: (entidad: E) => void,
     eliminar: (entidad: E) => void,
     modificar: (entidad: E) => void,
     seleccionar: (entidad: E) => void,
+    seleccionarPorId: (id: string) => void,
     limpiarSeleccion: () => void,
     seleccionada: E | null,
+    idSeleccionada: string | null
 }
 
 export function useLista<E extends Entidad>(
     listaInicial: E[],
 ): HookLista<E> {
-    console.log('useLista', listaInicial);
+
     const entidadSeleccionada = listaInicial.length > 0 ? listaInicial[0] : null;
+    const idEntidadSeleccionada = entidadSeleccionada ? entidadSeleccionada.id : null;
+
     const [entidades, setEntidades] = useState<E[]>(listaInicial);
-    const [seleccionada, setSeleccionada] = useState<E | null>(entidadSeleccionada);
+    const [idSeleccionada, setIdSeleccionada] = useState<string | null>(idEntidadSeleccionada);
 
     const añadir = useCallback((entidad: E) => {
         setEntidades([...entidades, entidad]);
-        setSeleccionada(entidad);
-    }, [entidades, setEntidades]);
+        setIdSeleccionada(entidad.id);
+    }, [entidades, setEntidades, setIdSeleccionada]);
+
+    const getPorId = useCallback((id: string | null) => {
+        const elementos = entidades.filter((e) => e.id === id);
+        if (elementos.length === 1) {
+            return elementos[0];
+        }
+        return null;
+    }, [entidades]);
 
     const seleccionar = useCallback((entidad: E) => {
-        setSeleccionada(entidad);
-    }, [setSeleccionada]);
+        const entidadEncontrada = getPorId(entidad.id);
+        if (entidadEncontrada) {
+            setIdSeleccionada(entidadEncontrada.id);
+        } else {
+            setIdSeleccionada(null);
+        }
+    }, [setIdSeleccionada, entidades]);
+
+    const seleccionarPorId = useCallback((id: string) => {
+        const entidad = entidades.find((e) => e.id === id);
+        setIdSeleccionada(entidad ? entidad.id : null);
+    }, [entidades, setIdSeleccionada]);
 
     const limpiarSeleccion = useCallback(() => {
-        setSeleccionada(null);
-    }, [setSeleccionada]);
+        setIdSeleccionada(null);
+    }, [setIdSeleccionada]);
 
     const modificar = useCallback((entidad: E) => {
         const listaModificada = entidades.map((e) => (e.id === entidad.id ? entidad : e));
         setEntidades(listaModificada);
-        setSeleccionada(entidad);
-    }, [entidades, setEntidades]);
+        setIdSeleccionada(entidad.id);
+    }, [entidades, setEntidades, setIdSeleccionada]);
 
     const eliminar = useCallback((entidad: E) => {
         const listaModificada = entidades.filter((e) => e.id !== entidad.id);
         const nuevaSeleccionada = entidadSeleccionadaTrasEliminacion(entidad);
         setEntidades(listaModificada);
-        setSeleccionada(nuevaSeleccionada);
-    }, [entidades, setEntidades]);
+        setIdSeleccionada(nuevaSeleccionada ? nuevaSeleccionada.id : null);
+    }, [entidades, setEntidades, setIdSeleccionada]);
 
     const entidadSeleccionadaTrasEliminacion = (entidadAEliminar: E) => {
         const indice = indiceEntidad(entidadAEliminar);
@@ -57,22 +80,48 @@ export function useLista<E extends Entidad>(
     const indiceEntidad = (entidad: E) => {
         return entidades.findIndex((e) => e.id === entidad.id);
     }
+    const refrescar = useCallback((lista: E[], id?: string) => {
+        const idASeleccionar = id || idSeleccionada;
+        const indiceEnListaActual = entidades.findIndex((e) => e.id === idASeleccionar);
+        const indiceEnNuevaLista = idASeleccionar
+            ? lista.findIndex((e) => e.id === idASeleccionar)
+            : -1;
+        const indiceSeleccionada = indiceEnNuevaLista > -1
+            ? indiceEnNuevaLista
+            : lista.length > 0
+                ? indiceEnListaActual < lista.length
+                    ? indiceEnListaActual < 0
+                        ? 0
+                        : indiceEnListaActual
+                    : lista.length - 1
+                : null
+        setEntidades(lista);
+        setIdSeleccionada(indiceSeleccionada !== null ? lista[indiceSeleccionada].id : null);
+    }, [entidades, setEntidades, idSeleccionada, setIdSeleccionada]);
+
     const setLista = useCallback((lista: E[]) => {
         setEntidades(lista);
-        const indiceSeleccionada = seleccionada
-            ? lista.findIndex((e) => e.id === seleccionada.id)
-            : -1;
-        setSeleccionada(indiceSeleccionada === -1 ? (lista[0] || null) : lista[indiceSeleccionada]);
-    }, [setEntidades]);
+        setIdSeleccionada(lista[0] ? lista[0].id : null);
+    }, [setEntidades, setIdSeleccionada]);
+
+    const seleccionada = useCallback(() => {
+        const entidad = getPorId(idSeleccionada);
+        return entidad;
+    }, [entidades, idSeleccionada]);
 
     return {
         lista: entidades,
         setLista,
+        refrescar,
         añadir,
         modificar,
         eliminar,
         seleccionar,
+        seleccionarPorId,
         limpiarSeleccion,
-        seleccionada
+        get seleccionada() {
+            return seleccionada();
+        },
+        idSeleccionada
     }
 }

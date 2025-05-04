@@ -93,7 +93,7 @@ export function useModelo<T extends Modelo>(
         }
     }
     const init = useCallback((modelo?: T) => {
-        console.log('useCallback init', modelo);
+        // console.log('useCallback init', modelo);
         dispatch({
             type: "init",
             payload: {
@@ -110,7 +110,7 @@ export function useModelo<T extends Modelo>(
         init,
         dispatch,
         modificado: modeloModificado(entidad),
-        valido: modeloEsValido(meta)(entidad),
+        valido: modeloEsValido(meta)(entidad.valor),
         editable: modeloEsEditable<T>(meta)(modelo),
     } as const;
 }

@@ -30,7 +30,9 @@ export const EditarCantidadLineaPresupuesto = ({
   };
 
   const submit = (valor: string) => {
-    onCantidadEditada(linea, parseInt(valor));
+    if (valor.toString() !== linea.cantidad.toString()) {
+      onCantidadEditada(linea, parseInt(valor));
+    }
   };
 
   return (

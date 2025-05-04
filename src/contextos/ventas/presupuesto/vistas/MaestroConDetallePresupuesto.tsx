@@ -27,33 +27,29 @@ const metaTablaPresupuesto = [
 ];
 type Estado = "lista" | "alta";
 export const MaestroConDetallePresupuesto = () => {
-  // const [entidades, setEntidades] = useState<Presupuesto[]>([]);
-  // const [seleccionada, setSeleccionada] = useState<Presupuesto | null>(null);
+
   const [estado, setEstado] = useState<Estado>('lista');
   const presupuestos = useLista<Presupuesto>([]);
 
   const maquina: Maquina<Estado> = {
     alta: {
-      'PRESUPUESTO_CREADO': (payload: unknown) => {
+      PRESUPUESTO_CREADO: (payload: unknown) => {
         const presupuesto = payload as Presupuesto;
-        // setEntidades([...entidades, presupuesto]);
         presupuestos.añadir(presupuesto);
         return 'lista';
       },
-      'ALTA_CANCELADA': 'lista'
+      ALTA_CANCELADA: 'lista'
     },
     lista: {
-      'ALTA_INICIADA': 'alta',
-      'PRESUPUESTO_CAMBIADO': (payload: unknown) => {
+      ALTA_INICIADA: 'alta',
+      PRESUPUESTO_CAMBIADO: (payload: unknown) => {
         const presupuesto = payload as Presupuesto;
-        // setEntidades(actualizarEntidadEnLista<Presupuesto>(entidades, presupuesto));
         presupuestos.modificar(presupuesto);
       }
     }
   }
 
   const emitir = useMaquina(maquina, estado, setEstado);
-  
   const emision = (evento: string, payload?: unknown) => () => emitir(evento, payload);
 
   return (
@@ -78,9 +74,7 @@ export const MaestroConDetallePresupuesto = () => {
       </div>
 
       <QModal nombre="modal" abierto={estado === 'alta'} onCerrar={emision('ALTA_CANCELADA')}>
-        <AltaPresupuesto
-          emitir={emitir}
-        />
+        <AltaPresupuesto emitir={emitir} />
       </QModal>
     </div>
   );
