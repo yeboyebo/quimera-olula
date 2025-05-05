@@ -3,6 +3,7 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
 import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
+import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Presupuesto } from "../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
@@ -19,6 +20,7 @@ type ParamOpcion = {
   descripcion?: string
 };
 export type ValorControl = null | string | ParamOpcion;
+type Estado = "defecto";
 
 export const DetallePresupuesto = ({
   presupuestoInicial = null,
@@ -38,12 +40,22 @@ export const DetallePresupuesto = ({
   );
   const { modelo, init } = ctxPresupuesto;
 
-  const onGuardarClicked = async () => {
-    await patchPresupuesto(modelo.id, modelo);
-    const presupuesto_guardado = await getPresupuesto(modelo.id);
-    init(presupuesto_guardado);
-    emitir('PRESUPUESTO_CAMBIADO', presupuesto_guardado);
-  };
+  const maquina: Maquina<Estado> = {
+    defecto: {
+      GUARDAR_INICIADO: async () => {
+        await patchPresupuesto(modelo.id, modelo);
+        recargarCabecera();
+      },
+      APROBAR_INICIADO: async () => {
+        await aprobarPresupuesto(modelo.id);
+        recargarCabecera();
+      },
+      CLIENTE_PRESUPUESTO_CAMBIADO: async() => {
+        recargarCabecera();
+      }
+    },
+  }
+  const emitirPresupuesto = useMaquina(maquina, 'defecto', () => {});
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
@@ -51,12 +63,16 @@ export const DetallePresupuesto = ({
     emitir('PRESUPUESTO_CAMBIADO', nuevoPresupuesto);
   };
 
-  const aprobarClicked = async () => {
-    await aprobarPresupuesto(modelo.id);
-    const presupuesto_aprobado = await getPresupuesto(modelo.id);
-    init(presupuesto_aprobado);
-    emitir('PRESUPUESTO_CAMBIADO', presupuesto_aprobado);
-  };
+  // const onGuardarClicked = async () => {
+  //   await patchPresupuesto(modelo.id, modelo);
+  //   recargarCabecera();
+  // };
+
+
+  // const aprobarClicked = async () => {
+  //   await aprobarPresupuesto(modelo.id);
+  //   recargarCabecera();
+  // };
 
   return (
     <Detalle
@@ -71,10 +87,8 @@ export const DetallePresupuesto = ({
           { !modelo.aprobado && (
             <div className="botones maestro-botones ">
               <QBoton
-                onClick={aprobarClicked}
-              >
-                Aprobar
-              </QBoton>
+                onClick={() => emitirPresupuesto('APROBAR_INICIADO')}
+              > Aprobar </QBoton>
             </div>
           )}
           <Tabs
@@ -82,7 +96,7 @@ export const DetallePresupuesto = ({
               <Tab key="tab-1"label="Cliente" children={
                   <TabCliente
                     ctxPresupuesto={ctxPresupuesto}
-                    emitir={emitir}
+                    publicar={emitirPresupuesto}
                   />
                 }
               />,
@@ -103,7 +117,7 @@ export const DetallePresupuesto = ({
           { ctxPresupuesto.modificado && (
             <div className="botones maestro-botones ">
               <QBoton
-                onClick={onGuardarClicked}
+                onClick={() => emitirPresupuesto('GUARDAR_INICIADO')}
                 deshabilitado={!ctxPresupuesto.valido}
               >
                 Guardar
@@ -166,8 +180,6 @@ export const DetallePresupuesto = ({
               </span>
             </div>
           </div>
-
-          {/* Componente Lineas */}
           <Lineas
             presupuesto={ctxPresupuesto}
             onCabeceraModificada={recargarCabecera}
