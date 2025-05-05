@@ -13,6 +13,7 @@ declare namespace React {
             'quimera-checkbox': NodoComun;
             'quimera-select': NodoComun;
             'quimera-tabla': NodoComun;
+            'quimera-textarea': NodoComun;
             'quimera-icono': NodoComun;
             'box-icon': BoxIcon;
         }

@@ -1,86 +1,55 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import {
-  campoObjetoValorAInput,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
-} from "../../../comun/dominio.ts";
-import { Clientes } from "../../comun/componentes/cliente.tsx";
-import { Direcciones } from "../../comun/componentes/dirCliente.tsx";
-import { Presupuesto } from "../diseño.ts";
+import { EmitirEvento } from "../../../comun/diseño.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
+import { Cliente } from "../../comun/componentes/cliente.tsx";
+import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
-
+import "./AltaPresupuesto.css";
 export const AltaPresupuesto = ({
-  onPresupuestoCreado = () => {},
-  onCancelar,
+  emitir = () => {},
 }: {
-  onPresupuestoCreado?: (presupuesto: Presupuesto) => void;
-  onCancelar: () => void;
+  emitir?: EmitirEvento
 }) => {
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaNuevoPresupuesto),
-    initEstadoObjetoValor(presupuestoNuevoVacio(), metaNuevoPresupuesto)
+
+  const nuevoPresupuesto = useModelo(
+    metaNuevoPresupuesto,
+    presupuestoNuevoVacio()
   );
 
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
-
-  const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
-  };
-
   const guardar = async () => {
-    const id = await postPresupuesto(estado.valor);
+    const id = await postPresupuesto(nuevoPresupuesto.modelo);
     const presupuestoCreado = await getPresupuesto(id);
-    onPresupuestoCreado(presupuestoCreado);
-  };
-
-  const onClienteChanged = async (
-    clienteId: {
-      valor: string;
-      descripcion: string;
-    } | null
-  ) => {
-    if (!clienteId) return;
-    setCampo("cliente_id")(clienteId.valor);
+    emitir("PRESUPUESTO_CREADO", presupuestoCreado);
   };
 
   return (
     <>
       <h2>Nuevo Presupuesto</h2>
       <quimera-formulario>
-        <Clientes
-          cliente_id={estado.valor.cliente_id}
-          onClienteChanged={onClienteChanged}
+        <Cliente
+          {...nuevoPresupuesto.uiProps("cliente_id")}
+          nombre='alta_presupuesto_cliente_id'
         />
-        <Direcciones
-          clienteId={estado.valor.cliente_id}
-          direccion_id={estado.valor.direccion_id}
-          onDireccionChanged={(opcion) =>
-            setCampo("direccion_id")(opcion?.valor || "")
-          }
+        <DirCliente
+          clienteId={nuevoPresupuesto.modelo.cliente_id}
+          {...nuevoPresupuesto.uiProps("direccion_id")}
+          nombre='alta_presupuesto_direccion_id'
         />
         <QInput
           label="Empresa"
-          onChange={setCampo("empresa_id")}
-          {...getProps("empresa_id")}
+          {...nuevoPresupuesto.uiProps("empresa_id")}
         />
       </quimera-formulario>
       <div className="botones">
         <QBoton
           onClick={guardar}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
+          deshabilitado={!nuevoPresupuesto.valido}
         >
           Guardar
         </QBoton>
-        <QBoton onClick={onCancelar} variante="texto">
+        <QBoton onClick={() => emitir('ALTA_CANCELADA')} variante="texto">
           Cancelar
         </QBoton>
       </div>

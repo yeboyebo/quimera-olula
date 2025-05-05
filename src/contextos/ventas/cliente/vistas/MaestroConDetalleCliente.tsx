@@ -57,12 +57,9 @@ export const MaestroConDetalleCliente = () => {
     setSeleccionada(null);
   };
 
-  const clasesMaestro = "maestro" + (seleccionada ? " solo-una-vista" : "");
-  const clasesDetalle = "detalle" + (seleccionada ? "" : " solo-una-vista");
-
   return (
-    <section className="maestro-con-detalle">
-      <section className={clasesMaestro}>
+    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
+      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
         <h2>Clientes</h2>
         <div className="maestro-botones">
           <QBoton onClick={onCrearCliente}>Nuevo</QBoton>
@@ -78,14 +75,14 @@ export const MaestroConDetalleCliente = () => {
           setSeleccionada={setSeleccionada}
           cargar={getClientes}
         />
-      </section>
-      <section className={clasesDetalle}>
+      </div>
+      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <DetalleCliente
           clienteInicial={seleccionada}
           onEntidadActualizada={actualizarEntidad}
           cancelarSeleccionada={() => setSeleccionada(null)}
         />
-      </section>
+      </div>
 
       <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
         <AltaCliente
@@ -93,6 +90,6 @@ export const MaestroConDetalleCliente = () => {
           onCancelar={onCancelar}
         />
       </QModal>
-    </section>
+    </div>
   );
 };

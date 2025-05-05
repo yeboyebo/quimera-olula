@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { LineaPresupuesto as Linea } from "../diseño.ts";
 
@@ -18,17 +18,21 @@ export const EditarCantidadLineaPresupuesto = ({
   onCantidadEditada: (linea: Linea, cantidad: number) => void;
 }) => {
   const [estado, setEstado] = useState("");
+  const [valor, setValor] = useState(linea.cantidad.toString());
+  useEffect(() => {
+    setValor(linea.cantidad.toString());
+  }, [linea.cantidad]);
 
-  const submit = (valor: string, e: React.FocusEvent<HTMLElement>) => {
-    e.preventDefault();
-    const cantidad = valor;
-
-    const nuevoEstado = validacion(cantidad);
+  const handleChange = (v: string) => {
+    const nuevoEstado = validacion(v);
     setEstado(nuevoEstado);
+    setValor(v);
+  };
 
-    if (nuevoEstado.length > 0) return;
-
-    onCantidadEditada(linea, parseInt(cantidad));
+  const submit = (valor: string) => {
+    if (valor.toString() !== linea.cantidad.toString()) {
+      onCantidadEditada(linea, parseInt(valor));
+    }
   };
 
   return (
@@ -36,10 +40,11 @@ export const EditarCantidadLineaPresupuesto = ({
       <QInput
         label="Cantidad"
         nombre="cantidad"
-        valor={linea.cantidad.toString()}
+        valor={valor}
         erroneo={!!estado && estado.length > 0}
         textoValidacion={estado}
         condensado
+        onChange={handleChange}
         onBlur={submit}
       />
     </quimera-formulario>

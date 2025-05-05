@@ -1,100 +1,73 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import {
-  Accion,
-  entidadModificada,
-  EstadoObjetoValor,
-  puedoGuardarObjetoValor,
-} from "../../../comun/dominio.ts";
-import { Agentes } from "../../comun/componentes/agente.tsx";
-import { Divisas } from "../../comun/componentes/divisa.tsx";
+import { HookModelo } from "../../../comun/useModelo.ts";
+import { Agente } from "../../comun/componentes/agente.tsx";
+import { Divisa } from "../../comun/componentes/divisa.tsx";
 import { FormaPago } from "../../comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
 import { Cliente } from "../diseño.ts";
-import { getCliente, patchCliente } from "../infraestructura.ts";
 import "./TabComercial.css";
 
 interface TabComercialProps {
-  getProps: (campo: string) => Record<string, unknown>;
-  setCampo: (campo: string) => (valor: unknown) => void;
-  cliente: EstadoObjetoValor<Cliente>;
-  dispatch: (action: Accion<Cliente>) => void;
+  // getProps: (campo: string) => Record<string, unknown>;
+  // setCampo: (campo: string) => (valor: unknown) => void;
+  // dispatch: (action: Accion<Cliente>) => void;
+  cliente: HookModelo<Cliente>;
   onEntidadActualizada: (entidad: Cliente) => void;
 }
 
 export const TabComercial = ({
-  getProps,
-  setCampo,
+  // getProps,
+  // setCampo,
+  // dispatch,
   cliente,
-  dispatch,
-  onEntidadActualizada,
+  // onEntidadActualizada,
 }: TabComercialProps) => {
-  const onGuardarClicked = async () => {
-    await patchCliente(cliente.valor.id, cliente.valor);
-    const clienteGuardado = await getCliente(cliente.valor.id);
-    dispatch({ type: "init", payload: { entidad: clienteGuardado } });
-    onEntidadActualizada(cliente.valor);
-  };
 
-  const onAgenteChange = async (
-    agenteId: { valor: string; descripcion: string } | null
-  ) => {
-    if (!agenteId) return;
+  const { uiProps } = cliente;
 
-    setCampo("agente_id")(agenteId.valor);
-  };
+  // const onGuardarClicked = async () => {
+  //   await patchCliente(modelo.id, modelo);
+  //   const clienteGuardado = await getCliente(modelo.id);
+  //   // dispatch({ type: "init", payload: { entidad: clienteGuardado } });
+  //   init(clienteGuardado);
+  //   onEntidadActualizada(modelo);
+  // };
+
+  // const onAgenteChange = async (
+  //   agenteId: { valor: string; descripcion: string } | null
+  // ) => {
+  //   if (!agenteId) return;
+
+  //   setCampo("agente_id")(agenteId.valor);
+  // };
 
   return (
     <>
       <quimera-formulario>
-        <Agentes
-          agente_id={cliente.valor.agente_id ?? ""}
-          onAgenteChanged={onAgenteChange}
+        <Agente
+          {...uiProps("agente_id", "nombre_agente")}
+          nombre='cliente/agente_id'
         />
-        <Divisas
-          valor={cliente.valor.divisa_id}
-          onChange={(opcion) => setCampo("divisa_id")(opcion?.valor)}
-          getProps={getProps}
+        <div id="span3"/>
+        <Divisa
+          {...uiProps("divisa_id")}
+          nombre='cliente/divisa_id'
         />
         <QInput
-          nombre="serie_id"
           label="Serie"
-          onChange={setCampo("serie_id")}
-          {...getProps("serie_id")}
+          {...uiProps("serie_id")}
+          nombre='cliente/serie_id'
         />
         <FormaPago
-          forma_pago_id={cliente.valor.forma_pago_id}
-          forma_pago={cliente.valor.forma_pago}
-          onChange={(opcion) => setCampo("forma_pago_id")(opcion?.valor)}
-          getProps={getProps}
+          {...uiProps("forma_pago_id", "nombre_forma_pago")}
+          nombre='cliente/forma_pago_id'
         />
-        <QInput
-          nombre="grupo_iva_negocio_id"
-          label="Grupo IVA Negocio"
-          onChange={setCampo("grupo_iva_negocio_id")}
-          {...getProps("grupo_iva_negocio_id")}
+        <GrupoIvaNegocio
+          label='Grupo IVA'
+          {...uiProps("grupo_iva_negocio_id")}
+          nombre='cliente/grupo_iva_negocio_id'
         />
       </quimera-formulario>
-      <div className="botones">
-        <QBoton
-          onClick={onGuardarClicked}
-          deshabilitado={!puedoGuardarObjetoValor(cliente)}
-        >
-          Guardar
-        </QBoton>
-        <QBoton
-          tipo="reset"
-          variante="texto"
-          onClick={() => {
-            dispatch({
-              type: "init",
-              payload: { entidad: cliente.valor_inicial },
-            });
-          }}
-          deshabilitado={!entidadModificada(cliente)}
-        >
-          Cancelar
-        </QBoton>
-      </div>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 const baseUrl = `/ventas/presupuesto`;
 
@@ -44,7 +44,7 @@ export const patchCambiarCliente = async (id: string, clienteId: string, dirClie
   await RestAPI.patch(`${baseUrl}/${id}`, {
     cambios: {
       cliente: {
-        id: clienteId,
+        cliente_id: clienteId,
         direccion_id: dirClienteId
       }
     }
@@ -65,7 +65,8 @@ export const postLinea: PostLinea = async (id, linea) => {
       cantidad: linea.cantidad
     }]
   }).then((respuesta) => {
-    return respuesta.id;
+    const miRespuesta = respuesta as unknown as { ids: string[] };
+    return miRespuesta.ids[0];
   });
 }
 
@@ -80,6 +81,22 @@ export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, refe
   await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload);
 }
 
+export const patchLinea: PatchLinea = async (id, linea) => {
+  const payload = {
+    cambios: {
+      articulo: {
+        articulo_id: linea.referencia
+      },
+      cantidad: linea.cantidad,
+      pvp_unitario: linea.pvp_unitario,
+      dto_porcentual: linea.dto_porcentual,
+      grupo_iva_producto_id: linea.grupo_iva_producto_id,
+    },
+  }
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+}
+
+
 export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
@@ -93,7 +110,7 @@ export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantid
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}/borrar`, {
+  await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
     lineas: [lineaId]
   });
 }
@@ -104,15 +121,23 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       agente_id: presupuesto.agente_id,
       divisa: {
         divisa_id: presupuesto.divisa_id,
+        tasa_conversion: presupuesto.tasa_conversion,
       },
       fecha: presupuesto.fecha,
       cliente_id: presupuesto.cliente_id,
       nombre_cliente: presupuesto.nombre_cliente,
       id_fiscal: presupuesto.id_fiscal,
       direccion_id: presupuesto.direccion_id,
+      forma_pago_id: presupuesto.forma_pago_id,
+      grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
+      observaciones: presupuesto.observaciones,
     },
   };
 
   await RestAPI.patch(`${baseUrl}/${id}`, payload);
 };
 
+
+export const aprobarPresupuesto = async (id: string) => {
+  await RestAPI.patch(`${baseUrl}/${id}/aprobar`, {});
+};

@@ -34,6 +34,10 @@ quimera-input[nombre="observaciones"] {
     grid-column: span 12;
 }
 
-quimera-date[nombre="fechabaja"] {
+quimera-date[nombre="fecha_baja"] {
+    grid-column: span 3;
+}
+
+quimera-boton {
     grid-column: span 6;
 }

@@ -1,12 +1,6 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import {
-  campoObjetoValorAInput,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
-} from "../../../comun/dominio.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { DirCliente } from "../diseño.ts";
 import { metaNuevaDireccion, nuevaDireccionVacia } from "../dominio.ts";
 import { getDireccion, postDireccion } from "../infraestructura.ts";
@@ -19,56 +13,45 @@ export const AltaDireccion = ({
   onDireccionCreada?: (direccion: DirCliente) => void;
   onCancelar: () => void;
 }) => {
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaNuevaDireccion),
-    initEstadoObjetoValor(nuevaDireccionVacia, metaNuevaDireccion)
+
+  const nuevaDireccion = useModelo(
+    metaNuevaDireccion,
+    nuevaDireccionVacia
   );
 
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
-
-  const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
-  };
+  const { uiProps } = nuevaDireccion;
 
   const guardar = async () => {
-    const id = await postDireccion(clienteId, estado.valor);
+    const id = await postDireccion(clienteId, nuevaDireccion.modelo);
     const direccionCreada = await getDireccion(clienteId, id);
     onDireccionCreada(direccionCreada);
   };
 
   return (
     <>
-      <h2>Nueva Dirección</h2>
-      <section>
+      <h2>Nueva dirección</h2>
+      <quimera-formulario>
         <QInput
           label="Tipo de Vía"
-          onChange={setCampo("tipo_via")}
-          {...getProps("tipo_via")}
+          {...uiProps("tipo_via")}
         />
         <QInput
           label="Nombre de la Vía"
-          onChange={setCampo("nombre_via")}
-          {...getProps("nombre_via")}
+          {...uiProps("nombre_via")}
         />
         <QInput
           label="Ciudad"
-          onChange={setCampo("ciudad")}
-          {...getProps("ciudad")}
+          {...uiProps("ciudad")}
         />
-      </section>
-      <section>
+      </quimera-formulario>
+      <div className="botones maestro-botones ">
         <QBoton
           onClick={guardar}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
+          deshabilitado={!nuevaDireccion.valido}
         >
           Guardar
         </QBoton>
-      </section>
+      </div>
     </>
   );
 };
