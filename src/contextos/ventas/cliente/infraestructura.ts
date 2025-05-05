@@ -214,7 +214,7 @@ export const cuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
   },
 });
 
-export const getCrmContactos = async (clienteId: string): Promise<CrmContacto[]> =>
+export const getCrmContactosCliente = async (clienteId: string): Promise<CrmContacto[]> =>
   await RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/cliente/${clienteId}/contactos`).then((respuesta) => respuesta.datos);
 
 export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<string> => {
@@ -230,6 +230,13 @@ export const vincularContactoCliente = async (contactoId: string, clienteId: str
     contacto_id: contactoId,
   };
   await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/vincular_contacto`, payload);
+};
+
+export const desvincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
+  const payload = {
+    contacto_id: contactoId,
+  };
+  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/desvincular_contacto`, payload);
 };
 
 export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => {

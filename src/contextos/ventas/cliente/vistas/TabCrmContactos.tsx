@@ -5,7 +5,8 @@ import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { CrmContacto } from "../diseño.ts";
 import {
   deleteCrmContacto,
-  getCrmContactos,
+  desvincularContactoCliente,
+  getCrmContactosCliente,
   vincularContactoCliente,
 } from "../infraestructura.ts";
 import { AltaCrmContactos } from "./AltaCrmContactos.tsx";
@@ -26,7 +27,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
 
   const cargarContactos = useCallback(async () => {
     setCargando(true);
-    const contactos = await getCrmContactos(clienteId);
+    const contactos = await getCrmContactosCliente(clienteId);
     setContactos(contactos);
     setCargando(false);
   }, [clienteId]);
@@ -60,9 +61,26 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     setModo("lista");
   };
 
+  const eliminarAociciacionContactoCliente = async () => {
+    if (!seleccionada) return;
+    await desvincularContactoCliente(seleccionada.id, clienteId);
+    setContactos(contactos.filter((c) => c.id !== seleccionada.id));
+    setSeleccionada(null);
+  };
+
+  const abrirModalVincularContacto = () => {
+    setModo("alta");
+  };
+
   return (
     <>
       <>
+        <div className="detalle-contacto-tab-contenido maestro-botones">
+          <QBoton onClick={() => abrirModalVincularContacto()}>Asociar</QBoton>
+          <QBoton onClick={() => eliminarAociciacionContactoCliente()}>
+            Eliminar asociacion
+          </QBoton>
+        </div>
         <div className="acciones maestro-botones">
           <QBoton onClick={() => setModo("alta")}>Nuevo</QBoton>
           <QBoton

@@ -29,7 +29,7 @@ const metaTablaCliente = [
 export const MaestroConDetalleCliente = () => {
   const [entidades, setEntidades] = useState<Cliente[]>([]);
   const [seleccionada, setSeleccionada] = useState<Cliente | null>(null);
-  const [mostrarModal, setMostrarModal] = useState(false); // Estado para controlar el modal
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   const actualizarEntidad = (entidad: Cliente) => {
     setEntidades(actualizarEntidadEnLista<Cliente>(entidades, entidad));
