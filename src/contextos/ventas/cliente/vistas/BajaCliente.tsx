@@ -1,43 +1,40 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../componentes/atomos/qdate.tsx";
 import {
-  campoObjetoValorAInput,
-  EstadoObjetoValor,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
+  MetaModelo
 } from "../../../comun/dominio.ts";
 
+import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../diseño.ts";
-import { metaDarDeBaja } from "../dominio.ts";
 import { darDeBajaCliente } from "../infraestructura.ts";
 
+type BajaCliente = {
+  fecha_baja: string;
+};
+
 interface BajaClienteProps {
-  cliente: EstadoObjetoValor<Cliente>;
+  cliente: HookModelo<Cliente>;
   onBajaRealizada: () => void;
 }
 
+const metaBajaCliente: MetaModelo<BajaCliente> = {
+    campos: {
+        fecha_baja: { requerido: true },
+    }
+};
+
 export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
+
+  const bajaCliente = useModelo(
+    metaBajaCliente,
+    { fecha_baja: "" }
+  )
+
+  const { modelo, valido, uiProps } = bajaCliente;
+
   const onGuardarClicked = async () => {
-    await darDeBajaCliente(cliente.valor.id, estado.valor.fecha_baja);
+    await darDeBajaCliente(cliente.modelo.id, modelo.fecha_baja);
     onBajaRealizada();
-  };
-
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaDarDeBaja),
-    initEstadoObjetoValor({ fecha_baja: "" }, metaDarDeBaja)
-  );
-
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
-
-  const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
   };
 
   return (
@@ -45,14 +42,13 @@ export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
       <quimera-formulario>
         <QDate
           label="Fecha Baja"
-          onChange={setCampo("fecha_baja")}
-          {...getProps("fecha_baja")}
+          { ...uiProps("fecha_baja") }
         />
       </quimera-formulario>
       <div className="botones">
         <QBoton
           onClick={onGuardarClicked}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
+          deshabilitado={!valido}
         >
           Guardar
         </QBoton>

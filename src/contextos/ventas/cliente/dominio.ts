@@ -1,4 +1,4 @@
-import { EstadoObjetoValor, initEstadoObjetoValor, makeValidador, MetaObjetoValor, stringNoVacio, ValidacionCampo, ValidadorCampos, validarCampo } from "../../comun/dominio.ts";
+import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 
@@ -90,172 +90,85 @@ export const validadoresCliente = {
 };
 
 
-export const initEstadoCliente = (cliente: Cliente): EstadoObjetoValor<Cliente> => {
-    return initEstadoObjetoValor(cliente, metaCliente);
+export const initEstadoCliente = (cliente: Cliente): EstadoModelo<Cliente> => {
+    return initEstadoModelo(cliente);
 }
 
-export const initEstadoDireccion = (direccion: DirCliente): EstadoObjetoValor<DirCliente> => {
-    return initEstadoObjetoValor(direccion, metaDireccion);
+export const initEstadoDireccion = (direccion: DirCliente): EstadoModelo<DirCliente> => {
+    return initEstadoModelo(direccion);
 }
 
-const validacionesCliente: ValidadorCampos<Cliente> = {
-    tipo_id_fiscal: (cliente: EstadoObjetoValor<Cliente>): ValidacionCampo => {
-        const valido = tipoIdFiscalValido(cliente.valor.tipo_id_fiscal);
-        return {
-            ...cliente.validacion.tipo_id_fiscal,
-            valido: valido === true,
-            textoValidacion: typeof valido === "string" ? valido : "",
-        }
-    },
-    id_fiscal: (cliente: EstadoObjetoValor<Cliente>): ValidacionCampo => {
-        const tipoValido = tipoIdFiscalValido(cliente.valor.tipo_id_fiscal);
-        const valido = tipoValido
-            ? idFiscalValido(cliente.valor.tipo_id_fiscal)(cliente.valor.id_fiscal)
-            : true;
-        return {
-            ...cliente.validacion.id_fiscal,
-            valido: valido === true,
-            textoValidacion: typeof valido === "string" ? valido : "",
-        }
-    },
-    fecha_baja: (estado: EstadoObjetoValor<Cliente>): ValidacionCampo => {
-        const cliente = estado.valor;
-        const deBajaSinFecha = cliente.de_baja && cliente.fecha_baja === '';
-        const activoConFecha = !cliente.de_baja && cliente.fecha_baja !== '';
-        const invalido = deBajaSinFecha || activoConFecha;
-        return {
-            ...estado.validacion.fecha_baja,
-            valido: !invalido,
-            textoValidacion: deBajaSinFecha
-                ? "Debe indicar la fecha de baja"
-                : activoConFecha
-                    ? "No se puede marcar como activo con fecha de baja"
-                    : "",
-        }
-    },
-    fecha_baja_segun_de_baja: (estado: EstadoObjetoValor<Cliente>): ValidacionCampo => {
-        const cliente = estado.valor;
-        // const deBajaSinFecha = cliente.de_baja && cliente.fecha_baja === '';
-        // const activoConFecha = !cliente.de_baja && cliente.fecha_baja !== '';
-        // const invalido = deBajaSinFecha || activoConFecha;
-        return {
-            ...estado.validacion.fecha_baja,
-            bloqueado: !cliente.de_baja,
-            // valido: !invalido,
-            // textoValidacion: deBajaSinFecha
-            //     ? "Debe indicar la fecha de baja"
-            //     : activoConFecha
-            //         ? "No se puede marcar como activo con fecha de baja"
-            //         : "",
-        }
-    },
-}
 
-const makeValidadorCliente = (validadorCampos: ValidadorCampos<Cliente>) =>
-
-    (estado: EstadoObjetoValor<Cliente>, campo: string) => {
-
-        const validacion = estado.validacion;
-
-        switch (campo) {
-            case "tipo_id_fiscal": {
-                return {
-                    ...validacion,
-                    tipo_id_fiscal: validarCampo(estado, campo, validadorCampos.tipo_id_fiscal),
-                    id_fiscal: validarCampo(estado, "id_fiscal", validadorCampos.id_fiscal),
-                };
-            }
-            case "fecha_baja": {
-                return {
-                    ...validacion,
-                    fecha_baja: validarCampo(estado, campo, validadorCampos.fecha_baja),
-                };
-            }
-            case "de_baja": {
-                const v1 = {
-                    ...validacion,
-                    fecha_baja: validarCampo(estado, campo, validadorCampos.fecha_baja_segun_de_baja),
-                };
-                return {
-                    ...v1,
-                    fecha_baja: validarCampo(estado, "fecha_baja", validadorCampos.fecha_baja),
-                };
-            }
-            default: {
-                return makeValidador(validadorCampos)(estado, campo);
-            }
-        }
+export const metaCliente: MetaModelo<Cliente> = {
+    campos: {
+        nombre: { requerido: true },
+        id_fiscal: {
+            requerido: true,
+            validacion: (cliente: Cliente) => idFiscalValido(cliente.tipo_id_fiscal)(cliente.id_fiscal),
+        },
+        tipo_id_fiscal: {
+            requerido: true,
+            validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
+        },
+        nombre_agente: { bloqueado: true },
     }
-
-export const metaCliente: MetaObjetoValor<Cliente> = {
-    bloqueados: ['nombre_agente'],
-    requeridos: [
-        'nombre',
-        'tipo_id_fiscal',
-        'id_fiscal'
-    ],
-    validador: makeValidadorCliente(validacionesCliente),
 };
 
-export const metaNuevoCliente: MetaObjetoValor<NuevoCliente> = {
-    bloqueados: [],
-    requeridos: [
-        'nombre',
-        'tipo_id_fiscal',
-        'id_fiscal'
-    ],
-    validador: makeValidador({}),
+
+export const metaNuevoCliente: MetaModelo<NuevoCliente> = {
+    campos: {
+        nombre: { requerido: true },
+        tipo_id_fiscal: { requerido: true },
+        id_fiscal: { requerido: true },
+    }
 };
 
-export const metaDireccion: MetaObjetoValor<DirCliente> = {
-    bloqueados: [],
-    requeridos: [
-        'tipo_via',
-        'nombre_via',
-        'ciudad'
-    ],
-    validador: makeValidador({}),
+export const metaDireccion: MetaModelo<DirCliente> = {
+    campos: {
+        tipo_via: { requerido: true },
+        nombre_via: { requerido: true },
+        ciudad: { requerido: true },
+    }
 };
 
-export const metaNuevaDireccion: MetaObjetoValor<NuevaDireccion> = {
-    bloqueados: [],
-    requeridos: [
-        'nombre_via',
-        'ciudad'
-    ],
-    validador: makeValidador({}),
+export const metaNuevaDireccion: MetaModelo<NuevaDireccion> = {
+    campos: {
+        nombre_via: { requerido: true },
+        ciudad: { requerido: true },
+    }
 };
 
-export const metaCuentaBanco: MetaObjetoValor<CuentaBanco> = {
-    bloqueados: [],
-    requeridos: ["iban", "bic"],
-    validador: makeValidador({}),
+export const metaCuentaBanco: MetaModelo<CuentaBanco> = {
+    campos: {
+        iban: { requerido: true },
+        bic: { requerido: true },
+    }
 };
 
-export const metaNuevaCuentaBanco: MetaObjetoValor<NuevaCuentaBanco> = {
-    bloqueados: [],
-    requeridos: ["cuenta"],
-    validador: makeValidador({}),
+export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
+    campos: {
+        cuenta: { requerido: true },
+    }
 };
 
-export const metaCrmContacto: MetaObjetoValor<CrmContacto> = {
-    bloqueados: [],
-    requeridos: ["nombre", "email"],
-    validador: makeValidador({}),
+export const metaCrmContacto: MetaModelo<CrmContacto> = {
+    campos: {
+        nombre: { requerido: true },
+        email: { requerido: true },
+    }
 };
 
-export const metaNuevoCrmContacto: MetaObjetoValor<NuevoCrmContacto> = {
-    bloqueados: [],
-    requeridos: ["nombre", "email"],
-    validador: makeValidador({}),
+export const metaNuevoCrmContacto: MetaModelo<NuevoCrmContacto> = {
+    campos: {
+        nombre: { requerido: true },
+        email: { requerido: true },
+    }
 };
 
-export const metaDarDeBaja: MetaObjetoValor<FormBaja> = {
-    bloqueados: [],
-    requeridos: [
-        'fecha_baja',
-    ],
-    validador: makeValidador({}),
+export const metaDarDeBaja: MetaModelo<FormBaja> = {
+    campos: {
+        fecha_baja: { requerido: true },
+    }
 };
 
 

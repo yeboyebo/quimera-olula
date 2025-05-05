@@ -1,23 +1,27 @@
-quimera-autocompletar[nombre="agente_id"] {
-    grid-column: 1 / span 3;
+quimera-autocompletar[nombre="cliente/agente_id"] {
+    grid-column: span 9;
 }
 
-quimera-input[nombre="nombre_agente"] {
-    grid-column: span 7;
+div[id="span3"] {
+    grid-column: span 3;
 }
 
-quimera-select[nombre="divisa_id"] {
-    grid-column: 1 / span 3;
+quimera-select[nombre="cliente/divisa_id"] {
+    grid-column: span 3;
 }
 
 quimera-date[nombre="fecha_baja"] {
     grid-column: span 8;
 }
 
-quimera-input[nombre="serie_id"] {
+quimera-input[nombre="cliente/serie_id"] {
     grid-column: span 3;
 }
 
-quimera-input[nombre="forma_pago_id"] {
+quimera-select[nombre="cliente/forma_pago_id"] {
+    grid-column: span 3;
+}
+
+quimera-select[nombre="cliente/grupo_iva_negocio_id"] {
     grid-column: span 3;
 }

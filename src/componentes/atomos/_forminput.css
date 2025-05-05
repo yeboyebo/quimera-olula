@@ -1,6 +1,7 @@
 quimera-input,
 quimera-select,
 quimera-date,
+quimera-textarea,
 quimera-checkbox {
     --color-borde: var(--color-texto-secundario);
     --color-focus: var(--color-primario-claro);
@@ -49,6 +50,12 @@ quimera-checkbox {
             color: var(--color-validacion);
             font-size: var(--tamaño-letra-s);
             margin-left: var(--espaciado-xxs);
+        }
+    }
+
+    &[tipo='numero'] {
+        input {
+            text-align: right;
         }
     }
 

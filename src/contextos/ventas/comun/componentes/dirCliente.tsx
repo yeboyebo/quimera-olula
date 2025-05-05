@@ -4,16 +4,19 @@ import { getDirecciones } from "../../cliente/infraestructura.ts";
 
 interface DireccionesProps {
   clienteId: string | null;
-  direccion_id?: string;
-  onDireccionChanged: (
+  valor?: string;
+  nombre?: string;
+  onChange: (
     opcion: { valor: string; descripcion: string } | null
   ) => void;
 }
 
-export const Direcciones = ({
+export const DirCliente = ({
   clienteId,
-  direccion_id,
-  onDireccionChanged,
+  valor,
+  nombre = "direccion_id",
+  onChange,
+  ...props
 }: DireccionesProps) => {
   const [opcionesDireccion, setOpcionesDireccion] = useState<
     { valor: string; descripcion: string }[]
@@ -21,7 +24,9 @@ export const Direcciones = ({
 
   useEffect(() => {
     const fetchDirecciones = async () => {
+      console.log("direcciones", clienteId);
       if (!clienteId) {
+        console.log("direcciones vacias");
         setOpcionesDireccion([]);
         return;
       }
@@ -39,11 +44,12 @@ export const Direcciones = ({
 
   return (
     <QSelect
+      {...props}
       label="Dirección"
-      nombre="direccion_id"
-      valor={direccion_id}
+      nombre={nombre}
+      valor={valor}
       opciones={opcionesDireccion}
-      onChange={onDireccionChanged}
+      onChange={onChange}
     />
   );
 };

@@ -4,6 +4,7 @@ import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import {
   boolAString,
   direccionCompleta,
+  getElemento,
   quitarEntidadDeLista,
   refrescarSeleccionada,
 } from "../../../comun/dominio.ts";
@@ -16,7 +17,7 @@ import {
 } from "../infraestructura.ts";
 
 const metaTablaDirecciones = [
-  { id: "id", cabecera: "id" },
+  // { id: "id", cabecera: "id" },
   {
     id: "direccion",
     cabecera: "Dirección",
@@ -48,8 +49,8 @@ export const TabDireccionesLista = ({
   onCrearDireccion: () => void;
   direcciones: DirCliente[];
   setDirecciones: (direcciones: DirCliente[]) => void;
-  seleccionada: DirCliente | null;
-  setSeleccionada: (direccion: DirCliente | null) => void;
+  seleccionada: string | undefined;
+  setSeleccionada: (idDireccion: string | undefined) => void;
 }) => {
   const [cargando, setCargando] = useState(true);
 
@@ -57,17 +58,17 @@ export const TabDireccionesLista = ({
     setCargando(true);
     const direcciones = await getDirecciones(clienteId);
     setDirecciones(direcciones);
-    refrescarSeleccionada(direcciones, seleccionada?.id, setSeleccionada);
+    refrescarSeleccionada(direcciones, seleccionada, setSeleccionada);
     setCargando(false);
-  }, [clienteId, setDirecciones, seleccionada?.id, setSeleccionada]);
+  }, [clienteId, setDirecciones, seleccionada, setSeleccionada]);
 
   const onBorrarDireccion = async () => {
     if (!seleccionada) {
       return;
     }
     setDirecciones(quitarEntidadDeLista<DirCliente>(direcciones, seleccionada));
-    setSeleccionada(null);
-    await deleteDireccion(clienteId, seleccionada.id);
+    setSeleccionada(undefined);
+    await deleteDireccion(clienteId, seleccionada);
   };
 
   const onMarcarFacturacionClicked = async (
@@ -84,10 +85,10 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <div className="acciones maestro-botones">
+      <div className="botones maestro-botones ">
         <QBoton onClick={onCrearDireccion}>Nueva</QBoton>
         <QBoton
-          onClick={() => seleccionada && onEditarDireccion(seleccionada)}
+          onClick={() => seleccionada && onEditarDireccion(getElemento(direcciones, seleccionada))}
           deshabilitado={!seleccionada}
         >
           Editar
@@ -95,11 +96,10 @@ export const TabDireccionesLista = ({
         <QBoton deshabilitado={!seleccionada} onClick={onBorrarDireccion}>
           Borrar
         </QBoton>
-        <div className="maestro-botones"></div>
         <QBoton
-          onClick={() => onMarcarFacturacionClicked(seleccionada?.id)}
+          onClick={() => onMarcarFacturacionClicked(seleccionada)}
           deshabilitado={
-            !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
+            !seleccionada || !puedoMarcarDireccionFacturacion(getElemento(direcciones, seleccionada))
           }
         >
           Facturación
@@ -109,8 +109,8 @@ export const TabDireccionesLista = ({
         metaTabla={metaTablaDirecciones}
         datos={direcciones}
         cargando={cargando}
-        seleccionadaId={seleccionada?.id}
-        onSeleccion={setSeleccionada}
+        seleccionadaId={seleccionada}
+        onSeleccion={(direccion) => setSeleccionada(direccion.id)}
         orden={{ id: "ASC" }}
         onOrdenar={
           (_: string) => null

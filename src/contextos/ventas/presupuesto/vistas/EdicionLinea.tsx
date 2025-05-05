@@ -1,58 +1,60 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { LineaPresupuesto as Linea } from "../diseño.ts";
-import { patchArticuloLinea } from "../infraestructura.ts";
-
+import { useModelo } from "../../../comun/useModelo.ts";
+import { Articulo } from "../../comun/componentes/articulo.tsx";
+import { GrupoIvaProducto } from "../../comun/componentes/grupo_iva_producto.tsx";
+import { LineaPresupuesto } from "../diseño.ts";
+import { metaLinea } from "../dominio.ts";
+import "./EdicionLinea.css";
 export const EdicionLinea = ({
-  presupuestoId,
-  linea,
-  onLineaActualizada,
-  onCancelar,
+  lineaInicial,
+  emitir,
 }: {
-  presupuestoId: string;
-  linea: Linea;
-  onLineaActualizada: (linea: Linea) => void;
-  onCancelar: () => void;
+  lineaInicial: LineaPresupuesto
+  emitir: (evento: string, payload: unknown) => void;
 }) => {
-  const [estado, setEstado] = useState({} as Record<string, string>);
 
-  const onGuardar = async (datos: Record<string, string>) => {
-    const nuevoEstado = {
-      referencia:
-        datos.referencia.trim() === "" ? "La referencia es obligatoria." : "",
-    };
-
-    setEstado(nuevoEstado);
-
-    if (Object.values(nuevoEstado).some((v) => v.length > 0)) return;
-
-    await patchArticuloLinea(presupuestoId, linea.id, datos.referencia);
-    const lineaActualizada = { ...linea, referencia: datos.referencia };
-    onLineaActualizada(lineaActualizada);
-  };
+  const {modelo, uiProps, valido, init} = useModelo(metaLinea, lineaInicial);
+  
+  useEffect(() => {
+      init(lineaInicial);
+  }, [lineaInicial, init]);
 
   return (
     <>
       <h2>Edición de línea</h2>
-      <QForm onSubmit={onGuardar} onReset={onCancelar}>
-        <section>
-          <QInput
-            label="Referencia"
-            nombre="referencia"
-            valor={linea.referencia}
-            erroneo={!!estado.referencia && estado.referencia.length > 0}
-            textoValidacion={estado.referencia}
+      <quimera-formulario>
+        <Articulo
+          {...uiProps("referencia", "descripcion")}
+        />
+        <QInput
+          label='Cantidad'
+          tipo='numero'
+          {...uiProps("cantidad")}
+        />
+        <GrupoIvaProducto
+          {...uiProps("grupo_iva_producto_id")}
           />
-        </section>
-        <section>
-          <QBoton tipo="submit">Guardar</QBoton>
-          <QBoton tipo="reset" variante="texto">
-            Cancelar
-          </QBoton>
-        </section>
-      </QForm>
+        <QInput
+          label='Precio'
+          tipo='numero'
+          {...uiProps("pvp_unitario")}
+        />
+        <QInput
+          label='% Descuento'
+          tipo='numero'
+          {...uiProps("dto_porcentual")}
+        />
+      </quimera-formulario>
+      <div className="botones maestro-botones ">
+        <QBoton
+          onClick={() => emitir('EDICION_LISTA', modelo)}
+          deshabilitado={!valido}
+        >
+          Guardar
+        </QBoton>
+      </div>
     </>
   );
 };

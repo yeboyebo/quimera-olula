@@ -15,7 +15,7 @@ export const transformarCriteria = (filtro?: Filtro, orden?: Orden): string => {
     const filtroString = filtro ? transformarFiltro(filtro) : "";
     const ordenString = orden ? transformarOrden(orden) : "";
 
-    return [filtroString, ordenString].filter(Boolean).join(" ");
+    return [filtroString, ordenString].filter(Boolean).join("_|_");
 }
 
 const transformarFiltro = (filtro: Filtro): string => {

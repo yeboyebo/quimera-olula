@@ -107,7 +107,7 @@ export const QAutocompletar = ({
         ref={valorReal}
         type="hidden"
         name={nombre}
-        value={valor}
+        value={valor || ""}
         defaultValue={undefined}
         required={!props.opcional}
       />

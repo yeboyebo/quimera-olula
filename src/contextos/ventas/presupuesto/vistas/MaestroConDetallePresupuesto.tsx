@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
-import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
 import "./MaestroConDetallePresupuesto.css";
 
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
+import { useLista } from "../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { AltaPresupuesto } from "./AltaPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
 
@@ -15,41 +15,42 @@ const metaTablaPresupuesto = [
   {
     id: "codigo",
     cabecera: "Código",
-    render: (entidad: Entidad) => entidad.codigo as string,
   },
   {
-    id: "cliente",
+    id: "nombre_cliente",
     cabecera: "Cliente",
-    render: (entidad: Entidad) => entidad.nombre_cliente as string,
   },
   {
     id: "total",
     cabecera: "Total",
-    render: (entidad: Entidad) => entidad.total as string,
   },
 ];
-
+type Estado = "lista" | "alta";
 export const MaestroConDetallePresupuesto = () => {
-  const [entidades, setEntidades] = useState<Presupuesto[]>([]);
-  const [seleccionada, setSeleccionada] = useState<Presupuesto | null>(null);
-  const [mostrarModal, setMostrarModal] = useState(false);
 
-  const actualizarEntidad = (entidad: Presupuesto) => {
-    setEntidades(actualizarEntidadEnLista<Presupuesto>(entidades, entidad));
-  };
+  const [estado, setEstado] = useState<Estado>('lista');
+  const presupuestos = useLista<Presupuesto>([]);
 
-  const onCrearPresupuesto = () => {
-    setMostrarModal(true);
-  };
+  const maquina: Maquina<Estado> = {
+    alta: {
+      PRESUPUESTO_CREADO: (payload: unknown) => {
+        const presupuesto = payload as Presupuesto;
+        presupuestos.añadir(presupuesto);
+        return 'lista';
+      },
+      ALTA_CANCELADA: 'lista'
+    },
+    lista: {
+      ALTA_INICIADA: 'alta',
+      PRESUPUESTO_CAMBIADO: (payload: unknown) => {
+        const presupuesto = payload as Presupuesto;
+        presupuestos.modificar(presupuesto);
+      }
+    }
+  }
 
-  const onPresupuestoCreado = (nuevoPresupuesto: Presupuesto) => {
-    setEntidades([...entidades, nuevoPresupuesto]);
-    setMostrarModal(false);
-  };
-
-  const onCancelar = () => {
-    setMostrarModal(false);
-  };
+  const emitir = useMaquina(maquina, estado, setEstado);
+  const emision = (evento: string, payload?: unknown) => () => emitir(evento, payload);
 
   return (
     <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
@@ -57,26 +58,23 @@ export const MaestroConDetallePresupuesto = () => {
         <h2>Presupuestos</h2>
         <Listado
           metaTabla={metaTablaPresupuesto}
-          entidades={entidades}
-          setEntidades={setEntidades}
-          seleccionada={seleccionada}
-          setSeleccionada={setSeleccionada}
+          entidades={presupuestos.lista}
+          setEntidades={presupuestos.setLista}
+          seleccionada={presupuestos.seleccionada}
+          setSeleccionada={presupuestos.seleccionar}
           cargar={getPresupuestos}
         />
-        <QBoton onClick={onCrearPresupuesto}>Crear Presupuesto</QBoton>
+        <QBoton onClick={emision('ALTA_INICIADA')}>Crear Presupuesto</QBoton>
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <DetallePresupuesto
-          presupuestoInicial={seleccionada}
-          onEntidadActualizada={actualizarEntidad}
+          presupuestoInicial={presupuestos.seleccionada}
+          emitir={emitir}
         />
       </div>
 
-      <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
-        <AltaPresupuesto
-          onPresupuestoCreado={onPresupuestoCreado}
-          onCancelar={onCancelar}
-        />
+      <QModal nombre="modal" abierto={estado === 'alta'} onCerrar={emision('ALTA_CANCELADA')}>
+        <AltaPresupuesto emitir={emitir} />
       </QModal>
     </div>
   );

@@ -1,13 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
-import { refrescarSeleccionada } from "../../../comun/dominio.ts";
 import { LineaPresupuesto as Linea } from "../diseño.ts";
-import {
-  deleteLinea,
-  getLineas,
-  patchCantidadLinea,
-} from "../infraestructura.ts";
 import { EditarCantidadLineaPresupuesto } from "./EditarCantidadLineaPresupuesto.tsx";
 
 const getMetaTablaLineas = (
@@ -29,85 +21,39 @@ const getMetaTablaLineas = (
         />
       ),
     },
-    { id: "pvp_unitario", cabecera: "P. Unitario" },
+    { id: "pvp_unitario", cabecera: "Precio" },
+    { id: "grupo_iva_producto_id", cabecera: "IVA" },
+    { id: "dto_porcentual", cabecera: "% Dto.",
+      render: (linea: Linea) => linea.dto_porcentual ? 
+        `${linea.dto_porcentual}%`
+        : ""
+     },
     { id: "pvp_total", cabecera: "Total" },
   ];
 };
 
 export const LineasLista = ({
-  presupuestoId,
-  onEditarLinea,
-  onCrearLinea,
-  onLineaBorrada,
-  onLineaCambiada,
   lineas,
-  setLineas,
   seleccionada,
-  setSeleccionada,
+  emitir
 }: {
-  presupuestoId: string;
-  onEditarLinea: (linea: Linea) => void;
-  onCrearLinea: () => void;
-  onLineaBorrada: () => void;
-  onLineaCambiada: (linea: Linea) => void;
   lineas: Linea[];
-  setLineas: (lineas: Linea[]) => void;
-  seleccionada: Linea | null;
-  setSeleccionada: (linea: Linea | null) => void;
+  seleccionada?: string;
+  emitir: (evento: string, payload?: unknown) => void;
 }) => {
-  const [cargando, setCargando] = useState(true);
-
-  const borrarLinea = async () => {
-    if (!seleccionada) {
-      return;
-    }
-    setLineas(quitarElemento(lineas, seleccionada));
-    await deleteLinea(presupuestoId, seleccionada.id);
-    onLineaBorrada();
-  };
 
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    await patchCantidadLinea(presupuestoId, linea, cantidad);
-    onLineaCambiada(linea);
+    emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
   };
-
-  const quitarElemento = <T extends Entidad>(lista: T[], elemento: T): T[] => {
-    return lista.filter((e) => e.id !== elemento.id);
-  };
-
-  const cargar = useCallback(async () => {
-    setCargando(true);
-    const lineas = await getLineas(presupuestoId);
-    setLineas(lineas);
-    refrescarSeleccionada(lineas, seleccionada?.id, setSeleccionada);
-    setCargando(false);
-  }, [presupuestoId, setLineas, seleccionada?.id, setSeleccionada]);
-
-  useEffect(() => {
-    if (presupuestoId) cargar();
-  }, [presupuestoId, cargar]);
 
   return (
     <>
-      <button onClick={onCrearLinea}> Nueva</button>
-      <button
-        onClick={() => seleccionada && onEditarLinea(seleccionada)}
-        disabled={!seleccionada}
-      >
-        {" "}
-        Editar
-      </button>
-      <button disabled={!seleccionada} onClick={borrarLinea}>
-        {" "}
-        Borrar
-      </button>
-
       <QTabla
         metaTabla={getMetaTablaLineas(cambiarCantidad)}
         datos={lineas}
-        cargando={cargando}
-        seleccionadaId={seleccionada?.id}
-        onSeleccion={setSeleccionada}
+        cargando={false}
+        seleccionadaId={seleccionada}
+        onSeleccion={(linea) => emitir('LINEA_SELECCIONADA', linea)}
         orden={{ id: "ASC" }}
         onOrdenar={
           (_: string) => null

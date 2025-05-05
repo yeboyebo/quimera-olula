@@ -1,4 +1,4 @@
-export type ObjetoValor = {
+export type Modelo = {
   [clave: string]: unknown;
 };
 
@@ -34,3 +34,6 @@ export type Direccion = {
   apartado: string;
   telefono: string;
 };
+
+
+export type EmitirEvento = (evento: string, payload?: unknown) => void

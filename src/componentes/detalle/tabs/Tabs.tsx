@@ -25,10 +25,10 @@ const Tabs: React.FC<TabsProps> = ({ children, className }) => {
 
   return (
     <div className={`${detalleTabs} ${className || ""}`.trim()}>
-      {" "}
       {/* Aplicar className */}
       <div className="tab-header">
         {children.map((tab, index) => (
+          
           <button
             key={index}
             onClick={() => handleTabClick(index)}
