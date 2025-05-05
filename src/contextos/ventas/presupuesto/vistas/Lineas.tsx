@@ -21,6 +21,8 @@ export const Lineas = ({
   const [estado, setEstado] = useState<Estado>("lista");
   const lineas = useLista<Linea>([]);
   const presupuestoId = presupuesto?.modelo?.id ;
+
+  const { setLista } = lineas;
   
   const refrescarLineas = async (idLinea?: string) => {
     console.log("refrescar lineas - seleccionada", lineas.seleccionada);
@@ -32,8 +34,8 @@ export const Lineas = ({
   const cargar = useCallback(async () => {
     console.log("cargar lineas", presupuestoId);
     const nuevasLineas = await getLineas(presupuestoId);
-    lineas.setLista(nuevasLineas);
-  }, [presupuestoId, lineas.setLista]);
+    setLista(nuevasLineas);
+  }, [presupuestoId, setLista]);
 
   useEffect(() => {
     if (presupuestoId) cargar();

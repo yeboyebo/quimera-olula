@@ -45,7 +45,7 @@ export function useLista<E extends Entidad>(
         } else {
             setIdSeleccionada(null);
         }
-    }, [setIdSeleccionada, entidades]);
+    }, [setIdSeleccionada, getPorId]);
 
     const seleccionarPorId = useCallback((id: string) => {
         const entidad = entidades.find((e) => e.id === id);
@@ -62,24 +62,25 @@ export function useLista<E extends Entidad>(
         setIdSeleccionada(entidad.id);
     }, [entidades, setEntidades, setIdSeleccionada]);
 
+
     const eliminar = useCallback((entidad: E) => {
+        const indiceEntidad = (entidad: E) => {
+            return entidades.findIndex((e) => e.id === entidad.id);
+        }
+        const entidadSeleccionadaTrasEliminacion = (entidadAEliminar: E) => {
+            const indice = indiceEntidad(entidadAEliminar);
+            if (indice == -1) {
+                return null;
+            }
+            const longitud = entidades.length;
+            return longitud > indice + 1 ? entidades[indice + 1] : (indice > 0 ? entidades[indice - 1] : null);
+        }
         const listaModificada = entidades.filter((e) => e.id !== entidad.id);
         const nuevaSeleccionada = entidadSeleccionadaTrasEliminacion(entidad);
         setEntidades(listaModificada);
         setIdSeleccionada(nuevaSeleccionada ? nuevaSeleccionada.id : null);
     }, [entidades, setEntidades, setIdSeleccionada]);
 
-    const entidadSeleccionadaTrasEliminacion = (entidadAEliminar: E) => {
-        const indice = indiceEntidad(entidadAEliminar);
-        if (indice == -1) {
-            return null;
-        }
-        const longitud = entidades.length;
-        return longitud > indice + 1 ? entidades[indice + 1] : (indice > 0 ? entidades[indice - 1] : null);
-    }
-    const indiceEntidad = (entidad: E) => {
-        return entidades.findIndex((e) => e.id === entidad.id);
-    }
     const refrescar = useCallback((lista: E[], id?: string) => {
         const idASeleccionar = id || idSeleccionada;
         const indiceEnListaActual = entidades.findIndex((e) => e.id === idASeleccionar);
@@ -107,7 +108,7 @@ export function useLista<E extends Entidad>(
     const seleccionada = useCallback(() => {
         const entidad = getPorId(idSeleccionada);
         return entidad;
-    }, [entidades, idSeleccionada]);
+    }, [idSeleccionada, getPorId]);
 
     return {
         lista: entidades,

@@ -65,7 +65,8 @@ export const postLinea: PostLinea = async (id, linea) => {
       cantidad: linea.cantidad
     }]
   }).then((respuesta) => {
-    return respuesta.ids[0];
+    const miRespuesta = respuesta as unknown as { ids: string[] };
+    return miRespuesta.ids[0];
   });
 }
 

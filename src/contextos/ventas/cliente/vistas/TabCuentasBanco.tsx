@@ -33,7 +33,7 @@ export const TabCuentasBanco = ({
   cliente,
 }: TabCuentasBancoProps) => {
 
-  const { modelo, init, dispatch } = cliente;
+  const { modelo, dispatch } = cliente;
 
   const [modo, setModo] = useState<"lista" | "alta" | "edicion">("lista");
   const [cuentas, setCuentas] = useState<CuentaBanco[]>([]);

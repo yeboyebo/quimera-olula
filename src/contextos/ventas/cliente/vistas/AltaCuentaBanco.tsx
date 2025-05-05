@@ -2,10 +2,10 @@ import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import {
-    campoModeloAInput,
-    initEstadoModelo,
-    makeReductor,
-    modeloEsValido,
+  campoModeloAInput,
+  initEstadoModelo,
+  makeReductor,
+  modeloEsValido,
 } from "../../../comun/dominio.ts";
 import { CuentaBanco } from "../diseño.ts";
 import { metaNuevaCuentaBanco, nuevaCuentaBancoVacia } from "../dominio.ts";
@@ -25,7 +25,7 @@ export const AltaCuentaBanco = ({
 }: AltaCuentaBancoProps) => {
   const [estado, dispatch] = useReducer(
     makeReductor(metaNuevaCuentaBanco),
-    initEstadoModelo(nuevaCuentaBancoVacia, metaNuevaCuentaBanco)
+    initEstadoModelo(nuevaCuentaBancoVacia)
   );
 
   const setCampo = (campo: string) => (valor: string) => {
@@ -64,7 +64,7 @@ export const AltaCuentaBanco = ({
       <div className="botones">
         <QBoton
           onClick={guardar}
-          deshabilitado={!modeloEsValido(estado)}
+          deshabilitado={!modeloEsValido(metaNuevaCuentaBanco)(estado.valor)}
         >
           Guardar
         </QBoton>

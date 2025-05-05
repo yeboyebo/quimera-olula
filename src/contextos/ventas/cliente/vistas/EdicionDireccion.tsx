@@ -28,7 +28,7 @@ export const EdicionDireccion = ({
   );
   useEffect(() => {
     direccionEditada.init(direccion);
-  }, [direccion]);
+  }, [direccion, direccionEditada]);
 
   // const setCampo = (campo: string) => (valor: string) => {
   //   dispatch({

@@ -93,7 +93,6 @@ export function useModelo<T extends Modelo>(
         }
     }
     const init = useCallback((modelo?: T) => {
-        // console.log('useCallback init', modelo);
         dispatch({
             type: "init",
             payload: {
@@ -101,7 +100,7 @@ export function useModelo<T extends Modelo>(
             }
         })
         setModeloInicial(modelo || modeloInicial);
-    }, [entidad]);
+    }, [modeloInicial]);
 
     return {
         modelo,

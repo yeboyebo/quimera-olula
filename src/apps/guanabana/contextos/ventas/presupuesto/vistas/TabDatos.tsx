@@ -17,7 +17,6 @@ interface TabDatosProps {
 
 export const TabDatosGua = ({
   ctxPresupuesto,
-  onEntidadActualizada,
 }: TabDatosProps) => {
 
   const {uiProps} = ctxPresupuesto;

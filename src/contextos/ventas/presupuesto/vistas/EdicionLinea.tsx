@@ -19,7 +19,7 @@ export const EdicionLinea = ({
   
   useEffect(() => {
       init(lineaInicial);
-  }, [lineaInicial]);
+  }, [lineaInicial, init]);
 
   return (
     <>

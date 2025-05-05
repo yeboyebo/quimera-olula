@@ -3,10 +3,10 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
 import {
-    campoModeloAInput,
-    initEstadoModelo,
-    makeReductor,
-    modeloEsValido,
+  campoModeloAInput,
+  initEstadoModelo,
+  makeReductor,
+  modeloEsValido,
 } from "../../../comun/dominio.ts";
 import { opcionesTipoIdFiscal } from "../../../valores/idfiscal.ts";
 import { Cliente } from "../diseño.ts";
@@ -22,7 +22,7 @@ export const AltaCliente = ({
 }) => {
   const [estado, dispatch] = useReducer(
     makeReductor(metaNuevoCliente),
-    initEstadoModelo(nuevoClienteVacio, metaNuevoCliente)
+    initEstadoModelo(nuevoClienteVacio)
   );
 
   const setCampo = (campo: string) => (valor: string) => {
@@ -77,7 +77,7 @@ export const AltaCliente = ({
       <div className="botones">
         <QBoton
           onClick={guardar}
-          deshabilitado={!modeloEsValido(estado)}
+          deshabilitado={!modeloEsValido(metaNuevoCliente)(estado.valor)}
         >
           Guardar
         </QBoton>

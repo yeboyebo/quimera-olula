@@ -148,9 +148,10 @@ const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, cam
     switch (campos[campo].tipo) {
         case 'boolean':
             return valor === 'true'
-        case 'number':
-            const numero = parseFloat(valor)
+        case 'number': {
+            const numero = parseFloat(valor);
             return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
+        }
         default:
             return valor;
     }

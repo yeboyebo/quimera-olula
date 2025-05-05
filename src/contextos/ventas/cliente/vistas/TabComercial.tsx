@@ -20,10 +20,10 @@ export const TabComercial = ({
   // setCampo,
   // dispatch,
   cliente,
-  onEntidadActualizada,
+  // onEntidadActualizada,
 }: TabComercialProps) => {
 
-  const { modelo, init, uiProps, valido, modificado } = cliente;
+  const { uiProps } = cliente;
 
   // const onGuardarClicked = async () => {
   //   await patchCliente(modelo.id, modelo);

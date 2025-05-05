@@ -17,30 +17,14 @@ interface BajaClienteProps {
   onBajaRealizada: () => void;
 }
 
-export const metaBajaCliente: MetaModelo<BajaCliente> = {
-    // validador: makeValidadorCliente(validacionesCliente),
+const metaBajaCliente: MetaModelo<BajaCliente> = {
     campos: {
         fecha_baja: { requerido: true },
-        // id_fiscal: {
-        //     requerido: true,
-        //     validacion: (cliente: Cliente) => idFiscalValido(cliente.tipo_id_fiscal)(cliente.id_fiscal),
-        // },
-        // tipo_id_fiscal: {
-        //     requerido: true,
-        //     validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
-        // },
-        // nombre_agente: { bloqueado: true },
     }
 };
 
 export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
 
-  // const { modelo, init } = cliente;
-
-  // const [estado, dispatch] = useReducer(
-  //   makeReductor(metaDarDeBaja),
-  //   initEstadoModelo({ fecha_baja: "" }, metaDarDeBaja)
-  // );
   const bajaCliente = useModelo(
     metaBajaCliente,
     { fecha_baja: "" }
@@ -52,18 +36,6 @@ export const BajaCliente = ({ cliente, onBajaRealizada }: BajaClienteProps) => {
     await darDeBajaCliente(cliente.modelo.id, modelo.fecha_baja);
     onBajaRealizada();
   };
-
-
-  // const setCampo = (campo: string) => (valor: string) => {
-  //   dispatch({
-  //     type: "set_campo",
-  //     payload: { campo, valor },
-  //   });
-  // };
-
-  // const getProps = (campo: string) => {
-  //   return campoModeloAInput(estado, campo);
-  // };
 
   return (
     <>

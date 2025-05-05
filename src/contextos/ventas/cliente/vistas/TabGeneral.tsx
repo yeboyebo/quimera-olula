@@ -24,7 +24,6 @@ export const TabGeneral = ({
   // setCampo,
   // dispatch,
   cliente,
-  onEntidadActualizada,
   recargarCliente,
 }: TabGeneralProps) => {
   const [mostrarModal, setMostrarModal] = useState(false);
