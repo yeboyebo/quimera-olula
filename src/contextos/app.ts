@@ -1,4 +1,3 @@
-import { FactoryVentasBase } from "./ventas/factory.ts";
+import { FactoryBase } from "../apps/base/factory.ts";
 
-export const appFactory = () => FactoryVentasBase
-// export const AppFactory = FactoryVentasBase
+export const appFactory = () => FactoryBase
