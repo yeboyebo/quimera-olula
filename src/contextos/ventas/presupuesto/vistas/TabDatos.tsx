@@ -5,14 +5,14 @@ import { Presupuesto } from "../diseño.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
-  ctxPresupuesto: HookModelo<Presupuesto>; 
+  presupuesto: HookModelo<Presupuesto>; 
 }
 
 export const TabDatos = ({
-  ctxPresupuesto,
+  presupuesto,
 }: TabDatosProps) => {
   return appFactory().PresupuestoTabDatos({
-    ctxPresupuesto,
+    presupuesto,
   })
 };
 

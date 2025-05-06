@@ -2,7 +2,7 @@ import { useCallback, useReducer, useState } from "react";
 import { Modelo } from "./diseño.ts";
 import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
 
-
+type TipoInput = "texto" | "checkbox" | "numero";
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T
@@ -79,10 +79,22 @@ export function useModelo<T extends Modelo>(
                 : '';
         const editable = modeloEsEditable<T>(meta)(modelo, campo);
         const cambiado = valor !== modeloInicial[campo];
+        const campos = meta.campos || {};
+        const tipoMeta = campo in campos && campos[campo]?.tipo
+            ? campos[campo].tipo
+            : "string";
+        const conversionTipo = {
+            "string": "texto",
+            "boolean": "checkbox",
+            "number": "numero",
+        }
+        const tipo = (conversionTipo[tipoMeta] || "texto") as TipoInput;
+
 
         return {
             nombre: campo,
             valor: valor,
+            tipo: tipo,
             deshabilitado: !editable,
             valido: cambiado && valido,
             erroneo: !valido,
@@ -135,6 +147,7 @@ export type ValorControl = null | string | ParamOpcion;
 export type UiProps = {
     nombre: string;
     valor: string;
+    tipo: TipoInput;
     textoValidacion: string;
     deshabilitado: boolean;
     erroneo: boolean;

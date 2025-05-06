@@ -51,7 +51,7 @@ export const DetallePresupuesto = ({
         recargarCabecera();
       },
       CLIENTE_PRESUPUESTO_CAMBIADO: async() => {
-        recargarCabecera();
+        await recargarCabecera();
       }
     },
   }
@@ -62,17 +62,6 @@ export const DetallePresupuesto = ({
     init(nuevoPresupuesto);
     emitir('PRESUPUESTO_CAMBIADO', nuevoPresupuesto);
   };
-
-  // const onGuardarClicked = async () => {
-  //   await patchPresupuesto(modelo.id, modelo);
-  //   recargarCabecera();
-  // };
-
-
-  // const aprobarClicked = async () => {
-  //   await aprobarPresupuesto(modelo.id);
-  //   recargarCabecera();
-  // };
 
   return (
     <Detalle
@@ -95,14 +84,14 @@ export const DetallePresupuesto = ({
             children={[
               <Tab key="tab-1"label="Cliente" children={
                   <TabCliente
-                    ctxPresupuesto={ctxPresupuesto}
+                  presupuesto={ctxPresupuesto}
                     publicar={emitirPresupuesto}
                   />
                 }
               />,
               <Tab key="tab-2" label="Datos" children={
                   <TabDatos
-                    ctxPresupuesto={ctxPresupuesto}
+                  presupuesto={ctxPresupuesto}
                   />
                 }
               />,
