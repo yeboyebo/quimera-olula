@@ -100,6 +100,14 @@ export const darDeBajaCliente = async (id: string, fecha: string) =>
     },
   });
 
+export const darDeAltaCliente = async (id: string) =>
+  await RestAPI.patch(`${baseUrlVentas}/${id}`, {
+    cambios: {
+      de_baja: false,
+      fecha_baja: null,
+    },
+  });
+
 export const deleteCliente = async (id: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlVentas}/${id}`);
 
@@ -225,6 +233,9 @@ export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<strin
   return await RestAPI.post(`${baseUrlCrm}/contacto`, payload).then((respuesta) => respuesta.id);
 };
 
+export const getCrmContacto = async (contactoId: string): Promise<CrmContacto> =>
+  await RestAPI.get<{ datos: CrmContacto }>(`${baseUrlCrm}/contacto/${contactoId}`).then((respuesta) => respuesta.datos);
+
 export const vincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
   const payload = {
     contacto_id: contactoId,
@@ -248,4 +259,4 @@ export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => 
 };
 
 export const deleteCrmContacto = async (contactoId: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlCrm}/${contactoId}`);
+  await RestAPI.delete(`${baseUrlCrm}/contacto/${contactoId}`);

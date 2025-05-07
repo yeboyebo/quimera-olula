@@ -28,6 +28,7 @@ export const presupuestoVacio = (): Presupuesto => ({
     id: '',
     codigo: '',
     fecha: '',
+    fecha_salida: '',
     cliente_id: '',
     nombre_cliente: '',
     id_fiscal: '',

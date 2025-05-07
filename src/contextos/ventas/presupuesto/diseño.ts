@@ -4,6 +4,7 @@ export interface Presupuesto extends Entidad {
   id: string;
   codigo: string;
   fecha: string;
+  fecha_salida: string;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;

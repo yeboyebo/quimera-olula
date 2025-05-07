@@ -1,22 +1,28 @@
+import { useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Presupuesto } from "../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
-import { aprobarPresupuesto, getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
+import {
+  aprobarPresupuesto,
+  borrarPresupuesto,
+  getPresupuesto,
+  patchPresupuesto,
+} from "../infraestructura.ts";
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas.tsx";
 import { TabCliente } from "./TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-
 type ParamOpcion = {
   valor: string;
-  descripcion?: string
+  descripcion?: string;
 };
 export type ValorControl = null | string | ParamOpcion;
 
@@ -25,37 +31,43 @@ export const DetallePresupuesto = ({
   emitir = () => {},
 }: {
   presupuestoInicial?: Presupuesto | null;
-  emitir?: EmitirEvento
+  emitir?: EmitirEvento;
 }) => {
   const params = useParams();
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+    "edicion"
+  );
 
   const presupuestoId = presupuestoInicial?.id ?? params.id;
   const titulo = (presupuesto: Entidad) => presupuesto.codigo as string;
 
-  const ctxPresupuesto = useModelo(
-    metaPresupuesto,
-    presupuestoVacio()
-  );
+  const ctxPresupuesto = useModelo(metaPresupuesto, presupuestoVacio());
   const { modelo, init } = ctxPresupuesto;
 
   const onGuardarClicked = async () => {
     await patchPresupuesto(modelo.id, modelo);
     const presupuesto_guardado = await getPresupuesto(modelo.id);
     init(presupuesto_guardado);
-    emitir('PRESUPUESTO_CAMBIADO', presupuesto_guardado);
+    emitir("PRESUPUESTO_CAMBIADO", presupuesto_guardado);
   };
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
     init(nuevoPresupuesto);
-    emitir('PRESUPUESTO_CAMBIADO', nuevoPresupuesto);
+    emitir("PRESUPUESTO_CAMBIADO", nuevoPresupuesto);
   };
 
   const aprobarClicked = async () => {
     await aprobarPresupuesto(modelo.id);
     const presupuesto_aprobado = await getPresupuesto(modelo.id);
     init(presupuesto_aprobado);
-    emitir('PRESUPUESTO_CAMBIADO', presupuesto_aprobado);
+    emitir("PRESUPUESTO_CAMBIADO", presupuesto_aprobado);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await borrarPresupuesto(modelo.id);
+    emitir("PRESUPUESTO_BORRADO", modelo);
+    setEstado("edicion");
   };
 
   return (
@@ -68,39 +80,36 @@ export const DetallePresupuesto = ({
     >
       {!!presupuestoId && (
         <>
-          { !modelo.aprobado && (
+          {!modelo.aprobado && (
             <div className="botones maestro-botones ">
-              <QBoton
-                onClick={aprobarClicked}
-              >
-                Aprobar
+              <QBoton onClick={aprobarClicked}>Aprobar</QBoton>
+              <QBoton onClick={() => setEstado("confirmarBorrado")}>
+                Borrar
               </QBoton>
             </div>
           )}
           <Tabs
             children={[
-              <Tab key="tab-1"label="Cliente" children={
-                  <TabCliente
-                    ctxPresupuesto={ctxPresupuesto}
-                    emitir={emitir}
-                  />
+              <Tab
+                key="tab-1"
+                label="Cliente"
+                children={
+                  <TabCliente ctxPresupuesto={ctxPresupuesto} emitir={emitir} />
                 }
               />,
-              <Tab key="tab-2" label="Datos" children={
-                  <TabDatos
-                    ctxPresupuesto={ctxPresupuesto}
-                  />
-                }
+              <Tab
+                key="tab-2"
+                label="Datos"
+                children={<TabDatos ctxPresupuesto={ctxPresupuesto} />}
               />,
-              <Tab key="tab-3" label="Observaciones" children={
-                  <TabObservaciones 
-                    ctxPresupuesto={ctxPresupuesto}
-                  />
-                }
+              <Tab
+                key="tab-3"
+                label="Observaciones"
+                children={<TabObservaciones ctxPresupuesto={ctxPresupuesto} />}
               />,
             ]}
           ></Tabs>
-          { ctxPresupuesto.modificado && (
+          {ctxPresupuesto.modificado && (
             <div className="botones maestro-botones ">
               <QBoton
                 onClick={onGuardarClicked}
@@ -171,6 +180,14 @@ export const DetallePresupuesto = ({
           <Lineas
             presupuesto={ctxPresupuesto}
             onCabeceraModificada={recargarCabecera}
+          />
+          <QModalConfirmacion
+            nombre="borrarPresupuesto"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este presupuesto?"
+            onCerrar={() => setEstado("edicion")}
+            onAceptar={onBorrarConfirmado}
           />
         </>
       )}

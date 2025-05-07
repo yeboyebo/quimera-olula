@@ -1,55 +1,45 @@
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { useModelo } from "../../../comun/useModelo.ts";
-import { DirCliente } from "../diseño.ts";
 import { metaNuevaDireccion, nuevaDireccionVacia } from "../dominio.ts";
 import { getDireccion, postDireccion } from "../infraestructura.ts";
 
 export const AltaDireccion = ({
   clienteId,
-  onDireccionCreada = () => {},
+  emitir,
 }: {
   clienteId: string;
-  onDireccionCreada?: (direccion: DirCliente) => void;
-  onCancelar: () => void;
+  emitir: (evento: string, payload?: unknown) => void;
 }) => {
-
-  const nuevaDireccion = useModelo(
+  const { modelo, uiProps, valido } = useModelo(
     metaNuevaDireccion,
     nuevaDireccionVacia
   );
 
-  const { uiProps } = nuevaDireccion;
-
   const guardar = async () => {
-    const id = await postDireccion(clienteId, nuevaDireccion.modelo);
+    const id = await postDireccion(clienteId, modelo);
     const direccionCreada = await getDireccion(clienteId, id);
-    onDireccionCreada(direccionCreada);
+    emitir("DIRECCION_CREADA", direccionCreada);
   };
 
   return (
     <>
       <h2>Nueva dirección</h2>
       <quimera-formulario>
-        <QInput
-          label="Tipo de Vía"
-          {...uiProps("tipo_via")}
-        />
-        <QInput
-          label="Nombre de la Vía"
-          {...uiProps("nombre_via")}
-        />
-        <QInput
-          label="Ciudad"
-          {...uiProps("ciudad")}
-        />
+        <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
+        <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
+        <QInput label="Ciudad" {...uiProps("ciudad")} />
       </quimera-formulario>
-      <div className="botones maestro-botones ">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!nuevaDireccion.valido}
-        >
+      <div className="botones maestro-botones">
+        <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
+        </QBoton>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => emitir("ALTA_CANCELADA")}
+        >
+          Cancelar
         </QBoton>
       </div>
     </>

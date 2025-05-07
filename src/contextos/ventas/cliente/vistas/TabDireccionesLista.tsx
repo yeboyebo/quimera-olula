@@ -1,23 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
-import {
-  boolAString,
-  direccionCompleta,
-  getElemento,
-  quitarEntidadDeLista,
-  refrescarSeleccionada,
-} from "../../../comun/dominio.ts";
+import { boolAString, direccionCompleta } from "../../../comun/dominio.ts";
 import { DirCliente } from "../diseño.ts";
 import { puedoMarcarDireccionFacturacion } from "../dominio.ts";
-import {
-  deleteDireccion,
-  getDirecciones,
-  setDirFacturacion,
-} from "../infraestructura.ts";
 
 const metaTablaDirecciones = [
-  // { id: "id", cabecera: "id" },
   {
     id: "direccion",
     cabecera: "Dirección",
@@ -36,70 +23,37 @@ const metaTablaDirecciones = [
 ];
 
 export const TabDireccionesLista = ({
-  clienteId,
-  onEditarDireccion,
-  onCrearDireccion,
   direcciones,
-  setDirecciones,
   seleccionada,
-  setSeleccionada,
+  emitir,
+  cargando,
 }: {
   clienteId: string;
-  onEditarDireccion: (direccion: DirCliente) => void;
-  onCrearDireccion: () => void;
   direcciones: DirCliente[];
-  setDirecciones: (direcciones: DirCliente[]) => void;
-  seleccionada: string | undefined;
-  setSeleccionada: (idDireccion: string | undefined) => void;
+  seleccionada: DirCliente | null;
+  emitir: (evento: string, payload?: unknown) => void;
+  cargando: boolean;
 }) => {
-  const [cargando, setCargando] = useState(true);
-
-  const cargar = useCallback(async () => {
-    setCargando(true);
-    const direcciones = await getDirecciones(clienteId);
-    setDirecciones(direcciones);
-    refrescarSeleccionada(direcciones, seleccionada, setSeleccionada);
-    setCargando(false);
-  }, [clienteId, setDirecciones, seleccionada, setSeleccionada]);
-
-  const onBorrarDireccion = async () => {
-    if (!seleccionada) {
-      return;
-    }
-    setDirecciones(quitarEntidadDeLista<DirCliente>(direcciones, seleccionada));
-    setSeleccionada(undefined);
-    await deleteDireccion(clienteId, seleccionada);
-  };
-
-  const onMarcarFacturacionClicked = async (
-    direccionId: string | undefined
-  ) => {
-    if (!direccionId) return;
-    await setDirFacturacion(clienteId, direccionId);
-    cargar();
-  };
-
-  useEffect(() => {
-    if (clienteId) cargar();
-  }, [clienteId, cargar]);
-
   return (
     <>
-      <div className="botones maestro-botones ">
-        <QBoton onClick={onCrearDireccion}>Nueva</QBoton>
+      <div className="botones maestro-botones">
+        <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
         <QBoton
-          onClick={() => seleccionada && onEditarDireccion(getElemento(direcciones, seleccionada))}
+          onClick={() => seleccionada && emitir("EDICION_SOLICITADA")}
           deshabilitado={!seleccionada}
         >
           Editar
         </QBoton>
-        <QBoton deshabilitado={!seleccionada} onClick={onBorrarDireccion}>
+        <QBoton
+          onClick={() => emitir("BORRADO_SOLICITADO")}
+          deshabilitado={!seleccionada}
+        >
           Borrar
         </QBoton>
         <QBoton
-          onClick={() => onMarcarFacturacionClicked(seleccionada)}
+          onClick={() => emitir("FACTURACION_SOLICITADA")}
           deshabilitado={
-            !seleccionada || !puedoMarcarDireccionFacturacion(getElemento(direcciones, seleccionada))
+            !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
           }
         >
           Facturación
@@ -109,13 +63,10 @@ export const TabDireccionesLista = ({
         metaTabla={metaTablaDirecciones}
         datos={direcciones}
         cargando={cargando}
-        seleccionadaId={seleccionada}
-        onSeleccion={(direccion) => setSeleccionada(direccion.id)}
+        seleccionadaId={seleccionada?.id}
+        onSeleccion={(direccion) => emitir("DIRECCION_SELECCIONADA", direccion)}
         orden={{ id: "ASC" }}
-        onOrdenar={
-          (_: string) => null
-          //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
-        }
+        onOrdenar={() => null}
       />
     </>
   );
