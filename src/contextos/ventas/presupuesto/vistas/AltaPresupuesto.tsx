@@ -10,9 +10,8 @@ import "./AltaPresupuesto.css";
 export const AltaPresupuesto = ({
   emitir = () => {},
 }: {
-  emitir?: EmitirEvento
+  emitir?: EmitirEvento;
 }) => {
-
   const nuevoPresupuesto = useModelo(
     metaNuevoPresupuesto,
     presupuestoNuevoVacio()
@@ -25,34 +24,28 @@ export const AltaPresupuesto = ({
   };
 
   return (
-    <>
+    <div className="AltaPresupuesto">
       <h2>Nuevo Presupuesto</h2>
       <quimera-formulario>
         <Cliente
           {...nuevoPresupuesto.uiProps("cliente_id")}
-          nombre='alta_presupuesto_cliente_id'
+          nombre="alta_presupuesto_cliente_id"
         />
         <DirCliente
           clienteId={nuevoPresupuesto.modelo.cliente_id}
           {...nuevoPresupuesto.uiProps("direccion_id")}
-          nombre='alta_presupuesto_direccion_id'
+          nombre="alta_presupuesto_direccion_id"
         />
-        <QInput
-          label="Empresa"
-          {...nuevoPresupuesto.uiProps("empresa_id")}
-        />
+        <QInput label="Empresa" {...nuevoPresupuesto.uiProps("empresa_id")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!nuevoPresupuesto.valido}
-        >
+        <QBoton onClick={guardar} deshabilitado={!nuevoPresupuesto.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => emitir('ALTA_CANCELADA')} variante="texto">
+        <QBoton onClick={() => emitir("ALTA_CANCELADA")} variante="texto">
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { Entidad } from "../../../comun/diseño.ts";
+import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../diseño.ts";
 import { clienteVacio, metaCliente } from "../dominio.ts";
-import { getCliente, patchCliente } from "../infraestructura.ts";
+import { deleteCliente, getCliente, patchCliente } from "../infraestructura.ts";
 import "./DetalleCliente.css";
 import { TabComercial } from "./TabComercial.tsx";
 import { TabCrmContactos } from "./TabCrmContactos.tsx";
@@ -16,11 +18,11 @@ import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,
-  onEntidadActualizada = () => {},
+  emitir = () => {},
   cancelarSeleccionada,
 }: {
   clienteInicial?: Cliente | null;
-  onEntidadActualizada?: (entidad: Cliente) => void;
+  emitir?: EmitirEvento;
   cancelarSeleccionada?: () => void;
 }) => {
   const params = useParams();
@@ -28,47 +30,36 @@ export const DetalleCliente = ({
   const clienteId = clienteInicial?.id ?? params.id;
   const titulo = (cliente: Entidad) => cliente.nombre as string;
 
-  // const [cliente, dispatch] = useReducer(
-  //   makeReductor(metaCliente),
-  //   initEstadoClienteVacio()
-  // );
-  const cliente = useModelo(
-    metaCliente,
-    clienteVacio()
-  );
+  const cliente = useModelo(metaCliente, clienteVacio());
   const { modelo, init, modificado, valido } = cliente;
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+    "edicion"
+  );
 
   const onGuardarClicked = async () => {
     await patchCliente(modelo.id, modelo);
     const cliente_guardado = await getCliente(modelo.id);
     init(cliente_guardado);
-    onEntidadActualizada(modelo);
+    emitir("CLIENTE_CAMBIADO", cliente_guardado);
   };
-
-
-  // const setCampo = (campo: string) => (valor: unknown) => {
-  //   dispatch({
-  //     type: "set_campo",
-  //     payload: { campo, valor: valor as string },
-  //   });
-  // };
-
-  // const getProps = (campo: string) => {
-  //   return campoModeloAInput(cliente, campo);
-  // };
 
   const onRecargarCliente = async () => {
     const clienteRecargado = await getCliente(modelo.id);
-    // dispatch({ type: "init", payload: { entidad: clienteRecargado } });
     init(clienteRecargado);
-    onEntidadActualizada(clienteRecargado);
+    emitir("CLIENTE_CAMBIADO", clienteRecargado);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await deleteCliente(modelo.id);
+    emitir("CLIENTE_BORRADO", modelo);
+    setEstado("edicion");
   };
 
   return (
     <Detalle
       id={clienteId}
       obtenerTitulo={titulo}
-      setEntidad={(c) => init(c as Cliente) }
+      setEntidad={(c) => init(c as Cliente)}
       entidad={modelo}
       cargar={getCliente}
       className="detalle-cliente"
@@ -76,32 +67,41 @@ export const DetalleCliente = ({
     >
       {!!clienteId && (
         <>
+          <div className="maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <Tabs
             children={[
-              <Tab key="tab-1" label="General" children={
+              <Tab
+                key="tab-1"
+                label="General"
+                children={
                   <TabGeneral
                     cliente={cliente}
-                    onEntidadActualizada={onEntidadActualizada}
+                    emitirCliente={emitir}
                     recargarCliente={onRecargarCliente}
                   />
                 }
               />,
-              <Tab key="tab-1" label="Comercial" children={
-                  <TabComercial
-                    cliente={cliente}
-                    onEntidadActualizada={onEntidadActualizada}
-                  />
+              <Tab
+                key="tab-1"
+                label="Comercial"
+                children={
+                  <TabComercial cliente={cliente} emitirCliente={emitir} />
                 }
               />,
-              <Tab key="tab-2" label="Direcciones" children={
-                  <TabDirecciones clienteId={clienteId} />
-                }
+              <Tab
+                key="tab-2"
+                label="Direcciones"
+                children={<TabDirecciones clienteId={clienteId} />}
               />,
-              <Tab key="tab-3" label="Cuentas Bancarias" children={
-                  <TabCuentasBanco
-                    cliente={cliente}
-                    onEntidadActualizada={onEntidadActualizada}
-                  />
+              <Tab
+                key="tab-3"
+                label="Cuentas Bancarias"
+                children={
+                  <TabCuentasBanco cliente={cliente} emitirCliente={emitir} />
                 }
               />,
               <Tab
@@ -115,12 +115,9 @@ export const DetalleCliente = ({
               />,
             ]}
           />
-          { cliente.modificado && (
-            <div className="botones maestro-botones ">
-              <QBoton
-                onClick={onGuardarClicked}
-                deshabilitado={!valido}
-              >
+          {cliente.modificado && (
+            <div className="maestro-botones ">
+              <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
                 Guardar
               </QBoton>
               <QBoton
@@ -133,6 +130,14 @@ export const DetalleCliente = ({
               </QBoton>
             </div>
           )}
+          <QModalConfirmacion
+            nombre="borrarCliente"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este cliente?"
+            onCerrar={() => setEstado("edicion")}
+            onAceptar={onBorrarConfirmado}
+          />
         </>
       )}
     </Detalle>
