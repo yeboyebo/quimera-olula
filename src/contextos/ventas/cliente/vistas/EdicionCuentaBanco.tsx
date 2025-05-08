@@ -9,59 +9,36 @@ import "./TabCuentasBanco.css";
 interface EdicionCuentaBancoProps {
   clienteId: string;
   cuenta: CuentaBanco;
-  onCuentaActualizada?: (cuenta: CuentaBanco) => void;
-  onCancelar: () => void;
+  emitir: (evento: string, payload?: unknown) => void;
 }
 
 export const EdicionCuentaBanco = ({
   clienteId,
   cuenta,
-  onCuentaActualizada = () => {},
-  onCancelar,
+  emitir,
 }: EdicionCuentaBancoProps) => {
-  // const [estado, dispatch] = useReducer(
-  //   makeReductor(metaCuentaBanco),
-  //   initEstadoModelo(cuenta, metaCuentaBanco)
-  // );
-
-  const {modelo, uiProps, valido, } = useModelo(metaCuentaBanco, cuenta);
-
-  // const setCampo = (campo: string) => (valor: string) => {
-  //   dispatch({
-  //     type: "set_campo",
-  //     payload: { campo, valor },
-  //   });
-  // };
-
-  // const getProps = (campo: string) => {
-  //   return campoModeloAInput(estado, campo);
-  // };
+  const { modelo, uiProps, valido } = useModelo(metaCuentaBanco, cuenta);
 
   const guardar = async () => {
     await patchCuentaBanco(clienteId, modelo);
-    onCuentaActualizada(modelo);
+    emitir("CUENTA_ACTUALIZADA", modelo);
   };
 
   return (
     <>
       <quimera-formulario>
-        <QInput
-          label="IBAN"
-          {...uiProps("iban")}
-        />
-        <QInput
-          label="BIC"
-          {...uiProps("bic")}
-        />
+        <QInput label="IBAN" {...uiProps("iban")} />
+        <QInput label="BIC" {...uiProps("bic")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!valido}
-        >
+        <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
         </QBoton>
-        <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => emitir("EDICION_CANCELADA")}
+        >
           Cancelar
         </QBoton>
       </div>

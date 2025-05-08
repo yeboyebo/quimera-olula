@@ -16,7 +16,7 @@ quimera-modal {
         main {
             padding: var(--espaciado-l);
             width: 100%;
-            min-height: 300px;
+            min-height: 150px;
         }
 
         header form quimera-boton {
@@ -42,5 +42,23 @@ quimera-modal {
                 }
             }
         }
+    }
+
+    .mensaje {
+        margin: 2rem 0;
+    }
+
+    .botones {
+        display: flex;
+        justify-content: end;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+
+    .botones button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
     }
 }

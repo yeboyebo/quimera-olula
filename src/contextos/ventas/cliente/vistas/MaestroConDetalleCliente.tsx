@@ -3,7 +3,8 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
-import { actualizarEntidadEnLista } from "../../../comun/dominio.ts";
+import { useLista } from "../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Cliente } from "../diseño.ts";
 import { deleteCliente, getClientes } from "../infraestructura.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
@@ -25,36 +26,41 @@ const metaTablaCliente = [
   { id: "forma_pago", cabecera: "Forma de Pago" },
   { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
 ];
-
+type Estado = "lista" | "alta";
 export const MaestroConDetalleCliente = () => {
-  const [entidades, setEntidades] = useState<Cliente[]>([]);
-  const [seleccionada, setSeleccionada] = useState<Cliente | null>(null);
-  const [mostrarModal, setMostrarModal] = useState(false); // Estado para controlar el modal
+  const [estado, setEstado] = useState<Estado>("lista");
+  const clientes = useLista<Cliente>([]);
 
-  const actualizarEntidad = (entidad: Cliente) => {
-    setEntidades(actualizarEntidadEnLista<Cliente>(entidades, entidad));
+  const maquina: Maquina<Estado> = {
+    alta: {
+      CLIENTE_CREADO: (payload: unknown) => {
+        const cliente = payload as Cliente;
+        clientes.añadir(cliente);
+        return "lista";
+      },
+      ALTA_CANCELADA: "lista",
+    },
+    lista: {
+      ALTA_INICIADA: "alta",
+      CLIENTE_CAMBIADO: (payload: unknown) => {
+        const cliente = payload as Cliente;
+        clientes.modificar(cliente);
+      },
+      CLIENTE_BORRADO: (payload: unknown) => {
+        const cliente = payload as Cliente;
+        clientes.eliminar(cliente);
+      },
+    },
   };
 
-  const onCrearCliente = () => {
-    setMostrarModal(true);
-  };
-
-  const onClienteCreado = (nuevoCliente: Cliente) => {
-    setEntidades([...entidades, nuevoCliente]);
-    setMostrarModal(false);
-  };
-
-  const onCancelar = () => {
-    setMostrarModal(false);
-  };
+  const emitir = useMaquina(maquina, estado, setEstado);
 
   const onBorrarCliente = async () => {
-    if (!seleccionada) {
+    if (!clientes.seleccionada) {
       return;
     }
-    await deleteCliente(seleccionada.id);
-    setEntidades(entidades.filter((e) => e.id !== seleccionada.id));
-    setSeleccionada(null);
+    await deleteCliente(clientes.seleccionada.id);
+    clientes.eliminar(clientes.seleccionada);
   };
 
   return (
@@ -62,32 +68,40 @@ export const MaestroConDetalleCliente = () => {
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
         <h2>Clientes</h2>
         <div className="maestro-botones">
-          <QBoton onClick={onCrearCliente}>Nuevo</QBoton>
-          <QBoton deshabilitado={!seleccionada} onClick={onBorrarCliente}>
+          <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
+          <QBoton
+            deshabilitado={!clientes.seleccionada}
+            onClick={onBorrarCliente}
+          >
             Borrar
           </QBoton>
         </div>
         <Listado
           metaTabla={metaTablaCliente}
-          entidades={entidades}
-          setEntidades={setEntidades}
-          seleccionada={seleccionada}
-          setSeleccionada={setSeleccionada}
+          entidades={clientes.lista}
+          setEntidades={clientes.setLista}
+          seleccionada={clientes.seleccionada}
+          setSeleccionada={clientes.seleccionar}
           cargar={getClientes}
         />
       </div>
       <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
         <DetalleCliente
-          clienteInicial={seleccionada}
-          onEntidadActualizada={actualizarEntidad}
-          cancelarSeleccionada={() => setSeleccionada(null)}
+          clienteInicial={clientes.seleccionada}
+          emitir={emitir}
+          cancelarSeleccionada={clientes.limpiarSeleccion}
         />
       </div>
 
-      <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
+      >
         <AltaCliente
-          onClienteCreado={onClienteCreado}
-          onCancelar={onCancelar}
+          emitir={emitir}
+          // onClienteCreado={onClienteCreado}
+          // onCancelar={onCancelar}
         />
       </QModal>
     </div>

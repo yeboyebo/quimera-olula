@@ -1,73 +1,41 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import {
-  campoModeloAInput,
-  initEstadoModelo,
-  makeReductor,
-  modeloEsValido,
-} from "../../../comun/dominio.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { CrmContacto } from "../diseño.ts";
 import { metaCrmContacto } from "../dominio.ts";
-import { patchCrmContacto } from "../infraestructura.ts";
 import "./TabCuentasBanco.css";
 
 interface EdicionCrmContactosProps {
-  clienteId: string;
   contacto: CrmContacto;
-  onContactoActualizado?: (contacto: CrmContacto) => void;
-  onCancelar: () => void;
+  emitir: (evento: string, payload?: unknown) => void;
 }
 
 export const EdicionCrmContactos = ({
   contacto,
-  onContactoActualizado = () => {},
-  onCancelar,
+  emitir,
 }: EdicionCrmContactosProps) => {
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaCrmContacto),
-    initEstadoModelo(contacto)
-  );
-
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
-
-  const getProps = (campo: string) => {
-    return campoModeloAInput(estado, campo);
-  };
+  const { modelo, uiProps, valido } = useModelo(metaCrmContacto, contacto);
 
   const guardar = async () => {
-    await patchCrmContacto(estado.valor);
-    onContactoActualizado(estado.valor);
+    emitir("CONTACTO_ACTUALIZADO", modelo);
   };
 
   return (
     <div className="edicion-crm-contactos">
       <h2>Editar Contacto CRM</h2>
       <quimera-formulario>
-        <QInput
-          label="Nombre"
-          onChange={setCampo("nombre")}
-          {...getProps("nombre")}
-        />
-        <QInput
-          label="Email"
-          onChange={setCampo("email")}
-          {...getProps("email")}
-        />
+        <QInput label="Nombre" {...uiProps("nombre")} />
+        <QInput label="Email" {...uiProps("email")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!modeloEsValido(metaCrmContacto)(estado.valor)}
-        >
+        <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
         </QBoton>
-        <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => emitir("EDICION_CANCELADA")}
+        >
           Cancelar
         </QBoton>
       </div>

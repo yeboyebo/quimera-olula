@@ -26,6 +26,7 @@ export const getElemento = <T extends Entidad>(lista: T[], id: string): T => {
 };
 
 export const direccionCompleta = (valor: Direccion) => `${valor.tipo_via ? (valor.tipo_via + ' ') : ''} ${valor.nombre_via}, ${valor.ciudad}`;
+
 export const direccionVacia: Direccion = {
     tipo_via: '',
     nombre_via: '',

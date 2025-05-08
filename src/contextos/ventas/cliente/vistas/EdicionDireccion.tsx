@@ -11,39 +11,21 @@ import "./TabComercial.css";
 export const EdicionDireccion = ({
   clienteId,
   direccion,
-  onDireccionActualizada = () => {},
+  emitir,
 }: {
   clienteId: string;
   direccion: DirCliente;
-  onDireccionActualizada?: (direccion: DirCliente) => void;
-  onCancelar: () => void;
+  emitir: (evento: string, payload?: unknown) => void;
 }) => {
-  // const [estado, dispatch] = useReducer(
-  //   makeReductor(metaDireccion),
-  //   initEstadoModelo(direccion, metaDireccion)
-  // );
-  const direccionEditada = useModelo(
-    metaDireccion,
-    direccion
-  );
+  const direccionEditada = useModelo(metaDireccion, direccion);
+
   useEffect(() => {
     direccionEditada.init(direccion);
   }, [direccion, direccionEditada]);
 
-  // const setCampo = (campo: string) => (valor: string) => {
-  //   dispatch({
-  //     type: "set_campo",
-  //     payload: { campo, valor },
-  //   });
-  // };
-
-  // const getProps = (campo: string) => {
-  //   return campoModeloAInput(estado, campo);
-  // };
-
   const guardar = async () => {
     await actualizarDireccion(clienteId, direccionEditada.modelo);
-    onDireccionActualizada(direccionEditada.modelo);
+    emitir("DIRECCION_ACTUALIZADA", direccionEditada.modelo);
   };
 
   const opciones = [
@@ -73,18 +55,19 @@ export const EdicionDireccion = ({
           />
         </div>
         <div style={{ gridColumn: "span 12" }}>
-          <QInput
-            label="Ciudad"
-            {...direccionEditada.uiProps("ciudad")}
-          />
+          <QInput label="Ciudad" {...direccionEditada.uiProps("ciudad")} />
         </div>
       </quimera-formulario>
-      <div className="botones maestro-botones ">
-        <QBoton
-          deshabilitado={!direccionEditada.valido}
-          onClick={guardar}
-        >
+      <div className="botones maestro-botones">
+        <QBoton deshabilitado={!direccionEditada.valido} onClick={guardar}>
           Guardar
+        </QBoton>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => emitir("EDICION_CANCELADA")}
+        >
+          Cancelar
         </QBoton>
       </div>
     </>
