@@ -12,11 +12,12 @@ export const pedidoDesdeAPI = appFactory().Ventas.pedidoDesdeAPI;
 // export const pedidoFromAPI = (p: PedidoAPI): Pedido => p;
 export const lineaPedidoFromAPI = (l: LineaPedidoAPI): LineaPedido => l;
 
-export const getPedido: GetPedido = async (id) =>
-  RestAPI.get<{ datos: Pedido }>(
+export const getPedido: GetPedido = async (id) => {
+  return RestAPI.get<{ datos: Pedido }>(
     `${baseUrl}/${id}`).then((respuesta) => {
       return pedidoDesdeAPI(respuesta.datos);
     });
+}
 
 export const getPedidos: GetPedidos = async (_, __) => {
   return RestAPI.get<{ datos: Pedido[] }>(
@@ -115,6 +116,7 @@ export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Pro
 }
 
 export const patchPedido = async (id: string, pedido: Pedido) => {
+  // throw new Error("No implementado");
   const payload = appFactory().Ventas.api_payloadPatchPedido(pedido);
   // const payload = {
   //   cambios: {
@@ -134,7 +136,9 @@ export const patchPedido = async (id: string, pedido: Pedido) => {
   //   },
   // };
 
-  await RestAPI.patch(`${baseUrl}/${id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}`, payload,
+    'Error al guardar el pedido'
+  );
 };
 
 

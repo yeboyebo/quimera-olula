@@ -30,7 +30,6 @@ export const EdicionLinea = ({
         />
         <QInput
           label='Cantidad'
-          tipo='numero'
           {...uiProps("cantidad")}
         />
         <GrupoIvaProducto
@@ -38,12 +37,10 @@ export const EdicionLinea = ({
           />
         <QInput
           label='Precio'
-          tipo='numero'
           {...uiProps("pvp_unitario")}
         />
         <QInput
           label='% Descuento'
-          tipo='numero'
           {...uiProps("dto_porcentual")}
         />
       </quimera-formulario>

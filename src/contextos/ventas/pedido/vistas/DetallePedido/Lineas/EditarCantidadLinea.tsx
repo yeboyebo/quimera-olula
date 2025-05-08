@@ -5,7 +5,7 @@ import { LineaPedido as Linea } from "../../../diseño.ts";
 const validacion = (cantidadRaw: string) => {
   const cantidad = parseInt(cantidadRaw);
 
-  return isNaN(cantidad) || cantidad < 0
+  return isNaN(cantidad) || cantidad <= 0
     ? "Debe tener una cantidad mayor que cero."
     : "";
 };

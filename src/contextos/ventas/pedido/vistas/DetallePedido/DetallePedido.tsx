@@ -14,7 +14,9 @@ import { TabCliente } from "./TabCliente/TabCliente.tsx";
 // import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
+import { useContext } from "react";
 import { appFactory } from "../../../../app.ts";
+import { ContextoError, QError } from "../../../../comun/contexto.ts";
 type ParamOpcion = {
   valor: string;
   descripcion?: string
@@ -23,6 +25,17 @@ export type ValorControl = null | string | ParamOpcion;
 type Estado = "defecto";
 
 const TabDatos = appFactory().Ventas.PedidoTabDatos
+
+
+async function tiriti<Out> (f: () => Out, setError: (error: QError) => void): Promise<Out> {
+  try {
+    const result = await f();
+    return result;
+  } catch (error) {
+    setError(error as QError);
+    throw error;
+  }
+}
 
 export const DetallePedido = ({
   pedidoInicial = null,
@@ -33,6 +46,8 @@ export const DetallePedido = ({
 }) => {
   const params = useParams();
 
+  const { intentar } = useContext(ContextoError);
+
   const pedidoId = pedidoInicial?.id ?? params.id;
   const titulo = (pedido: Entidad) => pedido.codigo as string;
 
@@ -42,7 +57,7 @@ export const DetallePedido = ({
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchPedido(modelo.id, modelo);
+        await intentar(() => patchPedido(modelo.id, modelo));
         recargarCabecera();
       },
       CLIENTE_PEDIDO_CAMBIADO: async() => {

@@ -1,3 +1,3 @@
-import { FactoryBase } from "../apps/base/factory.ts";
+import { FactoryGUA } from "../apps/guanabana/factory.ts";
 
-export const appFactory = () => FactoryBase
+export const appFactory = () => FactoryGUA

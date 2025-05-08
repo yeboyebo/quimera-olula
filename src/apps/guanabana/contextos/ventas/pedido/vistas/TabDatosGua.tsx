@@ -1,7 +1,7 @@
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { HookModelo } from "../../../../../../contextos/comun/useModelo.ts";
 import { Pedido } from "../../../../../../contextos/ventas/pedido/diseño.ts";
-import { TabDatosBase } from "../../../../../../contextos/ventas/pedido/vistas/DetallePedido/TabDatosBase.tsx";
+import { TabDatosBase } from "../../../../../../contextos/ventas/pedido/vistas/DetallePedido/TabDatos.tsx";
 
 interface TabDatosProps {
   pedido: HookModelo<Pedido>; 

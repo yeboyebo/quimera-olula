@@ -45,8 +45,9 @@ export function useModelo<T extends Modelo>(
     // }, [modeloInicial]);
 
     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
-
-        let valor = _valor || '';
+        console.log('setCampo', campo, _valor);
+        let valor = _valor || null;
+        console.log('setCampo valor = ', campo, valor);
         let descripcion: string | undefined = undefined;
         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
             valor = _valor.valor;
@@ -70,7 +71,6 @@ export function useModelo<T extends Modelo>(
     const uiProps = (campo: string, secundario?: string) => {
         const validacion = validacionCampoModelo(meta)(modelo, campo);
         const valido = validacion === true;
-        // console.log('validacion', campo, validacion, valido);
         const valor = modelo[campo] as string;
         const textoValidacion = valor === modeloInicial[campo]
             ? ''

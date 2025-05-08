@@ -26,7 +26,7 @@ export interface Venta extends Entidad {
 
 export interface LineaVenta extends Entidad {
     id: string;
-    referencia: string;
+    referencia: string | null;
     descripcion: string;
     cantidad: number;
     pvp_unitario: number;
