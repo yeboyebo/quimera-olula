@@ -1,46 +1,45 @@
 import { useState } from "react";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { EmitirEvento } from "../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { HookModelo } from "../../../comun/useModelo.ts";
-import { Cliente } from "../../comun/componentes/cliente.tsx";
-import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
-import { Presupuesto, CambioCliente as TipoCambioCliente } from "../diseño.ts";
-import { editable } from "../dominio.ts";
-import { patchCambiarCliente } from "../infraestructura.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { EmitirEvento } from "../../../../../comun/diseño.ts";
+import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { HookModelo } from "../../../../../comun/useModelo.ts";
+import { Cliente } from "../../../../comun/componentes/cliente.tsx";
+import { DirCliente } from "../../../../comun/componentes/dirCliente.tsx";
+import { Pedido, CambioClientePedido as TipoCambioCliente } from "../../../diseño.ts";
+import { patchCambiarCliente } from "../../../infraestructura.ts";
 import { CambioCliente } from "./CambioCliente.tsx";
 import "./TabCliente.css";
 
 
 interface TabClienteProps {
-  presupuesto: HookModelo<Presupuesto>; 
+  pedido: HookModelo<Pedido>; 
   publicar?: EmitirEvento
 }
 type Estado = "edicion" | "cambiando_cliente";
 
 export const TabCliente = ({
-  presupuesto,
+  pedido,
   publicar = () => {},
 }: TabClienteProps) => {
 
   const [estado, setEstado] = useState<Estado>('edicion');
-  const {modelo, uiProps} = presupuesto;
+  const {modelo, uiProps, editable} = pedido;
   
   const maquina: Maquina<Estado> = {
     edicion: {
+
       CAMBIO_CLIENTE_INICIADO: 'cambiando_cliente',
     },
     cambiando_cliente: {
+
       CAMBIO_CLIENTE_CANCELADO: 'edicion',
+      
       CAMBIO_CLIENTE_LISTO: async (payload: unknown) => {
         const cambioCliente = payload as TipoCambioCliente;
-        await patchCambiarCliente(modelo.id, 
-          cambioCliente.cliente_id,
-          cambioCliente.direccion_id
-        );
-        publicar('CLIENTE_PRESUPUESTO_CAMBIADO', modelo);
+        await patchCambiarCliente(modelo.id, cambioCliente);
+        publicar('CLIENTE_PEDIDO_CAMBIADO', modelo);
         return 'edicion' as Estado;
       },
     },
@@ -59,7 +58,7 @@ export const TabCliente = ({
         />
         <div id='cambiar_cliente' className="botones maestro-botones">
           <QBoton
-            deshabilitado={!editable(modelo)}
+            deshabilitado={!editable}
             onClick={() => emitir("CAMBIO_CLIENTE_INICIADO")}
           >C</QBoton>
         </div>
@@ -71,7 +70,8 @@ export const TabCliente = ({
       </quimera-formulario>
 
       <QModal nombre="modal"
-        abierto={estado === 'cambiando_cliente'} onCerrar={() => emitir('CAMBIO_CLIENTE_CANCELADO')}
+        abierto={estado === 'cambiando_cliente'}
+        onCerrar={() => emitir('CAMBIO_CLIENTE_CANCELADO')}
       >
         <CambioCliente publicar={emitir} /> 
       </QModal>

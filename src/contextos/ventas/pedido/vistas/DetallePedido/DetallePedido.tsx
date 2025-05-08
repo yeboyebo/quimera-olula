@@ -1,120 +1,106 @@
-import { useState } from "react";
 import { useParams } from "react-router";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { Presupuesto } from "../diseño.ts";
-import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
-import {
-  aprobarPresupuesto,
-  borrarPresupuesto,
-  getPresupuesto,
-  patchPresupuesto,
-} from "../infraestructura.ts";
-import "./DetallePresupuesto.css";
-import { Lineas } from "./Lineas.tsx";
-import { TabCliente } from "./TabCliente.tsx";
-import { TabDatos } from "./TabDatos.tsx";
+import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
+import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
+import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
+import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
+import { useModelo } from "../../../../comun/useModelo.ts";
+import { Pedido } from "../../diseño.ts";
+import { pedidoVacio } from "../../dominio.ts";
+import { getPedido, patchPedido } from "../../infraestructura.ts";
+import "./DetallePedido.css";
+import { Lineas } from "./Lineas/Lineas.tsx";
+import { TabCliente } from "./TabCliente/TabCliente.tsx";
+// import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
+import { useContext } from "react";
+import { appFactory } from "../../../../app.ts";
+import { ContextoError } from "../../../../comun/contexto.ts";
 type ParamOpcion = {
   valor: string;
-  descripcion?: string;
+  descripcion?: string
 };
 export type ValorControl = null | string | ParamOpcion;
 type Estado = "defecto";
 
-export const DetallePresupuesto = ({
-  presupuestoInicial = null,
+const TabDatos = appFactory().Ventas.PedidoTabDatos
+
+
+export const DetallePedido = ({
+  pedidoInicial = null,
   emitir = () => {},
 }: {
-  presupuestoInicial?: Presupuesto | null;
-  emitir?: EmitirEvento;
+  pedidoInicial?: Pedido | null;
+  emitir?: EmitirEvento
 }) => {
   const params = useParams();
-  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
-    "edicion"
-  );
 
-  const presupuestoId = presupuestoInicial?.id ?? params.id;
-  const titulo = (presupuesto: Entidad) => presupuesto.codigo as string;
+  const { intentar } = useContext(ContextoError);
 
-  const ctxPresupuesto = useModelo(metaPresupuesto, presupuestoVacio());
-  const { modelo, init } = ctxPresupuesto;
+  const pedidoId = pedidoInicial?.id ?? params.id;
+  const titulo = (pedido: Entidad) => pedido.codigo as string;
 
+  const pedido = useModelo(appFactory().Ventas.metaPedido, pedidoVacio);
+  const { modelo, init } = pedido;
 
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchPresupuesto(modelo.id, modelo);
+        await intentar(() => patchPedido(modelo.id, modelo));
         recargarCabecera();
       },
-      APROBAR_INICIADO: async () => {
-        await aprobarPresupuesto(modelo.id);
-        recargarCabecera();
-      },
-      CLIENTE_PRESUPUESTO_CAMBIADO: async() => {
+      CLIENTE_PEDIDO_CAMBIADO: async() => {
         await recargarCabecera();
       }
     },
   }
-  const emitirPresupuesto = useMaquina(maquina, 'defecto', () => {});
-
+  const emitirPedido = useMaquina(maquina, 'defecto', () => {});
 
   const recargarCabecera = async () => {
-    const nuevoPresupuesto = await getPresupuesto(modelo.id);
-    init(nuevoPresupuesto);
-    emitir("PRESUPUESTO_CAMBIADO", nuevoPresupuesto);
+    const nuevoPedido = await getPedido(modelo.id);
+    init(nuevoPedido);
+    emitir('PEDIDO_CAMBIADO', nuevoPedido);
   };
 
   return (
     <Detalle
-      id={presupuestoId}
+      id={pedidoId}
       obtenerTitulo={titulo}
       setEntidad={(p) => init(p)}
       entidad={modelo}
-      cargar={getPresupuesto}
+      cargar={getPedido}
     >
-      {!!presupuestoId && (
+      {!!pedidoId && (
         <>
-          {!modelo.aprobado && (
-            <div className="botones maestro-botones ">
-              <QBoton
-                onClick={() => emitirPresupuesto('APROBAR_INICIADO')}
-              > Aprobar </QBoton>
-            </div>
-          )}
           <Tabs
             children={[
               <Tab key="tab-1"label="Cliente" children={
                   <TabCliente
-                  presupuesto={ctxPresupuesto}
-                    publicar={emitirPresupuesto}
+                  pedido={pedido}
+                    publicar={emitirPedido}
                   />
                 }
               />,
               <Tab key="tab-2" label="Datos" children={
                   <TabDatos
-                  presupuesto={ctxPresupuesto}
+                  pedido={pedido}
                   />
                 }
               />,
-              <Tab
-                key="tab-3"
-                label="Observaciones"
-                children={<TabObservaciones ctxPresupuesto={ctxPresupuesto} />}
+              <Tab key="tab-3" label="Observaciones" children={
+                  <TabObservaciones 
+                    pedido={pedido}
+                  />
+                }
               />,
             ]}
           ></Tabs>
-          {ctxPresupuesto.modificado && (
+          { pedido.modificado && (
             <div className="botones maestro-botones ">
               <QBoton
-                onClick={() => emitirPresupuesto('GUARDAR_INICIADO')}
-                deshabilitado={!ctxPresupuesto.valido}
+                onClick={() => emitirPedido('GUARDAR_INICIADO')}
+                deshabilitado={!pedido.valido}
               >
                 Guardar
               </QBoton>
@@ -122,7 +108,6 @@ export const DetallePresupuesto = ({
                 tipo="reset"
                 variante="texto"
                 onClick={() => init()}
-                // deshabilitado={!modeloModificado(presupuesto)}
               >
                 Cancelar
               </QBoton>
@@ -177,16 +162,8 @@ export const DetallePresupuesto = ({
             </div>
           </div>
           <Lineas
-            presupuesto={ctxPresupuesto}
+            pedido={pedido}
             onCabeceraModificada={recargarCabecera}
-          />
-          <QModalConfirmacion
-            nombre="borrarPresupuesto"
-            abierto={estado === "confirmarBorrado"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar este presupuesto?"
-            onCerrar={() => setEstado("edicion")}
-            onAceptar={onBorrarConfirmado}
           />
         </>
       )}

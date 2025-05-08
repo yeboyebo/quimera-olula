@@ -1,27 +1,22 @@
+// import { QDate } from "../../../../../componentes/atomos/qdate.tsx";
+// import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
+// import { HookModelo } from "../../../../comun/useModelo.ts";
+// import { Agente } from "../../../comun/componentes/agente.tsx";
+// import { Divisa } from "../../../comun/componentes/divisa.tsx";
+// import { FormaPago } from "../../../comun/componentes/formapago.tsx";
+// import { GrupoIvaNegocio } from "../../../comun/componentes/grupo_iva_negocio.tsx";
+// import { Pedido } from "../../diseño.ts";
+// import "./TabDatos.css";
 
-import { appFactory } from "../../../app.ts";
-import { HookModelo } from "../../../comun/useModelo.ts";
-import { Presupuesto } from "../diseño.ts";
-import "./TabDatos.css";
+// interface TabDatosProps {
+//   pedido: HookModelo<Pedido>; 
+// }
 
-interface TabDatosProps {
-  presupuesto: HookModelo<Presupuesto>; 
-}
-
-export const TabDatos = ({
-  presupuesto,
-}: TabDatosProps) => {
-  return appFactory().Ventas.PresupuestoTabDatos({
-    presupuesto,
-  })
-};
-
-// export const TabDatos = ({
-//   ctxPresupuesto,
-//   onEntidadActualizada,
+// export const TabDatosBase = ({
+//   pedido,
 // }: TabDatosProps) => {
 
-//   const {uiProps} = ctxPresupuesto;
+//   const {uiProps} = pedido;
 
 //   return (
 //     <>
@@ -35,12 +30,10 @@ export const TabDatos = ({
 //           {...uiProps("divisa_id")}
 //         />
 //         <QInput
-//           tipo='numero'
 //           label="T. Conversión"
 //           {...uiProps("tasa_conversion")}
 //         />
 //         <QInput
-//           tipo='numero'
 //           {...uiProps("total_divisa_empresa")}
 //           label="Total €"
 //         />
@@ -52,11 +45,9 @@ export const TabDatos = ({
 //           {...uiProps("forma_pago_id", "nombre_forma_pago")}
 //         />
 //         <GrupoIvaNegocio
-//           // label='Grupo IVA'
 //           {...uiProps("grupo_iva_negocio_id")}
 //         />
 //       </quimera-formulario>
-      
 //     </>
 //   );
 // };

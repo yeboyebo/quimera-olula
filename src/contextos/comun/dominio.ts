@@ -71,7 +71,7 @@ type Campo<T extends Modelo> = {
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
 }
-type TipoCampo = string | boolean | number;
+type TipoCampo = string | boolean | number | null;
 
 export type MetaModelo<T extends Modelo> = {
     campos?: Record<string, Campo<T>>;
@@ -145,6 +145,10 @@ export const makeReductor2 = <T extends Modelo>(meta: MetaModelo<T>) => {
 const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, Campo<T>>) => {
     if (!campos) return valor;
     if (!(campo in campos)) return valor;
+
+    if (valor === null) {
+        return null;
+    }
 
     switch (campos[campo].tipo) {
         case 'boolean':
@@ -263,7 +267,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     const campos = meta.campos || {};
     const requerido = campo in campos && campos[campo]?.requerido
     const valor = modelo[campo];
-    if (requerido && valor === '') {
+    if (requerido && valor === null) {
         return "Campo requerido";
     }
     const validacion = campos[campo]?.validacion

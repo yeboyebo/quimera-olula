@@ -7,6 +7,7 @@ import { Indice } from "./contextos/comun/Indice.tsx";
 import { LoginPage } from "./contextos/usuarios/login/vistas/LoginPage.tsx";
 import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente.tsx";
 import { MaestroConDetalleCliente } from "./contextos/ventas/cliente/vistas/MaestroConDetalleCliente.tsx";
+import { MaestroConDetallePedido } from "./contextos/ventas/pedido/vistas/MaestroConDetallePedido.tsx";
 import { MaestroConDetallePresupuesto } from "./contextos/ventas/presupuesto/vistas/MaestroConDetallePresupuesto.tsx";
 import "./index.css";
 
@@ -37,6 +38,16 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Vista>
                   <DetalleCliente />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="pedido">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetallePedido />
                 </Vista>
               }
             />

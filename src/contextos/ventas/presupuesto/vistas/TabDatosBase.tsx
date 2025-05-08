@@ -10,11 +10,14 @@ import { Presupuesto } from "../diseño.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
-  ctxPresupuesto: HookModelo<Presupuesto>;
+  presupuesto: HookModelo<Presupuesto>; 
 }
 
-export const TabDatosBase = ({ ctxPresupuesto }: TabDatosProps) => {
-  const { uiProps } = ctxPresupuesto;
+export const TabDatosBase = ({
+  presupuesto,
+}: TabDatosProps) => {
+
+  const {uiProps} = presupuesto;
 
   return (
     <>
@@ -24,12 +27,10 @@ export const TabDatosBase = ({ ctxPresupuesto }: TabDatosProps) => {
         <div id="espacio_fecha" />
         <Divisa {...uiProps("divisa_id")} />
         <QInput
-          tipo="numero"
           label="T. Conversión"
           {...uiProps("tasa_conversion")}
         />
         <QInput
-          tipo="numero"
           {...uiProps("total_divisa_empresa")}
           label="Total €"
         />
@@ -37,7 +38,6 @@ export const TabDatosBase = ({ ctxPresupuesto }: TabDatosProps) => {
         <div id="espacio_agente" />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <GrupoIvaNegocio
-          // label='Grupo IVA'
           {...uiProps("grupo_iva_negocio_id")}
         />
       </quimera-formulario>

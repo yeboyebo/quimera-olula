@@ -109,7 +109,6 @@ export const presupuestoValido = modeloEsValido<Presupuesto>(metaPresupuesto);
 
 
 export const metaLinea: MetaModelo<LineaPresupuesto> = {
-    // validador: makeValidador({}),
     campos: {
         cantidad: { tipo: "number", requerido: true },
         referencia: { requerido: true },
@@ -117,7 +116,6 @@ export const metaLinea: MetaModelo<LineaPresupuesto> = {
 };
 
 export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
-    // validador: makeValidador({}),
     campos: {
         cantidad: { tipo: "number", requerido: true },
         referencia: { requerido: true },
