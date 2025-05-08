@@ -5,6 +5,7 @@ import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
+import { ContactoSelector } from "../../comun/componentes/contacto.tsx";
 import { CrmContacto } from "../diseño.ts";
 import {
   deleteCrmContacto,
@@ -21,12 +22,50 @@ const metaTablaCrmContactos = [
   { id: "email", cabecera: "Email" },
 ];
 
-type Estado = "lista" | "alta" | "edicion" | "asociar" | "confirmarBorrado";
+type Estado =
+  | "lista"
+  | "alta"
+  | "edicion"
+  | "asociar"
+  | "confirmarBorrado"
+  | "confirmarEliminarAsociacion";
+
+type ConfiguracionModalConfirmacion = {
+  nombre: string;
+  titulo: string;
+  mensaje: string;
+  onCerrar: string;
+  onAceptar: string;
+};
+
+const configuracionModalConfirmacion: Partial<
+  Record<Estado, ConfiguracionModalConfirmacion>
+> = {
+  confirmarBorrado: {
+    nombre: "confirmacionBorrarContacto",
+    titulo: "Confirmar borrar",
+    mensaje: "¿Está seguro de que desea borrar este contacto?",
+    onCerrar: "BORRADO_CANCELADO",
+    onAceptar: "BORRADO_SOLICITADO",
+  },
+  confirmarEliminarAsociacion: {
+    nombre: "confirmacionEliminarAsociacion",
+    titulo: "Confirmar eliminación de asociación",
+    mensaje:
+      "¿Está seguro de que desea eliminar la asociación de este contacto?",
+    onCerrar: "ELIMINACION_CANCELADA",
+    onAceptar: "ELIMINACION_SOLICITADA",
+  },
+};
 
 export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
   const contactos = useLista<CrmContacto>([]);
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
+  const [contactoSeleccionado, setContactoSeleccionado] = useState<{
+    valor: string;
+    descripcion: string;
+  } | null>(null);
 
   const cargarContactos = useCallback(async () => {
     setCargando(true);
@@ -48,10 +87,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         contactos.seleccionar(contacto);
       },
       CONFIRMAR_BORRADO: "confirmarBorrado",
-      ELIMINAR_ASOCIACION: async () => {
-        if (!contactos.seleccionada) return;
-        await desvincularContactoCliente(contactos.seleccionada.id, clienteId);
-      },
+      ELIMINAR_ASOCIACION: "confirmarEliminarAsociacion",
       ASOCIAR_SOLICITADO: "asociar",
     },
     alta: {
@@ -72,7 +108,13 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       EDICION_CANCELADA: "lista",
     },
     asociar: {
-      ASOCIAR_CANCELADO: "lista",
+      ASOCIAR_CERRAR: "lista",
+      ASOCIAR_CONTACTO: async () => {
+        if (!contactoSeleccionado) return;
+        await vincularContactoCliente(contactoSeleccionado.valor, clienteId);
+        await cargarContactos();
+        return "lista" as Estado;
+      },
     },
     confirmarBorrado: {
       BORRADO_SOLICITADO: async () => {
@@ -83,9 +125,20 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       },
       BORRADO_CANCELADO: "lista",
     },
+    confirmarEliminarAsociacion: {
+      ELIMINACION_SOLICITADA: async () => {
+        if (!contactos.seleccionada) return;
+        await desvincularContactoCliente(contactos.seleccionada.id, clienteId);
+        contactos.eliminar(contactos.seleccionada);
+        return "lista" as Estado;
+      },
+      ELIMINACION_CANCELADA: "lista",
+    },
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
+
+  const configuracionActual = configuracionModalConfirmacion[estado as Estado];
 
   return (
     <>
@@ -120,14 +173,19 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         orden={{ id: "ASC" }}
         onOrdenar={() => null}
       />
-      <QModalConfirmacion
-        nombre="borrarContacto"
-        abierto={estado === "confirmarBorrado"}
-        titulo="Confirmar borrar"
-        mensaje="¿Está seguro de que desea borrar este contacto?"
-        onCerrar={() => emitir("BORRADO_CANCELADO")}
-        onAceptar={() => emitir("BORRADO_SOLICITADO")}
-      />
+      {configuracionActual?.nombre && (
+        <QModalConfirmacion
+          nombre={configuracionActual.nombre}
+          abierto={
+            estado === "confirmarBorrado" ||
+            estado === "confirmarEliminarAsociacion"
+          }
+          titulo={configuracionActual.titulo}
+          mensaje={configuracionActual.mensaje}
+          onCerrar={() => emitir(configuracionActual.onCerrar)}
+          onAceptar={() => emitir(configuracionActual.onAceptar)}
+        />
+      )}
       <QModal
         nombre="altaCrmContacto"
         abierto={estado === "alta"}
@@ -150,9 +208,35 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       <QModal
         nombre="asociarCrmContacto"
         abierto={estado === "asociar"}
-        onCerrar={() => emitir("ASOCIAR_CANCELADO")}
+        onCerrar={() => emitir("ASOCIAR_CERRAR")}
       >
-        <p>Seleccionar contacto para asociar.</p>
+        <h2>Asociar contacto</h2>
+        <ContactoSelector
+          valor={contactoSeleccionado?.valor || ""}
+          descripcion=""
+          nombre="cliente/contacto_id"
+          label="Seleccionar contacto"
+          onChange={(contacto) => setContactoSeleccionado(contacto)}
+        />
+        <div className="botones">
+          <QBoton
+            onClick={async () => {
+              if (contactoSeleccionado) {
+                emitir("ASOCIAR_CONTACTO");
+              }
+            }}
+            deshabilitado={!contactoSeleccionado}
+          >
+            Guardar
+          </QBoton>
+          <QBoton
+            tipo="reset"
+            variante="texto"
+            onClick={() => emitir("ASOCIAR_CERRAR")}
+          >
+            Cancelar
+          </QBoton>
+        </div>
       </QModal>
     </>
   );
