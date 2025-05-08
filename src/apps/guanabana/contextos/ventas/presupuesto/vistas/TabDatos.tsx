@@ -34,12 +34,10 @@ export const TabDatosGua = ({
           {...uiProps("divisa_id")}
         />
         <QInput
-          tipo='numero'
           label="T. Conversión"
           {...uiProps("tasa_conversion")}
         />
         <QInput
-          tipo='numero'
           {...uiProps("total_divisa_empresa")}
           label="Total €"
         />

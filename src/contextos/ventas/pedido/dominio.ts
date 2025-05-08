@@ -38,10 +38,7 @@ export const metaPedido: MetaModelo<Pedido> = {
     campos: {
         ...metaVenta.campos,
     },
-    editable: (pedido: Pedido, _?: string) => {
-        // return pedido.servido == 'No';
-        return true;
-    },
+
 };
 
 

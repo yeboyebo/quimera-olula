@@ -16,7 +16,7 @@ import { TabObservaciones } from "./TabObservaciones.tsx";
 
 import { useContext } from "react";
 import { appFactory } from "../../../../app.ts";
-import { ContextoError, QError } from "../../../../comun/contexto.ts";
+import { ContextoError } from "../../../../comun/contexto.ts";
 type ParamOpcion = {
   valor: string;
   descripcion?: string
@@ -26,16 +26,6 @@ type Estado = "defecto";
 
 const TabDatos = appFactory().Ventas.PedidoTabDatos
 
-
-async function tiriti<Out> (f: () => Out, setError: (error: QError) => void): Promise<Out> {
-  try {
-    const result = await f();
-    return result;
-  } catch (error) {
-    setError(error as QError);
-    throw error;
-  }
-}
 
 export const DetallePedido = ({
   pedidoInicial = null,
