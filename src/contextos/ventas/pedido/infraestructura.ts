@@ -3,13 +3,11 @@ import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, LineaPedido, Patch
 
 const baseUrl = `/ventas/pedido`;
 
-// type PedidoAPI = Pedido
 type LineaPedidoAPI = LineaPedido
 
 import { appFactory } from "../../app.ts";
 export const pedidoDesdeAPI = appFactory().Ventas.pedidoDesdeAPI;
 
-// export const pedidoFromAPI = (p: PedidoAPI): Pedido => p;
 export const lineaPedidoFromAPI = (l: LineaPedidoAPI): LineaPedido => l;
 
 export const getPedido: GetPedido = async (id) => {
@@ -36,7 +34,6 @@ export const postPedido: PostPedido = async (pedido) => {
   }
   return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
 }
-
 
 
 export const patchCambiarCliente: PatchClientePedido = async (id, cambio) => {
@@ -95,7 +92,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
   }
   await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
 }
-
 
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
   const payload = {

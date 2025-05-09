@@ -236,6 +236,11 @@ export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<strin
 export const getCrmContacto = async (contactoId: string): Promise<CrmContacto> =>
   await RestAPI.get<{ datos: CrmContacto }>(`${baseUrlCrm}/contacto/${contactoId}`).then((respuesta) => respuesta.datos);
 
+export const getCrmContactos = async (filtro: Filtro, orden: Orden): Promise<CrmContacto[]> => {
+  const q = criteriaQuery(filtro, orden);
+  return RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/contacto` + q).then((respuesta) => respuesta.datos);
+}
+
 export const vincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
   const payload = {
     contacto_id: contactoId,

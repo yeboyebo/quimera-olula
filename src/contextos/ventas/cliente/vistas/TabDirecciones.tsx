@@ -24,7 +24,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
     const nuevasDirecciones = await getDirecciones(clienteId);
     direcciones.setLista(nuevasDirecciones);
     setCargando(false);
-  }, [clienteId]);
+  }, [clienteId, direcciones]);
 
   useEffect(() => {
     if (clienteId) cargarDirecciones();
