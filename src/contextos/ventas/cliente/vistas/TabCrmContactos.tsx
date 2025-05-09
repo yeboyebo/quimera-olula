@@ -72,7 +72,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     const nuevosContactos = await getCrmContactosCliente(clienteId);
     contactos.setLista(nuevosContactos);
     setCargando(false);
-  }, [clienteId]);
+  }, [clienteId, contactos]);
 
   useEffect(() => {
     if (clienteId) cargarContactos();

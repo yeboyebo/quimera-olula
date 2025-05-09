@@ -142,3 +142,7 @@ export const patchCambiarCliente = async (id: string, cambio: Albaran) => {
   };
   await RestAPI.patch(`${baseUrl}/${id}/cliente`, payload);
 };
+
+export const borrarAlbaran = async (id: string) => {
+  await RestAPI.delete(`${baseUrl}/${id}`);
+}

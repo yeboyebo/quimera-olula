@@ -50,6 +50,10 @@ export const MaestroConDetalleAlbaran = () => {
         const albaran = payload as Albaran;
         albaranes.modificar(albaran);
       },
+      ALBARAN_BORRADO: (payload: unknown) => {
+        const albaran = payload as Albaran;
+        albaranes.eliminar(albaran);
+      },
     },
   };
 

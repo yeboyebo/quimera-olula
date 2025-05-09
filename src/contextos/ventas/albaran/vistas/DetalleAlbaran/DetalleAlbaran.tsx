@@ -7,21 +7,27 @@ import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { Albaran } from "../../diseño.ts";
 import { albaranVacio, metaAlbaran } from "../../dominio.ts";
-import { getAlbaran, patchAlbaran } from "../../infraestructura.ts";
-// import "./DetalleAlbaran.css";
+import {
+  borrarAlbaran,
+  getAlbaran,
+  patchAlbaran,
+} from "../../infraestructura.ts";
+import "./DetalleAlbaran.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
+
 type ParamOpcion = {
   valor: string;
   descripcion?: string;
 };
 export type ValorControl = null | string | ParamOpcion;
-type Estado = "defecto";
+type Estado = "defecto" | "confirmarBorrado";
 
 export const DetalleAlbaran = ({
   albaranInicial = null,
@@ -30,6 +36,7 @@ export const DetalleAlbaran = ({
   albaranInicial?: Albaran | null;
   emitir?: EmitirEvento;
 }) => {
+  const [estado, setEstado] = useState<Estado>("defecto");
   const params = useParams();
 
   const { intentar } = useContext(ContextoError);
@@ -50,6 +57,7 @@ export const DetalleAlbaran = ({
         await recargarCabecera();
       },
     },
+    confirmarBorrado: {},
   };
   const emitirAlbaran = useMaquina(maquina, "defecto", () => {});
 
@@ -57,6 +65,12 @@ export const DetalleAlbaran = ({
     const nuevoAlbaran = await getAlbaran(modelo.id);
     init(nuevoAlbaran);
     emitir("ALBARAN_CAMBIADO", nuevoAlbaran);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await borrarAlbaran(modelo.id);
+    emitir("ALBARAN_BORRADO", modelo);
+    setEstado("defecto");
   };
 
   return (
@@ -69,6 +83,11 @@ export const DetalleAlbaran = ({
     >
       {!!albaranId && (
         <>
+          <div className="botones maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <Tabs
             children={[
               <Tab
@@ -152,6 +171,14 @@ export const DetalleAlbaran = ({
             </div>
           </div>
           <Lineas albaran={albaran} onCabeceraModificada={recargarCabecera} />
+          <QModalConfirmacion
+            nombre="borrarAlbaran"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este albarán?"
+            onCerrar={() => setEstado("defecto")}
+            onAceptar={onBorrarConfirmado}
+          />
         </>
       )}
     </Detalle>
