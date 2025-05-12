@@ -1,3 +1,4 @@
+import { formatearMoneda } from "../../comun/dominio.ts";
 import "./TotalesVenta.css";
 
 interface TotalesVentaProps {
@@ -17,30 +18,15 @@ export const TotalesVenta = ({
     <div className="totales-venta">
       <div className="totales-venta-item">
         <label>Neto:</label>
-        <span>
-          {new Intl.NumberFormat("es-ES", {
-            style: "currency",
-            currency: divisa,
-          }).format(neto)}
-        </span>
+        <span>{formatearMoneda(neto, divisa)}</span>
       </div>
       <div className="totales-venta-item">
         <label>Total IVA:</label>
-        <span>
-          {new Intl.NumberFormat("es-ES", {
-            style: "currency",
-            currency: divisa,
-          }).format(totalIva)}
-        </span>
+        <span>{formatearMoneda(totalIva, divisa)}</span>
       </div>
       <div className="totales-venta-item">
         <label>Total:</label>
-        <span>
-          {new Intl.NumberFormat("es-ES", {
-            style: "currency",
-            currency: divisa,
-          }).format(total)}
-        </span>
+        <span>{formatearMoneda(total, divisa)}</span>
       </div>
     </div>
   );

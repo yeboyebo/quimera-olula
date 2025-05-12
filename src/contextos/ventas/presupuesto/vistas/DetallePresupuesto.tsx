@@ -7,6 +7,7 @@ import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconf
 import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
+import { TotalesVenta } from "../../venta/TotalesVenta.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
 import {
@@ -143,53 +144,12 @@ export const DetallePresupuesto = ({
             </div>
           )}
 
-          <div
-            style={{
-              marginTop: "1rem",
-              padding: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              backgroundColor: "#f9f9f9",
-              marginBottom: "1rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Neto:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(Number(modelo.neto ?? 0))}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Total IVA:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(Number(modelo.total_iva ?? 0))}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Total:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: String(modelo.coddivisa ?? "EUR"),
-                }).format(Number(modelo.total ?? 0))}
-              </span>
-            </div>
-          </div>
+          <TotalesVenta
+            neto={Number(modelo.neto ?? 0)}
+            totalIva={Number(modelo.total_iva ?? 0)}
+            total={Number(modelo.total ?? 0)}
+            divisa={String(modelo.coddivisa ?? "EUR")}
+          />
           <Lineas
             presupuesto={ctxPresupuesto}
             onCabeceraModificada={recargarCabecera}

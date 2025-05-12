@@ -17,22 +17,22 @@ import { TabObservaciones } from "./TabObservaciones.tsx";
 import { useContext } from "react";
 import { appFactory } from "../../../../app.ts";
 import { ContextoError } from "../../../../comun/contexto.ts";
+import { TotalesVenta } from "../../../venta/TotalesVenta.tsx";
 type ParamOpcion = {
   valor: string;
-  descripcion?: string
+  descripcion?: string;
 };
 export type ValorControl = null | string | ParamOpcion;
 type Estado = "defecto";
 
-const TabDatos = appFactory().Ventas.PedidoTabDatos
-
+const TabDatos = appFactory().Ventas.PedidoTabDatos;
 
 export const DetallePedido = ({
   pedidoInicial = null,
   emitir = () => {},
 }: {
   pedidoInicial?: Pedido | null;
-  emitir?: EmitirEvento
+  emitir?: EmitirEvento;
 }) => {
   const params = useParams();
 
@@ -50,17 +50,17 @@ export const DetallePedido = ({
         await intentar(() => patchPedido(modelo.id, modelo));
         recargarCabecera();
       },
-      CLIENTE_PEDIDO_CAMBIADO: async() => {
+      CLIENTE_PEDIDO_CAMBIADO: async () => {
         await recargarCabecera();
-      }
+      },
     },
-  }
-  const emitirPedido = useMaquina(maquina, 'defecto', () => {});
+  };
+  const emitirPedido = useMaquina(maquina, "defecto", () => {});
 
   const recargarCabecera = async () => {
     const nuevoPedido = await getPedido(modelo.id);
     init(nuevoPedido);
-    emitir('PEDIDO_CAMBIADO', nuevoPedido);
+    emitir("PEDIDO_CAMBIADO", nuevoPedido);
   };
 
   return (
@@ -75,96 +75,46 @@ export const DetallePedido = ({
         <>
           <Tabs
             children={[
-              <Tab key="tab-1"label="Cliente" children={
-                  <TabCliente
-                  pedido={pedido}
-                    publicar={emitirPedido}
-                  />
+              <Tab
+                key="tab-1"
+                label="Cliente"
+                children={
+                  <TabCliente pedido={pedido} publicar={emitirPedido} />
                 }
               />,
-              <Tab key="tab-2" label="Datos" children={
-                  <TabDatos
-                  pedido={pedido}
-                  />
-                }
+              <Tab
+                key="tab-2"
+                label="Datos"
+                children={<TabDatos pedido={pedido} />}
               />,
-              <Tab key="tab-3" label="Observaciones" children={
-                  <TabObservaciones 
-                    pedido={pedido}
-                  />
-                }
+              <Tab
+                key="tab-3"
+                label="Observaciones"
+                children={<TabObservaciones pedido={pedido} />}
               />,
             ]}
           ></Tabs>
-          { pedido.modificado && (
+          {pedido.modificado && (
             <div className="botones maestro-botones ">
               <QBoton
-                onClick={() => emitirPedido('GUARDAR_INICIADO')}
+                onClick={() => emitirPedido("GUARDAR_INICIADO")}
                 deshabilitado={!pedido.valido}
               >
                 Guardar
               </QBoton>
-              <QBoton
-                tipo="reset"
-                variante="texto"
-                onClick={() => init()}
-              >
+              <QBoton tipo="reset" variante="texto" onClick={() => init()}>
                 Cancelar
               </QBoton>
             </div>
           )}
 
-          <div
-            style={{
-              marginTop: "1rem",
-              padding: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              backgroundColor: "#f9f9f9",
-              marginBottom: "1rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Neto:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(Number(modelo.neto ?? 0))}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Total IVA:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(Number(modelo.total_iva ?? 0))}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Total:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: String(modelo.coddivisa ?? "EUR"),
-                }).format(Number(modelo.total ?? 0))}
-              </span>
-            </div>
-          </div>
-          <Lineas
-            pedido={pedido}
-            onCabeceraModificada={recargarCabecera}
+          <TotalesVenta
+            neto={Number(modelo.neto ?? 0)}
+            totalIva={Number(modelo.total_iva ?? 0)}
+            total={Number(modelo.total ?? 0)}
+            divisa={String(modelo.coddivisa ?? "EUR")}
           />
+          <Lineas pedido={pedido} onCabeceraModificada={recargarCabecera} />
         </>
       )}
     </Detalle>

@@ -302,3 +302,11 @@ export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
     )
 }
+
+export const formatearMoneda = (cantidad: number, divisa: string): string => {
+    const locale = divisa === "EUR" ? "es-ES" : "en-US";
+    return new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: divisa,
+    }).format(cantidad);
+};
