@@ -9,7 +9,7 @@ import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { AltaPresupuesto } from "./AltaPresupuesto.tsx";
-import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
+import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
 
 const metaTablaPresupuesto = [
   {

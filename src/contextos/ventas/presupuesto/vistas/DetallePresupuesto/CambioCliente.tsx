@@ -1,23 +1,20 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { EmitirEvento } from "../../../comun/diseño.ts";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { Cliente } from "../../comun/componentes/cliente.tsx";
-import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
-import { cambioClienteVacio, metaCambioCliente } from "../dominio.ts";
+import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
+import { EmitirEvento } from "../../../../comun/diseño.ts";
+import { useModelo } from "../../../../comun/useModelo.ts";
+import { Cliente } from "../../../comun/componentes/cliente.tsx";
+import { DirCliente } from "../../../comun/componentes/dirCliente.tsx";
+import { cambioClienteVacio, metaCambioCliente } from "../../dominio.ts";
 import "./CambioCliente.css";
 
 export const CambioCliente = ({
   publicar = () => {},
 }: {
   publicar?: EmitirEvento;
-  
 }) => {
-
-  const {modelo, uiProps, valido} = useModelo(
+  const { modelo, uiProps, valido } = useModelo(
     metaCambioCliente,
     cambioClienteVacio()
   );
-
 
   return (
     <>
@@ -26,7 +23,7 @@ export const CambioCliente = ({
       <quimera-formulario>
         <Cliente
           {...uiProps("cliente_id", "nombre_cliente")}
-          nombre='cambiar_cliente_presupuesto'
+          nombre="cambiar_cliente_presupuesto"
         />
         <DirCliente
           clienteId={modelo.cliente_id}

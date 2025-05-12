@@ -1,19 +1,16 @@
-
-import { appFactory } from "../../../app.ts";
-import { HookModelo } from "../../../comun/useModelo.ts";
-import { Presupuesto } from "../diseño.ts";
+import { appFactory } from "../../../../app.ts";
+import { HookModelo } from "../../../../comun/useModelo.ts";
+import { Presupuesto } from "../../diseño.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
-  presupuesto: HookModelo<Presupuesto>; 
+  presupuesto: HookModelo<Presupuesto>;
 }
 
-export const TabDatos = ({
-  presupuesto,
-}: TabDatosProps) => {
+export const TabDatos = ({ presupuesto }: TabDatosProps) => {
   return appFactory().Ventas.PresupuestoTabDatos({
     presupuesto,
-  })
+  });
 };
 
 // export const TabDatos = ({
@@ -56,7 +53,7 @@ export const TabDatos = ({
 //           {...uiProps("grupo_iva_negocio_id")}
 //         />
 //       </quimera-formulario>
-      
+
 //     </>
 //   );
 // };

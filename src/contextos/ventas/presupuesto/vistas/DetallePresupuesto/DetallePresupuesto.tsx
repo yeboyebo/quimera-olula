@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { useParams } from "react-router";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { TotalesVenta } from "../../venta/TotalesVenta.tsx";
-import { Presupuesto } from "../diseño.ts";
-import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
+import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
+import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
+import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
+import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
+import { useModelo } from "../../../../comun/useModelo.ts";
+import { TotalesVenta } from "../../../venta/TotalesVenta.tsx";
+import { Presupuesto } from "../../diseño.ts";
+import { metaPresupuesto, presupuestoVacio } from "../../dominio.ts";
 import {
   aprobarPresupuesto,
   borrarPresupuesto,
   getPresupuesto,
   patchPresupuesto,
-} from "../infraestructura.ts";
+} from "../../infraestructura.ts";
+
 import "./DetallePresupuesto.css";
-import { Lineas } from "./Lineas.tsx";
+import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
