@@ -64,7 +64,10 @@ export const MaestroConDetalleCliente = () => {
   };
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
+    <div
+      className="MaestroConDetalle"
+      style={{ display: "flex", gap: "2rem", overflow: "hidden" }}
+    >
       <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
         <h2>Clientes</h2>
         <div className="maestro-botones">

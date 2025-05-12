@@ -24,13 +24,18 @@ export const elementosDelMenu: ElementoMenu[] = [
         icono: "",
       },
       {
+        nombre: "Presupuestos",
+        url: "/ventas/presupuesto",
+        icono: "",
+      },
+      {
         nombre: "Pedidos",
         url: "/ventas/pedido",
         icono: "",
       },
       {
-        nombre: "Presupuestos",
-        url: "/ventas/presupuesto",
+        nombre: "Albaranes",
+        url: "/ventas/albaran",
         icono: "",
       },
     ],

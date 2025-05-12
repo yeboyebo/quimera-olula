@@ -40,7 +40,7 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
     const nuevasCuentas = await getCuentasBanco(modelo.id);
     cuentas.setLista(nuevasCuentas);
     setCargando(false);
-  }, [modelo.id]); // Remove `cuentas` from dependencies to avoid infinite loop
+  }, [modelo.id, cuentas]);
 
   useEffect(() => {
     if (modelo.id) cargarCuentas();

@@ -46,7 +46,6 @@ export const DetallePresupuesto = ({
   const ctxPresupuesto = useModelo(metaPresupuesto, presupuestoVacio());
   const { modelo, init } = ctxPresupuesto;
 
-
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
@@ -57,18 +56,30 @@ export const DetallePresupuesto = ({
         await aprobarPresupuesto(modelo.id);
         recargarCabecera();
       },
-      CLIENTE_PRESUPUESTO_CAMBIADO: async() => {
+      CLIENTE_PRESUPUESTO_CAMBIADO: async () => {
         await recargarCabecera();
-      }
+      },
     },
-  }
-  const emitirPresupuesto = useMaquina(maquina, 'defecto', () => {});
-
+  };
+  const emitirPresupuesto = useMaquina(maquina, "defecto", () => {});
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
     init(nuevoPresupuesto);
     emitir("PRESUPUESTO_CAMBIADO", nuevoPresupuesto);
+  };
+
+  const aprobarClicked = async () => {
+    await aprobarPresupuesto(modelo.id);
+    const presupuesto_aprobado = await getPresupuesto(modelo.id);
+    init(presupuesto_aprobado);
+    emitir("PRESUPUESTO_CAMBIADO", presupuesto_aprobado);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await borrarPresupuesto(modelo.id);
+    emitir("PRESUPUESTO_BORRADO", modelo);
+    setEstado("edicion");
   };
 
   return (
@@ -83,25 +94,28 @@ export const DetallePresupuesto = ({
         <>
           {!modelo.aprobado && (
             <div className="botones maestro-botones ">
-              <QBoton
-                onClick={() => emitirPresupuesto('APROBAR_INICIADO')}
-              > Aprobar </QBoton>
+              <QBoton onClick={aprobarClicked}>Aprobar</QBoton>
+              <QBoton onClick={() => setEstado("confirmarBorrado")}>
+                Borrar
+              </QBoton>
             </div>
           )}
           <Tabs
             children={[
-              <Tab key="tab-1"label="Cliente" children={
+              <Tab
+                key="tab-1"
+                label="Cliente"
+                children={
                   <TabCliente
-                  presupuesto={ctxPresupuesto}
+                    presupuesto={ctxPresupuesto}
                     publicar={emitirPresupuesto}
                   />
                 }
               />,
-              <Tab key="tab-2" label="Datos" children={
-                  <TabDatos
-                  presupuesto={ctxPresupuesto}
-                  />
-                }
+              <Tab
+                key="tab-2"
+                label="Datos"
+                children={<TabDatos presupuesto={ctxPresupuesto} />}
               />,
               <Tab
                 key="tab-3"
@@ -113,7 +127,7 @@ export const DetallePresupuesto = ({
           {ctxPresupuesto.modificado && (
             <div className="botones maestro-botones ">
               <QBoton
-                onClick={() => emitirPresupuesto('GUARDAR_INICIADO')}
+                onClick={() => emitirPresupuesto("GUARDAR_INICIADO")}
                 deshabilitado={!ctxPresupuesto.valido}
               >
                 Guardar
