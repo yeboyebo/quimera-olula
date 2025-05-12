@@ -38,6 +38,11 @@ export const elementosDelMenu: ElementoMenu[] = [
         url: "/ventas/albaran",
         icono: "",
       },
+      {
+        nombre: "Facturas",
+        url: "/ventas/factura",
+        icono: "",
+      },
     ],
   },
   {
