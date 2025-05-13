@@ -21,7 +21,7 @@ export const TotalesVenta = ({
         <span>{formatearMoneda(neto, divisa)}</span>
       </div>
       <div className="totales-venta-item">
-        <label>Total IVA:</label>
+        <label>IVA:</label>
         <span>{formatearMoneda(totalIva, divisa)}</span>
       </div>
       <div className="totales-venta-item">

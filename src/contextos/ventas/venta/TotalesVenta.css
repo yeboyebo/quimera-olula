@@ -6,8 +6,9 @@
     background-color: #f9f9f9;
     margin-bottom: 1rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
+    justify-content: flex-end;
 }
 
 .totales-venta-item {
