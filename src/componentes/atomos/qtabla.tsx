@@ -5,6 +5,15 @@ import "./qtabla.css";
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
+  tipo?:
+    | "texto"
+    | "numero"
+    | "moneda"
+    | "fecha"
+    | "hora"
+    | "booleano"
+    | undefined;
+  divisa?: string;
   render?: (entidad: T) => string | ReactNode;
 };
 

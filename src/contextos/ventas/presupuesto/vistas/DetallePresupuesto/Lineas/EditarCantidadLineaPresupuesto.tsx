@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { LineaPresupuesto as Linea } from "../diseño.ts";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { LineaPresupuesto as Linea } from "../../../diseño.ts";
 
 const validacion = (cantidadRaw: string) => {
   const cantidad = parseInt(cantidadRaw);

@@ -5,7 +5,7 @@ import { metaPedido } from "./pedido/dominio.ts";
 import { payloadPatchPedido, pedidoDesdeAPI } from "./pedido/infraestructura_base.ts";
 import { TabDatosBase as PedidoTabDatosBase } from "./pedido/vistas/DetallePedido/TabDatos.tsx";
 import { metaTablaPedido } from "./pedido/vistas/metatabla_pedido.ts";
-import { TabDatosBase as PresupuestoTabDatosBase } from "./presupuesto/vistas/TabDatosBase.tsx";
+import { TabDatosBase as PresupuestoTabDatosBase } from "./presupuesto/vistas/DetallePresupuesto/TabDatosBase.tsx";
 
 export class FactoryVentasBase {
     static PresupuestoTabDatos = PresupuestoTabDatosBase

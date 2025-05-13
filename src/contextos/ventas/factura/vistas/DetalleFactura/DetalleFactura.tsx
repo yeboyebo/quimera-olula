@@ -7,23 +7,30 @@ import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { Factura } from "../../diseño.ts";
 
-import { getFactura, patchFactura } from "../../infraestructura.ts";
+import {
+  borrarFactura,
+  getFactura,
+  patchFactura,
+} from "../../infraestructura.ts";
 import "./DetalleFactura.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
+import { TotalesVenta } from "../../../venta/TotalesVenta.tsx";
 import { facturaVacia, metaFactura } from "../../dominio.ts";
 import { TabDatos } from "./TabDatos.tsx";
+
 type ParamOpcion = {
   valor: string;
   descripcion?: string;
 };
 export type ValorControl = null | string | ParamOpcion;
-type Estado = "defecto";
+type Estado = "defecto" | "confirmarBorrado";
 
 export const DetalleFactura = ({
   facturaInicial = null,
@@ -32,6 +39,7 @@ export const DetalleFactura = ({
   facturaInicial?: Factura | null;
   emitir?: EmitirEvento;
 }) => {
+  const [estado, setEstado] = useState<Estado>("defecto");
   const params = useParams();
 
   const { intentar } = useContext(ContextoError);
@@ -52,6 +60,7 @@ export const DetalleFactura = ({
         await recargarCabecera();
       },
     },
+    confirmarBorrado: {},
   };
   const emitirFactura = useMaquina(maquina, "defecto", () => {});
 
@@ -59,6 +68,12 @@ export const DetalleFactura = ({
     const nuevaFactura = await getFactura(modelo.id);
     init(nuevaFactura);
     emitir("FACTURA_CAMBIADA", nuevaFactura);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await intentar(() => borrarFactura(modelo.id));
+    emitir("FACTURA_BORRADA", modelo);
+    setEstado("defecto");
   };
 
   return (
@@ -71,6 +86,11 @@ export const DetalleFactura = ({
     >
       {!!facturaId && (
         <>
+          <div className="botones maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <Tabs
             children={[
               <Tab
@@ -106,54 +126,21 @@ export const DetalleFactura = ({
             </div>
           )}
 
-          <div
-            style={{
-              marginTop: "1rem",
-              padding: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              backgroundColor: "#f9f9f9",
-              marginBottom: "1rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Neto:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(Number(modelo.neto ?? 0))}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Total IVA:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(Number(modelo.total_iva ?? 0))}
-              </span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <label style={{ fontWeight: "bold", marginRight: "0.5rem" }}>
-                Total:
-              </label>
-              <span>
-                {new Intl.NumberFormat("es-ES", {
-                  style: "currency",
-                  currency: String(modelo.coddivisa ?? "EUR"),
-                }).format(Number(modelo.total ?? 0))}
-              </span>
-            </div>
-          </div>
+          <TotalesVenta
+            neto={Number(modelo.neto ?? 0)}
+            totalIva={Number(modelo.total_iva ?? 0)}
+            total={Number(modelo.total ?? 0)}
+            divisa={String(modelo.coddivisa ?? "EUR")}
+          />
           <Lineas factura={factura} onCabeceraModificada={recargarCabecera} />
+          <QModalConfirmacion
+            nombre="borrarFactura"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar esta factura?"
+            onCerrar={() => setEstado("defecto")}
+            onAceptar={onBorrarConfirmado}
+          />
         </>
       )}
     </Detalle>

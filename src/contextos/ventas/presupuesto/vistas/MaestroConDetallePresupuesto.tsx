@@ -5,13 +5,14 @@ import { getPresupuestos } from "../infraestructura.ts";
 import "./MaestroConDetallePresupuesto.css";
 
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { AltaPresupuesto } from "./AltaPresupuesto.tsx";
-import { DetallePresupuesto } from "./DetallePresupuesto.tsx";
+import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
 
-const metaTablaPresupuesto = [
+const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
   {
     id: "codigo",
     cabecera: "Código",
@@ -23,6 +24,7 @@ const metaTablaPresupuesto = [
   {
     id: "total",
     cabecera: "Total",
+    tipo: "moneda",
   },
 ];
 type Estado = "lista" | "alta";
