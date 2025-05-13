@@ -21,7 +21,7 @@ import { TabObservaciones } from "./TabObservaciones.tsx";
 import { useContext, useState } from "react";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
-import { TotalesVenta } from "../../../venta/TotalesVenta.tsx";
+import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
 import { facturaVacia, metaFactura } from "../../dominio.ts";
 import { TabDatos } from "./TabDatos.tsx";
 
