@@ -8,7 +8,7 @@ import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Cliente } from "../diseño.ts";
 import { deleteCliente, getClientes } from "../infraestructura.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
-import { DetalleCliente } from "./DetalleCliente.tsx";
+import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 
 const metaTablaCliente = [

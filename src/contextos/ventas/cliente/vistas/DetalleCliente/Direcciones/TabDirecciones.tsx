@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { DirCliente } from "../diseño.ts";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { useLista } from "../../../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { DirCliente } from "../../../diseño.ts";
 import {
   deleteDireccion,
   getDirecciones,
   setDirFacturacion,
-} from "../infraestructura.ts";
+} from "../../../infraestructura.ts";
 import { AltaDireccion } from "./AltaDireccion.tsx";
 import { EdicionDireccion } from "./EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
@@ -28,7 +28,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
 
   useEffect(() => {
     if (clienteId) cargarDirecciones();
-  }, [clienteId, cargarDirecciones]);
+  }, [clienteId]);
 
   const maquina: Maquina<Estado> = {
     lista: {

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { DirCliente } from "../diseño.ts";
-import { metaDireccion } from "../dominio.ts";
-import { actualizarDireccion } from "../infraestructura.ts";
-import "./TabComercial.css";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { QSelect } from "../../../../../../componentes/atomos/qselect.tsx";
+import { useModelo } from "../../../../../comun/useModelo.ts";
+import { DirCliente } from "../../../diseño.ts";
+import { metaDireccion } from "../../../dominio.ts";
+import { actualizarDireccion } from "../../../infraestructura.ts";
+// import "./TabComercial.css";
 
 export const EdicionDireccion = ({
   clienteId,

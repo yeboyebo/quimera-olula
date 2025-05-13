@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { ContactoSelector } from "../../comun/componentes/contacto.tsx";
-import { CrmContacto } from "../diseño.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { useLista } from "../../../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { ContactoSelector } from "../../../../comun/componentes/contacto.tsx";
+import { CrmContacto } from "../../../diseño.ts";
 import {
   deleteCrmContacto,
   desvincularContactoCliente,
   getCrmContactosCliente,
   vincularContactoCliente,
-} from "../infraestructura.ts";
+} from "../../../infraestructura.ts";
 import { AltaCrmContactos } from "./AltaCrmContactos.tsx";
 import { EdicionCrmContactos } from "./EdicionCrmContactos.tsx";
 
@@ -76,7 +76,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
 
   useEffect(() => {
     if (clienteId) cargarContactos();
-  }, [clienteId, cargarContactos]);
+  }, [clienteId]);
 
   const maquina: Maquina<Estado> = {
     lista: {
