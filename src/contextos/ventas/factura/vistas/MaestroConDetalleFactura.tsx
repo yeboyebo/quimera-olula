@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
@@ -12,7 +13,7 @@ import { AltaFactura } from "./AltaFactura.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 
-const metaTablaFactura = [
+const metaTablaFactura: MetaTabla<Factura> = [
   {
     id: "codigo",
     cabecera: "Código",

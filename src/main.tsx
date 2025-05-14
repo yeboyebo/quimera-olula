@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
+import { MaestroConDetalleGruposReglas } from "./contextos/administracion/vistas/MaestroConDetalleGruposReglas.tsx";
 import { Indice } from "./contextos/comun/Indice.tsx";
 import { LoginPage } from "./contextos/usuarios/login/vistas/LoginPage.tsx";
 import { MaestroConDetalleAlbaran } from "./contextos/ventas/albaran/vistas/MaestroConDetalleAlbaran.tsx";
@@ -63,6 +64,7 @@ createRoot(document.getElementById("root")!).render(
                 </Vista>
               }
             />
+            import("./componentes/historias/historias.tsx")
           </Route>
           <Route path="albaran">
             <Route
@@ -94,6 +96,18 @@ createRoot(document.getElementById("root")!).render(
               </Vista>
             }
           />
+        </Route>
+        <Route path="administracion">
+          <Route path="grupos">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleGruposReglas />
+                </Vista>
+              }
+            />
+          </Route>
         </Route>
         <Route path="docs/componentes" element={<Historias />} />
       </Routes>
