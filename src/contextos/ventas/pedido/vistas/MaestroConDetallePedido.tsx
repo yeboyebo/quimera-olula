@@ -31,6 +31,9 @@ export const MaestroConDetallePedido = () => {
         const pedido = payload as Pedido;
         pedidos.modificar(pedido);
       },
+      CANCELAR_SELECCION: () => {
+        pedidos.limpiarSeleccion();
+      },
     },
   };
 
@@ -39,8 +42,8 @@ export const MaestroConDetallePedido = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
+    <maestro-detalle name="pedidos">
+      <div className="Maestro">
         <h2>Pedidos</h2>
         <Listado
           metaTabla={appFactory().Ventas.metaTablaPedido}
@@ -50,9 +53,11 @@ export const MaestroConDetallePedido = () => {
           setSeleccionada={pedidos.seleccionar}
           cargar={getPedidos}
         />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
+        <div className="maestro-botones">
+          <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
+        </div>
       </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
+      <div className="Detalle">
         <DetallePedido pedidoInicial={pedidos.seleccionada} emitir={emitir} />
       </div>
 
@@ -63,6 +68,6 @@ export const MaestroConDetallePedido = () => {
       >
         <AltaPedido publicar={emitir} />
       </QModal>
-    </div>
+    </maestro-detalle>
   );
 };

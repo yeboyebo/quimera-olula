@@ -59,8 +59,8 @@ export const MaestroConDetallePresupuesto = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
+    <maestro-detalle name="presupuestos">
+      <div className="Maestro">
         <h2>Presupuestos</h2>
         <Listado
           metaTabla={metaTablaPresupuesto}
@@ -70,9 +70,11 @@ export const MaestroConDetallePresupuesto = () => {
           setSeleccionada={presupuestos.seleccionar}
           cargar={getPresupuestos}
         />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Presupuesto</QBoton>
+        <div className="maestro-botones">
+          <QBoton onClick={emision("ALTA_INICIADA")}>Crear Presupuesto</QBoton>
+        </div>
       </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
+      <div className="Detalle">
         <DetallePresupuesto
           presupuestoInicial={presupuestos.seleccionada}
           emitir={emitir}
@@ -86,6 +88,6 @@ export const MaestroConDetallePresupuesto = () => {
       >
         <AltaPresupuesto emitir={emitir} />
       </QModal>
-    </div>
+    </maestro-detalle>
   );
 };

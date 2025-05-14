@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
+import "./contextos/comun/comun.css";
 import { Indice } from "./contextos/comun/Indice.tsx";
 import { LoginPage } from "./contextos/usuarios/login/vistas/LoginPage.tsx";
 import { MaestroConDetalleAlbaran } from "./contextos/ventas/albaran/vistas/MaestroConDetalleAlbaran.tsx";

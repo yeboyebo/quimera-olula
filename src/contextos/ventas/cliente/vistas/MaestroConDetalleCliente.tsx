@@ -64,11 +64,8 @@ export const MaestroConDetalleCliente = () => {
   };
 
   return (
-    <div
-      className="MaestroConDetalle"
-      style={{ display: "flex", gap: "2rem", overflow: "hidden" }}
-    >
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
+    <maestro-detalle name="clientes">
+      <div className="Maestro">
         <h2>Clientes</h2>
         <div className="maestro-botones">
           <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
@@ -88,7 +85,7 @@ export const MaestroConDetalleCliente = () => {
           cargar={getClientes}
         />
       </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
+      <div className="Detalle">
         <DetalleCliente
           clienteInicial={clientes.seleccionada}
           emitir={emitir}
@@ -107,6 +104,6 @@ export const MaestroConDetalleCliente = () => {
           // onCancelar={onCancelar}
         />
       </QModal>
-    </div>
+    </maestro-detalle>
   );
 };

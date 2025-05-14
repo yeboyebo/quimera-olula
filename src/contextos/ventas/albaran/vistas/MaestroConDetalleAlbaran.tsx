@@ -62,8 +62,8 @@ export const MaestroConDetalleAlbaran = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
+    <maestro-detalle name="albaranes">
+      <div className="Maestro">
         <h2>Albaranes</h2>
         <Listado
           metaTabla={metaTablaAlbaran}
@@ -73,9 +73,11 @@ export const MaestroConDetalleAlbaran = () => {
           setSeleccionada={albaranes.seleccionar}
           cargar={getAlbaranes}
         />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
+        <div className="maestro-botones">
+          <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
+        </div>
       </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
+      <div className="Detalle">
         <DetalleAlbaran
           albaranInicial={albaranes.seleccionada}
           emitir={emitir}
@@ -89,6 +91,6 @@ export const MaestroConDetalleAlbaran = () => {
       >
         <AltaAlbaran publicar={emitir} />
       </QModal>
-    </div>
+    </maestro-detalle>
   );
 };

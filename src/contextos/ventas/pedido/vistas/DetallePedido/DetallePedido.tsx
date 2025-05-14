@@ -70,6 +70,7 @@ export const DetallePedido = ({
       setEntidad={(p) => init(p)}
       entidad={modelo}
       cargar={getPedido}
+      cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
       {!!pedidoId && (
         <>
