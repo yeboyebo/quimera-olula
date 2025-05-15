@@ -1,36 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Listado } from "../../../componentes/maestro/Listado.tsx";
+import { useLista } from "../../comun/useLista.ts";
 import { Grupo, Regla } from "../diseño.ts";
 import { getGrupos, getReglas } from "../infraestructura.ts";
+import { ReglasGrupo } from "./ReglasGrupo/ReglasGrupo.tsx";
 
 const metaTablaGrupos = [
   { id: "id", cabecera: "Grupo" },
   { id: "descripcion", cabecera: "Descripción" },
 ];
 
-const metaTablaReglas = [
-  { id: "id", cabecera: "Regla" },
-  { id: "descripcion", cabecera: "Descripción" },
-];
-
 export const MaestroConDetalleGruposReglas = () => {
-  const [grupos, setGrupos] = useState<Grupo[]>([]);
-  const [reglas, setReglas] = useState<Regla[]>([]);
-  const [grupoSeleccionado, setGrupoSeleccionado] = useState<Grupo | null>(
-    null
-  );
+  const grupos = useLista<Grupo>([]);
+  const reglas = useLista<Regla>([]);
 
   useEffect(() => {
-    getGrupos().then(setGrupos);
+    getGrupos().then(grupos.setLista);
   }, []);
 
   useEffect(() => {
-    if (grupoSeleccionado) {
-      getReglas().then(setReglas);
+    if (grupos.seleccionada) {
+      getReglas().then(reglas.setLista);
     } else {
-      setReglas([]);
+      reglas.setLista([]);
     }
-  }, [grupoSeleccionado]);
+  }, [grupos.seleccionada]);
 
   return (
     <div style={{ display: "flex", gap: "2rem", overflow: "hidden" }}>
@@ -38,24 +32,14 @@ export const MaestroConDetalleGruposReglas = () => {
         <h2>Grupos</h2>
         <Listado
           metaTabla={metaTablaGrupos}
-          entidades={grupos}
-          setEntidades={setGrupos}
+          entidades={grupos.lista}
+          setEntidades={grupos.setLista}
+          seleccionada={grupos.seleccionada}
+          setSeleccionada={grupos.seleccionar}
           cargar={getGrupos}
-          seleccionada={grupoSeleccionado}
-          setSeleccionada={setGrupoSeleccionado}
         />
       </div>
-      <div style={{ flexBasis: "50%", overflow: "auto" }}>
-        <h2>Reglas</h2>
-        <Listado
-          metaTabla={metaTablaReglas}
-          entidades={reglas}
-          setEntidades={setReglas}
-          seleccionada={null}
-          setSeleccionada={() => {}}
-          cargar={getReglas}
-        />
-      </div>
+      <ReglasGrupo reglas={reglas} grupoId={grupos.seleccionada?.id || ""} />
     </div>
   );
 };

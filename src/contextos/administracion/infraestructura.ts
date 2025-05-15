@@ -1,5 +1,4 @@
-
-import { grupos, rules } from "./datos.tsx";
+import { grupos, permisos, rules } from "./datos.tsx";
 import { Grupo, Regla } from "./diseño.ts";
 
 export const getGrupos = async (): Promise<Grupo[]> => {
@@ -7,7 +6,9 @@ export const getGrupos = async (): Promise<Grupo[]> => {
 };
 
 export const getReglas = async (): Promise<Regla[]> => {
-    return rules.filter(
-        (regla: Regla) => !regla.id.includes("/")
-    );
+    return rules;
+};
+
+export const getPermisos = async (idRegla: string) => {
+    return permisos.filter((permiso) => permiso.idrule === idRegla);
 };
