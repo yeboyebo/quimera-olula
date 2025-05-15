@@ -1,5 +1,5 @@
 .AltaPresupuesto {
-    quimera-autocompletar[nombre="alta_presupuesto_cliente_id"] {
+    quimera-autocompletar[nombre="cliente_id"] {
         grid-column: span 12;
     }
 }

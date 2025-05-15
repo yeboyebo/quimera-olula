@@ -17,14 +17,11 @@ export const CambioCliente = ({
   );
 
   return (
-    <>
+    <div className="CambioCliente">
       <h2>Cambiar cliente</h2>
 
       <quimera-formulario>
-        <Cliente
-          {...uiProps("cliente_id", "nombre_cliente")}
-          nombre="cambiar_cliente_presupuesto"
-        />
+        <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
         <DirCliente
           clienteId={modelo.cliente_id}
           {...uiProps("direccion_id")}
@@ -39,6 +36,6 @@ export const CambioCliente = ({
           Guardar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

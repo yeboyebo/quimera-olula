@@ -134,12 +134,7 @@ export const DetallePresupuesto = ({
               >
                 Guardar
               </QBoton>
-              <QBoton
-                tipo="reset"
-                variante="texto"
-                onClick={() => init()}
-                // deshabilitado={!modeloModificado(presupuesto)}
-              >
+              <QBoton tipo="reset" variante="texto" onClick={() => init()}>
                 Cancelar
               </QBoton>
             </div>

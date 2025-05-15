@@ -59,35 +59,37 @@ export const MaestroConDetalleFactura = () => {
     emitir(evento, payload);
 
   return (
-    <maestro-detalle name="facturas">
-      <div className="Maestro">
-        <h2>Facturas</h2>
-        <Listado
-          metaTabla={metaTablaFactura}
-          entidades={facturas.lista}
-          setEntidades={facturas.setLista}
-          seleccionada={facturas.seleccionada}
-          setSeleccionada={facturas.seleccionar}
-          cargar={getFacturas}
-        />
-        <div className="maestro-botones">
-          <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
+    <div className="Factura">
+      <maestro-detalle>
+        <div className="Maestro">
+          <h2>Facturas</h2>
+          <Listado
+            metaTabla={metaTablaFactura}
+            entidades={facturas.lista}
+            setEntidades={facturas.setLista}
+            seleccionada={facturas.seleccionada}
+            setSeleccionada={facturas.seleccionar}
+            cargar={getFacturas}
+          />
+          <div className="maestro-botones">
+            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
+          </div>
         </div>
-      </div>
-      <div className="Detalle">
-        <DetalleFactura
-          facturaInicial={facturas.seleccionada}
-          emitir={emitir}
-        />
-      </div>
+        <div className="Detalle">
+          <DetalleFactura
+            facturaInicial={facturas.seleccionada}
+            emitir={emitir}
+          />
+        </div>
 
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={emision("ALTA_CANCELADA")}
-      >
-        <AltaFactura publicar={emitir} />
-      </QModal>
-    </maestro-detalle>
+        <QModal
+          nombre="modal"
+          abierto={estado === "alta"}
+          onCerrar={emision("ALTA_CANCELADA")}
+        >
+          <AltaFactura publicar={emitir} />
+        </QModal>
+      </maestro-detalle>
+    </div>
   );
 };
