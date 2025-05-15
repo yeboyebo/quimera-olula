@@ -67,16 +67,18 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     descripcion: string;
   } | null>(null);
 
+  const setListaContactos = contactos.setLista;
+
   const cargarContactos = useCallback(async () => {
     setCargando(true);
     const nuevosContactos = await getCrmContactosCliente(clienteId);
-    contactos.setLista(nuevosContactos);
+    setListaContactos(nuevosContactos);
     setCargando(false);
-  }, [clienteId, contactos]);
+  }, [clienteId, setListaContactos]);
 
   useEffect(() => {
     if (clienteId) cargarContactos();
-  }, [clienteId]);
+  }, [clienteId, cargarContactos]);
 
   const maquina: Maquina<Estado> = {
     lista: {

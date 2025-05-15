@@ -35,16 +35,18 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
 
+  const setListaCuentas = cuentas.setLista;
+
   const cargarCuentas = useCallback(async () => {
     setCargando(true);
     const nuevasCuentas = await getCuentasBanco(modelo.id);
-    cuentas.setLista(nuevasCuentas);
+    setListaCuentas(nuevasCuentas);
     setCargando(false);
-  }, [modelo.id, cuentas]);
+  }, [modelo.id, setListaCuentas]);
 
   useEffect(() => {
     if (modelo.id) cargarCuentas();
-  }, [modelo.id]);
+  }, [modelo.id, cargarCuentas]);
 
   const maquina: Maquina<Estado> = {
     lista: {
