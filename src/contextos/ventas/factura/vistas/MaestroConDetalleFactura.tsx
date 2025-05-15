@@ -9,17 +9,14 @@ import { getFacturas } from "../infraestructura.ts";
 
 import { AltaFactura } from "./AltaFactura.tsx";
 
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 
-const metaTablaFactura = [
+const metaTablaFactura: MetaTabla<Factura> = [
   {
     id: "codigo",
     cabecera: "Código",
-  },
-  {
-    id: "servido",
-    cabecera: "Servido",
   },
   {
     id: "nombre_cliente",
@@ -28,6 +25,7 @@ const metaTablaFactura = [
   {
     id: "total",
     cabecera: "Total",
+    tipo: "moneda",
   },
 ];
 

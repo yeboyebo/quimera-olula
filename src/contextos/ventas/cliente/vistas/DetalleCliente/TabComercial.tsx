@@ -1,11 +1,11 @@
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { EmitirEvento } from "../../../comun/diseño.ts";
-import { HookModelo } from "../../../comun/useModelo.ts";
-import { Agente } from "../../comun/componentes/agente.tsx";
-import { Divisa } from "../../comun/componentes/divisa.tsx";
-import { FormaPago } from "../../comun/componentes/formapago.tsx";
-import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
-import { Cliente } from "../diseño.ts";
+import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
+import { EmitirEvento } from "../../../../comun/diseño.ts";
+import { HookModelo } from "../../../../comun/useModelo.ts";
+import { Agente } from "../../../comun/componentes/agente.tsx";
+import { Divisa } from "../../../comun/componentes/divisa.tsx";
+import { FormaPago } from "../../../comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "../../../comun/componentes/grupo_iva_negocio.tsx";
+import { Cliente } from "../../diseño.ts";
 import "./TabComercial.css";
 
 interface TabComercialProps {

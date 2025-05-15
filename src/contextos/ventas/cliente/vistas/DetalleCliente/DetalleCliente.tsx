@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useParams } from "react-router";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
-import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { Cliente } from "../diseño.ts";
-import { clienteVacio, metaCliente } from "../dominio.ts";
-import { deleteCliente, getCliente, patchCliente } from "../infraestructura.ts";
+import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
+import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
+import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
+import { useModelo } from "../../../../comun/useModelo.ts";
+import { Cliente } from "../../diseño.ts";
+import { clienteVacio, metaCliente } from "../../dominio.ts";
+import {
+  deleteCliente,
+  getCliente,
+  patchCliente,
+} from "../../infraestructura.ts";
+import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
+import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
+import { TabDirecciones } from "./Direcciones/TabDirecciones.tsx";
 import { TabComercial } from "./TabComercial.tsx";
-import { TabCrmContactos } from "./TabCrmContactos.tsx";
-import { TabCuentasBanco } from "./TabCuentasBanco.tsx";
-import { TabDirecciones } from "./TabDirecciones.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({

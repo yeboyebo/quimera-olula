@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { EmitirEvento } from "../../../comun/diseño.ts";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { HookModelo } from "../../../comun/useModelo.ts";
-import { Cliente, CuentaBanco } from "../diseño.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { EmitirEvento } from "../../../../../comun/diseño.ts";
+import { useLista } from "../../../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { HookModelo } from "../../../../../comun/useModelo.ts";
+import { Cliente, CuentaBanco } from "../../../diseño.ts";
 import {
   deleteCuentaBanco,
   desmarcarCuentaDomiciliacion,
   domiciliarCuenta,
   getCuentasBanco,
-} from "../infraestructura.ts";
+} from "../../../infraestructura.ts";
 import { AltaCuentaBanco } from "./AltaCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
 
@@ -35,12 +35,14 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
 
+  const setListaCuentas = cuentas.setLista;
+
   const cargarCuentas = useCallback(async () => {
     setCargando(true);
     const nuevasCuentas = await getCuentasBanco(modelo.id);
-    cuentas.setLista(nuevasCuentas);
+    setListaCuentas(nuevasCuentas);
     setCargando(false);
-  }, [modelo.id, cuentas]);
+  }, [modelo.id, setListaCuentas]);
 
   useEffect(() => {
     if (modelo.id) cargarCuentas();

@@ -1,8 +1,8 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { metaNuevaDireccion, nuevaDireccionVacia } from "../dominio.ts";
-import { getDireccion, postDireccion } from "../infraestructura.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { useModelo } from "../../../../../comun/useModelo.ts";
+import { metaNuevaDireccion, nuevaDireccionVacia } from "../../../dominio.ts";
+import { getDireccion, postDireccion } from "../../../infraestructura.ts";
 
 export const AltaDireccion = ({
   clienteId,

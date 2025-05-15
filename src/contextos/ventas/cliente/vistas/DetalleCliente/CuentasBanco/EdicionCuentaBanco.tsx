@@ -1,9 +1,9 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { CuentaBanco } from "../diseño.ts";
-import { metaCuentaBanco } from "../dominio.ts";
-import { patchCuentaBanco } from "../infraestructura.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { useModelo } from "../../../../../comun/useModelo.ts";
+import { CuentaBanco } from "../../../diseño.ts";
+import { metaCuentaBanco } from "../../../dominio.ts";
+import { patchCuentaBanco } from "../../../infraestructura.ts";
 import "./TabCuentasBanco.css";
 
 interface EdicionCuentaBancoProps {

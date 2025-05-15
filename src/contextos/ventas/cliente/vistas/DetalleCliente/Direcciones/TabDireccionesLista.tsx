@@ -1,8 +1,11 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
-import { boolAString, direccionCompleta } from "../../../comun/dominio.ts";
-import { DirCliente } from "../diseño.ts";
-import { puedoMarcarDireccionFacturacion } from "../dominio.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
+import {
+  boolAString,
+  direccionCompleta,
+} from "../../../../../comun/dominio.ts";
+import { DirCliente } from "../../../diseño.ts";
+import { puedoMarcarDireccionFacturacion } from "../../../dominio.ts";
 
 const metaTablaDirecciones = [
   {

@@ -1,4 +1,4 @@
-import { formatearMoneda } from "../../comun/dominio.ts";
+import { formatearMoneda } from "../../../comun/dominio.ts";
 import "./TotalesVenta.css";
 
 interface TotalesVentaProps {

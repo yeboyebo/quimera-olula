@@ -17,7 +17,7 @@ import { TabObservaciones } from "./TabObservaciones.tsx";
 import { useContext } from "react";
 import { appFactory } from "../../../../app.ts";
 import { ContextoError } from "../../../../comun/contexto.ts";
-import { TotalesVenta } from "../../../venta/TotalesVenta.tsx";
+import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
 type ParamOpcion = {
   valor: string;
   descripcion?: string;

@@ -7,7 +7,7 @@ import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalc
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
-import { TotalesVenta } from "../../../venta/TotalesVenta.tsx";
+import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
 import { Presupuesto } from "../../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../../dominio.ts";
 import {

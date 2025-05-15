@@ -17,10 +17,6 @@ const metaTablaAlbaran = [
     cabecera: "Código",
   },
   {
-    id: "servido",
-    cabecera: "Servido",
-  },
-  {
     id: "nombre_cliente",
     cabecera: "Cliente",
   },
