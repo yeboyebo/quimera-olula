@@ -46,7 +46,7 @@ export const TabCliente = ({
   const emitir = useMaquina(maquina, estado, setEstado);
 
   return (
-    <>
+    <div className="TabCliente">
       <quimera-formulario>
         <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
         <QInput {...uiProps("id_fiscal")} label="ID Fiscal" />
@@ -72,6 +72,6 @@ export const TabCliente = ({
       >
         <CambioCliente publicar={emitir} />
       </QModal>
-    </>
+    </div>
   );
 };

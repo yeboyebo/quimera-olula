@@ -16,7 +16,7 @@ export const TabDatos = ({ factura }: TabDatosProps) => {
   const { uiProps } = factura;
 
   return (
-    <>
+    <div className="TabDatos">
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
         <div id="espacio_fecha" />
@@ -28,6 +28,6 @@ export const TabDatos = ({ factura }: TabDatosProps) => {
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
       </quimera-formulario>
-    </>
+    </div>
   );
 };
