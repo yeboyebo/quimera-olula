@@ -25,7 +25,7 @@ export const EdicionCuentaBanco = ({
   };
 
   return (
-    <>
+    <div className="EdicionCuentaBanco">
       <quimera-formulario>
         <QInput label="IBAN" {...uiProps("iban")} />
         <QInput label="BIC" {...uiProps("bic")} />
@@ -42,6 +42,6 @@ export const EdicionCuentaBanco = ({
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

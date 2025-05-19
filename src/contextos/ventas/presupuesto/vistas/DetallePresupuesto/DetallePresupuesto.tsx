@@ -19,7 +19,8 @@ import {
 
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
-import { TabCliente } from "./TabCliente.tsx";
+
+import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 

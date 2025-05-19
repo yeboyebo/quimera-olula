@@ -97,7 +97,7 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   const emitir = useMaquina(maquina, estado, setEstado);
 
   return (
-    <>
+    <div className="CuentasBanco">
       <div className="detalle-cliente-tab-contenido">
         <div className="CuentaBancoDomiciliacion maestro-botones">
           <span>Domiciliar: {modelo.descripcion_cuenta}</span>
@@ -166,6 +166,6 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
           />
         )}
       </QModal>
-    </>
+    </div>
   );
 };

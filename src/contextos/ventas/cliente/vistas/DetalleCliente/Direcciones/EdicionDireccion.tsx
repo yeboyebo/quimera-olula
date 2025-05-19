@@ -38,7 +38,7 @@ export const EdicionDireccion = ({
   ];
 
   return (
-    <>
+    <div className="EdicionDireccion">
       <h2>Edición de dirección</h2>
       <quimera-formulario>
         <div style={{ gridColumn: "span 2" }}>
@@ -70,6 +70,6 @@ export const EdicionDireccion = ({
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

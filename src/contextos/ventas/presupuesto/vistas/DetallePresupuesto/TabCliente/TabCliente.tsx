@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
-import { QModal } from "../../../../../componentes/moleculas/qmodal.tsx";
-import { EmitirEvento } from "../../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
-import { HookModelo } from "../../../../comun/useModelo.ts";
-import { Cliente } from "../../../comun/componentes/cliente.tsx";
-import { DirCliente } from "../../../comun/componentes/dirCliente.tsx";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { EmitirEvento } from "../../../../../comun/diseño.ts";
+import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { HookModelo } from "../../../../../comun/useModelo.ts";
+import { Cliente } from "../../../../comun/componentes/cliente.tsx";
+import { DirCliente } from "../../../../comun/componentes/dirCliente.tsx";
 import {
   Presupuesto,
   CambioCliente as TipoCambioCliente,
-} from "../../diseño.ts";
-import { editable } from "../../dominio.ts";
-import { patchCambiarCliente } from "../../infraestructura.ts";
+} from "../../../diseño.ts";
+import { editable } from "../../../dominio.ts";
+import { patchCambiarCliente } from "../../../infraestructura.ts";
 import { CambioCliente } from "./CambioCliente.tsx";
 import "./TabCliente.css";
 

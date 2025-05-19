@@ -1,7 +1,9 @@
-quimera-input[nombre="nombre_cliente"] {
-    grid-column: 1 / span 3;
-}
+.Albaran {
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: 1 / span 3;
+    }
 
-quimera-autocompletar[nombre="cliente_id"] {
-    grid-column: 1 / span 3;
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: 1 / span 3;
+    }
 }

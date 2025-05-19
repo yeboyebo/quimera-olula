@@ -143,7 +143,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
   const configuracionActual = configuracionModalConfirmacion[estado as Estado];
 
   return (
-    <>
+    <div className="TabCrmContactos">
       <div className="detalle-contacto-tab-contenido maestro-botones">
         <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nuevo</QBoton>
         <QBoton
@@ -240,6 +240,6 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
           </QBoton>
         </div>
       </QModal>
-    </>
+    </div>
   );
 };
