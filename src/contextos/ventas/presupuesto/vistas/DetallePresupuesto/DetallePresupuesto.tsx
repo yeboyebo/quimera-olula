@@ -92,6 +92,7 @@ export const DetallePresupuesto = ({
       setEntidad={(p) => init(p)}
       entidad={modelo}
       cargar={getPresupuesto}
+      cerrarDetalle={() => emitir("CANCELAR_SELECCIONADA")}
     >
       {!!presupuestoId && (
         <>

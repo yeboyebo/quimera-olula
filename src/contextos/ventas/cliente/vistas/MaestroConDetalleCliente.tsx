@@ -50,6 +50,9 @@ export const MaestroConDetalleCliente = () => {
         const cliente = payload as Cliente;
         clientes.eliminar(cliente);
       },
+      CANCELAR_SELECCION: () => {
+        clientes.limpiarSeleccion();
+      },
     },
   };
 
@@ -90,7 +93,6 @@ export const MaestroConDetalleCliente = () => {
           <DetalleCliente
             clienteInicial={clientes.seleccionada}
             emitir={emitir}
-            cancelarSeleccionada={clientes.limpiarSeleccion}
           />
         </div>
 

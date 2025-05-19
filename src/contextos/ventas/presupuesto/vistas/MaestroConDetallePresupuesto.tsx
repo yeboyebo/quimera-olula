@@ -51,6 +51,9 @@ export const MaestroConDetallePresupuesto = () => {
         const presupuesto = payload as Presupuesto;
         presupuestos.eliminar(presupuesto);
       },
+      CANCELAR_SELECCIONADA: () => {
+        presupuestos.limpiarSeleccion();
+      },
     },
   };
 

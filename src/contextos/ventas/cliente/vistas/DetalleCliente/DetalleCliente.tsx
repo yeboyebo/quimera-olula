@@ -23,11 +23,9 @@ import { TabGeneral } from "./TabGeneral.tsx";
 export const DetalleCliente = ({
   clienteInicial = null,
   emitir = () => {},
-  cancelarSeleccionada,
 }: {
   clienteInicial?: Cliente | null;
   emitir?: EmitirEvento;
-  cancelarSeleccionada?: () => void;
 }) => {
   const params = useParams();
 
@@ -68,7 +66,7 @@ export const DetalleCliente = ({
         entidad={modelo}
         cargar={getCliente}
         className="detalle-cliente"
-        cerrarDetalle={cancelarSeleccionada}
+        cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
       >
         {!!clienteId && (
           <div className="DetalleCliente">

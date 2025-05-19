@@ -49,6 +49,9 @@ export const MaestroConDetalleFactura = () => {
         const factura = payload as Factura;
         facturas.modificar(factura);
       },
+      CANCELAR_SELECCION: () => {
+        facturas.limpiarSeleccion();
+      },
     },
   };
 

@@ -50,6 +50,9 @@ export const MaestroConDetalleAlbaran = () => {
         const albaran = payload as Albaran;
         albaranes.eliminar(albaran);
       },
+      CANCELAR_SELECCION: () => {
+        albaranes.limpiarSeleccion();
+      },
     },
   };
 
