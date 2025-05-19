@@ -1,8 +1,11 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { metaNuevaCuentaBanco, nuevaCuentaBancoVacia } from "../dominio.ts";
-import { getCuentaBanco, postCuentaBanco } from "../infraestructura.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { useModelo } from "../../../../../comun/useModelo.ts";
+import {
+  metaNuevaCuentaBanco,
+  nuevaCuentaBancoVacia,
+} from "../../../dominio.ts";
+import { getCuentaBanco, postCuentaBanco } from "../../../infraestructura.ts";
 import "./TabCuentasBanco.css";
 
 interface AltaCuentaBancoProps {

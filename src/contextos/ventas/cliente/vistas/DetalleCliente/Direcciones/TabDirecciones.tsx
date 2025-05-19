@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { DirCliente } from "../diseño.ts";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { useLista } from "../../../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { DirCliente } from "../../../diseño.ts";
 import {
   deleteDireccion,
   getDirecciones,
   setDirFacturacion,
-} from "../infraestructura.ts";
+} from "../../../infraestructura.ts";
 import { AltaDireccion } from "./AltaDireccion.tsx";
 import { EdicionDireccion } from "./EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
@@ -19,12 +19,14 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
 
+  const setListaDirecciones = direcciones.setLista;
+
   const cargarDirecciones = useCallback(async () => {
     setCargando(true);
     const nuevasDirecciones = await getDirecciones(clienteId);
-    direcciones.setLista(nuevasDirecciones);
+    setListaDirecciones(nuevasDirecciones);
     setCargando(false);
-  }, [clienteId, direcciones]);
+  }, [clienteId, setListaDirecciones]);
 
   useEffect(() => {
     if (clienteId) cargarDirecciones();

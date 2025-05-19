@@ -1,9 +1,11 @@
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { useModelo } from "../../../comun/useModelo.ts";
-import { metaNuevoCrmContacto, nuevoCrmContactoVacio } from "../dominio.ts";
-import { getCrmContacto, postCrmContacto } from "../infraestructura.ts";
-import "./TabCuentasBanco.css";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { useModelo } from "../../../../../comun/useModelo.ts";
+import {
+  metaNuevoCrmContacto,
+  nuevoCrmContactoVacio,
+} from "../../../dominio.ts";
+import { getCrmContacto, postCrmContacto } from "../../../infraestructura.ts";
 
 interface AltaCrmContactosProps {
   clienteId: string;

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QDate } from "../../../../componentes/atomos/qdate.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QTextArea } from "../../../../componentes/atomos/qtextarea.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { EmitirEvento } from "../../../comun/diseño.ts";
-import { HookModelo } from "../../../comun/useModelo.ts";
-import { TipoIdFiscal } from "../../comun/componentes/tipoIdFiscal.tsx";
-import { Cliente } from "../diseño.ts";
-import { darDeAltaCliente } from "../infraestructura.ts";
+import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
+import { QDate } from "../../../../../componentes/atomos/qdate.tsx";
+import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
+import { QTextArea } from "../../../../../componentes/atomos/qtextarea.tsx";
+import { QModal } from "../../../../../componentes/moleculas/qmodal.tsx";
+import { EmitirEvento } from "../../../../comun/diseño.ts";
+import { HookModelo } from "../../../../comun/useModelo.ts";
+import { TipoIdFiscal } from "../../../comun/componentes/tipoIdFiscal.tsx";
+import { Cliente } from "../../diseño.ts";
+import { darDeAltaCliente } from "../../infraestructura.ts";
 import { BajaCliente } from "./BajaCliente.tsx";
 import "./TabGeneral.css";
 
