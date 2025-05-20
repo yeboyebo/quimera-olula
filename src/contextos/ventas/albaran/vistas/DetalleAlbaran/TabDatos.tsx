@@ -6,7 +6,7 @@ import { Divisa } from "../../../comun/componentes/divisa.tsx";
 import { FormaPago } from "../../../comun/componentes/formapago.tsx";
 import { GrupoIvaNegocio } from "../../../comun/componentes/grupo_iva_negocio.tsx";
 import { Albaran } from "../../diseño.ts";
-// import "./TabDatos.css";
+import "./TabDatos.css";
 
 interface TabDatosProps {
   albaran: HookModelo<Albaran>;
@@ -16,7 +16,7 @@ export const TabDatos = ({ albaran }: TabDatosProps) => {
   const { uiProps } = albaran;
 
   return (
-    <>
+    <div className="TabDatos">
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
         <div id="espacio_fecha" />
@@ -28,6 +28,6 @@ export const TabDatos = ({ albaran }: TabDatosProps) => {
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
       </quimera-formulario>
-    </>
+    </div>
   );
 };

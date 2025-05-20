@@ -50,6 +50,9 @@ export const MaestroConDetalleCliente = () => {
         const cliente = payload as Cliente;
         clientes.eliminar(cliente);
       },
+      CANCELAR_SELECCION: () => {
+        clientes.limpiarSeleccion();
+      },
     },
   };
 
@@ -64,49 +67,47 @@ export const MaestroConDetalleCliente = () => {
   };
 
   return (
-    <div
-      className="MaestroConDetalle"
-      style={{ display: "flex", gap: "2rem", overflow: "hidden" }}
-    >
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <h2>Clientes</h2>
-        <div className="maestro-botones">
-          <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-          <QBoton
-            deshabilitado={!clientes.seleccionada}
-            onClick={onBorrarCliente}
-          >
-            Borrar
-          </QBoton>
+    <div className="Cliente">
+      <maestro-detalle name="clientes">
+        <div className="Maestro">
+          <h2>Clientes</h2>
+          <div className="maestro-botones">
+            <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
+            <QBoton
+              deshabilitado={!clientes.seleccionada}
+              onClick={onBorrarCliente}
+            >
+              Borrar
+            </QBoton>
+          </div>
+          <Listado
+            metaTabla={metaTablaCliente}
+            entidades={clientes.lista}
+            setEntidades={clientes.setLista}
+            seleccionada={clientes.seleccionada}
+            setSeleccionada={clientes.seleccionar}
+            cargar={getClientes}
+          />
         </div>
-        <Listado
-          metaTabla={metaTablaCliente}
-          entidades={clientes.lista}
-          setEntidades={clientes.setLista}
-          seleccionada={clientes.seleccionada}
-          setSeleccionada={clientes.seleccionar}
-          cargar={getClientes}
-        />
-      </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <DetalleCliente
-          clienteInicial={clientes.seleccionada}
-          emitir={emitir}
-          cancelarSeleccionada={clientes.limpiarSeleccion}
-        />
-      </div>
+        <div className="Detalle">
+          <DetalleCliente
+            clienteInicial={clientes.seleccionada}
+            emitir={emitir}
+          />
+        </div>
 
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      >
-        <AltaCliente
-          emitir={emitir}
-          // onClienteCreado={onClienteCreado}
-          // onCancelar={onCancelar}
-        />
-      </QModal>
+        <QModal
+          nombre="modal"
+          abierto={estado === "alta"}
+          onCerrar={() => emitir("ALTA_CANCELADA")}
+        >
+          <AltaCliente
+            emitir={emitir}
+            // onClienteCreado={onClienteCreado}
+            // onCancelar={onCancelar}
+          />
+        </QModal>
+      </maestro-detalle>
     </div>
   );
 };

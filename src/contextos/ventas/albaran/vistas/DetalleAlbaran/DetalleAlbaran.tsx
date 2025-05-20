@@ -81,6 +81,7 @@ export const DetalleAlbaran = ({
       setEntidad={(a) => init(a)}
       entidad={modelo}
       cargar={getAlbaran}
+      cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
       {!!albaranId && (
         <>

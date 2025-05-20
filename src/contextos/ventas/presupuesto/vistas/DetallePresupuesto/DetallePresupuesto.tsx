@@ -19,7 +19,8 @@ import {
 
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
-import { TabCliente } from "./TabCliente.tsx";
+
+import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
@@ -91,6 +92,7 @@ export const DetallePresupuesto = ({
       setEntidad={(p) => init(p)}
       entidad={modelo}
       cargar={getPresupuesto}
+      cerrarDetalle={() => emitir("CANCELAR_SELECCIONADA")}
     >
       {!!presupuestoId && (
         <>
@@ -134,12 +136,7 @@ export const DetallePresupuesto = ({
               >
                 Guardar
               </QBoton>
-              <QBoton
-                tipo="reset"
-                variante="texto"
-                onClick={() => init()}
-                // deshabilitado={!modeloModificado(presupuesto)}
-              >
+              <QBoton tipo="reset" variante="texto" onClick={() => init()}>
                 Cancelar
               </QBoton>
             </div>

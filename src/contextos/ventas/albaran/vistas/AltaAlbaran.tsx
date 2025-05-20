@@ -21,7 +21,7 @@ export const AltaAlbaran = ({
   };
 
   return (
-    <>
+    <div className="AltaAlbaran">
       <h2>Nuevo Albarán</h2>
       <quimera-formulario>
         <Cliente
@@ -43,6 +43,6 @@ export const AltaAlbaran = ({
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

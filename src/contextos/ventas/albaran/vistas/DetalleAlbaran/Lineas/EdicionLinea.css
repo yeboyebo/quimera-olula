@@ -1,19 +1,21 @@
-quimera-autocompletar[nombre="referencia"] {
-    grid-column: span 12;
-}
+.Albaran .EdicionLinea {
+    quimera-autocompletar[nombre="referencia"] {
+        grid-column: span 12;
+    }
 
-quimera-input[nombre="cantidad"] {
-    grid-column: span 6;
-}
+    quimera-input[nombre="cantidad"] {
+        grid-column: span 6;
+    }
 
-quimera-input[nombre="pvp_unitario"] {
-    grid-column: span 6;
-}
+    quimera-input[nombre="pvp_unitario"] {
+        grid-column: span 6;
+    }
 
-quimera-select[nombre="grupo_iva_producto_id"] {
-    grid-column: span 6;
-}
+    quimera-select[nombre="grupo_iva_producto_id"] {
+        grid-column: span 6;
+    }
 
-quimera-input[nombre="dto_porcentual"] {
-    grid-column: span 6;
+    quimera-input[nombre="dto_porcentual"] {
+        grid-column: span 6;
+    }
 }

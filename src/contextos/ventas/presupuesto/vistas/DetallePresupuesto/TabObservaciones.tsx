@@ -11,7 +11,7 @@ export const TabObservaciones = ({ ctxPresupuesto }: TabClienteProps) => {
   const { uiProps } = ctxPresupuesto;
 
   return (
-    <>
+    <div className="TabObservaciones">
       <quimera-formulario>
         <QTextArea
           label="Observaciones"
@@ -19,6 +19,6 @@ export const TabObservaciones = ({ ctxPresupuesto }: TabClienteProps) => {
           {...uiProps("observaciones")}
         />
       </quimera-formulario>
-    </>
+    </div>
   );
 };

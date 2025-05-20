@@ -42,7 +42,7 @@ export const TabGeneral = ({ cliente, recargarCliente }: TabGeneralProps) => {
   };
 
   return (
-    <>
+    <div className="TabGeneral">
       <quimera-formulario>
         <QInput label="Nombre" {...uiProps("nombre")} />
         <QInput label="Nombre Comercial" {...uiProps("nombre_comercial")} />
@@ -66,6 +66,6 @@ export const TabGeneral = ({ cliente, recargarCliente }: TabGeneralProps) => {
         <h2>Dar de baja</h2>
         <BajaCliente cliente={cliente} onBajaRealizada={onBajaRealizada} />
       </QModal>
-    </>
+    </div>
   );
 };

@@ -19,16 +19,18 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
 
+  const setListaDirecciones = direcciones.setLista;
+
   const cargarDirecciones = useCallback(async () => {
     setCargando(true);
     const nuevasDirecciones = await getDirecciones(clienteId);
-    direcciones.setLista(nuevasDirecciones);
+    setListaDirecciones(nuevasDirecciones);
     setCargando(false);
-  }, [clienteId, direcciones]);
+  }, [clienteId, setListaDirecciones]);
 
   useEffect(() => {
     if (clienteId) cargarDirecciones();
-  }, [clienteId]);
+  }, [clienteId, cargarDirecciones]);
 
   const maquina: Maquina<Estado> = {
     lista: {
@@ -70,7 +72,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const emitir = useMaquina(maquina, estado, setEstado);
 
   return (
-    <>
+    <div className="TabDirecciones">
       <TabDireccionesLista
         clienteId={clienteId}
         direcciones={direcciones.lista}
@@ -104,6 +106,6 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         <h2 className="titulo-modal">Nueva dirección</h2>
         <AltaDireccion clienteId={clienteId} emitir={emitir} />
       </QModal>
-    </>
+    </div>
   );
 };

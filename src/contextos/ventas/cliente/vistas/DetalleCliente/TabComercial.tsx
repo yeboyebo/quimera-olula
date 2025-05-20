@@ -17,7 +17,7 @@ export const TabComercial = ({ cliente }: TabComercialProps) => {
   const { uiProps } = cliente;
 
   return (
-    <>
+    <div className="TabComercial">
       <quimera-formulario>
         <Agente
           {...uiProps("agente_id", "nombre_agente")}
@@ -40,6 +40,6 @@ export const TabComercial = ({ cliente }: TabComercialProps) => {
           nombre="cliente/grupo_iva_negocio_id"
         />
       </quimera-formulario>
-    </>
+    </div>
   );
 };

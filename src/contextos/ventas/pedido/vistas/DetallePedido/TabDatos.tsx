@@ -9,45 +9,25 @@ import { Pedido } from "../../diseño.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
-  pedido: HookModelo<Pedido>; 
+  pedido: HookModelo<Pedido>;
 }
 
-export const TabDatosBase = ({
-  pedido,
-}: TabDatosProps) => {
-
-  const {uiProps} = pedido;
+export const TabDatosBase = ({ pedido }: TabDatosProps) => {
+  const { uiProps } = pedido;
 
   return (
-    <>
+    <div className="TabDatos">
       <quimera-formulario>
-        <QDate
-          label="Fecha"
-          {...uiProps("fecha")}
-        />
-        <div id="espacio_fecha"/>
-        <Divisa
-          {...uiProps("divisa_id")}
-        />
-        <QInput
-          label="T. Conversión"
-          {...uiProps("tasa_conversion")}
-        />
-        <QInput
-          {...uiProps("total_divisa_empresa")}
-          label="Total €"
-        />
-        <Agente
-          {...uiProps("agente_id", "nombre_agente")}
-        />
-        <div id="espacio_agente"/>
-        <FormaPago
-          {...uiProps("forma_pago_id", "nombre_forma_pago")}
-        />
-        <GrupoIvaNegocio
-          {...uiProps("grupo_iva_negocio_id")}
-        />
+        <QDate label="Fecha" {...uiProps("fecha")} />
+        <div id="espacio_fecha" />
+        <Divisa {...uiProps("divisa_id")} />
+        <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
+        <QInput {...uiProps("total_divisa_empresa")} label="Total €" />
+        <Agente {...uiProps("agente_id", "nombre_agente")} />
+        <div id="espacio_agente" />
+        <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
+        <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
       </quimera-formulario>
-    </>
+    </div>
   );
 };

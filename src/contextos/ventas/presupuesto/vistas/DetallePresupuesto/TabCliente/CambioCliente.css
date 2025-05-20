@@ -1,4 +1,4 @@
-.AltaPresupuesto {
+.CambioCliente {
     quimera-autocompletar[nombre="cliente_id"] {
         grid-column: span 12;
     }

@@ -10,6 +10,7 @@ import { getFacturas } from "../infraestructura.ts";
 
 import { AltaFactura } from "./AltaFactura.tsx";
 
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 
@@ -49,6 +50,9 @@ export const MaestroConDetalleFactura = () => {
         const factura = payload as Factura;
         facturas.modificar(factura);
       },
+      CANCELAR_SELECCION: () => {
+        facturas.limpiarSeleccion();
+      },
     },
   };
 
@@ -57,33 +61,37 @@ export const MaestroConDetalleFactura = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <h2>Facturas</h2>
-        <Listado
-          metaTabla={metaTablaFactura}
-          entidades={facturas.lista}
-          setEntidades={facturas.setLista}
-          seleccionada={facturas.seleccionada}
-          setSeleccionada={facturas.seleccionar}
-          cargar={getFacturas}
-        />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
-      </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <DetalleFactura
-          facturaInicial={facturas.seleccionada}
-          emitir={emitir}
-        />
-      </div>
+    <div className="Factura">
+      <maestro-detalle>
+        <div className="Maestro">
+          <h2>Facturas</h2>
+          <Listado
+            metaTabla={metaTablaFactura}
+            entidades={facturas.lista}
+            setEntidades={facturas.setLista}
+            seleccionada={facturas.seleccionada}
+            setSeleccionada={facturas.seleccionar}
+            cargar={getFacturas}
+          />
+          <div className="maestro-botones">
+            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
+          </div>
+        </div>
+        <div className="Detalle">
+          <DetalleFactura
+            facturaInicial={facturas.seleccionada}
+            emitir={emitir}
+          />
+        </div>
 
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={emision("ALTA_CANCELADA")}
-      >
-        <AltaFactura publicar={emitir} />
-      </QModal>
+        <QModal
+          nombre="modal"
+          abierto={estado === "alta"}
+          onCerrar={emision("ALTA_CANCELADA")}
+        >
+          <AltaFactura publicar={emitir} />
+        </QModal>
+      </maestro-detalle>
     </div>
   );
 };

@@ -67,16 +67,18 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     descripcion: string;
   } | null>(null);
 
+  const setListaContactos = contactos.setLista;
+
   const cargarContactos = useCallback(async () => {
     setCargando(true);
     const nuevosContactos = await getCrmContactosCliente(clienteId);
-    contactos.setLista(nuevosContactos);
+    setListaContactos(nuevosContactos);
     setCargando(false);
-  }, [clienteId, contactos]);
+  }, [clienteId, setListaContactos]);
 
   useEffect(() => {
     if (clienteId) cargarContactos();
-  }, [clienteId]);
+  }, [clienteId, cargarContactos]);
 
   const maquina: Maquina<Estado> = {
     lista: {
@@ -141,7 +143,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
   const configuracionActual = configuracionModalConfirmacion[estado as Estado];
 
   return (
-    <>
+    <div className="TabCrmContactos">
       <div className="detalle-contacto-tab-contenido maestro-botones">
         <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nuevo</QBoton>
         <QBoton
@@ -238,6 +240,6 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
           </QBoton>
         </div>
       </QModal>
-    </>
+    </div>
   );
 };
