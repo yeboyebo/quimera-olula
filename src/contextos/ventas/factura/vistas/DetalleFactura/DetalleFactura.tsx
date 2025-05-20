@@ -83,6 +83,7 @@ export const DetalleFactura = ({
       setEntidad={(f) => init(f)}
       entidad={modelo}
       cargar={getFactura}
+      cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
       {!!facturaId && (
         <>

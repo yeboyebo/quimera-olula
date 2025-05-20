@@ -72,7 +72,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const emitir = useMaquina(maquina, estado, setEstado);
 
   return (
-    <>
+    <div className="TabDirecciones">
       <TabDireccionesLista
         clienteId={clienteId}
         direcciones={direcciones.lista}
@@ -106,6 +106,6 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         <h2 className="titulo-modal">Nueva dirección</h2>
         <AltaDireccion clienteId={clienteId} emitir={emitir} />
       </QModal>
-    </>
+    </div>
   );
 };

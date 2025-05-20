@@ -51,6 +51,9 @@ export const MaestroConDetallePresupuesto = () => {
         const presupuesto = payload as Presupuesto;
         presupuestos.eliminar(presupuesto);
       },
+      CANCELAR_SELECCIONADA: () => {
+        presupuestos.limpiarSeleccion();
+      },
     },
   };
 
@@ -59,33 +62,39 @@ export const MaestroConDetallePresupuesto = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <h2>Presupuestos</h2>
-        <Listado
-          metaTabla={metaTablaPresupuesto}
-          entidades={presupuestos.lista}
-          setEntidades={presupuestos.setLista}
-          seleccionada={presupuestos.seleccionada}
-          setSeleccionada={presupuestos.seleccionar}
-          cargar={getPresupuestos}
-        />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Presupuesto</QBoton>
-      </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <DetallePresupuesto
-          presupuestoInicial={presupuestos.seleccionada}
-          emitir={emitir}
-        />
-      </div>
+    <div className="Presupuesto">
+      <maestro-detalle>
+        <div className="Maestro">
+          <h2>Presupuestos</h2>
+          <Listado
+            metaTabla={metaTablaPresupuesto}
+            entidades={presupuestos.lista}
+            setEntidades={presupuestos.setLista}
+            seleccionada={presupuestos.seleccionada}
+            setSeleccionada={presupuestos.seleccionar}
+            cargar={getPresupuestos}
+          />
+          <div className="maestro-botones">
+            <QBoton onClick={emision("ALTA_INICIADA")}>
+              Crear Presupuesto
+            </QBoton>
+          </div>
+        </div>
+        <div className="Detalle">
+          <DetallePresupuesto
+            presupuestoInicial={presupuestos.seleccionada}
+            emitir={emitir}
+          />
+        </div>
 
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={emision("ALTA_CANCELADA")}
-      >
-        <AltaPresupuesto emitir={emitir} />
-      </QModal>
+        <QModal
+          nombre="modal"
+          abierto={estado === "alta"}
+          onCerrar={emision("ALTA_CANCELADA")}
+        >
+          <AltaPresupuesto emitir={emitir} />
+        </QModal>
+      </maestro-detalle>
     </div>
   );
 };

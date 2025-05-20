@@ -23,7 +23,7 @@ export const AltaDireccion = ({
   };
 
   return (
-    <>
+    <div className="AltaDireccion">
       <h2>Nueva dirección</h2>
       <quimera-formulario>
         <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
@@ -42,6 +42,6 @@ export const AltaDireccion = ({
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

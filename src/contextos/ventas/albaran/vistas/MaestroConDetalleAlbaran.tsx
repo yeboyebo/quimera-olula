@@ -50,6 +50,9 @@ export const MaestroConDetalleAlbaran = () => {
         const albaran = payload as Albaran;
         albaranes.eliminar(albaran);
       },
+      CANCELAR_SELECCION: () => {
+        albaranes.limpiarSeleccion();
+      },
     },
   };
 
@@ -58,33 +61,37 @@ export const MaestroConDetalleAlbaran = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <h2>Albaranes</h2>
-        <Listado
-          metaTabla={metaTablaAlbaran}
-          entidades={albaranes.lista}
-          setEntidades={albaranes.setLista}
-          seleccionada={albaranes.seleccionada}
-          setSeleccionada={albaranes.seleccionar}
-          cargar={getAlbaranes}
-        />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
-      </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <DetalleAlbaran
-          albaranInicial={albaranes.seleccionada}
-          emitir={emitir}
-        />
-      </div>
+    <div className="Albaran">
+      <maestro-detalle name="albaranes">
+        <div className="Maestro">
+          <h2>Albaranes</h2>
+          <Listado
+            metaTabla={metaTablaAlbaran}
+            entidades={albaranes.lista}
+            setEntidades={albaranes.setLista}
+            seleccionada={albaranes.seleccionada}
+            setSeleccionada={albaranes.seleccionar}
+            cargar={getAlbaranes}
+          />
+          <div className="maestro-botones">
+            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
+          </div>
+        </div>
+        <div className="Detalle">
+          <DetalleAlbaran
+            albaranInicial={albaranes.seleccionada}
+            emitir={emitir}
+          />
+        </div>
 
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={emision("ALTA_CANCELADA")}
-      >
-        <AltaAlbaran publicar={emitir} />
-      </QModal>
+        <QModal
+          nombre="modal"
+          abierto={estado === "alta"}
+          onCerrar={emision("ALTA_CANCELADA")}
+        >
+          <AltaAlbaran publicar={emitir} />
+        </QModal>
+      </maestro-detalle>
     </div>
   );
 };

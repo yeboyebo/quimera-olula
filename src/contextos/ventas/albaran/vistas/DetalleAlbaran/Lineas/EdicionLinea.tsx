@@ -24,7 +24,7 @@ export const EdicionLinea = ({
   }, [lineaInicial, init]);
 
   return (
-    <>
+    <div className="EdicionLinea">
       <h2>Edición de línea</h2>
       <quimera-formulario>
         <Articulo {...uiProps("referencia", "descripcion")} />
@@ -41,6 +41,6 @@ export const EdicionLinea = ({
           Guardar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

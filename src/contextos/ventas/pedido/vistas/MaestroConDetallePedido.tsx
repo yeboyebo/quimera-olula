@@ -31,6 +31,9 @@ export const MaestroConDetallePedido = () => {
         const pedido = payload as Pedido;
         pedidos.modificar(pedido);
       },
+      CANCELAR_SELECCION: () => {
+        pedidos.limpiarSeleccion();
+      },
     },
   };
 
@@ -39,30 +42,34 @@ export const MaestroConDetallePedido = () => {
     emitir(evento, payload);
 
   return (
-    <div className="MaestroConDetalle" style={{ display: "flex", gap: "2rem" }}>
-      <div className="Maestro" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <h2>Pedidos</h2>
-        <Listado
-          metaTabla={appFactory().Ventas.metaTablaPedido}
-          entidades={pedidos.lista}
-          setEntidades={pedidos.setLista}
-          seleccionada={pedidos.seleccionada}
-          setSeleccionada={pedidos.seleccionar}
-          cargar={getPedidos}
-        />
-        <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
-      </div>
-      <div className="Detalle" style={{ flexBasis: "50%", overflow: "auto" }}>
-        <DetallePedido pedidoInicial={pedidos.seleccionada} emitir={emitir} />
-      </div>
+    <div className="Pedido">
+      <maestro-detalle>
+        <div className="Maestro">
+          <h2>Pedidos</h2>
+          <Listado
+            metaTabla={appFactory().Ventas.metaTablaPedido}
+            entidades={pedidos.lista}
+            setEntidades={pedidos.setLista}
+            seleccionada={pedidos.seleccionada}
+            setSeleccionada={pedidos.seleccionar}
+            cargar={getPedidos}
+          />
+          <div className="maestro-botones">
+            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
+          </div>
+        </div>
+        <div className="Detalle">
+          <DetallePedido pedidoInicial={pedidos.seleccionada} emitir={emitir} />
+        </div>
 
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={emision("ALTA_CANCELADA")}
-      >
-        <AltaPedido publicar={emitir} />
-      </QModal>
+        <QModal
+          nombre="modal"
+          abierto={estado === "alta"}
+          onCerrar={emision("ALTA_CANCELADA")}
+        >
+          <AltaPedido publicar={emitir} />
+        </QModal>
+      </maestro-detalle>
     </div>
   );
 };

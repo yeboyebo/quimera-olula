@@ -27,14 +27,10 @@ export const AltaPresupuesto = ({
     <div className="AltaPresupuesto">
       <h2>Nuevo Presupuesto</h2>
       <quimera-formulario>
-        <Cliente
-          {...nuevoPresupuesto.uiProps("cliente_id")}
-          nombre="alta_presupuesto_cliente_id"
-        />
+        <Cliente {...nuevoPresupuesto.uiProps("cliente_id")} />
         <DirCliente
           clienteId={nuevoPresupuesto.modelo.cliente_id}
           {...nuevoPresupuesto.uiProps("direccion_id")}
-          nombre="alta_presupuesto_direccion_id"
         />
         <QInput label="Empresa" {...nuevoPresupuesto.uiProps("empresa_id")} />
       </quimera-formulario>

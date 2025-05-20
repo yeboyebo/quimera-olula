@@ -1,10 +1,10 @@
-.Albaran .TabCliente {
-
+.Presupuesto .TabCliente {
     quimera-autocompletar[nombre="cliente_id"] {
         grid-column: span 9;
     }
 
     quimera-input[nombre="id_fiscal"] {
+
         grid-column: span 2;
     }
 
