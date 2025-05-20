@@ -1,0 +1,36 @@
+.AccionesRegla {
+    button {
+        border-radius: 15px;
+        padding: 8px 12px;
+        font-size: 16px;
+        cursor: pointer;
+        color: black;
+        transition: background-color 0.3s, transform 0.3s;
+        margin-left: 5px;
+    }
+
+    button:hover {
+        background-color: lightgrey;
+        transition: background-color 0.2s ease;
+        color: white;
+    }
+
+    .boton-permitir.activo {
+        background-color: #4caf50;
+        color: white;
+
+    }
+
+    .boton-cancelar.activo {
+        background-color: #f44336;
+        color: white;
+
+    }
+
+    .boton-borrar.activo {
+        background-color: #000000;
+        color: white;
+
+    }
+
+}

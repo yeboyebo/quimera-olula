@@ -25,14 +25,17 @@ quimera-tabla {
         text-align: left;
     }
 
-    tr {
+    .fila-par,
+    .detalle-extra {
         background-color: var(--color-fondo);
     }
 
+    .cebra,
+    .detalle-extra.cebra {
+        background-color: var(--color-deshabilitado);
+    }
+
     tbody tr {
-        &:nth-child(odd) {
-            background-color: var(--color-deshabilitado);
-        }
 
         &[data-seleccionada="true"] th,
         &[data-seleccionada="true"] td {

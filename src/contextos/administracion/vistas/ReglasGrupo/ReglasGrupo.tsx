@@ -1,43 +1,71 @@
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
+import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { Regla } from "../../diseño.ts";
-
-const metaTablaReglas = (emitirActualizarPermisos: (regla: Regla) => void) => [
-  { id: "id", cabecera: "Regla" },
-  { id: "descripcion", cabecera: "Descripción" },
-  {
-    id: "acciones",
-    cabecera: "Acciones",
-    render: (regla: Regla) => (
-      <button onClick={() => emitirActualizarPermisos(regla)}>
-        Actualizar Permisos
-      </button>
-    ),
-  },
-];
+import { Permiso, Regla } from "../../diseño.ts";
+import {
+  actualizarPermiso,
+  obtenerReglasAgrupadas,
+  obtenerSubreglas,
+} from "../../dominio.ts";
+import { AccionesRegla } from "./AccionesRegla.tsx";
+import "./ReglasGrupo.css";
+import { SubReglas } from "./SubReglas.tsx";
 
 type Estado = "lista" | "actualizando";
 
 export const ReglasGrupo = ({
   reglas,
   grupoId,
+  permisos,
 }: {
   reglas: ReturnType<typeof useLista<Regla>>;
   grupoId: string;
+  permisos: ReturnType<typeof useLista<Permiso>>;
 }) => {
+  const metaTablaReglas = (emitir: EmitirEvento) => [
+    { id: "id", cabecera: "Regla" },
+    { id: "descripcion", cabecera: "Descripción" },
+    {
+      id: "acciones",
+      cabecera: "Acciones",
+      render: (regla: Regla) => (
+        <AccionesRegla
+          regla={regla}
+          grupoId={grupoId}
+          emitir={emitir}
+          permisos={permisos.lista}
+        />
+      ),
+    },
+  ];
+
   const maquina: Maquina<Estado> = {
     lista: {
-      REGLA_SELECCIONADA: (payload: unknown) => {
+      ALTERNAR_SELECCION: (payload: unknown) => {
         const regla = payload as Regla;
+        if (reglas.seleccionada?.id === regla.id) {
+          reglas.limpiarSeleccion();
+          return "lista";
+        }
         reglas.seleccionar(regla);
       },
-      ACTUALIZAR_PERMISOS: async (payload: unknown) => {
+      PERMITIR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        console.log(
-          `Actualizando permisos para la regla ${regla.id} del grupo ${grupoId}`
-        );
-
+        actualizarPermiso(permisos, regla.id, grupoId, true);
+        console.log(`Permitir regla ${regla.id} del grupo ${grupoId}`);
+        return "lista";
+      },
+      CANCELAR_REGLA: (payload: unknown) => {
+        const regla = payload as Regla;
+        actualizarPermiso(permisos, regla.id, grupoId, false);
+        console.log(`Cancelar regla ${regla.id} del grupo ${grupoId}`);
+        return "lista";
+      },
+      BORRAR_REGLA: (payload: unknown) => {
+        const regla = payload as Regla;
+        actualizarPermiso(permisos, regla.id, grupoId, null);
+        console.log(`Borrar regla ${regla.id} del grupo ${grupoId}`);
         return "lista";
       },
     },
@@ -48,25 +76,38 @@ export const ReglasGrupo = ({
 
   const emitir = useMaquina(maquina, "lista", () => {});
 
-  const emitirActualizarPermisos = (regla: Regla) => {
-    emitir("ACTUALIZAR_PERMISOS", regla);
-  };
-
-  const reglasAgrupadas = reglas.lista.filter(
-    (regla) => !regla.id.includes("/")
-  );
+  const reglasAgrupadas = obtenerReglasAgrupadas(reglas.lista);
 
   return (
-    <div style={{ flexBasis: "50%", overflow: "auto" }}>
+    <div
+      className="ReglasGrupo"
+      style={{
+        flexBasis: "50%",
+        overflow: "hidden",
+        maxWidth: "50%",
+      }}
+    >
       <h2>Reglas</h2>
       <QTabla
-        metaTabla={metaTablaReglas(emitirActualizarPermisos)}
+        metaTabla={metaTablaReglas(emitir)}
         datos={reglasAgrupadas}
         cargando={false}
         seleccionadaId={reglas.seleccionada?.id}
-        onSeleccion={(regla) => emitir("REGLA_SELECCIONADA", regla)}
+        onSeleccion={(regla) => emitir("ALTERNAR_SELECCION", regla)}
         orden={{ id: "ASC" }}
         onOrdenar={() => null}
+        detalleExtra={(regla) => {
+          const subreglas = obtenerSubreglas(reglas.lista, regla.id);
+          return subreglas.length > 0 &&
+            reglas.seleccionada?.id === regla.id ? (
+            <SubReglas
+              reglas={subreglas}
+              permisos={permisos.lista}
+              emitir={emitir}
+              grupoId={grupoId}
+            />
+          ) : null;
+        }}
       />
     </div>
   );

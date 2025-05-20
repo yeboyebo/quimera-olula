@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Listado } from "../../../componentes/maestro/Listado.tsx";
 import { useLista } from "../../comun/useLista.ts";
-import { Grupo, Regla } from "../diseño.ts";
-import { getGrupos, getReglas } from "../infraestructura.ts";
+import { Grupo, Permiso, Regla } from "../diseño.ts";
+import { getGrupos, getPermisos, getReglas } from "../infraestructura.ts";
 import { ReglasGrupo } from "./ReglasGrupo/ReglasGrupo.tsx";
 
 const metaTablaGrupos = [
@@ -13,18 +13,13 @@ const metaTablaGrupos = [
 export const MaestroConDetalleGruposReglas = () => {
   const grupos = useLista<Grupo>([]);
   const reglas = useLista<Regla>([]);
+  const permisos = useLista<Permiso>([]);
 
   useEffect(() => {
     getGrupos().then(grupos.setLista);
+    getReglas().then(reglas.setLista);
+    getPermisos().then(permisos.setLista);
   }, []);
-
-  useEffect(() => {
-    if (grupos.seleccionada) {
-      getReglas().then(reglas.setLista);
-    } else {
-      reglas.setLista([]);
-    }
-  }, [grupos.seleccionada]);
 
   return (
     <div style={{ display: "flex", gap: "2rem", overflow: "hidden" }}>
@@ -39,7 +34,11 @@ export const MaestroConDetalleGruposReglas = () => {
           cargar={getGrupos}
         />
       </div>
-      <ReglasGrupo reglas={reglas} grupoId={grupos.seleccionada?.id || ""} />
+      <ReglasGrupo
+        reglas={reglas}
+        permisos={permisos}
+        grupoId={grupos.seleccionada?.id || ""}
+      />
     </div>
   );
 };

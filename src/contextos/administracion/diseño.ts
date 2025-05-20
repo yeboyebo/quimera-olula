@@ -10,3 +10,10 @@ export interface Regla extends Entidad {
     descripcion: string;
     grupo: string;
 }
+
+export interface Permiso extends Entidad {
+    idpermission: number;
+    idrule: string;
+    id: string;
+    value: boolean | null;
+}

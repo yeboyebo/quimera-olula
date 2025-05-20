@@ -9,6 +9,6 @@ export const getReglas = async (): Promise<Regla[]> => {
     return rules;
 };
 
-export const getPermisos = async (idRegla: string) => {
-    return permisos.filter((permiso) => permiso.idrule === idRegla);
+export const getPermisos = async () => {
+    return permisos;
 };

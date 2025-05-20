@@ -1,0 +1,35 @@
+.SubReglas {
+    .accion-caja {
+        display: block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: bold;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .accion-get {
+        background-color: #2196f3;
+    }
+
+    .accion-post {
+        background-color: #4caf50;
+    }
+
+    .accion-patch {
+        background-color: #ff9800;
+    }
+
+    .accion-delete {
+        background-color: #f44336;
+    }
+
+    .accion-default {
+        background-color: #000000;
+    }
+
+    tr,
+    td {
+        background-color: inherit !important;
+    }
+}

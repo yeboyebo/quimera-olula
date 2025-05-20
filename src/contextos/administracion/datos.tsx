@@ -265,9 +265,15 @@ export const permisos = [
     value: true,
   },
   {
+    idpermission: 60,
+    idrule: "presupuestoscli",
+    id: "administracion",
+    value: false,
+  },
+  {
     idpermission: 61,
     idrule: "presupuestoscli/delete",
     id: "almacen",
-    value: null,
+    value: false,
   },
 ];

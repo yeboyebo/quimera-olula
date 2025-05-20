@@ -65,6 +65,8 @@ export type QTablaProps<T extends Entidad> = {
   onSeleccion?: (entidad: T) => void;
   orden: Orden;
   onOrdenar?: (clave: string) => void;
+  detalleExtra?: (entidad: T) => ReactNode;
+  mostrarCabecera?: boolean;
 };
 
 export const QTabla = <T extends Entidad>({
@@ -75,23 +77,38 @@ export const QTabla = <T extends Entidad>({
   onSeleccion,
   orden,
   onOrdenar,
+  detalleExtra,
+  mostrarCabecera = true,
 }: QTablaProps<T>) => {
   return (
     <quimera-tabla>
       <table>
-        <thead>
-          <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
-        </thead>
+        {mostrarCabecera && (
+          <thead>
+            <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
+          </thead>
+        )}
         <tbody data-cargando={cargando}>
-          {datos.map((entidad: T) => (
-            <tr
-              key={entidad.id}
-              onClick={() => onSeleccion && onSeleccion(entidad)}
-              data-seleccionada={entidad.id === seleccionadaId}
-            >
-              {fila(entidad, metaTabla)}
-            </tr>
-          ))}
+          {datos.map((entidad: T, index: number) => {
+            const filaClase = index % 2 === 0 ? "cebra" : undefined;
+            return (
+              <>
+                <tr
+                  key={entidad.id}
+                  className={filaClase}
+                  onClick={() => onSeleccion && onSeleccion(entidad)}
+                  data-seleccionada={entidad.id === seleccionadaId}
+                >
+                  {fila(entidad, metaTabla)}
+                </tr>
+                {detalleExtra && (
+                  <tr className={`detalle-extra ${filaClase || ""}`}>
+                    {detalleExtra(entidad)}
+                  </tr>
+                )}
+              </>
+            );
+          })}
         </tbody>
       </table>
     </quimera-tabla>
