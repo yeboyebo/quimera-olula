@@ -7,28 +7,28 @@
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         font-weight: bold;
-        color: #ffffff;
+        color: var(--blanco);
         text-align: center;
     }
 
     .accion-get {
-        background-color: #2196f3;
+        background-color: var(--color-primario);
     }
 
     .accion-post {
-        background-color: #4caf50;
+        background-color: var(--color-exito);
     }
 
     .accion-patch {
-        background-color: #ff9800;
+        background-color: var(--naranja-5);
     }
 
     .accion-delete {
-        background-color: #f44336;
+        background-color: var(--color-error);
     }
 
     .accion-default {
-        background-color: #000000;
+        background-color: var(--negro);
     }
 
     .cebra {

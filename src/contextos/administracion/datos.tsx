@@ -253,6 +253,12 @@ export const rules: Regla[] = [
 
 export const permisos = [
   {
+    idpermission: 2,
+    idrule: "general",
+    id: "almacen",
+    value: false,
+  },
+  {
     idpermission: 3,
     idrule: "albaranescli/delete",
     id: "almacen",

@@ -9,17 +9,18 @@
     .AccionesReglas button {
         padding: 0.5rem 1rem;
         font-size: 1rem;
-        border: 1px solid #ccc;
+        border: 1px solid var(--blanco);
         cursor: pointer;
     }
 
     .AccionesReglas button:hover {
-        background-color: #e0e0e0;
+        background-color: var(--gris-2);
         transition: background-color 0.2s ease;
     }
 
     .AccionesReglas button:active {
-        background-color: #d0d0d0;
+        background-color: var(--gris-3);
+        transition: background-color 0.2s ease;
     }
 
     h2 {
