@@ -1,4 +1,7 @@
 .SubReglas {
+    width: 100%;
+    padding: 0;
+
     .accion-caja {
         display: block;
         padding: 0.25rem 0.5rem;
@@ -28,8 +31,20 @@
         background-color: #000000;
     }
 
-    tr,
-    td {
-        background-color: inherit !important;
+    .cebra {
+        background-color: inherit;
     }
+
+    td.id {
+        width: 20%;
+    }
+
+    td.descripcion {
+        white-space: normal;
+    }
+
+    td.acciones {
+        width: 20%;
+    }
+
 }

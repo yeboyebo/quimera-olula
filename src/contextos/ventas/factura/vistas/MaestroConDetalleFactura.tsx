@@ -10,7 +10,6 @@ import { getFacturas } from "../infraestructura.ts";
 
 import { AltaFactura } from "./AltaFactura.tsx";
 
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 

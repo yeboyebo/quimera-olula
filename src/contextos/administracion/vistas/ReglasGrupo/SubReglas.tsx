@@ -1,6 +1,6 @@
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "../../../comun/diseño.ts";
-import { Permiso, Regla } from "../../diseño.ts";
+import { Grupo, Permiso, Regla } from "../../diseño.ts";
 import { obtenerTextoYClaseAccion } from "../../dominio.ts";
 import { AccionesRegla } from "./AccionesRegla.tsx";
 import "./SubReglas.css";
@@ -8,16 +8,16 @@ import "./SubReglas.css";
 export const SubReglas = ({
   reglas,
   permisos,
-  grupoId,
+  grupoSeleccionado,
   emitir = () => {},
 }: {
   permisos: Permiso[];
   reglas: Regla[];
-  grupoId: string;
+  grupoSeleccionado: Grupo | null;
   emitir?: EmitirEvento;
 }) => {
   return (
-    <td className="SubReglas">
+    <td colSpan={2} className="SubReglas" style={{ padding: 0 }}>
       <QTabla
         metaTabla={[
           {
@@ -39,7 +39,7 @@ export const SubReglas = ({
                 regla={regla}
                 permisos={permisos}
                 emitir={emitir}
-                grupoId={grupoId}
+                grupoId={grupoSeleccionado?.id || ""}
               />
             ),
           },

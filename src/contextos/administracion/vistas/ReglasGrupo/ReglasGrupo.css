@@ -1,4 +1,11 @@
 .ReglasGrupo {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+    max-width: 50%;
+    overflow: hidden;
+    box-sizing: border-box;
+
     .AccionesReglas button {
         padding: 0.5rem 1rem;
         font-size: 1rem;
@@ -13,6 +20,17 @@
 
     .AccionesReglas button:active {
         background-color: #d0d0d0;
+    }
+
+    h2 {
+        margin: 0 0 1rem 0;
+    }
+
+    quimera-tabla {
+
+        table {
+            table-layout: fixed;
+        }
     }
 
 }

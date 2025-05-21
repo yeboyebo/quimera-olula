@@ -37,7 +37,7 @@ export const MaestroConDetalleGruposReglas = () => {
       <ReglasGrupo
         reglas={reglas}
         permisos={permisos}
-        grupoId={grupos.seleccionada?.id || ""}
+        grupoSeleccionado={grupos.seleccionada}
       />
     </div>
   );

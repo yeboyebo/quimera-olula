@@ -68,3 +68,32 @@ export const actualizarPermiso = (
         });
     }
 };
+
+export const calcularPermiso = (
+    permisos: Permiso[],
+    grupoId: string,
+    reglaId: string
+): "true" | "false" | "null" => {
+    const permisoActual = permisos.find(
+        (p) =>
+            p.id.toUpperCase() === grupoId.toUpperCase() && p.idrule === reglaId
+    );
+    return permisoActual
+        ? permisoActual.value === true
+            ? "true"
+            : permisoActual.value === false
+                ? "false"
+                : "null"
+        : "null";
+};
+
+export const calcularClasesExtra = (reglaId: string): string => {
+    if (!reglaId.includes("/")) {
+        return "";
+    }
+
+    const esAccion = !["/get", "/patch", "/post", "/delete"].some((accion) =>
+        reglaId.includes(accion)
+    );
+    return esAccion ? "accion" : "";
+};

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { Permiso, Regla } from "../../diseño.ts";
+import { calcularClasesExtra, calcularPermiso } from "../../dominio.ts";
 import "./AccionesRegla.css";
 
 export const AccionesRegla = ({
@@ -15,35 +16,30 @@ export const AccionesRegla = ({
   emitir: EmitirEvento;
 }) => {
   const [permiso, setPermiso] = useState<"true" | "false" | "null">("null");
+
   useEffect(() => {
-    const permisoActual = permisos.find(
-      (p) =>
-        p.id.toUpperCase() === grupoId.toUpperCase() && p.idrule === regla.id
-    );
-    setPermiso(
-      permisoActual
-        ? permisoActual.value === true
-          ? "true"
-          : permisoActual.value === false
-          ? "false"
-          : "null"
-        : "null"
-    );
+    setPermiso(calcularPermiso(permisos, grupoId, regla.id));
   }, [grupoId, permisos, regla.id]);
+
+  const clasesExtra = calcularClasesExtra(regla.id);
 
   return (
     <div className="AccionesRegla">
       <button
-        className={`boton-permitir ${permiso === "true" ? "activo" : ""}`}
+        className={`boton-nulo ${
+          permiso === "null" ? "activo" : ""
+        } ${clasesExtra}`}
         onClick={(event) => {
           event.stopPropagation();
-          emitir("PERMITIR_REGLA", regla);
+          emitir("BORRAR_REGLA", regla);
         }}
       >
-        v
+        -
       </button>
       <button
-        className={`boton-cancelar ${permiso === "false" ? "activo" : ""}`}
+        className={`boton-cancelar ${
+          permiso === "false" ? "activo" : ""
+        } ${clasesExtra}`}
         onClick={(event) => {
           event.stopPropagation();
           emitir("CANCELAR_REGLA", regla);
@@ -52,13 +48,15 @@ export const AccionesRegla = ({
         c
       </button>
       <button
-        className={`boton-borrar ${permiso === "null" ? "activo" : ""}`}
+        className={`boton-permitir ${
+          permiso === "true" ? "activo" : ""
+        } ${clasesExtra}`}
         onClick={(event) => {
           event.stopPropagation();
-          emitir("BORRAR_REGLA", regla);
+          emitir("PERMITIR_REGLA", regla);
         }}
       >
-        -
+        v
       </button>
     </div>
   );

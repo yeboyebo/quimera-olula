@@ -2,7 +2,7 @@ import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { Permiso, Regla } from "../../diseño.ts";
+import { Grupo, Permiso, Regla } from "../../diseño.ts";
 import {
   actualizarPermiso,
   obtenerReglasAgrupadas,
@@ -16,15 +16,14 @@ type Estado = "lista" | "actualizando";
 
 export const ReglasGrupo = ({
   reglas,
-  grupoId,
+  grupoSeleccionado,
   permisos,
 }: {
   reglas: ReturnType<typeof useLista<Regla>>;
-  grupoId: string;
+  grupoSeleccionado: Grupo | null;
   permisos: ReturnType<typeof useLista<Permiso>>;
 }) => {
   const metaTablaReglas = (emitir: EmitirEvento) => [
-    { id: "id", cabecera: "Regla" },
     { id: "descripcion", cabecera: "Descripción" },
     {
       id: "acciones",
@@ -32,7 +31,7 @@ export const ReglasGrupo = ({
       render: (regla: Regla) => (
         <AccionesRegla
           regla={regla}
-          grupoId={grupoId}
+          grupoId={grupoSeleccionado?.id || ""}
           emitir={emitir}
           permisos={permisos.lista}
         />
@@ -52,20 +51,43 @@ export const ReglasGrupo = ({
       },
       PERMITIR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        actualizarPermiso(permisos, regla.id, grupoId, true);
-        console.log(`Permitir regla ${regla.id} del grupo ${grupoId}`);
+        if (grupoSeleccionado?.id) {
+          actualizarPermiso(
+            permisos,
+            regla.id,
+            grupoSeleccionado?.id ?? "",
+            true
+          );
+          console.log(
+            `Permitir regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
+          );
+        }
         return "lista";
       },
       CANCELAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        actualizarPermiso(permisos, regla.id, grupoId, false);
-        console.log(`Cancelar regla ${regla.id} del grupo ${grupoId}`);
+        actualizarPermiso(
+          permisos,
+          regla.id,
+          grupoSeleccionado?.id ?? "",
+          false
+        );
+        console.log(
+          `Cancelar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
+        );
         return "lista";
       },
       BORRAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        actualizarPermiso(permisos, regla.id, grupoId, null);
-        console.log(`Borrar regla ${regla.id} del grupo ${grupoId}`);
+        actualizarPermiso(
+          permisos,
+          regla.id,
+          grupoSeleccionado?.id ?? "",
+          null
+        );
+        console.log(
+          `Borrar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
+        );
         return "lista";
       },
     },
@@ -79,14 +101,7 @@ export const ReglasGrupo = ({
   const reglasAgrupadas = obtenerReglasAgrupadas(reglas.lista);
 
   return (
-    <div
-      className="ReglasGrupo"
-      style={{
-        flexBasis: "50%",
-        overflow: "hidden",
-        maxWidth: "50%",
-      }}
-    >
+    <div className="ReglasGrupo">
       <h2>Reglas</h2>
       <QTabla
         metaTabla={metaTablaReglas(emitir)}
@@ -96,6 +111,7 @@ export const ReglasGrupo = ({
         onSeleccion={(regla) => emitir("ALTERNAR_SELECCION", regla)}
         orden={{ id: "ASC" }}
         onOrdenar={() => null}
+        mostrarCabecera={false}
         detalleExtra={(regla) => {
           const subreglas = obtenerSubreglas(reglas.lista, regla.id);
           return subreglas.length > 0 &&
@@ -104,7 +120,7 @@ export const ReglasGrupo = ({
               reglas={subreglas}
               permisos={permisos.lista}
               emitir={emitir}
-              grupoId={grupoId}
+              grupoSeleccionado={grupoSeleccionado}
             />
           ) : null;
         }}

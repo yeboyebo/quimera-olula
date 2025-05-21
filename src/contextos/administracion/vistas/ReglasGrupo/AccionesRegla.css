@@ -1,12 +1,17 @@
 .AccionesRegla {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+    gap: 5px;
+
     button {
+        border-color: rgba(0, 0, 0, 0.23);
         border-radius: 15px;
         padding: 8px 12px;
         font-size: 16px;
         cursor: pointer;
         color: black;
-        transition: background-color 0.3s, transform 0.3s;
-        margin-left: 5px;
+        transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
     }
 
     button:hover {
@@ -18,19 +23,24 @@
     .boton-permitir.activo {
         background-color: #4caf50;
         color: white;
-
     }
 
     .boton-cancelar.activo {
         background-color: #f44336;
         color: white;
-
     }
 
-    .boton-borrar.activo {
-        background-color: #000000;
+    .boton-nulo.activo {
+        background-color: #757575;
         color: white;
+    }
 
+    .boton-nulo.activo.accion~.boton-cancelar {
+        border: 2px solid #f44336;
+    }
+
+    .boton-nulo.activo:not(.accion)~.boton-permitir {
+        border: 2px solid #4caf50;
     }
 
 }
