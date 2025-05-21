@@ -28,3 +28,14 @@ maestro-detalle {
         cursor: pointer;
     }
 }
+
+@media (max-width: 768px) {
+    maestro-detalle {
+        flex-direction: column;
+    }
+
+    .Maestro,
+    .Detalle {
+        flex-basis: 100%;
+    }
+}
