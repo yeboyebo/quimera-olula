@@ -32,6 +32,10 @@ export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<str
   return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
 }
 
+export const borrarPresupuesto = async (id: string): Promise<void> => {
+  await RestAPI.delete(`${baseUrl}/${id}`);
+}
+
 export const patchCambiarAgente = async (id: string, agenteId: string) => {
   await RestAPI.patch(`${baseUrl}/${id}`, { cambios: { agente_id: agenteId } });
 }

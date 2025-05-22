@@ -1,71 +1,42 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import {
-  campoModeloAInput,
-  initEstadoModelo,
-  makeReductor,
-  modeloEsValido,
-} from "../../../comun/dominio.ts";
-import { CrmContacto } from "../diseño.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { metaNuevoCrmContacto, nuevoCrmContactoVacio } from "../dominio.ts";
-import { postCrmContacto } from "../infraestructura.ts";
+import { getCrmContacto, postCrmContacto } from "../infraestructura.ts";
 import "./TabCuentasBanco.css";
 
 interface AltaCrmContactosProps {
   clienteId: string;
-  onContactoCreado?: (contacto: CrmContacto) => void;
-  onCancelar: () => void;
+  emitir: (evento: string, payload?: unknown) => void;
 }
 
-export const AltaCrmContactos = ({
-  onContactoCreado = () => {},
-  onCancelar,
-}: AltaCrmContactosProps) => {
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaNuevoCrmContacto),
-    initEstadoModelo(nuevoCrmContactoVacio)
+export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
+  const { modelo, uiProps, valido } = useModelo(
+    metaNuevoCrmContacto,
+    nuevoCrmContactoVacio
   );
 
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
-
-  const getProps = (campo: string) => {
-    return campoModeloAInput(estado, campo);
-  };
-
   const guardar = async () => {
-    const id = await postCrmContacto(estado.valor);
-    onContactoCreado({ ...estado.valor, id });
+    const id = await postCrmContacto(modelo);
+    emitir("CONTACTO_CREADO", await getCrmContacto(id));
   };
 
   return (
     <div className="alta-crm-contactos">
       <h2>Nuevo Contacto CRM</h2>
       <quimera-formulario>
-        <QInput
-          label="Nombre"
-          onChange={setCampo("nombre")}
-          {...getProps("nombre")}
-        />
-        <QInput
-          label="Email"
-          onChange={setCampo("email")}
-          {...getProps("email")}
-        />
+        <QInput label="Nombre" {...uiProps("nombre")} />
+        <QInput label="Email" {...uiProps("email")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!modeloEsValido(metaNuevoCrmContacto)(estado.valor)}
-        >
+        <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
         </QBoton>
-        <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => emitir("ALTA_CANCELADA")}
+        >
           Cancelar
         </QBoton>
       </div>

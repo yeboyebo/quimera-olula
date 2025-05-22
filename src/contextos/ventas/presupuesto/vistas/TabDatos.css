@@ -2,8 +2,12 @@ quimera-date[nombre="fecha"] {
     grid-column: span 2;
 }
 
+quimera-date[nombre="fecha_salida"] {
+    grid-column: span 2;
+}
+
 div[id="espacio_fecha"] {
-    grid-column: span 10;
+    grid-column: span 8;
 }
 
 quimera-select[nombre="divisa_id"] {

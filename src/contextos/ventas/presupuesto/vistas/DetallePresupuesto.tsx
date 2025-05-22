@@ -1,23 +1,29 @@
+import { useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento, Entidad } from "../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Presupuesto } from "../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
-import { aprobarPresupuesto, getPresupuesto, patchPresupuesto } from "../infraestructura.ts";
+import {
+  aprobarPresupuesto,
+  borrarPresupuesto,
+  getPresupuesto,
+  patchPresupuesto,
+} from "../infraestructura.ts";
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas.tsx";
 import { TabCliente } from "./TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-
 type ParamOpcion = {
   valor: string;
-  descripcion?: string
+  descripcion?: string;
 };
 export type ValorControl = null | string | ParamOpcion;
 type Estado = "defecto";
@@ -27,18 +33,19 @@ export const DetallePresupuesto = ({
   emitir = () => {},
 }: {
   presupuestoInicial?: Presupuesto | null;
-  emitir?: EmitirEvento
+  emitir?: EmitirEvento;
 }) => {
   const params = useParams();
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+    "edicion"
+  );
 
   const presupuestoId = presupuestoInicial?.id ?? params.id;
   const titulo = (presupuesto: Entidad) => presupuesto.codigo as string;
 
-  const ctxPresupuesto = useModelo(
-    metaPresupuesto,
-    presupuestoVacio()
-  );
+  const ctxPresupuesto = useModelo(metaPresupuesto, presupuestoVacio());
   const { modelo, init } = ctxPresupuesto;
+
 
   const maquina: Maquina<Estado> = {
     defecto: {
@@ -57,10 +64,11 @@ export const DetallePresupuesto = ({
   }
   const emitirPresupuesto = useMaquina(maquina, 'defecto', () => {});
 
+
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
     init(nuevoPresupuesto);
-    emitir('PRESUPUESTO_CAMBIADO', nuevoPresupuesto);
+    emitir("PRESUPUESTO_CAMBIADO", nuevoPresupuesto);
   };
 
   return (
@@ -73,7 +81,7 @@ export const DetallePresupuesto = ({
     >
       {!!presupuestoId && (
         <>
-          { !modelo.aprobado && (
+          {!modelo.aprobado && (
             <div className="botones maestro-botones ">
               <QBoton
                 onClick={() => emitirPresupuesto('APROBAR_INICIADO')}
@@ -95,15 +103,14 @@ export const DetallePresupuesto = ({
                   />
                 }
               />,
-              <Tab key="tab-3" label="Observaciones" children={
-                  <TabObservaciones 
-                    ctxPresupuesto={ctxPresupuesto}
-                  />
-                }
+              <Tab
+                key="tab-3"
+                label="Observaciones"
+                children={<TabObservaciones ctxPresupuesto={ctxPresupuesto} />}
               />,
             ]}
           ></Tabs>
-          { ctxPresupuesto.modificado && (
+          {ctxPresupuesto.modificado && (
             <div className="botones maestro-botones ">
               <QBoton
                 onClick={() => emitirPresupuesto('GUARDAR_INICIADO')}
@@ -172,6 +179,14 @@ export const DetallePresupuesto = ({
           <Lineas
             presupuesto={ctxPresupuesto}
             onCabeceraModificada={recargarCabecera}
+          />
+          <QModalConfirmacion
+            nombre="borrarPresupuesto"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este presupuesto?"
+            onCerrar={() => setEstado("edicion")}
+            onAceptar={onBorrarConfirmado}
           />
         </>
       )}

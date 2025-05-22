@@ -2,15 +2,18 @@ import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
+import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { useLista } from "../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { CrmContacto } from "../diseño.ts";
 import {
   deleteCrmContacto,
-  getCrmContactos,
+  desvincularContactoCliente,
+  getCrmContactosCliente,
   vincularContactoCliente,
 } from "../infraestructura.ts";
 import { AltaCrmContactos } from "./AltaCrmContactos.tsx";
 import { EdicionCrmContactos } from "./EdicionCrmContactos.tsx";
-import "./TabCrmContactos.css";
 
 const metaTablaCrmContactos = [
   { id: "id", cabecera: "ID" },
@@ -18,16 +21,17 @@ const metaTablaCrmContactos = [
   { id: "email", cabecera: "Email" },
 ];
 
+type Estado = "lista" | "alta" | "edicion" | "asociar" | "confirmarBorrado";
+
 export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
-  const [modo, setModo] = useState<"lista" | "alta" | "edicion">("lista");
-  const [contactos, setContactos] = useState<CrmContacto[]>([]);
-  const [seleccionada, setSeleccionada] = useState<CrmContacto | null>(null);
+  const contactos = useLista<CrmContacto>([]);
   const [cargando, setCargando] = useState(true);
+  const [estado, setEstado] = useState<Estado>("lista");
 
   const cargarContactos = useCallback(async () => {
     setCargando(true);
-    const contactos = await getCrmContactos(clienteId);
-    setContactos(contactos);
+    const nuevosContactos = await getCrmContactosCliente(clienteId);
+    contactos.setLista(nuevosContactos);
     setCargando(false);
   }, [clienteId]);
 
@@ -35,82 +39,120 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     if (clienteId) cargarContactos();
   }, [clienteId, cargarContactos]);
 
-  const onGuardarNuevoContacto = async (contacto: CrmContacto) => {
-    await vincularContactoCliente(contacto.id, clienteId);
-    setContactos([contacto, ...contactos]);
-    setModo("lista");
+  const maquina: Maquina<Estado> = {
+    lista: {
+      ALTA_SOLICITADA: "alta",
+      EDICION_SOLICITADA: "edicion",
+      CONTACTO_SELECCIONADO: (payload: unknown) => {
+        const contacto = payload as CrmContacto;
+        contactos.seleccionar(contacto);
+      },
+      CONFIRMAR_BORRADO: "confirmarBorrado",
+      ELIMINAR_ASOCIACION: async () => {
+        if (!contactos.seleccionada) return;
+        await desvincularContactoCliente(contactos.seleccionada.id, clienteId);
+      },
+      ASOCIAR_SOLICITADO: "asociar",
+    },
+    alta: {
+      CONTACTO_CREADO: async (payload: unknown) => {
+        const nuevoContacto = payload as CrmContacto;
+        contactos.añadir(nuevoContacto);
+        await vincularContactoCliente(nuevoContacto.id, clienteId);
+        return "lista" as Estado;
+      },
+      ALTA_CANCELADA: "lista",
+    },
+    edicion: {
+      CONTACTO_ACTUALIZADO: async (payload: unknown) => {
+        const contactoActualizado = payload as CrmContacto;
+        contactos.modificar(contactoActualizado);
+        return "lista" as Estado;
+      },
+      EDICION_CANCELADA: "lista",
+    },
+    asociar: {
+      ASOCIAR_CANCELADO: "lista",
+    },
+    confirmarBorrado: {
+      BORRADO_SOLICITADO: async () => {
+        if (!contactos.seleccionada) return;
+        await deleteCrmContacto(contactos.seleccionada.id);
+        contactos.eliminar(contactos.seleccionada);
+        return "lista" as Estado;
+      },
+      BORRADO_CANCELADO: "lista",
+    },
   };
 
-  const onGuardarEdicionContacto = async (contacto: CrmContacto) => {
-    setContactos(contactos.map((c) => (c.id === contacto.id ? contacto : c)));
-    setSeleccionada(null);
-    setModo("lista");
-  };
-
-  const onBorrarContacto = async () => {
-    if (!seleccionada) return;
-
-    await deleteCrmContacto(seleccionada.id);
-    setContactos(contactos.filter((c) => c.id !== seleccionada.id));
-    setSeleccionada(null);
-  };
-
-  const onCancelar = () => {
-    setSeleccionada(null);
-    setModo("lista");
-  };
+  const emitir = useMaquina(maquina, estado, setEstado);
 
   return (
     <>
-      <>
-        <div className="acciones maestro-botones">
-          <QBoton onClick={() => setModo("alta")}>Nuevo</QBoton>
-          <QBoton
-            onClick={() => seleccionada && setModo("edicion")}
-            deshabilitado={!seleccionada}
-          >
-            Editar
-          </QBoton>
-          <QBoton onClick={onBorrarContacto} deshabilitado={!seleccionada}>
-            Borrar
-          </QBoton>
-        </div>
-        <QTabla
-          metaTabla={metaTablaCrmContactos}
-          datos={contactos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={setSeleccionada}
-          orden={{ id: "ASC" }}
-          onOrdenar={() => null}
-        />
-      </>
-
+      <div className="detalle-contacto-tab-contenido maestro-botones">
+        <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nuevo</QBoton>
+        <QBoton
+          onClick={() => contactos.seleccionada && emitir("EDICION_SOLICITADA")}
+          deshabilitado={!contactos.seleccionada}
+        >
+          Editar
+        </QBoton>
+        <QBoton
+          onClick={() => emitir("CONFIRMAR_BORRADO")}
+          deshabilitado={!contactos.seleccionada}
+        >
+          Borrar
+        </QBoton>
+        <QBoton
+          onClick={() => emitir("ELIMINAR_ASOCIACION")}
+          deshabilitado={!contactos.seleccionada}
+        >
+          Eliminar asociación
+        </QBoton>
+        <QBoton onClick={() => emitir("ASOCIAR_SOLICITADO")}>Asociar</QBoton>
+      </div>
+      <QTabla
+        metaTabla={metaTablaCrmContactos}
+        datos={contactos.lista}
+        cargando={cargando}
+        seleccionadaId={contactos.seleccionada?.id}
+        onSeleccion={(contacto) => emitir("CONTACTO_SELECCIONADO", contacto)}
+        orden={{ id: "ASC" }}
+        onOrdenar={() => null}
+      />
+      <QModalConfirmacion
+        nombre="borrarContacto"
+        abierto={estado === "confirmarBorrado"}
+        titulo="Confirmar borrar"
+        mensaje="¿Está seguro de que desea borrar este contacto?"
+        onCerrar={() => emitir("BORRADO_CANCELADO")}
+        onAceptar={() => emitir("BORRADO_SOLICITADO")}
+      />
       <QModal
         nombre="altaCrmContacto"
-        abierto={modo === "alta"}
-        onCerrar={onCancelar}
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <AltaCrmContactos
-          clienteId={clienteId}
-          onContactoCreado={onGuardarNuevoContacto}
-          onCancelar={onCancelar}
-        />
+        <AltaCrmContactos clienteId={clienteId} emitir={emitir} />
       </QModal>
-
       <QModal
         nombre="edicionCrmContacto"
-        abierto={modo === "edicion"}
-        onCerrar={onCancelar}
+        abierto={estado === "edicion"}
+        onCerrar={() => emitir("EDICION_CANCELADA")}
       >
-        {seleccionada && (
+        {contactos.seleccionada && (
           <EdicionCrmContactos
-            clienteId={clienteId}
-            contacto={seleccionada}
-            onContactoActualizado={onGuardarEdicionContacto}
-            onCancelar={onCancelar}
+            contacto={contactos.seleccionada}
+            emitir={emitir}
           />
         )}
+      </QModal>
+      <QModal
+        nombre="asociarCrmContacto"
+        abierto={estado === "asociar"}
+        onCerrar={() => emitir("ASOCIAR_CANCELADO")}
+      >
+        <p>Seleccionar contacto para asociar.</p>
       </QModal>
     </>
   );

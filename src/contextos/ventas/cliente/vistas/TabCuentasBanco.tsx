@@ -2,11 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import {
-  getElemento,
-  quitarEntidadDeLista,
-  refrescarSeleccionada
-} from "../../../comun/dominio.ts";
+import { EmitirEvento } from "../../../comun/diseño.ts";
+import { useLista } from "../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../comun/useModelo.ts";
 import { Cliente, CuentaBanco } from "../diseño.ts";
 import {
@@ -24,76 +22,84 @@ const metaTablaCuentasBanco = [
   { id: "bic", cabecera: "BIC" },
 ];
 
+type Estado = "lista" | "alta" | "edicion";
+
 interface TabCuentasBancoProps {
   cliente: HookModelo<Cliente>;
-  onEntidadActualizada: (entidad: Cliente) => void;
+  emitirCliente: EmitirEvento;
 }
 
-export const TabCuentasBanco = ({
-  cliente,
-}: TabCuentasBancoProps) => {
-
+export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
   const { modelo, dispatch } = cliente;
-
-  const [modo, setModo] = useState<"lista" | "alta" | "edicion">("lista");
-  const [cuentas, setCuentas] = useState<CuentaBanco[]>([]);
-  const [seleccionada, setSeleccionada] = useState<string | undefined>(undefined);
+  const cuentas = useLista<CuentaBanco>([]);
   const [cargando, setCargando] = useState(true);
+  const [estado, setEstado] = useState<Estado>("lista");
 
   const cargarCuentas = useCallback(async () => {
     setCargando(true);
-    const cuentas = await getCuentasBanco(modelo.id);
-    setCuentas(cuentas);
-    if (seleccionada) {
-      refrescarSeleccionada(cuentas, seleccionada, setSeleccionada);
-    }
+    const nuevasCuentas = await getCuentasBanco(modelo.id);
+    cuentas.setLista(nuevasCuentas);
     setCargando(false);
-  }, [modelo.id, seleccionada]);
+  }, [modelo.id]); // Remove `cuentas` from dependencies to avoid infinite loop
 
   useEffect(() => {
     if (modelo.id) cargarCuentas();
   }, [modelo.id, cargarCuentas]);
 
-  const onDomiciliarCuenta = async () => {
-    if (!seleccionada) return;
-
-    await domiciliarCuenta(modelo.id, seleccionada);
-    dispatch({
-      type: "set_campo",
-      payload: { campo: "cuenta_domiciliada", valor: seleccionada }
-    });
-    // setCampo("cuenta_domiciliada")(seleccionada);
-    // setSeleccionada(null);
+  const maquina: Maquina<Estado> = {
+    lista: {
+      ALTA_SOLICITADA: "alta",
+      EDICION_SOLICITADA: "edicion",
+      CUENTA_SELECCIONADA: (payload: unknown) => {
+        const cuenta = payload as CuentaBanco;
+        cuentas.seleccionar(cuenta);
+      },
+      BORRADO_SOLICITADO: async () => {
+        if (!cuentas.seleccionada) return;
+        await deleteCuentaBanco(modelo.id, cuentas.seleccionada.id);
+        cuentas.eliminar(cuentas.seleccionada);
+      },
+      DOMICILIAR_SOLICITADO: async () => {
+        if (!cuentas.seleccionada) return;
+        await domiciliarCuenta(modelo.id, cuentas.seleccionada.id);
+        dispatch({
+          type: "set_campo",
+          payload: {
+            campo: "cuenta_domiciliada",
+            valor: cuentas.seleccionada.id,
+          },
+        });
+      },
+      DESMARCAR_DOMICILIACION: async () => {
+        await desmarcarCuentaDomiciliacion(modelo.id);
+      },
+    },
+    alta: {
+      CUENTA_CREADA: async (payload: unknown) => {
+        const nuevaCuenta = payload as CuentaBanco;
+        cuentas.añadir(nuevaCuenta);
+        return "lista" as Estado;
+      },
+      ALTA_CANCELADA: "lista",
+    },
+    edicion: {
+      CUENTA_ACTUALIZADA: async (payload: unknown) => {
+        const cuentaActualizada = payload as CuentaBanco;
+        cuentas.modificar(cuentaActualizada);
+        return "lista" as Estado;
+      },
+      EDICION_CANCELADA: "lista",
+    },
   };
 
-  const onGuardarNuevaCuenta = async () => {
-    setModo("lista");
-  };
-
-  const onGuardarEdicionCuenta = async () => {
-    setModo("lista");
-  };
-
-  const onBorrarCuenta = async () => {
-    if (!seleccionada) return;
-
-    await deleteCuentaBanco(modelo.id, seleccionada);
-    setCuentas(quitarEntidadDeLista<CuentaBanco>(cuentas, seleccionada));
-    setSeleccionada(undefined);
-  };
-
-  const desmarcarCuentaDomiciliada = async () => {
-    if (!modelo.id) return;
-
-    await desmarcarCuentaDomiciliacion(modelo.id);
-  };
+  const emitir = useMaquina(maquina, estado, setEstado);
 
   return (
     <>
       <div className="detalle-cliente-tab-contenido">
         <div className="CuentaBancoDomiciliacion maestro-botones">
-          <span>Domiciliar: {modelo.cuenta_domiciliada}</span>
-          <QBoton onClick={() => desmarcarCuentaDomiciliada()}>
+          <span>Domiciliar: {modelo.descripcion_cuenta}</span>
+          <QBoton onClick={() => emitir("DESMARCAR_DOMICILIACION")}>
             Desmarcar
           </QBoton>
         </div>
@@ -101,57 +107,60 @@ export const TabCuentasBanco = ({
       <div className="CuentasBanco">
         <div className="CuentasBancoAcciones">
           <div className="CuentasBancoBotonesIzquierda maestro-botones">
-            <QBoton onClick={() => setModo("alta")}>Nueva</QBoton>
+            <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
             <QBoton
-              onClick={() => seleccionada && setModo("edicion")}
-              deshabilitado={!seleccionada}
+              onClick={() =>
+                cuentas.seleccionada && emitir("EDICION_SOLICITADA")
+              }
+              deshabilitado={!cuentas.seleccionada}
             >
               Editar
             </QBoton>
-            <QBoton onClick={onBorrarCuenta} deshabilitado={!seleccionada}>
+            <QBoton
+              onClick={() => emitir("BORRADO_SOLICITADO")}
+              deshabilitado={!cuentas.seleccionada}
+            >
               Borrar
             </QBoton>
           </div>
           <div className="CuentasBancoBotonDerecha maestro-botones">
-            <QBoton onClick={onDomiciliarCuenta}>
+            <QBoton
+              onClick={() => emitir("DOMICILIAR_SOLICITADO")}
+              deshabilitado={!cuentas.seleccionada}
+            >
               Cuenta de domiciliación
             </QBoton>
           </div>
         </div>
         <QTabla
           metaTabla={metaTablaCuentasBanco}
-          datos={cuentas}
+          datos={cuentas.lista}
           cargando={cargando}
-          seleccionadaId={seleccionada}
-          onSeleccion={(cuenta) => setSeleccionada(cuenta.id)}
+          seleccionadaId={cuentas.seleccionada?.id}
+          onSeleccion={(cuenta) => emitir("CUENTA_SELECCIONADA", cuenta)}
           orden={{ id: "ASC" }}
-          onOrdenar={(_: string) => null}
+          onOrdenar={() => null}
         />
       </div>
 
       <QModal
         nombre="altaCuentaBanco"
-        abierto={modo === "alta"}
-        onCerrar={() => setModo("lista")}
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <AltaCuentaBanco
-          clienteId={modelo.id}
-          onCuentaCreada={onGuardarNuevaCuenta}
-          onCancelar={() => setModo("lista")}
-        />
+        <AltaCuentaBanco clienteId={modelo.id} emitir={emitir} />
       </QModal>
 
       <QModal
         nombre="edicionCuentaBanco"
-        abierto={modo === "edicion"}
-        onCerrar={() => setModo("lista")}
+        abierto={estado === "edicion"}
+        onCerrar={() => emitir("EDICION_CANCELADA")}
       >
-        {seleccionada && (
+        {cuentas.seleccionada && (
           <EdicionCuentaBanco
             clienteId={modelo.id}
-            cuenta={getElemento(cuentas, seleccionada)}
-            onCuentaActualizada={onGuardarEdicionCuenta}
-            onCancelar={() => setModo("lista")}
+            cuenta={cuentas.seleccionada}
+            emitir={emitir}
           />
         )}
       </QModal>
