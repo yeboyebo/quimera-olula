@@ -1,9 +1,10 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
-import { NuevaOportunidadVenta, OportunidadVenta } from "./diseño.ts";
+import { EstadoOportunidad, NuevaOportunidadVenta, OportunidadVenta } from "./diseño.ts";
 
 const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
+const baseUrlEstadoOportunidadVenta = `/crm/estado_oportunidad_venta`;
 
 export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta> =>
     await RestAPI.get<{ datos: OportunidadVenta }>(`${baseUrlOportunidadVenta}/${id}`).then((respuesta) => respuesta.datos);
@@ -23,3 +24,11 @@ export const patchOportunidadVenta = async (id: string, oportunidad: Partial<Opo
 
 export const deleteOportunidadVenta = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlOportunidadVenta}/${id}`);
+
+export const getEstadosOportunidadVenta = async (
+    filtro = {},
+    orden = {}
+): Promise<EstadoOportunidad[]> =>
+    await RestAPI.get<{ datos: EstadoOportunidad[] }>(
+        baseUrlEstadoOportunidadVenta + criteriaQuery(filtro, orden)
+    ).then((respuesta) => respuesta.datos);

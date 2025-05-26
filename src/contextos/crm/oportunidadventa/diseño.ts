@@ -7,7 +7,7 @@ export interface OportunidadVenta extends Entidad {
     nombre_cliente: string | null;
     total_venta: number;
     estado_id: string;
-    nombre_estado: string | null;
+    descripcion_estado: string | null;
     probabilidad: number;
     fecha_cierre: string | null;
     contacto_id: string | null;
@@ -16,12 +16,14 @@ export interface OportunidadVenta extends Entidad {
     nombre_tarjeta: string | null;
     usuario_id: string | null;
     observaciones: string | null;
+    valor_defecto: boolean;
 };
 
 export type NuevaOportunidadVenta = {
     descripcion: string;
-    estado_id: string;
-    fecha_cierre: string;
+    valor_defecto: boolean;
+    probabilidad: string;
+    estado_id?: string;
 };
 
 export type EstadoOportunidad = {

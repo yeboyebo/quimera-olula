@@ -2,11 +2,16 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
+import { EstadoOportunidad } from "../../comun/componentes/estadoOportunidadVenta.tsx";
 import {
   metaNuevaOportunidadVenta,
   nuevaOportunidadVentaVacia,
 } from "../dominio.ts";
-// import "./AltaOportunidadVenta.css";
+import {
+  getOportunidadVenta,
+  postOportunidadVenta,
+} from "../infraestructura.ts";
+import "./AltaOportunidadVenta.css";
 
 export const AltaOportunidadVenta = ({
   emitir = () => {},
@@ -19,9 +24,9 @@ export const AltaOportunidadVenta = ({
   );
 
   const guardar = async () => {
-    // const id = await postOportunidadVenta(nuevaOportunidad.modelo);
-    // const oportunidadCreada = await getOportunidadVenta(id);
-    emitir("OPORTUNIDAD_CREADA", nuevaOportunidad.modelo);
+    const id = await postOportunidadVenta(nuevaOportunidad.modelo);
+    const oportunidadCreada = await getOportunidadVenta(id);
+    emitir("OPORTUNIDAD_CREADA", oportunidadCreada);
   };
 
   return (
@@ -32,9 +37,14 @@ export const AltaOportunidadVenta = ({
           label="Descripción"
           {...nuevaOportunidad.uiProps("descripcion")}
         />
+        <EstadoOportunidad
+          label="Estado"
+          {...nuevaOportunidad.uiProps("estado_id")}
+          nombre="alta_estado_id"
+        />
         <QInput
-          label="Fecha Cierre"
-          {...nuevaOportunidad.uiProps("fecha_cierre")}
+          label="probailidad (%)"
+          {...nuevaOportunidad.uiProps("probabilidad")}
         />
       </quimera-formulario>
       <div className="botones">

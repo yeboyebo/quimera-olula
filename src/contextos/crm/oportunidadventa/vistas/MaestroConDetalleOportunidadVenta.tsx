@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
@@ -13,11 +14,11 @@ import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "./DetalleOportunidadVenta/DetalleOportunidadVenta.tsx";
 // import "./MaestroConDetalleOportunidadVenta.css";
 
-const metaTablaOportunidadVenta = [
+const metaTablaOportunidadVenta: MetaTabla<OportunidadVenta> = [
   { id: "id", cabecera: "Código" },
   { id: "descripcion", cabecera: "Descripción" },
   { id: "nombre_cliente", cabecera: "Cliente" },
-  { id: "total_venta", cabecera: "Total Venta" },
+  { id: "total_venta", cabecera: "Total Venta", tipo: "moneda" },
   { id: "fecha_cierre", cabecera: "Fecha Cierre" },
 ];
 
