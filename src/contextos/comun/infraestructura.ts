@@ -1,6 +1,6 @@
 import { OpcionCampo } from "../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "./api/rest_api.ts";
-import { Filtro, Orden, ValorFiltro } from "./diseño.ts";
+import { CriteriaAPI, Filtro, FiltroAPI, Orden, OrdenAPI } from "./diseño.ts";
 
 export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     if (!filtro && !orden) {
@@ -8,29 +8,26 @@ export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     }
 
     const criteria = transformarCriteria(filtro, orden);
-    return `?q=${btoa(criteria)}`;
+    return `?q=${JSON.stringify(criteria)}`;
 }
 
-export const transformarCriteria = (filtro?: Filtro, orden?: Orden): string => {
-    const filtroString = filtro ? transformarFiltro(filtro) : "";
-    const ordenString = orden ? transformarOrden(orden) : "";
-
-    return [filtroString, ordenString].filter(Boolean).join("_|_");
-}
-
-const transformarFiltro = (filtro: Filtro): string => {
-    return Object.entries(filtro).map(([campo, valor]) => `${campo}:${transformarValorFiltro(valor)}`).join(" ");
-}
-
-const transformarOrden = (orden: Orden): string => {
-    return "orden:" + Object.entries(orden).map(([campo, valor]) => `${campo}-${valor}`).join(",");
-}
-
-const transformarValorFiltro = (valor: ValorFiltro): string => {
-    if ("LIKE" in valor) {
-        return `~${valor.LIKE}`;
+export const transformarCriteria = (filtro?: Filtro, orden?: Orden): CriteriaAPI => {
+    const res: CriteriaAPI = {}
+    if (filtro) {
+        res['filtro'] = transformarFiltro(filtro);
     }
-    return valor;
+    if (orden) {
+        res['orden'] = transformarOrden(orden);
+    }
+    return res;
+}
+
+const transformarFiltro = (filtro: Filtro): FiltroAPI => {
+    return Object.entries(filtro).map(([campo, valor]) => [campo, '~', valor['LIKE']]);
+}
+
+const transformarOrden = (orden: Orden): OrdenAPI => {
+    return Object.entries(orden).map(([campo, orden]) => [campo, orden]).flat();
 }
 
 export const obtenerOpcionesSelector =
