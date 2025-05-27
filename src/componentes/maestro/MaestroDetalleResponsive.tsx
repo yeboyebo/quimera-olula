@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { useEsMovil } from "./useEsMovil.ts";
 
 export function MaestroDetalleResponsive({
   seleccionada,
@@ -9,7 +10,7 @@ export function MaestroDetalleResponsive({
   Maestro: ReactNode;
   Detalle: ReactNode;
 }) {
-  const esMovil = window.matchMedia("(max-width: 768px)").matches;
+  const esMovil = useEsMovil();
 
   return (
     <maestro-detalle>
