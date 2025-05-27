@@ -163,9 +163,6 @@ const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, cam
 }
 
 export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
-    if ('referencia' in modelo) {
-        console.log("init modelo y modelo_inicial");
-    }
     const estado = {
         valor: { ...modelo },
         valor_inicial: modelo,
@@ -297,7 +294,7 @@ export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) =
 export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
     const valor_inicial = estado.valor_inicial;
     const valor = estado.valor;
-    // console.log("Modelo modificado = ", Object.keys(valor).some((k) => valor[k] !== valor_inicial[k]));
+
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
     )

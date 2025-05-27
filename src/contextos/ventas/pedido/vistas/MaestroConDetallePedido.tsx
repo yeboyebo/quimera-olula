@@ -42,7 +42,7 @@ export const MaestroConDetallePedido = () => {
   const emitir = useMaquina(maquina, estado, setEstado);
   const emision = (evento: string, payload?: unknown) => () =>
     emitir(evento, payload);
-  console.log(pedidos.seleccionada);
+
   return (
     <div className="Pedido">
       <MaestroDetalleResponsive

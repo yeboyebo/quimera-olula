@@ -9,6 +9,7 @@ maestro-detalle {
     }
 
     .Detalle {
+        max-width: 94vw;
         flex-basis: 50%;
         overflow: auto;
     }
