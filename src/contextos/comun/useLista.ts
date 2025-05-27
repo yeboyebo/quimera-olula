@@ -102,7 +102,11 @@ export function useLista<E extends Entidad>(
 
     const setLista = useCallback((lista: E[]) => {
         setEntidades(lista);
-        setIdSeleccionada(lista[0] ? lista[0].id : null);
+        const esMovil = window.matchMedia("(max-width: 768px)").matches;
+        if (!esMovil && lista.length > 0) {
+            setIdSeleccionada(lista[0].id);
+        }
+        // setIdSeleccionada(lista[0] ? lista[0].id : null);
     }, [setEntidades, setIdSeleccionada]);
 
     const seleccionada = useCallback(() => {
