@@ -1,12 +1,12 @@
 import { ReactNode } from "react";
 import { useEsMovil } from "./useEsMovil.ts";
 
-export function MaestroDetalleResponsive({
+export function MaestroDetalleResponsive<T>({
   seleccionada,
   Maestro,
   Detalle,
 }: {
-  seleccionada: unknown;
+  seleccionada: T;
   Maestro: ReactNode;
   Detalle: ReactNode;
 }) {
