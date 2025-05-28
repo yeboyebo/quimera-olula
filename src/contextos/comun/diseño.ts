@@ -16,6 +16,13 @@ export type Criteria = {
   orden: Orden;
 }
 
+export type FiltroAPI = [string, string, string][];
+export type OrdenAPI = string[];
+export type CriteriaAPI = {
+  filtro?: FiltroAPI;
+  orden?: OrdenAPI;
+}
+
 
 export type ValorFiltro = { LIKE: string };
 export type Orden = { [campo: string]: "ASC" | "DESC" }

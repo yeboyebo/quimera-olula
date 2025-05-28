@@ -63,7 +63,7 @@ export type EstadoModelo<T extends Modelo> = {
 
 
 // export type Validador<T extends Modelo> = (estado: EstadoModelo<T>, campo: string) => Validacion;
-type PropTipoCampo = 'string' | 'boolean' | 'number'
+type PropTipoCampo = 'string' | 'boolean' | 'number' | 'date'
 type Campo<T extends Modelo> = {
     nombre?: string;
     tipo?: PropTipoCampo;
