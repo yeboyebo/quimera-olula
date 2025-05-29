@@ -87,6 +87,7 @@ export function useModelo<T extends Modelo>(
             "string": "texto",
             "boolean": "checkbox",
             "number": "numero",
+            "date": "fecha",
         }
         const tipo = (conversionTipo[tipoMeta] || "texto") as TipoInput;
 
