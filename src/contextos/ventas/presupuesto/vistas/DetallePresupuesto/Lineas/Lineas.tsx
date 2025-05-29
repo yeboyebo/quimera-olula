@@ -36,14 +36,12 @@ export const Lineas = ({
   const { setLista } = lineas;
 
   const refrescarLineas = async (idLinea?: string) => {
-    console.log("refrescar lineas - seleccionada", lineas.seleccionada);
     const nuevasLineas = await getLineas(presupuestoId);
     lineas.refrescar(nuevasLineas, idLinea);
     onCabeceraModificada();
   };
 
   const cargar = useCallback(async () => {
-    console.log("cargar lineas", presupuestoId);
     const nuevasLineas = await getLineas(presupuestoId);
     setLista(nuevasLineas);
   }, [presupuestoId, setLista]);
@@ -57,7 +55,6 @@ export const Lineas = ({
       ALTA_LISTA: async (payload: unknown) => {
         const idLinea = await postLinea(presupuestoId, payload as NuevaLinea);
         await refrescarLineas(idLinea);
-        console.log("longitud lineas", lineas.lista.length);
         return "lista" as Estado;
       },
     },

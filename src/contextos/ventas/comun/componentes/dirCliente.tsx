@@ -6,9 +6,7 @@ interface DireccionesProps {
   clienteId: string | null;
   valor?: string;
   nombre?: string;
-  onChange: (
-    opcion: { valor: string; descripcion: string } | null
-  ) => void;
+  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const DirCliente = ({
@@ -24,9 +22,7 @@ export const DirCliente = ({
 
   useEffect(() => {
     const fetchDirecciones = async () => {
-      console.log("direcciones", clienteId);
       if (!clienteId) {
-        console.log("direcciones vacias");
         setOpcionesDireccion([]);
         return;
       }

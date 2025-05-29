@@ -9,6 +9,7 @@ maestro-detalle {
     }
 
     .Detalle {
+        max-width: 94vw;
         flex-basis: 50%;
         overflow: auto;
     }
@@ -26,5 +27,16 @@ maestro-detalle {
         padding: 0.5rem 1rem;
         font-size: 1rem;
         cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+    maestro-detalle {
+        flex-direction: column;
+    }
+
+    .Maestro,
+    .Detalle {
+        flex-basis: 100%;
     }
 }

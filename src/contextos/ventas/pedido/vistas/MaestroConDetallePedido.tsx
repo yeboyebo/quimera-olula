@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { appFactory } from "../../../app.ts";
 import { useLista } from "../../../comun/useLista.ts";
@@ -33,6 +34,7 @@ export const MaestroConDetallePedido = () => {
       },
       CANCELAR_SELECCION: () => {
         pedidos.limpiarSeleccion();
+        return "lista";
       },
     },
   };
@@ -43,33 +45,35 @@ export const MaestroConDetallePedido = () => {
 
   return (
     <div className="Pedido">
-      <maestro-detalle>
-        <div className="Maestro">
-          <h2>Pedidos</h2>
-          <Listado
-            metaTabla={appFactory().Ventas.metaTablaPedido}
-            entidades={pedidos.lista}
-            setEntidades={pedidos.setLista}
-            seleccionada={pedidos.seleccionada}
-            setSeleccionada={pedidos.seleccionar}
-            cargar={getPedidos}
-          />
-          <div className="maestro-botones">
-            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
-          </div>
-        </div>
-        <div className="Detalle">
+      <MaestroDetalleResponsive
+        seleccionada={pedidos.seleccionada}
+        Maestro={
+          <>
+            <h2>Pedidos</h2>
+            <Listado
+              metaTabla={appFactory().Ventas.metaTablaPedido}
+              entidades={pedidos.lista}
+              setEntidades={pedidos.setLista}
+              seleccionada={pedidos.seleccionada}
+              setSeleccionada={pedidos.seleccionar}
+              cargar={getPedidos}
+            />
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
+            </div>
+          </>
+        }
+        Detalle={
           <DetallePedido pedidoInicial={pedidos.seleccionada} emitir={emitir} />
-        </div>
-
-        <QModal
-          nombre="modal"
-          abierto={estado === "alta"}
-          onCerrar={emision("ALTA_CANCELADA")}
-        >
-          <AltaPedido publicar={emitir} />
-        </QModal>
-      </maestro-detalle>
+        }
+      />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={emision("ALTA_CANCELADA")}
+      >
+        <AltaPedido publicar={emitir} />
+      </QModal>
     </div>
   );
 };
