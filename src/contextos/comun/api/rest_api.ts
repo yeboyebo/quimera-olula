@@ -1,6 +1,6 @@
 import type { API } from "./diseño.ts";
 
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:8005";
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const consulta = async <T>(
   method: string,
