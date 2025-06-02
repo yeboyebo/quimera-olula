@@ -45,8 +45,6 @@ export const tokenAcceso = {
         const now = Date.now();
         const validez_minutos = (fechaRefresco - now) / MINUTOS;
 
-        console.log(validez_minutos)
-
         return validez_minutos;
     },
     eliminar: () => {
