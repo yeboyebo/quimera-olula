@@ -1,3 +1,4 @@
+import { tokenAcceso } from "../../usuarios/login/infraestructura.ts";
 import type { API } from "./diseño.ts";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -11,8 +12,14 @@ const consulta = async <T>(
     method,
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${tokenAcceso.obtener() ?? ""}`,
     },
   });
+
+  if ([401, 403].includes(response.status)) {
+    window.location.href = "/login";
+    return Promise.reject();
+  }
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -20,7 +27,7 @@ const consulta = async <T>(
       nombre: msgError || `Error ${response.status}`,
       descripcion: errorText,
     }
-    throw error;
+    return Promise.reject(error);
   }
 
   const json = await response.json();
@@ -39,16 +46,23 @@ const comando = async <T, U>(
     method,
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${tokenAcceso.obtener() ?? ""}`,
     },
     body: JSON.stringify(body ?? {}),
   });
+
+  if ([401, 403].includes(response.status)) {
+    window.location.href = "/login";
+    return Promise.reject();
+  }
+
   if (!response.ok) {
     const errorText = await response.text();
     const error = {
       nombre: msgError || `Error ${response.status}`,
       descripcion: errorText,
     }
-    throw error;
+    return Promise.reject(error);
   }
   const json = await response.json();
 
