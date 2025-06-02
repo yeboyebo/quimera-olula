@@ -3,8 +3,16 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QCheckbox } from "../../../../componentes/atomos/qcheckbox.tsx";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { login } from "../dominio.ts";
+import { comprobarToken, login } from "../dominio.ts";
 import estilos from "./Login.module.css";
+
+const MINUTOS = 60 * 1000;
+
+setInterval(() => {
+  comprobarToken()?.catch((_e) => {
+    return;
+  });
+}, 2 * MINUTOS);
 
 export const Login = () => {
   const [mostrarContraseña, setMostrarContraseña] = useState(false);
@@ -12,7 +20,7 @@ export const Login = () => {
   const loginSubmit = async (datos: Record<string, string>) => {
     const { id, contraseña } = datos;
 
-    login(id, contraseña).then((d) => {
+    login(id, contraseña).then(() => {
       window.location.href = "/";
     });
   };
@@ -40,11 +48,6 @@ export const Login = () => {
           <QBoton tipo="submit" tamaño="mediano">
             Iniciar sesión
           </QBoton>
-          {/* <QBoton
-          variante="texto"
-          onClick={() => setShowForgetPassword(true)}
-          children="Olvidé mi contraseña"
-        /> */}
         </QForm>
       </div>
     </section>

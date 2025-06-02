@@ -1,6 +1,8 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Login, Logout, RefrescarToken, UsuarioLogin, UsuarioRefresco } from "./diseño.ts";
 
+const MINUTOS_REFRESCO = 15;
+const MINUTOS = 60 * 1000;
 const baseUrl = '/auth';
 
 type PeticionLogin = { id: string; contraseña: string; };
@@ -25,9 +27,32 @@ export const logout: Logout = async (tokenRefresco: string) => {
 }
 
 export const tokenAcceso = {
-    actualizar: (tokenAcceso: string) => localStorage.setItem("token-acceso", tokenAcceso),
+    actualizar: (tokenAcceso: string) => {
+        const now = Date.now();
+        const fechaRefresco = now + MINUTOS_REFRESCO * MINUTOS;
+
+        localStorage.setItem("token-acceso", tokenAcceso);
+        localStorage.setItem("fecha-refresco", fechaRefresco.toString());
+    },
     obtener: () => localStorage.getItem("token-acceso"),
-    eliminar: () => localStorage.removeItem("token-acceso"),
+    validez: () => {
+        const fecha = localStorage.getItem("fecha-refresco");
+        if (!fecha) return 0;
+
+        const fechaRefresco = parseInt(fecha);
+        if (isNaN(fechaRefresco)) return 0;
+
+        const now = Date.now();
+        const validez_minutos = (fechaRefresco - now) / MINUTOS;
+
+        console.log(validez_minutos)
+
+        return validez_minutos;
+    },
+    eliminar: () => {
+        localStorage.removeItem("fecha-refresco");
+        localStorage.removeItem("token-acceso");
+    },
 }
 
 export const tokenRefresco = {

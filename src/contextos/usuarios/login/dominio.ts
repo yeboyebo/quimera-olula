@@ -17,6 +17,14 @@ export const logout = async () => {
     });
 }
 
+export const comprobarToken = () => {
+    const validez = tokenAcceso.validez();
+
+    if (validez > 3) return;
+
+    return refrescarToken();
+}
+
 export const refrescarToken = async () => {
     const token = tokenRefresco.obtener();
     if (!token) return;
