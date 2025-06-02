@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Albaran } from "../diseño.ts";
 import { getAlbaranes } from "../infraestructura.ts";
-
 import { AltaAlbaran } from "./AltaAlbaran.tsx";
 import { DetalleAlbaran } from "./DetalleAlbaran/DetalleAlbaran.tsx";
 import "./MaestroConDetalleAlbaran.css";
@@ -62,36 +62,38 @@ export const MaestroConDetalleAlbaran = () => {
 
   return (
     <div className="Albaran">
-      <maestro-detalle name="albaranes">
-        <div className="Maestro">
-          <h2>Albaranes</h2>
-          <Listado
-            metaTabla={metaTablaAlbaran}
-            entidades={albaranes.lista}
-            setEntidades={albaranes.setLista}
-            seleccionada={albaranes.seleccionada}
-            setSeleccionada={albaranes.seleccionar}
-            cargar={getAlbaranes}
-          />
-          <div className="maestro-botones">
-            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
-          </div>
-        </div>
-        <div className="Detalle">
+      <MaestroDetalleResponsive<Albaran>
+        seleccionada={albaranes.seleccionada}
+        Maestro={
+          <>
+            <h2>Albaranes</h2>
+            <Listado
+              metaTabla={metaTablaAlbaran}
+              entidades={albaranes.lista}
+              setEntidades={albaranes.setLista}
+              seleccionada={albaranes.seleccionada}
+              setSeleccionada={albaranes.seleccionar}
+              cargar={getAlbaranes}
+            />
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
+            </div>
+          </>
+        }
+        Detalle={
           <DetalleAlbaran
             albaranInicial={albaranes.seleccionada}
             emitir={emitir}
           />
-        </div>
-
-        <QModal
-          nombre="modal"
-          abierto={estado === "alta"}
-          onCerrar={emision("ALTA_CANCELADA")}
-        >
-          <AltaAlbaran publicar={emitir} />
-        </QModal>
-      </maestro-detalle>
+        }
+      />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={emision("ALTA_CANCELADA")}
+      >
+        <AltaAlbaran publicar={emitir} />
+      </QModal>
     </div>
   );
 };
