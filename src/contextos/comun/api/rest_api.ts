@@ -1,8 +1,12 @@
 import type { API } from "./diseño.ts";
 
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:8005";
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-const consulta = async <T>(method: string, url: string): Promise<T> => {
+const consulta = async <T>(
+  method: string,
+  url: string,
+  msgError?: string
+): Promise<T> => {
   const response = await fetch(`${BASE}${url}`, {
     method,
     headers: {
@@ -11,7 +15,12 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const errorText = await response.text();
+    const error = {
+      nombre: msgError || `Error ${response.status}`,
+      descripcion: errorText,
+    }
+    throw error;
   }
 
   const json = await response.json();
@@ -19,10 +28,12 @@ const consulta = async <T>(method: string, url: string): Promise<T> => {
   return json;
 };
 
+
 const comando = async <T>(
   method: string,
   url: string,
-  body?: Partial<T>
+  body?: Partial<T>,
+  msgError?: string
 ): Promise<void> => {
   const response = await fetch(`${BASE}${url}`, {
     method,
@@ -32,16 +43,23 @@ const comando = async <T>(
     body: JSON.stringify(body ?? {}),
   });
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const errorText = await response.text();
+    const error = {
+      nombre: msgError || `Error ${response.status}`,
+      descripcion: errorText,
+    }
+    throw error;
   }
   const json = await response.json();
+
   return json;
 };
 
 const comandoPost = async <T>(
   method: string,
   url: string,
-  body?: Partial<T>
+  body?: Partial<T>,
+  msgError?: string
 ): Promise<{ id: string }> => {
   const response = await fetch(`${BASE}${url}`, {
     method,
@@ -51,7 +69,12 @@ const comandoPost = async <T>(
     body: JSON.stringify(body ?? {}),
   });
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const errorText = await response.text();
+    const error = {
+      nombre: msgError || `Error ${response.status}`,
+      descripcion: errorText,
+    }
+    throw error;
   }
   const json = await response.json();
   return json;
@@ -59,9 +82,9 @@ const comandoPost = async <T>(
 
 
 export const RestAPI: API = {
-  get: <T>(url: string) => consulta<T>("GET", url),
-  post: <T>(url: string, body: T) => comandoPost<T>("POST", url, body),
-  put: <T>(url: string, body: T) => comando<T>("PUT", url, body),
-  patch: <T>(url: string, body: Partial<T>) => comando<T>("PATCH", url, body),
-  delete: (url: string) => comando("DELETE", url),
+  get: <T>(url: string, msgError?: string) => consulta<T>("GET", url, msgError),
+  post: <T>(url: string, body: T, msgError?: string) => comandoPost<T>("POST", url, body, msgError),
+  put: <T>(url: string, body: T, msgError?: string) => comando<T>("PUT", url, body, msgError),
+  patch: <T>(url: string, body: Partial<T>, msgError?: string) => comando<T>("PATCH", url, body, msgError),
+  delete: (url: string, msgError?: string) => comando("DELETE", url, msgError),
 };

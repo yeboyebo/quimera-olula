@@ -1,87 +1,45 @@
-import { useReducer } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
-import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
-import {
-  campoObjetoValorAInput,
-  initEstadoObjetoValor,
-  makeReductor,
-  puedoGuardarObjetoValor,
-} from "../../../comun/dominio.ts";
-import { opcionesTipoIdFiscal } from "../../../valores/idfiscal.ts";
-import { Cliente } from "../diseño.ts";
+import { EmitirEvento } from "../../../comun/diseño.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
+import { Agente } from "../../comun/componentes/agente.tsx";
+import { TipoIdFiscal } from "../../comun/componentes/tipoIdFiscal.tsx";
 import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
 import { getCliente, postCliente } from "../infraestructura.ts";
 
 export const AltaCliente = ({
-  onClienteCreado = () => {},
-  onCancelar,
+  emitir = () => {},
 }: {
-  onClienteCreado?: (cliente: Cliente) => void;
-  onCancelar: () => void;
+  emitir?: EmitirEvento;
 }) => {
-  const [estado, dispatch] = useReducer(
-    makeReductor(metaNuevoCliente),
-    initEstadoObjetoValor(nuevoClienteVacio, metaNuevoCliente)
-  );
-
-  const setCampo = (campo: string) => (valor: string) => {
-    dispatch({
-      type: "set_campo",
-      payload: { campo, valor },
-    });
-  };
-
-  const getProps = (campo: string) => {
-    return campoObjetoValorAInput(estado, campo);
-  };
+  const nuevoCliente = useModelo(metaNuevoCliente, nuevoClienteVacio);
 
   const guardar = async () => {
-    const id = await postCliente(estado.valor);
+    const id = await postCliente(nuevoCliente.modelo);
+    nuevoCliente.init(nuevoClienteVacio);
     const clienteCreado = await getCliente(id);
-    onClienteCreado(clienteCreado);
+    emitir("CLIENTE_CREADO", clienteCreado);
   };
 
   return (
     <>
       <h2>Nuevo Cliente</h2>
       <quimera-formulario>
-        <QInput
-          label="Nombre"
-          onChange={setCampo("nombre")}
-          {...getProps("nombre")}
-        />
-        <QSelect
-          label="Tipo Id Fiscal"
-          opciones={opcionesTipoIdFiscal}
-          onChange={(opcion) => setCampo("tipo_id_fiscal")(opcion?.valor || "")}
-          {...getProps("tipo_id_fiscal")}
-        />
-        <QInput
-          label="ID Fiscal"
-          onChange={setCampo("id_fiscal")}
-          {...getProps("id_fiscal")}
-        />
-        <QInput
-          label="Empresa"
-          onChange={setCampo("empresa_id")}
-          {...getProps("empresa_id")}
-        />
-
-        <QInput
-          label="Agente"
-          onChange={setCampo("agente_id")}
-          {...getProps("agente_id")}
-        />
+        <QInput label="Nombre" {...nuevoCliente.uiProps("nombre")} />
+        <TipoIdFiscal {...nuevoCliente.uiProps("tipo_id_fiscal")} />
+        <QInput label="ID Fiscal" {...nuevoCliente.uiProps("id_fiscal")} />
+        <QInput label="Empresa" {...nuevoCliente.uiProps("empresa_id")} />
+        <Agente {...nuevoCliente.uiProps("agente_id", "nombre_agente")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!puedoGuardarObjetoValor(estado)}
-        >
+        <QBoton onClick={guardar} deshabilitado={nuevoCliente.valido === false}>
           Guardar
         </QBoton>
-        <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
+        <QBoton
+          tipo="reset"
+          variante="texto"
+          onClick={() => emitir("ALTA_CANCELADA")}
+        >
           Cancelar
         </QBoton>
       </div>

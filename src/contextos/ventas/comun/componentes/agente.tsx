@@ -1,26 +1,61 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
+import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { getAgentes } from "../../agente/infraestructura.ts";
 
 interface AgenteProps {
-  agente_id: string;
-  onAgenteChanged: (
-    opcion: { valor: string; descripcion: string } | null
-  ) => void;
+  descripcion?: string;
+  valor: string;
+  nombre?: string;
+  label?: string;
+  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  // textoValidacion?: string;
+  // deshabilitado?: boolean;
+  // erroneo?: boolean;
+  // advertido?: boolean;
+  // valido?: boolean;
 }
 
-export const Agentes = ({ agente_id, onAgenteChanged }: AgenteProps) => {
-  const obtenerOpcionesAgente = async () => [
-    { valor: "1", descripcion: "Antonio 1" },
-    { valor: "2", descripcion: "Juanma 2" },
-    { valor: "3", descripcion: "Pozu 3" },
-  ];
+export const Agente = ({
+  descripcion = "",
+  valor,
+  nombre = "agente_id",
+  label = "Agente",
+  onChange,
+  ...props
+}: AgenteProps) => {
+  const obtenerOpciones = async (valor: string) => {
+    if (valor.length < 3) return [];
+
+    const criteria = {
+      filtro: {
+        nombre: {
+          LIKE: valor,
+        },
+      },
+      orden: { id: "DESC" },
+    };
+
+    const agentes = await getAgentes(
+      criteria.filtro as unknown as Filtro,
+      criteria.orden as Orden
+    );
+
+    return agentes.map((agente) => ({
+      valor: agente.id,
+      descripcion: agente.nombre,
+    }));
+  };
 
   return (
     <QAutocompletar
-      label="Agente"
-      nombre="agente_id"
-      onChange={onAgenteChanged}
-      valor={agente_id}
-      obtenerOpciones={obtenerOpcionesAgente}
+      label={label}
+      nombre={nombre}
+      onChange={onChange}
+      valor={valor}
+      autoSeleccion
+      obtenerOpciones={obtenerOpciones}
+      descripcion={descripcion}
+      {...props}
     />
   );
 };

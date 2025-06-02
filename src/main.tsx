@@ -3,10 +3,15 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
+import "./contextos/comun/comun.css";
 import { Indice } from "./contextos/comun/Indice.tsx";
+import { MaestroConDetalleOportunidadVenta } from "./contextos/crm/oportunidadventa/vistas/MaestroConDetalleOportunidadVenta.tsx";
 import { LoginPage } from "./contextos/usuarios/login/vistas/LoginPage.tsx";
-import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente.tsx";
+import { MaestroConDetalleAlbaran } from "./contextos/ventas/albaran/vistas/MaestroConDetalleAlbaran.tsx";
+import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente/DetalleCliente.tsx";
 import { MaestroConDetalleCliente } from "./contextos/ventas/cliente/vistas/MaestroConDetalleCliente.tsx";
+import { MaestroConDetalleFactura } from "./contextos/ventas/factura/vistas/MaestroConDetalleFactura.tsx";
+import { MaestroConDetallePedido } from "./contextos/ventas/pedido/vistas/MaestroConDetallePedido.tsx";
 import { MaestroConDetallePresupuesto } from "./contextos/ventas/presupuesto/vistas/MaestroConDetallePresupuesto.tsx";
 import "./index.css";
 
@@ -41,12 +46,54 @@ createRoot(document.getElementById("root")!).render(
               }
             />
           </Route>
+          <Route path="pedido">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetallePedido />
+                </Vista>
+              }
+            />
+          </Route>
           <Route path="presupuesto">
             <Route
               index
               element={
                 <Vista>
                   <MaestroConDetallePresupuesto />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="albaran">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleAlbaran />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="factura">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleFactura />
+                </Vista>
+              }
+            />
+          </Route>
+        </Route>
+        <Route path="crm">
+          <Route path="oportunidadventa">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleOportunidadVenta />
                 </Vista>
               }
             />

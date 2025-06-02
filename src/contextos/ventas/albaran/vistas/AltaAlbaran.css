@@ -1,0 +1,5 @@
+.AltaAbaran {
+    quimera-autocompletar[nombre="alta_presupuesto_cliente_id"] {
+        grid-column: span 12;
+    }
+}

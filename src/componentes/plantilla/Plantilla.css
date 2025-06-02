@@ -17,7 +17,7 @@
     &>section[role=main] {
         display: flex;
         flex-grow: 1;
-        gap: 1rem;
+        /* gap: 1rem; */
 
         &>*:not(menu-lateral) {
             padding: 1rem;

@@ -93,11 +93,11 @@ export const QAutocompletar = ({
       return;
     }
 
-    const objetivo = e.target as HTMLInputElement;
-    objetivo.value = "";
+    // const objetivo = e.target as HTMLInputElement;
+    // objetivo.value = "";
 
-    valorReal.current!.value = "";
-    onBlur?.(null, e);
+    // valorReal.current!.value = "";
+    // onBlur?.(null, e);
   };
 
   return (
@@ -107,7 +107,7 @@ export const QAutocompletar = ({
         ref={valorReal}
         type="hidden"
         name={nombre}
-        value={valor}
+        value={valor || ""}
         defaultValue={undefined}
         required={!props.opcional}
       />

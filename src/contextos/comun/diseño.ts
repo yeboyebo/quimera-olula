@@ -1,4 +1,4 @@
-export type ObjetoValor = {
+export type Modelo = {
   [clave: string]: unknown;
 };
 
@@ -14,6 +14,13 @@ export type EntidadAccion = {
 export type Criteria = {
   filtro: Filtro;
   orden: Orden;
+}
+
+export type FiltroAPI = [string, string, string][];
+export type OrdenAPI = string[];
+export type CriteriaAPI = {
+  filtro?: FiltroAPI;
+  orden?: OrdenAPI;
 }
 
 
@@ -34,3 +41,6 @@ export type Direccion = {
   apartado: string;
   telefono: string;
 };
+
+
+export type EmitirEvento = (evento: string, payload?: unknown) => void

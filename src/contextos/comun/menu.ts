@@ -28,6 +28,32 @@ export const elementosDelMenu: ElementoMenu[] = [
         url: "/ventas/presupuesto",
         icono: "",
       },
+      {
+        nombre: "Pedidos",
+        url: "/ventas/pedido",
+        icono: "",
+      },
+      {
+        nombre: "Albaranes",
+        url: "/ventas/albaran",
+        icono: "",
+      },
+      {
+        nombre: "Facturas",
+        url: "/ventas/factura",
+        icono: "",
+      },
+    ],
+  },
+  {
+    nombre: "CRM",
+    icono: "fichero",
+    subelementos: [
+      {
+        nombre: "Oportunidades de venta",
+        url: "/crm/oportunidadventa",
+        icono: "",
+      },
     ],
   },
   {

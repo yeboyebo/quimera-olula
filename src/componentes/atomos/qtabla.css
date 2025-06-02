@@ -94,4 +94,9 @@ quimera-tabla {
         transition: background-color var(--transicion-basica);
         white-space: nowrap;
     }
+
+    td.moneda,
+    td.numero {
+        text-align: right;
+    }
 }

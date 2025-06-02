@@ -1,10 +1,20 @@
 import { ReactNode } from "react";
 import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
+import { formatearMoneda } from "../../contextos/comun/dominio.ts";
 import "./qtabla.css";
 
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
+  tipo?:
+    | "texto"
+    | "numero"
+    | "moneda"
+    | "fecha"
+    | "hora"
+    | "booleano"
+    | undefined;
+  divisa?: string;
   render?: (entidad: T) => string | ReactNode;
 };
 
@@ -30,10 +40,18 @@ const cabecera = <T extends Entidad>(
 };
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
-  const renderColumna = ({ id, render }: MetaColumna<T>) => {
-    const datos = render?.(entidad as T) ?? (entidad[id] as string);
+  const renderColumna = ({ id, render, tipo, divisa }: MetaColumna<T>) => {
+    let datos = render?.(entidad as T) ?? (entidad[id] as string);
 
-    return <td key={[entidad.id, id].join("-")}>{datos}</td>;
+    if (tipo === "moneda" && typeof datos === "number") {
+      datos = formatearMoneda(datos, divisa ?? "EUR");
+    }
+
+    return (
+      <td key={[entidad.id, id].join("-")} className={`${tipo ?? ""} ${id}`}>
+        {datos}
+      </td>
+    );
   };
 
   return metaTabla.map(renderColumna);
