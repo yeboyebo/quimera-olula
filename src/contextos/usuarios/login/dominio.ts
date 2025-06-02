@@ -9,7 +9,6 @@ export const login = async (id: string, contraseña: string) => {
 
 export const logout = async () => {
     const token = tokenRefresco.obtener();
-
     if (!token) return;
 
     return logoutAPI(token).then(() => {
@@ -20,7 +19,6 @@ export const logout = async () => {
 
 export const refrescarToken = async () => {
     const token = tokenRefresco.obtener();
-
     if (!token) return;
 
     return refrescarTokenAPI(token).then((datosRefresco) => {

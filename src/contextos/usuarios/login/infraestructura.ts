@@ -3,18 +3,21 @@ import { Login, Logout, RefrescarToken, UsuarioLogin, UsuarioRefresco } from "./
 
 const baseUrl = '/auth';
 
+type PeticionLogin = { id: string; contraseña: string; };
+type RespuestaLogin = { token_acceso: string; token_refresco: string; };
+
 export const login: Login = async (id: string, contraseña: string) => {
     const payload = { id, contraseña: btoa(contraseña) };
-    const callback: (_: UsuarioLogin) => UsuarioLogin = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso as string, tokenRefresco: respuesta.token_refresco as string });
+    const callback: (_: RespuestaLogin) => UsuarioLogin = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso, tokenRefresco: respuesta.token_refresco });
 
-    return RestAPI.post<{ id: string; contraseña: string }>(`${baseUrl}/login`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioLogin);
+    return RestAPI.post<PeticionLogin>(`${baseUrl}/login`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioLogin);
 }
 
+type RespuestaRefresco = { token_acceso: string; };
 export const refrescarToken: RefrescarToken = async (tokenRefresco: string) => {
-    const payload = { token_refresco: tokenRefresco };
-    const callback: (_: UsuarioRefresco) => UsuarioRefresco = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso as string });
+    const callback: (_: RespuestaRefresco) => UsuarioRefresco = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso as string });
 
-    return RestAPI.post<{ token_refresco: string }>(`${baseUrl}/token`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioRefresco);
+    return RestAPI.get<RespuestaRefresco>(`${baseUrl}/refresh/${tokenRefresco}`).then(callback);
 }
 
 export const logout: Logout = async (tokenRefresco: string) => {
