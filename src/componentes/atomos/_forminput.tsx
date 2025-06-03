@@ -11,7 +11,10 @@ export type FormFieldProps = {
   opcional?: boolean;
   condensado?: boolean;
   autoSeleccion?: boolean;
-  onChange?: (valor: string, evento: React.ChangeEvent<HTMLElement>) => void;
+  onChange?: (
+    valor: string,
+    evento: React.ChangeEvent<HTMLInputElement>
+  ) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
 };
 

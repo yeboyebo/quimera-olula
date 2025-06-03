@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
-import "./MaestroConDetallePresupuesto.css";
 
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
