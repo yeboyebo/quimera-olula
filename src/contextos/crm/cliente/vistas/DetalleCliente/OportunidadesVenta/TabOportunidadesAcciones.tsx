@@ -2,6 +2,7 @@ import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { OportunidadVenta } from "../../../../oportunidadventa/diseño.ts";
+import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 
 export const TabOportunidadesAcciones = ({
   seleccionada,
@@ -33,8 +34,7 @@ export const TabOportunidadesAcciones = ({
         abierto={estado === "alta"}
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <h2 className="titulo-modal">Nueva oportunidad</h2>
-        {/* <AltaOportunidad emitir={emitir} /> */}
+        <AltaOportunidadVenta emitir={emitir} />
       </QModal>
       <QModalConfirmacion
         nombre="borrarOportunidad"

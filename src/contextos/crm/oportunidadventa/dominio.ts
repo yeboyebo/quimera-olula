@@ -27,15 +27,9 @@ export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
     estado_id: '',
 };
 
-export const validadoresOportunidadVenta = {
-    descripcion: (valor: string) => stringNoVacio(valor),
-    // total_venta: (valor: number) => valor >= 0,
-    estado_id: (valor: string) => stringNoVacio(valor),
-};
-
 export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
     campos: {
-        descripcion: { requerido: true },
+        descripcion: { requerido: true, validacion: (oportunidad: OportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
         total_venta: { requerido: false, tipo: "moneda" },
         probabilidad: { requerido: false, tipo: "numero" },
         fecha_cierre: { requerido: false, tipo: "fecha" },
@@ -44,7 +38,7 @@ export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
 
 export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
     campos: {
-        descripcion: { requerido: true },
+        descripcion: { requerido: true, validacion: (oportunidad: NuevaOportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
         valor_defecto: { requerido: true },
         probabilidad: { requerido: true, tipo: "numero" },
         estado_id: { requerido: false, tipo: "texto" },

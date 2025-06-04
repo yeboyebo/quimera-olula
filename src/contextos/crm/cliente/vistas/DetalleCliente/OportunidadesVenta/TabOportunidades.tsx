@@ -20,7 +20,7 @@ export const TabOportunidades = ({ clienteId }: { clienteId: string }) => {
 
   const cargarOportunidades = useCallback(async () => {
     setCargando(true);
-    const nuevasOportunidades = await getOportunidadesVentaCliente({}, {});
+    const nuevasOportunidades = await getOportunidadesVentaCliente(clienteId);
     setListaOportunidades(nuevasOportunidades);
     setCargando(false);
   }, [clienteId, setListaOportunidades]);

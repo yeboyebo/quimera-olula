@@ -1,5 +1,6 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
+import { NuevaOportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Cliente } from "./diseño.ts";
 
 
@@ -50,5 +51,24 @@ export const metaCliente: MetaModelo<Cliente> = {
 
 
 export const initEstadoClienteVacio = () => initEstadoCliente(clienteVacio())
+
+export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
+    campos: {
+        descripcion: { requerido: true },
+        probabilidad: { requerido: true },
+        estado_id: { requerido: false },
+        cliente_id: { requerido: true },
+        nombre_cliente: { requerido: true },
+    }
+};
+
+export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
+    descripcion: "",
+    probabilidad: "",
+    valor_defecto: false,
+    estado_id: undefined,
+    cliente_id: "",
+    nombre_cliente: "",
+};
 
 
