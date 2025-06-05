@@ -5,16 +5,23 @@ import {
 } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { OportunidadVenta } from "../../../../oportunidadventa/diseño.ts";
+import { Cliente } from "../../../diseño.ts";
 import { getOportunidadesVentaCliente } from "../../../infraestructura.ts";
 import { TabOportunidadesAcciones } from "./TabOportunidadesAcciones.tsx";
 
 type Estado = "lista" | "alta" | "borrar";
 
-export const TabOportunidades = ({ clienteId }: { clienteId: string }) => {
+export const TabOportunidades = ({
+  cliente,
+}: {
+  cliente: HookModelo<Cliente>;
+}) => {
   const oportunidades = useLista<OportunidadVenta>([]);
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
+  const clienteId = cliente.modelo.id;
 
   const setListaOportunidades = oportunidades.setLista;
 
@@ -79,7 +86,7 @@ export const TabOportunidades = ({ clienteId }: { clienteId: string }) => {
         seleccionada={oportunidades.seleccionada}
         emitir={emitir}
         estado={estado}
-        clienteId={clienteId}
+        cliente={cliente}
       />
       <QTabla
         metaTabla={metaTablaOportunidadVenta}

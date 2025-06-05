@@ -91,34 +91,31 @@ export const ClienteConNombre = ({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ flex: 1 }}>
-        <ClienteAuto
-          descripcion={nombreCliente}
-          valor={valor}
-          nombre={nombre}
-          label={label}
-          onChange={handleClienteChange}
-          {...props}
+    <>
+      <ClienteAuto
+        descripcion={descripcion}
+        valor={valor}
+        nombre={nombre}
+        label={label}
+        onChange={handleClienteChange}
+        {...props}
+      />
+
+      {mostrarNombre && (
+        <QInput
+          label={labelNombre}
+          valor={nombreCliente}
+          onChange={handleNombreChange}
+          nombre="nombre_cliente"
         />
-      </div>
+      )}
       <QBoton
         variante="texto"
         tamaño="pequeño"
         onClick={() => setMostrarNombre((v) => !v)}
       >
-        <QIcono nombre={mostrarNombre ? "lock-open" : "lock"} />
+        <QIcono nombre={mostrarNombre ? "candado_abierto" : "candado"} />
       </QBoton>
-      {mostrarNombre && (
-        <div style={{ flex: 1 }}>
-          <QInput
-            label={labelNombre}
-            valor={nombreCliente}
-            onChange={handleNombreChange}
-            nombre="nombre_cliente"
-          />
-        </div>
-      )}
-    </div>
+    </>
   );
 };

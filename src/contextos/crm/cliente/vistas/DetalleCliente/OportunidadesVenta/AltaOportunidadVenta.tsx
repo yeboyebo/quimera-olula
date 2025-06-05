@@ -1,9 +1,10 @@
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "../../../../../comun/diseño.ts";
-import { useModelo } from "../../../../../comun/useModelo.ts";
+import { HookModelo, useModelo } from "../../../../../comun/useModelo.ts";
 import { ClienteConNombre } from "../../../../comun/componentes/cliente_con_nombre.tsx";
 import { EstadoOportunidad } from "../../../../comun/componentes/estadoOportunidadVenta.tsx";
+import { Cliente } from "../../../diseño.ts";
 import {
   metaNuevaOportunidadVenta,
   nuevaOportunidadVentaVacia,
@@ -16,8 +17,10 @@ import {
 
 export const AltaOportunidadVenta = ({
   emitir = () => {},
+  cliente,
 }: {
   emitir?: EmitirEvento;
+  cliente: HookModelo<Cliente>;
 }) => {
   const nuevaOportunidad = useModelo(
     metaNuevaOportunidadVenta,
@@ -49,6 +52,8 @@ export const AltaOportunidadVenta = ({
         />
         <ClienteConNombre
           {...nuevaOportunidad.uiProps("cliente_id", "nombre_cliente")}
+          valor={cliente.modelo.id}
+          descripcion={cliente.modelo.nombre}
         />
       </quimera-formulario>
       <div className="botones">

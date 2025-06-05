@@ -102,7 +102,7 @@ export const DetalleCliente = ({
                   label="Oportunidades"
                   children={
                     <div className="detalle-cliente-tab-contenido">
-                      <TabOportunidades clienteId={clienteId} />
+                      <TabOportunidades cliente={cliente} />
                     </div>
                   }
                 />,
