@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
@@ -78,6 +78,10 @@ export const ClienteConNombre = ({
   const [mostrarNombre, setMostrarNombre] = useState(false);
   const [nombreCliente, setNombreCliente] = useState(descripcion);
 
+  useEffect(() => {
+    setNombreCliente(descripcion ?? "");
+  }, [descripcion, valor]);
+
   const handleClienteChange = (
     opcion: { valor: string; descripcion: string } | null
   ) => {
@@ -93,7 +97,7 @@ export const ClienteConNombre = ({
   return (
     <>
       <ClienteAuto
-        descripcion={descripcion}
+        descripcion={nombreCliente}
         valor={valor}
         nombre={nombre}
         label={label}
