@@ -1,10 +1,15 @@
 .OportunidadVenta .TabDatos {
+
     quimera-autocompletar[nombre="cliente_id"] {
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 5;
+    }
+
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: span 5;
     }
 
     quimera-autocompletar[nombre="contacto_id"] {
-        grid-column: span 6;
+        grid-column: 1 / span 6;
     }
 
     quimera-autocompletar[nombre="estado_id"] {

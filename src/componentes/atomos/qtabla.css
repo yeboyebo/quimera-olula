@@ -99,4 +99,9 @@ quimera-tabla {
     td.numero {
         text-align: right;
     }
+
+    th.moneda,
+    th.numero {
+        text-align: right;
+    }
 }

@@ -24,6 +24,8 @@ export type NuevaOportunidadVenta = {
     valor_defecto: boolean;
     probabilidad: string;
     estado_id?: string;
+    cliente_id?: string;
+    nombre_cliente?: string;
 };
 
 export type EstadoOportunidad = {
