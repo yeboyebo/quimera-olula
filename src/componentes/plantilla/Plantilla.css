@@ -28,9 +28,11 @@
     &>footer {
         color: var(--color-fondo);
         background-color: var(--color-texto-primario);
+        height: var(--alto-footer);
         width: 100%;
         text-align: center;
-        padding: 2rem;
+        padding: 0.5rem;
         align-self: flex-end;
     }
+
 }

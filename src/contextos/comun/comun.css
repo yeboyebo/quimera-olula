@@ -2,16 +2,21 @@ maestro-detalle {
     display: flex;
     gap: 2rem;
     overflow: hidden;
+    /* max-height: 100vh; */
 
     .Maestro {
         flex-basis: 50%;
-        overflow: auto;
+        flex-shrink: 1;
+        flex-grow: 1;
+        min-width: 0;
     }
 
     .Detalle {
         max-width: 94vw;
         flex-basis: 50%;
-        overflow: auto;
+        flex-shrink: 1;
+        flex-grow: 1;
+        min-width: 0;
     }
 
     .maestro-botones,

@@ -94,7 +94,7 @@ export const Listado = <T extends Entidad>({
   };
 
   return (
-    <div className="Maestro">
+    <div className="Listado">
       <MaestroFiltros
         campos={obtenerCampos(entidades[0])}
         filtro={filtro}
