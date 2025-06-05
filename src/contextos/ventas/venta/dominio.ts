@@ -45,8 +45,8 @@ export const nuevaLineaVentaVacia: NuevaLineaVenta = {
 
 export const metaVenta: MetaModelo<Venta> = {
     campos: {
-        tasa_conversion: { tipo: "number", requerido: true },
-        total_divisa_empresa: { tipo: "number", bloqueado: true },
+        tasa_conversion: { tipo: "numero", requerido: true },
+        total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
         id_fiscal: { bloqueado: true, requerido: true },
         cliente_id: { bloqueado: true, requerido: true },
@@ -56,7 +56,7 @@ export const metaVenta: MetaModelo<Venta> = {
 
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
-        cantidad: { tipo: "number", requerido: true },
+        cantidad: { tipo: "numero", requerido: true },
         referencia: { requerido: true },
     }
 };
@@ -78,7 +78,7 @@ export const metaCambioClienteVenta: MetaModelo<CambioClienteVenta> = {
 
 export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     campos: {
-        cantidad: { tipo: "number", requerido: true },
+        cantidad: { tipo: "numero", requerido: true },
         referencia: { requerido: true },
     }
 };

@@ -1,4 +1,4 @@
-import { Direccion, Entidad, Modelo } from "./diseño.ts";
+import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -63,10 +63,9 @@ export type EstadoModelo<T extends Modelo> = {
 
 
 // export type Validador<T extends Modelo> = (estado: EstadoModelo<T>, campo: string) => Validacion;
-type PropTipoCampo = 'string' | 'boolean' | 'number' | 'date'
 type Campo<T extends Modelo> = {
     nombre?: string;
-    tipo?: PropTipoCampo;
+    tipo?: TipoInput;
     requerido?: boolean;
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
@@ -151,9 +150,9 @@ const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, cam
     }
 
     switch (campos[campo].tipo) {
-        case 'boolean':
+        case 'checkbox':
             return valor === 'true'
-        case 'number': {
+        case 'numero': {
             const numero = parseFloat(valor);
             return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
         }
@@ -266,6 +265,12 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     const valor = modelo[campo];
     if (requerido && valor === null) {
         return "Campo requerido";
+    }
+    if (campos[campo]?.tipo === "email" && typeof valor === "string" && valor.length > 0) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(valor)) {
+            return "Formato Email incorrecto";
+        }
     }
     const validacion = campos[campo]?.validacion
     return validacion
