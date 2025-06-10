@@ -9,7 +9,7 @@ const baseUrlVentasCliente = `/ventas/cliente`;
 const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
 const baseUrlCrm = `/crm`;
 
-type ClienteApi = Cliente;
+export type ClienteApi = Cliente;
 
 const clienteFromAPI = (c: ClienteApi): Cliente => ({
   ...c,

@@ -1,15 +1,16 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../comun/diseño.ts";
-import { criteriaQuery } from "../../comun/infraestructura.ts";
+import { Filtro, FiltroAPI, Orden, OrdenAPI } from "../../comun/diseño.ts";
+import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Cliente } from "../cliente/diseño.ts";
-import { getClientes } from "../cliente/infraestructura.ts";
-import {
-  getOportunidadesVenta
-} from "../oportunidadventa/infraestructura.ts";
+import { ClienteApi } from "../cliente/infraestructura.ts";
+import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
+
 import { Contacto } from "./diseño.ts";
 
 
 const baseUrlContactos = `/crm/contacto`;
+const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
+const baseUrlVentasCliente = `/ventas/cliente`;
 
 type ContactoApi = Contacto;
 
@@ -37,14 +38,19 @@ export const patchContacto = async (id: string, contacto: Contacto) =>
 export const deleteContacto = async (id: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlContactos}/${id}`);
 
+
 export const getOportunidadesVentaContacto = async (contactoId: string) => {
-  const filtro = { contacto_id: { "LIKE": contactoId } };
-  const orden = { id: "DESC" };
-  return getOportunidadesVenta(filtro as unknown as Filtro, orden as Orden);
+  const filtro = ['contacto_id', contactoId] as unknown as FiltroAPI;
+
+  const orden = [] as OrdenAPI;
+
+  const q = criteriaQueryUrl(filtro, orden);
+  return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
 };
 
 export const getClientesPorContacto = async (contactoId: string): Promise<Cliente[]> => {
-  const filtro = { contacto_id: contactoId };
-  const orden = { id: "DESC" };
-  return getClientes(filtro as unknown as Filtro, orden as Orden);
+  const filtro = ['contacto_id', contactoId] as unknown as FiltroAPI;
+  const orden = ["id"] as OrdenAPI;
+  const q = criteriaQueryUrl(filtro, orden);
+  return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentasCliente + q).then((respuesta) => respuesta.datos);
 };

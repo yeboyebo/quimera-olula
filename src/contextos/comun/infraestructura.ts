@@ -6,9 +6,24 @@ export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     if (!filtro && !orden) {
         return "";
     }
-    console.log("criteriaQuery", filtro, orden);
 
     const criteria = transformarCriteria(filtro, orden);
+    return aplicarCriteriaUrl(criteria);
+}
+
+export const criteriaQueryUrl = (filtro?: FiltroAPI, orden?: OrdenAPI): string => {
+    if (!filtro && !orden) {
+        return "";
+    }
+
+    const criteria: CriteriaAPI = {
+        filtro,
+        orden,
+    }
+    return aplicarCriteriaUrl(criteria);
+}
+
+export const aplicarCriteriaUrl = (criteria: CriteriaAPI): string => {
     return `?q=${JSON.stringify(criteria)}`;
 }
 
