@@ -1,6 +1,6 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import { Filtro, Orden } from "../../../comun/diseño.ts";
-import { getClientes } from "../../cliente/infraestructura.ts";
+import { getClientes } from "../../../crm/cliente/infraestructura.ts";
 
 interface ClienteProps {
   descripcion?: string;

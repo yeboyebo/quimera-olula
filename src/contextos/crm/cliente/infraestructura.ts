@@ -5,8 +5,9 @@ import { NuevaOportunidadVenta, OportunidadVenta } from "../oportunidadventa/dis
 import { Cliente, GetCliente, PatchCliente } from "./diseño.ts";
 
 
-const baseUrlVentas = `/ventas/cliente`;
+const baseUrlVentasCliente = `/ventas/cliente`;
 const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
+const baseUrlCrm = `/crm`;
 
 type ClienteApi = Cliente;
 
@@ -16,15 +17,15 @@ const clienteFromAPI = (c: ClienteApi): Cliente => ({
 
 
 export const getCliente: GetCliente = async (id) =>
-  await RestAPI.get<{ datos: Cliente }>(`${baseUrlVentas}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
+  await RestAPI.get<{ datos: Cliente }>(`${baseUrlVentasCliente}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
 export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente[]> => {
   const q = criteriaQuery(filtro, orden);
-  return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentas + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
+  return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentasCliente + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
 }
 
 export const patchCliente: PatchCliente = async (id, cliente) =>
-  await RestAPI.patch(`${baseUrlVentas}/${id}`, {
+  await RestAPI.patch(`${baseUrlVentasCliente}/${id}`, {
     cambios: {
       nombre: cliente.nombre,
       id_fiscal: {
@@ -43,7 +44,7 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
   });
 
 export const deleteCliente = async (id: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlVentas}/${id}`);
+  await RestAPI.delete(`${baseUrlVentasCliente}/${id}`);
 
 export const getOportunidadesVentaCliente = async (clienteId: string): Promise<OportunidadVenta[]> =>
   await RestAPI.get<{ datos: OportunidadVenta[] }>(`/crm/cliente/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta.datos);
@@ -54,4 +55,18 @@ export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta>
 
 export const postOportunidadVenta = async (oportunidad: NuevaOportunidadVenta): Promise<string> => {
   return await RestAPI.post(baseUrlOportunidadVenta, oportunidad).then((respuesta) => respuesta.id);
+};
+
+export const vincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
+  const payload = {
+    contacto_id: contactoId,
+  };
+  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/vincular_contacto`, payload);
+};
+
+export const desvincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
+  const payload = {
+    contacto_id: contactoId,
+  };
+  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/desvincular_contacto`, payload);
 };

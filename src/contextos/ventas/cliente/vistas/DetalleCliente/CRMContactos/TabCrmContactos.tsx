@@ -5,13 +5,15 @@ import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
+import {
+  desvincularContactoCliente,
+  vincularContactoCliente,
+} from "../../../../../crm/cliente/infraestructura.ts";
 import { ContactoSelector } from "../../../../comun/componentes/contacto.tsx";
 import { CrmContacto } from "../../../diseño.ts";
 import {
   deleteCrmContacto,
-  desvincularContactoCliente,
   getCrmContactosCliente,
-  vincularContactoCliente,
 } from "../../../infraestructura.ts";
 import { AltaCrmContactos } from "./AltaCrmContactos.tsx";
 import { EdicionCrmContactos } from "./EdicionCrmContactos.tsx";

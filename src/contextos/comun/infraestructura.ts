@@ -6,6 +6,7 @@ export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     if (!filtro && !orden) {
         return "";
     }
+    console.log("criteriaQuery", filtro, orden);
 
     const criteria = transformarCriteria(filtro, orden);
     return `?q=${JSON.stringify(criteria)}`;
