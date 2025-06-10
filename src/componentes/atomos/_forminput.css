@@ -53,11 +53,6 @@ quimera-checkbox {
         }
     }
 
-    &[tipo='numero'] {
-        input {
-            text-align: right;
-        }
-    }
 
     &[erroneo] {
         --color-borde: var(--color-error);
@@ -114,6 +109,20 @@ quimera-checkbox {
 
         .texto-validacion {
             font-size: var(--tamaño-letra-xs);
+        }
+    }
+}
+
+quimera-input {
+
+    &[tipo='numero'],
+    &[tipo='moneda'] {
+        input {
+            text-align: right;
+        }
+
+        label {
+            text-align: right;
         }
     }
 }
