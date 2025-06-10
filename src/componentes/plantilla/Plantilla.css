@@ -8,6 +8,7 @@
         font-size: 1.5rem;
         padding: 1.5rem;
         color: var(--color-fondo);
+        max-height: var(--alto-header);
 
         & a:visited {
             color: var(--color-fondo);
