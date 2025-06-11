@@ -241,20 +241,6 @@ export const getCrmContactos = async (filtro: Filtro, orden: Orden): Promise<Crm
   return RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/contacto` + q).then((respuesta) => respuesta.datos);
 }
 
-export const vincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
-  const payload = {
-    contacto_id: contactoId,
-  };
-  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/vincular_contacto`, payload);
-};
-
-export const desvincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
-  const payload = {
-    contacto_id: contactoId,
-  };
-  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/desvincular_contacto`, payload);
-};
-
 export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => {
   const payload = {
     nombre: contacto.nombre,
