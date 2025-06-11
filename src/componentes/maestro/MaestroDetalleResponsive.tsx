@@ -6,7 +6,7 @@ export function MaestroDetalleResponsive<T>({
   Maestro,
   Detalle,
 }: {
-  seleccionada: T;
+  seleccionada: T | null;
   Maestro: ReactNode;
   Detalle: ReactNode;
 }) {

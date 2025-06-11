@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Factura } from "../diseño.ts";
 import { getFacturas } from "../infraestructura.ts";
-
 import { AltaFactura } from "./AltaFactura.tsx";
-
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 
@@ -61,36 +60,38 @@ export const MaestroConDetalleFactura = () => {
 
   return (
     <div className="Factura">
-      <maestro-detalle>
-        <div className="Maestro">
-          <h2>Facturas</h2>
-          <Listado
-            metaTabla={metaTablaFactura}
-            entidades={facturas.lista}
-            setEntidades={facturas.setLista}
-            seleccionada={facturas.seleccionada}
-            setSeleccionada={facturas.seleccionar}
-            cargar={getFacturas}
-          />
-          <div className="maestro-botones">
-            <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
-          </div>
-        </div>
-        <div className="Detalle">
+      <MaestroDetalleResponsive<Factura>
+        seleccionada={facturas.seleccionada}
+        Maestro={
+          <>
+            <h2>Facturas</h2>
+            <Listado
+              metaTabla={metaTablaFactura}
+              entidades={facturas.lista}
+              setEntidades={facturas.setLista}
+              seleccionada={facturas.seleccionada}
+              setSeleccionada={facturas.seleccionar}
+              cargar={getFacturas}
+            />
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
+            </div>
+          </>
+        }
+        Detalle={
           <DetalleFactura
             facturaInicial={facturas.seleccionada}
             emitir={emitir}
           />
-        </div>
-
-        <QModal
-          nombre="modal"
-          abierto={estado === "alta"}
-          onCerrar={emision("ALTA_CANCELADA")}
-        >
-          <AltaFactura publicar={emitir} />
-        </QModal>
-      </maestro-detalle>
+        }
+      />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={emision("ALTA_CANCELADA")}
+      >
+        <AltaFactura publicar={emitir} />
+      </QModal>
     </div>
   );
 };

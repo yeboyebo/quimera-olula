@@ -111,6 +111,8 @@ export const metaCliente: MetaModelo<Cliente> = {
             validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
         },
         nombre_agente: { bloqueado: true },
+        email: { tipo: "email" },
+        telefono1: { tipo: "telefono" },
     }
 };
 

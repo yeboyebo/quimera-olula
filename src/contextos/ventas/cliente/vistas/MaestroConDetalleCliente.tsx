@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../comun/useLista.ts";
@@ -68,46 +69,44 @@ export const MaestroConDetalleCliente = () => {
 
   return (
     <div className="Cliente">
-      <maestro-detalle name="clientes">
-        <div className="Maestro">
-          <h2>Clientes</h2>
-          <div className="maestro-botones">
-            <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-            <QBoton
-              deshabilitado={!clientes.seleccionada}
-              onClick={onBorrarCliente}
-            >
-              Borrar
-            </QBoton>
-          </div>
-          <Listado
-            metaTabla={metaTablaCliente}
-            entidades={clientes.lista}
-            setEntidades={clientes.setLista}
-            seleccionada={clientes.seleccionada}
-            setSeleccionada={clientes.seleccionar}
-            cargar={getClientes}
-          />
-        </div>
-        <div className="Detalle">
+      <MaestroDetalleResponsive<Cliente>
+        seleccionada={clientes.seleccionada}
+        Maestro={
+          <>
+            <h2>Clientes</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
+              <QBoton
+                deshabilitado={!clientes.seleccionada}
+                onClick={onBorrarCliente}
+              >
+                Borrar
+              </QBoton>
+            </div>
+            <Listado
+              metaTabla={metaTablaCliente}
+              entidades={clientes.lista}
+              setEntidades={clientes.setLista}
+              seleccionada={clientes.seleccionada}
+              setSeleccionada={clientes.seleccionar}
+              cargar={getClientes}
+            />
+          </>
+        }
+        Detalle={
           <DetalleCliente
             clienteInicial={clientes.seleccionada}
             emitir={emitir}
           />
-        </div>
-
-        <QModal
-          nombre="modal"
-          abierto={estado === "alta"}
-          onCerrar={() => emitir("ALTA_CANCELADA")}
-        >
-          <AltaCliente
-            emitir={emitir}
-            // onClienteCreado={onClienteCreado}
-            // onCancelar={onCancelar}
-          />
-        </QModal>
-      </maestro-detalle>
+        }
+      />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
+      >
+        <AltaCliente emitir={emitir} />
+      </QModal>
     </div>
   );
 };

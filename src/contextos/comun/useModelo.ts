@@ -1,8 +1,9 @@
 import { useCallback, useReducer, useState } from "react";
-import { Modelo } from "./diseño.ts";
+
+import { Modelo, TipoInput } from "./diseño.ts";
 import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
 
-type TipoInput = "texto" | "checkbox" | "numero";
+
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T
@@ -82,15 +83,15 @@ export function useModelo<T extends Modelo>(
         const campos = meta.campos || {};
         const tipoMeta = campo in campos && campos[campo]?.tipo
             ? campos[campo].tipo
-            : "string";
-        const conversionTipo = {
-            "string": "texto",
-            "boolean": "checkbox",
-            "number": "numero",
-            "date": "fecha",
-        }
-        const tipo = (conversionTipo[tipoMeta] || "texto") as TipoInput;
+            : "texto";
 
+        const conversionTipo = {
+            "boolean": "checkbox",
+            "dolar": "moneda",
+        };
+
+        // const tipo = conversionTipo[tipoMeta] || tipoMeta;
+        const tipo = (conversionTipo[tipoMeta as keyof typeof conversionTipo] || tipoMeta) as TipoInput;
 
         return {
             nombre: campo,

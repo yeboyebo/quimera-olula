@@ -36,9 +36,9 @@ export const validadoresOportunidadVenta = {
 export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
     campos: {
         descripcion: { requerido: true },
-        total_venta: { requerido: false },
-        probabilidad: { requerido: false, tipo: "number" },
-        fecha_cierre: { requerido: false, tipo: "date" },
+        total_venta: { requerido: false, tipo: "moneda" },
+        probabilidad: { requerido: false, tipo: "numero" },
+        fecha_cierre: { requerido: false, tipo: "fecha" },
     },
 };
 
@@ -46,8 +46,8 @@ export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
     campos: {
         descripcion: { requerido: true },
         valor_defecto: { requerido: true },
-        probabilidad: { requerido: true, tipo: "number" },
-        estado_id: { requerido: false, tipo: "string" },
+        probabilidad: { requerido: true, tipo: "numero" },
+        estado_id: { requerido: false, tipo: "texto" },
     },
 };
 

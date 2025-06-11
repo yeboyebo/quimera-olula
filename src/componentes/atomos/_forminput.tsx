@@ -32,6 +32,7 @@ const tiposFormInput = {
   fichero: "file",
   url: "url",
   rango: "range",
+  moneda: "text",
 } as const;
 
 export type FormInputProps = FormFieldProps & {

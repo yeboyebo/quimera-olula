@@ -44,3 +44,19 @@ export type Direccion = {
 
 
 export type EmitirEvento = (evento: string, payload?: unknown) => void
+
+export type TipoInput =
+  | "texto"
+  | "numero"
+  | "fecha"
+  | "hora"
+  | "contraseña"
+  | "email"
+  | "checkbox"
+  | "radio"
+  | "telefono"
+  | "color"
+  | "fichero"
+  | "url"
+  | "rango"
+  | "moneda";
