@@ -6,6 +6,14 @@ type TextAreaProps = FormFieldProps & {
     valor: string,
     evento: React.FormEvent<HTMLTextAreaElement>
   ) => void;
+  onChange?: (
+    valor: string,
+    evento: React.ChangeEvent<HTMLTextAreaElement>
+  ) => void;
+  onBlur?: (
+    valor: string,
+    evento: React.FocusEvent<HTMLTextAreaElement>
+  ) => void;
   rows?: number;
 };
 

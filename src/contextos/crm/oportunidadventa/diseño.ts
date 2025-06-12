@@ -25,6 +25,7 @@ export type NuevaOportunidadVenta = {
     probabilidad: string;
     estado_id?: string;
     cliente_id?: string;
+    contacto_id?: string;
     nombre_cliente?: string;
 };
 
