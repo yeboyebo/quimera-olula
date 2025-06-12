@@ -40,7 +40,7 @@ const inputFiltro = () => {
 type MaestroProps = {
   campos: string[];
   filtro: Filtro;
-  cambiarFiltro: (clave: string, valor: string) => void;
+  cambiarFiltro: (clave: string, valor: string, operador?: string) => void;
   borrarFiltro: (clave: string) => void;
   resetearFiltro: () => void;
 };
@@ -57,14 +57,12 @@ export const MaestroFiltros = ({
     formatearClave(clave),
   ]);
 
-  const filtrosActuales = Object.entries(filtro).map(([clave, valor]) => {
+  const filtrosActuales = filtro.map(([clave, _operador, valor]) => {
     const etiqueta = camposFormateados.find((campo) => campo[0] === clave)?.[1];
-    const valorMostrado = valor.LIKE;
-
     return (
       <div key={clave} onClick={() => borrarFiltro(clave)}>
         <span>{etiqueta}:</span>
-        <span>{valorMostrado}</span>
+        <span>{valor}</span>
       </div>
     );
   });
@@ -78,7 +76,7 @@ export const MaestroFiltros = ({
 
     if (!campo) return;
 
-    cambiarFiltro(campo, valor);
+    cambiarFiltro(campo, valor, "~");
   };
 
   return (
