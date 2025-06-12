@@ -15,15 +15,17 @@ export const login: Login = async (id: string, contraseña: string) => {
     return RestAPI.post<PeticionLogin>(`${baseUrl}/login`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioLogin);
 }
 
-type RespuestaRefresco = { token_acceso: string; };
+type RespuestaRefresco = { token: string; };
 export const refrescarToken: RefrescarToken = async (tokenRefresco: string) => {
-    const callback: (_: RespuestaRefresco) => UsuarioRefresco = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso as string });
+    const payload = { token: tokenRefresco };
+    const callback: (_: RespuestaRefresco) => UsuarioRefresco = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token as string });
 
-    return RestAPI.get<RespuestaRefresco>(`${baseUrl}/refresh/${tokenRefresco}`).then(callback);
+    return RestAPI.post<RespuestaRefresco>(`${baseUrl}/refrescar`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioRefresco);
 }
 
 export const logout: Logout = async (tokenRefresco: string) => {
-    return RestAPI.delete(`${baseUrl}/logout/${tokenRefresco}`);
+    const payload = { token: tokenRefresco };
+    RestAPI.post(`${baseUrl}/logout`, payload);
 }
 
 export const tokenAcceso = {
