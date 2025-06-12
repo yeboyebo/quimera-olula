@@ -6,13 +6,12 @@ import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 export const LineasLista = ({
   lineas,
   seleccionada,
-  emitir
+  emitir,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   emitir: EmitirEvento;
 }) => {
-
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
     emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
   };
@@ -24,8 +23,8 @@ export const LineasLista = ({
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
-        onSeleccion={(linea) => emitir('LINEA_SELECCIONADA', linea)}
-        orden={{ id: "ASC" }}
+        onSeleccion={(linea) => emitir("LINEA_SELECCIONADA", linea)}
+        orden={["id", "ASC"]}
         onOrdenar={
           (_: string) => null
           //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
@@ -34,7 +33,6 @@ export const LineasLista = ({
     </>
   );
 };
-
 
 const getMetaTablaLineas = (
   cambiarCantidad: (linea: Linea, cantidad: number) => void
@@ -57,11 +55,12 @@ const getMetaTablaLineas = (
     },
     { id: "pvp_unitario", cabecera: "Precio" },
     { id: "grupo_iva_producto_id", cabecera: "IVA" },
-    { id: "dto_porcentual", cabecera: "% Dto.",
-      render: (linea: Linea) => linea.dto_porcentual ? 
-        `${linea.dto_porcentual}%`
-        : ""
-     },
+    {
+      id: "dto_porcentual",
+      cabecera: "% Dto.",
+      render: (linea: Linea) =>
+        linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
+    },
     { id: "pvp_total", cabecera: "Total" },
   ];
 };

@@ -19,14 +19,8 @@ export const EstadoOportunidad = ({
 }: EstadoOportunidadProps) => {
   const obtenerOpciones = async (input: string) => {
     const criteria = {
-      filtro: input
-        ? {
-            descripcion: {
-              LIKE: input,
-            },
-          }
-        : {},
-      orden: ["id", "DESC"],
+      filtro: input ? [["descripcion", "~", input]] : [],
+      orden: ["id"],
     };
 
     const estados = await getEstadosOportunidadVenta(

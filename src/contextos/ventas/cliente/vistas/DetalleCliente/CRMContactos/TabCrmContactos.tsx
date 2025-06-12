@@ -174,7 +174,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         cargando={cargando}
         seleccionadaId={contactos.seleccionada?.id}
         onSeleccion={(contacto) => emitir("CONTACTO_SELECCIONADO", contacto)}
-        orden={{ id: "ASC" }}
+        orden={["id", "ASC"]}
         onOrdenar={() => null}
       />
       {configuracionActual?.nombre && (
