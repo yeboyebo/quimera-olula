@@ -26,8 +26,8 @@ export const deleteOportunidadVenta = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlOportunidadVenta}/${id}`);
 
 export const getEstadosOportunidadVenta = async (
-    filtro = {},
-    orden = {}
+    filtro = [],
+    orden = []
 ): Promise<EstadoOportunidad[]> =>
     await RestAPI.get<{ datos: EstadoOportunidad[] }>(
         baseUrlEstadoOportunidadVenta + criteriaQuery(filtro, orden)

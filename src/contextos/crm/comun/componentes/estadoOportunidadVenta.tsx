@@ -26,7 +26,7 @@ export const EstadoOportunidad = ({
             },
           }
         : {},
-      orden: { id: "DESC" },
+      orden: ["id", "DESC"],
     };
 
     const estados = await getEstadosOportunidadVenta(
