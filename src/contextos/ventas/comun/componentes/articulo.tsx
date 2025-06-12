@@ -6,9 +6,7 @@ interface ArticuloProps {
   valor: string;
   nombre?: string;
   label?: string;
-  onChange: (
-    opcion: { valor: string; descripcion: string } | null
-  ) => void;
+  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const Articulo = ({
@@ -21,12 +19,8 @@ export const Articulo = ({
 }: ArticuloProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria = {
-      filtro: {
-        descripcion: {
-          LIKE: texto,
-        },
-      },
-      orden: { id: "DESC" },
+      filtro: ["descripcion", "~", texto],
+      orden: ["id"],
     };
 
     const articulos = await getTagsArticulo(

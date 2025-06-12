@@ -68,7 +68,7 @@ export const TabDireccionesLista = ({
         cargando={cargando}
         seleccionadaId={seleccionada?.id}
         onSeleccion={(direccion) => emitir("DIRECCION_SELECCIONADA", direccion)}
-        orden={{ id: "ASC" }}
+        orden={["id", "ASC"]}
         onOrdenar={() => null}
       />
     </>

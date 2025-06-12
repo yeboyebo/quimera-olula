@@ -16,17 +16,20 @@ export type Criteria = {
   orden: Orden;
 }
 
-export type FiltroAPI = [string, string, string][];
-export type OrdenAPI = string[];
-export type CriteriaAPI = {
-  filtro?: FiltroAPI;
-  orden?: OrdenAPI;
-}
+// export type FiltroAPI = [string, string, string][];
+// export type OrdenAPI = string[];
+// export type CriteriaAPI = {
+//   filtro?: FiltroAPI;
+//   orden?: OrdenAPI;
+// }
 
 
-export type ValorFiltro = { LIKE: string };
-export type Orden = { [campo: string]: "ASC" | "DESC" }
-export type Filtro = { [campo: string]: ValorFiltro };
+// export type ValorFiltro = { LIKE: string };
+// export type Orden = { [campo: string]: "ASC" | "DESC" }
+// export type Filtro = { [campo: string]: ValorFiltro };
+
+export type Orden = string[];
+export type Filtro = [string, string, string][];
 
 export type Direccion = {
   nombre_via: string;

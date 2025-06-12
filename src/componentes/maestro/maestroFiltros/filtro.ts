@@ -6,7 +6,7 @@ export const filtrarEntidad = (
 ): boolean => {
     if (!conjuntoFiltros) return true;
 
-    return Object.entries(conjuntoFiltros).every(([campo, valor]) => {
+    return conjuntoFiltros.every(([campo, operador, valor]) => {
         const claves = campo.split(".");
 
         const valorCampo = (
@@ -16,6 +16,10 @@ export const filtrarEntidad = (
             ) as unknown as string
         )?.toLowerCase();
 
-        return valorCampo?.includes(valor.LIKE.toLowerCase()) ?? false;
+        if (operador === "~") {
+            return valorCampo?.includes(valor.toLowerCase()) ?? false;
+        }
+        // Si en el futuro hay otros operadores, se pueden añadir aquí
+        return true;
     });
 };

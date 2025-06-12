@@ -1,5 +1,5 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { Filtro } from "../../../comun/diseño.ts";
 import { getClientes } from "../../../crm/cliente/infraestructura.ts";
 
 interface ClienteProps {
@@ -20,17 +20,13 @@ export const Cliente = ({
 }: ClienteProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria = {
-      filtro: {
-        nombre: {
-          LIKE: texto,
-        },
-      },
-      orden: { id: "DESC" },
+      filtro: ["nombre", "~", texto],
+      orden: ["id"],
     };
 
     const clientes = await getClientes(
       criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+      criteria.orden
     );
 
     return clientes.map((cliente) => ({

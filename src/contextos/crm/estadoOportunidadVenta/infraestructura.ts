@@ -14,7 +14,7 @@ export const estadoOportunidadToAPI = (e: EstadoOportunidad) => ({
 export const getEstadoOportunidad = async (id: string): Promise<EstadoOportunidad> =>
     await RestAPI.get<{ datos: EstadoOportunidad }>(`${baseUrlEstadoOportunidadVenta}/${id}`).then((respuesta) => respuesta.datos);
 
-export const getEstadosOportunidad = async (filtro: Filtro = {}, orden: Orden = {}): Promise<EstadoOportunidad[]> => {
+export const getEstadosOportunidad = async (filtro: Filtro = [], orden: Orden = []): Promise<EstadoOportunidad[]> => {
     const q = criteriaQuery(filtro, orden);
     return RestAPI.get<{ datos: EstadoOportunidad[] }>(baseUrlEstadoOportunidadVenta + q).then((respuesta) => respuesta.datos);
 };

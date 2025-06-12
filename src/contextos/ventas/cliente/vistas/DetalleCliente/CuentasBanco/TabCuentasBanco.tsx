@@ -140,7 +140,7 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
           cargando={cargando}
           seleccionadaId={cuentas.seleccionada?.id}
           onSeleccion={(cuenta) => emitir("CUENTA_SELECCIONADA", cuenta)}
-          orden={{ id: "ASC" }}
+          orden={["id", "ASC"]}
           onOrdenar={() => null}
         />
       </div>
