@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, FiltroAPI, Orden, OrdenAPI } from "../../comun/diseño.ts";
+import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Cliente } from "../cliente/diseño.ts";
 import { ClienteApi } from "../cliente/infraestructura.ts";
@@ -40,17 +40,17 @@ export const deleteContacto = async (id: string): Promise<void> =>
 
 
 export const getOportunidadesVentaContacto = async (contactoId: string) => {
-  const filtro = ['contacto_id', contactoId] as unknown as FiltroAPI;
+  const filtro = ['contacto_id', contactoId] as unknown as Filtro;
 
-  const orden = [] as OrdenAPI;
+  const orden = [] as Orden;
 
   const q = criteriaQueryUrl(filtro, orden);
   return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
 };
 
 export const getClientesPorContacto = async (contactoId: string): Promise<Cliente[]> => {
-  const filtro = ['contacto_id', contactoId] as unknown as FiltroAPI;
-  const orden = ["id"] as OrdenAPI;
+  const filtro = ['contacto_id', contactoId] as unknown as Filtro;
+  const orden = ["id"] as Orden;
   const q = criteriaQueryUrl(filtro, orden);
   return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentasCliente + q).then((respuesta) => respuesta.datos);
 };

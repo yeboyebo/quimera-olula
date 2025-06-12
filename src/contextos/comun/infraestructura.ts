@@ -1,6 +1,6 @@
 import { OpcionCampo } from "../../componentes/detalle/FormularioGenerico.tsx";
 import { RestAPI } from "./api/rest_api.ts";
-import { CriteriaAPI, Filtro, FiltroAPI, Orden, OrdenAPI } from "./diseño.ts";
+import { Criteria, Filtro, Orden } from "./diseño.ts";
 
 export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     if (!filtro && !orden) {
@@ -11,40 +11,39 @@ export const criteriaQuery = (filtro?: Filtro, orden?: Orden): string => {
     return aplicarCriteriaUrl(criteria);
 }
 
-export const criteriaQueryUrl = (filtro?: FiltroAPI, orden?: OrdenAPI): string => {
+export const criteriaQueryUrl = (filtro?: Filtro, orden?: Orden): string => {
     if (!filtro && !orden) {
         return "";
     }
 
-    const criteria: CriteriaAPI = {
-        filtro,
-        orden,
-    }
+    const criteria = transformarCriteria(filtro, orden);
     return aplicarCriteriaUrl(criteria);
 }
 
-export const aplicarCriteriaUrl = (criteria: CriteriaAPI): string => {
+export const aplicarCriteriaUrl = (criteria: Criteria): string => {
     return `?q=${JSON.stringify(criteria)}`;
 }
 
-export const transformarCriteria = (filtro?: Filtro, orden?: Orden): CriteriaAPI => {
-    const res: CriteriaAPI = {}
+export const transformarCriteria = (filtro?: Filtro, orden?: Orden): Criteria => {
+    const res: Partial<Criteria> = {};
     if (filtro) {
-        res['filtro'] = transformarFiltro(filtro);
+        // res['filtro'] = transformarFiltro(filtro);
+        res['filtro'] = filtro;
     }
     if (orden) {
-        res['orden'] = transformarOrden(orden);
+        // res['orden'] = transformarOrden(orden);
+        res['orden'] = orden;
     }
-    return res;
+    return res as Criteria;
 }
 
-const transformarFiltro = (filtro: Filtro): FiltroAPI => {
-    return Object.entries(filtro).map(([campo, valor]) => [campo, '~', valor['LIKE']]);
-}
+// const transformarFiltro = (filtro: Filtro): FiltroAPI => {
+//     return Object.entries(filtro).map(([campo, valor]) => [campo, '~', valor['LIKE']]);
+// }
 
-const transformarOrden = (orden: Orden): OrdenAPI => {
-    return Object.entries(orden).map(([campo, orden]) => [campo, orden]).flat();
-}
+// const transformarOrden = (orden: Orden): OrdenAPI => {
+//     return Object.entries(orden).map(([campo, orden]) => [campo, orden]).flat();
+// }
 
 export const obtenerOpcionesSelector =
     (path: string) => async () =>

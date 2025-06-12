@@ -96,7 +96,7 @@ export const TabOportunidades = ({
         onSeleccion={(oportunidad) =>
           emitir("OPORTUNIDAD_SELECCIONADA", oportunidad)
         }
-        orden={{ id: "ASC" }}
+        orden={["id", "ASC"]}
         onOrdenar={() => null}
       />
     </div>

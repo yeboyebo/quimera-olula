@@ -29,7 +29,7 @@ const cabecera = <T extends Entidad>(
     <th
       key={id}
       data-modo="columna"
-      data-orden={orden[id] ?? ""}
+      data-orden={orden[id as keyof typeof orden] ?? ""}
       className={`${tipo ?? ""} ${id}`}
       onClick={() => onOrdenar && onOrdenar(id)}
     >

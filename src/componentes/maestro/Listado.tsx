@@ -40,7 +40,7 @@ export type MaestroProps<T extends Entidad> = {
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  criteria = { filtro: {}, orden: { id: "DESC" } },
+  criteria = { filtro: [], orden: ["id", "DESC"] },
   entidades,
   setEntidades,
   seleccionada,
@@ -86,9 +86,9 @@ export const Listado = <T extends Entidad>({
         seleccionadaId={seleccionada?.id}
         onSeleccion={(entidad) => setSeleccionada(entidad as T)}
         orden={orden}
-        onOrdenar={(clave) =>
-          setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
-        }
+        onOrdenar={(clave) => {
+          setOrden([clave]);
+        }}
       />
     );
   };
@@ -98,12 +98,15 @@ export const Listado = <T extends Entidad>({
       <MaestroFiltros
         campos={obtenerCampos(entidades[0])}
         filtro={filtro}
-        cambiarFiltro={(clave, valor) =>
-          setFiltro({ ...filtro, [clave]: { LIKE: valor } })
-        }
+        cambiarFiltro={(clave, valor, operador = "~") => {
+          const nuevoFiltro: Filtro = [
+            ...filtro.filter(([k]) => k !== clave),
+            [clave, operador, valor],
+          ];
+          setFiltro(nuevoFiltro);
+        }}
         borrarFiltro={(clave) => {
-          const { [clave]: _, ...resto } = filtro;
-          setFiltro(resto);
+          setFiltro(filtro.filter(([k]) => k !== clave));
         }}
         resetearFiltro={() => setFiltro(criteria.filtro)}
       />

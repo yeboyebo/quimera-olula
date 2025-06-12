@@ -34,12 +34,8 @@ export const Cliente = ({
 }: ClienteProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria = {
-      filtro: {
-        nombre: {
-          LIKE: texto,
-        },
-      },
-      orden: { id: "DESC" },
+      filtro: ["nombre", texto],
+      orden: ["id", "DESC"],
     };
 
     const clientes = await getClientes(

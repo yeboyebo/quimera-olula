@@ -85,7 +85,7 @@ export const TabClientes = ({
         cargando={cargando}
         seleccionadaId={clientes.seleccionada?.id}
         onSeleccion={(cliente) => emitir("CLIENTE_SELECCIONADO", cliente)}
-        orden={{ id: "ASC" }}
+        orden={["id", "ASC"]}
         onOrdenar={() => null}
       />
     </div>

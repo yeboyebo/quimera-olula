@@ -25,10 +25,8 @@ export const patchOportunidadVenta = async (id: string, oportunidad: Partial<Opo
 export const deleteOportunidadVenta = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlOportunidadVenta}/${id}`);
 
-export const getEstadosOportunidadVenta = async (
-    filtro = {},
-    orden = {}
-): Promise<EstadoOportunidad[]> =>
-    await RestAPI.get<{ datos: EstadoOportunidad[] }>(
-        baseUrlEstadoOportunidadVenta + criteriaQuery(filtro, orden)
-    ).then((respuesta) => respuesta.datos);
+export const getEstadosOportunidadVenta = async (filtro: Filtro, orden: Orden): Promise<EstadoOportunidad[]> => {
+    const q = criteriaQuery(filtro, orden);
+    return RestAPI.get<{ datos: EstadoOportunidad[] }>(baseUrlEstadoOportunidadVenta + q).then((respuesta) => respuesta.datos);
+}
+
