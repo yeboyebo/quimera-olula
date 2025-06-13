@@ -9,6 +9,7 @@ maestro-detalle {
         overflow-y: auto;
         flex-basis: 50%;
         flex-shrink: 1;
+        max-width: 48vw;
         flex-grow: 1;
         min-width: 0;
     }
@@ -17,6 +18,7 @@ maestro-detalle {
         max-height: calc(94vh - var(--alto-header));
         overflow-y: auto;
         flex-basis: 50%;
+        max-width: 48vw;
         flex-shrink: 1;
         flex-grow: 1;
         min-width: 0;
@@ -46,6 +48,6 @@ maestro-detalle {
     .Maestro,
     .Detalle {
         flex-basis: 100%;
-        width: 98vw;
+        max-width: 98vw !important;
     }
 }
