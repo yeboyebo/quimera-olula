@@ -1,51 +1,77 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
-import { NuevaOportunidadVenta, OportunidadVenta } from "./diseño.ts";
 
-export const oportunidadVentaVacia: OportunidadVenta = {
-    id: '',
-    descripcion: '',
-    cliente_id: null,
-    nombre_cliente: null,
-    total_venta: 0,
-    estado_id: '',
-    descripcion_estado: null,
-    probabilidad: 0,
-    fecha_cierre: null,
-    contacto_id: null,
-    nombre_contacto: null,
-    tarjeta_id: null,
-    nombre_tarjeta: null,
-    usuario_id: null,
-    observaciones: null,
-    valor_defecto: false,
+export type Accion = {
+    id: string;
+    fecha: string;
+    descripcion: string;
+    estado: string;
+    observaciones: string;
+    agente_id: string;
+    tipo: string;
+    cliente_id: string;
+    contacto_id: string;
+    oportunidad_id: string;
+    tarjeta_id: string;
+    incidencia_id: string;
+    proyecto_id: string;
+    subproyecto_id: string;
+    usuario_id: string;
+    fecha_fin: string;
 };
 
-export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
-    descripcion: '',
-    valor_defecto: false,
-    probabilidad: '',
-    estado_id: '',
+export const accionVacia: Accion = {
+    id: "",
+    fecha: "",
+    descripcion: "",
+    estado: "",
+    observaciones: "",
+    agente_id: "",
+    tipo: "",
+    cliente_id: "",
+    contacto_id: "",
+    oportunidad_id: "",
+    tarjeta_id: "",
+    incidencia_id: "",
+    proyecto_id: "",
+    subproyecto_id: "",
+    usuario_id: "",
+    fecha_fin: "",
 };
 
-export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
+export const metaAccion: MetaModelo<Accion> = {
     campos: {
-        descripcion: { requerido: true, validacion: (oportunidad: OportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
-        total_venta: { requerido: false, tipo: "moneda" },
-        probabilidad: { requerido: false, tipo: "numero" },
-        fecha_cierre: { requerido: false, tipo: "fecha" },
+        fecha: { requerido: true, tipo: "fecha" },
+        descripcion: { requerido: true, validacion: (accion: Accion) => stringNoVacio(accion.descripcion) },
+        observaciones: { requerido: false },
+        agente_id: { requerido: false },
+        tipo: { requerido: false },
     },
 };
 
-export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
-    campos: {
-        descripcion: { requerido: true, validacion: (oportunidad: NuevaOportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
-        valor_defecto: { requerido: true },
-        probabilidad: { requerido: true, tipo: "numero" },
-        estado_id: { requerido: false, tipo: "texto" },
-    },
+export const initEstadoAccion = (accion: Accion): EstadoModelo<Accion> =>
+    initEstadoModelo(accion);
+
+export const initEstadoAccionVacia = () => initEstadoAccion(accionVacia);
+
+export type NuevaAccion = {
+    fecha: string;
+    descripcion: string;
+    tipo: string;
+    observaciones: string;
 };
 
-export const initEstadoOportunidadVenta = (oportunidad: OportunidadVenta): EstadoModelo<OportunidadVenta> =>
-    initEstadoModelo(oportunidad);
+export const nuevaAccionVacia: NuevaAccion = {
+    fecha: "",
+    descripcion: "",
+    tipo: "",
+    observaciones: "",
+};
 
-export const initEstadoOportunidadVentaVacia = () => initEstadoOportunidadVenta(oportunidadVentaVacia);
+export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
+    campos: {
+        fecha: { requerido: true, tipo: "fecha" },
+        descripcion: { requerido: true, validacion: (accion: NuevaAccion) => stringNoVacio(accion.descripcion) },
+        tipo: { requerido: false },
+        observaciones: { requerido: false },
+    },
+};

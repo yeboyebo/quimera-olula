@@ -1,41 +1,26 @@
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { HookModelo } from "../../../../comun/useModelo.ts";
-import { ContactoSelector } from "../../../../ventas/comun/componentes/contacto.tsx";
-import { ClienteConNombre } from "../../../comun/componentes/cliente_con_nombre.tsx";
-import { EstadoOportunidad } from "../../../comun/componentes/estadoOportunidadVenta.tsx";
-import { OportunidadVenta } from "../../diseño.ts";
-import "./TabDatos.css";
+import { Accion } from "../../diseño.ts";
 
-export const TabDatos = ({
-  oportunidad,
-}: {
-  oportunidad: HookModelo<OportunidadVenta>;
-}) => {
-  const { uiProps } = oportunidad;
+export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
+  const { uiProps } = accion;
 
   return (
     <div className="TabDatos">
       <quimera-formulario>
-        <QInput label="Descripción" {...uiProps("descripcion")} />
-        <ClienteConNombre
-          {...uiProps("cliente_id", "nombre_cliente")}
-          valor={oportunidad.modelo.cliente_id ?? ""}
-          descripcion={oportunidad.modelo.nombre_cliente ?? ""}
-        />
-        <ContactoSelector
-          {...uiProps("contacto_id")}
-          label="Contacto"
-          descripcion={oportunidad.modelo.nombre_contacto ?? undefined}
-        />
-        <EstadoOportunidad
-          label="Estado"
-          {...uiProps("estado_id")}
-          descripcion={oportunidad.modelo.descripcion_estado ?? undefined}
-        />
-        <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
-        <QInput label="Tarjeta" {...uiProps("tarjeta_id")} deshabilitado />
-        <QInput label="Total Venta" {...uiProps("total_venta")} />
-        <QInput label="Fecha Cierre" {...uiProps("fecha_cierre")} />
+        <QInput label="Estado" {...uiProps("estado")} />
+        <QInput label="Observaciones" {...uiProps("observaciones")} />
+        <QInput label="Agente" {...uiProps("agente_id")} />
+        <QInput label="Tipo" {...uiProps("tipo")} />
+        <QInput label="Cliente" {...uiProps("cliente_id")} />
+        <QInput label="Contacto" {...uiProps("contacto_id")} />
+        <QInput label="Oportunidad" {...uiProps("oportunidad_id")} />
+        <QInput label="Tarjeta" {...uiProps("tarjeta_id")} />
+        <QInput label="Incidencia" {...uiProps("incidencia_id")} />
+        <QInput label="Proyecto" {...uiProps("proyecto_id")} />
+        <QInput label="Subproyecto" {...uiProps("subproyecto_id")} />
+        <QInput label="Usuario" {...uiProps("usuario_id")} />
+        <QInput label="Fecha fin" {...uiProps("fecha_fin")} />
       </quimera-formulario>
     </div>
   );

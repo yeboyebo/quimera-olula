@@ -1,82 +1,88 @@
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
-import { OportunidadVenta } from "../../diseño.ts";
-import { metaOportunidadVenta, oportunidadVentaVacia } from "../../dominio.ts";
-import {
-  getOportunidadVenta,
-  patchOportunidadVenta,
-} from "../../infraestructura.ts";
-// import "./DetalleOportunidadVenta.css";
+import { Accion } from "../../diseño.ts";
+import { accionVacia, metaAccion } from "../../dominio.ts";
+import { getAccion, patchAccion } from "../../infraestructura.ts";
 import { TabDatos } from "./TabDatos.tsx";
-import { TabObservaciones } from "./TabObservaciones.tsx";
 
 type Estado = "defecto";
 
-export const DetalleOportunidadVenta = ({
-  oportunidadInicial = null,
+export const DetalleAccion = ({
+  accionInicial = null,
   emitir = () => {},
 }: {
-  oportunidadInicial?: OportunidadVenta | null;
+  accionInicial?: Accion | null;
   emitir?: EmitirEvento;
 }) => {
   const params = useParams();
-  const oportunidadId = oportunidadInicial?.id ?? params.id;
-  const titulo = (oportunidad: Entidad) => oportunidad.descripcion as string;
+  const accionId = accionInicial?.id ?? params.id;
+  const titulo = (accion: Entidad) => accion.descripcion as string;
 
-  const oportunidad = useModelo(metaOportunidadVenta, oportunidadVentaVacia);
-  const { modelo, init } = oportunidad;
+  const accion = useModelo(metaAccion, accionVacia);
+  const { modelo, init } = accion;
 
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchOportunidadVenta(modelo.id, modelo);
+        await patchAccion(modelo.id, modelo);
         recargarCabecera();
       },
     },
   };
-  const emitirOportunidad = useMaquina(maquina, "defecto", () => {});
+  const emitirAccion = useMaquina(maquina, "defecto", () => {});
 
   const recargarCabecera = async () => {
-    const nuevaOportunidad = await getOportunidadVenta(modelo.id);
-    init(nuevaOportunidad);
-    emitir("OPORTUNIDAD_CAMBIADA", nuevaOportunidad);
+    const nuevaAccion = await getAccion(modelo.id);
+    init(nuevaAccion);
+    emitir("ACCION_CAMBIADA", nuevaAccion);
   };
 
   return (
     <Detalle
-      id={oportunidadId}
+      id={accionId}
       obtenerTitulo={titulo}
-      setEntidad={(o) => init(o)}
+      setEntidad={(a) => init(a)}
       entidad={modelo}
-      cargar={getOportunidadVenta}
+      cargar={getAccion}
       cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
-      {!!oportunidadId && (
+      {!!accionId && (
         <>
           <Tabs
             children={[
               <Tab
                 key="tab-1"
                 label="Datos"
-                children={<TabDatos oportunidad={oportunidad} />}
+                children={
+                  <div className="TabDatos">
+                    <quimera-formulario>
+                      <QInput
+                        label="Descripción"
+                        {...accion.uiProps("descripcion")}
+                      />
+                      <QInput label="Fecha" {...accion.uiProps("fecha")} />
+                    </quimera-formulario>
+                  </div>
+                }
               />,
               <Tab
                 key="tab-2"
-                label="Observaciones"
-                children={<TabObservaciones oportunidad={oportunidad} />}
+                label="Más datos"
+                children={<TabDatos accion={accion} />}
               />,
             ]}
           ></Tabs>
-          {oportunidad.modificado && (
+          {accion.modificado && (
             <div className="botones maestro-botones">
               <QBoton
-                onClick={() => emitirOportunidad("GUARDAR_INICIADO")}
-                deshabilitado={!oportunidad.valido}
+                onClick={() => emitirAccion("GUARDAR_INICIADO")}
+                deshabilitado={!accion.valido}
               >
                 Guardar
               </QBoton>

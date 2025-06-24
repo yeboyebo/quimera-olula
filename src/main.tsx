@@ -5,6 +5,7 @@ import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
 import "./contextos/comun/comun.css";
 import { Indice } from "./contextos/comun/Indice.tsx";
+import { MaestroConDetalleAccion } from "./contextos/crm/accion/vistas/MaestroConDetalleAccion.tsx";
 import { MaestroConDetalleClienteCRM } from "./contextos/crm/cliente/vistas/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleContacto } from "./contextos/crm/contacto/vistas/MaestroConDetalleContacto.tsx";
 import { MaestroConDetalleEstadoOportunidad } from "./contextos/crm/estadoOportunidadVenta/vistas/MaestroConDetalleEstadoOportunidad.tsx";
@@ -127,6 +128,16 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Vista>
                   <MaestroConDetalleContacto />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="accion">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleAccion />
                 </Vista>
               }
             />
