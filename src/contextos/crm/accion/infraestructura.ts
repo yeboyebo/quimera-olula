@@ -18,7 +18,11 @@ export const postAccion = async (accion: Partial<Accion>): Promise<string> => {
 };
 
 export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<void> => {
-    await RestAPI.patch(`${baseUrlAccion}/${id}`, { cambios: accion });
+    // Quitar es para probar
+    const accionSinNulls = Object.fromEntries(
+        Object.entries(accion).map(([k, v]) => [k, v === null ? "" : v])
+    );
+    await RestAPI.patch(`${baseUrlAccion}/${id}`, accionSinNulls);
 };
 
 export const deleteAccion = async (id: string): Promise<void> =>

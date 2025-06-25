@@ -10,6 +10,7 @@ import { Accion } from "../../diseño.ts";
 import { accionVacia, metaAccion } from "../../dominio.ts";
 import { getAccion, patchAccion } from "../../infraestructura.ts";
 import { TabDatos } from "./TabDatos.tsx";
+import { TabObservaciones } from "./TabObservaciones.tsx";
 
 type Estado = "defecto";
 
@@ -75,6 +76,11 @@ export const DetalleAccion = ({
                 key="tab-2"
                 label="Más datos"
                 children={<TabDatos accion={accion} />}
+              />,
+              <Tab
+                key="tab-3"
+                label="Observaciones"
+                children={<TabObservaciones oportunidad={accion} />}
               />,
             ]}
           ></Tabs>

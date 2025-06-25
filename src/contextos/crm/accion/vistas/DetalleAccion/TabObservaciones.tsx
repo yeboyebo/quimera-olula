@@ -1,12 +1,12 @@
 import { QTextArea } from "../../../../../componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "../../../../comun/useModelo.ts";
-import { OportunidadVenta } from "../../diseño.ts";
+import { Accion } from "../../diseño.ts";
 // import "./TabObservaciones.css";
 
 export const TabObservaciones = ({
   oportunidad,
 }: {
-  oportunidad: HookModelo<OportunidadVenta>;
+  oportunidad: HookModelo<Accion>;
 }) => {
   const { uiProps } = oportunidad;
 
