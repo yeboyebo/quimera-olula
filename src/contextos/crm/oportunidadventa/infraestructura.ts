@@ -19,7 +19,7 @@ export const postOportunidadVenta = async (oportunidad: NuevaOportunidadVenta): 
 };
 
 export const patchOportunidadVenta = async (id: string, oportunidad: Partial<OportunidadVenta>): Promise<void> => {
-    await RestAPI.patch(`${baseUrlOportunidadVenta}/${id}`, { cambios: oportunidad });
+    await RestAPI.patch(`${baseUrlOportunidadVenta}/${id}`, oportunidad);
 };
 
 export const deleteOportunidadVenta = async (id: string): Promise<void> =>
