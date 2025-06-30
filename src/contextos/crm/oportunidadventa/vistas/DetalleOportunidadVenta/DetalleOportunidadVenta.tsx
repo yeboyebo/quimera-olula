@@ -12,6 +12,8 @@ import {
   patchOportunidadVenta,
 } from "../../infraestructura.ts";
 // import "./DetalleOportunidadVenta.css";
+import { TabAcciones } from "./Acciones/TabAcciones.tsx";
+import { TabPresupuestos } from "./Presupuestos/TabPresupuestos.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
@@ -69,6 +71,16 @@ export const DetalleOportunidadVenta = ({
                 key="tab-2"
                 label="Observaciones"
                 children={<TabObservaciones oportunidad={oportunidad} />}
+              />,
+              <Tab
+                key="tab-3"
+                label="Acciones"
+                children={<TabAcciones oportunidad={oportunidad} />}
+              />,
+              <Tab
+                key="tab-4"
+                label="Presupuestos"
+                children={<TabPresupuestos oportunidad={oportunidad} />}
               />,
             ]}
           ></Tabs>
