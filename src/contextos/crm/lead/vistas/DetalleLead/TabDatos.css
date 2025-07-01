@@ -1,0 +1,34 @@
+.OportunidadVenta .TabDatos {
+
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: 1 / span 5;
+    }
+
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: span 5;
+    }
+
+    quimera-autocompletar[nombre="contacto_id"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-autocompletar[nombre="estado_id"] {
+        grid-column: 1 / span 3;
+    }
+
+    quimera-input[nombre="probabilidad"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="tarjeta_id"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="total_venta"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="fecha_cierre"] {
+        grid-column: span 6;
+    }
+}

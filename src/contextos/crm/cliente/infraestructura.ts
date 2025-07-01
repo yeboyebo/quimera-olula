@@ -1,6 +1,7 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
-import { criteriaQuery } from "../../comun/infraestructura.ts";
+import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
+import { Accion } from "../accion/diseño.ts";
 import { NuevaOportunidadVenta, OportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Cliente, GetCliente, PatchCliente } from "./diseño.ts";
 
@@ -8,6 +9,7 @@ import { Cliente, GetCliente, PatchCliente } from "./diseño.ts";
 const baseUrlVentasCliente = `/ventas/cliente`;
 const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
 const baseUrlCrm = `/crm`;
+const baseUrlAccion = `/crm/accion`;
 
 export type ClienteApi = Cliente;
 
@@ -69,4 +71,13 @@ export const desvincularContactoCliente = async (contactoId: string, clienteId: 
     contacto_id: contactoId,
   };
   await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/desvincular_contacto`, payload);
+};
+
+export const getAccionesCliente = async (clienteId: string) => {
+  const filtro = ['cliente_id', clienteId] as unknown as Filtro;
+
+  const orden = [] as Orden;
+
+  const q = criteriaQueryUrl(filtro, orden);
+  return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
 };
