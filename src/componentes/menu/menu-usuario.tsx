@@ -5,24 +5,22 @@ import { ElementoMenu, ElementoMenuPadre } from "../../contextos/comun/menu.ts";
 import { QIcono } from "../atomos/qicono.tsx";
 
 const elementosDelMenu = [
-  {
-    nombre: "Usuarios",
-    icono: "usuario",
-    subelementos: [
-      {
-        nombre: "Perfil",
-        icono: "perfil",
-        url: "/usuario/perfil",
-      },
-    ],
-  },
+  //   {
+  //     nombre: "Usuarios",
+
+  //     subelementos: [
+  //       {
+  //         nombre: "Perfil",
+  //         url: "/usuario/perfil",
+  //       },
+  //     ],
+  //   },
   {
     nombre: "Sesión",
-    icono: "sesion",
     subelementos: [
       {
         nombre: "Cerrar sesión",
-        icono: "cerrar-sesion",
+        icono: "cerrar_sesion",
         url: "/logout",
       },
     ],
@@ -55,6 +53,7 @@ export const MenuUsuario = () => {
         <summary>
           {icono} {elemento.nombre}
         </summary>
+        <hr />
         <ul>{subelementos}</ul>
       </details>
     );

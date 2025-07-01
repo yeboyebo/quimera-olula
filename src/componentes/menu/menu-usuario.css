@@ -42,17 +42,17 @@ menu-usuario {
                 content: "";
             }
 
-            &::after {
+            /* &::after {
                 content: "▸";
                 display: block;
                 flex-grow: 1;
                 text-align: right;
-            }
+            } */
         }
 
-        &[open] summary::after {
+        /* &[open] summary::after {
             content: "▾";
-        }
+        } */
 
         ul {
             padding-left: 2.5rem;

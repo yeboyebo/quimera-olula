@@ -19,6 +19,7 @@ const iconos: Record<string, string> = {
   guardar: "save",
   usuario: "user",
   perfil: "user-circle",
+  cerrar_sesion: "arrow-out-up-square-half",
 };
 
 export const QIcono = ({
