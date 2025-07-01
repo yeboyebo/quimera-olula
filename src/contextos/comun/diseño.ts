@@ -12,7 +12,7 @@ export type EntidadAccion = {
 }
 
 export type Criteria = {
-  filtro: Filtro;
+  filtros: Filtro;
   orden: Orden;
 }
 

@@ -9,6 +9,7 @@ import { MaestroConDetalleAccion } from "./contextos/crm/accion/vistas/MaestroCo
 import { MaestroConDetalleClienteCRM } from "./contextos/crm/cliente/vistas/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleContacto } from "./contextos/crm/contacto/vistas/MaestroConDetalleContacto.tsx";
 import { MaestroConDetalleEstadoOportunidad } from "./contextos/crm/estadoOportunidadVenta/vistas/MaestroConDetalleEstadoOportunidad.tsx";
+import { MaestroConDetalleLead } from "./contextos/crm/lead/vistas/MaestroConDetalleLead.tsx";
 import { MaestroConDetalleOportunidadVenta } from "./contextos/crm/oportunidadventa/vistas/MaestroConDetalleOportunidadVenta.tsx";
 import { Login } from "./contextos/usuarios/login/vistas/Login.tsx";
 import { MaestroConDetalleAlbaran } from "./contextos/ventas/albaran/vistas/MaestroConDetalleAlbaran.tsx";
@@ -138,6 +139,16 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Vista>
                   <MaestroConDetalleAccion />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="lead">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleLead />
                 </Vista>
               }
             />

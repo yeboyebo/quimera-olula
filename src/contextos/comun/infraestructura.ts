@@ -28,7 +28,7 @@ export const transformarCriteria = (filtro?: Filtro, orden?: Orden): Criteria =>
     const res: Partial<Criteria> = {};
     if (filtro) {
         // res['filtro'] = transformarFiltro(filtro);
-        res['filtro'] = filtro;
+        res['filtros'] = filtro;
     }
     if (orden) {
         // res['orden'] = transformarOrden(orden);
