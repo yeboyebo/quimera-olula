@@ -28,7 +28,6 @@ quimera-tabla {
 
     tr {
         background-color: var(--color-fondo);
-        height: 100px;
     }
 
     tbody tr {
