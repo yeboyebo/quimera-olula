@@ -75,7 +75,6 @@ export const MenuLateral = () => {
         <nav>
           <ul>{elementos}</ul>
         </nav>
-        {/* {renderMenuUsuario()} */}
       </aside>
     </menu-lateral>
   );

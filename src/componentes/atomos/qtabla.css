@@ -12,7 +12,8 @@ quimera-tabla {
     width: 100%;
     display: block;
     white-space: nowrap;
-    overflow-x: scroll;
+    overflow-x: auto;
+    overflow-y: auto;
 
     :root {
         --transicion-basica: 0.12 ease-in-out;

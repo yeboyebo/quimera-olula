@@ -1,0 +1,18 @@
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+#etiqueta-menu-usuario-abierto {
+    margin-left: auto;
+    order: 99;
+    display: flex;
+    align-items: center;
+}
+
+#boton-menu-lateral,
+#etiqueta-menu-abierto {
+    order: 0;
+}
