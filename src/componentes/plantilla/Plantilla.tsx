@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import { MenuLateral } from "../menu/menu-lateral.tsx";
+import { MenuUsuario } from "../menu/menu-usuario.tsx";
 import { Slot } from "../slot/Slot.tsx";
 import { Cabecera } from "./Cabecera.tsx";
 import { Pie } from "./Pie.tsx";
@@ -17,6 +18,7 @@ export const Plantilla = ({ children }: PropsWithChildren<object>) => {
       <section role="main">
         <MenuLateral />
         <Slot {...slots} />
+        <MenuUsuario />
       </section>
 
       <Slot nombre="pie" {...slots}>

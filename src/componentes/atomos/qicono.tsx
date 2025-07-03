@@ -3,6 +3,7 @@ import "./qicono.css";
 type QIconoProps = {
   nombre: string;
   tamaño?: "xs" | "sm" | "md" | "lg" | "xl";
+  color?: string;
 };
 
 const iconos: Record<string, string> = {
@@ -16,12 +17,19 @@ const iconos: Record<string, string> = {
   editar: "edit",
   eliminar: "trash",
   guardar: "save",
+  usuario: "user",
+  perfil: "user-circle",
+  cerrar_sesion: "arrow-out-up-square-half",
 };
 
-export const QIcono = ({ nombre, tamaño = "md" }: QIconoProps) => {
+export const QIcono = ({
+  nombre,
+  tamaño = "md",
+  color = "black",
+}: QIconoProps) => {
   return (
     <quimera-icono>
-      <box-icon name={iconos[nombre]} size={tamaño}></box-icon>
+      <box-icon name={iconos[nombre]} size={tamaño} color={color}></box-icon>
     </quimera-icono>
   );
 };

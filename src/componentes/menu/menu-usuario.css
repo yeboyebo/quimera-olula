@@ -1,27 +1,23 @@
-menu-lateral {
-    height: 100%;
+menu-usuario {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    z-index: 1002;
     width: 0px;
+    display: none;
     overflow-x: hidden;
     white-space: nowrap;
     overflow-y: auto;
     transition: width 0.5s ease-in-out;
     flex-shrink: 0;
-    height: 100%;
+
 
     aside {
         background-color: var(--color-deshabilitado);
-        height: 100%;
-        padding: 0 1rem;
-
-        #buscador {
-            display: flex;
-            gap: 0.25rem;
-            align-items: center;
-
-            quimera-icono {
-                padding-top: 10px;
-            }
-        }
+        height: 20%;
+        padding: 1rem 1rem;
+        float: none;
+        position: static;
     }
 
     ul {
@@ -46,17 +42,17 @@ menu-lateral {
                 content: "";
             }
 
-            &::after {
+            /* &::after {
                 content: "▸";
                 display: block;
                 flex-grow: 1;
                 text-align: right;
-            }
+            } */
         }
 
-        &[open] summary::after {
+        /* &[open] summary::after {
             content: "▾";
-        }
+        } */
 
         ul {
             padding-left: 2.5rem;
@@ -71,21 +67,22 @@ menu-lateral {
     }
 }
 
-menu-lateral.activo {
+menu-usuario.activo {
     width: 275px;
+    display: block;
 }
 
-#menu-abierto {
+#boton-menu-usuario {
+    display: none;
+}
+
+#menu-usuario-abierto {
     position: absolute;
     opacity: 0;
     cursor: pointer;
 }
 
-#boton-menu-lateral {
-    display: none;
-}
-
-#etiqueta-menu-abierto {
+/* #etiqueta-menu-usuario-abierto {
     user-select: none;
     display: inline-block;
     margin-top: 11px;
@@ -102,4 +99,4 @@ menu-lateral.activo {
         background-color: var(--color-fondo);
         box-shadow: 0 6px 0 0 var(--color-fondo), 0 12px 0 0 var(--color-fondo);
     }
-}
+} */

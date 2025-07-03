@@ -12,6 +12,8 @@ import { MaestroConDetalleEstadoOportunidad } from "./contextos/crm/estadoOportu
 import { MaestroConDetalleLead } from "./contextos/crm/lead/vistas/MaestroConDetalleLead.tsx";
 import { MaestroConDetalleOportunidadVenta } from "./contextos/crm/oportunidadventa/vistas/MaestroConDetalleOportunidadVenta.tsx";
 import { Login } from "./contextos/usuarios/login/vistas/Login.tsx";
+import { Logout } from "./contextos/usuarios/usuario/vistas/Logout.tsx";
+import Perfil from "./contextos/usuarios/usuario/vistas/Perfil.tsx";
 import { MaestroConDetalleAlbaran } from "./contextos/ventas/albaran/vistas/MaestroConDetalleAlbaran.tsx";
 import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente/DetalleCliente.tsx";
 import { MaestroConDetalleCliente } from "./contextos/ventas/cliente/vistas/MaestroConDetalleCliente.tsx";
@@ -163,6 +165,28 @@ createRoot(document.getElementById("root")!).render(
               </Vista>
             }
           />
+        </Route>
+        <Route path="logout">
+          <Route
+            index
+            element={
+              <Vista>
+                <Logout />
+              </Vista>
+            }
+          />
+        </Route>
+        <Route path="usuario">
+          <Route path="perfil">
+            <Route
+              index
+              element={
+                <Vista>
+                  <Perfil />
+                </Vista>
+              }
+            />
+          </Route>
         </Route>
         <Route path="docs/componentes" element={<Historias />} />
       </Routes>
