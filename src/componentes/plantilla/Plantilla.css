@@ -8,6 +8,7 @@
         font-size: 1.5rem;
         padding: 1.5rem;
         color: var(--color-fondo);
+        max-height: var(--alto-header);
 
         & a:visited {
             color: var(--color-fondo);
@@ -28,9 +29,11 @@
     &>footer {
         color: var(--color-fondo);
         background-color: var(--color-texto-primario);
+        height: var(--alto-footer);
         width: 100%;
         text-align: center;
-        padding: 2rem;
+        padding: 0.5rem;
         align-self: flex-end;
     }
+
 }

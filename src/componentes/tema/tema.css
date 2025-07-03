@@ -33,6 +33,9 @@
 
     --color-deshabilitado-claro: light-dark(var(--gris-1), var(--gris-5));
     --color-deshabilitado-oscuro: light-dark(var(--gris-5), var(--gris-9));
+
+    --alto-footer: 2rem;
+    --alto-header: 80px;
 }
 
 * {

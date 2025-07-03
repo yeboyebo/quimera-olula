@@ -3,7 +3,7 @@ menu-lateral {
     width: 0px;
     overflow-x: hidden;
     white-space: nowrap;
-    overflow-y: scroll;
+    overflow-y: auto;
     transition: width 0.5s ease-in-out;
     flex-shrink: 0;
     height: 100%;
