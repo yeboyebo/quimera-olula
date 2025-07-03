@@ -9,6 +9,7 @@ import { useModelo } from "../../../../comun/useModelo.ts";
 import { Lead } from "../../diseño.ts";
 import { leadVacio, metaLead } from "../../dominio.ts";
 import { getLead, patchLead } from "../../infraestructura.ts";
+import "./DetalleLead.css";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
@@ -63,8 +64,10 @@ export const DetalleLead = ({
                 children={
                   <div className="TabDatos">
                     <quimera-formulario>
-                      <QInput label="Nombre" {...lead.uiProps("nombre")} />
+                      <QInput label="Estado" {...lead.uiProps("estado_id")} />
+                      <QInput label="Fuente" {...lead.uiProps("fuente_id")} />
                       <QInput label="Tipo" {...lead.uiProps("tipo")} />
+                      <QInput label="Nombre" {...lead.uiProps("nombre")} />
                     </quimera-formulario>
                   </div>
                 }
