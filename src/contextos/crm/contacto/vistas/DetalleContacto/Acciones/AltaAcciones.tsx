@@ -1,19 +1,19 @@
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { HookModelo, useModelo } from "../../../../../comun/useModelo.ts";
+import { ContactoSelector } from "../../../../../ventas/comun/componentes/contacto.tsx";
 import { getAccion, postAccion } from "../../../../accion/infraestructura.ts";
 import { EstadoAccion } from "../../../../comun/componentes/estado_accion.tsx";
-import { OportunidadVenta as OportunidadSelect } from "../../../../comun/componentes/oportunidad_venta.tsx";
 import { TipoAccion } from "../../../../comun/componentes/tipo_accion.tsx";
-import { OportunidadVenta } from "../../../diseño.ts";
+import { Contacto } from "../../../diseño.ts";
 import { metaNuevaAccion, nuevaAccionVacia } from "./dominio.ts";
 
 export const AltaAcciones = ({
   emitir = () => {},
-  oportunidad,
+  contacto,
 }: {
   emitir?: (evento: string, payload?: unknown) => void;
-  oportunidad: HookModelo<OportunidadVenta>;
+  contacto: HookModelo<Contacto>;
 }) => {
   const nuevaAccion = useModelo(metaNuevaAccion, nuevaAccionVacia);
 
@@ -31,11 +31,11 @@ export const AltaAcciones = ({
         <QInput label="Descripción" {...nuevaAccion.uiProps("descripcion")} />
         <EstadoAccion {...nuevaAccion.uiProps("estado")} />
         <TipoAccion {...nuevaAccion.uiProps("tipo")} />
-        <OportunidadSelect
-          {...nuevaAccion.uiProps("oportunidad_id")}
-          valor={oportunidad.modelo.id}
-          descripcion={oportunidad.modelo.descripcion}
-          label="Oportunidad"
+        <ContactoSelector
+          {...nuevaAccion.uiProps("contacto_id")}
+          valor={contacto.modelo.id}
+          nombre={contacto.modelo.nombre}
+          label="Contacto"
           deshabilitado={true}
         />
       </quimera-formulario>

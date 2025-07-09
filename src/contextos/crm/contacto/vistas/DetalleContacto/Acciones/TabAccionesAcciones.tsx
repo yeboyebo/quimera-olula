@@ -3,21 +3,21 @@ import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { Accion } from "../../../../accion/diseño.ts";
-import { OportunidadVenta } from "../../../diseño.ts";
+import { Contacto } from "../../../diseño.ts";
 import { AltaAcciones } from "./AltaAcciones.tsx";
 
 interface Props {
   seleccionada?: Accion | null;
   emitir: (evento: string, payload?: unknown) => void;
   estado: string;
-  oportunidad: HookModelo<OportunidadVenta>;
+  contacto: HookModelo<Contacto>;
 }
 
 export const TabAccionesAcciones = ({
   seleccionada,
   emitir,
   estado,
-  oportunidad,
+  contacto,
 }: Props) => {
   return (
     <div className="TabAccionesAcciones maestro-botones">
@@ -34,7 +34,7 @@ export const TabAccionesAcciones = ({
         abierto={estado === "alta"}
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <AltaAcciones emitir={emitir} oportunidad={oportunidad} />
+        <AltaAcciones emitir={emitir} contacto={contacto} />
       </QModal>
 
       <QModalConfirmacion

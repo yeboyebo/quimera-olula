@@ -7,34 +7,34 @@ import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { Accion } from "../../../../accion/diseño.ts";
-import { getAccionesOportunidad } from "../../..//infraestructura.ts";
-import { OportunidadVenta } from "../../../diseño.ts";
+import { getAccionesContacto } from "../../..//infraestructura.ts";
+import { Contacto } from "../../../diseño.ts";
 import { TabAccionesAcciones } from "./TabAccionesAcciones.tsx";
 
 type Estado = "lista" | "alta" | "borrar";
 
 export const TabAcciones = ({
-  oportunidad,
+  contacto,
 }: {
-  oportunidad: HookModelo<OportunidadVenta>;
+  contacto: HookModelo<Contacto>;
 }) => {
   const acciones = useLista<Accion>([]);
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
-  const oportunidadId = oportunidad.modelo.id;
+  const contactoId = contacto.modelo.id;
 
   const setListaAcciones = acciones.setLista;
 
   const cargarAcciones = useCallback(async () => {
     setCargando(true);
-    const nuevasAcciones = await getAccionesOportunidad(oportunidadId);
+    const nuevasAcciones = await getAccionesContacto(contactoId);
     setListaAcciones(nuevasAcciones);
     setCargando(false);
-  }, [oportunidadId, setListaAcciones]);
+  }, [contactoId, setListaAcciones]);
 
   useEffect(() => {
-    if (oportunidadId) cargarAcciones();
-  }, [oportunidadId, cargarAcciones]);
+    if (contactoId) cargarAcciones();
+  }, [contactoId, cargarAcciones]);
 
   const maquina: Maquina<Estado> = {
     lista: {
@@ -85,7 +85,7 @@ export const TabAcciones = ({
         seleccionada={acciones.seleccionada}
         emitir={emitir}
         estado={estado}
-        oportunidad={oportunidad}
+        contacto={contacto}
       />
       <QTabla
         metaTabla={metaTablaAccion}

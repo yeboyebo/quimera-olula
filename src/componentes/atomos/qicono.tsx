@@ -18,7 +18,7 @@ const iconos: Record<string, string> = {
   eliminar: "trash",
   guardar: "save",
   usuario: "user",
-  perfil: "user-circle",
+  perfil: "user",
   cerrar_sesion: "arrow-out-up-square-half",
 };
 

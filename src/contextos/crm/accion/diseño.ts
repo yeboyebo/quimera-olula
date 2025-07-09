@@ -6,17 +6,15 @@ export interface Accion extends Entidad {
     descripcion: string;
     estado: string;
     observaciones: string;
-    agente_id: string;
     tipo: string;
     cliente_id: string;
+    nombre_cliente?: string;
     contacto_id: string;
     oportunidad_id: string;
+    descripcion_oportunidad?: string;
     tarjeta_id: string;
     incidencia_id: string;
-    proyecto_id: string;
-    subproyecto_id: string;
     usuario_id: string;
-    fecha_fin: string;
 }
 
 export type NuevaAccion = {

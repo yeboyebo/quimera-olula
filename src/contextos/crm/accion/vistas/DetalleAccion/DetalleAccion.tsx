@@ -6,9 +6,12 @@ import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
+import { EstadoAccion } from "../../../comun/componentes/estado_accion.tsx";
+import { TipoAccion } from "../../../comun/componentes/tipo_accion.tsx";
 import { Accion } from "../../diseño.ts";
 import { accionVacia, metaAccion } from "../../dominio.ts";
 import { getAccion, patchAccion } from "../../infraestructura.ts";
+import "./DetalleAccion.css";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
@@ -63,6 +66,8 @@ export const DetalleAccion = ({
                 children={
                   <div className="TabDatos">
                     <quimera-formulario>
+                      <EstadoAccion {...accion.uiProps("estado")} />
+                      <TipoAccion {...accion.uiProps("tipo")} />
                       <QInput
                         label="Descripción"
                         {...accion.uiProps("descripcion")}
