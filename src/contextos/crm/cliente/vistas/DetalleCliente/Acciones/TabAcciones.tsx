@@ -9,6 +9,7 @@ import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { Accion } from "../../../../accion/diseño.ts";
 import { getAccionesCliente } from "../../..//infraestructura.ts";
 import { Cliente } from "../../../diseño.ts";
+import { TabAccionesAcciones } from "./TabAccionesAcciones.tsx";
 // import { TabAccionesAcciones } from "./TabAccionesAcciones.tsx";
 
 type Estado = "lista" | "alta" | "borrar";
@@ -78,12 +79,12 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
 
   return (
     <div className="TabAcciones">
-      {/* <TabAccionesAcciones
+      <TabAccionesAcciones
         seleccionada={acciones.seleccionada}
         emitir={emitir}
         estado={estado}
         cliente={cliente}
-      /> */}
+      />
       <QTabla
         metaTabla={metaTablaAccion}
         datos={acciones.lista}

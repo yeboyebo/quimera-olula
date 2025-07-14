@@ -18,11 +18,15 @@ export const AltaAcciones = ({
   const nuevaAccion = useModelo(metaNuevaAccion, nuevaAccionVacia);
 
   const guardar = async () => {
-    const id = await postAccion(nuevaAccion.modelo);
+    const modelo = {
+      ...nuevaAccion.modelo,
+      contacto_id: nuevaAccion.modelo.contacto_id || contacto.modelo.id,
+    };
+    const id = await postAccion(modelo);
     const accionCreada = await getAccion(id);
     emitir("ACCION_CREADA", accionCreada);
   };
-
+  console.log(contacto.modelo);
   return (
     <div className="AltaAcciones">
       <h2>Nueva Acción</h2>
