@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos//eventos/producto/vistas/MaestroConDetalleProducto.tsx";
 import { MaestroConDetalleEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/MaestroConDetalleEvento.tsx";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
@@ -202,6 +203,18 @@ createRoot(document.getElementById("root")!).render(
             />
           </Route>
         </Route>
+        <Route path="eventos">
+          <Route path="producto">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleProducto />
+                </Vista>
+              }
+            />
+          </Route>
+        </Route>        
       </Routes>
     </BrowserRouter>
   </StrictMode>
