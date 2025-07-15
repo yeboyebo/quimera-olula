@@ -88,4 +88,15 @@ export const elementosDelMenu: ElementoMenu[] = [
       icono: "",
     }]
   },
+  {
+    nombre: "Eventos",
+    icono: "fichero",
+    subelementos: [
+      {
+        nombre: "Evento",
+        url: "/eventos/evento",
+        icono: "",
+      }
+    ]
+  }
 ];

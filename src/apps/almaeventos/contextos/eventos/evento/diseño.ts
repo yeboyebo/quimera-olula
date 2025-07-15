@@ -1,0 +1,54 @@
+import { Entidad } from "../../../../../contextos/comun/diseño.ts";
+
+export interface Evento extends Entidad {
+    id: string;
+    altas_ss: boolean;
+    camerinos: boolean;
+    camion_escenario: boolean;
+    carteleria: boolean;
+    ccf: string | null;
+    cliente_id: string | null;
+    conexion_electrica: string | null;
+    descripcion: string | null;
+    descripcion_ref: string | null;
+    direccion: string | null;
+    enviado_a_cliente: boolean;
+    enviado_a_proveedor: boolean;
+    empresa_id: string | null;
+    estado_id: string | null;
+    factura_enviada: boolean;
+    fecha_inicio: string | null;
+    gastos_facturacion: string | null;
+    gastos_personal: string | null;
+    hora_inicio: string | null;
+    hora_montaje: string | null;
+    hora_prueba_sonido: string | null;
+    hoja_ruta_enviada: boolean;
+    hoja_ruta_hecha: boolean;
+    liquidacion: boolean;
+    lugar: string | null;
+    num_descansos: string | null;
+    observaciones: string | null;
+    organizador_evento: string | null;
+    presupuesto: boolean;
+    proveedor_id: string | null;
+    recibido_por_cliente: boolean;
+    referencia: string | null;
+    responsable_local: string | null;
+    responsable_orquesta: string | null;
+    responsable_producciones: string | null;
+    recibido_por_proveedor: boolean;
+    subtotal_coste: string | null;
+    telefono: string | null;
+    tipo_escenario: string | null;
+    total_beneficio: string | null;
+    total_costes: string | null;
+    total_costesind: string | null;
+    total_ingresos: string | null;
+};
+
+export type NuevoEvento = {
+    referencia: string;
+    codproyecto: string;
+    fecha_inicio: string;
+};

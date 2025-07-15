@@ -4,7 +4,7 @@ import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCrmContacto, PatchCliente, PostCliente } from "./diseño.ts";
 
 
-const baseUrlVentas = `/ventas/cliente`;
+const baseUrlVentas = `/eventos/evento`;
 const baseUrlCrm = `/crm`;
 
 type ClienteApi = Cliente;
