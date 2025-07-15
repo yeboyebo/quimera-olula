@@ -4,6 +4,7 @@ quimera-formulario {
     /* grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); */
     gap: 1rem;
     place-items: center stretch;
+    padding: 1rem 0px;
 
     quimera-input,
     quimera-select {

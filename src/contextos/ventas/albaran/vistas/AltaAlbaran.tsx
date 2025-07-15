@@ -6,6 +6,7 @@ import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import { metaNuevoAlbaran, nuevoAlbaranVacio } from "../dominio.ts";
 import { getAlbaran, postAlbaran } from "../infraestructura.ts";
+import "./AltaAlbaran.css";
 
 export const AltaAlbaran = ({
   publicar = () => {},
@@ -24,14 +25,10 @@ export const AltaAlbaran = ({
     <div className="AltaAlbaran">
       <h2>Nuevo Albarán</h2>
       <quimera-formulario>
-        <Cliente
-          {...nuevoAlbaran.uiProps("cliente_id")}
-          nombre="alta_albaran_cliente_id"
-        />
+        <Cliente {...nuevoAlbaran.uiProps("cliente_id")} />
         <DirCliente
           clienteId={nuevoAlbaran.modelo.cliente_id}
           {...nuevoAlbaran.uiProps("direccion_id")}
-          nombre="alta_albaran_direccion_id"
         />
         <QInput label="Empresa" {...nuevoAlbaran.uiProps("empresa_id")} />
       </quimera-formulario>

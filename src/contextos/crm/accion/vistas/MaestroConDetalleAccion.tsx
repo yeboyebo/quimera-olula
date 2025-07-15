@@ -63,7 +63,7 @@ export const MaestroConDetalleAccion = () => {
 
   return (
     <div className="Accion">
-      <MaestroDetalleResponsive<Accion>
+      <MaestroDetalleResponsive
         seleccionada={acciones.seleccionada}
         Maestro={
           <>

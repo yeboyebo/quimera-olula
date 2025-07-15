@@ -84,7 +84,7 @@ export const DetalleAlbaran = ({
       cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
       {!!albaranId && (
-        <>
+        <div className="DetalleAlbaran">
           <div className="botones maestro-botones ">
             <QBoton onClick={() => setEstado("confirmarBorrado")}>
               Borrar
@@ -140,7 +140,7 @@ export const DetalleAlbaran = ({
             onCerrar={() => setEstado("defecto")}
             onAceptar={onBorrarConfirmado}
           />
-        </>
+        </div>
       )}
     </Detalle>
   );

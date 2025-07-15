@@ -159,3 +159,7 @@ export const payloadPatchPedido = (pedido: Pedido) => {
 
   return payload;
 }
+
+export const borrarPedido = async (id: string) => {
+  await RestAPI.delete(`${baseUrl}/${id}`);
+}

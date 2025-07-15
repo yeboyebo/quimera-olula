@@ -7,14 +7,15 @@ import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { Pedido } from "../../diseño.ts";
 import { pedidoVacio } from "../../dominio.ts";
-import { getPedido, patchPedido } from "../../infraestructura.ts";
+import { borrarPedido, getPedido, patchPedido } from "../../infraestructura.ts";
 import "./DetallePedido.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 // import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { appFactory } from "../../../../app.ts";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
@@ -23,7 +24,7 @@ type ParamOpcion = {
   descripcion?: string;
 };
 export type ValorControl = null | string | ParamOpcion;
-type Estado = "defecto";
+type Estado = "defecto" | "confirmarBorrado";
 
 const TabDatos = appFactory().Ventas.PedidoTabDatos;
 
@@ -34,6 +35,7 @@ export const DetallePedido = ({
   pedidoInicial?: Pedido | null;
   emitir?: EmitirEvento;
 }) => {
+  const [estado, setEstado] = useState<Estado>("defecto");
   const params = useParams();
 
   const { intentar } = useContext(ContextoError);
@@ -54,6 +56,7 @@ export const DetallePedido = ({
         await recargarCabecera();
       },
     },
+    confirmarBorrado: {},
   };
   const emitirPedido = useMaquina(maquina, "defecto", () => {});
 
@@ -61,6 +64,12 @@ export const DetallePedido = ({
     const nuevoPedido = await getPedido(modelo.id);
     init(nuevoPedido);
     emitir("PEDIDO_CAMBIADO", nuevoPedido);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await intentar(() => borrarPedido(modelo.id));
+    emitir("PEDIDO_BORRADO", modelo);
+    setEstado("defecto");
   };
 
   return (
@@ -74,6 +83,11 @@ export const DetallePedido = ({
     >
       {!!pedidoId && (
         <>
+          <div className="botones maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <Tabs
             children={[
               <Tab
@@ -116,6 +130,14 @@ export const DetallePedido = ({
             divisa={String(modelo.coddivisa ?? "EUR")}
           />
           <Lineas pedido={pedido} onCabeceraModificada={recargarCabecera} />
+          <QModalConfirmacion
+            nombre="borrarFactura"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este pedido?"
+            onCerrar={() => setEstado("defecto")}
+            onAceptar={onBorrarConfirmado}
+          />
         </>
       )}
     </Detalle>

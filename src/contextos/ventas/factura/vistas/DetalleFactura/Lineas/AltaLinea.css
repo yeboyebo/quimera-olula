@@ -1,0 +1,11 @@
+.AltaLinea quimera-formulario {
+    max-width: 500px;
+}
+
+.AltaLinea quimera-autocompletar[nombre="referencia"] {
+    grid-column: span 9;
+}
+
+.AltaLinea quimera-input[nombre="cantidad"] {
+    grid-column: span 3;
+}

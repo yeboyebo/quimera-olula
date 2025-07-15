@@ -10,6 +10,10 @@ header {
     order: 99;
     display: flex;
     align-items: center;
+
+    quimera-icono {
+        fill: var(--blanco);
+    }
 }
 
 #boton-menu-lateral,
