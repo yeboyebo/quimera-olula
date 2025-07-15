@@ -8,6 +8,7 @@ import { Agente } from "../../comun/componentes/agente.tsx";
 import { TipoIdFiscal } from "../../comun/componentes/tipoIdFiscal.tsx";
 import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
 import { getCliente, postCliente } from "../infraestructura.ts";
+import "./AltaCliente.css";
 
 export const AltaCliente = ({
   emitir = () => {},
@@ -25,7 +26,7 @@ export const AltaCliente = ({
   };
 
   return (
-    <>
+    <div className="AltaCliente">
       <h2>Nuevo Cliente</h2>
       <quimera-formulario>
         <QInput label="Nombre" {...nuevoCliente.uiProps("nombre")} />
@@ -46,6 +47,6 @@ export const AltaCliente = ({
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };
