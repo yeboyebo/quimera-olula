@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
@@ -21,7 +22,8 @@ import { AltaLinea } from "./AltaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
-type Estado = "lista" | "alta" | "edicion";
+type Estado = "lista" | "alta" | "edicion" | "confirmarBorrado";
+
 export const Lineas = ({
   onCabeceraModificada,
   albaran,
@@ -49,6 +51,13 @@ export const Lineas = ({
   useEffect(() => {
     if (albaranId) cargar();
   }, [albaranId, cargar]);
+
+  const onBorrarConfirmado = async () => {
+    if (!lineas.seleccionada) return;
+    await deleteLinea(albaranId, lineas.seleccionada.id);
+    await refrescarLineas();
+    setEstado("lista");
+  };
 
   const maquina: Maquina<Estado> = {
     alta: {
@@ -90,13 +99,14 @@ export const Lineas = ({
         await refrescarLineas();
       },
 
-      BORRADO_SOLICITADO: async () => {
-        if (!lineas.seleccionada) {
-          return;
-        }
-        await deleteLinea(albaranId, lineas.seleccionada.id);
-        await refrescarLineas();
+      BORRADO_SOLICITADO: () => "confirmarBorrado",
+    },
+    confirmarBorrado: {
+      BORRADO_CONFIRMADO: async () => {
+        await onBorrarConfirmado();
+        return "lista" as Estado;
       },
+      BORRADO_CANCELADO: "lista",
     },
   };
   const emitir = useMaquina(maquina, estado, setEstado);
@@ -141,6 +151,14 @@ export const Lineas = ({
       >
         <AltaLinea emitir={emitir} />
       </QModal>
+      <QModalConfirmacion
+        nombre="confirmarBorrarLinea"
+        abierto={estado === "confirmarBorrado"}
+        titulo="Confirmar borrado"
+        mensaje="¿Está seguro de que desea borrar esta línea?"
+        onCerrar={() => emitir("BORRADO_CANCELADO")}
+        onAceptar={() => emitir("BORRADO_CONFIRMADO")}
+      />
     </>
   );
 };

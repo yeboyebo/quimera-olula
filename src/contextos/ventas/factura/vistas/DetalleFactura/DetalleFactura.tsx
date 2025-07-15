@@ -86,7 +86,7 @@ export const DetalleFactura = ({
       cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
       {!!facturaId && (
-        <>
+        <div className="DetalleFactura">
           <div className="botones maestro-botones ">
             <QBoton onClick={() => setEstado("confirmarBorrado")}>
               Borrar
@@ -142,7 +142,7 @@ export const DetalleFactura = ({
             onCerrar={() => setEstado("defecto")}
             onAceptar={onBorrarConfirmado}
           />
-        </>
+        </div>
       )}
     </Detalle>
   );

@@ -1,5 +1,13 @@
-.AltaAbaran {
-    quimera-autocompletar[nombre="alta_presupuesto_cliente_id"] {
+.Albaran .AltaAlbaran {
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: span 12;
+    }
+
+    quimera-select[nombre="direccion_id"] {
+        grid-column: span 12;
+    }
+
+    quimera-input[nombre="empresa_id"] {
         grid-column: span 12;
     }
 }
