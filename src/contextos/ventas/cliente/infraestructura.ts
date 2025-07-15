@@ -90,7 +90,7 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       copiasfactura: cliente.copiasfactura,
       grupo_id: cliente.grupo_id,
     },
-  });
+  }, "Error al guardar el cliente");
 
 export const darDeBajaCliente = async (id: string, fecha: string) =>
   await RestAPI.patch(`${baseUrlVentas}/${id}`, {
@@ -112,7 +112,7 @@ export const deleteCliente = async (id: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlVentas}/${id}`);
 
 export const postCliente: PostCliente = async (cliente) => {
-  return await RestAPI.post(baseUrlVentas, cliente).then((respuesta) => respuesta.id);
+  return await RestAPI.post(baseUrlVentas, cliente, "Error al guardar el cliente").then((respuesta) => respuesta.id);
 }
 
 export const getDireccion = async (clienteId: string, direccionId: string): Promise<DirCliente> =>
