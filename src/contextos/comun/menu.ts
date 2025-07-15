@@ -98,7 +98,7 @@ export const elementosDelMenu: ElementoMenu[] = [
         icono: "",
       },
       {
-        nombre: "Evento",
+        nombre: "Eventos",
         url: "/eventos/evento",
         icono: "",
       }
