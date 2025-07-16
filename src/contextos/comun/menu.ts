@@ -99,7 +99,7 @@ export const elementosDelMenu: ElementoMenu[] = [
       },
       {
         nombre: "Eventos",
-        url: "/eventos/evento",
+        url: "/eventos/eventos",
         icono: "",
       },
       {

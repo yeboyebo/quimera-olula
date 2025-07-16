@@ -1,5 +1,9 @@
+import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
+import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { NuevoProducto, Producto } from "./diseño.ts";
+
+const baseUrlProducto = `/eventos/producto`;
 
 // Datos falsos para desarrollo
 const productosFake: Producto[] = [
@@ -28,8 +32,12 @@ export const getProducto = async (id: string): Promise<Producto> => {
 };
 
 export const getProductos = async (_filtro: Filtro, _orden: Orden): Promise<Producto[]> => {
-    return productosFake;
+    // return productosFake;
+    const q = criteriaQuery(_filtro, _orden);
+    return RestAPI.get<{ datos: Producto[] }>(baseUrlProducto + q).then((respuesta) => respuesta.datos);
 };
+
+
 
 // Las siguientes funciones se mantienen igual para cuando la API esté lista
 export const postProducto = async (_producto: NuevoProducto): Promise<string> => {

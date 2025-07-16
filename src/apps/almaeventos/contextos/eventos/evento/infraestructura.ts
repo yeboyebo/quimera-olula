@@ -1,5 +1,9 @@
+import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
+import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { Evento, NuevoEvento } from "./diseño.ts";
+
+const baseUrlEvento = `/eventos/evento`;
 
 // Datos falsos para desarrollo
 const eventosFake: Evento[] = [
@@ -204,8 +208,11 @@ export const getEvento = async (id: string): Promise<Evento> => {
 };
 
 export const getEventos = async (_filtro: Filtro, _orden: Orden): Promise<Evento[]> => {
-    return eventosFake;
+    // return eventosFake;
+    const q = criteriaQuery(_filtro, _orden);
+    return RestAPI.get<{ datos: Evento[] }>(baseUrlEvento + q).then((respuesta) => respuesta.datos);
 };
+
 
 // Las siguientes funciones se mantienen igual para cuando la API esté lista
 export const postEvento = async (_evento: NuevoEvento): Promise<string> => {

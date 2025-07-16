@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 // import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos//eventos/producto/vistas/MaestroConDetalleProducto.tsx";
 import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos//eventos/producto/vistas/MaestroConDetalleProducto.tsx";
-import { MaestroConDetalleEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/MaestroConDetalleEvento.tsx";
+import { DetalleEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/DetalleEvento/DetalleEvento.tsx";
+import { MaestroEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/MaestroEvento.tsx";
 import { MaestroConDetalleTrabajador } from "./apps/almaeventos/contextos/eventos/trabajador/vistas/MaestroConDetalleTrabajador.tsx";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
@@ -194,18 +195,26 @@ createRoot(document.getElementById("root")!).render(
         </Route>
         <Route path="docs/componentes" element={<Historias />} />
         <Route path="eventos">
-          <Route path="evento">
+          <Route path="eventos">
             <Route
               index
               element={
                 <Vista>
-                  <MaestroConDetalleEvento />
+                  <MaestroEvento />
                 </Vista>
               }
             />
           </Route>
-        </Route>
-        <Route path="eventos">
+          <Route path="evento">
+            <Route
+              path=":id"
+              element={
+                <Vista>
+                  <DetalleEvento />
+                </Vista>
+              }
+            />
+          </Route>
           <Route path="producto">
             <Route
               index
@@ -216,8 +225,6 @@ createRoot(document.getElementById("root")!).render(
               }
             />
           </Route>
-        </Route>   
-        <Route path="eventos">
           <Route path="trabajador">
             <Route
               index
@@ -228,7 +235,8 @@ createRoot(document.getElementById("root")!).render(
               }
             />
           </Route>
-        </Route>               
+        </Route>
+
       </Routes>
     </BrowserRouter>
   </StrictMode>
