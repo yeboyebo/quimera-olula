@@ -23,41 +23,21 @@ export type MetaTabla<T extends Entidad> = MetaColumna<T>[];
 const cabecera = <T extends Entidad>(
   metaTabla: MetaTabla<T>,
   orden: Orden,
-  onOrdenar?: (clave: string, nuevoOrden: "ASC" | "DESC") => void
+  onOrdenar?: (clave: string) => void
 ) => {
-  const ordenCol = Array.isArray(orden) ? orden : [];
-  const [colOrdenada, sentido] =
-    ordenCol.length === 2 ? ordenCol : [null, null];
+  const [colOrdenada, sentido] = Array.isArray(orden) ? orden : [null, null];
 
-  const renderCabecera = ({ id, cabecera, tipo }: MetaColumna<T>) => {
-    const esOrdenada = id === colOrdenada;
-    const icono =
-      esOrdenada && sentido === "ASC"
-        ? "▲"
-        : esOrdenada && sentido === "DESC"
-        ? "▼"
-        : "";
-
-    return (
-      <th
-        key={id}
-        data-modo="columna"
-        className={`${tipo ?? ""} ${id}`}
-        onClick={() => {
-          if (!onOrdenar) return;
-          let nuevoSentido: "ASC" | "DESC" = "ASC";
-          if (esOrdenada) {
-            nuevoSentido = sentido === "ASC" ? "DESC" : "ASC";
-          }
-          onOrdenar(id, nuevoSentido);
-        }}
-        style={{ cursor: "pointer", userSelect: "none" }}
-      >
-        {cabecera}
-        {icono && <span style={{ marginLeft: 6 }}>{icono}</span>}
-      </th>
-    );
-  };
+  const renderCabecera = ({ id, cabecera, tipo }: MetaColumna<T>) => (
+    <th
+      key={id}
+      data-modo="columna"
+      data-orden={id === colOrdenada ? sentido : ""}
+      className={`${tipo ?? ""} ${id}`}
+      onClick={() => onOrdenar && onOrdenar(id)}
+    >
+      {cabecera}
+    </th>
+  );
 
   return metaTabla.map(renderCabecera);
 };
@@ -87,7 +67,7 @@ export type QTablaProps<T extends Entidad> = {
   seleccionadaId?: string;
   onSeleccion?: (entidad: T) => void;
   orden: Orden;
-  onOrdenar?: (clave: string, nuevoOrden: "ASC" | "DESC") => void;
+  onOrdenar?: (clave: string) => void;
 };
 
 export const QTabla = <T extends Entidad>({

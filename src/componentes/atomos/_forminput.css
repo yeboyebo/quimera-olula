@@ -96,7 +96,6 @@ quimera-checkbox {
     &[condensado] {
         .etiqueta {
             font-size: var(--tamaño-letra-xs);
-            min-height: 14px;
 
             .etiqueta-opcional {
                 font-size: var(--tamaño-letra-xxs);
