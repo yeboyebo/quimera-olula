@@ -41,7 +41,6 @@ export type MaestroProps<T extends Entidad> = {
     orden: Orden,
     paginacion?: Paginacion
   ) => Promise<T[]>;
-  modoPaginacion?: "clasica" | "scroll";
 };
 
 export const Listado = <T extends Entidad>({
@@ -56,7 +55,6 @@ export const Listado = <T extends Entidad>({
   seleccionada,
   setSeleccionada,
   cargar,
-  modoPaginacion = "clasica",
 }: MaestroProps<T>) => {
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
@@ -72,11 +70,7 @@ export const Listado = <T extends Entidad>({
 
     cargar(filtro, orden, paginacion).then((entidadesNuevas) => {
       if (hecho) return;
-      if (modoPaginacion === "scroll" && paginacion.pagina > 1) {
-        setEntidades((prev) => [...prev, ...(entidadesNuevas as T[])]);
-      } else {
-        setEntidades(entidadesNuevas as T[]);
-      }
+      setEntidades(entidadesNuevas as T[]);
       setTotal(20);
       setCargando(false);
     });
@@ -84,12 +78,12 @@ export const Listado = <T extends Entidad>({
     return () => {
       hecho = true;
     };
-  }, [filtro, orden, paginacion, cargar, setEntidades, modoPaginacion]);
+  }, [filtro, orden, paginacion, cargar, setEntidades]);
 
   useEffect(() => {
     setPaginacion((p) => ({ ...p, pagina: 1 }));
     setEntidades([]);
-  }, [filtro, orden, modoPaginacion, setEntidades]);
+  }, [filtro, orden, setEntidades]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
@@ -113,50 +107,11 @@ export const Listado = <T extends Entidad>({
         onOrdenar={(clave) => {
           setOrden([clave]);
         }}
+        paginacion={paginacion}
+        onPaginacion={(limite, pagina) => {
+          setPaginacion({ limite, pagina });
+        }}
       />
-    );
-  };
-
-  const renderPaginacionClasica = () => {
-    const totalPaginas = Math.ceil(total / paginacion.limite);
-    return (
-      <div className="paginacion">
-        <button
-          disabled={paginacion.pagina === 1}
-          onClick={() => setPaginacion((p) => ({ ...p, pagina: p.pagina - 1 }))}
-        >
-          Anterior
-        </button>
-        <span>
-          Página {paginacion.pagina} de {totalPaginas}
-        </span>
-        <button
-          disabled={paginacion.pagina === totalPaginas}
-          onClick={() => setPaginacion((p) => ({ ...p, pagina: p.pagina + 1 }))}
-        >
-          Siguiente
-        </button>
-      </div>
-    );
-  };
-
-  const renderScrollSiguiente = () => {
-    const totalPaginas = Math.ceil(total / paginacion.limite);
-    return (
-      <div
-        className="scroll-paginacion"
-        style={{ textAlign: "center", margin: "1em 0" }}
-      >
-        <button
-          disabled={paginacion.pagina >= totalPaginas}
-          onClick={() => setPaginacion((p) => ({ ...p, pagina: p.pagina + 1 }))}
-        >
-          Siguiente
-        </button>
-        <span>
-          {entidades.length} / {total}
-        </span>
-      </div>
     );
   };
 
@@ -182,8 +137,6 @@ export const Listado = <T extends Entidad>({
         }}
       />
       {renderEntidades()}
-      {modoPaginacion === "clasica" && renderPaginacionClasica()}
-      {modoPaginacion === "scroll" && renderScrollSiguiente()}
     </div>
   );
 };

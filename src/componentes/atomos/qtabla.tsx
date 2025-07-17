@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
+import { Entidad, Orden, Paginacion } from "../../contextos/comun/diseño.ts";
 import { formatearMoneda } from "../../contextos/comun/dominio.ts";
 import "./qtabla.css";
 
@@ -58,6 +58,36 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
   return metaTabla.map(renderColumna);
 };
 
+const paginacionControlador = (
+  paginacion: Paginacion,
+  onPaginacion?: (pagina: number, limite: number) => void
+) => {
+  const totalPaginas = 3;
+  return (
+    <div className="paginacion">
+      <button
+        disabled={paginacion?.pagina === 1}
+        onClick={() =>
+          onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina - 1)
+        }
+      >
+        Anterior
+      </button>
+      <span>
+        Página {paginacion.pagina} de {totalPaginas}
+      </span>
+      <button
+        disabled={paginacion?.pagina === totalPaginas}
+        onClick={() =>
+          onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina + 1)
+        }
+      >
+        Siguiente
+      </button>
+    </div>
+  );
+};
+
 export type QTablaProps<T extends Entidad> = {
   metaTabla: MetaTabla<T>;
   datos: T[];
@@ -66,6 +96,8 @@ export type QTablaProps<T extends Entidad> = {
   onSeleccion?: (entidad: T) => void;
   orden: Orden;
   onOrdenar?: (clave: string) => void;
+  paginacion: Paginacion;
+  onPaginacion?: (pagina: number, limite: number) => void;
 };
 
 export const QTabla = <T extends Entidad>({
@@ -76,25 +108,30 @@ export const QTabla = <T extends Entidad>({
   onSeleccion,
   orden,
   onOrdenar,
+  paginacion,
+  onPaginacion,
 }: QTablaProps<T>) => {
   return (
-    <quimera-tabla>
-      <table>
-        <thead>
-          <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
-        </thead>
-        <tbody data-cargando={cargando}>
-          {datos.map((entidad: T) => (
-            <tr
-              key={entidad.id}
-              onClick={() => onSeleccion && onSeleccion(entidad)}
-              data-seleccionada={entidad.id === seleccionadaId}
-            >
-              {fila(entidad, metaTabla)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </quimera-tabla>
+    <>
+      <quimera-tabla>
+        <table>
+          <thead>
+            <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
+          </thead>
+          <tbody data-cargando={cargando}>
+            {datos.map((entidad: T) => (
+              <tr
+                key={entidad.id}
+                onClick={() => onSeleccion && onSeleccion(entidad)}
+                data-seleccionada={entidad.id === seleccionadaId}
+              >
+                {fila(entidad, metaTabla)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </quimera-tabla>
+      {paginacionControlador(paginacion, onPaginacion)}
+    </>
   );
 };
