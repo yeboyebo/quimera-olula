@@ -27,7 +27,7 @@ export const AltaProducto = ({
     <>
       <h2>Nuevo Producto</h2>
       <quimera-formulario>
-        <QInput label="Referencia" {...nuevoProducto.uiProps("referencia")} />
+        <QInput label="Referencia" {...nuevoProducto.uiProps("id")} />
         <QInput label="Descripción" {...nuevoProducto.uiProps("descripcion")} />
       </quimera-formulario>
       <div className="botones">

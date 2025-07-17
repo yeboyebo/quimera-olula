@@ -5,50 +5,28 @@ import { NuevoProducto, Producto } from "./diseño.ts";
 
 const baseUrlProducto = `/eventos/producto`;
 
-// Datos falsos para desarrollo
-const productosFake: Producto[] = [
-    {
-        id: "kraken",
-        descripcion: "Kraken",
-    },
-    {
-        id: "monster",
-        descripcion: "Monster",
-    },
-    {
-        id: "party",
-        descripcion: "Party",
-    },
-    {
-        id: "prueba",
-        descripcion: "Prueba",
-    },
-];
+export const productoToAPI = (e: Producto) => ({
+    ...e,
+    valordefecto: e.valor_defecto,
+});
 
-export const getProducto = async (id: string): Promise<Producto> => {
-    const producto = productosFake.find((e) => e.id === id);
-    if (!producto) throw new Error("Producto no encontrado");
-    return producto;
-};
+export const getProducto = async (id: string): Promise<Producto> =>
+    await RestAPI.get<{ datos: Producto }>(`${baseUrlProducto}/${id}`).then((respuesta) => respuesta.datos);
 
 export const getProductos = async (_filtro: Filtro, _orden: Orden): Promise<Producto[]> => {
-    // return productosFake;
     const q = criteriaQuery(_filtro, _orden);
-    console.log("mimensaje_getProductos", _filtro);
     return RestAPI.get<{ datos: Producto[] }>(baseUrlProducto + q).then((respuesta) => respuesta.datos);
 };
 
-
-
-// Las siguientes funciones se mantienen igual para cuando la API esté lista
 export const postProducto = async (_producto: NuevoProducto): Promise<string> => {
-    console.log("mimensaje_postProducto", _producto);
+    _producto.codFamilia = _producto.codFamilia || "EVEN";
     return await RestAPI.post(baseUrlProducto, _producto).then((respuesta) => respuesta.id);
-    // return "fake-id";
 };
 
-export const patchProducto = async (id: string, producto: Partial<Producto>): Promise<void> => {
-    await RestAPI.patch(`${baseUrlProducto}/${id}`, producto, "No se pudo actualizar el producto");
+export const patchProducto = async (id: string, estado: Partial<Producto>): Promise<void> => {
+    const payload = productoToAPI(estado as Producto);
+    await RestAPI.patch(`${baseUrlProducto}/${id}`, { cambios: payload });
 };
 
-export const deleteProducto = async (_id: string): Promise<void> => { };
+export const deleteProducto = async (id: string): Promise<void> =>
+    await RestAPI.delete(`${baseUrlProducto}/${id}`);

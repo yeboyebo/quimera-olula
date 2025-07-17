@@ -1,15 +1,16 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../../../../componentes/detalle/Detalle.tsx";
+import { QModalConfirmacion } from "../../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../../../../contextos/comun/contexto.ts";
 import { Entidad } from "../../../../../../../contextos/comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../../../../contextos/comun/useMaquina.ts";
 import { useModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Producto } from "../../diseño.ts";
 import { metaProducto, productoVacio } from "../../dominio.ts";
-import { getProducto, patchProducto } from "../../infraestructura.ts";
+import { deleteProducto, getProducto, patchProducto } from "../../infraestructura.ts";
 
 type Estado = "defecto";
 
@@ -22,11 +23,14 @@ export const DetalleProducto = ({
 }) => {
   const params = useParams();
   const productoId = productoInicial?.id ?? params.id;
-  const titulo = (producto: Entidad) => producto.descripcion as string;
+  const titulo = (producto: Entidad) => producto.id as string;
   const { intentar } = useContext(ContextoError);
 
   const producto = useModelo(metaProducto, productoVacio);
   const { modelo, init, modificado, valido } = producto;
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+    "edicion"
+  );  
 
   const maquina: Maquina<Estado> = {
     defecto: {
@@ -43,6 +47,14 @@ export const DetalleProducto = ({
     init(producto_guardado);
     emitir("PRODUCTO_CAMBIADO", producto_guardado);
   };
+
+  const onBorrarConfirmado = async () => {
+    await deleteProducto(modelo.id);
+    emitir("Producto_BORRADO", modelo);
+    setEstado("edicion");
+  };  
+
+  console.log("mimensaje_DetalleProducto_estado", estado);
   
   
   return (
@@ -56,6 +68,11 @@ export const DetalleProducto = ({
     >
       {!!productoId && (
         <div className="DetalleProductoDescripcion">
+          <div className="maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <quimera-formulario>
             <QInput label="Descripción" {...producto.uiProps("descripcion")} />
           </quimera-formulario>
@@ -76,6 +93,14 @@ export const DetalleProducto = ({
           </QBoton>
         </div>
       )}
+      <QModalConfirmacion
+        nombre="borrarProducto"
+        abierto={estado === "confirmarBorrado"}
+        titulo="Confirmar borrar"
+        mensaje="¿Está seguro de que desea borrar este producto?"
+        onCerrar={() => setEstado("edicion")}
+        onAceptar={onBorrarConfirmado}
+      />      
     </Detalle>
   );
 };
