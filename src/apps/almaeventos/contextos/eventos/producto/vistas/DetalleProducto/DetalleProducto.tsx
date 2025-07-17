@@ -6,7 +6,6 @@ import { Detalle } from "../../../../../../../componentes/detalle/Detalle.tsx";
 import { QModalConfirmacion } from "../../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../../../../contextos/comun/contexto.ts";
 import { Entidad } from "../../../../../../../contextos/comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../../../../../contextos/comun/useMaquina.ts";
 import { useModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Producto } from "../../diseño.ts";
 import { metaProducto, productoVacio } from "../../dominio.ts";
@@ -32,14 +31,14 @@ export const DetalleProducto = ({
     "edicion"
   );  
 
-  const maquina: Maquina<Estado> = {
-    defecto: {
-      GUARDAR_INICIADO: async () => {
-        console.log("hola mundo");
-      },
-    },
-  };
-  const emitirProducto = useMaquina(maquina, "defecto", () => {});
+  // const maquina: Maquina<Estado> = {
+  //   defecto: {
+  //     GUARDAR_INICIADO: async () => {
+  //       console.log("hola mundo");
+  //     },
+  //   },
+  // };
+  // const emitirProducto = useMaquina(maquina, "defecto", () => {});
 
   const onGuardarClicked = async () => {
     await intentar(() => patchProducto(modelo.id, modelo));
@@ -49,7 +48,7 @@ export const DetalleProducto = ({
   };
 
   const onBorrarConfirmado = async () => {
-    await deleteProducto(modelo.id);
+    await intentar(() => deleteProducto(modelo.id));
     emitir("PRODUCTO_BORRADO", modelo);
     setEstado("edicion");
   };  
