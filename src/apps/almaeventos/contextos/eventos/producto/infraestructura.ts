@@ -19,7 +19,6 @@ export const getProductos = async (_filtro: Filtro, _orden: Orden): Promise<Prod
 };
 
 export const postProducto = async (_producto: NuevoProducto): Promise<string> => {
-    _producto.codFamilia = _producto.codFamilia || "EVEN";
     return await RestAPI.post(baseUrlProducto, _producto).then((respuesta) => respuesta.id);
 };
 
