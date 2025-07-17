@@ -4,6 +4,7 @@ import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
 import { Trabajador } from "../diseño.ts";
@@ -11,6 +12,7 @@ import {
   deleteTrabajador,
   getTrabajadores,
 } from "../infraestructura.ts";
+import { AltaTrabajador } from "./AltaTrabajador.tsx";
 import { DetalleTrabajador } from "./DetalleTrabajador/DetalleTrabajador.tsx";
 // import "./MaestroConDetalleTrabajador.css";
 
@@ -69,12 +71,6 @@ export const MaestroConDetalleTrabajador = () => {
             <h2>Trabajadores</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!trabajadores.seleccionada}
-                onClick={onBorrarTrabajador}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaTrabajador}
@@ -93,6 +89,13 @@ export const MaestroConDetalleTrabajador = () => {
           />
         }
       />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
+      >
+        <AltaTrabajador emitir={emitir} />
+      </QModal>
     </div>
   );
 };

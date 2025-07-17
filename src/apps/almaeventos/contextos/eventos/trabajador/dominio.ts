@@ -17,13 +17,16 @@ export const nuevoTrabajadorVacio: NuevoTrabajador = {
 export const metaTrabajador: MetaModelo<Trabajador> = {
     campos: {
         coste: { requerido: true, tipo: "numero" },
-        // descripcion: { requerido: false },
+        nombre: { requerido: true, tipo: "texto" },
         // Agrega aquí más campos según validaciones necesarias
     },
 };
 
 export const metaNuevoTrabajador: MetaModelo<NuevoTrabajador> = {
     campos: {
+        id: { requerido: true, tipo: "texto" },
+        coste: { requerido: true, tipo: "numero" },
+        nombre: { requerido: true, tipo: "texto" },
         // referencia: { requerido: true, validacion: (trabajador: NuevoTrabajador) => stringNoVacio(trabajador.referencia) },
     },
 };

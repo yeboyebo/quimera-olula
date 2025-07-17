@@ -18,9 +18,8 @@ export const getTrabajadores = async (_filtro: Filtro, _orden: Orden): Promise<T
     return RestAPI.get<{ datos: Trabajador[] }>(baseUrlTrabajador + q).then((respuesta) => respuesta.datos);
 };
 
-// Las siguientes funciones se mantienen igual para cuando la API esté lista
 export const postTrabajador = async (_trabajador: NuevoTrabajador): Promise<string> => {
-    return "fake-id";
+    return await RestAPI.post(baseUrlTrabajador, _trabajador).then((respuesta) => respuesta.id);
 };
 
 export const patchTrabajador = async (_id: string, _trabajador: Partial<Trabajador>): Promise<void> => { };
