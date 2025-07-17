@@ -50,7 +50,7 @@ export const DetalleProducto = ({
 
   const onBorrarConfirmado = async () => {
     await deleteProducto(modelo.id);
-    emitir("Producto_BORRADO", modelo);
+    emitir("PRODUCTO_BORRADO", modelo);
     setEstado("edicion");
   };  
 

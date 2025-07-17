@@ -20,7 +20,7 @@ export const AltaProducto = ({
     const id = await postProducto(nuevoProducto.modelo);
     nuevoProducto.init(nuevoProductoVacio);
     const ProductoCreado = await getProducto(id);
-    emitir("Producto_CREADO", ProductoCreado);
+    emitir("PRODUCTO_CREADO", ProductoCreado);
   };
 
   return (

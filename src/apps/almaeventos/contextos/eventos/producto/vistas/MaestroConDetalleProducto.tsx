@@ -28,7 +28,6 @@ export const MaestroConDetalleProducto = () => {
   const maquina: Maquina<Estado> = {
     alta: {
       PRODUCTO_CREADO: (payload: unknown) => {
-        console.log("mimensaje_MaestroConDetalleProducto_PRODUCTO_CREADO", payload);
         const producto = payload as Producto;
         productos.añadir(producto);
         return "lista";
@@ -42,35 +41,18 @@ export const MaestroConDetalleProducto = () => {
         productos.modificar(producto);
       },
       PRODUCTO_BORRADO: (payload: unknown) => {
-        console.log("mimensaje_MaestroConDetalleProducto_PRODUCTO_BORRADO", payload);
-        return "confimarBorrado";
+        const producto = payload as Producto;
+        productos.eliminar(producto);
+        return "lista";        
       },
       CANCELAR_SELECCION: () => {
         productos.limpiarSeleccion();
       },
     },
-    confimarBorrado: {
-      PRODUCTO_BORRADO_CONFIRMADO: (payload: unknown) => {
-        console.log("mimensaje_MaestroConDetalleProducto-PRODUCTO_BORRADO_CONFIRMADO", payload);
-        const producto = payload as Producto;
-        productos.eliminar(producto);
-        return "lista";
-      }
-    }
+    confimarBorrado: {}
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
-
-  const onBorrarProducto = async () => {
-    if (!productos.seleccionada) {
-      return;
-    }
-    emitir("PRODUCTO_BORRADO")
-    // await deleteProducto(productos.seleccionada.id);
-    // productos.eliminar(productos.seleccionada);
-  };
-
-  // console.log("mimensaje_MaestroConDetalleProducto", productos);
 
   return (
     <div className="Producto">
@@ -81,12 +63,6 @@ export const MaestroConDetalleProducto = () => {
             <h2>Productos</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-              {/* <QBoton
-                deshabilitado={!productos.seleccionada}
-                onClick={onBorrarProducto}
-              >
-                Borrar
-              </QBoton> */}
             </div>
             <Listado
               metaTabla={metaTablaProducto}
