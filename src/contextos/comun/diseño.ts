@@ -32,7 +32,7 @@ export type Criteria = {
 export type Orden = string[];
 export type Filtro = [string, string, string][];
 export type Paginacion = {
-  tamaño: number;
+  limite: number;
   pagina: number;
 };
 
