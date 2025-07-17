@@ -62,7 +62,6 @@ const paginacionControlador = (
   paginacion: Paginacion,
   onPaginacion?: (pagina: number, limite: number) => void
 ) => {
-  const totalPaginas = 3;
   return (
     <div className="paginacion">
       <button
@@ -73,11 +72,7 @@ const paginacionControlador = (
       >
         Anterior
       </button>
-      <span>
-        Página {paginacion.pagina} de {totalPaginas}
-      </span>
       <button
-        disabled={paginacion?.pagina === totalPaginas}
         onClick={() =>
           onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina + 1)
         }

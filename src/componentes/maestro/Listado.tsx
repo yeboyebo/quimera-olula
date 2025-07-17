@@ -48,7 +48,7 @@ export const Listado = <T extends Entidad>({
   criteria = {
     filtros: [],
     orden: ["id", "DESC"],
-    paginacion: { limite: 7, pagina: 1 },
+    paginacion: { limite: 5, pagina: 1 },
   },
   entidades,
   setEntidades,
@@ -60,9 +60,8 @@ export const Listado = <T extends Entidad>({
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
   const [paginacion, setPaginacion] = useState<Paginacion>(
-    criteria.paginacion || { limite: 7, pagina: 1 }
+    criteria.paginacion || { limite: 5, pagina: 1 }
   );
-  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     let hecho = false;
@@ -70,8 +69,9 @@ export const Listado = <T extends Entidad>({
 
     cargar(filtro, orden, paginacion).then((entidadesNuevas) => {
       if (hecho) return;
-      setEntidades(entidadesNuevas as T[]);
-      setTotal(20);
+      if (entidadesNuevas.length > 0) {
+        setEntidades(entidadesNuevas as T[]);
+      }
       setCargando(false);
     });
 
@@ -79,11 +79,6 @@ export const Listado = <T extends Entidad>({
       hecho = true;
     };
   }, [filtro, orden, paginacion, cargar, setEntidades]);
-
-  useEffect(() => {
-    setPaginacion((p) => ({ ...p, pagina: 1 }));
-    setEntidades([]);
-  }, [filtro, orden, setEntidades]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
