@@ -14,6 +14,7 @@ export type EntidadAccion = {
 export type Criteria = {
   filtros: Filtro;
   orden: Orden;
+  paginacion?: Paginacion;
 }
 
 // export type FiltroAPI = [string, string, string][];
@@ -30,6 +31,10 @@ export type Criteria = {
 
 export type Orden = string[];
 export type Filtro = [string, string, string][];
+export type Paginacion = {
+  limite: number;
+  pagina: number;
+};
 
 export type Direccion = {
   nombre_via: string;

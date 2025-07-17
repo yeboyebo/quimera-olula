@@ -40,7 +40,7 @@ export type MaestroProps<T extends Entidad> = {
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  criteria = { filtros: [], orden: ["id", "DESC"] },
+  criteria = { filtros: [], orden: ["id", "ASC"] },
   entidades,
   setEntidades,
   seleccionada,
@@ -86,8 +86,8 @@ export const Listado = <T extends Entidad>({
         seleccionadaId={seleccionada?.id}
         onSeleccion={(entidad) => setSeleccionada(entidad as T)}
         orden={orden}
-        onOrdenar={(clave) => {
-          setOrden([clave]);
+        onOrdenar={(clave, nuevoOrden) => {
+          setOrden([clave, nuevoOrden]);
         }}
       />
     );
