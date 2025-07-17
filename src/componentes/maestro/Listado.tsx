@@ -28,13 +28,6 @@ const obtenerCampos = (entidad: Entidad | null): string[] => {
   return expandirEntidad(entidad).map(([clave]) => clave);
 };
 
-const obtenerSentidoOrden = (orden: Orden): string => {
-  if (Array.isArray(orden)) {
-    return orden[1] === "ASC" ? "DESC" : "ASC";
-  }
-  return "ASC";
-};
-
 export type MaestroProps<T extends Entidad> = {
   metaTabla: MetaTabla<T>;
   criteria?: Criteria;
@@ -94,7 +87,13 @@ export const Listado = <T extends Entidad>({
         onSeleccion={(entidad) => setSeleccionada(entidad as T)}
         orden={orden}
         onOrdenar={(clave) => {
-          setOrden([clave, obtenerSentidoOrden(orden)]);
+          const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
+          const sentido =
+            antigua_clave === clave && antiguo_sentido === "ASC"
+              ? "DESC"
+              : "ASC";
+
+          setOrden([clave, sentido]);
         }}
       />
     );

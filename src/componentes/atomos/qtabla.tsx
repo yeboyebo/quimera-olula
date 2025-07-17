@@ -25,7 +25,7 @@ const cabecera = <T extends Entidad>(
   orden: Orden,
   onOrdenar?: (clave: string) => void
 ) => {
-  const [colOrdenada, sentido] = Array.isArray(orden) ? orden : [null, null];
+  const [colOrdenada, sentido] = orden;
 
   const renderCabecera = ({ id, cabecera, tipo }: MetaColumna<T>) => (
     <th
