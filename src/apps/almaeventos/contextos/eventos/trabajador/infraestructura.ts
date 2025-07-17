@@ -1,38 +1,21 @@
+import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
+import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { NuevoTrabajador, Trabajador } from "./diseño.ts";
 
-// Datos falsos para desarrollo
-const trabajadoresFake: Trabajador[] = [
-    {
-        id: "TR00001",
-        nombre: "Juan Martínez Arnau",
-        coste: 10.5,
-    },
-    {
-        id: "TR00002",
-        nombre: "Román Lopez Grau",
-        coste: 10.5,
-    },
-    {
-        id: "TR00003",
-        nombre: "Antonio De la Osa Segundo",
-        coste: 10.5,
-    },
-    {
-        id: "TR00004",
-        nombre: "Javier Teruel García",
-        coste: 10.5,
-    },
-];
+const baseUrlTrabajador = `/eventos/trabajador`;
 
-export const getTrabajador = async (id: string): Promise<Trabajador> => {
-    const trabajador = trabajadoresFake.find((e) => e.id === id);
-    if (!trabajador) throw new Error("Trabajador no encontrado");
-    return trabajador;
-};
+export const TrabajadorToAPI = (e: Trabajador) => ({
+    ...e,
+    valordefecto: e.valor_defecto,
+});
+
+export const getTrabajador = async (id: string): Promise<Trabajador> =>
+    await RestAPI.get<{ datos: Trabajador }>(`${baseUrlTrabajador}/${id}`).then((respuesta) => respuesta.datos);
 
 export const getTrabajadores = async (_filtro: Filtro, _orden: Orden): Promise<Trabajador[]> => {
-    return trabajadoresFake;
+    const q = criteriaQuery(_filtro, _orden);
+    return RestAPI.get<{ datos: Trabajador[] }>(baseUrlTrabajador + q).then((respuesta) => respuesta.datos);
 };
 
 // Las siguientes funciones se mantienen igual para cuando la API esté lista
