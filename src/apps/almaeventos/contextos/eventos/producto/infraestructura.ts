@@ -34,6 +34,7 @@ export const getProducto = async (id: string): Promise<Producto> => {
 export const getProductos = async (_filtro: Filtro, _orden: Orden): Promise<Producto[]> => {
     // return productosFake;
     const q = criteriaQuery(_filtro, _orden);
+    console.log("mimensaje_getProductos", _filtro);
     return RestAPI.get<{ datos: Producto[] }>(baseUrlProducto + q).then((respuesta) => respuesta.datos);
 };
 
@@ -41,9 +42,13 @@ export const getProductos = async (_filtro: Filtro, _orden: Orden): Promise<Prod
 
 // Las siguientes funciones se mantienen igual para cuando la API esté lista
 export const postProducto = async (_producto: NuevoProducto): Promise<string> => {
-    return "fake-id";
+    console.log("mimensaje_postProducto", _producto);
+    return await RestAPI.post(baseUrlProducto, _producto).then((respuesta) => respuesta.id);
+    // return "fake-id";
 };
 
-export const patchProducto = async (_id: string, _producto: Partial<Producto>): Promise<void> => { };
+export const patchProducto = async (id: string, producto: Partial<Producto>): Promise<void> => {
+    await RestAPI.patch(`${baseUrlProducto}/${id}`, producto, "No se pudo actualizar el producto");
+};
 
 export const deleteProducto = async (_id: string): Promise<void> => { };

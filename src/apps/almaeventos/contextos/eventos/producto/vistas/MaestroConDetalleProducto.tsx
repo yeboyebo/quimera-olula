@@ -4,6 +4,7 @@ import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
 import { Producto } from "../diseño.ts";
@@ -11,6 +12,7 @@ import {
   deleteProducto,
   getProductos,
 } from "../infraestructura.ts";
+import { AltaProducto } from "./AltaProducto.tsx";
 import { DetalleProducto } from "./DetalleProducto/DetalleProducto.tsx";
 // import "./MaestroConDetalleProducto.css";
 
@@ -18,7 +20,7 @@ const metaTablaProducto: MetaTabla<Producto> = [
   { id: "id", cabecera: "Código" },
   { id: "descripcion", cabecera: "Descripción" }
 ];
-type Estado = "lista" | "alta";
+type Estado = "lista" | "alta" | "confimarBorrado";
 
 export const MaestroConDetalleProducto = () => {
   const [estado, setEstado] = useState<Estado>("lista");
@@ -27,6 +29,7 @@ export const MaestroConDetalleProducto = () => {
   const maquina: Maquina<Estado> = {
     alta: {
       PRODUCTO_CREADO: (payload: unknown) => {
+        console.log("mimensaje_PRODUCTO_CREADO", payload);
         const producto = payload as Producto;
         productos.añadir(producto);
         return "lista";
@@ -40,13 +43,19 @@ export const MaestroConDetalleProducto = () => {
         productos.modificar(producto);
       },
       PRODUCTO_BORRADO: (payload: unknown) => {
-        const producto = payload as Producto;
-        productos.eliminar(producto);
+        return "confimarBorrado";
       },
       CANCELAR_SELECCION: () => {
         productos.limpiarSeleccion();
       },
     },
+    confimarBorrado: {
+      PRODUCTO_BORRADO_CONFIRMADO: (payload: unknown) => {
+        const producto = payload as Producto;
+        productos.eliminar(producto);
+        return "lista";
+      }
+    }
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
@@ -58,6 +67,8 @@ export const MaestroConDetalleProducto = () => {
     await deleteProducto(productos.seleccionada.id);
     productos.eliminar(productos.seleccionada);
   };
+
+  console.log("mimensaje_MaestroConDetalleProducto", productos);
 
   return (
     <div className="Producto">
@@ -92,6 +103,13 @@ export const MaestroConDetalleProducto = () => {
           />
         }
       />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
+      >
+        <AltaProducto emitir={emitir} />
+      </QModal>
     </div>
   );
 };
