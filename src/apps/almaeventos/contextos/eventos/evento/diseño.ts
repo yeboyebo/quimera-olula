@@ -48,7 +48,7 @@ export interface Evento extends Entidad {
 };
 
 export type NuevoEvento = {
-    referencia: string;
+    descripcion: string;
     codproyecto: string;
     fecha_inicio: string;
 };

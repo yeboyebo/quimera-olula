@@ -1,36 +1,40 @@
-import { EmitirEvento } from "../../../comun/diseño.ts";
-// import { useModelo } from "../../../comun/useModelo.ts";
-// import { Agente } from "../../comun/componentes/agente.tsx";
-// import { TipoIdFiscal } from "../../comun/componentes/tipoIdFiscal.tsx";
-// import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
-// import { getCliente, postCliente } from "../infraestructura.ts";
+import { useContext } from "react";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../../contextos/comun/contexto.ts";
+import { EmitirEvento } from "../../../../../../contextos/comun/diseño.ts";
+import { useModelo } from "../../../../../../contextos/comun/useModelo.ts";
+import { Producto } from "../../../../contextos/comun/componentes/producto.tsx";
+import { metaNuevoEvento, nuevoEventoVacio } from "../dominio.ts";
+import { getEvento, postEvento } from "../infraestructura.ts";
 
-export const AltaCliente = ({
+export const AltaEvento = ({
   emitir = () => {},
 }: {
   emitir?: EmitirEvento;
 }) => {
-  // const nuevoCliente = useModelo(metaNuevoCliente, nuevoClienteVacio);
+  const nuevoEvento = useModelo(metaNuevoEvento, nuevoEventoVacio);
+  const { intentar } = useContext(ContextoError);
 
-  // const guardar = async () => {
-  //   const id = await postCliente(nuevoCliente.modelo);
-  //   nuevoCliente.init(nuevoClienteVacio);
-  //   const clienteCreado = await getCliente(id);
-  //   emitir("CLIENTE_CREADO", clienteCreado);
-  // };
-
+  const guardar = async () => {
+    const id = await intentar(() => postEvento(nuevoEvento.modelo));
+    nuevoEvento.init(nuevoEventoVacio);
+    const EventoCreado = await getEvento(id);
+    emitir("EVENTO_CREADO", EventoCreado);
+  };
+  
+  console.log('mimensaje_nuevoEvento', nuevoEvento);
+  
   return (
     <>
       <h2>Nuevo Evento</h2>
-      {/* <quimera-formulario>
-        <QInput label="Nombre" {...nuevoCliente.uiProps("nombre")} />
-        <TipoIdFiscal {...nuevoCliente.uiProps("tipo_id_fiscal")} />
-        <QInput label="ID Fiscal" {...nuevoCliente.uiProps("id_fiscal")} />
-        <QInput label="Empresa" {...nuevoCliente.uiProps("empresa_id")} />
-        <Agente {...nuevoCliente.uiProps("agente_id", "nombre_agente")} />
+      <quimera-formulario>
+        <Producto {...nuevoEvento.uiProps("codproyecto", "descripcion_producto")} />
+        <QInput label="Nombre" {...nuevoEvento.uiProps("nombre")} />
+        <QInput label="Fecha" {...nuevoEvento.uiProps("fecha_inicio")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton onClick={guardar} deshabilitado={nuevoCliente.valido === false}>
+        <QBoton onClick={guardar} deshabilitado={nuevoEvento.valido === false}>
           Guardar
         </QBoton>
         <QBoton
@@ -40,7 +44,7 @@ export const AltaCliente = ({
         >
           Cancelar
         </QBoton>
-      </div> */}
+      </div>
     </>
   );
 };
