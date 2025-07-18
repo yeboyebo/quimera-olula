@@ -5,7 +5,7 @@ import { NuevoTrabajador, Trabajador } from "./diseño.ts";
 
 const baseUrlTrabajador = `/eventos/trabajador`;
 
-export const TrabajadorToAPI = (e: Trabajador) => ({
+export const trabajadorToAPI = (e: Trabajador) => ({
     ...e,
     valordefecto: e.valor_defecto,
 });
@@ -22,6 +22,10 @@ export const postTrabajador = async (_trabajador: NuevoTrabajador): Promise<stri
     return await RestAPI.post(baseUrlTrabajador, _trabajador).then((respuesta) => respuesta.id);
 };
 
-export const patchTrabajador = async (_id: string, _trabajador: Partial<Trabajador>): Promise<void> => { };
+export const patchTrabajador = async (id: string, estado: Partial<Trabajador>): Promise<void> => {
+    const payload = trabajadorToAPI(estado as Trabajador);
+    await RestAPI.patch(`${baseUrlTrabajador}/${id}`, { cambios: payload });
+};
 
-export const deleteTrabajador = async (_id: string): Promise<void> => { };
+export const deleteTrabajador = async (id: string): Promise<void> =>
+    await RestAPI.delete(`${baseUrlTrabajador}/${id}`);

@@ -9,8 +9,7 @@ import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
 import { Trabajador } from "../diseño.ts";
 import {
-  deleteTrabajador,
-  getTrabajadores,
+  getTrabajadores
 } from "../infraestructura.ts";
 import { AltaTrabajador } from "./AltaTrabajador.tsx";
 import { DetalleTrabajador } from "./DetalleTrabajador/DetalleTrabajador.tsx";
@@ -53,14 +52,6 @@ export const MaestroConDetalleTrabajador = () => {
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
-
-  const onBorrarTrabajador = async () => {
-    if (!trabajadores.seleccionada) {
-      return;
-    }
-    await deleteTrabajador(trabajadores.seleccionada.id);
-    trabajadores.eliminar(trabajadores.seleccionada);
-  };
 
   return (
     <div className="Trabajador">

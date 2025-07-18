@@ -53,7 +53,7 @@ export const DetalleProducto = ({
     setEstado("edicion");
   };  
 
-  console.log("mimensaje_DetalleProducto_estado", estado);
+  // console.log("mimensaje_DetalleProducto_estado", estado);
   
   
   return (
