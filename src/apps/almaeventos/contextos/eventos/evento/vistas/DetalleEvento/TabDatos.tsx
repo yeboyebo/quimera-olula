@@ -3,7 +3,6 @@ import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx
 import { QDate } from "../../../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
 import { QTextArea } from "../../../../../../../componentes/atomos/qtextarea.tsx";
-import { QModal } from "../../../../../../../componentes/moleculas/qmodal.tsx";
 import { HookModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Producto } from "../../../../../contextos/comun/componentes/producto.tsx";
 import { Evento } from "../../diseño.ts";
@@ -22,7 +21,7 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
   return (
     <div className="TabDatos">
       <quimera-formulario>
-        <div className="main-column">
+        <div className="columna-principal">
             <div className="fila-1">
                 <Producto {...evento.uiProps("codproyecto", "descripcion_producto")} nombre="evento/codproyecto"/>
                 <QInput label="Nombre" {...uiProps("nombre")} />
@@ -49,7 +48,7 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
                 <QInput label="Margen" {...uiProps("total_beneficio")} />
             </div>
         </div>
-        <div className="checkbox-column col-1">
+        <div className="columna-checkbox col-1">
           <QCheckbox label="C. cliente enviado" nombre="enviado_a_cliente" valor={true} />
           <QCheckbox label="C. proveedor enviado" nombre="enviado_a_proveedor" valor={true} />
           <QCheckbox label="Hoja ruta hecha" nombre="hoja_ruta_hecha" valor={true} />
@@ -57,21 +56,21 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
           <QCheckbox label="Alta de seguridad social" nombre="altas_ss" valor={true} />
           <QCheckbox label="Liquidación" nombre="liquidacion" valor={true} />
         </div>
-        <div className="checkbox-column col-2">
+        <div className="columna-checkbox col-2">
           <QCheckbox label="C. cliente recibido" nombre="recibido_a_cliente" valor={true} />
           <QCheckbox label="C. proveedor recibido" nombre="recibido_por_proveedor" valor={true} />
           <QCheckbox label="Hoja ruta enviada" nombre="hoja_ruta_enviada" valor={true} />
           <QCheckbox label="Factura enviada" nombre="factura_enviada" valor={true} />
           <QCheckbox label="Cartelería" nombre="carteleria" valor={true} />
-          <div className="checkbox-placeholder"></div>
+          <div className="marcador-checkbox"></div>
         </div>
-        <div className="row-observaciones">
+        <div className="fila-observaciones">
           <QTextArea label="Observaciones" {...uiProps("observaciones")} />
         </div>
       </quimera-formulario>
-      <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
+      {/* <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
         <h2>Dar de baja</h2>
-      </QModal>
+      </QModal> */}
     </div>
   );
 };

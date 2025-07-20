@@ -13,7 +13,7 @@
     }
 
     /* Columna principal */
-    .main-column {
+    .columna-principal {
         grid-column: 1;
         grid-row: 1 / span 6;
         display: flex;
@@ -54,7 +54,7 @@
     .fila-5 > *:nth-child(4) { flex: 0 0 10%; }
 
     /* Columnas de checkboxes */
-    .checkbox-column {
+    .columna-checkbox {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -64,7 +64,7 @@
     }
     .col-1 { grid-column: 2; }
     .col-2 { grid-column: 3; }
-    .checkbox-placeholder { visibility: hidden; height: 1.5rem; }
+    .marcador-checkbox { visibility: hidden; height: 1.5rem; }
 
     /* Estilos de checkboxes */
     quimera-checkbox { width: 100%; }
@@ -75,13 +75,13 @@
     quimera-checkbox label input { margin-right: 0.5rem; }
 
     /* Observaciones */
-    .row-observaciones {
+    .fila-observaciones {
         grid-column: 1 / span 3;
         grid-row: 7;
         width: 100%;
         box-sizing: border-box;
     }
-    .row-observaciones quimera-textarea { width: 100%; box-sizing: border-box; }
+    .fila-observaciones quimera-textarea { width: 100%; box-sizing: border-box; }
 
     /* Componentes generales */
     quimera-input, quimera-date, quimera-textarea { width: 100%; }
