@@ -59,7 +59,7 @@ export function Detalle<T extends Entidad>({
               tamaño="pequeño"
               destructivo
             >
-              <QIcono nombre="cerrar" tamaño="xs" />
+              <QIcono nombre="cerrar" tamaño="sm" />
             </QBoton>
           )}
         </h2>

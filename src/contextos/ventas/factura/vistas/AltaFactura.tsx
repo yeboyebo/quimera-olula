@@ -22,17 +22,13 @@ export const AltaFactura = ({
   };
 
   return (
-    <>
+    <div className="AltaFactura">
       <h2>Nueva Factura</h2>
       <quimera-formulario>
-        <Cliente
-          {...nuevaFactura.uiProps("cliente_id")}
-          nombre="alta_factura_cliente_id"
-        />
+        <Cliente {...nuevaFactura.uiProps("cliente_id")} />
         <DirCliente
           clienteId={nuevaFactura.modelo.cliente_id}
           {...nuevaFactura.uiProps("direccion_id")}
-          nombre="alta_factura_direccion_id"
         />
         <QInput label="Empresa" {...nuevaFactura.uiProps("empresa_id")} />
       </quimera-formulario>
@@ -44,6 +40,6 @@ export const AltaFactura = ({
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };
