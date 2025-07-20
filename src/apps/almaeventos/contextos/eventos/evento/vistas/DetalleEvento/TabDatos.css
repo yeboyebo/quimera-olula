@@ -1,45 +1,88 @@
 .DetalleEvento .TabDatos {
-    quimera-input[nombre="nombre"] {
-        grid-column: span 3;
+    max-width: 100%;
+    overflow-x: hidden;
+
+    quimera-formulario {
+        display: grid;
+        grid-template-columns: 80% 10% 10%;
+        grid-template-rows: auto auto auto auto auto auto auto;
+        gap: 1rem;
+        width: 98%;
+        margin-right: 2%;
+        box-sizing: border-box;
     }
 
-    quimera-input[nombre="nombre_comercial"] {
-        grid-column: span 3;
+    /* Columna principal */
+    .main-column {
+        grid-column: 1;
+        grid-row: 1 / span 6;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
-    quimera-select[nombre="tipo_id_fiscal"] {
-        grid-column: span 3;
+    /* Filas de la columna principal */
+    .fila-1, .fila-2, .fila-3, .fila-4, .fila-5 {
+        display: flex;
+        width: 100%;
+        gap: 1rem;
     }
 
-    quimera-input[nombre="id_fiscal"] {
-        grid-column: span 3;
-    }
+    /* Fila 1: Producto y Nombre */
+    .fila-1 > *:first-child { flex: 0 0 25%; }
+    .fila-1 > *:last-child { flex: 1; }
 
-    quimera-input[nombre="telefono1"] {
-        grid-column: 1 / span 6;
-    }
+    /* Fila 2: Fecha, Lugar y Dirección */
+    .fila-2 > *:nth-child(1) { flex: 0 0 15%; }
+    .fila-2 > *:nth-child(2) { flex: 0 0 25%; }
+    .fila-2 > *:nth-child(3) { flex: 1; }
 
-    quimera-input[nombre="telefono2"] {
-        grid-column: span 6;
-    }
+    /* Fila 3: Horas */
+    .fila-3 > * { flex: 0 0 15%; }
 
-    quimera-input[nombre="email"] {
-        grid-column: span 12;
-    }
+    /* Fila 4: Empresa, Cliente, Proveedor */
+    .fila-4 > * { flex: 1; }
 
-    quimera-input[nombre="web"] {
-        grid-column: span 12;
+    /* Fila 5: CCF, Precios, Margen */
+    .fila-5 { justify-content: flex-end; }
+    .fila-5 > *:nth-child(1) { 
+        flex: 0 0 30%; 
+        margin-right: auto;
     }
+    .fila-5 > *:nth-child(2),
+    .fila-5 > *:nth-child(3),
+    .fila-5 > *:nth-child(4) { flex: 0 0 10%; }
 
-    quimera-input[nombre="observaciones"] {
-        grid-column: span 12;
+    /* Columnas de checkboxes */
+    .checkbox-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        grid-row: 1 / span 6;
+        height: 100%;
+        padding: 0.5rem 0;
     }
+    .col-1 { grid-column: 2; }
+    .col-2 { grid-column: 3; }
+    .checkbox-placeholder { visibility: hidden; height: 1.5rem; }
 
-    /* quimera-date[nombre="fecha_baja"] {
-        grid-column: span 3;
-    } */
-
-    quimera-boton {
-        grid-column: span 6;
+    /* Estilos de checkboxes */
+    quimera-checkbox { width: 100%; }
+    quimera-checkbox label {
+        display: flex;
+        align-items: center;
     }
+    quimera-checkbox label input { margin-right: 0.5rem; }
+
+    /* Observaciones */
+    .row-observaciones {
+        grid-column: 1 / span 3;
+        grid-row: 7;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .row-observaciones quimera-textarea { width: 100%; box-sizing: border-box; }
+
+    /* Componentes generales */
+    quimera-input, quimera-date, quimera-textarea { width: 100%; }
 }
