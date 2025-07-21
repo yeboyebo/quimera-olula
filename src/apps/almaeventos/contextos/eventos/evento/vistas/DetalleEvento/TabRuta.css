@@ -1,29 +1,63 @@
-.Evento .TabRuta {
-    quimera-autocompletar[nombre="cliente/agente_id"] {
-        grid-column: span 9;
+.DetalleEvento .TabRuta {
+    max-width: 100%;
+    overflow-x: hidden;
+
+    quimera-formulario {
+        display: flex;
+        flex-direction: column;
+        width: 98%;
+        margin-right: 2%;
+        box-sizing: border-box;
     }
 
-    div[id="span3"] {
-        grid-column: span 3;
+    .columna-unica {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
     }
 
-    quimera-select[nombre="cliente/divisa_id"] {
-        grid-column: span 3;
+    .fila-titulo {
+        margin-top: 1rem;
+        border-bottom: 1px solid #ccc;
     }
 
-    quimera-date[nombre="fecha_baja"] {
-        grid-column: span 8;
+    .fila-titulo h3 {
+        margin: 0;
+        padding-bottom: 0.5rem;
+        color: #333;
+        font-weight: 600;
     }
 
-    quimera-input[nombre="cliente/serie_id"] {
-        grid-column: span 3;
+    .fila-2, .fila-3, .fila-5 {
+        display: flex;
+        gap: 1rem;
+        width: 100%;
     }
 
-    quimera-select[nombre="cliente/forma_pago_id"] {
-        grid-column: span 3;
+    .fila-2 > *:first-child { flex: 1; }
+    .fila-2 > *:last-child { flex: 0 0 15%; }
+
+    .fila-3 > * { flex: 1; }
+
+    .fila-5 > *:first-child { flex: 0 0 10%; }
+    .fila-5 > *:last-child { flex: 1; }
+
+    .fila-checkbox {
+        display: flex;
+        align-items: center;
     }
 
-    quimera-select[nombre="cliente/grupo_iva_negocio_id"] {
-        grid-column: span 3;
+    .fila-checkbox quimera-checkbox { width: auto; }
+
+    .fila-textarea { width: 100%; }
+
+    quimera-checkbox label {
+        display: flex;
+        align-items: center;
     }
+
+    quimera-checkbox label input { margin-right: 0.5rem; }
+
+    quimera-input, quimera-textarea { width: 100%; }
 }

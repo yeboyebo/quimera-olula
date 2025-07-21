@@ -1,39 +1,68 @@
+import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
+import { QTextArea } from "../../../../../../../componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Evento } from "../../diseño.ts";
 import "./TabRuta.css";
 
 interface TabRutaProps {
   evento: HookModelo<Evento>;
-  // emitirEvento: EmitirEvento;
+  recargarEvento: () => void;
 }
 
 export const TabRuta = ({ evento }: TabRutaProps) => {
   const { uiProps } = evento;
 
   return (
-    <div className="TabRuta">   
+    <div className="TabRuta">
       <quimera-formulario>
-        {/* <Agente
-          {...uiProps("agente_id", "nombre_agente")}
-          nombre="evento/agente_id"
-        /> */}
-        {/* <div id="span3" /> */}
-        {/* <Divisa {...uiProps("divisa_id")} nombre="evento/divisa_id" /> */}
-        <QInput
-          label="Serie"
-          {...uiProps("serie_id")}
-          nombre="evento/serie_id"
-        />
-        {/* <FormaPago
-          {...uiProps("forma_pago_id", "nombre_forma_pago")}
-          nombre="evento/forma_pago_id"
-        />
-        <GrupoIvaNegocio
-          label="Grupo IVA"
-          {...uiProps("grupo_iva_negocio_id")}
-          nombre="evento/grupo_iva_negocio_id"
-        /> */}
+        <div className="columna-unica">
+          <div className="fila-titulo">
+            <h3>Responsables</h3>
+          </div>
+          
+          <div className="fila-2">
+            <QInput label="Organizador del evento" {...uiProps("organizador_evento")} />
+            <QInput label="Teléfono" {...uiProps("telefono")} />
+          </div>
+          
+          <div className="fila-3">
+            <QInput label="Responsable local" {...uiProps("responsable_local")} />
+            <QInput label="Responsable orquesta" {...uiProps("responsable_orquesta")} />
+            <QInput label="Responsable producciones" {...uiProps("responsable_producciones")} />
+          </div>
+          
+          <div className="fila-titulo">
+            <h3>Extras</h3>
+          </div>
+          
+          <div className="fila-5">
+            <QInput label="Nº descansos" {...uiProps("num_descansos")} />
+            <QInput label="Conexión eléctrica" {...uiProps("conexion_electrica")} />
+          </div>
+          
+          <div className="fila-checkbox">
+            <QCheckbox 
+              label="Camión en escenario" 
+              nombre="camion_escenario" 
+              valor={evento.modelo.camion_escenario} 
+              onChange={uiProps("camion_escenario").onChange} 
+            />
+          </div>
+          
+          <div className="fila-checkbox">
+            <QCheckbox 
+              label="Camerinos" 
+              nombre="camerinos" 
+              valor={evento.modelo.camerinos} 
+              onChange={uiProps("camerinos").onChange} 
+            />
+          </div>
+          
+          <div className="fila-textarea">
+            <QTextArea label="Tipo de escenario" {...uiProps("tipo_escenario")} />
+          </div>
+        </div>
       </quimera-formulario>
     </div>
   );

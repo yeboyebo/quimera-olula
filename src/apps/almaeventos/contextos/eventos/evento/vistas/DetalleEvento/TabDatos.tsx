@@ -18,6 +18,8 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
   const onCancelar = () => setMostrarModal(false);
   const { uiProps } = evento;
 
+  // console.log('mimensaje_aaaaaaaaaaaaaa', evento);
+
 
   return (
     <div className="TabDatos">
@@ -30,7 +32,7 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
                   onChange={uiProps("codproyecto", "descripcion_ref").onChange}
                   nombre="codproyecto"
                 />
-                <QInput label="Nombre" {...uiProps("nombre")} />
+                <QInput label="Nombre" {...uiProps("descripcion")} />
             </div>
             <div className="fila-2">
                 <QDate label="Fecha" {...uiProps("fecha_inicio")} />
