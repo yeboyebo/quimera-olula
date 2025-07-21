@@ -18,12 +18,18 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
   const onCancelar = () => setMostrarModal(false);
   const { uiProps } = evento;
 
+
   return (
     <div className="TabDatos">
       <quimera-formulario>
         <div className="columna-principal">
             <div className="fila-1">
-                <Producto {...evento.uiProps("codproyecto", "descripcion_producto")} nombre="evento/codproyecto"/>
+                <Producto 
+                  valor={evento.modelo.codproyecto || ""}
+                  descripcion={evento.modelo.descripcion_ref || ""}
+                  onChange={uiProps("codproyecto", "descripcion_ref").onChange}
+                  nombre="codproyecto"
+                />
                 <QInput label="Nombre" {...uiProps("nombre")} />
             </div>
             <div className="fila-2">
@@ -49,19 +55,74 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
             </div>
         </div>
         <div className="columna-checkbox col-1">
-          <QCheckbox label="C. cliente enviado" nombre="enviado_a_cliente" valor={true} />
-          <QCheckbox label="C. proveedor enviado" nombre="enviado_a_proveedor" valor={true} />
-          <QCheckbox label="Hoja ruta hecha" nombre="hoja_ruta_hecha" valor={true} />
-          <QCheckbox label="Presupuesto" nombre="presupuesto" valor={true} />
-          <QCheckbox label="Alta de seguridad social" nombre="altas_ss" valor={true} />
-          <QCheckbox label="Liquidación" nombre="liquidacion" valor={true} />
+          <QCheckbox 
+            label="C. cliente enviado" 
+            nombre="enviado_a_cliente" 
+            valor={evento.modelo.enviado_a_cliente} 
+            onChange={uiProps("enviado_a_cliente").onChange} 
+          />
+          <QCheckbox 
+            label="C. proveedor enviado" 
+            nombre="enviado_a_proveedor" 
+            valor={evento.modelo.enviado_a_proveedor} 
+            onChange={uiProps("enviado_a_proveedor").onChange} 
+          />
+          <QCheckbox 
+            label="Hoja ruta hecha" 
+            nombre="hoja_ruta_hecha" 
+            valor={evento.modelo.hoja_ruta_hecha} 
+            onChange={uiProps("hoja_ruta_hecha").onChange} 
+          />
+          <QCheckbox 
+            label="Presupuesto" 
+            nombre="presupuesto" 
+            valor={evento.modelo.presupuesto} 
+            onChange={uiProps("presupuesto").onChange} 
+          />
+          <QCheckbox 
+            label="Alta de seguridad social" 
+            nombre="altas_ss" 
+            valor={evento.modelo.altas_ss} 
+            onChange={uiProps("altas_ss").onChange} 
+          />
+          <QCheckbox 
+            label="Liquidación" 
+            nombre="liquidacion" 
+            valor={evento.modelo.liquidacion} 
+            onChange={uiProps("liquidacion").onChange} 
+          />
         </div>
         <div className="columna-checkbox col-2">
-          <QCheckbox label="C. cliente recibido" nombre="recibido_a_cliente" valor={true} />
-          <QCheckbox label="C. proveedor recibido" nombre="recibido_por_proveedor" valor={true} />
-          <QCheckbox label="Hoja ruta enviada" nombre="hoja_ruta_enviada" valor={true} />
-          <QCheckbox label="Factura enviada" nombre="factura_enviada" valor={true} />
-          <QCheckbox label="Cartelería" nombre="carteleria" valor={true} />
+          <QCheckbox 
+            label="C. cliente recibido" 
+            nombre="recibido_por_cliente" 
+            valor={evento.modelo.recibido_por_cliente} 
+            onChange={uiProps("recibido_por_cliente").onChange} 
+          />
+          <QCheckbox 
+            label="C. proveedor recibido" 
+            nombre="recibido_por_proveedor" 
+            valor={evento.modelo.recibido_por_proveedor} 
+            onChange={uiProps("recibido_por_proveedor").onChange} 
+          />
+          <QCheckbox 
+            label="Hoja ruta enviada" 
+            nombre="hoja_ruta_enviada" 
+            valor={evento.modelo.hoja_ruta_enviada} 
+            onChange={uiProps("hoja_ruta_enviada").onChange} 
+          />
+          <QCheckbox 
+            label="Factura enviada" 
+            nombre="factura_enviada" 
+            valor={evento.modelo.factura_enviada} 
+            onChange={uiProps("factura_enviada").onChange} 
+          />
+          <QCheckbox 
+            label="Cartelería" 
+            nombre="carteleria" 
+            valor={evento.modelo.carteleria} 
+            onChange={uiProps("carteleria").onChange} 
+          />
           <div className="marcador-checkbox"></div>
         </div>
         <div className="fila-observaciones">

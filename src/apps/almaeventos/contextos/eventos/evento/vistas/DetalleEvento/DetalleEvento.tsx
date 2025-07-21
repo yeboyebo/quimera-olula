@@ -53,7 +53,7 @@ export const DetalleEvento = () => {
     // emitir(EVENTO_CAMBIADO", eventoRecargado);
   };  
 
-  console.log('mimensaje_aaaaaaaaaaa', evento);
+  // console.log('mimensaje_aaaaaaaaaaa', evento);
   
   return (
     <div className="DetalleEvento">

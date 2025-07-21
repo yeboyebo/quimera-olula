@@ -8,6 +8,7 @@ export interface Evento extends Entidad {
     carteleria: boolean;
     ccf: string | null;
     cliente_id: string | null;
+    codproyecto: string | null;
     conexion_electrica: string | null;
     descripcion: string | null;
     descripcion_ref: string | null;
