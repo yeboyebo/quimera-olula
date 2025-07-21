@@ -6,6 +6,7 @@ import { EstadoAccion } from "../../../../comun/componentes/estado_accion.tsx";
 import { OportunidadVenta as OportunidadSelect } from "../../../../comun/componentes/oportunidad_venta.tsx";
 import { TipoAccion } from "../../../../comun/componentes/tipo_accion.tsx";
 import { OportunidadVenta } from "../../../diseño.ts";
+import "./AltaAcciones.css";
 import { metaNuevaAccion, nuevaAccionVacia } from "./dominio.ts";
 
 export const AltaAcciones = ({
@@ -27,8 +28,8 @@ export const AltaAcciones = ({
     <div className="AltaAcciones">
       <h2>Nueva Acción</h2>
       <quimera-formulario>
-        <QInput label="Fecha" {...nuevaAccion.uiProps("fecha")} />
         <QInput label="Descripción" {...nuevaAccion.uiProps("descripcion")} />
+        <QInput label="Fecha" {...nuevaAccion.uiProps("fecha")} />
         <EstadoAccion {...nuevaAccion.uiProps("estado")} />
         <TipoAccion {...nuevaAccion.uiProps("tipo")} />
         <OportunidadSelect

@@ -14,7 +14,7 @@ import {
   metaNuevaOportunidadVenta,
   nuevaOportunidadVentaVacia,
 } from "../../../dominio.ts";
-// import "./AltaOportunidadVenta.css";
+import "./AltaOportunidadVenta.css";
 
 export const AltaOportunidadVenta = ({
   emitir = () => {},
