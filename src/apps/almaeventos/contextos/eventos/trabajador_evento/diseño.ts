@@ -4,16 +4,20 @@ export interface TrabajadorEvento extends Entidad {
     id: string;
     nombre: string;
     coste: number;
-    evento_id: string
-    liquidado: boolean
-    trabajador_id: string
+    evento_id: string;
+    liquidado: boolean;
+    trabajador_id: string;
+    descripcion: string;
+    fecha: string;
 };
 
 export type NuevoTrabajadorEvento = {
     id: string;
     nombre: string;
     coste: number;
-    evento_id: string
-    liquidado: boolean
-    trabajador_id: string
+    evento_id: string;
+    liquidado: boolean;
+    trabajador_id: string;
+    descripcion: string;
+    fecha: string;
 };

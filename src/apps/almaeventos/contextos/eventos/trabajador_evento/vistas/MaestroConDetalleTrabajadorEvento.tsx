@@ -15,12 +15,12 @@ import { DetalleTrabajadorEvento } from "./DetalleTrabajadorEvento/DetalleTrabaj
 // import "./MaestroConDetalleTrabajadorEvento.css";
 
 const metaTablaTrabajadorEvento: MetaTabla<TrabajadorEvento> = [
-  { id: "id", cabecera: "Código" },
+  // { id: "id", cabecera: "Código" },
   { id: "nombre", cabecera: "Nombre" },
+  { id: "descripcion", cabecera: "Evento" },
+  { id: "fecha", cabecera: "Fecha" },
   { id: "coste", cabecera: "Coste/Hora" },
-  { id: "evento_id", cabecera: "Evento" },
-  { id: "liquidado", cabecera: "Liquidado" },
-  { id: "trabajador_id", cabecera: "Trabajador" }
+  { id: "liquidado", cabecera: "Liquidado" }
 ];
 type Estado = "lista" | "alta";
 
@@ -63,7 +63,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
         seleccionada={trabajadoresEvento.seleccionada}
         Maestro={
           <>
-            <h2>TrabajadoresEvento</h2>
+            <h2>Trabajadores por evento</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
             </div>

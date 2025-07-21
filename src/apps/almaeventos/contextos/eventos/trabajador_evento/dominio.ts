@@ -9,6 +9,8 @@ export const trabajadorEventoVacio: TrabajadorEvento = {
     evento_id: '',
     liquidado: false,
     trabajador_id: '',
+    descripcion: '',
+    fecha: '',
 };
 
 export const nuevoTrabajadorEventoVacio: NuevoTrabajadorEvento = {
@@ -18,6 +20,8 @@ export const nuevoTrabajadorEventoVacio: NuevoTrabajadorEvento = {
     evento_id: '',
     liquidado: false,
     trabajador_id: '',
+    descripcion: '',
+    fecha: '',
 };
 
 export const metaTrabajadorEvento: MetaModelo<TrabajadorEvento> = {
@@ -25,7 +29,7 @@ export const metaTrabajadorEvento: MetaModelo<TrabajadorEvento> = {
         coste: { requerido: true, tipo: "numero" },
         nombre: { requerido: true, tipo: "texto" },
         evento_id: { requerido: true },
-        trabajador_id: { requerido: true }
+        trabajador_id: { requerido: true },
         // Agrega aquí más campos según validaciones necesarias
     },
 };
