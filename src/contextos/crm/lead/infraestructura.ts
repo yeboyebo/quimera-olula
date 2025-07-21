@@ -1,9 +1,13 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
-import { criteriaQuery } from "../../comun/infraestructura.ts";
+import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
+import { Accion } from "../accion/diseño.ts";
+import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Lead, LeadAPI } from "./diseño.ts";
 
 const baseUrlLead = `/crm/lead`;
+const baseUrlAccion = `/crm/accion`;
+const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
 
 export const leadFromAPI = (l: LeadAPI): Lead => ({
     ...l,
@@ -78,3 +82,21 @@ export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> 
 export const deleteLead = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlLead}/${id}`);
 
+
+export const getOportunidadesVentaLead = async (leadId: string) => {
+    const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
+
+    const orden = [] as Orden;
+
+    const q = criteriaQueryUrl(filtro, orden);
+    return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
+};
+
+export const getAccionesLead = async (leadId: string) => {
+    const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
+
+    const orden = [] as Orden;
+
+    const q = criteriaQueryUrl(filtro, orden);
+    return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
+};

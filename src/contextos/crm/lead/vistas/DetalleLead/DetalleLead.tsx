@@ -10,7 +10,9 @@ import { FuenteLead } from "../../../comun/componentes/fuente_lead.tsx";
 import { Lead } from "../../diseño.ts";
 import { leadVacio, metaLead } from "../../dominio.ts";
 import { getLead, patchLead } from "../../infraestructura.ts";
+import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import "./DetalleLead.css";
+import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
@@ -80,6 +82,16 @@ export const DetalleLead = ({
                 key="tab-3"
                 label="Observaciones"
                 children={<TabObservaciones oportunidad={lead} />}
+              />,
+              <Tab
+                key="tab-4"
+                label="Oportunidades de Venta"
+                children={<TabOportunidades lead={lead} />}
+              />,
+              <Tab
+                key="tab-5"
+                label="Acciones"
+                children={<TabAcciones lead={lead} />}
               />,
             ]}
           ></Tabs>

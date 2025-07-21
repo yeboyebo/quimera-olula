@@ -1,4 +1,5 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
+import { NuevaOportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Lead } from "./diseño.ts";
 
 export const leadVacio: Lead = {
@@ -77,3 +78,26 @@ export const metaNuevoLead: MetaModelo<NuevoLead> = {
         estado_id: { requerido: true },
     },
 };
+
+export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
+    campos: {
+        descripcion: { requerido: true },
+        probabilidad: { requerido: true },
+        estado_id: { requerido: false },
+        cliente_id: { requerido: false },
+        contacto_id: { requerido: false },
+        nombre_cliente: { requerido: true },
+    }
+};
+
+export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
+    descripcion: "",
+    probabilidad: "",
+    valor_defecto: false,
+    estado_id: undefined,
+    cliente_id: "",
+    contacto_id: "",
+    nombre_cliente: "",
+};
+
+

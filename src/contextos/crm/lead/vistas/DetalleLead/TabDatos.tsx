@@ -14,7 +14,7 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
       <quimera-formulario>
         <TipoEntidadLead {...uiProps("tipo")} />
         {modelo.tipo === "Cliente" ? (
-          <Cliente {...uiProps("cliente_id")} />
+          <Cliente {...uiProps("cliente_id", "nombre")} />
         ) : (
           // <Proveedor {...uiProps("proveedor_id", "nombre")} />
           <></>
@@ -22,7 +22,6 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
         <QInput label="Dirección" {...uiProps("direccion")} />
         <QInput label="Código Postal" {...uiProps("cod_postal")} />
         <QInput label="Ciudad" {...uiProps("ciudad")} />
-        <QInput label="Provincia ID" {...uiProps("provincia_id")} />
         <QInput label="Provincia" {...uiProps("provincia")} />
         <QInput label="País ID" {...uiProps("pais_id")} />
         <QInput label="Teléfono 1" {...uiProps("telefono_1")} />
