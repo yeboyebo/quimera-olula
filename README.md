@@ -34,7 +34,8 @@ pnpm install
 
 ## Uso
 
-- `pnpm dev`. Levantar la aplicación en desarrollo
+- `pnpm dev`. Levantar la aplicación en desarrollo (web)
+- `pnpm electron`. Levantar la aplicación en desarrollo (escritorio)
 - `pnpm lint`. Lanzar el linter
 - `pnpm type-check`. Lanzar el type-checker
 - `pnpm run ci`. Lanzar todos los comprobadores de CI
