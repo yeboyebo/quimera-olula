@@ -20,6 +20,8 @@ const iconos: Record<string, string> = {
   usuario: "user",
   perfil: "user-circle",
   cerrar_sesion: "arrow-out-up-square-half",
+  verdadero: "check",
+  falso: "x",
 };
 
 export const QIcono = ({

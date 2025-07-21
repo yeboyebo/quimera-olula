@@ -14,13 +14,24 @@ import {
 import { DetalleTrabajadorEvento } from "./DetalleTrabajadorEvento/DetalleTrabajadorEvento.tsx";
 // import "./MaestroConDetalleTrabajadorEvento.css";
 
+import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
+
 const metaTablaTrabajadorEvento: MetaTabla<TrabajadorEvento> = [
   // { id: "id", cabecera: "Código" },
   { id: "nombre", cabecera: "Nombre" },
   { id: "descripcion", cabecera: "Evento" },
   { id: "fecha", cabecera: "Fecha" },
   { id: "coste", cabecera: "Coste/Hora" },
-  { id: "liquidado", cabecera: "Liquidado" }
+  { 
+    id: "liquidado", 
+    cabecera: "Liquidado",
+    tipo: "booleano",
+    render: (trabajadorEvento) => (
+      trabajadorEvento.liquidado ? 
+        <QIcono nombre="verdadero" color="green" /> : 
+        <QIcono nombre="falso" color="red" />
+    )
+  }
 ];
 type Estado = "lista" | "alta";
 
