@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../../../componentes/atomos/qboton.tsx";
+import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../../../../componentes/detalle/Detalle.tsx";
 import { ContextoError } from "../../../../../../../contextos/comun/contexto.ts";
@@ -21,7 +22,10 @@ export const DetalleTrabajadorEvento = ({
 }) => {
   const params = useParams();
   const trabajadorEventoId = trabajadorEventoInicial?.id ?? params.id;
-  const titulo = (trabajadorEvento: Entidad) => trabajadorEvento.id as string;
+  const titulo = (trabajadorEvento: Entidad) => {
+    const te = trabajadorEvento as TrabajadorEvento;
+    return `${te.fecha || ''} ${te.descripcion || ''}`;
+  };
   const { intentar } = useContext(ContextoError);
 
   const trabajadorEvento = useModelo(metaTrabajadorEvento, trabajadorEventoVacio);
@@ -58,14 +62,32 @@ export const DetalleTrabajadorEvento = ({
     >
       {!!trabajadorEventoId && (
         <div className="DetalleTrabajadorEvento">
-          {/* <div className="maestro-botones ">
-            <QBoton onClick={() => setEstado("confirmarBorrado")}>
-              Borrar
-            </QBoton>
-          </div> */}
           <quimera-formulario>
-            <QInput label="Nombre" {...trabajadorEvento.uiProps("nombre")} />
-            <QInput label="Coste/Hora" {...trabajadorEvento.uiProps("coste")} />
+            <QInput 
+              label={`Evento(${trabajadorEvento.modelo.evento_id})`} 
+              {...trabajadorEvento.uiProps("descripcion")} 
+              deshabilitado={true} 
+            />
+            <QInput 
+              label={`Trabajador(${trabajadorEvento.modelo.trabajador_id})`} 
+              {...trabajadorEvento.uiProps("nombre")} 
+              deshabilitado={true} 
+            />
+            <QInput 
+              label="Fecha Inicio" 
+              {...trabajadorEvento.uiProps("fecha")} 
+              deshabilitado={true} 
+            />
+            <QInput 
+              label="Coste/Hora" 
+              {...trabajadorEvento.uiProps("coste")} 
+            />
+            <QCheckbox 
+              label="Liquidado" 
+              nombre="liquidado" 
+              valor={modelo.liquidado} 
+              onChange={trabajadorEvento.uiProps("liquidado").onChange} 
+            />
           </quimera-formulario>
         </div>
       )}
