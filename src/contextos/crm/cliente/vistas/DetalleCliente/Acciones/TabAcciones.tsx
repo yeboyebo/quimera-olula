@@ -37,12 +37,6 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
     lista: {
       ALTA_SOLICITADA: "alta",
       BORRADO_SOLICITADO: "borrar",
-      EDICION_SOLICITADA: () => {
-        if (acciones.seleccionada) {
-          // Solo loguea el id de la acción
-          console.log("Editar acción:", acciones.seleccionada.id);
-        }
-      },
       ACCION_SELECCIONADA: (payload: unknown) => {
         const accion = payload as Accion;
         acciones.seleccionar(accion);

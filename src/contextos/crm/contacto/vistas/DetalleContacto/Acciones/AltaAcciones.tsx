@@ -27,7 +27,7 @@ export const AltaAcciones = ({
     const accionCreada = await getAccion(id);
     emitir("ACCION_CREADA", accionCreada);
   };
-  console.log(contacto.modelo);
+
   return (
     <div className="AltaAcciones">
       <h2>Nueva Acción</h2>

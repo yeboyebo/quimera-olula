@@ -40,12 +40,6 @@ export const TabOportunidades = ({
     lista: {
       ALTA_SOLICITADA: "alta",
       BORRADO_SOLICITADO: "borrar",
-      EDICION_SOLICITADA: () => {
-        if (oportunidades.seleccionada) {
-          // Solo loguea el id de la oportunidad
-          console.log("Editar oportunidad:", oportunidades.seleccionada.id);
-        }
-      },
       OPORTUNIDAD_SELECCIONADA: (payload: unknown) => {
         const oportunidad = payload as OportunidadVenta;
         oportunidades.seleccionar(oportunidad);

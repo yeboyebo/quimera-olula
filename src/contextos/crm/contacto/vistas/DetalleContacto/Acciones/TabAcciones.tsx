@@ -40,11 +40,6 @@ export const TabAcciones = ({
     lista: {
       ALTA_SOLICITADA: "alta",
       BORRADO_SOLICITADO: "borrar",
-      EDICION_SOLICITADA: () => {
-        if (acciones.seleccionada) {
-          console.log("Editar acción:", acciones.seleccionada.id);
-        }
-      },
       ACCION_SELECCIONADA: (payload: unknown) => {
         const accion = payload as Accion;
         acciones.seleccionar(accion);
