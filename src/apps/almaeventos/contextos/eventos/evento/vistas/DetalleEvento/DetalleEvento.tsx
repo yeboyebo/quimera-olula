@@ -53,6 +53,10 @@ export const DetalleEvento = () => {
     // emitir(EVENTO_CAMBIADO", eventoRecargado);
   };  
 
+  const onImprimirHojaRutaClicked = async () => {
+    console.log('mimensaje_onImprimirHojaRutaClicked');
+  };  
+
   // console.log('mimensaje_aaaaaaaaaaa', evento);
   
   return (
@@ -72,6 +76,9 @@ export const DetalleEvento = () => {
               <QBoton onClick={() => setEstado("confirmarBorrado")}>
                 Borrar
               </QBoton>
+              <QBoton onClick={() => onImprimirHojaRutaClicked}>
+                Imprimir hoja de ruta
+              </QBoton>              
             </div>
             <Tabs
               children={[
