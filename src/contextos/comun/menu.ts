@@ -106,6 +106,11 @@ export const elementosDelMenu: ElementoMenu[] = [
         nombre: "Trabajadores",
         url: "/eventos/trabajador",
         icono: "",
+      },
+      {
+        nombre: "Trabajadores por evento",
+        url: "/eventos/trabajador_evento",
+        icono: "",
       }
     ]
   }

@@ -6,6 +6,7 @@ import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos//eventos
 import { DetalleEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/DetalleEvento/DetalleEvento.tsx";
 import { MaestroEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/MaestroEvento.tsx";
 import { MaestroConDetalleTrabajador } from "./apps/almaeventos/contextos/eventos/trabajador/vistas/MaestroConDetalleTrabajador.tsx";
+import { MaestroConDetalleTrabajadorEvento } from "./apps/almaeventos/contextos/eventos/trabajador_evento/vistas/MaestroConDetalleTrabajadorEvento.tsx";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
 import "./contextos/comun/comun.css";
@@ -235,6 +236,16 @@ createRoot(document.getElementById("root")!).render(
               }
             />
           </Route>
+          <Route path="trabajador_evento">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleTrabajadorEvento />
+                </Vista>
+              }
+            />
+          </Route>          
         </Route>
 
       </Routes>
