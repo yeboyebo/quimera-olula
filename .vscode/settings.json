@@ -32,7 +32,7 @@
   // explorer
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, tsconfig.json, .gitignore, .npmignore, eslint.config.js, .eslintrc, .eslintrc.json, .eslintrc.js, .eslintrc.cjs, .prettierrc, .prettierrc.json, .prettierrc.js, jest.config.js, .prettierignore, .editorconfig, pnpm-workspace.yaml, README.md, vite.config.ts, Dockerfile, docker-compose*.yml, .nvmrc, .eslintrc.js, .dockerignore, Makefile, cucumber.js, biome.json, lint-staged.config.js, bunfig.toml"
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, tsconfig.json, .gitignore, .npmignore, eslint.config.js, .eslintrc, .eslintrc.json, .eslintrc.js, .eslintrc.cjs, .prettierrc, .prettierrc.json, .prettierrc.js, jest.config.js, .prettierignore, .editorconfig, pnpm-workspace.yaml, README.md, *vite.config.ts, Dockerfile, docker-compose*.yml, .nvmrc, .eslintrc.js, .dockerignore, Makefile, cucumber.js, biome.json, lint-staged.config.js, bunfig.toml"
   },
   // git
   "git.confirmSync": false,
