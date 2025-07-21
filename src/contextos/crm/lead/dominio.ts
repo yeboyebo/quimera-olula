@@ -31,7 +31,7 @@ export const metaLead: MetaModelo<Lead> = {
         estado_id: { requerido: true },
         nombre: { requerido: false },
         id_fiscal: { requerido: false },
-        cliente_id: { requerido: false, bloqueado: true },
+        cliente_id: { requerido: false },
         proveedor_id: { requerido: false },
         direccion: { requerido: false },
         cod_postal: { requerido: false },
@@ -56,12 +56,14 @@ export const initEstadoLead = (lead: Lead): EstadoModelo<Lead> =>
 export const initEstadoLeadVacio = () => initEstadoLead(leadVacio);
 
 export type NuevoLead = {
+    cliente_id: string;
     tipo: string;
     fuente_id: string;
     estado_id: string;
 };
 
 export const nuevoLeadVacio: NuevoLead = {
+    cliente_id: "",
     tipo: "Cliente",
     fuente_id: "",
     estado_id: "",
@@ -69,7 +71,8 @@ export const nuevoLeadVacio: NuevoLead = {
 
 export const metaNuevoLead: MetaModelo<NuevoLead> = {
     campos: {
-        tipo: { requerido: true },
+        cliente_id: { requerido: true },
+        tipo: { requerido: true, bloqueado: true },
         fuente_id: { requerido: true },
         estado_id: { requerido: true },
     },

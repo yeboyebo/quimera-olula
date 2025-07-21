@@ -1,20 +1,20 @@
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
-import { opcionesEstadoLead } from "../valores/estado_lead.ts";
+import { opcionesFuenteLead } from "../valores/fuente_lead.ts";
 
-interface EstadoLeadProps {
+interface FuenteLeadProps {
   valor: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const EstadoLead = ({ valor, onChange, getProps }: EstadoLeadProps) => {
+export const FuenteLead = ({ valor, onChange, getProps }: FuenteLeadProps) => {
   return (
     <QSelect
-      label="Estado"
-      nombre="estado_id"
+      label="Fuente"
+      nombre="fuente_id"
       valor={valor}
       onChange={onChange}
-      opciones={opcionesEstadoLead}
+      opciones={opcionesFuenteLead}
       {...(getProps ? getProps("tipo") : {})}
     />
   );

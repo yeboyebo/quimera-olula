@@ -1,5 +1,5 @@
 .Pedido .AltaPedido {
-    quimera-autocompletar[nombre="cliente_id"] {
+    quimera-autocompletar[nombre="cliente_id, nombre"] {
         grid-column: span 12;
     }
 }

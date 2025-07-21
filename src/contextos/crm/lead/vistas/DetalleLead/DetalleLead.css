@@ -1,17 +1,10 @@
 .Lead .TabDatos {
-    quimera-input[nombre="tipo"] {
-        grid-column: 1/ span 3;
+
+    quimera-select[nombre="estado_id"] {
+        grid-column: 1 / span 6;
     }
 
-    quimera-input[nombre="nombre"] {
-        grid-column: span 5;
-    }
-
-    quimera-input[nombre="estado_id"] {
-        grid-column: 1 / span 3;
-    }
-
-    quimera-input[nombre="fuente_id"] {
-        grid-column: span 3;
+    quimera-select[nombre="fuente_id"] {
+        grid-column: span 6;
     }
 }

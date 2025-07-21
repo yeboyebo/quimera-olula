@@ -25,7 +25,7 @@ export const AltaPedido = ({
     <div className="AltaPedido">
       <h2>Nuevo Pedido</h2>
       <quimera-formulario>
-        <Cliente {...nuevoPedido.uiProps("cliente_id")} />
+        <Cliente {...nuevoPedido.uiProps("cliente_id, nombre")} />
         <DirCliente
           clienteId={nuevoPedido.modelo.cliente_id}
           {...nuevoPedido.uiProps("direccion_id")}

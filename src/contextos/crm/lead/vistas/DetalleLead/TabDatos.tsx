@@ -14,7 +14,7 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
       <quimera-formulario>
         <TipoEntidadLead {...uiProps("tipo")} />
         {modelo.tipo === "Cliente" ? (
-          <Cliente {...uiProps("cliente_id", "nombre")} />
+          <Cliente {...uiProps("cliente_id")} />
         ) : (
           // <Proveedor {...uiProps("proveedor_id", "nombre")} />
           <></>
