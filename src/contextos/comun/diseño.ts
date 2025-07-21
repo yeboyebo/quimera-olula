@@ -14,22 +14,15 @@ export type EntidadAccion = {
 export type Criteria = {
   filtros: Filtro;
   orden: Orden;
+  paginacion?: Paginacion;
 }
-
-// export type FiltroAPI = [string, string, string][];
-// export type OrdenAPI = string[];
-// export type CriteriaAPI = {
-//   filtro?: FiltroAPI;
-//   orden?: OrdenAPI;
-// }
-
-
-// export type ValorFiltro = { LIKE: string };
-// export type Orden = { [campo: string]: "ASC" | "DESC" }
-// export type Filtro = { [campo: string]: ValorFiltro };
 
 export type Orden = string[];
 export type Filtro = [string, string, string][];
+export type Paginacion = {
+  limite: number;
+  pagina: number;
+};
 
 export type Direccion = {
   nombre_via: string;

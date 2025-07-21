@@ -77,6 +77,14 @@ export interface CuentaBanco extends Entidad {
   bic: string;
 };
 
+export type CuentaBancoAPI = {
+  descripcion: string;
+  cuenta: {
+    iban: string;
+    bic: string;
+  };
+};
+
 export type NuevaCuentaBanco = {
   descripcion: string;
   iban: string;
