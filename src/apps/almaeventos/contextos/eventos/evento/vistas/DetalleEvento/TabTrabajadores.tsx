@@ -17,7 +17,6 @@ interface TabTrabajadoresProps {
 }
 
 export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
-  const { uiProps } = evento;
   const [trabajadoresData, setTrabajadoresData] = useState<Trabajador[]>([]);
   const [trabajadoresEventoData, setTrabajadoresEventoData] = useState<TrabajadorEvento[]>([]);
   const { intentar } = useContext(ContextoError);
@@ -35,17 +34,12 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
     
     const fetchTrabajadores = async (trabajadoresEvento: TrabajadorEvento[]) => {
       try {
-        // Extraer los IDs de trabajadores ya asignados al evento
         const idsAsignados = trabajadoresEvento.map(t => t.trabajador_id);
         
-        // Para filtros NOT IN, necesitamos crear un array anidado con la condición
-        // El formato correcto es [["campo", "operador", valor]]
-        // Usamos as unknown as Filtro para hacer el casting de tipo
+        // Necesitamos hacer un casting de tipo porque la estructura del filtro es compleja
         const filtro = idsAsignados.length > 0 ? 
           [["id", "!in", idsAsignados]] as unknown as Filtro : 
           [] as unknown as Filtro;
-        
-        console.log('Filtro aplicado:', filtro);
         
         const trabajadores = await getTrabajadores(filtro, ["id", "DESC"]);
         setTrabajadoresData(trabajadores);
@@ -58,31 +52,27 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
   }, [evento.modelo.id]);
 
   const asignarTrabajador = async (trabajador: Trabajador) => {
-    nuevoTrabajadorEventoVacio.trabajador_id = trabajador.id
-    nuevoTrabajadorEventoVacio.nombre = trabajador.nombre
-    nuevoTrabajadorEventoVacio.coste = trabajador.coste
-    nuevoTrabajadorEventoVacio.evento_id = evento.modelo.id
-    nuevoTrabajadorEventoVacio.descripcion = evento.modelo.descripcion || ''
-    nuevoTrabajadorEventoVacio.fecha = evento.modelo.fecha_inicio || ''
+    nuevoTrabajadorEventoVacio.trabajador_id = trabajador.id;
+    nuevoTrabajadorEventoVacio.nombre = trabajador.nombre;
+    nuevoTrabajadorEventoVacio.coste = trabajador.coste;
+    nuevoTrabajadorEventoVacio.evento_id = evento.modelo.id;
+    nuevoTrabajadorEventoVacio.descripcion = evento.modelo.descripcion || '';
+    nuevoTrabajadorEventoVacio.fecha = evento.modelo.fecha_inicio || '';
     
     const id = await intentar(() => postTrabajadorEvento(nuevoTrabajadorEventoVacio));
-    // Crear una copia del array y añadir el nuevo elemento
-    setTrabajadoresEventoData([...trabajadoresEventoData, {...nuevoTrabajadorEventoVacio, id}]);
     
-    // Actualizar la lista de trabajadores disponibles
-    const nuevaTrabajadoresData = trabajadoresData.filter(t => t.id !== trabajador.id);
-    setTrabajadoresData(nuevaTrabajadoresData);
+    // Actualizar UI sin recargar datos del servidor
+    setTrabajadoresEventoData([...trabajadoresEventoData, {...nuevoTrabajadorEventoVacio, id}]);
+    setTrabajadoresData(trabajadoresData.filter(t => t.id !== trabajador.id));
   };    
 
   const quitarTrabajador = async (trabajadorEvento: TrabajadorEvento) => {
-    const id = await intentar(() => deleteTrabajadorEvento(trabajadorEvento.id));
-    // Actualizar la lista de trabajadores asignados
-    const nuevaTrabajadoresEventoData = trabajadoresEventoData.filter(t => t.id !== trabajadorEvento.id);
-    setTrabajadoresEventoData(nuevaTrabajadoresEventoData);
-    // Actualizar la lista de trabajadores disponibles
+    await intentar(() => deleteTrabajadorEvento(trabajadorEvento.id));
+    
+    // Actualizar UI sin recargar datos del servidor
+    setTrabajadoresEventoData(trabajadoresEventoData.filter(t => t.id !== trabajadorEvento.id));
     const trabajadorQuitado = await getTrabajador(trabajadorEvento.trabajador_id);
     setTrabajadoresData([...trabajadoresData, trabajadorQuitado]);
-
   };  
   
   return (
@@ -95,8 +85,8 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
               <ul className="lista-trabajadores">
                 {trabajadoresData.map(trabajador => (
                   <li key={trabajador.id} className="trabajador-item">
-                    <span>{trabajador.nombre}</span>
-                    <QBoton variante="borde" tamaño="pequeño" onClick={() => asignarTrabajador(trabajador)} >
+                    <span className="trabajador-nombre">{trabajador.nombre}</span>
+                    <QBoton variante="borde" tamaño="pequeño" onClick={() => asignarTrabajador(trabajador)}>
                       Asignar
                     </QBoton>                    
                   </li>
@@ -113,8 +103,8 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
               <ul className="lista-trabajadores">
                 {trabajadoresEventoData.map(trabajadorEvento => (
                   <li key={trabajadorEvento.id} className="trabajador-item">
-                    <span>{trabajadorEvento.nombre}</span>
-                    <QBoton variante="borde" tamaño="pequeño" destructivo onClick={() => quitarTrabajador(trabajadorEvento)} >
+                    <span className="trabajador-nombre">{trabajadorEvento.nombre}</span>
+                    <QBoton variante="borde" tamaño="pequeño" destructivo onClick={() => quitarTrabajador(trabajadorEvento)}>
                       Quitar
                     </QBoton>
                   </li>

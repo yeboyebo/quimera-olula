@@ -1,26 +1,33 @@
 .TabTrabajadores {
     width: 100%;
     padding: 1rem;
-    border: 1px solid red;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.TabTrabajadores quimera-formulario {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .TabTrabajadores .contenedor-columnas {
     display: flex;
     gap: 2rem;
     width: 100%;
-    min-width: 1500px;
-    border: 1px solid blue;
+    justify-content: center;
+    text-align: center;
 }
 
 .TabTrabajadores .columna-izquierda,
 .TabTrabajadores .columna-derecha {
     flex: 1;
-    min-width: 30%;
+    max-width: 600px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     padding: 1rem;
     background-color: #f9f9f9;
-    border: 1px solid green;
 }
 
 .TabTrabajadores h3 {
@@ -48,6 +55,16 @@
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     transition: background-color 0.2s;
+}
+
+/* Nombre del trabajador centrado y con truncamiento si es muy largo */
+.TabTrabajadores .trabajador-item .trabajador-nombre {
+    flex: 1;
+    text-align: center;
+    padding: 0 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .TabTrabajadores .trabajador-item:hover {
