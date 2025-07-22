@@ -47,7 +47,7 @@ export const DetalleTrabajadorEvento = ({
     await intentar(() => patchTrabajadorEvento(modelo.id, modelo));
     const trabajadorEvento_guardado = await getTrabajadorEvento(modelo.id);
     init(trabajadorEvento_guardado);
-    emitir("TRABAJADOR_CAMBIADO", trabajadorEvento_guardado);
+    emitir("TRABAJADOR_EVENTO_CAMBIADO", trabajadorEvento_guardado);
   };
 
   

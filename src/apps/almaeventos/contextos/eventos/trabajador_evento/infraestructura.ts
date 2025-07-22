@@ -24,6 +24,12 @@ export const postTrabajadorEvento = async (_trabajadorEvento: NuevoTrabajadorEve
 
 export const patchTrabajadorEvento = async (id: string, estado: Partial<TrabajadorEvento>): Promise<void> => {
     const payload = trabajadorEventoToAPI(estado as TrabajadorEvento);
+
+    // Asegurarse de que id sea siempre un string
+    if (payload.id !== undefined) {
+        payload.id = String(payload.id);
+    }
+
     await RestAPI.patch(`${baseUrlTrabajadorEvento}/${id}`, { cambios: payload });
 };
 
