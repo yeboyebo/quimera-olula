@@ -4,10 +4,10 @@ import { ContextoError } from "../../../../../../../contextos/comun/contexto.ts"
 import { Filtro } from "../../../../../../../contextos/comun/diseño.ts";
 import { HookModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Trabajador } from "../../../trabajador/diseño.ts";
-import { getTrabajadores } from "../../../trabajador/infraestructura.ts";
+import { getTrabajador, getTrabajadores } from "../../../trabajador/infraestructura.ts";
 import { TrabajadorEvento } from "../../../trabajador_evento/diseño.ts";
 import { nuevoTrabajadorEventoVacio } from "../../../trabajador_evento/dominio.ts";
-import { getTrabajadoresEvento, postTrabajadorEvento } from "../../../trabajador_evento/infraestructura.ts";
+import { deleteTrabajadorEvento, getTrabajadoresEvento, postTrabajadorEvento } from "../../../trabajador_evento/infraestructura.ts";
 import { Evento } from "../../diseño.ts";
 import "./TabTrabajadores.css";
 
@@ -66,7 +66,6 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
     nuevoTrabajadorEventoVacio.fecha = evento.modelo.fecha_inicio || ''
     
     const id = await intentar(() => postTrabajadorEvento(nuevoTrabajadorEventoVacio));
-    
     // Crear una copia del array y añadir el nuevo elemento
     setTrabajadoresEventoData([...trabajadoresEventoData, {...nuevoTrabajadorEventoVacio, id}]);
     
@@ -75,11 +74,15 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
     setTrabajadoresData(nuevaTrabajadoresData);
   };    
 
-  const quitarTrabajador = async () => {
-    // const id = await intentar(() => postEvento(nuevoEvento.modelo));
-    // nuevoEvento.init(nuevoEventoVacio);
-    // const EventoCreado = await getEvento(id);
-    // emitir("EVENTO_CREADO", EventoCreado);
+  const quitarTrabajador = async (trabajadorEvento: TrabajadorEvento) => {
+    const id = await intentar(() => deleteTrabajadorEvento(trabajadorEvento.id));
+    // Actualizar la lista de trabajadores asignados
+    const nuevaTrabajadoresEventoData = trabajadoresEventoData.filter(t => t.id !== trabajadorEvento.id);
+    setTrabajadoresEventoData(nuevaTrabajadoresEventoData);
+    // Actualizar la lista de trabajadores disponibles
+    const trabajadorQuitado = await getTrabajador(trabajadorEvento.trabajador_id);
+    setTrabajadoresData([...trabajadoresData, trabajadorQuitado]);
+
   };  
   
   return (
@@ -111,7 +114,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
                 {trabajadoresEventoData.map(trabajadorEvento => (
                   <li key={trabajadorEvento.id} className="trabajador-item">
                     <span>{trabajadorEvento.nombre}</span>
-                    <QBoton variante="borde" tamaño="pequeño" destructivo onClick={quitarTrabajador} >
+                    <QBoton variante="borde" tamaño="pequeño" destructivo onClick={() => quitarTrabajador(trabajadorEvento)} >
                       Quitar
                     </QBoton>
                   </li>

@@ -96,7 +96,7 @@ export const DetalleEvento = () => {
                 />,
                 <Tab
                   key="tab-2"
-                  label="Trabjadores"
+                  label="Trabajadores"
                   children={
                     <TabTrabajadores evento={evento} 
                     // emitirEvento={emitir} 
