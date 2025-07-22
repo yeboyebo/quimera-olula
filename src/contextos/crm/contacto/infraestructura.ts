@@ -18,6 +18,11 @@ const contactoFromAPI = (c: ContactoApi): Contacto => ({
   ...c,
 });
 
+const contactoToAPI = (c: Contacto): ContactoApi => ({
+  ...c,
+});
+
+
 
 export const getContacto = async (id: string): Promise<Contacto> =>
   await RestAPI.get<{ datos: Contacto }>(`${baseUrlContactos}/${id}`).then((respuesta) => contactoFromAPI(respuesta.datos));
@@ -34,6 +39,12 @@ export const patchContacto = async (id: string, contacto: Contacto) =>
       email: contacto.email,
     },
   });
+
+export const postContacto = async (contacto: Partial<Contacto>): Promise<string> => {
+  return await RestAPI.post(baseUrlContactos, contactoToAPI(contacto as Contacto)).then(
+    (respuesta) => respuesta.id
+  );
+};
 
 export const deleteContacto = async (id: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlContactos}/${id}`);

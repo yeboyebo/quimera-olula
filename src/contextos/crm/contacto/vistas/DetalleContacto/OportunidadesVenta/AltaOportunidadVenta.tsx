@@ -9,8 +9,8 @@ import {
   getOportunidadVenta,
   postOportunidadVenta,
 } from "../../../../oportunidadventa/infraestructura.ts";
+import { Contacto } from "../../../diseño.ts";
 import {
-  Contacto,
   metaNuevaOportunidadVenta,
   nuevaOportunidadVentaVacia,
 } from "../../../dominio.ts";
