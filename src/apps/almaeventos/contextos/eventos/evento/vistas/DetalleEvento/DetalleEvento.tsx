@@ -11,6 +11,7 @@ import { eventoVacio, metaEvento } from "../../dominio.ts";
 import { deleteEvento, getEvento, patchEvento } from "../../infraestructura.ts";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabRuta } from "./TabRuta.tsx";
+import { TabTrabajadores } from "./TabTrabajadores.tsx";
 
 type Estado = "defecto";
 
@@ -94,35 +95,25 @@ export const DetalleEvento = () => {
                   }
                 />,
                 <Tab
-                  key="tab-1"
+                  key="tab-2"
+                  label="Trabjadores"
+                  children={
+                    <TabTrabajadores evento={evento} 
+                    // emitirEvento={emitir} 
+                    recargarEvento={onRecargarEvento}
+                    />
+                  }
+                />,
+                <Tab
+                  key="tab-3"
                   label="Hoja de ruta"
                   children={
                     <TabRuta evento={evento} 
                     // emitirEvento={emitir} 
+                    recargarEvento={onRecargarEvento}
                     />
                   }
                 />,
-                // <Tab
-                //   key="tab-2"
-                //   label="Direcciones"
-                //   children={<TabDirecciones eventoId={eventoId} />}
-                // />,
-                // <Tab
-                //   key="tab-3"
-                //   label="Cuentas Bancarias"
-                //   children={
-                //     <TabCuentasBanco evento={evento} emitirEvento={emitir} />
-                //   }
-                // />,
-                // <Tab
-                //   key="tab-4"
-                //   label="Agenda"
-                //   children={
-                //     <div className="detalle-evento-tab-contenido">
-                //       <TabCrmContactos eventoId={eventoId} />
-                //     </div>
-                //   }
-                // />,
               ]}
             />
             {evento.modificado && (

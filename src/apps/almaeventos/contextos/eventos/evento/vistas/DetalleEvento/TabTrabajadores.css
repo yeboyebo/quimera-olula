@@ -1,0 +1,55 @@
+.TabTrabajadores {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid red;
+}
+
+.TabTrabajadores .contenedor-columnas {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    min-width: 1500px;
+    border: 1px solid blue;
+}
+
+.TabTrabajadores .columna-izquierda,
+.TabTrabajadores .columna-derecha {
+    flex: 1;
+    min-width: 30%;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid green;
+}
+
+.TabTrabajadores h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.TabTrabajadores .lista-trabajadores {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.TabTrabajadores .trabajador-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.TabTrabajadores .trabajador-item:hover {
+    background-color: #f0f0f0;
+}
