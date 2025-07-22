@@ -1,0 +1,8 @@
+.DetalleEvento .maestro-botones {
+  display: flex;
+  gap: 1rem;
+}
+
+.DetalleEvento .maestro-botones.alinear-derecha {
+  justify-content: flex-end;
+}

@@ -9,6 +9,7 @@ import { useModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Evento } from "../../diseño.ts";
 import { eventoVacio, metaEvento } from "../../dominio.ts";
 import { deleteEvento, getEvento, patchEvento } from "../../infraestructura.ts";
+import "./DetalleEvento.css";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabRuta } from "./TabRuta.tsx";
 import { TabTrabajadores } from "./TabTrabajadores.tsx";
@@ -73,13 +74,15 @@ export const DetalleEvento = () => {
       >
         {!!eventoId && (
           <div className="DetalleEvento">
-            <div className="maestro-botones ">
-              <QBoton onClick={() => setEstado("confirmarBorrado")}>
-                Borrar
-              </QBoton>
-              <QBoton onClick={() => onImprimirHojaRutaClicked}>
-                Imprimir hoja de ruta
-              </QBoton>              
+            <div>
+              <div className="maestro-botones alinear-derecha">
+                <QBoton onClick={() => setEstado("confirmarBorrado")}>
+                  Borrar
+                </QBoton>
+                <QBoton onClick={() => onImprimirHojaRutaClicked}>
+                  Imprimir hoja de ruta
+                </QBoton>              
+              </div>
             </div>
             <Tabs
               children={[
@@ -117,7 +120,7 @@ export const DetalleEvento = () => {
               ]}
             />
             {evento.modificado && (
-              <div className="maestro-botones ">
+              <div className="maestro-botones">
                 <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
                   Guardar
                 </QBoton>
