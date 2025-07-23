@@ -1,0 +1,10 @@
+.accion-celda {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.accion-celda:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
