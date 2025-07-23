@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { QBoton } from "../../../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../../../componentes/detalle/tabs/Tabs.tsx";
@@ -25,6 +25,7 @@ export const DetalleEvento = () => {
     );
   const eventoId = params.id;
   const titulo = (evento: Entidad) => evento.descripcion as string;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -44,8 +45,9 @@ export const DetalleEvento = () => {
 
   const onBorrarConfirmado = async () => {
     await deleteEvento(modelo.id);
+    navigate("/eventos/eventos", { replace: true });
     // emitir("EVENTO_BORRADO", modelo);
-    setEstado("edicion");
+    // setEstado("edicion");
   };
 
   const onRecargarEvento = async () => {
