@@ -106,7 +106,7 @@ export const darDeBajaCliente = async (id: string, fecha: string) =>
       de_baja: true,
       fecha_baja: fecha,
     },
-  });
+  }, "Error al dar de baja el cliente");
 
 export const darDeAltaCliente = async (id: string) =>
   await RestAPI.patch(`${baseUrlVentas}/${id}`, {
@@ -114,10 +114,10 @@ export const darDeAltaCliente = async (id: string) =>
       de_baja: false,
       fecha_baja: null,
     },
-  });
+  }, "Error al dar de alta el cliente");
 
 export const deleteCliente = async (id: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlVentas}/${id}`);
+  await RestAPI.delete(`${baseUrlVentas}/${id}`, "Error al borrar cliente");
 
 export const postCliente: PostCliente = async (cliente) => {
   return await RestAPI.post(baseUrlVentas, cliente, "Error al guardar el cliente").then((respuesta) => respuesta.id);
@@ -140,21 +140,21 @@ export const postDireccion = async (clienteId: string, direccion: NuevaDireccion
       ...direccion,
     }
   }
-  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/direccion`, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/direccion`, payload, "Error al guardar dirección").then((respuesta) => respuesta.id);
 }
 
 export const setDirFacturacion = async (clienteId: string, direccionId: string): Promise<void> =>
-  RestAPI.patch(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}/facturacion`, {});
+  RestAPI.patch(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}/facturacion`, {}, "Error al establecer dirección de facturación");
 
 
 export const actualizarDireccion = async (clienteId: string, direccion: DirCliente): Promise<void> =>
   RestAPI.patch(
     `${baseUrlVentas}/${clienteId}/direccion/${direccion.id}`
-    , { direccion: dirClienteToAPI(direccion) }
+    , { direccion: dirClienteToAPI(direccion) }, "Error al actualizar dirección"
   );
 
 export const deleteDireccion = async (clienteId: string, direccionId: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}`);
+  await RestAPI.delete(`${baseUrlVentas}/${clienteId}/direccion/${direccionId}`, "Error al borrar dirección");
 
 
 export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]> =>
@@ -178,7 +178,7 @@ export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): 
       bic: cuenta.bic,
     },
   };
-  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_banco/${cuenta.id}`, payload);
+  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_banco/${cuenta.id}`, payload, "Error al actualizar cuenta bancaria");
 };
 
 export const deleteCuentaBanco = async (clienteId: string, cuentaId: string): Promise<void> =>
