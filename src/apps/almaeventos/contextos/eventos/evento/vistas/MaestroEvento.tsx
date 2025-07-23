@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
 import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { ContextoError } from "../../../../../../contextos/comun/contexto.ts";
@@ -32,7 +33,7 @@ const AccionCampoEvento = ({
     }}
     title={`Cambiar ${campo}`}
   >
-    {valor ? <span style={{ color: "green" }}>✔️</span> : "❌"}
+    {valor ? <QIcono nombre="verdadero" color="green" /> : <QIcono nombre="falso" color="red" />}
   </span>
 );
 
