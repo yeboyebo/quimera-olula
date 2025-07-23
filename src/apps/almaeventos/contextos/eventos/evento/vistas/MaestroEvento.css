@@ -1,0 +1,37 @@
+.accion-campo {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.accion-campo:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+}
+
+.indicador-estado {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+.enlace-detalle {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Estilo para celdas con texto que puede ser truncado */
+.texto-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
