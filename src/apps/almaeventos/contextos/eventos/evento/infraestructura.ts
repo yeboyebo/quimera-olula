@@ -2,6 +2,7 @@ import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
 import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { Evento, NuevoEvento } from "./diseño.ts";
+import { reemplazarNulls } from "./dominio.ts";
 
 const baseUrlEvento = `/eventos/evento`;
 
@@ -22,10 +23,9 @@ export const postEvento = async (_evento: NuevoEvento): Promise<string> => {
     return await RestAPI.post(baseUrlEvento, _evento).then((respuesta) => respuesta.id);
 };
 
-export const patchEvento = async (id: string, estado: Partial<Evento>): Promise<void> => {
-    const payload = eventoToAPI(estado as Evento);
-    console.log('mimensaje_patchEvento', payload);
-    await RestAPI.patch(`${baseUrlEvento}/${id}`, { cambios: payload });
+export const patchEvento = async (id: string, evento: Partial<Evento>): Promise<void> => {
+    const eventoSinNulls = reemplazarNulls(evento);
+    await RestAPI.patch(`${baseUrlEvento}/${id}`, { cambios: eventoSinNulls });
 };
 
 export const deleteEvento = async (id: string): Promise<void> =>

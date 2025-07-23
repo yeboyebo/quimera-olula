@@ -8,51 +8,93 @@ export const eventoVacio: Evento = {
     camerinos: false,
     camion_escenario: false,
     carteleria: false,
-    ccf: null,
-    cliente_id: null,
-    conexion_electrica: null,
-    descripcion: null,
-    descripcion_ref: null,
-    direccion: null,
+    ccf: '',
+    cliente_id: '',
+    conexion_electrica: '',
+    descripcion: '',
+    descripcion_ref: '',
+    direccion: '',
     enviado_a_cliente: false,
     enviado_a_proveedor: false,
-    empresa_id: null,
-    estado_id: null,
+    empresa_id: '',
+    estado_id: '',
     factura_enviada: false,
-    fecha_inicio: null,
-    gastos_facturacion: null,
-    gastos_personal: null,
-    hora_inicio: null,
-    hora_montaje: null,
-    hora_prueba_sonido: null,
+    fecha_inicio: '',
+    gastos_facturacion: 0,
+    gastos_personal: 0,
+    hora_inicio: '',
+    hora_montaje: '',
+    hora_prueba_sonido: '',
     hoja_ruta_enviada: false,
     hoja_ruta_hecha: false,
     liquidacion: false,
-    lugar: null,
-    num_descansos: null,
-    observaciones: null,
-    organizador_evento: null,
+    lugar: '',
+    num_descansos: 0,
+    observaciones: '',
+    organizador_evento: '',
     presupuesto: false,
-    proveedor_id: null,
+    proveedor_id: '',
     recibido_por_cliente: false,
-    referencia: null,
-    responsable_local: null,
-    responsable_orquesta: null,
-    responsable_producciones: null,
+    referencia: '',
+    responsable_local: '',
+    responsable_orquesta: '',
+    responsable_producciones: '',
     recibido_por_proveedor: false,
-    subtotal_coste: null,
-    telefono: null,
-    tipo_escenario: null,
-    total_beneficio: null,
-    total_costes: null,
-    total_costesind: null,
-    total_ingresos: null,
+    subtotal_coste: 0,
+    telefono: '',
+    tipo_escenario: '',
+    total_beneficio: 0,
+    total_costes: 0,
+    total_costesind: 0,
+    total_ingresos: 0,
+    codproyecto: ''
 };
 
 export const nuevoEventoVacio: NuevoEvento = {
+    altas_ss: false,
+    camerinos: false,
+    camion_escenario: false,
+    carteleria: false,
+    ccf: '',
+    cliente_id: '',
+    conexion_electrica: '',
     descripcion: '',
-    codproyecto: '',
+    descripcion_ref: '',
+    direccion: '',
+    enviado_a_cliente: false,
+    enviado_a_proveedor: false,
+    empresa_id: '',
+    estado_id: '',
+    factura_enviada: false,
     fecha_inicio: '',
+    gastos_facturacion: 0,
+    gastos_personal: 0,
+    hora_inicio: '',
+    hora_montaje: '',
+    hora_prueba_sonido: '',
+    hoja_ruta_enviada: false,
+    hoja_ruta_hecha: false,
+    liquidacion: false,
+    lugar: '',
+    num_descansos: 0,
+    observaciones: '',
+    organizador_evento: '',
+    presupuesto: false,
+    proveedor_id: '',
+    recibido_por_cliente: false,
+    referencia: '',
+    responsable_local: '',
+    responsable_orquesta: '',
+    responsable_producciones: '',
+    recibido_por_proveedor: false,
+    subtotal_coste: 0,
+    telefono: '',
+    tipo_escenario: '',
+    total_beneficio: 0,
+    total_costes: 0,
+    total_costesind: 0,
+    total_ingresos: 0,
+    codproyecto: ''
 };
 
 export const metaEvento: MetaModelo<Evento> = {
@@ -82,3 +124,26 @@ export const initEstadoEvento = (evento: Evento): EstadoModelo<Evento> =>
     initEstadoModelo(evento);
 
 export const initEstadoEventoVacio = () => initEstadoEvento(eventoVacio);
+
+// Función para determinar el tipo de un campo basado en la interfaz Evento
+export const dameValorDefectoPorTipo = (campo: keyof Evento): any => {
+    const valor = eventoVacio[campo];
+    if (typeof valor === 'boolean') {
+        return false;
+    } else if (typeof valor === 'number') {
+        return 0;
+    } else {
+        return '';
+    }
+};
+
+export const reemplazarNulls = (evento: Partial<Evento>): Partial<Evento> => {
+    return Object.fromEntries(
+        Object.entries(evento).map(([k, v]) => {
+            if (v === null) {
+                return [k, dameValorDefectoPorTipo(k as keyof Evento)];
+            }
+            return [k, v];
+        })
+    ) as Partial<Evento>;
+};
