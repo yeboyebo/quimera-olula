@@ -1,8 +1,7 @@
-// import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-
-import { QAutocompletar } from "../../../../../componentes/moleculas/qautocompletar.tsx";
+import { QSelect } from "../../../../../componentes/atomos/qselect.tsx";
 import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
 import { getProductos } from "../../../contextos/eventos/producto/infraestructura.ts";
+import { useEffect, useState } from "react";
 
 interface ProductoProps {
   descripcion?: string;
@@ -44,15 +43,37 @@ export const Producto = ({
     }));
   };
 
+  const [opcionesProducto, setOpcionesProducto] = useState<
+    { valor: string; descripcion: string }[]
+  >([]);
+
+  useEffect(() => {
+    const cargarOpciones = async () => {
+      // Cargar todas las opciones al inicio
+      const criteria = {
+        filtro: [] as unknown as Filtro,
+        orden: ["descripcion", "ASC"] as Orden,
+      };
+      
+      const productos = await getProductos(criteria.filtro, criteria.orden);
+      const opciones = productos.map((producto) => ({
+        valor: producto.id,
+        descripcion: producto.descripcion,
+      }));
+      
+      setOpcionesProducto(opciones);
+    };
+    
+    cargarOpciones();
+  }, []);
+
   return (
-    <QAutocompletar
+    <QSelect
       label={label}
       nombre={descripcion}
-      onChange={onChange}
       valor={valor}
-      autoSeleccion
-      obtenerOpciones={obtenerOpciones}
-      descripcion={descripcion}
+      onChange={onChange}
+      opciones={opcionesProducto}
       {...props}
     />
   );
