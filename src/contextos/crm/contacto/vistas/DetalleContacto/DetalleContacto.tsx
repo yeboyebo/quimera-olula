@@ -13,6 +13,7 @@ import {
   getContacto,
   patchContacto,
 } from "../../infraestructura.ts";
+import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import { TabClientes } from "./Clientes/TabClientes.tsx";
 import "./DetalleContacto.css";
 import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
@@ -101,6 +102,15 @@ export const DetalleContacto = ({
                   children={
                     <div className="detalle-cliente-tab-contenido">
                       <TabOportunidades contacto={contacto} />
+                    </div>
+                  }
+                />,
+                <Tab
+                  key="tab-5"
+                  label="Acciones"
+                  children={
+                    <div className="detalle-cliente-tab-contenido">
+                      <TabAcciones contacto={contacto} />
                     </div>
                   }
                 />,

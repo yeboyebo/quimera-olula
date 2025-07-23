@@ -1,0 +1,21 @@
+.Cliente .AltaOportunidadVenta {
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="descripcion"] {
+        grid-column: 1 / span 12;
+    }
+
+    quimera-select[nombre="estado"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-select[nombre="probabilidad"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: span 5;
+    }
+}

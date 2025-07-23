@@ -1,6 +1,10 @@
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { HookModelo } from "../../../../comun/useModelo.ts";
+import { Cliente } from "../../../../ventas/comun/componentes/cliente.tsx";
+import { ContactoSelector } from "../../../../ventas/comun/componentes/contacto.tsx";
+import { OportunidadVenta } from "../../../comun/componentes/oportunidad_venta.tsx";
 import { Accion } from "../../diseño.ts";
+import "./TabDatos.css";
 
 export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
   const { uiProps } = accion;
@@ -8,19 +12,14 @@ export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
   return (
     <div className="TabDatos">
       <quimera-formulario>
-        <QInput label="Estado" {...uiProps("estado")} />
-        <QInput label="Observaciones" {...uiProps("observaciones")} />
-        <QInput label="Agente" {...uiProps("agente_id")} />
-        <QInput label="Tipo" {...uiProps("tipo")} />
-        <QInput label="Cliente" {...uiProps("cliente_id")} />
-        <QInput label="Contacto" {...uiProps("contacto_id")} />
-        <QInput label="Oportunidad" {...uiProps("oportunidad_id")} />
-        <QInput label="Tarjeta" {...uiProps("tarjeta_id")} />
-        <QInput label="Incidencia" {...uiProps("incidencia_id")} />
-        <QInput label="Proyecto" {...uiProps("proyecto_id")} />
-        <QInput label="Subproyecto" {...uiProps("subproyecto_id")} />
-        <QInput label="Usuario" {...uiProps("usuario_id")} />
-        <QInput label="Fecha fin" {...uiProps("fecha_fin")} />
+        <QInput label="Responsable" {...uiProps("usuario_id")} deshabilitado />
+        <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
+        <ContactoSelector {...uiProps("contacto_id", "nombre_contacto")} />
+        <OportunidadVenta
+          {...uiProps("oportunidad_id", "descripcion_oportunidad")}
+        />
+        {/* <QInput label="Incidencia" {...uiProps("incidencia_id")} />
+        <QInput label="Tarjeta" {...uiProps("tarjeta_id")} /> */}
       </quimera-formulario>
     </div>
   );

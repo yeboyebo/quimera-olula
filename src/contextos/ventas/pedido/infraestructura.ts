@@ -6,6 +6,9 @@ const baseUrl = `/ventas/pedido`;
 type LineaPedidoAPI = LineaPedido
 
 import { appFactory } from "../../app.ts";
+import { Filtro, Orden } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
+
 export const pedidoDesdeAPI = appFactory().Ventas.pedidoDesdeAPI;
 
 export const lineaPedidoFromAPI = (l: LineaPedidoAPI): LineaPedido => l;
@@ -17,9 +20,17 @@ export const getPedido: GetPedido = async (id) => {
     });
 }
 
-export const getPedidos: GetPedidos = async (_, __) => {
+// export const getPedidos: GetPedidos = async (_, __) => {
+//   return RestAPI.get<{ datos: Pedido[] }>(
+//     `${baseUrl}`).then((respuesta) => {
+//       return respuesta.datos.map((d) => pedidoDesdeAPI(d));
+//     });
+// }
+
+export const getPedidos: GetPedidos = async (filtro: Filtro, orden: Orden) => {
+  const q = criteriaQuery(filtro, orden);
   return RestAPI.get<{ datos: Pedido[] }>(
-    `${baseUrl}`).then((respuesta) => {
+    baseUrl + q).then((respuesta) => {
       return respuesta.datos.map((d) => pedidoDesdeAPI(d));
     });
 }

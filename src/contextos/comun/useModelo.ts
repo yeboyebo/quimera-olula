@@ -8,7 +8,7 @@ export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T
 ): HookModelo<T> {
-
+    console.log('useModelo', meta, modeloInicialProp);
     // const memoizedInitModelo = useCallback(() => {
     //     return initEstadoModelo(modeloInicial);
     // }, [modeloInicial]);

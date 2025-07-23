@@ -1,7 +1,7 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
-import { Presupuesto } from "../../ventas/presupuesto/diseño.ts";
+import { NuevoPresupuesto, Presupuesto } from "../../ventas/presupuesto/diseño.ts";
 import { Accion } from "../accion/diseño.ts";
 import { EstadoOportunidad, NuevaOportunidadVenta, OportunidadVenta } from "./diseño.ts";
 
@@ -53,3 +53,12 @@ export const getPresupuestosOportunidad = async (oportunidadId: string) => {
     return RestAPI.get<{ datos: Presupuesto[] }>(baseUrlPresupuesto + q).then((respuesta) => respuesta.datos);
 };
 
+export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente_id: string): Promise<string> => {
+    const nuevoPresupuesto: Partial<NuevoPresupuesto> = {
+        cliente_id: oportunidadId,
+        direccion_id: cliente_id,
+        empresa_id: "1",
+    };
+
+    return await RestAPI.post(baseUrlPresupuesto, nuevoPresupuesto).then((respuesta) => respuesta.id);
+}

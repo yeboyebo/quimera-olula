@@ -28,3 +28,6 @@ export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<
 export const deleteAccion = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlAccion}/${id}`);
 
+export const finalizarAccion = async (id: string) => {
+    await RestAPI.patch(`${baseUrlAccion}/${id}/finalizar`, {});
+};
