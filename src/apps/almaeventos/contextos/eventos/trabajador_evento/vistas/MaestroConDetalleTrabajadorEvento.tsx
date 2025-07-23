@@ -16,32 +16,13 @@ import {
 import { DetalleTrabajadorEvento } from "./DetalleTrabajadorEvento/DetalleTrabajadorEvento.tsx";
 import "./MaestroConDetalleTrabajadorEvento.css";
 
-// Componente para cambiar el estado de liquidado
-const AccionLiquidado = ({
-  valor,
-  onClick,
-}: {
-  valor: boolean;
-  onClick: (e: React.MouseEvent) => void;
-}) => (
-  <span
-    className="accion-celda"
-    onClick={onClick}
-    title="Cambiar estado de liquidación"
-  >
-    {valor ? 
-      <QIcono nombre="verdadero" color="green" /> : 
-      <QIcono nombre="falso" color="red" />}
-  </span>
-);
-
 type Estado = "lista" | "alta";
 
 export const MaestroConDetalleTrabajadorEvento = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const trabajadoresEvento = useLista<TrabajadorEvento>([]);
   const { intentar } = useContext(ContextoError);
-
+  
   const maquina: Maquina<Estado> = {
     alta: {
       TRABAJADOR_EVENTO_CREADO: (payload: unknown) => {
@@ -69,11 +50,13 @@ export const MaestroConDetalleTrabajadorEvento = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
-  const onLiquidadoToggle = async (trabajadorEvento: TrabajadorEvento) => {
+  // Función para cambiar el estado de liquidado
+  const cambiarEstadoLiquidado = async (trabajadorEvento: TrabajadorEvento) => {
     const nuevoValor = !trabajadorEvento.liquidado;
     await intentar(() => patchTrabajadorEvento(trabajadorEvento.id, { liquidado: nuevoValor }));
     // Actualizar la UI
     emitir("TRABAJADOR_EVENTO_CAMBIADO", {...trabajadorEvento, liquidado: nuevoValor});
+
   };
 
   const metaTablaTrabajadorEvento: MetaTabla<TrabajadorEvento> = [
@@ -87,13 +70,14 @@ export const MaestroConDetalleTrabajadorEvento = () => {
       cabecera: "Liquidado",
       tipo: "booleano",
       render: (trabajadorEvento) => (
-        <AccionLiquidado 
-          valor={trabajadorEvento.liquidado}
-          onClick={(e) => {
-            e.stopPropagation();
-            onLiquidadoToggle(trabajadorEvento);
-          }}
-        />
+        <div 
+          className="accion-celda"
+          onClick={() => {cambiarEstadoLiquidado(trabajadorEvento)}}
+        >
+          {trabajadorEvento.liquidado ? 
+            <QIcono nombre="verdadero" color="green" /> : 
+            <QIcono nombre="falso" color="red" />}
+        </div>
       )
     }
   ];
