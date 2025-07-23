@@ -106,7 +106,11 @@ export const DetalleCliente = ({
                   key="tab-3"
                   label="Cuentas Bancarias"
                   children={
-                    <TabCuentasBanco cliente={cliente} emitirCliente={emitir} />
+                    <TabCuentasBanco
+                      cliente={cliente}
+                      emitirCliente={emitir}
+                      recargarCliente={onRecargarCliente}
+                    />
                   }
                 />,
                 <Tab

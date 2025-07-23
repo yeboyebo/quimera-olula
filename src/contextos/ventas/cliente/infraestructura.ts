@@ -182,16 +182,16 @@ export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): 
 };
 
 export const deleteCuentaBanco = async (clienteId: string, cuentaId: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlVentas}/${clienteId}/cuenta_banco/${cuentaId}`);
+  await RestAPI.delete(`${baseUrlVentas}/${clienteId}/cuenta_banco/${cuentaId}`, "Error al borrar cuenta bancaria");
 
 export const desmarcarCuentaDomiciliacion = async (clienteId: string): Promise<void> =>
-  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_domiciliacion`, { "cuenta_id": null });
+  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_domiciliacion`, { "cuenta_id": "" }, "Error al desmarcar cuenta domiciliación");
 
 export const domiciliarCuenta = async (clienteId: string, cuentaId: string): Promise<void> => {
   const payload = {
     cuenta_id: cuentaId,
   };
-  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_domiciliacion`, payload);
+  await RestAPI.patch(`${baseUrlVentas}/${clienteId}/cuenta_domiciliacion`, payload, "Error al domiciliar cuenta");
 };
 
 export type CuentaBancoAPI = {
@@ -227,7 +227,7 @@ export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<strin
     nombre: contacto.nombre,
     email: contacto.email,
   };
-  return await RestAPI.post(`${baseUrlCrm}/contacto`, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${baseUrlCrm}/contacto`, payload, "Error al crear contacto").then((respuesta) => respuesta.id);
 };
 
 export const getCrmContacto = async (contactoId: string): Promise<CrmContacto> =>
@@ -243,8 +243,8 @@ export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => 
     nombre: contacto.nombre,
     email: contacto.email,
   };
-  await RestAPI.patch(`${baseUrlCrm}/${contacto.id}`, payload);
+  await RestAPI.patch(`${baseUrlCrm}/contacto/${contacto.id}`, payload, "Error al actualizar contacto");
 };
 
 export const deleteCrmContacto = async (contactoId: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlCrm}/contacto/${contactoId}`);
+  await RestAPI.delete(`${baseUrlCrm}/contacto/${contactoId}`, "Error al borrar contacto");
