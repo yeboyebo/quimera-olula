@@ -23,7 +23,7 @@ export const AltaEvento = ({
     emitir("EVENTO_CREADO", EventoCreado);
   };
   
-  console.log('mimensaje_nuevoEvento',  nuevoEvento,  nuevoEvento.valido);
+  // console.log('mimensaje_nuevoEvento',  nuevoEvento,  nuevoEvento.valido);
   
   return (
     <>
