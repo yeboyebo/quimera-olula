@@ -23,13 +23,13 @@ export const AltaEvento = ({
     emitir("EVENTO_CREADO", EventoCreado);
   };
   
-  // console.log('mimensaje_nuevoEvento', nuevoEvento);
+  console.log('mimensaje_nuevoEvento',  nuevoEvento,  nuevoEvento.valido);
   
   return (
     <>
       <h2>Nuevo Evento</h2>
       <quimera-formulario>
-        <Producto {...nuevoEvento.uiProps("codproyecto", "descripcion_producto")} />
+        <Producto {...nuevoEvento.uiProps("referencia", "descripcion_producto")} />
         <QInput label="Nombre" {...nuevoEvento.uiProps("descripcion")} />
         <QInput label="Fecha" {...nuevoEvento.uiProps("fecha_inicio")} />
       </quimera-formulario>

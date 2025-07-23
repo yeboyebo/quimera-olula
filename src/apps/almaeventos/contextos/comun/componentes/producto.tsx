@@ -1,7 +1,7 @@
+import { useEffect, useState } from "react";
 import { QSelect } from "../../../../../componentes/atomos/qselect.tsx";
 import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
 import { getProductos } from "../../../contextos/eventos/producto/infraestructura.ts";
-import { useEffect, useState } from "react";
 
 interface ProductoProps {
   descripcion?: string;

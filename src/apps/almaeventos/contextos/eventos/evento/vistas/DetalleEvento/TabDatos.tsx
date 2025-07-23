@@ -27,9 +27,9 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
         <div className="columna-principal">
             <div className="fila-1">
                 <Producto 
-                  valor={evento.modelo.codproyecto || ""}
+                  valor={evento.modelo.referencia || ""}
                   descripcion={evento.modelo.descripcion_ref || ""}
-                  onChange={uiProps("codproyecto", "descripcion_ref").onChange}
+                  onChange={uiProps("referencia", "descripcion_ref").onChange}
                   nombre="codproyecto"
                 />
                 <QInput label="Nombre" {...uiProps("descripcion")} />

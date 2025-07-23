@@ -114,8 +114,8 @@ export const metaEvento: MetaModelo<Evento> = {
 
 export const metaNuevoEvento: MetaModelo<NuevoEvento> = {
     campos: {
+        referencia: { requerido: true, validacion: (evento: NuevoEvento) => stringNoVacio(evento.referencia) },
         descripcion: { requerido: true, validacion: (evento: NuevoEvento) => stringNoVacio(evento.descripcion) },
-        codproyecto: { requerido: true, validacion: (evento: NuevoEvento) => stringNoVacio(evento.codproyecto) },
         fecha_inicio: { requerido: true, tipo: "fecha", validacion: (evento: NuevoEvento) => stringNoVacio(evento.fecha_inicio) },
     },
 };
