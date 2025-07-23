@@ -15,7 +15,7 @@ export interface Evento extends Entidad {
     direccion: string | null;
     enviado_a_cliente: boolean;
     enviado_a_proveedor: boolean;
-    empresa_id: string | null;
+    empresa_id: number | null;
     // empresa_nombre: string | null;
     estado_id: string | null;
     factura_enviada: boolean;
@@ -63,7 +63,7 @@ export type NuevoEvento = {
     direccion: string;
     enviado_a_cliente: boolean;
     enviado_a_proveedor: boolean;
-    empresa_id: string;
+    empresa_id: number;
     estado_id: string;
     factura_enviada: boolean;
     fecha_inicio: string;

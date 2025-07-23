@@ -37,9 +37,7 @@ export const MaestroConDetalleTrabajador = () => {
     },
     lista: {
       ALTA_INICIADA: "alta",
-      TRABAJADOR_CAMBIADO: (payload: unknown) => {
-        console.log('mimensaje_TRABAJADOR_CAMBIADO');
-        
+      TRABAJADOR_CAMBIADO: (payload: unknown) => {        
         const trabajador = payload as Trabajador;
         trabajadores.modificar(trabajador);
       },

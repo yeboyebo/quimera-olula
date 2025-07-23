@@ -50,9 +50,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
     },
     lista: {
       ALTA_INICIADA: "alta",
-      TRABAJADOR_EVENTO_CAMBIADO: (payload: unknown) => {
-        console.log('mimensaje_TRABAJADOR_EVENTO_CAMBIADO');
-        
+      TRABAJADOR_EVENTO_CAMBIADO: (payload: unknown) => {        
         const trabajadorEvento = payload as TrabajadorEvento;
         trabajadoresEvento.modificar(trabajadorEvento);
       },
