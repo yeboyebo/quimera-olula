@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
@@ -27,6 +28,7 @@ export const TabCliente = ({
 }: TabClienteProps) => {
   const [estado, setEstado] = useState<Estado>("edicion");
   const { modelo, uiProps, editable } = pedido;
+  const { intentar } = useContext(ContextoError);
 
   const maquina: Maquina<Estado> = {
     edicion: {
@@ -37,7 +39,7 @@ export const TabCliente = ({
 
       CAMBIO_CLIENTE_LISTO: async (payload: unknown) => {
         const cambioCliente = payload as TipoCambioCliente;
-        await patchCambiarCliente(modelo.id, cambioCliente);
+        await intentar(() => patchCambiarCliente(modelo.id, cambioCliente));
         publicar("CLIENTE_PEDIDO_CAMBIADO", modelo);
         return "edicion" as Estado;
       },

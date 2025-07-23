@@ -67,6 +67,9 @@ export const MaestroConDetalleAlbaran = () => {
         Maestro={
           <>
             <h2>Albaranes</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
+            </div>
             <Listado
               metaTabla={metaTablaAlbaran}
               entidades={albaranes.lista}
@@ -75,9 +78,6 @@ export const MaestroConDetalleAlbaran = () => {
               setSeleccionada={albaranes.seleccionar}
               cargar={getAlbaranes}
             />
-            <div className="maestro-botones">
-              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
-            </div>
           </>
         }
         Detalle={

@@ -22,7 +22,10 @@ export const AltaLinea = ({
     <div className="AltaLinea">
       <h2>Nueva línea</h2>
       <quimera-formulario>
-        <Articulo {...uiProps("referencia", "descripcion")} />
+        <Articulo
+          {...uiProps("referencia", "descripcion")}
+          nombre="referencia_nueva_linea_pedido"
+        />
         <QInput label="Cantidad" {...uiProps("cantidad")} />
       </quimera-formulario>
       <div className="botones maestro-botones ">

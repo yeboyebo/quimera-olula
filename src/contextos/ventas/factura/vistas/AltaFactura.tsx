@@ -25,7 +25,10 @@ export const AltaFactura = ({
     <div className="AltaFactura">
       <h2>Nueva Factura</h2>
       <quimera-formulario>
-        <Cliente {...nuevaFactura.uiProps("cliente_id")} />
+        <Cliente
+          {...nuevaFactura.uiProps("cliente_id")}
+          nombre="factura_cliente_id"
+        />
         <DirCliente
           clienteId={nuevaFactura.modelo.cliente_id}
           {...nuevaFactura.uiProps("direccion_id")}

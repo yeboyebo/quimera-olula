@@ -92,6 +92,8 @@ export const metaCambioCliente: MetaModelo<CambioCliente> = {
 
 export const metaPresupuesto: MetaModelo<Presupuesto> = {
     campos: {
+        fecha: { tipo: "fecha", requerido: false },
+        fecha_salida: { tipo: "fecha", requerido: false },
         tasa_conversion: { tipo: "numero", requerido: true },
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },

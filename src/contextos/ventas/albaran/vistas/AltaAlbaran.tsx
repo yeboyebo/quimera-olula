@@ -25,7 +25,10 @@ export const AltaAlbaran = ({
     <div className="AltaAlbaran">
       <h2>Nuevo Albarán</h2>
       <quimera-formulario>
-        <Cliente {...nuevoAlbaran.uiProps("cliente_id")} />
+        <Cliente
+          {...nuevoAlbaran.uiProps("cliente_id")}
+          nombre="albaran_cliente_id"
+        />
         <DirCliente
           clienteId={nuevoAlbaran.modelo.cliente_id}
           {...nuevoAlbaran.uiProps("direccion_id")}

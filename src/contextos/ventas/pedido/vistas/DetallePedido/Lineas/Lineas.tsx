@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
@@ -33,6 +34,7 @@ export const Lineas = ({
   const [estado, setEstado] = useState<Estado>("lista");
   const lineas = useLista<Linea>([]);
   const pedidoId = pedido?.modelo?.id;
+  const { intentar } = useContext(ContextoError);
 
   const { setLista } = lineas;
 
@@ -53,7 +55,9 @@ export const Lineas = ({
 
   const onBorrarConfirmado = async () => {
     if (!lineas.seleccionada) return;
-    await deleteLinea(pedidoId, lineas.seleccionada.id);
+    const lineaId = lineas.seleccionada.id;
+    if (!lineaId) return;
+    await intentar(() => deleteLinea(pedidoId, lineaId));
     await refrescarLineas();
     setEstado("lista");
   };
@@ -61,7 +65,9 @@ export const Lineas = ({
   const maquina: Maquina<Estado> = {
     alta: {
       ALTA_LISTA: async (payload: unknown) => {
-        const idLinea = await postLinea(pedidoId, payload as NuevaLineaPedido);
+        const idLinea = await intentar(() =>
+          postLinea(pedidoId, payload as NuevaLineaPedido)
+        );
         await refrescarLineas(idLinea);
         return "lista" as Estado;
       },
@@ -69,7 +75,7 @@ export const Lineas = ({
     edicion: {
       EDICION_LISTA: async (payload: unknown) => {
         const linea = payload as LineaPedido;
-        await patchLinea(pedidoId, linea);
+        await intentar(() => patchLinea(pedidoId, linea));
         await refrescarLineas();
         return "lista" as Estado;
       },
@@ -87,7 +93,7 @@ export const Lineas = ({
           linea: LineaPedido;
           cantidad: number;
         };
-        await patchCantidadLinea(pedidoId, linea, cantidad);
+        await intentar(() => patchCantidadLinea(pedidoId, linea, cantidad));
         await refrescarLineas();
       },
       BORRADO_SOLICITADO: () => "confirmarBorrado",

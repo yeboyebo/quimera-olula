@@ -50,6 +50,9 @@ export const MaestroConDetallePedido = () => {
         Maestro={
           <>
             <h2>Pedidos</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
+            </div>
             <Listado
               metaTabla={appFactory().Ventas.metaTablaPedido}
               entidades={pedidos.lista}
@@ -58,9 +61,6 @@ export const MaestroConDetallePedido = () => {
               setSeleccionada={pedidos.seleccionar}
               cargar={getPedidos}
             />
-            <div className="maestro-botones">
-              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Pedido</QBoton>
-            </div>
           </>
         }
         Detalle={

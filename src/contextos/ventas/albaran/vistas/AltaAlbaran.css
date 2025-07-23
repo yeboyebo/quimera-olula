@@ -1,5 +1,5 @@
 .Albaran .AltaAlbaran {
-    quimera-autocompletar[nombre="cliente_id"] {
+    quimera-autocompletar[nombre="albaran_cliente_id"] {
         grid-column: span 12;
     }
 
