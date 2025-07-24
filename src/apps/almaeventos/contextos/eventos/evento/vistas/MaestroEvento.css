@@ -37,11 +37,36 @@ td.estado_id {
   text-decoration: underline;
 }
 
-/* Estilo para celdas con texto que puede ser truncado */
+/* Contenedor para texto con ellipsis */
+.texto-ellipsis-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+/* Estilo para el texto truncado */
 .texto-ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
   display: block;
+}
+
+/* Tooltip personalizado */
+.tooltip-custom {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin-bottom: 5px;
+  pointer-events: none;
 }

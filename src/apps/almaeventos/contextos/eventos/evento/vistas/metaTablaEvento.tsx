@@ -1,15 +1,32 @@
 import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
 import { Evento } from "../diseño.ts";
 
-// Componente para mostrar texto con ellipsis
+import { useState } from "react";
+
+// Componente para mostrar texto con ellipsis y tooltip
 export const TextoEllipsis = ({ texto, maxLength = 30 }: { texto: string | null, maxLength?: number }) => {
+  const [mostrarTooltip, setMostrarTooltip] = useState(false);
+  
   if (!texto) return null;
   
   const textoRecortado = texto.length > maxLength ? 
     `${texto.substring(0, maxLength)}...` : 
     texto;
   
-  return <span className="texto-ellipsis" title={texto}>{textoRecortado}</span>;
+  return (
+    <span 
+      className="texto-ellipsis-container"
+      onMouseEnter={() => setMostrarTooltip(true)}
+      onMouseLeave={() => setMostrarTooltip(false)}
+    >
+      <span className="texto-ellipsis">{textoRecortado}</span>
+      {mostrarTooltip && (
+        <div className="tooltip-custom">
+          {texto}
+        </div>
+      )}
+    </span>
+  );
 };
 
 // Componente para mostrar y cambiar el estado de un campo booleano
@@ -60,7 +77,6 @@ export const getMetaTablaEvento = (
       <span
         className="enlace-detalle"
         onClick={() => window.location.href = `/eventos/evento/${e.id}`}
-        title="Ver detalle"
       >
         <TextoEllipsis texto={e.descripcion} maxLength={30} />
       </span>
