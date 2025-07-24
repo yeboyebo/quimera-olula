@@ -2,6 +2,7 @@ import { Entidad } from "../../../../../contextos/comun/diseño.ts";
 
 export interface Evento extends Entidad {
     evento_id: string;
+    id: string; // Alias para evento_id para compatibilidad con Detalle
     altas_ss: boolean;
     camerinos: boolean;
     camion_escenario: boolean;

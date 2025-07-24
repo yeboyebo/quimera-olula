@@ -60,8 +60,6 @@ export const DetalleEvento = () => {
   const onImprimirHojaRutaClicked = async () => {
     console.log('mimensaje_onImprimirHojaRutaClicked');
   };  
-
-  // console.log('mimensaje_aaaaaaaaaaa', evento);
   
   return (
     <div className="DetalleEvento">
