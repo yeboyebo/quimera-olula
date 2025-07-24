@@ -1,4 +1,6 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import { Filtro, Orden } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 const baseUrl = `/ventas/presupuesto`;
@@ -14,10 +16,13 @@ export const getPresupuesto: GetPresupuesto = async (id) =>
     return presupuestoFromAPI(respuesta.datos);
   });
 
-export const getPresupuestos: GetPresupuestos = async (_, __) => {
-  return RestAPI.get<{ datos: Presupuesto[] }>(`${baseUrl}`).then((respuesta) => {
-    return respuesta.datos.map((d) => presupuestoFromAPI(d));
-  });
+
+export const getPresupuestos: GetPresupuestos = async (filtro: Filtro, orden: Orden) => {
+  const q = criteriaQuery(filtro, orden);
+  return RestAPI.get<{ datos: Presupuesto[] }>(
+    baseUrl + q).then((respuesta) => {
+      return respuesta.datos.map((d) => presupuestoFromAPI(d));
+    });
 }
 
 export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<string> => {

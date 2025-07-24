@@ -1,23 +1,6 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
+import { Accion } from "./diseño.ts";
 
-export type Accion = {
-    id: string;
-    fecha: string;
-    descripcion: string;
-    estado: string;
-    observaciones: string;
-    agente_id: string;
-    tipo: string;
-    cliente_id: string;
-    contacto_id: string;
-    oportunidad_id: string;
-    tarjeta_id: string;
-    incidencia_id: string;
-    proyecto_id: string;
-    subproyecto_id: string;
-    usuario_id: string;
-    fecha_fin: string;
-};
 
 export const accionVacia: Accion = {
     id: "",
@@ -28,14 +11,14 @@ export const accionVacia: Accion = {
     agente_id: "",
     tipo: "",
     cliente_id: "",
+    nombre_cliente: "",
     contacto_id: "",
+    nombre_contacto: "",
     oportunidad_id: "",
+    descripcion_oportunidad: "",
     tarjeta_id: "",
     incidencia_id: "",
-    proyecto_id: "",
-    subproyecto_id: "",
     usuario_id: "",
-    fecha_fin: "",
 };
 
 export const metaAccion: MetaModelo<Accion> = {
@@ -57,13 +40,15 @@ export type NuevaAccion = {
     fecha: string;
     descripcion: string;
     tipo: string;
+    estado: "Pendiente" | "En Progreso" | "Completada" | "Cancelada";
     observaciones: string;
 };
 
 export const nuevaAccionVacia: NuevaAccion = {
     fecha: "",
     descripcion: "",
-    tipo: "",
+    tipo: "Tarea",
+    estado: "Pendiente",
     observaciones: "",
 };
 

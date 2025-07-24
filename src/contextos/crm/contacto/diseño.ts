@@ -7,5 +7,10 @@ export interface Contacto extends Entidad {
   email: string;
 };
 
+export type NuevoContacto = {
+  nombre: string;
+  email: string;
+};
+
 export type GetContacto = (id: string) => Promise<Contacto>;
 export type PatchContacto = (id: string, contacto: Contacto) => Promise<void>;

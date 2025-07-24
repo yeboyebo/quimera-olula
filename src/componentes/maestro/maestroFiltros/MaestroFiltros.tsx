@@ -28,7 +28,7 @@ const selectorCampo = (campos: OpcionCampo[]) => {
 const inputFiltro = () => {
   const attrsValor: CampoFormularioGenerico = {
     nombre: "valor",
-    etiqueta: "",
+    etiqueta: "Buscar",
     placeholder: "Valor a filtrar",
     tipo: "text",
     requerido: true,

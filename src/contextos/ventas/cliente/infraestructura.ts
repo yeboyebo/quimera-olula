@@ -59,6 +59,14 @@ const dirClienteToAPI = (d: DirCliente): DireccionAPI => (
   }
 )
 
+const CuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
+  descripcion: c.descripcion,
+  cuenta: {
+    iban: c.iban,
+    bic: c.bic,
+  },
+});
+
 export const getCliente: GetCliente = async (id) =>
   await RestAPI.get<{ datos: Cliente }>(`${baseUrlVentas}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
@@ -160,10 +168,7 @@ export const getCuentaBanco = async (clienteId: string, cuentaId: string): Promi
   );
 
 export const postCuentaBanco = async (clienteId: string, cuenta: NuevaCuentaBanco): Promise<string> => {
-  const payload = {
-    cuenta: cuenta,
-  };
-  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/cuenta_banco`, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${baseUrlVentas}/${clienteId}/cuenta_banco`, CuentaBancoToAPI(cuenta as CuentaBanco)).then((respuesta) => respuesta.id);
 };
 
 export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {
@@ -199,7 +204,7 @@ export type CuentaBancoAPI = {
 };
 
 export type CuentaBancoAPIPatch = {
-  id: string;
+  descripcion: string;
   cuenta: {
     iban: string;
     bic: string;
@@ -212,14 +217,6 @@ export const cuentaBancoFromAPI = (c: CuentaBancoAPI): CuentaBanco => ({
   descripcion: c.cuenta.descripcion,
   iban: c.cuenta.iban,
   bic: c.cuenta.bic,
-});
-
-export const cuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
-  id: c.id,
-  cuenta: {
-    iban: c.iban,
-    bic: c.bic,
-  },
 });
 
 export const getCrmContactosCliente = async (clienteId: string): Promise<CrmContacto[]> =>

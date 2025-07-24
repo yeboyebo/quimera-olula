@@ -13,7 +13,7 @@ import {
   getOportunidadVenta,
   postOportunidadVenta,
 } from "../../../infraestructura.ts";
-// import "./AltaOportunidadVenta.css";
+import "./AltaOportunidadVenta.css";
 
 export const AltaOportunidadVenta = ({
   emitir = () => {},

@@ -9,6 +9,7 @@ import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { OportunidadVenta } from "../../../diseño.ts";
 import { getPresupuestosOportunidad } from "../../../infraestructura.ts";
+import { TabPresupuestosAcciones } from "./TabPresupuestosAcciones.tsx";
 // import { TabPresupuestosAcciones } from "./TabPresupuestosAcciones.tsx";
 
 type Estado = "lista" | "alta" | "borrar";
@@ -40,21 +41,19 @@ export const TabPresupuestos = ({
     lista: {
       ALTA_SOLICITADA: "alta",
       BORRADO_SOLICITADO: "borrar",
-      EDICION_SOLICITADA: () => {
-        if (presupuestos.seleccionada) {
-          // Solo loguea el id del presupuesto
-          console.log("Editar presupuesto:", presupuestos.seleccionada.id);
-        }
-      },
       PRESUPUESTO_SELECCIONADO: (payload: unknown) => {
         const presupuesto = payload as Presupuesto;
         presupuestos.seleccionar(presupuesto);
       },
     },
     alta: {
-      PRESUPUESTO_CREADO: async (payload: unknown) => {
-        const nuevoPresupuesto = payload as Presupuesto;
-        presupuestos.añadir(nuevoPresupuesto);
+      CREAR_PRESUPUESTO: async () => {
+        // const nuevoPresupuestoId = await crearPresupuestoOportunidad(
+        //   oportunidad.modelo.id,
+        //   oportunidad.modelo.cliente_id || ""
+        // );
+        // const nuevoPresupuesto = await getPresupuesto(nuevoPresupuestoId);
+        // presupuestos.añadir(nuevoPresupuesto);
         return "lista" as Estado;
       },
       ALTA_CANCELADA: "lista",
@@ -80,12 +79,12 @@ export const TabPresupuestos = ({
 
   return (
     <div className="TabPresupuestos">
-      {/* <TabPresupuestosAcciones
-        seleccionada={presupuestos.seleccionada}
+      <TabPresupuestosAcciones
+        seleccionada={presupuestos.seleccionada || null}
         emitir={emitir}
         estado={estado}
-        cliente={cliente}
-      /> */}
+        oportunidad={oportunidad}
+      />
       <QTabla
         metaTabla={metaTablaPresupuesto}
         datos={presupuestos.lista}
