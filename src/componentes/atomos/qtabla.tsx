@@ -70,19 +70,21 @@ const paginacionControlador = (
       <QBoton
         deshabilitado={paginacion?.pagina === 1}
         tamaño="pequeño"
+        variante="texto"
         onClick={() =>
           onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina - 1)
         }
       >
-        Anterior
+        &lt;
       </QBoton>
       <QBoton
         tamaño="pequeño"
+        variante="borde"
         onClick={() =>
           onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina + 1)
         }
       >
-        Siguiente
+        &gt;
       </QBoton>
     </quimera-tabla-paginacion>
   );
@@ -130,8 +132,8 @@ export const QTabla = <T extends Entidad>({
             ))}
           </tbody>
         </table>
+        {paginacionControlador(paginacion, onPaginacion)}
       </quimera-tabla>
-      {paginacionControlador(paginacion, onPaginacion)}
     </>
   );
 };

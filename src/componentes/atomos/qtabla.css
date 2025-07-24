@@ -10,10 +10,6 @@
 
 quimera-tabla {
     width: 100%;
-    display: block;
-    white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: auto;
 
     :root {
         --transicion-basica: 0.12 ease-in-out;
@@ -24,6 +20,11 @@ quimera-tabla {
         border-spacing: 0;
         border-collapse: separate;
         text-align: left;
+        display: block;
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: auto;
+
     }
 
     tr {
