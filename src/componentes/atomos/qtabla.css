@@ -106,3 +106,13 @@ quimera-tabla {
         text-align: right;
     }
 }
+
+quimera-tabla-paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--espaciado-m);
+    padding: var(--espaciado-s);
+    border-radius: var(--radio-borde-m);
+    gap: var(--espaciado-xs);
+}

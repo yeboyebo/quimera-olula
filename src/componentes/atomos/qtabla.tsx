@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Entidad, Orden, Paginacion } from "../../contextos/comun/diseño.ts";
 import { formatearMoneda } from "../../contextos/comun/dominio.ts";
+import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 
 type MetaColumna<T extends Entidad> = {
@@ -65,23 +66,25 @@ const paginacionControlador = (
   onPaginacion?: (pagina: number, limite: number) => void
 ) => {
   return (
-    <div className="paginacion">
-      <button
-        disabled={paginacion?.pagina === 1}
+    <quimera-tabla-paginacion>
+      <QBoton
+        deshabilitado={paginacion?.pagina === 1}
+        tamaño="pequeño"
         onClick={() =>
           onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina - 1)
         }
       >
         Anterior
-      </button>
-      <button
+      </QBoton>
+      <QBoton
+        tamaño="pequeño"
         onClick={() =>
           onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina + 1)
         }
       >
         Siguiente
-      </button>
-    </div>
+      </QBoton>
+    </quimera-tabla-paginacion>
   );
 };
 
