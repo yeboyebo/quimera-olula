@@ -11,7 +11,7 @@ export function useMaquina<Estado extends string>(
     setEstado: (estado: Estado) => void
 ): ProcesarEvento {
     return useCallback(async (evento, payload) => {
-        console.log("procesarEvento", evento, payload, 'estado actual', estado);
+        // console.log("procesarEvento", evento, payload, 'estado actual', estado);
         if (!(evento in maquina[estado])) {
             return;
         }

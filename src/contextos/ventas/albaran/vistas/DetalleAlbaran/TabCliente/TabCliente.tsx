@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
@@ -13,6 +13,7 @@ import {
 } from "../../../diseño.ts";
 import { patchCambiarCliente } from "../../../infraestructura.ts";
 
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { CambioCliente } from "./CambioCliente.tsx";
 import "./TabCliente.css";
 
@@ -28,6 +29,7 @@ export const TabCliente = ({
 }: TabClienteProps) => {
   const [estado, setEstado] = useState<Estado>("edicion");
   const { modelo, uiProps, editable } = albaran;
+  const { intentar } = useContext(ContextoError);
 
   const maquina: Maquina<Estado> = {
     edicion: {
@@ -37,7 +39,9 @@ export const TabCliente = ({
       CAMBIO_CLIENTE_CANCELADO: "edicion",
       CAMBIO_CLIENTE_LISTO: async (payload: unknown) => {
         const cambioCliente = payload as TipoCambioCliente;
-        await patchCambiarCliente(modelo.id, cambioCliente as Albaran);
+        await intentar(() =>
+          patchCambiarCliente(modelo.id, cambioCliente as Albaran)
+        );
         publicar("CLIENTE_ALBARAN_CAMBIADO", modelo);
         return "edicion" as Estado;
       },

@@ -65,7 +65,7 @@ export const getLeads = async (filtro: Filtro, orden: Orden): Promise<Lead[]> =>
 };
 
 export const postLead = async (lead: Partial<Lead>): Promise<string> => {
-    return await RestAPI.post(baseUrlLead, leadToAPI(lead as Lead)).then(
+    return await RestAPI.post(baseUrlLead, leadToAPI(lead as Lead), "Error al guardar lead").then(
         (respuesta) => respuesta.id
     );
 };
@@ -76,11 +76,11 @@ export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> 
     const leadSinNulls = Object.fromEntries(
         Object.entries(apiLead).map(([k, v]) => [k, v === null ? "" : v])
     );
-    await RestAPI.patch(`${baseUrlLead}/${id}`, leadSinNulls);
+    await RestAPI.patch(`${baseUrlLead}/${id}`, leadSinNulls, "Error al guardar lead");
 };
 
 export const deleteLead = async (id: string): Promise<void> =>
-    await RestAPI.delete(`${baseUrlLead}/${id}`);
+    await RestAPI.delete(`${baseUrlLead}/${id}`, "Error al borrar lead");
 
 
 export const getOportunidadesVentaLead = async (leadId: string) => {

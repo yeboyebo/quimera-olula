@@ -1,14 +1,14 @@
 .Presupuesto .TabDatos {
     quimera-date[nombre="fecha"] {
-        grid-column: span 2;
+        grid-column: span 3;
     }
 
     quimera-date[nombre="fecha_salida"] {
-        grid-column: span 2;
+        grid-column: span 3;
     }
 
     div[id="espacio_fecha"] {
-        grid-column: span 8;
+        grid-column: span 6;
     }
 
     quimera-select[nombre="divisa_id"] {

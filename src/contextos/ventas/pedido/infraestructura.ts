@@ -20,13 +20,6 @@ export const getPedido: GetPedido = async (id) => {
     });
 }
 
-// export const getPedidos: GetPedidos = async (_, __) => {
-//   return RestAPI.get<{ datos: Pedido[] }>(
-//     `${baseUrl}`).then((respuesta) => {
-//       return respuesta.datos.map((d) => pedidoDesdeAPI(d));
-//     });
-// }
-
 export const getPedidos: GetPedidos = async (filtro: Filtro, orden: Orden) => {
   const q = criteriaQuery(filtro, orden);
   return RestAPI.get<{ datos: Pedido[] }>(
@@ -43,7 +36,7 @@ export const postPedido: PostPedido = async (pedido) => {
     },
     empresa_id: pedido.empresa_id
   }
-  return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(baseUrl, payload, "Error al crear pedido").then((respuesta) => respuesta.id);
 }
 
 
@@ -55,7 +48,7 @@ export const patchCambiarCliente: PatchClientePedido = async (id, cambio) => {
         direccion_id: cambio.direccion_id
       }
     }
-  });
+  }, "Error al cambiar cliente del pedido");
 }
 
 export const getLineas: GetLineasPedido = async (id) =>
@@ -72,7 +65,7 @@ export const postLinea: PostLinea = async (id, linea) => {
       articulo_id: linea.referencia,
       cantidad: linea.cantidad
     }]
-  }).then((respuesta) => {
+  }, "Error al crear linea de pedido").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
   });
@@ -86,7 +79,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
       },
     },
   }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload, "Error al actualizar artículo de la línea de pedido");
 }
 
 export const patchLinea: PatchLinea = async (id, linea) => {
@@ -101,7 +94,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
     },
   }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de pedido");
 }
 
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
@@ -113,13 +106,13 @@ export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad
       cantidad: cantidad,
     },
   }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar cantidad de la línea de pedido");
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
   await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
     lineas: [lineaId]
-  });
+  }, "Error al borrar línea de pedido");
 }
 
 export const patchPedido = async (id: string, pedido: Pedido) => {
@@ -172,5 +165,5 @@ export const payloadPatchPedido = (pedido: Pedido) => {
 }
 
 export const borrarPedido = async (id: string) => {
-  await RestAPI.delete(`${baseUrl}/${id}`);
+  await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar pedido");
 }

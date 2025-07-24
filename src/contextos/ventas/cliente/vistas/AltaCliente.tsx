@@ -29,7 +29,11 @@ export const AltaCliente = ({
     <div className="AltaCliente">
       <h2>Nuevo Cliente</h2>
       <quimera-formulario>
-        <QInput label="Nombre" {...nuevoCliente.uiProps("nombre")} />
+        <QInput
+          label="Nombre"
+          autoSeleccion={true}
+          {...nuevoCliente.uiProps("nombre")}
+        />
         <TipoIdFiscal {...nuevoCliente.uiProps("tipo_id_fiscal")} />
         <QInput label="ID Fiscal" {...nuevoCliente.uiProps("id_fiscal")} />
         <QInput label="Empresa" {...nuevoCliente.uiProps("empresa_id")} />

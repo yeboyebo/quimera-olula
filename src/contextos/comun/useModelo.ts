@@ -8,7 +8,7 @@ export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T
 ): HookModelo<T> {
-    console.log('useModelo', meta, modeloInicialProp);
+    // console.log('useModelo', meta, modeloInicialProp);
     // const memoizedInitModelo = useCallback(() => {
     //     return initEstadoModelo(modeloInicial);
     // }, [modeloInicial]);
@@ -46,9 +46,9 @@ export function useModelo<T extends Modelo>(
     // }, [modeloInicial]);
 
     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
-        console.log('setCampo', campo, _valor);
+        // console.log('setCampo', campo, _valor);
         let valor = _valor || null;
-        console.log('setCampo valor = ', campo, valor);
+        // console.log('setCampo valor = ', campo, valor);
         let descripcion: string | undefined = undefined;
         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
             valor = _valor.valor;

@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
@@ -16,9 +18,10 @@ export const AltaPresupuesto = ({
     metaNuevoPresupuesto,
     presupuestoNuevoVacio()
   );
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postPresupuesto(nuevoPresupuesto.modelo);
+    const id = await intentar(() => postPresupuesto(nuevoPresupuesto.modelo));
     const presupuestoCreado = await getPresupuesto(id);
     emitir("PRESUPUESTO_CREADO", presupuestoCreado);
   };

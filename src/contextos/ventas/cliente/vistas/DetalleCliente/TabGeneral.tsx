@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { QTextArea } from "../../../../../componentes/atomos/qtextarea.tsx";
 import { QModal } from "../../../../../componentes/moleculas/qmodal.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../../comun/diseño.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { TipoIdFiscal } from "../../../comun/componentes/tipoIdFiscal.tsx";
@@ -20,6 +21,7 @@ interface TabGeneralProps {
 
 export const TabGeneral = ({ cliente, recargarCliente }: TabGeneralProps) => {
   const [mostrarModal, setMostrarModal] = useState(false);
+  const { intentar } = useContext(ContextoError);
 
   const onCancelar = () => {
     setMostrarModal(false);
@@ -32,7 +34,7 @@ export const TabGeneral = ({ cliente, recargarCliente }: TabGeneralProps) => {
   };
 
   const onDarAltaClicked = async () => {
-    await darDeAltaCliente(cliente.modelo.id);
+    await intentar(() => darDeAltaCliente(cliente.modelo.id));
     recargarCliente();
   };
 
