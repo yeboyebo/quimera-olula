@@ -42,7 +42,7 @@ export const getMetaTablaEvento = (
 ) => [
   {
     id: "estado_id",
-    cabecera: "Estado",
+    cabecera: "",
     render: (e: Evento) => (
       <span
         className="indicador-estado"
@@ -70,7 +70,7 @@ export const getMetaTablaEvento = (
   { 
     id: "lugar", 
     cabecera: "Lugar",
-    render: (e: Evento) => <TextoEllipsis texto={e.lugar} maxLength={25} />
+    render: (e: Evento) => <TextoEllipsis texto={e.lugar} maxLength={15} />
   },
   { id: "hora_inicio", cabecera: "Horario" },
   { 

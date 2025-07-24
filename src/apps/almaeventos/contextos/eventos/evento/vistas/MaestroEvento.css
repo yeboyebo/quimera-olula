@@ -21,6 +21,16 @@
   border: 1px solid #ccc;
 }
 
+/* Estilos para la columna de estado */
+th.estado_id,
+td.estado_id {
+  width: 30px;
+  min-width: 30px;
+  max-width: 30px;
+  padding: 0;
+  text-align: center;
+}
+
 .enlace-detalle {
   color: #1976d2;
   cursor: pointer;
