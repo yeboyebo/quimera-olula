@@ -1,14 +1,14 @@
 import { Entidad } from "../../../../../contextos/comun/diseño.ts";
 
 export interface Evento extends Entidad {
-    id: string;
+    evento_id: string;
     altas_ss: boolean;
     camerinos: boolean;
     camion_escenario: boolean;
     carteleria: boolean;
     ccf: string | null;
     cliente_id: string | null;
-    cliente_nombre: string | null;
+    nombre_cliente: string | null;
     codproyecto: string | null;
     conexion_electrica: string | null;
     descripcion: string | null;
@@ -17,7 +17,7 @@ export interface Evento extends Entidad {
     enviado_a_cliente: boolean;
     enviado_a_proveedor: boolean;
     empresa_id: number | null;
-    empresa_nombre: string | null;
+    nombre_empresa: string | null;
     estado_id: string | null;
     factura_enviada: boolean;
     fecha_inicio: string | null;
@@ -35,7 +35,7 @@ export interface Evento extends Entidad {
     organizador_evento: string | null;
     presupuesto: boolean;
     proveedor_id: string | null;
-    proveedor_nombre: string | null;
+    nombre_proveedor: string | null;
     recibido_por_cliente: boolean;
     referencia: string | null;
     responsable_local: string | null;

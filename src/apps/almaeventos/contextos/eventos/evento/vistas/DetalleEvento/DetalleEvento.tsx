@@ -37,14 +37,14 @@ export const DetalleEvento = () => {
   }, []);
 
   const onGuardarClicked = async () => {
-    await patchEvento(modelo.id, modelo);
-    const evento_guardado = await getEvento(modelo.id);
+    await patchEvento(modelo.evento_id, modelo);
+    const evento_guardado = await getEvento(modelo.evento_id);
     init(evento_guardado);
     // emitir("EVENTO_CAMBIADO", evento_guardado);
   };
 
   const onBorrarConfirmado = async () => {
-    await deleteEvento(modelo.id);
+    await deleteEvento(modelo.evento_id);
     navigate("/eventos/eventos", { replace: true });
     // emitir("EVENTO_BORRADO", modelo);
     // setEstado("edicion");

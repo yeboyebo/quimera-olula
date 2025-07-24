@@ -24,7 +24,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
   useEffect(() => {
     const fetchTrabajadoresEvento = async () => {
       try {
-        const trabajadoresEvento = await getTrabajadoresEvento([["codproyecto", "=", evento.modelo.id]], ["id", "DESC"]);
+        const trabajadoresEvento = await getTrabajadoresEvento([["codproyecto", "=", evento.modelo.evento_id]], ["id", "DESC"]);
         setTrabajadoresEventoData(trabajadoresEvento);
         fetchTrabajadores(trabajadoresEvento);
       } catch (error) {
@@ -55,7 +55,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
     nuevoTrabajadorEventoVacio.trabajador_id = trabajador.id;
     nuevoTrabajadorEventoVacio.nombre = trabajador.nombre;
     nuevoTrabajadorEventoVacio.coste = trabajador.coste;
-    nuevoTrabajadorEventoVacio.evento_id = evento.modelo.id;
+    nuevoTrabajadorEventoVacio.evento_id = evento.modelo.evento_id;
     nuevoTrabajadorEventoVacio.descripcion = evento.modelo.descripcion || '';
     nuevoTrabajadorEventoVacio.fecha = evento.modelo.fecha_inicio || '';
     

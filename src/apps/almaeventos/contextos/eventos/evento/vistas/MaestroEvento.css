@@ -55,8 +55,9 @@ td.estado_id {
 
 /* Tooltip personalizado */
 .tooltip-custom {
-  position: absolute;
-  bottom: 100%;
+  position: fixed;
+  bottom: auto;
+  top: auto;
   left: 50%;
   transform: translateX(-50%);
   background-color: #333;
@@ -67,6 +68,14 @@ td.estado_id {
   white-space: nowrap;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  margin-bottom: 5px;
   pointer-events: none;
+  max-width: 90vw;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+/* Posicionamiento inteligente del tooltip */
+.texto-ellipsis-container:hover .tooltip-custom {
+  left: max(10px, min(50%, calc(100vw - 10px)));
+  transform: translateX(-50%);
 }

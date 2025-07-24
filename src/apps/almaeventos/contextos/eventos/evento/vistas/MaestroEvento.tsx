@@ -63,11 +63,14 @@ export const MaestroEvento = () => {
 
   // Manejador para cambios en campos booleanos
   const campoEventoChanged = async (eventoActualizado: Evento, nuevoValor: boolean) => {
-    await intentar(() => patchEvento(eventoActualizado.id, eventoActualizado));
-    const evento_guardado = await getEvento(eventoActualizado.id);
+    await intentar(() => patchEvento(eventoActualizado.evento_id, eventoActualizado));
+    const evento_guardado = await getEvento(eventoActualizado.evento_id);
     init(evento_guardado);
     emitir("EVENTO_CAMBIADO", evento_guardado);
   };
+
+  // console.log('mimensaje_evento', eventos);
+  
 
   return (
     <div className="Evento">
@@ -80,7 +83,7 @@ export const MaestroEvento = () => {
         metaTabla={getMetaTablaEvento(campoEventoChanged)}
         datos={eventos.lista}
         cargando={false}
-        seleccionadaId={eventos.seleccionada?.id}
+        seleccionadaId={eventos.seleccionada?.evento_id}
         orden={["id", "ASC"]}
         onOrdenar={() => null}
       />

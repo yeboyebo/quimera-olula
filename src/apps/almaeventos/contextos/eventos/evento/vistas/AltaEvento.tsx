@@ -17,9 +17,9 @@ export const AltaEvento = ({
   const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await intentar(() => postEvento(nuevoEvento.modelo));
+    const evento_id = await intentar(() => postEvento(nuevoEvento.modelo));
     nuevoEvento.init(nuevoEventoVacio);
-    const EventoCreado = await getEvento(id);
+    const EventoCreado = await getEvento(evento_id);
     emitir("EVENTO_CREADO", EventoCreado);
   };
   

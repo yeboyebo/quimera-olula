@@ -6,6 +6,7 @@ import { useState } from "react";
 // Componente para mostrar texto con ellipsis y tooltip
 export const TextoEllipsis = ({ texto, maxLength = 30 }: { texto: string | null, maxLength?: number }) => {
   const [mostrarTooltip, setMostrarTooltip] = useState(false);
+  const [posicionTooltip, setPosicionTooltip] = useState({ top: 0, left: 0 });
   
   if (!texto) return null;
   
@@ -13,15 +14,49 @@ export const TextoEllipsis = ({ texto, maxLength = 30 }: { texto: string | null,
     `${texto.substring(0, maxLength)}...` : 
     texto;
   
+  // Solo mostrar tooltip si el texto está recortado
+  const textoEstaRecortado = texto.length > maxLength;
+  
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    if (!textoEstaRecortado) return; // No mostrar tooltip si no está recortado
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const tooltipWidth = Math.min(texto.length * 8, window.innerWidth * 0.9); // Estimación del ancho
+    
+    let left = rect.left + rect.width / 2;
+    
+    // Ajustar si se sale por la izquierda
+    if (left - tooltipWidth / 2 < 10) {
+      left = tooltipWidth / 2 + 10;
+    }
+    // Ajustar si se sale por la derecha
+    else if (left + tooltipWidth / 2 > window.innerWidth - 10) {
+      left = window.innerWidth - tooltipWidth / 2 - 10;
+    }
+    
+    setPosicionTooltip({
+      top: rect.top - 40, // 40px arriba del elemento
+      left: left
+    });
+    setMostrarTooltip(true);
+  };
+  
   return (
     <span 
       className="texto-ellipsis-container"
-      onMouseEnter={() => setMostrarTooltip(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setMostrarTooltip(false)}
     >
       <span className="texto-ellipsis">{textoRecortado}</span>
-      {mostrarTooltip && (
-        <div className="tooltip-custom">
+      {mostrarTooltip && textoEstaRecortado && (
+        <div 
+          className="tooltip-custom"
+          style={{
+            top: posicionTooltip.top,
+            left: posicionTooltip.left,
+            transform: 'translateX(-50%)'
+          }}
+        >
           {texto}
         </div>
       )}
@@ -76,7 +111,7 @@ export const getMetaTablaEvento = (
     render: (e: Evento) => (
       <span
         className="enlace-detalle"
-        onClick={() => window.location.href = `/eventos/evento/${e.id}`}
+        onClick={() => window.location.href = `/eventos/evento/${e.evento_id}`}
       >
         <TextoEllipsis texto={e.descripcion} maxLength={30} />
       </span>
@@ -90,19 +125,19 @@ export const getMetaTablaEvento = (
   },
   { id: "hora_inicio", cabecera: "Horario" },
   { 
-    id: "cliente_nombre", 
+    id: "nombre_cliente", 
     cabecera: "P. Cliente",
-    render: (e: Evento) => <TextoEllipsis texto={e.cliente_nombre} maxLength={20} />
+    render: (e: Evento) => <TextoEllipsis texto={e.nombre_cliente} maxLength={20} />
   },
   { 
-    id: "proveedor_nombre", 
+    id: "nombre_proveedor", 
     cabecera: "P. Prov.",
-    render: (e: Evento) => <TextoEllipsis texto={e.proveedor_nombre} maxLength={20} />
+    render: (e: Evento) => <TextoEllipsis texto={e.nombre_proveedor} maxLength={20} />
   },
   { 
-    id: "empresa_nombre", 
+    id: "nombre_empresa", 
     cabecera: "Empresa fact.",
-    render: (e: Evento) => <TextoEllipsis texto={e.empresa_nombre} maxLength={20} />
+    render: (e: Evento) => <TextoEllipsis texto={e.nombre_empresa} maxLength={20} />
   },
   // Campos booleanos
   ...["presupuesto", "enviado_a_cliente", "recibido_por_cliente", 

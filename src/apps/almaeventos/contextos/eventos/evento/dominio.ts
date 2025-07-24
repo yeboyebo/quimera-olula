@@ -3,7 +3,7 @@ import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../..
 import { Evento, NuevoEvento } from "./diseño.ts";
 
 export const eventoVacio: Evento = {
-    id: '',
+    evento_id: '',
     altas_ss: false,
     camerinos: false,
     camion_escenario: false,
