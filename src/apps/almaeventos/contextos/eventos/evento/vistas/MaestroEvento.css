@@ -79,3 +79,37 @@ td.estado_id {
   left: max(10px, min(50%, calc(100vw - 10px)));
   transform: translateX(-50%);
 }
+
+/* Asegurar scroll horizontal en la tabla */
+.Evento {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.Evento quimera-tabla {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.Evento table {
+  min-width: 1500px; /* Forzar un ancho mínimo para activar el scroll */
+  width: max-content;
+}
+
+/* Asegurar anchos mínimos para las columnas */
+.Evento th,
+.Evento td {
+  min-width: 80px;
+  white-space: nowrap;
+}
+
+/* Columnas específicas con anchos mínimos */
+.Evento th.descripcion,
+.Evento td.descripcion {
+  min-width: 200px;
+}
+
+.Evento th.lugar,
+.Evento td.lugar {
+  min-width: 150px;
+}
