@@ -4,6 +4,8 @@ import { QDate } from "../../../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
 import { QTextArea } from "../../../../../../../componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "../../../../../../../contextos/comun/useModelo.ts";
+import { Empresa } from "../../../../../../../contextos/crm/comun/componentes/empresa.tsx";
+import { Cliente } from "../../../../../../../contextos/ventas/comun/componentes/cliente.tsx";
 import { Producto } from "../../../../../contextos/comun/componentes/producto.tsx";
 import { Evento } from "../../diseño.ts";
 import "./TabDatos.css";
@@ -45,8 +47,13 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
                 <QInput label="Hora inicio" {...uiProps("hora_inicio")} />
             </div>
             <div className="fila-4">
-                <QInput label="Empresa que factura" {...uiProps("empresa_id")} />
-                <QInput label="Cliente" {...uiProps("cliente_id")} />
+                <Empresa
+                  label="Empresa que factura"
+                  {...evento.uiProps("empresa_id", "nombre_empresa")}
+                />  
+                <Cliente
+                  {...evento.uiProps("cliente_id", "nombre_cliente")}
+                />                
                 <QInput label="Proveedor" {...uiProps("proveedor_id")} />
             </div>
             <div className="fila-5">
