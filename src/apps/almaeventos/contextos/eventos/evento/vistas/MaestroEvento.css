@@ -1,115 +1,31 @@
-.accion-campo {
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+/* Componentes básicos */
+.accion-campo { cursor: pointer; display: flex; justify-content: center; align-items: center; }
+.accion-campo:hover { background-color: rgba(0, 0, 0, 0.05); border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; }
+.indicador-estado { display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 1px solid #ccc; }
+.enlace-detalle { color: #1976d2; cursor: pointer; text-decoration: underline; display: block; width: 100%; }
+.texto-responsive { display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tooltip-custom { position: fixed; background: #333; color: white; padding: 8px 12px; border-radius: 4px; font-size: 14px; white-space: nowrap; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); pointer-events: none; max-width: 90vw; }
 
-.accion-campo:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  margin: 0 auto;
-}
+/* Tabla responsive */
+.Evento { width: 100%; overflow-x: auto; }
+.Evento quimera-tabla { overflow-x: auto; width: 100%; }
+.Evento table { width: 100%; min-width: 1200px; table-layout: fixed; }
+.Evento th, .Evento td { min-width: 60px; white-space: nowrap; padding: 8px; }
 
-.indicador-estado {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-}
+/* Anchos fijos */
+.Evento th.estado_id, .Evento td.estado_id { width: 30px; min-width: 30px; max-width: 30px; padding: 0; text-align: center; }
 
-/* Estilos para la columna de estado */
-th.estado_id,
-td.estado_id {
-  width: 30px;
-  min-width: 30px;
-  max-width: 30px;
-  padding: 0;
-  text-align: center;
-}
+/* Columnas de acciones booleanas - ancho suficiente para leer títulos */
+/* Columnas booleanas */
+.Evento th.presupuesto, .Evento td.presupuesto, .Evento th.hoja_ruta_enviada, .Evento td.hoja_ruta_enviada, .Evento th.altas_ss, .Evento td.altas_ss, .Evento th.liquidacion, .Evento td.liquidacion { width: 110px; min-width: 110px; max-width: 110px; text-align: center; }
+.Evento th.enviado_a_cliente, .Evento td.enviado_a_cliente { width: 130px; min-width: 130px; max-width: 130px; text-align: center; }
+.Evento th.recibido_por_cliente, .Evento td.recibido_por_cliente, .Evento th.enviado_a_proveedor, .Evento td.enviado_a_proveedor { width: 140px; min-width: 140px; max-width: 140px; text-align: center; }
+.Evento th.recibido_por_proveedor, .Evento td.recibido_por_proveedor { width: 150px; min-width: 150px; max-width: 150px; text-align: center; }
+.Evento th.factura_enviada, .Evento td.factura_enviada, .Evento th.carteleria, .Evento td.carteleria { width: 100px; min-width: 100px; max-width: 100px; text-align: center; }
+.Evento th.hoja_ruta_hecha, .Evento td.hoja_ruta_hecha { width: 90px; min-width: 90px; max-width: 90px; text-align: center; }
 
-.enlace-detalle {
-  color: #1976d2;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-/* Contenedor para texto con ellipsis */
-.texto-ellipsis-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-/* Estilo para el texto truncado */
-.texto-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  display: block;
-}
-
-/* Tooltip personalizado */
-.tooltip-custom {
-  position: fixed;
-  bottom: auto;
-  top: auto;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  white-space: nowrap;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  pointer-events: none;
-  max-width: 90vw;
-  word-wrap: break-word;
-  white-space: normal;
-}
-
-/* Posicionamiento inteligente del tooltip */
-.texto-ellipsis-container:hover .tooltip-custom {
-  left: max(10px, min(50%, calc(100vw - 10px)));
-  transform: translateX(-50%);
-}
-
-/* Asegurar scroll horizontal en la tabla */
-.Evento {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.Evento quimera-tabla {
-  overflow-x: auto;
-  width: 100%;
-}
-
-.Evento table {
-  min-width: 1500px; /* Forzar un ancho mínimo para activar el scroll */
-  width: max-content;
-}
-
-/* Asegurar anchos mínimos para las columnas */
-.Evento th,
-.Evento td {
-  min-width: 80px;
-  white-space: nowrap;
-}
-
-/* Columnas específicas con anchos mínimos */
-.Evento th.descripcion,
-.Evento td.descripcion {
-  min-width: 200px;
-}
-
-.Evento th.lugar,
-.Evento td.lugar {
-  min-width: 150px;
-}
+/* Anchos de columnas */
+.Evento th.descripcion, .Evento td.descripcion { width: 240px; }
+.Evento th.lugar, .Evento td.lugar, .Evento th.nombre_cliente, .Evento td.nombre_cliente, .Evento th.nombre_proveedor, .Evento td.nombre_proveedor, .Evento th.nombre_empresa, .Evento td.nombre_empresa { width: 208px; }
+.Evento th.fecha_inicio, .Evento td.fecha_inicio { width: 100px; min-width: 100px; max-width: 100px; }
+.Evento th.hora_inicio, .Evento td.hora_inicio { width: 80px; min-width: 80px; max-width: 80px; }
