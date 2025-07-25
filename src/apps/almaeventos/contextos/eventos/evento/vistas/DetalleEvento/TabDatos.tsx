@@ -3,6 +3,7 @@ import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx
 import { QDate } from "../../../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
 import { QTextArea } from "../../../../../../../componentes/atomos/qtextarea.tsx";
+import { Proveedor } from "../../../../../../../contextos/compras/comun/componentes/proveedor.tsx";
 import { HookModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Empresa } from "../../../../../../../contextos/crm/comun/componentes/empresa.tsx";
 import { Cliente } from "../../../../../../../contextos/ventas/comun/componentes/cliente.tsx";
@@ -54,7 +55,10 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
                 <Cliente
                   {...evento.uiProps("cliente_id", "nombre_cliente")}
                 />                
-                <QInput label="Proveedor" {...uiProps("proveedor_id")} />
+                {/* <QInput label="Proveedor" {...uiProps("proveedor_id")} /> */}
+                <Proveedor
+                  {...evento.uiProps("proveedor_id", "nombre_proveedor")}
+                />                  
             </div>
             <div className="fila-5">
                 <QInput label="CCF" {...uiProps("ccf")} />
