@@ -27,7 +27,7 @@ export const Cabecera = () => {
           onClick={() => toggleMenu("menu-usuario")}
         ></button>
         <label htmlFor="boton-menu-usuario" id="etiqueta-menu-usuario-abierto">
-          <QIcono nombre="perfil" tamaño="md" color="white" />
+          <QIcono nombre="perfil" tamaño="md" />
         </label>
       </header>
     </>

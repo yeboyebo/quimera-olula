@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../../../comun/diseño.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
@@ -27,13 +28,18 @@ type Estado = "lista" | "alta" | "edicion";
 interface TabCuentasBancoProps {
   cliente: HookModelo<Cliente>;
   emitirCliente: EmitirEvento;
+  recargarCliente: () => void;
 }
 
-export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
-  const { modelo, dispatch } = cliente;
+export const TabCuentasBanco = ({
+  cliente,
+  recargarCliente,
+}: TabCuentasBancoProps) => {
+  const { modelo } = cliente;
   const cuentas = useLista<CuentaBanco>([]);
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
+  const { intentar } = useContext(ContextoError);
 
   const setListaCuentas = cuentas.setLista;
 
@@ -58,22 +64,21 @@ export const TabCuentasBanco = ({ cliente }: TabCuentasBancoProps) => {
       },
       BORRADO_SOLICITADO: async () => {
         if (!cuentas.seleccionada) return;
-        await deleteCuentaBanco(modelo.id, cuentas.seleccionada.id);
+        const idCuenta = cuentas.seleccionada?.id;
+        if (!idCuenta) return;
+        await intentar(() => deleteCuentaBanco(modelo.id, idCuenta));
         cuentas.eliminar(cuentas.seleccionada);
       },
       DOMICILIAR_SOLICITADO: async () => {
         if (!cuentas.seleccionada) return;
-        await domiciliarCuenta(modelo.id, cuentas.seleccionada.id);
-        dispatch({
-          type: "set_campo",
-          payload: {
-            campo: "cuenta_domiciliada",
-            valor: cuentas.seleccionada.id,
-          },
-        });
+        const idCuenta = cuentas.seleccionada?.id;
+        if (!idCuenta) return;
+        await intentar(() => domiciliarCuenta(modelo.id, idCuenta));
+        recargarCliente();
       },
       DESMARCAR_DOMICILIACION: async () => {
-        await desmarcarCuentaDomiciliacion(modelo.id);
+        await intentar(() => desmarcarCuentaDomiciliacion(modelo.id));
+        recargarCliente();
       },
     },
     alta: {

@@ -1,4 +1,6 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import { Filtro, Orden } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
 
 const baseUrl = `/ventas/factura`;
@@ -16,12 +18,13 @@ export const getFactura: GetFactura = async (id) => {
     });
 };
 
-export const getFacturas: GetFacturas = async (_, __) => {
+export const getFacturas: GetFacturas = async (filtro: Filtro, orden: Orden) => {
+  const q = criteriaQuery(filtro, orden);
   return RestAPI.get<{ datos: Factura[] }>(
-    `${baseUrl}`).then((respuesta) => {
+    baseUrl + q).then((respuesta) => {
       return respuesta.datos.map((d) => facturaDesdeAPI(d));
     });
-};
+}
 
 export const postFactura: PostFactura = async (factura) => {
   const payload = {
@@ -31,7 +34,7 @@ export const postFactura: PostFactura = async (factura) => {
     },
     empresa_id: factura.empresa_id
   };
-  return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(baseUrl, payload, "Error al crear factura").then((respuesta) => respuesta.id);
 };
 
 export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
@@ -42,7 +45,7 @@ export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
         direccion_id: cambio.direccion_id
       }
     }
-  });
+  }, "Error al cambiar cliente de la factura");
 };
 
 export const getLineas: GetLineasFactura = async (id) =>
@@ -58,7 +61,7 @@ export const postLinea: PostLinea = async (id, linea) => {
       articulo_id: linea.referencia,
       cantidad: linea.cantidad
     }]
-  }).then((respuesta) => {
+  }, "Error al crear linea de factura").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
   });
@@ -72,7 +75,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
       },
     },
   };
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload, "Error al actualizar artículo de la línea de factura");
 };
 
 export const patchLinea: PatchLinea = async (id, linea) => {
@@ -87,7 +90,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
     },
   };
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de factura");
 };
 
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
@@ -99,13 +102,13 @@ export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad
       cantidad: cantidad,
     },
   };
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar cantidad de la línea de factura");
 };
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
   await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
     lineas: [lineaId]
-  });
+  }, "Error al borrar línea de factura");
 };
 
 export const patchFactura = async (id: string, factura: Factura) => {
@@ -133,5 +136,5 @@ export const patchFactura = async (id: string, factura: Factura) => {
 };
 
 export const borrarFactura = async (id: string) => {
-  await RestAPI.delete(`${baseUrl}/${id}`);
+  await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar factura");
 }

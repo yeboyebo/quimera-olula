@@ -37,6 +37,7 @@ export const metaCambioClientePedido: MetaModelo<CambioClientePedido> = metaCamb
 export const metaPedido: MetaModelo<Pedido> = {
     campos: {
         ...metaVenta.campos,
+        fecha: { tipo: "fecha", requerido: false },
     },
 
 };

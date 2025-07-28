@@ -7,7 +7,7 @@ import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Cliente } from "../diseño.ts";
-import { deleteCliente, getClientes } from "../infraestructura.ts";
+import { getClientes } from "../infraestructura.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
@@ -59,14 +59,6 @@ export const MaestroConDetalleCliente = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
-  const onBorrarCliente = async () => {
-    if (!clientes.seleccionada) {
-      return;
-    }
-    await deleteCliente(clientes.seleccionada.id);
-    clientes.eliminar(clientes.seleccionada);
-  };
-
   return (
     <div className="Cliente">
       <MaestroDetalleResponsive<Cliente>
@@ -76,12 +68,6 @@ export const MaestroConDetalleCliente = () => {
             <h2>Clientes</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!clientes.seleccionada}
-                onClick={onBorrarCliente}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaCliente}

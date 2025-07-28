@@ -1,6 +1,11 @@
-.AltaOportunidadVenta {
-    quimera-autocompletar[nombre="alta_estado_id"] {
+.AltaLead {
+
+    quimera-input[nombre="tipo"] {
         grid-column: 1 / span 6;
+    }
+
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: span 6;
     }
 
     quimera-input[nombre="probabilidad"] {

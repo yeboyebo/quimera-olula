@@ -43,10 +43,10 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       observaciones: cliente.observaciones,
       grupo_id: cliente.grupo_id,
     },
-  });
+  }, "Error al guardar cliente");
 
 export const deleteCliente = async (id: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlVentasCliente}/${id}`);
+  await RestAPI.delete(`${baseUrlVentasCliente}/${id}`, "Error al borrar cliente");
 
 export const getOportunidadesVentaCliente = async (clienteId: string): Promise<OportunidadVenta[]> =>
   await RestAPI.get<{ datos: OportunidadVenta[] }>(`/crm/cliente/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta.datos);
@@ -63,14 +63,14 @@ export const vincularContactoCliente = async (contactoId: string, clienteId: str
   const payload = {
     contacto_id: contactoId,
   };
-  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/vincular_contacto`, payload);
+  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/vincular_contacto`, payload, "Error al vincular cliente");
 };
 
 export const desvincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
   const payload = {
     contacto_id: contactoId,
   };
-  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/desvincular_contacto`, payload);
+  await RestAPI.patch(`${baseUrlCrm}/cliente/${clienteId}/desvincular_contacto`, payload, "Error al desvincular contacto");
 };
 
 export const getAccionesCliente = async (clienteId: string) => {

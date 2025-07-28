@@ -68,6 +68,11 @@ export const MaestroConDetallePresupuesto = () => {
         Maestro={
           <>
             <h2>Presupuestos</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>
+                Crear Presupuesto
+              </QBoton>
+            </div>
             <Listado
               metaTabla={metaTablaPresupuesto}
               entidades={presupuestos.lista}
@@ -76,11 +81,6 @@ export const MaestroConDetallePresupuesto = () => {
               setSeleccionada={presupuestos.seleccionar}
               cargar={getPresupuestos}
             />
-            <div className="maestro-botones">
-              <QBoton onClick={emision("ALTA_INICIADA")}>
-                Crear Presupuesto
-              </QBoton>
-            </div>
           </>
         }
         Detalle={

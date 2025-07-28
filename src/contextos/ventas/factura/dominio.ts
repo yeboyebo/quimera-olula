@@ -35,6 +35,7 @@ export const metaCambioClienteFactura: MetaModelo<CambioClienteFactura> = metaCa
 
 export const metaFactura: MetaModelo<Factura> = {
     campos: {
+        fecha: { tipo: "fecha", requerido: false },
         ...metaVenta.campos,
     },
 };

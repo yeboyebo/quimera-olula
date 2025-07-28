@@ -9,12 +9,12 @@ import {
   getOportunidadVenta,
   postOportunidadVenta,
 } from "../../../../oportunidadventa/infraestructura.ts";
+import { Contacto } from "../../../diseño.ts";
 import {
-  Contacto,
   metaNuevaOportunidadVenta,
   nuevaOportunidadVentaVacia,
 } from "../../../dominio.ts";
-// import "./AltaOportunidadVenta.css";
+import "./AltaOportunidadVenta.css";
 
 export const AltaOportunidadVenta = ({
   emitir = () => {},

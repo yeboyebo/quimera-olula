@@ -81,22 +81,11 @@ export const elementosDelMenu: ElementoMenu[] = [
       },
     ],
   },
-  {
-    nombre: "Financiera", icono: "grafico_barras", subelementos: [{
-      nombre: "Cuentas",
-      url: "/financiera/cuenta",
-      icono: "",
-    }]
-  },
   // {
-  //   nombre: "Eventos",
-  //   icono: "fichero",
-  //   subelementos: [
-  //     {
-  //       nombre: "Evento",
-  //       url: "/eventos/evento",
-  //       icono: "",
-  //     }
-  //   ]
-  // }
+  //   nombre: "Financiera", icono: "grafico_barras", subelementos: [{
+  //     nombre: "Cuentas",
+  //     url: "/financiera/cuenta",
+  //     icono: "",
+  //   }]
+  // },
 ];
