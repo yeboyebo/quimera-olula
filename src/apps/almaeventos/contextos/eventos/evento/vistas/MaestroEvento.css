@@ -56,103 +56,42 @@
   padding: 8px;
 }
 
-/* Anchos fijos */
+/* Anchos por tipo de dato (para table-layout: fixed) */
+.Evento th.texto,
+.Evento td.texto {
+  width: 200px;
+}
+
+.Evento th.booleano,
+.Evento td.booleano {
+  width: 115px;
+}
+
+.Evento th.fecha,
+.Evento td.fecha {
+  width: 100px;
+}
+
+.Evento th.hora,
+.Evento td.hora {
+  width: 80px;
+}
+
+.Evento th.moneda,
+.Evento td.moneda {
+  width: 120px;
+}
+
+.Evento th.numero,
+.Evento td.numero {
+  width: 100px;
+}
+
+/* Columna especial de estado */
 .Evento th.estado_id,
 .Evento td.estado_id {
   width: 30px;
   min-width: 30px;
   max-width: 30px;
-  padding: 0;
-  text-align: center;
-}
-
-/* Columnas de acciones booleanas - ancho suficiente para leer títulos */
-/* Columnas booleanas */
-.Evento th.presupuesto,
-.Evento td.presupuesto,
-.Evento th.hoja_ruta_enviada,
-.Evento td.hoja_ruta_enviada,
-.Evento th.altas_ss,
-.Evento td.altas_ss,
-.Evento th.liquidacion,
-.Evento td.liquidacion {
-  width: 110px;
-  min-width: 110px;
-  max-width: 110px;
-  text-align: center;
-}
-
-.Evento th.enviado_a_cliente,
-.Evento td.enviado_a_cliente {
-  width: 130px;
-  min-width: 130px;
-  max-width: 130px;
-  text-align: center;
-}
-
-.Evento th.recibido_por_cliente,
-.Evento td.recibido_por_cliente,
-.Evento th.enviado_a_proveedor,
-.Evento td.enviado_a_proveedor {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  text-align: center;
-}
-
-.Evento th.recibido_por_proveedor,
-.Evento td.recibido_por_proveedor {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
-  text-align: center;
-}
-
-.Evento th.factura_enviada,
-.Evento td.factura_enviada,
-.Evento th.carteleria,
-.Evento td.carteleria {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  text-align: center;
-}
-
-.Evento th.hoja_ruta_hecha,
-.Evento td.hoja_ruta_hecha {
-  width: 90px;
-  min-width: 90px;
-  max-width: 90px;
-  text-align: center;
-}
-
-/* Anchos de columnas */
-.Evento th.descripcion,
-.Evento td.descripcion {
-  width: 240px;
-}
-
-.Evento th.lugar,
-.Evento td.lugar,
-.Evento th.nombre_cliente,
-.Evento td.nombre_cliente,
-.Evento th.nombre_proveedor,
-.Evento td.nombre_proveedor,
-.Evento th.nombre_empresa,
-.Evento td.nombre_empresa {
-  width: 208px;
-}
-
-.Evento th.fecha_inicio,
-.Evento td.fecha_inicio {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-}
-
-.Evento th.hora_inicio,
-.Evento td.hora_inicio {
-  width: 80px;
-  min-width: 80px;
-  max-width: 80px;
+  padding: 1;
 }
