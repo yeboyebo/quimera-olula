@@ -9,6 +9,7 @@ import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { Accion } from "../../../../accion/diseño.ts";
 import { getAccionesCliente } from "../../..//infraestructura.ts";
 import { Cliente } from "../../../diseño.ts";
+import { TabAccionesAcciones } from "./TabAccionesAcciones.tsx";
 // import { TabAccionesAcciones } from "./TabAccionesAcciones.tsx";
 
 type Estado = "lista" | "alta" | "borrar";
@@ -36,12 +37,6 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
     lista: {
       ALTA_SOLICITADA: "alta",
       BORRADO_SOLICITADO: "borrar",
-      EDICION_SOLICITADA: () => {
-        if (acciones.seleccionada) {
-          // Solo loguea el id de la acción
-          console.log("Editar acción:", acciones.seleccionada.id);
-        }
-      },
       ACCION_SELECCIONADA: (payload: unknown) => {
         const accion = payload as Accion;
         acciones.seleccionar(accion);
@@ -78,12 +73,12 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
 
   return (
     <div className="TabAcciones">
-      {/* <TabAccionesAcciones
+      <TabAccionesAcciones
         seleccionada={acciones.seleccionada}
         emitir={emitir}
         estado={estado}
         cliente={cliente}
-      /> */}
+      />
       <QTabla
         metaTabla={metaTablaAccion}
         datos={acciones.lista}

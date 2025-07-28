@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import {
@@ -68,6 +69,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     valor: string;
     descripcion: string;
   } | null>(null);
+  const { intentar } = useContext(ContextoError);
 
   const setListaContactos = contactos.setLista;
 
@@ -98,7 +100,9 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       CONTACTO_CREADO: async (payload: unknown) => {
         const nuevoContacto = payload as CrmContacto;
         contactos.añadir(nuevoContacto);
-        await vincularContactoCliente(nuevoContacto.id, clienteId);
+        await intentar(() =>
+          vincularContactoCliente(nuevoContacto.id, clienteId)
+        );
         return "lista" as Estado;
       },
       ALTA_CANCELADA: "lista",
@@ -115,7 +119,9 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       ASOCIAR_CERRAR: "lista",
       ASOCIAR_CONTACTO: async () => {
         if (!contactoSeleccionado) return;
-        await vincularContactoCliente(contactoSeleccionado.valor, clienteId);
+        await intentar(() =>
+          vincularContactoCliente(contactoSeleccionado.valor, clienteId)
+        );
         await cargarContactos();
         return "lista" as Estado;
       },
@@ -123,7 +129,9 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     confirmarBorrado: {
       BORRADO_SOLICITADO: async () => {
         if (!contactos.seleccionada) return;
-        await deleteCrmContacto(contactos.seleccionada.id);
+        const idContacto = contactos.seleccionada.id;
+        if (!idContacto) return;
+        await intentar(() => deleteCrmContacto(idContacto));
         contactos.eliminar(contactos.seleccionada);
         return "lista" as Estado;
       },
@@ -132,7 +140,9 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     confirmarEliminarAsociacion: {
       ELIMINACION_SOLICITADA: async () => {
         if (!contactos.seleccionada) return;
-        await desvincularContactoCliente(contactos.seleccionada.id, clienteId);
+        const idContacto = contactos.seleccionada.id;
+        if (!idContacto) return;
+        await intentar(() => desvincularContactoCliente(idContacto, clienteId));
         contactos.eliminar(contactos.seleccionada);
         return "lista" as Estado;
       },

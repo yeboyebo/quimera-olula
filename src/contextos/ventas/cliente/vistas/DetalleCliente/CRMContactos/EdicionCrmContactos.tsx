@@ -1,8 +1,11 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useModelo } from "../../../../../comun/useModelo.ts";
 import { CrmContacto } from "../../../diseño.ts";
 import { metaCrmContacto } from "../../../dominio.ts";
+import { patchCrmContacto } from "../../../infraestructura.ts";
 
 interface EdicionCrmContactosProps {
   contacto: CrmContacto;
@@ -14,8 +17,10 @@ export const EdicionCrmContactos = ({
   emitir,
 }: EdicionCrmContactosProps) => {
   const { modelo, uiProps, valido } = useModelo(metaCrmContacto, contacto);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
+    await intentar(() => patchCrmContacto(modelo));
     emitir("CONTACTO_ACTUALIZADO", modelo);
   };
 

@@ -20,7 +20,6 @@ const elementosDelMenu = [
     subelementos: [
       {
         nombre: "Cerrar sesión",
-        icono: "cerrar_sesion",
         url: "/logout",
       },
     ],

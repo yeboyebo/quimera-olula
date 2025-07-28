@@ -1,7 +1,9 @@
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { useModelo } from "../../../../../comun/useModelo.ts";
+import { Articulo } from "../../../../comun/componentes/articulo.tsx";
 import { metaNuevaLinea, nuevaLineaVacia } from "../../../dominio.ts";
+import "./AltaLinea.css";
 
 export const AltaLinea = ({
   emitir,
@@ -14,10 +16,10 @@ export const AltaLinea = ({
   );
 
   return (
-    <>
+    <div className="AltaLinea">
       <h2>Nueva línea</h2>
       <quimera-formulario>
-        <QInput label="Referencia" {...uiProps("referencia")} />
+        <Articulo {...uiProps("referencia", "descripcion")} />
         <QInput label="Cantidad" {...uiProps("cantidad")} />
       </quimera-formulario>
       <div className="botones maestro-botones ">
@@ -28,6 +30,6 @@ export const AltaLinea = ({
           Guardar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

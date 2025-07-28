@@ -7,7 +7,7 @@ import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Accion } from "../diseño.ts";
-import { deleteAccion, getAcciones } from "../infraestructura.ts";
+import { getAcciones } from "../infraestructura.ts";
 import { AltaAccion } from "./AltaAccion.tsx";
 import { DetalleAccion } from "./DetalleAccion/DetalleAccion.tsx";
 // import "./MaestroConDetalleAccion.css";
@@ -53,29 +53,15 @@ export const MaestroConDetalleAccion = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
-  const onBorrarAccion = async () => {
-    if (!acciones.seleccionada) {
-      return;
-    }
-    await deleteAccion(acciones.seleccionada.id);
-    acciones.eliminar(acciones.seleccionada);
-  };
-
   return (
     <div className="Accion">
-      <MaestroDetalleResponsive<Accion>
+      <MaestroDetalleResponsive
         seleccionada={acciones.seleccionada}
         Maestro={
           <>
             <h2>Acciones</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
-              <QBoton
-                deshabilitado={!acciones.seleccionada}
-                onClick={onBorrarAccion}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaAccion}

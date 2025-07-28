@@ -25,11 +25,13 @@ const cabecera = <T extends Entidad>(
   orden: Orden,
   onOrdenar?: (clave: string) => void
 ) => {
+  const [colOrdenada, sentido] = orden;
+
   const renderCabecera = ({ id, cabecera, tipo }: MetaColumna<T>) => (
     <th
       key={id}
       data-modo="columna"
-      data-orden={orden[id as keyof typeof orden] ?? ""}
+      data-orden={id === colOrdenada ? sentido : ""}
       className={`${tipo ?? ""} ${id}`}
       onClick={() => onOrdenar && onOrdenar(id)}
     >

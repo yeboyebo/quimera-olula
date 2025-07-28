@@ -21,13 +21,13 @@ export const getEstadosOportunidad = async (filtro: Filtro = [], orden: Orden = 
 
 export const postEstadoOportunidad = async (estado: EstadoOportunidad): Promise<string> => {
     const payload = estadoOportunidadToAPI(estado);
-    return await RestAPI.post(baseUrlEstadoOportunidadVenta, payload).then((respuesta) => respuesta.id);
+    return await RestAPI.post(baseUrlEstadoOportunidadVenta, payload, "Error al guardar oportunidad de venta").then((respuesta) => respuesta.id);
 };
 
 export const patchEstadoOportunidad = async (id: string, estado: Partial<EstadoOportunidad>): Promise<void> => {
     const payload = estadoOportunidadToAPI(estado as EstadoOportunidad);
-    await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}`, { cambios: payload });
+    await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}`, { cambios: payload }, "Error al guardar oportunidad de venta");
 };
 
 export const deleteEstadoOportunidad = async (id: string): Promise<void> =>
-    await RestAPI.delete(`${baseUrlEstadoOportunidadVenta}/${id}`);
+    await RestAPI.delete(`${baseUrlEstadoOportunidadVenta}/${id}`, "Error al borrar oportunidad de venta");
