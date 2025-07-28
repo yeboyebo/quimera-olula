@@ -9,22 +9,22 @@ const TextoConTooltip = ({ texto }: { texto: string | null }) => {
   
   const onMouseEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
     const el = e.currentTarget;
-    if (el.scrollWidth <= el.clientWidth) return;
+    if (el.scrollWidth <= el.clientWidth) return; // Solo mostrar si hay ellipsis
+
+    const rect = el.getBoundingClientRect(); // Posición del elemento
+    const width = Math.min(texto.length * 8, window.innerWidth * 0.9); // Ancho tooltip (~8px/char, máx 90%)
+    let left = rect.left + rect.width / 2; // Centrar horizontalmente
     
-    const rect = el.getBoundingClientRect();
-    const width = Math.min(texto.length * 8, window.innerWidth * 0.9);
-    let left = rect.left + rect.width / 2;
+    if (left - width / 2 < 10) left = width / 2 + 10; // Ajustar si se sale por izquierda
+    else if (left + width / 2 > window.innerWidth - 10) left = window.innerWidth - width / 2 - 10; // Ajustar si se sale por derecha
     
-    if (left - width / 2 < 10) left = width / 2 + 10;
-    else if (left + width / 2 > window.innerWidth - 10) left = window.innerWidth - width / 2 - 10;
-    
-    setTooltip({ show: true, top: rect.top - 40, left });
+    setTooltip({ show: true, top: rect.top - 40, left }); // Mostrar 40px arriba
   };
   
   return (
     <span className="texto-responsive" onMouseEnter={onMouseEnter} onMouseLeave={() => setTooltip(prev => ({ ...prev, show: false }))}>
       {texto}
-      {tooltip.show && <div className="tooltip-custom" style={{ top: tooltip.top, left: tooltip.left, transform: 'translateX(-50%)' }}>{texto}</div>}
+      {tooltip.show && <div className="tooltip-custom" style={{ top: tooltip.top, left: tooltip.left, transform: 'translateX(-50%)' }} /* Posición dinámica para el tooltip calculada */>{texto}</div>}
     </span>
   );
 };
