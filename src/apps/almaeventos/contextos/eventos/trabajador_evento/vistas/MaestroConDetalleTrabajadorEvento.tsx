@@ -62,14 +62,15 @@ export const MaestroConDetalleTrabajadorEvento = () => {
 
   const metaTablaTrabajadorEvento: MetaTabla<TrabajadorEvento> = [
     // { id: "id", cabecera: "Código" },
-    { id: "nombre", cabecera: "Nombre", render: (t) => <TextoConTooltip texto={t.nombre} /> },
-    { id: "descripcion", cabecera: "Evento", render: (t) => <TextoConTooltip texto={t.descripcion} /> },
-    { id: "fecha", cabecera: "Fecha", tipo: "fecha"  },
-    { id: "coste", cabecera: "Coste/Hora", tipo: "moneda" },
+    { id: "nombre", cabecera: "Nombre", tipo: "texto", ancho: "200px", render: (t) => <TextoConTooltip texto={t.nombre} /> },
+    { id: "descripcion", cabecera: "Evento", tipo: "texto", ancho: "250px", render: (t) => <TextoConTooltip texto={t.descripcion} /> },
+    { id: "fecha", cabecera: "Fecha", tipo: "fecha", ancho: "100px" },
+    { id: "coste", cabecera: "Coste/Hora", tipo: "moneda", ancho: "120px" },
     { 
       id: "liquidado", 
       cabecera: "Liquidado",
       tipo: "booleano",
+      ancho: "100px",
       render: (trabajadorEvento) => (
         <div 
           className="accion-celda"

@@ -32,66 +32,8 @@
 
 
 
-/* Tabla responsive */
+/* Scroll horizontal automático cuando sea necesario */
 .Evento {
   width: 100%;
   overflow-x: auto;
-}
-
-.Evento quimera-tabla {
-  overflow-x: auto;
-  width: 100%;
-}
-
-.Evento table {
-  width: 100%;
-  min-width: 1200px;
-  table-layout: fixed;
-}
-
-.Evento th,
-.Evento td {
-  min-width: 60px;
-  white-space: nowrap;
-  padding: 8px;
-}
-
-/* Anchos por tipo de dato (para table-layout: fixed) */
-.Evento th.texto,
-.Evento td.texto {
-  width: 200px;
-}
-
-.Evento th.booleano,
-.Evento td.booleano {
-  width: 115px;
-}
-
-.Evento th.fecha,
-.Evento td.fecha {
-  width: 100px;
-}
-
-.Evento th.hora,
-.Evento td.hora {
-  width: 80px;
-}
-
-.Evento th.moneda,
-.Evento td.moneda {
-  width: 120px;
-}
-
-.Evento th.numero,
-.Evento td.numero {
-  width: 100px;
-}
-
-/* Columna especial de estado */
-.Evento th.estado_id,
-.Evento td.estado_id {
-  width: 30px;
-  min-width: 30px;
-  max-width: 30px;
-  padding: 1;
 }

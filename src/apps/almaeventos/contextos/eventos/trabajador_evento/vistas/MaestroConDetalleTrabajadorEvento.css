@@ -12,13 +12,4 @@
   margin: 0 auto;
 }
 
-/* Solución genérica para cualquier tabla con ellipsis */
-.TrabajadorEvento table {
-  width: 100%;
-}
-
-.TrabajadorEvento th,
-.TrabajadorEvento td {
-  padding: 8px;
-  max-width: 0; /* Fuerza ellipsis automático */
-}
+/* table-layout: fixed ahora se maneja automáticamente en qtabla.css */
