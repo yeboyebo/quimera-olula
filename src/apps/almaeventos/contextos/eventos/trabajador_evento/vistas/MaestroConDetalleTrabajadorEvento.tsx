@@ -15,6 +15,7 @@ import {
 } from "../infraestructura.ts";
 import { DetalleTrabajadorEvento } from "./DetalleTrabajadorEvento/DetalleTrabajadorEvento.tsx";
 import "./MaestroConDetalleTrabajadorEvento.css";
+import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip";
 
 type Estado = "lista" | "alta";
 
@@ -61,8 +62,8 @@ export const MaestroConDetalleTrabajadorEvento = () => {
 
   const metaTablaTrabajadorEvento: MetaTabla<TrabajadorEvento> = [
     // { id: "id", cabecera: "Código" },
-    { id: "nombre", cabecera: "Nombre" },
-    { id: "descripcion", cabecera: "Evento" },
+    { id: "nombre", cabecera: "Nombre", render: (t) => <TextoConTooltip texto={t.nombre} /> },
+    { id: "descripcion", cabecera: "Evento", render: (t) => <TextoConTooltip texto={t.descripcion} /> },
     { id: "fecha", cabecera: "Fecha" },
     { id: "coste", cabecera: "Coste/Hora" },
     { 

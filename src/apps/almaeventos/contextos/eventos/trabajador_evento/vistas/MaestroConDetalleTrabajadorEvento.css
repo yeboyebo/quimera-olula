@@ -11,3 +11,42 @@
   width: 40px;
   margin: 0 auto;
 }
+
+/* Estilos para tabla con ellipsis */
+.TrabajadorEvento table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.TrabajadorEvento th,
+.TrabajadorEvento td {
+  padding: 8px;
+  white-space: nowrap;
+}
+
+/* Anchos específicos para columnas */
+.TrabajadorEvento th:nth-child(1),
+.TrabajadorEvento td:nth-child(1) {
+  width: 200px; /* Nombre */
+}
+
+.TrabajadorEvento th:nth-child(2),
+.TrabajadorEvento td:nth-child(2) {
+  width: 250px; /* Descripción */
+}
+
+.TrabajadorEvento th:nth-child(3),
+.TrabajadorEvento td:nth-child(3) {
+  width: 100px; /* Fecha */
+}
+
+.TrabajadorEvento th:nth-child(4),
+.TrabajadorEvento td:nth-child(4) {
+  width: 100px; /* Coste */
+}
+
+.TrabajadorEvento th:nth-child(5),
+.TrabajadorEvento td:nth-child(5) {
+  width: 80px; /* Liquidado */
+  text-align: center;
+}
