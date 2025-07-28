@@ -26,6 +26,16 @@ quimera-tabla {
         text-align: left;
     }
 
+    /* Sistema con anchos calculados automáticamente */
+    table[data-anchos-fijos="true"] {
+        table-layout: fixed;
+    }
+
+    table[data-anchos-fijos="true"] th,
+    table[data-anchos-fijos="true"] td {
+        white-space: nowrap;
+    }
+
     tr {
         background-color: var(--color-fondo);
     }

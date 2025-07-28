@@ -15,6 +15,7 @@ type MetaColumna<T extends Entidad> = {
     | "booleano"
     | undefined;
   divisa?: string;
+  ancho?: string; // Ancho específico para esta columna
   render?: (entidad: T) => string | ReactNode;
 };
 
@@ -27,12 +28,13 @@ const cabecera = <T extends Entidad>(
 ) => {
   const [colOrdenada, sentido] = orden;
 
-  const renderCabecera = ({ id, cabecera, tipo }: MetaColumna<T>) => (
+  const renderCabecera = ({ id, cabecera, tipo, ancho }: MetaColumna<T>) => (
     <th
       key={id}
       data-modo="columna"
       data-orden={id === colOrdenada ? sentido : ""}
       className={`${tipo ?? ""} ${id}`}
+      style={ancho ? { width: ancho } : undefined}
       onClick={() => onOrdenar && onOrdenar(id)}
     >
       {cabecera}
@@ -43,7 +45,7 @@ const cabecera = <T extends Entidad>(
 };
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
-  const renderColumna = ({ id, render, tipo, divisa }: MetaColumna<T>) => {
+  const renderColumna = ({ id, render, tipo, divisa, ancho }: MetaColumna<T>) => {
     let datos = render?.(entidad as T) ?? (entidad[id] as string);
 
     // Formateo automático según tipo
@@ -58,7 +60,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     }
 
     return (
-      <td key={[entidad.id, id].join("-")} className={`${tipo ?? ""} ${id}`}>
+      <td key={[entidad.id, id].join("-")} className={`${tipo ?? ""} ${id}`} style={ancho ? { width: ancho } : undefined}>
         {datos}
       </td>
     );
@@ -86,11 +88,27 @@ export const QTabla = <T extends Entidad>({
   orden,
   onOrdenar,
 }: QTablaProps<T>) => {
+  // Detectar si hay anchos específicos
+  const tieneAnchosFijos = metaTabla.some(col => col.ancho);
+  
+  // Calcular ancho mínimo y completar columnas sin ancho
+  const metaTablaCompleta = tieneAnchosFijos ? metaTabla.map(col => {
+    if (col.ancho) return col;
+    // Asignar ancho por defecto según tipo
+    const anchoPorDefecto = col.tipo === "texto" ? "150px" : 
+                           col.tipo === "fecha" ? "90px" :
+                           col.tipo === "hora" ? "80px" :
+                           col.tipo === "moneda" ? "120px" :
+                           col.tipo === "numero" ? "100px" :
+                           col.tipo === "booleano" ? "100px" : "150px";
+    return { ...col, ancho: anchoPorDefecto };
+  }) : metaTabla;
+  
   return (
     <quimera-tabla>
-      <table>
+      <table data-anchos-fijos={tieneAnchosFijos}>
         <thead>
-          <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
+          <tr>{cabecera(metaTablaCompleta, orden, onOrdenar)}</tr>
         </thead>
         <tbody data-cargando={cargando}>
           {datos.map((entidad: T) => (
@@ -99,7 +117,7 @@ export const QTabla = <T extends Entidad>({
               onClick={() => onSeleccion && onSeleccion(entidad)}
               data-seleccionada={entidad.id === seleccionadaId}
             >
-              {fila(entidad, metaTabla)}
+              {fila(entidad, metaTablaCompleta)}
             </tr>
           ))}
         </tbody>
