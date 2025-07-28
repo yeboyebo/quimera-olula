@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Entidad, Orden } from "../../contextos/comun/diseño.ts";
-import { formatearMoneda } from "../../contextos/comun/dominio.ts";
+import { formatearFecha, formatearHora, formatearMoneda } from "../../contextos/comun/dominio.ts";
 import "./qtabla.css";
 
 type MetaColumna<T extends Entidad> = {
@@ -44,8 +44,15 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
   const renderColumna = ({ id, render, tipo, divisa }: MetaColumna<T>) => {
     let datos = render?.(entidad as T) ?? (entidad[id] as string);
 
+    // Formateo automático según tipo
     if (tipo === "moneda" && typeof datos === "number") {
       datos = formatearMoneda(datos, divisa ?? "EUR");
+    } else if (tipo === "fecha" && typeof datos === "string") {
+      datos = formatearFecha(datos);
+    } else if (tipo === "hora" && typeof datos === "string") {
+      datos = formatearHora(datos);
+    } else if (tipo === "numero" && typeof datos === "number") {
+      datos = datos.toLocaleString();
     }
 
     return (
