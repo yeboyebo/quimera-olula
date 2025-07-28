@@ -8,6 +8,7 @@ import { MaestroDetalleResponsive } from "../../../../../../componentes/maestro/
 import { ContextoError } from "../../../../../../contextos/comun/contexto.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
+import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip";
 import { TrabajadorEvento } from "../diseño.ts";
 import {
   getTrabajadoresEvento,
@@ -15,7 +16,6 @@ import {
 } from "../infraestructura.ts";
 import { DetalleTrabajadorEvento } from "./DetalleTrabajadorEvento/DetalleTrabajadorEvento.tsx";
 import "./MaestroConDetalleTrabajadorEvento.css";
-import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip";
 
 type Estado = "lista" | "alta";
 
@@ -64,8 +64,8 @@ export const MaestroConDetalleTrabajadorEvento = () => {
     // { id: "id", cabecera: "Código" },
     { id: "nombre", cabecera: "Nombre", render: (t) => <TextoConTooltip texto={t.nombre} /> },
     { id: "descripcion", cabecera: "Evento", render: (t) => <TextoConTooltip texto={t.descripcion} /> },
-    { id: "fecha", cabecera: "Fecha" },
-    { id: "coste", cabecera: "Coste/Hora" },
+    { id: "fecha", cabecera: "Fecha", tipo: "fecha"  },
+    { id: "coste", cabecera: "Coste/Hora", tipo: "moneda" },
     { 
       id: "liquidado", 
       cabecera: "Liquidado",
