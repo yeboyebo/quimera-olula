@@ -42,13 +42,13 @@ const cabeceras = {
 
 export const getMetaTablaEvento = (onChange: (evento: Evento, valor: boolean) => void) => [
   { id: "estado_id", cabecera: "", ancho: "30px", render: (e: Evento) => <EstadoEvento estado={e.estado_id} /> },
-  { id: "descripcion", cabecera: "Nombre", tipo: "texto", render: (e: Evento) => <span className="enlace-detalle" onClick={() => window.location.href = `/eventos/evento/${e.evento_id}`}><TextoConTooltip texto={e.descripcion} /></span> },
+  { id: "descripcion", cabecera: "Nombre", tipo: "texto", ancho: "200px", render: (e: Evento) => <span className="enlace-detalle" onClick={() => window.location.href = `/eventos/evento/${e.evento_id}`}><TextoConTooltip texto={e.descripcion} /></span> },
   { id: "fecha_inicio", cabecera: "Fecha", tipo: "fecha" },
   { id: "lugar", cabecera: "Lugar", tipo: "texto", render: (e: Evento) => <TextoConTooltip texto={e.lugar} /> },
   { id: "hora_inicio", cabecera: "Horario", tipo: "hora", ancho: "80px" },
-  { id: "nombre_cliente", cabecera: "P. Cliente", tipo: "texto", render: (e: Evento) => <TextoConTooltip texto={e.nombre_cliente} /> },
-  { id: "nombre_proveedor", cabecera: "P. Prov.", tipo: "texto", render: (e: Evento) => <TextoConTooltip texto={e.nombre_proveedor} /> },
-  { id: "nombre_empresa", cabecera: "Empresa fact.", tipo: "texto", render: (e: Evento) => <TextoConTooltip texto={e.nombre_empresa} /> },
+  { id: "nombre_cliente", cabecera: "P. Cliente", tipo: "texto", ancho: "200px", render: (e: Evento) => <TextoConTooltip texto={e.nombre_cliente} /> },
+  { id: "nombre_proveedor", cabecera: "P. Prov.", tipo: "texto", ancho: "200px", render: (e: Evento) => <TextoConTooltip texto={e.nombre_proveedor} /> },
+  { id: "nombre_empresa", cabecera: "Empresa fact.", tipo: "texto", ancho: "200px", render: (e: Evento) => <TextoConTooltip texto={e.nombre_empresa} /> },
   ...["presupuesto", "enviado_a_cliente", "recibido_por_cliente", "enviado_a_proveedor", "recibido_por_proveedor", "factura_enviada", "hoja_ruta_hecha", "hoja_ruta_enviada", "altas_ss", "carteleria", "liquidacion"].map(campo => ({
     id: campo, cabecera: cabeceras[campo as keyof typeof cabeceras] || campo, tipo: "booleano", ancho: "115px",
     render: (e: Evento) => <AccionBooleana campo={campo as keyof Evento} valor={e[campo as keyof Evento] as boolean} evento={e} onClick={onChange} />
