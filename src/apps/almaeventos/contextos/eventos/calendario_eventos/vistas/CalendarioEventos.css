@@ -1,0 +1,221 @@
+.calendario-eventos {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-fondo);
+}
+
+/* Cabecera */
+.calendario-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--espaciado-m);
+  border-bottom: 1px solid var(--gris-4);
+  background: white;
+}
+
+.calendario-navegacion {
+  display: flex;
+  align-items: center;
+  gap: var(--espaciado-m);
+}
+
+.calendario-navegacion h2 {
+  margin: 0;
+  font-size: var(--tamaño-letra-xl);
+  font-weight: var(--grosor-letra-6);
+  text-transform: capitalize;
+  min-width: 200px;
+  text-align: center;
+}
+
+.calendario-controles {
+  display: flex;
+  align-items: center;
+  gap: var(--espaciado-m);
+}
+
+/* Grid del calendario */
+.calendario-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.calendario-dias-semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--gris-1);
+  border-bottom: 1px solid var(--gris-4);
+}
+
+.dia-semana {
+  padding: var(--espaciado-s);
+  text-align: center;
+  font-weight: var(--grosor-letra-6);
+  font-size: var(--tamaño-letra-s);
+  color: var(--color-texto-secundario);
+  text-transform: uppercase;
+}
+
+.calendario-dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  flex: 1;
+  gap: 1px;
+  background: var(--gris-4);
+}
+
+/* Días individuales */
+.calendario-dia {
+  background: white;
+  padding: var(--espaciado-xs);
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.calendario-dia:hover {
+  background: var(--gris-1);
+}
+
+.calendario-dia.otro-mes {
+  background: var(--gris-2);
+  color: var(--color-texto-secundario);
+}
+
+.calendario-dia.hoy {
+  background: var(--color-primario-claro);
+}
+
+.calendario-dia.hoy .dia-numero {
+  background: var(--color-primario);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dia-numero {
+  font-weight: var(--grosor-letra-6);
+  font-size: var(--tamaño-letra-s);
+  margin-bottom: var(--espaciado-xs);
+}
+
+/* Eventos en el día */
+.dia-eventos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.evento-item {
+  background: var(--color-primario-claro);
+  border-left: 3px solid var(--color-primario);
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 11px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.evento-item:hover {
+  background: var(--color-primario);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.evento-item.confirmado {
+  background: #e8f5e8;
+  border-left-color: #4caf50;
+}
+
+.evento-item.pendiente {
+  background: #fff3e0;
+  border-left-color: #ff9800;
+}
+
+.evento-item.cancelado {
+  background: #ffebee;
+  border-left-color: #f44336;
+}
+
+.evento-hora {
+  font-weight: var(--grosor-letra-6);
+  color: var(--color-texto-secundario);
+  min-width: 30px;
+}
+
+.evento-titulo {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventos-mas {
+  font-size: 10px;
+  color: var(--color-texto-secundario);
+  text-align: center;
+  padding: 2px;
+  background: var(--gris-2);
+  border-radius: 2px;
+  margin-top: 2px;
+}
+
+/* Estado de carga */
+.calendario-cargando {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: var(--espaciado-s);
+  background: white;
+  padding: var(--espaciado-m);
+  border-radius: var(--radio-borde-m);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .calendario-cabecera {
+    flex-direction: column;
+    gap: var(--espaciado-s);
+  }
+  
+  .calendario-navegacion h2 {
+    font-size: var(--tamaño-letra-l);
+    min-width: auto;
+  }
+  
+  .calendario-dia {
+    min-height: 80px;
+  }
+  
+  .evento-item {
+    font-size: 10px;
+  }
+  
+  .dia-eventos {
+    gap: 1px;
+  }
+}

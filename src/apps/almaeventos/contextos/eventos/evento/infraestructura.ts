@@ -14,7 +14,8 @@ export const eventoToAPI = (e: Evento) => ({
 export const getEvento = async (evento_id: string): Promise<Evento> =>
     await RestAPI.get<{ datos: Evento }>(`${baseUrlEvento}/${evento_id}`).then((respuesta) => respuesta.datos);
 
-export const getEventos = async (_filtro: Filtro, _orden: Orden): Promise<Evento[]> => {
+// export const getEventos = async (_filtro: Filtro, _orden: Orden): Promise<Evento[]> => {
+export const getEventos = async (_filtro: Filtro, _orden: Orden = ["fecha_inicio", "ASC"]): Promise<Evento[]> => {
     const q = criteriaQuery(_filtro, _orden);
     return RestAPI.get<{ datos: Evento[] }>(baseUrlEvento + q).then((respuesta) => respuesta.datos);
 };

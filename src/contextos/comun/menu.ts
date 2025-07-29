@@ -93,6 +93,11 @@ export const elementosDelMenu: ElementoMenu[] = [
     icono: "fichero",
     subelementos: [
       {
+        nombre: "Calendario",
+        url: "/eventos/calendario",
+        icono: "",
+      },
+      {
         nombre: "Productos",
         url: "/eventos/producto",
         icono: "",
