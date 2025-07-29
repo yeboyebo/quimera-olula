@@ -19,7 +19,7 @@ const metaTablaOportunidadVenta: MetaTabla<OportunidadVenta> = [
   { id: "id", cabecera: "Código" },
   { id: "descripcion", cabecera: "Descripción" },
   { id: "nombre_cliente", cabecera: "Cliente" },
-  { id: "total_venta", cabecera: "Total Venta", tipo: "moneda" },
+  { id: "importe", cabecera: "Total Venta", tipo: "moneda" },
   { id: "fecha_cierre", cabecera: "Fecha Cierre" },
 ];
 

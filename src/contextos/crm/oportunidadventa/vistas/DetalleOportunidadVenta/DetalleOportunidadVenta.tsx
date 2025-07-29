@@ -12,6 +12,8 @@ import {
   patchOportunidadVenta,
 } from "../../infraestructura.ts";
 // import "./DetalleOportunidadVenta.css";
+import { useContext } from "react";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import { TabPresupuestos } from "./Presupuestos/TabPresupuestos.tsx";
 import { TabDatos } from "./TabDatos.tsx";
@@ -29,6 +31,7 @@ export const DetalleOportunidadVenta = ({
   const params = useParams();
   const oportunidadId = oportunidadInicial?.id ?? params.id;
   const titulo = (oportunidad: Entidad) => oportunidad.descripcion as string;
+  const { intentar } = useContext(ContextoError);
 
   const oportunidad = useModelo(metaOportunidadVenta, oportunidadVentaVacia);
   const { modelo, init } = oportunidad;
@@ -36,7 +39,7 @@ export const DetalleOportunidadVenta = ({
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchOportunidadVenta(modelo.id, modelo);
+        await intentar(() => patchOportunidadVenta(modelo.id, modelo));
         recargarCabecera();
       },
     },
