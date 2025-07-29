@@ -70,11 +70,24 @@ const CuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
 export const getCliente: GetCliente = async (id) =>
   await RestAPI.get<{ datos: Cliente }>(`${baseUrlVentas}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
-export const getClientes = async (filtro: Filtro, orden: Orden, paginacion?: Paginacion): Promise<Cliente[]> => {
+// export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente[]> => {
+//   const q = criteriaQuery(filtro, orden);
+
+//   return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentas + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
+// }
+
+export const getClientes = async (
+  filtro: Filtro,
+  orden: Orden,
+  paginacion?: Paginacion
+): Promise<[Cliente[], number]> => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
-  return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentas + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
-}
+  const respuesta = await RestAPI.get<{ datos: ClienteApi[]; total: number }>(baseUrlVentas + q);
+  return [respuesta.datos.map(clienteFromAPI), respuesta.total];
+
+
+};
 
 export const patchCliente: PatchCliente = async (id, cliente) =>
   await RestAPI.patch(`${baseUrlVentas}/${id}`, {

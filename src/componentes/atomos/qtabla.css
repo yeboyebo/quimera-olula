@@ -116,4 +116,8 @@ quimera-tabla-paginacion {
     padding: var(--espaciado-s);
     border-radius: var(--radio-borde-m);
     gap: var(--espaciado-xs);
+
+    >span {
+        padding: var(--espaciado-xs);
+    }
 }

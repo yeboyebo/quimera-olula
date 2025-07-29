@@ -40,7 +40,7 @@ export type MaestroProps<T extends Entidad> = {
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-  ) => Promise<T[]>;
+  ) => Promise<[T[], number]>;
 };
 
 export const Listado = <T extends Entidad>({
@@ -56,17 +56,22 @@ export const Listado = <T extends Entidad>({
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
   const [paginacion, setPaginacion] = useState<Paginacion>(
-    criteria.paginacion || { limite: 5, pagina: 1 }
+    criteria.paginacion || { limite: 1, pagina: 1 }
   );
+  const [totalRegistros, setTotalRegistros] = useState(0);
 
   useEffect(() => {
     let hecho = false;
     setCargando(true);
 
-    cargar(filtro, orden, paginacion).then((entidadesNuevas) => {
+    cargar(filtro, orden, paginacion).then(([entidadesNuevas, total]) => {
+      console.log("cargar", entidadesNuevas, total);
       if (hecho) return;
       if (entidadesNuevas.length > 0) {
         setEntidades(entidadesNuevas as T[]);
+        if (total && total > 0) {
+          setTotalRegistros(total);
+        }
       }
       setCargando(false);
     });
@@ -105,9 +110,10 @@ export const Listado = <T extends Entidad>({
           setOrden([clave, sentido]);
         }}
         paginacion={paginacion}
-        onPaginacion={(limite, pagina) => {
-          setPaginacion({ limite, pagina });
+        onPaginacion={(pagina, limite) => {
+          setPaginacion({ pagina, limite });
         }}
+        total={totalRegistros}
       />
     );
   };

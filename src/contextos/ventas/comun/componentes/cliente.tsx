@@ -26,10 +26,15 @@ export const Cliente = ({
       orden: ["id"],
     };
 
-    const clientes = await getClientes(
+    const [clientes] = await getClientes(
       criteria.filtro as unknown as Filtro,
       criteria.orden
     );
+
+    if (!Array.isArray(clientes)) {
+      console.error("Los clientes no son un array:", clientes);
+      return [];
+    }
 
     return clientes.map((cliente) => ({
       valor: cliente.id,

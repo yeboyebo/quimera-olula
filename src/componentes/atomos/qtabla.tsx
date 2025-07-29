@@ -1,6 +1,9 @@
 import { ReactNode } from "react";
 import { Entidad, Orden, Paginacion } from "../../contextos/comun/diseño.ts";
-import { formatearMoneda } from "../../contextos/comun/dominio.ts";
+import {
+  calcularPaginacionSimplificada,
+  formatearMoneda,
+} from "../../contextos/comun/dominio.ts";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 
@@ -62,29 +65,69 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
 };
 
 const paginacionControlador = (
+  total: number | undefined,
   paginacion: Paginacion,
   onPaginacion?: (pagina: number, limite: number) => void
 ) => {
+  if (!onPaginacion || total === undefined || total <= 0) {
+    return null;
+  }
+  const { pagina, limite } = paginacion;
+  const { paginasMostradas, totalPaginas } = calcularPaginacionSimplificada(
+    total,
+    pagina,
+    limite
+  );
+
   return (
     <quimera-tabla-paginacion>
       <QBoton
-        deshabilitado={paginacion?.pagina === 1}
+        deshabilitado={pagina === 1 || totalPaginas === 0}
         tamaño="pequeño"
         variante="texto"
-        onClick={() =>
-          onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina - 1)
-        }
+        onClick={() => onPaginacion?.(1, limite)}
+      >
+        &lt;&lt;
+      </QBoton>
+
+      <QBoton
+        deshabilitado={pagina === 1 || totalPaginas === 0}
+        tamaño="pequeño"
+        variante="texto"
+        onClick={() => onPaginacion?.(Math.max(1, pagina - 1), limite)}
       >
         &lt;
       </QBoton>
+
+      {paginasMostradas.map((numPagina) => (
+        <QBoton
+          key={numPagina}
+          tamaño="pequeño"
+          variante={numPagina === pagina ? "solido" : "texto"}
+          onClick={() => onPaginacion?.(numPagina, limite)}
+        >
+          {numPagina}
+        </QBoton>
+      ))}
+
       <QBoton
+        deshabilitado={pagina >= totalPaginas || totalPaginas === 0}
         tamaño="pequeño"
-        variante="borde"
+        variante="texto"
         onClick={() =>
-          onPaginacion && onPaginacion(paginacion.limite, paginacion.pagina + 1)
+          onPaginacion?.(Math.min(totalPaginas, pagina + 1), limite)
         }
       >
         &gt;
+      </QBoton>
+
+      <QBoton
+        deshabilitado={pagina >= totalPaginas || totalPaginas === 0}
+        tamaño="pequeño"
+        variante="texto"
+        onClick={() => onPaginacion?.(totalPaginas, limite)}
+      >
+        &gt;&gt;
       </QBoton>
     </quimera-tabla-paginacion>
   );
@@ -100,6 +143,7 @@ export type QTablaProps<T extends Entidad> = {
   onOrdenar?: (clave: string) => void;
   paginacion: Paginacion;
   onPaginacion?: (pagina: number, limite: number) => void;
+  total?: number;
 };
 
 export const QTabla = <T extends Entidad>({
@@ -112,6 +156,7 @@ export const QTabla = <T extends Entidad>({
   onOrdenar,
   paginacion,
   onPaginacion,
+  total = 0,
 }: QTablaProps<T>) => {
   return (
     <>
@@ -132,7 +177,7 @@ export const QTabla = <T extends Entidad>({
             ))}
           </tbody>
         </table>
-        {paginacionControlador(paginacion, onPaginacion)}
+        {paginacionControlador(total, paginacion, onPaginacion)}
       </quimera-tabla>
     </>
   );
