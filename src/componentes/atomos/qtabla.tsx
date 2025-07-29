@@ -91,18 +91,19 @@ export const QTabla = <T extends Entidad>({
   // Detectar si hay anchos específicos
   const tieneAnchosFijos = metaTabla.some(col => col.ancho);
   
-  // Calcular ancho mínimo y completar columnas sin ancho
-  const metaTablaCompleta = tieneAnchosFijos ? metaTabla.map(col => {
-    if (col.ancho) return col;
-    // Asignar ancho por defecto según tipo
-    const anchoPorDefecto = col.tipo === "texto" ? "150px" : 
-                           col.tipo === "fecha" ? "90px" :
-                           col.tipo === "hora" ? "80px" :
-                           col.tipo === "moneda" ? "120px" :
-                           col.tipo === "numero" ? "100px" :
-                           col.tipo === "booleano" ? "100px" : "150px";
-    return { ...col, ancho: anchoPorDefecto };
-  }) : metaTabla;
+  // Completar columnas sin ancho
+  const metaTablaCompleta = tieneAnchosFijos 
+    ? metaTabla.map(col => {
+      if (col.ancho) return col;
+      
+      const hayPorcentajes = metaTabla.some(c => c.ancho?.includes('%'));
+      const anchos = hayPorcentajes ? 
+        { texto: "20%", fecha: "10%", hora: "8%", moneda: "12%", numero: "10%", booleano: "8%", defecto: "15%" } :
+        { texto: "150px", fecha: "90px", hora: "80px", moneda: "120px", numero: "100px", booleano: "100px", defecto: "150px" };
+      
+      return { ...col, ancho: anchos[col.tipo as keyof typeof anchos] || anchos.defecto };
+    }) 
+    : metaTabla;
   
   return (
     <quimera-tabla>
