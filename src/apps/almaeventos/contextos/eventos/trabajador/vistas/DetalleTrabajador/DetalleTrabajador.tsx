@@ -22,7 +22,7 @@ export const DetalleTrabajador = ({
 }) => {
   const params = useParams();
   const trabajadorId = trabajadorInicial?.id ?? params.id;
-  const titulo = (trabajador: Entidad) => trabajador.id as string;
+  const titulo = (trabajador: Entidad) => `Trabajador (${trabajador.id})` as string;
   const { intentar } = useContext(ContextoError);
 
   const trabajador = useModelo(metaTrabajador, trabajadorVacio);

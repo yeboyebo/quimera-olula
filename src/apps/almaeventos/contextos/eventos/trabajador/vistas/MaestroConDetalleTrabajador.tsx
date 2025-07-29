@@ -16,7 +16,7 @@ import { DetalleTrabajador } from "./DetalleTrabajador/DetalleTrabajador.tsx";
 // import "./MaestroConDetalleTrabajador.css";
 
 const metaTablaTrabajador: MetaTabla<Trabajador> = [
-  { id: "id", cabecera: "Código" },
+  // { id: "id", cabecera: "Código" },
   { id: "nombre", cabecera: "Nombre" },
   { id: "coste", cabecera: "Coste/Hora" }
 ];
