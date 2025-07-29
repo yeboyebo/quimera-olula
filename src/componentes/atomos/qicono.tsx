@@ -22,6 +22,8 @@ const iconos: Record<string, string> = {
   cerrar_sesion: "arrow-out-up-square-half",
   verdadero: "check",
   falso: "x",
+  atras: 'chevron-left',
+  adelante: 'chevron-right'
 };
 
 export const QIcono = ({ nombre, tamaño = "md", color }: QIconoProps) => {
