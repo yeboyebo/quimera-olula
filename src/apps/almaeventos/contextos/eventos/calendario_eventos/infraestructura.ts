@@ -6,9 +6,9 @@ import { EventoCalendario } from "./diseño.ts";
 const baseUrlEvento = `/eventos/evento`;
 
 // Obtener eventos simplificados para el calendario
-export const getEventosCalendario = async (filtro: Filtro = [], orden: Orden = ["fecha_inicio", "ASC"]): Promise<EventoCalendario[]> => {
+export const getEventosCalendario = async (filtro: Filtro = [], orden: Orden = ["finicio", "ASC"]): Promise<EventoCalendario[]> => {
     const q = criteriaQuery(filtro, orden);
-    return RestAPI.get<{ datos: EventoCalendario[] }>(baseUrlEvento + q).then((respuesta) => 
+    return RestAPI.get<{ datos: EventoCalendario[] }>(baseUrlEvento + q).then((respuesta) =>
         respuesta.datos.map(evento => ({
             ...evento,
             id: evento.evento_id // Asegurar compatibilidad
