@@ -93,6 +93,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
             <h2>Trabajadores por evento</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
+              <QBoton onClick={() => emitir("DESCARGA_EXCEL_INICIADA")}>Descargar</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaTrabajadorEvento}
