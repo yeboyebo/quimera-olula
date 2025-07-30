@@ -62,15 +62,16 @@ export const esMesActual = (fecha: Date, fechaActual: Date): boolean => {
     return fecha.getMonth() === fechaActual.getMonth();
 };
 
+
+export const formatearMes = (fecha: Date): string => {
+    const mes = fecha.toLocaleDateString('es-ES', { month: 'long' });
+    return mes.charAt(0).toUpperCase() + mes.slice(1);
+};
+
 export const formatearMesAño = (fecha: Date): string => {
-    return fecha.toLocaleDateString('es-ES', {
+    const texto = fecha.toLocaleDateString('es-ES', {
         month: 'long',
         year: 'numeric'
     });
-};
-
-export const formatearAño = (fecha: Date): string => {
-    return fecha.toLocaleDateString('es-ES', {
-        year: 'numeric'
-    });
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
 };

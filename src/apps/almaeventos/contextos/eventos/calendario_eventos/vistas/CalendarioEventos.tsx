@@ -1,211 +1,138 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
 import { EventoCalendario } from "../diseño.ts";
-import { esHoy, esMesActual, formatearMesAño, getDiasDelMes, getEventosPorFecha, getSemanasDelMes } from "../dominio.ts";
+import { esHoy, esMesActual, formatearMes, formatearMesAño, getDiasDelMes, getEventosPorFecha, getSemanasDelMes } from "../dominio.ts";
 import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
 
 export const CalendarioEventos = () => {
-    const [eventos, setEventos] = useState<EventoCalendario[]>([]);
-    const [fechaActual, setFechaActual] = useState(new Date());
-    const [cargando, setCargando] = useState(false);
-    const [modoAnio, setModoAnio] = useState(false);
-    const [scrollPosition, setScrollPosition] = useState(0);
+    const [state, setState] = useState({
+        eventos: [] as EventoCalendario[],
+        fechaActual: new Date(),
+        cargando: false,
+        modoAnio: false,
+        scrollPosition: 0
+    });
+
+    const anioGridRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const cargarEventos = async () => {
-            setCargando(true);
+            setState(prev => ({...prev, cargando: true}));
             try {
                 const eventosData = await getEventosCalendario();
-                setEventos(eventosData);
+                setState(prev => ({...prev, eventos: eventosData}));
             } catch (error) {
                 console.error("Error cargando eventos:", error);
             } finally {
-                setCargando(false);
+                setState(prev => ({...prev, cargando: false}));
             }
         };
         cargarEventos();
     }, []);
 
     useEffect(() => {
-        if (modoAnio) {
-            // Scroll al mes actual cuando cambiamos a modo año
-            const hoy = new Date();
-            const scrollToMonth = hoy.getMonth() * 300; // Ajusta este valor según tu diseño
-            setScrollPosition(scrollToMonth);
+        if (state.modoAnio && anioGridRef.current) {
+            const handleScroll = () => {
+                setState(prev => ({...prev, scrollPosition: anioGridRef.current?.scrollTop || 0}));
+            };
+            
+            anioGridRef.current.addEventListener('scroll', handleScroll);
+            return () => {
+                anioGridRef.current?.removeEventListener('scroll', handleScroll);
+            };
         }
-    }, [modoAnio]);
+    }, [state.modoAnio]);    
 
-    const navegarMes = (direccion: number) => {
-        const nuevaFecha = new Date(fechaActual);
-        nuevaFecha.setMonth(nuevaFecha.getMonth() + direccion);
-        setFechaActual(nuevaFecha);
-    };
-
-    const navegarAnio = (direccion: number) => {
-        const nuevaFecha = new Date(fechaActual);
-        nuevaFecha.setFullYear(nuevaFecha.getFullYear() + direccion);
-        setFechaActual(nuevaFecha);
+    const calcularPosicionScroll = (mesTarget: number) => {
+        if (!anioGridRef.current) return 0;
+        
+        const meses = Array.from(anioGridRef.current.querySelectorAll('.mes-anio'));
+        
+        return meses.slice(0, mesTarget).reduce((acc, mes) => {
+            return acc + mes.clientHeight + 32; // Suma altura del mes + gap
+        }, 0);
     };
 
     const irAHoy = () => {
         const hoy = new Date();
-        setFechaActual(hoy);
+        const mesActual = hoy.getMonth();
         
-        if (modoAnio) {
-            const scrollToMonth = hoy.getMonth() * 300;
-            setScrollPosition(scrollToMonth);
+        setState(prev => ({...prev, fechaActual: hoy}));
+        
+        if (state.modoAnio && anioGridRef.current) {
+            const targetPosition = calcularPosicionScroll(mesActual);
+            anioGridRef.current.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
         }
     };
 
-    const toggleModo = () => {
-        setModoAnio(!modoAnio);
+
+    const navegarTiempo = (direccion: number) => {
+        const nuevaFecha = new Date(state.fechaActual);
+        state.modoAnio 
+            ? nuevaFecha.setFullYear(nuevaFecha.getFullYear() + direccion)
+            : nuevaFecha.setMonth(nuevaFecha.getMonth() + direccion);
+        setState(prev => ({...prev, fechaActual: nuevaFecha}));
     };
 
-    const dias = getDiasDelMes(fechaActual);
-    const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-
-    const renderMes = () => {
-        return (
-            <div className="calendario-grid">
-                {/* Cabecera días de la semana */}
-                <div className="calendario-dias-semana">
-                    {diasSemana.map(dia => (
-                        <div key={dia} className="dia-semana">{dia}</div>
-                    ))}
-                </div>
-
-                {/* Días del mes */}
-                <div className="calendario-dias">
-                    {dias.map((fecha, index) => {
-                        const eventosDelDia = getEventosPorFecha(eventos, fecha);
-                        return (
-                            <div 
-                                key={index}
-                                className={`calendario-dia ${
-                                    !esMesActual(fecha, fechaActual) ? 'otro-mes' : ''
-                                } ${esHoy(fecha) ? 'hoy' : ''}`}
-                            >
-                                <div className="dia-numero">{fecha.getDate()}</div>
-                                <div className="dia-eventos">
-                                    {eventosDelDia.slice(0, 3).map(evento => (
-                                        <div 
-                                            key={evento.evento_id}
-                                            className={`evento-item ${evento.estado_id?.toLowerCase() || 'sin-estado'}`}
-                                            title={`${evento.descripcion} - ${evento.lugar} (${evento.hora_inicio})`}
-                                        >
-                                            <span className="evento-hora">
-                                                {evento.hora_inicio?.substring(0, 5)}
-                                            </span>
-                                            <span className="evento-titulo">
-                                                {evento.descripcion}
-                                            </span>
-                                        </div>
-                                    ))}
-                                    {eventosDelDia.length > 3 && (
-                                        <div className="eventos-mas">
-                                            +{eventosDelDia.length - 3} más
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        );
-    };
-
-    const renderAnio = () => {
-        const meses = [];
-        const hoy = new Date(); // Fecha actual
+    const renderDia = (dia: Date, mesReferencia: Date, maxEventos: number) => {
+        const esDiaDelMes = esMesActual(dia, mesReferencia);
+        const eventosDelDia = esDiaDelMes ? getEventosPorFecha(state.eventos, dia) : [];
         
-        for (let i = 0; i < 12; i++) {
-            const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
-            const semanas = getSemanasDelMes(mesFecha);
-            
-            meses.push(
-                <div key={i} className="mes-anio">
-                    <h3>{formatearMesAño(mesFecha)}</h3>
-                    <div className="semanas-mes">
-                        {semanas.map((semana, semanaIndex) => (
-                            <div key={semanaIndex} className="semana-anio">
-                                {semana.map((dia, diaIndex) => {
-                                    const esDiaDelMes = esMesActual(dia, mesFecha);
-                                    const esHoyEnEsteMes = esHoy(dia) && esDiaDelMes;
-                                    const eventosDelDia = esDiaDelMes ? getEventosPorFecha(eventos, dia) : [];
-                                    
-                                    return (
-                                        <div 
-                                            key={diaIndex}
-                                            className={`calendario-dia ${
-                                                !esDiaDelMes ? 'otro-mes' : ''
-                                            } ${
-                                                esHoyEnEsteMes ? 'hoy' : ''
-                                            }`}
-                                        >
-                                            <div className="dia-numero">{dia.getDate()}</div>
-                                            {esDiaDelMes && (
-                                                <div className="dia-eventos">
-                                                    {eventosDelDia.slice(0, 2).map(evento => (
-                                                        <div 
-                                                            key={evento.evento_id}
-                                                            className={`evento-item ${evento.estado_id?.toLowerCase() || 'sin-estado'}`}
-                                                            title={`${evento.descripcion} - ${evento.lugar} (${evento.hora_inicio})`}
-                                                        >
-                                                            <span className="evento-hora">
-                                                                {evento.hora_inicio?.substring(0, 5)}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                    {eventosDelDia.length > 2 && (
-                                                        <div className="eventos-mas">
-                                                            +{eventosDelDia.length - 2}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
+        return (
+            <div key={dia.toString()} className={`calendario-dia ${
+                !esDiaDelMes ? 'otro-mes' : ''
+            } ${
+                esHoy(dia) && esDiaDelMes ? 'hoy' : ''
+            }`}>
+                <div className="dia-numero">{dia.getDate()}</div>
+                {esDiaDelMes && (
+                    <div className="dia-eventos">
+                        {eventosDelDia.slice(0, maxEventos).map(evento => (
+                            <Evento key={evento.evento_id} evento={evento} />
                         ))}
+                        {eventosDelDia.length > maxEventos && (
+                            <div className="eventos-mas">+{eventosDelDia.length - maxEventos} más</div>
+                        )}
                     </div>
-                </div>
-            );
-        }
-        
-        return (
-            <div 
-                className="anio-grid" 
-                onScroll={(e) => setScrollPosition(e.currentTarget.scrollTop)}
-                ref={(el) => {
-                    if (el) el.scrollTop = scrollPosition;
-                }}
-            >
-                {meses}
+                )}
             </div>
         );
     };
 
+    const Evento = ({ evento }: { evento: EventoCalendario }) => (
+        <div className={`evento-item ${evento.estado_id?.toLowerCase() || 'sin-estado'}`}
+             title={`${evento.descripcion} - ${evento.lugar} (${evento.hora_inicio})`}>
+            <span className="evento-hora">{evento.hora_inicio?.substring(0, 5)}</span>
+            <span className="evento-titulo">{evento.descripcion}</span>
+        </div>
+    );
+
+    const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+        if (anioGridRef.current) {
+            setState(prev => ({...prev, scrollPosition: anioGridRef.current?.scrollTop || 0}));
+        }
+    }, []);    
 
     return (
         <div className="calendario-eventos">
-            {/* Cabecera */}
             <div className="calendario-cabecera">
                 <div className="calendario-controles">
-                    <QBoton onClick={toggleModo}>
-                        {modoAnio ? 'Modo Mes' : 'Modo Año'}
+                    <QBoton onClick={() => setState(prev => ({...prev, modoAnio: !prev.modoAnio}))}>
+                        {state.modoAnio ? 'Modo Año' : 'Modo Mes'}
                     </QBoton>
                 </div>
 
                 <div className="calendario-navegacion">
-                    <QBoton onClick={() => modoAnio ? navegarAnio(-1) : navegarMes(-1)}>
+                    <QBoton onClick={() => navegarTiempo(-1)}>
                         <QIcono nombre="atras" />
                     </QBoton>
-                    <h2>{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>
-                    <QBoton onClick={() => modoAnio ? navegarAnio(1) : navegarMes(1)}>
+                    <h2>{state.modoAnio ? state.fechaActual.getFullYear() : formatearMesAño(state.fechaActual)}</h2>
+                    <QBoton onClick={() => navegarTiempo(1)}>
                         <QIcono nombre="adelante" />
                     </QBoton>
                 </div>
@@ -215,10 +142,40 @@ export const CalendarioEventos = () => {
                 </div>
             </div>
 
-            {/* Calendario */}
-            {modoAnio ? renderAnio() : renderMes()}
+            {state.modoAnio ? (
+                <div 
+                    ref={anioGridRef}
+                    className="anio-grid" 
+                    onScroll={handleScroll}
+                >
+                    {Array.from({ length: 12 }).map((_, i) => {
+                        const mesFecha = new Date(state.fechaActual.getFullYear(), i, 1);
+                        return (
+                            <div key={i} className="mes-anio" id={`mes-${i}`}>
+                                <h3>{formatearMes(mesFecha)}</h3>
+                                {getSemanasDelMes(mesFecha).map((semana, j) => (
+                                    <div key={j} className="semana-anio">
+                                        {semana.map(dia => renderDia(dia, mesFecha, 2))}
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className="calendario-grid">
+                    <div className="calendario-dias-semana">
+                        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(dia => (
+                            <div key={dia} className="dia-semana">{dia}</div>
+                        ))}
+                    </div>
+                    <div className="calendario-dias">
+                        {getDiasDelMes(state.fechaActual).map(dia => renderDia(dia, state.fechaActual, 3))}
+                    </div>
+                </div>
+            )}
 
-            {cargando && (
+            {state.cargando && (
                 <div className="calendario-cargando">
                     <QIcono nombre="usuario" />
                     Cargando eventos...
