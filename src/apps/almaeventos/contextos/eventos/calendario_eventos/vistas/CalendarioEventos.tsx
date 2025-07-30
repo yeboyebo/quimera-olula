@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
-import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
+import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
 import { EventoCalendario } from "../diseño.ts";
-import { esHoy, esMesActual, formatearMes, formatearMesAño, getDiasDelMes, getEventosPorFecha, getSemanasDelMes } from "../dominio.ts";
+import { esHoy, esMesActual, getEventosPorFecha } from "../dominio.ts";
 import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
 
@@ -98,8 +97,19 @@ export const CalendarioEventos = () => {
 
   return (
     <div className="calendario-eventos">
+      <Calendario
+        eventos={state.eventos}
+        cargando={state.cargando}
+        // fechaActual={state.fechaActual}
+        // modoAnio={state.modoAnio}
+        // navegarTiempo={navegarTiempo}
+        // irAHoy={irAHoy}
+        // anioGridRef={anioGridRef}
+        // scrollPosition={state.scrollPosition}
+        // renderDia={renderDia}
+      />        
       {/* Cabecera */}
-      <div className="calendario-cabecera">
+      {/* <div className="calendario-cabecera">
         <div className="calendario-controles">
           <QBoton onClick={() => setState(prev => ({...prev, modoAnio: !prev.modoAnio}))}>
             {state.modoAnio ? 'Modo Mes' : 'Modo Año'}
@@ -121,7 +131,6 @@ export const CalendarioEventos = () => {
         </div>
       </div>
 
-      {/* Contenido */}
       {state.modoAnio ? (
         <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>
           {Array.from({ length: 12 }).map((_, i) => {
@@ -156,7 +165,7 @@ export const CalendarioEventos = () => {
           <QIcono nombre="usuario" />
           Cargando eventos...
         </div>
-      )}
+      )} */}
     </div>
   );
 };

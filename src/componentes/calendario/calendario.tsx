@@ -1,0 +1,230 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { QBoton } from "../atomos/qboton.tsx";
+import { QIcono } from '../atomos/qicono.tsx';
+import './calendario.css';
+import { CalendarioConfig, EventoBase } from './tipos';
+
+// Funciones por defecto
+const funcionesPorDefecto = {
+  esHoy: (fecha: Date) => fecha.toDateString() === new Date().toDateString(),
+  esMesActual: (fecha: Date, mesReferencia: Date) => 
+    fecha.getMonth() === mesReferencia.getMonth() && 
+    fecha.getFullYear() === mesReferencia.getFullYear(),
+  formatearMes: (fecha: Date) => 
+    fecha.toLocaleDateString('es-ES', { month: 'long' }).charAt(0).toUpperCase() + 
+    fecha.toLocaleDateString('es-ES', { month: 'long' }).slice(1),
+  formatearMesAño: (fecha: Date) => 
+    `${fecha.toLocaleDateString('es-ES', { month: 'long' }).charAt(0).toUpperCase() + 
+    fecha.toLocaleDateString('es-ES', { month: 'long' }).slice(1)} ${fecha.getFullYear()}`,
+  getDiasDelMes: (fecha: Date) => {
+    const año = fecha.getFullYear();
+    const mes = fecha.getMonth();
+    const dias = new Date(año, mes + 1, 0).getDate();
+    return Array.from({ length: dias }, (_, i) => new Date(año, mes, i + 1));
+  },
+  getEventosPorFecha: <T extends EventoBase>(eventos: T[], fecha: Date) => 
+    eventos.filter(e => {      
+      const fechaEvento = typeof e.fecha === 'string' ? new Date(e.fecha) : e.fecha;
+      return fechaEvento.toDateString() === fecha.toDateString();
+    }),
+  getSemanasDelMes: (fecha: Date) => {
+    const primerDia = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+    const ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+    
+    let diaActual = new Date(primerDia);
+    diaActual.setDate(diaActual.getDate() - diaActual.getDay()); // Retroceder al domingo
+    
+    const semanas: Date[][] = [];
+    while (diaActual <= ultimoDia || semanas.length < 6) {
+      const semana: Date[] = [];
+      for (let i = 0; i < 7; i++) {
+        semana.push(new Date(diaActual));
+        diaActual.setDate(diaActual.getDate() + 1);
+      }
+      semanas.push(semana);
+    }
+    return semanas;
+  }
+};
+
+interface CalendarioProps<T extends EventoBase> {
+  eventos: T[];
+  cargando?: boolean;
+  config?: Partial<CalendarioConfig<T>>;
+  renderEvento?: (evento: T) => React.ReactNode;
+  children?: React.ReactNode;
+}
+
+export function Calendario<T extends EventoBase>({
+  eventos = [],
+  cargando = false,
+  config = {},
+  renderEvento,
+  children
+}: CalendarioProps<T>) {
+  if (eventos?.length === 0) return <div className='calendario'>No hay eventos</div>;
+  
+  const [fechaActual, setFechaActual] = useState(new Date());
+  const [modoAnio, setModoAnio] = useState(false);
+  const anioGridRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  // Combinar configuraciones
+  const {
+    esHoy,
+    esMesActual,
+    formatearMes,
+    formatearMesAño,
+    getDiasDelMes,
+    getEventosPorFecha,
+    getSemanasDelMes
+  } = { ...funcionesPorDefecto, ...config };
+
+  // Scroll al mes actual en modo año
+  useEffect(() => {
+    if (modoAnio && anioGridRef.current) {
+      const hoy = new Date();
+      scrollToMes(hoy.getMonth());
+    }
+  }, [modoAnio]);  
+
+  const scrollToMes = (mesIndex: number) => {
+    if (!anioGridRef.current) return;
+    
+    const meses = anioGridRef.current.querySelectorAll('.mes-anio');
+    if (!meses.length || mesIndex < 0 || mesIndex >= meses.length) return;
+    
+    let posicion = 0;
+    for (let i = 0; i < mesIndex; i++) {
+      posicion += meses[i].clientHeight + 32; // 32px = gap entre meses
+    }
+    
+    anioGridRef.current.scrollTo({
+      top: posicion,
+      behavior: 'smooth'
+    });
+    setScrollPosition(posicion);
+  };
+
+  const handleScroll = useCallback(() => {
+    if (anioGridRef.current) {
+      setScrollPosition(anioGridRef.current.scrollTop);
+    }
+  }, []);
+
+  const navegarTiempo = (direccion: number) => {
+    const nuevaFecha = new Date(fechaActual);
+    modoAnio 
+      ? nuevaFecha.setFullYear(nuevaFecha.getFullYear() + direccion)
+      : nuevaFecha.setMonth(nuevaFecha.getMonth() + direccion);
+    setFechaActual(nuevaFecha);
+  };
+
+  const irAHoy = () => {
+    const hoy = new Date();
+    setFechaActual(hoy);
+    if (modoAnio) scrollToMes(hoy.getMonth());
+  };
+
+  const renderDia = (dia: Date, mesReferencia: Date, maxEventos: number) => {
+    const esDiaDelMes = esMesActual(dia, mesReferencia);
+    const eventosDelDia = esDiaDelMes ? getEventosPorFecha(eventos, dia) : [];
+    
+    return (
+      <div 
+        key={dia.toString()} 
+        className={`calendario-dia ${!esDiaDelMes ? 'otro-mes' : ''} ${esHoy(dia) && esDiaDelMes ? 'hoy' : ''}`}
+      >
+        <div className="dia-numero">{dia.getDate()}</div>
+        {esDiaDelMes && (
+          <div className="dia-eventos">
+            {eventosDelDia.slice(0, maxEventos).map(evento => (
+              renderEvento ? renderEvento(evento) : (
+                <div 
+                  key={evento.id} 
+                  className="evento-item"
+                  title={evento.descripcion}
+                >
+                  <span className="evento-titulo">{evento.descripcion}</span>
+                </div>
+              )
+            ))}
+            {eventosDelDia.length > maxEventos && (
+              <div className="eventos-mas">+{eventosDelDia.length - maxEventos} más</div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="calendario-container">
+      {/* Cabecera */}
+      <div className="calendario-cabecera">
+        <div className="calendario-controles">
+          <QBoton onClick={() => setModoAnio(!modoAnio)}>
+            {modoAnio ? 'Modo Mes' : 'Modo Año'}
+          </QBoton>
+          {children}
+        </div>
+
+        <div className="calendario-navegacion">
+          <QBoton onClick={() => navegarTiempo(-1)}>
+            <QIcono nombre="atras" />
+          </QBoton>
+          <h2>{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>
+          <QBoton onClick={() => navegarTiempo(1)}>
+            <QIcono nombre="adelante" />
+          </QBoton>
+        </div>
+        
+        <div className="calendario-controles">
+          <QBoton onClick={irAHoy}>Hoy</QBoton>
+        </div>
+      </div>
+
+      {/* Contenido */}
+      {modoAnio ? (
+        <div ref={anioGridRef} className="anio-grid calendario-grid" onScroll={handleScroll}>
+          {Array.from({ length: 12 }).map((_, i) => {
+            const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
+            return (
+              <div key={i} className="mes-anio">
+                <h3>{formatearMes(mesFecha)}</h3>
+                <div className="calendario-dias-semana">
+                  {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(dia => (
+                    <div key={dia} className="dia-semana">{dia}</div>
+                  ))}
+                </div>
+                {getSemanasDelMes(mesFecha).map((semana, j) => (
+                  <div key={j} className="calendario-dias">
+                    {semana.map(dia => renderDia(dia, mesFecha, 2))}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="calendario-grid">
+          <div className="calendario-dias-semana">
+            {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(dia => (
+              <div key={dia} className="dia-semana">{dia}</div>
+            ))}
+          </div>
+          <div className="calendario-dias">
+            {getDiasDelMes(fechaActual).map(dia => renderDia(dia, fechaActual, 3))}
+          </div>
+        </div>
+      )}
+
+      {cargando && (
+        <div className="calendario-cargando">
+          <QIcono nombre="cargando" />
+          Cargando eventos...
+        </div>
+      )}
+    </div>
+  );
+}

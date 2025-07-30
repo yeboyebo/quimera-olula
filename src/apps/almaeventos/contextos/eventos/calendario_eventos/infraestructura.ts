@@ -11,7 +11,8 @@ export const getEventosCalendario = async (filtro: Filtro = [], orden: Orden = [
     return RestAPI.get<{ datos: EventoCalendario[] }>(baseUrlEvento + q).then((respuesta) =>
         respuesta.datos.map(evento => ({
             ...evento,
-            id: evento.evento_id // Asegurar compatibilidad
+            id: evento.evento_id, // Asegurar compatibilidad
+            fecha: evento.fecha_inicio
         }))
     );
 };
