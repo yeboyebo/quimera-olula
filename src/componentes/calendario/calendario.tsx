@@ -4,7 +4,6 @@ import { QIcono } from '../atomos/qicono.tsx';
 import './calendario.css';
 import { CalendarioConfig, EventoBase } from './tipos';
 
-// Funciones por defecto
 const funcionesPorDefecto = {
   esHoy: (fecha: Date) => fecha.toDateString() === new Date().toDateString(),
   esMesActual: (fecha: Date, mesReferencia: Date) => 
@@ -32,7 +31,7 @@ const funcionesPorDefecto = {
     const ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
     
     let diaActual = new Date(primerDia);
-    diaActual.setDate(diaActual.getDate() - diaActual.getDay()); // Retroceder al domingo
+    diaActual.setDate(diaActual.getDate() - diaActual.getDay());
     
     const semanas: Date[][] = [];
     while (diaActual <= ultimoDia || semanas.length < 6) {
@@ -62,14 +61,11 @@ export function Calendario<T extends EventoBase>({
   renderEvento,
   children
 }: CalendarioProps<T>) {
-  if (eventos?.length === 0) return <div className='calendario'>No hay eventos</div>;
-  
   const [fechaActual, setFechaActual] = useState(new Date());
   const [modoAnio, setModoAnio] = useState(false);
   const anioGridRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
 
-  // Combinar configuraciones
   const {
     esHoy,
     esMesActual,
@@ -80,13 +76,13 @@ export function Calendario<T extends EventoBase>({
     getSemanasDelMes
   } = { ...funcionesPorDefecto, ...config };
 
-  // Scroll al mes actual en modo año
+  // Scroll al mes actual al cambiar a modo año
   useEffect(() => {
     if (modoAnio && anioGridRef.current) {
       const hoy = new Date();
       scrollToMes(hoy.getMonth());
     }
-  }, [modoAnio]);  
+  }, [modoAnio]);
 
   const scrollToMes = (mesIndex: number) => {
     if (!anioGridRef.current) return;
@@ -96,7 +92,7 @@ export function Calendario<T extends EventoBase>({
     
     let posicion = 0;
     for (let i = 0; i < mesIndex; i++) {
-      posicion += meses[i].clientHeight + 32; // 32px = gap entre meses
+      posicion += meses[i].clientHeight + 32;
     }
     
     anioGridRef.current.scrollTo({
@@ -114,16 +110,29 @@ export function Calendario<T extends EventoBase>({
 
   const navegarTiempo = (direccion: number) => {
     const nuevaFecha = new Date(fechaActual);
-    modoAnio 
-      ? nuevaFecha.setFullYear(nuevaFecha.getFullYear() + direccion)
-      : nuevaFecha.setMonth(nuevaFecha.getMonth() + direccion);
+    if (modoAnio) {
+      nuevaFecha.setFullYear(nuevaFecha.getFullYear() + direccion);
+    } else {
+      nuevaFecha.setMonth(nuevaFecha.getMonth() + direccion);
+    }
     setFechaActual(nuevaFecha);
+
+    // Mantener posición de scroll relativa en modo año
+    if (modoAnio && anioGridRef.current) {
+      setTimeout(() => {
+        if (anioGridRef.current) {
+          anioGridRef.current.scrollTop = scrollPosition;
+        }
+      }, 0);
+    }
   };
 
   const irAHoy = () => {
     const hoy = new Date();
     setFechaActual(hoy);
-    if (modoAnio) scrollToMes(hoy.getMonth());
+    if (modoAnio) {
+      scrollToMes(hoy.getMonth());
+    }
   };
 
   const renderDia = (dia: Date, mesReferencia: Date, maxEventos: number) => {
@@ -160,11 +169,10 @@ export function Calendario<T extends EventoBase>({
 
   return (
     <div className="calendario-container">
-      {/* Cabecera */}
       <div className="calendario-cabecera">
         <div className="calendario-controles">
           <QBoton onClick={() => setModoAnio(!modoAnio)}>
-            {modoAnio ? 'Modo Mes' : 'Modo Año'}
+            {modoAnio ? 'Modo Año' : 'Modo Mes'}
           </QBoton>
           {children}
         </div>
@@ -173,7 +181,12 @@ export function Calendario<T extends EventoBase>({
           <QBoton onClick={() => navegarTiempo(-1)}>
             <QIcono nombre="atras" />
           </QBoton>
-          <h2>{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>
+          {
+            modoAnio
+            ? <h2>{fechaActual.getFullYear()}</h2>
+            : <h2 className="calendario-navegacion-mes-anio">{formatearMesAño(fechaActual)}</h2>
+          }
+          {/* <h2>{modoAnio ? fechaActual.getFulslYear() : formatearMesAño(fechaActual)}</h2> */}
           <QBoton onClick={() => navegarTiempo(1)}>
             <QIcono nombre="adelante" />
           </QBoton>
@@ -184,9 +197,8 @@ export function Calendario<T extends EventoBase>({
         </div>
       </div>
 
-      {/* Contenido */}
       {modoAnio ? (
-        <div ref={anioGridRef} className="anio-grid calendario-grid" onScroll={handleScroll}>
+        <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>
           {Array.from({ length: 12 }).map((_, i) => {
             const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
             return (

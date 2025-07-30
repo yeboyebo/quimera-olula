@@ -1,112 +1,71 @@
-/* Calendario.css */
+/* Variables */
 :root {
-  /* Colores base */
   --color-fondo: #ffffff;
   --color-primario: #3a86ff;
   --color-primario-claro: #ebf2ff;
-  --color-error: #ff3860;
-  --color-exito: #00d1b2;
-  --color-advertencia: #ffdd57;
   --gris-1: #f8f9fa;
   --gris-2: #e9ecef;
   --gris-3: #dee2e6;
-  --gris-4: #ced4da;
-
-  /* Espaciado */
-  --espaciado-xs: 0.25rem;
   --espaciado-s: 0.5rem;
   --espaciado-m: 1rem;
   --espaciado-l: 1.5rem;
-
-  /* Tipografía */
-  --grosor-letra-6: 600;
-  --tamaño-texto-xs: 0.75rem;
-  --tamaño-texto-s: 0.875rem;
-  --tamaño-texto-base: 1rem;
-
-  /* Dimensiones */
   --altura-dia: 120px;
   --altura-dia-mobile: 90px;
-  --radio-borde: 0.25rem;
 }
 
-/* Estructura principal */
+/* Estructura Principal */
 .calendario-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--color-fondo);
   font-family: system-ui, sans-serif;
+  max-width: 100%;
 }
 
 /* Cabecera */
 .calendario-cabecera {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: var(--espaciado-m);
+  align-items: center;
   background: white;
   border-bottom: 1px solid var(--gris-3);
-  /* position: sticky; */
-  top: 0;
-  z-index: 10;
-  gap: var(--espaciado-m);
 }
 
 .calendario-navegacion {
   display: flex;
   align-items: center;
   gap: var(--espaciado-m);
-  flex-grow: 1;
-  justify-content: center;
 }
 
-.calendario-controles {
-  display: flex;
-  align-items: center;
-  gap: var(--espaciado-m);
-}
-
-/* Contenedores principales */
-.calendario-grid {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  flex: 1;
+/* Grid Principal */
+.calendario-grid,
+.anio-grid {
   background: var(--gris-2);
   padding: 2px;
 }
 
 .anio-grid {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--espaciado-m);
   scroll-behavior: smooth;
-  background: var(--gris-2);
+  overflow-y: auto;
+  height: 70vh;
 }
 
-/* Días de la semana (compartido en ambos modos) */
+
+/* Días */
 .calendario-dias-semana {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   background: var(--gris-1);
   padding: var(--espaciado-s);
   text-align: center;
-  font-weight: var(--grosor-letra-6);
-  font-size: var(--tamaño-texto-s);
-  /* position: sticky; */
-  top: 60px;
-  z-index: 5;
+  font-weight: 600;
 }
 
-/* Semanas y días (compartido) */
-.calendario-dias,
-.semana-anio {
+.calendario-dias {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
 }
 
-/* Estilo de día (unificado) */
+/* Celda de Día */
 .calendario-dia {
   background: white;
   min-height: var(--altura-dia);
@@ -114,8 +73,6 @@
   padding: 4px;
   display: flex;
   flex-direction: column;
-  transition: all 0.2s ease;
-  border-radius: 4px;
 }
 
 .calendario-dia.otro-mes {
@@ -125,114 +82,50 @@
 
 .calendario-dia.hoy {
   background: var(--color-primario-claro);
-  border: 2px solid var(--color-primario);
+  border-color: var(--color-primario);
 }
 
-/* Modo año específico */
-.mes-anio {
-  margin-bottom: var(--espaciado-l);
-  scroll-snap-align: start;
-}
-
-.mes-anio h3 {
-  /* position: sticky; */
-  top: 60px;
-  background: var(--color-fondo);
-  z-index: 5;
-  padding: var(--espaciado-s) 0;
-  margin-bottom: var(--espaciado-s);
-  border-bottom: 1px solid var(--gris-3);
-  text-align: center;
-  font-size: var(--tamaño-texto-base);
-  font-weight: var(--grosor-letra-6);
+.dia-numero {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 /* Eventos */
-.dia-numero {
-  align-self: flex-end;
-  font-weight: var(--grosor-letra-6);
-  font-size: 0.75rem;
-  margin-bottom: 2px;
-}
-
 .dia-eventos {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   overflow: hidden;
 }
 
 .evento-item {
-  font-size: var(--tamaño-texto-xs);
-  line-height: 1.3;
-  padding: 3px 6px;
-  border-radius: var(--radio-borde);
-  background-color: var(--color-primario-claro);
+  background: var(--color-primario-claro);
   border-left: 3px solid var(--color-primario);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.evento-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 4px 6px;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 .evento-titulo {
-  flex: 1;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
-.eventos-mas {
-  font-size: 0.65rem;
-  color: var(--gris-6);
-  text-align: center;
-  padding: 2px;
-  background-color: var(--gris-2);
-  border-radius: var(--radio-borde);
-  margin-top: auto;
+.mes-anio {
+  scroll-snap-align: start;
 }
 
-/* Estados de eventos */
-.evento-item.prioridad-alta {
-  border-left-color: var(--color-error);
-  background-color: #ffebee;
-}
-
-.evento-item.prioridad-media {
-  border-left-color: var(--color-advertencia);
-  background-color: #fff3e0;
-}
-
-.evento-item.prioridad-baja {
-  border-left-color: var(--color-exito);
-  background-color: #e8f5e9;
-}
-
-/* Loading */
-.calendario-cargando {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: var(--espaciado-s);
-  background: white;
-  padding: var(--espaciado-m);
-  border-radius: var(--radio-borde);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 20;
-}
-
-/* Barra de scroll */
-.anio-grid::-webkit-scrollbar {
+/* Mejora la visualización del scroll */
+/* .anio-grid::-webkit-scrollbar {
   width: 8px;
 }
 
@@ -243,6 +136,13 @@
 .anio-grid::-webkit-scrollbar-thumb {
   background: var(--gris-4);
   border-radius: 4px;
+} */
+
+.calendario-navegacion-mes-anio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 13rem;
 }
 
 /* Responsive */
@@ -251,19 +151,8 @@
     --altura-dia: var(--altura-dia-mobile);
   }
 
-  .calendario-cabecera {
-    flex-wrap: wrap;
-  }
-
-  .calendario-navegacion {
-    order: 1;
-    width: 100%;
-    justify-content: center;
-  }
-
-  .mes-anio h3,
-  .calendario-dias-semana {
-    top: 110px;
-    /* Ajuste para cabecera en móvil */
+  .evento-titulo {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
   }
 }
