@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
@@ -34,6 +35,7 @@ export const Lineas = ({
   const [estado, setEstado] = useState<Estado>("lista");
   const lineas = useLista<Linea>([]);
   const albaranId = albaran?.modelo?.id;
+  const { intentar } = useContext(ContextoError);
 
   const { setLista } = lineas;
 
@@ -54,7 +56,9 @@ export const Lineas = ({
 
   const onBorrarConfirmado = async () => {
     if (!lineas.seleccionada) return;
-    await deleteLinea(albaranId, lineas.seleccionada.id);
+    const lineaId = lineas.seleccionada.id;
+    if (!lineaId) return;
+    await intentar(() => deleteLinea(albaranId, lineaId));
     await refrescarLineas();
     setEstado("lista");
   };

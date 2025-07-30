@@ -24,7 +24,6 @@ export const AltaDireccion = ({
 
   return (
     <div className="AltaDireccion">
-      <h2>Nueva dirección</h2>
       <quimera-formulario>
         <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
         <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />

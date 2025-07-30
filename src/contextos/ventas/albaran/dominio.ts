@@ -36,6 +36,7 @@ export const metaCambioClienteAlbaran: MetaModelo<CambioClienteAlbaran> = metaCa
 export const metaAlbaran: MetaModelo<Albaran> = {
     campos: {
         ...metaVenta.campos,
+        fecha: { tipo: "fecha", requerido: false },
     },
 };
 

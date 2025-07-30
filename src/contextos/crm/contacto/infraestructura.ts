@@ -38,16 +38,16 @@ export const patchContacto = async (id: string, contacto: Contacto) =>
       nombre: contacto.nombre,
       email: contacto.email,
     },
-  });
+  }, "Error al guardar contacto");
 
 export const postContacto = async (contacto: Partial<Contacto>): Promise<string> => {
-  return await RestAPI.post(baseUrlContactos, contactoToAPI(contacto as Contacto)).then(
+  return await RestAPI.post(baseUrlContactos, contactoToAPI(contacto as Contacto), "Error al guardar contacto").then(
     (respuesta) => respuesta.id
   );
 };
 
 export const deleteContacto = async (id: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlContactos}/${id}`);
+  await RestAPI.delete(`${baseUrlContactos}/${id}`, "Error al borrar contacto");
 
 
 export const getOportunidadesVentaContacto = async (contactoId: string) => {

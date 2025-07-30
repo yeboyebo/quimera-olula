@@ -14,7 +14,7 @@ export const getAcciones = async (filtro: Filtro, orden: Orden): Promise<Accion[
 };
 
 export const postAccion = async (accion: Partial<Accion>): Promise<string> => {
-    return await RestAPI.post(baseUrlAccion, accion).then((respuesta) => respuesta.id);
+    return await RestAPI.post(baseUrlAccion, accion, "Error al guardar acción").then((respuesta) => respuesta.id);
 };
 
 export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<void> => {
@@ -22,12 +22,12 @@ export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<
     const accionSinNulls = Object.fromEntries(
         Object.entries(accion).map(([k, v]) => [k, v === null ? "" : v])
     );
-    await RestAPI.patch(`${baseUrlAccion}/${id}`, accionSinNulls);
+    await RestAPI.patch(`${baseUrlAccion}/${id}`, accionSinNulls, "Error al guardar acción");
 };
 
 export const deleteAccion = async (id: string): Promise<void> =>
-    await RestAPI.delete(`${baseUrlAccion}/${id}`);
+    await RestAPI.delete(`${baseUrlAccion}/${id}, "Error al borrar acción"`);
 
 export const finalizarAccion = async (id: string) => {
-    await RestAPI.patch(`${baseUrlAccion}/${id}/finalizar`, {});
+    await RestAPI.patch(`${baseUrlAccion}/${id}/finalizar`, {}, "Error al finalizar acción");
 };

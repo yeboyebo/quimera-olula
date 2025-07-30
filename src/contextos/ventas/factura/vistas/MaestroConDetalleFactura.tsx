@@ -65,6 +65,9 @@ export const MaestroConDetalleFactura = () => {
         Maestro={
           <>
             <h2>Facturas</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
+            </div>
             <Listado
               metaTabla={metaTablaFactura}
               entidades={facturas.lista}
@@ -73,9 +76,6 @@ export const MaestroConDetalleFactura = () => {
               setSeleccionada={facturas.seleccionar}
               cargar={getFacturas}
             />
-            <div className="maestro-botones">
-              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Factura</QBoton>
-            </div>
           </>
         }
         Detalle={

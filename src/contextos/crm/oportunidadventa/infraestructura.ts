@@ -19,15 +19,15 @@ export const getOportunidadesVenta = async (filtro: Filtro, orden: Orden): Promi
 };
 
 export const postOportunidadVenta = async (oportunidad: NuevaOportunidadVenta): Promise<string> => {
-    return await RestAPI.post(baseUrlOportunidadVenta, oportunidad).then((respuesta) => respuesta.id);
+    return await RestAPI.post(baseUrlOportunidadVenta, oportunidad, "Error al guardar oportunidad de enta").then((respuesta) => respuesta.id);
 };
 
 export const patchOportunidadVenta = async (id: string, oportunidad: Partial<OportunidadVenta>): Promise<void> => {
-    await RestAPI.patch(`${baseUrlOportunidadVenta}/${id}`, oportunidad);
+    await RestAPI.patch(`${baseUrlOportunidadVenta}/${id}`, oportunidad, "Error al guardar oportunidad de venta");
 };
 
 export const deleteOportunidadVenta = async (id: string): Promise<void> =>
-    await RestAPI.delete(`${baseUrlOportunidadVenta}/${id}`);
+    await RestAPI.delete(`${baseUrlOportunidadVenta}/${id}`, "Error al borrar oportunidad de venta");
 
 export const getEstadosOportunidadVenta = async (filtro: Filtro, orden: Orden): Promise<EstadoOportunidad[]> => {
     const q = criteriaQuery(filtro, orden);
@@ -60,5 +60,5 @@ export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente
         empresa_id: "1",
     };
 
-    return await RestAPI.post(baseUrlPresupuesto, nuevoPresupuesto).then((respuesta) => respuesta.id);
+    return await RestAPI.post(baseUrlPresupuesto, nuevoPresupuesto, "Error al crear presupuesto").then((respuesta) => respuesta.id);
 }

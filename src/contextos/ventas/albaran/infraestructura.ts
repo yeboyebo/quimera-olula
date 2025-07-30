@@ -50,7 +50,7 @@ export const postAlbaran: PostAlbaran = async (albaran) => {
     },
     empresa_id: albaran.empresa_id,
   };
-  return await RestAPI.post(baseUrl, payload).then((respuesta) => respuesta.id);
+  return await RestAPI.post(baseUrl, payload, "Error al guardar albarán").then((respuesta) => respuesta.id);
 };
 
 export const getLineas: GetLineasPedido = async (id) =>
@@ -67,7 +67,7 @@ export const postLinea: PostLinea = async (id, linea) => {
       articulo_id: linea.referencia,
       cantidad: linea.cantidad
     }]
-  }).then((respuesta) => {
+  }, "Error al guardar").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
   });
@@ -81,7 +81,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
       },
     },
   }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload, "Error al actualizar la línea del albarán");
 }
 
 export const patchLinea: PatchLinea = async (id, linea) => {
@@ -96,7 +96,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
     },
   }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar la línea del albarán");
 }
 
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
@@ -108,13 +108,13 @@ export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad
       cantidad: cantidad,
     },
   }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar la línea del albarán");
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
   await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
     lineas: [lineaId]
-  });
+  }, "Error al borrar la línea del albarán");
 }
 
 export const patchAlbaran = async (id: string, albaran: Albaran) => {
@@ -137,7 +137,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
   };
 
   await RestAPI.patch(`${baseUrl}/${id}`, payload,
-    'Error al guardar el albaran'
+    'Error al guardar el albarán'
   );
 };
 
@@ -148,9 +148,9 @@ export const patchCambiarCliente = async (id: string, cambio: Albaran) => {
       direccion_id: cambio.direccion_id,
     },
   };
-  await RestAPI.patch(`${baseUrl}/${id}/cliente`, payload);
+  await RestAPI.patch(`${baseUrl}/${id}/cliente`, payload, "Error al cambiar cliente del albarán");
 };
 
 export const borrarAlbaran = async (id: string) => {
-  await RestAPI.delete(`${baseUrl}/${id}`);
+  await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar albarán");
 }

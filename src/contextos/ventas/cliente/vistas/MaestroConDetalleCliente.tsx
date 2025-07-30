@@ -3,12 +3,11 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Cliente } from "../diseño.ts";
-import { deleteCliente, getClientes } from "../infraestructura.ts";
+import { getClientes } from "../infraestructura.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
@@ -28,7 +27,7 @@ const metaTablaCliente = [
   { id: "forma_pago", cabecera: "Forma de Pago" },
   { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
 ];
-type Estado = "lista" | "alta" | "confirmarBorrado";
+type Estado = "lista" | "alta";
 export const MaestroConDetalleCliente = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const clientes = useLista<Cliente>([]);
@@ -56,24 +55,9 @@ export const MaestroConDetalleCliente = () => {
         clientes.limpiarSeleccion();
       },
     },
-    confirmarBorrado: {},
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
-
-  const onBorrarCliente = async () => {
-    setEstado("confirmarBorrado");
-  };
-
-  const confirmarBorrado = async () => {
-    if (!clientes.seleccionada) {
-      setEstado("lista");
-      return;
-    }
-    await deleteCliente(clientes.seleccionada.id);
-    clientes.eliminar(clientes.seleccionada);
-    setEstado("lista");
-  };
 
   return (
     <div className="Cliente">
@@ -84,12 +68,6 @@ export const MaestroConDetalleCliente = () => {
             <h2>Clientes</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!clientes.seleccionada}
-                onClick={onBorrarCliente}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaCliente}
@@ -116,14 +94,6 @@ export const MaestroConDetalleCliente = () => {
       >
         <AltaCliente emitir={emitir} />
       </QModal>
-      <QModalConfirmacion
-        nombre="confirmarBorrarCliente"
-        abierto={estado === "confirmarBorrado"}
-        titulo="Confirmar borrado"
-        mensaje="¿Está seguro de que desea borrar este cliente?"
-        onCerrar={() => setEstado("lista")}
-        onAceptar={confirmarBorrado}
-      />
     </div>
   );
 };

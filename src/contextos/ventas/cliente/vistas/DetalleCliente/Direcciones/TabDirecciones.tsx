@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { DirCliente } from "../../../diseño.ts";
@@ -12,7 +14,7 @@ import { AltaDireccion } from "./AltaDireccion.tsx";
 import { EdicionDireccion } from "./EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
 
-type Estado = "lista" | "alta" | "edicion";
+type Estado = "lista" | "alta" | "edicion" | "confirmarBorrado";
 
 export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const direcciones = useLista<DirCliente>([]);
@@ -20,6 +22,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const [estado, setEstado] = useState<Estado>("lista");
 
   const setListaDirecciones = direcciones.setLista;
+  const { intentar } = useContext(ContextoError);
 
   const cargarDirecciones = useCallback(async () => {
     setCargando(true);
@@ -40,14 +43,12 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         const direccion = payload as DirCliente;
         direcciones.seleccionar(direccion);
       },
-      BORRADO_SOLICITADO: async () => {
-        if (!direcciones.seleccionada) return;
-        await deleteDireccion(clienteId, direcciones.seleccionada.id);
-        direcciones.eliminar(direcciones.seleccionada);
-      },
+      BORRADO_SOLICITADO: "confirmarBorrado",
       FACTURACION_SOLICITADA: async () => {
         if (!direcciones.seleccionada) return;
-        await setDirFacturacion(clienteId, direcciones.seleccionada.id);
+        const idDireccion = direcciones.seleccionada.id;
+        if (!idDireccion) return;
+        await intentar(() => setDirFacturacion(clienteId, idDireccion));
         cargarDirecciones();
       },
     },
@@ -67,6 +68,22 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
       },
       EDICION_CANCELADA: "lista",
     },
+    confirmarBorrado: {},
+  };
+
+  const confirmarBorrado = async () => {
+    if (!direcciones.seleccionada) {
+      setEstado("lista");
+      return;
+    }
+    const idDireccion = direcciones.seleccionada.id;
+    if (!idDireccion) {
+      setEstado("lista");
+      return;
+    }
+    await intentar(() => deleteDireccion(clienteId, idDireccion));
+    direcciones.eliminar(direcciones.seleccionada);
+    setEstado("lista");
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
@@ -106,6 +123,14 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         <h2 className="titulo-modal">Nueva dirección</h2>
         <AltaDireccion clienteId={clienteId} emitir={emitir} />
       </QModal>
+      <QModalConfirmacion
+        nombre="confirmarBorrarDireccion"
+        abierto={estado === "confirmarBorrado"}
+        titulo="Confirmar borrado"
+        mensaje="¿Está seguro de que desea borrar esta dirección?"
+        onCerrar={() => setEstado("lista")}
+        onAceptar={confirmarBorrado}
+      />
     </div>
   );
 };
