@@ -68,10 +68,16 @@ export const formatearMes = (fecha: Date): string => {
     return mes.charAt(0).toUpperCase() + mes.slice(1);
 };
 
+// export const formatearMesAño = (fecha: Date): string => {
+//     const texto = fecha.toLocaleDateString('es-ES', {
+//         month: 'long',
+//         year: 'numeric'
+//     });
+//     return texto.charAt(0).toUpperCase() + texto.slice(1);
+// };
+
 export const formatearMesAño = (fecha: Date): string => {
-    const texto = fecha.toLocaleDateString('es-ES', {
-        month: 'long',
-        year: 'numeric'
-    });
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
+    const mes = fecha.toLocaleDateString('es-ES', { month: 'long' });
+    const año = fecha.getFullYear();
+    return `${mes.charAt(0).toUpperCase() + mes.slice(1)} ${año}`;
 };
