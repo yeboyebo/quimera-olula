@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCrmContacto, PatchCliente, PostCliente } from "./diseño.ts";
 
@@ -70,23 +70,15 @@ const CuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
 export const getCliente: GetCliente = async (id) =>
   await RestAPI.get<{ datos: Cliente }>(`${baseUrlVentas}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
-// export const getClientes = async (filtro: Filtro, orden: Orden): Promise<Cliente[]> => {
-//   const q = criteriaQuery(filtro, orden);
-
-//   return RestAPI.get<{ datos: ClienteApi[] }>(baseUrlVentas + q).then((respuesta) => respuesta.datos.map(clienteFromAPI));
-// }
-
 export const getClientes = async (
   filtro: Filtro,
   orden: Orden,
   paginacion?: Paginacion
-): Promise<[Cliente[], number]> => {
+): RespuestaLista<Cliente> => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
   const respuesta = await RestAPI.get<{ datos: ClienteApi[]; total: number }>(baseUrlVentas + q);
-  return [respuesta.datos.map(clienteFromAPI), respuesta.total];
-
-
+  return { datos: respuesta.datos.map(clienteFromAPI), total: respuesta.total };
 };
 
 export const patchCliente: PatchCliente = async (id, cliente) =>

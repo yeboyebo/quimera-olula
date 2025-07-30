@@ -97,6 +97,7 @@ export const MaestroConDetalleCliente = () => {
               setEntidades={clientes.setLista}
               seleccionada={clientes.seleccionada}
               setSeleccionada={clientes.seleccionar}
+              tamañoPagina={2}
               cargar={getClientes}
             />
           </>

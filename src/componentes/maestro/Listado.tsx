@@ -5,6 +5,7 @@ import {
   Filtro,
   Orden,
   Paginacion,
+  RespuestaLista,
 } from "../../contextos/comun/diseño.ts";
 import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
@@ -36,11 +37,12 @@ export type MaestroProps<T extends Entidad> = {
   setEntidades: (entidades: T[]) => void;
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
+  tamañoPagina?: number;
   cargar: (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-  ) => Promise<[T[], number]>;
+  ) => RespuestaLista<T>;
 };
 
 export const Listado = <T extends Entidad>({
@@ -50,13 +52,14 @@ export const Listado = <T extends Entidad>({
   setEntidades,
   seleccionada,
   setSeleccionada,
+  tamañoPagina = 5,
   cargar,
 }: MaestroProps<T>) => {
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
   const [paginacion, setPaginacion] = useState<Paginacion>(
-    criteria.paginacion || { limite: 1, pagina: 1 }
+    criteria.paginacion || { limite: tamañoPagina, pagina: 1 }
   );
   const [totalRegistros, setTotalRegistros] = useState(0);
 
@@ -64,11 +67,10 @@ export const Listado = <T extends Entidad>({
     let hecho = false;
     setCargando(true);
 
-    cargar(filtro, orden, paginacion).then(([entidadesNuevas, total]) => {
-      console.log("cargar", entidadesNuevas, total);
+    cargar(filtro, orden, paginacion).then(({ datos, total }) => {
       if (hecho) return;
-      if (entidadesNuevas.length > 0) {
-        setEntidades(entidadesNuevas as T[]);
+      if (datos.length > 0) {
+        setEntidades(datos as T[]);
         if (total && total > 0) {
           setTotalRegistros(total);
         }
@@ -113,7 +115,7 @@ export const Listado = <T extends Entidad>({
         onPaginacion={(pagina, limite) => {
           setPaginacion({ pagina, limite });
         }}
-        total={totalRegistros}
+        totalEntidades={totalRegistros}
       />
     );
   };
@@ -135,7 +137,7 @@ export const Listado = <T extends Entidad>({
         }}
         resetearFiltro={() => {
           setFiltro(criteria.filtros);
-          setPaginacion({ limite: 5, pagina: 1 });
+          setPaginacion({ limite: tamañoPagina, pagina: 1 });
           setEntidades([]);
         }}
       />

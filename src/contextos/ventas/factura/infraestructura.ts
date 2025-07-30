@@ -1,4 +1,6 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
 
 const baseUrl = `/ventas/factura`;
@@ -16,12 +18,18 @@ export const getFactura: GetFactura = async (id) => {
     });
 };
 
-export const getFacturas: GetFacturas = async (_, __) => {
-  return RestAPI.get<{ datos: Factura[] }>(
-    `${baseUrl}`).then((respuesta) => {
-      return respuesta.datos.map((d) => facturaDesdeAPI(d));
-    });
+
+export const getFacturas: GetFacturas = async (
+  filtro: Filtro,
+  orden: Orden,
+  paginacion?: Paginacion
+) => {
+  const q = criteriaQuery(filtro, orden, paginacion);
+
+  const respuesta = await RestAPI.get<{ datos: Factura[]; total: number }>(baseUrl + q);
+  return { datos: respuesta.datos.map(facturaDesdeAPI), total: respuesta.total };
 };
+
 
 export const postFactura: PostFactura = async (factura) => {
   const payload = {

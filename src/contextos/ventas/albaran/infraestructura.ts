@@ -1,4 +1,6 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { GetLineasPedido } from "../pedido/diseño.ts";
 import {
   Albaran,
@@ -28,11 +30,17 @@ export const getAlbaran: GetAlbaran = async (id) => {
   });
 };
 
-export const getAlbaranes: GetAlbaranes = async (_, __) => {
-  return RestAPI.get<{ datos: Albaran[] }>(`${baseUrl}`).then((respuesta) => {
-    return respuesta.datos.map((d) => albaranDesdeAPI(d));
-  });
+export const getAlbaranes: GetAlbaranes = async (
+  filtro: Filtro,
+  orden: Orden,
+  paginacion?: Paginacion
+) => {
+  const q = criteriaQuery(filtro, orden, paginacion);
+
+  const respuesta = await RestAPI.get<{ datos: Albaran[]; total: number }>(baseUrl + q);
+  return { datos: respuesta.datos.map(albaranDesdeAPI), total: respuesta.total };
 };
+
 
 export const postAlbaran: PostAlbaran = async (albaran) => {
   const payload = {

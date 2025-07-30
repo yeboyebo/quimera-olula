@@ -65,16 +65,16 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
 };
 
 const paginacionControlador = (
-  total: number | undefined,
+  totalEntidades: number | undefined,
   paginacion: Paginacion,
   onPaginacion?: (pagina: number, limite: number) => void
 ) => {
-  if (!onPaginacion || total === undefined || total <= 0) {
+  if (!onPaginacion || totalEntidades === undefined || totalEntidades <= 0) {
     return null;
   }
   const { pagina, limite } = paginacion;
   const { paginasMostradas, totalPaginas } = calcularPaginacionSimplificada(
-    total,
+    totalEntidades,
     pagina,
     limite
   );
@@ -103,7 +103,8 @@ const paginacionControlador = (
         <QBoton
           key={numPagina}
           tamaño="pequeño"
-          variante={numPagina === pagina ? "solido" : "texto"}
+          deshabilitado={numPagina === pagina}
+          variante={numPagina === pagina ? "borde" : "texto"}
           onClick={() => onPaginacion?.(numPagina, limite)}
         >
           {numPagina}
@@ -143,7 +144,7 @@ export type QTablaProps<T extends Entidad> = {
   onOrdenar?: (clave: string) => void;
   paginacion: Paginacion;
   onPaginacion?: (pagina: number, limite: number) => void;
-  total?: number;
+  totalEntidades?: number;
 };
 
 export const QTabla = <T extends Entidad>({
@@ -156,7 +157,7 @@ export const QTabla = <T extends Entidad>({
   onOrdenar,
   paginacion,
   onPaginacion,
-  total = 0,
+  totalEntidades = 0,
 }: QTablaProps<T>) => {
   return (
     <>
@@ -177,7 +178,7 @@ export const QTabla = <T extends Entidad>({
             ))}
           </tbody>
         </table>
-        {paginacionControlador(total, paginacion, onPaginacion)}
+        {paginacionControlador(totalEntidades, paginacion, onPaginacion)}
       </quimera-tabla>
     </>
   );

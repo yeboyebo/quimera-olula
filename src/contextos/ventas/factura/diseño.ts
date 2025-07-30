@@ -1,4 +1,4 @@
-import { Filtro, Orden } from "../../comun/diseño.ts";
+import { Filtro, Orden, RespuestaLista } from "../../comun/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
@@ -14,7 +14,7 @@ export type CambioClienteFactura = CambioClienteVenta;
 
 export type NuevaLineaFactura = NuevaLineaVenta;
 
-export type GetFacturas = (filtro: Filtro, orden: Orden) => Promise<Factura[]>;
+export type GetFacturas = (filtro: Filtro, orden: Orden) => RespuestaLista<Factura>;
 
 export type GetFactura = (id: string) => Promise<Factura>;
 

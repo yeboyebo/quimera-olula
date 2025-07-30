@@ -1,6 +1,6 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import { Filtro } from "../../../comun/diseño.ts";
-import { getClientes } from "../../../crm/cliente/infraestructura.ts";
+import { getClientes } from "../../cliente/infraestructura.ts";
 
 interface ClienteProps {
   descripcion?: string;
@@ -26,17 +26,17 @@ export const Cliente = ({
       orden: ["id"],
     };
 
-    const [clientes] = await getClientes(
+    const { datos } = await getClientes(
       criteria.filtro as unknown as Filtro,
       criteria.orden
     );
 
-    if (!Array.isArray(clientes)) {
-      console.error("Los clientes no son un array:", clientes);
+    if (!Array.isArray(datos)) {
+      console.error("Los clientes no son un array:", datos);
       return [];
     }
 
-    return clientes.map((cliente) => ({
+    return datos.map((cliente) => ({
       valor: cliente.id,
       descripcion: cliente.nombre,
     }));
