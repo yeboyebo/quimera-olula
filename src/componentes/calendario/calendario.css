@@ -48,6 +48,14 @@
   height: 70vh;
 }
 
+.calendario-mes {
+  display: flex;
+  justify-content: center;
+  background: var(--gris-4);
+  padding: var(--espaciado-xs);
+  border: 1px solid var(--gris-3);
+}
+
 
 /* Días */
 .calendario-dias-semana {
@@ -121,6 +129,7 @@
 }
 
 .mes-anio {
+  scroll-margin-top: 60px;
   scroll-snap-align: start;
 }
 

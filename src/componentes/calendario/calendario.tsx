@@ -85,21 +85,21 @@ export function Calendario<T extends EventoBase>({
   }, [modoAnio]);
 
   const scrollToMes = (mesIndex: number) => {
-    if (!anioGridRef.current) return;
-    
-    const meses = anioGridRef.current.querySelectorAll('.mes-anio');
-    if (!meses.length || mesIndex < 0 || mesIndex >= meses.length) return;
-    
+    const grid = anioGridRef.current;
+    if (!grid) return;
+
+    const meses = grid.querySelectorAll('.mes-anio');
+    if (meses.length === 0 || mesIndex < 0 || mesIndex >= meses.length) return;
+
     let posicion = 0;
     for (let i = 0; i < mesIndex; i++) {
-      posicion += meses[i].clientHeight + 32;
+      posicion += meses[i].clientHeight + 32; // 32px = gap entre meses
     }
-    
-    anioGridRef.current.scrollTo({
+
+    grid.scrollTo({
       top: posicion,
       behavior: 'smooth'
     });
-    setScrollPosition(posicion);
   };
 
   const handleScroll = useCallback(() => {
@@ -129,9 +129,22 @@ export function Calendario<T extends EventoBase>({
 
   const irAHoy = () => {
     const hoy = new Date();
-    setFechaActual(hoy);
-    if (modoAnio) {
-      scrollToMes(hoy.getMonth());
+    setFechaActual(hoy); // Actualiza la fecha siempre
+
+    // Solo hace scroll en modo año si no está visible el mes actual
+    if (modoAnio && anioGridRef.current) {
+      const mesActual = hoy.getMonth();
+      const meses = anioGridRef.current.querySelectorAll('.mes-anio');
+      
+      // Verifica si el mes actual ya está visible
+      const mesVisible = Array.from(meses).some(mes => {
+        const rect = mes.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= window.innerHeight;
+      });
+
+      if (!mesVisible) {
+        scrollToMes(mesActual); // 👈 Scroll solo si es necesario
+      }
     }
   };
 
@@ -203,7 +216,7 @@ export function Calendario<T extends EventoBase>({
             const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
             return (
               <div key={i} className="mes-anio">
-                <h3>{formatearMes(mesFecha)}</h3>
+                <h3 className="calendario-mes">{formatearMes(mesFecha)}</h3>
                 <div className="calendario-dias-semana">
                   {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(dia => (
                     <div key={dia} className="dia-semana">{dia}</div>
