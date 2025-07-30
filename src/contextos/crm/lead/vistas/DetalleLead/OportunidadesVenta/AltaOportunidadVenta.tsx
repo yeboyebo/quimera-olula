@@ -28,7 +28,11 @@ export const AltaOportunidadVenta = ({
   );
 
   const guardar = async () => {
-    const id = await postOportunidadVenta(nuevaOportunidad.modelo);
+    const modelo = {
+      ...nuevaOportunidad.modelo,
+      tarjeta_id: lead.modelo.id,
+    };
+    const id = await postOportunidadVenta(modelo);
     const oportunidadCreada = await getOportunidadVenta(id);
     emitir("OPORTUNIDAD_CREADA", oportunidadCreada);
   };
