@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
@@ -57,11 +57,16 @@ export const getLead = async (id: string): Promise<Lead> =>
         leadFromAPI(respuesta.datos)
     );
 
-export const getLeads = async (filtro: Filtro, orden: Orden): Promise<Lead[]> => {
-    const q = criteriaQuery(filtro, orden);
-    return RestAPI.get<{ datos: LeadAPI[] }>(baseUrlLead + q).then((respuesta) =>
-        respuesta.datos.map(leadFromAPI)
-    );
+
+export const getLeads = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<Lead> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(baseUrlLead + q);
+    return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
 };
 
 export const postLead = async (lead: Partial<Lead>): Promise<string> => {

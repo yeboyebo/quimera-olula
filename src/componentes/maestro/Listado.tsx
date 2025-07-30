@@ -110,6 +110,7 @@ export const Listado = <T extends Entidad>({
               : "ASC";
 
           setOrden([clave, sentido]);
+          setPaginacion({ ...paginacion, pagina: 1 });
         }}
         paginacion={paginacion}
         onPaginacion={(pagina, limite) => {
@@ -137,7 +138,7 @@ export const Listado = <T extends Entidad>({
         }}
         resetearFiltro={() => {
           setFiltro(criteria.filtros);
-          setPaginacion({ limite: tamañoPagina, pagina: 1 });
+          setPaginacion({ ...paginacion, pagina: 1 });
           setEntidades([]);
         }}
       />

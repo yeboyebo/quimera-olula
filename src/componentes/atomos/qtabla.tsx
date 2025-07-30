@@ -142,7 +142,7 @@ export type QTablaProps<T extends Entidad> = {
   onSeleccion?: (entidad: T) => void;
   orden: Orden;
   onOrdenar?: (clave: string) => void;
-  paginacion: Paginacion;
+  paginacion?: Paginacion;
   onPaginacion?: (pagina: number, limite: number) => void;
   totalEntidades?: number;
 };
@@ -178,7 +178,9 @@ export const QTabla = <T extends Entidad>({
             ))}
           </tbody>
         </table>
-        {paginacionControlador(totalEntidades, paginacion, onPaginacion)}
+
+        {paginacion &&
+          paginacionControlador(totalEntidades, paginacion, onPaginacion)}
       </quimera-tabla>
     </>
   );

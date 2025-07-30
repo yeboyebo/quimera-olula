@@ -26,11 +26,11 @@ export const OportunidadVenta = ({
       orden: ["id"],
     };
 
-    const oportunidades = await getOportunidadesVenta(
+    const { datos } = await getOportunidadesVenta(
       criteria.filtro as unknown as Filtro,
       criteria.orden as Orden
     );
-    return oportunidades.map((oportunidad: OportunidadVentaTipo) => ({
+    return datos.map((oportunidad: OportunidadVentaTipo) => ({
       valor: oportunidad.id,
       descripcion: oportunidad.descripcion ?? "",
     }));
