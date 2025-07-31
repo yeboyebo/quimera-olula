@@ -21,18 +21,36 @@
 
 /* Cabecera */
 .calendario-cabecera {
-  display: flex;
-  justify-content: space-between;
-  padding: var(--espaciado-m);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  padding: var(--espaciado-m);
   background: white;
   border-bottom: 1px solid var(--gris-3);
+  gap: var(--espaciado-m);
+}
+
+.cabecera-izquierda,
+.cabecera-derecha {
+  display: flex;
+  align-items: center;
+  gap: var(--espaciado-s);
+}
+
+.cabecera-izquierda {
+  justify-content: flex-start;
+}
+
+.cabecera-derecha {
+  justify-content: flex-end;
 }
 
 .calendario-navegacion {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--espaciado-m);
+  margin: 0 auto;
 }
 
 /* Grid Principal */
@@ -125,6 +143,16 @@
   scroll-snap-align: start;
 }
 
+.calendario-mes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.4rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  background-color: var(--gris-3);
+}
+
 .calendario-navegacion-mes-anio {
   display: flex;
   align-items: center;
@@ -141,5 +169,17 @@
   .dato-item {
     -webkit-line-clamp: 1;
     line-clamp: 1;
+  }
+
+  .calendario-cabecera {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: var(--espaciado-s);
+  }
+
+  .cabecera-izquierda,
+  .calendario-navegacion,
+  .cabecera-derecha {
+    justify-content: center;
   }
 }

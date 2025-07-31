@@ -69,7 +69,8 @@ export function Calendario<T extends DatoBase>({
   children
 }: CalendarioProps<T>) {
   const [fechaActual, setFechaActual] = useState(new Date());
-  const [modoAnio, setModoAnio] = useState(false);
+   const modoInicial = config.cabecera?.modoCalendario === 'anio';
+  const [modoAnio, setModoAnio] = useState(modoInicial);
   const anioGridRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
 
@@ -78,6 +79,20 @@ export function Calendario<T extends DatoBase>({
     formatearMesAño,
     getDiasDelMes,
     getSemanasDelMes,
+    cabecera: {
+      botonesIzquierda = [],
+      botonesDerecha = [],
+      mostrarCambioModo = true,
+      mostrarControlesNavegacion = true,
+      mostrarBotonHoy = true,
+      modoCalendario = 'mes'
+    } = {},
+    estilos: {
+      dia: estiloDia,
+      dato: estiloDato,
+      cabecera: estiloCabecera,
+      boton: estiloBoton,
+    } = {},
     maxDatosVisibles = modoAnio ? 2 : 3,
     getDatosPorFecha = (datos: T[], fecha: Date) => 
       datos.filter((d: T) => new Date(d.fecha).toDateString() === fecha.toDateString()),
@@ -94,6 +109,13 @@ export function Calendario<T extends DatoBase>({
       scrollToMes(hoy.getMonth());
     }
   }, [modoAnio]);
+
+  useEffect(() => {
+    // Sincronizar el estado interno si cambia la prop modoCalendario
+    if (config.cabecera?.modoCalendario) {
+      setModoAnio(config.cabecera.modoCalendario === 'anio');
+    }
+  }, [config.cabecera?.modoCalendario]);  
 
   const scrollToMes = (mesIndex: number) => {
     const grid = anioGridRef.current;
@@ -159,6 +181,41 @@ export function Calendario<T extends DatoBase>({
     }
   };
 
+  const renderCabecera = () => (
+    <div className="calendario-cabecera">
+      <div className="cabecera-izquierda">
+        {mostrarCambioModo && (
+          <QBoton onClick={() => setModoAnio(!modoAnio)}>
+            {modoAnio ? 'Modo Mes' : 'Modo Año'}
+          </QBoton>
+        )}
+        {botonesIzquierda}
+      </div>
+
+      <div className="calendario-navegacion">
+        {mostrarControlesNavegacion && (
+          <>
+            <QBoton onClick={() => navegarTiempo(-1)}>
+              <QIcono nombre="atras" />
+            </QBoton>
+            {(modoAnio 
+              ? <h2>{fechaActual.getFullYear()}</h2>
+              : <h2 className="calendario-navegacion-mes-anio">{formatearMesAño(fechaActual)}</h2>
+            )}
+            <QBoton onClick={() => navegarTiempo(1)}>
+              <QIcono nombre="adelante" />
+            </QBoton>
+          </>
+        )}
+      </div>
+
+      <div className="cabecera-derecha">
+        {botonesDerecha}
+        {mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
+      </div>
+    </div>
+  );  
+
   const renderDiaPorDefecto = (fecha: Date, mesReferencia: Date) => {
     const esDiaDelMes = esMesActual(fecha, mesReferencia);
     const datosDelDia: T[] = esDiaDelMes ? getDatosPorFecha(datos, fecha) : [];
@@ -177,33 +234,7 @@ export function Calendario<T extends DatoBase>({
 
   return (
     <div className="calendario-container">
-      <div className="calendario-cabecera">
-        <div className="calendario-controles">
-          <QBoton onClick={() => setModoAnio(!modoAnio)}>
-            {modoAnio ? 'Modo Año' : 'Modo Mes'}
-          </QBoton>
-          {children}
-        </div>
-
-        <div className="calendario-navegacion">
-          <QBoton onClick={() => navegarTiempo(-1)}>
-            <QIcono nombre="atras" />
-          </QBoton>
-          {
-            modoAnio
-            ? <h2>{fechaActual.getFullYear()}</h2>
-            : <h2 className="calendario-navegacion-mes-anio">{formatearMesAño(fechaActual)}</h2>
-          }
-          {/* <h2>{modoAnio ? fechaActual.getFulslYear() : formatearMesAño(fechaActual)}</h2> */}
-          <QBoton onClick={() => navegarTiempo(1)}>
-            <QIcono nombre="adelante" />
-          </QBoton>
-        </div>
-        
-        <div className="calendario-controles">
-          <QBoton onClick={irAHoy}>Hoy</QBoton>
-        </div>
-      </div>
+      {renderCabecera()}
 
       {modoAnio ? (
         <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>

@@ -33,6 +33,11 @@ export const CalendarioEventos = () => {
         cargando={cargando}
         config={{
           maxDatosVisibles: 3,
+          cabecera: {
+            // mostrarBotonHoy: false,
+            mostrarCambioModo: false,
+            modoCalendario: 'anio'
+          }
         }}        
         renderDato={(dato: EventoCalendario) => (
           <div 

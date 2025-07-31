@@ -15,6 +15,20 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
   getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
   esHoy?: (fecha: Date) => boolean;
   esMesActual?: (fecha: Date, mesReferencia: Date) => boolean;
+  cabecera?: {
+    botonesIzquierda?: React.ReactNode[];
+    botonesDerecha?: React.ReactNode[];
+    mostrarCambioModo?: boolean;
+    mostrarControlesNavegacion?: boolean;
+    mostrarBotonHoy?: boolean;
+    modoCalendario?: 'mes' | 'anio';
+  };
+  estilos?: {
+    dia?: React.CSSProperties;
+    dato?: React.CSSProperties;
+    cabecera?: React.CSSProperties;
+    boton?: React.CSSProperties;
+  };
 }
 
 export interface PersonalizacionCalendario<T extends DatoBase> {
@@ -27,8 +41,4 @@ export interface PersonalizacionCalendario<T extends DatoBase> {
 
   renderDato?: (dato: T) => React.ReactNode;
 
-  estilos?: {
-    dia?: React.CSSProperties;
-    dato?: React.CSSProperties;
-  };
 }
