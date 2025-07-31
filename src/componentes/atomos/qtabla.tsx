@@ -160,29 +160,25 @@ export const QTabla = <T extends Entidad>({
   totalEntidades = 0,
 }: QTablaProps<T>) => {
   return (
-    <>
-      <quimera-tabla>
-        <div className="tabla-contenedor">
-          <table>
-            <thead>
-              <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
-            </thead>
-            <tbody data-cargando={cargando}>
-              {datos.map((entidad: T) => (
-                <tr
-                  key={entidad.id}
-                  onClick={() => onSeleccion && onSeleccion(entidad)}
-                  data-seleccionada={entidad.id === seleccionadaId}
-                >
-                  {fila(entidad, metaTabla)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {paginacion &&
-          paginacionControlador(totalEntidades, paginacion, onPaginacion)}
-      </quimera-tabla>
-    </>
+    <quimera-tabla>
+      <table>
+        <thead>
+          <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
+        </thead>
+        <tbody data-cargando={cargando}>
+          {datos.map((entidad: T) => (
+            <tr
+              key={entidad.id}
+              onClick={() => onSeleccion && onSeleccion(entidad)}
+              data-seleccionada={entidad.id === seleccionadaId}
+            >
+              {fila(entidad, metaTabla)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {paginacion &&
+        paginacionControlador(totalEntidades, paginacion, onPaginacion)}
+    </quimera-tabla>
   );
 };

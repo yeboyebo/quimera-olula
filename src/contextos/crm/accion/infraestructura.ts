@@ -15,8 +15,7 @@ export const getAcciones = async (
 ): RespuestaLista<Accion> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: Accion[]; total: number }>(baseUrlAccion + q);
-    return { datos: respuesta.datos, total: respuesta.total };
+    return await RestAPI.get<{ datos: Accion[]; total: number }>(baseUrlAccion + q);
 };
 
 export const postAccion = async (accion: Partial<Accion>): Promise<string> => {

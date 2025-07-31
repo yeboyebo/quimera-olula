@@ -9,18 +9,13 @@
 }
 
 quimera-tabla {
-
     :root {
         --transicion-basica: 0.12 ease-in-out;
     }
 
-    .tabla-contenedor {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
 
     table {
+        -webkit-overflow-scrolling: touch;
         width: 100%;
         min-width: 100%;
         border-spacing: 0;

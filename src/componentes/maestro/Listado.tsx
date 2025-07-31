@@ -52,7 +52,7 @@ export const Listado = <T extends Entidad>({
   setEntidades,
   seleccionada,
   setSeleccionada,
-  tamañoPagina = 5,
+  tamañoPagina = 10,
   cargar,
 }: MaestroProps<T>) => {
   const [cargando, setCargando] = useState(true);
