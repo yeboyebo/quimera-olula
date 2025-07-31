@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { QBoton } from "../atomos/qboton.tsx";
 import { QIcono } from '../atomos/qicono.tsx';
 import './calendario.css';
-import { CalendarioConfig, EventoBase } from './tipos';
+import { CalendarioConfig, DatoBase } from './tipos';
 
 const funcionesPorDefecto = {
   esHoy: (fecha: Date) => fecha.toDateString() === new Date().toDateString(),
@@ -21,10 +21,10 @@ const funcionesPorDefecto = {
     const dias = new Date(año, mes + 1, 0).getDate();
     return Array.from({ length: dias }, (_, i) => new Date(año, mes, i + 1));
   },
-  getEventosPorFecha: <T extends EventoBase>(eventos: T[], fecha: Date) => 
-    eventos.filter(e => {      
-      const fechaEvento = typeof e.fecha === 'string' ? new Date(e.fecha) : e.fecha;
-      return fechaEvento.toDateString() === fecha.toDateString();
+  getDatosPorFecha: <T extends DatoBase>(datos: T[], fecha: Date) => 
+    datos.filter(e => {      
+      const fechaDato = typeof e.fecha === 'string' ? new Date(e.fecha) : e.fecha;
+      return fechaDato.toDateString() === fecha.toDateString();
     }),
   getSemanasDelMes: (fecha: Date) => {
     const primerDia = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
@@ -46,19 +46,26 @@ const funcionesPorDefecto = {
   }
 };
 
-interface CalendarioProps<T extends EventoBase> {
-  eventos: T[];
+interface CalendarioProps<T extends DatoBase> {
+  datos: T[];
   cargando?: boolean;
   config?: Partial<CalendarioConfig<T>>;
-  renderEvento?: (evento: T) => React.ReactNode;
+  renderDia?: (args: {
+    fecha: Date;
+    datos: T[];
+    esMesActual: boolean;
+    esHoy: boolean;
+  }) => React.ReactNode;
+  renderDato?: (dato: T) => React.ReactNode;
   children?: React.ReactNode;
 }
 
-export function Calendario<T extends EventoBase>({
-  eventos = [],
+export function Calendario<T extends DatoBase>({
+  datos = [],
   cargando = false,
   config = {},
-  renderEvento,
+  renderDia,
+  renderDato,
   children
 }: CalendarioProps<T>) {
   const [fechaActual, setFechaActual] = useState(new Date());
@@ -67,13 +74,17 @@ export function Calendario<T extends EventoBase>({
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const {
-    esHoy,
-    esMesActual,
     formatearMes,
     formatearMesAño,
     getDiasDelMes,
-    getEventosPorFecha,
-    getSemanasDelMes
+    getSemanasDelMes,
+    maxDatosVisibles = modoAnio ? 2 : 3,
+    getDatosPorFecha = (datos: T[], fecha: Date) => 
+      datos.filter((d: T) => new Date(d.fecha).toDateString() === fecha.toDateString()),
+    esHoy = (fecha: Date) => fecha.toDateString() === new Date().toDateString(),
+    esMesActual = (fecha: Date, mesReferencia: Date) => 
+      fecha.getMonth() === mesReferencia.getMonth() && 
+      fecha.getFullYear() === mesReferencia.getFullYear(),    
   } = { ...funcionesPorDefecto, ...config };
 
   // Scroll al mes actual al cambiar a modo año
@@ -148,34 +159,18 @@ export function Calendario<T extends EventoBase>({
     }
   };
 
-  const renderDia = (dia: Date, mesReferencia: Date, maxEventos: number) => {
-    const esDiaDelMes = esMesActual(dia, mesReferencia);
-    const eventosDelDia = esDiaDelMes ? getEventosPorFecha(eventos, dia) : [];
-    
+  const renderDiaPorDefecto = (fecha: Date, mesReferencia: Date) => {
+    const esDiaDelMes = esMesActual(fecha, mesReferencia);
+    const datosDelDia: T[] = esDiaDelMes ? getDatosPorFecha(datos, fecha) : [];
+
     return (
-      <div 
-        key={dia.toString()} 
-        className={`calendario-dia ${!esDiaDelMes ? 'otro-mes' : ''} ${esHoy(dia) && esDiaDelMes ? 'hoy' : ''}`}
-      >
-        <div className="dia-numero">{dia.getDate()}</div>
-        {esDiaDelMes && (
-          <div className="dia-eventos">
-            {eventosDelDia.slice(0, maxEventos).map(evento => (
-              renderEvento ? renderEvento(evento) : (
-                <div 
-                  key={evento.id} 
-                  className="evento-item"
-                  title={evento.descripcion}
-                >
-                  <span className="evento-titulo">{evento.descripcion}</span>
-                </div>
-              )
-            ))}
-            {eventosDelDia.length > maxEventos && (
-              <div className="eventos-mas">+{eventosDelDia.length - maxEventos} más</div>
-            )}
-          </div>
-        )}
+      <div className={`calendario-dia ${!esDiaDelMes ? 'otro-mes' : ''} ${esHoy(fecha) ? 'hoy' : ''}`}>
+        <div className="dia-numero">{fecha.getDate()}</div>
+        {esDiaDelMes && datosDelDia.slice(0, maxDatosVisibles).map((dato: T) => (
+          renderDato 
+            ? renderDato(dato)
+            : <div key={dato.id} className="dato-item">{dato.descripcion}</div>
+        ))}
       </div>
     );
   };
@@ -222,11 +217,20 @@ export function Calendario<T extends EventoBase>({
                     <div key={dia} className="dia-semana">{dia}</div>
                   ))}
                 </div>
-                {getSemanasDelMes(mesFecha).map((semana, j) => (
-                  <div key={j} className="calendario-dias">
-                    {semana.map(dia => renderDia(dia, mesFecha, 2))}
-                  </div>
-                ))}
+                  {getSemanasDelMes(mesFecha).map((semana, j) => (
+                    <div key={j} className="calendario-dias">
+                      {semana.map(dia => (
+                        renderDia 
+                          ? renderDia({
+                              fecha: dia,
+                              datos: getDatosPorFecha(datos, dia),
+                              esMesActual: esMesActual(dia, mesFecha),
+                              esHoy: esHoy(dia)
+                            })
+                          : renderDiaPorDefecto(dia, mesFecha, 2) // 2 eventos visibles en modo año
+                      ))}
+                    </div>
+                  ))}
               </div>
             );
           })}
@@ -239,7 +243,16 @@ export function Calendario<T extends EventoBase>({
             ))}
           </div>
           <div className="calendario-dias">
-            {getDiasDelMes(fechaActual).map(dia => renderDia(dia, fechaActual, 3))}
+            {getDiasDelMes(fechaActual).map(dia => (
+              renderDia
+                ? renderDia({
+                    fecha: dia,
+                    datos: getDatosPorFecha(datos, dia),
+                    esMesActual: esMesActual(dia, fechaActual),
+                    esHoy: esHoy(dia)
+                  })
+                : renderDiaPorDefecto(dia, fechaActual)
+            ))}
           </div>
         </div>
       )}
@@ -247,7 +260,7 @@ export function Calendario<T extends EventoBase>({
       {cargando && (
         <div className="calendario-cargando">
           <QIcono nombre="cargando" />
-          Cargando eventos...
+          Cargando datos...
         </div>
       )}
     </div>

@@ -1,56 +1,39 @@
 import { useEffect, useState } from "react";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
+import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { EventoCalendario } from "../diseño.ts";
 import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
 
-// Extraer tipos a una interfaz
-interface CalendarioState {
-  eventos: EventoCalendario[];
-  fechaActual: Date;
-  cargando: boolean;
-  modoAnio: boolean;
-  scrollPosition: number;
-}
 
 export const CalendarioEventos = () => {
-  const [state, setState] = useState<CalendarioState>({
-    eventos: [],
-    fechaActual: new Date(),
-    cargando: false,
-    modoAnio: false,
-    scrollPosition: 0
-  });
+  const eventosCalendarioData = useLista<EventoCalendario>([]);
+  const [cargando, setCargando] = useState(false);
 
-  // Cargar eventos
+  // Cargar eventos al montar el componente
   useEffect(() => {
-    const cargarEventos = async () => {
-      setState(prev => ({...prev, cargando: true}));
-      try {
-        const eventosData = await getEventosCalendario();
-        setState(prev => ({...prev, eventos: eventosData}));
-      } catch (error) {
-        console.error("Error cargando eventos:", error);
-      } finally {
-        setState(prev => ({...prev, cargando: false}));
-      }
+    const fetchEventosCalendario = async () => {
+      setCargando(true);
+      const eventos = await getEventosCalendario([], []);
+      eventosCalendarioData.setLista(eventos); // Call the setLista method on the correct object
+      setCargando(false);
     };
-    cargarEventos();
+    fetchEventosCalendario();
   }, []);
+
+  // console.log('mimensaje_aaaaaaaaaaaaaaaa', eventosCalendarioData);
+  
 
 
   return (
     <div className="calendario-eventos">
       <Calendario
-        eventos={state.eventos}
-        cargando={state.cargando}
-        // fechaActual={state.fechaActual}
-        // modoAnio={state.modoAnio}
-        // navegarTiempo={navegarTiempo}
-        // irAHoy={irAHoy}
-        // anioGridRef={anioGridRef}
-        // scrollPosition={state.scrollPosition}
-        // renderDia={renderDia}
+        datos={eventosCalendarioData.lista}
+        cargando={cargando}
+        config={{
+          maxDatosVisibles: 3,
+        }}        
+        renderDato={(dato: EventoCalendario) => <div onClick={() => window.location.href = `/eventos/evento/${dato.evento_id}`} className="evento_item">{`${dato.hora_inicio} - ${dato.descripcion}`}</div>}  
       />
     </div>
   );

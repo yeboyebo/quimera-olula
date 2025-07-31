@@ -99,8 +99,8 @@
   font-weight: 600;
 }
 
-/* Eventos */
-.dia-eventos {
+/* Datos */
+.dia-datos {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -108,7 +108,7 @@
   overflow: hidden;
 }
 
-.evento-item {
+.dato-item {
   background: var(--color-primario-claro);
   border-left: 3px solid var(--color-primario);
   padding: 4px 6px;
@@ -116,7 +116,7 @@
   overflow: hidden;
 }
 
-.evento-titulo {
+.dato-titulo {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -133,20 +133,6 @@
   scroll-snap-align: start;
 }
 
-/* Mejora la visualización del scroll */
-/* .anio-grid::-webkit-scrollbar {
-  width: 8px;
-}
-
-.anio-grid::-webkit-scrollbar-track {
-  background: var(--gris-2);
-}
-
-.anio-grid::-webkit-scrollbar-thumb {
-  background: var(--gris-4);
-  border-radius: 4px;
-} */
-
 .calendario-navegacion-mes-anio {
   display: flex;
   align-items: center;
@@ -160,7 +146,7 @@
     --altura-dia: var(--altura-dia-mobile);
   }
 
-  .evento-titulo {
+  .dato-titulo {
     -webkit-line-clamp: 1;
     line-clamp: 1;
   }
