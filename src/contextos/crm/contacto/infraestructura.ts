@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { Cliente } from "../cliente/diseño.ts";
@@ -27,10 +27,17 @@ const contactoToAPI = (c: Contacto): ContactoApi => ({
 export const getContacto = async (id: string): Promise<Contacto> =>
   await RestAPI.get<{ datos: Contacto }>(`${baseUrlContactos}/${id}`).then((respuesta) => contactoFromAPI(respuesta.datos));
 
-export const getContactos = async (filtro: Filtro, orden: Orden): Promise<Contacto[]> => {
-  const q = criteriaQuery(filtro, orden);
-  return RestAPI.get<{ datos: ContactoApi[] }>(baseUrlContactos + q).then((respuesta) => respuesta.datos.map(contactoFromAPI));
-}
+export const getContactos = async (
+  filtro: Filtro,
+  orden: Orden,
+  paginacion?: Paginacion
+): RespuestaLista<Contacto> => {
+  const q = criteriaQuery(filtro, orden, paginacion);
+
+  const respuesta = await RestAPI.get<{ datos: Contacto[]; total: number }>(baseUrlContactos + q);
+  return { datos: respuesta.datos.map(contactoFromAPI), total: respuesta.total };
+};
+
 
 export const patchContacto = async (id: string, contacto: Contacto) =>
   await RestAPI.patch(`${baseUrlContactos}/${id}`, {

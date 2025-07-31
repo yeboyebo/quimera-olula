@@ -1,4 +1,4 @@
-import { Filtro, Orden } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Pedido extends Venta {
@@ -14,7 +14,7 @@ export type CambioClientePedido = CambioClienteVenta
 
 export type NuevaLineaPedido = NuevaLineaVenta
 
-export type GetPedidos = (filtro: Filtro, orden: Orden) => Promise<Pedido[]>;
+export type GetPedidos = (filtro: Filtro, orden: Orden, paginacion?: Paginacion) => RespuestaLista<Pedido>;
 
 export type GetPedido = (id: string) => Promise<Pedido>;
 

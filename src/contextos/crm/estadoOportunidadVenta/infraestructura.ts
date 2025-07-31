@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { EstadoOportunidad } from "./diseño.ts";
 
@@ -14,9 +14,16 @@ export const estadoOportunidadToAPI = (e: EstadoOportunidad) => ({
 export const getEstadoOportunidad = async (id: string): Promise<EstadoOportunidad> =>
     await RestAPI.get<{ datos: EstadoOportunidad }>(`${baseUrlEstadoOportunidadVenta}/${id}`).then((respuesta) => respuesta.datos);
 
-export const getEstadosOportunidad = async (filtro: Filtro = [], orden: Orden = []): Promise<EstadoOportunidad[]> => {
-    const q = criteriaQuery(filtro, orden);
-    return RestAPI.get<{ datos: EstadoOportunidad[] }>(baseUrlEstadoOportunidadVenta + q).then((respuesta) => respuesta.datos);
+
+export const getEstadosOportunidad = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<EstadoOportunidad> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    const respuesta = await RestAPI.get<{ datos: EstadoOportunidad[]; total: number }>(baseUrlEstadoOportunidadVenta + q);
+    return { datos: respuesta.datos, total: respuesta.total };
 };
 
 export const postEstadoOportunidad = async (estado: EstadoOportunidad): Promise<string> => {
