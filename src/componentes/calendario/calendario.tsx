@@ -273,36 +273,39 @@ export function Calendario<T extends DatoBase>({
       {renderCabecera()}
 
       {modoAnio ? (
-        <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>
-          {Array.from({ length: 12 }).map((_, i) => {
-            const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
-            return (
-              <div key={i} className="mes-anio">
-                <h3 className="calendario-mes">{formatearMes(mesFecha)}</h3>
-                <div className="calendario-dias-semana">
-                  {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(dia => (
-                    <div key={dia} className="dia-semana">{dia}</div>
-                  ))}
-                </div>
-                  {getSemanasDelMes(mesFecha).map((semana, j) => (
-                    <div key={j} className="calendario-dias">
-                      {semana.map(dia => (
-                        renderDia 
-                          ? renderDia({
-                              fecha: dia,
-                              datos: getDatosPorFecha(datos, dia),
-                              esMesActual: esMesActual(dia, mesFecha),
-                              esHoy: esHoy(dia)
-                            })
-                          : renderDiaPorDefecto(dia, mesFecha, 2) // 2 eventos visibles en modo año
+            <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>
+              {Array.from({ length: 12 }).map((_, i) => {
+                const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
+                return (
+                  <div key={i} className="mes-anio">
+                    <h3 className="calendario-mes">{formatearMes(mesFecha)}</h3>
+                    <div className="calendario-dias-semana">
+                      {diasSemana.map(dia => (
+                        <div key={dia} className="dia-semana">{dia}</div>
                       ))}
                     </div>
-                  ))}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
+                    {funcionesPorDefecto.getSemanasDelMes(mesFecha, inicioSemana)
+                      .filter(semana => semana.some(dia => dia.getMonth() === i))
+                      .map((semana, j) => (
+                        <div key={j} className="calendario-dias">
+                          {semana.map(dia => (
+                            renderDia 
+                              ? renderDia({
+                                  fecha: dia,
+                                  datos: getDatosPorFecha(datos, dia),
+                                  esMesActual: esMesActual(dia, mesFecha),
+                                  esHoy: esHoy(dia)
+                                })
+                              : renderDiaPorDefecto(dia, mesFecha)
+                          ))}
+                        </div>
+                      ))
+                    }
+                  </div>
+                );
+              })}
+            </div>
+          ): (
           <div className="calendario-grid">
             <div className="calendario-dias-semana">
               {diasSemana.map(dia => (
