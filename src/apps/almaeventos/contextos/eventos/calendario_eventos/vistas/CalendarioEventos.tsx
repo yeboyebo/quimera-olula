@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
+import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip/TextoConTooltip.tsx";
 import { EventoCalendario } from "../diseño.ts";
 import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
@@ -33,7 +34,16 @@ export const CalendarioEventos = () => {
         config={{
           maxDatosVisibles: 3,
         }}        
-        renderDato={(dato: EventoCalendario) => <div onClick={() => window.location.href = `/eventos/evento/${dato.evento_id}`} className="evento_item">{`${dato.hora_inicio} - ${dato.descripcion}`}</div>}  
+        renderDato={(dato: EventoCalendario) => (
+          <div 
+            onClick={() => window.location.href = `/eventos/evento/${dato.evento_id}`}
+            className="evento-item"
+          >
+            <div className="texto-multilinea-wrapper">
+              <TextoConTooltip texto={`${dato.hora_inicio} - ${dato.descripcion}`} />
+            </div>
+          </div>
+        )}
       />
     </div>
   );

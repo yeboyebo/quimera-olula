@@ -1,4 +1,14 @@
-.evento_item {
-  background-color: red;
-  color: white;
+.evento-item {
+  max-height: 3em;
+  /* 2 líneas * 1.3em */
+
+  /* Estilos visuales heredados */
+  background-color: white;
+  border-left: 3px solid var(--color-primario);
+  border-top: 1px solid var(--gris-3);
+  border-right: 1px solid var(--gris-3);
+  border-bottom: 1px solid var(--gris-3);
+  border-radius: 3px;
+  padding: 4px 6px;
+  cursor: pointer;
 }
