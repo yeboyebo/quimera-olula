@@ -160,6 +160,18 @@
   width: 13rem;
 }
 
+.calendario-semanas {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 4px;
+}
+
+.calendario-semana {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-height: var(--altura-dia);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   :root {

@@ -35,8 +35,8 @@ export const CalendarioEventos = () => {
           maxDatosVisibles: 3,
           cabecera: {
             // mostrarBotonHoy: false,
-            mostrarCambioModo: false,
-            modoCalendario: 'anio'
+            // mostrarCambioModo: false,
+            // modoCalendario: 'anio'
           }
         }}        
         renderDato={(dato: EventoCalendario) => (

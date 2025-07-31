@@ -26,15 +26,27 @@ const funcionesPorDefecto = {
       const fechaDato = typeof e.fecha === 'string' ? new Date(e.fecha) : e.fecha;
       return fechaDato.toDateString() === fecha.toDateString();
     }),
-  getSemanasDelMes: (fecha: Date) => {
-    const primerDia = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
-    const ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+  getSemanasDelMes: (fecha: Date, inicioSemana: 'lunes' | 'domingo' = 'lunes') => {
+    const primerDiaMes = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+    const ultimoDiaMes = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
     
-    let diaActual = new Date(primerDia);
-    diaActual.setDate(diaActual.getDate() - diaActual.getDay());
+    // Ajuste para comenzar en lunes
+    let primerDiaCalendario = new Date(primerDiaMes);
+    const diaSemana = primerDiaMes.getDay(); // 0=domingo, 1=lunes, ..., 6=sábado
+    
+    if (inicioSemana === 'lunes') {
+      // Retroceder al lunes anterior
+      const diferencia = diaSemana === 0 ? 6 : diaSemana - 1;
+      primerDiaCalendario.setDate(primerDiaMes.getDate() - diferencia);
+    } else {
+      // Comportamiento original (domingo)
+      primerDiaCalendario.setDate(primerDiaMes.getDate() - diaSemana);
+    }
     
     const semanas: Date[][] = [];
-    while (diaActual <= ultimoDia || semanas.length < 6) {
+    let diaActual = new Date(primerDiaCalendario);
+    
+    while (diaActual <= ultimoDiaMes || semanas.length < 6) {
       const semana: Date[] = [];
       for (let i = 0; i < 7; i++) {
         semana.push(new Date(diaActual));
@@ -43,7 +55,11 @@ const funcionesPorDefecto = {
       semanas.push(semana);
     }
     return semanas;
-  }
+  },
+  getDiasSemana: (inicioSemana: 'lunes' | 'domingo' = 'lunes') => 
+    inicioSemana === 'lunes' 
+      ? ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+      : ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 };
 
 interface CalendarioProps<T extends DatoBase> {
@@ -94,6 +110,7 @@ export function Calendario<T extends DatoBase>({
       boton: estiloBoton,
     } = {},
     maxDatosVisibles = modoAnio ? 2 : 3,
+    inicioSemana = 'lunes',
     getDatosPorFecha = (datos: T[], fecha: Date) => 
       datos.filter((d: T) => new Date(d.fecha).toDateString() === fecha.toDateString()),
     esHoy = (fecha: Date) => fecha.toDateString() === new Date().toDateString(),
@@ -102,6 +119,7 @@ export function Calendario<T extends DatoBase>({
       fecha.getFullYear() === mesReferencia.getFullYear(),    
   } = { ...funcionesPorDefecto, ...config };
 
+  const diasSemana = funcionesPorDefecto.getDiasSemana(inicioSemana);
   // Scroll al mes actual al cambiar a modo año
   useEffect(() => {
     if (modoAnio && anioGridRef.current) {
@@ -267,22 +285,27 @@ export function Calendario<T extends DatoBase>({
           })}
         </div>
       ) : (
-        <div className="calendario-grid">
+                <div className="calendario-grid">
           <div className="calendario-dias-semana">
-            {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(dia => (
+            {diasSemana.map(dia => (
               <div key={dia} className="dia-semana">{dia}</div>
             ))}
           </div>
-          <div className="calendario-dias">
-            {getDiasDelMes(fechaActual).map(dia => (
-              renderDia
-                ? renderDia({
-                    fecha: dia,
-                    datos: getDatosPorFecha(datos, dia),
-                    esMesActual: esMesActual(dia, fechaActual),
-                    esHoy: esHoy(dia)
-                  })
-                : renderDiaPorDefecto(dia, fechaActual)
+          <div className="calendario-semanas">
+            {funcionesPorDefecto.getSemanasDelMes(fechaActual, inicioSemana).map((semana, indexSemana) => (
+              <div key={`semana-${indexSemana}`} className="calendario-semana">
+                {semana.map((dia, indexDia) => {
+                  const esDiaDelMes = dia.getMonth() === fechaActual.getMonth();
+                  return renderDia
+                    ? renderDia({
+                        fecha: dia,
+                        datos: esDiaDelMes ? getDatosPorFecha(datos, dia) : [],
+                        esMesActual: esDiaDelMes,
+                        esHoy: esHoy(dia)
+                      })
+                    : renderDiaPorDefecto(dia, fechaActual);
+                })}
+              </div>
             ))}
           </div>
         </div>
