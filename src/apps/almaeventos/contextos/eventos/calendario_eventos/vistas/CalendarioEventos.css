@@ -12,3 +12,7 @@
   padding: 4px 6px;
   cursor: pointer;
 }
+
+.evento-item:hover {
+  background-color: var(--gris-1);
+}
