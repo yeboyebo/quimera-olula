@@ -11,6 +11,8 @@
   --espaciado-l: 1.5rem;
   --altura-dia: 120px;
   --altura-dia-mobile: 90px;
+  --altura-cabecera: 60px;
+  --altura-dias-semana: 40px
 }
 
 /* Estructura Principal */
@@ -162,8 +164,17 @@
 
 .calendario-semanas {
   display: grid;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: minmax(var(--altura-dia), auto);
   gap: 4px;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+}
+
+.calendario-grid {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  height: 100%;
 }
 
 .calendario-semana {

@@ -32,28 +32,46 @@ const funcionesPorDefecto = {
     
     // Ajuste para comenzar en lunes
     let primerDiaCalendario = new Date(primerDiaMes);
-    const diaSemana = primerDiaMes.getDay(); // 0=domingo, 1=lunes, ..., 6=sábado
+    const diaSemana = primerDiaMes.getDay();
     
     if (inicioSemana === 'lunes') {
-      // Retroceder al lunes anterior
       const diferencia = diaSemana === 0 ? 6 : diaSemana - 1;
       primerDiaCalendario.setDate(primerDiaMes.getDate() - diferencia);
     } else {
-      // Comportamiento original (domingo)
       primerDiaCalendario.setDate(primerDiaMes.getDate() - diaSemana);
     }
     
     const semanas: Date[][] = [];
     let diaActual = new Date(primerDiaCalendario);
     
-    while (diaActual <= ultimoDiaMes || semanas.length < 6) {
+    // Filtramos semanas que no contengan días del mes actual
+    while (diaActual <= ultimoDiaMes) {
       const semana: Date[] = [];
+      let contieneDiasDelMes = false;
+      
+      // Primera pasada: verificar si la semana tiene días del mes
       for (let i = 0; i < 7; i++) {
-        semana.push(new Date(diaActual));
-        diaActual.setDate(diaActual.getDate() + 1);
+        const diaVerificar = new Date(diaActual);
+        diaVerificar.setDate(diaActual.getDate() + i);
+        if (diaVerificar.getMonth() === fecha.getMonth()) {
+          contieneDiasDelMes = true;
+          break;
+        }
       }
-      semanas.push(semana);
+      
+      // Segunda pasada: agregar semana si tiene días del mes
+      if (contieneDiasDelMes) {
+        for (let i = 0; i < 7; i++) {
+          semana.push(new Date(diaActual));
+          diaActual.setDate(diaActual.getDate() + 1);
+        }
+        semanas.push(semana);
+      } else {
+        // Saltar semana completa si no tiene días del mes
+        diaActual.setDate(diaActual.getDate() + 7);
+      }
     }
+    
     return semanas;
   },
   getDiasSemana: (inicioSemana: 'lunes' | 'domingo' = 'lunes') => 
@@ -285,30 +303,33 @@ export function Calendario<T extends DatoBase>({
           })}
         </div>
       ) : (
-                <div className="calendario-grid">
-          <div className="calendario-dias-semana">
-            {diasSemana.map(dia => (
-              <div key={dia} className="dia-semana">{dia}</div>
-            ))}
+          <div className="calendario-grid">
+            <div className="calendario-dias-semana">
+              {diasSemana.map(dia => (
+                <div key={dia} className="dia-semana">{dia}</div>
+              ))}
+            </div>
+            <div className="calendario-semanas">
+              {funcionesPorDefecto.getSemanasDelMes(fechaActual, inicioSemana)
+                .filter(semana => semana.some(dia => dia.getMonth() === fechaActual.getMonth()))
+                .map((semana, indexSemana) => (
+                  <div key={`semana-${indexSemana}`} className="calendario-semana">
+                    {semana.map((dia, indexDia) => {
+                      const esDiaDelMes = dia.getMonth() === fechaActual.getMonth();
+                      return renderDia
+                        ? renderDia({
+                            fecha: dia,
+                            datos: esDiaDelMes ? getDatosPorFecha(datos, dia) : [],
+                            esMesActual: esDiaDelMes,
+                            esHoy: esHoy(dia)
+                          })
+                        : renderDiaPorDefecto(dia, fechaActual);
+                    })}
+                  </div>
+                ))
+              }
+            </div>
           </div>
-          <div className="calendario-semanas">
-            {funcionesPorDefecto.getSemanasDelMes(fechaActual, inicioSemana).map((semana, indexSemana) => (
-              <div key={`semana-${indexSemana}`} className="calendario-semana">
-                {semana.map((dia, indexDia) => {
-                  const esDiaDelMes = dia.getMonth() === fechaActual.getMonth();
-                  return renderDia
-                    ? renderDia({
-                        fecha: dia,
-                        datos: esDiaDelMes ? getDatosPorFecha(datos, dia) : [],
-                        esMesActual: esDiaDelMes,
-                        esHoy: esHoy(dia)
-                      })
-                    : renderDiaPorDefecto(dia, fechaActual);
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
       )}
 
       {cargando && (
