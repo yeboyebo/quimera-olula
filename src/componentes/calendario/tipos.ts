@@ -12,6 +12,7 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
   getDiasDelMes?: (fecha: Date) => Date[];
   getSemanasDelMes?: (fecha: Date) => Date[][];
   maxDatosVisibles?: number;
+  inicioSemana?: 'lunes' | 'domingo';
   getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
   esHoy?: (fecha: Date) => boolean;
   esMesActual?: (fecha: Date, mesReferencia: Date) => boolean;
