@@ -1,16 +1,10 @@
-import { QTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Grupo, Permiso, Regla } from "../../diseño.ts";
-import {
-  actualizarPermiso,
-  obtenerReglasAgrupadas,
-  obtenerSubreglas,
-} from "../../dominio.ts";
+import { actualizarPermiso, obtenerReglasAgrupadas } from "../../dominio.ts";
 import { AccionesRegla } from "./AccionesRegla.tsx";
 import "./ReglasGrupo.css";
-import { SubReglas } from "./SubReglas.tsx";
 
 type Estado = "lista" | "actualizando";
 
@@ -103,7 +97,7 @@ export const ReglasGrupo = ({
   return (
     <div className="ReglasGrupo">
       <h2>Reglas</h2>
-      <QTabla
+      {/* <QTabla
         metaTabla={metaTablaReglas(emitir)}
         datos={reglasAgrupadas}
         cargando={false}
@@ -124,7 +118,7 @@ export const ReglasGrupo = ({
             />
           ) : null;
         }}
-      />
+      /> */}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const MaestroConDetalleGruposReglas = () => {
   const permisos = useLista<Permiso>([]);
 
   useEffect(() => {
-    getGrupos().then(grupos.setLista);
+    getGrupos().then(({ datos }) => grupos.setLista(datos));
     getReglas().then(reglas.setLista);
     getPermisos().then(permisos.setLista);
   }, []);
