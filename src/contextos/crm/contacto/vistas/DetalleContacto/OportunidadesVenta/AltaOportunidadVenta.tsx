@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../../../comun/diseño.ts";
 import { HookModelo, useModelo } from "../../../../../comun/useModelo.ts";
 // import { ContactoConNombre } from "../../../../comun/componentes/contacto_con_nombre.tsx";
@@ -27,9 +29,14 @@ export const AltaOportunidadVenta = ({
     metaNuevaOportunidadVenta,
     nuevaOportunidadVentaVacia
   );
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postOportunidadVenta(nuevaOportunidad.modelo);
+    const modelo = {
+      ...nuevaOportunidad.modelo,
+      contacto_id: contacto.modelo.id,
+    };
+    const id = await intentar(() => postOportunidadVenta(modelo));
     const oportunidadCreada = await getOportunidadVenta(id);
     emitir("OPORTUNIDAD_CREADA", oportunidadCreada);
   };

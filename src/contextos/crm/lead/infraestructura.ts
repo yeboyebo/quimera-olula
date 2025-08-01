@@ -70,7 +70,7 @@ export const getLeads = async (
 };
 
 export const postLead = async (lead: Partial<Lead>): Promise<string> => {
-    return await RestAPI.post(baseUrlLead, leadToAPI(lead as Lead), "Error al guardar lead").then(
+    return await RestAPI.post(baseUrlLead, lead, "Error al guardar lead").then(
         (respuesta) => respuesta.id
     );
 };

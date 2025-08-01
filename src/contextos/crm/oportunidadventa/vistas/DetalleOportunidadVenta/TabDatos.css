@@ -24,7 +24,7 @@
         grid-column: span 3;
     }
 
-    quimera-input[nombre="total_venta"] {
+    quimera-input[nombre="importe"] {
         grid-column: 1 / span 6;
     }
 

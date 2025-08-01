@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { Contacto } from "../../diseño.ts";
@@ -30,6 +31,7 @@ export const DetalleContacto = ({
 
   const contactoId = contactoInicial?.id ?? params.id;
   const titulo = (contacto: Entidad) => contacto.nombre as string;
+  const { intentar } = useContext(ContextoError);
 
   const contacto = useModelo(metaContacto, contactoVacio());
   const { modelo, init, modificado, valido } = contacto;
@@ -38,7 +40,7 @@ export const DetalleContacto = ({
   );
 
   const onGuardarClicked = async () => {
-    await patchContacto(modelo.id, modelo);
+    await intentar(() => patchContacto(modelo.id, modelo));
     const contacto_guardado = await getContacto(modelo.id);
     init(contacto_guardado);
     emitir("CONTACTO_CAMBIADO", contacto_guardado);
@@ -51,7 +53,7 @@ export const DetalleContacto = ({
   };
 
   const onBorrarConfirmado = async () => {
-    await deleteContacto(modelo.id);
+    await intentar(() => deleteContacto(modelo.id));
     emitir("CONTACTO_BORRADO", modelo);
     setEstado("edicion");
   };

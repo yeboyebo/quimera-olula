@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { EstadoOportunidad } from "../../comun/componentes/estadoOportunidadVenta.tsx";
@@ -22,9 +24,12 @@ export const AltaOportunidadVenta = ({
     metaNuevaOportunidadVenta,
     nuevaOportunidadVentaVacia
   );
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postOportunidadVenta(nuevaOportunidad.modelo);
+    const id = await intentar(() =>
+      postOportunidadVenta(nuevaOportunidad.modelo)
+    );
     const oportunidadCreada = await getOportunidadVenta(id);
     emitir("OPORTUNIDAD_CREADA", oportunidadCreada);
   };
@@ -41,6 +46,10 @@ export const AltaOportunidadVenta = ({
           label="Estado"
           {...nuevaOportunidad.uiProps("estado_id")}
           nombre="alta_estado_id"
+        />
+        <QInput
+          {...nuevaOportunidad.uiProps("fecha_cierre")}
+          label="Fecha Cierre"
         />
         <QInput
           label="probailidad (%)"

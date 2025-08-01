@@ -7,7 +7,7 @@ import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Lead } from "../diseño.ts";
-import { deleteLead, getLeads } from "../infraestructura.ts";
+import { getLeads } from "../infraestructura.ts";
 import { AltaLead } from "./AltaLead.tsx";
 import { DetalleLead } from "./DetalleLead/DetalleLead.tsx";
 // import "./MaestroConDetalleLead.css";
@@ -53,14 +53,6 @@ export const MaestroConDetalleLead = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
-  const onBorrarLead = async () => {
-    if (!leads.seleccionada) {
-      return;
-    }
-    await deleteLead(leads.seleccionada.id);
-    leads.eliminar(leads.seleccionada);
-  };
-
   return (
     <div className="Lead">
       <MaestroDetalleResponsive<Lead>
@@ -70,12 +62,6 @@ export const MaestroConDetalleLead = () => {
             <h2>Leads</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!leads.seleccionada}
-                onClick={onBorrarLead}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaLead}

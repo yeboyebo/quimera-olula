@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../../../ventas/comun/componentes/cliente.tsx";
@@ -11,9 +13,14 @@ import "./AltaLead.css";
 
 export const AltaLead = ({ emitir = () => {} }: { emitir?: EmitirEvento }) => {
   const nuevoLead = useModelo(metaNuevoLead, nuevoLeadVacio);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postLead(nuevoLead.modelo);
+    const modelo = {
+      ...nuevoLead.modelo,
+      responsable_id: "juanma",
+    };
+    const id = await intentar(() => postLead(modelo));
     const leadCreado = await getLead(id);
     emitir("LEAD_CREADO", leadCreado);
   };
@@ -23,7 +30,7 @@ export const AltaLead = ({ emitir = () => {} }: { emitir?: EmitirEvento }) => {
       <h2>Nuevo Lead</h2>
       <quimera-formulario>
         <QInput label="Tipo" {...nuevoLead.uiProps("tipo")} />
-        <Cliente {...nuevoLead.uiProps("cliente_id")} />
+        <Cliente {...nuevoLead.uiProps("cliente_id", "nombre")} />
         <EstadoLead {...nuevoLead.uiProps("estado_id")} />
         <FuenteLead {...nuevoLead.uiProps("fuente_id")} />
       </quimera-formulario>

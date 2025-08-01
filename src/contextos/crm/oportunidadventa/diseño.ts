@@ -5,7 +5,7 @@ export interface OportunidadVenta extends Entidad {
     descripcion: string;
     cliente_id: string | null;
     nombre_cliente: string | null;
-    total_venta: number;
+    importe: number;
     estado_id: string;
     descripcion_estado: string | null;
     probabilidad: number;
@@ -17,15 +17,18 @@ export interface OportunidadVenta extends Entidad {
     usuario_id: string | null;
     observaciones: string | null;
     valor_defecto: boolean;
+    agente_id: string | null;
 };
 
 export type NuevaOportunidadVenta = {
     descripcion: string;
     valor_defecto: boolean;
     probabilidad: string;
+    importe?: number;
     estado_id?: string;
     cliente_id?: string;
     contacto_id?: string;
+    fecha_cierre?: string;
     nombre_cliente?: string;
 };
 

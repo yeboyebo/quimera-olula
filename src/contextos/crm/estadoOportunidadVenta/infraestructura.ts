@@ -33,7 +33,7 @@ export const postEstadoOportunidad = async (estado: EstadoOportunidad): Promise<
 
 export const patchEstadoOportunidad = async (id: string, estado: Partial<EstadoOportunidad>): Promise<void> => {
     const payload = estadoOportunidadToAPI(estado as EstadoOportunidad);
-    await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}`, { cambios: payload }, "Error al guardar oportunidad de venta");
+    await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}`, payload, "Error al guardar oportunidad de venta");
 };
 
 export const deleteEstadoOportunidad = async (id: string): Promise<void> =>
