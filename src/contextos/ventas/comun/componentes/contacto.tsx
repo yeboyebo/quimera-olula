@@ -7,6 +7,7 @@ interface ContactoSelectorProps {
   valor: string;
   nombre?: string;
   label?: string;
+  deshabilitado?: boolean;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -15,18 +16,15 @@ export const ContactoSelector = ({
   valor,
   nombre = "contacto_id",
   label = "Seleccionar contacto",
+  deshabilitado = false,
   onChange,
 }: ContactoSelectorProps) => {
   const obtenerOpciones = async (valor: string) => {
     if (valor.length < 3) return [];
 
     const criteria = {
-      filtro: {
-        nombre: {
-          LIKE: valor,
-        },
-      },
-      orden: { id: "DESC" },
+      filtro: ["nombre", "~", valor],
+      orden: ["id"],
     };
 
     const contactos = await getCrmContactos(
@@ -49,6 +47,7 @@ export const ContactoSelector = ({
       autoSeleccion
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
     />
   );
 };

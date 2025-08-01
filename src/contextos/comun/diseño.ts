@@ -12,21 +12,24 @@ export type EntidadAccion = {
 }
 
 export type Criteria = {
-  filtro: Filtro;
+  filtros: Filtro;
   orden: Orden;
+  paginacion?: Paginacion;
 }
 
-export type FiltroAPI = [string, string, string][];
-export type OrdenAPI = string[];
-export type CriteriaAPI = {
-  filtro?: FiltroAPI;
-  orden?: OrdenAPI;
-}
+export type Orden = string[];
+export type Filtro = [string, string, string][];
+export type Paginacion = {
+  limite: number;
+  pagina: number;
+};
 
+export type TotalRegistros = number;
 
-export type ValorFiltro = { LIKE: string };
-export type Orden = { [campo: string]: "ASC" | "DESC" }
-export type Filtro = { [campo: string]: ValorFiltro };
+export type RespuestaLista<T> = Promise<{
+  datos: T[];
+  total: TotalRegistros;
+}>
 
 export type Direccion = {
   nombre_via: string;
@@ -44,3 +47,19 @@ export type Direccion = {
 
 
 export type EmitirEvento = (evento: string, payload?: unknown) => void
+
+export type TipoInput =
+  | "texto"
+  | "numero"
+  | "fecha"
+  | "hora"
+  | "contraseña"
+  | "email"
+  | "checkbox"
+  | "radio"
+  | "telefono"
+  | "color"
+  | "fichero"
+  | "url"
+  | "rango"
+  | "moneda";

@@ -9,20 +9,19 @@
 }
 
 quimera-tabla {
-    width: 100%;
-    display: block;
-    white-space: nowrap;
-    overflow-x: scroll;
-
     :root {
         --transicion-basica: 0.12 ease-in-out;
     }
 
+
     table {
+        -webkit-overflow-scrolling: touch;
         width: 100%;
+        min-width: 100%;
         border-spacing: 0;
         border-collapse: separate;
         text-align: left;
+        white-space: nowrap;
     }
 
     .fila-par,
@@ -101,5 +100,24 @@ quimera-tabla {
     td.moneda,
     td.numero {
         text-align: right;
+    }
+
+    th.moneda,
+    th.numero {
+        text-align: right;
+    }
+}
+
+quimera-tabla-paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--espaciado-m);
+    padding: var(--espaciado-s);
+    border-radius: var(--radio-borde-m);
+    gap: var(--espaciado-xs);
+
+    >span {
+        padding: var(--espaciado-xs);
     }
 }

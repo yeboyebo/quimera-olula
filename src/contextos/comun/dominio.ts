@@ -1,4 +1,4 @@
-import { Direccion, Entidad, Modelo } from "./diseño.ts";
+import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -63,10 +63,9 @@ export type EstadoModelo<T extends Modelo> = {
 
 
 // export type Validador<T extends Modelo> = (estado: EstadoModelo<T>, campo: string) => Validacion;
-type PropTipoCampo = 'string' | 'boolean' | 'number' | 'date'
 type Campo<T extends Modelo> = {
     nombre?: string;
-    tipo?: PropTipoCampo;
+    tipo?: TipoInput;
     requerido?: boolean;
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
@@ -151,9 +150,9 @@ const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, cam
     }
 
     switch (campos[campo].tipo) {
-        case 'boolean':
+        case 'checkbox':
             return valor === 'true'
-        case 'number': {
+        case 'numero': {
             const numero = parseFloat(valor);
             return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
         }
@@ -163,9 +162,6 @@ const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, cam
 }
 
 export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
-    if ('referencia' in modelo) {
-        console.log("init modelo y modelo_inicial");
-    }
     const estado = {
         valor: { ...modelo },
         valor_inicial: modelo,
@@ -270,6 +266,12 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     if (requerido && valor === null) {
         return "Campo requerido";
     }
+    if (campos[campo]?.tipo === "email" && typeof valor === "string" && valor.length > 0) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(valor)) {
+            return "Formato Email incorrecto";
+        }
+    }
     const validacion = campos[campo]?.validacion
     return validacion
         ? validacion(modelo)
@@ -297,7 +299,7 @@ export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) =
 export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
     const valor_inicial = estado.valor_inicial;
     const valor = estado.valor;
-    // console.log("Modelo modificado = ", Object.keys(valor).some((k) => valor[k] !== valor_inicial[k]));
+
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
     )
@@ -309,4 +311,37 @@ export const formatearMoneda = (cantidad: number, divisa: string): string => {
         style: "currency",
         currency: divisa,
     }).format(cantidad);
+};
+
+
+export const calcularPaginacionSimplificada = (
+    total: number | undefined,
+    paginaActual: number,
+    limite: number
+) => {
+    const totalPaginas = total ? Math.ceil(total / limite) : 0;
+
+    if (totalPaginas <= 0) {
+        return { paginasMostradas: [], totalPaginas: 0 };
+    }
+
+    // Para mostrar un máximo de 5 páginas alrededor de la página actual
+    let inicio = Math.max(1, paginaActual - 2);
+    let fin = Math.min(totalPaginas, paginaActual + 2);
+
+    // Ajustar si no llegamos al máximo de páginas mostradas
+    if (fin - inicio + 1 < 5) {
+        if (paginaActual < 3) {
+            fin = Math.min(totalPaginas, 5);
+        } else {
+            inicio = Math.max(1, totalPaginas - 4);
+        }
+    }
+
+    const paginasMostradas = [];
+    for (let i = inicio; i <= fin; i++) {
+        paginasMostradas.push(i);
+    }
+
+    return { paginasMostradas, totalPaginas };
 };

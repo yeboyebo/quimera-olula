@@ -111,6 +111,9 @@ export const metaCliente: MetaModelo<Cliente> = {
             validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
         },
         nombre_agente: { bloqueado: true },
+        email: { tipo: "email" },
+        fecha_baja: { tipo: "fecha" },
+        telefono1: { tipo: "telefono" },
     }
 };
 
@@ -154,20 +157,20 @@ export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
 export const metaCrmContacto: MetaModelo<CrmContacto> = {
     campos: {
         nombre: { requerido: true },
-        email: { requerido: true },
+        email: { requerido: true, tipo: "email" },
     }
 };
 
 export const metaNuevoCrmContacto: MetaModelo<NuevoCrmContacto> = {
     campos: {
         nombre: { requerido: true },
-        email: { requerido: true },
+        email: { requerido: true, tipo: "email" },
     }
 };
 
 export const metaDarDeBaja: MetaModelo<FormBaja> = {
     campos: {
-        fecha_baja: { requerido: true },
+        fecha_baja: { requerido: true, tipo: "fecha" },
     }
 };
 

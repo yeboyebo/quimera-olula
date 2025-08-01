@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useModelo } from "../../../../../comun/useModelo.ts";
 import { CuentaBanco } from "../../../diseño.ts";
 import { metaCuentaBanco } from "../../../dominio.ts";
@@ -18,9 +20,10 @@ export const EdicionCuentaBanco = ({
   emitir,
 }: EdicionCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(metaCuentaBanco, cuenta);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    await patchCuentaBanco(clienteId, modelo);
+    await intentar(() => patchCuentaBanco(clienteId, modelo));
     emitir("CUENTA_ACTUALIZADA", modelo);
   };
 

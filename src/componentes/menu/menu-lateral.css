@@ -3,7 +3,7 @@ menu-lateral {
     width: 0px;
     overflow-x: hidden;
     white-space: nowrap;
-    overflow-y: scroll;
+    overflow-y: auto;
     transition: width 0.5s ease-in-out;
     flex-shrink: 0;
     height: 100%;
@@ -71,10 +71,18 @@ menu-lateral {
     }
 }
 
+menu-lateral.activo {
+    width: 275px;
+}
+
 #menu-abierto {
     position: absolute;
     opacity: 0;
     cursor: pointer;
+}
+
+#boton-menu-lateral {
+    display: none;
 }
 
 #etiqueta-menu-abierto {
@@ -94,8 +102,4 @@ menu-lateral {
         background-color: var(--color-fondo);
         box-shadow: 0 6px 0 0 var(--color-fondo), 0 12px 0 0 var(--color-fondo);
     }
-}
-
-header:has(#menu-abierto:checked)~section menu-lateral {
-    width: 275px;
 }

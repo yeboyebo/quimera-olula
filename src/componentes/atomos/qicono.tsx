@@ -11,6 +11,14 @@ const iconos: Record<string, string> = {
   inicio: "home",
   fichero: "file",
   grafico_barras: "bar-chart-alt-2",
+  candado: "lock-alt",
+  candado_abierto: "lock-open-alt",
+  editar: "edit",
+  eliminar: "trash",
+  guardar: "save",
+  usuario: "user",
+  perfil: "user",
+  cerrar_sesion: "arrow-out-up-square-half",
 };
 
 export const QIcono = ({ nombre, tamaño = "md" }: QIconoProps) => {

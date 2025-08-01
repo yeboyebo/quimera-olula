@@ -11,9 +11,8 @@ import "./AltaPedido.css";
 export const AltaPedido = ({
   publicar = () => {},
 }: {
-  publicar?: EmitirEvento
+  publicar?: EmitirEvento;
 }) => {
-
   const nuevoPedido = useModelo(metaNuevoPedido, nuevoPedidoVacio);
 
   const guardar = async () => {
@@ -23,34 +22,25 @@ export const AltaPedido = ({
   };
 
   return (
-    <>
+    <div className="AltaPedido">
       <h2>Nuevo Pedido</h2>
       <quimera-formulario>
-        <Cliente
-          {...nuevoPedido.uiProps("cliente_id")}
-          nombre='alta_pedido_cliente_id'
-        />
+        <Cliente {...nuevoPedido.uiProps("cliente_id, nombre")} />
         <DirCliente
           clienteId={nuevoPedido.modelo.cliente_id}
           {...nuevoPedido.uiProps("direccion_id")}
-          nombre='alta_pedido_direccion_id'
+          nombre="alta_pedido_direccion_id"
         />
-        <QInput
-          label="Empresa"
-          {...nuevoPedido.uiProps("empresa_id")}
-        />
+        <QInput label="Empresa" {...nuevoPedido.uiProps("empresa_id")} />
       </quimera-formulario>
       <div className="botones">
-        <QBoton
-          onClick={guardar}
-          deshabilitado={!nuevoPedido.valido}
-        >
+        <QBoton onClick={guardar} deshabilitado={!nuevoPedido.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar('ALTA_CANCELADA')} variante="texto">
+        <QBoton onClick={() => publicar("ALTA_CANCELADA")} variante="texto">
           Cancelar
         </QBoton>
       </div>
-    </>
+    </div>
   );
 };

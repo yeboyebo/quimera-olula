@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useModelo } from "../../../../../comun/useModelo.ts";
 import {
   metaNuevoCrmContacto,
@@ -17,9 +19,10 @@ export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
     metaNuevoCrmContacto,
     nuevoCrmContactoVacio
   );
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postCrmContacto(modelo);
+    const id = await intentar(() => postCrmContacto(modelo));
     emitir("CONTACTO_CREADO", await getCrmContacto(id));
   };
 

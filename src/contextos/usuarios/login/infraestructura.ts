@@ -1,38 +1,62 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { ForgetPassword, Login, Usuario } from "./diseño.ts";
+import { Login, Logout, RefrescarToken, UsuarioLogin, UsuarioRefresco } from "./diseño.ts";
 
-const baseUrl = `/usuarios/login`;
+const MINUTOS_REFRESCO = 15;
+const MINUTOS = 60 * 1000;
+const baseUrl = '/auth';
 
-type UsuarioApi = {
-    iduser: string;
-    superuser: boolean;
-    token: string;
-    email: string;
-};;
-const usuarioFromAPI = (u: UsuarioApi): Usuario => {
-    return { id: u.iduser, superuser: u.superuser, token: u.token, email: u.email };
+type PeticionLogin = { id: string; contraseña: string; };
+type RespuestaLogin = { token_acceso: string; token_refresco: string; };
+
+export const login: Login = async (id: string, contraseña: string) => {
+    const payload = { id, contraseña: btoa(contraseña) };
+    const callback: (_: RespuestaLogin) => UsuarioLogin = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso, tokenRefresco: respuesta.token_refresco });
+
+    return RestAPI.post<PeticionLogin>(`${baseUrl}/login`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioLogin);
 }
 
-export const loginApi: Login = async (id) =>
-    await RestAPI.get<{ datos: UsuarioApi }>(`${baseUrl}/${id}`).then((respuesta) => usuarioFromAPI(respuesta.datos));
+type RespuestaRefresco = { token: string; };
+export const refrescarToken: RefrescarToken = async (tokenRefresco: string) => {
+    const payload = { token: tokenRefresco };
+    const callback: (_: RespuestaRefresco) => UsuarioRefresco = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token as string });
 
-export const forgetPassword: ForgetPassword = async (email) => {
-    return {
-        result: true,
-        message: "Se ha enviado un correo a la dirección de email: " + email
-    };
+    return RestAPI.post<RespuestaRefresco>(`${baseUrl}/refrescar`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioRefresco);
 }
 
-export const login: Login = async (email, password) => {
-    return usuarioFromAPI({
-        iduser: "ivan",
-        superuser: true,
-        token: "1bc9a242fe914c66776eb47639eedbadba8438f6_" + password,
-        email
-    });
+export const logout: Logout = async (tokenRefresco: string) => {
+    const payload = { token: tokenRefresco };
+    RestAPI.post(`${baseUrl}/logout`, payload);
 }
 
-export const isLogged = () => {
-    const usuario = localStorage.getItem("usuario");
-    return usuario !== null && usuario !== undefined;
+export const tokenAcceso = {
+    actualizar: (tokenAcceso: string) => {
+        const now = Date.now();
+        const fechaRefresco = now + MINUTOS_REFRESCO * MINUTOS;
+
+        localStorage.setItem("token-acceso", tokenAcceso);
+        localStorage.setItem("fecha-refresco", fechaRefresco.toString());
+    },
+    obtener: () => localStorage.getItem("token-acceso"),
+    validez: () => {
+        const fecha = localStorage.getItem("fecha-refresco");
+        if (!fecha) return 0;
+
+        const fechaRefresco = parseInt(fecha);
+        if (isNaN(fechaRefresco)) return 0;
+
+        const now = Date.now();
+        const validez_minutos = (fechaRefresco - now) / MINUTOS;
+
+        return validez_minutos;
+    },
+    eliminar: () => {
+        localStorage.removeItem("fecha-refresco");
+        localStorage.removeItem("token-acceso");
+    },
+}
+
+export const tokenRefresco = {
+    actualizar: (tokenRefresco: string) => localStorage.setItem("token-refresco", tokenRefresco),
+    obtener: () => localStorage.getItem("token-refresco"),
+    eliminar: () => localStorage.removeItem("token-refresco"),
 }

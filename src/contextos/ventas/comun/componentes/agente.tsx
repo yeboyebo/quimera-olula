@@ -27,12 +27,8 @@ export const Agente = ({
     if (valor.length < 3) return [];
 
     const criteria = {
-      filtro: {
-        nombre: {
-          LIKE: valor,
-        },
-      },
-      orden: { id: "DESC" },
+      filtro: ["nombre", "~", valor],
+      orden: ["id"],
     };
 
     const agentes = await getAgentes(

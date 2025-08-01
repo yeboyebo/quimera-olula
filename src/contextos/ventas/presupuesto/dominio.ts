@@ -92,8 +92,10 @@ export const metaCambioCliente: MetaModelo<CambioCliente> = {
 
 export const metaPresupuesto: MetaModelo<Presupuesto> = {
     campos: {
-        tasa_conversion: { tipo: "number", requerido: true },
-        total_divisa_empresa: { tipo: "number", bloqueado: true },
+        fecha: { tipo: "fecha", requerido: false },
+        fecha_salida: { tipo: "fecha", requerido: false },
+        tasa_conversion: { tipo: "numero", requerido: true },
+        total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
         id_fiscal: { bloqueado: true, requerido: true },
         cliente_id: { bloqueado: true, requerido: true },
@@ -110,14 +112,14 @@ export const presupuestoValido = modeloEsValido<Presupuesto>(metaPresupuesto);
 
 export const metaLinea: MetaModelo<LineaPresupuesto> = {
     campos: {
-        cantidad: { tipo: "number", requerido: true },
+        cantidad: { tipo: "numero", requerido: true },
         referencia: { requerido: true },
     }
 };
 
 export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
     campos: {
-        cantidad: { tipo: "number", requerido: true },
+        cantidad: { tipo: "numero", requerido: true },
         referencia: { requerido: true },
     }
 };

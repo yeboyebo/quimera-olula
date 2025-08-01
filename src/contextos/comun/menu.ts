@@ -54,13 +54,38 @@ export const elementosDelMenu: ElementoMenu[] = [
         url: "/crm/oportunidadventa",
         icono: "",
       },
+      {
+        nombre: "Estados por oportunidad de venta",
+        url: "/crm/estadooportunidadventa",
+        icono: "",
+      },
+      {
+        nombre: "Clientes",
+        url: "/crm/cliente",
+        icono: "",
+      },
+      {
+        nombre: "Contactos",
+        url: "/crm/contacto",
+        icono: "",
+      },
+      {
+        nombre: "Acciones",
+        url: "/crm/accion",
+        icono: "",
+      },
+      {
+        nombre: "Leads",
+        url: "/crm/lead",
+        icono: "",
+      },
     ],
   },
-  {
-    nombre: "Financiera", icono: "grafico_barras", subelementos: [{
-      nombre: "Cuentas",
-      url: "/financiera/cuenta",
-      icono: "",
-    }]
-  },
+  // {
+  //   nombre: "Financiera", icono: "grafico_barras", subelementos: [{
+  //     nombre: "Cuentas",
+  //     url: "/financiera/cuenta",
+  //     icono: "",
+  //   }]
+  // },
 ];

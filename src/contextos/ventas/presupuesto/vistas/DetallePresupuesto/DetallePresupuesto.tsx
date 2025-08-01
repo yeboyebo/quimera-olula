@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
@@ -20,6 +20,7 @@ import {
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
@@ -42,6 +43,7 @@ export const DetallePresupuesto = ({
   const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
     "edicion"
   );
+  const { intentar } = useContext(ContextoError);
 
   const presupuestoId = presupuestoInicial?.id ?? params.id;
   const titulo = (presupuesto: Entidad) => presupuesto.codigo as string;
@@ -52,11 +54,11 @@ export const DetallePresupuesto = ({
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchPresupuesto(modelo.id, modelo);
+        await intentar(() => patchPresupuesto(modelo.id, modelo));
         recargarCabecera();
       },
       APROBAR_INICIADO: async () => {
-        await aprobarPresupuesto(modelo.id);
+        await intentar(() => aprobarPresupuesto(modelo.id));
         recargarCabecera();
       },
       CLIENTE_PRESUPUESTO_CAMBIADO: async () => {
@@ -73,14 +75,14 @@ export const DetallePresupuesto = ({
   };
 
   const aprobarClicked = async () => {
-    await aprobarPresupuesto(modelo.id);
+    await intentar(() => aprobarPresupuesto(modelo.id));
     const presupuesto_aprobado = await getPresupuesto(modelo.id);
     init(presupuesto_aprobado);
     emitir("PRESUPUESTO_CAMBIADO", presupuesto_aprobado);
   };
 
   const onBorrarConfirmado = async () => {
-    await borrarPresupuesto(modelo.id);
+    await intentar(() => borrarPresupuesto(modelo.id));
     emitir("PRESUPUESTO_BORRADO", modelo);
     setEstado("edicion");
   };

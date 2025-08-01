@@ -35,13 +35,20 @@ export const QCheckbox = ({
     deshabilitado,
   };
 
+  const manejarChange = (
+    _valor: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    onChange?.(e.target.checked.toString(), e);
+  };
+
   const inputAttrs = {
     nombre,
     deshabilitado,
     opcional,
     checked: valor,
     tipo: "checkbox" as const,
-    onChange,
+    onChange: manejarChange,
     ...props,
   };
 

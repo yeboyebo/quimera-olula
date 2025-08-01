@@ -54,7 +54,7 @@ export const LineasLista = ({
         cargando={false}
         seleccionadaId={seleccionada}
         onSeleccion={(linea) => emitir("LINEA_SELECCIONADA", linea)}
-        orden={{ id: "ASC" }}
+        orden={["id", "ASC"]}
         onOrdenar={
           (_: string) => null
           //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })

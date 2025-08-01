@@ -1,10 +1,10 @@
 .Pedido .TabDatos {
     quimera-date[nombre="fecha"] {
-        grid-column: span 2;
+        grid-column: span 3;
     }
 
     div[id="espacio_fecha"] {
-        grid-column: span 10;
+        grid-column: span 9;
     }
 
     quimera-select[nombre="divisa_id"] {

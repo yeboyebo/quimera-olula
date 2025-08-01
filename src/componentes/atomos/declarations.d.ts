@@ -1,6 +1,7 @@
 interface BoxIcon extends NodoComun {
     name: string;
     size?: string;
+    color?: string;
 }
 
 declare namespace React {
@@ -13,6 +14,7 @@ declare namespace React {
             'quimera-checkbox': NodoComun;
             'quimera-select': NodoComun;
             'quimera-tabla': NodoComun;
+            'quimera-tabla-paginacion': NodoComun;
             'quimera-textarea': NodoComun;
             'quimera-icono': NodoComun;
             'box-icon': BoxIcon;

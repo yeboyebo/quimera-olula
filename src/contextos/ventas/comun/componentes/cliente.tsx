@@ -1,5 +1,5 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { Filtro } from "../../../comun/diseño.ts";
 import { getClientes } from "../../cliente/infraestructura.ts";
 
 interface ClienteProps {
@@ -7,6 +7,7 @@ interface ClienteProps {
   valor: string;
   nombre?: string;
   label?: string;
+  deshabilitado?: boolean;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -15,25 +16,27 @@ export const Cliente = ({
   valor,
   nombre = "cliente_id",
   label = "Cliente",
+  deshabilitado = false,
   onChange,
   ...props
 }: ClienteProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria = {
-      filtro: {
-        nombre: {
-          LIKE: texto,
-        },
-      },
-      orden: { id: "DESC" },
+      filtro: ["nombre", "~", texto],
+      orden: ["id"],
     };
 
-    const clientes = await getClientes(
+    const { datos } = await getClientes(
       criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+      criteria.orden
     );
 
-    return clientes.map((cliente) => ({
+    if (!Array.isArray(datos)) {
+      console.error("Los clientes no son un array:", datos);
+      return [];
+    }
+
+    return datos.map((cliente) => ({
       valor: cliente.id,
       descripcion: cliente.nombre,
     }));
@@ -47,6 +50,7 @@ export const Cliente = ({
       valor={valor}
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
       {...props}
     />
   );

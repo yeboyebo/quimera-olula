@@ -6,7 +6,7 @@ import {
   ElementoMenu,
   ElementoMenuPadre,
   elementosDelMenu,
-} from "../../contextos/comun/menu";
+} from "../../contextos/comun/menu.ts";
 import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 
@@ -75,7 +75,6 @@ export const MenuLateral = () => {
         <nav>
           <ul>{elementos}</ul>
         </nav>
-        {/* {renderMenuUsuario()} */}
       </aside>
     </menu-lateral>
   );

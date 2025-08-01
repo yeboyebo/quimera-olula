@@ -2,6 +2,7 @@ import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
@@ -65,42 +66,44 @@ export const MaestroConDetalleOportunidadVenta = () => {
 
   return (
     <div className="OportunidadVenta">
-      <maestro-detalle name="oportunidades">
-        <div className="Maestro">
-          <h2>Oportunidades de Venta</h2>
-          <div className="maestro-botones">
-            <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
-            <QBoton
-              deshabilitado={!oportunidades.seleccionada}
-              onClick={onBorrarOportunidad}
-            >
-              Borrar
-            </QBoton>
-          </div>
-          <Listado
-            metaTabla={metaTablaOportunidadVenta}
-            entidades={oportunidades.lista}
-            setEntidades={oportunidades.setLista}
-            seleccionada={oportunidades.seleccionada}
-            setSeleccionada={oportunidades.seleccionar}
-            cargar={getOportunidadesVenta}
-          />
-        </div>
-        <div className="Detalle">
+      <MaestroDetalleResponsive<OportunidadVenta>
+        seleccionada={oportunidades.seleccionada}
+        Maestro={
+          <>
+            <h2>Oportunidades de Venta</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
+              <QBoton
+                deshabilitado={!oportunidades.seleccionada}
+                onClick={onBorrarOportunidad}
+              >
+                Borrar
+              </QBoton>
+            </div>
+            <Listado
+              metaTabla={metaTablaOportunidadVenta}
+              entidades={oportunidades.lista}
+              setEntidades={oportunidades.setLista}
+              seleccionada={oportunidades.seleccionada}
+              setSeleccionada={oportunidades.seleccionar}
+              cargar={getOportunidadesVenta}
+            />
+          </>
+        }
+        Detalle={
           <DetalleOportunidadVenta
             oportunidadInicial={oportunidades.seleccionada}
             emitir={emitir}
           />
-        </div>
-
-        <QModal
-          nombre="modal"
-          abierto={estado === "alta"}
-          onCerrar={() => emitir("ALTA_CANCELADA")}
-        >
-          <AltaOportunidadVenta emitir={emitir} />
-        </QModal>
-      </maestro-detalle>
+        }
+      />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
+      >
+        <AltaOportunidadVenta emitir={emitir} />
+      </QModal>
     </div>
   );
 };
