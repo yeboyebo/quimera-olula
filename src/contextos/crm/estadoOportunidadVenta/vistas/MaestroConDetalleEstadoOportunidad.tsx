@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
+import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { EstadoOportunidad } from "../diseño.ts";
@@ -22,11 +24,12 @@ const metaTablaEstadoOportunidad: MetaTabla<EstadoOportunidad> = [
   { id: "valor_defecto", cabecera: "Por defecto" },
 ];
 
-type Estado = "lista" | "alta";
+type Estado = "lista" | "alta" | "confirmarBorrado";
 
 export const MaestroConDetalleEstadoOportunidad = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const estados = useLista<EstadoOportunidad>([]);
+  const { intentar } = useContext(ContextoError);
 
   const maquina: Maquina<Estado> = {
     alta: {
@@ -51,16 +54,24 @@ export const MaestroConDetalleEstadoOportunidad = () => {
         estados.limpiarSeleccion();
       },
     },
+    confirmarBorrado: {},
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
-  const onBorrarEstadoOportunidad = async () => {
+  const onBorrarConfirmado = async () => {
     if (!estados.seleccionada) {
       return;
     }
-    await deleteEstadoOportunidad(estados.seleccionada.id);
-    estados.eliminar(estados.seleccionada);
+    const estadoId = estados.seleccionada.id;
+    if (estadoId) {
+      await intentar(() => deleteEstadoOportunidad(estadoId));
+      estados.eliminar(estados.seleccionada);
+    }
+  };
+
+  const onBorrarEstadoOportunidad = async () => {
+    setEstado("confirmarBorrado");
   };
 
   return (
@@ -95,6 +106,14 @@ export const MaestroConDetalleEstadoOportunidad = () => {
             emitir={emitir}
           />
         }
+      />
+      <QModalConfirmacion
+        nombre="borrarEstadoOportunidad"
+        abierto={estado === "confirmarBorrado"}
+        titulo="Confirmar borrar"
+        mensaje="¿Está seguro de que desea borrar este estado de oportunidad?"
+        onCerrar={() => setEstado("lista")}
+        onAceptar={onBorrarConfirmado}
       />
       <QModal
         nombre="modal"

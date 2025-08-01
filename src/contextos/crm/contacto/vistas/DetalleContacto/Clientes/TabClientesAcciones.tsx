@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { Cliente as ClienteSelector } from "../../../../../ventas/comun/componentes/cliente.tsx";
 import { Cliente } from "../../../../cliente/diseño.ts";
@@ -29,10 +30,13 @@ export const TabClientesAcciones = ({
     valor: string;
     descripcion: string;
   } | null>(null);
+  const { intentar } = useContext(ContextoError);
 
   const onAsociar = async () => {
     if (clienteSeleccionado) {
-      await vincularContactoCliente(contactoId, clienteSeleccionado.valor);
+      await intentar(() =>
+        vincularContactoCliente(contactoId, clienteSeleccionado.valor)
+      );
       emitir("CLIENTE_VINCULADO", clienteSeleccionado);
       //   setClienteSeleccionado(null);
     }
@@ -40,7 +44,9 @@ export const TabClientesAcciones = ({
 
   const onDesvincular = async () => {
     if (clienteSeleccionado) {
-      await desvincularContactoCliente(contactoId, clienteSeleccionado.valor);
+      await intentar(() =>
+        desvincularContactoCliente(contactoId, clienteSeleccionado.valor)
+      );
       emitir("CLIENTE_DESVINCULADO", clienteSeleccionado);
       //   setClienteSeleccionado(null);
     }

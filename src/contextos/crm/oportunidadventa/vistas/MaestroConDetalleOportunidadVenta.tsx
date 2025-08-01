@@ -7,10 +7,7 @@ import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { OportunidadVenta } from "../diseño.ts";
-import {
-  deleteOportunidadVenta,
-  getOportunidadesVenta,
-} from "../infraestructura.ts";
+import { getOportunidadesVenta } from "../infraestructura.ts";
 import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "./DetalleOportunidadVenta/DetalleOportunidadVenta.tsx";
 // import "./MaestroConDetalleOportunidadVenta.css";
@@ -56,14 +53,6 @@ export const MaestroConDetalleOportunidadVenta = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
-  const onBorrarOportunidad = async () => {
-    if (!oportunidades.seleccionada) {
-      return;
-    }
-    await deleteOportunidadVenta(oportunidades.seleccionada.id);
-    oportunidades.eliminar(oportunidades.seleccionada);
-  };
-
   return (
     <div className="OportunidadVenta">
       <MaestroDetalleResponsive<OportunidadVenta>
@@ -73,12 +62,6 @@ export const MaestroConDetalleOportunidadVenta = () => {
             <h2>Oportunidades de Venta</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
-              <QBoton
-                deshabilitado={!oportunidades.seleccionada}
-                onClick={onBorrarOportunidad}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaOportunidadVenta}
