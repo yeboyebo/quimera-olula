@@ -43,28 +43,29 @@ export const obtenerSubreglas = (reglas: Regla[], reglaBaseId: string): Regla[] 
 };
 
 export const obtenerReglasAgrupadas = (reglas: Regla[]): Regla[] => {
-    return reglas.filter((regla) => !regla.id.includes("/"));
+    return reglas.filter((regla) => !regla.id.includes("-"));
 };
 
 export const actualizarPermiso = (
     permisos: ReturnType<typeof useLista<Permiso>>,
     reglaId: string,
     grupoId: string,
-    value: boolean | null
+    valor: boolean | null
 ) => {
     const permisoExistente = permisos.lista.find(
         (permiso) =>
-            permiso.idrule === reglaId && permiso.id.toUpperCase() === grupoId.toUpperCase()
+            permiso.id_regla === reglaId && permiso.id_grupo.toUpperCase() === grupoId.toUpperCase()
     );
 
     if (permisoExistente) {
-        permisos.modificar({ ...permisoExistente, value });
+        console.log("permiso existente", permisoExistente);
+        permisos.modificar({ ...permisoExistente, valor });
     } else {
         permisos.añadir({
-            idpermission: Date.now(),
-            idrule: reglaId,
-            id: grupoId,
-            value,
+            id: String(Date.now()),
+            id_regla: reglaId,
+            id_grupo: grupoId,
+            valor,
         });
     }
 };
@@ -76,18 +77,19 @@ export const calcularPermiso = (
 ): "true" | "false" | "null" => {
     const permisoActual = permisos.find(
         (p) =>
-            p.id.toUpperCase() === grupoId.toUpperCase() && p.idrule === reglaId
+            p.id_grupo.toUpperCase() === grupoId.toUpperCase() && p.id_regla === reglaId
     );
     return permisoActual
-        ? permisoActual.value === true
+        ? permisoActual.valor === true
             ? "true"
-            : permisoActual.value === false
+            : permisoActual.valor === false
                 ? "false"
                 : "null"
         : "null";
 };
 
 export const calcularClasesExtra = (reglaId: string): string => {
+    return "";
     if (!reglaId.includes("/")) {
         return "";
     }

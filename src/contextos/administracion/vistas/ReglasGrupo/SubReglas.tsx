@@ -23,7 +23,7 @@ export const SubReglas = ({
           {
             id: "id",
             cabecera: "Acción",
-            render: (regla: Regla) => {
+            render: (regla) => {
               const partes = regla.id.split("/");
               const accion = partes[1] || "";
               const { texto, clase } = obtenerTextoYClaseAccion(accion);
@@ -34,7 +34,7 @@ export const SubReglas = ({
           {
             id: "acciones",
             cabecera: "Acciones",
-            render: (regla: Regla) => (
+            render: (regla) => (
               <AccionesRegla
                 regla={regla}
                 permisos={permisos}
@@ -46,7 +46,6 @@ export const SubReglas = ({
         ]}
         datos={reglas}
         cargando={false}
-        orden={{ id: "ASC" }}
         mostrarCabecera={false}
       />
     </td>

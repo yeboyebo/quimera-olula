@@ -17,8 +17,8 @@ export const MaestroConDetalleGruposReglas = () => {
 
   useEffect(() => {
     getGrupos().then(({ datos }) => grupos.setLista(datos));
-    getReglas().then(reglas.setLista);
-    getPermisos().then(permisos.setLista);
+    getReglas().then(({ datos }) => reglas.setLista(datos));
+    getPermisos().then(({ datos }) => permisos.setLista(datos));
   }, []);
 
   return (

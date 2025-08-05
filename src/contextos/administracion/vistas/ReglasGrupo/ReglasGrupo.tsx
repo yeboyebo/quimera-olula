@@ -1,8 +1,9 @@
-import { EmitirEvento } from "../../../comun/diseño.ts";
+import { QLista } from "../../../../componentes/atomos/qlista.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Grupo, Permiso, Regla } from "../../diseño.ts";
 import { actualizarPermiso, obtenerReglasAgrupadas } from "../../dominio.ts";
+import { putPermiso } from "../../infraestructura.ts";
 import { AccionesRegla } from "./AccionesRegla.tsx";
 import "./ReglasGrupo.css";
 
@@ -17,21 +18,9 @@ export const ReglasGrupo = ({
   grupoSeleccionado: Grupo | null;
   permisos: ReturnType<typeof useLista<Permiso>>;
 }) => {
-  const metaTablaReglas = (emitir: EmitirEvento) => [
-    { id: "descripcion", cabecera: "Descripción" },
-    {
-      id: "acciones",
-      cabecera: "Acciones",
-      render: (regla: Regla) => (
-        <AccionesRegla
-          regla={regla}
-          grupoId={grupoSeleccionado?.id || ""}
-          emitir={emitir}
-          permisos={permisos.lista}
-        />
-      ),
-    },
-  ];
+  // useEffect(() => {
+  //   // getPermisos().then(permisos.setLista);
+  // }, []);
 
   const maquina: Maquina<Estado> = {
     lista: {
@@ -46,26 +35,30 @@ export const ReglasGrupo = ({
       PERMITIR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
         if (grupoSeleccionado?.id) {
+          putPermiso(grupoSeleccionado.id, regla.id, true);
           actualizarPermiso(
             permisos,
             regla.id,
             grupoSeleccionado?.id ?? "",
             true
           );
-          console.log(
-            `Permitir regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
-          );
+          // console.log(
+          //   `Permitir regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
+          // );
         }
         return "lista";
       },
       CANCELAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        actualizarPermiso(
-          permisos,
-          regla.id,
-          grupoSeleccionado?.id ?? "",
-          false
-        );
+        if (grupoSeleccionado?.id) {
+          putPermiso(grupoSeleccionado.id, regla.id, false);
+          actualizarPermiso(
+            permisos,
+            regla.id,
+            grupoSeleccionado?.id ?? "",
+            false
+          );
+        }
         console.log(
           `Cancelar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
         );
@@ -73,12 +66,12 @@ export const ReglasGrupo = ({
       },
       BORRAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        actualizarPermiso(
-          permisos,
-          regla.id,
-          grupoSeleccionado?.id ?? "",
-          null
-        );
+        // actualizarPermiso(
+        //   permisos,
+        //   regla.id,
+        //   grupoSeleccionado?.id ?? "",
+        //   null
+        // );
         console.log(
           `Borrar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
         );
@@ -97,28 +90,21 @@ export const ReglasGrupo = ({
   return (
     <div className="ReglasGrupo">
       <h2>Reglas</h2>
-      {/* <QTabla
-        metaTabla={metaTablaReglas(emitir)}
+      <QLista<Regla>
         datos={reglasAgrupadas}
         cargando={false}
-        seleccionadaId={reglas.seleccionada?.id}
-        onSeleccion={(regla) => emitir("ALTERNAR_SELECCION", regla)}
-        orden={{ id: "ASC" }}
-        onOrdenar={() => null}
-        mostrarCabecera={false}
-        detalleExtra={(regla) => {
-          const subreglas = obtenerSubreglas(reglas.lista, regla.id);
-          return subreglas.length > 0 &&
-            reglas.seleccionada?.id === regla.id ? (
-            <SubReglas
-              reglas={subreglas}
-              permisos={permisos.lista}
+        render={(regla: Regla) => (
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>{regla.descripcion}</div>
+            <AccionesRegla
+              regla={regla}
+              grupoId={grupoSeleccionado?.id || ""}
               emitir={emitir}
-              grupoSeleccionado={grupoSeleccionado}
+              permisos={permisos.lista}
             />
-          ) : null;
-        }}
-      /> */}
+          </div>
+        )}
+      />
     </div>
   );
 };

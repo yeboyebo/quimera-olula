@@ -1,0 +1,15 @@
+quimera-lista {
+    :root {
+        --transicion-basica: 0.12 ease-in-out;
+    }
+
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    min-width: 100%;
+    max-height: 70vh;
+    overflow: auto;
+    border-spacing: 0;
+    border-collapse: separate;
+    text-align: left;
+    white-space: nowrap;
+}
