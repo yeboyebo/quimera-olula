@@ -72,21 +72,9 @@ const ClienteEdicion = ({
     });
   };
 
-  // const obtenerOpcionesCliente = async () => [
-  //   { valor: "1", descripcion: "Antonio 1" },
-  //   { valor: "2", descripcion: "Juanma 2" },
-  //   { valor: "3", descripcion: "Pozu 3" },
-  // ];
-
   return (
     <QForm onSubmit={guardarClienteClicked} onReset={canceladoCallback}>
       <section>
-        {/* <QAutocompletar
-          label="ID Cliente"
-          nombre="cliente_id"
-          valor={presupuesto.cliente_id}
-          obtenerOpciones={obtenerOpcionesCliente}
-        /> */}
         <QInput
           label="ID Dirección"
           nombre="direccion_id"

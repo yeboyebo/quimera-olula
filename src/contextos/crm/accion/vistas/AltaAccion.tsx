@@ -19,7 +19,6 @@ export const AltaAccion = ({
   const guardar = async () => {
     const modelo = {
       ...nuevaAccion.modelo,
-      usuario_id: "juanma",
     };
     const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);

@@ -18,7 +18,6 @@ export const AltaLead = ({ emitir = () => {} }: { emitir?: EmitirEvento }) => {
   const guardar = async () => {
     const modelo = {
       ...nuevoLead.modelo,
-      responsable_id: "juanma",
     };
     const id = await intentar(() => postLead(modelo));
     const leadCreado = await getLead(id);

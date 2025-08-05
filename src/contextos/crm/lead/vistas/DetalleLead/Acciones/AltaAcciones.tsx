@@ -24,7 +24,6 @@ export const AltaAcciones = ({
     const modelo = {
       ...nuevaAccion.modelo,
       tarjeta_id: lead.modelo.id,
-      usuario_id: "juanma",
     };
     const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);

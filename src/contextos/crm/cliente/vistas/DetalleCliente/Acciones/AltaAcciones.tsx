@@ -25,7 +25,6 @@ export const AltaAcciones = ({
     const modelo = {
       ...nuevaAccion.modelo,
       cliente_id: nuevaAccion.modelo.cliente_id || cliente.modelo.id,
-      usuario_id: "juanma",
     };
     const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);
