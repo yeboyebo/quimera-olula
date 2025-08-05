@@ -61,12 +61,12 @@ export const actualizarPermiso = (
         console.log("permiso existente", permisoExistente);
         permisos.modificar({ ...permisoExistente, valor });
     } else {
-        permisos.añadir({
-            id: String(Date.now()),
-            id_regla: reglaId,
-            id_grupo: grupoId,
-            valor,
-        });
+        // permisos.añadir({
+        //     id: String(Date.now()),
+        //     id_regla: reglaId,
+        //     id_grupo: grupoId,
+        //     valor,
+        // });
     }
 };
 

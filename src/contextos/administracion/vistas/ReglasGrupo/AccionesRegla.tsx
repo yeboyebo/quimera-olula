@@ -29,8 +29,7 @@ export const AccionesRegla = ({
         className={`boton-nulo ${
           permiso === "null" ? "activo" : ""
         } ${clasesExtra}`}
-        onClick={(event) => {
-          event.stopPropagation();
+        onClick={() => {
           emitir("BORRAR_REGLA", regla);
         }}
       >
@@ -40,8 +39,7 @@ export const AccionesRegla = ({
         className={`boton-cancelar ${
           permiso === "false" ? "activo" : ""
         } ${clasesExtra}`}
-        onClick={(event) => {
-          event.stopPropagation();
+        onClick={() => {
           emitir("CANCELAR_REGLA", regla);
         }}
       >
@@ -51,8 +49,7 @@ export const AccionesRegla = ({
         className={`boton-permitir ${
           permiso === "true" ? "activo" : ""
         } ${clasesExtra}`}
-        onClick={(event) => {
-          event.stopPropagation();
+        onClick={() => {
           emitir("PERMITIR_REGLA", regla);
         }}
       >

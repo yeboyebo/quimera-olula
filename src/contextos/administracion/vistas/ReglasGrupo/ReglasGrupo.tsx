@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { QLista } from "../../../../componentes/atomos/qlista.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Grupo, Permiso, Regla } from "../../diseño.ts";
@@ -18,9 +20,7 @@ export const ReglasGrupo = ({
   grupoSeleccionado: Grupo | null;
   permisos: ReturnType<typeof useLista<Permiso>>;
 }) => {
-  // useEffect(() => {
-  //   // getPermisos().then(permisos.setLista);
-  // }, []);
+  const { intentar } = useContext(ContextoError);
 
   const maquina: Maquina<Estado> = {
     lista: {
@@ -35,23 +35,20 @@ export const ReglasGrupo = ({
       PERMITIR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
         if (grupoSeleccionado?.id) {
-          putPermiso(grupoSeleccionado.id, regla.id, true);
+          intentar(() => putPermiso(grupoSeleccionado.id, regla.id, true));
           actualizarPermiso(
             permisos,
             regla.id,
             grupoSeleccionado?.id ?? "",
             true
           );
-          // console.log(
-          //   `Permitir regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
-          // );
         }
         return "lista";
       },
       CANCELAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
         if (grupoSeleccionado?.id) {
-          putPermiso(grupoSeleccionado.id, regla.id, false);
+          intentar(() => putPermiso(grupoSeleccionado.id, regla.id, false));
           actualizarPermiso(
             permisos,
             regla.id,
@@ -66,12 +63,15 @@ export const ReglasGrupo = ({
       },
       BORRAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
-        // actualizarPermiso(
-        //   permisos,
-        //   regla.id,
-        //   grupoSeleccionado?.id ?? "",
-        //   null
-        // );
+        if (grupoSeleccionado?.id) {
+          intentar(() => putPermiso(grupoSeleccionado.id, regla.id, ""));
+          // actualizarPermiso(
+          //   permisos,
+          //   regla.id,
+          //   grupoSeleccionado?.id ?? "",
+          //   null
+          // );
+        }
         console.log(
           `Borrar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
         );
