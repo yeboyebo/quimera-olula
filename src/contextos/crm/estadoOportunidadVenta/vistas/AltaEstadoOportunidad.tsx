@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import {
@@ -21,9 +23,12 @@ export const AltaEstadoOportunidad = ({
     metaNuevoEstadoOportunidad,
     nuevoEstadoOportunidadVacio
   );
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postEstadoOportunidad(estadoOportunidad.modelo);
+    const id = await intentar(() =>
+      postEstadoOportunidad(estadoOportunidad.modelo)
+    );
     const estadoCreado = await getEstadoOportunidad(id);
     emitir("ESTADO_OPORTUNIDAD_CREADO", estadoCreado);
   };
