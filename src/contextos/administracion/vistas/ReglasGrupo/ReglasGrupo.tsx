@@ -1,26 +1,64 @@
-import { useContext } from "react";
-import { QLista } from "../../../../componentes/atomos/qlista.tsx";
+import { useContext, useEffect, useState } from "react";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { Grupo, Permiso, Regla } from "../../diseño.ts";
-import { actualizarPermiso, obtenerReglasAgrupadas } from "../../dominio.ts";
-import { putPermiso } from "../../infraestructura.ts";
-import { AccionesRegla } from "./AccionesRegla.tsx";
+import { CategoriaReglas, Grupo, Regla, ReglaAnidada } from "../../diseño.ts";
+import { getReglasPorGrupoPermiso } from "../../dominio.ts";
+import { getPermisosGrupo, putPermiso } from "../../infraestructura.ts";
 import "./ReglasGrupo.css";
+import { ReglasOrganizadas } from "./ReglasOrganizadas";
 
 type Estado = "lista" | "actualizando";
 
 export const ReglasGrupo = ({
   reglas,
   grupoSeleccionado,
-  permisos,
 }: {
   reglas: ReturnType<typeof useLista<Regla>>;
   grupoSeleccionado: Grupo | null;
-  permisos: ReturnType<typeof useLista<Permiso>>;
 }) => {
   const { intentar } = useContext(ContextoError);
+  const [reglasOrganizadas, setReglasOrganizadas] = useState<CategoriaReglas[]>(
+    []
+  );
+  const [categoriasAbiertas, setCategoriasAbiertas] = useState<
+    Record<string, boolean>
+  >({});
+
+  const actualizarReglaOrganizada = (
+    reglaId: string,
+    nuevoValor: boolean | null
+  ) => {
+    const actualizarRegla = (regla: ReglaAnidada): ReglaAnidada => {
+      const valorActualizado = regla.id === reglaId ? nuevoValor : regla.valor;
+      const hijosActualizados = regla.hijos?.map(actualizarRegla);
+      return {
+        ...regla,
+        valor: valorActualizado,
+        ...(hijosActualizados && { hijos: hijosActualizados }),
+      };
+    };
+
+    setReglasOrganizadas((prev) =>
+      prev.map((categoria) => ({
+        ...categoria,
+        reglas: categoria.reglas.map(actualizarRegla),
+      }))
+    );
+  };
+
+  useEffect(() => {
+    if (grupoSeleccionado?.id) {
+      getPermisosGrupo(grupoSeleccionado.id).then(({ datos: permisos }) => {
+        const organizadas = getReglasPorGrupoPermiso(
+          grupoSeleccionado.id,
+          reglas.lista,
+          permisos
+        );
+        setReglasOrganizadas(organizadas);
+      });
+    }
+  }, [grupoSeleccionado?.id, reglas.lista]);
 
   const maquina: Maquina<Estado> = {
     lista: {
@@ -36,12 +74,7 @@ export const ReglasGrupo = ({
         const regla = payload as Regla;
         if (grupoSeleccionado?.id) {
           intentar(() => putPermiso(grupoSeleccionado.id, regla.id, true));
-          actualizarPermiso(
-            permisos,
-            regla.id,
-            grupoSeleccionado?.id ?? "",
-            true
-          );
+          actualizarReglaOrganizada(regla.id, true);
         }
         return "lista";
       },
@@ -49,32 +82,24 @@ export const ReglasGrupo = ({
         const regla = payload as Regla;
         if (grupoSeleccionado?.id) {
           intentar(() => putPermiso(grupoSeleccionado.id, regla.id, false));
-          actualizarPermiso(
-            permisos,
-            regla.id,
-            grupoSeleccionado?.id ?? "",
-            false
-          );
+          actualizarReglaOrganizada(regla.id, false);
         }
-        console.log(
-          `Cancelar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
-        );
         return "lista";
       },
       BORRAR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;
         if (grupoSeleccionado?.id) {
-          intentar(() => putPermiso(grupoSeleccionado.id, regla.id, ""));
-          // actualizarPermiso(
-          //   permisos,
-          //   regla.id,
-          //   grupoSeleccionado?.id ?? "",
-          //   null
-          // );
+          intentar(() => putPermiso(grupoSeleccionado.id, regla.id, null));
+          actualizarReglaOrganizada(regla.id, null);
         }
-        console.log(
-          `Borrar regla ${regla.id} del grupo ${grupoSeleccionado?.id}`
-        );
+        return "lista";
+      },
+      TOGGLE_CATEGORIA: (payload: unknown) => {
+        const categoriaId = payload as string;
+        setCategoriasAbiertas((prev) => ({
+          ...prev,
+          [categoriaId]: !prev[categoriaId],
+        }));
         return "lista";
       },
     },
@@ -85,26 +110,22 @@ export const ReglasGrupo = ({
 
   const emitir = useMaquina(maquina, "lista", () => {});
 
-  const reglasAgrupadas = obtenerReglasAgrupadas(reglas.lista);
-
   return (
     <div className="ReglasGrupo">
-      <h2>Reglas</h2>
-      <QLista<Regla>
-        datos={reglasAgrupadas}
-        cargando={false}
-        render={(regla: Regla) => (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div>{regla.descripcion}</div>
-            <AccionesRegla
-              regla={regla}
-              grupoId={grupoSeleccionado?.id || ""}
-              emitir={emitir}
-              permisos={permisos.lista}
-            />
-          </div>
-        )}
-      />
+      <h2>
+        Reglas{" "}
+        {grupoSeleccionado && grupoSeleccionado?.descripcion
+          ? ` ${grupoSeleccionado.descripcion}`
+          : ""}
+      </h2>
+      <div className="ListaReglas">
+        <ReglasOrganizadas
+          reglasOrganizadas={reglasOrganizadas}
+          grupoSeleccionado={grupoSeleccionado}
+          categoriasAbiertas={categoriasAbiertas}
+          emitir={emitir}
+        />
+      </div>
     </div>
   );
 };

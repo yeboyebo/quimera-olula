@@ -2,45 +2,133 @@
     display: flex;
     justify-content: flex-start;
     flex-direction: row-reverse;
-    gap: 5px;
+    gap: 0px;
 
-    button {
-        border: 2px solid var(--gris-9);
-        border-radius: 15px;
-        padding: 8px 12px;
-        font-size: 16px;
-        cursor: pointer;
-        color: black;
-        transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+    quimera-boton {
+
+        quimera-icono {
+            fill: var(--gris-7);
+
+            box-icon {
+                width: 40px;
+                height: 25px;
+            }
+
+        }
+
+        button {
+            border: 1px solid var(--gris-6);
+            border-radius: 15px;
+            padding: 2px 2px;
+            font-size: 16px;
+            cursor: pointer;
+            color: var(--gris-6);
+            transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+        }
     }
 
-    button:hover {
-        background-color: lightgrey;
+    quimera-boton button:hover {
+        background-color: var(--gris-4) !important;
         transition: background-color 0.2s ease;
         color: var(--blanco);
+        border-color: var(--gris-6);
     }
 
-    .boton-permitir.activo {
-        background-color: var(--verde-6);
-        color: var(--blanco);
+    .boton-permitir {
+        quimera-boton button {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+
+        }
+
+        &.BordeActivo {
+            quimera-boton button {
+                border: 1px solid var(--verde-6);
+            }
+
+            quimera-icono {
+                fill: var(--verde-6);
+            }
+        }
+
+        &.activo {
+            quimera-boton button {
+                background-color: var(--verde-6);
+                color: var(--blanco);
+                border: 1px solid var(--verde-6);
+            }
+
+            quimera-icono {
+                fill: var(--blanco);
+            }
+        }
     }
 
-    .boton-cancelar.activo {
-        background-color: var(--rojo-8);
-        color: var(--blanco);
+    .boton-cancelar {
+        quimera-boton button {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-right-color: transparent;
+            border-left-color: transparent;
+        }
+
+        &.BordeActivo {
+            quimera-boton button {
+                border: 1px solid var(--rojo-8);
+            }
+
+            quimera-icono {
+                fill: var(--rojo-8);
+            }
+        }
+
+        &.activo {
+            quimera-boton button {
+                background-color: var(--rojo-8);
+                color: var(--blanco);
+                border: 1px solid var(--rojo-8);
+            }
+
+            quimera-icono {
+                fill: var(--blanco);
+            }
+        }
     }
 
-    .boton-nulo.activo {
-        background-color: var(--gris-6);
-        color: var(--blanco);
+    .boton-nulo {
+        quimera-boton button {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        &.activo {
+            quimera-boton button {
+                background-color: var(--gris-6);
+                color: var(--blanco);
+                border: 1px solid var(--gris-6);
+            }
+
+            quimera-icono {
+                fill: var(--blanco);
+            }
+        }
     }
 
+    /* 
     .boton-nulo.activo.accion~.boton-cancelar {
-        border: 2px solid var(--rojo-8);
-    }
+        border: 1px solid var(--rojo-8);
+    } */
 
-    .boton-nulo.activo:not(.accion)~.boton-permitir {
-        border: 2px solid var(--verde-6);
-    }
+    /* .boton-nulo.activo:not(.accion)~.boton-permitir {
+        quimera-boton button {
+            border: 1px solid var(--verde-6);
+        }
+
+        quimera-icono {
+            fill: var(--verde-6);
+        }
+    } */
 
 }

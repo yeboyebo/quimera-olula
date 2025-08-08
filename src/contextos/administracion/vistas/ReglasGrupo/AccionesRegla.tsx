@@ -1,60 +1,62 @@
-import { useEffect, useState } from "react";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
 import { EmitirEvento } from "../../../comun/diseño.ts";
-import { Permiso, Regla } from "../../diseño.ts";
-import { calcularClasesExtra, calcularPermiso } from "../../dominio.ts";
+import { ReglaAnidada, ReglaConValor } from "../../diseño.ts";
+import { calcularClasesExtra } from "../../dominio.ts";
 import "./AccionesRegla.css";
 
 export const AccionesRegla = ({
+  reglaPadre,
   regla,
-  permisos,
-  grupoId,
   emitir,
 }: {
-  regla: Regla;
-  permisos: Permiso[];
+  reglaPadre?: ReglaAnidada;
+  regla: ReglaConValor | ReglaAnidada;
   grupoId: string;
   emitir: EmitirEvento;
 }) => {
-  const [permiso, setPermiso] = useState<"true" | "false" | "null">("null");
-
-  useEffect(() => {
-    setPermiso(calcularPermiso(permisos, grupoId, regla.id));
-  }, [grupoId, permisos, regla.id]);
-
-  const clasesExtra = calcularClasesExtra(regla.id);
+  const clasesExtra = calcularClasesExtra(regla, reglaPadre);
 
   return (
     <div className="AccionesRegla">
-      <button
-        className={`boton-nulo ${
-          permiso === "null" ? "activo" : ""
-        } ${clasesExtra}`}
-        onClick={() => {
-          emitir("BORRAR_REGLA", regla);
-        }}
+      <div className={`boton-nulo ${regla.valor === null ? "activo" : ""}`}>
+        <QBoton
+          variante="borde"
+          onClick={() => {
+            emitir("BORRAR_REGLA", regla);
+          }}
+        >
+          <QIcono nombre="minus" tamaño="sm" />
+        </QBoton>
+      </div>
+      <div
+        className={`boton-cancelar ${regla.valor === false ? "activo" : ""} ${
+          clasesExtra.cancelar
+        }`}
       >
-        -
-      </button>
-      <button
-        className={`boton-cancelar ${
-          permiso === "false" ? "activo" : ""
-        } ${clasesExtra}`}
-        onClick={() => {
-          emitir("CANCELAR_REGLA", regla);
-        }}
+        <QBoton
+          variante="borde"
+          onClick={() => {
+            emitir("CANCELAR_REGLA", regla);
+          }}
+        >
+          <QIcono nombre="x_circle" tamaño="sm" />
+        </QBoton>
+      </div>
+      <div
+        className={`boton-permitir ${regla.valor === true ? "activo" : ""} ${
+          clasesExtra.permitir
+        }`}
       >
-        c
-      </button>
-      <button
-        className={`boton-permitir ${
-          permiso === "true" ? "activo" : ""
-        } ${clasesExtra}`}
-        onClick={() => {
-          emitir("PERMITIR_REGLA", regla);
-        }}
-      >
-        v
-      </button>
+        <QBoton
+          variante="borde"
+          onClick={() => {
+            emitir("PERMITIR_REGLA", regla);
+          }}
+        >
+          <QIcono nombre="check" tamaño="sm" />
+        </QBoton>
+      </div>
     </div>
   );
 };
