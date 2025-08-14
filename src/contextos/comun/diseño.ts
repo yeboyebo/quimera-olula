@@ -31,6 +31,11 @@ export type RespuestaLista<T> = Promise<{
   total: TotalRegistros;
 }>
 
+export type RespuestaLista2<T> = {
+  datos: T[];
+  total: TotalRegistros;
+}
+
 export type Direccion = {
   nombre_via: string;
   tipo_via: string;
