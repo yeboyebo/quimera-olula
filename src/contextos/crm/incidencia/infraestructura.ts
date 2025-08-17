@@ -1,75 +1,71 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
-import { criteriaQuery } from "../../comun/infraestructura.ts";
-import { Incidencia, IncidenciaAPI } from "./diseño.ts";
+import { Filtro, Orden } from "../../comun/diseño.ts";
+import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
+import { Accion } from "../accion/diseño.ts";
+import { DeleteIncidencia, GetIncidencia, GetIncidencias, Incidencia, IncidenciaAPI, PatchIncidencia, PostIncidencia } from "./diseño.ts";
 
 const baseUrlIncidencia = `/crm/incidencia`;
-// const baseUrlAccion = `/crm/accion`;
-// const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
+const baseUrlAccion = `/crm/accion`;
 
-export const IncidenciaFromAPI = (l: IncidenciaAPI): Incidencia => ({
-    ...l,
-});
+export const incidenciaFromApi = (incidenciaApi: IncidenciaAPI): Incidencia => {
 
-export const IncidenciaToAPI = (l: Incidencia): IncidenciaAPI => {
-    const {
-        ...rest
-    } = l;
-    return {
-        ...rest,
-    };
+    const incidencia = {
+        ...incidenciaApi,
+        fecha: new Date(incidenciaApi.fecha),
+    }
+    return incidencia;
 };
 
-export const getIncidencia = async (id: string): Promise<Incidencia> =>
+export const incidenciaToApi = (incidencia: Incidencia): IncidenciaAPI => {
+
+    const incidenciaApi = {
+        ...incidencia,
+        fecha: incidencia.fecha.toISOString(),
+    };
+    return incidenciaApi;
+};
+
+export const getIncidencia: GetIncidencia = async (id) =>
     await RestAPI.get<{ datos: IncidenciaAPI }>(`${baseUrlIncidencia}/${id}`).then((respuesta) =>
-        IncidenciaFromAPI(respuesta.datos)
+        incidenciaFromApi(respuesta.datos)
     );
 
 
-export const getIncidencias = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion?: Paginacion
-): RespuestaLista<Incidencia> => {
-    const q = criteriaQuery(filtro, orden, paginacion);
+export const getIncidencias: GetIncidencias = async (
+    filtro, orden, paginacion?
+) => {
 
+    const q = criteriaQuery(filtro, orden, paginacion);
     const respuesta = await RestAPI.get<{ datos: IncidenciaAPI[]; total: number }>(baseUrlIncidencia + q);
-    return { datos: respuesta.datos.map(IncidenciaFromAPI), total: respuesta.total };
+
+    return { datos: respuesta.datos.map(incidenciaFromApi), total: respuesta.total };
 };
 
-export const postIncidencia = async (Incidencia: Partial<Incidencia>): Promise<string> => {
-    return await RestAPI.post(baseUrlIncidencia, Incidencia, "Error al guardar Incidencia").then(
+export const postIncidencia: PostIncidencia = async (incidencia) => {
+    return await RestAPI.post(baseUrlIncidencia, incidencia, "Error al guardar Incidencia").then(
         (respuesta) => respuesta.id
     );
 };
 
-export const patchIncidencia = async (id: string, Incidencia: Partial<Incidencia>): Promise<void> => {
-    const apiIncidencia = IncidenciaToAPI(Incidencia as Incidencia);
-    // Convierte nulls a ""
+export const patchIncidencia: PatchIncidencia = async (id, incidencia) => {
+
+    const apiIncidencia = incidenciaToApi(incidencia as Incidencia);
     const IncidenciaSinNulls = Object.fromEntries(
         Object.entries(apiIncidencia).map(([k, v]) => [k, v === null ? "" : v])
     );
     await RestAPI.patch(`${baseUrlIncidencia}/${id}`, IncidenciaSinNulls, "Error al guardar Incidencia");
 };
 
-export const deleteIncidencia = async (id: string): Promise<void> =>
+export const deleteIncidencia: DeleteIncidencia = async (id) => {
     await RestAPI.delete(`${baseUrlIncidencia}/${id}`, "Error al borrar Incidencia");
+}
 
+export const getAccionesIncidencia = async (incidenciaId: string) => {
 
-// export const getOportunidadesVentaIncidencia = async (IncidenciaId: string) => {
-//     const filtro = ['tarjeta_id', IncidenciaId] as unknown as Filtro;
+    const filtro: Filtro = ['incidencia_id', incidenciaId]
+    const orden: Orden = [];
+    const q = criteriaQueryUrl(filtro, orden);
 
-//     const orden = [] as Orden;
+    return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
+};
 
-//     const q = criteriaQueryUrl(filtro, orden);
-//     return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
-// };
-
-// export const getAccionesIncidencia = async (IncidenciaId: string) => {
-//     const filtro = ['tarjeta_id', IncidenciaId] as unknown as Filtro;
-
-//     const orden = [] as Orden;
-
-//     const q = criteriaQueryUrl(filtro, orden);
-//     return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
-// };

@@ -1,46 +1,44 @@
 import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { Usuario } from "../../../../../comun/componentes/usuario.tsx";
 import { ContextoError } from "../../../../../comun/contexto.ts";
 import { HookModelo, useModelo } from "../../../../../comun/useModelo.ts";
-// import { EstadoIncidencia } from "../../../../comun/componentes/estado_incidencia.tsx";
-// import { TipoIncidencia } from "../../../../comun/componentes/tipo_incidencia.tsx";
-import { getIncidencia, postIncidencia } from "../../../../incidencia/infraestructura.ts";
+import { getAccion, postAccion } from "../../../../accion/infraestructura.ts";
 import { Incidencia } from "../../../diseño.ts";
-import { metaNuevaIncidencia, nuevaIncidenciaVacia } from "../../../dominio.ts";
-import "./AltaIncidenciaes.css";
+import { metaNuevaAccion, nuevaAccionVacia } from "../../../dominio.ts";
+import "./AltaAcciones.css";
 
-export const AltaIncidenciaes = ({
+export const AltaAcciones = ({
   emitir = () => {},
-  lead,
+  incidencia,
 }: {
   emitir?: (evento: string, payload?: unknown) => void;
-  lead: HookModelo<Incidencia>;
+  incidencia: HookModelo<Incidencia>;
 }) => {
-  const nuevaIncidencia = useModelo(metaNuevaIncidencia, nuevaIncidenciaVacia);
+  const nuevaAccion = useModelo(metaNuevaAccion, nuevaAccionVacia);
   const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
     const modelo = {
-      ...nuevaIncidencia.modelo,
-      tarjeta_id: lead.modelo.id,
+      ...nuevaAccion.modelo,
+      incidencia_id: incidencia.modelo.id,
     };
-    const id = await intentar(() => postIncidencia(modelo));
-    const incidenciaCreada = await getIncidencia(id);
-    emitir("ACCION_CREADA", incidenciaCreada);
+    const id = await intentar(() => postAccion(modelo));
+    const accionCreada = await getAccion(id);
+    emitir("ACCION_CREADA", accionCreada);
   };
 
   return (
-    <div className="AltaIncidenciaes">
+    <div className="AltaAcciones">
       <h2>Nueva Acción</h2>
       <quimera-formulario>
-        <QInput label="Descripción" {...nuevaIncidencia.uiProps("descripcion")} />
-        <QInput label="Fecha" {...nuevaIncidencia.uiProps("fecha")} />
-        {/* <EstadoIncidencia {...nuevaIncidencia.uiProps("estado")} />
-        <TipoIncidencia {...nuevaIncidencia.uiProps("tipo")} /> */}
+        <QInput label="Descripción" {...nuevaAccion.uiProps("descripcion")} />
+        <QInput label="Fecha" {...nuevaAccion.uiProps("fecha")} />
+        <Usuario {...nuevaAccion.uiProps("usuario_id")} label='Responsable'/>
       </quimera-formulario>
       <div className="botones">
-        <QBoton onClick={guardar} deshabilitado={!nuevaIncidencia.valido}>
+        <QBoton onClick={guardar} deshabilitado={!nuevaAccion.valido}>
           Guardar
         </QBoton>
         <QBoton onClick={() => emitir("ALTA_CANCELADA")} variante="texto">

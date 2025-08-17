@@ -14,10 +14,10 @@ import { DetalleIncidencia } from "./DetalleIncidencia/DetalleIncidencia.tsx";
 
 const metaTablaIncidencia: MetaTabla<Incidencia> = [
   { id: "id", cabecera: "Código" },
+  { id: "descripcion", cabecera: "Descripcion" },
   { id: "nombre", cabecera: "Nombre" },
-  { id: "tipo", cabecera: "Tipo" },
-  { id: "estado_id", cabecera: "Estado" },
-  { id: "fuente_id", cabecera: "Fuente" },
+  { id: "estado", cabecera: "Estado" },
+  { id: "prioridad", cabecera: "Prioridad" },
 ];
 
 type Estado = "lista" | "alta";

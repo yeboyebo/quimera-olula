@@ -18,7 +18,14 @@ import "./DetalleIncidencia.css";
 // import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
 // import { TabDatos } from "./TabDatos.tsx";
 // import { TabObservaciones } from "./TabObservaciones.tsx";
+import { QDate } from "../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
+import { QTextArea } from "../../../../../componentes/atomos/qtextarea.tsx";
+import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { Usuario } from "../../../../comun/componentes/usuario.tsx";
+import { EstadoIncidencia } from "../../../comun/componentes/EstadoIncidencia.tsx";
+import { PrioridadIncidencia } from "../../../comun/componentes/PrioridadIncidencia.tsx";
+import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 
 type Estado = "defecto";
 
@@ -31,7 +38,7 @@ export const DetalleIncidencia = ({
 }) => {
   const params = useParams();
   const incidenciaId = incidenciaInicial?.id ?? params.id;
-  const titulo = (incidencia: Entidad) => incidencia.nombre as string;
+  const titulo = (incidencia: Entidad) => incidencia.descripcion as string;
   const { intentar } = useContext(ContextoError);
 
   const incidencia = useModelo(metaIncidencia, IncidenciaVacia);
@@ -79,43 +86,52 @@ export const DetalleIncidencia = ({
               Borrar
             </QBoton>
           </div>
-          <QInput label="Dirección" {...uiProps("direccion")} />
-          {/* <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Datos"
-                children={
-                  <div className="TabDatos">
-                    <quimera-formulario>
-                      <EstadoIncidencia {...incidencia.uiProps("estado_id")} />
-                      <FuenteIncidencia {...incidencia.uiProps("fuente_id")} />
-                    </quimera-formulario>
-                  </div>
-                }
-              />,
-              <Tab
-                key="tab-2"
-                label="Más datos"
-                children={<TabDatos incidencia={incidencia} />}
-              />,
-              <Tab
-                key="tab-3"
-                label="Observaciones"
-                children={<TabObservaciones oportunidad={incidencia} />}
-              />,
-              <Tab
-                key="tab-4"
-                label="Oportunidades de Venta"
-                children={<TabOportunidades incidencia={incidencia} />}
-              />,
-              <Tab
-                key="tab-5"
-                label="Acciones"
-                children={<TabAcciones incidencia={incidencia} />}
-              />,
-            ]}
-          ></Tabs> */}
+          <div className="DetalleIncidencia">
+            <quimera-formulario>
+              <QInput label="Descripción" {...uiProps("descripcion")} />
+              <QInput label="Nombre" {...uiProps("nombre")} />
+              <QDate label="Fecha" {...uiProps("fecha")} />
+              <PrioridadIncidencia {...uiProps("prioridad")}/>
+              <EstadoIncidencia {...uiProps("estado")}/>
+              <Usuario {...uiProps("responsable_id", "nombre_responsable")} label='Responsable'/>
+              <div className="Tabs">
+              <Tabs
+                children={[
+                  <Tab
+                    key="tab-1"
+                    label="Descripción"
+                    children={
+                      <QTextArea
+                        label="Descripción larga"
+                        rows={5}
+                        {...uiProps("descripcion_larga")}
+                      />
+                    }
+                  />,
+                  <Tab
+                    key="tab-2"
+                    label="Resolución"
+                    children={
+                      <QTextArea
+                        label="Resolución"
+                        rows={5}
+                        {...uiProps("resolucion")}
+                      />}
+                  />,
+                  <Tab
+                    key="tab-3"
+                    label="Acciones"
+                    children={
+                      <div className="detalle-incidencia-tab-contenido">
+                        <TabAcciones incidencia={incidencia} />
+                      </div>
+                    }
+                  />,
+                ]}
+              ></Tabs>
+              </div>
+            </quimera-formulario>
+          </div>
           {incidencia.modificado && (
             <div className="botones maestro-botones">
               <QBoton

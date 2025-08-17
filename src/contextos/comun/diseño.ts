@@ -18,7 +18,11 @@ export type Criteria = {
 }
 
 export type Orden = string[];
-export type Filtro = [string, string, string][];
+export type Filtro = (
+  [string, string] |
+  [string, string, string] |
+  [string, string, string][]
+);
 export type Paginacion = {
   limite: number;
   pagina: number;
