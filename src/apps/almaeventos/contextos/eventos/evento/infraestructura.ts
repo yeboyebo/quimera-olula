@@ -1,5 +1,5 @@
 import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../../../../contextos/comun/diseño.ts";
 import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { Evento, NuevoEvento } from "./diseño.ts";
 import { reemplazarNulls } from "./dominio.ts";
@@ -14,10 +14,14 @@ export const eventoToAPI = (e: Evento) => ({
 export const getEvento = async (evento_id: string): Promise<Evento> =>
     await RestAPI.get<{ datos: Evento }>(`${baseUrlEvento}/${evento_id}`).then((respuesta) => respuesta.datos);
 
-// export const getEventos = async (_filtro: Filtro, _orden: Orden): Promise<Evento[]> => {
-export const getEventos = async (_filtro: Filtro, _orden: Orden = ["fecha_inicio", "ASC"]): Promise<Evento[]> => {
-    const q = criteriaQuery(_filtro, _orden);
-    return RestAPI.get<{ datos: Evento[] }>(baseUrlEvento + q).then((respuesta) => respuesta.datos);
+export const getEventos = async (
+    filtro: Filtro,
+    orden: Orden = ["fecha_inicio", "ASC"],
+    paginacion?: Paginacion
+): RespuestaLista<Evento> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    return await RestAPI.get<{ datos: Evento[]; total: number }>(baseUrlEvento + q);
 };
 
 export const postEvento = async (_evento: NuevoEvento): Promise<string> => {

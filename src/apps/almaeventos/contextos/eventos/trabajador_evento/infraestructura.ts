@@ -1,5 +1,5 @@
 import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../../../../contextos/comun/diseño.ts";
 import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { NuevoTrabajadorEvento, TrabajadorEvento } from "./diseño.ts";
 
@@ -13,9 +13,14 @@ export const trabajadorEventoToAPI = (e: TrabajadorEvento) => ({
 export const getTrabajadorEvento = async (id: string): Promise<TrabajadorEvento> =>
     await RestAPI.get<{ datos: TrabajadorEvento }>(`${baseUrlTrabajadorEvento}/${id}`).then((respuesta) => respuesta.datos);
 
-export const getTrabajadoresEvento = async (_filtro: Filtro, _orden: Orden): Promise<TrabajadorEvento[]> => {
-    const q = criteriaQuery(_filtro, _orden);
-    return RestAPI.get<{ datos: TrabajadorEvento[] }>(baseUrlTrabajadorEvento + q).then((respuesta) => respuesta.datos);
+export const getTrabajadoresEvento = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<TrabajadorEvento> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    return await RestAPI.get<{ datos: TrabajadorEvento[]; total: number }>(baseUrlTrabajadorEvento + q);
 };
 
 export const postTrabajadorEvento = async (_trabajadorEvento: NuevoTrabajadorEvento): Promise<string> => {

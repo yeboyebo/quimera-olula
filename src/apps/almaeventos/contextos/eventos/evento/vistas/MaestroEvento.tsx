@@ -22,8 +22,8 @@ export const MaestroEvento = () => {
   // Cargar eventos al montar el componente
   useEffect(() => {
     const fetchEventos = async () => {
-      const eventosData = await getEventos([], []);
-      eventos.setLista(eventosData);
+      const respuesta = await getEventos([], []);      
+      eventos.setLista(respuesta.datos);
     };
     fetchEventos();
   }, []);

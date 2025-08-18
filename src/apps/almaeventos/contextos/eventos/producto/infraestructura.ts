@@ -1,5 +1,5 @@
 import { RestAPI } from "../../../../../contextos/comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../../../../contextos/comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../../../../contextos/comun/diseño.ts";
 import { criteriaQuery } from "../../../../../contextos/comun/infraestructura.ts";
 import { NuevoProducto, Producto } from "./diseño.ts";
 
@@ -13,9 +13,14 @@ export const productoToAPI = (e: Producto) => ({
 export const getProducto = async (id: string): Promise<Producto> =>
     await RestAPI.get<{ datos: Producto }>(`${baseUrlProducto}/${id}`).then((respuesta) => respuesta.datos);
 
-export const getProductos = async (_filtro: Filtro, _orden: Orden): Promise<Producto[]> => {
-    const q = criteriaQuery(_filtro, _orden);
-    return RestAPI.get<{ datos: Producto[] }>(baseUrlProducto + q).then((respuesta) => respuesta.datos);
+export const getProductos = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<Producto> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    return await RestAPI.get<{ datos: Producto[]; total: number }>(baseUrlProducto + q);
 };
 
 export const postProducto = async (_producto: NuevoProducto): Promise<string> => {

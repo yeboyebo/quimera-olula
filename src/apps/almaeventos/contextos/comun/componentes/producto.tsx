@@ -55,8 +55,8 @@ export const Producto = ({
         orden: ["descripcion", "ASC"] as Orden,
       };
       
-      const productos = await getProductos(criteria.filtro, criteria.orden);
-      const opciones = productos.map((producto) => ({
+      const productos = await getProductos(criteria.filtro, criteria.orden);      
+      const opciones = productos?.datos?.map((producto) => ({
         valor: producto.id,
         descripcion: producto.descripcion,
       }));

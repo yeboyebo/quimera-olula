@@ -51,7 +51,7 @@ export const getMetaTablaEvento = (onChange: (evento: Evento, valor: boolean) =>
   { id: "nombre_empresa", cabecera: "Empresa fact.", tipo: "texto", ancho: "200px", render: (e: Evento) => <TextoConTooltip texto={e.nombre_empresa} /> },
   ...["presupuesto", "enviado_a_cliente", "recibido_por_cliente", "enviado_a_proveedor", "recibido_por_proveedor", "factura_enviada", "hoja_ruta_hecha", "hoja_ruta_enviada", "altas_ss", "carteleria", "liquidacion"].map(campo => ({
     id: campo, cabecera: cabeceras[campo as keyof typeof cabeceras] || campo, tipo: "booleano", ancho: "115px",
-    render: (e: Evento) => <AccionBooleana campo={campo as keyof Evento} valor={e[campo as keyof Evento] as boolean} evento={e} onClick={onChange} />
+    render: (e: Evento) => <AccionBooleana campo={campo as keyof Evento} valor={!!e[campo as keyof Evento]} evento={e} onClick={onChange} />
   }))
 ];
 
