@@ -4,6 +4,8 @@ type QIconoProps = {
   nombre: string;
   tamaño?: "xs" | "sm" | "md" | "lg" | "xl";
   color?: string;
+  style?: React.CSSProperties;
+  props?: React.HTMLAttributes<HTMLDivElement>;
 };
 
 const iconos: Record<string, string> = {
@@ -17,6 +19,7 @@ const iconos: Record<string, string> = {
   editar: "edit",
   eliminar: "trash",
   guardar: "save",
+  copiar: "copy",
   usuario: "user",
   perfil: "user",
   cerrar_sesion: "arrow-out-up-square-half",
@@ -26,10 +29,10 @@ const iconos: Record<string, string> = {
   adelante: 'chevron-right'
 };
 
-export const QIcono = ({ nombre, tamaño = "md", color }: QIconoProps) => {
+export const QIcono = ({ nombre, tamaño = "md", color, style, props }: QIconoProps) => {
   return (
     <quimera-icono>
-      <box-icon name={iconos[nombre]} size={tamaño} color={color}></box-icon>
+      <box-icon name={iconos[nombre]} size={tamaño} color={color} style={style} {...props}></box-icon>
     </quimera-icono>
   );
 };
