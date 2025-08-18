@@ -8,6 +8,9 @@ type QBotonProps = {
   destructivo?: boolean;
   deshabilitado?: boolean;
   onClick?: MouseEventHandler;
+  onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>;
+  props?: any;
 };
 
 export const QBoton = ({
@@ -17,13 +20,16 @@ export const QBoton = ({
   tamaño = "mediano",
   destructivo,
   deshabilitado,
+  props,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
 }: PropsWithChildren<QBotonProps>) => {
   const attrs = { tamaño, variante, destructivo, deshabilitado };
 
   return (
     <quimera-boton {...attrs}>
-      <button type={tipo} onClick={onClick}>
+      <button type={tipo} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...props} >
         {children}
       </button>
     </quimera-boton>
