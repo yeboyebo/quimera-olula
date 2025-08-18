@@ -1,5 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
-import { Filtro, Orden } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { NuevoPresupuesto, Presupuesto } from "../../ventas/presupuesto/diseño.ts";
 import { Accion } from "../accion/diseño.ts";
@@ -13,9 +13,16 @@ const baseUrlPresupuesto = `/ventas/presupuesto`;
 export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta> =>
     await RestAPI.get<{ datos: OportunidadVenta }>(`${baseUrlOportunidadVenta}/${id}`).then((respuesta) => respuesta.datos);
 
-export const getOportunidadesVenta = async (filtro: Filtro, orden: Orden): Promise<OportunidadVenta[]> => {
-    const q = criteriaQuery(filtro, orden);
-    return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
+
+export const getOportunidadesVenta = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<OportunidadVenta> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    const respuesta = await RestAPI.get<{ datos: OportunidadVenta[]; total: number }>(baseUrlOportunidadVenta + q);
+    return { datos: respuesta.datos, total: respuesta.total };
 };
 
 export const postOportunidadVenta = async (oportunidad: NuevaOportunidadVenta): Promise<string> => {

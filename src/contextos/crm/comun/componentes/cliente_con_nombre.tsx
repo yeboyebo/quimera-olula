@@ -4,8 +4,8 @@ import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { getClientes } from "../../../ventas/cliente/infraestructura.ts";
 import { Cliente as ClienteAuto } from "../../../ventas/comun/componentes/cliente.tsx";
-import { getClientes } from "../../cliente/infraestructura.ts";
 
 interface ClienteProps {
   descripcion?: string;
@@ -38,12 +38,12 @@ export const Cliente = ({
       orden: ["id", "DESC"],
     };
 
-    const clientes = await getClientes(
+    const { datos } = await getClientes(
       criteria.filtro as unknown as Filtro,
       criteria.orden as Orden
     );
 
-    return clientes.map((cliente) => ({
+    return datos.map((cliente) => ({
       valor: cliente.id,
       descripcion: cliente.nombre,
     }));

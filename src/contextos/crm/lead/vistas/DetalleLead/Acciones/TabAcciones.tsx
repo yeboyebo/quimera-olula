@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   MetaTabla,
   QTabla,
 } from "../../../../../../componentes/atomos/qtabla.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
@@ -19,6 +20,7 @@ export const TabAcciones = ({ lead }: { lead: HookModelo<Lead> }) => {
   const [cargando, setCargando] = useState(true);
   const [estado, setEstado] = useState<Estado>("lista");
   const leadId = lead.modelo.id;
+  const { intentar } = useContext(ContextoError);
 
   const setListaAcciones = acciones.setLista;
 
@@ -53,8 +55,11 @@ export const TabAcciones = ({ lead }: { lead: HookModelo<Lead> }) => {
     borrar: {
       ACCION_BORRADA: async () => {
         if (acciones.seleccionada) {
-          await deleteAccion(acciones.seleccionada.id);
-          acciones.eliminar(acciones.seleccionada);
+          const accionId = acciones.seleccionada.id;
+          if (accionId) {
+            await intentar(() => deleteAccion(accionId));
+            acciones.eliminar(acciones.seleccionada);
+          }
         }
         return "lista" as Estado;
       },

@@ -34,7 +34,7 @@ export const TabDatos = ({
         />
         <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
         <QInput label="Tarjeta" {...uiProps("tarjeta_id")} deshabilitado />
-        <QInput label="Total Venta" {...uiProps("total_venta")} />
+        <QInput label="Total Venta" {...uiProps("importe")} />
         <QInput label="Fecha Cierre" {...uiProps("fecha_cierre")} />
       </quimera-formulario>
     </div>

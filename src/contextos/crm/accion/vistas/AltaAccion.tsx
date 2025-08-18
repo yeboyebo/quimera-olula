@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { metaNuevaAccion, nuevaAccionVacia } from "../dominio.ts";
@@ -12,9 +14,13 @@ export const AltaAccion = ({
   emitir?: EmitirEvento;
 }) => {
   const nuevaAccion = useModelo(metaNuevaAccion, nuevaAccionVacia);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postAccion(nuevaAccion.modelo);
+    const modelo = {
+      ...nuevaAccion.modelo,
+    };
+    const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);
     emitir("ACCION_CREADA", accionCreada);
   };

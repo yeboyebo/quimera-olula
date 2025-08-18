@@ -8,16 +8,20 @@ import { useModelo } from "../../../../comun/useModelo.ts";
 import { OportunidadVenta } from "../../diseño.ts";
 import { metaOportunidadVenta, oportunidadVentaVacia } from "../../dominio.ts";
 import {
+  deleteOportunidadVenta,
   getOportunidadVenta,
   patchOportunidadVenta,
 } from "../../infraestructura.ts";
 // import "./DetalleOportunidadVenta.css";
+import { useContext, useState } from "react";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import { TabPresupuestos } from "./Presupuestos/TabPresupuestos.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-type Estado = "defecto";
+type Estado = "defecto" | "confirmarBorrado";
 
 export const DetalleOportunidadVenta = ({
   oportunidadInicial = null,
@@ -29,16 +33,23 @@ export const DetalleOportunidadVenta = ({
   const params = useParams();
   const oportunidadId = oportunidadInicial?.id ?? params.id;
   const titulo = (oportunidad: Entidad) => oportunidad.descripcion as string;
+  const { intentar } = useContext(ContextoError);
 
   const oportunidad = useModelo(metaOportunidadVenta, oportunidadVentaVacia);
   const { modelo, init } = oportunidad;
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+    "edicion"
+  );
 
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchOportunidadVenta(modelo.id, modelo);
+        await intentar(() => patchOportunidadVenta(modelo.id, modelo));
         recargarCabecera();
       },
+    },
+    confirmarBorrado: {
+      BORRAR_CANCELADO: "defecto",
     },
   };
   const emitirOportunidad = useMaquina(maquina, "defecto", () => {});
@@ -47,6 +58,12 @@ export const DetalleOportunidadVenta = ({
     const nuevaOportunidad = await getOportunidadVenta(modelo.id);
     init(nuevaOportunidad);
     emitir("OPORTUNIDAD_CAMBIADA", nuevaOportunidad);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await intentar(() => deleteOportunidadVenta(modelo.id));
+    emitir("OPORTUNIDAD_BORRADA", modelo);
+    setEstado("edicion");
   };
 
   return (
@@ -60,6 +77,11 @@ export const DetalleOportunidadVenta = ({
     >
       {!!oportunidadId && (
         <>
+          <div className="maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <Tabs
             children={[
               <Tab
@@ -97,6 +119,14 @@ export const DetalleOportunidadVenta = ({
               </QBoton>
             </div>
           )}
+          <QModalConfirmacion
+            nombre="borrarOportunidad"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar esta oportunidad de venta?"
+            onCerrar={() => setEstado("edicion")}
+            onAceptar={onBorrarConfirmado}
+          />
         </>
       )}
     </Detalle>

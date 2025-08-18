@@ -24,6 +24,13 @@ export type Paginacion = {
   pagina: number;
 };
 
+export type TotalRegistros = number;
+
+export type RespuestaLista<T> = Promise<{
+  datos: T[];
+  total: TotalRegistros;
+}>
+
 export type Direccion = {
   nombre_via: string;
   tipo_via: string;
