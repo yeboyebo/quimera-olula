@@ -114,8 +114,10 @@ export function Calendario<T extends DatoBase>({
     getDiasDelMes,
     getSemanasDelMes,
     cabecera: {
-      botonesIzquierda = [],
-      botonesDerecha = [],
+      botonesIzqModo = [],
+      botonesDerModo = [],
+      botonesIzqHoy = [],
+      botonesDerHoy = [],
       mostrarCambioModo = true,
       mostrarControlesNavegacion = true,
       mostrarBotonHoy = true,
@@ -220,12 +222,13 @@ export function Calendario<T extends DatoBase>({
   const renderCabecera = () => (
     <div className="calendario-cabecera">
       <div className="cabecera-izquierda">
+        {botonesIzqModo}
         {mostrarCambioModo && (
           <QBoton onClick={() => setModoAnio(!modoAnio)}>
             {modoAnio ? 'Modo Mes' : 'Modo Año'}
           </QBoton>
         )}
-        {botonesIzquierda}
+        {botonesDerModo}
       </div>
 
       <div className="calendario-navegacion">
@@ -246,8 +249,9 @@ export function Calendario<T extends DatoBase>({
       </div>
 
       <div className="cabecera-derecha">
-        {botonesDerecha}
+        {botonesIzqHoy}
         {mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
+        {botonesDerHoy}
       </div>
     </div>
   );  

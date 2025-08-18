@@ -17,8 +17,10 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
   esHoy?: (fecha: Date) => boolean;
   esMesActual?: (fecha: Date, mesReferencia: Date) => boolean;
   cabecera?: {
-    botonesIzquierda?: React.ReactNode[];
-    botonesDerecha?: React.ReactNode[];
+    botonesIzqModo?: React.ReactNode[];
+    botonesDerModo?: React.ReactNode[];
+    botonesIzqHoy?: React.ReactNode[];
+    botonesDerHoy?: React.ReactNode[];
     mostrarCambioModo?: boolean;
     mostrarControlesNavegacion?: boolean;
     mostrarBotonHoy?: boolean;
