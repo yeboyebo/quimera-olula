@@ -1,7 +1,10 @@
+import { useContext, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
@@ -9,7 +12,7 @@ import { EstadoLead } from "../../../comun/componentes/estado_lead.tsx";
 import { FuenteLead } from "../../../comun/componentes/fuente_lead.tsx";
 import { Lead } from "../../diseño.ts";
 import { leadVacio, metaLead } from "../../dominio.ts";
-import { getLead, patchLead } from "../../infraestructura.ts";
+import { deleteLead, getLead, patchLead } from "../../infraestructura.ts";
 import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import "./DetalleLead.css";
 import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
@@ -28,9 +31,13 @@ export const DetalleLead = ({
   const params = useParams();
   const leadId = leadInicial?.id ?? params.id;
   const titulo = (lead: Entidad) => lead.nombre as string;
+  const { intentar } = useContext(ContextoError);
 
   const lead = useModelo(metaLead, leadVacio);
   const { modelo, init } = lead;
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+    "edicion"
+  );
 
   const maquina: Maquina<Estado> = {
     defecto: {
@@ -48,6 +55,12 @@ export const DetalleLead = ({
     emitir("LEAD_CAMBIADO", nuevoLead);
   };
 
+  const onBorrarConfirmado = async () => {
+    await intentar(() => deleteLead(modelo.id));
+    emitir("LEAD_BORRADO", modelo);
+    setEstado("edicion");
+  };
+
   return (
     <Detalle
       id={leadId}
@@ -59,6 +72,11 @@ export const DetalleLead = ({
     >
       {!!leadId && (
         <>
+          <div className="maestro-botones ">
+            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              Borrar
+            </QBoton>
+          </div>
           <Tabs
             children={[
               <Tab
@@ -108,6 +126,14 @@ export const DetalleLead = ({
               </QBoton>
             </div>
           )}
+          <QModalConfirmacion
+            nombre="borrarLead"
+            abierto={estado === "confirmarBorrado"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este lead?"
+            onCerrar={() => setEstado("edicion")}
+            onAceptar={onBorrarConfirmado}
+          />
         </>
       )}
     </Detalle>

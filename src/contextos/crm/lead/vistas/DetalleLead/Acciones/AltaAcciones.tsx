@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { HookModelo, useModelo } from "../../../../../comun/useModelo.ts";
 import { getAccion, postAccion } from "../../../../accion/infraestructura.ts";
 import { EstadoAccion } from "../../../../comun/componentes/estado_accion.tsx";
@@ -16,13 +18,14 @@ export const AltaAcciones = ({
   lead: HookModelo<Lead>;
 }) => {
   const nuevaAccion = useModelo(metaNuevaAccion, nuevaAccionVacia);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
     const modelo = {
       ...nuevaAccion.modelo,
       tarjeta_id: lead.modelo.id,
     };
-    const id = await postAccion(modelo);
+    const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);
     emitir("ACCION_CREADA", accionCreada);
   };

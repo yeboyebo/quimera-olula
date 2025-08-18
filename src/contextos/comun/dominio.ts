@@ -323,3 +323,35 @@ export const formatearHora = (hora: string): string => {
     if (!hora) return hora;
     return hora.substring(0, 5); // "14:30:00" -> "14:30"
 };
+
+export const calcularPaginacionSimplificada = (
+    total: number | undefined,
+    paginaActual: number,
+    limite: number
+) => {
+    const totalPaginas = total ? Math.ceil(total / limite) : 0;
+
+    if (totalPaginas <= 0) {
+        return { paginasMostradas: [], totalPaginas: 0 };
+    }
+
+    // Para mostrar un máximo de 5 páginas alrededor de la página actual
+    let inicio = Math.max(1, paginaActual - 2);
+    let fin = Math.min(totalPaginas, paginaActual + 2);
+
+    // Ajustar si no llegamos al máximo de páginas mostradas
+    if (fin - inicio + 1 < 5) {
+        if (paginaActual < 3) {
+            fin = Math.min(totalPaginas, 5);
+        } else {
+            inicio = Math.max(1, totalPaginas - 4);
+        }
+    }
+
+    const paginasMostradas = [];
+    for (let i = inicio; i <= fin; i++) {
+        paginasMostradas.push(i);
+    }
+
+    return { paginasMostradas, totalPaginas };
+};

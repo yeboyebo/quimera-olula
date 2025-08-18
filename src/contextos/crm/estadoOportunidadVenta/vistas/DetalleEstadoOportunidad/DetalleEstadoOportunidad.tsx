@@ -1,7 +1,9 @@
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
@@ -27,6 +29,7 @@ export const DetalleEstadoOportunidad = ({
   const params = useParams();
   const estadoId = estadoInicial?.id ?? params.id;
   const titulo = (estado: Entidad) => estado.descripcion as string;
+  const { intentar } = useContext(ContextoError);
 
   const estado = useModelo(metaEstadoOportunidad, estadoOportunidadVacio);
   const { modelo, init } = estado;
@@ -34,7 +37,7 @@ export const DetalleEstadoOportunidad = ({
   const maquina: Maquina<Estado> = {
     defecto: {
       GUARDAR_INICIADO: async () => {
-        await patchEstadoOportunidad(modelo.id, modelo);
+        await intentar(() => patchEstadoOportunidad(modelo.id, modelo));
         recargarCabecera();
       },
     },
