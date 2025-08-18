@@ -33,12 +33,15 @@ export const CalendarioEventos = () => {
         cargando={cargando}
         config={{
           maxDatosVisibles: 3,
+          // ¿filtro?
           cabecera: {
+            // ¿filtro?
             // mostrarBotonHoy: false,
             // mostrarCambioModo: false,
             // modoCalendario: 'anio'
           }
-        }}        
+        }}    
+        // ¿filtro?    
         renderDato={(dato: EventoCalendario) => (
           <div 
             onClick={() => window.location.href = `/eventos/evento/${dato.evento_id}`}
