@@ -45,7 +45,8 @@ export const DetalleEvento = () => {
 
   const onBorrarConfirmado = async () => {
     await deleteEvento(modelo.evento_id);
-    navigate("/eventos/eventos", { replace: true });
+    const pantalla = window.location.pathname.includes("calendario") ? "calendario" : "eventos"; 
+    navigate(`/eventos/${pantalla}`, { replace: true });
     // emitir("EVENTO_BORRADO", modelo);
     // setEstado("edicion");
   };

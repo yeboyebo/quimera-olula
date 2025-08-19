@@ -205,6 +205,16 @@ createRoot(document.getElementById("root")!).render(
                 </Vista>
               }
             />
+            <Route path="evento">
+              <Route
+                path=":id"
+                element={
+                  <Vista>
+                    <DetalleEvento />
+                  </Vista>
+                }
+              />
+            </Route>
           </Route>          
           <Route path="eventos">
             <Route

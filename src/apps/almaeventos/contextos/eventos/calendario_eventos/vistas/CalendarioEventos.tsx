@@ -107,7 +107,7 @@ export const CalendarioEventos = () => {
         // ¿filtro?    
         renderDato={(dato: EventoCalendario) => (
           <div 
-            onClick={() => window.location.href = `/eventos/evento/${dato.evento_id}`}
+            onClick={() => window.location.href = `/eventos/calendario/evento/${dato.evento_id}`}
             className="evento-item"
           >
             <div className="texto-multilinea-wrapper">
