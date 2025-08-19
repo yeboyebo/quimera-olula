@@ -3,20 +3,26 @@ import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
 import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
+import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
 import { BotonConTooltip } from "../../../comun/componentes/BotonConTooltip/BotonConTooltip.tsx";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip/TextoConTooltip.tsx";
+import { AltaEvento } from "../../evento/vistas/AltaEvento.tsx";
 import { EventoCalendario } from "../diseño.ts";
 import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
 
+// Define Estado type for use in MaestroEvento
+type Estado = "calendario" | "alta";
 
 export const CalendarioEventos = () => {
   const eventosCalendarioData = useLista<EventoCalendario>([]);
   const [cargando, setCargando] = useState(false);
   const [filtro, setFiltro] = useState<Filtro>([]);
-  const camposFiltro = ["descripcionref"];
+  const [estado, setEstado] = useState<Estado>("calendario");
+  const camposFiltro = ["descripcionref","referencia"];
 
   // Cargar eventos al montar el componente
   useEffect(() => {
@@ -28,6 +34,28 @@ export const CalendarioEventos = () => {
     };
     fetchEventosCalendario();
   }, [filtro]);
+
+
+  // Definir la máquina de estados
+  const maquina: Maquina<Estado> = {
+    alta: {
+      EVENTO_CREADO: (payload: unknown) => {
+        const evento = payload as EventoCalendario;        
+        const eventoProcesado = {
+          ...evento,
+          fecha: evento.fecha_inicio
+        }
+        eventosCalendarioData.añadir(eventoProcesado);
+        return "calendario";
+      },
+      ALTA_CANCELADA: "calendario",
+    },
+    calendario: {
+      ALTA_INICIADA: "alta",
+    },
+  };
+
+  const emitir = useMaquina(maquina, estado, setEstado);  
 
   // console.log('mimensaje_aaaaaaaaaaaaaaaa', eventosCalendarioData);
 
@@ -42,10 +70,6 @@ export const CalendarioEventos = () => {
   };
   const resetearFiltro = () => setFiltro([]);  
   
-  const altaEvento = () => {
-      console.log('mimensaje_altaEvento_clicked');
-  };
-
   const generarEnlace = () => {
       console.log('mimensaje_generarEnlace_clicked');
   };  
@@ -70,7 +94,7 @@ export const CalendarioEventos = () => {
               />
             ],
             botonesDerHoy: [   
-              <QBoton onClick={altaEvento}>Nuevo evento</QBoton>,
+              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo evento</QBoton>,
               <BotonConTooltip tooltip="Generar enlace a calendario" tamaño={"pequeño"} onClick={generarEnlace}> 
                 <QIcono nombre={"copiar"} tamaño={"sm"} color={"white"} style={{margin: '4px'}}/>
               </BotonConTooltip>
@@ -92,6 +116,13 @@ export const CalendarioEventos = () => {
           </div>
         )}
       />
+      <QModal
+        nombre="modal"
+        abierto={estado === "alta"}
+        onCerrar={() => emitir("ALTA_CANCELADA")}
+      >
+        <AltaEvento emitir={emitir} />
+      </QModal>
     </div>
   );
 };
