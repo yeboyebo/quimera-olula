@@ -184,6 +184,7 @@ export const QTabla = <T extends Entidad>({
   
   return (
     <quimera-tabla>
+      <div className="tabla-contenedor-scroll">
       <table data-anchos-fijos={tieneAnchosFijos}>
         <thead>
           <tr>{cabecera(metaTablaCompleta, orden, onOrdenar)}</tr>
@@ -200,6 +201,7 @@ export const QTabla = <T extends Entidad>({
           ))}
         </tbody>
       </table>
+      </div>
       {paginacion &&
         paginacionControlador(totalEntidades, paginacion, onPaginacion)}
     </quimera-tabla>

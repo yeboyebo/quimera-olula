@@ -123,14 +123,27 @@ quimera-tabla {
     }
 }
 
+.tabla-contenedor-scroll {
+    overflow-x: auto;
+    /* Scroll horizontal solo aquí */
+    width: 100%;
+    border-bottom: var(--tamaño-borde-s) solid var(--gris-4);
+}
+
+.tabla-contenedor-scroll table {
+    min-width: 100%;
+    margin-bottom: 0;
+}
+
 quimera-tabla-paginacion {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: var(--espaciado-m);
-    padding: var(--espaciado-s);
     border-radius: var(--radio-borde-m);
     gap: var(--espaciado-xs);
+    background: var(--color-fondo);
+    padding: var(--espaciado-m) 0;
 
     >span {
         padding: var(--espaciado-xs);
