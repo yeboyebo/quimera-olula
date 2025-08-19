@@ -1,5 +1,5 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
-import { Accion } from "./diseño.ts";
+import { Accion, NuevaAccion } from "./diseño.ts";
 
 
 export const accionVacia: Accion = {
@@ -36,13 +36,13 @@ export const initEstadoAccion = (accion: Accion): EstadoModelo<Accion> =>
 
 export const initEstadoAccionVacia = () => initEstadoAccion(accionVacia);
 
-export type NuevaAccion = {
-    fecha: string;
-    descripcion: string;
-    tipo: string;
-    estado: "Pendiente" | "En Progreso" | "Completada" | "Cancelada";
-    observaciones: string;
-};
+// export type NuevaAccion = {
+//     fecha: string;
+//     descripcion: string;
+//     tipo: string;
+//     estado: "Pendiente" | "En Progreso" | "Completada" | "Cancelada";
+//     observaciones: string;
+// };
 
 export const nuevaAccionVacia: NuevaAccion = {
     fecha: "",
@@ -50,6 +50,7 @@ export const nuevaAccionVacia: NuevaAccion = {
     tipo: "Tarea",
     estado: "Pendiente",
     observaciones: "",
+    incidencia_id: "",
 };
 
 export const metaNuevaAccion: MetaModelo<NuevaAccion> = {

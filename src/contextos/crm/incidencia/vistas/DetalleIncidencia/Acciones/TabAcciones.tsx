@@ -1,26 +1,25 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import {
   MetaTabla,
   QTabla,
 } from "../../../../../../componentes/atomos/qtabla.tsx";
-import { ContextoError } from "../../../../../comun/contexto.ts";
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
 import { Accion } from "../../../../accion/diseño.ts";
-import { deleteAccion } from "../../../../accion/infraestructura.ts";
+import { AltaAccion } from "../../../../accion/vistas/AltaAccion.tsx";
+import { BajaAccion } from "../../../../accion/vistas/BajaAccion.tsx";
 import { Incidencia } from "../../../diseño.ts";
 import { getAccionesIncidencia } from "../../../infraestructura.ts";
-import { TabAccionesAcciones } from "./TabAccionesAcciones.tsx";
 
-type Estado = "lista" | "alta" | "borrar";
+type Estado = "Inactivo" | "Creando" | "Borrando";
 
 export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia> }) => {
   const acciones = useLista<Accion>([]);
   const [cargando, setCargando] = useState(true);
-  const [estado, setEstado] = useState<Estado>("lista");
+  const [estado, setEstado] = useState<Estado>("Inactivo");
   const incidenciaId = incidencia.modelo.id;
-  const { intentar } = useContext(ContextoError);
 
   const setListaAcciones = acciones.setLista;
 
@@ -36,34 +35,29 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
   }, [incidenciaId, cargarAcciones]);
 
   const maquina: Maquina<Estado> = {
-    lista: {
-      ALTA_SOLICITADA: "alta",
-      BORRADO_SOLICITADO: "borrar",
-      ACCION_SELECCIONADA: (payload: unknown) => {
+    Inactivo: {
+      crear: "Creando",
+      borrar: "Borrando",
+      accion_seleccionada: (payload: unknown) => {
         const accion = payload as Accion;
         acciones.seleccionar(accion);
       },
     },
-    alta: {
-      ACCION_CREADA: async (payload: unknown) => {
-        const nuevaAccion = payload as Accion;
-        acciones.añadir(nuevaAccion);
-        return "lista" as Estado;
+    Creando: {
+      accion_creada: async (payload: unknown) => {
+        acciones.añadir(payload as Accion);
+        return "Inactivo" as Estado;
       },
-      ALTA_CANCELADA: "lista",
+      creacion_cancelada: "Inactivo",
     },
-    borrar: {
-      ACCION_BORRADA: async () => {
+    Borrando: {
+      accion_borrada: async () => {
         if (acciones.seleccionada) {
-          const accionId = acciones.seleccionada.id;
-          if (accionId) {
-            await intentar(() => deleteAccion(accionId));
-            acciones.eliminar(acciones.seleccionada);
-          }
+          acciones.eliminar(acciones.seleccionada);
         }
-        return "lista" as Estado;
+        return "Inactivo" as Estado;
       },
-      BORRADO_CANCELADO: "lista",
+      borrado_cancelado: "Inactivo",
     },
   };
 
@@ -79,18 +73,38 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
 
   return (
     <div className="TabAcciones">
-      <TabAccionesAcciones
+      {/* <TabAccionesAcciones
         seleccionada={acciones.seleccionada}
         emitir={emitir}
         estado={estado}
         incidencia={incidencia}
-      />
+      /> */}
+      <div className="TabAccionesAcciones maestro-botones">
+        <QBoton onClick={() => emitir("crear")}>
+          Nueva
+        </QBoton>
+        
+        <QBoton
+          onClick={() => emitir("borrar")}
+          deshabilitado={!acciones.seleccionada}
+        >
+          Borrar
+        </QBoton>
+  
+        <AltaAccion emitir={emitir} idIncidencia={incidencia.modelo.id} key={incidencia.modelo.id} activo={estado === "Creando"}/>
+  
+        <BajaAccion 
+          emitir={emitir}
+          activo={estado === "Borrando"}
+          idAccion={acciones.seleccionada?.id}
+        />
+      </div>
       <QTabla
         metaTabla={metaTablaAccion}
         datos={acciones.lista}
         cargando={cargando}
         seleccionadaId={acciones.seleccionada?.id}
-        onSeleccion={(accion) => emitir("ACCION_SELECCIONADA", accion)}
+        onSeleccion={(accion) => emitir("accion_seleccionada", accion)}
         orden={["id", "ASC"]}
         onOrdenar={() => null}
       />

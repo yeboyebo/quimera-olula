@@ -3,7 +3,6 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Incidencia } from "../diseño.ts";
@@ -20,32 +19,29 @@ const metaTablaIncidencia: MetaTabla<Incidencia> = [
   { id: "prioridad", cabecera: "Prioridad" },
 ];
 
-type Estado = "lista" | "alta";
+type Estado = "Inactivo" | "Creando";
 
 export const MaestroConDetalleIncidencia = () => {
-  const [estado, setEstado] = useState<Estado>("lista");
+  const [estado, setEstado] = useState<Estado>("Inactivo");
   const incidencias = useLista<Incidencia>([]);
 
   const maquina: Maquina<Estado> = {
-    alta: {
-      INCIDENCIA_CREADA: (payload: unknown) => {
-        const Incidencia = payload as Incidencia;
-        incidencias.añadir(Incidencia);
-        return "lista";
+    Creando: {
+      incidencia_creada: (payload: unknown) => {
+        incidencias.añadir(payload as Incidencia);
+        return "Inactivo";
       },
-      ALTA_CANCELADA: "lista",
+      creacion_cancelada: "Inactivo",
     },
-    lista: {
-      ALTA_INICIADA: "alta",
-      INCIDENCIA_CAMBIADA: (payload: unknown) => {
-        const Incidencia = payload as Incidencia;
-        incidencias.modificar(Incidencia);
+    Inactivo: {
+      crear: "Creando",
+      incidencia_cambiada: (payload: unknown) => {
+        incidencias.modificar(payload as Incidencia);
       },
-      INCIDENCIA_BORRADA: (payload: unknown) => {
-        const Incidencia = payload as Incidencia;
-        incidencias.eliminar(Incidencia);
+      incidencia_borrada: (payload: unknown) => {
+        incidencias.eliminar(payload as Incidencia);
       },
-      CANCELAR_SELECCION: () => {
+      cancelar_seleccion: () => {
         incidencias.limpiarSeleccion();
       },
     },
@@ -61,7 +57,7 @@ export const MaestroConDetalleIncidencia = () => {
           <>
             <h2>Incidencias</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
+              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaIncidencia}
@@ -77,13 +73,7 @@ export const MaestroConDetalleIncidencia = () => {
           <DetalleIncidencia incidenciaInicial={incidencias.seleccionada} emitir={emitir} />
         }
       />
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      >
-        <AltaIncidencia emitir={emitir} />
-      </QModal>
+      <AltaIncidencia publicar={emitir} activo={estado === 'Creando'}/>
     </div>
   );
 };
