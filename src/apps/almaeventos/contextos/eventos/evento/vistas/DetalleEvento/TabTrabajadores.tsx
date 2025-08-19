@@ -24,9 +24,9 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
   useEffect(() => {
     const fetchTrabajadoresEvento = async () => {
       try {
-        const trabajadoresEvento = await getTrabajadoresEvento([["codproyecto", "=", evento.modelo.evento_id]], ["id", "DESC"]);
-        setTrabajadoresEventoData(trabajadoresEvento);
-        fetchTrabajadores(trabajadoresEvento);
+        const trabajadoresEvento = await getTrabajadoresEvento([["codproyecto", "=", evento.modelo.evento_id]], ["id", "DESC"]);        
+        setTrabajadoresEventoData(trabajadoresEvento?.datos);
+        fetchTrabajadores(trabajadoresEvento?.datos);
       } catch (error) {
         console.error("Error al cargar trabajadores del evento:", error);
       }
@@ -42,7 +42,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
           [] as unknown as Filtro;
         
         const trabajadores = await getTrabajadores(filtro, ["id", "DESC"]);
-        setTrabajadoresData(trabajadores);
+        setTrabajadoresData(trabajadores?.datos);
       } catch (error) {
         console.error("Error al cargar trabajadores disponibles:", error);
       }
@@ -81,6 +81,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
         <div className="contenedor-columnas">
           <div className="columna-izquierda">
             <h3>Trabajadores disponibles</h3>
+            <div className="listado-trabjadores">
             {trabajadoresData.length > 0 ? (
               <ul className="lista-trabajadores">
                 {trabajadoresData.map(trabajador => (
@@ -95,10 +96,12 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
             ) : (
               <p>No hay trabajadores disponibles</p>
             )}
+            </div>
           </div>
           
           <div className="columna-derecha">
             <h3>Trabajadores asignados</h3>
+            <div className="listado-trabjadores">
             {trabajadoresEventoData.length > 0 ? (
               <ul className="lista-trabajadores">
                 {trabajadoresEventoData.map(trabajadorEvento => (
@@ -113,6 +116,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
             ) : (
               <p>No hay trabajadores asignados a este evento</p>
             )}
+            </div>
           </div>
         </div>
       </quimera-formulario>
