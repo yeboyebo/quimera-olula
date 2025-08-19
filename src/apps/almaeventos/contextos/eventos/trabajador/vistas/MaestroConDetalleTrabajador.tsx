@@ -70,6 +70,7 @@ export const MaestroConDetalleTrabajador = () => {
               seleccionada={trabajadores.seleccionada}
               setSeleccionada={trabajadores.seleccionar}
               cargar={getTrabajadores}
+              // tamañoPagina={10}
             />
           </>
         }

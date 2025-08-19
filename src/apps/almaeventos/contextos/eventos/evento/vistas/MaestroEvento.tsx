@@ -18,15 +18,20 @@ export const MaestroEvento = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const eventos = useLista<Evento>([]);
   const { intentar } = useContext(ContextoError);
+  const [paginacion, setPaginacion] = useState({ pagina: 1, limite: 9 });
+  const [totalRegistros, setTotalRegistros] = useState(0);
 
   // Cargar eventos al montar el componente
   useEffect(() => {
     const fetchEventos = async () => {
-      const respuesta = await getEventos([], []);      
+      const respuesta = await getEventos([], [], paginacion);      
       eventos.setLista(respuesta.datos);
+      if (respuesta.total && respuesta.total > 0) {
+        setTotalRegistros(respuesta.total);
+      }
     };
     fetchEventos();
-  }, []);
+  }, [paginacion]);
 
   // Definir la máquina de estados
   const maquina: Maquina<Estado> = {
@@ -86,6 +91,9 @@ export const MaestroEvento = () => {
         seleccionadaId={eventos.seleccionada?.evento_id}
         orden={["id", "ASC"]}
         onOrdenar={() => null}
+        paginacion={paginacion}
+        onPaginacion={(pagina, limite) => setPaginacion({ pagina, limite })}
+        totalEntidades={totalRegistros}
       />
       
       <QModal
