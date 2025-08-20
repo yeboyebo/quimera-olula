@@ -11,7 +11,7 @@ export const incidenciaFromApi = (incidenciaApi: IncidenciaAPI): Incidencia => {
 
     const incidencia = {
         ...incidenciaApi,
-        fecha: new Date(incidenciaApi.fecha),
+        // fecha: new Date(incidenciaApi.fecha),
     }
     return incidencia;
 };
@@ -20,7 +20,7 @@ export const incidenciaToApi = (incidencia: Incidencia): IncidenciaAPI => {
 
     const incidenciaApi = {
         ...incidencia,
-        fecha: incidencia.fecha.toISOString(),
+        // fecha: incidencia.fecha.toISOString(),
     };
     return incidenciaApi;
 };

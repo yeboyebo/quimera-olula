@@ -5,11 +5,11 @@ import { Incidencia } from "../../diseño.ts";
 import { deleteIncidencia } from "../../infraestructura.ts";
 
 export const BorrarIncidencia = ({
-  emitir,
+  publicar,
   activo = false,
   incidencia
 }: {
-  emitir: (evento: string, payload?: unknown) => void;
+  publicar: (evento: string, payload?: unknown) => void;
   incidencia: Incidencia;
   activo: boolean;
 }) => {
@@ -20,9 +20,8 @@ export const BorrarIncidencia = ({
     if (incidencia.id) {
       await intentar(() => deleteIncidencia(incidencia.id));
     }
-    emitir("incidencia_borrada");
+    publicar("incidencia_borrada");
   };
-
   
   return (
     <QModalConfirmacion
@@ -30,7 +29,7 @@ export const BorrarIncidencia = ({
         abierto={activo}
         titulo="Confirmar borrado"
         mensaje="¿Está seguro de que desea borrar esta incidencia?"
-        onCerrar={() => emitir("borrado_cancelado")}
+        onCerrar={() => publicar("borrado_cancelado")}
         onAceptar={borrar}
       />
   );

@@ -13,10 +13,10 @@ import { PrioridadIncidencia } from "../../comun/componentes/PrioridadIncidencia
 import { NuevaIncidencia } from "../diseño.ts";
 import { metaNuevaIncidencia, nuevaIncidenciaVacia } from "../dominio.ts";
 import { getIncidencia, postIncidencia } from "../infraestructura.ts";
-import "./AltaIncidencia.css";
+import "./CrearIncidencia.css";
 
 
-export const AltaIncidencia = ({
+export const CrearIncidencia = ({
   publicar = () => {},
   activo= false
 }: {
@@ -72,7 +72,7 @@ const FormAltaIncidencia = ({
   };
 
   return (
-    <div className="AltaIncidencia">
+    <div className="CrearIncidencia">
       <h2>Nueva Incidencia</h2>
       <quimera-formulario>
         <QInput label="Descripción" {...incidencia.uiProps("descripcion")} />
@@ -96,63 +96,6 @@ const FormAltaIncidencia = ({
         </QBoton>
       </div>
     </div>
-
-    // <div className="AltaIncidencia">
-    //   <h2>Nueva Incidencia</h2>
-    //   <quimera-formulario>
-    //     <QInput label="Descripción" {...accion.uiProps("descripcion")} />
-    //     <QInput label="Fecha" {...accion.uiProps("fecha")} />
-    //     <Usuario {...accion.uiProps("usuario_id")} label='Responsable'/>
-    //     <QInput label="Incidencia" {...accion.uiProps("incidencia_id")} />
-    //   </quimera-formulario>
-    //   <div className="botones">
-    //     <QBoton onClick={crear} deshabilitado={!accion.valido}>
-    //       Guardar
-    //     </QBoton>
-    //     <QBoton onClick={cancelar} variante="texto">
-    //       Cancelar
-    //     </QBoton>
-    //   </div>
-    // </div>
   );
 };
-// export const AltaIncidencia = ({ emitir = () => {} }: { emitir?: EmitirEvento }) => {
-//   const incidencia = useModelo(metaNuevaIncidencia, incidenciaVacia);
-//   const { intentar } = useContext(ContextoError);
 
-//   const guardar = async () => {
-//     const modelo = {
-//       ...incidencia.modelo,
-//     };
-//     const id = await intentar(() => postIncidencia(modelo));
-//     const leadCreado = await getIncidencia(id);
-//     emitir("INCIDENCIA_CREADA", leadCreado);
-//   };
-
-//   return (
-//     <div className="AltaIncidencia">
-//       <h2>Nueva Incidencia</h2>
-//       <quimera-formulario>
-//         <QInput label="Descripción" {...incidencia.uiProps("descripcion")} />
-//         <QInput label="Nombre" {...incidencia.uiProps("nombre")} />
-//         <QDate label="Fecha" {...incidencia.uiProps("fecha")} />
-//         <PrioridadIncidencia {...incidencia.uiProps("prioridad")}/>
-//         <EstadoIncidencia {...incidencia.uiProps("estado")}/>
-//         <Usuario {...incidencia.uiProps("responsable_id")} label='Responsable'/>
-//         <QTextArea
-//           label="Descripción larga"
-//           rows={5}
-//           {...incidencia.uiProps("descripcion_larga")}
-//         />
-//       </quimera-formulario>
-//       <div className="botones">
-//         <QBoton onClick={guardar} deshabilitado={!incidencia.valido}>
-//           Guardar
-//         </QBoton>
-//         <QBoton onClick={() => emitir("ALTA_CANCELADA")} variante="texto">
-//           Cancelar
-//         </QBoton>
-//       </div>
-//     </div>
-//   );
-// };

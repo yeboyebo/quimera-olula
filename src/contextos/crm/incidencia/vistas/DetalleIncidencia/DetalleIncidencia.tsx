@@ -1,52 +1,42 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
-import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
-// import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
-import { ContextoError } from "../../../../comun/contexto.ts";
-import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
-import { useModelo } from "../../../../comun/useModelo.ts";
-// import { EstadoIncidencia } from "../../../comun/componentes/estado_incidencia.tsx";
-// import { FuenteIncidencia } from "../../../comun/componentes/fuente_incidencia.tsx";
-import { Incidencia } from "../../diseño.ts";
-import { incidenciaVacia, metaIncidencia } from "../../dominio.ts";
-import { getIncidencia, patchIncidencia } from "../../infraestructura.ts";
-import "./DetalleIncidencia.css";
-// import { TabAcciones } from "./Acciones/TabAcciones.tsx";
-// import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
-// import { TabDatos } from "./TabDatos.tsx";
-// import { TabObservaciones } from "./TabObservaciones.tsx";
 import { QDate } from "../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { QTextArea } from "../../../../../componentes/atomos/qtextarea.tsx";
+import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { Usuario } from "../../../../comun/componentes/usuario.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
+import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
+import { Maquina, useMaquina2 } from "../../../../comun/useMaquina.ts";
+import { useModelo } from "../../../../comun/useModelo.ts";
 import { EstadoIncidencia } from "../../../comun/componentes/EstadoIncidencia.tsx";
 import { PrioridadIncidencia } from "../../../comun/componentes/PrioridadIncidencia.tsx";
-import { TabAcciones } from "./Acciones/TabAcciones.tsx";
+import { Incidencia } from "../../diseño.ts";
+import { incidenciaVacia, metaIncidencia } from "../../dominio.ts";
+import { getIncidencia, patchIncidencia } from "../../infraestructura.ts";
 import { BorrarIncidencia } from "./BorrarIncidencia.tsx";
+import "./DetalleIncidencia.css";
+import { TabAcciones } from "./TabAcciones.tsx";
 
 type Estado = "Editando" | "Borrando";
 
+const titulo = (incidencia: Entidad) => incidencia.descripcion as string;
+
 export const DetalleIncidencia = ({
   incidenciaInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   incidenciaInicial?: Incidencia | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-  const incidenciaId = incidenciaInicial?.id ?? params.id;
-  const titulo = (incidencia: Entidad) => incidencia.descripcion as string;
   const { intentar } = useContext(ContextoError);
-
+  
   const incidencia = useModelo(metaIncidencia, incidenciaVacia);
   const { modelo, uiProps, init } = incidencia;
-  const [estado, setEstado] = useState<Estado>(
-    "Editando"
-  );
-
+  
   const maquina: Maquina<Estado> = {
     Editando: {
       borrar: "Borrando",
@@ -61,17 +51,19 @@ export const DetalleIncidencia = ({
     Borrando: {
       borrado_cancelado: "Editando",
       incidencia_borrada: async () => {
-        emitir("incidencia_borrada", modelo);
+        publicar("incidencia_borrada", modelo);
       }
     }
   };
-  const emitirIncidencia = useMaquina(maquina, estado, setEstado);
-
+  const [emitir, estado] = useMaquina2(maquina, 'Editando');
+  
   const recargarCabecera = async () => {
-    const nuevoIncidencia = await getIncidencia(modelo.id);
-    init(nuevoIncidencia);
-    emitir("incidencia_cambiada", nuevoIncidencia);
+    const nuevaIncidencia = await intentar(() => getIncidencia(modelo.id));
+    init(nuevaIncidencia);
+    publicar("incidencia_cambiada", nuevaIncidencia);
   };
+  
+  const incidenciaId = incidenciaInicial?.id ?? params.id;
 
   return (
     <Detalle
@@ -80,67 +72,65 @@ export const DetalleIncidencia = ({
       setEntidad={(accionInicial) => init(accionInicial)}
       entidad={modelo}
       cargar={getIncidencia}
-      cerrarDetalle={() => emitir("cancelar_seleccion")}
+      cerrarDetalle={() => publicar("cancelar_seleccion")}
     >
       {!!incidenciaId && (
         <>
           <div className="maestro-botones ">
-            <QBoton onClick={() => emitirIncidencia("borrar")}>
+            <QBoton onClick={() => emitir("borrar")}>
               Borrar
             </QBoton>
           </div>
           <div className="DetalleIncidencia">
-            <quimera-formulario>
-              <QInput label="Descripción" {...uiProps("descripcion")} />
-              <QInput label="Nombre" {...uiProps("nombre")} />
-              <QDate label="Fecha" {...uiProps("fecha")} />
-              <PrioridadIncidencia {...uiProps("prioridad")}/>
-              <EstadoIncidencia {...uiProps("estado")}/>
-              <Usuario {...uiProps("responsable_id", "nombre_responsable")} label='Responsable'/>
-              <div className="Tabs">
-              <Tabs
-                children={[
-                  <Tab
-                    key="tab-1" label="Descripción"
-                    children={
-                      <QTextArea
-                        label="Descripción larga"
-                        rows={5}
-                        {...uiProps("descripcion_larga")}
-                      />
-                    }
-                  />,
-                  <Tab
-                    key="tab-2" label="Resolución"
-                    children={
-                      <QTextArea
-                        label="Resolución"
-                        rows={5}
-                        {...uiProps("resolucion")}
-                      />}
-                  />,
-                  <Tab
-                    key="tab-3" label="Acciones"
-                    children={
-                      <div className="detalle-incidencia-tab-contenido">
-                        <TabAcciones incidencia={incidencia} />
-                      </div>
-                    }
-                  />,
-                ]}
-              ></Tabs>
-              </div>
-            </quimera-formulario>
+            <Tabs
+              children={[
+                <Tab key="general" label="General">
+                  <quimera-formulario>
+                    <QInput label="Descripción" {...uiProps("descripcion")} />
+                    <QInput label="Nombre" {...uiProps("nombre")} />
+                    <QDate label="Fecha" {...uiProps("fecha")} />
+                    <PrioridadIncidencia {...uiProps("prioridad")}/>
+                    <EstadoIncidencia {...uiProps("estado")}/>
+                    <Usuario {...uiProps("responsable_id", "nombre_responsable")} label='Responsable'/>
+                    <div className="Tabs">
+                    <Tabs
+                      children={[
+                        <Tab key="tab-1" label="Descripción">
+                          <QTextArea
+                            label="Descripción larga"
+                            rows={5}
+                            {...uiProps("descripcion_larga")}
+                          />
+                        </Tab>,
+                        <Tab key="tab-2" label="Resolución">
+                          <QTextArea
+                            label="Resolución"
+                            rows={5}
+                            {...uiProps("resolucion")}
+                          />
+                        </Tab>,
+                      ]}
+                    ></Tabs>
+                    </div>
+                  </quimera-formulario>
+                </Tab>,
+                <Tab key="tab-3" label="Acciones">
+                  <div className="detalle-incidencia-tab-contenido">
+                    <TabAcciones incidencia={incidencia} />
+                  </div>
+                </Tab>
+              ]}
+            ></Tabs>
           </div>
           {incidencia.modificado && (
             <div className="botones maestro-botones">
               <QBoton
-                onClick={() => emitirIncidencia("guardar")}
+                onClick={() => emitir("guardar")}
                 deshabilitado={!incidencia.valido}
               >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={() => emitirIncidencia("cancelar")}
+              <QBoton tipo="reset" variante="texto" onClick={() => emitir("cancelar")}
                 deshabilitado={!incidencia.modificado}
               >
                 Cancelar
@@ -148,7 +138,7 @@ export const DetalleIncidencia = ({
             </div>
           )}
           <BorrarIncidencia 
-            emitir={emitirIncidencia}
+            publicar={emitir}
             activo={estado === "Borrando"}
             incidencia={modelo}
           />

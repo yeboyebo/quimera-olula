@@ -1,15 +1,13 @@
-import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
+import { Maquina, useMaquina2 } from "../../../comun/useMaquina.ts";
 import { Incidencia } from "../diseño.ts";
 import { getIncidencias } from "../infraestructura.ts";
-import { AltaIncidencia } from "./AltaIncidencia.tsx";
+import { CrearIncidencia } from "./CrearIncidencia.tsx";
 import { DetalleIncidencia } from "./DetalleIncidencia/DetalleIncidencia.tsx";
-// import "./MaestroConDetalleIncidencia.css";
 
 const metaTablaIncidencia: MetaTabla<Incidencia> = [
   { id: "id", cabecera: "Código" },
@@ -22,12 +20,12 @@ const metaTablaIncidencia: MetaTabla<Incidencia> = [
 type Estado = "Inactivo" | "Creando";
 
 export const MaestroConDetalleIncidencia = () => {
-  const [estado, setEstado] = useState<Estado>("Inactivo");
+
   const incidencias = useLista<Incidencia>([]);
 
   const maquina: Maquina<Estado> = {
     Creando: {
-      incidencia_creada: (payload: unknown) => {
+      incidencia_creada: (payload) => {
         incidencias.añadir(payload as Incidencia);
         return "Inactivo";
       },
@@ -35,10 +33,10 @@ export const MaestroConDetalleIncidencia = () => {
     },
     Inactivo: {
       crear: "Creando",
-      incidencia_cambiada: (payload: unknown) => {
+      incidencia_cambiada: (payload) => {
         incidencias.modificar(payload as Incidencia);
       },
-      incidencia_borrada: (payload: unknown) => {
+      incidencia_borrada: (payload) => {
         incidencias.eliminar(payload as Incidencia);
       },
       cancelar_seleccion: () => {
@@ -47,7 +45,7 @@ export const MaestroConDetalleIncidencia = () => {
     },
   };
 
-  const emitir = useMaquina(maquina, estado, setEstado);
+  const [emitir, estado] = useMaquina2(maquina, "Inactivo");
 
   return (
     <div className="Incidencia">
@@ -70,10 +68,12 @@ export const MaestroConDetalleIncidencia = () => {
           </>
         }
         Detalle={
-          <DetalleIncidencia incidenciaInicial={incidencias.seleccionada} emitir={emitir} />
+          <DetalleIncidencia 
+            key={incidencias.seleccionada?.id}
+            incidenciaInicial={incidencias.seleccionada} publicar={emitir} />
         }
       />
-      <AltaIncidencia publicar={emitir} activo={estado === 'Creando'}/>
+      <CrearIncidencia publicar={emitir} activo={estado === 'Creando'}/>
     </div>
   );
 };

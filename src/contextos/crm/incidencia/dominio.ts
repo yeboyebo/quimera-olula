@@ -8,7 +8,7 @@ export const incidenciaVacia: Incidencia = {
     nombre: "",
     responsable_id: "",
     prioridad: "media",
-    fecha: new Date(),
+    fecha: "",
 
 };
 
@@ -18,6 +18,7 @@ export const metaIncidencia: MetaModelo<Incidencia> = {
         responsable_id: { requerido: false },
         descripcion_larga: { requerido: false },
         prioridad: { requerido: true },
+        fecha: { requerido: true, tipo: "fecha" },
         // nombre_responsable: { requerido: true, bloqueado: true },
     },
 };
@@ -33,7 +34,7 @@ export const nuevaIncidenciaVacia: NuevaIncidencia = {
     prioridad: "media",
     responsable_id: null,
     descripcion_larga: "",
-    fecha: new Date(),
+    fecha: (new Date()).toISOString().split("T")[0],
 };
 
 export const metaNuevaIncidencia: MetaModelo<NuevaIncidencia> = {

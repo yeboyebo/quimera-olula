@@ -10,7 +10,7 @@ export interface Incidencia extends Entidad {
     nombre: string;
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
-    fecha: Date
+    fecha: string
 }
 
 export interface IncidenciaAPI extends Entidad {
@@ -20,7 +20,7 @@ export interface IncidenciaAPI extends Entidad {
     nombre: string;
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
-    fecha: string; // ISO date string
+    fecha: string;
 }
 
 export type NuevaIncidencia = {
@@ -29,7 +29,7 @@ export type NuevaIncidencia = {
     nombre: string;
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
-    fecha: Date;
+    fecha: string;
 };
 
 
