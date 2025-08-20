@@ -62,7 +62,7 @@ export const deleteIncidencia: DeleteIncidencia = async (id) => {
 
 export const getAccionesIncidencia = async (incidenciaId: string) => {
 
-    const filtro: Filtro = ['incidencia_id', incidenciaId]
+    const filtro: Filtro = [['incidencia_id', incidenciaId]]
     const orden: Orden = [];
     const q = criteriaQueryUrl(filtro, orden);
 

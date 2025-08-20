@@ -66,6 +66,9 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
   const [emitir, estado] = useMaquina2(maquina, 'Inactivo');
 
   useEffect(() => {
+    if (estado !== "Inactivo") {
+      return;
+    }
     emitir("cargar");
   }, [idIncidencia]);
 

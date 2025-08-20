@@ -55,7 +55,7 @@ export function useMaquina2<Estado extends string>(
                 : await proceso(payload) : undefined;
         setEstado(nuevoEstado || estado);
 
-    }, [maquina, estadoInicial, estado]);
+    }, [maquina, estado]);
 
     return [emitir, estado, setEstado];
 }
