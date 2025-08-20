@@ -1,20 +1,13 @@
 // --- Hooks y helpers para experiencia móvil ---
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useEsMovil } from "../../componentes/maestro/useEsMovil.ts";
 import { QBoton } from "../atomos/qboton.tsx";
 import { QIcono } from '../atomos/qicono.tsx';
 import './calendario.css';
 import { CalendarioConfig, DatoBase } from './tipos';
-function useEsMovil(breakpoint: number = 640): boolean {
-  const [esMovil, setEsMovil] = useState(false);
-  useEffect(() => {
-    const check = () => setEsMovil(window.innerWidth <= breakpoint);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, [breakpoint]);
-  return esMovil;
-}
+// import { useSwipe } from "../../componentes/maestro/useSwipe.ts";
+
 
 function useSwipe(
   onSwipeLeft: () => void,
@@ -48,6 +41,7 @@ function useSwipe(
 }
 
 interface MenuAccionesMovilProps {
+  esMovil: boolean;
   modoAnio: boolean;
   onCambioModo: () => void;
   onIrHoy: () => void;
@@ -55,9 +49,9 @@ interface MenuAccionesMovilProps {
   botonesDerModo?: React.ReactNode[];
   botonesIzqHoy?: React.ReactNode[];
   botonesDerHoy?: React.ReactNode[];
-  children?: React.ReactNode;
 }
 function MenuAccionesMovil({
+  esMovil,
   modoAnio,
   onCambioModo,
   onIrHoy,
@@ -65,7 +59,6 @@ function MenuAccionesMovil({
   botonesDerModo = [],
   botonesIzqHoy = [],
   botonesDerHoy = [],
-  children
 }: MenuAccionesMovilProps) {
   // Estado de apertura controlado por React
   const [abierto, setAbierto] = useState(false);
@@ -125,22 +118,36 @@ function MenuAccionesMovil({
       boxShadow: '2px 0 16px rgba(0,0,0,0.12)'
     }}>
       <nav>
-        <div className="menu-acciones-fila">
-          {botonesIzqModo}
-          <QBoton onClick={onCambioModo}>
+        <div className="menu-acciones">
+          {botonesIzqModo.map((boton, index) => (
+            <div className="menu-acciones-fila" key={index}>
+              {boton}
+            </div>
+          ))}
+          <div className="menu-acciones-fila" key={'modo'}>
+          <QBoton onClick={onCambioModo} variante={esMovil ? 'texto' : 'solido'}>
             {modoAnio ? 'Modo Mes' : 'Modo Año'}
           </QBoton>
-          {botonesDerModo}
+          </div>
+          {botonesDerModo.map((boton, index) => (
+            <div className="menu-acciones-fila" key={index}>
+              {boton}
+            </div>
+          ))}      
+          {botonesIzqHoy.map((boton, index) => (
+            <div className="menu-acciones-fila" key={index}>
+              {boton}
+            </div>
+          ))}            
+          <div className="menu-acciones-fila">
+            <QBoton onClick={onIrHoy} variante={esMovil ? 'texto' : 'solido'}>Hoy</QBoton>
+          </div>
+          {botonesDerHoy.map((boton, index) => (
+            <div className="menu-acciones-fila" key={index}>
+              {boton}
+            </div>
+          ))}           
         </div>
-        <div className="menu-acciones-fila">
-          {botonesIzqHoy}
-          <QBoton onClick={onIrHoy}>Hoy</QBoton>
-          {botonesDerHoy}
-        </div>
-        {children && <div className="menu-acciones-fila">{children}</div>}
-        {/* <div className="menu-acciones-fila">
-          <QBoton onClick={() => setAbierto(false)} >Cerrar</QBoton>
-        </div> */}
       </nav>
     </aside>
   </menu-lateral>
@@ -155,7 +162,7 @@ function MenuAccionesMovil({
         onClick={() => setAbierto(true)}
         type="button"
       >
-        <QIcono nombre="menu" tamaño="sm" color="white" />
+        <QIcono nombre="menu" tamaño="sm" />
       </button>
       {portalNode && ReactDOM.createPortal(menuLateral, portalNode)}
     </>
@@ -261,7 +268,7 @@ export function Calendario<T extends DatoBase>({
   children
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
-  const esMovil = useEsMovil();
+  const esMovil = useEsMovil(640);
   // Control de fecha y modo: si no se pasa desde fuera, lo gestiona el propio componente
   const controlado = typeof config.fechaActual !== 'undefined' && typeof config.onFechaActualChange === 'function';
   const [fechaNoControlada, setFechaNoControlada] = useState(() => config.fechaActual ?? new Date());
@@ -430,6 +437,7 @@ export function Calendario<T extends DatoBase>({
       return (
         <div className="calendario-cabecera">
           <MenuAccionesMovil
+            esMovil={esMovil}
             modoAnio={modoAnio}
             onCambioModo={() => setModoAnio(m => !m)}
             onIrHoy={irAHoy}
@@ -437,7 +445,6 @@ export function Calendario<T extends DatoBase>({
             botonesDerModo={botonesDerModo}
             botonesIzqHoy={botonesIzqHoy}
             botonesDerHoy={botonesDerHoy}
-            // Puedes pasar children personalizados aquí si lo deseas
           />
           <h2 className="calendario-navegacion-mes-anio">{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>
         </div>

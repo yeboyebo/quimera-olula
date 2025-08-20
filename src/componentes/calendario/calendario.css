@@ -251,4 +251,18 @@
   font-size: 0.8rem;
   padding: 2px 4px;
 }
+
+.boton-menu-lateral {
+  border: 1px solid white;
+  background-color: inherit;
+  padding-top: 5px;
+}
+
+.menu-acciones {
+  margin-top: 1rem;
+}
+
+.menu-acciones-fila {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--gris-3);
 }

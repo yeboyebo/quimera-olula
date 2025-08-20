@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
+import { useEsMovil } from "../../../../../../componentes/maestro/useEsMovil.ts";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
@@ -19,6 +20,7 @@ export const CalendarioEventos = () => {
   const [cargando, setCargando] = useState(false);
   const [filtro, setFiltro] = useState<Filtro>([]);
   const [estado, setEstado] = useState<Estado>("calendario");
+  const esMovil = useEsMovil(640);
   const camposFiltro = ["descripcionref","referencia"];
 
   // Cargar eventos al montar el componente
@@ -81,17 +83,23 @@ export const CalendarioEventos = () => {
         config={{
           maxDatosVisibles: 3,
           cabecera: {
-            // botonesDerModo: [ 
-            //   <MaestroFiltros
-            //     campos={camposFiltro}
-            //     filtro={filtro}
-            //     cambiarFiltro={cambiarFiltro}
-            //     borrarFiltro={borrarFiltro}
-            //     resetearFiltro={resetearFiltro}
-            //   />
-            // ],
+            botonesIzqModo: [ 
+              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>UNO</QBoton>,
+              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>DOS</QBoton>,
+            ],            
+            botonesDerModo: [ 
+              // <MaestroFiltros
+              //   campos={camposFiltro}
+              //   filtro={filtro}
+              //   cambiarFiltro={cambiarFiltro}
+              //   borrarFiltro={borrarFiltro}
+              //   resetearFiltro={resetearFiltro}
+              // />
+              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>tres</QBoton>,
+              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>CUATRO</QBoton>,
+            ],
             botonesDerHoy: [   
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo evento</QBoton>,
+              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>Nuevo evento</QBoton>,
               // <BotonConTooltip tooltip="Generar enlace a calendario" tamaño={"pequeño"} onClick={generarEnlace}> 
               //   <QIcono nombre={"copiar"} tamaño={"sm"} color={"white"} style={{margin: '4px'}}/>
               // </BotonConTooltip>
