@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
-import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
-import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
-import { BotonConTooltip } from "../../../comun/componentes/BotonConTooltip/BotonConTooltip.tsx";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip/TextoConTooltip.tsx";
 import { AltaEvento } from "../../evento/vistas/AltaEvento.tsx";
 import { EventoCalendario } from "../diseño.ts";
@@ -84,27 +81,26 @@ export const CalendarioEventos = () => {
         config={{
           maxDatosVisibles: 3,
           cabecera: {
-            botonesDerModo: [ 
-              <MaestroFiltros
-                campos={camposFiltro}
-                filtro={filtro}
-                cambiarFiltro={cambiarFiltro}
-                borrarFiltro={borrarFiltro}
-                resetearFiltro={resetearFiltro}
-              />
-            ],
+            // botonesDerModo: [ 
+            //   <MaestroFiltros
+            //     campos={camposFiltro}
+            //     filtro={filtro}
+            //     cambiarFiltro={cambiarFiltro}
+            //     borrarFiltro={borrarFiltro}
+            //     resetearFiltro={resetearFiltro}
+            //   />
+            // ],
             botonesDerHoy: [   
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo evento</QBoton>,
-              <BotonConTooltip tooltip="Generar enlace a calendario" tamaño={"pequeño"} onClick={generarEnlace}> 
-                <QIcono nombre={"copiar"} tamaño={"sm"} color={"white"} style={{margin: '4px'}}/>
-              </BotonConTooltip>
+              // <BotonConTooltip tooltip="Generar enlace a calendario" tamaño={"pequeño"} onClick={generarEnlace}> 
+              //   <QIcono nombre={"copiar"} tamaño={"sm"} color={"white"} style={{margin: '4px'}}/>
+              // </BotonConTooltip>
             ],
             // mostrarBotonHoy: false,
             // mostrarCambioModo: false,
             // modoCalendario: 'anio'
           }
         }}    
-        // ¿filtro?    
         renderDato={(dato: EventoCalendario) => (
           <div 
             onClick={() => window.location.href = `/eventos/calendario/evento/${dato.evento_id}`}

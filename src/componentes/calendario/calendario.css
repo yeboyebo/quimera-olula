@@ -159,7 +159,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 13rem;
+  max-width: 100%;
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .calendario-semanas {
@@ -184,7 +188,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1120px) {
   :root {
     --altura-dia: var(--altura-dia-mobile);
   }
@@ -205,4 +209,45 @@
   .cabecera-derecha {
     justify-content: center;
   }
+}
+
+@media (max-width: 640px) {
+  .calendario-cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  /* .calendario-dias-semana {
+    border: 1px solid red;
+    /* display: flex; */
+  /* min-width: 420px; */
+}
+
+*/ .calendario-dias,
+.calendario-semana {
+  overflow-x: auto;
+  display: flex;
+  min-width: 420px;
+  /* 7 días x 60px */
+}
+
+.calendario-dia {
+  min-width: 60px;
+  min-height: 70px;
+  font-size: 0.85rem;
+  padding: 2px;
+}
+
+.dia-numero {
+  font-size: 0.8rem;
+}
+
+.dato-item {
+  font-size: 0.8rem;
+  padding: 2px 4px;
+}
 }

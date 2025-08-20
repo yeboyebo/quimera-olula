@@ -221,15 +221,18 @@ export function Calendario<T extends DatoBase>({
 
   const renderCabecera = () => (
     <div className="calendario-cabecera">
-      <div className="cabecera-izquierda">
-        {botonesIzqModo}
-        {mostrarCambioModo && (
-          <QBoton onClick={() => setModoAnio(!modoAnio)}>
-            {modoAnio ? 'Modo Mes' : 'Modo Año'}
-          </QBoton>
-        )}
-        {botonesDerModo}
-      </div>
+      {/* Oculta la izquierda si no hay contenido */}
+      {(botonesIzqModo.length > 0 || mostrarCambioModo || botonesDerModo.length > 0) && (
+        <div className="cabecera-izquierda">
+          {botonesIzqModo}
+          {mostrarCambioModo && (
+            <QBoton onClick={() => setModoAnio(!modoAnio)}>
+              {modoAnio ? 'Modo Mes' : 'Modo Año'}
+            </QBoton>
+          )}
+          {botonesDerModo}
+        </div>
+      )}
 
       <div className="calendario-navegacion">
         {mostrarControlesNavegacion && (
@@ -237,10 +240,9 @@ export function Calendario<T extends DatoBase>({
             <QBoton onClick={() => navegarTiempo(-1)}>
               <QIcono nombre="atras" />
             </QBoton>
-            {(modoAnio 
-              ? <h2>{fechaActual.getFullYear()}</h2>
-              : <h2 className="calendario-navegacion-mes-anio">{formatearMesAño(fechaActual)}</h2>
-            )}
+            <h2 className="calendario-navegacion-mes-anio">
+              {modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}
+            </h2>
             <QBoton onClick={() => navegarTiempo(1)}>
               <QIcono nombre="adelante" />
             </QBoton>
@@ -248,11 +250,14 @@ export function Calendario<T extends DatoBase>({
         )}
       </div>
 
-      <div className="cabecera-derecha">
-        {botonesIzqHoy}
-        {mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
-        {botonesDerHoy}
-      </div>
+      {/* Oculta la derecha si no hay contenido */}
+      {(botonesIzqHoy.length > 0 || mostrarBotonHoy || botonesDerHoy.length > 0) && (
+        <div className="cabecera-derecha">
+          {botonesIzqHoy}
+          {mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
+          {botonesDerHoy}
+        </div>
+      )}
     </div>
   );  
 
