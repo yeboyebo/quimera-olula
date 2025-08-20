@@ -213,6 +213,7 @@
 
 @media (max-width: 640px) {
   .calendario-cabecera {
+    display: flex;
     position: sticky;
     top: 0;
     z-index: 10;

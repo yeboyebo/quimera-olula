@@ -100,9 +100,9 @@ export const CalendarioEventos = () => {
             // mostrarCambioModo: false,
             // modoCalendario: 'anio'
           }
-        }}    
+        }}
         renderDato={(dato: EventoCalendario) => (
-          <div 
+          <div
             onClick={() => window.location.href = `/eventos/calendario/evento/${dato.evento_id}`}
             className="evento-item"
           >

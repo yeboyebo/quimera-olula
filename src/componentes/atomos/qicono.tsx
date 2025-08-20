@@ -26,7 +26,8 @@ const iconos: Record<string, string> = {
   verdadero: "check",
   falso: "x",
   atras: 'chevron-left',
-  adelante: 'chevron-right'
+  adelante: 'chevron-right',
+  menu: 'menu',
 };
 
 export const QIcono = ({ nombre, tamaño = "md", color, style, props }: QIconoProps) => {

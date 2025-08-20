@@ -7,6 +7,9 @@ export interface DatoBase {
 
 // Tipo para las funciones de formateo personalizadas
 export interface CalendarioConfig<T extends DatoBase = DatoBase> {
+  /** Permite controlar la fecha actual desde fuera (modo controlado, útil para móvil) */
+  fechaActual?: Date;
+  onFechaActualChange?: (fecha: Date) => void;
   formatearMes?: (fecha: Date) => string;
   formatearMesAño?: (fecha: Date) => string;
   getDiasDelMes?: (fecha: Date) => Date[];
