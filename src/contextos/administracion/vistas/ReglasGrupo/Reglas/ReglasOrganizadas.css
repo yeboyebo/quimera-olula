@@ -49,4 +49,16 @@
             transform: rotate(90deg);
         }
     }
+
+    .categoria-header.sin-toggle {
+        cursor: default;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .categoria-header.sin-toggle h3:before {
+        content: "";
+        margin-right: 0;
+    }
 }

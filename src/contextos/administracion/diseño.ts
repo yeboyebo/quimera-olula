@@ -30,4 +30,5 @@ export interface CategoriaReglas {
     id: string;
     descripcion: string;
     reglas: ReglaAnidada[];
+    valor?: boolean | null;
 }

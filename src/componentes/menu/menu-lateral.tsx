@@ -1,7 +1,6 @@
-import "./menu-lateral.css";
-
 import { useState } from "react";
 import { Link } from "react-router";
+import { puede } from "../../contextos/comun/dominio.ts";
 import {
   ElementoMenu,
   ElementoMenuPadre,
@@ -9,25 +8,24 @@ import {
 } from "../../contextos/comun/menu.ts";
 import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
+import "./menu-lateral.css";
 
 export const MenuLateral = () => {
   const [busqueda, setBusqueda] = useState("");
 
-  const renderBuscador = () => {
-    return (
-      <div id="buscador">
-        <QIcono nombre="buscar" tamaño="sm" />
-        <QInput
-          nombre="buscador"
-          label=""
-          condensado
-          placeholder="Buscar..."
-          valor={busqueda}
-          onChange={setBusqueda}
-        />
-      </div>
-    );
-  };
+  const renderBuscador = () => (
+    <div id="buscador">
+      <QIcono nombre="buscar" tamaño="sm" />
+      <QInput
+        nombre="buscador"
+        label=""
+        condensado
+        placeholder="Buscar..."
+        valor={busqueda}
+        onChange={setBusqueda}
+      />
+    </div>
+  );
 
   const renderizaElemento = (elemento: ElementoMenu, filtro: string) => {
     const icono = elemento.icono ? (
@@ -35,9 +33,13 @@ export const MenuLateral = () => {
     ) : null;
     const cumpleFiltro = elemento.nombre.toLowerCase().includes(filtro);
 
+    // Si tiene regla y no tiene permiso, no mostrar
+    if ("regla" in elemento && elemento.regla && !puede(elemento.regla)) {
+      return null;
+    }
+
     if ("url" in elemento && elemento.url) {
       if (!cumpleFiltro) return null;
-
       return (
         <li key={elemento.nombre}>
           <Link to={elemento.url}>

@@ -5,8 +5,8 @@ import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { CategoriaReglas, Grupo, Regla, ReglaAnidada } from "../../diseño.ts";
 import { getReglasPorGrupoPermiso } from "../../dominio.ts";
 import { getPermisosGrupo, putPermiso } from "../../infraestructura.ts";
+import { ReglasOrganizadas } from "./Reglas/ReglasOrganizadas.tsx";
 import "./ReglasGrupo.css";
-import { ReglasOrganizadas } from "./ReglasOrganizadas";
 
 type Estado = "lista" | "actualizando";
 
@@ -24,6 +24,9 @@ export const ReglasGrupo = ({
   const [categoriasAbiertas, setCategoriasAbiertas] = useState<
     Record<string, boolean>
   >({});
+  const [reglasAbiertas, setReglasAbiertas] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const actualizarReglaOrganizada = (
     reglaId: string,
@@ -44,6 +47,19 @@ export const ReglasGrupo = ({
         ...categoria,
         reglas: categoria.reglas.map(actualizarRegla),
       }))
+    );
+  };
+
+  const actualizarValorCategoria = (
+    categoriaId: string,
+    nuevoValor: boolean | null
+  ) => {
+    setReglasOrganizadas((prev) =>
+      prev.map((categoria) =>
+        categoria.id === categoriaId
+          ? { ...categoria, valor: nuevoValor }
+          : categoria
+      )
     );
   };
 
@@ -94,11 +110,43 @@ export const ReglasGrupo = ({
         }
         return "lista";
       },
+      PERMITIR_REGLA_CATEGORIA: (payload: unknown) => {
+        const categoria = payload as CategoriaReglas;
+        if (grupoSeleccionado?.id) {
+          intentar(() => putPermiso(grupoSeleccionado.id, categoria.id, true));
+          actualizarValorCategoria(categoria.id, true);
+        }
+        return "lista";
+      },
+      CANCELAR_REGLA_CATEGORIA: (payload: unknown) => {
+        const categoria = payload as CategoriaReglas;
+        if (grupoSeleccionado?.id) {
+          intentar(() => putPermiso(grupoSeleccionado.id, categoria.id, false));
+          actualizarValorCategoria(categoria.id, false);
+        }
+        return "lista";
+      },
+      BORRAR_REGLA_CATEGORIA: (payload: unknown) => {
+        const categoria = payload as CategoriaReglas;
+        if (grupoSeleccionado?.id) {
+          intentar(() => putPermiso(grupoSeleccionado.id, categoria.id, null));
+          actualizarValorCategoria(categoria.id, null);
+        }
+        return "lista";
+      },
       TOGGLE_CATEGORIA: (payload: unknown) => {
         const categoriaId = payload as string;
         setCategoriasAbiertas((prev) => ({
           ...prev,
           [categoriaId]: !prev[categoriaId],
+        }));
+        return "lista";
+      },
+      TOGGLE_REGLA: (payload: unknown) => {
+        const reglaId = payload as string;
+        setReglasAbiertas((prev) => ({
+          ...prev,
+          [reglaId]: !prev[reglaId],
         }));
         return "lista";
       },
@@ -124,6 +172,7 @@ export const ReglasGrupo = ({
           grupoSeleccionado={grupoSeleccionado}
           categoriasAbiertas={categoriasAbiertas}
           emitir={emitir}
+          reglasAbiertas={reglasAbiertas}
         />
       </div>
     </div>

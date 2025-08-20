@@ -22,9 +22,9 @@ export const MaestroConDetalleGruposReglas = () => {
   const [estado, setEstado] = useState<Estado>("lista");
 
   useEffect(() => {
-    getGrupos().then(({ datos }) => grupos.setLista(datos));
+    // getGrupos().then(({ datos }) => grupos.setLista(datos));
     getReglas().then(({ datos }) => reglas.setLista(datos));
-  }, []);
+  }, [reglas]);
 
   const maquina: Maquina<Estado> = {
     alta: {

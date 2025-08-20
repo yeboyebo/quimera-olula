@@ -63,7 +63,8 @@ export const getReglasPorGrupoPermiso = (
             categorias[categoria] = {
                 id: categoria,
                 descripcion: regla.descripcion.split(' - ')[0],
-                reglas: []
+                reglas: [],
+                valor: mapaPermisos[categoria] !== undefined ? mapaPermisos[categoria] : null
             };
         }
 
@@ -97,20 +98,39 @@ export const getReglasPorGrupoPermiso = (
     return Object.values(categorias);
 };
 
+const permisosGrupo = [
+    {
+        "eventos": [],
+        "id": 2,
+        "id_grupo": "CRM",
+        "id_regla": "general",
+        "valor": false
+    },
+];
+
 export const calcularClasesExtra = (
     regla: ReglaConValor | ReglaAnidada,
-    reglaPadre?: ReglaAnidada
+    reglaPadre?: ReglaAnidada,
 ): { permitir: string; cancelar: string } => {
     const clases = {
         permitir: "",
         cancelar: "",
     };
+    const permisoGeneral = permisosGrupo.find(p => p.id_regla === "general");
 
     if (regla.valor === null) {
         if (!reglaPadre) {
-            clases.permitir = "BordeActivo";
+            if (permisoGeneral?.valor === false) {
+                clases.cancelar = "BordeActivo";
+            } else {
+                clases.permitir = "BordeActivo";
+            }
         } else {
             if (reglaPadre.valor === false) {
+                clases.cancelar = "BordeActivo";
+            } else if (reglaPadre.valor === true) {
+                clases.permitir = "BordeActivo";
+            } else if (permisoGeneral?.valor === false) {
                 clases.cancelar = "BordeActivo";
             } else {
                 clases.permitir = "BordeActivo";

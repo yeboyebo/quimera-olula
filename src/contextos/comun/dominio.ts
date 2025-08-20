@@ -345,3 +345,64 @@ export const calcularPaginacionSimplificada = (
 
     return { paginasMostradas, totalPaginas };
 };
+
+const permisosGrupo = [
+    {
+        "eventos": [],
+        "id": 30,
+        "id_grupo": "CRM",
+        "id_regla": "ventas.cliente.crear",
+        "valor": false
+    },
+    {
+        "eventos": [],
+        "id": 30,
+        "id_grupo": "CRM",
+        "id_regla": "crm.cliente",
+        "valor": true
+    },
+    {
+        "eventos": [],
+        "id": 20,
+        "id_grupo": "CRM",
+        "id_regla": "crm.cliente.leer",
+        "valor": false
+    },
+    {
+        "eventos": [],
+        "id": 2,
+        "id_grupo": "CRM",
+        "id_regla": "general",
+        "valor": true
+    },
+];
+
+export const puede = (regla: string): boolean => {
+    if (!regla) return true;
+    // Busca el permiso exacto
+    const permisoExacto = permisosGrupo.find(p => p.id_regla === regla);
+    if (permisoExacto) {
+        if (permisoExacto.valor === true) return true;
+        if (permisoExacto.valor === false) return false;
+        // Si es null, sigue buscando
+    }
+    // Quita la última parte y busca
+    const partes = regla.split(".");
+    if (partes.length > 1) {
+        const padre = partes.slice(0, -1).join(".");
+        const permisoPadre = permisosGrupo.find(p => p.id_regla === padre);
+        if (permisoPadre) {
+            if (permisoPadre.valor === true) return true;
+            if (permisoPadre.valor === false) return false;
+            // Si es null, sigue buscando
+        }
+    }
+    // Busca permiso general
+    const permisoGeneral = permisosGrupo.find(p => p.id_regla === "general");
+    if (permisoGeneral) {
+        if (permisoGeneral.valor === true) return true;
+        if (permisoGeneral.valor === false) return false;
+    }
+
+    return false;
+};

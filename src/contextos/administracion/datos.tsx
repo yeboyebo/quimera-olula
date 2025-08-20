@@ -30,6 +30,12 @@ export const grupos: Grupo[] = [
 export const rules: Regla[] = [
   {
     eventos: [],
+    id: "general",
+    grupo: "general",
+    descripcion: "General",
+  },
+  {
+    eventos: [],
     id: "contabilidad.asiento",
     grupo: "contabilidad.asiento",
     descripcion: "Contabilidad - Asiento",
@@ -45,6 +51,12 @@ export const rules: Regla[] = [
     id: "ventas.pedido",
     grupo: "ventas.pedido",
     descripcion: "Ventas - Pedido",
+  },
+  {
+    eventos: [],
+    id: "ventas.pedido.leer",
+    grupo: "ventas.pedido",
+    descripcion: "Ventas - Pedido - Leer",
   },
   {
     eventos: [],
