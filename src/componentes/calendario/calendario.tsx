@@ -138,33 +138,42 @@ function MenuAccionesMovil({
   }, []);
 
   const menuLateral = (
-    <menu-lateral 
-      id="menu-acciones-movil"
-      style={{
-        border: '1px solid #ccc',
-        position: 'fixed',
-        top: 154,
-        height: '79vh',
-        zIndex: 1200,
-        width: '320px',
-        maxWidth: '100vw',
-        overflowY: 'hidden',
-        marginLeft: '1rem',
-        left: abierto ? 0 : '-320px',
-        visibility: abierto ? 'visible' : 'hidden',
-        transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s',
-      }}
-    >
-      <aside ref={menuRef} style={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        background: '#fff',
-        boxShadow: '2px 0 16px rgba(0,0,0,0.12)'
-      }}>
-        <nav>
-          <div className="menu-acciones">
+    <>
+      {/* Overlay de fondo */}
+      <div 
+        className={`menu-overlay ${abierto ? 'visible' : ''}`}
+        onClick={cerrarMenu}
+      />
+      
+      {/* Menú lateral */}
+      <menu-lateral 
+        id="menu-acciones-movil"
+        className={abierto ? 'abierto' : ''}
+        style={{
+          border: '1px solid #ccc',
+          position: 'fixed',
+          top: 154,
+          height: '79vh',
+          zIndex: 1200,
+          width: '320px',
+          maxWidth: '100vw',
+          overflowY: 'hidden',
+          marginLeft: '1rem',
+          left: abierto ? 0 : '-320px',
+          visibility: abierto ? 'visible' : 'hidden',
+          transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s',
+        }}
+      >
+        <aside ref={menuRef} style={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          background: '#fff',
+          boxShadow: '2px 0 16px rgba(0,0,0,0.12)'
+        }}>
+          <nav>
+            <div className="menu-acciones">
             {botonesIzqModo.map((boton, index) => (
               <div className="menu-acciones-fila" key={index}>
                 {clonarBotonConCierre(boton, index)}
@@ -199,17 +208,16 @@ function MenuAccionesMovil({
         </nav>
       </aside>
     </menu-lateral>
+    </>
   );
 
   return (
     <>
-      {console.log('mimensaje_abierto', abierto)
-      }
       <button
         id="boton-menu-acciones-movil"
         aria-label={abierto ? "Cerrar menú acciones" : "Abrir menú acciones"}
         className="boton-menu-lateral"
-        onClick={toggleMenu} // ← Cambiado a toggleMenu
+        onClick={toggleMenu}
         type="button"
       >
         <QIcono nombre="menu" tamaño="sm" />
