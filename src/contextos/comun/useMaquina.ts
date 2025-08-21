@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 
 type OnEvento<E> = (payload?: unknown) => E | void | Promise<E | void>
 
@@ -22,4 +22,40 @@ export function useMaquina<Estado extends string>(
                 : await proceso(payload) : undefined;
         setEstado(nuevoEstado || estado);
     }, [maquina, estado, setEstado]);
+}
+
+
+export function useMaquina2<Estado extends string>(
+    maquina: Maquina<Estado>,
+    estadoInicial: Estado,
+): [ProcesarEvento, Estado, (estado: Estado) => void] {
+
+    const [estado, setEstado] = useState<Estado>(estadoInicial);
+    const estadoPrevio = useRef<Estado>(estadoInicial);
+
+    if (estado !== estadoPrevio.current) {
+        estadoPrevio.current = estado;
+        if ('al_entrar' in maquina[estado]) {
+            const onEnter = maquina[estado].al_entrar;
+            if (typeof onEnter === 'function') {
+                onEnter();
+            }
+        }
+    }
+
+    const emitir: ProcesarEvento = useCallback(async (evento, payload) => {
+        // console.log("Evento recibido:", evento, "en estado actual:", estado);
+        if (!(evento in maquina[estado])) {
+            return;
+        }
+        const proceso = maquina[estado][evento];
+        const nuevoEstado = proceso ?
+            typeof proceso === 'string'
+                ? proceso
+                : await proceso(payload) : undefined;
+        setEstado(nuevoEstado || estado);
+
+    }, [maquina, estado]);
+
+    return [emitir, estado, setEstado];
 }

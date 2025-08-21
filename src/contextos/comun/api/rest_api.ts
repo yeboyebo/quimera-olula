@@ -64,6 +64,16 @@ const comando = async <T, U>(
     }
     return Promise.reject(error);
   }
+  const contentType = response.headers.get('content-type')!;
+  console.log(`Content-Type: ${contentType}`);
+  if (contentType.startsWith('text/plain')) {
+    const text = await response.text();
+    return { 'respuesta': text } as U;
+  } else {
+    const json = await response.json();
+
+    return json;
+  }
   const json = await response.json();
 
   return json;

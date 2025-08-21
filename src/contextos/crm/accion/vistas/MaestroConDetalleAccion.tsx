@@ -3,14 +3,12 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Accion } from "../diseño.ts";
 import { getAcciones } from "../infraestructura.ts";
 import { AltaAccion } from "./AltaAccion.tsx";
 import { DetalleAccion } from "./DetalleAccion/DetalleAccion.tsx";
-// import "./MaestroConDetalleAccion.css";
 
 const metaTablaAccion: MetaTabla<Accion> = [
   { id: "id", cabecera: "Código" },
@@ -20,32 +18,29 @@ const metaTablaAccion: MetaTabla<Accion> = [
   { id: "estado", cabecera: "Estado" },
 ];
 
-type Estado = "lista" | "alta";
+type Estado = "Inactivo" | "Creando";
 
 export const MaestroConDetalleAccion = () => {
-  const [estado, setEstado] = useState<Estado>("lista");
+  const [estado, setEstado] = useState<Estado>("Inactivo");
   const acciones = useLista<Accion>([]);
 
   const maquina: Maquina<Estado> = {
-    alta: {
-      ACCION_CREADA: (payload: unknown) => {
-        const accion = payload as Accion;
-        acciones.añadir(accion);
-        return "lista";
+    Creando: {
+      accion_creada: (payload: unknown) => {
+        acciones.añadir(payload as Accion);
+        return "Inactivo";
       },
-      ALTA_CANCELADA: "lista",
+      creacion_cancelada: "Inactivo",
     },
-    lista: {
-      ALTA_INICIADA: "alta",
-      ACCION_CAMBIADA: (payload: unknown) => {
-        const accion = payload as Accion;
-        acciones.modificar(accion);
+    Inactivo: {
+      crear: "Creando",
+      accion_cambiada: (payload: unknown) => {
+        acciones.modificar(payload as Accion);
       },
-      ACCION_BORRADA: (payload: unknown) => {
-        const accion = payload as Accion;
-        acciones.eliminar(accion);
+      accion_borrada: (payload: unknown) => {
+        acciones.eliminar(payload as Accion);
       },
-      CANCELAR_SELECCION: () => {
+      seleccion_cancelada: () => {
         acciones.limpiarSeleccion();
       },
     },
@@ -61,7 +56,7 @@ export const MaestroConDetalleAccion = () => {
           <>
             <h2>Acciones</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
+              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaAccion}
@@ -75,18 +70,13 @@ export const MaestroConDetalleAccion = () => {
         }
         Detalle={
           <DetalleAccion
+            key={acciones.seleccionada?.id}
             accionInicial={acciones.seleccionada}
             emitir={emitir}
           />
         }
       />
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      >
-        <AltaAccion emitir={emitir} />
-      </QModal>
+      <AltaAccion emitir={emitir} activo={estado === 'Creando'}/>
     </div>
   );
 };

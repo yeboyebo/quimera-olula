@@ -79,6 +79,11 @@ export const elementosDelMenu: ElementoMenu[] = [
         url: "/crm/lead",
         icono: "",
       },
+      {
+        nombre: "Incidencias",
+        url: "/crm/incidencia",
+        icono: "",
+      },
     ],
   },
   // {

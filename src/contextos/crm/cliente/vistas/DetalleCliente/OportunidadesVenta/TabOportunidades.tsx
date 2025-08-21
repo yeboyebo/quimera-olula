@@ -13,6 +13,7 @@ import { TabOportunidadesAcciones } from "./TabOportunidadesAcciones.tsx";
 
 type Estado = "lista" | "alta" | "borrar";
 
+
 export const TabOportunidades = ({
   cliente,
 }: {
@@ -51,7 +52,7 @@ export const TabOportunidades = ({
         oportunidades.añadir(nuevaOportunidad);
         return "lista" as Estado;
       },
-      ALTA_CANCELADA: "lista",
+      ALTA_CANCELADA: "lista", 
     },
     borrar: {
       OPORTUNIDAD_BORRADA: async () => {

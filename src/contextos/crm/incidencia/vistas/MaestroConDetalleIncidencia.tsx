@@ -1,0 +1,79 @@
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
+import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
+import { useLista } from "../../../comun/useLista.ts";
+import { Maquina, useMaquina2 } from "../../../comun/useMaquina.ts";
+import { Incidencia } from "../diseño.ts";
+import { getIncidencias } from "../infraestructura.ts";
+import { CrearIncidencia } from "./CrearIncidencia.tsx";
+import { DetalleIncidencia } from "./DetalleIncidencia/DetalleIncidencia.tsx";
+
+const metaTablaIncidencia: MetaTabla<Incidencia> = [
+  { id: "id", cabecera: "Código" },
+  { id: "descripcion", cabecera: "Descripcion" },
+  { id: "nombre", cabecera: "Nombre" },
+  { id: "estado", cabecera: "Estado" },
+  { id: "prioridad", cabecera: "Prioridad" },
+];
+
+type Estado = "Inactivo" | "Creando";
+
+export const MaestroConDetalleIncidencia = () => {
+
+  const incidencias = useLista<Incidencia>([]);
+
+  const maquina: Maquina<Estado> = {
+    Creando: {
+      incidencia_creada: (payload) => {
+        incidencias.añadir(payload as Incidencia);
+        return "Inactivo";
+      },
+      creacion_cancelada: "Inactivo",
+    },
+    Inactivo: {
+      crear: "Creando",
+      incidencia_cambiada: (payload) => {
+        incidencias.modificar(payload as Incidencia);
+      },
+      incidencia_borrada: (payload) => {
+        incidencias.eliminar(payload as Incidencia);
+      },
+      cancelar_seleccion: () => {
+        incidencias.limpiarSeleccion();
+      },
+    },
+  };
+
+  const [emitir, estado] = useMaquina2(maquina, "Inactivo");
+
+  return (
+    <div className="Incidencia">
+      <MaestroDetalleResponsive<Incidencia>
+        seleccionada={incidencias.seleccionada}
+        Maestro={
+          <>
+            <h2>Incidencias</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
+            </div>
+            <Listado
+              metaTabla={metaTablaIncidencia}
+              entidades={incidencias.lista}
+              setEntidades={incidencias.setLista}
+              seleccionada={incidencias.seleccionada}
+              setSeleccionada={incidencias.seleccionar}
+              cargar={getIncidencias}
+            />
+          </>
+        }
+        Detalle={
+          <DetalleIncidencia 
+            key={incidencias.seleccionada?.id}
+            incidenciaInicial={incidencias.seleccionada} publicar={emitir} />
+        }
+      />
+      <CrearIncidencia publicar={emitir} activo={estado === 'Creando'}/>
+    </div>
+  );
+};

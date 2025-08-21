@@ -1,9 +1,19 @@
-.AltaOportunidadVenta {
-    quimera-autocompletar[nombre="alta_estado_id"] {
-        grid-column: 1 / span 6;
+.FormAltaAccion {
+
+    quimera-input[nombre="descripcion"] {
+        grid-column: 1 / span 12;
     }
 
-    quimera-input[nombre="probabilidad"] {
-        grid-column: span 6;
+    quimera-autocompletar[nombre="responsable_id"] {
+        grid-column: span 8;
+    }
+
+    quimera-date[nombre="fecha"] {
+        grid-column: span 4;
+    }
+
+
+    quimera-date[nombre="incidencia_id"] {
+        grid-column: 1 / span 4;
     }
 }
