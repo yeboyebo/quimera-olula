@@ -82,6 +82,7 @@ export const CalendarioEventos = () => {
         datos={eventosCalendarioData.lista}
         cargando={cargando}
         config={{
+          // inicioSemana: "domingo",
           maxDatosVisibles: 5,
           cabecera: {        
             botonesDerModo: !esMovil ? [ 

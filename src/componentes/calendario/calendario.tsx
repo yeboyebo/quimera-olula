@@ -1,5 +1,5 @@
 // --- Hooks y helpers para experiencia móvil ---
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { QIcono } from '../atomos/qicono.tsx';
 import { CabeceraCalendario } from './CabeceraCalendario';
 import './calendario.css';
@@ -8,13 +8,24 @@ import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, g
 import { isMobile, useSwipe } from './hooks';
 import { MenuAccionesMovil } from './MenuAccionesMovil';
 import { CalendarioConfig, DatoBase } from './tipos';
+import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendario.ts';
 
 
 
 interface CalendarioProps<T extends DatoBase> {
   datos: T[];
   cargando?: boolean;
-  config?: Partial<CalendarioConfig<T>>;
+  /**
+   * Configuración avanzada del calendario. Solo se permite personalizar getDatosPorFecha.
+   * El resto de helpers (esHoy, esMesActual, formatearMes, formatearMesAño) son internos y no se pueden personalizar.
+   * inicioSemana solo acepta 'lunes' o 'domingo'.
+   */
+  config?: {
+    cabecera?: CalendarioConfig<T>["cabecera"];
+    maxDatosVisibles?: number;
+    inicioSemana?: 'lunes' | 'domingo';
+    getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
+  };
   renderDia?: (args: {
     fecha: Date;
     datos: T[];
@@ -22,7 +33,6 @@ interface CalendarioProps<T extends DatoBase> {
     esHoy: boolean;
   }) => React.ReactNode;
   renderDato?: (dato: T) => React.ReactNode;
-  children?: React.ReactNode;
 }
 
 export function Calendario<T extends DatoBase>({
@@ -31,25 +41,25 @@ export function Calendario<T extends DatoBase>({
   config = {},
   renderDia,
   renderDato,
-  children
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
   const esMovil = isMobile(640);
-  // Control de fecha y modo: si no se pasa desde fuera, lo gestiona el propio componente
-  const controlado = typeof config.fechaActual !== 'undefined' && typeof config.onFechaActualChange === 'function';
-  const [fechaNoControlada, setFechaNoControlada] = useState(() => config.fechaActual ?? new Date());
-  const fechaActual = controlado ? config.fechaActual! : fechaNoControlada;
-  // Setters separados para evitar ambigüedad de tipos
-  const setFechaActualControlado = config.onFechaActualChange;
-  const setFechaActualNoControlado = setFechaNoControlada;
-  const modoInicial = config.cabecera?.modoCalendario === 'anio';
-  const [modoAnio, setModoAnio] = useState(modoInicial);
+  const {
+    controlado,
+    fechaActual,
+    setFechaActualControlado,
+    setFechaActualNoControlado,
+    modoAnio,
+    setModoAnio,
+    anioGridRef,
+    scrollPosition,
+    scrollToMes,
+    handleScroll,
+  } = usoControladoDeEstadoCalendario({ config });
 
   // Swipe: el hook se llama siempre, pero solo se usa el ref si esMovil
-  // setFechaActual puede ser una función (setState) o un setter directo (controlado)
   const setFechaActualAntSig = (dir: number) => {
     if (controlado && setFechaActualControlado) {
-      // Controlado: setter externo
       const nueva = new Date(fechaActual);
       if (modoAnio) {
         nueva.setFullYear(nueva.getFullYear() + dir);
@@ -58,7 +68,6 @@ export function Calendario<T extends DatoBase>({
       }
       setFechaActualControlado(nueva);
     } else {
-      // No controlado: setState interno
       setFechaActualNoControlado((prev: Date) => {
         const nueva = new Date(prev);
         if (modoAnio) {
@@ -75,8 +84,6 @@ export function Calendario<T extends DatoBase>({
     () => setFechaActualAntSig(-1)
   );
   const calendarioRef = swipeRef;
-  const anioGridRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
 
   const {
     cabecera: {
@@ -91,58 +98,17 @@ export function Calendario<T extends DatoBase>({
     maxDatosVisibles = modoAnio ? 2 : 3,
     inicioSemana = 'lunes',
     getDatosPorFecha: getDatosPorFechaConfig,
-    esHoy: esHoyConfig,
-    esMesActual: esMesActualConfig,
-    formatearMes: formatearMesConfig,
-    formatearMesAño: formatearMesAñoConfig,
   } = config;
 
-  // Usar helpers por defecto si no se pasan en config
+  // Solo getDatosPorFecha es personalizable, el resto de helpers son internos
   const getDatosPorFechaFn = getDatosPorFechaConfig || getDatosPorFecha;
-  const esHoyFn = esHoyConfig || esHoy;
-  const esMesActualFn = esMesActualConfig || esMesActual;
-  const formatearMesFn = formatearMesConfig || formatearMes;
-  const formatearMesAñoFn = formatearMesAñoConfig || formatearMesAño;
+  const esHoyFn = esHoy;
+  const esMesActualFn = esMesActual;
+  const formatearMesFn = formatearMes;
+  const formatearMesAñoFn = formatearMesAño;
   const diasSemana = getDiasSemana(inicioSemana);
 
-  // Scroll al mes actual al cambiar a modo año
-  useEffect(() => {
-    if (modoAnio && anioGridRef.current) {
-      const hoy = new Date();
-      scrollToMes(hoy.getMonth());
-    }
-  }, [modoAnio]);
-
-  useEffect(() => {
-    // Sincronizar el estado interno si cambia la prop modoCalendario
-    if (config.cabecera?.modoCalendario) {
-      setModoAnio(config.cabecera.modoCalendario === 'anio');
-    }
-  }, [config.cabecera?.modoCalendario]);  
-
-  const scrollToMes = (mesIndex: number) => {
-    const grid = anioGridRef.current;
-    if (!grid) return;
-
-    const meses = grid.querySelectorAll('.mes-anio');
-    if (meses.length === 0 || mesIndex < 0 || mesIndex >= meses.length) return;
-
-    let posicion = 0;
-    for (let i = 0; i < mesIndex; i++) {
-      posicion += meses[i].clientHeight + 32; // 32px = gap entre meses
-    }
-
-    grid.scrollTo({
-      top: posicion,
-      behavior: 'smooth'
-    });
-  };
-
-  const handleScroll = useCallback(() => {
-    if (anioGridRef.current) {
-      setScrollPosition(anioGridRef.current.scrollTop);
-    }
-  }, []);
+  // ...el resto de la lógica permanece igual, usando los valores del hook extraído...
 
   const navegarTiempo = (direccion: number) => {
     const nuevaFecha = new Date(fechaActual);
@@ -233,10 +199,12 @@ export function Calendario<T extends DatoBase>({
         mostrarControlesNavegacion={mostrarControlesNavegacion}
         mostrarBotonHoy={mostrarBotonHoy}
         irAHoy={irAHoy}
-        botonesIzqModo={botonesIzqModo}
-        botonesDerModo={botonesDerModo}
-        botonesIzqHoy={botonesIzqHoy}
-        botonesDerHoy={botonesDerHoy}
+        botones={{
+          izqModo: botonesIzqModo,
+          derModo: botonesDerModo,
+          izqHoy: botonesIzqHoy,
+          derHoy: botonesDerHoy,
+        }}
       />
     );
   };
