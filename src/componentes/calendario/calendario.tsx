@@ -1,5 +1,5 @@
 // --- Hooks y helpers para experiencia móvil ---
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { QIcono } from '../atomos/qicono.tsx';
 import { CabeceraGrid } from './CabeceraGrid';
 import './calendario.css';
@@ -110,6 +110,9 @@ export function Calendario<T extends DatoBase>({
 
   // ...el resto de la lógica permanece igual, usando los valores del hook extraído...
 
+  // Estado para forzar scroll tras cambio de año
+  const [scrollToMesIndex, setScrollToMesIndex] = useState<number|null>(null);
+
   const navegarTiempo = (direccion: number) => {
     const nuevaFecha = new Date(fechaActual);
     if (modoAnio) {
@@ -140,23 +143,22 @@ export function Calendario<T extends DatoBase>({
     } else {
       setFechaActualNoControlado(hoy);
     }
-
-    // Solo hace scroll en modo año si no está visible el mes actual
-    if (modoAnio && anioGridRef.current) {
-      const mesActual = hoy.getMonth();
-      const meses = anioGridRef.current.querySelectorAll('.mes-anio');
-      
-      // Verifica si el mes actual ya está visible
-      const mesVisible = Array.from(meses).some(mes => {
-        const rect = mes.getBoundingClientRect();
-        return rect.top >= 0 && rect.bottom <= window.innerHeight;
-      });
-
-      if (!mesVisible) {
-        scrollToMes(mesActual); // 👈 Scroll solo si es necesario
-      }
+    // En modo año, forzar scroll tras el render
+    if (modoAnio) {
+      setScrollToMesIndex(hoy.getMonth());
     }
   };
+
+  // Efecto: cuando scrollToMesIndex cambia, hacer scroll tras el render
+  useEffect(() => {
+    if (scrollToMesIndex !== null && modoAnio && anioGridRef.current) {
+      // Esperar al siguiente tick para asegurar render
+      setTimeout(() => {
+        scrollToMes(scrollToMesIndex);
+        setScrollToMesIndex(null);
+      }, 0);
+    }
+  }, [scrollToMesIndex, modoAnio, scrollToMes, anioGridRef]);
 
   // Cabecera: ahora es un componente externo
 
