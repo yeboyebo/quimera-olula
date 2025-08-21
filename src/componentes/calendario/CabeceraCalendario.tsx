@@ -22,30 +22,35 @@ interface CabeceraCalendarioProps {
   botones?: CabeceraBotones;
 }
 
-export function CabeceraCalendario({
-  modoAnio,
-  setModoAnio,
-  formatearMesAño,
-  fechaActual,
-  navegarTiempo,
-  mostrarCambioModo = true,
-  mostrarControlesNavegacion = true,
-  mostrarBotonHoy = true,
-  irAHoy,
-  botones = {},
-}: CabeceraCalendarioProps) {
+export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: CabeceraCalendarioProps) => {
+  const {
+    modoAnio,
+    setModoAnio,
+    formatearMesAño,
+    fechaActual,
+    navegarTiempo,
+    mostrarCambioModo,
+    mostrarControlesNavegacion,
+    mostrarBotonHoy,
+    irAHoy,
+    botones,
+  } = props;
+  const _mostrarCambioModo = mostrarCambioModo !== undefined ? mostrarCambioModo : true;
+  const _mostrarControlesNavegacion = mostrarControlesNavegacion !== undefined ? mostrarControlesNavegacion : true;
+  const _mostrarBotonHoy = mostrarBotonHoy !== undefined ? mostrarBotonHoy : true;
+  const _botones = botones || {};
   const {
     izqModo = [],
     derModo = [],
     izqHoy = [],
     derHoy = [],
-  } = botones;
+  } = _botones;
   return (
     <div className="calendario-cabecera">
-      {(izqModo.length > 0 || mostrarCambioModo || derModo.length > 0) && (
+      {(izqModo.length > 0 || _mostrarCambioModo || derModo.length > 0) && (
         <div className="cabecera-izquierda">
           {izqModo}
-          {mostrarCambioModo && (
+          {_mostrarCambioModo && (
             <QBoton onClick={() => setModoAnio(!modoAnio)}>
               {modoAnio ? 'Modo Mes' : 'Modo Año'}
             </QBoton>
@@ -54,7 +59,7 @@ export function CabeceraCalendario({
         </div>
       )}
       <div className="calendario-navegacion">
-        {mostrarControlesNavegacion && (
+        {_mostrarControlesNavegacion && (
           <>
             <QBoton onClick={() => navegarTiempo(-1)}>
               <QIcono nombre="atras" />
@@ -68,10 +73,10 @@ export function CabeceraCalendario({
           </>
         )}
       </div>
-      {(izqHoy.length > 0 || mostrarBotonHoy || derHoy.length > 0) && (
+      {(izqHoy.length > 0 || _mostrarBotonHoy || derHoy.length > 0) && (
         <div className="cabecera-derecha">
           {izqHoy}
-          {mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
+          {_mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
           {derHoy}
         </div>
       )}

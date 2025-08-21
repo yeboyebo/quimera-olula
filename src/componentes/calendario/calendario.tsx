@@ -1,12 +1,11 @@
 // --- Hooks y helpers para experiencia móvil ---
 import React from 'react';
 import { QIcono } from '../atomos/qicono.tsx';
-import { CabeceraCalendario } from './CabeceraCalendario';
+import { CabeceraGrid } from './CabeceraGrid';
 import './calendario.css';
-import { DiaCalendario } from './DiaCalendario';
-import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, getDiasSemana, getSemanasDelMes } from './helpers';
+import { CalendarioGrid } from './CalendarioGrid';
+import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, getDiasSemana } from './helpers';
 import { isMobile, useSwipe } from './hooks';
-import { MenuAccionesMovil } from './MenuAccionesMovil';
 import { CalendarioConfig, DatoBase } from './tipos';
 import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendario.ts';
 
@@ -86,19 +85,20 @@ export function Calendario<T extends DatoBase>({
   const calendarioRef = swipeRef;
 
   const {
-    cabecera: {
-      botonesIzqModo = [],
-      botonesDerModo = [],
-      botonesIzqHoy = [],
-      botonesDerHoy = [],
-      mostrarCambioModo = true,
-      mostrarControlesNavegacion = true,
-      mostrarBotonHoy = true,
-    } = {},
+    cabecera = {},
     maxDatosVisibles = modoAnio ? 2 : 3,
     inicioSemana = 'lunes',
     getDatosPorFecha: getDatosPorFechaConfig,
   } = config;
+  const {
+    botonesIzqModo = [],
+    botonesDerModo = [],
+    botonesIzqHoy = [],
+    botonesDerHoy = [],
+    mostrarCambioModo = true,
+    mostrarControlesNavegacion = true,
+    mostrarBotonHoy = true,
+  } = cabecera;
 
   // Solo getDatosPorFecha es personalizable, el resto de helpers son internos
   const getDatosPorFechaFn = getDatosPorFechaConfig || getDatosPorFecha;
@@ -158,142 +158,43 @@ export function Calendario<T extends DatoBase>({
     }
   };
 
-  // Cabecera: menú móvil o cabecera tradicional
-  const renderCabecera = () => {
-    if (esMovil) {
-      return (
-        <div className="calendario-cabecera">
-          <MenuAccionesMovil
-            modoAnio={modoAnio}
-            onCambioModo={() => setModoAnio(m => !m)}
-            botonesIzqModo={botonesIzqModo}
-            botonesDerModo={botonesDerModo}
-            botonesIzqHoy={botonesIzqHoy}
-            botonesDerHoy={botonesDerHoy}
-            mostrarCambioModo={mostrarCambioModo}
-          />
-          <div className="calendario-navegacion-movil">
-            <h2 className="calendario-navegacion-mes-anio">{modoAnio ? fechaActual.getFullYear() : formatearMesAñoFn(fechaActual)}</h2>
-            {mostrarBotonHoy &&
-              <button className="boton-hoy-movil" type="button" onClick={irAHoy}>
-                <div
-                  className="icono-calendario-con-fecha"
-                  data-dia={new Date().getDate()}
-                >
-                  <QIcono nombre={"calendario_vacio"} tamaño={"md"} color={"black"} />
-                </div>
-              </button>
-            }
-          </div>
-        </div>
-      );
-    }
-    return (
-      <CabeceraCalendario
+  // Cabecera: ahora es un componente externo
+
+  return (
+    <div className="calendario-container" ref={esMovil ? calendarioRef : undefined}>
+      <CabeceraGrid
+        esMovil={esMovil}
         modoAnio={modoAnio}
         setModoAnio={setModoAnio}
-        formatearMesAño={formatearMesAñoFn}
+        formatearMesAño={formatearMesAño}
         fechaActual={fechaActual}
         navegarTiempo={navegarTiempo}
         mostrarCambioModo={mostrarCambioModo}
         mostrarControlesNavegacion={mostrarControlesNavegacion}
         mostrarBotonHoy={mostrarBotonHoy}
         irAHoy={irAHoy}
-        botones={{
-          izqModo: botonesIzqModo,
-          derModo: botonesDerModo,
-          izqHoy: botonesIzqHoy,
-          derHoy: botonesDerHoy,
-        }}
+        botonesIzqModo={botonesIzqModo}
+        botonesDerModo={botonesDerModo}
+        botonesIzqHoy={botonesIzqHoy}
+        botonesDerHoy={botonesDerHoy}
       />
-    );
-  };
-
-  const renderDiaPorDefecto = (fecha: Date, mesReferencia: Date) => {
-    const esDiaDelMes = esMesActualFn(fecha, mesReferencia);
-    const datosDelDia: T[] = esDiaDelMes ? getDatosPorFechaFn(datos, fecha) : [];
-    return (
-      <DiaCalendario
-        fecha={fecha}
-        mesReferencia={mesReferencia}
-        datos={datosDelDia}
-        esHoy={esHoyFn(fecha)}
-        esMesActual={esDiaDelMes}
-        maxDatosVisibles={maxDatosVisibles}
+      <CalendarioGrid
+        modoAnio={modoAnio}
+        fechaActual={fechaActual}
+        anioGridRef={anioGridRef}
+        handleScroll={handleScroll}
+        diasSemana={diasSemana}
+        inicioSemana={inicioSemana}
+        getDatosPorFechaFn={getDatosPorFechaFn}
+        esHoyFn={esHoyFn}
+        esMesActualFn={esMesActualFn}
+        formatearMesFn={formatearMesFn}
+        formatearMesAñoFn={formatearMesAñoFn}
+        datos={datos}
+        renderDia={renderDia}
         renderDato={renderDato}
+        maxDatosVisibles={maxDatosVisibles}
       />
-    );
-  };
-
-  return (
-    <div className="calendario-container" ref={esMovil ? calendarioRef : undefined}>
-      {renderCabecera()}
-
-      {modoAnio ? (
-        <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>
-          {Array.from({ length: 12 }).map((_, i) => {
-            const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
-            return (
-              <div key={mesFecha.getFullYear() + '-' + i} className="mes-anio">
-                <h3 className="calendario-mes">{formatearMesFn(mesFecha)}</h3>
-                <div className="calendario-dias-semana">
-                  {diasSemana.map(dia => (
-                    <div key={dia} className="dia-semana">{dia}</div>
-                  ))}
-                </div>
-                {getSemanasDelMes(mesFecha, inicioSemana)
-                  .filter(semana => semana.some(dia => dia.getMonth() === i))
-                  .map((semana, j) => (
-                    <div key={mesFecha.getFullYear() + '-' + i + '-semana-' + j} className="calendario-dias">
-                      {semana.map(dia => {
-                        const key = dia.toISOString();
-                        return renderDia
-                          ? <React.Fragment key={key}>{renderDia({
-                              fecha: dia,
-                              datos: getDatosPorFechaFn(datos, dia),
-                              esMesActual: esMesActualFn(dia, mesFecha),
-                              esHoy: esHoyFn(dia)
-                            })}</React.Fragment>
-                          : <React.Fragment key={key}>{renderDiaPorDefecto(dia, mesFecha)}</React.Fragment>;
-                      })}
-                    </div>
-                  ))
-                }
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="calendario-grid">
-          <div className="calendario-dias-semana">
-            {diasSemana.map(dia => (
-              <div key={dia} className="dia-semana">{dia}</div>
-            ))}
-          </div>
-          <div className="calendario-semanas">
-            {getSemanasDelMes(fechaActual, inicioSemana)
-              .filter(semana => semana.some(dia => dia.getMonth() === fechaActual.getMonth()))
-              .map((semana, indexSemana) => (
-                <div key={`semana-${fechaActual.getFullYear()}-${fechaActual.getMonth()}-${indexSemana}`} className="calendario-semana">
-                  {semana.map((dia) => {
-                    const key = dia.toISOString();
-                    const esDiaDelMes = dia.getMonth() === fechaActual.getMonth();
-                    return renderDia
-                      ? <React.Fragment key={key}>{renderDia({
-                          fecha: dia,
-                          datos: esDiaDelMes ? getDatosPorFechaFn(datos, dia) : [],
-                          esMesActual: esDiaDelMes,
-                          esHoy: esHoyFn(dia)
-                        })}</React.Fragment>
-                      : <React.Fragment key={key}>{renderDiaPorDefecto(dia, fechaActual)}</React.Fragment>;
-                  })}
-                </div>
-              ))
-            }
-          </div>
-        </div>
-      )}
-
       {cargando && (
         <div className="calendario-cargando">
           <QIcono nombre="cargando" />
