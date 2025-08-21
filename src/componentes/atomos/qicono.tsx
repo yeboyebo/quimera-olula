@@ -28,6 +28,7 @@ const iconos: Record<string, string> = {
   atras: 'chevron-left',
   adelante: 'chevron-right',
   menu: 'menu',
+  calendario_vacio: 'calendar-alt',
 };
 
 export const QIcono = ({ nombre, tamaño = "md", color, style, props }: QIconoProps) => {
