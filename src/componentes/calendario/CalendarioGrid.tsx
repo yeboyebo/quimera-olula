@@ -66,7 +66,7 @@ export function CalendarioGrid<T extends DatoBase>({
           const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
           return (
             <div key={mesFecha.getFullYear() + '-' + i} className="mes-anio">
-              <h3 className="calendario-mes">{formatearMesAñoFn(mesFecha)}</h3>
+              <h3 className="calendario-mes">{formatearMesFn(mesFecha)}</h3>
               <div className="calendario-dias-semana">
                 {diasSemana.map(dia => (
                   <div key={dia} className="dia-semana">{dia}</div>
