@@ -212,6 +212,25 @@
 }
 
 @media (max-width: 640px) {
+  .boton-menu-lateral {
+    border: 1px solid white;
+    background-color: inherit;
+    padding-top: 5px;
+  }
+
+  .boton-hoy-movil {
+    border: 1px solid white;
+    background-color: inherit;
+    cursor: pointer;
+  }
+
+  .calendario-navegacion-movil {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .calendario-cabecera {
     display: flex;
     position: sticky;
@@ -222,47 +241,60 @@
     font-size: 0.95rem;
   }
 
-  /* .calendario-dias-semana {
-    border: 1px solid red;
-    /* display: flex; */
-  /* min-width: 420px; */
-}
 
-*/ .calendario-dias,
-.calendario-semana {
-  overflow-x: auto;
-  display: flex;
-  min-width: 420px;
-  /* 7 días x 60px */
-}
+  */ .calendario-dias,
+  .calendario-semana {
+    overflow-x: auto;
+    display: flex;
+    min-width: 420px;
+    /* 7 días x 60px */
+  }
 
-.calendario-dia {
-  min-width: 60px;
-  min-height: 70px;
-  font-size: 0.85rem;
-  padding: 2px;
-}
+  .calendario-dia {
+    min-width: 60px;
+    min-height: 70px;
+    font-size: 0.85rem;
+    padding: 2px;
+  }
 
-.dia-numero {
-  font-size: 0.8rem;
-}
+  .dia-numero {
+    font-size: 0.8rem;
+  }
 
-.dato-item {
-  font-size: 0.8rem;
-  padding: 2px 4px;
-}
+  .dato-item {
+    font-size: 0.8rem;
+    padding: 2px 4px;
+  }
 
-.boton-menu-lateral {
-  border: 1px solid white;
-  background-color: inherit;
-  padding-top: 5px;
-}
+  /* CSS para el icono con número */
+  .icono-calendario-con-fecha {
+    position: relative;
+    display: inline-block;
+  }
 
-.menu-acciones {
-  margin-top: 1rem;
-}
+  .icono-calendario-con-fecha::after {
+    content: attr(data-dia);
+    /* Obtiene el número del atributo data-dia */
+    position: absolute;
+    top: 50%;
+    /* Ajusta según el icono */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    /* Tamaño pequeño para el número */
+    font-weight: bold;
+    color: black;
+    pointer-events: none;
+    /* Para que no interfiera con los clics */
+  }
 
-.menu-acciones-fila {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--gris-3);
+  .menu-acciones {
+    margin-top: 1rem;
+  }
+
+  .menu-acciones-fila {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--gris-3);
+  }
+
 }

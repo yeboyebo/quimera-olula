@@ -44,21 +44,21 @@ interface MenuAccionesMovilProps {
   esMovil: boolean;
   modoAnio: boolean;
   onCambioModo: () => void;
-  onIrHoy: () => void;
   botonesIzqModo?: React.ReactNode[];
   botonesDerModo?: React.ReactNode[];
   botonesIzqHoy?: React.ReactNode[];
   botonesDerHoy?: React.ReactNode[];
+  mostrarCambioModo?: boolean;
 }
 function MenuAccionesMovil({
   esMovil,
   modoAnio,
   onCambioModo,
-  onIrHoy,
   botonesIzqModo = [],
   botonesDerModo = [],
   botonesIzqHoy = [],
   botonesDerHoy = [],
+  mostrarCambioModo = true
 }: MenuAccionesMovilProps) {
   const [abierto, setAbierto] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -94,7 +94,6 @@ function MenuAccionesMovil({
 
   // Wrappers para las acciones principales
   const handleCambioModo = crearManejadorConCierre(onCambioModo);
-  const handleIrHoy = crearManejadorConCierre(onIrHoy);
 
   // Función para clonar botones con el manejador de cierre
   const clonarBotonConCierre = (boton: React.ReactNode, index: number): React.ReactNode => {
@@ -144,8 +143,8 @@ function MenuAccionesMovil({
       style={{
         border: '1px solid #ccc',
         position: 'fixed',
-        top: 148,
-        height: '80vh',
+        top: 154,
+        height: '79vh',
         zIndex: 1200,
         width: '320px',
         maxWidth: '100vw',
@@ -172,11 +171,12 @@ function MenuAccionesMovil({
               </div>
             ))}
             
-            <div className="menu-acciones-fila" key={'modo'}>
+            {mostrarCambioModo && <div className="menu-acciones-fila" key={'modo'}>
               <QBoton onClick={handleCambioModo} variante={esMovil ? 'texto' : 'solido'}>
                 {modoAnio ? 'Modo Mes' : 'Modo Año'}
               </QBoton>
             </div>
+            }
 
             {botonesDerModo.map((boton, index) => (
               <div className="menu-acciones-fila" key={index}>
@@ -189,12 +189,6 @@ function MenuAccionesMovil({
                 {clonarBotonConCierre(boton, index)}
               </div>
             ))}            
-            
-            <div className="menu-acciones-fila">
-              <QBoton onClick={handleIrHoy} variante={esMovil ? 'texto' : 'solido'}>
-                Hoy
-              </QBoton>
-            </div>
 
             {botonesDerHoy.map((boton, index) => (
               <div className="menu-acciones-fila" key={index}>
@@ -496,13 +490,25 @@ export function Calendario<T extends DatoBase>({
             esMovil={esMovil}
             modoAnio={modoAnio}
             onCambioModo={() => setModoAnio(m => !m)}
-            onIrHoy={irAHoy}
             botonesIzqModo={botonesIzqModo}
             botonesDerModo={botonesDerModo}
             botonesIzqHoy={botonesIzqHoy}
             botonesDerHoy={botonesDerHoy}
+            mostrarCambioModo={mostrarCambioModo}
           />
-          <h2 className="calendario-navegacion-mes-anio">{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>
+          <div className="calendario-navegacion-movil">
+            <h2 className="calendario-navegacion-mes-anio">{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>
+            {mostrarBotonHoy && 
+                <button className="boton-hoy-movil" type="button" onClick={irAHoy}> 
+                  <div 
+                    className="icono-calendario-con-fecha"
+                    data-dia={new Date().getDate()} // Número del día actual
+                  >
+                    <QIcono nombre={"calendario_vacio"} tamaño={"md"} color={"black"} />
+                  </div>
+                </button>
+            }
+          </div>
         </div>
       );
     }
