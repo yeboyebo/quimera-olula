@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
+import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { useEsMovil } from "../../../../../../componentes/maestro/useEsMovil.ts";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
@@ -83,15 +84,15 @@ export const CalendarioEventos = () => {
         config={{
           maxDatosVisibles: 5,
           cabecera: {        
-            botonesDerModo: [ 
-              // <MaestroFiltros
-              //   campos={camposFiltro}
-              //   filtro={filtro}
-              //   cambiarFiltro={cambiarFiltro}
-              //   borrarFiltro={borrarFiltro}
-              //   resetearFiltro={resetearFiltro}
-              // />
-            ],
+            botonesDerModo: !esMovil ? [ 
+              <MaestroFiltros
+                campos={camposFiltro}
+                filtro={filtro}
+                cambiarFiltro={cambiarFiltro}
+                borrarFiltro={borrarFiltro}
+                resetearFiltro={resetearFiltro}
+              />
+            ] : [],
             botonesDerHoy: [   
               <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>Nuevo evento</QBoton>,
               // <BotonConTooltip tooltip="Generar enlace a calendario" tamaño={"pequeño"} onClick={generarEnlace}> 
