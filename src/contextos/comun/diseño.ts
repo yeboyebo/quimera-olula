@@ -74,3 +74,8 @@ export type TipoInput =
   | "url"
   | "rango"
   | "moneda";
+
+export type ListaSeleccionable<E extends Entidad> = {
+  lista: E[];
+  idActivo: string | null;
+}

@@ -2,8 +2,9 @@ import { useContext, useEffect } from "react";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla, QTabla } from "../../../../../componentes/atomos/qtabla.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
-import { useLista } from "../../../../comun/useLista.ts";
-import { Maquina, useMaquina2 } from "../../../../comun/useMaquina.ts";
+import { ListaSeleccionable } from "../../../../comun/diseño.ts";
+import { cargarLista, incluirEnLista, listaSeleccionableVacia, quitarDeLista, seleccionarItemEnLista } from "../../../../comun/entidad.ts";
+import { ConfigMaquina3, useMaquina3 } from "../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Accion } from "../../../accion/diseño.ts";
 import { AltaAccion } from "../../../accion/vistas/AltaAccion.tsx";
@@ -13,9 +14,67 @@ import { getAccionesIncidencia } from "../../infraestructura.ts";
 
 type Estado = "Inactivo" | "Creando" | "Borrando" | "Cargando";
 
+type Contexto = {
+  acciones: ListaSeleccionable<Accion>;
+}
+
+const configMaquina: ConfigMaquina3<Estado, Contexto> = {
+  Cargando: {
+    acciones_cargadas: (maquina, payload) => {
+      return {
+        estado: "Inactivo" as Estado,
+        contexto: {
+          ...maquina.contexto,
+          acciones: cargarLista(payload as Accion[]),
+        },
+      }
+    },
+  },
+  Inactivo: {
+    crear: "Creando",
+    borrar: "Borrando", 
+    accion_seleccionada: ({ contexto, ...maquina}, payload) => {
+      return {
+        ...maquina,
+        contexto: {
+          ...contexto,
+          acciones: seleccionarItemEnLista(contexto.acciones, payload as Accion),
+        },
+      }
+    },
+    cargar: 'Cargando',
+  },
+  Creando: {
+    accion_creada: ({ contexto, ...maquina}, payload: unknown) => {
+      return {
+        estado: "Inactivo",
+        contexto: {
+          ...maquina,
+          acciones: incluirEnLista(contexto.acciones, payload as Accion, {}),
+        },
+      }
+    },
+    creacion_cancelada: "Inactivo",
+  },
+  Borrando: {
+    accion_borrada: ({ contexto, ...maquina}) => {
+      if (!contexto.acciones.idActivo) {
+        return { contexto, ...maquina}
+      }
+      return {
+        estado: "Inactivo",
+        contexto: {
+          ...contexto,
+          acciones: quitarDeLista(contexto.acciones, contexto.acciones.idActivo),
+        },
+      }
+    },
+    borrado_cancelado: "Inactivo",
+  },
+};
+
 export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia> }) => {
 
-  const acciones = useLista<Accion>([]);
   const { intentar } = useContext(ContextoError);
 
   const idIncidencia = incidencia.modelo.id;
@@ -26,51 +85,18 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
     );
     emitir("acciones_cargadas", nuevasAcciones);
   };
-  
-  const maquina: Maquina<Estado> = {
-    Cargando: {
-      al_entrar: async () => {
-        await cargarAcciones()
-      },
-      acciones_cargadas: (payload) => {
-        acciones.setLista(payload as Accion[]);
-        return "Inactivo" as Estado;
-      }
-    },
-    Inactivo: {
-      crear: "Creando",
-      borrar: "Borrando", 
-      accion_seleccionada: (payload) => {
-        acciones.seleccionar(payload as Accion);
-      },
-      cargar: 'Cargando',
-    },
-    Creando: {
-      accion_creada: async (payload) => {
-        acciones.añadir(payload as Accion);
-        return "Inactivo" as Estado;
-      },
-      creacion_cancelada: "Inactivo",
-    },
-    Borrando: {
-      accion_borrada: async () => {
-        if (acciones.seleccionada) {
-          acciones.eliminar(acciones.seleccionada);
-        }
-        return "Inactivo" as Estado;
-      },
-      borrado_cancelado: "Inactivo",
-    },
-  };
-  
-  const [emitir, estado] = useMaquina2(maquina, 'Inactivo');
+
+  const [emitir, { estado, contexto}] = useMaquina3<Estado, Contexto>(
+    configMaquina, 'Inactivo', {
+      acciones: listaSeleccionableVacia<Accion>(),
+    }
+  );
+  const { acciones } = contexto;
 
   useEffect(() => {
-    if (estado !== "Inactivo") {
-      return;
-    }
     emitir("cargar");
-  }, [idIncidencia]);
+    cargarAcciones()
+  }, [idIncidencia, emitir]);
 
 
   const metaTablaAccion: MetaTabla<Accion> = [
@@ -83,14 +109,13 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
 
   return (
     <div className="TabAcciones">
-      {estado}
       <div className="TabAccionesAcciones maestro-botones">
         <QBoton onClick={() => emitir("crear")}
         >Nueva</QBoton>
         
         <QBoton
           onClick={() => emitir("borrar")}
-          deshabilitado={!acciones.seleccionada}
+          deshabilitado={!acciones.idActivo}
         >Borrar</QBoton>
       </div>
       
@@ -104,14 +129,14 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
       <BajaAccion 
         emitir={emitir}
         activo={estado === "Borrando"}
-        idAccion={acciones.seleccionada?.id}
+        idAccion={acciones.idActivo || undefined}
       />
 
       <QTabla
         metaTabla={metaTablaAccion}
         datos={acciones.lista}
         cargando={estado === 'Cargando'}
-        seleccionadaId={acciones.seleccionada?.id}
+        seleccionadaId={acciones.idActivo || undefined}
         onSeleccion={(accion) => emitir("accion_seleccionada", accion)}
         orden={["id", "ASC"]}
         onOrdenar={() => null}
