@@ -81,12 +81,8 @@ export const CalendarioEventos = () => {
         datos={eventosCalendarioData.lista}
         cargando={cargando}
         config={{
-          maxDatosVisibles: 3,
-          cabecera: {
-            botonesIzqModo: [ 
-              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>UNO</QBoton>,
-              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>DOS</QBoton>,
-            ],            
+          maxDatosVisibles: 5,
+          cabecera: {        
             botonesDerModo: [ 
               // <MaestroFiltros
               //   campos={camposFiltro}
@@ -95,8 +91,6 @@ export const CalendarioEventos = () => {
               //   borrarFiltro={borrarFiltro}
               //   resetearFiltro={resetearFiltro}
               // />
-              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>tres</QBoton>,
-              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>CUATRO</QBoton>,
             ],
             botonesDerHoy: [   
               <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>Nuevo evento</QBoton>,
