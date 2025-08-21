@@ -173,10 +173,12 @@ export function Calendario<T extends DatoBase>({
         mostrarControlesNavegacion={mostrarControlesNavegacion}
         mostrarBotonHoy={mostrarBotonHoy}
         irAHoy={irAHoy}
-        botonesIzqModo={botonesIzqModo}
-        botonesDerModo={botonesDerModo}
-        botonesIzqHoy={botonesIzqHoy}
-        botonesDerHoy={botonesDerHoy}
+        botones={{
+          izqModo: botonesIzqModo,
+          derModo: botonesDerModo,
+          izqHoy: botonesIzqHoy,
+          derHoy: botonesDerHoy,
+        }}
       />
       <CalendarioGrid
         modoAnio={modoAnio}

@@ -3,6 +3,13 @@ import { QIcono } from '../atomos/qicono.tsx';
 import { CabeceraCalendario } from './CabeceraCalendario';
 import { MenuAccionesMovil } from './MenuAccionesMovil';
 
+interface CabeceraBotones {
+  izqModo?: React.ReactNode[];
+  derModo?: React.ReactNode[];
+  izqHoy?: React.ReactNode[];
+  derHoy?: React.ReactNode[];
+}
+
 interface CabeceraGridProps {
   esMovil: boolean;
   modoAnio: boolean;
@@ -14,10 +21,7 @@ interface CabeceraGridProps {
   mostrarControlesNavegacion: boolean;
   mostrarBotonHoy: boolean;
   irAHoy: () => void;
-  botonesIzqModo: React.ReactNode[];
-  botonesDerModo: React.ReactNode[];
-  botonesIzqHoy: React.ReactNode[];
-  botonesDerHoy: React.ReactNode[];
+  botones?: CabeceraBotones;
 }
 
 export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
@@ -31,21 +35,24 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
   mostrarControlesNavegacion,
   mostrarBotonHoy,
   irAHoy,
-  botonesIzqModo,
-  botonesDerModo,
-  botonesIzqHoy,
-  botonesDerHoy,
+  botones = {},
 }) => {
+  const {
+    izqModo = [],
+    derModo = [],
+    izqHoy = [],
+    derHoy = [],
+  } = botones;
   if (esMovil) {
     return (
       <div className="calendario-cabecera">
         <MenuAccionesMovil
           modoAnio={modoAnio}
           onCambioModo={() => setModoAnio((m: boolean) => !m)}
-          botonesIzqModo={botonesIzqModo}
-          botonesDerModo={botonesDerModo}
-          botonesIzqHoy={botonesIzqHoy}
-          botonesDerHoy={botonesDerHoy}
+          botonesIzqModo={izqModo}
+          botonesDerModo={derModo}
+          botonesIzqHoy={izqHoy}
+          botonesDerHoy={derHoy}
           mostrarCambioModo={mostrarCambioModo}
         />
         <div className="calendario-navegacion-movil">
@@ -76,10 +83,10 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
       mostrarBotonHoy={mostrarBotonHoy}
       irAHoy={irAHoy}
       botones={{
-        izqModo: botonesIzqModo,
-        derModo: botonesDerModo,
-        izqHoy: botonesIzqHoy,
-        derHoy: botonesDerHoy,
+        izqModo,
+        derModo,
+        izqHoy,
+        derHoy,
       }}
     />
   );
