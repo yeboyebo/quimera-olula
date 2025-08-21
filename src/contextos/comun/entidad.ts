@@ -38,3 +38,18 @@ export const seleccionarItemEnLista = <E extends Entidad>(listaS: ListaSeleccion
         idActivo: entidad.id,
     };
 }
+
+export const cambiarItemEnLista = <E extends Entidad>(listaS: ListaSeleccionable<E>, entidad: E): ListaSeleccionable<E> => {
+    const lista = listaS.lista.map(e => e.id === entidad.id ? entidad : e);
+    return {
+        ...listaS,
+        lista,
+    };
+}
+
+export const getSeleccionada = <E extends Entidad>(listaS: ListaSeleccionable<E>): E | null => {
+    if (listaS.idActivo) {
+        return listaS.lista.find(e => e.id === listaS.idActivo) || null;
+    }
+    return null;
+}
