@@ -65,8 +65,8 @@
 .anio-grid {
   scroll-behavior: smooth;
   overflow-y: auto;
-  height: 70vh;
-  scroll-snap-type: y proximity;
+  height: calc(100vh - 250px);
+  padding-bottom: 4rem;
 }
 
 /* Días */
@@ -141,8 +141,7 @@
 }
 
 .mes-anio {
-  scroll-margin-top: 60px;
-  scroll-snap-align: start;
+  margin-bottom: 1.5rem;
 }
 
 .calendario-mes {
