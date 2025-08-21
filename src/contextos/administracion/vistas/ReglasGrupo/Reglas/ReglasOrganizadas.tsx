@@ -20,6 +20,9 @@ export const ReglasOrganizadas = ({
 }: ReglasOrganizadasProps) => {
   if (!grupoSeleccionado) return null;
   // console.log("ReglasOrganizadas", reglasOrganizadas, grupoSeleccionado);
+  const reglaGeneral = reglasOrganizadas.find(
+    (categoria) => categoria.id === "general"
+  );
   return (
     <div className="ReglasOrganizadas">
       {reglasOrganizadas.map((categoria) => (
@@ -29,6 +32,7 @@ export const ReglasOrganizadas = ({
           estaAbierta={categoriasAbiertas[categoria.id]}
           grupoId={grupoSeleccionado.id}
           emitir={emitir}
+          reglaGeneral={reglaGeneral}
           reglasAbiertas={reglasAbiertas}
         />
       ))}

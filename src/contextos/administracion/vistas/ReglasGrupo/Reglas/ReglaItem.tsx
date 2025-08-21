@@ -1,4 +1,4 @@
-import { ReglaAnidada } from "../../../diseño.ts";
+import { CategoriaReglas, ReglaAnidada } from "../../../diseño.ts";
 import { AccionesRegla } from "./Acciones.tsx";
 import { SubReglaItem } from "./SubReglaItem";
 
@@ -7,11 +7,13 @@ export const ReglaItem = ({
   grupoId,
   emitir,
   abierta,
+  reglaGeneral,
 }: {
   regla: ReglaAnidada;
   grupoId: string;
   emitir: (evento: string, payload?: unknown) => void;
   abierta: boolean;
+  reglaGeneral?: CategoriaReglas;
 }) => (
   <div className="categoria-item">
     <div className="regla-item">
@@ -28,7 +30,12 @@ export const ReglaItem = ({
         {regla.descripcion.split(" - ")[1]?.trim().replace(/_/g, " ") ||
           regla.descripcion}
       </div>
-      <AccionesRegla regla={regla} grupoId={grupoId} emitir={emitir} />
+      <AccionesRegla
+        regla={regla}
+        grupoId={grupoId}
+        emitir={emitir}
+        reglaGeneral={reglaGeneral}
+      />
     </div>
     {regla.hijos &&
       regla.hijos.length > 0 &&
@@ -40,6 +47,7 @@ export const ReglaItem = ({
           padre={regla}
           grupoId={grupoId}
           emitir={emitir}
+          reglaGeneral={reglaGeneral}
         />
       ))}
   </div>

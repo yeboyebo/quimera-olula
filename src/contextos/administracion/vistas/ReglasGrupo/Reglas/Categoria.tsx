@@ -8,12 +8,14 @@ export const Categoria = ({
   grupoId,
   emitir,
   reglasAbiertas,
+  reglaGeneral,
 }: {
   categoria: CategoriaReglas;
   estaAbierta: boolean;
   grupoId: string;
   emitir: (evento: string, payload?: unknown) => void;
   reglasAbiertas: Record<string, boolean>;
+  reglaGeneral?: CategoriaReglas;
 }) => (
   <div className="categoria-reglas">
     <div
@@ -33,6 +35,7 @@ export const Categoria = ({
         <AccionesCategoria
           categoria={categoria}
           grupoId={grupoId}
+          reglaGeneral={reglaGeneral}
           emitir={emitir}
         />
       )}
@@ -48,6 +51,7 @@ export const Categoria = ({
             regla={regla}
             grupoId={grupoId}
             emitir={emitir}
+            reglaGeneral={reglaGeneral}
             abierta={!!reglasAbiertas[regla.id]}
           />
         ))}

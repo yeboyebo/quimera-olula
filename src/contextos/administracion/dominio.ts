@@ -98,25 +98,16 @@ export const getReglasPorGrupoPermiso = (
     return Object.values(categorias);
 };
 
-const permisosGrupo = [
-    {
-        "eventos": [],
-        "id": 2,
-        "id_grupo": "CRM",
-        "id_regla": "general",
-        "valor": false
-    },
-];
-
 export const calcularClasesExtra = (
     regla: ReglaConValor | ReglaAnidada,
     reglaPadre?: ReglaAnidada,
+    reglaGeneral?: CategoriaReglas
 ): { permitir: string; cancelar: string } => {
     const clases = {
         permitir: "",
         cancelar: "",
     };
-    const permisoGeneral = permisosGrupo.find(p => p.id_regla === "general");
+    const permisoGeneral = reglaGeneral;
 
     if (regla.valor === null) {
         if (!reglaPadre) {

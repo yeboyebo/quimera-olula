@@ -12,14 +12,16 @@ import "./AccionesRegla.css";
 export const AccionesRegla = ({
   reglaPadre,
   regla,
+  reglaGeneral,
   emitir,
 }: {
   reglaPadre?: ReglaAnidada;
   regla: ReglaConValor | ReglaAnidada;
+  reglaGeneral?: CategoriaReglas;
   grupoId: string;
   emitir: EmitirEvento;
 }) => {
-  const clasesExtra = calcularClasesExtra(regla, reglaPadre);
+  const clasesExtra = calcularClasesExtra(regla, reglaPadre, reglaGeneral);
 
   return (
     <div className="AccionesRegla">
@@ -72,6 +74,7 @@ export const AccionesCategoria = ({
   categoria: CategoriaReglas;
   grupoId: string;
   emitir: EmitirEvento;
+  reglaGeneral?: CategoriaReglas;
 }) => {
   const clasesExtra = "";
 

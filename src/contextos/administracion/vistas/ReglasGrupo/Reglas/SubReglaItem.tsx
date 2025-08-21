@@ -1,14 +1,16 @@
-import { ReglaAnidada } from "../../../diseño.ts";
+import { CategoriaReglas, ReglaAnidada } from "../../../diseño.ts";
 import { AccionesRegla } from "./Acciones.tsx";
 
 export const SubReglaItem = ({
   regla,
   padre,
   grupoId,
+  reglaGeneral,
   emitir,
 }: {
   regla: ReglaAnidada;
   padre?: ReglaAnidada;
+  reglaGeneral?: CategoriaReglas;
   grupoId: string;
   emitir: (evento: string, payload?: unknown) => void;
 }) => (
@@ -19,6 +21,7 @@ export const SubReglaItem = ({
       reglaPadre={padre}
       grupoId={grupoId}
       emitir={emitir}
+      reglaGeneral={reglaGeneral}
     />
   </div>
 );

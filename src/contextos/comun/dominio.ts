@@ -1,3 +1,4 @@
+import { permisosGrupo } from "../usuarios/login/infraestructura.ts";
 import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
@@ -346,41 +347,11 @@ export const calcularPaginacionSimplificada = (
     return { paginasMostradas, totalPaginas };
 };
 
-const permisosGrupo = [
-    {
-        "eventos": [],
-        "id": 30,
-        "id_grupo": "CRM",
-        "id_regla": "ventas.cliente.crear",
-        "valor": false
-    },
-    {
-        "eventos": [],
-        "id": 30,
-        "id_grupo": "CRM",
-        "id_regla": "crm.cliente",
-        "valor": true
-    },
-    {
-        "eventos": [],
-        "id": 20,
-        "id_grupo": "CRM",
-        "id_regla": "crm.cliente.leer",
-        "valor": false
-    },
-    {
-        "eventos": [],
-        "id": 2,
-        "id_grupo": "CRM",
-        "id_regla": "general",
-        "valor": true
-    },
-];
-
 export const puede = (regla: string): boolean => {
     if (!regla) return true;
     // Busca el permiso exacto
-    const permisoExacto = permisosGrupo.find(p => p.id_regla === regla);
+    const permisos = JSON.parse(permisosGrupo.obtener() || "[]");
+    const permisoExacto = permisos.find(p => p.id_regla === regla);
     if (permisoExacto) {
         if (permisoExacto.valor === true) return true;
         if (permisoExacto.valor === false) return false;
@@ -390,7 +361,7 @@ export const puede = (regla: string): boolean => {
     const partes = regla.split(".");
     if (partes.length > 1) {
         const padre = partes.slice(0, -1).join(".");
-        const permisoPadre = permisosGrupo.find(p => p.id_regla === padre);
+        const permisoPadre = permisos.find(p => p.id_regla === padre);
         if (permisoPadre) {
             if (permisoPadre.valor === true) return true;
             if (permisoPadre.valor === false) return false;
@@ -398,11 +369,11 @@ export const puede = (regla: string): boolean => {
         }
     }
     // Busca permiso general
-    const permisoGeneral = permisosGrupo.find(p => p.id_regla === "general");
+    const permisoGeneral = permisos.find(p => p.id_regla === "general");
     if (permisoGeneral) {
         if (permisoGeneral.valor === true) return true;
         if (permisoGeneral.valor === false) return false;
     }
 
-    return false;
+    return true;
 };

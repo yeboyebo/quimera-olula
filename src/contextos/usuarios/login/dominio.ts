@@ -1,4 +1,4 @@
-import { login as loginAPI, logout as logoutAPI, refrescarToken as refrescarTokenAPI, tokenAcceso, tokenRefresco } from './infraestructura.ts';
+import { login as loginAPI, logout as logoutAPI, misPermisos, permisosGrupo, refrescarToken as refrescarTokenAPI, tokenAcceso, tokenRefresco } from './infraestructura.ts';
 
 export const login = async (id: string, contraseña: string) => {
     return loginAPI(id, contraseña).then((datosLogin) => {
@@ -31,5 +31,8 @@ export const refrescarToken = async () => {
 
     return refrescarTokenAPI(token).then((datosRefresco) => {
         tokenAcceso.actualizar(datosRefresco.tokenAcceso);
+        misPermisos().then((datosPermisos) => {
+            permisosGrupo.actualizar(datosPermisos.datos);
+        });
     })
 }
