@@ -14,6 +14,7 @@ export const logout = async () => {
     return logoutAPI(token).then(() => {
         tokenAcceso.eliminar();
         tokenRefresco.eliminar();
+        permisosGrupo.eliminar();
     });
 }
 

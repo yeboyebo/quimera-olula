@@ -33,6 +33,9 @@ export const validadoresRegla = {
     grupo: (valor: string) => valor.trim() !== "",
 };
 
+const excepcionesRegla: string[] = [
+    "publica"
+];
 
 export const getReglasPorGrupoPermiso = (
     grupoId: string,
@@ -46,7 +49,12 @@ export const getReglasPorGrupoPermiso = (
         mapaPermisos[p.id_regla] = p.valor;
     });
 
-    const reglasConValor = reglas.map(regla => ({
+    // Filtrar reglas que NO estén en las excepciones
+    const reglasFiltradas = reglas.filter(regla =>
+        !excepcionesRegla.some(excepcion => regla.id.includes(excepcion))
+    );
+
+    const reglasConValor = reglasFiltradas.map(regla => ({
         ...regla,
         valor: mapaPermisos[regla.id] !== undefined ? mapaPermisos[regla.id] : null
     }));

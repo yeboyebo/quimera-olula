@@ -63,6 +63,6 @@ export const getPermisosGrupo = async (
     grupoId?: string,
 ): RespuestaLista<Permiso> => {
 
-    return await RestAPI.get<{ datos: Permiso[]; total: number }>(baseUrl + '/permiso/' + grupoId);
+    return await RestAPI.get<{ datos: Permiso[]; total: number }>(baseUrl + '/permiso/por_grupo/' + grupoId);
 };
 
