@@ -1,22 +1,18 @@
 import { useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
-import { QDate } from "../../../../../../componentes/atomos/qdate.tsx";
-import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
 import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { useEsMovil } from "../../../../../../componentes/maestro/useEsMovil.ts";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
-import { Proveedor } from "../../../../../../contextos/compras/comun/componentes/proveedor.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
-import { Empresa } from "../../../../../../contextos/crm/comun/componentes/empresa.tsx";
-import { Cliente } from "../../../../../../contextos/ventas/comun/componentes/cliente.tsx";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip/TextoConTooltip.tsx";
 import { AltaEvento } from "../../evento/vistas/AltaEvento.tsx";
 import { EventoCalendario } from "../diseño.ts";
 import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
+import { FichaEventoAbierto } from "./FichaEventoAbierto.tsx";
 
 // Define Estado type for use in MaestroEvento
 type Estado = "calendario" | "alta" | "evento_abierto";
@@ -150,44 +146,7 @@ export const CalendarioEventos = () => {
         abierto={estado === "evento_abierto"}
         onCerrar={() => emitir("EVENTO_CERRADO")}
       >
-        {eventoAbierto && (
-          <div className="ficha-evento">
-            <quimera-formulario>
-              <div className="columna-principal">
-                <h2><span>{eventoAbierto.descripcion}</span></h2>
-                <div className="fila-1">
-                  <QInput label="Producto" valor={eventoAbierto.descripcion_ref || ""} deshabilitado />
-                </div>
-                <div className="fila-2">
-                  <QDate label="Fecha" valor={eventoAbierto.fecha_inicio} deshabilitado />
-                  <QInput label="Hora inicio" valor={eventoAbierto.hora_inicio || ""} deshabilitado />
-                </div>
-                <div className="fila-3">
-                  <QInput label="Lugar" valor={eventoAbierto.lugar || ""} deshabilitado />
-                  <QInput label="Dirección" valor={eventoAbierto.direccion || ""} deshabilitado />                  
-                </div>
-                <div className="fila-4">
-                  <Empresa
-                    label="Empresa que factura"
-                    valor={eventoAbierto.empresa_id || ""}
-                    descripcion={eventoAbierto.nombre_empresa || ""}
-                    deshabilitado
-                  />
-                  <Cliente
-                    valor={eventoAbierto.cliente_id || ""}
-                    descripcion={eventoAbierto.nombre_cliente || ""}
-                    deshabilitado
-                  />
-                  <Proveedor
-                    valor={eventoAbierto.proveedor_id || ""}
-                    descripcion={eventoAbierto.nombre_proveedor || ""}
-                    deshabilitado
-                  />
-                </div>
-              </div>
-            </quimera-formulario>
-          </div>
-        )}
+        {eventoAbierto && <FichaEventoAbierto evento={eventoAbierto} />}
       </QModal>
     </div>
   );
