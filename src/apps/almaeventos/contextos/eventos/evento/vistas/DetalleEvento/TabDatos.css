@@ -92,8 +92,9 @@
         flex-direction: column;
         justify-content: space-between;
         grid-row: 1 / span 6;
-        height: auto;
+        height: calc(100vh - 650px);
         padding: 0.5rem 0;
+        /* border: 1px solid red; */
     }
 
     .col-1 {
