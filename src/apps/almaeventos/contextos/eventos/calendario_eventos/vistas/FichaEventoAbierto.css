@@ -27,6 +27,15 @@
   gap: 1rem;
 }
 
+.ficha-evento .fila-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gris-3);
+}
+
 .ficha-evento .fila-1>* {
   flex: 1;
 }

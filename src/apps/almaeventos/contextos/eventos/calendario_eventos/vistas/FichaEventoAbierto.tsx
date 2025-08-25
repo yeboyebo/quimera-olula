@@ -1,3 +1,4 @@
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QDate } from "../../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { Proveedor } from "../../../../../../contextos/compras/comun/componentes/proveedor.tsx";
@@ -44,6 +45,14 @@ export const FichaEventoAbierto = ({ evento }: FichaEventoAbiertoProps) => {
               descripcion={evento.nombre_proveedor || ""}
               deshabilitado
             />
+          </div>
+          <div className="fila-botones">
+            <QBoton 
+              onClick={() => window.location.href = `/eventos/calendario/evento/${evento.evento_id}`}
+              variante="solido"
+            >
+              Ver detalle
+            </QBoton>
           </div>
         </div>
       </quimera-formulario>
