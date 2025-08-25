@@ -74,10 +74,14 @@
         margin-right: auto;
     }
 
-    .fila-5>*:nth-child(2),
-    .fila-5>*:nth-child(3),
-    .fila-5>*:nth-child(4) {
-        flex: 0 0 10%;
+    .fila-5 .precios-margen {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .fila-5 .precios-margen>* {
+        flex: 0 0 20%;
     }
 
     /* Columnas de checkboxes */
@@ -173,8 +177,8 @@
         flex-direction: column;
         gap: 0.5rem;
     }
-    
-    .DetalleEvento .TabDatos .fila-1 > * {
+
+    .DetalleEvento .TabDatos .fila-1>* {
         flex: none !important;
         width: 100% !important;
     }
@@ -232,20 +236,20 @@
         gap: 0.5rem;
         justify-content: stretch;
     }
-    
-    .DetalleEvento .TabDatos .fila-5 > *:nth-child(1) {
+
+    .DetalleEvento .TabDatos .fila-5>*:nth-child(1) {
         flex: none !important;
         width: 100% !important;
         margin-right: 0;
     }
-    
+
     .DetalleEvento .TabDatos .fila-5 .precios-margen {
         display: flex;
         gap: 0.5rem;
         width: 100%;
     }
-    
-    .DetalleEvento .TabDatos .fila-5 .precios-margen > * {
+
+    .DetalleEvento .TabDatos .fila-5 .precios-margen>* {
         flex: 1 !important;
         width: auto !important;
     }
