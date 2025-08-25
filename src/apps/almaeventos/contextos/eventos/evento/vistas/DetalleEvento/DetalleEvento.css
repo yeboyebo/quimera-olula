@@ -1,9 +1,17 @@
 .DetalleEvento {
-  height: calc(100vh - 2rem);
+  height: 100vh;
   padding: 1rem;
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
+  
+  /* Asegurar que ningún hijo genere scroll */
+  .detalle,
+  .detalleTabs,
+  .tab-content {
+    height: auto !important;
+    overflow: visible !important;
+  }
 }
 
 .DetalleEvento .maestro-botones {

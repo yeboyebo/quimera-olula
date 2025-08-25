@@ -74,7 +74,7 @@ export const DetalleEvento = () => {
         // cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
       >
         {!!eventoId && (
-          <div className="DetalleEvento">
+          <>
             <div>
               <div className="maestro-botones alinear-derecha">
                 <QBoton onClick={() => setEstado("confirmarBorrado")}>
@@ -143,7 +143,7 @@ export const DetalleEvento = () => {
               onCerrar={() => setEstado("edicion")}
               onAceptar={onBorrarConfirmado}
             />
-          </div>
+          </>
         )}
       </Detalle>
     </div>

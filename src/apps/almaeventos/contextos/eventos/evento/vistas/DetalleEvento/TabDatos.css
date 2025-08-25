@@ -1,6 +1,7 @@
 .DetalleEvento .TabDatos {
     max-width: 100%;
-    /* overflow-x: hidden; */
+    height: auto;
+    overflow: visible;
 
     quimera-formulario {
         display: grid;
@@ -90,7 +91,7 @@
         flex-direction: column;
         justify-content: space-between;
         grid-row: 1 / span 6;
-        height: 100%;
+        height: auto;
         padding: 0.5rem 0;
     }
 

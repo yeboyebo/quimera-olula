@@ -1,6 +1,7 @@
 .DetalleEvento .TabRuta {
     max-width: 100%;
-    overflow-x: hidden;
+    height: auto;
+    overflow: visible;
 
     quimera-formulario {
         display: flex;
