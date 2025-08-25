@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QDate } from "../../../../../../componentes/atomos/qdate.tsx";
+import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
 import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { useEsMovil } from "../../../../../../componentes/maestro/useEsMovil.ts";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
+import { Proveedor } from "../../../../../../contextos/compras/comun/componentes/proveedor.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
+import { Empresa } from "../../../../../../contextos/crm/comun/componentes/empresa.tsx";
+import { Cliente } from "../../../../../../contextos/ventas/comun/componentes/cliente.tsx";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip/TextoConTooltip.tsx";
 import { AltaEvento } from "../../evento/vistas/AltaEvento.tsx";
 import { EventoCalendario } from "../diseño.ts";
@@ -14,10 +19,11 @@ import { getEventosCalendario } from "../infraestructura.ts";
 import "./CalendarioEventos.css";
 
 // Define Estado type for use in MaestroEvento
-type Estado = "calendario" | "alta";
+type Estado = "calendario" | "alta" | "evento_abierto";
 
 export const CalendarioEventos = () => {
   const eventosCalendarioData = useLista<EventoCalendario>([]);
+  const [eventoAbierto, setEventoAbierto] = useState<EventoCalendario | null>(null);
   const [cargando, setCargando] = useState(false);
   const [filtro, setFiltro] = useState<Filtro>([]);
   const [estado, setEstado] = useState<Estado>("calendario");
@@ -52,7 +58,18 @@ export const CalendarioEventos = () => {
     },
     calendario: {
       ALTA_INICIADA: "alta",
+      ABRIR_EVENTO: (payload: unknown) => {
+        const evento = payload as EventoCalendario;   
+        setEventoAbierto(evento);     
+        return "evento_abierto";
+      },
     },
+    evento_abierto: {
+      EVENTO_CERRADO: () => {
+        setEventoAbierto(null);
+        return "calendario"
+      }
+    }
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);  
@@ -87,6 +104,7 @@ export const CalendarioEventos = () => {
           cabecera: {        
             botonesDerModo: !esMovil ? [ 
               <MaestroFiltros
+                key="filtros"
                 campos={camposFiltro}
                 filtro={filtro}
                 cambiarFiltro={cambiarFiltro}
@@ -95,7 +113,7 @@ export const CalendarioEventos = () => {
               />
             ] : [],
             botonesDerHoy: [   
-              <QBoton onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>Nuevo evento</QBoton>,
+              <QBoton key="nuevo-evento" onClick={() => emitir("ALTA_INICIADA")} variante={esMovil ? 'texto' : 'solido'}>Nuevo evento</QBoton>,
               // <BotonConTooltip tooltip="Generar enlace a calendario" tamaño={"pequeño"} onClick={generarEnlace}> 
               //   <QIcono nombre={"copiar"} tamaño={"sm"} color={"white"} style={{margin: '4px'}}/>
               // </BotonConTooltip>
@@ -107,11 +125,12 @@ export const CalendarioEventos = () => {
         }}
         renderDato={(dato: EventoCalendario) => (
           <div
-            onClick={() => window.location.href = `/eventos/calendario/evento/${dato.evento_id}`}
+            // onClick={() => window.location.href = `/eventos/calendario/evento/${dato.evento_id}`}
+            onClick={() => emitir("ABRIR_EVENTO", dato)}
             className="evento-item"
           >
             <div className="texto-multilinea-wrapper">
-              <TextoConTooltip texto={`${dato.hora_inicio} - ${dato.descripcion}`} />
+              <TextoConTooltip texto={`${dato.hora_inicio ? `${dato.hora_inicio} - ` : ""}${dato.descripcion}`} />
             </div>
           </div>
         )}
@@ -122,6 +141,53 @@ export const CalendarioEventos = () => {
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
         <AltaEvento emitir={emitir} />
+      </QModal>
+
+        {/* <>{console.log('mimensaje_aaaaaaaaaaaaaaaa', eventoAbierto)}</> */}
+
+      <QModal
+        nombre="fichaEvento"
+        abierto={estado === "evento_abierto"}
+        onCerrar={() => emitir("EVENTO_CERRADO")}
+      >
+        {eventoAbierto && (
+          <div className="ficha-evento">
+            <quimera-formulario>
+              <div className="columna-principal">
+                <h2><span>{eventoAbierto.descripcion}</span></h2>
+                <div className="fila-1">
+                  <QInput label="Producto" valor={eventoAbierto.descripcion_ref || ""} deshabilitado />
+                </div>
+                <div className="fila-2">
+                  <QDate label="Fecha" valor={eventoAbierto.fecha_inicio} deshabilitado />
+                  <QInput label="Hora inicio" valor={eventoAbierto.hora_inicio || ""} deshabilitado />
+                </div>
+                <div className="fila-3">
+                  <QInput label="Lugar" valor={eventoAbierto.lugar || ""} deshabilitado />
+                  <QInput label="Dirección" valor={eventoAbierto.direccion || ""} deshabilitado />                  
+                </div>
+                <div className="fila-4">
+                  <Empresa
+                    label="Empresa que factura"
+                    valor={eventoAbierto.empresa_id || ""}
+                    descripcion={eventoAbierto.nombre_empresa || ""}
+                    deshabilitado
+                  />
+                  <Cliente
+                    valor={eventoAbierto.cliente_id || ""}
+                    descripcion={eventoAbierto.nombre_cliente || ""}
+                    deshabilitado
+                  />
+                  <Proveedor
+                    valor={eventoAbierto.proveedor_id || ""}
+                    descripcion={eventoAbierto.nombre_proveedor || ""}
+                    deshabilitado
+                  />
+                </div>
+              </div>
+            </quimera-formulario>
+          </div>
+        )}
       </QModal>
     </div>
   );
