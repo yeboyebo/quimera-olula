@@ -61,3 +61,58 @@
 
     quimera-input, quimera-textarea { width: 100%; }
 }
+
+/* Tablet - 1024px breakpoint */
+@media (max-width: 1024px) {
+    .DetalleEvento .TabRuta .fila-2 > *:last-child { flex: 0 0 20%; }
+    .DetalleEvento .TabRuta .fila-5 > *:first-child { flex: 0 0 15%; }
+}
+
+/* Móvil - 768px breakpoint */
+@media (max-width: 768px) {
+    .DetalleEvento .TabRuta .columna-unica {
+        gap: 0.75rem;
+    }
+    
+    .DetalleEvento .TabRuta .fila-titulo {
+        margin-top: 0.75rem;
+    }
+    
+    /* Fila-2: Organizador y Teléfono cada uno en su línea */
+    .DetalleEvento .TabRuta .fila-2 {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .DetalleEvento .TabRuta .fila-2 > * {
+        flex: none !important;
+        width: 100% !important;
+    }
+    
+    /* Fila-3: Los 3 responsables cada uno en su línea */
+    .DetalleEvento .TabRuta .fila-3 {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .DetalleEvento .TabRuta .fila-3 > * {
+        flex: none !important;
+        width: 100% !important;
+    }
+    
+    /* Fila-5: Descansos y Conexión cada uno en su línea */
+    .DetalleEvento .TabRuta .fila-5 {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .DetalleEvento .TabRuta .fila-5 > * {
+        flex: none !important;
+        width: 100% !important;
+    }
+    
+    /* Checkboxes con mejor espaciado */
+    .DetalleEvento .TabRuta .fila-checkbox {
+        padding: 0.25rem 0;
+    }
+}
