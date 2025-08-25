@@ -1,3 +1,11 @@
+.DetalleEvento {
+  height: calc(100vh - 2rem);
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .DetalleEvento .maestro-botones {
   display: flex;
   gap: 1rem;
@@ -5,4 +13,33 @@
 
 .DetalleEvento .maestro-botones.alinear-derecha {
   justify-content: flex-end;
+}
+
+/* Tablet - 1024px breakpoint */
+@media (max-width: 1024px) {
+  .DetalleEvento .maestro-botones {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .DetalleEvento .maestro-botones.alinear-derecha {
+    justify-content: center;
+  }
+}
+
+/* Móvil - 768px breakpoint */
+@media (max-width: 768px) {
+  .DetalleEvento .maestro-botones {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .DetalleEvento .maestro-botones.alinear-derecha {
+    justify-content: stretch;
+  }
+
+  .DetalleEvento .maestro-botones quimera-boton,
+  .DetalleEvento .maestro-botones button {
+    width: 100%;
+  }
 }

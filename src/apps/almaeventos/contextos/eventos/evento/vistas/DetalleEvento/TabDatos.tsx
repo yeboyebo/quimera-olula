@@ -38,8 +38,10 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
                 <QInput label="Nombre" {...uiProps("descripcion")} />
             </div>
             <div className="fila-2">
-                <QDate label="Fecha" {...uiProps("fecha_inicio")} />
-                <QInput label="Lugar" {...uiProps("lugar")} />
+                <div className="fecha-lugar">
+                    <QDate label="Fecha" {...uiProps("fecha_inicio")} />
+                    <QInput label="Lugar" {...uiProps("lugar")} />
+                </div>
                 <QInput label="Dirección" {...uiProps("direccion")} />
             </div>
             <div className="fila-3">
@@ -62,9 +64,11 @@ export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
             </div>
             <div className="fila-5">
                 <QInput label="CCF" {...uiProps("ccf")} />
-                <QInput label="Precio cliente" {...uiProps("total_ingresos")} />
-                <QInput label="Precio proveedor" {...uiProps("total_costes")} />
-                <QInput label="Margen" {...uiProps("total_beneficio")} />
+                <div className="precios-margen">
+                    <QInput label="Precio cliente" {...uiProps("total_ingresos")} />
+                    <QInput label="Precio proveedor" {...uiProps("total_costes")} />
+                    <QInput label="Margen" {...uiProps("total_beneficio")} />
+                </div>
             </div>
         </div>
         <div className="columna-checkbox col-1">
