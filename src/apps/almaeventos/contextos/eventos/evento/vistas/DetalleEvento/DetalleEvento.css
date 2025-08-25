@@ -16,30 +16,7 @@
 }
 
 /* Tablet - 1024px breakpoint */
-@media (max-width: 1024px) {
-  .DetalleEvento .maestro-botones {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .DetalleEvento .maestro-botones.alinear-derecha {
-    justify-content: center;
-  }
-}
+@media (max-width: 1024px) {}
 
 /* Móvil - 768px breakpoint */
-@media (max-width: 768px) {
-  .DetalleEvento .maestro-botones {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .DetalleEvento .maestro-botones.alinear-derecha {
-    justify-content: stretch;
-  }
-
-  .DetalleEvento .maestro-botones quimera-boton,
-  .DetalleEvento .maestro-botones button {
-    width: 100%;
-  }
-}
+@media (max-width: 768px) {}
