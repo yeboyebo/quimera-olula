@@ -259,10 +259,14 @@
         order: 2;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
+        gap: 1rem 0.5rem;
         padding: 1rem 0;
         border-top: 1px solid var(--gris-3);
         height: auto;
+    }
+    
+    .DetalleEvento .TabDatos .columna-checkbox quimera-checkbox {
+        padding: 0.5rem 0;
     }
 
     .DetalleEvento .TabDatos .col-1 {
