@@ -1,7 +1,8 @@
 .DetalleEvento .TabDatos {
     max-width: 100%;
-    height: auto;
-    overflow: visible;
+    height: calc(100vh - 310px);
+    overflow-y: auto;
+    overflow-x: hidden;
 
     quimera-formulario {
         display: grid;
@@ -265,7 +266,7 @@
         border-top: 1px solid var(--gris-3);
         height: auto;
     }
-    
+
     .DetalleEvento .TabDatos .columna-checkbox quimera-checkbox {
         padding: 0.5rem 0;
     }

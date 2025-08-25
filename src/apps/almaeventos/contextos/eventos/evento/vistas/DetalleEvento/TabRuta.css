@@ -1,7 +1,8 @@
 .DetalleEvento .TabRuta {
     max-width: 100%;
-    height: auto;
-    overflow: visible;
+    height: calc(100vh - 310px);
+    overflow-y: auto;
+    overflow-x: hidden;
 
     quimera-formulario {
         display: flex;
@@ -30,43 +31,71 @@
         font-weight: 600;
     }
 
-    .fila-2, .fila-3, .fila-5 {
+    .fila-2,
+    .fila-3,
+    .fila-5 {
         display: flex;
         gap: 1rem;
         width: 100%;
     }
 
-    .fila-2 > *:first-child { flex: 1; }
-    .fila-2 > *:last-child { flex: 0 0 15%; }
+    .fila-2>*:first-child {
+        flex: 1;
+    }
 
-    .fila-3 > * { flex: 1; }
+    .fila-2>*:last-child {
+        flex: 0 0 15%;
+    }
 
-    .fila-5 > *:first-child { flex: 0 0 10%; }
-    .fila-5 > *:last-child { flex: 1; }
+    .fila-3>* {
+        flex: 1;
+    }
+
+    .fila-5>*:first-child {
+        flex: 0 0 10%;
+    }
+
+    .fila-5>*:last-child {
+        flex: 1;
+    }
 
     .fila-checkbox {
         display: flex;
         align-items: center;
     }
 
-    .fila-checkbox quimera-checkbox { width: auto; }
+    .fila-checkbox quimera-checkbox {
+        width: auto;
+    }
 
-    .fila-textarea { width: 100%; }
+    .fila-textarea {
+        width: 100%;
+    }
 
     quimera-checkbox label {
         display: flex;
         align-items: center;
     }
 
-    quimera-checkbox label input { margin-right: 0.5rem; }
+    quimera-checkbox label input {
+        margin-right: 0.5rem;
+    }
 
-    quimera-input, quimera-textarea { width: 100%; }
+    quimera-input,
+    quimera-textarea {
+        width: 100%;
+    }
 }
 
 /* Tablet - 1024px breakpoint */
 @media (max-width: 1024px) {
-    .DetalleEvento .TabRuta .fila-2 > *:last-child { flex: 0 0 20%; }
-    .DetalleEvento .TabRuta .fila-5 > *:first-child { flex: 0 0 15%; }
+    .DetalleEvento .TabRuta .fila-2>*:last-child {
+        flex: 0 0 20%;
+    }
+
+    .DetalleEvento .TabRuta .fila-5>*:first-child {
+        flex: 0 0 15%;
+    }
 }
 
 /* Móvil - 768px breakpoint */
@@ -74,44 +103,44 @@
     .DetalleEvento .TabRuta .columna-unica {
         gap: 0.75rem;
     }
-    
+
     .DetalleEvento .TabRuta .fila-titulo {
         margin-top: 0.75rem;
     }
-    
+
     /* Fila-2: Organizador y Teléfono cada uno en su línea */
     .DetalleEvento .TabRuta .fila-2 {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
-    .DetalleEvento .TabRuta .fila-2 > * {
+
+    .DetalleEvento .TabRuta .fila-2>* {
         flex: none !important;
         width: 100% !important;
     }
-    
+
     /* Fila-3: Los 3 responsables cada uno en su línea */
     .DetalleEvento .TabRuta .fila-3 {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
-    .DetalleEvento .TabRuta .fila-3 > * {
+
+    .DetalleEvento .TabRuta .fila-3>* {
         flex: none !important;
         width: 100% !important;
     }
-    
+
     /* Fila-5: Descansos y Conexión cada uno en su línea */
     .DetalleEvento .TabRuta .fila-5 {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
-    .DetalleEvento .TabRuta .fila-5 > * {
+
+    .DetalleEvento .TabRuta .fila-5>* {
         flex: none !important;
         width: 100% !important;
     }
-    
+
     /* Checkboxes con mejor espaciado */
     .DetalleEvento .TabRuta .fila-checkbox {
         padding: 0.25rem 0;
