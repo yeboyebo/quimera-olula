@@ -300,6 +300,11 @@ export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) =
 export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
     const valor_inicial = estado.valor_inicial;
     const valor = estado.valor;
+    for (const key in valor) {
+        if (valor[key] !== valor_inicial[key]) {
+            console.log(`Campo modificado: ${key}, valor: ${valor[key]}, valor inicial: ${valor_inicial[key]}`);
+        }
+    }
 
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])

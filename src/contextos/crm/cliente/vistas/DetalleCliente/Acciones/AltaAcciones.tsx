@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../../../comun/contexto.ts";
 import { HookModelo, useModelo } from "../../../../../comun/useModelo.ts";
 import { Cliente as ClienteSelector } from "../../../../../ventas/comun/componentes/cliente.tsx";
 import { getAccion, postAccion } from "../../../../accion/infraestructura.ts";
@@ -17,13 +19,14 @@ export const AltaAcciones = ({
   cliente: HookModelo<Cliente>;
 }) => {
   const nuevaAccion = useModelo(metaNuevaAccion, nuevaAccionVacia);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
     const modelo = {
       ...nuevaAccion.modelo,
       cliente_id: nuevaAccion.modelo.cliente_id || cliente.modelo.id,
     };
-    const id = await postAccion(modelo);
+    const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);
     emitir("ACCION_CREADA", accionCreada);
   };

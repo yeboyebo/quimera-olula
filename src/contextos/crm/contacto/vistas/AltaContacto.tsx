@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 
@@ -13,9 +15,10 @@ export const AltaContacto = ({
   emitir?: EmitirEvento;
 }) => {
   const nuevoContacto = useModelo(metaNuevoContacto, nuevoContactoVacio);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postContacto(nuevoContacto.modelo);
+    const id = await intentar(() => postContacto(nuevoContacto.modelo));
     const leadCreado = await getContacto(id);
     emitir("CONTACTO_CREADO", leadCreado);
   };
