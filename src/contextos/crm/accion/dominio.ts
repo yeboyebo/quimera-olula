@@ -51,6 +51,9 @@ export const nuevaAccionVacia: NuevaAccion = {
     estado: "Pendiente",
     observaciones: "",
     incidencia_id: "",
+    usuario_id: "",
+    tarjeta_id: "",
+    oportunidad_id: "",
 };
 
 export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
@@ -59,5 +62,6 @@ export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
         descripcion: { requerido: true, validacion: (accion: NuevaAccion) => stringNoVacio(accion.descripcion) },
         tipo: { requerido: false },
         observaciones: { requerido: false },
+        usuario_id: { requerido: true },
     },
 };

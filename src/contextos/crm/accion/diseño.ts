@@ -24,4 +24,7 @@ export type NuevaAccion = {
     estado: "Pendiente" | "En Progreso" | "Completada" | "Cancelada";
     observaciones: string;
     incidencia_id: string;
+    tarjeta_id: string;
+    usuario_id: string;
+    oportunidad_id: string;
 };

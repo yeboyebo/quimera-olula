@@ -13,17 +13,22 @@ import "./AltaAccion.css";
 
 export const AltaAccion = ({
   emitir = () => {},
-  idIncidencia = '',
-  activo= false
+  idIncidencia = "",
+  idLead = "",
+  idOportunidadVenta = "",
+  activo = false,
 }: {
   emitir?: EmitirEvento;
   idIncidencia?: string;
+  idLead?: string;
+  idOportunidadVenta?: string;
   activo: boolean;
 }) => {
-
   const accion = useModelo(metaNuevaAccion, {
     ...nuevaAccionVacia,
     incidencia_id: idIncidencia,
+    tarjeta_id: idLead,
+    oportunidad_id: idOportunidadVenta,
   });
 
   const cancelar = () => {
@@ -31,15 +36,9 @@ export const AltaAccion = ({
     accion.init();
   };
 
-
   return (
-    <Mostrar modo="modal" activo={activo}
-      onCerrar={cancelar}
-    >
-      <FormAltaAccion
-        emitir={emitir}
-        accion={accion}
-        />
+    <Mostrar modo="modal" activo={activo} onCerrar={cancelar}>
+      <FormAltaAccion emitir={emitir} accion={accion} />
     </Mostrar>
   );
 };
@@ -51,7 +50,6 @@ const FormAltaAccion = ({
   emitir?: EmitirEvento;
   accion: HookModelo<NuevaAccion>;
 }) => {
-
   const { intentar } = useContext(ContextoError);
 
   const crear = async () => {
@@ -75,8 +73,11 @@ const FormAltaAccion = ({
       <quimera-formulario>
         <QInput label="Descripción" {...accion.uiProps("descripcion")} />
         <QInput label="Fecha" {...accion.uiProps("fecha")} />
-        <Usuario {...accion.uiProps("usuario_id")} label='Responsable'/>
-        <QInput label="Incidencia" {...accion.uiProps("incidencia_id")} />
+        <Usuario
+          {...accion.uiProps("usuario_id, descripcion")}
+          label="Responsable"
+        />
+        {/* <QInput label="Incidencia" {...accion.uiProps("incidencia_id")} /> */}
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={crear} deshabilitado={!accion.valido}>

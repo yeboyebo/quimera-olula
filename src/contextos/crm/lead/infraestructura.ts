@@ -8,6 +8,8 @@ import { Lead, LeadAPI } from "./diseño.ts";
 const baseUrlLead = `/crm/lead`;
 const baseUrlAccion = `/crm/accion`;
 const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
+const baseUrlFuenteLead = `/crm/fuente_lead`;
+const baseUrlEstadoLead = `/crm/estado_lead`;
 
 export const leadFromAPI = (l: LeadAPI): Lead => ({
     ...l,
@@ -104,4 +106,27 @@ export const getAccionesLead = async (leadId: string) => {
 
     const q = criteriaQueryUrl(filtro, orden);
     return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
+};
+
+
+export const getFuentesLead = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<Lead> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(baseUrlFuenteLead + q);
+    return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
+};
+
+export const getEstadosLead = async (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+): RespuestaLista<Lead> => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+
+    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(baseUrlEstadoLead + q);
+    return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
 };
