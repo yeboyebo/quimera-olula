@@ -93,11 +93,6 @@ export const TabAcciones = ({ lead }: { lead: HookModelo<Lead> }) => {
 
   const idLead = lead.modelo.id;
 
-  const cargarAcciones = async () => {
-    const nuevasAcciones = await intentar(() => getAccionesLead(idLead));
-    emitir("acciones_cargadas", nuevasAcciones);
-  };
-
   const [emitir, { estado, contexto }] = useMaquina3<Estado, Contexto>(
     configMaquina,
     "Inactivo",
@@ -108,9 +103,13 @@ export const TabAcciones = ({ lead }: { lead: HookModelo<Lead> }) => {
   const { acciones } = contexto;
 
   useEffect(() => {
+    const cargarAcciones = async () => {
+      const nuevasAcciones = await intentar(() => getAccionesLead(idLead));
+      emitir("acciones_cargadas", nuevasAcciones);
+    };
     emitir("cargar");
     cargarAcciones();
-  }, [idLead, emitir]);
+  }, [emitir, idLead, intentar]);
 
   const metaTablaAccion: MetaTabla<Accion> = [
     { id: "id", cabecera: "Código" },
