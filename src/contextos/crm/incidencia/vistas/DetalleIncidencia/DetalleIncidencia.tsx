@@ -21,7 +21,7 @@ import "./DetalleIncidencia.css";
 import { TabAcciones } from "./TabAcciones.tsx";
 
 type Estado = "Editando" | "Borrando";
-type Contexto = {};
+type Contexto = Record<string, unknown>;
 const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   inicial: {
     estado: "Editando",

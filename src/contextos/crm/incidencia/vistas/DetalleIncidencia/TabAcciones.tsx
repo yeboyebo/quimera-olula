@@ -41,7 +41,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   estados: {
     Cargando: {
       acciones_cargadas: ({maquina, payload, setEstado}) => pipe(
-        maquina,
+        maquina, 
         setEstado("Inactivo"),
         setAcciones(cargarLista(payload as Accion[]))
       ),
@@ -85,22 +85,23 @@ export const TabAcciones = ({ incidencia }: { incidencia: HookModelo<Incidencia>
 
   const idIncidencia = incidencia.modelo.id;
   
-  const cargarAcciones = async () => {
-    const nuevasAcciones = await intentar(
-      () => getAccionesIncidencia(idIncidencia)
-    );
-    emitir("acciones_cargadas", nuevasAcciones);
-  };
-
   const [emitir, { estado, contexto}] = useMaquina4<Estado, Contexto>(
     {config: configMaquina}
   );
   const { acciones } = contexto;
 
   useEffect(() => {
+
+    const cargarAcciones = async () => {
+      const nuevasAcciones = await intentar(
+        () => getAccionesIncidencia(idIncidencia)
+      );
+      emitir("acciones_cargadas", nuevasAcciones);
+    };
+
     emitir("cargar");
     cargarAcciones()
-  }, [idIncidencia, emitir]);
+  }, [idIncidencia, emitir, intentar]);
 
 
   const metaTablaAccion: MetaTabla<Accion> = [
