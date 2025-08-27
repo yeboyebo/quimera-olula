@@ -16,12 +16,14 @@ export const AltaAccion = ({
   idIncidencia = "",
   idLead = "",
   idOportunidadVenta = "",
+  idContacto = "",
   activo = false,
 }: {
   emitir?: EmitirEvento;
   idIncidencia?: string;
   idLead?: string;
   idOportunidadVenta?: string;
+  idContacto?: string;
   activo: boolean;
 }) => {
   const accion = useModelo(metaNuevaAccion, {
@@ -29,6 +31,7 @@ export const AltaAccion = ({
     incidencia_id: idIncidencia,
     tarjeta_id: idLead,
     oportunidad_id: idOportunidadVenta,
+    contacto_id: idContacto,
   });
 
   const cancelar = () => {

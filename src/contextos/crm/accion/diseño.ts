@@ -27,4 +27,5 @@ export type NuevaAccion = {
     tarjeta_id: string;
     usuario_id: string;
     oportunidad_id: string;
+    contacto_id: string;
 };
