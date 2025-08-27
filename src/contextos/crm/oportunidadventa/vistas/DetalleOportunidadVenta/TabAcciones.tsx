@@ -1,9 +1,6 @@
 import { useContext, useEffect } from "react";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
-import {
-  MetaTabla,
-  QTabla,
-} from "../../../../../componentes/atomos/qtabla.tsx";
+import { QTabla } from "../../../../../componentes/atomos/qtabla.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { ListaSeleccionable } from "../../../../comun/diseño.ts";
 import {
@@ -16,6 +13,7 @@ import {
 import { ConfigMaquina3, useMaquina3 } from "../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Accion } from "../../../accion/diseño.ts";
+import { metaTablaAccion } from "../../../accion/dominio.ts";
 import { AltaAccion } from "../../../accion/vistas/AltaAccion.tsx";
 import { BajaAccion } from "../../../accion/vistas/BajaAccion.tsx";
 import { OportunidadVenta } from "../../diseño.ts";
@@ -97,13 +95,6 @@ export const TabAcciones = ({
 
   const idOportunidadVenta = oportunidad.modelo.id;
 
-  const cargarAcciones = async () => {
-    const nuevasAcciones = await intentar(() =>
-      getAccionesOportunidad(idOportunidadVenta)
-    );
-    emitir("acciones_cargadas", nuevasAcciones);
-  };
-
   const [emitir, { estado, contexto }] = useMaquina3<Estado, Contexto>(
     configMaquina,
     "Inactivo",
@@ -114,17 +105,15 @@ export const TabAcciones = ({
   const { acciones } = contexto;
 
   useEffect(() => {
+    const cargarAcciones = async () => {
+      const nuevasAcciones = await intentar(() =>
+        getAccionesOportunidad(idOportunidadVenta)
+      );
+      emitir("acciones_cargadas", nuevasAcciones);
+    };
     emitir("cargar");
     cargarAcciones();
-  }, [idOportunidadVenta, emitir]);
-
-  const metaTablaAccion: MetaTabla<Accion> = [
-    { id: "id", cabecera: "Código" },
-    { id: "descripcion", cabecera: "Descripción" },
-    { id: "tipo", cabecera: "Tipo" },
-    { id: "estado", cabecera: "Estado" },
-    { id: "fecha", cabecera: "Fecha" },
-  ];
+  }, [idOportunidadVenta, emitir, intentar]);
 
   return (
     <div className="TabAcciones">

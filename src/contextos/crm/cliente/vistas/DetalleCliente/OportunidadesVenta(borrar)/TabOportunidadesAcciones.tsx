@@ -2,25 +2,23 @@ import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
-import { Accion } from "../../../../accion/diseño.ts";
+import { OportunidadVenta } from "../../../../oportunidadventa/diseño.ts";
 import { Cliente } from "../../../diseño.ts";
-import { AltaAcciones } from "./AltaAcciones.tsx";
+import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 
-interface Props {
-  seleccionada?: Accion | null;
-  emitir: (evento: string, payload?: unknown) => void;
-  estado: string;
-  cliente: HookModelo<Cliente>;
-}
-
-export const TabAccionesAcciones = ({
+export const TabOportunidadesAcciones = ({
   seleccionada,
   emitir,
   estado,
   cliente,
-}: Props) => {
+}: {
+  seleccionada: OportunidadVenta | null;
+  emitir: (evento: string, payload?: unknown) => void;
+  estado: string;
+  cliente: HookModelo<Cliente>;
+}) => {
   return (
-    <div className="TabAccionesAcciones maestro-botones">
+    <div className="botones maestro-botones">
       <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
       <QBoton
         onClick={() => emitir("BORRADO_SOLICITADO")}
@@ -28,22 +26,20 @@ export const TabAccionesAcciones = ({
       >
         Borrar
       </QBoton>
-
       <QModal
-        nombre="altaAccion"
+        nombre="altaOportunidad"
         abierto={estado === "alta"}
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <AltaAcciones emitir={emitir} cliente={cliente} />
+        <AltaOportunidadVenta emitir={emitir} cliente={cliente} />
       </QModal>
-
       <QModalConfirmacion
-        nombre="confirmarBorrarAccion"
+        nombre="borrarOportunidad"
         abierto={estado === "borrar"}
-        titulo="Confirmar borrado"
-        mensaje="¿Está seguro de que desea borrar esta acción?"
+        titulo="¿Borrar oportunidad?"
+        mensaje="¿Está seguro de que desea borrar esta oportunidad?"
         onCerrar={() => emitir("BORRADO_CANCELADO")}
-        onAceptar={() => emitir("ACCION_BORRADA")}
+        onAceptar={() => emitir("OPORTUNIDAD_BORRADA")}
       />
     </div>
   );

@@ -1,10 +1,12 @@
 import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
-import { useModelo } from "../../../comun/useModelo.ts";
+import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
 import { EstadoOportunidad } from "../../comun/componentes/estadoOportunidadVenta.tsx";
+import { NuevaOportunidadVenta } from "../diseño.ts";
 import {
   metaNuevaOportunidadVenta,
   nuevaOportunidadVentaVacia,
@@ -17,21 +19,61 @@ import "./AltaOportunidadVenta.css";
 
 export const AltaOportunidadVenta = ({
   emitir = () => {},
+  idLead = "",
+  idContacto = "",
+  idCliente = "",
+  activo = false,
 }: {
   emitir?: EmitirEvento;
+  idLead?: string;
+  idContacto?: string;
+  idCliente?: string;
+  activo: boolean;
 }) => {
-  const nuevaOportunidad = useModelo(
-    metaNuevaOportunidadVenta,
-    nuevaOportunidadVentaVacia
+  const oportunidadventa = useModelo(metaNuevaOportunidadVenta, {
+    ...nuevaOportunidadVentaVacia,
+    tarjeta_id: idLead,
+    contacto_id: idContacto,
+    cliente_id: idCliente,
+  });
+
+  const cancelar = () => {
+    emitir("creacion_cancelada");
+    oportunidadventa.init();
+  };
+
+  return (
+    <Mostrar modo="modal" activo={activo} onCerrar={cancelar}>
+      <FormAltaOportunidadVenta
+        emitir={emitir}
+        oportunidadventa={oportunidadventa}
+      />
+    </Mostrar>
   );
+};
+
+export const FormAltaOportunidadVenta = ({
+  emitir = () => {},
+  oportunidadventa,
+}: {
+  emitir?: EmitirEvento;
+  oportunidadventa: HookModelo<NuevaOportunidadVenta>;
+}) => {
   const { intentar } = useContext(ContextoError);
 
-  const guardar = async () => {
-    const id = await intentar(() =>
-      postOportunidadVenta(nuevaOportunidad.modelo)
-    );
-    const oportunidadCreada = await getOportunidadVenta(id);
-    emitir("OPORTUNIDAD_CREADA", oportunidadCreada);
+  const crear = async () => {
+    const modelo = {
+      ...oportunidadventa.modelo,
+    };
+    const id = await intentar(() => postOportunidadVenta(modelo));
+    const oportunidadventaCreada = await getOportunidadVenta(id);
+    emitir("oportunidad_creada", oportunidadventaCreada);
+    oportunidadventa.init();
+  };
+
+  const cancelar = () => {
+    emitir("ALTA_CANCELADA");
+    oportunidadventa.init();
   };
 
   return (
@@ -40,27 +82,27 @@ export const AltaOportunidadVenta = ({
       <quimera-formulario>
         <QInput
           label="Descripción"
-          {...nuevaOportunidad.uiProps("descripcion")}
+          {...oportunidadventa.uiProps("descripcion")}
         />
         <EstadoOportunidad
           label="Estado"
-          {...nuevaOportunidad.uiProps("estado_id")}
+          {...oportunidadventa.uiProps("estado_id")}
           nombre="alta_estado_id"
         />
         <QInput
-          {...nuevaOportunidad.uiProps("fecha_cierre")}
+          {...oportunidadventa.uiProps("fecha_cierre")}
           label="Fecha Cierre"
         />
         <QInput
           label="probailidad (%)"
-          {...nuevaOportunidad.uiProps("probabilidad")}
+          {...oportunidadventa.uiProps("probabilidad")}
         />
       </quimera-formulario>
       <div className="botones">
-        <QBoton onClick={guardar} deshabilitado={!nuevaOportunidad.valido}>
+        <QBoton onClick={crear} deshabilitado={!oportunidadventa.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => emitir("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={cancelar} variante="texto">
           Cancelar
         </QBoton>
       </div>

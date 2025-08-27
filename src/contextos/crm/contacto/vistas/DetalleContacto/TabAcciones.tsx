@@ -1,9 +1,6 @@
 import { useContext, useEffect } from "react";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
-import {
-  MetaTabla,
-  QTabla,
-} from "../../../../../componentes/atomos/qtabla.tsx";
+import { QTabla } from "../../../../../componentes/atomos/qtabla.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { ListaSeleccionable } from "../../../../comun/diseño.ts";
 import {
@@ -16,6 +13,7 @@ import {
 import { ConfigMaquina3, useMaquina3 } from "../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Accion } from "../../../accion/diseño.ts";
+import { metaTablaAccion } from "../../../accion/dominio.ts";
 import { AltaAccion } from "../../../accion/vistas/AltaAccion.tsx";
 import { BajaAccion } from "../../../accion/vistas/BajaAccion.tsx";
 import { Contacto } from "../../diseño.ts";
@@ -116,14 +114,6 @@ export const TabAcciones = ({
     emitir("cargar");
     cargarAcciones();
   }, [emitir, idContacto, intentar]);
-
-  const metaTablaAccion: MetaTabla<Accion> = [
-    { id: "id", cabecera: "Código" },
-    { id: "descripcion", cabecera: "Descripción" },
-    { id: "tipo", cabecera: "Tipo" },
-    { id: "estado", cabecera: "Estado" },
-    { id: "fecha", cabecera: "Fecha" },
-  ];
 
   return (
     <div className="TabAcciones">

@@ -1,22 +1,14 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Accion } from "../diseño.ts";
+import { metaTablaAccion } from "../dominio.ts";
 import { getAcciones } from "../infraestructura.ts";
 import { AltaAccion } from "./AltaAccion.tsx";
 import { DetalleAccion } from "./DetalleAccion/DetalleAccion.tsx";
-
-const metaTablaAccion: MetaTabla<Accion> = [
-  { id: "id", cabecera: "Código" },
-  { id: "fecha", cabecera: "Fecha" },
-  { id: "descripcion", cabecera: "Descripción" },
-  { id: "tipo", cabecera: "Tipo" },
-  { id: "estado", cabecera: "Estado" },
-];
 
 type Estado = "Inactivo" | "Creando";
 
@@ -76,7 +68,7 @@ export const MaestroConDetalleAccion = () => {
           />
         }
       />
-      <AltaAccion emitir={emitir} activo={estado === 'Creando'}/>
+      <AltaAccion emitir={emitir} activo={estado === "Creando"} />
     </div>
   );
 };

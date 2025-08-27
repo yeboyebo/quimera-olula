@@ -62,7 +62,7 @@ export const DetalleOportunidadVenta = ({
 
   const onBorrarConfirmado = async () => {
     await intentar(() => deleteOportunidadVenta(modelo.id));
-    emitir("OPORTUNIDAD_BORRADA", modelo);
+    emitir("oportunidad_borrada", modelo);
     setEstado("edicion");
   };
 

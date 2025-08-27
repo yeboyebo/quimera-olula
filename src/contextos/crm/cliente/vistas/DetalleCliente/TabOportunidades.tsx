@@ -12,27 +12,27 @@ import {
 } from "../../../../comun/entidad.ts";
 import { ConfigMaquina3, useMaquina3 } from "../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
-import { Accion } from "../../../accion/diseño.ts";
-import { metaTablaAccion } from "../../../accion/dominio.ts";
-import { AltaAccion } from "../../../accion/vistas/AltaAccion.tsx";
-import { BajaAccion } from "../../../accion/vistas/BajaAccion.tsx";
+import { OportunidadVenta } from "../../../oportunidadventa/diseño.ts";
+import { metaTablaOportunidadVenta } from "../../../oportunidadventa/dominio.ts";
+import { AltaOportunidadVenta } from "../../../oportunidadventa/vistas/AltaOportunidadVenta.tsx";
+import { BajaOportunidadVenta } from "../../../oportunidadventa/vistas/BajaOportunidadVenta.tsx";
 import { Cliente } from "../../diseño.ts";
-import { getAccionesCliente } from "../../infraestructura.ts";
+import { getOportunidadesVentaCliente } from "../../infraestructura.ts";
 
 type Estado = "Inactivo" | "Creando" | "Borrando" | "Cargando";
 
 type Contexto = {
-  acciones: ListaSeleccionable<Accion>;
+  oportunidades: ListaSeleccionable<OportunidadVenta>;
 };
 
 const configMaquina: ConfigMaquina3<Estado, Contexto> = {
   Cargando: {
-    acciones_cargadas: (maquina, payload) => {
+    oportunidades_cargadas: (maquina, payload) => {
       return {
         estado: "Inactivo" as Estado,
         contexto: {
           ...maquina.contexto,
-          acciones: cargarLista(payload as Accion[]),
+          oportunidades: cargarLista(payload as OportunidadVenta[]),
         },
       };
     },
@@ -40,14 +40,14 @@ const configMaquina: ConfigMaquina3<Estado, Contexto> = {
   Inactivo: {
     crear: "Creando",
     borrar: "Borrando",
-    accion_seleccionada: ({ contexto, ...maquina }, payload) => {
+    oportunidad_seleccionada: ({ contexto, ...maquina }, payload) => {
       return {
         ...maquina,
         contexto: {
           ...contexto,
-          acciones: seleccionarItemEnLista(
-            contexto.acciones,
-            payload as Accion
+          oportunidades: seleccionarItemEnLista(
+            contexto.oportunidades,
+            payload as OportunidadVenta
           ),
         },
       };
@@ -55,29 +55,33 @@ const configMaquina: ConfigMaquina3<Estado, Contexto> = {
     cargar: "Cargando",
   },
   Creando: {
-    accion_creada: ({ contexto, ...maquina }, payload: unknown) => {
+    oportunidad_creada: ({ contexto, ...maquina }, payload: unknown) => {
       return {
         estado: "Inactivo",
         contexto: {
           ...maquina,
-          acciones: incluirEnLista(contexto.acciones, payload as Accion, {}),
+          oportunidades: incluirEnLista(
+            contexto.oportunidades,
+            payload as OportunidadVenta,
+            {}
+          ),
         },
       };
     },
     creacion_cancelada: "Inactivo",
   },
   Borrando: {
-    accion_borrada: ({ contexto, ...maquina }) => {
-      if (!contexto.acciones.idActivo) {
+    oportunidad_borrada: ({ contexto, ...maquina }) => {
+      if (!contexto.oportunidades.idActivo) {
         return { contexto, ...maquina };
       }
       return {
         estado: "Inactivo",
         contexto: {
           ...contexto,
-          acciones: quitarDeLista(
-            contexto.acciones,
-            contexto.acciones.idActivo
+          oportunidades: quitarDeLista(
+            contexto.oportunidades,
+            contexto.oportunidades.idActivo
           ),
         },
       };
@@ -86,7 +90,11 @@ const configMaquina: ConfigMaquina3<Estado, Contexto> = {
   },
 };
 
-export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
+export const TabOportunidades = ({
+  cliente,
+}: {
+  cliente: HookModelo<Cliente>;
+}) => {
   const { intentar } = useContext(ContextoError);
 
   const idCliente = cliente.modelo.id;
@@ -95,54 +103,56 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
     configMaquina,
     "Inactivo",
     {
-      acciones: listaSeleccionableVacia<Accion>(),
+      oportunidades: listaSeleccionableVacia<OportunidadVenta>(),
     }
   );
-  const { acciones } = contexto;
+  const { oportunidades } = contexto;
 
   useEffect(() => {
-    const cargarAcciones = async () => {
-      const nuevasAcciones = await intentar(() =>
-        getAccionesCliente(idCliente)
+    const cargarOportunidades = async () => {
+      const nuevasOportunidades = await intentar(() =>
+        getOportunidadesVentaCliente(idCliente)
       );
-      emitir("acciones_cargadas", nuevasAcciones);
+      emitir("oportunidades_cargadas", nuevasOportunidades);
     };
     emitir("cargar");
-    cargarAcciones();
+    cargarOportunidades();
   }, [emitir, idCliente, intentar]);
 
   return (
-    <div className="TabAcciones">
-      <div className="TabAccionesAcciones maestro-botones">
+    <div className="TabOportunidades">
+      <div className="TabOportunidadesOportunidades maestro-botones">
         <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
 
         <QBoton
           onClick={() => emitir("borrar")}
-          deshabilitado={!acciones.idActivo}
+          deshabilitado={!oportunidades.idActivo}
         >
           Borrar
         </QBoton>
       </div>
 
-      <AltaAccion
+      <AltaOportunidadVenta
         emitir={emitir}
         activo={estado === "Creando"}
         key={cliente.modelo.id}
         idCliente={cliente.modelo.id}
       />
 
-      <BajaAccion
+      <BajaOportunidadVenta
         emitir={emitir}
         activo={estado === "Borrando"}
-        idAccion={acciones.idActivo || undefined}
+        idOportunidadVenta={oportunidades.idActivo || undefined}
       />
 
       <QTabla
-        metaTabla={metaTablaAccion}
-        datos={acciones.lista}
+        metaTabla={metaTablaOportunidadVenta}
+        datos={oportunidades.lista}
         cargando={estado === "Cargando"}
-        seleccionadaId={acciones.idActivo || undefined}
-        onSeleccion={(accion) => emitir("accion_seleccionada", accion)}
+        seleccionadaId={oportunidades.idActivo || undefined}
+        onSeleccion={(oportunidadventa) =>
+          emitir("oportunidad_seleccionada", oportunidadventa)
+        }
         orden={["id", "ASC"]}
         onOrdenar={() => null}
       />
