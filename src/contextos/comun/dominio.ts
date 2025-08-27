@@ -1,3 +1,4 @@
+import { Permiso } from "../administracion/diseño.ts";
 import { permisosGrupo } from "../usuarios/login/infraestructura.ts";
 import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
 
@@ -355,7 +356,7 @@ export const calcularPaginacionSimplificada = (
 export const puede = (regla: string): boolean => {
     if (!regla) return true;
     // Busca el permiso exacto
-    const permisos = JSON.parse(permisosGrupo.obtener() || "[]");
+    const permisos = JSON.parse(permisosGrupo.obtener() || "[]") as Permiso[];
     const permisoExacto = permisos.find(p => p.id_regla === regla);
     if (permisoExacto) {
         if (permisoExacto.valor === true) return true;
