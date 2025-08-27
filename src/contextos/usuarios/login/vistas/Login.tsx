@@ -4,6 +4,7 @@ import { QCheckbox } from "../../../../componentes/atomos/qcheckbox.tsx";
 import { QForm } from "../../../../componentes/atomos/qform.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { comprobarToken, login } from "../dominio.ts";
+import { misPermisos, permisosGrupo } from "../infraestructura.ts";
 import estilos from "./Login.module.css";
 
 const MINUTOS = 60 * 1000;
@@ -21,7 +22,10 @@ export const Login = () => {
     const { id, contraseña } = datos;
 
     login(id, contraseña).then(() => {
-      window.location.href = "/";
+      misPermisos().then((datosPermisos) => {
+        permisosGrupo.actualizar(datosPermisos.datos);
+        window.location.href = "/";
+      });
     });
   };
 

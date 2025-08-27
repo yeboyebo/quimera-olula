@@ -1,0 +1,52 @@
+.ReglasGrupo {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    .AccionesReglas button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--blanco);
+        cursor: pointer;
+    }
+
+    .AccionesReglas button:hover {
+        background-color: var(--gris-2);
+        transition: background-color 0.2s ease;
+    }
+
+    .AccionesReglas button:active {
+        background-color: var(--gris-3);
+        transition: background-color 0.2s ease;
+    }
+
+    h2 {
+        margin: 0 0 1rem 0;
+    }
+
+    quimera-tabla {
+
+        table {
+            table-layout: fixed;
+        }
+    }
+
+    .ListaReglas {
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        min-width: 100%;
+        max-height: 70vh;
+        overflow: auto;
+        border-spacing: 0;
+        border-collapse: separate;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* .categoria-header {
+        cursor: "pointer";
+        padding: "10px";
+    } */
+}

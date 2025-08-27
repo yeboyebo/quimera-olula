@@ -1,20 +1,22 @@
 import "./menu-usuario.css";
 
 import { Link } from "react-router";
+import { puede } from "../../contextos/comun/dominio.ts";
 import { ElementoMenu, ElementoMenuPadre } from "../../contextos/comun/menu.ts";
 import { QIcono } from "../atomos/qicono.tsx";
 
 const elementosDelMenu = [
-  //   {
-  //     nombre: "Usuarios",
+  {
+    nombre: "Usuarios",
 
-  //     subelementos: [
-  //       {
-  //         nombre: "Perfil",
-  //         url: "/usuario/perfil",
-  //       },
-  //     ],
-  //   },
+    subelementos: [
+      {
+        nombre: "Grupos",
+        url: "/administracion/grupos",
+        regla: "contexto.recibo_venta",
+      },
+    ],
+  },
   {
     nombre: "Sesión",
     subelementos: [
@@ -31,6 +33,10 @@ export const MenuUsuario = () => {
     const icono = elemento.icono ? (
       <QIcono nombre={elemento.icono} tamaño="sm" />
     ) : null;
+
+    if ("regla" in elemento && elemento.regla && !puede(elemento.regla)) {
+      return null;
+    }
 
     if ("url" in elemento && elemento.url) {
       return (
