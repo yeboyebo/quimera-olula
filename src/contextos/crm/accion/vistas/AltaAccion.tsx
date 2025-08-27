@@ -11,12 +11,26 @@ import { metaNuevaAccion, nuevaAccionVacia } from "../dominio.ts";
 import { getAccion, postAccion } from "../infraestructura.ts";
 import "./AltaAccion.css";
 
+// type Relacionados = {
+//   incidencia_id?: string;
+//   tarjeta_id?: string;
+//   oportunidad_id?: string;
+//   contacto_id?: string;
+//   cliente_id?: string;
+// };
+
+// const accion = useModelo(metaNuevaAccion, {
+//   ...nuevaAccionVacia,
+//   ...relacionados,
+// });
+
 export const AltaAccion = ({
   emitir = () => {},
   idIncidencia = "",
   idLead = "",
   idOportunidadVenta = "",
   idContacto = "",
+  idCliente = "",
   activo = false,
 }: {
   emitir?: EmitirEvento;
@@ -24,6 +38,7 @@ export const AltaAccion = ({
   idLead?: string;
   idOportunidadVenta?: string;
   idContacto?: string;
+  idCliente?: string;
   activo: boolean;
 }) => {
   const accion = useModelo(metaNuevaAccion, {
@@ -32,6 +47,7 @@ export const AltaAccion = ({
     tarjeta_id: idLead,
     oportunidad_id: idOportunidadVenta,
     contacto_id: idContacto,
+    cliente_id: idCliente,
   });
 
   const cancelar = () => {

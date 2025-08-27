@@ -28,4 +28,5 @@ export type NuevaAccion = {
     usuario_id: string;
     oportunidad_id: string;
     contacto_id: string;
+    cliente_id: string;
 };

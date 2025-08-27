@@ -54,6 +54,8 @@ export const nuevaAccionVacia: NuevaAccion = {
     usuario_id: "",
     tarjeta_id: "",
     oportunidad_id: "",
+    contacto_id: "",
+    cliente_id: "",
 };
 
 export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
