@@ -1,8 +1,27 @@
 header {
-    display: flex;
+    gap: 1rem;
     align-items: center;
-    justify-content: space-between;
-    position: relative;
+    flex-grow: 0;
+    background-color: var(--color-texto-primario);
+    font-size: 1.5rem;
+    color: var(--color-fondo);
+    max-height: var(--alto-header);
+    width: 100%;
+    color: #E0E0E0;
+    padding: 0 1.5rem !important;
+    display: flex;
+
+
+    & a:visited,
+    a {
+        color: var(--mg-6);
+        text-decoration: none;
+    }
+
+    & a>span {
+        color: var(--mg-6);
+        font-weight: 600;
+    }
 }
 
 #etiqueta-menu-usuario-abierto {

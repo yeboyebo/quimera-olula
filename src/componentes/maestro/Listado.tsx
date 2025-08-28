@@ -74,7 +74,7 @@ export const Listado = <T extends Entidad>({
   useEffect(() => {
     let hecho = false;
     setCargando(true);
-
+    //poner intentar
     cargar(filtro, orden, paginacion).then(({ datos, total }) => {
       if (hecho) return;
       if (datos.length > 0) {

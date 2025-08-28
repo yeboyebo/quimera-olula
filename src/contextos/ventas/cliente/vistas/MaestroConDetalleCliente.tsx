@@ -65,6 +65,7 @@ export const MaestroConDetalleCliente = () => {
   return (
     <div className="Cliente">
       <MaestroDetalleResponsive<Cliente>
+        // Modo
         seleccionada={clientes.seleccionada}
         Maestro={
           <>

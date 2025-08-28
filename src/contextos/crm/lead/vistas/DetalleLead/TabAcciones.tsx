@@ -21,9 +21,8 @@ import { Accion } from "../../../accion/diseño.ts";
 import { metaTablaAccion } from "../../../accion/dominio.ts";
 import { AltaAccion } from "../../../accion/vistas/AltaAccion.tsx";
 import { BajaAccion } from "../../../accion/vistas/BajaAccion.tsx";
-import { Incidencia } from "../../diseño.ts";
-import { getAccionesIncidencia } from "../../infraestructura.ts";
-
+import { Lead } from "../../diseño.ts";
+import { getAccionesLead } from "../../infraestructura.ts";
 type Estado = "Inactivo" | "Creando" | "Borrando" | "Cargando";
 
 type Contexto = {
@@ -95,14 +94,10 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   },
 };
 
-export const TabAcciones = ({
-  incidencia,
-}: {
-  incidencia: HookModelo<Incidencia>;
-}) => {
+export const TabAcciones = ({ lead }: { lead: HookModelo<Lead> }) => {
   const { intentar } = useContext(ContextoError);
 
-  const idIncidencia = incidencia.modelo.id;
+  const idLead = lead.modelo.id;
 
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
@@ -111,15 +106,13 @@ export const TabAcciones = ({
 
   useEffect(() => {
     const cargarAcciones = async () => {
-      const nuevasAcciones = await intentar(() =>
-        getAccionesIncidencia(idIncidencia)
-      );
+      const nuevasAcciones = await intentar(() => getAccionesLead(idLead));
       emitir("acciones_cargadas", nuevasAcciones);
     };
 
     emitir("cargar");
     cargarAcciones();
-  }, [idIncidencia, emitir, intentar]);
+  }, [idLead, emitir, intentar]);
 
   return (
     <div className="TabAcciones">
@@ -137,8 +130,8 @@ export const TabAcciones = ({
       <AltaAccion
         emitir={emitir}
         activo={estado === "Creando"}
-        key={incidencia.modelo.id}
-        idIncidencia={incidencia.modelo.id}
+        key={lead.modelo.id}
+        idLead={lead.modelo.id}
       />
 
       <BajaAccion

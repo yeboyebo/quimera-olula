@@ -4,16 +4,18 @@
         grid-column: 1 / span 12;
     }
 
-    quimera-autocompletar[nombre="responsable_id"] {
-        grid-column: span 8;
+    quimera-autocompletar[nombre="usuario_id, descripcion"] {
+        grid-column: span 6;
     }
 
-    quimera-date[nombre="fecha"] {
-        grid-column: span 4;
+    quimera-input[nombre="fecha"] {
+        grid-column: 1 / span 6;
     }
 
 
     quimera-date[nombre="incidencia_id"] {
-        grid-column: 1 / span 4;
+        grid-column: span 12;
     }
+
+
 }
