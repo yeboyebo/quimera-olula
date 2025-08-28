@@ -1,21 +1,47 @@
+import { useEffect, useState } from "react";
 import { QSelect } from "../../../../componentes/atomos/qselect.tsx";
-import { opcionesEstadoLead } from "../valores/estado_lead.ts";
+import { getEstadosLead } from "../../lead/infraestructura.ts";
 
-interface EstadoLeadProps {
+interface EstadoLeadsProps {
   valor: string;
+  nombre?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const EstadoLead = ({ valor, onChange, getProps }: EstadoLeadProps) => {
+export const EstadoLead = ({
+  valor,
+  nombre = "estado_id",
+  onChange,
+  ...props
+}: EstadoLeadsProps) => {
+  const [opcionesEstadoLead, setOpcionesEstadoLead] = useState<
+    { valor: string; descripcion: string }[]
+  >([]);
+
+  useEffect(() => {
+    const cargarOpcionesEstadoLead = async () => {
+      const opciones = await getEstadosLead([], []).then(
+        (respuesta) => respuesta.datos
+      );
+      const opcionesMapeadas = opciones.map((opcion) => ({
+        valor: String(opcion.id),
+        descripcion: String(opcion.descripcion),
+      }));
+      setOpcionesEstadoLead(opcionesMapeadas);
+    };
+
+    cargarOpcionesEstadoLead();
+  }, []);
+
   return (
     <QSelect
       label="Estado"
-      nombre="estado_id"
+      nombre={nombre}
       valor={valor}
       onChange={onChange}
       opciones={opcionesEstadoLead}
-      {...(getProps ? getProps("tipo") : {})}
+      {...props}
     />
   );
 };

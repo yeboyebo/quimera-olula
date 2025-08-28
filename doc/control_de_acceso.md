@@ -1,5 +1,13 @@
 # Control de acceso
 
+### Crear permiso general para los grupos para probar bien
+
+Hay que tener en cuenta que debe existir al menos un permiso general a true para el grupo con el que trabajemos para tener acceso a la API.
+
+```sql
+INSERT INTO flpermissions (value, idrule, idgroup) VALUES (true, 'general', '[grupo_id]');
+```
+
 ### Describir sistema de reglas (jerarquía)
 
 El sistema de reglas permite definir permisos de acceso a funcionalidades de la aplicación de forma jerárquica.  

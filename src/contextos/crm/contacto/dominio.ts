@@ -1,5 +1,4 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
-import { NuevaOportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Contacto, NuevoContacto } from "./diseño.ts";
 
 
@@ -33,25 +32,5 @@ export const metaNuevoContacto: MetaModelo<NuevoContacto> = {
 };
 
 export const initEstadoContactoVacio = () => initEstadoContacto(contactoVacio())
-
-
-export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
-    campos: {
-        descripcion: { requerido: true },
-        probabilidad: { requerido: true },
-        estado_id: { requerido: false },
-        contacto_id: { requerido: true, bloqueado: true },
-        nombre_cliente: { requerido: true },
-    }
-};
-
-export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
-    descripcion: "",
-    probabilidad: "",
-    valor_defecto: false,
-    estado_id: undefined,
-    contacto_id: "",
-    nombre_cliente: "",
-};
 
 

@@ -1,3 +1,4 @@
+import { MetaTabla } from "../../../componentes/atomos/qtabla.tsx";
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { Accion, NuevaAccion } from "./diseño.ts";
 
@@ -51,6 +52,11 @@ export const nuevaAccionVacia: NuevaAccion = {
     estado: "Pendiente",
     observaciones: "",
     incidencia_id: "",
+    usuario_id: "",
+    tarjeta_id: "",
+    oportunidad_id: "",
+    contacto_id: "",
+    cliente_id: "",
 };
 
 export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
@@ -59,5 +65,14 @@ export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
         descripcion: { requerido: true, validacion: (accion: NuevaAccion) => stringNoVacio(accion.descripcion) },
         tipo: { requerido: false },
         observaciones: { requerido: false },
+        usuario_id: { requerido: true },
     },
 };
+
+export const metaTablaAccion: MetaTabla<Accion> = [
+    { id: "id", cabecera: "Código" },
+    { id: "fecha", cabecera: "Fecha" },
+    { id: "descripcion", cabecera: "Descripción" },
+    { id: "tipo", cabecera: "Tipo" },
+    { id: "estado", cabecera: "Estado" },
+];
