@@ -13,10 +13,11 @@ import {
   quitarDeLista,
   seleccionarItemEnLista,
 } from "../../../comun/entidad.ts";
+import { pipe } from "../../../comun/funcional.ts";
 import {
-  ConfigMaquina3,
+  ConfigMaquina4,
   Maquina3,
-  useMaquina3,
+  useMaquina4,
 } from "../../../comun/useMaquina.ts";
 import { Incidencia } from "../diseño.ts";
 import { getIncidencias } from "../infraestructura.ts";
@@ -37,99 +38,99 @@ type Contexto = {
   incidencias: ListaSeleccionable<Incidencia>;
 };
 
-const setIncidencias = (
-  maquina: Maquina3<Estado, Contexto>,
-  incidencias: ListaSeleccionable<Incidencia>
-) => {
-  return {
-    ...maquina,
-    contexto: {
-      ...maquina.contexto,
-      incidencias: incidencias,
-    },
+const setIncidencias =
+  (
+    aplicable: (
+      incidencias: ListaSeleccionable<Incidencia>
+    ) => ListaSeleccionable<Incidencia>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => {
+    return {
+      ...maquina,
+      contexto: {
+        ...maquina.contexto,
+        incidencias: aplicable(maquina.contexto.incidencias),
+      },
+    };
   };
-};
 
-const configMaquina: ConfigMaquina3<Estado, Contexto> = {
-  Inactivo: {
-    crear: "Creando",
-    incidencia_cambiada: ({ contexto, ...maquina }, payload) => {
-      return {
-        ...maquina,
-        contexto: {
-          ...contexto,
-          incidencias: cambiarItemEnLista(
-            contexto.incidencias,
-            payload as Incidencia
-          ),
-        },
-      };
-    },
-    incidencia_seleccionada: (maquina, payload) => {
-      return setIncidencias(
-        maquina,
-        seleccionarItemEnLista(
-          maquina.contexto.incidencias,
-          payload as Incidencia
-        )
-      );
-    },
-    incidencia_borrada: ({ contexto, ...maquina }) => {
-      if (!contexto.incidencias.idActivo) {
-        return { contexto, ...maquina };
-      }
-      return {
-        estado: "Inactivo",
-        contexto: {
-          ...contexto,
-          incidencias: quitarDeLista(
-            contexto.incidencias,
-            contexto.incidencias.idActivo
-          ),
-        },
-      };
-    },
-    // incidencias_cargadas: (maquina, payload) => {
-    //   return maquina.accion.cargarIncidencias(payload as Incidencia[])
-    // },
-    incidencias_cargadas: ({ contexto, ...maquina }, payload) => {
-      return {
-        ...maquina,
-        estado: "Inactivo",
-        contexto: {
-          ...contexto,
-          incidencias: cargarLista(payload as Incidencia[]),
-        },
-      };
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "Inactivo",
+    contexto: {
+      incidencias: listaSeleccionableVacia<Incidencia>(),
     },
   },
-  Creando: {
-    incidencia_creada: ({ contexto, ...maquina }, payload: unknown) => {
-      return {
-        estado: "Inactivo",
-        contexto: {
-          ...maquina,
-          incidencias: incluirEnLista(
-            contexto.incidencias,
-            payload as Incidencia,
-            {}
-          ),
-        },
-      };
+  estados: {
+    Inactivo: {
+      crear: "Creando",
+      incidencia_cambiada: ({ maquina, payload }) =>
+        pipe(
+          maquina,
+          setIncidencias(cambiarItemEnLista(payload as Incidencia))
+        ),
+      incidencia_seleccionada: ({ maquina, payload }) =>
+        pipe(
+          maquina,
+          setIncidencias(seleccionarItemEnLista(payload as Incidencia))
+        ),
+      incidencia_borrada: ({ maquina }) => {
+        const { incidencias } = maquina.contexto;
+        if (!incidencias.idActivo) {
+          return maquina;
+        }
+        return pipe(
+          maquina,
+          setIncidencias(quitarDeLista(incidencias.idActivo))
+        );
+      },
+      incidencias_cargadas: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo" as Estado),
+          setIncidencias(cargarLista(payload as Incidencia[]))
+        ),
     },
-    creacion_cancelada: "Inactivo",
+    Creando: {
+      incidencia_creada: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo" as Estado),
+          setIncidencias(incluirEnLista(payload as Incidencia, {}))
+        ),
+      creacion_cancelada: "Inactivo",
+    },
   },
-  // cargar: 'Cargando',
 };
 
 export const MaestroConDetalleIncidencia = () => {
-  const [emitir, { estado, contexto }] = useMaquina3<Estado, Contexto>(
-    configMaquina,
-    "Inactivo",
-    {
-      incidencias: listaSeleccionableVacia<Incidencia>(),
-    }
-  );
+  // const incidencias = useLista<Incidencia>([]);
+
+  // const maquina: Maquina<Estado> = {
+  //   Creando: {
+  //     incidencia_creada: (payload) => {
+  //       incidencias.añadir(payload as Incidencia);
+  //       return "Inactivo";
+  //     },
+  //     creacion_cancelada: "Inactivo",
+  //   },
+  //   Inactivo: {
+  //     crear: "Creando",
+  //     incidencia_cambiada: (payload) => {
+  //       incidencias.modificar(payload as Incidencia);
+  //     },
+  //     incidencia_borrada: (payload) => {
+  //       incidencias.eliminar(payload as Incidencia);
+  //     },
+  //     cancelar_seleccion: () => {
+  //       incidencias.limpiarSeleccion();
+  //     },
+  //   },
+  // };
+
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
   const { incidencias } = contexto;
 
   const setEntidades = useCallback(
