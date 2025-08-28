@@ -1,0 +1,11 @@
+quimera-acciones {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+quimera-acciones.vertical {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+}

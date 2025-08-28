@@ -1,5 +1,5 @@
-import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
+import { QuimeraAcciones } from "../../../../../../componentes/moleculas/qacciones.tsx";
 import {
   boolAString,
   direccionCompleta,
@@ -37,30 +37,37 @@ export const TabDireccionesLista = ({
   emitir: (evento: string, payload?: unknown) => void;
   cargando: boolean;
 }) => {
+  const acciones = [
+    {
+      icono: "nuevo",
+      texto: "Nueva",
+      onClick: () => emitir("ALTA_SOLICITADA"),
+    },
+    {
+      icono: "editar",
+      texto: "Editar",
+      onClick: () => seleccionada && emitir("EDICION_SOLICITADA"),
+      deshabilitado: !seleccionada,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      onClick: () => emitir("BORRADO_SOLICITADO"),
+      deshabilitado: !seleccionada,
+    },
+    {
+      icono: "check",
+      texto: "Facturación",
+      onClick: () => emitir("FACTURACION_SOLICITADA"),
+      deshabilitado:
+        !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada),
+    },
+  ];
+
   return (
     <>
       <div className="botones maestro-botones">
-        <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
-        <QBoton
-          onClick={() => seleccionada && emitir("EDICION_SOLICITADA")}
-          deshabilitado={!seleccionada}
-        >
-          Editar
-        </QBoton>
-        <QBoton
-          onClick={() => emitir("BORRADO_SOLICITADO")}
-          deshabilitado={!seleccionada}
-        >
-          Borrar
-        </QBoton>
-        <QBoton
-          onClick={() => emitir("FACTURACION_SOLICITADA")}
-          deshabilitado={
-            !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada)
-          }
-        >
-          Facturación
-        </QBoton>
+        <QuimeraAcciones acciones={acciones} />
       </div>
       <QTabla
         metaTabla={metaTablaDirecciones}

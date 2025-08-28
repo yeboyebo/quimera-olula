@@ -76,6 +76,12 @@ export const MaestroConDetalleCliente = () => {
             </div>
             <Listado
               metaTabla={metaTablaCliente}
+              formato={(cliente) => (
+                <div>
+                  <div className="tarjeta-titulo">{cliente.nombre}</div>
+                  <div className="tarjeta-detalle">ID: {cliente.id}</div>
+                </div>
+              )}
               entidades={clientes.lista}
               setEntidades={clientes.setLista}
               seleccionada={clientes.seleccionada}
