@@ -14,10 +14,10 @@ import { Lead } from "../../diseño.ts";
 import { leadVacio, metaLead } from "../../dominio.ts";
 import { deleteLead, getLead, patchLead } from "../../infraestructura.ts";
 import "./DetalleLead.css";
-import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
 import { TabAcciones } from "./TabAcciones.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
+import { TabOportunidades } from "./TabOportunidades.tsx";
 
 type Estado = "defecto";
 

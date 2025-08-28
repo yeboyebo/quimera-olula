@@ -10,7 +10,12 @@ import {
   quitarDeLista,
   seleccionarItemEnLista,
 } from "../../../../comun/entidad.ts";
-import { ConfigMaquina3, useMaquina3 } from "../../../../comun/useMaquina.ts";
+import { pipe } from "../../../../comun/funcional.ts";
+import {
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { OportunidadVenta } from "../../../oportunidadventa/diseño.ts";
 import { metaTablaOportunidadVenta } from "../../../oportunidadventa/dominio.ts";
@@ -25,68 +30,71 @@ type Contexto = {
   oportunidades: ListaSeleccionable<OportunidadVenta>;
 };
 
-const configMaquina: ConfigMaquina3<Estado, Contexto> = {
-  Cargando: {
-    oportunidades_cargadas: (maquina, payload) => {
-      return {
-        estado: "Inactivo" as Estado,
-        contexto: {
-          ...maquina.contexto,
-          oportunidades: cargarLista(payload as OportunidadVenta[]),
-        },
-      };
+const setAcciones =
+  (
+    aplicable: (
+      oportunidades: ListaSeleccionable<OportunidadVenta>
+    ) => ListaSeleccionable<OportunidadVenta>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => {
+    return {
+      ...maquina,
+      contexto: {
+        ...maquina.contexto,
+        oportunidades: aplicable(maquina.contexto.oportunidades),
+      },
+    };
+  };
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "Inactivo",
+    contexto: {
+      oportunidades: listaSeleccionableVacia<OportunidadVenta>(),
     },
   },
-  Inactivo: {
-    crear: "Creando",
-    borrar: "Borrando",
-    oportunidad_seleccionada: ({ contexto, ...maquina }, payload) => {
-      return {
-        ...maquina,
-        contexto: {
-          ...contexto,
-          oportunidades: seleccionarItemEnLista(
-            contexto.oportunidades,
-            payload as OportunidadVenta
-          ),
-        },
-      };
+  estados: {
+    Cargando: {
+      oportunidades_cargadas: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo"),
+          setAcciones(cargarLista(payload as OportunidadVenta[]))
+        ),
     },
-    cargar: "Cargando",
-  },
-  Creando: {
-    oportunidad_creada: ({ contexto, ...maquina }, payload: unknown) => {
-      return {
-        estado: "Inactivo",
-        contexto: {
-          ...maquina,
-          oportunidades: incluirEnLista(
-            contexto.oportunidades,
-            payload as OportunidadVenta,
-            {}
-          ),
-        },
-      };
+    Inactivo: {
+      crear: "Creando",
+      borrar: "Borrando",
+      oportunidad_seleccionada: ({ maquina, payload }) =>
+        pipe(
+          maquina,
+          setAcciones(seleccionarItemEnLista(payload as OportunidadVenta))
+        ),
+      cargar: "Cargando",
     },
-    creacion_cancelada: "Inactivo",
-  },
-  Borrando: {
-    oportunidad_borrada: ({ contexto, ...maquina }) => {
-      if (!contexto.oportunidades.idActivo) {
-        return { contexto, ...maquina };
-      }
-      return {
-        estado: "Inactivo",
-        contexto: {
-          ...contexto,
-          oportunidades: quitarDeLista(
-            contexto.oportunidades,
-            contexto.oportunidades.idActivo
-          ),
-        },
-      };
+    Creando: {
+      oportunidad_creada: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo"),
+          setAcciones(incluirEnLista(payload as OportunidadVenta, {}))
+        ),
+      creacion_cancelada: "Inactivo",
     },
-    borrado_cancelado: "Inactivo",
+    Borrando: {
+      oportunidad_borrada: ({ maquina, setEstado }) => {
+        const idActivo = maquina.contexto.oportunidades.idActivo;
+        if (!idActivo) {
+          return maquina;
+        }
+        return pipe(
+          maquina,
+          setEstado("Inactivo"),
+          setAcciones(quitarDeLista(idActivo))
+        );
+      },
+      borrado_cancelado: "Inactivo",
+    },
   },
 };
 
@@ -99,13 +107,9 @@ export const TabOportunidades = ({
 
   const idCliente = cliente.modelo.id;
 
-  const [emitir, { estado, contexto }] = useMaquina3<Estado, Contexto>(
-    configMaquina,
-    "Inactivo",
-    {
-      oportunidades: listaSeleccionableVacia<OportunidadVenta>(),
-    }
-  );
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
   const { oportunidades } = contexto;
 
   useEffect(() => {

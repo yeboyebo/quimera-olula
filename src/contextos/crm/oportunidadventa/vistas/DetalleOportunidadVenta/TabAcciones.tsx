@@ -10,7 +10,12 @@ import {
   quitarDeLista,
   seleccionarItemEnLista,
 } from "../../../../comun/entidad.ts";
-import { ConfigMaquina3, useMaquina3 } from "../../../../comun/useMaquina.ts";
+import { pipe } from "../../../../comun/funcional.ts";
+import {
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Accion } from "../../../accion/diseño.ts";
 import { metaTablaAccion } from "../../../accion/dominio.ts";
@@ -25,64 +30,68 @@ type Contexto = {
   acciones: ListaSeleccionable<Accion>;
 };
 
-const configMaquina: ConfigMaquina3<Estado, Contexto> = {
-  Cargando: {
-    acciones_cargadas: (maquina, payload) => {
-      return {
-        estado: "Inactivo" as Estado,
-        contexto: {
-          ...maquina.contexto,
-          acciones: cargarLista(payload as Accion[]),
-        },
-      };
+const setAcciones =
+  (
+    aplicable: (
+      acciones: ListaSeleccionable<Accion>
+    ) => ListaSeleccionable<Accion>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => {
+    return {
+      ...maquina,
+      contexto: {
+        ...maquina.contexto,
+        acciones: aplicable(maquina.contexto.acciones),
+      },
+    };
+  };
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "Inactivo",
+    contexto: {
+      acciones: listaSeleccionableVacia<Accion>(),
     },
   },
-  Inactivo: {
-    crear: "Creando",
-    borrar: "Borrando",
-    accion_seleccionada: ({ contexto, ...maquina }, payload) => {
-      return {
-        ...maquina,
-        contexto: {
-          ...contexto,
-          acciones: seleccionarItemEnLista(
-            contexto.acciones,
-            payload as Accion
-          ),
-        },
-      };
+  estados: {
+    Cargando: {
+      acciones_cargadas: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo"),
+          setAcciones(cargarLista(payload as Accion[]))
+        ),
     },
-    cargar: "Cargando",
-  },
-  Creando: {
-    accion_creada: ({ contexto, ...maquina }, payload: unknown) => {
-      return {
-        estado: "Inactivo",
-        contexto: {
-          ...maquina,
-          acciones: incluirEnLista(contexto.acciones, payload as Accion, {}),
-        },
-      };
+    Inactivo: {
+      crear: "Creando",
+      borrar: "Borrando",
+      accion_seleccionada: ({ maquina, payload }) =>
+        pipe(maquina, setAcciones(seleccionarItemEnLista(payload as Accion))),
+      cargar: "Cargando",
     },
-    creacion_cancelada: "Inactivo",
-  },
-  Borrando: {
-    accion_borrada: ({ contexto, ...maquina }) => {
-      if (!contexto.acciones.idActivo) {
-        return { contexto, ...maquina };
-      }
-      return {
-        estado: "Inactivo",
-        contexto: {
-          ...contexto,
-          acciones: quitarDeLista(
-            contexto.acciones,
-            contexto.acciones.idActivo
-          ),
-        },
-      };
+    Creando: {
+      accion_creada: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo"),
+          setAcciones(incluirEnLista(payload as Accion, {}))
+        ),
+      creacion_cancelada: "Inactivo",
     },
-    borrado_cancelado: "Inactivo",
+    Borrando: {
+      accion_borrada: ({ maquina, setEstado }) => {
+        const idActivo = maquina.contexto.acciones.idActivo;
+        if (!idActivo) {
+          return maquina;
+        }
+        return pipe(
+          maquina,
+          setEstado("Inactivo"),
+          setAcciones(quitarDeLista(idActivo))
+        );
+      },
+      borrado_cancelado: "Inactivo",
+    },
   },
 };
 
@@ -95,15 +104,10 @@ export const TabAcciones = ({
 
   const idOportunidadVenta = oportunidad.modelo.id;
 
-  const [emitir, { estado, contexto }] = useMaquina3<Estado, Contexto>(
-    configMaquina,
-    "Inactivo",
-    {
-      acciones: listaSeleccionableVacia<Accion>(),
-    }
-  );
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
   const { acciones } = contexto;
-
   useEffect(() => {
     const cargarAcciones = async () => {
       const nuevasAcciones = await intentar(() =>

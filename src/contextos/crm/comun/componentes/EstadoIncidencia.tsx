@@ -6,15 +6,19 @@ interface EstadoProps {
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const opcionesEstado = [
-    { valor: "nueva", descripcion: "Nueva" },
-    { valor: "en_espera", descripcion: "En espera" },
-    { valor: "asignada", descripcion: "Asignada" },
-    { valor: "rechazada", descripcion: "Rechazada" },
-    { valor: "cerrada", descripcion: "Cerrada" },
-]
+const opcionesEstado = [
+  { valor: "nueva", descripcion: "Nueva" },
+  { valor: "en_espera", descripcion: "En espera" },
+  { valor: "asignada", descripcion: "Asignada" },
+  { valor: "rechazada", descripcion: "Rechazada" },
+  { valor: "cerrada", descripcion: "Cerrada" },
+];
 
-export const EstadoIncidencia = ({ valor, onChange, getProps }: EstadoProps) => {
+export const EstadoIncidencia = ({
+  valor,
+  onChange,
+  getProps,
+}: EstadoProps) => {
   return (
     <QSelect
       label="Estado"

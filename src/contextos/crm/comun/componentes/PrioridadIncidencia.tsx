@@ -6,13 +6,17 @@ interface PrioridadProps {
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
-export const opcionesPrioridad = [
-    { valor: "alta", descripcion: "Alta" },
-    { valor: "media", descripcion: "Media" },
-    { valor: "baja", descripcion: "Baja" },
-]
+const opcionesPrioridad = [
+  { valor: "alta", descripcion: "Alta" },
+  { valor: "media", descripcion: "Media" },
+  { valor: "baja", descripcion: "Baja" },
+];
 
-export const PrioridadIncidencia = ({ valor, onChange, getProps }: PrioridadProps) => {
+export const PrioridadIncidencia = ({
+  valor,
+  onChange,
+  getProps,
+}: PrioridadProps) => {
   return (
     <QSelect
       label="Prioridad"
