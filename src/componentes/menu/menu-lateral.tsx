@@ -40,8 +40,12 @@ export const MenuLateral = () => {
 
     if ("url" in elemento && elemento.url) {
       if (!cumpleFiltro) return null;
+      const path = window.location.pathname;
       return (
-        <li key={elemento.nombre}>
+        <li
+          key={elemento.nombre}
+          className={path === elemento.url ? "activo" : ""}
+        >
           <Link to={elemento.url}>
             {icono} {elemento.nombre}
           </Link>

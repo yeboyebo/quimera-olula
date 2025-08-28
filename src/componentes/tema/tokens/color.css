@@ -158,4 +158,16 @@
     --naranja-7: #f76707;
     --naranja-8: #e8590c;
     --naranja-9: #d9480f;
+
+    /* Paleta Matching Gradient */
+    --mg-1: #333333;
+    --mg-2: #4b4d52;
+    --mg-3: #5f6a72;
+    --mg-4: #6C9099;
+    --mg-5: #89aaa9;
+    --mg-6: #abcac6;
+    --mg-7: #bbd4ce8e;
+
+    --degradado-fondo-1: radial-gradient(circle, rgba(51, 51, 51, 1) 0%, rgba(75, 77, 82, 1) 50%);
+    --degradado-fondo-2: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(237, 237, 237, 1) 50%);
 }

@@ -28,7 +28,13 @@ const renderComponente = (componente: HistoriasComponente, tema: string) => {
   const clave = meta.grupo + "/" + meta.titulo;
 
   return (
-    <qhistorias-componente style={{ colorScheme: tema }} key={clave}>
+    <qhistorias-componente
+      style={{ colorScheme: tema }}
+      key={clave}
+      className={
+        clave.split("/")[0] + " " + clave.replace("/", "-").replace(/ /g, "")
+      }
+    >
       <section>
         <h2>{clave}</h2>
         <section>
