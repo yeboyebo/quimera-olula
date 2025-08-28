@@ -38,10 +38,19 @@ quimera-checkbox {
                 background-color: var(--color-focus);
                 border-color: transparent;
                 border-radius: var(--redondeo-borde-xs);
+                color: var(--color-texto-primario);
             }
 
             &::placeholder {
                 color: var(--color-texto-deshabilitado);
+            }
+
+            &:not(:has(option:checked[value=""])) {
+                color: var(--color-texto-primario);
+            }
+
+            option {
+                color: var(--color-texto-primario);
             }
         }
 
@@ -62,13 +71,13 @@ quimera-checkbox {
 
     &[advertido] {
         --color-borde: var(--color-advertencia);
-        --color-focus: var(--color-advertencia-claro);
+        /* --color-focus: var(--color-advertencia-claro); */
         --color-validacion: var(--color-advertencia);
     }
 
     &[valido] {
         --color-borde: var(--color-exito);
-        --color-focus: var(--color-exito-claro);
+        /* --color-focus: var(--color-exito-claro); */
         --color-validacion: var(--color-exito);
     }
 
@@ -105,6 +114,7 @@ quimera-checkbox {
         input,
         select {
             font-size: var(--tamaño-letra-s);
+            color: var(--color-primario);
         }
 
         .texto-validacion {

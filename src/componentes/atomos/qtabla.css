@@ -1,10 +1,6 @@
-@keyframes moving-gradient {
-    0% {
-        background-position: -600px 0;
-    }
-
-    100% {
-        background-position: 600px 0;
+@keyframes loading {
+    to {
+        background-position-x: -30%;
     }
 }
 
@@ -22,32 +18,50 @@ quimera-tabla {
         border-collapse: separate;
         text-align: left;
         white-space: nowrap;
-    }
-
-    tr {
-        background-color: var(--color-fondo);
+        background: var(--blanco);
+        border: var(--tamaño-borde-s) solid var(--gris-1);
+        border-radius: 8px;
     }
 
     tbody tr {
-        &:nth-child(odd) {
-            background-color: var(--color-deshabilitado);
-        }
 
         &[data-seleccionada="true"] th,
         &[data-seleccionada="true"] td {
             font-weight: var(--grosor-letra-6);
         }
+
+        &[data-seleccionada="true"] {
+            background-color: var(--color-primario-selected);
+        }
     }
 
-    tbody[data-cargando="true"] tr {
-        background: linear-gradient(to right, var(--color-fondo) 20%, var(--color-deshabilitado) 50%, var(--color-fondo) 80%);
-        background-size: 120%;
-        animation-name: moving-gradient;
-        animation-duration: 1s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-        animation-fill-mode: forwards;
-        color: transparent;
+    thead tr {
+        background: var(--color-head-tabla);
+    }
+
+    tbody[data-cargando="true"] td {
+        font-size: 0;
+    }
+
+    tbody tr:hover {
+        background-color: var(--color-primario-hover);
+        cursor: pointer;
+    }
+
+    tbody[data-cargando="true"] td::before {
+        background-color: var(--gris-2);
+        background: linear-gradient(100deg,
+                rgba(255, 255, 255, 0) 40%,
+                rgba(255, 255, 255, .5) 50%,
+                rgba(255, 255, 255, 0) 60%) var(--gris-2);
+        background-size: 200% 100%;
+        background-position-x: 180%;
+        animation: 1s loading ease-in-out infinite;
+        width: 80%;
+        margin: 0 auto;
+        content: "";
+        height: 25px;
+        display: block;
     }
 
     th {
