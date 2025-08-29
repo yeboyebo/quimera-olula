@@ -236,7 +236,7 @@
   height: 100%;
 }
 
-.calendario-semana-modo-semana .calendario-dia > *:not(.dia-numero):not(.eventos-container) {
+.calendario-semana-modo-semana .calendario-dia>*:not(.dia-numero):not(.eventos-container) {
   padding: 2px 4px;
   margin: 1px 4px;
   font-size: 0.75rem;
@@ -424,23 +424,24 @@
 }
 
 @media (max-width: 768px) {
+
   /* En móvil el modo semana mantiene la misma lógica de flex pero con menos padding */
   .calendario-semana-modo-semana {
     gap: 1px;
     padding: 2px;
   }
-  
+
   .calendario-semana-modo-semana .dia-numero {
     padding: 2px 4px;
     font-size: 0.75rem;
   }
-  
-  .calendario-semana-modo-semana .calendario-dia > *:not(.dia-numero):not(.eventos-container) {
+
+  .calendario-semana-modo-semana .calendario-dia>*:not(.dia-numero):not(.eventos-container) {
     padding: 1px 2px;
     margin: 1px 2px;
     font-size: 0.7rem;
   }
-  
+
   .calendario-semana-modo-semana .eventos-container {
     padding: 2px;
     gap: 1px;
