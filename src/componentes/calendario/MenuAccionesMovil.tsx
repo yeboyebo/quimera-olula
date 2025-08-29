@@ -8,7 +8,6 @@ import { ModoCalendario } from './tipos';
 
 interface MenuAccionesMovilProps {
   modoAnio: boolean;
-  modoVista?: ModoCalendario;
   modos?: ModoCalendario[];
   onCambioModo: () => void;
   onCambioModoVista?: (modo: ModoCalendario) => void;
@@ -21,7 +20,6 @@ interface MenuAccionesMovilProps {
 
 export function MenuAccionesMovil({
   modoAnio,
-  modoVista,
   modos,
   onCambioModo,
   onCambioModoVista,
@@ -154,7 +152,6 @@ export function MenuAccionesMovil({
             {mostrarCambioModo && onCambioModoVista && (
               <div className="menu-acciones-fila" key={'selector-modo'}>
                 <SelectorModo
-                  modoActual={modoVista || 'mes'}
                   onCambioModo={(modo) => {
                     onCambioModoVista(modo);
                     cerrarMenu();

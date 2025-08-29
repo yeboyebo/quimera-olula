@@ -179,7 +179,9 @@ export function Calendario<T extends DatoBase>({
     setModoVista,
     irAHoy,
     esMovil,
-    anioGridRef
+    anioGridRef,
+    mostrarCambioModo: config.cabecera?.mostrarCambioModo,
+    mostrarBotonHoy: config.cabecera?.mostrarBotonHoy
   });
 
   return (

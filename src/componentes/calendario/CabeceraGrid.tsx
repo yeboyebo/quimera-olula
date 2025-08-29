@@ -56,7 +56,6 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
         <MenuAccionesMovil
           modoAnio={modoAnio}
           onCambioModo={() => setModoAnio(!modoAnio)}
-          modoVista={modoVista}
           onCambioModoVista={setModoVista}
           modos={modos}
           botonesIzqModo={izqModo}

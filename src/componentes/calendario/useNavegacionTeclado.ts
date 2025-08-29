@@ -33,6 +33,8 @@ interface UseNavegacionTecladoProps {
   irAHoy: () => void;
   esMovil: boolean;
   anioGridRef?: React.RefObject<HTMLDivElement | null>;
+  mostrarCambioModo?: boolean;
+  mostrarBotonHoy?: boolean;
 }
 
 export function useNavegacionTeclado({
@@ -43,7 +45,9 @@ export function useNavegacionTeclado({
   setModoVista,
   irAHoy,
   esMovil,
-  anioGridRef
+  anioGridRef,
+  mostrarCambioModo = true,
+  mostrarBotonHoy = true
 }: UseNavegacionTecladoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -73,28 +77,31 @@ export function useNavegacionTeclado({
     const tecla = event.key.toLowerCase();
 
     // Atajos básicos del calendario
-    if (tecla === configTeclado.atajos.hoy) {
+    if (tecla === configTeclado.atajos.hoy && mostrarBotonHoy) {
       event.preventDefault();
       irAHoy();
       return;
     }
 
-    if (tecla === configTeclado.atajos.modoMes) {
-      event.preventDefault();
-      setModoVista('mes');
-      return;
-    }
+    // Atajos para cambio de modo (condicionados a mostrarCambioModo)
+    if (mostrarCambioModo) {
+      if (tecla === configTeclado.atajos.modoMes) {
+        event.preventDefault();
+        setModoVista('mes');
+        return;
+      }
 
-    if (tecla === configTeclado.atajos.modoSemana) {
-      event.preventDefault();
-      setModoVista('semana');
-      return;
-    }
+      if (tecla === configTeclado.atajos.modoSemana) {
+        event.preventDefault();
+        setModoVista('semana');
+        return;
+      }
 
-    if (tecla === configTeclado.atajos.modoAño) {
-      event.preventDefault();
-      setModoVista('anio');
-      return;
+      if (tecla === configTeclado.atajos.modoAño) {
+        event.preventDefault();
+        setModoVista('anio');
+        return;
+      }
     }
 
     // Navegación con flechas según el modo

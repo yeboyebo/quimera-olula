@@ -3,7 +3,7 @@ import { QBoton } from '../atomos/qboton.tsx';
 import { ModoCalendario } from './tipos';
 
 interface SelectorModoProps {
-  modoActual: ModoCalendario;
+  modoActual?: ModoCalendario;
   onCambioModo: (modo: ModoCalendario) => void;
   variante?: 'horizontal' | 'vertical';
   mostrarIconos?: boolean;

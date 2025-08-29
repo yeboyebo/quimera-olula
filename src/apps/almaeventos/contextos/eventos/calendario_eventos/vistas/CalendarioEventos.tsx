@@ -120,8 +120,8 @@ export const CalendarioEventos = () => {
               // </BotonConTooltip>
             ],
             // modos: ['semana', 'mes', 'anio'],
-            mostrarBotonHoy: false,
-            mostrarCambioModo: false,
+            // mostrarBotonHoy: false,
+            // mostrarCambioModo: false,
             // modoCalendario: 'semana'
           }
         }}
