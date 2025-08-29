@@ -63,25 +63,23 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({
     if (anioGridRef.current) {
       setScrollPosition(anioGridRef.current.scrollTop);
 
-      // Detectar carga infinita solo en modo año
-      if (modoVista === 'anio') {
-        const container = anioGridRef.current;
-        const scrollTop = container.scrollTop;
-        const scrollHeight = container.scrollHeight;
-        const clientHeight = container.clientHeight;
+      // Detectar carga infinita en todos los modos, no solo año
+      const container = anioGridRef.current;
+      const scrollTop = container.scrollTop;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
 
-        // Detectar si estamos en el 25% superior o inferior del scroll
-        const scrollRatio = scrollTop / (scrollHeight - clientHeight);
+      // Detectar si estamos en el 25% superior o inferior del scroll
+      const scrollRatio = scrollTop / (scrollHeight - clientHeight);
 
-        // Si estamos en el último 25% del scroll (scroll hacia abajo)
-        if (scrollRatio > 0.75) {
-          onNecesitaDatosPosteriores?.();
-        }
+      // Si estamos en el último 25% del scroll (scroll hacia abajo)
+      if (scrollRatio > 0.75) {
+        onNecesitaDatosPosteriores?.();
+      }
 
-        // Si estamos en el primer 25% del scroll (scroll hacia arriba)
-        if (scrollRatio < 0.25) {
-          onNecesitaDatosAnteriores?.();
-        }
+      // Si estamos en el primer 25% del scroll (scroll hacia arriba)
+      if (scrollRatio < 0.25) {
+        onNecesitaDatosAnteriores?.();
       }
     }
   }, [modoVista, onNecesitaDatosAnteriores, onNecesitaDatosPosteriores]);

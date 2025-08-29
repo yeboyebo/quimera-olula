@@ -15,6 +15,7 @@ interface EventosCalendarioState {
   expandirRangoAnterior: () => Promise<void>;
   expandirRangoPosterior: () => Promise<void>;
   resetear: (fechaInicial?: Date) => void;
+  verificarRango: (fecha: Date) => Promise<void>;
 }
 
 const MESES_BUFFER = 3; // Meses a cargar por cada lado
@@ -215,12 +216,28 @@ export const useEventosCalendarioInfinito = (filtro: Filtro): EventosCalendarioS
     setEventos([]);
   }, []);
 
+  // Verificar si una fecha está fuera del rango y cargar datos si es necesario
+  const verificarRango = useCallback(async (fecha: Date) => {
+    const fechaInicio = obtenerInicioMes(fecha);
+
+    // Verificar si necesitamos cargar hacia atrás
+    if (fechaInicio < rangoActual.inicio) {
+      await expandirRangoAnterior();
+    }
+
+    // Verificar si necesitamos cargar hacia adelante  
+    if (fechaInicio > rangoActual.fin) {
+      await expandirRangoPosterior();
+    }
+  }, [rangoActual, expandirRangoAnterior, expandirRangoPosterior]);
+
   return {
     eventos,
     cargando,
     rangoActual,
     expandirRangoAnterior,
     expandirRangoPosterior,
-    resetear
+    resetear,
+    verificarRango
   };
 };
