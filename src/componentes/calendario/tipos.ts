@@ -30,6 +30,7 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
     botonesIzqHoy?: React.ReactNode[];
     botonesDerHoy?: React.ReactNode[];
     mostrarCambioModo?: boolean;
+    modos?: ModoCalendario[]; // Array de modos permitidos
     mostrarControlesNavegacion?: boolean;
     mostrarBotonHoy?: boolean;
     modoCalendario?: ModoCalendario;

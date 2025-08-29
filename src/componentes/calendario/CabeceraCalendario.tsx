@@ -16,6 +16,7 @@ interface CabeceraCalendarioProps {
   setModoAnio: (v: boolean) => void;
   modoVista?: ModoCalendario;
   setModoVista?: (modo: ModoCalendario) => void;
+  modos?: ModoCalendario[];
   formatearMesAño: (fecha: Date) => string;
   fechaActual: Date;
   navegarTiempo: (dir: number) => void;
@@ -32,6 +33,7 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
     setModoAnio,
     modoVista,
     setModoVista,
+    modos,
     formatearMesAño,
     fechaActual,
     navegarTiempo,
@@ -92,6 +94,7 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
                     setDropdownAbierto(false);
                   }}
                   variante="vertical"
+                  modos={modos}
                 />
               </div>
             </div>

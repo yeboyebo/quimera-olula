@@ -7,6 +7,7 @@ interface SelectorModoProps {
   onCambioModo: (modo: ModoCalendario) => void;
   variante?: 'horizontal' | 'vertical';
   mostrarIconos?: boolean;
+  modos?: ModoCalendario[]; // Modos permitidos
 }
 
 const MODOS: Array<{modo: ModoCalendario, label: string, icono: string}> = [
@@ -20,15 +21,19 @@ export const SelectorModo: React.FC<SelectorModoProps> = ({
   modoActual,
   onCambioModo,
   variante = 'horizontal',
-  mostrarIconos = false
+  mostrarIconos = false,
+  modos = ['dia', 'semana', 'mes', 'anio'] // Todos los modos por defecto
 }) => {
   const className = variante === 'horizontal' 
     ? 'selector-modo-horizontal' 
     : 'selector-modo-vertical';
 
+  // Filtrar solo los modos permitidos
+  const modosPermitidos = MODOS.filter(({modo}) => modos.includes(modo));
+
   return (
     <div className={className}>
-      {MODOS.map(({modo, label, icono}) => (
+      {modosPermitidos.map(({modo, label, icono}) => (
         <QBoton
           key={modo}
           onClick={() => onCambioModo(modo)}

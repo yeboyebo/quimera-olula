@@ -15,6 +15,7 @@ interface CabeceraGridProps {
   esMovil: boolean;
   modoAnio: boolean;
   modoVista?: ModoCalendario;
+  modos?: ModoCalendario[];
   setModoAnio: (v: boolean | ((m: boolean) => boolean)) => void;
   setModoVista?: (modo: ModoCalendario) => void;
   formatearMesAño: (fecha: Date) => string;
@@ -33,6 +34,7 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
   setModoAnio,
   modoVista,
   setModoVista,
+  modos,
   formatearMesAño,
   fechaActual,
   navegarTiempo,
@@ -56,6 +58,7 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
           onCambioModo={() => setModoAnio(!modoAnio)}
           modoVista={modoVista}
           onCambioModoVista={setModoVista}
+          modos={modos}
           botonesIzqModo={izqModo}
           botonesDerModo={derModo}
           botonesIzqHoy={izqHoy}
@@ -84,6 +87,7 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
       setModoAnio={setModoAnio}
       modoVista={modoVista}
       setModoVista={setModoVista}
+      modos={modos}
       formatearMesAño={formatearMesAño}
       fechaActual={fechaActual}
       navegarTiempo={navegarTiempo}

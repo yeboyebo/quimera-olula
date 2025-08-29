@@ -102,6 +102,7 @@ export function Calendario<T extends DatoBase>({
     botonesIzqHoy = [],
     botonesDerHoy = [],
     mostrarCambioModo = true,
+    modos = ['dia', 'semana', 'mes', 'anio'], // Todos los modos por defecto
     mostrarControlesNavegacion = true,
     mostrarBotonHoy = true,
   } = cabecera;
@@ -194,6 +195,7 @@ export function Calendario<T extends DatoBase>({
         setModoAnio={(valor) => setModoVista(valor ? 'anio' : 'mes')}
         modoVista={modoVista}
         setModoVista={setModoVista}
+        modos={modos}
         formatearMesAño={formatearMesAño}
         fechaActual={fechaActual}
         navegarTiempo={navegarTiempo}

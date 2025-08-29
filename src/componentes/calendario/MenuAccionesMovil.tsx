@@ -9,6 +9,7 @@ import { ModoCalendario } from './tipos';
 interface MenuAccionesMovilProps {
   modoAnio: boolean;
   modoVista?: ModoCalendario;
+  modos?: ModoCalendario[];
   onCambioModo: () => void;
   onCambioModoVista?: (modo: ModoCalendario) => void;
   botonesIzqModo?: React.ReactNode[];
@@ -21,6 +22,7 @@ interface MenuAccionesMovilProps {
 export function MenuAccionesMovil({
   modoAnio,
   modoVista,
+  modos,
   onCambioModo,
   onCambioModoVista,
   botonesIzqModo = [],
@@ -159,6 +161,7 @@ export function MenuAccionesMovil({
                   }}
                   variante="vertical"
                   mostrarIconos={false}
+                  modos={modos}
                 />
               </div>
             )}
