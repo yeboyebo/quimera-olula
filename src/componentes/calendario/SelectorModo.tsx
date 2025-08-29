@@ -11,7 +11,6 @@ interface SelectorModoProps {
 }
 
 const MODOS: Array<{modo: ModoCalendario, label: string, icono: string}> = [
-  { modo: 'dia', label: 'Día', icono: '📅' },
   { modo: 'semana', label: 'Semana', icono: '📊' },
   { modo: 'mes', label: 'Mes', icono: '📆' },
   { modo: 'anio', label: 'Año', icono: '🗓️' }
@@ -22,7 +21,7 @@ export const SelectorModo: React.FC<SelectorModoProps> = ({
   onCambioModo,
   variante = 'horizontal',
   mostrarIconos = false,
-  modos = ['dia', 'semana', 'mes', 'anio'] // Todos los modos por defecto
+  modos = ['semana', 'mes', 'anio'] // Todos los modos por defecto
 }) => {
   const className = variante === 'horizontal' 
     ? 'selector-modo-horizontal' 

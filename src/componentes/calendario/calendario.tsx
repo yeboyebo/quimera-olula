@@ -102,7 +102,7 @@ export function Calendario<T extends DatoBase>({
     botonesIzqHoy = [],
     botonesDerHoy = [],
     mostrarCambioModo = true,
-    modos = ['dia', 'semana', 'mes', 'anio'], // Todos los modos por defecto
+    modos = ['semana', 'mes', 'anio'], // Todos los modos por defecto
     mostrarControlesNavegacion = true,
     mostrarBotonHoy = true,
   } = cabecera;

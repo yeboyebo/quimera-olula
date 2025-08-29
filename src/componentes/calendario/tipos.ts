@@ -8,7 +8,7 @@ export interface DatoBase {
 }
 
 // Tipos para los modos de vista del calendario
-export type ModoCalendario = 'dia' | 'semana' | 'mes' | 'anio';
+export type ModoCalendario = 'semana' | 'mes' | 'anio';
 
 // Tipo para las funciones de formateo personalizadas
 export interface CalendarioConfig<T extends DatoBase = DatoBase> {

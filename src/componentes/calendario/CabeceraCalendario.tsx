@@ -83,7 +83,7 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
           {modoVista && setModoVista && (
             <div className="dropdown-modo" ref={dropdownRef}>
               <QBoton onClick={() => setDropdownAbierto(!dropdownAbierto)}>
-                {modoVista === 'dia' ? 'Día' : modoVista === 'semana' ? 'Semana' : modoVista === 'mes' ? 'Mes' : 'Año'}
+                {modoVista === 'semana' ? 'Semana' : modoVista === 'mes' ? 'Mes' : 'Año'}
                 <span style={{ marginLeft: '8px' }}>{dropdownAbierto ? '▲' : '▼'}</span>
               </QBoton>
               <div className={`dropdown-modo-contenido ${dropdownAbierto ? 'abierto' : ''}`}>

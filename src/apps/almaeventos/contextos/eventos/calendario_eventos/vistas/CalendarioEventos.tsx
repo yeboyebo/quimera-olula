@@ -119,9 +119,9 @@ export const CalendarioEventos = () => {
               //   <QIcono nombre={"copiar"} tamaño={"sm"} color={"white"} style={{margin: '4px'}}/>
               // </BotonConTooltip>
             ],
-            // modos: ['mes', 'anio'],
-            // mostrarBotonHoy: false,
-            // mostrarCambioModo: false,
+            // modos: ['semana', 'mes', 'anio'],
+            mostrarBotonHoy: false,
+            mostrarCambioModo: false,
             // modoCalendario: 'semana'
           }
         }}
