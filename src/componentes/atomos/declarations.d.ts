@@ -19,6 +19,8 @@ declare namespace React {
             'quimera-textarea': NodoComun;
             'quimera-icono': NodoComun;
             'box-icon': BoxIcon;
+            'quimera-tarjetas': NodoComun;
+            'quimera-tarjeta': NodoComun;
         }
     }
 }

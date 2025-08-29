@@ -1,0 +1,36 @@
+quimera-tarjetas {
+    :root {
+        --transicion-basica: 0.12 ease-in-out;
+    }
+
+    width: 100%;
+    display: block;
+    margin-top: 100px;
+}
+
+quimera-tarjeta {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-fondo);
+    border: var(--tamaño-borde-s) solid var(--gris-4);
+    border-radius: var(--radio-borde-m);
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+    margin: var(--espaciado-xs);
+    padding: var(--espaciado-m);
+    transition: box-shadow 0.15s, border-color 0.15s;
+    cursor: pointer;
+}
+
+quimera-tarjeta.seleccionada {
+    border-color: var(--color-primario);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.10);
+}
+
+quimera-tarjetas .cargando,
+quimera-tarjetas .no-datos {
+    width: 100%;
+    text-align: center;
+    color: var(--color-texto-secundario);
+    padding: var(--espaciado-m);
+    font-size: var(--tamaño-letra-m);
+}

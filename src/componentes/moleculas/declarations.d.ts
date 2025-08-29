@@ -3,6 +3,7 @@ declare namespace React {
         interface IntrinsicElements {
             'quimera-autocompletar': NodoComun;
             'quimera-modal': NodoComun;
+            'quimera-acciones': NodoComun;
         }
     }
 }

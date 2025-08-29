@@ -1,0 +1,17 @@
+.tarjeta-cliente {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+}
+
+.tarjeta-titulo {
+    font-size: var(--tamaño-letra-l);
+    font-weight: var(--grosor-letra-6);
+    color: var(--color-texto-principal);
+}
+
+.tarjeta-detalle {
+    font-size: var(--tamaño-letra-m);
+    color: var(--color-texto-secundario);
+}
