@@ -18,7 +18,6 @@ interface EventosCalendarioState {
 }
 
 const MESES_BUFFER = 3; // Meses a cargar por cada lado
-const MESES_MAXIMOS = 12; // Máximo de meses en cache
 
 // Helpers para manejo de fechas
 const obtenerInicioMes = (fecha: Date): Date => {
@@ -140,14 +139,6 @@ export const useEventosCalendarioInfinito = (filtro: Filtro): EventosCalendarioS
         const eventosUnificados = [...eventosAnteriores, ...eventosActuales]
           .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime());
 
-        // Limitar el cache si es necesario
-        const totalMeses = Math.floor((rangoActual.fin.getTime() - nuevoInicio.getTime()) / (1000 * 60 * 60 * 24 * 30));
-        if (totalMeses > MESES_MAXIMOS) {
-          // Recortar eventos del final
-          const fechaCorte = obtenerFinMes(sumarMeses(rangoActual.inicio, MESES_MAXIMOS));
-          return eventosUnificados.filter(evento => new Date(evento.fecha_inicio) <= fechaCorte);
-        }
-
         return eventosUnificados;
       });
 
@@ -198,14 +189,6 @@ export const useEventosCalendarioInfinito = (filtro: Filtro): EventosCalendarioS
         // Combinar eventos actuales con los posteriores (ordenar por fecha)
         const eventosUnificados = [...eventosActuales, ...eventosPosteriores]
           .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime());
-
-        // Limitar el cache si es necesario
-        const totalMeses = Math.floor((nuevoFin.getTime() - rangoActual.inicio.getTime()) / (1000 * 60 * 60 * 24 * 30));
-        if (totalMeses > MESES_MAXIMOS) {
-          // Recortar eventos del inicio
-          const fechaCorte = obtenerFinMes(sumarMeses(rangoActual.inicio, MESES_MAXIMOS));
-          return eventosUnificados.filter(evento => new Date(evento.fecha_inicio) <= fechaCorte);
-        }
 
         return eventosUnificados;
       });
