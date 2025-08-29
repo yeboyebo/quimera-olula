@@ -8,7 +8,7 @@ export function isMobile(breakpoint = 640) {
 export function useSwipe(
   onSwipeLeft: () => void,
   onSwipeRight: () => void
-): React.RefObject<HTMLDivElement> {
+): React.RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;

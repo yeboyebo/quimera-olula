@@ -192,6 +192,8 @@ export function Calendario<T extends DatoBase>({
         esMovil={esMovil}
         modoAnio={modoVista === 'anio'}
         setModoAnio={(valor) => setModoVista(valor ? 'anio' : 'mes')}
+        modoVista={modoVista}
+        setModoVista={setModoVista}
         formatearMesAño={formatearMesAño}
         fechaActual={fechaActual}
         navegarTiempo={navegarTiempo}

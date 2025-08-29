@@ -2,6 +2,7 @@ import React from 'react';
 import { QIcono } from '../atomos/qicono.tsx';
 import { CabeceraCalendario } from './CabeceraCalendario';
 import { MenuAccionesMovil } from './MenuAccionesMovil';
+import { ModoCalendario } from './tipos';
 
 interface CabeceraBotones {
   izqModo?: React.ReactNode[];
@@ -13,7 +14,9 @@ interface CabeceraBotones {
 interface CabeceraGridProps {
   esMovil: boolean;
   modoAnio: boolean;
+  modoVista?: ModoCalendario;
   setModoAnio: (v: boolean | ((m: boolean) => boolean)) => void;
+  setModoVista?: (modo: ModoCalendario) => void;
   formatearMesAño: (fecha: Date) => string;
   fechaActual: Date;
   navegarTiempo: (dir: number) => void;
@@ -28,6 +31,8 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
   esMovil,
   modoAnio,
   setModoAnio,
+  modoVista,
+  setModoVista,
   formatearMesAño,
   fechaActual,
   navegarTiempo,
@@ -49,6 +54,8 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
         <MenuAccionesMovil
           modoAnio={modoAnio}
           onCambioModo={() => setModoAnio(!modoAnio)}
+          modoVista={modoVista}
+          onCambioModoVista={setModoVista}
           botonesIzqModo={izqModo}
           botonesDerModo={derModo}
           botonesIzqHoy={izqHoy}
@@ -75,6 +82,8 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
     <CabeceraCalendario
       modoAnio={modoAnio}
       setModoAnio={setModoAnio}
+      modoVista={modoVista}
+      setModoVista={setModoVista}
       formatearMesAño={formatearMesAño}
       fechaActual={fechaActual}
       navegarTiempo={navegarTiempo}

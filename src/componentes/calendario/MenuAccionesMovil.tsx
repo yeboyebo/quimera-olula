@@ -2,11 +2,15 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { QBoton } from '../atomos/qboton.tsx';
 import { QIcono } from '../atomos/qicono.tsx';
+import { SelectorModo } from './SelectorModo';
 import './menu-acciones-movil.css';
+import { ModoCalendario } from './tipos';
 
 interface MenuAccionesMovilProps {
   modoAnio: boolean;
+  modoVista?: ModoCalendario;
   onCambioModo: () => void;
+  onCambioModoVista?: (modo: ModoCalendario) => void;
   botonesIzqModo?: React.ReactNode[];
   botonesDerModo?: React.ReactNode[];
   botonesIzqHoy?: React.ReactNode[];
@@ -16,7 +20,9 @@ interface MenuAccionesMovilProps {
 
 export function MenuAccionesMovil({
   modoAnio,
+  modoVista,
   onCambioModo,
+  onCambioModoVista,
   botonesIzqModo = [],
   botonesDerModo = [],
   botonesIzqHoy = [],
@@ -143,12 +149,28 @@ export function MenuAccionesMovil({
               </div>
             ))}
             
-            {mostrarCambioModo && <div className="menu-acciones-fila" key={'modo'}>
-              <QBoton onClick={handleCambioModo} variante={'texto'}>
-                {modoAnio ? 'Modo Mes' : 'Modo Año'}
-              </QBoton>
-            </div>
-            }
+            {mostrarCambioModo && onCambioModoVista && (
+              <div className="menu-acciones-fila" key={'selector-modo'}>
+                <SelectorModo
+                  modoActual={modoVista || 'mes'}
+                  onCambioModo={(modo) => {
+                    onCambioModoVista(modo);
+                    cerrarMenu();
+                  }}
+                  variante="vertical"
+                  mostrarIconos={false}
+                />
+              </div>
+            )}
+            
+            {/* Fallback para compatibilidad con sistemas que no usan modoVista */}
+            {mostrarCambioModo && !onCambioModoVista && (
+              <div className="menu-acciones-fila" key={'modo'}>
+                <QBoton onClick={handleCambioModo} variante={'texto'}>
+                  {modoAnio ? 'Modo Mes' : 'Modo Año'}
+                </QBoton>
+              </div>
+            )}
 
             {botonesDerModo.map((boton, index) => (
               <div className="menu-acciones-fila" key={index}>
