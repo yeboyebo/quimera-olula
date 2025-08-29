@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { ContextoError } from "../../contextos/comun/contexto.ts";
+import { ContextoError, QError } from "../../contextos/comun/contexto.ts";
 import {
   Criteria,
   Entidad,
@@ -79,33 +79,35 @@ export const Listado = <T extends Entidad>({
   );
   const [totalRegistros, setTotalRegistros] = useState(0);
   const [modo, setModo] = useState<Modo>(modoInicial);
-  const { intentar } = useContext(ContextoError);
+  const { setError } = useContext(ContextoError);
 
   useEffect(() => {
     let hecho = false;
     setCargando(true);
-
-    const cargarDatos = async () => {
-      await intentar(() =>
-        cargar(filtro, orden, paginacion).then(({ datos, total }) => {
-          if (hecho) return;
-          if (datos.length > 0) {
-            setEntidades(datos as T[]);
-            if (total && total > 0) {
-              setTotalRegistros(total);
-            }
+    cargar(filtro, orden, paginacion)
+      .then(({ datos, total }) => {
+        if (hecho) return;
+        if (datos.length > 0) {
+          setEntidades(datos as T[]);
+          if (total && total > 0) {
+            setTotalRegistros(total);
           }
-          setCargando(false);
-        })
-      );
-    };
-
-    cargarDatos();
+        }
+        setCargando(false);
+      })
+      .catch((error) => {
+        if (hecho) return;
+        const apiError = error as QError;
+        setError({
+          nombre: apiError.nombre,
+          descripcion: apiError.descripcion,
+        });
+      });
 
     return () => {
       hecho = true;
     };
-  }, [filtro, orden, paginacion, cargar, setEntidades, intentar]);
+  }, [filtro, orden, paginacion, cargar, setEntidades, setError]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
