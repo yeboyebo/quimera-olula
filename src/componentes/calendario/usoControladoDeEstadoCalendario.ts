@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CalendarioConfig, DatoBase } from './tipos';
+import { CalendarioConfig, DatoBase, ModoCalendario } from './tipos';
 
 interface UseControlledCalendarStateProps<T extends DatoBase> {
   config: Partial<CalendarioConfig<T>>;
@@ -13,8 +13,8 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({ config }: 
   // Setters separados para evitar ambigüedad de tipos
   const setFechaActualControlado = config.onFechaActualChange;
   const setFechaActualNoControlado = setFechaNoControlada;
-  const modoInicial = config.cabecera?.modoCalendario === 'anio';
-  const [modoAnio, setModoAnio] = useState(modoInicial);
+  const modoInicial = config.cabecera?.modoCalendario || 'mes';
+  const [modoVista, setModoVista] = useState<ModoCalendario>(modoInicial);
 
   // Scroll y refs para modo año
   const anioGridRef = useRef<HTMLDivElement>(null);
@@ -22,16 +22,16 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({ config }: 
 
   // Scroll al mes actual al cambiar a modo año
   useEffect(() => {
-    if (modoAnio && anioGridRef.current) {
+    if (modoVista === 'anio' && anioGridRef.current) {
       const hoy = new Date();
       scrollToMes(hoy.getMonth());
     }
-  }, [modoAnio]);
+  }, [modoVista]);
 
   useEffect(() => {
     // Sincronizar el estado interno si cambia la prop modoCalendario
     if (config.cabecera?.modoCalendario) {
-      setModoAnio(config.cabecera.modoCalendario === 'anio');
+      setModoVista(config.cabecera.modoCalendario);
     }
   }, [config.cabecera?.modoCalendario]);
 
@@ -64,8 +64,8 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({ config }: 
     fechaActual,
     setFechaActualControlado,
     setFechaActualNoControlado,
-    modoAnio,
-    setModoAnio,
+    modoVista,
+    setModoVista,
     anioGridRef,
     scrollPosition,
     setScrollPosition,

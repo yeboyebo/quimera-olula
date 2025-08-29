@@ -1,10 +1,11 @@
 import React from 'react';
 import { DiaCalendario } from './DiaCalendario';
-import { getSemanasDelMes } from './helpers';
-import { DatoBase } from './tipos';
+import { getSemanaActual, getSemanasDelMes } from './helpers';
+import { DatoBase, ModoCalendario } from './tipos';
 
 interface CalendarioGridProps<T extends DatoBase> {
   modoAnio: boolean;
+  modoVista?: ModoCalendario; // Nueva prop para futura compatibilidad
   fechaActual: Date;
   anioGridRef?: React.RefObject<HTMLDivElement | null>;
   handleScroll: () => void;
@@ -14,7 +15,7 @@ interface CalendarioGridProps<T extends DatoBase> {
   esHoyFn: (fecha: Date) => boolean;
   esMesActualFn: (fecha: Date, mesReferencia: Date) => boolean;
   formatearMesFn: (fecha: Date) => string;
-  formatearMesAñoFn: (fecha: Date) => string;
+  formatearMesAñoFn?: (fecha: Date) => string;
   datos: T[];
   renderDia?: (args: {
     fecha: Date;
@@ -28,6 +29,7 @@ interface CalendarioGridProps<T extends DatoBase> {
 
 export function CalendarioGrid<T extends DatoBase>({
   modoAnio,
+  modoVista,
   fechaActual,
   anioGridRef,
   handleScroll,
@@ -37,15 +39,21 @@ export function CalendarioGrid<T extends DatoBase>({
   esHoyFn,
   esMesActualFn,
   formatearMesFn,
-  formatearMesAñoFn,
+  // formatearMesAñoFn, // No se usa actualmente
   datos,
   renderDia,
   renderDato,
   maxDatosVisibles,
 }: CalendarioGridProps<T>) {
+  // Si se pasa modoVista, usamos esa información
+  const modoCalendario = modoVista || (modoAnio ? 'anio' : 'mes');
+
   const renderDiaPorDefecto = (fecha: Date, mesReferencia: Date) => {
     const esDiaDelMes = esMesActualFn(fecha, mesReferencia);
     const datosDelDia: T[] = esDiaDelMes ? getDatosPorFechaFn(datos, fecha) : [];
+    // En modo semana, permitir más eventos visibles para aprovechar el espacio vertical
+    const maxEventosVisibles = modoCalendario === 'semana' ? 50 : maxDatosVisibles;
+    
     return (
       <DiaCalendario
         fecha={fecha}
@@ -53,13 +61,13 @@ export function CalendarioGrid<T extends DatoBase>({
         datos={datosDelDia}
         esHoy={esHoyFn(fecha)}
         esMesActual={esDiaDelMes}
-        maxDatosVisibles={maxDatosVisibles}
+        maxDatosVisibles={maxEventosVisibles}
         renderDato={renderDato}
       />
     );
   };
 
-  if (modoAnio) {
+  if (modoCalendario === 'anio' || modoAnio) {
     return (
       <div 
         ref={anioGridRef} 
@@ -102,6 +110,37 @@ export function CalendarioGrid<T extends DatoBase>({
       </div>
     );
   }
+
+  // Modo semana
+  if (modoCalendario === 'semana') {
+    const semanaActual = getSemanaActual(fechaActual, inicioSemana);
+    
+    return (
+      <div className="calendario-grid calendario-grid-semana">
+        <div className="calendario-dias-semana">
+          {diasSemana.map(dia => (
+            <div key={dia} className="dia-semana">{dia}</div>
+          ))}
+        </div>
+        <div className="calendario-semanas calendario-semanas-semana">
+          <div className="calendario-semana calendario-semana-modo-semana">
+            {semanaActual.map((dia) => {
+              const key = dia.toISOString();
+              return renderDia
+                ? <React.Fragment key={key}>{renderDia({
+                    fecha: dia,
+                    datos: getDatosPorFechaFn(datos, dia),
+                    esMesActual: esMesActualFn(dia, fechaActual),
+                    esHoy: esHoyFn(dia)
+                  })}</React.Fragment>
+                : <React.Fragment key={key}>{renderDiaPorDefecto(dia, fechaActual)}</React.Fragment>;
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Modo mes
   return (
     <div className="calendario-grid">

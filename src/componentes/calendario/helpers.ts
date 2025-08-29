@@ -79,3 +79,46 @@ export const getDiasSemana = (inicioSemana: 'lunes' | 'domingo' = 'lunes') =>
   inicioSemana === 'lunes'
     ? ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
     : ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+// Helpers para modo semana
+export const getSemanaActual = (fecha: Date, inicioSemana: 'lunes' | 'domingo' = 'lunes') => {
+  const dia = new Date(fecha);
+  const diaSemana = dia.getDay();
+
+  // Calcular el primer día de la semana
+  let diferencia;
+  if (inicioSemana === 'lunes') {
+    diferencia = diaSemana === 0 ? 6 : diaSemana - 1;
+  } else {
+    diferencia = diaSemana;
+  }
+
+  const primerDiaSemana = new Date(dia);
+  primerDiaSemana.setDate(dia.getDate() - diferencia);
+
+  // Generar array con los 7 días de la semana
+  return Array.from({ length: 7 }, (_, i) => {
+    const nuevoDia = new Date(primerDiaSemana);
+    nuevoDia.setDate(primerDiaSemana.getDate() + i);
+    return nuevoDia;
+  });
+};
+
+export const formatearSemana = (fecha: Date) => {
+  const diasSemana = getSemanaActual(fecha);
+  const primerDia = diasSemana[0];
+  const ultimoDia = diasSemana[6];
+
+  const formatearDia = (dia: Date) => dia.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'short'
+  });
+
+  return `${formatearDia(primerDia)} - ${formatearDia(ultimoDia)}`;
+};
+
+export const esSemanaActual = (fecha: Date, semanaReferencia: Date) => {
+  const semanaFecha = getSemanaActual(fecha);
+  const semanaRef = getSemanaActual(semanaReferencia);
+  return semanaFecha[0].toDateString() === semanaRef[0].toDateString();
+};

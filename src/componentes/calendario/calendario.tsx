@@ -50,8 +50,8 @@ export function Calendario<T extends DatoBase>({
     fechaActual,
     setFechaActualControlado,
     setFechaActualNoControlado,
-    modoAnio,
-    setModoAnio,
+    modoVista,
+    setModoVista,
     anioGridRef,
     scrollPosition,
     scrollToMes,
@@ -62,8 +62,10 @@ export function Calendario<T extends DatoBase>({
   const setFechaActualAntSig = (dir: number) => {
     if (controlado && setFechaActualControlado) {
       const nueva = new Date(fechaActual);
-      if (modoAnio) {
+      if (modoVista === 'anio') {
         nueva.setFullYear(nueva.getFullYear() + dir);
+      } else if (modoVista === 'semana') {
+        nueva.setDate(nueva.getDate() + (dir * 7));
       } else {
         nueva.setMonth(nueva.getMonth() + dir);
       }
@@ -71,8 +73,10 @@ export function Calendario<T extends DatoBase>({
     } else {
       setFechaActualNoControlado((prev: Date) => {
         const nueva = new Date(prev);
-        if (modoAnio) {
+        if (modoVista === 'anio') {
           nueva.setFullYear(nueva.getFullYear() + dir);
+        } else if (modoVista === 'semana') {
+          nueva.setDate(nueva.getDate() + (dir * 7));
         } else {
           nueva.setMonth(nueva.getMonth() + dir);
         }
@@ -88,10 +92,9 @@ export function Calendario<T extends DatoBase>({
 
   const {
     cabecera = {},
-    maxDatosVisibles = modoAnio ? 2 : 3,
+    maxDatosVisibles = modoVista === 'anio' ? 2 : modoVista === 'semana' ? 1 : 3,
     inicioSemana = 'lunes',
     getDatosPorFecha: getDatosPorFechaConfig,
-    teclado: configTeclado,
   } = config;
   const {
     botonesIzqModo = [],
@@ -117,20 +120,23 @@ export function Calendario<T extends DatoBase>({
   const [scrollToMesIndex, setScrollToMesIndex] = useState<number|null>(null);
 
   const navegarTiempo = (direccion: number) => {
-    const nuevaFecha = new Date(fechaActual);
-    if (modoAnio) {
-      nuevaFecha.setFullYear(nuevaFecha.getFullYear() + direccion);
+    const nueva = new Date(fechaActual);
+    if (modoVista === 'anio') {
+      nueva.setFullYear(nueva.getFullYear() + direccion);
+    } else if (modoVista === 'semana') {
+      nueva.setDate(nueva.getDate() + direccion);
     } else {
-      nuevaFecha.setMonth(nuevaFecha.getMonth() + direccion);
+      // Modo mes y modo día usan meses
+      nueva.setMonth(nueva.getMonth() + direccion);
     }
     if (controlado && setFechaActualControlado) {
-      setFechaActualControlado(nuevaFecha);
+      setFechaActualControlado(nueva);
     } else {
-      setFechaActualNoControlado(nuevaFecha);
+      setFechaActualNoControlado(nueva);
     }
 
     // Mantener posición de scroll relativa en modo año
-    if (modoAnio && anioGridRef.current) {
+    if (modoVista === 'anio' && anioGridRef.current) {
       setTimeout(() => {
         if (anioGridRef.current) {
           anioGridRef.current.scrollTop = scrollPosition;
@@ -147,29 +153,29 @@ export function Calendario<T extends DatoBase>({
       setFechaActualNoControlado(hoy);
     }
     // En modo año, forzar scroll tras el render
-    if (modoAnio) {
+    if (modoVista === 'anio') {
       setScrollToMesIndex(hoy.getMonth());
     }
   };
 
   // Efecto: cuando scrollToMesIndex cambia, hacer scroll tras el render
   useEffect(() => {
-    if (scrollToMesIndex !== null && modoAnio && anioGridRef.current) {
+    if (scrollToMesIndex !== null && modoVista === 'anio' && anioGridRef.current) {
       // Esperar al siguiente tick para asegurar render
       setTimeout(() => {
         scrollToMes(scrollToMesIndex);
         setScrollToMesIndex(null);
       }, 0);
     }
-  }, [scrollToMesIndex, modoAnio, scrollToMes, anioGridRef]);
+  }, [scrollToMesIndex, modoVista, scrollToMes, anioGridRef]);
 
   // Navegación por teclado
   const { containerRef } = useNavegacionTeclado({
-    config: configTeclado,
-    modoAnio,
+    config: config.teclado,
+    modoVista,
     fechaActual,
     navegarTiempo,
-    setModoAnio,
+    setModoVista,
     irAHoy,
     esMovil,
     anioGridRef
@@ -184,8 +190,8 @@ export function Calendario<T extends DatoBase>({
     >
       <CabeceraGrid
         esMovil={esMovil}
-        modoAnio={modoAnio}
-        setModoAnio={setModoAnio}
+        modoAnio={modoVista === 'anio'}
+        setModoAnio={(valor) => setModoVista(valor ? 'anio' : 'mes')}
         formatearMesAño={formatearMesAño}
         fechaActual={fechaActual}
         navegarTiempo={navegarTiempo}
@@ -201,7 +207,8 @@ export function Calendario<T extends DatoBase>({
         }}
       />
       <CalendarioGrid
-        modoAnio={modoAnio}
+        modoAnio={modoVista === 'anio'}
+        modoVista={modoVista}
         fechaActual={fechaActual}
         anioGridRef={anioGridRef}
         handleScroll={handleScroll}

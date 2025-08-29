@@ -13,7 +13,7 @@ interface DiaCalendarioProps<T extends DatoBase> {
 
 export function DiaCalendario<T extends DatoBase>({
   fecha,
-  mesReferencia,
+  mesReferencia: _mesReferencia,
   datos,
   esHoy,
   esMesActual,
@@ -23,11 +23,13 @@ export function DiaCalendario<T extends DatoBase>({
   return (
     <div className={`calendario-dia ${!esMesActual ? 'otro-mes' : ''} ${esHoy ? 'hoy' : ''}`}>
       <div className="dia-numero">{fecha.getDate()}</div>
-      {esMesActual && datos.slice(0, maxDatosVisibles).map((dato) => (
-        renderDato
-          ? renderDato(dato)
-          : <div key={dato.id} className="dato-item">{dato.descripcion}</div>
-      ))}
+      <div className="eventos-container">
+        {esMesActual && datos.slice(0, maxDatosVisibles).map((dato) => (
+          renderDato
+            ? renderDato(dato)
+            : <div key={dato.id} className="dato-item">{dato.descripcion}</div>
+        ))}
+      </div>
     </div>
   );
 }

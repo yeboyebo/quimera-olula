@@ -7,6 +7,9 @@ export interface DatoBase {
   [key: string]: any; // Permite propiedades adicionales
 }
 
+// Tipos para los modos de vista del calendario
+export type ModoCalendario = 'dia' | 'semana' | 'mes' | 'anio';
+
 // Tipo para las funciones de formateo personalizadas
 export interface CalendarioConfig<T extends DatoBase = DatoBase> {
   /** Permite controlar la fecha actual desde fuera (modo controlado, útil para móvil) */
@@ -29,7 +32,7 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
     mostrarCambioModo?: boolean;
     mostrarControlesNavegacion?: boolean;
     mostrarBotonHoy?: boolean;
-    modoCalendario?: 'mes' | 'anio';
+    modoCalendario?: ModoCalendario;
   };
   teclado?: ConfigTeclado;
   estilos?: {

@@ -48,7 +48,7 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
       <div className="calendario-cabecera">
         <MenuAccionesMovil
           modoAnio={modoAnio}
-          onCambioModo={() => setModoAnio((m: boolean) => !m)}
+          onCambioModo={() => setModoAnio(!modoAnio)}
           botonesIzqModo={izqModo}
           botonesDerModo={derModo}
           botonesIzqHoy={izqHoy}
