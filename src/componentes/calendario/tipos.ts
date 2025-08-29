@@ -1,3 +1,5 @@
+import { ConfigTeclado } from './useNavegacionTeclado';
+
 // Tipo base que deben cumplir todos los datos
 export interface DatoBase {
   id: string | number;
@@ -29,6 +31,7 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
     mostrarBotonHoy?: boolean;
     modoCalendario?: 'mes' | 'anio';
   };
+  teclado?: ConfigTeclado;
   estilos?: {
     dia?: React.CSSProperties;
     dato?: React.CSSProperties;

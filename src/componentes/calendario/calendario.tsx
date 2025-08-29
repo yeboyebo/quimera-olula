@@ -7,6 +7,7 @@ import { CalendarioGrid } from './CalendarioGrid';
 import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, getDiasSemana } from './helpers';
 import { isMobile, useSwipe } from './hooks';
 import { CalendarioConfig, DatoBase } from './tipos';
+import { ConfigTeclado, useNavegacionTeclado } from './useNavegacionTeclado';
 import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendario.ts';
 
 
@@ -24,6 +25,7 @@ interface CalendarioProps<T extends DatoBase> {
     maxDatosVisibles?: number;
     inicioSemana?: 'lunes' | 'domingo';
     getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
+    teclado?: ConfigTeclado;
   };
   renderDia?: (args: {
     fecha: Date;
@@ -89,6 +91,7 @@ export function Calendario<T extends DatoBase>({
     maxDatosVisibles = modoAnio ? 2 : 3,
     inicioSemana = 'lunes',
     getDatosPorFecha: getDatosPorFechaConfig,
+    teclado: configTeclado,
   } = config;
   const {
     botonesIzqModo = [],
@@ -160,10 +163,25 @@ export function Calendario<T extends DatoBase>({
     }
   }, [scrollToMesIndex, modoAnio, scrollToMes, anioGridRef]);
 
-  // Cabecera: ahora es un componente externo
+  // Navegación por teclado
+  const { containerRef } = useNavegacionTeclado({
+    config: configTeclado,
+    modoAnio,
+    fechaActual,
+    navegarTiempo,
+    setModoAnio,
+    irAHoy,
+    esMovil,
+    anioGridRef
+  });
 
   return (
-    <div className="calendario-container" ref={esMovil ? calendarioRef : undefined}>
+    <div 
+      className="calendario-container" 
+      ref={esMovil ? calendarioRef : containerRef}
+      tabIndex={0}
+      style={{ outline: 'none' }}
+    >
       <CabeceraGrid
         esMovil={esMovil}
         modoAnio={modoAnio}

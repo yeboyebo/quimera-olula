@@ -68,9 +68,7 @@ export const CalendarioEventos = () => {
     }
   };
 
-  const emitir = useMaquina(maquina, estado, setEstado);  
-
-  // console.log('mimensaje_aaaaaaaaaaaaaaaa', eventosCalendarioData);
+  const emitir = useMaquina(maquina, estado, setEstado);
 
   const cambiarFiltro = (clave: string, valor: string, operador = "~") => {
     setFiltro((prev) => [
@@ -81,11 +79,7 @@ export const CalendarioEventos = () => {
   const borrarFiltro = (clave: string) => {
     setFiltro((prev) => prev.filter(([k]) => k !== clave));
   };
-  const resetearFiltro = () => setFiltro([]);  
-  
-  const generarEnlace = () => {
-      console.log('mimensaje_generarEnlace_clicked');
-  };  
+  const resetearFiltro = () => setFiltro([]);
 
   // Generar enlace a calendario
 
@@ -97,6 +91,17 @@ export const CalendarioEventos = () => {
         config={{
           // inicioSemana: "domingo",
           maxDatosVisibles: 5,
+          teclado: {
+            atajos: {
+              nuevo: 'n',      // Atajo personalizado para crear evento
+            },
+            onAccion: (accion) => {
+              if (accion === 'nuevo') {
+                emitir("ALTA_INICIADA");
+              }
+              // Se pueden añadir más acciones personalizadas aquí
+            }
+          },
           cabecera: {        
             botonesDerModo: !esMovil ? [ 
               <MaestroFiltros
@@ -138,8 +143,6 @@ export const CalendarioEventos = () => {
       >
         <AltaEvento emitir={emitir} />
       </QModal>
-
-        {/* <>{console.log('mimensaje_aaaaaaaaaaaaaaaa', eventoAbierto)}</> */}
 
       <QModal
         nombre="fichaEvento"

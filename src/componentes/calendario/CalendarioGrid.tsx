@@ -61,7 +61,13 @@ export function CalendarioGrid<T extends DatoBase>({
 
   if (modoAnio) {
     return (
-      <div ref={anioGridRef} className="anio-grid" onScroll={handleScroll}>
+      <div 
+        ref={anioGridRef} 
+        className="anio-grid" 
+        onScroll={handleScroll}
+        tabIndex={0}
+        style={{ outline: 'none' }}
+      >
         {Array.from({ length: 12 }).map((_, i) => {
           const mesFecha = new Date(fechaActual.getFullYear(), i, 1);
           return (
