@@ -26,6 +26,8 @@ interface CalendarioProps<T extends DatoBase> {
     inicioSemana?: 'lunes' | 'domingo';
     getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
     teclado?: ConfigTeclado;
+    onNecesitaDatosAnteriores?: () => Promise<void>;
+    onNecesitaDatosPosteriores?: () => Promise<void>;
   };
   renderDia?: (args: {
     fecha: Date;
@@ -45,6 +47,17 @@ export function Calendario<T extends DatoBase>({
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
   const esMovil = isMobile(640);
+
+  // Extraer configuración primero
+  const {
+    cabecera = {},
+    maxDatosVisibles = 3, // Será ajustado por modo después
+    inicioSemana = 'lunes',
+    getDatosPorFecha: getDatosPorFechaConfig,
+    onNecesitaDatosAnteriores,
+    onNecesitaDatosPosteriores
+  } = config;
+
   const {
     controlado,
     fechaActual,
@@ -56,7 +69,11 @@ export function Calendario<T extends DatoBase>({
     scrollPosition,
     scrollToMes,
     handleScroll,
-  } = usoControladoDeEstadoCalendario({ config });
+  } = usoControladoDeEstadoCalendario({ 
+    config,
+    onNecesitaDatosAnteriores,
+    onNecesitaDatosPosteriores
+  });
 
   // Swipe: el hook se llama siempre, pero solo se usa el ref si esMovil
   const setFechaActualAntSig = (dir: number) => {
@@ -90,12 +107,9 @@ export function Calendario<T extends DatoBase>({
   );
   const calendarioRef = swipeRef;
 
-  const {
-    cabecera = {},
-    maxDatosVisibles = modoVista === 'anio' ? 2 : modoVista === 'semana' ? 1 : 3,
-    inicioSemana = 'lunes',
-    getDatosPorFecha: getDatosPorFechaConfig,
-  } = config;
+  // Ajustar maxDatosVisibles según el modo
+  const maxDatosVisiblesAjustado = maxDatosVisibles || (modoVista === 'anio' ? 2 : modoVista === 'semana' ? 1 : 3);
+
   const {
     botonesIzqModo = [],
     botonesDerModo = [],
@@ -130,6 +144,30 @@ export function Calendario<T extends DatoBase>({
       // Modo mes y modo día usan meses
       nueva.setMonth(nueva.getMonth() + direccion);
     }
+
+    // Detectar si necesitamos cargar más datos
+    const fechaNavegacion = nueva.getTime();
+    
+    // Obtener el rango de fechas de los datos actuales
+    if (datos.length > 0) {
+      const fechasOrdenadas = datos
+        .map(dato => new Date(dato.fecha).getTime())
+        .sort((a, b) => a - b);
+      
+      const fechaMinima = fechasOrdenadas[0];
+      const fechaMaxima = fechasOrdenadas[fechasOrdenadas.length - 1];
+      
+      // Si navegamos hacia fechas anteriores y estamos cerca del límite inferior
+      if (direccion < 0 && fechaNavegacion <= fechaMinima) {
+        onNecesitaDatosAnteriores?.();
+      }
+      
+      // Si navegamos hacia fechas posteriores y estamos cerca del límite superior
+      if (direccion > 0 && fechaNavegacion >= fechaMaxima) {
+        onNecesitaDatosPosteriores?.();
+      }
+    }
+
     if (controlado && setFechaActualControlado) {
       setFechaActualControlado(nueva);
     } else {
@@ -228,7 +266,7 @@ export function Calendario<T extends DatoBase>({
         datos={datos}
         renderDia={renderDia}
         renderDato={renderDato}
-        maxDatosVisibles={maxDatosVisibles}
+        maxDatosVisibles={maxDatosVisiblesAjustado}
       />
       {cargando && (
         <div className="calendario-cargando">

@@ -15,6 +15,9 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
   /** Permite controlar la fecha actual desde fuera (modo controlado, útil para móvil) */
   fechaActual?: Date;
   onFechaActualChange?: (fecha: Date) => void;
+  /** Callbacks para carga infinita cuando se navega fuera del rango de datos */
+  onNecesitaDatosAnteriores?: () => Promise<void>;
+  onNecesitaDatosPosteriores?: () => Promise<void>;
   formatearMes?: (fecha: Date) => string;
   formatearMesAño?: (fecha: Date) => string;
   getDiasDelMes?: (fecha: Date) => Date[];

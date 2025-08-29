@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
 import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { useEsMovil } from "../../../../../../componentes/maestro/useEsMovil.ts";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { Filtro } from "../../../../../../contextos/comun/diseño.ts";
-import { useLista } from "../../../../../../contextos/comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip/TextoConTooltip.tsx";
 import { AltaEvento } from "../../evento/vistas/AltaEvento.tsx";
 import { EventoCalendario } from "../diseño.ts";
-import { getEventosCalendario } from "../infraestructura.ts";
+import { useEventosCalendarioInfinito } from "../useEventosCalendarioInfinito.ts";
 import "./CalendarioEventos.css";
 import { FichaEventoAbierto } from "./FichaEventoAbierto.tsx";
 
@@ -18,36 +17,28 @@ import { FichaEventoAbierto } from "./FichaEventoAbierto.tsx";
 type Estado = "calendario" | "alta" | "evento_abierto";
 
 export const CalendarioEventos = () => {
-  const eventosCalendarioData = useLista<EventoCalendario>([]);
   const [eventoAbierto, setEventoAbierto] = useState<EventoCalendario | null>(null);
-  const [cargando, setCargando] = useState(false);
   const [filtro, setFiltro] = useState<Filtro>([]);
   const [estado, setEstado] = useState<Estado>("calendario");
   const esMovil = useEsMovil(640);
   const camposFiltro = ["descripcionref","referencia"];
 
-  // Cargar eventos al montar el componente
-  useEffect(() => {
-    const fetchEventosCalendario = async () => {
-      setCargando(true);
-      const eventos = await getEventosCalendario(filtro, []);
-      eventosCalendarioData.setLista(eventos); // Call the setLista method on the correct object
-      setCargando(false);
-    };
-    fetchEventosCalendario();
-  }, [filtro]);
-
+  // Usar el nuevo hook de carga infinita
+  const {
+    eventos,
+    cargando,
+    expandirRangoAnterior,
+    expandirRangoPosterior,
+    resetear
+  } = useEventosCalendarioInfinito(filtro);
 
   // Definir la máquina de estados
   const maquina: Maquina<Estado> = {
     alta: {
-      EVENTO_CREADO: (payload: unknown) => {
-        const evento = payload as EventoCalendario;        
-        const eventoProcesado = {
-          ...evento,
-          fecha: evento.fecha_inicio
-        }
-        eventosCalendarioData.añadir(eventoProcesado);
+      EVENTO_CREADO: () => {
+        // TODO: Implementar añadir evento al cache local
+        // Por ahora, resetear para recargar datos
+        resetear();
         return "calendario";
       },
       ALTA_CANCELADA: "calendario",
@@ -86,11 +77,13 @@ export const CalendarioEventos = () => {
   return (
     <div className="calendario-eventos">
       <Calendario
-        datos={eventosCalendarioData.lista}
+        datos={eventos}
         cargando={cargando}
         config={{
           // inicioSemana: "domingo",
           maxDatosVisibles: 5,
+          onNecesitaDatosAnteriores: expandirRangoAnterior,
+          onNecesitaDatosPosteriores: expandirRangoPosterior,
           teclado: {
             atajos: {
               nuevo: 'n',      // Atajo personalizado para crear evento
@@ -122,7 +115,7 @@ export const CalendarioEventos = () => {
             // modos: ['semana', 'mes', 'anio'],
             // mostrarBotonHoy: false,
             // mostrarCambioModo: false,
-            // modoCalendario: 'semana'
+            modoCalendario: 'anio'
           }
         }}
         renderDato={(dato: EventoCalendario) => (

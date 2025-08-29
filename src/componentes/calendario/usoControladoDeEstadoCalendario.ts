@@ -3,9 +3,15 @@ import { CalendarioConfig, DatoBase, ModoCalendario } from './tipos';
 
 interface UseControlledCalendarStateProps<T extends DatoBase> {
   config: Partial<CalendarioConfig<T>>;
+  onNecesitaDatosAnteriores?: () => Promise<void>;
+  onNecesitaDatosPosteriores?: () => Promise<void>;
 }
 
-export function usoControladoDeEstadoCalendario<T extends DatoBase>({ config }: UseControlledCalendarStateProps<T>) {
+export function usoControladoDeEstadoCalendario<T extends DatoBase>({
+  config,
+  onNecesitaDatosAnteriores,
+  onNecesitaDatosPosteriores
+}: UseControlledCalendarStateProps<T>) {
   // Control de fecha y modo: si no se pasa desde fuera, lo gestiona el propio componente
   const controlado = typeof config.fechaActual !== 'undefined' && typeof config.onFechaActualChange === 'function';
   const [fechaNoControlada, setFechaNoControlada] = useState(() => config.fechaActual ?? new Date());
@@ -56,8 +62,29 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({ config }: 
   const handleScroll = useCallback(() => {
     if (anioGridRef.current) {
       setScrollPosition(anioGridRef.current.scrollTop);
+
+      // Detectar carga infinita solo en modo año
+      if (modoVista === 'anio') {
+        const container = anioGridRef.current;
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+
+        // Detectar si estamos en el 25% superior o inferior del scroll
+        const scrollRatio = scrollTop / (scrollHeight - clientHeight);
+
+        // Si estamos en el último 25% del scroll (scroll hacia abajo)
+        if (scrollRatio > 0.75) {
+          onNecesitaDatosPosteriores?.();
+        }
+
+        // Si estamos en el primer 25% del scroll (scroll hacia arriba)
+        if (scrollRatio < 0.25) {
+          onNecesitaDatosAnteriores?.();
+        }
+      }
     }
-  }, []);
+  }, [modoVista, onNecesitaDatosAnteriores, onNecesitaDatosPosteriores]);
 
   return {
     controlado,
