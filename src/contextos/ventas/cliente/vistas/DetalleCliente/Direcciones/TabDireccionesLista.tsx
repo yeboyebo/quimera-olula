@@ -39,12 +39,11 @@ export const TabDireccionesLista = ({
 }) => {
   const acciones = [
     {
-      icono: "nuevo",
       texto: "Nueva",
+      variante: "borde" as const,
       onClick: () => emitir("ALTA_SOLICITADA"),
     },
     {
-      icono: "editar",
       texto: "Editar",
       onClick: () => seleccionada && emitir("EDICION_SOLICITADA"),
       deshabilitado: !seleccionada,
@@ -56,7 +55,6 @@ export const TabDireccionesLista = ({
       deshabilitado: !seleccionada,
     },
     {
-      icono: "check",
       texto: "Facturación",
       onClick: () => emitir("FACTURACION_SOLICITADA"),
       deshabilitado:
@@ -66,9 +64,7 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <div className="botones maestro-botones">
-        <QuimeraAcciones acciones={acciones} />
-      </div>
+      <QuimeraAcciones acciones={acciones} />
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}

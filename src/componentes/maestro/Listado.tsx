@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ContextoError } from "../../contextos/comun/contexto.ts";
 import {
   Criteria,
   Entidad,
@@ -12,6 +13,7 @@ import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
+import "./Listado.css";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
@@ -35,7 +37,7 @@ type Modo = "tabla" | "tarjetas";
 
 export type MaestroProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
-  formato?: (entidad: T) => React.ReactNode;
+  tarjeta?: (entidad: T) => React.ReactNode;
   criteria?: Criteria;
   entidades: T[];
   setEntidades: (entidades: T[]) => void;
@@ -51,7 +53,7 @@ export type MaestroProps<T extends Entidad> = {
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  formato,
+  tarjeta,
   criteria = { filtros: [], orden: ["id", "ASC"] },
   entidades,
   setEntidades,
@@ -60,6 +62,15 @@ export const Listado = <T extends Entidad>({
   tamañoPagina = 10,
   cargar,
 }: MaestroProps<T>) => {
+  const modoInicial: Modo =
+    metaTabla && tarjeta
+      ? "tabla"
+      : metaTabla
+      ? "tabla"
+      : tarjeta
+      ? "tarjetas"
+      : "tabla";
+
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
@@ -67,29 +78,34 @@ export const Listado = <T extends Entidad>({
     criteria.paginacion || { limite: tamañoPagina, pagina: 1 }
   );
   const [totalRegistros, setTotalRegistros] = useState(0);
-
-  // Nuevo estado para alternar entre tabla y tarjetas
-  const [modo, setModo] = useState<Modo>("tabla");
+  const [modo, setModo] = useState<Modo>(modoInicial);
+  const { intentar } = useContext(ContextoError);
 
   useEffect(() => {
     let hecho = false;
     setCargando(true);
-    //poner intentar
-    cargar(filtro, orden, paginacion).then(({ datos, total }) => {
-      if (hecho) return;
-      if (datos.length > 0) {
-        setEntidades(datos as T[]);
-        if (total && total > 0) {
-          setTotalRegistros(total);
-        }
-      }
-      setCargando(false);
-    });
+
+    const cargarDatos = async () => {
+      await intentar(() =>
+        cargar(filtro, orden, paginacion).then(({ datos, total }) => {
+          if (hecho) return;
+          if (datos.length > 0) {
+            setEntidades(datos as T[]);
+            if (total && total > 0) {
+              setTotalRegistros(total);
+            }
+          }
+          setCargando(false);
+        })
+      );
+    };
+
+    cargarDatos();
 
     return () => {
       hecho = true;
     };
-  }, [filtro, orden, paginacion, cargar, setEntidades]);
+  }, [filtro, orden, paginacion, cargar, setEntidades, intentar]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
@@ -102,10 +118,10 @@ export const Listado = <T extends Entidad>({
       ? entidadesFiltradas
       : datosCargando<T>();
 
-    if (modo == "tarjetas" && formato) {
+    if (modo == "tarjetas" && tarjeta) {
       return (
         <QTarjetas
-          formato={formato}
+          tarjeta={tarjeta}
           datos={datos}
           cargando={cargando}
           seleccionadaId={seleccionada?.id}
@@ -163,25 +179,15 @@ export const Listado = <T extends Entidad>({
 
   return (
     <div className="Listado">
-      {formato && metaTabla && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: "0.5rem",
-          }}
-        >
+      {tarjeta && metaTabla && (
+        <div className="cambio-modo">
           <span
-            style={{
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-            }}
+            className="cambio-modo-icono"
             onClick={() =>
-              setModo((m) => (m === "tabla" ? "tarjetas" : "tabla"))
+              setModo((modo) => (modo === "tabla" ? "tarjetas" : "tabla"))
             }
           >
-            <QIcono nombre={"fichero"} tamaño="sm" />
+            <QIcono nombre={"lista"} tamaño="sm" />
           </span>
         </div>
       )}

@@ -1,11 +1,18 @@
 quimera-acciones {
     display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    justify-content: flex-end;
 
-quimera-acciones.vertical {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
+    quimera-boton {
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    &.vertical {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
 }

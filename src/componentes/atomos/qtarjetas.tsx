@@ -76,7 +76,7 @@ const paginacionControlador = (
 };
 
 export type QTarjetasProps<T extends Entidad> = {
-  formato: (entidad: T) => ReactNode;
+  tarjeta: (entidad: T) => ReactNode;
   datos: T[];
   cargando: boolean;
   seleccionadaId?: string;
@@ -89,7 +89,7 @@ export type QTarjetasProps<T extends Entidad> = {
 };
 
 export const QTarjetas = <T extends Entidad>({
-  formato,
+  tarjeta,
   datos,
   cargando,
   seleccionadaId,
@@ -111,7 +111,7 @@ export const QTarjetas = <T extends Entidad>({
             className={entidad.id === seleccionadaId ? "seleccionada" : ""}
             onClick={() => onSeleccion && onSeleccion(entidad)}
           >
-            {formato(entidad)}
+            {tarjeta(entidad)}
           </quimera-tarjeta>
         ))
       )}

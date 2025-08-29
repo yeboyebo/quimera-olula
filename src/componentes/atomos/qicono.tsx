@@ -22,6 +22,8 @@ const iconos: Record<string, string> = {
   check: "check",
   x_circle: "x-circle",
   minus: "minus",
+  lista: "list-ul",
+  tarjeta: "credit-card",
 };
 
 export const QIcono = ({ nombre, tamaño = "md" }: QIconoProps) => {
