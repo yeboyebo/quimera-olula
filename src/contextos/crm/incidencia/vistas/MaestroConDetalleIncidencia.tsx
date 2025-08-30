@@ -5,13 +5,13 @@ import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
 import {
-  cambiarItemEnLista,
-  cargarLista,
+  cambiarItem,
+  cargar,
   getSeleccionada,
-  incluirEnLista,
+  incluirItem,
   listaSeleccionableVacia,
-  quitarDeLista,
-  seleccionarItemEnLista,
+  quitarItem,
+  seleccionarItem
 } from "../../../comun/entidad.ts";
 import { pipe } from "../../../comun/funcional.ts";
 import {
@@ -67,12 +67,12 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       incidencia_cambiada: ({ maquina, payload }) =>
         pipe(
           maquina,
-          setIncidencias(cambiarItemEnLista(payload as Incidencia))
+          setIncidencias(cambiarItem(payload as Incidencia))
         ),
       incidencia_seleccionada: ({ maquina, payload }) =>
         pipe(
           maquina,
-          setIncidencias(seleccionarItemEnLista(payload as Incidencia))
+          setIncidencias(seleccionarItem(payload as Incidencia))
         ),
       incidencia_borrada: ({ maquina }) => {
         const { incidencias } = maquina.contexto;
@@ -81,14 +81,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
         }
         return pipe(
           maquina,
-          setIncidencias(quitarDeLista(incidencias.idActivo))
+          setIncidencias(quitarItem(incidencias.idActivo))
         );
       },
       incidencias_cargadas: ({ maquina, payload, setEstado }) =>
         pipe(
           maquina,
           setEstado("Inactivo" as Estado),
-          setIncidencias(cargarLista(payload as Incidencia[]))
+          setIncidencias(cargar(payload as Incidencia[]))
         ),
     },
     Creando: {
@@ -96,7 +96,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
         pipe(
           maquina,
           setEstado("Inactivo" as Estado),
-          setIncidencias(incluirEnLista(payload as Incidencia, {}))
+          setIncidencias(incluirItem(payload as Incidencia, {}))
         ),
       creacion_cancelada: "Inactivo",
     },
@@ -104,29 +104,6 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 };
 
 export const MaestroConDetalleIncidencia = () => {
-  // const incidencias = useLista<Incidencia>([]);
-
-  // const maquina: Maquina<Estado> = {
-  //   Creando: {
-  //     incidencia_creada: (payload) => {
-  //       incidencias.añadir(payload as Incidencia);
-  //       return "Inactivo";
-  //     },
-  //     creacion_cancelada: "Inactivo",
-  //   },
-  //   Inactivo: {
-  //     crear: "Creando",
-  //     incidencia_cambiada: (payload) => {
-  //       incidencias.modificar(payload as Incidencia);
-  //     },
-  //     incidencia_borrada: (payload) => {
-  //       incidencias.eliminar(payload as Incidencia);
-  //     },
-  //     cancelar_seleccion: () => {
-  //       incidencias.limpiarSeleccion();
-  //     },
-  //   },
-  // };
 
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,

@@ -6,24 +6,24 @@ import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
-import { metaNuevoPresupuesto, presupuestoNuevoVacio } from "../dominio.ts";
+import { metaNuevoPresupuesto, nuevoPresupuestoVacio } from "../dominio.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
 import "./AltaPresupuesto.css";
 export const AltaPresupuesto = ({
-  emitir = () => {},
+  publicar = () => {},
 }: {
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const nuevoPresupuesto = useModelo(
     metaNuevoPresupuesto,
-    presupuestoNuevoVacio()
+    nuevoPresupuestoVacio
   );
   const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
     const id = await intentar(() => postPresupuesto(nuevoPresupuesto.modelo));
     const presupuestoCreado = await getPresupuesto(id);
-    emitir("PRESUPUESTO_CREADO", presupuestoCreado);
+    publicar("presupuesto_creado", presupuestoCreado);
   };
 
   return (
@@ -44,7 +44,7 @@ export const AltaPresupuesto = ({
         <QBoton onClick={guardar} deshabilitado={!nuevoPresupuesto.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => emitir("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={() => publicar("creacion_presupuesto_cancelada")} variante="texto">
           Cancelar
         </QBoton>
       </div>

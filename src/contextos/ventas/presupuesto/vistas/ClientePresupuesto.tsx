@@ -10,7 +10,7 @@ interface ClienteProps {
   onClienteCambiadoCallback: (cliente: TipoCliente) => void;
 }
 
-export const Cliente = ({
+export const ClientePresupuesto = ({
   presupuesto,
   onClienteCambiadoCallback,
 }: ClienteProps) => {
