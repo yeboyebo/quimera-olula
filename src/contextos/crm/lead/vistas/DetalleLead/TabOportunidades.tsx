@@ -4,11 +4,11 @@ import { QTabla } from "../../../../../componentes/atomos/qtabla.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { ListaSeleccionable } from "../../../../comun/diseño.ts";
 import {
-  cargarLista,
-  incluirEnLista,
+  cargar,
+  incluirItem,
   listaSeleccionableVacia,
-  quitarDeLista,
-  seleccionarItemEnLista,
+  quitarItem,
+  seleccionarItem
 } from "../../../../comun/entidad.ts";
 import { pipe } from "../../../../comun/funcional.ts";
 import {
@@ -59,7 +59,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
         pipe(
           maquina,
           setEstado("Inactivo"),
-          setAcciones(cargarLista(payload as OportunidadVenta[]))
+          setAcciones(cargar(payload as OportunidadVenta[]))
         ),
     },
     Inactivo: {
@@ -68,7 +68,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       oportunidad_seleccionada: ({ maquina, payload }) =>
         pipe(
           maquina,
-          setAcciones(seleccionarItemEnLista(payload as OportunidadVenta))
+          setAcciones(seleccionarItem(payload as OportunidadVenta))
         ),
       cargar: "Cargando",
     },
@@ -77,7 +77,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
         pipe(
           maquina,
           setEstado("Inactivo"),
-          setAcciones(incluirEnLista(payload as OportunidadVenta, {}))
+          setAcciones(incluirItem(payload as OportunidadVenta, {}))
         ),
       creacion_cancelada: "Inactivo",
     },
@@ -90,7 +90,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
         return pipe(
           maquina,
           setEstado("Inactivo"),
-          setAcciones(quitarDeLista(idActivo))
+          setAcciones(quitarItem(idActivo))
         );
       },
       borrado_cancelado: "Inactivo",
