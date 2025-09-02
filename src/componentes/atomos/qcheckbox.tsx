@@ -8,7 +8,7 @@ import {
 import "./qcheckbox.css";
 
 type QCheckBoxProps = Omit<FormInputProps, "valor"> & {
-  valor: boolean;
+  valor: boolean | string;
 };
 
 export const QCheckbox = ({
@@ -42,11 +42,16 @@ export const QCheckbox = ({
     onChange?.(e.target.checked.toString(), e);
   };
 
+  // Convertir valor a boolean si viene como string
+  const valorBoolean = typeof valor === 'string' 
+    ? valor === 'true' || valor === '1' 
+    : valor;
+
   const inputAttrs = {
     nombre,
     deshabilitado,
     opcional,
-    checked: valor,
+    checked: valorBoolean,
     tipo: "checkbox" as const,
     onChange: manejarChange,
     ...props,
