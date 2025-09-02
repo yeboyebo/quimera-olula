@@ -84,9 +84,13 @@ export const DetalleTrabajadorEvento = ({
             />
             <QCheckbox 
               label="Liquidado" 
-              nombre="liquidado" 
-              valor={modelo.liquidado} 
-              onChange={trabajadorEvento.uiProps("liquidado").onChange} 
+              nombre={trabajadorEvento.uiProps("liquidado").nombre}
+              valor={trabajadorEvento.uiProps("liquidado").valor}
+              onChange={trabajadorEvento.uiProps("liquidado").onChange}
+              deshabilitado={trabajadorEvento.uiProps("liquidado").deshabilitado}
+              erroneo={trabajadorEvento.uiProps("liquidado").erroneo}
+              valido={trabajadorEvento.uiProps("liquidado").valido}
+              textoValidacion={trabajadorEvento.uiProps("liquidado").textoValidacion}
             />
           </quimera-formulario>
         </div>
