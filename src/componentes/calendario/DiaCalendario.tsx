@@ -9,6 +9,10 @@ interface DiaCalendarioProps<T extends DatoBase> {
   esMesActual: boolean;
   maxDatosVisibles: number;
   renderDato?: (dato: T) => React.ReactNode;
+  // Props para selección
+  onClick?: (fecha: Date) => void;
+  estaSeleccionada?: boolean;
+  esSeleccionable?: boolean;
 }
 
 export function DiaCalendario<T extends DatoBase>({
@@ -18,10 +22,31 @@ export function DiaCalendario<T extends DatoBase>({
   esHoy,
   esMesActual,
   maxDatosVisibles,
-  renderDato
+  renderDato,
+  onClick,
+  estaSeleccionada,
+  esSeleccionable = true,
 }: DiaCalendarioProps<T>) {
+  const manejarClick = () => {
+    if (onClick && esSeleccionable) {
+      onClick(fecha);
+    }
+  };
+
+  const clasesDia = [
+    'calendario-dia',
+    !esMesActual ? 'otro-mes' : '',
+    esHoy ? 'hoy' : '',
+    estaSeleccionada ? 'seleccionada' : '',
+    onClick && esSeleccionable ? 'seleccionable' : '',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={`calendario-dia ${!esMesActual ? 'otro-mes' : ''} ${esHoy ? 'hoy' : ''}`}>
+    <div 
+      className={clasesDia}
+      onClick={manejarClick}
+      style={{ cursor: onClick && esSeleccionable ? 'pointer' : 'default' }}
+    >
       <div className="dia-numero">{fecha.getDate()}</div>
       <div className="eventos-container">
         {esMesActual && datos.slice(0, maxDatosVisibles).map((dato) => (

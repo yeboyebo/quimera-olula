@@ -8,6 +8,7 @@ import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, g
 import { isMobile, useSwipe } from './hooks';
 import { CalendarioConfig, DatoBase } from './tipos';
 import { ConfigTeclado, useNavegacionTeclado } from './useNavegacionTeclado';
+import { useSeleccionFechas } from './useSeleccionFechas';
 import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendario.ts';
 
 
@@ -28,14 +29,21 @@ interface CalendarioProps<T extends DatoBase> {
     teclado?: ConfigTeclado;
     onNecesitaDatosAnteriores?: () => Promise<void>;
     onNecesitaDatosPosteriores?: () => Promise<void>;
+    /** Configuración para selección de fechas */
+    seleccion?: import('./tipos').ConfiguracionSeleccion;
   };
   renderDia?: (args: {
     fecha: Date;
     datos: T[];
     esMesActual: boolean;
     esHoy: boolean;
+    /** Estados de selección para styling personalizado */
+    estaSeleccionada?: boolean;
+    esSeleccionable?: boolean;
   }) => React.ReactNode;
   renderDato?: (dato: T) => React.ReactNode;
+  /** Callback cuando cambia la selección de fechas */
+  onSeleccionCambio?: (seleccion: import('./tipos').EstadoSeleccion) => void;
 }
 
 export function Calendario<T extends DatoBase>({
@@ -44,6 +52,7 @@ export function Calendario<T extends DatoBase>({
   config = {},
   renderDia,
   renderDato,
+  onSeleccionCambio,
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
   const esMovil = isMobile(640);
@@ -55,8 +64,19 @@ export function Calendario<T extends DatoBase>({
     inicioSemana = 'lunes',
     getDatosPorFecha: getDatosPorFechaConfig,
     onNecesitaDatosAnteriores,
-    onNecesitaDatosPosteriores
+    onNecesitaDatosPosteriores,
+    seleccion: configuracionSeleccion
   } = config;
+
+  // Hook para selección de fechas (opcional)
+  const seleccionFechas = useSeleccionFechas(configuracionSeleccion);
+
+  // Notificar cambios de selección
+  useEffect(() => {
+    if (configuracionSeleccion && onSeleccionCambio) {
+      onSeleccionCambio(seleccionFechas.seleccion);
+    }
+  }, [seleccionFechas.seleccion, onSeleccionCambio, configuracionSeleccion]);
 
   const {
     controlado,
@@ -267,6 +287,9 @@ export function Calendario<T extends DatoBase>({
         renderDia={renderDia}
         renderDato={renderDato}
         maxDatosVisibles={maxDatosVisiblesAjustado}
+        onClickFecha={configuracionSeleccion ? seleccionFechas.manejarClickFecha : undefined}
+        esFechaSeleccionada={configuracionSeleccion ? seleccionFechas.esFechaSeleccionada : undefined}
+        esFechaSeleccionable={configuracionSeleccion ? seleccionFechas.esFechaValida : undefined}
       />
       {cargando && (
         <div className="calendario-cargando">

@@ -539,3 +539,52 @@
     gap: 1px;
   }
 }
+
+/* Estilos para selección de fechas */
+.calendario-dia.seleccionable {
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.calendario-dia.seleccionable:hover {
+  background-color: var(--color-primario-claro);
+  transform: translateY(-1px);
+}
+
+.calendario-dia.seleccionada {
+  background-color: var(--color-primario);
+  color: white;
+}
+
+.calendario-dia.seleccionada .dia-numero {
+  color: white;
+  font-weight: bold;
+}
+
+.calendario-dia.seleccionada:hover {
+  background-color: var(--color-primario);
+  opacity: 0.9;
+}
+
+/* Invertir colores de eventos cuando el día está seleccionado */
+.calendario-dia.seleccionada .evento-item,
+.calendario-dia.seleccionada .dato-item {
+  background-color: white !important;
+  color: var(--color-primario) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.calendario-dia.seleccionada .evento-item:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-1px);
+}
+
+/* Estados especiales de selección */
+.calendario-dia.seleccionada.hoy {
+  background-color: var(--color-primario);
+  box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.3);
+}
+
+.calendario-dia.seleccionable:not(.seleccionada).hoy:hover {
+  background-color: var(--color-primario-claro);
+}

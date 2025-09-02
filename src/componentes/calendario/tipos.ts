@@ -56,5 +56,31 @@ export interface PersonalizacionCalendario<T extends DatoBase> {
   }) => React.ReactNode;
 
   renderDato?: (dato: T) => React.ReactNode;
+}
 
+// Tipos para selección de fechas
+export type TipoSeleccion = 'simple' | 'multiple' | 'rango';
+
+export interface ConfiguracionSeleccion {
+  /** Tipo de selección permitida */
+  tipo: TipoSeleccion;
+  /** Número mínimo de días para selección de rango */
+  minDias?: number;
+  /** Número máximo de días para selección múltiple o rango */
+  maxDias?: number;
+  /** Fechas que no pueden ser seleccionadas */
+  fechasDeshabilitadas?: Date[];
+  /** Validador personalizado para la selección */
+  validador?: (fechas: Date[]) => boolean;
+  /** Mensaje de error personalizado cuando la validación falla */
+  mensajeError?: string;
+}
+
+export interface EstadoSeleccion {
+  tipo: TipoSeleccion;
+  fechas: Date[];
+  fechaInicio?: Date;
+  fechaFin?: Date;
+  esValida: boolean;
+  error?: string;
 }

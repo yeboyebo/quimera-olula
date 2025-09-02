@@ -22,9 +22,15 @@ interface CalendarioGridProps<T extends DatoBase> {
     datos: T[];
     esMesActual: boolean;
     esHoy: boolean;
+    estaSeleccionada?: boolean;
+    esSeleccionable?: boolean;
   }) => React.ReactNode;
   renderDato?: (dato: T) => React.ReactNode;
   maxDatosVisibles: number;
+  // Props para selección de fechas
+  onClickFecha?: (fecha: Date) => void;
+  esFechaSeleccionada?: (fecha: Date) => boolean;
+  esFechaSeleccionable?: (fecha: Date) => boolean;
 }
 
 export function CalendarioGrid<T extends DatoBase>({
@@ -44,6 +50,9 @@ export function CalendarioGrid<T extends DatoBase>({
   renderDia,
   renderDato,
   maxDatosVisibles,
+  onClickFecha,
+  esFechaSeleccionada,
+  esFechaSeleccionable,
 }: CalendarioGridProps<T>) {
   // Si se pasa modoVista, usamos esa información
   const modoCalendario = modoVista || (modoAnio ? 'anio' : 'mes');
@@ -54,6 +63,21 @@ export function CalendarioGrid<T extends DatoBase>({
     // En modo semana, permitir más eventos visibles para aprovechar el espacio vertical
     const maxEventosVisibles = modoCalendario === 'semana' ? 50 : maxDatosVisibles;
     
+    const estaSeleccionada = esFechaSeleccionada?.(fecha) || false;
+    const esSeleccionable = esFechaSeleccionable?.(fecha) ?? true;
+    
+    // Si hay renderDia personalizado, pasarle los estados de selección
+    if (renderDia) {
+      return renderDia({
+        fecha,
+        datos: datosDelDia,
+        esMesActual: esDiaDelMes,
+        esHoy: esHoyFn(fecha),
+        estaSeleccionada,
+        esSeleccionable,
+      });
+    }
+    
     return (
       <DiaCalendario
         fecha={fecha}
@@ -63,6 +87,9 @@ export function CalendarioGrid<T extends DatoBase>({
         esMesActual={esDiaDelMes}
         maxDatosVisibles={maxEventosVisibles}
         renderDato={renderDato}
+        onClick={onClickFecha}
+        estaSeleccionada={estaSeleccionada}
+        esSeleccionable={esSeleccionable}
       />
     );
   };

@@ -8,8 +8,39 @@
   border-radius: 3px;
   padding: 4px 6px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .evento-item:hover {
   background-color: var(--gris-1);
+}
+
+/* Estilos para eventos en días seleccionados */
+.calendario-dia.seleccionada .evento-item {
+  max-height: 3em;
+  background-color: white;
+  border-left: 3px solid var(--gris-5);
+  border-top: 1px solid var(--gris-3);
+  border-right: 1px solid var(--gris-3);
+  border-bottom: 1px solid var(--gris-3);
+  border-radius: 3px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendario-dia.seleccionada .evento-item:hover {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Asegurar que el texto dentro de eventos en días seleccionados sea visible */
+.calendario-dia.seleccionada .evento-item .texto-multilinea-wrapper,
+.calendario-dia.seleccionada .evento-item .texto-con-tooltip {
+  color: var(--color-primario) !important;
+}
+
+.calendario-dia.seleccionada .evento-item * {
+  color: var(--color-primario) !important;
 }
