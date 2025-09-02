@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { Calendario } from "../../../../../../componentes/calendario/calendario.tsx";
-import { EjemploSeleccionCalendario } from "../../../../../../componentes/calendario/EjemploSeleccionCalendario.tsx";
+import { EjemploSeleccionCalendario } from "../../../../../../componentes/calendario/ejemplos/EjemploSeleccionCalendario.tsx";
 import { MaestroFiltros } from "../../../../../../componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { useEsMovil } from "../../../../../../componentes/maestro/useEsMovil.ts";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";

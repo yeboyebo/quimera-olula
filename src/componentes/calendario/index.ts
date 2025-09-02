@@ -19,5 +19,7 @@ export {
 } from './helpers';
 export { isMobile, useSwipe } from './hooks';
 
-// Componente de ejemplo
-export { EjemploSeleccionCalendario } from './EjemploSeleccionCalendario';
+// Componentes de ejemplo
+export { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
+export { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
+

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Calendario } from './calendario';
-import { EstadoSeleccion, TipoSeleccion } from './tipos';
+import { Calendario } from '../calendario';
+import { EstadoSeleccion, TipoSeleccion } from '../tipos';
 
 /**
  * Ejemplo de uso del calendario con selección de fechas
