@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../../../componentes/atomos/qboton.tsx";
 import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx";
@@ -30,7 +30,15 @@ export const DetalleTrabajadorEvento = ({
 
   const trabajadorEvento = useModelo(metaTrabajadorEvento, trabajadorEventoVacio);
   const { modelo, init, modificado, valido } = trabajadorEvento;
-    const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+
+  // Sincronizar el estado interno cuando cambie trabajadorEventoInicial
+  useEffect(() => {
+    if (trabajadorEventoInicial) {
+      init(trabajadorEventoInicial);
+    }
+  }, [trabajadorEventoInicial?.id, trabajadorEventoInicial?.liquidado, init]);
+
+  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
     "edicion"
   );    
 
