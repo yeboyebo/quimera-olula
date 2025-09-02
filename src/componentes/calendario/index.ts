@@ -6,8 +6,18 @@ export type {
   CalendarioConfig, ConfiguracionSeleccion, DatoBase, EstadoSeleccion, ModoCalendario, TipoSeleccion
 } from './tipos';
 
-// Hook para selección
+// Hooks principales
+export { useNavegacionTeclado } from './useNavegacionTeclado';
 export { useSeleccionFechas } from './useSeleccionFechas';
+
+// Utilidades y helpers
+export {
+  esHoy,
+  esMesActual,
+  formatearMes,
+  formatearMesAño, getDatosPorFecha, getDiasDelMes, getSemanasDelMes
+} from './helpers';
+export { isMobile, useSwipe } from './hooks';
 
 // Componente de ejemplo
 export { EjemploSeleccionCalendario } from './EjemploSeleccionCalendario';
