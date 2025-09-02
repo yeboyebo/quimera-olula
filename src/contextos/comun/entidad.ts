@@ -16,6 +16,7 @@ export const incluirItem = <E extends Entidad>(entidad: E, { activar = true }: O
     (listaS: ListaSeleccionable<E>): ListaSeleccionable<E> =>
         incluirItemEnLista(listaS, entidad, { activar });
 
+// Poder añadir el item al inicio con alguna ocpion u otra funcion
 export const incluirItemEnLista = <E extends Entidad>(
     listaS: ListaSeleccionable<E>,
     entidad: E,
