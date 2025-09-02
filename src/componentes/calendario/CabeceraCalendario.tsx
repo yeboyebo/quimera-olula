@@ -25,6 +25,10 @@ interface CabeceraCalendarioProps {
   mostrarBotonHoy?: boolean;
   irAHoy: () => void;
   botones?: CabeceraBotones;
+  /** Mostrar botón de playground */
+  playground?: boolean;
+  /** Callback para abrir playground */
+  onAbrirPlayground?: () => void;
 }
 
 export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: CabeceraCalendarioProps) => {
@@ -42,6 +46,8 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
     mostrarBotonHoy,
     irAHoy,
     botones,
+    playground = false,
+    onAbrirPlayground,
   } = props;
 
   // Estado para el dropdown
@@ -117,10 +123,18 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
           </>
         )}
       </div>
-      {(izqHoy.length > 0 || _mostrarBotonHoy || derHoy.length > 0) && (
+      {(izqHoy.length > 0 || _mostrarBotonHoy || derHoy.length > 0 || playground) && (
         <div className="cabecera-derecha">
           {izqHoy}
           {_mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
+          {playground && (
+            <QBoton 
+              onClick={onAbrirPlayground}
+              variante="borde"
+            >
+              📚 Playground
+            </QBoton>
+          )}
           {derHoy}
         </div>
       )}

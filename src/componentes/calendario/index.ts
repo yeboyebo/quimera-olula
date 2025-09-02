@@ -23,3 +23,6 @@ export { isMobile, useSwipe } from './hooks';
 export { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
 export { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
 
+// Playground interactivo
+export { CalendarioPlayground } from './CalendarioPlayground';
+

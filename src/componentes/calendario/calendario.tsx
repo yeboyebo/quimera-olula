@@ -4,6 +4,7 @@ import { QIcono } from '../atomos/qicono.tsx';
 import { CabeceraGrid } from './CabeceraGrid';
 import './calendario.css';
 import { CalendarioGrid } from './CalendarioGrid';
+import { CalendarioPlayground } from './CalendarioPlayground';
 import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, getDiasSemana } from './helpers';
 import { isMobile, useSwipe } from './hooks';
 import { CalendarioConfig, DatoBase } from './tipos';
@@ -16,6 +17,8 @@ import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendar
 interface CalendarioProps<T extends DatoBase> {
   datos: T[];
   cargando?: boolean;
+  /** Mostrar botón de Playground para explorar funcionalidades */
+  playground?: boolean;
   /**
    * Configuración avanzada del calendario. Solo se permite personalizar getDatosPorFecha.
    * El resto de helpers (esHoy, esMesActual, formatearMes, formatearMesAño) son internos y no se pueden personalizar.
@@ -49,6 +52,7 @@ interface CalendarioProps<T extends DatoBase> {
 export function Calendario<T extends DatoBase>({
   datos = [],
   cargando = false,
+  playground = false,
   config = {},
   renderDia,
   renderDato,
@@ -56,6 +60,9 @@ export function Calendario<T extends DatoBase>({
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
   const esMovil = isMobile(640);
+
+  // Estado del playground
+  const [mostrarPlayground, setMostrarPlayground] = useState(false);
 
   // Extraer configuración primero
   const {
@@ -263,6 +270,8 @@ export function Calendario<T extends DatoBase>({
         mostrarControlesNavegacion={mostrarControlesNavegacion}
         mostrarBotonHoy={mostrarBotonHoy}
         irAHoy={irAHoy}
+        playground={playground}
+        onAbrirPlayground={() => setMostrarPlayground(true)}
         botones={{
           izqModo: botonesIzqModo,
           derModo: botonesDerModo,
@@ -295,6 +304,59 @@ export function Calendario<T extends DatoBase>({
         <div className="calendario-cargando">
           <QIcono nombre="cargando" />
           Cargando datos...
+        </div>
+      )}
+      
+      {/* Modal del Playground */}
+      {mostrarPlayground && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }} onClick={() => setMostrarPlayground(false)}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            width: '95vw',
+            height: '90vh',
+            maxWidth: '1400px',
+            overflow: 'auto',
+            position: 'relative'
+          }} onClick={(e) => e.stopPropagation()}>
+            {/* Botón cerrar */}
+            <button
+              onClick={() => setMostrarPlayground(false)}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+                zIndex: 10000,
+                padding: '5px',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ✕
+            </button>
+            
+            <CalendarioPlayground />
+          </div>
         </div>
       )}
     </div>

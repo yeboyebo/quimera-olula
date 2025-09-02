@@ -26,6 +26,10 @@ interface CabeceraGridProps {
   mostrarBotonHoy: boolean;
   irAHoy: () => void;
   botones?: CabeceraBotones;
+  /** Mostrar botón de playground */
+  playground?: boolean;
+  /** Callback para abrir playground */
+  onAbrirPlayground?: () => void;
 }
 
 export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
@@ -43,6 +47,8 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
   mostrarBotonHoy,
   irAHoy,
   botones = {},
+  playground = false,
+  onAbrirPlayground,
 }) => {
   const {
     izqModo = [],
@@ -100,6 +106,8 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
         izqHoy,
         derHoy,
       }}
+      playground={playground}
+      onAbrirPlayground={onAbrirPlayground}
     />
   );
 };
