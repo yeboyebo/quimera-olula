@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
 import { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
 import { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
 
@@ -39,6 +40,16 @@ const ejemplos: EjemploConfig[] = [
     componente: EjemploNavegacionTeclado,
     categoria: 'interaccion',
     dificultad: 'intermedio',
+    tags: ['accesibilidad', 'atajos', 'productividad', 'navegacion']
+  },
+  {
+    id: 'modos',
+    titulo: 'Modos Múltiples',
+    descripcion: 'Visualización del calendario en diferentes modos (día, semana, mes)',
+    icono: '📅',
+    componente: EjemploModosMúltiples,
+    categoria: 'interaccion',
+    dificultad: 'basico',
     tags: ['accesibilidad', 'atajos', 'productividad', 'navegacion']
   }
 ];

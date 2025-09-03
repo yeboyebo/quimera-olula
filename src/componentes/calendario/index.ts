@@ -20,6 +20,7 @@ export {
 export { isMobile, useSwipe } from './hooks';
 
 // Componentes de ejemplo
+export { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
 export { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
 export { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
 
