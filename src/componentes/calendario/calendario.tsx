@@ -15,6 +15,7 @@ import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendar
 
 
 interface CalendarioProps<T extends DatoBase> {
+  calendarioId?: string;
   datos: T[];
   cargando?: boolean;
   /** Mostrar botón de Playground para explorar funcionalidades */
@@ -50,6 +51,7 @@ interface CalendarioProps<T extends DatoBase> {
 }
 
 export function Calendario<T extends DatoBase>({
+  calendarioId,
   datos = [],
   cargando = false,
   playground = false,
@@ -235,6 +237,7 @@ export function Calendario<T extends DatoBase>({
     }
   }, [scrollToMesIndex, modoVista, scrollToMes, anioGridRef]);
 
+  
   // Navegación por teclado
   const { containerRef } = useNavegacionTeclado({
     config: config.teclado,
@@ -246,7 +249,9 @@ export function Calendario<T extends DatoBase>({
     esMovil,
     anioGridRef,
     mostrarCambioModo: config.cabecera?.mostrarCambioModo,
-    mostrarBotonHoy: config.cabecera?.mostrarBotonHoy
+    mostrarBotonHoy: config.cabecera?.mostrarBotonHoy,
+    hayPlayground: mostrarPlayground,
+    calendarioId
   });
 
   return (

@@ -145,6 +145,7 @@ export const EjemploNavegacionTeclado = () => {
 
       {/* Calendario con navegación por teclado */}
       <Calendario
+        calendarioId="calendario-ejemplo-navegacion-teclado"
         datos={tareas}
         config={{
           teclado: {

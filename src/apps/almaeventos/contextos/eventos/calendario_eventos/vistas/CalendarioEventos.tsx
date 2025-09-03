@@ -82,6 +82,7 @@ export const CalendarioEventos = () => {
   return (
     <div className="calendario-eventos">
       <Calendario
+        calendarioId="calendario-eventos-principal"
         datos={eventos}
         cargando={cargando}
         playground={true}

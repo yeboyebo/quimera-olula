@@ -35,6 +35,8 @@ interface UseNavegacionTecladoProps {
   anioGridRef?: React.RefObject<HTMLDivElement | null>;
   mostrarCambioModo?: boolean;
   mostrarBotonHoy?: boolean;
+  hayPlayground?: boolean;
+  calendarioId?: string;
 }
 
 export function useNavegacionTeclado({
@@ -47,7 +49,9 @@ export function useNavegacionTeclado({
   esMovil,
   anioGridRef,
   mostrarCambioModo = true,
-  mostrarBotonHoy = true
+  mostrarBotonHoy = true,
+  hayPlayground = false,
+  calendarioId,
 }: UseNavegacionTecladoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -203,17 +207,21 @@ export function useNavegacionTeclado({
     navegarTiempo,
     setModoVista,
     irAHoy,
-    config
+    config,
+    calendarioId,
+    hayPlayground
   ]);
 
   useEffect(() => {
     if (!configTeclado.habilitado || esMovil) return;
+    if (hayPlayground && calendarioId !== 'calendario-ejemplo-navegacion-teclado') return;
 
     document.addEventListener('keydown', manejarTecla);
     return () => {
       document.removeEventListener('keydown', manejarTecla);
     };
   }, [manejarTecla, configTeclado.habilitado, esMovil]);
+
 
   return {
     containerRef,
