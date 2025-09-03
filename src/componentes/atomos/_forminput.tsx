@@ -32,7 +32,8 @@ const tiposFormInput = {
   fichero: "file",
   url: "url",
   rango: "range",
-  moneda: "text",
+  moneda: "number",
+  autocompletar: "text",
 } as const;
 
 export type FormInputProps = FormFieldProps & {

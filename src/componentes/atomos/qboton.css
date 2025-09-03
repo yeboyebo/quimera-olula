@@ -8,7 +8,7 @@ quimera-boton {
     }
 
     &[deshabilitado] {
-        --color-primario: var(--color-texto-deshabilitado);
+        --color-primario: var(--color-deshabilitado);
 
         button {
             cursor: inherit;

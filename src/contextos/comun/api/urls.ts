@@ -1,3 +1,6 @@
+import CRM_Urls from "../../crm/comun/urls.ts";
+import Ventas_Urls from "../../ventas/comun/urls.ts";
+
 class ApiUrls {
     // Auth
     static readonly AUTH_USUARIO = `/auth/usuario`;
@@ -23,24 +26,10 @@ class ApiUrls {
     static readonly TESORERIA_RECIBO_VENTA = `/tesoreria/recibo_venta`;
 
     // CRM
-    static readonly CRM_ESTADO_LEAD = `/crm/estado_lead`;
-    static readonly CRM_ESTADO_OPORTUNIDAD = `/crm/estado_oportunidad_venta`;
-    static readonly CRM_INCIDENCIA = `/crm/incidencia`;
-    static readonly CRM_CLIENTE = `/crm/cliente`;
-    static readonly CRM_OPORTUNIDAD_VENTA = `/crm/oportunidad_venta`;
-    static readonly CRM_CONTACTO = `/crm/contacto`;
-    static readonly CRM_LEAD = `/crm/lead`;
-    static readonly CRM_ACCION = `/crm/accion`;
-    static readonly CRM_FUENTE_LEAD = `/crm/fuente_lead`;
+    static readonly CRM = new CRM_Urls();
 
     // Ventas
-    static readonly VENTAS_ALBARAN = `/ventas/albaran`;
-    static readonly VENTAS_AGENTE = `/ventas/agente`;
-    static readonly VENTAS_PRESUPUESTO = `/ventas/presupuesto`;
-    static readonly VENTAS_CLIENTE = `/ventas/cliente`;
-    static readonly VENTAS_PEDIDO = `/ventas/pedido`;
-    static readonly VENTAS_FACTURA = `/ventas/factura`;
-    static readonly VENTAS_ARTICULO = `/ventas/articulo`;
+    static readonly VENTAS = new Ventas_Urls();
 }
 
 export default ApiUrls;

@@ -5,7 +5,7 @@ import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
-import { EstadoOportunidad } from "../../comun/componentes/estadoOportunidadVenta.tsx";
+import { EstadoOportunidad } from "../../comun/componentes/estado_oportunidad_venta.tsx";
 import { NuevaOportunidadVenta } from "../diseño.ts";
 import {
   metaNuevaOportunidadVenta,

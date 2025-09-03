@@ -13,7 +13,7 @@ const clienteFromAPI = (c: ClienteApi): Cliente => ({
 });
 
 export const getCliente: GetCliente = async (id) =>
-  await RestAPI.get<{ datos: Cliente }>(`${ApiUrls.VENTAS_CLIENTE}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
+  await RestAPI.get<{ datos: Cliente }>(`${ApiUrls.VENTAS.CLIENTE}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
 export const getClientes = async (
   filtro: Filtro,
@@ -22,12 +22,12 @@ export const getClientes = async (
 ): Promise<RespuestaLista<Cliente>> => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
-  const respuesta = await RestAPI.get<{ datos: ClienteApi[]; total: number }>(ApiUrls.VENTAS_CLIENTE + q);
+  const respuesta = await RestAPI.get<{ datos: ClienteApi[]; total: number }>(ApiUrls.VENTAS.CLIENTE + q);
   return { datos: respuesta.datos.map(clienteFromAPI), total: respuesta.total };
 };
 
 export const patchCliente: PatchCliente = async (id, cliente) =>
-  await RestAPI.patch(`${ApiUrls.VENTAS_CLIENTE}/${id}`, {
+  await RestAPI.patch(`${ApiUrls.VENTAS.CLIENTE}/${id}`, {
     cambios: {
       nombre: cliente.nombre,
       id_fiscal: {
@@ -46,35 +46,35 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
   }, "Error al guardar cliente");
 
 export const deleteCliente = async (id: string): Promise<void> =>
-  await RestAPI.delete(`${ApiUrls.VENTAS_CLIENTE}/${id}`, "Error al borrar cliente");
+  await RestAPI.delete(`${ApiUrls.VENTAS.CLIENTE}/${id}`, "Error al borrar cliente");
 
 export const getOportunidadesVentaCliente = async (clienteId: string): Promise<OportunidadVenta[]> =>
-  await RestAPI.get<{ datos: OportunidadVenta[] }>(`${ApiUrls.CRM_CLIENTE}/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta.datos);
+  await RestAPI.get<{ datos: OportunidadVenta[] }>(`${ApiUrls.CRM.CLIENTE}/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta.datos);
 
 export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta> =>
-  await RestAPI.get<{ datos: OportunidadVenta }>(`${ApiUrls.CRM_OPORTUNIDAD_VENTA}/${id}`).then((respuesta) => respuesta.datos);
+  await RestAPI.get<{ datos: OportunidadVenta }>(`${ApiUrls.CRM.OPORTUNIDAD_VENTA}/${id}`).then((respuesta) => respuesta.datos);
 
 export const postOportunidadVenta = async (oportunidad: NuevaOportunidadVenta): Promise<string> => {
-  return await RestAPI.post(ApiUrls.CRM_OPORTUNIDAD_VENTA, oportunidad).then((respuesta) => respuesta.id);
+  return await RestAPI.post(ApiUrls.CRM.OPORTUNIDAD_VENTA, oportunidad).then((respuesta) => respuesta.id);
 };
 
 export const vincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
   const payload = {
     contacto_id: contactoId,
   };
-  await RestAPI.patch(`${ApiUrls.CRM_CLIENTE}/${clienteId}/vincular_contacto`, payload, "Error al vincular cliente");
+  await RestAPI.patch(`${ApiUrls.CRM.CLIENTE}/${clienteId}/vincular_contacto`, payload, "Error al vincular cliente");
 };
 
 export const desvincularContactoCliente = async (contactoId: string, clienteId: string): Promise<void> => {
   const payload = {
     contacto_id: contactoId,
   };
-  await RestAPI.patch(`${ApiUrls.CRM_CLIENTE}/${clienteId}/desvincular_contacto`, payload, "Error al desvincular contacto");
+  await RestAPI.patch(`${ApiUrls.CRM.CLIENTE}/${clienteId}/desvincular_contacto`, payload, "Error al desvincular contacto");
 };
 
 export const getAccionesCliente = async (clienteId: string) => {
   const filtro = ['cliente_id', clienteId] as unknown as Filtro;
   const orden = [] as Orden;
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: Accion[] }>(ApiUrls.CRM_ACCION + q).then((respuesta) => respuesta.datos);
+  return RestAPI.get<{ datos: Accion[] }>(ApiUrls.CRM.ACCION + q).then((respuesta) => respuesta.datos);
 };

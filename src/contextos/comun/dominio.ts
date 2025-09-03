@@ -265,6 +265,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     const campos = meta.campos || {};
     const requerido = campo in campos && campos[campo]?.requerido
     const valor = modelo[campo];
+    // console.log(`Validando campo ${campo}, valor: ${valor}, requerido: ${requerido}`);
     if (requerido && valor === null) {
         return "Campo requerido";
     }
@@ -273,6 +274,9 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
         if (!emailRegex.test(valor)) {
             return "Formato Email incorrecto";
         }
+    }
+    if ((campos[campo]?.tipo === "fecha") && requerido && valor === '') {
+        return "Campo requerido";
     }
     const validacion = campos[campo]?.validacion
     return validacion

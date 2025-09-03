@@ -12,7 +12,7 @@
         grid-column: 1 / span 6;
     }
 
-    quimera-autocompletar[nombre="estado_id"] {
+    quimera-select[nombre="estado_id"] {
         grid-column: 1 / span 3;
     }
 
@@ -20,15 +20,15 @@
         grid-column: span 3;
     }
 
-    quimera-input[nombre="tarjeta_id"] {
+    quimera-autocompletar[nombre="tarjeta_id"] {
         grid-column: span 3;
     }
 
     quimera-input[nombre="importe"] {
-        grid-column: 1 / span 6;
+        grid-column: span 6;
     }
 
     quimera-input[nombre="fecha_cierre"] {
-        grid-column: span 6;
+        grid-column: span 3;
     }
 }

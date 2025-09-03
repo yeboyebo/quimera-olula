@@ -73,7 +73,9 @@ export type TipoInput =
   | "fichero"
   | "url"
   | "rango"
-  | "moneda";
+  | "moneda"
+  | "autocompletar";
+
 
 export type ListaSeleccionable<E extends Entidad> = {
   lista: E[];
