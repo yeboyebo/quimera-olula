@@ -31,8 +31,10 @@ interface CalendarioProps<T extends DatoBase> {
     inicioSemana?: 'lunes' | 'domingo';
     getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
     teclado?: ConfigTeclado;
-    onNecesitaDatosAnteriores?: () => Promise<void>;
-    onNecesitaDatosPosteriores?: () => Promise<void>;
+    // onNecesitaDatosAnteriores?: () => Promise<void>;
+    // onNecesitaDatosPosteriores?: () => Promise<void>;
+    onNecesitaDatosAnteriores?: (fechaActual: Date) => Promise<void>;
+    onNecesitaDatosPosteriores?: (fechaActual: Date) => Promise<void>;
     /** Configuración para selección de fechas */
     seleccion?: import('./tipos').ConfiguracionSeleccion;
   };

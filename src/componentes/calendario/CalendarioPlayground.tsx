@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { EjemploCargaInfinita } from './ejemplos/EjemploCargaInfinita';
 import { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
 import { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
 import { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
@@ -51,6 +52,16 @@ const ejemplos: EjemploConfig[] = [
     categoria: 'interaccion',
     dificultad: 'basico',
     tags: ['accesibilidad', 'atajos', 'productividad', 'navegacion']
+  },
+  {
+    id: 'carga-infinita',
+    titulo: 'Carga Infinita',
+    descripcion: 'Carga dinámica de datos en el calendario',
+    icono: '📅',
+    componente: EjemploCargaInfinita,
+    categoria: 'interaccion',
+    dificultad: 'intermedio',
+    tags: ['carga', 'datos', 'dinamico']
   }
 ];
 
