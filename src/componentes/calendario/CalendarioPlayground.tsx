@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { EjemploCargaInfinita } from './ejemplos/EjemploCargaInfinita';
 import { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
 import { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
+import { EjemploPersonalizacionVisual } from './ejemplos/EjemploPersonalizacionVisual';
 import { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
 
 /**
@@ -62,6 +63,18 @@ const ejemplos: EjemploConfig[] = [
     categoria: 'interaccion',
     dificultad: 'intermedio',
     tags: ['carga', 'datos', 'dinamico']
+  },
+  // EjemploPersonalizacionVisual
+  {
+    id: 'personalizacion',
+    titulo: 'Personalización Visual',
+    descripcion: 'Personalización visual del calendario con temas y colores personalizados',
+    icono: '🎨',
+    componente: EjemploPersonalizacionVisual,
+    destacado: true,
+    categoria: 'personalizacion',
+    dificultad: 'basico',
+    tags: ['temas', 'colores', 'personalizacion']
   }
 ];
 

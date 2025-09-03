@@ -23,6 +23,7 @@ export { isMobile, useSwipe } from './hooks';
 export { EjemploCargaInfinita } from './ejemplos/EjemploCargaInfinita';
 export { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
 export { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
+export { EjemploPersonalizacionVisual } from './ejemplos/EjemploPersonalizacionVisual';
 export { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendario';
 
 // Playground interactivo
