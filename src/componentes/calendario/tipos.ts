@@ -16,8 +16,8 @@ export interface CalendarioConfig<T extends DatoBase = DatoBase> {
   fechaActual?: Date;
   onFechaActualChange?: (fecha: Date) => void;
   /** Callbacks para carga infinita cuando se navega fuera del rango de datos */
-  onNecesitaDatosAnteriores?: () => Promise<void>;
-  onNecesitaDatosPosteriores?: () => Promise<void>;
+  onNecesitaDatosAnteriores?: (fechaActual: Date) => Promise<void>;
+  onNecesitaDatosPosteriores?: (fechaActual: Date) => Promise<void>;
   formatearMes?: (fecha: Date) => string;
   formatearMesAño?: (fecha: Date) => string;
   getDiasDelMes?: (fecha: Date) => Date[];

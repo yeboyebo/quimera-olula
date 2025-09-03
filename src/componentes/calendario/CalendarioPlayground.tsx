@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { EjemploCalendarioMovil } from './ejemplos/EjemploCalendarioMovil';
 import { EjemploCargaInfinita } from './ejemplos/EjemploCargaInfinita';
 import { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
 import { EjemploNavegacionTeclado } from './ejemplos/EjemploNavegacionTeclado';
@@ -64,7 +65,6 @@ const ejemplos: EjemploConfig[] = [
     dificultad: 'intermedio',
     tags: ['carga', 'datos', 'dinamico']
   },
-  // EjemploPersonalizacionVisual
   {
     id: 'personalizacion',
     titulo: 'Personalización Visual',
@@ -75,6 +75,17 @@ const ejemplos: EjemploConfig[] = [
     categoria: 'personalizacion',
     dificultad: 'basico',
     tags: ['temas', 'colores', 'personalizacion']
+  },
+  {
+    id: 'movil',
+    titulo: 'Calendario Móvil',
+    descripcion: 'Optimización del calendario para dispositivos móviles',
+    icono: '📱',
+    componente: EjemploCalendarioMovil,
+    destacado: true,
+    categoria: 'empresarial',
+    dificultad: 'avanzado',
+    tags: ['movil', 'gestos', 'ux']
   }
 ];
 

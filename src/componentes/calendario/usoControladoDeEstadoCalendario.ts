@@ -2,23 +2,31 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { CalendarioConfig, DatoBase, ModoCalendario } from './tipos';
 
 interface UseControlledCalendarStateProps<T extends DatoBase> {
-  config: Partial<CalendarioConfig<T>>;
-  onNecesitaDatosAnteriores?: () => Promise<void>;
-  onNecesitaDatosPosteriores?: () => Promise<void>;
+  // ✅ Usar CalendarioConfig directamente
+  config?: CalendarioConfig<T>;
+  onNecesitaDatosAnteriores?: (fechaActual: Date) => Promise<void>;
+  onNecesitaDatosPosteriores?: (fechaActual: Date) => Promise<void>;
 }
 
 export function usoControladoDeEstadoCalendario<T extends DatoBase>({
-  config,
+  config = {},
   onNecesitaDatosAnteriores,
-  onNecesitaDatosPosteriores
+  onNecesitaDatosPosteriores,
 }: UseControlledCalendarStateProps<T>) {
-  // Control de fecha y modo: si no se pasa desde fuera, lo gestiona el propio componente
+  // ✅ CORRECCIÓN: Usar las funciones del config primero, luego los parámetros del hook
+  const funcionAnteriores = config.onNecesitaDatosAnteriores || onNecesitaDatosAnteriores;
+  const funcionPosteriores = config.onNecesitaDatosPosteriores || onNecesitaDatosPosteriores;
+
+  // Control de fecha y modo
   const controlado = typeof config.fechaActual !== 'undefined' && typeof config.onFechaActualChange === 'function';
   const [fechaNoControlada, setFechaNoControlada] = useState(() => config.fechaActual ?? new Date());
   const fechaActual = controlado ? config.fechaActual! : fechaNoControlada;
+
   // Setters separados para evitar ambigüedad de tipos
   const setFechaActualControlado = config.onFechaActualChange;
   const setFechaActualNoControlado = setFechaNoControlada;
+
+  // Safe access con optional chaining y valor por defecto
   const modoInicial = config.cabecera?.modoCalendario || 'mes';
   const [modoVista, setModoVista] = useState<ModoCalendario>(modoInicial);
 
@@ -36,10 +44,10 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({
 
   useEffect(() => {
     // Sincronizar el estado interno si cambia la prop modoCalendario
-    if (config.cabecera?.modoCalendario) {
+    if (config?.cabecera?.modoCalendario) {
       setModoVista(config.cabecera.modoCalendario);
     }
-  }, [config.cabecera?.modoCalendario]);
+  }, [config?.cabecera?.modoCalendario]);
 
   const scrollToMes = (mesIndex: number) => {
     const grid = anioGridRef.current;
@@ -50,7 +58,7 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({
 
     let posicion = 0;
     for (let i = 0; i < mesIndex; i++) {
-      posicion += meses[i].clientHeight + 32; // 32px = gap entre meses
+      posicion += meses[i].clientHeight + 32;
     }
 
     grid.scrollTo({
@@ -63,26 +71,50 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({
     if (anioGridRef.current) {
       setScrollPosition(anioGridRef.current.scrollTop);
 
-      // Detectar carga infinita en todos los modos, no solo año
       const container = anioGridRef.current;
       const scrollTop = container.scrollTop;
       const scrollHeight = container.scrollHeight;
       const clientHeight = container.clientHeight;
 
-      // Detectar si estamos en el 25% superior o inferior del scroll
       const scrollRatio = scrollTop / (scrollHeight - clientHeight);
 
-      // Si estamos en el último 25% del scroll (scroll hacia abajo)
+      // ✅ CORRECCIÓN: Usar las funciones unificadas
       if (scrollRatio > 0.75) {
-        onNecesitaDatosPosteriores?.();
+        funcionPosteriores?.(fechaActual);
       }
 
-      // Si estamos en el primer 25% del scroll (scroll hacia arriba)
       if (scrollRatio < 0.25) {
-        onNecesitaDatosAnteriores?.();
+        funcionAnteriores?.(fechaActual);
       }
     }
-  }, [modoVista, onNecesitaDatosAnteriores, onNecesitaDatosPosteriores]);
+  }, [modoVista, funcionAnteriores, funcionPosteriores, fechaActual]);
+
+  const navegarTiempo = useCallback(async (direccion: number) => {
+    const nueva = new Date(fechaActual);
+    if (modoVista === 'anio') {
+      nueva.setFullYear(nueva.getFullYear() + direccion);
+    } else if (modoVista === 'semana') {
+      nueva.setDate(nueva.getDate() + direccion);
+    } else {
+      nueva.setMonth(nueva.getMonth() + direccion);
+    }
+
+    // ✅ CORRECCIÓN: Usar las funciones unificadas
+    if (direccion < 0 && funcionAnteriores) {
+      await funcionAnteriores(nueva);
+    }
+
+    if (direccion > 0 && funcionPosteriores) {
+      await funcionPosteriores(nueva);
+    }
+
+    // Actualizar la fecha
+    if (controlado && setFechaActualControlado) {
+      setFechaActualControlado(nueva);
+    } else {
+      setFechaActualNoControlado(nueva);
+    }
+  }, [fechaActual, modoVista, funcionAnteriores, funcionPosteriores, controlado, setFechaActualControlado, setFechaActualNoControlado]);
 
   return {
     controlado,
@@ -93,8 +125,8 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({
     setModoVista,
     anioGridRef,
     scrollPosition,
-    setScrollPosition,
     scrollToMes,
     handleScroll,
+    navegarTiempo,
   };
 }

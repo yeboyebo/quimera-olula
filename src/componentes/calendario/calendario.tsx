@@ -14,7 +14,7 @@ import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendar
 
 
 
-interface CalendarioProps<T extends DatoBase> {
+export interface CalendarioProps<T extends DatoBase> {
   calendarioId?: string;
   datos: T[];
   cargando?: boolean;
@@ -31,8 +31,6 @@ interface CalendarioProps<T extends DatoBase> {
     inicioSemana?: 'lunes' | 'domingo';
     getDatosPorFecha?: (datos: T[], fecha: Date) => T[];
     teclado?: ConfigTeclado;
-    // onNecesitaDatosAnteriores?: () => Promise<void>;
-    // onNecesitaDatosPosteriores?: () => Promise<void>;
     onNecesitaDatosAnteriores?: (fechaActual: Date) => Promise<void>;
     onNecesitaDatosPosteriores?: (fechaActual: Date) => Promise<void>;
     /** Configuración para selección de fechas */
@@ -100,6 +98,7 @@ export function Calendario<T extends DatoBase>({
     scrollPosition,
     scrollToMes,
     handleScroll,
+    navegarTiempo, // ✅ Usar la función del hook
   } = usoControladoDeEstadoCalendario({ 
     config,
     onNecesitaDatosAnteriores,
@@ -160,60 +159,8 @@ export function Calendario<T extends DatoBase>({
   const formatearMesAñoFn = formatearMesAño;
   const diasSemana = getDiasSemana(inicioSemana);
 
-  // ...el resto de la lógica permanece igual, usando los valores del hook extraído...
-
   // Estado para forzar scroll tras cambio de año
   const [scrollToMesIndex, setScrollToMesIndex] = useState<number|null>(null);
-
-  const navegarTiempo = (direccion: number) => {
-    const nueva = new Date(fechaActual);
-    if (modoVista === 'anio') {
-      nueva.setFullYear(nueva.getFullYear() + direccion);
-    } else if (modoVista === 'semana') {
-      nueva.setDate(nueva.getDate() + direccion);
-    } else {
-      // Modo mes y modo día usan meses
-      nueva.setMonth(nueva.getMonth() + direccion);
-    }
-
-    // Detectar si necesitamos cargar más datos
-    const fechaNavegacion = nueva.getTime();
-    
-    // Obtener el rango de fechas de los datos actuales
-    if (datos.length > 0) {
-      const fechasOrdenadas = datos
-        .map(dato => new Date(dato.fecha).getTime())
-        .sort((a, b) => a - b);
-      
-      const fechaMinima = fechasOrdenadas[0];
-      const fechaMaxima = fechasOrdenadas[fechasOrdenadas.length - 1];
-      
-      // Si navegamos hacia fechas anteriores y estamos cerca del límite inferior
-      if (direccion < 0 && fechaNavegacion <= fechaMinima) {
-        onNecesitaDatosAnteriores?.();
-      }
-      
-      // Si navegamos hacia fechas posteriores y estamos cerca del límite superior
-      if (direccion > 0 && fechaNavegacion >= fechaMaxima) {
-        onNecesitaDatosPosteriores?.();
-      }
-    }
-
-    if (controlado && setFechaActualControlado) {
-      setFechaActualControlado(nueva);
-    } else {
-      setFechaActualNoControlado(nueva);
-    }
-
-    // Mantener posición de scroll relativa en modo año
-    if (modoVista === 'anio' && anioGridRef.current) {
-      setTimeout(() => {
-        if (anioGridRef.current) {
-          anioGridRef.current.scrollTop = scrollPosition;
-        }
-      }, 0);
-    }
-  };
 
   const irAHoy = () => {
     const hoy = new Date();
