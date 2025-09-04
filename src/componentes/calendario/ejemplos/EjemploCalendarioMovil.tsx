@@ -138,9 +138,9 @@ export const EjemploCalendarioMovil = () => {
   const actividades = generarActividades();
 
   // Determinar tamaños de pantalla
-  const esPantallaPequeña = tamañoPantalla.width < 768;
+  const esPantallaPequeña = tamañoPantalla.width < 640;
   const esPantallaMinima = tamañoPantalla.width < 480;
-  const esTablet = tamañoPantalla.width >= 768 && tamañoPantalla.width < 1024;
+  const esTablet = tamañoPantalla.width >= 640 && tamañoPantalla.width < 1120;
 
   // Configuración específica para móvil
   const obtenerConfigMovil = () => {

@@ -263,19 +263,19 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                 onClick={onCerrar}
                 style={{
                   padding: '8px',
-                  backgroundColor: esMovilReal ? '#f8f9fa' : '#dc3545', // ✅ Fondo gris en móvil para coherencia
-                  color: esMovilReal ? '#333' : 'white',
-                  border: esMovilReal ? '1px solid #dee2e6' : 'none', // ✅ Borde en móvil
+                  backgroundColor: '#f8f9fa', // ✅ Fondo gris en móvil para coherencia
+                  color: '#333',
+                  border: '1px solid #dee2e6', // ✅ Borde en móvil
                   borderRadius: '50%',
-                  fontSize: esMovilReal ? '1.1rem' : '1rem',
+                  fontSize: '1.1rem',
                   cursor: 'pointer',
-                  width: esMovilReal ? '45px' : '36px', // ✅ Un poco más grande en móvil
-                  height: esMovilReal ? '45px' : '36px',
+                  width: '45px', // ✅ Un poco más grande en móvil
+                  height: '45px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 'bold',
-                  boxShadow: esMovilReal ? '0 2px 4px rgba(0,0,0,0.1)' : 'none', // ✅ Sombra sutil en móvil
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // ✅ Sombra sutil en móvil
                   transition: 'all 0.2s ease'
                 }}
               >
