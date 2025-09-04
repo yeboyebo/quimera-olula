@@ -261,7 +261,6 @@ export function Calendario<T extends DatoBase>({
         </div>
       )}
       
-      {/* Modal del Playground */}
       {mostrarPlayground && (
         <div style={{
           position: 'fixed',
@@ -272,44 +271,53 @@ export function Calendario<T extends DatoBase>({
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           zIndex: 9999,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: esMovil ? 'flex-start' : 'center', // ✅ Tablets también usan flex-start
           justifyContent: 'center',
-          padding: '20px'
+          padding: esMovil ? '0' : '20px', // ✅ Sin padding en móvil y tablet
+          overflowY: 'auto'
         }} onClick={() => setMostrarPlayground(false)}>
           <div style={{
             backgroundColor: 'white',
-            borderRadius: '12px',
-            width: '95vw',
-            height: '90vh',
-            maxWidth: '1400px',
+            borderRadius: esMovil ? '0' : '12px', // ✅ Sin bordes redondeados en tablet tampoco
+            width: esMovil ? '100vw' : '95vw',
+            height: esMovil ? '100vh' : '90vh', // ✅ Altura completa en tablet también
+            maxWidth: esMovil ? 'none' : '1400px',
             overflow: 'auto',
-            position: 'relative'
+            position: 'relative',
+            WebkitOverflowScrolling: 'touch'
           }} onClick={(e) => e.stopPropagation()}>
-            {/* Botón cerrar */}
             <button
               onClick={() => setMostrarPlayground(false)}
               style={{
                 position: 'absolute',
-                top: '10px',
-                right: '15px',
-                background: 'none',
-                border: 'none',
-                fontSize: '1.5rem',
+                top: esMovil ? '15px' : '10px',
+                right: esMovil ? '20px' : '15px',
+                background: esMovil ? '#f8f9fa' : 'none',
+                border: esMovil ? '1px solid #dee2e6' : 'none',
+                fontSize: esMovil ? '1.2rem' : '1.5rem',
                 cursor: 'pointer',
                 zIndex: 10000,
-                padding: '5px',
+                padding: esMovil ? '10px' : '5px',
                 borderRadius: '50%',
-                width: '35px',
-                height: '35px',
+                width: esMovil ? '45px' : '35px',
+                height: esMovil ? '45px' : '35px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                boxShadow: esMovil ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
+                color: esMovil ? '#333' : 'inherit'
               }}
             >
               ✕
             </button>
             
-            <CalendarioPlayground />
+            <div style={{ 
+              padding: esMovil ? '60px 10px 20px 10px' : '40px 20px 20px 20px'
+            }}>
+              <CalendarioPlayground 
+                esMovil={esMovil} // ✅ Ahora incluye tablets
+              />
+            </div>
           </div>
         </div>
       )}
