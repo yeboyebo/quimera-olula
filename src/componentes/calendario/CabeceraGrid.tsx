@@ -69,6 +69,8 @@ export const CabeceraGrid: React.FC<CabeceraGridProps> = ({
           botonesIzqHoy={izqHoy}
           botonesDerHoy={derHoy}
           mostrarCambioModo={mostrarCambioModo}
+          playground={playground}
+          onAbrirPlayground={onAbrirPlayground}
         />
         <div className="calendario-navegacion-movil">
           <h2 className="calendario-navegacion-mes-anio">{modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}</h2>

@@ -16,6 +16,8 @@ interface MenuAccionesMovilProps {
   botonesIzqHoy?: React.ReactNode[];
   botonesDerHoy?: React.ReactNode[];
   mostrarCambioModo?: boolean;
+  playground?: boolean;
+  onAbrirPlayground?: () => void;
 }
 
 export function MenuAccionesMovil({
@@ -27,7 +29,9 @@ export function MenuAccionesMovil({
   botonesDerModo = [],
   botonesIzqHoy = [],
   botonesDerHoy = [],
-  mostrarCambioModo = true
+  mostrarCambioModo = true,
+  playground,
+  onAbrirPlayground
 }: MenuAccionesMovilProps) {
   const [abierto, setAbierto] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -168,6 +172,17 @@ export function MenuAccionesMovil({
               <div className="menu-acciones-fila" key={'modo'}>
                 <QBoton onClick={handleCambioModo} variante={'texto'}>
                   {modoAnio ? 'Modo Mes' : 'Modo Año'}
+                </QBoton>
+              </div>
+            )}
+
+            {playground && (
+              <div className="menu-acciones-fila" key={'playground'}>
+                <QBoton 
+                  onClick={onAbrirPlayground}
+                  variante="texto"
+                >
+                  Playground
                 </QBoton>
               </div>
             )}

@@ -286,36 +286,12 @@ export function Calendario<T extends DatoBase>({
             position: 'relative',
             WebkitOverflowScrolling: 'touch'
           }} onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setMostrarPlayground(false)}
-              style={{
-                position: 'absolute',
-                top: esMovil ? '15px' : '10px',
-                right: esMovil ? '20px' : '15px',
-                background: esMovil ? '#f8f9fa' : 'none',
-                border: esMovil ? '1px solid #dee2e6' : 'none',
-                fontSize: esMovil ? '1.2rem' : '1.5rem',
-                cursor: 'pointer',
-                zIndex: 10000,
-                padding: esMovil ? '10px' : '5px',
-                borderRadius: '50%',
-                width: esMovil ? '45px' : '35px',
-                height: esMovil ? '45px' : '35px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: esMovil ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
-                color: esMovil ? '#333' : 'inherit'
-              }}
-            >
-              ✕
-            </button>
-            
             <div style={{ 
-              padding: esMovil ? '60px 10px 20px 10px' : '40px 20px 20px 20px'
+              padding: esMovil ? '0px' : '0px 10px'
             }}>
               <CalendarioPlayground 
                 esMovil={esMovil} // ✅ Ahora incluye tablets
+                onCerrar={() => setMostrarPlayground(false)}
               />
             </div>
           </div>

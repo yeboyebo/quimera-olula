@@ -95,6 +95,7 @@ export const CalendarioEventos = () => {
           teclado: {
             atajos: {
               nuevo: 'n',      // Atajo personalizado para crear evento
+              playground: 'p' // Atajo para abrir el playground
             },
             onAccion: (accion) => {
               if (accion === 'nuevo') {

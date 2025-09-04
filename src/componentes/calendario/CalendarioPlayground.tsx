@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EjemploCalendarioMovil } from './ejemplos/EjemploCalendarioMovil';
 import { EjemploCargaInfinita } from './ejemplos/EjemploCargaInfinita';
 import { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
@@ -8,6 +8,7 @@ import { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendari
 
 interface CalendarioPlaygroundProps {
   esMovil?: boolean;
+  onCerrar?: () => void; // ✅ Función para cerrar el modal
 }
 
 interface EjemploConfig {
@@ -102,12 +103,13 @@ const dificultades = {
 };
 
 export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({ 
-  esMovil = false 
+  esMovil = false,
+  onCerrar // ✅ Recibir función de cerrar
 }) => {
   const [ejemploActivo, setEjemploActivo] = useState<string>('seleccion');
   const [filtroCategoria, setFiltroCategoria] = useState<string>('todas');
   const [busqueda, setBusqueda] = useState<string>('');
-  const [mostrarSidebar, setMostrarSidebar] = useState(false); // ✅ Cerrado por defecto en móvil/tablet
+  const [mostrarSidebar, setMostrarSidebar] = useState(false);
   
   // ✅ Detección responsive basada en CSS media queries
   const [dimensiones, setDimensiones] = useState({ width: 0, height: 0 });
@@ -162,27 +164,29 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
       flexDirection: 'column'
     }}>
       
-      {/* ✅ HEADER FIJO responsive */}
+      {/* ✅ HEADER CON BOTÓN CERRAR INTEGRADO */}
       <header style={{ 
         backgroundColor: 'white', 
         borderBottom: '1px solid #dee2e6',
-        padding: esMovilReal ? '10px 0' : esTablet ? '15px 0' : '20px 0',
+        padding: esMovilReal ? '12px 0' : esTablet ? '16px 0' : '20px 0',
         flexShrink: 0,
         zIndex: 100
       }}>
         <div style={{ 
+          minWidth: '100%',
           maxWidth: '100%', 
           margin: '0 auto', 
           padding: '0 15px'
         }}>
-          {/* Título y botón hamburguesa */}
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'space-between', 
-            marginBottom: esMovilReal ? '8px' : '12px'
+            justifyContent: 'space-around' // ✅ Cambio a space-between para distribuir elementos
           }}>
-            <div>
+            
+            {/* ✅ LADO IZQUIERDO - Título y descripción */}
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+              <div>
               <h1 style={{ 
                 margin: 0, 
                 color: '#2c3e50', 
@@ -191,7 +195,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                 gap: '8px',
                 fontSize: esMovilReal ? '1.2rem' : esTablet ? '1.4rem' : '1.8rem'
               }}>
-                🗓️ <span>Playground</span>
+                🗓️ <span >Playground</span>
               </h1>
               {/* Descripción solo en desktop */}
               {esDesktop && (
@@ -199,11 +203,12 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                   Explora todas las funcionalidades del componente calendario
                 </p>
               )}
-            </div>
+              </div>
+
             
-            {/* Stats solo en desktop */}
+            {/* ✅ LADO CENTRO - Stats solo en desktop */}
             {esDesktop && (
-              <div style={{ display: 'flex', gap: '20px', fontSize: '0.9rem' }}>
+              <div style={{ display: 'flex', gap: '20px', fontSize: '0.9rem', marginRight: '20px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontWeight: 'bold', fontSize: '1.3rem', color: '#3a86ff' }}>
                     {ejemplos.length}
@@ -219,91 +224,70 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
               </div>
             )}
 
-            {/* Botón hamburguesa para móvil/tablet */}
-            {!esDesktop && (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px' 
+            }}>
+              {/* Botón hamburguesa para móvil/tablet */}
+              {!esDesktop && (
+                <button
+                  onClick={() => setMostrarSidebar(!mostrarSidebar)}
+                  style={{
+                    padding: esMovilReal ? '8px 12px' : '10px 16px',
+                    backgroundColor: mostrarSidebar ? '#dc3545' : '#3a86ff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: esMovilReal ? '0.9rem' : '1rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.2s ease',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  <span style={{ fontSize: '1.1rem' }}>
+                    {mostrarSidebar ? '✕' : '☰'}
+                  </span>
+                  {mostrarSidebar ? 'Cerrar' : 'Ejemplos'}
+                </button>
+              )}
+            </div>
+            </div>
+            <div>
+              {/* ✅ BOTÓN CERRAR MODAL - integrado en el header */}
+              {onCerrar && (
               <button
-                onClick={() => setMostrarSidebar(!mostrarSidebar)}
+                onClick={onCerrar}
                 style={{
-                  padding: esMovilReal ? '8px 12px' : '10px 16px',
-                  backgroundColor: mostrarSidebar ? '#dc3545' : '#3a86ff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: esMovilReal ? '0.9rem' : '1rem',
+                  padding: '8px',
+                  backgroundColor: esMovilReal ? '#f8f9fa' : '#dc3545', // ✅ Fondo gris en móvil para coherencia
+                  color: esMovilReal ? '#333' : 'white',
+                  border: esMovilReal ? '1px solid #dee2e6' : 'none', // ✅ Borde en móvil
+                  borderRadius: '50%',
+                  fontSize: esMovilReal ? '1.1rem' : '1rem',
                   cursor: 'pointer',
+                  width: esMovilReal ? '45px' : '36px', // ✅ Un poco más grande en móvil
+                  height: esMovilReal ? '45px' : '36px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  transition: 'all 0.2s ease',
-                  fontWeight: 'bold'
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  boxShadow: esMovilReal ? '0 2px 4px rgba(0,0,0,0.1)' : 'none', // ✅ Sombra sutil en móvil
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <span style={{ fontSize: '1.1rem' }}>
-                  {mostrarSidebar ? '✕' : '☰'}
-                </span>
-                {mostrarSidebar ? 'Cerrar' : 'Ejemplos'}
+                ✕
               </button>
-            )}
-          </div>
-
-          {/* Controles de búsqueda y filtro */}
-          <div style={{ 
-            display: 'flex', 
-            gap: esMovilReal ? '8px' : '12px', 
-            alignItems: 'center', 
-            flexWrap: esMovilReal ? 'wrap' : 'nowrap'
-          }}>
-            {/* Buscador */}
-            <div style={{ 
-              flex: esMovilReal ? '1 1 100%' : '1 1 auto',
-              minWidth: esMovilReal ? '200px' : '250px'
-            }}>
-              <input
-                type="text"
-                placeholder={esMovilReal ? "🔍 Buscar..." : "🔍 Buscar ejemplos, funcionalidades, tags..."}
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: esMovilReal ? '8px 12px' : '10px 14px',
-                  border: '1px solid #dee2e6',
-                  borderRadius: '8px',
-                  fontSize: esMovilReal ? '0.9rem' : '1rem',
-                  outline: 'none',
-                  transition: 'border-color 0.2s ease'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#3a86ff'}
-                onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
-              />
+              )}
             </div>
-
-            {/* Filtro por categoría */}
-            <select
-              value={filtroCategoria}
-              onChange={(e) => setFiltroCategoria(e.target.value)}
-              style={{
-                padding: esMovilReal ? '8px 12px' : '10px 14px',
-                border: '1px solid #dee2e6',
-                borderRadius: '8px',
-                fontSize: esMovilReal ? '0.9rem' : '1rem',
-                minWidth: esMovilReal ? '100px' : '140px',
-                flex: esMovilReal ? '1' : 'none',
-                outline: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <option value="todas">📂 Todas</option>
-              {Object.entries(categorias).map(([key, cat]) => (
-                <option key={key} value={key}>
-                  {cat.icono} {cat.titulo}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       </header>
 
-      {/* ✅ CONTENIDO PRINCIPAL */}
+      {/* ✅ CONTENIDO PRINCIPAL - resto del código igual */}
       <div style={{ 
         display: 'flex',
         flex: 1,
@@ -313,81 +297,77 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
         
         {/* ✅ SIDEBAR - comportamiento por dispositivo */}
         {esDesktop ? (
-          // DESKTOP: Sidebar siempre visible
+          // DESKTOP: Sidebar siempre visible con controles integrados
           <aside style={{ 
             width: '350px',
             backgroundColor: 'white',
             borderRight: '1px solid #dee2e6',
-            padding: '20px',
             overflowY: 'auto',
-            flexShrink: 0
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column'
           }}>
             <SidebarContent 
               ejemplosFiltrados={ejemplosFiltrados}
               ejemploActivo={ejemploActivo}
               setEjemploActivo={setEjemploActivo}
               esMovilReal={false}
+              esDesktop={esDesktop}
+              busqueda={busqueda}
+              setBusqueda={setBusqueda}
+              filtroCategoria={filtroCategoria}
+              setFiltroCategoria={setFiltroCategoria}
+              onCerrar={undefined} // ✅ Desktop no necesita cerrar
             />
           </aside>
         ) : (
-          // MÓVIL/TABLET: Sidebar como overlay
+          // MÓVIL/TABLET: Sidebar como overlay integrado con el modal
           mostrarSidebar && (
             <>
-              {/* Backdrop */}
-              <div 
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                  zIndex: 500,
-                  backdropFilter: 'blur(2px)'
-                }}
-                onClick={() => setMostrarSidebar(false)}
-              />
-              
-              {/* Sidebar overlay */}
+              {/* ✅ SIDEBAR OVERLAY - integrado con el diseño del modal */}
               <aside style={{ 
                 position: 'fixed',
-                top: esMovilReal ? '120px' : '140px', // Debajo del header
-                left: '15px',
-                width: esMovilReal ? 'calc(100vw - 30px)' : '320px',
-                height: esMovilReal ? 'calc(100vh - 140px)' : 'calc(100vh - 160px)',
+                top: esMovilReal ? '0' : '10px', // ✅ Misma posición que el modal padre
+                left: esMovilReal ? '0' : '10px', // ✅ Mismo margen que el modal padre
+                right: esMovilReal ? '0' : '10px',
+                bottom: esMovilReal ? '0' : '10px',
+                width: esMovilReal ? '100vw' : 'calc(100vw - 20px)', // ✅ Mismo ancho que modal padre
+                height: esMovilReal ? '100vh' : 'calc(100vh - 20px)', // ✅ Misma altura que modal padre
                 backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '20px',
+                borderRadius: esMovilReal ? '0' : '12px', // ✅ Mismos bordes que modal padre
                 overflowY: 'auto',
-                zIndex: 1000,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-                animation: 'slideIn 0.3s ease-out'
+                zIndex: 10001, // ✅ MAYOR que cualquier botón (para ocultar botón X del header)
+                display: 'flex',
+                flexDirection: 'column',
+                // ✅ Sombra igual al modal padre
+                boxShadow: esMovilReal ? 'none' : '0 4px 12px rgba(0,0,0,0.15)'
               }}>
                 <SidebarContent 
                   ejemplosFiltrados={ejemplosFiltrados}
                   ejemploActivo={ejemploActivo}
                   setEjemploActivo={(id) => {
                     setEjemploActivo(id);
-                    setMostrarSidebar(false); // Auto-cerrar en móvil/tablet
+                    setMostrarSidebar(false); // Auto-cerrar
                   }}
                   esMovilReal={esMovilReal}
+                  esDesktop={false}
+                  busqueda={busqueda}
+                  setBusqueda={setBusqueda}
+                  filtroCategoria={filtroCategoria}
+                  setFiltroCategoria={setFiltroCategoria}
+                  onCerrar={() => setMostrarSidebar(false)} // ✅ Función para cerrar
                 />
               </aside>
             </>
           )
         )}
 
-        {/* ✅ ÁREA PRINCIPAL */}
+        {/* ✅ ÁREA PRINCIPAL - resto del código igual */}
         <main style={{ 
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
-          // Blur cuando sidebar está abierto en móvil/tablet
-          ...((!esDesktop && mostrarSidebar) && {
-            filter: 'blur(1px)',
-            pointerEvents: 'none'
-          })
+          overflow: 'hidden'
         }}>
           {EjemploComponente ? (
             <div style={{ 
@@ -468,182 +448,291 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
           )}
         </main>
       </div>
-
-      {/* ✅ ESTILOS CSS-in-JS para animaciones */}
-      <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-      `}</style>
     </div>
   );
 };
 
-// ✅ COMPONENTE SIDEBAR separado para reutilizar
+// ✅ COMPONENTE SIDEBAR con padding ajustado para integración visual
 const SidebarContent: React.FC<{
   ejemplosFiltrados: EjemploConfig[];
   ejemploActivo: string;
   setEjemploActivo: (id: string) => void;
   esMovilReal: boolean;
-}> = ({ ejemplosFiltrados, ejemploActivo, setEjemploActivo, esMovilReal }) => {
+  esDesktop: boolean;
+  busqueda: string;
+  setBusqueda: (value: string) => void;
+  filtroCategoria: string;
+  setFiltroCategoria: (value: string) => void;
+  onCerrar?: () => void;
+}> = ({ 
+  ejemplosFiltrados, 
+  ejemploActivo, 
+  setEjemploActivo, 
+  esMovilReal, 
+  esDesktop,
+  busqueda,
+  setBusqueda,
+  filtroCategoria,
+  setFiltroCategoria,
+  onCerrar 
+}) => {
   return (
-    <>
-      <h3 style={{ 
-        margin: '0 0 20px 0', 
-        color: '#2c3e50',
-        fontSize: esMovilReal ? '1.1rem' : '1.3rem'
+    <div style={{ 
+      // ✅ PADDING ajustado para que coincida con el modal padre
+      padding: esDesktop ? '20px' : esMovilReal ? '12px 15px' : '40px 20px 20px 20px', // ✅ Mismo padding que modal
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%'
+    }}>
+      {/* ✅ HEADER del sidebar con botón cerrar para móvil */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '20px' // ✅ Más espacio para respirar
       }}>
-        📚 Ejemplos ({ejemplosFiltrados.length})
-      </h3>
-      
-      {ejemplosFiltrados.length === 0 ? (
-        <div style={{ 
-          textAlign: 'center', 
-          color: '#6c757d', 
-          padding: '40px 20px',
-          fontSize: esMovilReal ? '0.9rem' : '1rem'
+        <h3 style={{ 
+          margin: 0, 
+          color: '#2c3e50',
+          fontSize: esMovilReal ? '1.2rem' : '1.3rem' // ✅ Título un poco más grande
         }}>
-          <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🔍</div>
-          No se encontraron ejemplos
-        </div>
-      ) : (
-        ejemplosFiltrados.map(ejemplo => (
-          <div
-            key={ejemplo.id}
-            onClick={() => setEjemploActivo(ejemplo.id)}
+          📚 Ejemplos ({ejemplosFiltrados.length})
+        </h3>
+        
+        {/* ✅ Botón X solo para móvil/tablet - mejorado visualmente */}
+        {onCerrar && (
+          <button
+            onClick={onCerrar}
             style={{
-              padding: esMovilReal ? '12px' : '16px',
-              marginBottom: '10px',
-              borderRadius: '10px',
+              padding: '8px',
+              backgroundColor: esMovilReal ? '#f8f9fa' : '#dc3545', // ✅ Fondo gris en móvil para coherencia
+              color: esMovilReal ? '#333' : 'white',
+              border: esMovilReal ? '1px solid #dee2e6' : 'none', // ✅ Borde en móvil
+              borderRadius: '50%',
+              fontSize: esMovilReal ? '1.1rem' : '1rem',
               cursor: 'pointer',
-              border: `2px solid ${ejemploActivo === ejemplo.id ? categorias[ejemplo.categoria].color : 'transparent'}`,
-              backgroundColor: ejemploActivo === ejemplo.id 
-                ? `${categorias[ejemplo.categoria].color}15` 
-                : '#f8f9fa',
-              transition: 'all 0.2s ease',
-              position: 'relative'
-            }}
-            onMouseEnter={(e) => {
-              if (ejemploActivo !== ejemplo.id) {
-                e.currentTarget.style.backgroundColor = `${categorias[ejemplo.categoria].color}08`;
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (ejemploActivo !== ejemplo.id) {
-                e.currentTarget.style.backgroundColor = '#f8f9fa';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }
+              width: esMovilReal ? '45px' : '36px', // ✅ Un poco más grande en móvil
+              height: esMovilReal ? '45px' : '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              boxShadow: esMovilReal ? '0 2px 4px rgba(0,0,0,0.1)' : 'none', // ✅ Sombra sutil en móvil
+              transition: 'all 0.2s ease'
             }}
           >
-            {ejemplo.destacado && !esMovilReal && (
-              <div style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                backgroundColor: '#ffc107',
-                color: 'white',
-                borderRadius: '50%',
-                width: '24px',
-                height: '24px',
-                fontSize: '0.7rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
-              }}>
-                ⭐
-              </div>
-            )}
-            
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <span style={{ fontSize: esMovilReal ? '1.3rem' : '1.6rem', flexShrink: 0 }}>
-                {ejemplo.icono}
-              </span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h4 style={{ 
-                  margin: '0 0 6px 0', 
-                  color: '#2c3e50', 
-                  fontSize: esMovilReal ? '0.95rem' : '1.05rem',
-                  fontWeight: 'bold'
+            ✕
+          </button>
+        )}
+      </div>
+
+      {/* ✅ CONTROLES DE BÚSQUEDA */}
+      <div style={{
+        marginBottom: '20px', // ✅ Más espacio
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px' // ✅ Más gap entre elementos
+      }}>
+        {/* Buscador */}
+        <input
+          type="text"
+          placeholder={esMovilReal ? "🔍 Buscar..." : "🔍 Buscar ejemplos, funcionalidades, tags..."}
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          style={{
+            width: '100%',
+            padding: esMovilReal ? '12px 14px' : '12px 14px', // ✅ Padding uniforme y generoso
+            border: '1px solid #dee2e6',
+            borderRadius: '8px',
+            fontSize: esMovilReal ? '1rem' : '1rem', // ✅ Tamaño uniforme
+            outline: 'none',
+            transition: 'border-color 0.2s ease',
+            boxSizing: 'border-box'
+          }}
+          onFocus={(e) => e.target.style.borderColor = '#3a86ff'}
+          onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
+        />
+
+        {/* Filtro por categoría */}
+        <select
+          value={filtroCategoria}
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+          style={{
+            width: '100%',
+            padding: esMovilReal ? '12px 14px' : '12px 14px', // ✅ Padding uniforme
+            border: '1px solid #dee2e6',
+            borderRadius: '8px',
+            fontSize: esMovilReal ? '1rem' : '1rem', // ✅ Tamaño uniforme
+            outline: 'none',
+            cursor: 'pointer',
+            boxSizing: 'border-box'
+          }}
+        >
+          <option value="todas">📂 Todas las categorías</option>
+          {Object.entries(categorias).map(([key, cat]) => (
+            <option key={key} value={key}>
+              {cat.icono} {cat.titulo}
+            </option>
+          ))}
+        </select>
+      </div>
+      
+      {/* ✅ LISTA DE EJEMPLOS scrolleable */}
+      <div style={{ 
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        // ✅ Margen negativo para compensar el padding del contenedor
+        marginLeft: esDesktop ? '0' : '-5px',
+        marginRight: esDesktop ? '0' : '-5px',
+        paddingLeft: esDesktop ? '0' : '5px',
+        paddingRight: esDesktop ? '0' : '5px'
+      }}>
+        {ejemplosFiltrados.length === 0 ? (
+          <div style={{ 
+            textAlign: 'center', 
+            color: '#6c757d', 
+            padding: '40px 20px',
+            fontSize: esMovilReal ? '1rem' : '1rem' // ✅ Tamaño uniforme
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🔍</div>
+            <p style={{ margin: 0 }}>No se encontraron ejemplos</p>
+          </div>
+        ) : (
+          ejemplosFiltrados.map(ejemplo => (
+            <div
+              key={ejemplo.id}
+              onClick={() => setEjemploActivo(ejemplo.id)}
+              style={{
+                padding: esMovilReal ? '16px' : '16px', // ✅ Padding uniforme y generoso
+                marginBottom: '12px', // ✅ Más espacio entre items
+                borderRadius: '12px', // ✅ Bordes más redondeados
+                cursor: 'pointer',
+                border: `2px solid ${ejemploActivo === ejemplo.id ? categorias[ejemplo.categoria].color : 'transparent'}`,
+                backgroundColor: ejemploActivo === ejemplo.id 
+                  ? `${categorias[ejemplo.categoria].color}15` 
+                  : '#f8f9fa',
+                transition: 'all 0.2s ease',
+                position: 'relative'
+              }}
+              onMouseEnter={(e) => {
+                if (ejemploActivo !== ejemplo.id) {
+                  e.currentTarget.style.backgroundColor = `${categorias[ejemplo.categoria].color}08`;
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (ejemploActivo !== ejemplo.id) {
+                  e.currentTarget.style.backgroundColor = '#f8f9fa';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
+            >
+              {ejemplo.destacado && !esMovilReal && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-8px',
+                  backgroundColor: '#ffc107',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '26px', // ✅ Un poco más grande
+                  height: '26px',
+                  fontSize: '0.8rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                 }}>
-                  {ejemplo.titulo}
-                </h4>
-                <p style={{ 
-                  margin: '0 0 10px 0', 
-                  color: '#6c757d', 
-                  fontSize: esMovilReal ? '0.8rem' : '0.9rem', 
-                  lineHeight: '1.4',
-                  ...(esMovilReal && {
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden'
-                  })
-                }}>
-                  {ejemplo.descripcion}
-                </p>
-                
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center', 
-                  flexWrap: 'wrap',
-                  gap: '8px'
-                }}>
-                  <span style={{ 
-                    backgroundColor: categorias[ejemplo.categoria].color,
-                    color: 'white',
-                    padding: '3px 8px',
-                    borderRadius: '12px',
-                    fontSize: esMovilReal ? '0.7rem' : '0.75rem',
+                  ⭐
+                </div>
+              )}
+              
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}> {/* ✅ Más gap */}
+                <span style={{ fontSize: esMovilReal ? '1.6rem' : '1.6rem', flexShrink: 0 }}> {/* ✅ Tamaño uniforme */}
+                  {ejemplo.icono}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h4 style={{ 
+                    margin: '0 0 8px 0', // ✅ Más margen
+                    color: '#2c3e50', 
+                    fontSize: esMovilReal ? '1rem' : '1.05rem', // ✅ Texto un poco más grande
                     fontWeight: 'bold'
                   }}>
-                    {categorias[ejemplo.categoria].icono} {categorias[ejemplo.categoria].titulo}
-                  </span>
-                  
-                  <span style={{
-                    color: dificultades[ejemplo.dificultad].color,
-                    fontWeight: 'bold',
-                    fontSize: esMovilReal ? '0.7rem' : '0.8rem'
+                    {ejemplo.titulo}
+                  </h4>
+                  <p style={{ 
+                    margin: '0 0 12px 0', // ✅ Más margen
+                    color: '#6c757d', 
+                    fontSize: esMovilReal ? '0.85rem' : '0.9rem', // ✅ Texto un poco más grande
+                    lineHeight: '1.5', // ✅ Mejor interlineado
+                    ...(esMovilReal && {
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    })
                   }}>
-                    {dificultades[ejemplo.dificultad].titulo}
-                  </span>
-                </div>
-                
-                {!esMovilReal && (
-                  <div style={{ marginTop: '10px' }}>
-                    {ejemplo.tags.map(tag => (
-                      <span
-                        key={tag}
-                        style={{
-                          backgroundColor: '#e9ecef',
-                          color: '#495057',
-                          fontSize: '0.7rem',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          marginRight: '4px',
-                          marginTop: '2px',
-                          display: 'inline-block'
-                        }}
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                    {ejemplo.descripcion}
+                  </p>
+                  
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    flexWrap: 'wrap',
+                    gap: '10px' // ✅ Más gap
+                  }}>
+                    <span style={{ 
+                      backgroundColor: categorias[ejemplo.categoria].color,
+                      color: 'white',
+                      padding: '4px 10px', // ✅ Más padding
+                      borderRadius: '14px', // ✅ Más redondeado
+                      fontSize: esMovilReal ? '0.75rem' : '0.8rem', // ✅ Texto un poco más grande
+                      fontWeight: 'bold'
+                    }}>
+                      {categorias[ejemplo.categoria].icono} {categorias[ejemplo.categoria].titulo}
+                    </span>
+                    
+                    <span style={{
+                      color: dificultades[ejemplo.dificultad].color,
+                      fontWeight: 'bold',
+                      fontSize: esMovilReal ? '0.75rem' : '0.85rem' // ✅ Texto un poco más grande
+                    }}>
+                      {dificultades[ejemplo.dificultad].titulo}
+                    </span>
                   </div>
-                )}
+                  
+                  {!esMovilReal && (
+                    <div style={{ marginTop: '12px' }}> {/* ✅ Más margen */}
+                      {ejemplo.tags.map(tag => (
+                        <span
+                          key={tag}
+                          style={{
+                            backgroundColor: '#e9ecef',
+                            color: '#495057',
+                            fontSize: '0.75rem', // ✅ Un poco más grande
+                            padding: '3px 7px', // ✅ Más padding
+                            borderRadius: '5px', // ✅ Más redondeado
+                            marginRight: '6px', // ✅ Más margen
+                            marginTop: '3px',
+                            display: 'inline-block'
+                          }}
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      )}
-    </>
+          ))
+        )}
+      </div>
+    </div>
   );
 };
