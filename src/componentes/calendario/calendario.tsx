@@ -62,6 +62,7 @@ export function Calendario<T extends DatoBase>({
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
   const esMovil = isMobile(640);
+  const esTablet = isMobile(1120);
 
   // Estado del playground
   const [mostrarPlayground, setMostrarPlayground] = useState(false);
@@ -290,7 +291,8 @@ export function Calendario<T extends DatoBase>({
               padding: esMovil ? '0px' : '0px 10px'
             }}>
               <CalendarioPlayground 
-                esMovil={esMovil} // ✅ Ahora incluye tablets
+                esMovil={esMovil}
+                esTablet={esTablet}
                 onCerrar={() => setMostrarPlayground(false)}
               />
             </div>

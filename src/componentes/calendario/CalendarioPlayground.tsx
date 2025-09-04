@@ -8,7 +8,8 @@ import { EjemploSeleccionCalendario } from './ejemplos/EjemploSeleccionCalendari
 
 interface CalendarioPlaygroundProps {
   esMovil?: boolean;
-  onCerrar?: () => void; // ✅ Función para cerrar el modal
+  esTablet?: boolean; // ✅ Añadir esTablet como prop
+  onCerrar?: () => void;
 }
 
 interface EjemploConfig {
@@ -104,34 +105,18 @@ const dificultades = {
 
 export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({ 
   esMovil = false,
-  onCerrar // ✅ Recibir función de cerrar
+  esTablet = false, // ✅ Recibir esTablet del padre
+  onCerrar
 }) => {
   const [ejemploActivo, setEjemploActivo] = useState<string>('seleccion');
   const [filtroCategoria, setFiltroCategoria] = useState<string>('todas');
   const [busqueda, setBusqueda] = useState<string>('');
   const [mostrarSidebar, setMostrarSidebar] = useState(false);
   
-  // ✅ Detección responsive basada en CSS media queries
-  const [dimensiones, setDimensiones] = useState({ width: 0, height: 0 });
-  
-  useEffect(() => {
-    const detectarDimensiones = () => {
-      setDimensiones({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-    
-    detectarDimensiones();
-    window.addEventListener('resize', detectarDimensiones);
-    
-    return () => window.removeEventListener('resize', detectarDimensiones);
-  }, []);
-
-  // ✅ Media queries según CSS
-  const esMovilReal = dimensiones.width < 640;      // CSS: @media (max-width: 640px)
-  const esTablet = dimensiones.width < 1120;       // CSS: @media (max-width: 1120px)
-  const esDesktop = dimensiones.width >= 1120;     // Sin media query
+  // ✅ USAR las props del padre en lugar de detectar internamente
+  const esMovilReal = esMovil;      // Ya detectado en calendario.tsx
+  const esTabletReal = esTablet;    // Ya detectado en calendario.tsx  
+  const esDesktop = !esTabletReal;  // Desktop = NO tablet
 
   const ejemplosFiltrados = ejemplos.filter(ejemplo => {
     const coincideBusqueda = busqueda === '' || 
@@ -168,7 +153,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
       <header style={{ 
         backgroundColor: 'white', 
         borderBottom: '1px solid #dee2e6',
-        padding: esMovilReal ? '12px 0' : esTablet ? '16px 0' : '20px 0',
+        padding: esMovilReal ? '12px 0' : esTabletReal ? '16px 0' : '20px 0',
         flexShrink: 0,
         zIndex: 100
       }}>
@@ -181,7 +166,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'space-around' // ✅ Cambio a space-between para distribuir elementos
+            justifyContent: 'space-around'
           }}>
             
             {/* ✅ LADO IZQUIERDO - Título y descripción */}
@@ -193,9 +178,9 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '8px',
-                fontSize: esMovilReal ? '1.2rem' : esTablet ? '1.4rem' : '1.8rem'
+                fontSize: esMovilReal ? '1.2rem' : esTabletReal ? '1.4rem' : '1.8rem'
               }}>
-                🗓️ <span >Playground</span>
+                🗓️ <span>Playground</span>
               </h1>
               {/* Descripción solo en desktop */}
               {esDesktop && (
@@ -257,25 +242,25 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
             </div>
             </div>
             <div>
-              {/* ✅ BOTÓN CERRAR MODAL - integrado en el header */}
+              {/* ✅ BOTÓN CERRAR MODAL */}
               {onCerrar && (
               <button
                 onClick={onCerrar}
                 style={{
                   padding: '8px',
-                  backgroundColor: '#f8f9fa', // ✅ Fondo gris en móvil para coherencia
+                  backgroundColor: '#f8f9fa',
                   color: '#333',
-                  border: '1px solid #dee2e6', // ✅ Borde en móvil
+                  border: '1px solid #dee2e6',
                   borderRadius: '50%',
                   fontSize: '1.1rem',
                   cursor: 'pointer',
-                  width: '45px', // ✅ Un poco más grande en móvil
+                  width: '45px',
                   height: '45px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 'bold',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // ✅ Sombra sutil en móvil
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -287,7 +272,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
         </div>
       </header>
 
-      {/* ✅ CONTENIDO PRINCIPAL - resto del código igual */}
+      {/* ✅ CONTENIDO PRINCIPAL */}
       <div style={{ 
         display: 'flex',
         flex: 1,
@@ -297,7 +282,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
         
         {/* ✅ SIDEBAR - comportamiento por dispositivo */}
         {esDesktop ? (
-          // DESKTOP: Sidebar siempre visible con controles integrados
+          // DESKTOP: Sidebar siempre visible
           <aside style={{ 
             width: '350px',
             backgroundColor: 'white',
@@ -312,34 +297,38 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
               ejemploActivo={ejemploActivo}
               setEjemploActivo={setEjemploActivo}
               esMovilReal={false}
+              esTabletReal={false}
               esDesktop={esDesktop}
               busqueda={busqueda}
               setBusqueda={setBusqueda}
               filtroCategoria={filtroCategoria}
               setFiltroCategoria={setFiltroCategoria}
-              onCerrar={undefined} // ✅ Desktop no necesita cerrar
+              onCerrar={undefined}
             />
           </aside>
         ) : (
-          // MÓVIL/TABLET: Sidebar como overlay integrado con el modal
+          // MÓVIL/TABLET: Sidebar como overlay
           mostrarSidebar && (
             <>
-              {/* ✅ SIDEBAR OVERLAY - integrado con el diseño del modal */}
+              {/* ✅ SIDEBAR OVERLAY - posicionamiento corregido */}
               <aside style={{ 
                 position: 'fixed',
-                top: esMovilReal ? '0' : '10px', // ✅ Misma posición que el modal padre
-                left: esMovilReal ? '0' : '10px', // ✅ Mismo margen que el modal padre
-                right: esMovilReal ? '0' : '10px',
-                bottom: esMovilReal ? '0' : '10px',
-                width: esMovilReal ? '100vw' : 'calc(100vw - 20px)', // ✅ Mismo ancho que modal padre
-                height: esMovilReal ? '100vh' : 'calc(100vh - 20px)', // ✅ Misma altura que modal padre
+                // ✅ CENTRADO como el modal padre
+                top: '50%',
+                left: '50%',
+                transform: esMovilReal 
+                  ? 'translate(-50%, -50%)' // Móvil: centrado perfecto
+                  : 'translate(-50%, -50%)', // Tablet: también centrado perfecto
+                // ✅ Dimensiones exactas del modal padre
+                width: esMovilReal ? '100vw' : '95vw',
+                height: esMovilReal ? '100vh' : '90vh', 
+                maxWidth: esMovilReal ? 'none' : '1400px',
                 backgroundColor: 'white',
-                borderRadius: esMovilReal ? '0' : '12px', // ✅ Mismos bordes que modal padre
+                borderRadius: esMovilReal ? '0' : '12px',
                 overflowY: 'auto',
-                zIndex: 10001, // ✅ MAYOR que cualquier botón (para ocultar botón X del header)
+                zIndex: 10001,
                 display: 'flex',
                 flexDirection: 'column',
-                // ✅ Sombra igual al modal padre
                 boxShadow: esMovilReal ? 'none' : '0 4px 12px rgba(0,0,0,0.15)'
               }}>
                 <SidebarContent 
@@ -347,22 +336,23 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                   ejemploActivo={ejemploActivo}
                   setEjemploActivo={(id) => {
                     setEjemploActivo(id);
-                    setMostrarSidebar(false); // Auto-cerrar
+                    setMostrarSidebar(false);
                   }}
                   esMovilReal={esMovilReal}
+                  esTabletReal={esTabletReal}
                   esDesktop={false}
                   busqueda={busqueda}
                   setBusqueda={setBusqueda}
                   filtroCategoria={filtroCategoria}
                   setFiltroCategoria={setFiltroCategoria}
-                  onCerrar={() => setMostrarSidebar(false)} // ✅ Función para cerrar
+                  onCerrar={() => setMostrarSidebar(false)}
                 />
               </aside>
             </>
           )
         )}
 
-        {/* ✅ ÁREA PRINCIPAL - resto del código igual */}
+        {/* ✅ ÁREA PRINCIPAL */}
         <main style={{ 
           flex: 1,
           display: 'flex',
@@ -395,7 +385,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                     <h2 style={{ 
                       margin: '0 0 4px 0', 
                       color: '#2c3e50',
-                      fontSize: esMovilReal ? '1.1rem' : esTablet ? '1.3rem' : '1.5rem'
+                      fontSize: esMovilReal ? '1.1rem' : esTabletReal ? '1.3rem' : '1.5rem'
                     }}>
                       {ejemploSeleccionado!.titulo}
                     </h2>
@@ -403,7 +393,7 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
                       <p style={{ 
                         margin: 0, 
                         color: '#6c757d', 
-                        fontSize: esTablet ? '0.95rem' : '1.05rem' 
+                        fontSize: esTabletReal ? '0.95rem' : '1.05rem' 
                       }}>
                         {ejemploSeleccionado!.descripcion}
                       </p>
@@ -452,12 +442,13 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
   );
 };
 
-// ✅ COMPONENTE SIDEBAR con padding ajustado para integración visual
+// ✅ ACTUALIZAR SidebarContent para usar esTabletReal
 const SidebarContent: React.FC<{
   ejemplosFiltrados: EjemploConfig[];
   ejemploActivo: string;
   setEjemploActivo: (id: string) => void;
   esMovilReal: boolean;
+  esTabletReal: boolean; // ✅ Añadir esTabletReal
   esDesktop: boolean;
   busqueda: string;
   setBusqueda: (value: string) => void;
@@ -469,6 +460,7 @@ const SidebarContent: React.FC<{
   ejemploActivo, 
   setEjemploActivo, 
   esMovilReal, 
+  esTabletReal, // ✅ Usar esTabletReal
   esDesktop,
   busqueda,
   setBusqueda,
@@ -478,47 +470,46 @@ const SidebarContent: React.FC<{
 }) => {
   return (
     <div style={{ 
-      // ✅ PADDING ajustado para que coincida con el modal padre
-      padding: esDesktop ? '20px' : esMovilReal ? '12px 15px' : '40px 20px 20px 20px', // ✅ Mismo padding que modal
+      padding: esDesktop ? '20px' : esMovilReal ? '12px 15px' : '20px', // ✅ Tablet usa padding normal
       display: 'flex',
       flexDirection: 'column',
       height: '100%'
     }}>
-      {/* ✅ HEADER del sidebar con botón cerrar para móvil */}
+      {/* ✅ Header del sidebar */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: '20px' // ✅ Más espacio para respirar
+        marginBottom: '20px'
       }}>
         <h3 style={{ 
           margin: 0, 
           color: '#2c3e50',
-          fontSize: esMovilReal ? '1.2rem' : '1.3rem' // ✅ Título un poco más grande
+          fontSize: esMovilReal ? '1.2rem' : '1.3rem'
         }}>
           📚 Ejemplos ({ejemplosFiltrados.length})
         </h3>
         
-        {/* ✅ Botón X solo para móvil/tablet - mejorado visualmente */}
+        {/* ✅ Botón X para móvil/tablet */}
         {onCerrar && (
           <button
             onClick={onCerrar}
             style={{
               padding: '8px',
-              backgroundColor: '#f8f9fa', // ✅ Fondo gris en móvil para coherencia
+              backgroundColor: '#f8f9fa',
               color: '#333',
-              border: '1px solid #dee2e6', // ✅ Borde en móvil
+              border: '1px solid #dee2e6',
               borderRadius: '50%',
               fontSize: '1.1rem',
               cursor: 'pointer',
-              width: '45px', // ✅ Un poco más grande en móvil
+              width: '45px',
               height: '45px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // ✅ Sombra sutil en móvil
-              transition: 'all 0.2s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              transition: 'all 0.2s ease'
             }}
           >
             ✕
