@@ -34,10 +34,10 @@ type Estado = "defecto";
 
 export const DetallePresupuesto = ({
   presupuestoInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   presupuestoInicial?: Presupuesto | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
   const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
@@ -71,19 +71,19 @@ export const DetallePresupuesto = ({
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
     init(nuevoPresupuesto);
-    emitir("PRESUPUESTO_CAMBIADO", nuevoPresupuesto);
+    publicar("presupuesto_cambiado", nuevoPresupuesto);
   };
 
   const aprobarClicked = async () => {
     await intentar(() => aprobarPresupuesto(modelo.id));
     const presupuesto_aprobado = await getPresupuesto(modelo.id);
     init(presupuesto_aprobado);
-    emitir("PRESUPUESTO_CAMBIADO", presupuesto_aprobado);
+    publicar("presupuesto_cambiado", presupuesto_aprobado);
   };
 
   const onBorrarConfirmado = async () => {
     await intentar(() => borrarPresupuesto(modelo.id));
-    emitir("PRESUPUESTO_BORRADO", modelo);
+    publicar("presupuesto_borrado", modelo);
     setEstado("edicion");
   };
 
@@ -94,7 +94,7 @@ export const DetallePresupuesto = ({
       setEntidad={(p) => init(p)}
       entidad={modelo}
       cargar={getPresupuesto}
-      cerrarDetalle={() => emitir("CANCELAR_SELECCIONADA")}
+      cerrarDetalle={() => publicar("seleccion_presupuesto_cancelada")}
     >
       {!!presupuestoId && (
         <>

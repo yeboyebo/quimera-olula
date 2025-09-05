@@ -18,7 +18,13 @@ export type Criteria = {
 }
 
 export type Orden = string[];
-export type Filtro = [string, string, string][];
+type ClausulaFiltro = [string, string, string?];
+export type Filtro = ClausulaFiltro[];
+// export type Filtro = (
+//   [string, string] |
+//   [string, string, string] |
+//   [string, string, string][]
+// );
 export type Paginacion = {
   limite: number;
   pagina: number;
@@ -30,6 +36,11 @@ export type RespuestaLista<T> = Promise<{
   datos: T[];
   total: TotalRegistros;
 }>
+
+export type RespuestaLista2<T> = {
+  datos: T[];
+  total: TotalRegistros;
+}
 
 export type Direccion = {
   nombre_via: string;
@@ -63,3 +74,8 @@ export type TipoInput =
   | "url"
   | "rango"
   | "moneda";
+
+export type ListaSeleccionable<E extends Entidad> = {
+  lista: E[];
+  idActivo: string | null;
+}

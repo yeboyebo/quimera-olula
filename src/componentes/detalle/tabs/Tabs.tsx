@@ -17,7 +17,7 @@ const Tab: React.FC<TabProps> = ({ children }) => {
 
 const Tabs: React.FC<TabsProps> = ({ children, className }) => {
   const [activeTab, setActiveTab] = React.useState(0);
-  const { detalleTabs } = estilos;
+  const { detalleTabs, active } = estilos;
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -28,11 +28,10 @@ const Tabs: React.FC<TabsProps> = ({ children, className }) => {
       {/* Aplicar className */}
       <div className="tab-header">
         {children.map((tab, index) => (
-          
           <button
             key={index}
             onClick={() => handleTabClick(index)}
-            className={activeTab === index ? "active" : "inactive"}
+            className={activeTab === index ? active : "inactive"}
           >
             {tab.props.label}
           </button>

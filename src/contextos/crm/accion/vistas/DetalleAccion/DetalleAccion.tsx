@@ -1,11 +1,10 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
 import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
@@ -14,16 +13,16 @@ import { TipoAccion } from "../../../comun/componentes/tipo_accion.tsx";
 import { Accion } from "../../diseño.ts";
 import { accionVacia, metaAccion } from "../../dominio.ts";
 import {
-  deleteAccion,
   finalizarAccion,
   getAccion,
-  patchAccion,
+  patchAccion
 } from "../../infraestructura.ts";
+import { BajaAccion } from "../BajaAccion.tsx";
 import "./DetalleAccion.css";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-type Estado = "defecto" | "confirmarBorrado" | "confimarFinalizar";
+type Estado = "Inactivo" | "Borrando" | "confimarFinalizar";
 
 export const DetalleAccion = ({
   accionInicial = null,
@@ -33,43 +32,45 @@ export const DetalleAccion = ({
   emitir?: EmitirEvento;
 }) => {
   const params = useParams();
-  const [estado, setEstado] = useState<Estado>("defecto");
+  const [estado, setEstado] = useState<Estado>("Inactivo");
   const accionId = accionInicial?.id ?? params.id;
   const titulo = (accion: Entidad) => accion.descripcion as string;
-  const { intentar } = useContext(ContextoError);
 
   const accion = useModelo(metaAccion, accionVacia);
   const { modelo, init } = accion;
 
   const maquina: Maquina<Estado> = {
-    defecto: {
-      GUARDAR_INICIADO: async () => {
+    Inactivo: {
+      borrar: "Borrando",
+      guardar: async () => {
         await patchAccion(modelo.id, modelo);
         recargarCabecera();
       },
+      cancelar: () => {
+        init();
+      }
     },
-    confirmarBorrado: {},
+    Borrando: {
+      borrado_cancelado: "Inactivo",
+      accion_borrada: async () => {
+        emitir("accion_borrada", modelo);
+      },
+    },
     confimarFinalizar: {},
   };
-  const emitirAccion = useMaquina(maquina, "defecto", () => {});
+  const emitirAccion = useMaquina(maquina, estado, setEstado);
 
   const recargarCabecera = async () => {
     const nuevaAccion = await getAccion(modelo.id);
     init(nuevaAccion);
-    emitir("ACCION_CAMBIADA", nuevaAccion);
+    emitir("accion_cambiada", nuevaAccion);
   };
 
   const finalizarConfirmado = async () => {
     await finalizarAccion(modelo.id);
     const accion_finalizada = await getAccion(modelo.id);
     init(accion_finalizada);
-    emitir("ACCION_CAMBIADA", accion_finalizada);
-  };
-
-  const onBorrarAccion = async () => {
-    await intentar(() => deleteAccion(modelo.id));
-    emitir("ACCION_BORRADA", modelo);
-    return "defecto";
+    emitir("accion_cambiada", accion_finalizada);
   };
 
   return (
@@ -79,7 +80,7 @@ export const DetalleAccion = ({
       setEntidad={(a) => init(a)}
       entidad={modelo}
       cargar={getAccion}
-      cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+      cerrarDetalle={() => emitir("seleccion_cancelada")}
     >
       {!!accionId && (
         <>
@@ -87,9 +88,10 @@ export const DetalleAccion = ({
             <QBoton onClick={() => setEstado("confimarFinalizar")}>
               Finalizar
             </QBoton>
-            <QBoton onClick={() => setEstado("confirmarBorrado")}>
+            <QBoton onClick={() => emitir("borrar")}>
               Borrar
             </QBoton>
+            {estado}
           </div>
 
           <Tabs
@@ -126,12 +128,12 @@ export const DetalleAccion = ({
           {accion.modificado && (
             <div className="botones maestro-botones">
               <QBoton
-                onClick={() => emitirAccion("GUARDAR_INICIADO")}
+                onClick={() => emitirAccion("crear")}
                 deshabilitado={!accion.valido}
               >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={() => init()}>
+              <QBoton tipo="reset" variante="texto" onClick={() => emitirAccion("cancelar")}>
                 Cancelar
               </QBoton>
             </div>
@@ -141,16 +143,21 @@ export const DetalleAccion = ({
             abierto={estado === "confimarFinalizar"}
             titulo="Finalizar acción"
             mensaje="¿Está seguro de que desea finalizar esta acción?"
-            onCerrar={() => setEstado("defecto")}
+            onCerrar={() => setEstado("Inactivo")}
             onAceptar={finalizarConfirmado}
           />
-          <QModalConfirmacion
+          {/* <QModalConfirmacion
             nombre="borrarAccion"
             abierto={estado === "confirmarBorrado"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar esta acción?"
             onCerrar={() => setEstado("defecto")}
             onAceptar={onBorrarAccion}
+          /> */}
+          <BajaAccion 
+            emitir={emitirAccion}
+            activo={estado === "Borrando"}
+            idAccion={modelo.id}
           />
         </>
       )}

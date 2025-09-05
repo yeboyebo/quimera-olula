@@ -20,14 +20,16 @@ export const Cabecera = () => {
         ></button>
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
-        <Link to="/">Quimera Olula</Link>
+        <Link to="/">
+          <span>Quimera</span> Olula
+        </Link>
         <button
           id="boton-menu-usuario"
           aria-label="Abrir menú usuario"
           onClick={() => toggleMenu("menu-usuario")}
         ></button>
         <label htmlFor="boton-menu-usuario" id="etiqueta-menu-usuario-abierto">
-          <QIcono nombre="perfil" tamaño="md" />
+          <QIcono nombre="perfil" tamaño="sm" />
         </label>
       </header>
     </>

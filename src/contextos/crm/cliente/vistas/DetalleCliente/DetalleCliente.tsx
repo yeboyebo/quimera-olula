@@ -15,10 +15,10 @@ import {
   getCliente,
   patchCliente,
 } from "../../infraestructura.ts";
-import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import "./DetalleCliente.css";
-import { TabOportunidades } from "./OportunidadesVenta/TabOportunidades.tsx";
+import { TabAcciones } from "./TabAcciones.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
+import { TabOportunidades } from "./TabOportunidades.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,

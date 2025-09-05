@@ -1,24 +1,15 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { OportunidadVenta } from "../diseño.ts";
+import { metaTablaOportunidadVenta } from "../dominio.ts";
 import { getOportunidadesVenta } from "../infraestructura.ts";
 import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "./DetalleOportunidadVenta/DetalleOportunidadVenta.tsx";
 // import "./MaestroConDetalleOportunidadVenta.css";
-
-const metaTablaOportunidadVenta: MetaTabla<OportunidadVenta> = [
-  { id: "id", cabecera: "Código" },
-  { id: "descripcion", cabecera: "Descripción" },
-  { id: "nombre_cliente", cabecera: "Cliente" },
-  { id: "importe", cabecera: "Total Venta", tipo: "moneda" },
-  { id: "fecha_cierre", cabecera: "Fecha Cierre" },
-];
 
 type Estado = "lista" | "alta";
 
@@ -28,7 +19,7 @@ export const MaestroConDetalleOportunidadVenta = () => {
 
   const maquina: Maquina<Estado> = {
     alta: {
-      OPORTUNIDAD_CREADA: (payload: unknown) => {
+      oportunidad_creada: (payload: unknown) => {
         const oportunidad = payload as OportunidadVenta;
         oportunidades.añadir(oportunidad);
         return "lista";
@@ -41,7 +32,7 @@ export const MaestroConDetalleOportunidadVenta = () => {
         const oportunidad = payload as OportunidadVenta;
         oportunidades.modificar(oportunidad);
       },
-      OPORTUNIDAD_BORRADA: (payload: unknown) => {
+      oportunidad_borrada: (payload: unknown) => {
         const oportunidad = payload as OportunidadVenta;
         oportunidades.eliminar(oportunidad);
       },
@@ -80,13 +71,7 @@ export const MaestroConDetalleOportunidadVenta = () => {
           />
         }
       />
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      >
-        <AltaOportunidadVenta emitir={emitir} />
-      </QModal>
+      <AltaOportunidadVenta emitir={emitir} activo={estado === "alta"} />
     </div>
   );
 };

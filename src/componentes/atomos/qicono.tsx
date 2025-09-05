@@ -29,6 +29,11 @@ const iconos: Record<string, string> = {
   adelante: 'chevron-right',
   menu: 'menu',
   calendario_vacio: 'calendar-alt',
+  check: "check",
+  x_circle: "x-circle",
+  minus: "minus",
+  lista: "list-ul",
+  tarjeta: "credit-card",
 };
 
 export const QIcono = ({ nombre, tamaño = "md", color, style, props }: QIconoProps) => {

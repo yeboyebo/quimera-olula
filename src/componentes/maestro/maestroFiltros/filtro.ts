@@ -17,7 +17,9 @@ export const filtrarEntidad = (
         )?.toLowerCase();
 
         if (operador === "~") {
-            return valorCampo?.includes(valor.toLowerCase()) ?? false;
+            return valor
+                ? valorCampo?.includes(valor.toLowerCase()) ?? false
+                : false;
         }
         // Si en el futuro hay otros operadores, se pueden añadir aquí
         return true;

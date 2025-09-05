@@ -9,12 +9,14 @@ import { MaestroConDetalleTrabajador } from "./apps/almaeventos/contextos/evento
 import { MaestroConDetalleTrabajadorEvento } from "./apps/almaeventos/contextos/eventos/trabajador_evento/vistas/MaestroConDetalleTrabajadorEvento.tsx";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
+import { MaestroConDetalleGruposReglas } from "./contextos/administracion/vistas/MaestroConDetalleGruposReglas.tsx";
 import "./contextos/comun/comun.css";
 import { Indice } from "./contextos/comun/Indice.tsx";
 import { MaestroConDetalleAccion } from "./contextos/crm/accion/vistas/MaestroConDetalleAccion.tsx";
 import { MaestroConDetalleClienteCRM } from "./contextos/crm/cliente/vistas/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleContacto } from "./contextos/crm/contacto/vistas/MaestroConDetalleContacto.tsx";
 import { MaestroConDetalleEstadoOportunidad } from "./contextos/crm/estadoOportunidadVenta/vistas/MaestroConDetalleEstadoOportunidad.tsx";
+import { MaestroConDetalleIncidencia } from "./contextos/crm/incidencia/vistas/MaestroConDetalleIncidencia.tsx";
 import { MaestroConDetalleLead } from "./contextos/crm/lead/vistas/MaestroConDetalleLead.tsx";
 import { MaestroConDetalleOportunidadVenta } from "./contextos/crm/oportunidadventa/vistas/MaestroConDetalleOportunidadVenta.tsx";
 import { Login } from "./contextos/usuarios/login/vistas/Login.tsx";
@@ -78,6 +80,7 @@ createRoot(document.getElementById("root")!).render(
                 </Vista>
               }
             />
+            import("./componentes/historias/historias.tsx")
           </Route>
           <Route path="albaran">
             <Route
@@ -161,6 +164,16 @@ createRoot(document.getElementById("root")!).render(
               }
             />
           </Route>
+          <Route path="incidencia">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleIncidencia />
+                </Vista>
+              }
+            />
+        </Route>
         </Route>
         <Route path="login">
           <Route
@@ -189,6 +202,18 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <Vista>
                   <Perfil />
+                </Vista>
+              }
+            />
+          </Route>
+        </Route>
+        <Route path="administracion">
+          <Route path="grupos">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleGruposReglas />
                 </Vista>
               }
             />
