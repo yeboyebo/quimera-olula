@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { QBoton } from '../atomos/qboton.tsx';
 import { QIcono } from '../atomos/qicono.tsx';
+import './MenuAccionesMovil.css';
 import { SelectorModo } from './SelectorModo';
-import './menu-acciones-movil.css';
 import { ModoCalendario } from './tipos';
 
 interface MenuAccionesMovilProps {
@@ -37,13 +37,45 @@ export function MenuAccionesMovil({
   const menuRef = useRef<HTMLDivElement>(null);
   const ignoreNextClick = useRef(false);
 
+  // ✅ Detectar si el playground está abierto revisando el DOM
+  const [playgroundAbierto, setPlaygroundAbierto] = useState(false);
+
+  useEffect(() => {
+    // ✅ Función para detectar si el playground está visible
+    const detectarPlayground = () => {
+      // Buscar el overlay del playground en el DOM
+      const playgroundOverlay = document.querySelector('[style*="rgba(0, 0, 0, 0.5)"][style*="position: fixed"]');
+      setPlaygroundAbierto(!!playgroundOverlay);
+    };
+
+    // ✅ Observar cambios en el DOM
+    const observer = new MutationObserver(detectarPlayground);
+    observer.observe(document.body, { 
+      childList: true, 
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    // ✅ Detectar inicial
+    detectarPlayground();
+
+    return () => observer.disconnect();
+  }, []);
+
+  // ✅ Z-index dinámico basado en si el playground está abierto
+  const zIndexMenu = playgroundAbierto ? 10100 : 1200; // Mayor que playground (9999)
+  const zIndexOverlay = playgroundAbierto ? 10099 : 1199;
+
   // Función toggle: abre si está cerrado, cierra si está abierto
   const toggleMenu = () => {
+    console.log('mimensaje_toogleMenu', ignoreNextClick.current);
+    
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
     }
-    
+    console.log('mimensaje_PASA', ignoreNextClick.current);
     setAbierto(prev => !prev);
   };
 
@@ -110,35 +142,166 @@ export function MenuAccionesMovil({
     };
   }, []);
 
+  // ✅ Solo calcular offset cuando esté en playground
+  const calcularTopOffset = () => {
+    if (playgroundAbierto) {
+      // Buscar el contenedor del calendario dentro del playground
+      const calendarioContainer = document.querySelector('.calendario-container');
+      if (calendarioContainer) {
+        const rect = calendarioContainer.getBoundingClientRect();
+        return rect.top + 154; // top del calendario + offset normal
+      }
+    }
+    return 154; // valor normal
+  };
+
+  const [topOffset, setTopOffset] = useState(154);
+
+  // ✅ Actualizar solo el top cuando cambie el playground
+  useEffect(() => {
+    if (playgroundAbierto) {
+      const actualizarTop = () => setTopOffset(calcularTopOffset());
+      actualizarTop();
+      // Actualizar si hay scroll en el playground
+      const interval = setInterval(actualizarTop, 200);
+      return () => clearInterval(interval);
+    } else {
+      setTopOffset(154); // resetear al valor normal
+    }
+  }, [playgroundAbierto]);
+
+  // ✅ Calcular posición relativa al calendario dentro del ejemplo
+  const calcularPosicion = () => {
+    if (playgroundAbierto) {
+      // ✅ Buscar el calendario DENTRO del ejemplo activo (no el contenedor general)
+      const ejemploContainer = document.querySelector('main .calendario-container');
+      // ✅ Alternativa: buscar por el ID específico del calendario si existe
+      const calendarioEjemplo = ejemploContainer || document.querySelector('#calendario-ejemplo') || document.querySelector('[data-calendario="true"]');
+      
+      if (calendarioEjemplo) {
+        const rect = calendarioEjemplo.getBoundingClientRect();
+        
+        // ✅ Buscar la cabecera del calendario del ejemplo para calcular offset
+        const cabeceraCalendario = calendarioEjemplo.querySelector('.calendario-cabecera, header, .cabecera-grid');
+        const offsetCabecera = cabeceraCalendario ? cabeceraCalendario.getBoundingClientRect().height : 60;
+        
+        return {
+          top: rect.top + offsetCabecera, // Desde el top del calendario del ejemplo + cabecera
+          left: rect.left + 16, // Desde el left del calendario del ejemplo + margen
+          maxHeight: rect.height - offsetCabecera - 20, // Altura disponible dentro del calendario del ejemplo
+          // ✅ Información de debug
+          debug: {
+            calendarioRect: rect,
+            offsetCabecera,
+            elemento: calendarioEjemplo.className || calendarioEjemplo.tagName
+          }
+        };
+      } else {
+        // ✅ Fallback: si no encuentra el calendario del ejemplo, usar el contenedor general
+        console.warn('No se encontró calendario dentro del ejemplo, usando fallback');
+        const playgroundMain = document.querySelector('main');
+        if (playgroundMain) {
+          const rect = playgroundMain.getBoundingClientRect();
+          return {
+            top: rect.top + 100,
+            left: rect.left + 16,
+            maxHeight: rect.height - 120
+          };
+        }
+      }
+    }
+    
+    // ✅ Posición normal cuando no está en playground
+    return {
+      top: 154,
+      left: abierto ? 16 : -320,
+      maxHeight: '79vh'
+    };
+  };
+
+  const [posicion, setPosicion] = useState(calcularPosicion());
+
+  // ✅ Actualizar posición cuando cambie el playground, ejemplo activo o se abra/cierre
+  useEffect(() => {
+    if (playgroundAbierto) {
+      const actualizarPosicion = () => {
+        const nuevaPosicion = calcularPosicion();
+        setPosicion(nuevaPosicion);
+        
+        // ✅ Debug para verificar que encuentra el calendario correcto
+        if (nuevaPosicion.debug) {
+          console.log('Menú posicionado relativo a:', nuevaPosicion.debug);
+        }
+      };
+      
+      // ✅ Actualizar inmediatamente
+      actualizarPosicion();
+      
+      // ✅ Observar cambios en el DOM del ejemplo (cuando cambia de ejemplo)
+      const observer = new MutationObserver(actualizarPosicion);
+      const mainElement = document.querySelector('main');
+      
+      if (mainElement) {
+        observer.observe(mainElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['class', 'style']
+        });
+      }
+      
+      // ✅ También actualizar con interval como backup
+      const interval = setInterval(actualizarPosicion, 300);
+      
+      return () => {
+        observer.disconnect();
+        clearInterval(interval);
+      };
+    } else {
+      setPosicion(calcularPosicion()); // resetear al valor normal
+    }
+  }, [playgroundAbierto, abierto]);
+
   const menuLateral = (
     <>
-      {/* Overlay de fondo */}
+      {/* ✅ Overlay igual */}
       <div 
         className={`menu-overlay ${abierto ? 'visible' : ''}`}
         onClick={cerrarMenu}
+        style={{
+          zIndex: zIndexOverlay
+        }}
       />
       
-      {/* Menú lateral */}
+      {/* ✅ Menú con posición relativa al calendario del ejemplo */}
       <menu-lateral 
         id="menu-acciones-movil"
         className={abierto ? 'abierto' : ''}
         style={{
           border: '1px solid #ccc',
           position: 'fixed',
-          top: 154,
-          height: '79vh',
-          zIndex: 1200,
+          // ✅ Usar posición calculada dinámicamente
+          top: posicion.top,
+          left: playgroundAbierto ? posicion.left : posicion.left,
+          height: playgroundAbierto ? posicion.maxHeight : '79vh',
+          zIndex: zIndexMenu,
           width: '320px',
-          maxWidth: '100vw',
-          overflowY: 'hidden',
-          marginLeft: '1rem',
-          left: abierto ? 0 : '-320px',
+          maxWidth: playgroundAbierto ? '300px' : '100vw',
+          overflowY: 'auto', // ✅ Cambiar a auto para scroll si es necesario
+          marginLeft: playgroundAbierto ? '0' : '1rem',
+          // ✅ Animación condicional
+          transform: playgroundAbierto 
+            ? (abierto ? 'translateX(0)' : 'translateX(-100%)') // En playground usar transform
+            : 'none', // Fuera del playground usar left
           visibility: abierto ? 'visible' : 'hidden',
-          transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s',
+          transition: playgroundAbierto 
+            ? 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s'
+            : 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s',
         }}
       >
+        {/* ✅ Resto exactamente igual */}
         <aside ref={menuRef} style={{
-          height: '100vh',
+          height: '100%', // ✅ 100% del contenedor calculado
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
@@ -167,7 +330,6 @@ export function MenuAccionesMovil({
               </div>
             )}
             
-            {/* Fallback para compatibilidad con sistemas que no usan modoVista */}
             {mostrarCambioModo && !onCambioModoVista && (
               <div className="menu-acciones-fila" key={'modo'}>
                 <QBoton onClick={handleCambioModo} variante={'texto'}>
@@ -219,6 +381,10 @@ export function MenuAccionesMovil({
         className="boton-menu-lateral"
         onClick={toggleMenu}
         type="button"
+        style={{
+          position: 'relative',
+          zIndex: playgroundAbierto ? 10101 : 'auto'
+        }}
       >
         <QIcono nombre="menu" tamaño="sm" />
       </button>
