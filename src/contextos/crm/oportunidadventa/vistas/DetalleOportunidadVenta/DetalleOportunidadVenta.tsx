@@ -16,8 +16,8 @@ import {
 import { useContext, useState } from "react";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
-import { TabAcciones } from "./Acciones/TabAcciones.tsx";
 import { TabPresupuestos } from "./Presupuestos/TabPresupuestos.tsx";
+import { TabAcciones } from "./TabAcciones.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
@@ -62,7 +62,7 @@ export const DetalleOportunidadVenta = ({
 
   const onBorrarConfirmado = async () => {
     await intentar(() => deleteOportunidadVenta(modelo.id));
-    emitir("OPORTUNIDAD_BORRADA", modelo);
+    emitir("oportunidad_borrada", modelo);
     setEstado("edicion");
   };
 

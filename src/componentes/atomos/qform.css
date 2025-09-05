@@ -5,6 +5,7 @@ quimera-formulario {
     gap: 1rem;
     place-items: center stretch;
     padding: 1rem 0px;
+    align-items: stretch;
 
     quimera-input,
     quimera-select {

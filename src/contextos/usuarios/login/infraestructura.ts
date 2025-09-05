@@ -1,4 +1,6 @@
+import { Permiso } from "../../administracion/diseño.ts";
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import { RespuestaLista } from "../../comun/diseño.ts";
 import { Login, Logout, RefrescarToken, UsuarioLogin, UsuarioRefresco } from "./diseño.ts";
 
 const MINUTOS_REFRESCO = 15;
@@ -60,3 +62,13 @@ export const tokenRefresco = {
     obtener: () => localStorage.getItem("token-refresco"),
     eliminar: () => localStorage.removeItem("token-refresco"),
 }
+
+export const permisosGrupo = {
+    actualizar: (permisosGrupo: Permiso[]) => localStorage.setItem("permisos-grupo", JSON.stringify(permisosGrupo)),
+    obtener: () => localStorage.getItem("permisos-grupo"),
+    eliminar: () => localStorage.removeItem("permisos-grupo"),
+}
+
+export const misPermisos = async (): RespuestaLista<Permiso> => {
+    return await RestAPI.get<{ datos: Permiso[]; total: number }>(baseUrl + '/permiso/mi_grupo');
+};

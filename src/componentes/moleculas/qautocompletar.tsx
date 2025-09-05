@@ -59,7 +59,7 @@ export const QAutocompletar = ({
   };
 
   useEffect(() => {
-    setValorDescrito(descripcion);
+    setValorDescrito(descripcion || "");
   }, [descripcion]);
 
   const manejarChange = (valor: string) => {

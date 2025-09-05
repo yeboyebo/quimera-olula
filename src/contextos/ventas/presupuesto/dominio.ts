@@ -50,11 +50,11 @@ export const presupuestoVacio = (): Presupuesto => ({
     observaciones: '',
 })
 
-export const presupuestoNuevoVacio = (): NuevoPresupuesto => ({
+export const nuevoPresupuestoVacio: NuevoPresupuesto = {
     cliente_id: "",
     direccion_id: "",
     empresa_id: "1",
-});
+};
 
 export const cambioClienteVacio = (): CambioCliente => ({
     cliente_id: "",

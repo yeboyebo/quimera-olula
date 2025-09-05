@@ -1,3 +1,4 @@
+import { MetaTabla } from "../../../componentes/atomos/qtabla.tsx";
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { NuevaOportunidadVenta, OportunidadVenta } from "./diseño.ts";
 
@@ -30,6 +31,7 @@ export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
     cliente_id: '',
     contacto_id: '',
     fecha_cierre: '',
+    tarjeta_id: '',
 };
 
 export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
@@ -56,3 +58,11 @@ export const initEstadoOportunidadVenta = (oportunidad: OportunidadVenta): Estad
     initEstadoModelo(oportunidad);
 
 export const initEstadoOportunidadVentaVacia = () => initEstadoOportunidadVenta(oportunidadVentaVacia);
+
+export const metaTablaOportunidadVenta: MetaTabla<OportunidadVenta> = [
+    { id: "id", cabecera: "Código" },
+    { id: "descripcion", cabecera: "Descripción" },
+    { id: "nombre_cliente", cabecera: "Cliente" },
+    { id: "importe", cabecera: "Total Venta", tipo: "moneda" },
+    { id: "fecha_cierre", cabecera: "Fecha Cierre" },
+];

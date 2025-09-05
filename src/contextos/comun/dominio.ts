@@ -1,3 +1,5 @@
+import { Permiso } from "../administracion/diseño.ts";
+import { permisosGrupo } from "../usuarios/login/infraestructura.ts";
 import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
@@ -299,6 +301,11 @@ export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) =
 export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
     const valor_inicial = estado.valor_inicial;
     const valor = estado.valor;
+    // for (const key in valor) {
+    //     if (valor[key] !== valor_inicial[key]) {
+    //         console.log(`Campo modificado: ${key}, valor: ${valor[key]}, valor inicial: ${valor_inicial[key]}`);
+    //     }
+    // }
 
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
@@ -344,4 +351,35 @@ export const calcularPaginacionSimplificada = (
     }
 
     return { paginasMostradas, totalPaginas };
+};
+
+export const puede = (regla: string): boolean => {
+    if (!regla) return true;
+    // Busca el permiso exacto
+    const permisos = JSON.parse(permisosGrupo.obtener() || "[]") as Permiso[];
+    const permisoExacto = permisos.find(p => p.id_regla === regla);
+    if (permisoExacto) {
+        if (permisoExacto.valor === true) return true;
+        if (permisoExacto.valor === false) return false;
+        // Si es null, sigue buscando
+    }
+    // Quita la última parte y busca
+    const partes = regla.split(".");
+    if (partes.length > 1) {
+        const padre = partes.slice(0, -1).join(".");
+        const permisoPadre = permisos.find(p => p.id_regla === padre);
+        if (permisoPadre) {
+            if (permisoPadre.valor === true) return true;
+            if (permisoPadre.valor === false) return false;
+            // Si es null, sigue buscando
+        }
+    }
+    // Busca permiso general
+    const permisoGeneral = permisos.find(p => p.id_regla === "general");
+    if (permisoGeneral) {
+        if (permisoGeneral.valor === true) return true;
+        if (permisoGeneral.valor === false) return false;
+    }
+
+    return true;
 };

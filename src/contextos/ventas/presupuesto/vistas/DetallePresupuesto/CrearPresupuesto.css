@@ -1,0 +1,5 @@
+.CrearPresupuesto {
+    quimera-autocompletar[nombre="clientePresupuesto"] {
+        grid-column: span 12;
+    }
+}

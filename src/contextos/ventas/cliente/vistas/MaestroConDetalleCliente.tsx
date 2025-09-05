@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
+import { QuimeraAcciones } from "../../../../componentes/moleculas/qacciones.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { Entidad } from "../../../../contextos/comun/diseño.ts";
+import { puede } from "../../../comun/dominio.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Cliente } from "../diseño.ts";
@@ -11,6 +12,7 @@ import { getClientes } from "../infraestructura.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
+import { TarjetaCliente } from "./TarjetaCliente.tsx";
 
 const metaTablaCliente = [
   { id: "id", cabecera: "Id" },
@@ -59,6 +61,22 @@ export const MaestroConDetalleCliente = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
+  const puedeCrear = puede("ventas.cliente.crear");
+
+  const acciones = [
+    puedeCrear && {
+      texto: "Nuevo",
+      onClick: () => emitir("ALTA_INICIADA"),
+      variante: "borde" as const,
+    },
+    // {
+    //   icono: "eliminar",
+    //   texto: "Borrar",
+    //   onClick: () => emitir("BORRADO_SOLICITADO"),
+    //   deshabilitado: true,
+    // },
+  ].filter(Boolean);
+
   return (
     <div className="Cliente">
       <MaestroDetalleResponsive<Cliente>
@@ -67,10 +85,11 @@ export const MaestroConDetalleCliente = () => {
           <>
             <h2>Clientes</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
+              <QuimeraAcciones acciones={acciones} />
             </div>
             <Listado
               metaTabla={metaTablaCliente}
+              tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
               entidades={clientes.lista}
               setEntidades={clientes.setLista}
               seleccionada={clientes.seleccionada}

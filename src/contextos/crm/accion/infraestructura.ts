@@ -31,7 +31,7 @@ export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<
 };
 
 export const deleteAccion = async (id: string): Promise<void> =>
-    await RestAPI.delete(`${baseUrlAccion}/${id}, "Error al borrar acción"`);
+    await RestAPI.delete(`${baseUrlAccion}/${id}`, "Error al borrar acción");
 
 export const finalizarAccion = async (id: string) => {
     await RestAPI.patch(`${baseUrlAccion}/${id}/finalizar`, {}, "Error al finalizar acción");

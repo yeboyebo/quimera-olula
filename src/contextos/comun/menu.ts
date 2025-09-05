@@ -2,12 +2,14 @@ export interface ElementoMenuPadre {
   nombre: string;
   icono?: string;
   subelementos: ElementoMenu[];
+  regla?: string;
 }
 
 export interface ElementoMenuHijo {
   nombre: string;
   icono?: string;
   url: string;
+  regla?: string;
 }
 
 export type ElementoMenu = ElementoMenuPadre | ElementoMenuHijo;
@@ -21,11 +23,13 @@ export const elementosDelMenu: ElementoMenu[] = [
       {
         nombre: "Clientes",
         url: "/ventas/cliente",
+        regla: "crm.cliente.leer",
         icono: "",
       },
       {
         nombre: "Presupuestos",
         url: "/ventas/presupuesto",
+        regla: "ventas.presupuesto.leer",
         icono: "",
       },
       {
@@ -77,6 +81,11 @@ export const elementosDelMenu: ElementoMenu[] = [
       {
         nombre: "Leads",
         url: "/crm/lead",
+        icono: "",
+      },
+      {
+        nombre: "Incidencias",
+        url: "/crm/incidencia",
         icono: "",
       },
     ],

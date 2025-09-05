@@ -3,24 +3,30 @@
 @import "./tokens/borde.css";
 @import "./tokens/ratio.css";
 @import "./tokens/color.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     color-scheme: light dark;
 
-    --color-fondo: light-dark(var(--gris-1), var(--gris-8));
+    --color-fondo: light-dark(var(--blanco), var(--gris-8));
+    --color-fondo-header: light-dark(var(--mg-1), #edededed);
 
-    --color-texto-primario: light-dark(var(--negro), var(--blanco));
-    --color-texto-secundario: light-dark(var(--gris-8), var(--gris-5));
-    --color-texto-deshabilitado: light-dark(var(--gris-6), var(--gris-6));
+    --color-texto-primario: light-dark(var(--mg-1), var(--mg-1));
+    --color-texto-secundario: light-dark(var(--mg-2), var(--mg-2));
+    --color-texto-deshabilitado: light-dark(var(--mg-4), var(--mg-3));
 
-    --color-primario: light-dark(var(--azul-7), var(--azul-6));
+    --color-texto-menu: light-dark(var(--blanco), var(--mg-1));
+
+    --color-primario: light-dark(var(--mg-4), var(--mg-4));
     --color-error: light-dark(var(--rojo-7), var(--rojo-6));
     --color-advertencia: light-dark(var(--naranja-7), var(--naranja-6));
     --color-exito: light-dark(var(--verde-7), var(--verde-6));
-    --color-deshabilitado: light-dark(var(--gris-3), var(--gris-7));
+    --color-deshabilitado: light-dark(#dee2e6, #dee2e6);
 
-    --color-primario-claro: light-dark(var(--azul-3), var(--azul-3));
-    --color-primario-oscuro: light-dark(var(--azul-9), var(--azul-9));
+    --color-primario-claro: light-dark(var(--mg-6), var(--mg-6));
+    --color-primario-oscuro: light-dark(var(--mg-4), var(--mg-4));
+    --color-primario-hover: light-dark(var(--mg-6), var(--mg-6));
+    --color-primario-selected: light-dark(var(--mg-7), var(--mg-7));
 
     --color-error-claro: light-dark(var(--rojo-3), var(--rojo-3));
     --color-error-oscuro: light-dark(var(--rojo-9), var(--rojo-9));
@@ -36,6 +42,12 @@
 
     --alto-footer: 2rem;
     --alto-header: 80px;
+
+    --color-head-tabla: light-dark(var(--gris-2), var(--gris-7));
+
+    --font-system-ui: 'Inter', sans-serif;
+
+    --width-menu: 275px;
 }
 
 * {
@@ -56,4 +68,8 @@ html {
     -moz-osx-font-smoothing: grayscale;
 
     font-weight: 400;
+
+    section[role="main"]>div {
+        width: calc(100% - var(--width-menu));
+    }
 }
