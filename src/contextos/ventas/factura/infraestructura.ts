@@ -1,9 +1,10 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
 
-const baseUrl = `/ventas/factura`;
+const baseUrl = ApiUrls.VENTAS.FACTURA;
 
 type LineaFacturaAPI = LineaFactura;
 

@@ -34,6 +34,7 @@ const tiposFormInput = {
   rango: "range",
   moneda: "number",
   autocompletar: "text",
+  selector: "text",
 } as const;
 
 export type FormInputProps = FormFieldProps & {

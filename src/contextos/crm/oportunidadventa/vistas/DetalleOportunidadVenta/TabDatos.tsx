@@ -34,11 +34,11 @@ export const TabDatos = ({
           label="Contacto"
           descripcion={oportunidad.modelo.nombre_contacto ?? undefined}
         />
-        <QInput label="Fecha Cierre" {...uiProps("fecha_cierre")} />
         <EstadoOportunidad label="Estado" {...uiProps("estado_id")} />
         <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
+        <QInput label="Fecha Cierre" {...uiProps("fecha_cierre")} />
 
-        <QInput label="Total Venta" {...uiProps("importe")} />
+        <QInput label="Total" {...uiProps("importe")} />
       </quimera-formulario>
     </div>
   );

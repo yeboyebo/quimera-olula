@@ -15,6 +15,7 @@ export const EstadoOportunidad = ({
   nombre = "estado_id",
   label = "Estado",
   onChange,
+  ...props
 }: EstadoOportunidadProps) => {
   const [opcionesEstado, setOpcionesEstado] = useState<
     { valor: string; descripcion: string }[]
@@ -50,6 +51,7 @@ export const EstadoOportunidad = ({
       valor={valor}
       onChange={onChange}
       opciones={opcionesEstado}
+      {...props}
     />
   );
 };

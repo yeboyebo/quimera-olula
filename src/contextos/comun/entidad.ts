@@ -22,7 +22,7 @@ export const incluirItemEnLista = <E extends Entidad>(
     entidad: E,
     { activar = true }: OpcionesIncluirEnLista
 ) => ({
-    lista: [...listaS.lista, entidad],
+    lista: [entidad, ...listaS.lista],
     idActivo: activar ? entidad.id : listaS.idActivo,
 })
 

@@ -13,7 +13,7 @@ export const getOportunidadesVenta = async (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-): Promise<RespuestaLista<OportunidadVenta>> => {
+): RespuestaLista<OportunidadVenta> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: OportunidadVenta[]; total: number }>(ApiUrls.CRM.OPORTUNIDAD_VENTA + q);

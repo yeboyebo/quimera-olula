@@ -1,4 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { GetLineasPedido } from "../pedido/diseño.ts";
@@ -15,7 +16,7 @@ import {
   PostLinea
 } from "./diseño.ts";
 
-const baseUrl = `/ventas/albaran`;
+const baseUrl = ApiUrls.VENTAS.ALBARAN;
 
 type LineaAlbaranAPI = LineaAlbaran;
 type AlbaranAPI = Albaran

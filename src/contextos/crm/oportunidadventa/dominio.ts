@@ -38,8 +38,9 @@ export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
     campos: {
         descripcion: { requerido: true, validacion: (oportunidad: OportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
         importe: { requerido: false, tipo: "moneda" },
-        probabilidad: { requerido: false, tipo: "numero" },
-        fecha_cierre: { requerido: false, tipo: "fecha" },
+        probabilidad: { requerido: true, tipo: "numero" },
+        fecha_cierre: { requerido: true, tipo: "fecha" },
+        estado_id: { requerido: true, tipo: "selector" },
     },
 };
 
@@ -49,8 +50,8 @@ export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
         valor_defecto: { requerido: true },
         importe: { requerido: false, tipo: "moneda" },
         probabilidad: { requerido: true, tipo: "numero" },
-        estado_id: { requerido: false, tipo: "texto" },
-        fecha_cierre: { requerido: false, tipo: "fecha" },
+        estado_id: { requerido: true, tipo: "selector" },
+        fecha_cierre: { requerido: true, tipo: "fecha" },
     },
 };
 
@@ -63,6 +64,6 @@ export const metaTablaOportunidadVenta: MetaTabla<OportunidadVenta> = [
     { id: "id", cabecera: "Código" },
     { id: "descripcion", cabecera: "Descripción" },
     { id: "nombre_cliente", cabecera: "Cliente" },
-    { id: "importe", cabecera: "Total Venta", tipo: "moneda" },
+    { id: "importe", cabecera: "Total", tipo: "moneda" },
     { id: "fecha_cierre", cabecera: "Fecha Cierre" },
 ];

@@ -19,7 +19,7 @@ export const getClientes = async (
   filtro: Filtro,
   orden: Orden,
   paginacion?: Paginacion
-): Promise<RespuestaLista<Cliente>> => {
+): RespuestaLista<Cliente> => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
   const respuesta = await RestAPI.get<{ datos: ClienteApi[]; total: number }>(ApiUrls.VENTAS.CLIENTE + q);

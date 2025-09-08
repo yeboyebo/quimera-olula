@@ -17,7 +17,7 @@ const opcionesEstado = [
 export const EstadoIncidencia = ({
   valor,
   onChange,
-  getProps,
+  ...props
 }: EstadoProps) => {
   return (
     <QSelect
@@ -26,7 +26,7 @@ export const EstadoIncidencia = ({
       valor={valor}
       onChange={onChange}
       opciones={opcionesEstado}
-      {...(getProps ? getProps("estado") : {})}
+      {...props}
     />
   );
 };

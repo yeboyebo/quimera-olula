@@ -9,11 +9,11 @@
     }
 
     quimera-autocompletar[nombre="contacto_id"] {
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 4;
     }
 
     quimera-select[nombre="estado_id"] {
-        grid-column: 1 / span 3;
+        grid-column: span 3;
     }
 
     quimera-input[nombre="probabilidad"] {
@@ -25,10 +25,10 @@
     }
 
     quimera-input[nombre="importe"] {
-        grid-column: span 6;
+        grid-column: span 3;
     }
 
     quimera-input[nombre="fecha_cierre"] {
-        grid-column: span 3;
+        grid-column: 1 / span 3;
     }
 }

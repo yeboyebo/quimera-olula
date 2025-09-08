@@ -1,11 +1,11 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCrmContacto, PatchCliente, PostCliente } from "./diseño.ts";
 
 
-const baseUrlVentas = `/ventas/cliente`;
-const baseUrlCrm = `/crm`;
+const baseUrlVentas = ApiUrls.VENTAS.CLIENTE;;
 
 type ClienteApi = Cliente;
 
@@ -225,22 +225,22 @@ export const cuentaBancoFromAPI = (c: CuentaBancoAPI): CuentaBanco => ({
 });
 
 export const getCrmContactosCliente = async (clienteId: string): Promise<CrmContacto[]> =>
-  await RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/cliente/${clienteId}/contactos`).then((respuesta) => respuesta.datos);
+  await RestAPI.get<{ datos: CrmContacto[] }>(`${ApiUrls.CRM.CLIENTE}/${clienteId}/contactos`).then((respuesta) => respuesta.datos);
 
 export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<string> => {
   const payload = {
     nombre: contacto.nombre,
     email: contacto.email,
   };
-  return await RestAPI.post(`${baseUrlCrm}/contacto`, payload, "Error al crear contacto").then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${ApiUrls.CRM.CONTACTO}`, payload, "Error al crear contacto").then((respuesta) => respuesta.id);
 };
 
 export const getCrmContacto = async (contactoId: string): Promise<CrmContacto> =>
-  await RestAPI.get<{ datos: CrmContacto }>(`${baseUrlCrm}/contacto/${contactoId}`).then((respuesta) => respuesta.datos);
+  await RestAPI.get<{ datos: CrmContacto }>(`${ApiUrls.CRM.CONTACTO}/${contactoId}`).then((respuesta) => respuesta.datos);
 
 export const getCrmContactos = async (filtro: Filtro, orden: Orden): Promise<CrmContacto[]> => {
   const q = criteriaQuery(filtro, orden);
-  return RestAPI.get<{ datos: CrmContacto[] }>(`${baseUrlCrm}/contacto` + q).then((respuesta) => respuesta.datos);
+  return RestAPI.get<{ datos: CrmContacto[] }>(`${ApiUrls.CRM.CONTACTO}` + q).then((respuesta) => respuesta.datos);
 }
 
 export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => {
@@ -248,8 +248,8 @@ export const patchCrmContacto = async (contacto: CrmContacto): Promise<void> => 
     nombre: contacto.nombre,
     email: contacto.email,
   };
-  await RestAPI.patch(`${baseUrlCrm}/contacto/${contacto.id}`, payload, "Error al actualizar contacto");
+  await RestAPI.patch(`${ApiUrls.CRM.CONTACTO}/${contacto.id}`, payload, "Error al actualizar contacto");
 };
 
 export const deleteCrmContacto = async (contactoId: string): Promise<void> =>
-  await RestAPI.delete(`${baseUrlCrm}/contacto/${contactoId}`, "Error al borrar contacto");
+  await RestAPI.delete(`${ApiUrls.CRM.CONTACTO}/${contactoId}`, "Error al borrar contacto");

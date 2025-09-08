@@ -47,7 +47,7 @@ export type MaestroProps<T extends Entidad> = {
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  criteria = { filtros: [], orden: ["id", "ASC"] },
+  criteria = { filtros: [], orden: ["id", "DESC"] },
   entidades,
   setEntidades,
   seleccionada,

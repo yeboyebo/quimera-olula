@@ -1,6 +1,6 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import ApiUrls from "../../comun/api/urls.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista, RespuestaLista2 } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
@@ -58,7 +58,7 @@ export const getLeads = async (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-): Promise<RespuestaLista<Lead>> => {
+): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(ApiUrls.CRM.LEAD + q);
@@ -103,7 +103,7 @@ export const getFuentesLead = async (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-): Promise<RespuestaLista2<Lead>> => {
+): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(ApiUrls.CRM.FUENTE_LEAD + q);
@@ -114,7 +114,7 @@ export const getEstadosLead = async (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-): Promise<RespuestaLista2<Lead>> => {
+): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(ApiUrls.CRM.ESTADO_LEAD + q);
