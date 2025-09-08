@@ -274,11 +274,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     if (requerido && (valor === null || valor === undefined)) {
         return "Campo requerido";
     }
-    if (campo == "cliente_id") {
-        console.log(campos);
-        console.log(modelo);
-        console.log(`Validando campo ${campo}, tipo ${tipoCampo}, requerido ${requerido}, valor: ${valor}`);
-    }
+
     if (campos[campo]?.tipo === "email" && typeof valor === "string" && valor.length > 0) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(valor)) {
