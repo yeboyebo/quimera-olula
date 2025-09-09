@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ContextoError, QError } from "../../contextos/comun/contexto.ts";
 import {
   Criteria,
   Entidad,
@@ -7,9 +8,12 @@ import {
   Paginacion,
   RespuestaLista,
 } from "../../contextos/comun/diseño.ts";
+import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
+import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
+import "./Listado.css";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
 
@@ -26,12 +30,14 @@ const datosCargando = <T extends Entidad>() =>
 
 const obtenerCampos = (entidad: Entidad | null): string[] => {
   if (!entidad) return [];
-
   return expandirEntidad(entidad).map(([clave]) => clave);
 };
 
+type Modo = "tabla" | "tarjetas";
+
 export type MaestroProps<T extends Entidad> = {
-  metaTabla: MetaTabla<T>;
+  metaTabla?: MetaTabla<T>;
+  tarjeta?: (entidad: T) => React.ReactNode;
   criteria?: Criteria;
   entidades: T[];
   setEntidades: (entidades: T[]) => void;
@@ -48,6 +54,7 @@ export type MaestroProps<T extends Entidad> = {
 export const Listado = <T extends Entidad>({
   metaTabla,
   criteria = { filtros: [], orden: ["id", "DESC"] },
+  tarjeta,
   entidades,
   setEntidades,
   seleccionada,
@@ -55,6 +62,15 @@ export const Listado = <T extends Entidad>({
   tamañoPagina = 10,
   cargar,
 }: MaestroProps<T>) => {
+  const modoInicial: Modo =
+    metaTabla && tarjeta
+      ? "tabla"
+      : metaTabla
+      ? "tabla"
+      : tarjeta
+      ? "tarjetas"
+      : "tabla";
+
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
@@ -62,26 +78,36 @@ export const Listado = <T extends Entidad>({
     criteria.paginacion || { limite: tamañoPagina, pagina: 1 }
   );
   const [totalRegistros, setTotalRegistros] = useState(0);
+  const [modo, setModo] = useState<Modo>(modoInicial);
+  const { setError } = useContext(ContextoError);
 
   useEffect(() => {
     let hecho = false;
     setCargando(true);
-    //poner intentar
-    cargar(filtro, orden, paginacion).then(({ datos, total }) => {
-      if (hecho) return;
-      if (datos.length > 0) {
-        setEntidades(datos as T[]);
-        if (total && total > 0) {
-          setTotalRegistros(total);
+    cargar(filtro, orden, paginacion)
+      .then(({ datos, total }) => {
+        if (hecho) return;
+        if (datos.length > 0) {
+          setEntidades(datos as T[]);
+          if (total && total > 0) {
+            setTotalRegistros(total);
+          }
         }
-      }
-      setCargando(false);
-    });
+        setCargando(false);
+      })
+      .catch((error) => {
+        if (hecho) return;
+        const apiError = error as QError;
+        setError({
+          nombre: apiError.nombre,
+          descripcion: apiError.descripcion,
+        });
+      });
 
     return () => {
       hecho = true;
     };
-  }, [filtro, orden, paginacion, cargar, setEntidades]);
+  }, [filtro, orden, paginacion, cargar, setEntidades, setError]);
 
   const entidadesFiltradas = entidades.filter((entidad) =>
     filtrarEntidad(entidad, filtro)
@@ -94,35 +120,79 @@ export const Listado = <T extends Entidad>({
       ? entidadesFiltradas
       : datosCargando<T>();
 
-    return (
-      <QTabla
-        metaTabla={metaTabla}
-        datos={datos}
-        cargando={cargando}
-        seleccionadaId={seleccionada?.id}
-        onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-        orden={orden}
-        onOrdenar={(clave) => {
-          const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
-          const sentido =
-            antigua_clave === clave && antiguo_sentido === "ASC"
-              ? "DESC"
-              : "ASC";
+    if (modo == "tarjetas" && tarjeta) {
+      return (
+        <QTarjetas
+          tarjeta={tarjeta}
+          datos={datos}
+          cargando={cargando}
+          seleccionadaId={seleccionada?.id}
+          onSeleccion={(entidad) => setSeleccionada(entidad as T)}
+          paginacion={paginacion}
+          onPaginacion={(pagina, limite) => {
+            setPaginacion({ pagina, limite });
+          }}
+          totalEntidades={totalRegistros}
+          orden={orden}
+          onOrdenar={(clave) => {
+            const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
+            const sentido =
+              antigua_clave === clave && antiguo_sentido === "ASC"
+                ? "DESC"
+                : "ASC";
 
-          setOrden([clave, sentido]);
-          setPaginacion({ ...paginacion, pagina: 1 });
-        }}
-        paginacion={paginacion}
-        onPaginacion={(pagina, limite) => {
-          setPaginacion({ pagina, limite });
-        }}
-        totalEntidades={totalRegistros}
-      />
-    );
+            setOrden([clave, sentido]);
+            setPaginacion({ ...paginacion, pagina: 1 });
+          }}
+        />
+      );
+    }
+
+    if (modo == "tabla" && metaTabla) {
+      return (
+        <QTabla
+          metaTabla={metaTabla}
+          datos={datos}
+          cargando={cargando}
+          seleccionadaId={seleccionada?.id}
+          onSeleccion={(entidad) => setSeleccionada(entidad as T)}
+          orden={orden}
+          onOrdenar={(clave) => {
+            const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
+            const sentido =
+              antigua_clave === clave && antiguo_sentido === "ASC"
+                ? "DESC"
+                : "ASC";
+
+            setOrden([clave, sentido]);
+            setPaginacion({ ...paginacion, pagina: 1 });
+          }}
+          paginacion={paginacion}
+          onPaginacion={(pagina, limite) => {
+            setPaginacion({ pagina, limite });
+          }}
+          totalEntidades={totalRegistros}
+        />
+      );
+    }
+
+    return null;
   };
 
   return (
     <div className="Listado">
+      {tarjeta && metaTabla && (
+        <div className="cambio-modo">
+          <span
+            className="cambio-modo-icono"
+            onClick={() =>
+              setModo((modo) => (modo === "tabla" ? "tarjetas" : "tabla"))
+            }
+          >
+            <QIcono nombre={"lista"} tamaño="sm" />
+          </span>
+        </div>
+      )}
       <MaestroFiltros
         campos={obtenerCampos(entidades[0])}
         filtro={filtro}
