@@ -37,10 +37,11 @@ export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
 export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
     campos: {
         descripcion: { requerido: true, validacion: (oportunidad: OportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
-        importe: { requerido: false, tipo: "moneda" },
+        importe: { requerido: true, tipo: "moneda" },
         probabilidad: { requerido: true, tipo: "numero" },
         fecha_cierre: { requerido: true, tipo: "fecha" },
         estado_id: { requerido: true, tipo: "selector" },
+        cliente_id: { requerido: true, tipo: "autocompletar" },
     },
 };
 

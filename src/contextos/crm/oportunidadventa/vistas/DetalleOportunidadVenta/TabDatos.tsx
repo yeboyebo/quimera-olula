@@ -1,7 +1,7 @@
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { HookModelo } from "../../../../comun/useModelo.ts";
+import { Cliente } from "../../../../ventas/comun/componentes/cliente.tsx";
 import { ContactoSelector } from "../../../../ventas/comun/componentes/contacto.tsx";
-import { Cliente } from "../../../comun/componentes/cliente_con_nombre.tsx";
 import { EstadoOportunidad } from "../../../comun/componentes/estado_oportunidad_venta.tsx";
 import { LeadSelector } from "../../../comun/componentes/lead.tsx";
 import { OportunidadVenta } from "../../diseño.ts";
@@ -18,11 +18,7 @@ export const TabDatos = ({
     <div className="TabDatos">
       <quimera-formulario>
         <QInput label="Descripción" {...uiProps("descripcion")} />
-        <Cliente
-          {...uiProps("cliente_id", "nombre_cliente")}
-          valor={oportunidad.modelo.cliente_id ?? ""}
-          descripcion={oportunidad.modelo.nombre_cliente ?? ""}
-        />
+        <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
         <LeadSelector
           {...uiProps("tarjeta_id")}
           label="Lead"

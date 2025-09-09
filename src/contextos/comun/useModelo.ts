@@ -14,7 +14,6 @@ export function useModelo<T extends Modelo>(
         modeloInicialProp
     );
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
-
     const entidad = {
         valor: modelo,
         valor_inicial: modeloInicial,
@@ -23,9 +22,7 @@ export function useModelo<T extends Modelo>(
     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
         let valor = _valor || null;
         let descripcion: string | undefined = undefined;
-        // if (campo === "responsable_id") {
-        //     console.log(`Cambiando campo ${campo} a valor: ${valor}, descripcion: ${descripcion}`);
-        // }
+
         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
             valor = _valor.valor;
             if (segundo) {
