@@ -10,7 +10,7 @@ type QBotonProps = {
   onClick?: MouseEventHandler;
   onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>;
-  props?: any;
+  props?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 };
 
 export const QBoton = ({

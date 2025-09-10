@@ -6,11 +6,11 @@ import './calendario.css';
 import { CalendarioGrid } from './CalendarioGrid';
 import { CalendarioPlayground } from './CalendarioPlayground';
 import { esHoy, esMesActual, formatearMes, formatearMesAño, getDatosPorFecha, getDiasSemana } from './helpers';
-import { isMobile, useSwipe } from './hooks';
+import { useIsMobile, useSwipe } from './hooks';
 import { CalendarioConfig, DatoBase } from './tipos';
 import { ConfigTeclado, useNavegacionTeclado } from './useNavegacionTeclado';
 import { useSeleccionFechas } from './useSeleccionFechas';
-import { usoControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendario.ts';
+import { useControladoDeEstadoCalendario } from './usoControladoDeEstadoCalendario.ts';
 
 
 
@@ -61,8 +61,8 @@ export function Calendario<T extends DatoBase>({
   onSeleccionCambio,
 }: CalendarioProps<T>) {
   // --- Experiencia móvil integrada ---
-  const esMovil = isMobile(640);
-  const esTablet = isMobile(1120);
+  const esMovil = useIsMobile(640);
+  const esTablet = useIsMobile(1120);
 
   // Estado del playground
   const [mostrarPlayground, setMostrarPlayground] = useState(false);
@@ -96,11 +96,10 @@ export function Calendario<T extends DatoBase>({
     modoVista,
     setModoVista,
     anioGridRef,
-    scrollPosition,
     scrollToMes,
     handleScroll,
     navegarTiempo, // ✅ Usar la función del hook
-  } = usoControladoDeEstadoCalendario({ 
+  } = useControladoDeEstadoCalendario({ 
     config,
     onNecesitaDatosAnteriores,
     onNecesitaDatosPosteriores

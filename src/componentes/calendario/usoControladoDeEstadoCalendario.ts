@@ -8,7 +8,7 @@ interface UseControlledCalendarStateProps<T extends DatoBase> {
   onNecesitaDatosPosteriores?: (fechaActual: Date) => Promise<void>;
 }
 
-export function usoControladoDeEstadoCalendario<T extends DatoBase>({
+export function useControladoDeEstadoCalendario<T extends DatoBase>({
   config = {},
   onNecesitaDatosAnteriores,
   onNecesitaDatosPosteriores,
@@ -87,7 +87,7 @@ export function usoControladoDeEstadoCalendario<T extends DatoBase>({
         funcionAnteriores?.(fechaActual);
       }
     }
-  }, [modoVista, funcionAnteriores, funcionPosteriores, fechaActual]);
+  }, [funcionAnteriores, funcionPosteriores, fechaActual]);
 
   const navegarTiempo = useCallback(async (direccion: number) => {
     const nueva = new Date(fechaActual);

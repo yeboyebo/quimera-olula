@@ -14,8 +14,6 @@ import { TabDatos } from "./TabDatos.tsx";
 import { TabRuta } from "./TabRuta.tsx";
 import { TabTrabajadores } from "./TabTrabajadores.tsx";
 
-type Estado = "defecto";
-
 export const DetalleEvento = () => {
   const params = useParams();
   const evento = useModelo(metaEvento, eventoVacio);
@@ -34,7 +32,7 @@ export const DetalleEvento = () => {
       init(eventoData);
     };
     fetchEventos();
-  }, []);
+  }, [eventoId, init]);
 
   const onGuardarClicked = async () => {
     await patchEvento(modelo.evento_id, modelo);

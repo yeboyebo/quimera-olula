@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx";
 import { QDate } from "../../../../../../../componentes/atomos/qdate.tsx";
 import { QInput } from "../../../../../../../componentes/atomos/qinput.tsx";
@@ -16,19 +15,17 @@ interface TabDatosProps {
   recargarEvento: () => void;
 }
 
-export const TabDatos = ({ evento, recargarEvento }: TabDatosProps) => {
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const onCancelar = () => setMostrarModal(false);
+export const TabDatos = ({ evento }: TabDatosProps) => {
   const { uiProps } = evento;
 
   // Helper para convertir valores a boolean
-  const toBool = (valor: any): boolean => {
+  const toBool = (valor: boolean | string): boolean => {
     return valor === true || valor === "true";
   };
 
   // Helper para manejar onChange de checkboxes
   const handleCheckboxChange = (campo: keyof Evento) => (valor: string) => {
-    uiProps(campo).onChange(valor === "true" ? "true" : "false");
+    uiProps(campo as string).onChange(valor === "true" ? "true" : "false");
   };
 
 

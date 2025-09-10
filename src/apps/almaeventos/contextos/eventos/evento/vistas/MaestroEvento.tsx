@@ -67,7 +67,7 @@ export const MaestroEvento = () => {
   };
 
   // Manejador para cambios en campos booleanos
-  const campoEventoChanged = async (eventoActualizado: Evento, nuevoValor: boolean) => {
+  const campoEventoChanged = async (eventoActualizado: Evento) => {
     await intentar(() => patchEvento(eventoActualizado.evento_id, eventoActualizado));
     const evento_guardado = await getEvento(eventoActualizado.evento_id);
     init(evento_guardado);

@@ -17,7 +17,7 @@ export {
   formatearMes,
   formatearMesAño, getDatosPorFecha, getDiasDelMes, getSemanasDelMes
 } from './helpers';
-export { isMobile, useSwipe } from './hooks';
+export { useIsMobile, useSwipe } from './hooks';
 
 // Componentes de ejemplo
 export { EjemploCalendarioMovil } from './ejemplos/EjemploCalendarioMovil';

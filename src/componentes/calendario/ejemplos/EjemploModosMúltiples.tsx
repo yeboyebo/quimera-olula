@@ -100,12 +100,13 @@ export const EjemploModosMúltiples = () => {
     switch (modo) {
       case 'mes':
         return fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-      case 'semana':
+      case 'semana': {
         const inicioSemana = new Date(fecha);
         inicioSemana.setDate(fecha.getDate() - fecha.getDay() + 1);
         const finSemana = new Date(inicioSemana);
         finSemana.setDate(inicioSemana.getDate() + 6);
         return `${inicioSemana.toLocaleDateString('es-ES')} - ${finSemana.toLocaleDateString('es-ES')}`;
+      }
       case 'anio':
         return `Año ${fecha.getFullYear()}`;
       default:

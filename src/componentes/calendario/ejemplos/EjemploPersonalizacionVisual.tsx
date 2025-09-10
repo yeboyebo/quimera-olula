@@ -368,7 +368,7 @@ export const EjemploPersonalizacionVisual = () => {
             {['baja', 'media', 'alta'].map((densidad) => (
               <button
                 key={densidad}
-                onClick={() => setDensidadDatos(densidad as any)}
+                onClick={() => setDensidadDatos(densidad as 'baja' | 'media' | 'alta')}
                 style={{
                   padding: '6px 12px',
                   backgroundColor: densidad === densidadDatos ? temaActual.colores.task : 'transparent',

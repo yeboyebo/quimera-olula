@@ -4,7 +4,7 @@ import { ConfigTeclado } from './useNavegacionTeclado';
 export interface DatoBase {
   id: string | number;
   fecha: Date | string;
-  [key: string]: any; // Permite propiedades adicionales
+  [key: string]: unknown; // Permite propiedades adicionales
 }
 
 // Tipos para los modos de vista del calendario

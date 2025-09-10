@@ -3,6 +3,10 @@ import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../..
 import { Evento, NuevoEvento } from "./diseño.ts";
 
 export const eventoVacio: Evento = {
+    id: '',
+    nombre_cliente: '',
+    nombre_empresa: '',
+    nombre_proveedor: '',
     evento_id: '',
     altas_ss: false,
     camerinos: false,
@@ -126,7 +130,7 @@ export const initEstadoEvento = (evento: Evento): EstadoModelo<Evento> =>
 export const initEstadoEventoVacio = () => initEstadoEvento(eventoVacio);
 
 // Función para determinar el tipo de un campo basado en la interfaz Evento
-export const dameValorDefectoPorTipo = (campo: keyof Evento): any => {
+export const dameValorDefectoPorTipo = (campo: keyof Evento): string | number | boolean => {
     const valor = eventoVacio[campo];
     if (typeof valor === 'boolean') {
         return false;

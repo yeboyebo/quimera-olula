@@ -24,25 +24,6 @@ export const Producto = ({
   onChange,
   ...props
 }: ProductoProps) => {
-  const obtenerOpciones = async (valor: string) => {
-    if (valor.length < 3) return [];
-
-    const criteria = {
-      filtro: [["descripcion", "~", valor]],
-      orden: ["id","DESC"],
-    };
-
-    const productos = await getProductos(
-      criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
-    );    
-
-    return productos.map((producto) => ({
-      valor: producto.id,
-      descripcion: producto.descripcion,
-    }));
-  };
-
   const [opcionesProducto, setOpcionesProducto] = useState<
     { valor: string; descripcion: string }[]
   >([]);

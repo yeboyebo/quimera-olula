@@ -2,6 +2,8 @@ import { ReactNode, useState } from "react";
 import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import "./BotonConTooltip.css";
 
+import { ButtonHTMLAttributes } from "react";
+
 export const BotonConTooltip = ({
   children,
   tooltip,
@@ -9,8 +11,7 @@ export const BotonConTooltip = ({
 }: {
   children: ReactNode;
   tooltip: string;
-  [key: string]: any;
-}) => {
+} & ButtonHTMLAttributes<HTMLButtonElement>) => {
   const [show, setShow] = useState(false);
   const [coords, setCoords] = useState({ top: 0 });
 

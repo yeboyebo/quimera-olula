@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useEsMovil } from "../../componentes/maestro/useEsMovil.ts";
 
-export function isMobile(breakpoint = 640) {
+export function useIsMobile(breakpoint = 640) {
   return useEsMovil(breakpoint);
 }
 

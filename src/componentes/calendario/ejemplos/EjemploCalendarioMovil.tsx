@@ -18,10 +18,7 @@ interface EjemploActividad {
   completada?: boolean;
 }
 
-type VistaMovil = 'compacta' | 'lista' | 'agenda' | 'widget';
-
 export const EjemploCalendarioMovil = () => {
-  const [vistaMovil, setVistaMovil] = useState<VistaMovil>('compacta');
   const [orientacion, setOrientacion] = useState<'vertical' | 'horizontal'>('vertical');
   const [tamañoPantalla, setTamañoPantalla] = useState({ width: 0, height: 0 });
   const [modoUnaMano, setModoUnaMano] = useState(false);

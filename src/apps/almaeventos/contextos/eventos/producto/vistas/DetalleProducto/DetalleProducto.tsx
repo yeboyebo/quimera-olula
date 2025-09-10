@@ -11,8 +11,6 @@ import { Producto } from "../../diseño.ts";
 import { metaProducto, productoVacio } from "../../dominio.ts";
 import { deleteProducto, getProducto, patchProducto } from "../../infraestructura.ts";
 
-type Estado = "defecto";
-
 export const DetalleProducto = ({
   productoInicial = null,
   emitir = () => {},

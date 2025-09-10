@@ -11,8 +11,6 @@ import { deleteTrabajador, getTrabajador, patchTrabajador } from "../../../traba
 import { Trabajador } from "../../diseño.ts";
 import { metaTrabajador, trabajadorVacio } from "../../dominio.ts";
 
-type Estado = "defecto";
-
 export const DetalleTrabajador = ({
   trabajadorInicial = null,
   emitir = () => {},

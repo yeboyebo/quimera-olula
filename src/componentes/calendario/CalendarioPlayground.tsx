@@ -450,7 +450,6 @@ const SidebarContent: React.FC<{
   ejemploActivo, 
   setEjemploActivo, 
   esMovilReal, 
-  esTabletReal, // ✅ Usar esTabletReal
   esDesktop,
   busqueda,
   setBusqueda,

@@ -13,7 +13,7 @@ export const getEventosCalendario = async (
     fechaFin?: string
 ): Promise<EventoCalendario[]> => {
     // Añadir filtros de fecha si se proporcionan
-    let filtroConFechas = [...filtro];
+    const filtroConFechas = [...filtro];
 
     if (fechaInicio) {
         filtroConFechas.push(["finicio", ">=", fechaInicio]);

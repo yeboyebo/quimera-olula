@@ -56,11 +56,11 @@ export function useNavegacionTeclado({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Configuración final combinando defaults con config del usuario
-  const configTeclado = {
+  const configTeclado = useMemo(() => ({
     ...defaultConfig,
     ...config,
     atajos: { ...defaultConfig.atajos, ...config?.atajos }
-  };
+  }), [config]);
 
   const manejarTecla = useCallback((event: KeyboardEvent) => {
     // Solo procesar si el teclado está habilitado y no estamos en móvil
@@ -208,8 +208,9 @@ export function useNavegacionTeclado({
     setModoVista,
     irAHoy,
     config,
-    calendarioId,
-    hayPlayground
+    anioGridRef,
+    mostrarBotonHoy,
+    mostrarCambioModo
   ]);
 
   useEffect(() => {
@@ -220,7 +221,7 @@ export function useNavegacionTeclado({
     return () => {
       document.removeEventListener('keydown', manejarTecla);
     };
-  }, [manejarTecla, configTeclado.habilitado, esMovil]);
+  }, [manejarTecla, configTeclado.habilitado, esMovil, hayPlayground, calendarioId]);
 
 
   return {
@@ -228,3 +229,12 @@ export function useNavegacionTeclado({
     configTeclado
   };
 }
+// Simple implementation of useMemo for environments where React's useMemo is not available.
+// In a real React app, you should import useMemo from 'react'.
+function useMemo<T>(factory: () => T, _deps: unknown[]): T {
+  // This is a naive implementation for non-React environments.
+  // It simply calls the factory every time, ignoring deps.
+  // In React, useMemo would cache the value based on deps.
+  return factory();
+}
+

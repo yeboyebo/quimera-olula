@@ -7,7 +7,9 @@ import { ModoCalendario } from '../tipos';
  * Demuestra atajos personalizados y callbacks de acciones
  */
 
-interface EjemploTarea {
+import type { DatoBase } from '../tipos';
+
+interface EjemploTarea extends DatoBase {
   id: string;
   fecha: Date;
   titulo: string;
@@ -160,22 +162,25 @@ export const EjemploNavegacionTeclado = () => {
             modos: ['semana', 'mes', 'anio'],
           },
         }}
-        renderDato={(tarea) => (
-          <div style={{ 
-            backgroundColor: colorPorTipo[tarea.tipo],
-            color: 'white', 
-            padding: '3px 6px', 
-            borderRadius: '4px',
-            fontSize: '0.8rem',
-            margin: '2px 0',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ fontWeight: 'bold' }}>{tarea.titulo}</div>
-            <div style={{ fontSize: '0.7rem', opacity: 0.9 }}>
-              {tarea.tipo.charAt(0).toUpperCase() + tarea.tipo.slice(1)}
+        renderDato={(dato) => {
+          const tarea = dato as unknown as EjemploTarea;
+          return (
+            <div style={{ 
+              backgroundColor: colorPorTipo[tarea.tipo],
+              color: 'white', 
+              padding: '3px 6px', 
+              borderRadius: '4px',
+              fontSize: '0.8rem',
+              margin: '2px 0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{ fontWeight: 'bold' }}>{tarea.titulo}</div>
+              <div style={{ fontSize: '0.7rem', opacity: 0.9 }}>
+                {tarea.tipo.charAt(0).toUpperCase() + tarea.tipo.slice(1)}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        }}
       />
 
       {/* Instrucciones detalladas */}

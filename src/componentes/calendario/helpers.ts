@@ -31,7 +31,7 @@ export const getSemanasDelMes = (fecha: Date, inicioSemana: 'lunes' | 'domingo' 
   const ultimoDiaMes = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
 
   // Ajuste para comenzar en lunes
-  let primerDiaCalendario = new Date(primerDiaMes);
+  const primerDiaCalendario = new Date(primerDiaMes);
   const diaSemana = primerDiaMes.getDay();
 
   if (inicioSemana === 'lunes') {
@@ -42,7 +42,7 @@ export const getSemanasDelMes = (fecha: Date, inicioSemana: 'lunes' | 'domingo' 
   }
 
   const semanas: Date[][] = [];
-  let diaActual = new Date(primerDiaCalendario);
+  const diaActual = new Date(primerDiaCalendario);
 
   // Filtramos semanas que no contengan días del mes actual
   while (diaActual <= ultimoDiaMes) {

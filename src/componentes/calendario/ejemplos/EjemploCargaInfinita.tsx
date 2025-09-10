@@ -122,7 +122,7 @@ export const EjemploCargaInfinita = () => {
       const hoy = new Date();
       const anioActual = hoy.getFullYear();
       let todasLasTareas: EjemploTarea[] = [];
-      let rangosPorMes = [];
+      const rangosPorMes = [];
 
       for (let mes = 0; mes < 12; mes++) {
         const inicioMes = new Date(anioActual, mes, 1);

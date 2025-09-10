@@ -34,7 +34,6 @@ interface CabeceraCalendarioProps {
 export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: CabeceraCalendarioProps) => {
   const {
     modoAnio,
-    setModoAnio,
     modoVista,
     setModoVista,
     modos,

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../../../componentes/atomos/qboton.tsx";
 import { QCheckbox } from "../../../../../../../componentes/atomos/qcheckbox.tsx";
@@ -10,8 +10,6 @@ import { useModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { getTrabajadorEvento, patchTrabajadorEvento } from "../../../trabajador_evento/infraestructura.ts";
 import { TrabajadorEvento } from "../../diseño.ts";
 import { metaTrabajadorEvento, trabajadorEventoVacio } from "../../dominio.ts";
-
-type Estado = "defecto";
 
 export const DetalleTrabajadorEvento = ({
   trabajadorEventoInicial = null,
@@ -36,11 +34,11 @@ export const DetalleTrabajadorEvento = ({
     if (trabajadorEventoInicial) {
       init(trabajadorEventoInicial);
     }
-  }, [trabajadorEventoInicial?.id, trabajadorEventoInicial?.liquidado, init]);
+  }, [trabajadorEventoInicial, trabajadorEventoInicial?.id, trabajadorEventoInicial?.liquidado, init]);
 
-  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
-    "edicion"
-  );    
+  // const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+  //   "edicion"
+  // );    
 
   // const maquina: Maquina<Estado> = {
   //   defecto: {

@@ -143,7 +143,7 @@ export function MenuAccionesMovil({
   }, []);
 
   // ✅ Solo calcular offset cuando esté en playground
-  const calcularTopOffset = () => {
+  const calcularTopOffset = React.useCallback(() => {
     if (playgroundAbierto) {
       // Buscar el contenedor del calendario dentro del playground
       const calendarioContainer = document.querySelector('.calendario-container');
@@ -153,25 +153,21 @@ export function MenuAccionesMovil({
       }
     }
     return 154; // valor normal
-  };
-
-  const [topOffset, setTopOffset] = useState(154);
+  }, [playgroundAbierto]);
 
   // ✅ Actualizar solo el top cuando cambie el playground
   useEffect(() => {
     if (playgroundAbierto) {
-      const actualizarTop = () => setTopOffset(calcularTopOffset());
+      const actualizarTop = () => calcularTopOffset();
       actualizarTop();
       // Actualizar si hay scroll en el playground
       const interval = setInterval(actualizarTop, 200);
       return () => clearInterval(interval);
-    } else {
-      setTopOffset(154); // resetear al valor normal
     }
-  }, [playgroundAbierto]);
+  }, [playgroundAbierto, calcularTopOffset]);
 
   // ✅ Calcular posición relativa al calendario dentro del ejemplo
-  const calcularPosicion = () => {
+  const calcularPosicion = React.useCallback(() => {
     if (playgroundAbierto) {
       // ✅ Buscar el calendario DENTRO del ejemplo activo (no el contenedor general)
       const ejemploContainer = document.querySelector('main .calendario-container');
@@ -217,7 +213,7 @@ export function MenuAccionesMovil({
       left: abierto ? 16 : -320,
       maxHeight: '79vh'
     };
-  };
+  }, [playgroundAbierto, abierto]);
 
   const [posicion, setPosicion] = useState(calcularPosicion());
 
@@ -227,11 +223,7 @@ export function MenuAccionesMovil({
       const actualizarPosicion = () => {
         const nuevaPosicion = calcularPosicion();
         setPosicion(nuevaPosicion);
-        
-        // ✅ Debug para verificar que encuentra el calendario correcto
-        if (nuevaPosicion.debug) {
-          console.log('Menú posicionado relativo a:', nuevaPosicion.debug);
-        }
+    
       };
       
       // ✅ Actualizar inmediatamente
@@ -260,7 +252,7 @@ export function MenuAccionesMovil({
     } else {
       setPosicion(calcularPosicion()); // resetear al valor normal
     }
-  }, [playgroundAbierto, abierto]);
+  }, [playgroundAbierto, abierto, calcularPosicion]);
 
   const menuLateral = (
     <>

@@ -97,7 +97,7 @@ export function useSeleccionFechas(configuracion?: ConfiguracionSeleccion) {
           fechaFin = fecha;
           break;
 
-        case 'multiple':
+        case 'multiple': {
           const fechaYaSeleccionada = prev.fechas.some(f =>
             f.toISOString().split('T')[0] === fechaStr
           );
@@ -118,6 +118,7 @@ export function useSeleccionFechas(configuracion?: ConfiguracionSeleccion) {
             fechaFin = fechasOrdenadas[fechasOrdenadas.length - 1];
           }
           break;
+        }
 
         case 'rango':
           if (prev.fechas.length === 0 || prev.fechas.length === 2) {

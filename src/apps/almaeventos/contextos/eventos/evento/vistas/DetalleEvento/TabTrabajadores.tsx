@@ -49,7 +49,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
     };
     
     fetchTrabajadoresEvento();
-  }, [evento.modelo.id]);
+  }, [evento.modelo.id, evento.modelo.evento_id]);
 
   const asignarTrabajador = async (trabajador: Trabajador) => {
     nuevoTrabajadorEventoVacio.trabajador_id = trabajador.id;
