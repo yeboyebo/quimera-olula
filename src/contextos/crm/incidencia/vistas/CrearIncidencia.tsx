@@ -15,15 +15,13 @@ import { metaNuevaIncidencia, nuevaIncidenciaVacia } from "../dominio.ts";
 import { getIncidencia, postIncidencia } from "../infraestructura.ts";
 import "./CrearIncidencia.css";
 
-
 export const CrearIncidencia = ({
   publicar = () => {},
-  activo= false
+  activo = false,
 }: {
   publicar?: EmitirEvento;
   activo: boolean;
 }) => {
-
   const incidencia = useModelo(metaNuevaIncidencia, {
     ...nuevaIncidenciaVacia,
   });
@@ -33,15 +31,9 @@ export const CrearIncidencia = ({
     publicar("creacion_cancelada");
   };
 
-
   return (
-    <Mostrar modo="modal" activo={activo}
-      onCerrar={cancelar}
-    >
-      <FormAltaIncidencia
-        publicar={publicar}
-        incidencia={incidencia}
-        />
+    <Mostrar modo="modal" activo={activo} onCerrar={cancelar}>
+      <FormAltaIncidencia publicar={publicar} incidencia={incidencia} />
     </Mostrar>
   );
 };
@@ -53,7 +45,6 @@ const FormAltaIncidencia = ({
   publicar?: EmitirEvento;
   incidencia: HookModelo<NuevaIncidencia>;
 }) => {
-
   const { intentar } = useContext(ContextoError);
 
   const crear = async () => {
@@ -66,7 +57,7 @@ const FormAltaIncidencia = ({
     incidencia.init();
   };
 
-  const cancelar = () => { 
+  const cancelar = () => {
     publicar("creacion_cancelada");
     incidencia.init();
   };
@@ -78,9 +69,12 @@ const FormAltaIncidencia = ({
         <QInput label="Descripción" {...incidencia.uiProps("descripcion")} />
         <QInput label="Nombre" {...incidencia.uiProps("nombre")} />
         <QDate label="Fecha" {...incidencia.uiProps("fecha")} />
-        <PrioridadIncidencia {...incidencia.uiProps("prioridad")}/>
-        <EstadoIncidencia {...incidencia.uiProps("estado")}/>
-        <Usuario {...incidencia.uiProps("responsable_id")} label='Responsable'/>
+        <PrioridadIncidencia {...incidencia.uiProps("prioridad")} />
+        <EstadoIncidencia {...incidencia.uiProps("estado")} />
+        <Usuario
+          {...incidencia.uiProps("responsable_id")}
+          label="Responsable"
+        />
         <QTextArea
           label="Descripción larga"
           rows={5}
@@ -98,4 +92,3 @@ const FormAltaIncidencia = ({
     </div>
   );
 };
-

@@ -15,7 +15,7 @@ import { accionVacia, metaAccion } from "../../dominio.ts";
 import {
   finalizarAccion,
   getAccion,
-  patchAccion
+  patchAccion,
 } from "../../infraestructura.ts";
 import { BajaAccion } from "../BajaAccion.tsx";
 import "./DetalleAccion.css";
@@ -42,13 +42,14 @@ export const DetalleAccion = ({
   const maquina: Maquina<Estado> = {
     Inactivo: {
       borrar: "Borrando",
+      finalizar: "confimarFinalizar",
       guardar: async () => {
         await patchAccion(modelo.id, modelo);
         recargarCabecera();
       },
       cancelar: () => {
         init();
-      }
+      },
     },
     Borrando: {
       borrado_cancelado: "Inactivo",
@@ -56,6 +57,7 @@ export const DetalleAccion = ({
         emitir("accion_borrada", modelo);
       },
     },
+
     confimarFinalizar: {},
   };
   const emitirAccion = useMaquina(maquina, estado, setEstado);
@@ -85,13 +87,8 @@ export const DetalleAccion = ({
       {!!accionId && (
         <>
           <div className="botones maestro-botones ">
-            <QBoton onClick={() => setEstado("confimarFinalizar")}>
-              Finalizar
-            </QBoton>
-            <QBoton onClick={() => emitir("borrar")}>
-              Borrar
-            </QBoton>
-            {estado}
+            <QBoton onClick={() => emitirAccion("finalizar")}>Finalizar</QBoton>
+            <QBoton onClick={() => emitirAccion("borrar")}>Borrar</QBoton>
           </div>
 
           <Tabs
@@ -128,12 +125,16 @@ export const DetalleAccion = ({
           {accion.modificado && (
             <div className="botones maestro-botones">
               <QBoton
-                onClick={() => emitirAccion("crear")}
+                onClick={() => emitirAccion("guardar")}
                 deshabilitado={!accion.valido}
               >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={() => emitirAccion("cancelar")}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitirAccion("cancelar")}
+              >
                 Cancelar
               </QBoton>
             </div>
@@ -154,7 +155,7 @@ export const DetalleAccion = ({
             onCerrar={() => setEstado("defecto")}
             onAceptar={onBorrarAccion}
           /> */}
-          <BajaAccion 
+          <BajaAccion
             emitir={emitirAccion}
             activo={estado === "Borrando"}
             idAccion={modelo.id}

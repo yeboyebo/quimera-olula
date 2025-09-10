@@ -63,9 +63,7 @@ export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
     campos: {
         fecha: { requerido: true, tipo: "fecha" },
         descripcion: { requerido: true, validacion: (accion: NuevaAccion) => stringNoVacio(accion.descripcion) },
-        tipo: { requerido: false },
-        observaciones: { requerido: false },
-        usuario_id: { requerido: true },
+        usuario_id: { requerido: true, tipo: "autocompletar" },
     },
 };
 

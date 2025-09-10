@@ -14,7 +14,6 @@ export function useModelo<T extends Modelo>(
         modeloInicialProp
     );
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
-
     const entidad = {
         valor: modelo,
         valor_inicial: modeloInicial,
@@ -30,6 +29,7 @@ export function useModelo<T extends Modelo>(
                 descripcion = _valor.descripcion;
             }
         }
+
 
         dispatch({
             type: "set_campo",

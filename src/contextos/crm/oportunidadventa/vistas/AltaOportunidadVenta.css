@@ -1,10 +1,14 @@
 .AltaOportunidadVenta {
-    quimera-autocompletar[nombre="alta_estado_id"] {
+    quimera-select[nombre="estado_id"] {
         grid-column: 1 / span 6;
     }
 
-    quimera-input[nombre="fecha_cierre"] {
+    quimera-input[nombre="importe"] {
         grid-column: span 6;
+    }
+
+    quimera-input[nombre="fecha_cierre"] {
+        grid-column: 1 / span 6;
     }
 
     quimera-input[nombre="probabilidad"] {

@@ -14,7 +14,9 @@ export const AltaContacto = ({
 }: {
   emitir?: EmitirEvento;
 }) => {
-  const nuevoContacto = useModelo(metaNuevoContacto, nuevoContactoVacio);
+  const nuevoContacto = useModelo(metaNuevoContacto, {
+    ...nuevoContactoVacio,
+  });
   const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {

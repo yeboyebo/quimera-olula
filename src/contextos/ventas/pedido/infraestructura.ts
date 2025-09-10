@@ -1,11 +1,12 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
-const baseUrl = `/ventas/pedido`;
+const baseUrl = ApiUrls.VENTAS.PEDIDO;;
 
 type LineaPedidoAPI = LineaPedido
 
 import { appFactory } from "../../app.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 
