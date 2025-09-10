@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { QBoton } from '../atomos/qboton.tsx';
 import { EjemploCalendarioMovil } from './ejemplos/EjemploCalendarioMovil';
 import { EjemploCargaInfinita } from './ejemplos/EjemploCargaInfinita';
 import { EjemploModosMúltiples } from './ejemplos/EjemploModosMúltiples';
@@ -150,12 +151,13 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
     }}>
       
       {/* ✅ HEADER CON BOTÓN CERRAR INTEGRADO */}
-      <header style={{ 
+      <header style={{
         backgroundColor: 'white', 
         borderBottom: '1px solid #dee2e6',
         padding: esMovilReal ? '12px 0' : esTabletReal ? '16px 0' : '20px 0',
-        flexShrink: 0,
-        zIndex: 100
+        // flexShrink: 0,
+        // zIndex: 100,
+        margin: '10px auto'
       }}>
         <div style={{ 
           minWidth: '100%',
@@ -216,28 +218,16 @@ export const CalendarioPlayground: React.FC<CalendarioPlaygroundProps> = ({
             }}>
               {/* Botón hamburguesa para móvil/tablet */}
               {!esDesktop && (
-                <button
+                <QBoton
                   onClick={() => setMostrarSidebar(!mostrarSidebar)}
-                  style={{
-                    padding: esMovilReal ? '8px 12px' : '10px 16px',
-                    backgroundColor: mostrarSidebar ? '#dc3545' : '#3a86ff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: esMovilReal ? '0.9rem' : '1rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s ease',
-                    fontWeight: 'bold'
-                  }}
+                  tamaño="mediano"
+                  variante='texto'
                 >
-                  <span style={{ fontSize: '1.1rem' }}>
+                  <span style={{ fontSize: '1.1rem', marginRight: '5px' }}>
                     {mostrarSidebar ? '✕' : '☰'}
                   </span>
                   {mostrarSidebar ? 'Cerrar' : 'Ejemplos'}
-                </button>
+                </QBoton>
               )}
             </div>
             </div>
