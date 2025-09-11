@@ -331,6 +331,16 @@ export const formatearMoneda = (cantidad: number, divisa: string): string => {
     }).format(cantidad);
 };
 
+export const formatearFecha = (fecha: string): string => {
+    if (!fecha) return fecha;
+    const date = new Date(fecha);
+    return date.toLocaleDateString("es-ES");
+};
+
+export const formatearHora = (hora: string): string => {
+    if (!hora) return hora;
+    return hora.substring(0, 5); // "14:30:00" -> "14:30"
+};
 
 export const calcularPaginacionSimplificada = (
     total: number | undefined,

@@ -18,6 +18,19 @@ quimera-tabla {
         border-collapse: separate;
         text-align: left;
         white-space: nowrap;
+    }
+
+    /* Sistema con anchos calculados automáticamente */
+    table[data-anchos-fijos="true"] {
+        table-layout: fixed;
+    }
+
+    table[data-anchos-fijos="true"] th,
+    table[data-anchos-fijos="true"] td {
+        white-space: nowrap;
+    }
+
+    tr {
         background: var(--blanco);
         border: var(--tamaño-borde-s) solid var(--gris-1);
         border-radius: 8px;
@@ -108,15 +121,35 @@ quimera-tabla {
         white-space: nowrap;
     }
 
+    /* Alineación a la derecha para números y monedas */
     td.moneda,
-    td.numero {
-        text-align: right;
-    }
-
+    td.numero,
     th.moneda,
     th.numero {
         text-align: right;
     }
+
+    /* Centrado para fechas, horas y booleanos */
+    td.fecha,
+    td.hora,
+    td.booleano,
+    th.fecha,
+    th.hora,
+    th.booleano {
+        text-align: center;
+    }
+}
+
+.tabla-contenedor-scroll {
+    overflow-x: auto;
+    /* Scroll horizontal solo aquí */
+    width: 100%;
+    border-bottom: var(--tamaño-borde-s) solid var(--gris-4);
+}
+
+.tabla-contenedor-scroll table {
+    min-width: 100%;
+    margin-bottom: 0;
 }
 
 quimera-tabla-paginacion {
@@ -124,9 +157,10 @@ quimera-tabla-paginacion {
     justify-content: center;
     align-items: center;
     margin-top: var(--espaciado-m);
-    padding: var(--espaciado-s);
     border-radius: var(--radio-borde-m);
     gap: var(--espaciado-xs);
+    background: var(--color-fondo);
+    padding: var(--espaciado-m) 0;
 
     >span {
         padding: var(--espaciado-xs);
