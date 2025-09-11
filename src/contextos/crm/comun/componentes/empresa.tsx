@@ -7,7 +7,8 @@ interface ClienteProps {
   valor: string;
   nombre?: string;
   label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  deshabilitado?: boolean;
+  onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const Empresa = ({
@@ -15,6 +16,7 @@ export const Empresa = ({
   valor,
   nombre = "empresa_id",
   label = "Empresa",
+  deshabilitado = false,
   onChange,
   ...props
 }: ClienteProps) => {
@@ -43,6 +45,7 @@ export const Empresa = ({
       valor={valor}
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
       {...props}
     />
   );

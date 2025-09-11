@@ -8,7 +8,7 @@ interface ClienteProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const Cliente = ({
