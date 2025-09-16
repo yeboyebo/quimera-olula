@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
@@ -6,10 +6,8 @@ import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
+import { ConfigMaquina4, useMaquina4 } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
-import { EstadoLead } from "../../../comun/componentes/estado_lead.tsx";
-import { FuenteLead } from "../../../comun/componentes/fuente_lead.tsx";
 import { Lead } from "../../diseño.ts";
 import { leadVacio, metaLead } from "../../dominio.ts";
 import { deleteLead, getLead, patchLead } from "../../infraestructura.ts";
@@ -19,14 +17,33 @@ import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabOportunidades } from "./TabOportunidades.tsx";
 
-type Estado = "defecto";
+type Estado = "edicion" | "borrando";
+type Contexto = Record<string, unknown>;
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "edicion",
+    contexto: {},
+  },
+  estados: {
+    edicion: {
+      borrar: "borrando",
+      lead_guardado: ({ publicar }) => publicar("lead_guardado"),
+      cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
+    },
+    borrando: {
+      borrado_cancelado: "edicion",
+      lead_borrado: ({ publicar }) => publicar("lead_borrado"),
+    },
+  },
+};
 
 export const DetalleLead = ({
   leadInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   leadInicial?: Lead | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
   const leadId = leadInicial?.id ?? params.id;
@@ -34,31 +51,24 @@ export const DetalleLead = ({
   const { intentar } = useContext(ContextoError);
 
   const lead = useModelo(metaLead, leadVacio);
-  const { modelo, init } = lead;
-  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
-    "edicion"
-  );
+  const { modelo, init, modificado, valido } = lead;
 
-  const maquina: Maquina<Estado> = {
-    defecto: {
-      GUARDAR_INICIADO: async () => {
-        await patchLead(modelo.id, modelo);
-        recargarCabecera();
-      },
-    },
-  };
-  const emitirLead = useMaquina(maquina, "defecto", () => {});
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar: publicar,
+  });
 
-  const recargarCabecera = async () => {
-    const nuevoLead = await getLead(modelo.id);
-    init(nuevoLead);
-    emitir("LEAD_CAMBIADO", nuevoLead);
+  const onGuardarClicked = async () => {
+    await intentar(() => patchLead(modelo.id, modelo));
+    const lead_guardado = await getLead(modelo.id);
+    init(lead_guardado);
+    emitir("lead_cambiado", lead_guardado);
   };
 
   const onBorrarConfirmado = async () => {
     await intentar(() => deleteLead(modelo.id));
-    emitir("LEAD_BORRADO", modelo);
-    setEstado("edicion");
+    emitir("lead_borrado", modelo);
+    emitir("borrado_cancelado");
   };
 
   return (
@@ -68,32 +78,18 @@ export const DetalleLead = ({
       setEntidad={(l) => init(l)}
       entidad={modelo}
       cargar={getLead}
-      cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+      cerrarDetalle={() => emitir("cancelar_seleccion")}
     >
       {!!leadId && (
         <>
           <div className="maestro-botones ">
-            <QBoton onClick={() => setEstado("confirmarBorrado")}>
-              Borrar
-            </QBoton>
+            <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
           <Tabs
             children={[
               <Tab
                 key="tab-1"
                 label="Datos"
-                children={
-                  <div className="TabDatos">
-                    <quimera-formulario>
-                      <EstadoLead {...lead.uiProps("estado_id")} />
-                      <FuenteLead {...lead.uiProps("fuente_id")} />
-                    </quimera-formulario>
-                  </div>
-                }
-              />,
-              <Tab
-                key="tab-2"
-                label="Más datos"
                 children={<TabDatos lead={lead} />}
               />,
               <Tab
@@ -113,12 +109,9 @@ export const DetalleLead = ({
               />,
             ]}
           ></Tabs>
-          {lead.modificado && (
+          {modificado && (
             <div className="botones maestro-botones">
-              <QBoton
-                onClick={() => emitirLead("GUARDAR_INICIADO")}
-                deshabilitado={!lead.valido}
-              >
+              <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
                 Guardar
               </QBoton>
               <QBoton tipo="reset" variante="texto" onClick={() => init()}>
@@ -128,10 +121,10 @@ export const DetalleLead = ({
           )}
           <QModalConfirmacion
             nombre="borrarLead"
-            abierto={estado === "confirmarBorrado"}
+            abierto={estado === "borrando"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar este lead?"
-            onCerrar={() => setEstado("edicion")}
+            onCerrar={() => emitir("borrado_cancelado")}
             onAceptar={onBorrarConfirmado}
           />
         </>

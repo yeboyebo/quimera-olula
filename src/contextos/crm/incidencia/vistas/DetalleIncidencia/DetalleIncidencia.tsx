@@ -28,15 +28,15 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     contexto: {},
   },
   estados: {
-  Editando: {
-    borrar: "Borrando",
-    incidencia_guardada: ({publicar}) => publicar("incidencia_guardada"),
+    Editando: {
+      borrar: "Borrando",
+      incidencia_guardada: ({ publicar }) => publicar("incidencia_guardada"),
+    },
+    Borrando: {
+      borrado_cancelado: "Editando",
+      incidencia_borrada: ({ publicar }) => publicar("incidencia_borrada"),
+    },
   },
-  Borrando: {
-    borrado_cancelado: "Editando",
-    incidencia_borrada: ({publicar}) => publicar("incidencia_borrada"),
-  },
-  }
 };
 
 const titulo = (incidencia: Entidad) => incidencia.descripcion as string;
@@ -50,7 +50,7 @@ export const DetalleIncidencia = ({
 }) => {
   const params = useParams();
   const { intentar } = useContext(ContextoError);
-  
+
   const incidencia = useModelo(metaIncidencia, incidenciaVacia);
   const { modelo, uiProps, init } = incidencia;
 
@@ -64,37 +64,17 @@ export const DetalleIncidencia = ({
     init();
   };
 
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar,
+  });
 
-  // const maquina: Maquina<Estado> = {
-  //   Editando: {
-  //     borrar: "Borrando",
-  //     guardar: async () => {
-  //       await intentar(() =>  patchIncidencia(modelo.id, modelo));
-  //       recargarCabecera();
-  //     },
-  //     cancelar: () => {
-  //       init();
-  //     }
-  //   },
-  //   Borrando: {
-  //     borrado_cancelado: "Editando",
-  //     incidencia_borrada: async () => {
-  //       publicar("incidencia_borrada", modelo);
-  //     }
-  //   }
-  // };
-  // const [emitir, estado] = useMaquina2(maquina, 'Editando');
-
-  const [emitir, { estado }] = useMaquina4<Estado, Contexto>(
-    { config: configMaquina, publicar }
-  );
-  
   const recargarCabecera = async () => {
     const nuevaIncidencia = await intentar(() => getIncidencia(modelo.id));
     init(nuevaIncidencia);
     publicar("incidencia_cambiada", nuevaIncidencia);
   };
-  
+
   const incidenciaId = incidenciaInicial?.id ?? params.id;
 
   return (
@@ -109,9 +89,7 @@ export const DetalleIncidencia = ({
       {!!incidenciaId && (
         <>
           <div className="maestro-botones ">
-            <QBoton onClick={() => emitir("borrar")}>
-              Borrar
-            </QBoton>
+            <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
           <div className="DetalleIncidencia">
             <Tabs
@@ -121,28 +99,31 @@ export const DetalleIncidencia = ({
                     <QInput label="Descripción" {...uiProps("descripcion")} />
                     <QInput label="Nombre" {...uiProps("nombre")} />
                     <QDate label="Fecha" {...uiProps("fecha")} />
-                    <PrioridadIncidencia {...uiProps("prioridad")}/>
-                    <EstadoIncidencia {...uiProps("estado")}/>
-                    <Usuario {...uiProps("responsable_id", "nombre_responsable")} label='Responsable'/>
+                    <PrioridadIncidencia {...uiProps("prioridad")} />
+                    <EstadoIncidencia {...uiProps("estado")} />
+                    <Usuario
+                      {...uiProps("responsable_id", "nombre_responsable")}
+                      label="Responsable"
+                    />
                     <div className="Tabs">
-                    <Tabs
-                      children={[
-                        <Tab key="tab-1" label="Descripción">
-                          <QTextArea
-                            label="Descripción larga"
-                            rows={5}
-                            {...uiProps("descripcion_larga")}
-                          />
-                        </Tab>,
-                        <Tab key="tab-2" label="Resolución">
-                          <QTextArea
-                            label="Resolución"
-                            rows={5}
-                            {...uiProps("resolucion")}
-                          />
-                        </Tab>,
-                      ]}
-                    ></Tabs>
+                      <Tabs
+                        children={[
+                          <Tab key="tab-1" label="Descripción">
+                            <QTextArea
+                              label="Descripción larga"
+                              rows={5}
+                              {...uiProps("descripcion_larga")}
+                            />
+                          </Tab>,
+                          <Tab key="tab-2" label="Resolución">
+                            <QTextArea
+                              label="Resolución"
+                              rows={5}
+                              {...uiProps("resolucion")}
+                            />
+                          </Tab>,
+                        ]}
+                      ></Tabs>
                     </div>
                   </quimera-formulario>
                 </Tab>,
@@ -150,25 +131,26 @@ export const DetalleIncidencia = ({
                   <div className="detalle-incidencia-tab-contenido">
                     <TabAcciones incidencia={incidencia} />
                   </div>
-                </Tab>
+                </Tab>,
               ]}
             ></Tabs>
           </div>
           {incidencia.modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar}
-                deshabilitado={!incidencia.valido}
-              >
+              <QBoton onClick={guardar} deshabilitado={!incidencia.valido}>
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={cancelar}
                 deshabilitado={!incidencia.modificado}
               >
                 Cancelar
               </QBoton>
             </div>
           )}
-          <BorrarIncidencia 
+          <BorrarIncidencia
             publicar={emitir}
             activo={estado === "Borrando"}
             incidencia={modelo}
@@ -214,10 +196,10 @@ export const DetalleIncidencia = ({
 // }) => {
 //   const params = useParams();
 //   const { intentar } = useContext(ContextoError);
-  
+
 //   const incidencia = useModelo(metaIncidencia, incidenciaVacia);
 //   const { modelo, uiProps, init } = incidencia;
-  
+
 //   const maquina: Maquina<Estado> = {
 //     Editando: {
 //       borrar: "Borrando",
@@ -237,13 +219,13 @@ export const DetalleIncidencia = ({
 //     }
 //   };
 //   const [emitir, estado] = useMaquina2(maquina, 'Editando');
-  
+
 //   const recargarCabecera = async () => {
 //     const nuevaIncidencia = await intentar(() => getIncidencia(modelo.id));
 //     init(nuevaIncidencia);
 //     publicar("incidencia_cambiada", nuevaIncidencia);
 //   };
-  
+
 //   const incidenciaId = incidenciaInicial?.id ?? params.id;
 
 //   return (
@@ -318,7 +300,7 @@ export const DetalleIncidencia = ({
 //               </QBoton>
 //             </div>
 //           )}
-//           <BorrarIncidencia 
+//           <BorrarIncidencia
 //             publicar={emitir}
 //             activo={estado === "Borrando"}
 //             incidencia={modelo}

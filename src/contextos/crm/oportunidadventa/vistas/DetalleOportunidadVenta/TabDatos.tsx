@@ -1,4 +1,5 @@
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
+import { Usuario } from "../../../../comun/componentes/usuario.tsx";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Cliente } from "../../../../ventas/comun/componentes/cliente.tsx";
 import { ContactoSelector } from "../../../../ventas/comun/componentes/contacto.tsx";
@@ -33,8 +34,8 @@ export const TabDatos = ({
         <EstadoOportunidad label="Estado" {...uiProps("estado_id")} />
         <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
         <QInput label="Fecha Cierre" {...uiProps("fecha_cierre")} />
-
         <QInput label="Total" {...uiProps("importe")} />
+        <Usuario {...uiProps("usuario_id")} label="Responsable" />
       </quimera-formulario>
     </div>
   );

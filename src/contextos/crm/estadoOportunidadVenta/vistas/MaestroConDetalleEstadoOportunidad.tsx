@@ -54,7 +54,9 @@ export const MaestroConDetalleEstadoOportunidad = () => {
         estados.limpiarSeleccion();
       },
     },
-    confirmarBorrado: {},
+    confirmarBorrado: {
+      borrado_confirmado: "lista",
+    },
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
@@ -68,6 +70,7 @@ export const MaestroConDetalleEstadoOportunidad = () => {
       await intentar(() => deleteEstadoOportunidad(estadoId));
       estados.eliminar(estados.seleccionada);
     }
+    emitir("borrado_confirmado");
   };
 
   const onBorrarEstadoOportunidad = async () => {

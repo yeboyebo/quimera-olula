@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
@@ -6,6 +6,7 @@ import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
+import { ConfigMaquina4, useMaquina4 } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { Contacto } from "../../diseño.ts";
 import { contactoVacio, metaContacto } from "../../dominio.ts";
@@ -20,42 +21,63 @@ import { TabAcciones } from "./TabAcciones.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
 import { TabOportunidades } from "./TabOportunidades.tsx";
 
+type Estado = "edicion" | "borrando";
+type Contexto = Record<string, unknown>;
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "edicion",
+    contexto: {},
+  },
+  estados: {
+    edicion: {
+      borrar: "borrando",
+      contacto_guardado: ({ publicar }) => publicar("contacto_guardado"),
+      cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
+    },
+    borrando: {
+      borrado_cancelado: "edicion",
+      contacto_borrado: ({ publicar }) => publicar("contacto_borrado"),
+    },
+  },
+};
+
 export const DetalleContacto = ({
   contactoInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   contactoInicial?: Contacto | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-
   const contactoId = contactoInicial?.id ?? params.id;
   const titulo = (contacto: Entidad) => contacto.nombre as string;
   const { intentar } = useContext(ContextoError);
-
   const contacto = useModelo(metaContacto, contactoVacio());
   const { modelo, init, modificado, valido } = contacto;
-  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
-    "edicion"
-  );
+
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar,
+  });
 
   const onGuardarClicked = async () => {
     await intentar(() => patchContacto(modelo.id, modelo));
-    const contacto_guardado = await getContacto(modelo.id);
-    init(contacto_guardado);
-    emitir("CONTACTO_CAMBIADO", contacto_guardado);
+    onRecargarContacto();
+    emitir("contacto_guardado");
   };
 
   const onRecargarContacto = async () => {
     const contactoRecargado = await getContacto(modelo.id);
     init(contactoRecargado);
-    emitir("CONTACTO_CAMBIADO", contactoRecargado);
+    console.log("contactoRecargado", contactoRecargado);
+    publicar("contacto_cambiado", contactoRecargado);
   };
 
   const onBorrarConfirmado = async () => {
     await intentar(() => deleteContacto(modelo.id));
-    emitir("CONTACTO_BORRADO", modelo);
-    setEstado("edicion");
+    emitir("contacto_borrado", modelo);
+    emitir("borrado_cancelado");
   };
 
   return (
@@ -67,14 +89,12 @@ export const DetalleContacto = ({
         entidad={modelo}
         cargar={getContacto}
         className="detalle-contacto"
-        cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+        cerrarDetalle={() => emitir("cancelar_seleccion")}
       >
         {!!contactoId && (
           <div className="DetalleContacto">
             <div className="maestro-botones ">
-              <QBoton onClick={() => setEstado("confirmarBorrado")}>
-                Borrar
-              </QBoton>
+              <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
             </div>
             <Tabs
               children={[
@@ -84,7 +104,7 @@ export const DetalleContacto = ({
                   children={
                     <TabGeneral
                       contacto={contacto}
-                      emitirContacto={emitir}
+                      emitirContacto={publicar}
                       recargarContacto={onRecargarContacto}
                     />
                   }
@@ -135,10 +155,10 @@ export const DetalleContacto = ({
             )}
             <QModalConfirmacion
               nombre="borrarContacto"
-              abierto={estado === "confirmarBorrado"}
+              abierto={estado === "borrando"}
               titulo="Confirmar borrar"
               mensaje="¿Está seguro de que desea borrar este contacto?"
-              onCerrar={() => setEstado("edicion")}
+              onCerrar={() => emitir("borrado_cancelado")}
               onAceptar={onBorrarConfirmado}
             />
           </div>

@@ -11,7 +11,7 @@ import {
   incluirItem,
   listaSeleccionableVacia,
   quitarItem,
-  seleccionarItem
+  seleccionarItem,
 } from "../../../comun/entidad.ts";
 import { pipe } from "../../../comun/funcional.ts";
 import {
@@ -65,24 +65,15 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     Inactivo: {
       crear: "Creando",
       incidencia_cambiada: ({ maquina, payload }) =>
-        pipe(
-          maquina,
-          setIncidencias(cambiarItem(payload as Incidencia))
-        ),
+        pipe(maquina, setIncidencias(cambiarItem(payload as Incidencia))),
       incidencia_seleccionada: ({ maquina, payload }) =>
-        pipe(
-          maquina,
-          setIncidencias(seleccionarItem(payload as Incidencia))
-        ),
+        pipe(maquina, setIncidencias(seleccionarItem(payload as Incidencia))),
       incidencia_borrada: ({ maquina }) => {
         const { incidencias } = maquina.contexto;
         if (!incidencias.idActivo) {
           return maquina;
         }
-        return pipe(
-          maquina,
-          setIncidencias(quitarItem(incidencias.idActivo))
-        );
+        return pipe(maquina, setIncidencias(quitarItem(incidencias.idActivo)));
       },
       incidencias_cargadas: ({ maquina, payload, setEstado }) =>
         pipe(
@@ -104,7 +95,6 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 };
 
 export const MaestroConDetalleIncidencia = () => {
-
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });

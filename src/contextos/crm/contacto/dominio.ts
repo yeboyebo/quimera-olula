@@ -1,4 +1,4 @@
-import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
+import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { Contacto, NuevoContacto } from "./diseño.ts";
 
 
@@ -26,8 +26,8 @@ export const nuevoContactoVacio: NuevoContacto = {
 
 export const metaNuevoContacto: MetaModelo<NuevoContacto> = {
     campos: {
-        nombre: { requerido: true },
-        email: { requerido: true, tipo: "email" },
+        nombre: { requerido: true, validacion: (contacto: NuevoContacto) => stringNoVacio(contacto.nombre) },
+        email: { requerido: true, tipo: "email", validacion: (contacto: NuevoContacto) => stringNoVacio(contacto.email) },
     },
 };
 
