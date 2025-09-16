@@ -64,6 +64,7 @@ export type TipoInput =
   | "numero"
   | "fecha"
   | "hora"
+  | "fecha_hora"
   | "contraseña"
   | "email"
   | "checkbox"

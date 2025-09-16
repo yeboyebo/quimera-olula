@@ -23,6 +23,7 @@ const tiposFormInput = {
   numero: "number",
   fecha: "date",
   hora: "time",
+  fecha_hora: "datetime-local",
   contraseña: "password",
   email: "email",
   checkbox: "checkbox",
