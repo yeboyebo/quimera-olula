@@ -3,5 +3,5 @@ export const fechaActual = () => {
     const ms = Date.now();
     const tz = ahora.getTimezoneOffset() * 60_000;
 
-    return new Date(ms - tz).toISOString().slice(0, 10);
+    return new Date(ms - tz).toISOString().slice(0, -5);
 };
