@@ -1,8 +1,8 @@
 :root {
-    --espaciado-xxs: 0.3rem;
-    --espaciado-xs: 0.5rem;
-    --espaciado-s: 0.75rem;
-    --espaciado-m: 1rem;
-    --espaciado-l: 1.5rem;
-    --espaciado-xl: 2rem;
+    --espaciado-xxs: 0.2rem;
+    --espaciado-xs: 0.3rem;
+    --espaciado-s: 0.5rem;
+    --espaciado-m: 0.75rem;
+    --espaciado-l: 1.25rem;
+    --espaciado-xl: 5rem;
 }
