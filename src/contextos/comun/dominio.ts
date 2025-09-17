@@ -1,6 +1,6 @@
 import { Permiso } from "../administracion/diseño.ts";
 import { permisosGrupo } from "../usuarios/login/infraestructura.ts";
-import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -382,4 +382,17 @@ export const puede = (regla: string): boolean => {
     }
 
     return true;
+};
+
+type RelacionDeCampos = Record<string, string>;
+export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Criteria) => Criteria => {
+    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro => clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+    const transformarFiltro = (filtro: Filtro): Filtro => filtro.map(transformarClausula);
+    const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
+
+    return (criteria) => ({
+        filtros: transformarFiltro(criteria.filtros),
+        orden: transformarOrden(criteria.orden),
+        paginacion: criteria.paginacion
+    })
 };

@@ -17,14 +17,11 @@ export type Criteria = {
   paginacion?: Paginacion;
 }
 
-export type Orden = string[];
-type ClausulaFiltro = [string, string, string?];
+export type ClausulaFiltro = [string, string, string?];
 export type Filtro = ClausulaFiltro[];
-// export type Filtro = (
-//   [string, string] |
-//   [string, string, string] |
-//   [string, string, string][]
-// );
+
+export type Orden = string[];
+
 export type Paginacion = {
   limite: number;
   pagina: number;

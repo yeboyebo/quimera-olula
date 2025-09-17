@@ -1,26 +1,41 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import { transformarCriteria } from "../../comun/dominio.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { ActualizarLineaTransferenciaStock, ActualizarTransferenciaStock, CrearLineaTransferenciaStock, CrearTransferenciaStock, EliminarLineaTransferenciaStock, EliminarTransferenciaStock, LineaTransferenciaStock, LineaTransferenciaStock_API, NuevaLineaTransferenciaStock, NuevaLineaTransferenciaStock_API, NuevaTransferenciaStock, NuevaTransferenciaStock_API, ObtenerLineasTransferenciaStock, ObtenerLineaTransferenciaStock, ObtenerTransferenciasStock, ObtenerTransferenciaStock, TransferenciaStock, TransferenciaStock_API } from "./diseño.ts";
 
 const baseUrlTransferencias = `/almacen/transferencia`;
 
-export const transferenciaStockFromAPI = (transferenciaAPI: TransferenciaStock_API): TransferenciaStock => ({
-    id: transferenciaAPI.id,
-    origen: transferenciaAPI.almacen_origen_id,
-    destino: transferenciaAPI.almacen_destino_id,
-    fecha: transferenciaAPI.fecha,
-    nombre_origen: transferenciaAPI.nombre_almacen_origen,
-    nombre_destino: transferenciaAPI.nombre_almacen_destino,
-});
+const camposTransferenciaFromAPI: Record<keyof TransferenciaStock_API, keyof TransferenciaStock> = {
+    id: "id",
+    almacen_origen_id: "origen",
+    almacen_destino_id: "destino",
+    fecha: "fecha",
+    nombre_almacen_origen: "nombre_origen",
+    nombre_almacen_destino: "nombre_destino",
+};
 
-export const transferenciaStockToAPI = (transferencia: TransferenciaStock): TransferenciaStock_API => ({
-    id: transferencia.id,
-    almacen_origen_id: transferencia.origen,
-    almacen_destino_id: transferencia.destino,
-    fecha: transferencia.fecha,
-    nombre_almacen_origen: transferencia.nombre_origen,
-    nombre_almacen_destino: transferencia.nombre_destino,
-});
+const camposTransferenciaToAPI: Record<keyof TransferenciaStock, keyof TransferenciaStock_API> = {
+    id: "id",
+    origen: "almacen_origen_id",
+    destino: "almacen_destino_id",
+    fecha: "fecha",
+    nombre_origen: "nombre_almacen_origen",
+    nombre_destino: "nombre_almacen_destino",
+};
+
+export const transferenciaStockFromAPI = (transferenciaAPI: TransferenciaStock_API): TransferenciaStock =>
+    Object.fromEntries(
+        Object.entries(camposTransferenciaFromAPI).map(
+            ([api, cli]) => [cli, transferenciaAPI[api as keyof TransferenciaStock_API]]
+        )
+    ) as TransferenciaStock;
+
+export const transferenciaStockToAPI = (transferencia: TransferenciaStock): TransferenciaStock_API =>
+    Object.fromEntries(
+        Object.entries(camposTransferenciaToAPI).map(
+            ([cli, api]) => [api, transferencia[cli as keyof TransferenciaStock]]
+        )
+    ) as TransferenciaStock_API;
 
 export const nuevaTransferenciaStockToAPI = (transferencia: NuevaTransferenciaStock): NuevaTransferenciaStock_API => ({
     almacen_origen_id: transferencia.origen,
@@ -34,9 +49,10 @@ export const obtenerTransferenciaStock: ObtenerTransferenciaStock = async (id) =
     );
 
 export const obtenerTransferenciasStock: ObtenerTransferenciasStock = async (
-    filtro, orden, paginacion?
+    filtros, orden, paginacion?
 ) => {
-    const q = criteriaQuery(filtro, orden, paginacion);
+    const criteria = transformarCriteria(camposTransferenciaToAPI)({ filtros, orden, paginacion });
+    const q = criteriaQuery(criteria.filtros, criteria.orden, criteria.paginacion);
     const respuesta = await RestAPI.get<{ datos: TransferenciaStock_API[]; total: number }>(baseUrlTransferencias + q);
 
     return { datos: respuesta.datos.map(transferenciaStockFromAPI), total: respuesta.total };
@@ -62,21 +78,35 @@ export const eliminarTransferenciaStock: EliminarTransferenciaStock = async (id)
 
 // LINEAS
 
-export const lineaTransferenciaFromAPI = (lineaAPI: LineaTransferenciaStock_API): LineaTransferenciaStock => ({
-    id: lineaAPI.id,
-    transferencia_id: lineaAPI.transferencia_id,
-    sku: lineaAPI.sku,
-    descripcion_producto: lineaAPI.descripcion,
-    cantidad: lineaAPI.cantidad,
-});
+const camposLineaTransferenciaFromAPI: Record<keyof LineaTransferenciaStock_API, keyof LineaTransferenciaStock> = {
+    id: "id",
+    transferencia_id: "transferencia_id",
+    sku: "sku",
+    descripcion: "descripcion_producto",
+    cantidad: "cantidad",
+};
 
-export const lineaTransferenciaToAPI = (linea: LineaTransferenciaStock): LineaTransferenciaStock_API => ({
-    id: linea.id,
-    transferencia_id: linea.transferencia_id,
-    sku: linea.sku,
-    descripcion: linea.descripcion_producto,
-    cantidad: linea.cantidad,
-});
+const camposLineaTransferenciaToAPI: Record<keyof LineaTransferenciaStock, keyof LineaTransferenciaStock_API> = {
+    id: "id",
+    transferencia_id: "transferencia_id",
+    sku: "sku",
+    descripcion_producto: "descripcion",
+    cantidad: "cantidad",
+};
+
+export const lineaTransferenciaStockFromAPI = (lineaAPI: LineaTransferenciaStock_API): LineaTransferenciaStock =>
+    Object.fromEntries(
+        Object.entries(camposLineaTransferenciaFromAPI).map(
+            ([api, cli]) => [cli, lineaAPI[api as keyof LineaTransferenciaStock_API]]
+        )
+    ) as LineaTransferenciaStock;
+
+export const lineaTransferenciaStockToAPI = (linea: LineaTransferenciaStock): LineaTransferenciaStock_API =>
+    Object.fromEntries(
+        Object.entries(camposLineaTransferenciaToAPI).map(
+            ([cli, api]) => [api, linea[cli as keyof LineaTransferenciaStock]]
+        )
+    ) as LineaTransferenciaStock_API;
 
 export const nuevaLineaTransferenciaStockToAPI = (linea: NuevaLineaTransferenciaStock): NuevaLineaTransferenciaStock_API => ({
     sku: linea.sku,
@@ -85,16 +115,17 @@ export const nuevaLineaTransferenciaStockToAPI = (linea: NuevaLineaTransferencia
 
 export const obtenerLineaTransferenciaStock: ObtenerLineaTransferenciaStock = async (id, idLinea) =>
     await RestAPI.get<{ datos: LineaTransferenciaStock_API }>(`${baseUrlTransferencias}/${id}/linea/${idLinea}`).then((respuesta) =>
-        lineaTransferenciaFromAPI(respuesta.datos)
+        lineaTransferenciaStockFromAPI(respuesta.datos)
     );
 
 export const obtenerLineasTransferenciaStock: ObtenerLineasTransferenciaStock = async (
-    id, filtro, orden, paginacion?
+    id, filtros, orden, paginacion?
 ) => {
-    const q = criteriaQuery(filtro, orden, paginacion);
+    const criteria = transformarCriteria(camposLineaTransferenciaToAPI)({ filtros, orden, paginacion });
+    const q = criteriaQuery(criteria.filtros, criteria.orden, criteria.paginacion);
     const respuesta = await RestAPI.get<{ datos: LineaTransferenciaStock_API[]; total: number }>(`${baseUrlTransferencias}/${id}/linea` + q);
 
-    return { datos: respuesta.datos.map(lineaTransferenciaFromAPI), total: respuesta.total };
+    return { datos: respuesta.datos.map(lineaTransferenciaStockFromAPI), total: respuesta.total };
 };
 
 export const crearLineaTransferenciaStock: CrearLineaTransferenciaStock = async (id, linea) => {
@@ -104,7 +135,7 @@ export const crearLineaTransferenciaStock: CrearLineaTransferenciaStock = async 
 };
 
 export const actualizarLineaTransferenciaStock: ActualizarLineaTransferenciaStock = async (id, idLinea, linea) => {
-    const lineaAPI = lineaTransferenciaToAPI(linea as LineaTransferenciaStock);
+    const lineaAPI = lineaTransferenciaStockToAPI(linea as LineaTransferenciaStock);
     const linea_limpia = Object.fromEntries(
         Object.entries(lineaAPI).map(([k, v]) => [k, v ?? ""])
     );
