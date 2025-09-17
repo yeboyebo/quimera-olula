@@ -57,8 +57,10 @@ const FormAltaLineaTransferenciaStock = ({
     const modelo = {
       ...linea.modelo,
     };
-    await intentar(() => crearLineaTransferenciaStock(transferenciaID, modelo));
-    publicar("linea_creada", { ...modelo, id: Math.random().toString() });
+    const id = await intentar(() =>
+      crearLineaTransferenciaStock(transferenciaID, modelo)
+    );
+    publicar("linea_creada", { ...modelo, id });
     linea.init();
   };
 
