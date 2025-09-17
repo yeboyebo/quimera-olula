@@ -1,35 +1,40 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
 import { Filtro, Orden } from "../../../comun/diseño.ts";
-import { getEstadosOportunidadVenta } from "../../oportunidadventa/infraestructura.ts";
+import { getLeads } from "../../lead/infraestructura.ts";
 
-interface EstadoOportunidadProps {
+interface LeadSelectorProps {
   descripcion?: string;
   valor: string;
   nombre?: string;
   label?: string;
+  deshabilitado?: boolean;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
-export const EstadoOportunidad = ({
+export const LeadSelector = ({
   descripcion = "",
   valor,
-  nombre = "estado_id",
-  label = "Estado",
+  nombre = "lead_id",
+  label = "Seleccionar lead",
+  deshabilitado = false,
   onChange,
-}: EstadoOportunidadProps) => {
-  const obtenerOpciones = async (input: string) => {
+}: LeadSelectorProps) => {
+  const obtenerOpciones = async (valor: string) => {
+    if (valor.length < 3) return [];
+
     const criteria = {
-      filtro: input ? [["descripcion", "~", input]] : [],
+      filtro: ["id", "~", valor],
       orden: ["id"],
     };
 
-    const estados = await getEstadosOportunidadVenta(
+    const { datos: leads } = await getLeads(
       criteria.filtro as unknown as Filtro,
       criteria.orden as Orden
     );
-    return estados.map((estado) => ({
-      valor: estado.id,
-      descripcion: estado.descripcion ?? "",
+
+    return leads.map((lead) => ({
+      valor: lead.id,
+      descripcion: `${lead.id} - ${lead.nombre}`,
     }));
   };
 
@@ -42,6 +47,7 @@ export const EstadoOportunidad = ({
       autoSeleccion
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
     />
   );
 };

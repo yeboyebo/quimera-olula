@@ -22,7 +22,7 @@ type QAutocompletarProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
 export const QAutocompletar = ({
   nombre,
   valor,
-  tiempoEspera = 250,
+  tiempoEspera = 150,
   longitudMinima = 2,
   obtenerOpciones,
   onBlur,

@@ -5,7 +5,7 @@ import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
-import { EstadoOportunidad } from "../../comun/componentes/estadoOportunidadVenta.tsx";
+import { EstadoOportunidad } from "../../comun/componentes/estado_oportunidad_venta.tsx";
 import { NuevaOportunidadVenta } from "../diseño.ts";
 import {
   metaNuevaOportunidadVenta,
@@ -38,7 +38,7 @@ export const AltaOportunidadVenta = ({
   });
 
   const cancelar = () => {
-    emitir("creacion_cancelada");
+    emitir("ALTA_CANCELADA");
     oportunidadventa.init();
   };
 
@@ -87,8 +87,8 @@ export const FormAltaOportunidadVenta = ({
         <EstadoOportunidad
           label="Estado"
           {...oportunidadventa.uiProps("estado_id")}
-          nombre="alta_estado_id"
         />
+        <QInput label="Total" {...oportunidadventa.uiProps("importe")} />
         <QInput
           {...oportunidadventa.uiProps("fecha_cierre")}
           label="Fecha Cierre"

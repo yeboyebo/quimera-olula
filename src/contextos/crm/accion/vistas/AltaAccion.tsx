@@ -92,10 +92,7 @@ const FormAltaAccion = ({
       <quimera-formulario>
         <QInput label="Descripción" {...accion.uiProps("descripcion")} />
         <QInput label="Fecha" {...accion.uiProps("fecha")} />
-        <Usuario
-          {...accion.uiProps("usuario_id, descripcion")}
-          label="Responsable"
-        />
+        <Usuario {...accion.uiProps("usuario_id")} label="Responsable" />
         {/* <QInput label="Incidencia" {...accion.uiProps("incidencia_id")} /> */}
       </quimera-formulario>
       <div className="botones">

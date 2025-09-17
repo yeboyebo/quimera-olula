@@ -1,4 +1,4 @@
-import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
+import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { Incidencia, NuevaIncidencia } from "./diseño.ts";
 
 export const incidenciaVacia: Incidencia = {
@@ -39,12 +39,13 @@ export const nuevaIncidenciaVacia: NuevaIncidencia = {
 
 export const metaNuevaIncidencia: MetaModelo<NuevaIncidencia> = {
     campos: {
-        descripcion: { requerido: true },
+        descripcion: { requerido: true, validacion: (incidencia: NuevaIncidencia) => stringNoVacio(incidencia.descripcion) },
         nombre: { requerido: true },
         fecha: { requerido: true, tipo: "fecha" },
-        responsable_id: { requerido: false },
+        responsable_id: { requerido: true, tipo: "autocompletar" },
         descripcion_larga: { requerido: false },
         prioridad: { requerido: true },
+        estado: { requerido: true, tipo: "selector" }
     },
 };
 

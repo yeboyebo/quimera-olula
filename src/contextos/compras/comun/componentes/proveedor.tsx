@@ -7,7 +7,8 @@ interface ProveedorProps {
   valor: string;
   nombre?: string;
   label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  deshabilitado?: boolean;
+  onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const Proveedor = ({
@@ -15,6 +16,7 @@ export const Proveedor = ({
   valor,
   nombre = "proveedor_id",
   label = "Proveedor",
+  deshabilitado = false,
   onChange,
   ...props
 }: ProveedorProps) => {
@@ -43,6 +45,7 @@ export const Proveedor = ({
       valor={valor}
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
       {...props}
     />
   );

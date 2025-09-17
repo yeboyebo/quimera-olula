@@ -7,7 +7,9 @@ import { ModoCalendario } from '../tipos';
  * Demuestra layouts responsivos y UX móvil REALISTA
  */
 
-interface EjemploActividad {
+import type { DatoBase } from '../tipos';
+
+interface EjemploActividad extends DatoBase {
   id: string;
   fecha: Date;
   titulo: string;
@@ -333,78 +335,81 @@ export const EjemploCalendarioMovil = () => {
             maxDatosVisibles: configMovil.maxDatosVisibles,
             // ✅ ELIMINADO: Las props táctiles no existen en el calendario real
           }}
-          renderDato={(actividad) => (
-            <div style={{
-              backgroundColor: coloresPorTipo[actividad.tipo],
-              color: 'white',
-              padding: esPantallaMinima ? '2px 4px' : '3px 6px',
-              borderRadius: '4px',
-              fontSize: esPantallaMinima ? '0.65rem' : '0.7rem',
-              margin: '1px 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '3px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
-              minHeight: esPantallaMinima ? '24px' : '28px', // ✅ Touch targets móvil
-              cursor: 'pointer',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              {/* Indicador de urgencia */}
-              {actividad.urgente && (
-                <div style={{
-                  position: 'absolute',
-                  top: '1px',
-                  right: '1px',
-                  width: '6px',
-                  height: '6px',
-                  backgroundColor: '#FF3B30',
-                  borderRadius: '50%',
-                  border: '1px solid white'
-                }} />
-              )}
-
-              {/* Indicador de completada */}
-              {actividad.completada && (
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '2px',
-                  backgroundColor: '#34C759'
-                }} />
-              )}
-
-              <span style={{ fontSize: esPantallaMinima ? '0.7rem' : '0.8rem' }}>
-                {iconosPorTipo[actividad.tipo]}
-              </span>
-              
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{
-                  fontWeight: '500',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  opacity: actividad.completada ? 0.6 : 1,
-                  textDecoration: actividad.completada ? 'line-through' : 'none'
-                }}>
-                  {actividad.titulo}
-                </div>
-                
-                {!esPantallaMinima && (
+          renderDato={(dato) => {
+            const actividad = dato as unknown as EjemploActividad;
+            return (
+              <div style={{
+                backgroundColor: coloresPorTipo[actividad.tipo],
+                color: 'white',
+                padding: esPantallaMinima ? '2px 4px' : '3px 6px',
+                borderRadius: '4px',
+                fontSize: esPantallaMinima ? '0.65rem' : '0.7rem',
+                margin: '1px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                minHeight: esPantallaMinima ? '24px' : '28px', // ✅ Touch targets móvil
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Indicador de urgencia */}
+                {actividad.urgente && (
                   <div style={{
-                    fontSize: '0.55rem',
-                    opacity: 0.8,
-                    marginTop: '1px'
-                  }}>
-                    ⏰ {actividad.duracion}
-                    {actividad.ubicacion && ` • 📍 ${actividad.ubicacion}`}
-                  </div>
+                    position: 'absolute',
+                    top: '1px',
+                    right: '1px',
+                    width: '6px',
+                    height: '6px',
+                    backgroundColor: '#FF3B30',
+                    borderRadius: '50%',
+                    border: '1px solid white'
+                  }} />
                 )}
+
+                {/* Indicador de completada */}
+                {actividad.completada && (
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '2px',
+                    backgroundColor: '#34C759'
+                  }} />
+                )}
+
+                <span style={{ fontSize: esPantallaMinima ? '0.7rem' : '0.8rem' }}>
+                  {iconosPorTipo[actividad.tipo]}
+                </span>
+                
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    fontWeight: '500',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    opacity: actividad.completada ? 0.6 : 1,
+                    textDecoration: actividad.completada ? 'line-through' : 'none'
+                  }}>
+                    {actividad.titulo}
+                  </div>
+                  
+                  {!esPantallaMinima && (
+                    <div style={{
+                      fontSize: '0.55rem',
+                      opacity: 0.8,
+                      marginTop: '1px'
+                    }}>
+                      ⏰ {actividad.duracion}
+                      {actividad.ubicacion && ` • 📍 ${actividad.ubicacion}`}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          }}
         />
 
         {/* ✅ CORRECCIÓN: Footer interno al calendario para modo una mano */}

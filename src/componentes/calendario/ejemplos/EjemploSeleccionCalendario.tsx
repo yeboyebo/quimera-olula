@@ -7,10 +7,13 @@ import { EstadoSeleccion, TipoSeleccion } from '../tipos';
  * Implementación genérica para cualquier aplicación empresarial
  */
 
-interface EjemploEvento {
+import type { DatoBase } from '../tipos';
+
+interface EjemploEvento extends DatoBase {
   id: string;
   fecha: Date;
   descripcion: string;
+  [key: string]: unknown;
 }
 
 export const EjemploSeleccionCalendario = () => {

@@ -15,6 +15,7 @@ interface EjemploEvento {
   departamento: 'engineering' | 'design' | 'marketing' | 'sales' | 'hr';
   duracion?: string;
   participantes?: number;
+  [key: string]: unknown; // Index signature for compatibility with DatoBase
 }
 
 type TemaVisual = 'corporate' | 'creative' | 'minimal' | 'dark' | 'colorful';
@@ -525,7 +526,7 @@ export const EjemploPersonalizacionVisual = () => {
       {/* Calendario con personalización visual */}
       <Calendario
         calendarioId="calendario-ejemplo-personalizacion-visual"
-        datos={eventos}
+        datos={eventos as EjemploEvento[]}
         config={{
           cabecera: {
             mostrarCambioModo: true,

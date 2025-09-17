@@ -9,26 +9,26 @@
     }
 
     quimera-autocompletar[nombre="contacto_id"] {
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 4;
     }
 
-    quimera-autocompletar[nombre="estado_id"] {
-        grid-column: 1 / span 3;
+    quimera-select[nombre="estado_id"] {
+        grid-column: span 3;
     }
 
     quimera-input[nombre="probabilidad"] {
         grid-column: span 3;
     }
 
-    quimera-input[nombre="tarjeta_id"] {
+    quimera-autocompletar[nombre="tarjeta_id"] {
         grid-column: span 3;
     }
 
     quimera-input[nombre="importe"] {
-        grid-column: 1 / span 6;
+        grid-column: span 3;
     }
 
     quimera-input[nombre="fecha_cierre"] {
-        grid-column: span 6;
+        grid-column: 1 / span 3;
     }
 }

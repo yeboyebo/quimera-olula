@@ -71,10 +71,11 @@ export const nuevoLeadVacio: NuevoLead = {
 
 export const metaNuevoLead: MetaModelo<NuevoLead> = {
     campos: {
-        cliente_id: { requerido: true },
+        cliente_id: { requerido: true, tipo: "autocompletar" },
         tipo: { requerido: true, bloqueado: true },
-        fuente_id: { requerido: true },
-        estado_id: { requerido: true },
+        fuente_id: { requerido: true, tipo: "selector" },
+        estado_id: { requerido: true, tipo: "selector" },
+        responsable_id: { requerido: true, tipo: "autocompletar" },
     },
 };
 

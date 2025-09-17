@@ -12,37 +12,59 @@ interface FichaEventoAbiertoProps {
 }
 
 export const FichaEventoAbierto = ({ evento }: FichaEventoAbiertoProps) => {
+  console.log("mimnesaje_evento.descripcion_ref", evento.descripcion_ref, typeof evento.descripcion_ref);
   return (
     <div className="ficha-evento">
       <quimera-formulario>
         <div className="columna-principal">
           <h2><span>{evento.descripcion}</span></h2>
           <div className="fila-1">
-            <QInput label="Producto" valor={evento.descripcion_ref || ""} deshabilitado />
+            <QInput
+              nombre="descripcion_ref"
+              label="Producto"
+              valor={typeof evento.descripcion_ref === "string" ? evento.descripcion_ref : ""}
+              deshabilitado
+            />
           </div>
           <div className="fila-2">
-            <QDate label="Fecha" valor={evento.fecha_inicio} deshabilitado />
-            <QInput label="Hora inicio" valor={evento.hora_inicio || ""} deshabilitado />
+            <QDate
+              nombre="fecha"
+              label="Fecha"
+              valor={
+                typeof evento.fecha_inicio === "string"
+                  ? evento.fecha_inicio
+                  : evento.fecha_inicio instanceof Date
+                    ? evento.fecha_inicio.toISOString().substring(0, 10)
+                    : ""
+              }
+              deshabilitado
+            />
+            <QInput nombre="hora_inicio" label="Hora inicio" valor={evento.hora_inicio || ""} deshabilitado />
           </div>
           <div className="fila-3">
-            <QInput label="Lugar" valor={evento.lugar || ""} deshabilitado />
-            <QInput label="Dirección" valor={evento.direccion || ""} deshabilitado />                  
+            <QInput nombre="lugar" label="Lugar" valor={evento.lugar ||   ""} deshabilitado />
+            <QInput
+              nombre="direccion"
+              label="Dirección"
+              valor={typeof evento.direccion === "string" ? evento.direccion : ""}
+              deshabilitado
+            />                  
           </div>
           <div className="fila-4">
             <Empresa
               label="Empresa que factura"
-              valor={evento.empresa_id || ""}
-              descripcion={evento.nombre_empresa || ""}
+              valor={typeof evento.empresa_id === "string" ? evento.empresa_id : ""}
+              descripcion={typeof evento.nombre_empresa === "string" ? evento.nombre_empresa : ""}
               deshabilitado
             />
             <Cliente
-              valor={evento.cliente_id || ""}
-              descripcion={evento.nombre_cliente || ""}
+              valor={typeof evento.cliente_id === "string" ? evento.cliente_id : ""}
+              descripcion={typeof evento.nombre_cliente === "string" ? evento.nombre_cliente : ""}
               deshabilitado
             />
             <Proveedor
-              valor={evento.proveedor_id || ""}
-              descripcion={evento.nombre_proveedor || ""}
+              valor={typeof evento.proveedor_id === "string" ? evento.proveedor_id : ""}
+              descripcion={typeof evento.nombre_proveedor === "string" ? evento.nombre_proveedor : ""}
               deshabilitado
             />
           </div>

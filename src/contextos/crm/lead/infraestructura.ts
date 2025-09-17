@@ -1,15 +1,10 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Lead, LeadAPI } from "./diseño.ts";
-
-const baseUrlLead = `/crm/lead`;
-const baseUrlAccion = `/crm/accion`;
-const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
-const baseUrlFuenteLead = `/crm/fuente_lead`;
-const baseUrlEstadoLead = `/crm/estado_lead`;
 
 export const leadFromAPI = (l: LeadAPI): Lead => ({
     ...l,
@@ -55,10 +50,9 @@ export const leadToAPI = (l: Lead): LeadAPI => {
 };
 
 export const getLead = async (id: string): Promise<Lead> =>
-    await RestAPI.get<{ datos: LeadAPI }>(`${baseUrlLead}/${id}`).then((respuesta) =>
+    await RestAPI.get<{ datos: LeadAPI }>(`${ApiUrls.CRM.LEAD}/${id}`).then((respuesta) =>
         leadFromAPI(respuesta.datos)
     );
-
 
 export const getLeads = async (
     filtro: Filtro,
@@ -67,12 +61,12 @@ export const getLeads = async (
 ): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(baseUrlLead + q);
+    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(ApiUrls.CRM.LEAD + q);
     return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
 };
 
 export const postLead = async (lead: Partial<Lead>): Promise<string> => {
-    return await RestAPI.post(baseUrlLead, lead, "Error al guardar lead").then(
+    return await RestAPI.post(ApiUrls.CRM.LEAD, lead, "Error al guardar lead").then(
         (respuesta) => respuesta.id
     );
 };
@@ -83,31 +77,27 @@ export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> 
     const leadSinNulls = Object.fromEntries(
         Object.entries(apiLead).map(([k, v]) => [k, v === null ? "" : v])
     );
-    await RestAPI.patch(`${baseUrlLead}/${id}`, leadSinNulls, "Error al guardar lead");
+    await RestAPI.patch(`${ApiUrls.CRM.LEAD}/${id}`, leadSinNulls, "Error al guardar lead");
 };
 
 export const deleteLead = async (id: string): Promise<void> =>
-    await RestAPI.delete(`${baseUrlLead}/${id}`, "Error al borrar lead");
+    await RestAPI.delete(`${ApiUrls.CRM.LEAD}/${id}`, "Error al borrar lead");
 
-
-export const getOportunidadesVentaLead = async (leadId: string) => {
+export const getOportunidadesVentaLead = async (leadId: string): Promise<OportunidadVenta[]> => {
     const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
-
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
+    return RestAPI.get<{ datos: OportunidadVenta[] }>(ApiUrls.CRM.OPORTUNIDAD_VENTA + q).then((respuesta) => respuesta.datos);
 };
 
-export const getAccionesLead = async (leadId: string) => {
+export const getAccionesLead = async (leadId: string): Promise<Accion[]> => {
     const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
-
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
+    return RestAPI.get<{ datos: Accion[] }>(ApiUrls.CRM.ACCION + q).then((respuesta) => respuesta.datos);
 };
-
 
 export const getFuentesLead = async (
     filtro: Filtro,
@@ -116,7 +106,7 @@ export const getFuentesLead = async (
 ): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(baseUrlFuenteLead + q);
+    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(ApiUrls.CRM.FUENTE_LEAD + q);
     return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
 };
 
@@ -127,6 +117,6 @@ export const getEstadosLead = async (
 ): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(baseUrlEstadoLead + q);
+    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(ApiUrls.CRM.ESTADO_LEAD + q);
     return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
 };

@@ -26,7 +26,7 @@ export function useLista<E extends Entidad>(
     const [idSeleccionada, setIdSeleccionada] = useState<string | null>(idEntidadSeleccionada);
 
     const añadir = useCallback((entidad: E) => {
-        setEntidades([...entidades, entidad]);
+        setEntidades([entidad, ...entidades]);
         setIdSeleccionada(entidad.id);
     }, [entidades, setEntidades, setIdSeleccionada]);
 

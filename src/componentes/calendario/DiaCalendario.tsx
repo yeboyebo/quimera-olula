@@ -52,7 +52,7 @@ export function DiaCalendario<T extends DatoBase>({
         {esMesActual && datos.slice(0, maxDatosVisibles).map((dato) => (
           renderDato
             ? renderDato(dato)
-            : <div key={dato.id} className="dato-item">{dato.descripcion}</div>
+            : <div key={dato.id} className="dato-item">{dato.descripcion as string}</div>
         ))}
       </div>
     </div>

@@ -121,8 +121,14 @@ export const metaCliente: MetaModelo<Cliente> = {
 export const metaNuevoCliente: MetaModelo<NuevoCliente> = {
     campos: {
         nombre: { requerido: true },
-        tipo_id_fiscal: { requerido: true },
-        id_fiscal: { requerido: true },
+        id_fiscal: {
+            requerido: true,
+            validacion: (cliente: NuevoCliente) => idFiscalValido(cliente.tipo_id_fiscal)(cliente.id_fiscal),
+        },
+        tipo_id_fiscal: {
+            requerido: true,
+            validacion: (cliente: NuevoCliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
+        },
     }
 };
 

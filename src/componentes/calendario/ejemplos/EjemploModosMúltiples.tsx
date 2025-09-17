@@ -7,7 +7,9 @@ import { ModoCalendario } from '../tipos';
  * Demuestra las vistas mes, semana y año con datos dinámicos
  */
 
-interface EjemploEvento {
+import type { DatoBase } from '../tipos';
+
+interface EjemploEvento extends DatoBase {
   id: string;
   fecha: Date;
   titulo: string;

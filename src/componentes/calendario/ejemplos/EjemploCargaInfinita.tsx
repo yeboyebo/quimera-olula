@@ -6,8 +6,9 @@ import { Calendario } from '../calendario';
  * Demuestra cómo cargar datos dinámicamente cuando el usuario navega
  * hacia fechas anteriores o posteriores
  */
+import { DatoBase } from '../tipos';
 
-interface EjemploTarea {
+interface EjemploTarea extends DatoBase {
   id: string;
   fecha: Date;
   titulo: string;
@@ -300,60 +301,63 @@ export const EjemploCargaInfinita = () => {
           onNecesitaDatosAnteriores: manejarCargaAnterior,
           onNecesitaDatosPosteriores: manejarCargaPosterior,
         }}
-        renderDato={(tarea) => (
-          <div style={{ 
-            backgroundColor: colorPorPrioridad[tarea.prioridad],
-            color: 'white', 
-            padding: '4px 8px', 
-            borderRadius: '4px',
-            fontSize: '0.75rem',
-            margin: '2px 0',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '3px',
-              height: '100%',
-              backgroundColor: colorPorEquipo[tarea.equipo as keyof typeof colorPorEquipo]
-            }} />
-            
+        renderDato={(dato) => {
+          const tarea = dato as unknown as EjemploTarea;
+          return (
             <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between',
-              gap: '4px',
-              paddingLeft: '6px'
+              backgroundColor: colorPorPrioridad[tarea.prioridad],
+              color: 'white', 
+              padding: '4px 8px', 
+              borderRadius: '4px',
+              fontSize: '0.75rem',
+              margin: '2px 0',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ 
-                  fontWeight: '500',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}>
-                  {tarea.titulo}
-                </div>
-                <div style={{ 
-                  fontSize: '0.65rem', 
-                  opacity: 0.9,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  marginTop: '2px'
-                }}>
-                  <span>{iconoPorEstado[tarea.estado]}</span>
-                  <span>{tarea.equipo}</span>
-                  {/* ✅ CORRECTO - Span cerrado correctamente */}
-                  {tarea.estimacion && <span>⏱️{tarea.estimacion}</span>}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '3px',
+                height: '100%',
+                backgroundColor: colorPorEquipo[tarea.equipo as keyof typeof colorPorEquipo]
+              }} />
+              
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                gap: '4px',
+                paddingLeft: '6px'
+              }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ 
+                    fontWeight: '500',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {tarea.titulo}
+                  </div>
+                  <div style={{ 
+                    fontSize: '0.65rem', 
+                    opacity: 0.9,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    marginTop: '2px'
+                  }}>
+                    <span>{iconoPorEstado[tarea.estado]}</span>
+                    <span>{tarea.equipo}</span>
+                    {/* ✅ CORRECTO - Span cerrado correctamente */}
+                    {tarea.estimacion && <span>⏱️{tarea.estimacion}</span>}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        }}
       />
 
 <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
