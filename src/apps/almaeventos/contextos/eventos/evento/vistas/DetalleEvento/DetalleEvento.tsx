@@ -7,7 +7,7 @@ import { QModalConfirmacion } from "../../../../../../../componentes/moleculas/q
 import { Entidad } from "../../../../../../../contextos/comun/diseño.ts";
 import { useModelo } from "../../../../../../../contextos/comun/useModelo.ts";
 import { Evento } from "../../diseño.ts";
-import { eventoVacio, metaEvento } from "../../dominio.ts";
+import { abrirHojaRuta, eventoVacio, metaEvento } from "../../dominio.ts";
 import { deleteEvento, getEvento, patchEvento } from "../../infraestructura.ts";
 import "./DetalleEvento.css";
 import { TabDatos } from "./TabDatos.tsx";
@@ -57,8 +57,16 @@ export const DetalleEvento = () => {
   };  
 
   const onImprimirHojaRutaClicked = async () => {
-    console.log('mimensaje_onImprimirHojaRutaClicked');
-  };  
+    try {
+      // await descargarYAbrirHojaRuta(modelo.evento_id);
+      await abrirHojaRuta(modelo.evento_id);
+    } catch (error) {
+      console.error('Error al obtener la hoja de ruta:', error);
+    }
+  }; 
+
+
+
   
   return (
     <div className="DetalleEvento">
@@ -78,7 +86,7 @@ export const DetalleEvento = () => {
                 <QBoton onClick={() => setEstado("confirmarBorrado")}>
                   Borrar
                 </QBoton>
-                <QBoton onClick={() => onImprimirHojaRutaClicked}>
+                <QBoton onClick={onImprimirHojaRutaClicked}>
                   Imprimir hoja de ruta
                 </QBoton>              
               </div>

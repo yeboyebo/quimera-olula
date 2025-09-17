@@ -35,3 +35,8 @@ export const patchEvento = async (evento_id: string, evento: Partial<Evento>): P
 
 export const deleteEvento = async (evento_id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlEvento}/${evento_id}`);
+
+export const descargarHojaRuta = async (evento_id: string): Promise<Blob> => {
+    const url = `${baseUrlEvento}/${evento_id}/hoja_ruta_evento`;
+    return await RestAPI.blob(url);
+};

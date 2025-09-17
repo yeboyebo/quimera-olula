@@ -1,4 +1,3 @@
-
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../../../../contextos/comun/dominio.ts";
 import { Evento, NuevoEvento } from "./diseño.ts";
 
@@ -150,4 +149,39 @@ export const reemplazarNulls = (evento: Partial<Evento>): Partial<Evento> => {
             return [k, v];
         })
     ) as Partial<Evento>;
+};
+
+// Para visualizar en nueva pestaña
+export const abrirHojaRuta = async (eventoId: string): Promise<void> => {
+    const { descargarHojaRuta } = await import('./infraestructura.ts');
+    const blob = await descargarHojaRuta(eventoId);
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+};
+
+// Para solo descargar
+export const descargarHojaRuta = async (eventoId: string): Promise<void> => {
+    const { descargarHojaRuta: descargarHojaRutaAPI } = await import('./infraestructura.ts');
+    const blob = await descargarHojaRutaAPI(eventoId);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `hoja_ruta_${eventoId}.pdf`;
+    document.body.appendChild(link); // Agregar al DOM
+    link.click();
+    document.body.removeChild(link); // Remover del DOM
+    window.URL.revokeObjectURL(url);
+};
+
+// Para descargar y abrir directamente
+export const descargarYAbrirHojaRuta = async (eventoId: string): Promise<void> => {
+    const { descargarHojaRuta } = await import('./infraestructura.ts');
+    const blob = await descargarHojaRuta(eventoId);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `hoja_ruta_${eventoId}.pdf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
 };
