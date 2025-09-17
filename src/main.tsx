@@ -1,6 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos//eventos/producto/vistas/MaestroConDetalleProducto.tsx";
+import { CalendarioEventos } from "./apps/almaeventos/contextos/eventos/calendario_eventos/vistas/CalendarioEventos.tsx";
+import { DetalleEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/DetalleEvento/DetalleEvento.tsx";
+import { MaestroEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/MaestroEvento.tsx";
+import { MaestroConDetalleTrabajador } from "./apps/almaeventos/contextos/eventos/trabajador/vistas/MaestroConDetalleTrabajador.tsx";
+import { MaestroConDetalleTrabajadorEvento } from "./apps/almaeventos/contextos/eventos/trabajador_evento/vistas/MaestroConDetalleTrabajadorEvento.tsx";
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
 import { MaestroConDetalleGruposReglas } from "./contextos/administracion/vistas/MaestroConDetalleGruposReglas.tsx";
@@ -224,6 +230,79 @@ createRoot(document.getElementById("root")!).render(
           </Route>
         </Route>
         <Route path="docs/componentes" element={<Historias />} />
+        <Route path="eventos">
+          <Route path="calendario">
+            <Route
+              index
+              element={
+                <Vista>
+                  <CalendarioEventos />
+                </Vista>
+              }
+            />
+            <Route path="evento">
+              <Route
+                path=":id"
+                element={
+                  <Vista>
+                    <DetalleEvento />
+                  </Vista>
+                }
+              />
+            </Route>
+          </Route>          
+          <Route path="eventos">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroEvento />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="evento">
+            <Route
+              path=":id"
+              element={
+                <Vista>
+                  <DetalleEvento />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="producto">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleProducto />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="trabajador">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleTrabajador />
+                </Vista>
+              }
+            />
+          </Route>
+          <Route path="trabajador_evento">
+            <Route
+              index
+              element={
+                <Vista>
+                  <MaestroConDetalleTrabajadorEvento />
+                </Vista>
+              }
+            />
+          </Route>          
+        </Route>
+
       </Routes>
     </BrowserRouter>
   </StrictMode>

@@ -263,17 +263,28 @@ export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (mode
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
     const campos = meta.campos || {};
-    const requerido = campo in campos && campos[campo]?.requerido
     const valor = modelo[campo];
-    if (requerido && valor === null) {
+    const tipoCampo = campos[campo]?.tipo;
+
+    if (campo.split(',').length > 1) {
+        campo = campo.split(',')[0].trim();
+    }
+    const requerido = campo in campos && campos[campo]?.requerido
+
+    if (requerido && (valor === null || valor === undefined)) {
         return "Campo requerido";
     }
+
     if (campos[campo]?.tipo === "email" && typeof valor === "string" && valor.length > 0) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(valor)) {
             return "Formato Email incorrecto";
         }
     }
+    if (tipoCampo && ["fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
+        return "Campo requerido";
+    }
+
     const validacion = campos[campo]?.validacion
     return validacion
         ? validacion(modelo)
@@ -320,6 +331,16 @@ export const formatearMoneda = (cantidad: number, divisa: string): string => {
     }).format(cantidad);
 };
 
+export const formatearFecha = (fecha: string): string => {
+    if (!fecha) return fecha;
+    const date = new Date(fecha);
+    return date.toLocaleDateString("es-ES");
+};
+
+export const formatearHora = (hora: string): string => {
+    if (!hora) return hora;
+    return hora.substring(0, 5); // "14:30:00" -> "14:30"
+};
 
 export const calcularPaginacionSimplificada = (
     total: number | undefined,

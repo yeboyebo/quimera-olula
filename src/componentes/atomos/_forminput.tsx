@@ -33,7 +33,9 @@ const tiposFormInput = {
   fichero: "file",
   url: "url",
   rango: "range",
-  moneda: "text",
+  moneda: "number",
+  autocompletar: "text",
+  selector: "text",
 } as const;
 
 export type FormInputProps = FormFieldProps & {
@@ -62,6 +64,21 @@ export const FormInput = ({
   onBlur,
   onInput,
 }: InputProps) => {
+  const obtenerValorPorDefecto = () => {
+    if (valor !== undefined && valor !== "" && valor != null) return valor;
+
+    switch (tipo) {
+      case "numero":
+      case "moneda":
+      case "rango":
+        return "";
+      default:
+        return "";
+    }
+  };
+
+  const valorFinal = onChange ? obtenerValorPorDefecto() : undefined;
+
   const manejarFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (autoSeleccion) {
       e.target.select();
@@ -85,7 +102,7 @@ export const FormInput = ({
       type={tiposFormInput[tipo] ?? "text"}
       name={nombre}
       placeholder={placeholder}
-      value={onChange ? valor : undefined}
+      value={valorFinal}
       defaultValue={onChange ? undefined : valor}
       checked={onChange ? checked : undefined}
       defaultChecked={onChange ? undefined : checked}

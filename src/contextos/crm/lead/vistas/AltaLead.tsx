@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { Usuario } from "../../../comun/componentes/usuario.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
@@ -28,8 +28,10 @@ export const AltaLead = ({ emitir = () => {} }: { emitir?: EmitirEvento }) => {
     <div className="AltaLead">
       <h2>Nuevo Lead</h2>
       <quimera-formulario>
-        <QInput label="Tipo" {...nuevoLead.uiProps("tipo")} />
         <Cliente {...nuevoLead.uiProps("cliente_id", "nombre")} />
+        <Usuario {...nuevoLead.uiProps("responsable_id")} label="Responsable" />
+        {/* <QInput label="Tipo" {...nuevoLead.uiProps("tipo")} /> */}
+
         <EstadoLead {...nuevoLead.uiProps("estado_id")} />
         <FuenteLead {...nuevoLead.uiProps("fuente_id")} />
       </quimera-formulario>

@@ -1,9 +1,10 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, DeleteLinea, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
-const baseUrl = `/ventas/presupuesto`;
+const baseUrl = ApiUrls.VENTAS.PRESUPUESTO;
 
 type PresupuestoAPI = Presupuesto
 type LineaPresupuestoAPI = LineaPresupuesto

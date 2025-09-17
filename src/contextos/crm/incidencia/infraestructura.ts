@@ -1,11 +1,12 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { DeleteIncidencia, GetIncidencia, GetIncidencias, Incidencia, IncidenciaAPI, PatchIncidencia, PostIncidencia } from "./diseño.ts";
 
-const baseUrlIncidencia = `/crm/incidencia`;
-const baseUrlAccion = `/crm/accion`;
+const baseUrlIncidencia = ApiUrls.CRM.INCIDENCIA;
+const baseUrlAccion = ApiUrls.CRM.ACCION;
 
 export const incidenciaFromApi = (incidenciaApi: IncidenciaAPI): Incidencia => {
 

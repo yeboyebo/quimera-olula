@@ -1,4 +1,5 @@
 import { RestAPI } from "../../comun/api/rest_api.ts";
+import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
@@ -8,9 +9,9 @@ import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { Contacto } from "./diseño.ts";
 
 
-const baseUrlContactos = `/crm/contacto`;
-const baseUrlAccion = `/crm/accion`;
-const baseUrlOportunidadVenta = `/crm/oportunidad_venta`;
+const baseUrlContactos = ApiUrls.CRM.CONTACTO;
+const baseUrlAccion = ApiUrls.CRM.ACCION;
+const baseUrlOportunidadVenta = ApiUrls.CRM.OPORTUNIDAD_VENTA;
 
 type ContactoApi = Contacto;
 

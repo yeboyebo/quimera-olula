@@ -1,9 +1,6 @@
 import { ReactNode } from "react";
 import { Entidad, Orden, Paginacion } from "../../contextos/comun/diseño.ts";
-import {
-  calcularPaginacionSimplificada,
-  formatearMoneda,
-} from "../../contextos/comun/dominio.ts";
+import { calcularPaginacionSimplificada, formatearFecha, formatearHora, formatearMoneda } from "../../contextos/comun/dominio.ts";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 
@@ -19,6 +16,7 @@ type MetaColumna<T extends Entidad> = {
     | "booleano"
     | undefined;
   divisa?: string;
+  ancho?: string; // Ancho específico para esta columna
   render?: (entidad: T) => string | ReactNode;
 };
 
@@ -31,12 +29,13 @@ const cabecera = <T extends Entidad>(
 ) => {
   const [colOrdenada, sentido] = orden;
 
-  const renderCabecera = ({ id, cabecera, tipo }: MetaColumna<T>) => (
+  const renderCabecera = ({ id, cabecera, tipo, ancho }: MetaColumna<T>) => (
     <th
       key={id}
       data-modo="columna"
       data-orden={id === colOrdenada ? sentido : ""}
       className={`${tipo ?? ""} ${id}`}
+      style={ancho ? { width: ancho } : undefined}
       onClick={() => onOrdenar && onOrdenar(id)}
     >
       {cabecera}
@@ -47,15 +46,22 @@ const cabecera = <T extends Entidad>(
 };
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
-  const renderColumna = ({ id, render, tipo, divisa }: MetaColumna<T>) => {
+  const renderColumna = ({ id, render, tipo, divisa, ancho }: MetaColumna<T>) => {
     let datos = render?.(entidad as T) ?? (entidad[id] as string);
 
+    // Formateo automático según tipo
     if (tipo === "moneda" && typeof datos === "number") {
       datos = formatearMoneda(datos, divisa ?? "EUR");
+    } else if (tipo === "fecha" && typeof datos === "string") {
+      datos = formatearFecha(datos);
+    } else if (tipo === "hora" && typeof datos === "string") {
+      datos = formatearHora(datos);
+    } else if (tipo === "numero" && typeof datos === "number") {
+      datos = datos.toLocaleString();
     }
 
     return (
-      <td key={[entidad.id, id].join("-")} className={`${tipo ?? ""} ${id}`}>
+      <td key={[entidad.id, id].join("-")} className={`${tipo ?? ""} ${id}`} style={ancho ? { width: ancho } : undefined}>
         {datos}
       </td>
     );
@@ -159,11 +165,29 @@ export const QTabla = <T extends Entidad>({
   onPaginacion,
   totalEntidades = 0,
 }: QTablaProps<T>) => {
+  // Detectar si hay anchos específicos
+  const tieneAnchosFijos = metaTabla.some(col => col.ancho);
+  
+  // Completar columnas sin ancho
+  const metaTablaCompleta = tieneAnchosFijos 
+    ? metaTabla.map(col => {
+      if (col.ancho) return col;
+      
+      const hayPorcentajes = metaTabla.some(c => c.ancho?.includes('%'));
+      const anchos = hayPorcentajes ? 
+        { texto: "20%", fecha: "10%", hora: "8%", moneda: "12%", numero: "10%", booleano: "8%", defecto: "15%" } :
+        { texto: "150px", fecha: "90px", hora: "80px", moneda: "120px", numero: "100px", booleano: "100px", defecto: "150px" };
+      
+      return { ...col, ancho: anchos[col.tipo as keyof typeof anchos] || anchos.defecto };
+    }) 
+    : metaTabla;
+  
   return (
     <quimera-tabla>
-      <table>
+      <div className="tabla-contenedor-scroll">
+      <table data-anchos-fijos={tieneAnchosFijos}>
         <thead>
-          <tr>{cabecera(metaTabla, orden, onOrdenar)}</tr>
+          <tr>{cabecera(metaTablaCompleta, orden, onOrdenar)}</tr>
         </thead>
         <tbody data-cargando={cargando}>
           {datos.map((entidad: T) => (
@@ -172,11 +196,12 @@ export const QTabla = <T extends Entidad>({
               onClick={() => onSeleccion && onSeleccion(entidad)}
               data-seleccionada={entidad.id === seleccionadaId}
             >
-              {fila(entidad, metaTabla)}
+              {fila(entidad, metaTablaCompleta)}
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
       {paginacion &&
         paginacionControlador(totalEntidades, paginacion, onPaginacion)}
     </quimera-tabla>
