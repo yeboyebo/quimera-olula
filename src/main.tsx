@@ -10,6 +10,7 @@ import { MaestroConDetalleTrabajadorEvento } from "./apps/almaeventos/contextos/
 import { Historias } from "./componentes/historias/historias.tsx";
 import { Vista } from "./componentes/vista/Vista.tsx";
 import { MaestroConDetalleGruposReglas } from "./contextos/administracion/vistas/MaestroConDetalleGruposReglas.tsx";
+import { MaestroDetalleTransferenciasStock } from "./contextos/almacen/transferencias/vistas/MaestroDetalleTransferenciasStock.tsx";
 import "./contextos/comun/comun.css";
 import { Indice } from "./contextos/comun/Indice.tsx";
 import { MaestroConDetalleAccion } from "./contextos/crm/accion/vistas/MaestroConDetalleAccion.tsx";
@@ -80,7 +81,6 @@ createRoot(document.getElementById("root")!).render(
                 </Vista>
               }
             />
-            import("./componentes/historias/historias.tsx")
           </Route>
           <Route path="albaran">
             <Route
@@ -173,7 +173,17 @@ createRoot(document.getElementById("root")!).render(
                 </Vista>
               }
             />
+          </Route>
         </Route>
+        <Route path="almacen">
+          <Route
+            path="transferencias"
+            element={
+              <Vista>
+                <MaestroDetalleTransferenciasStock />
+              </Vista>
+            }
+          />
         </Route>
         <Route path="login">
           <Route

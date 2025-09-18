@@ -1,0 +1,46 @@
+.TransferenciaStock {
+    .CrearTransferenciaStock {
+        quimera-formulario {
+
+            quimera-input,
+            quimera-date,
+            quimera-autocompletar {
+                grid-column: span 6;
+            }
+        }
+    }
+
+    .DetalleTransferenciaStock {
+        quimera-formulario {
+
+            quimera-input,
+            quimera-date,
+            quimera-autocompletar {
+                grid-column: span 6;
+            }
+        }
+    }
+
+    .CrearLineaTransferenciaStock {
+        quimera-formulario {
+
+            quimera-input,
+            quimera-date,
+            quimera-autocompletar {
+                grid-column: span 6;
+            }
+        }
+    }
+
+    .DetalleLineaTransferenciaStock {
+        quimera-formulario {
+
+            quimera-input,
+            quimera-date,
+            quimera-autocompletar {
+                grid-column: span 6;
+            }
+        }
+
+    }
+}

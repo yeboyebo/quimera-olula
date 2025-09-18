@@ -100,13 +100,17 @@ export const elementosDelMenu: ElementoMenu[] = [
       },
     ],
   },
-  // {
-  //   nombre: "Financiera", icono: "grafico_barras", subelementos: [{
-  //     nombre: "Cuentas",
-  //     url: "/financiera/cuenta",
-  //     icono: "",
-  //   }]
-  // },
+  {
+    nombre: "Almacén",
+    icono: "almacen",
+    subelementos: [
+      {
+        nombre: "Transferencias de Stock",
+        url: "/almacen/transferencias",
+        icono: "",
+      },
+    ],
+  },
   {
     nombre: "Eventos",
     icono: "fichero",
