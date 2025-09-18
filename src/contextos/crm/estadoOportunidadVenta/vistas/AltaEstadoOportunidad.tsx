@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { useModelo } from "../../../comun/useModelo.ts";
@@ -16,8 +17,10 @@ import "./AltaEstadoOportunidad.css";
 
 export const AltaEstadoOportunidad = ({
   emitir = () => {},
+  activo = false,
 }: {
   emitir?: EmitirEvento;
+  activo?: boolean;
 }) => {
   const estadoOportunidad = useModelo(
     metaNuevoEstadoOportunidad,
@@ -30,34 +33,42 @@ export const AltaEstadoOportunidad = ({
       postEstadoOportunidad(estadoOportunidad.modelo)
     );
     const estadoCreado = await getEstadoOportunidad(id);
-    emitir("ESTADO_OPORTUNIDAD_CREADO", estadoCreado);
+    emitir("estado_oportunidad_creado", estadoCreado);
+    estadoOportunidad.init();
+  };
+
+  const cancelar = () => {
+    emitir("creacion_cancelada");
+    estadoOportunidad.init();
   };
 
   return (
-    <div className="AltaEstadoOportunidad">
-      <h2>Nuevo Estado de Oportunidad</h2>
-      <quimera-formulario>
-        <QInput
-          label="Descripción"
-          {...estadoOportunidad.uiProps("descripcion")}
-        />
-        <QInput
-          label="Probabilidad (%)"
-          {...estadoOportunidad.uiProps("probabilidad")}
-        />
-        <QInput
-          label="Valor por Defecto"
-          {...estadoOportunidad.uiProps("valor_defecto")}
-        />
-      </quimera-formulario>
-      <div className="botones">
-        <QBoton onClick={guardar} deshabilitado={!estadoOportunidad.valido}>
-          Guardar
-        </QBoton>
-        <QBoton onClick={() => emitir("ALTA_CANCELADA")} variante="texto">
-          Cancelar
-        </QBoton>
+    <Mostrar modo="modal" activo={!!activo} onCerrar={cancelar}>
+      <div className="AltaEstadoOportunidad">
+        <h2>Nuevo Estado de Oportunidad</h2>
+        <quimera-formulario>
+          <QInput
+            label="Descripción"
+            {...estadoOportunidad.uiProps("descripcion")}
+          />
+          <QInput
+            label="Probabilidad (%)"
+            {...estadoOportunidad.uiProps("probabilidad")}
+          />
+          <QInput
+            label="Valor por Defecto"
+            {...estadoOportunidad.uiProps("valor_defecto")}
+          />
+        </quimera-formulario>
+        <div className="botones">
+          <QBoton onClick={guardar} deshabilitado={!estadoOportunidad.valido}>
+            Guardar
+          </QBoton>
+          <QBoton onClick={cancelar} variante="texto">
+            Cancelar
+          </QBoton>
+        </div>
       </div>
-    </div>
+    </Mostrar>
   );
 };

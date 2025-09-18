@@ -78,7 +78,7 @@ export const TabClientesAcciones = ({
           onChange={(cliente) => setClienteSeleccionado(cliente)}
         />
         <div className="botones">
-          <QBoton onClick={onAsociar} deshabilitado={!seleccionada}>
+          <QBoton onClick={onAsociar} deshabilitado={false}>
             Guardar
           </QBoton>
           <QBoton

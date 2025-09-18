@@ -17,6 +17,7 @@ const iconos: Record<string, string> = {
   candado: "lock-alt",
   candado_abierto: "lock-open-alt",
   editar: "edit",
+  editar_2: "edit-alt",
   eliminar: "trash",
   guardar: "save",
   copiar: "copy",
@@ -25,21 +26,35 @@ const iconos: Record<string, string> = {
   cerrar_sesion: "arrow-out-up-square-half",
   verdadero: "check",
   falso: "x",
-  atras: 'chevron-left',
-  adelante: 'chevron-right',
-  menu: 'menu',
-  calendario_vacio: 'calendar-alt',
+  atras: "chevron-left",
+  adelante: "chevron-right",
+  menu: "menu",
+  calendario_vacio: "calendar-alt",
   check: "check",
   x_circle: "x-circle",
   minus: "minus",
   lista: "list-ul",
   tarjeta: "credit-card",
+  ver: "show",
+  crear: "plus",
 };
 
-export const QIcono = ({ nombre, tamaño = "md", color, style, props }: QIconoProps) => {
+export const QIcono = ({
+  nombre,
+  tamaño = "md",
+  color,
+  style,
+  props,
+}: QIconoProps) => {
   return (
     <quimera-icono>
-      <box-icon name={iconos[nombre]} size={tamaño} color={color} style={style} {...props}></box-icon>
+      <box-icon
+        name={iconos[nombre]}
+        size={tamaño}
+        color={color}
+        style={style}
+        {...props}
+      ></box-icon>
     </quimera-icono>
   );
 };

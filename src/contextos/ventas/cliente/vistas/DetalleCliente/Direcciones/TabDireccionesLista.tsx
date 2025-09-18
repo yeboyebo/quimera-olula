@@ -64,7 +64,7 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <QuimeraAcciones acciones={acciones} />
+      <QuimeraAcciones acciones={acciones} vertical />
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}

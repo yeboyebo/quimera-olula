@@ -1,3 +1,4 @@
+import { MetaTabla } from "../../../componentes/atomos/qtabla.tsx";
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { EstadoOportunidad } from "./diseño.ts";
 
@@ -36,3 +37,10 @@ export const initEstadoEstadoOportunidad = (estado: EstadoOportunidad): EstadoMo
     initEstadoModelo(estado);
 
 export const initEstadoEstadoOportunidadVacio = () => initEstadoEstadoOportunidad(estadoOportunidadVacio);
+
+export const metaTablaEstadoOportunidad: MetaTabla<EstadoOportunidad> = [
+    { id: "id", cabecera: "Código" },
+    { id: "descripcion", cabecera: "Descripción" },
+    { id: "probabilidad", cabecera: "Probabilidad", tipo: "numero" },
+    { id: "valor_defecto", cabecera: "Por defecto" },
+];

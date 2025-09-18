@@ -1,4 +1,7 @@
 import { useContext, useEffect } from "react";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
+import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "../../../comun/useMaquina.ts";
@@ -7,9 +10,10 @@ import { ContactoSelector } from "../../../ventas/comun/componentes/contacto.tsx
 import { contactoVacio, metaContacto } from "../../contacto/dominio.ts";
 import { getContacto } from "../../contacto/infraestructura.ts";
 import { AltaContacto } from "../../contacto/vistas/AltaContacto.tsx";
+import { TabGeneral } from "../../contacto/vistas/DetalleContacto/TabGeneral.tsx";
 import "./contacto.css";
 
-type Estado = "inactivo" | "creando" | "lista";
+type Estado = "inactivo" | "creando" | "editando";
 type Contexto = Record<string, unknown>;
 
 const configMaquina: ConfigMaquina4<Estado, Contexto> = {
@@ -20,13 +24,17 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   estados: {
     inactivo: {
       iniciar: "inactivo",
-    },
-    lista: {
-      crear: "creando",
+      crear_contacto: "creando",
+      editar_contacto: "editando",
+      cargar: "inactivo",
     },
     creando: {
       alta_cancelada: "inactivo",
       contacto_creado: "inactivo",
+    },
+    editando: {
+      edicion_cancelada: "inactivo",
+      contacto_guardado: "inactivo",
     },
   },
 };
@@ -41,7 +49,6 @@ export const MoleculaContacto = ({
   const { intentar } = useContext(ContextoError);
   const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
-    publicar,
   });
   const contacto = useModelo(metaContacto, contactoVacio);
   const { uiProps, init } = contacto;
@@ -51,8 +58,13 @@ export const MoleculaContacto = ({
   ) => {
     if (opcion?.valor === contacto.modelo.id) return;
     uiProps("id").onChange(opcion);
-    console.log("Cambio contacto:", opcion);
     publicar("contacto_cambiado", opcion);
+  };
+
+  const onRecargarContacto = async () => {
+    const contactoRecargado = await getContacto(contacto.modelo.id);
+    init(contactoRecargado);
+    publicar("contacto_cambiado", contactoRecargado);
   };
 
   useEffect(() => {
@@ -77,10 +89,21 @@ export const MoleculaContacto = ({
           label="Contacto"
         />
         {contacto.modelo.id ? (
-          <>ver</>
+          <QBoton
+            variante="texto"
+            tamaño="pequeño"
+            onClick={() => emitir("editar_contacto")}
+          >
+            <QIcono nombre="editar_2" />
+          </QBoton>
         ) : (
-          // <Proveedor {...uiProps("proveedor_id", "nombre")} />
-          <>crear</>
+          <QBoton
+            variante="texto"
+            tamaño="pequeño"
+            onClick={() => emitir("crear_contacto")}
+          >
+            <QIcono nombre={"crear"} />
+          </QBoton>
         )}
       </div>
 
@@ -89,16 +112,17 @@ export const MoleculaContacto = ({
         activo={estado === "creando"}
         key={contactoId}
       />
-
-      {/* <QTabla
-        metaTabla={metaTablaContacto}
-        datos={contactos.lista}
-        cargando={estado === "Cargando"}
-        seleccionadaId={contactos.idActivo || undefined}
-        onSeleccion={(contacto) => emitir("contacto_seleccionada", contacto)}
-        orden={["id", "ASC"]}
-        onOrdenar={() => null}
-      /> */}
+      <Mostrar
+        modo="modal"
+        activo={estado === "editando"}
+        onCerrar={() => emitir("edicion_cancelada")}
+      >
+        <TabGeneral
+          contacto={contacto}
+          emitirContacto={publicar}
+          recargarContacto={onRecargarContacto}
+        />
+      </Mostrar>
     </div>
   );
 };

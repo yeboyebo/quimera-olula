@@ -1,130 +1,150 @@
-import { useContext, useState } from "react";
+import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "../../../comun/contexto.ts";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
-import { EstadoOportunidad } from "../diseño.ts";
+import { ListaSeleccionable } from "../../../comun/diseño.ts";
 import {
-  deleteEstadoOportunidad,
-  getEstadosOportunidad,
-} from "../infraestructura.ts";
+  cambiarItem,
+  cargar,
+  getSeleccionada,
+  incluirItem,
+  listaSeleccionableVacia,
+  quitarItem,
+  seleccionarItem,
+} from "../../../comun/entidad.ts";
+import { pipe } from "../../../comun/funcional.ts";
+import {
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "../../../comun/useMaquina.ts";
+import { EstadoOportunidad } from "../diseño.ts";
+import { metaTablaEstadoOportunidad } from "../dominio.ts";
+import { getEstadosOportunidad } from "../infraestructura.ts";
 import { AltaEstadoOportunidad } from "./AltaEstadoOportunidad.tsx";
 import { DetalleEstadoOportunidad } from "./DetalleEstadoOportunidad/DetalleEstadoOportunidad.tsx";
 // import "./MaestroConDetalleEstadoOportunidad.css";
 
-const metaTablaEstadoOportunidad: MetaTabla<EstadoOportunidad> = [
-  { id: "id", cabecera: "Código" },
-  { id: "descripcion", cabecera: "Descripción" },
-  { id: "probabilidad", cabecera: "Probabilidad", tipo: "numero" },
-  { id: "valor_defecto", cabecera: "Por defecto" },
-];
+type Estado = "inactivo" | "creando" | "borrando";
+type Contexto = {
+  estados: ListaSeleccionable<EstadoOportunidad>;
+};
 
-type Estado = "lista" | "alta" | "confirmarBorrado";
+const setEstados =
+  (
+    aplicable: (
+      estados: ListaSeleccionable<EstadoOportunidad>
+    ) => ListaSeleccionable<EstadoOportunidad>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => {
+    return {
+      ...maquina,
+      contexto: {
+        ...maquina.contexto,
+        estados: aplicable(maquina.contexto.estados),
+      },
+    };
+  };
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "inactivo",
+    contexto: {
+      estados: listaSeleccionableVacia<EstadoOportunidad>(),
+    },
+  },
+  estados: {
+    inactivo: {
+      crear: "creando",
+      estado_oportunidad_cambiado: ({ maquina, payload }) =>
+        pipe(maquina, setEstados(cambiarItem(payload as EstadoOportunidad))),
+      estado_oportunidad_seleccionado: ({ maquina, payload }) =>
+        pipe(
+          maquina,
+          setEstados(seleccionarItem(payload as EstadoOportunidad))
+        ),
+      estado_oportunidad_borrado: ({ maquina }) => {
+        const { estados } = maquina.contexto;
+        if (!estados.idActivo) {
+          return maquina;
+        }
+        return pipe(maquina, setEstados(quitarItem(estados.idActivo)));
+      },
+      estados_oportunidad_cargados: ({ maquina, payload }) =>
+        pipe(maquina, setEstados(cargar(payload as EstadoOportunidad[]))),
+      borrar: "borrando",
+    },
+    creando: {
+      estado_oportunidad_creado: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("inactivo" as Estado),
+          setEstados(incluirItem(payload as EstadoOportunidad, {}))
+        ),
+      creacion_cancelada: "inactivo",
+    },
+    borrando: {
+      borrado_cancelado: "inactivo",
+      borrado_confirmado: "inactivo",
+    },
+  },
+};
 
 export const MaestroConDetalleEstadoOportunidad = () => {
-  const [estado, setEstado] = useState<Estado>("lista");
-  const estados = useLista<EstadoOportunidad>([]);
-  const { intentar } = useContext(ContextoError);
+  // const { intentar } = useContext(ContextoError);
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
+  const { estados } = contexto;
 
-  const maquina: Maquina<Estado> = {
-    alta: {
-      ESTADO_OPORTUNIDAD_CREADO: (payload: unknown) => {
-        const estadoOportunidad = payload as EstadoOportunidad;
-        estados.añadir(estadoOportunidad);
-        return "lista";
-      },
-      ALTA_CANCELADA: "lista",
-    },
-    lista: {
-      ALTA_INICIADA: "alta",
-      ESTADO_OPORTUNIDAD_CAMBIADO: (payload: unknown) => {
-        const estadoOportunidad = payload as EstadoOportunidad;
-        estados.modificar(estadoOportunidad);
-      },
-      ESTADO_OPORTUNIDAD_BORRADO: (payload: unknown) => {
-        const estadoOportunidad = payload as EstadoOportunidad;
-        estados.eliminar(estadoOportunidad);
-      },
-      CANCELAR_SELECCION: () => {
-        estados.limpiarSeleccion();
-      },
-    },
-    confirmarBorrado: {
-      borrado_confirmado: "lista",
-    },
-  };
+  const setEntidades = useCallback(
+    (payload: EstadoOportunidad[]) =>
+      emitir("estados_oportunidad_cargados", payload),
+    [emitir]
+  );
+  const setSeleccionada = useCallback(
+    (payload: EstadoOportunidad) =>
+      emitir("estado_oportunidad_seleccionado", payload),
+    [emitir]
+  );
 
-  const emitir = useMaquina(maquina, estado, setEstado);
+  const seleccionada = getSeleccionada(estados);
 
-  const onBorrarConfirmado = async () => {
-    if (!estados.seleccionada) {
-      return;
-    }
-    const estadoId = estados.seleccionada.id;
-    if (estadoId) {
-      await intentar(() => deleteEstadoOportunidad(estadoId));
-      estados.eliminar(estados.seleccionada);
-    }
-    emitir("borrado_confirmado");
-  };
-
-  const onBorrarEstadoOportunidad = async () => {
-    setEstado("confirmarBorrado");
-  };
+  // const onBorrarConfirmado = async () => {
+  //   if (!seleccionada) return;
+  //   await intentar(() => deleteEstadoOportunidad(seleccionada.id));
+  //   emitir("estado_oportunidad_borrado", seleccionada);
+  //   emitir("borrado_confirmado");
+  // };
 
   return (
     <div className="EstadoOportunidad">
       <MaestroDetalleResponsive<EstadoOportunidad>
-        seleccionada={estados.seleccionada}
+        seleccionada={seleccionada}
         Maestro={
           <>
             <h2>Estados de Oportunidad</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!estados.seleccionada}
-                onClick={onBorrarEstadoOportunidad}
-              >
-                Borrar
-              </QBoton>
+              <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaEstadoOportunidad}
               entidades={estados.lista}
-              setEntidades={estados.setLista}
-              seleccionada={estados.seleccionada}
-              setSeleccionada={estados.seleccionar}
+              setEntidades={setEntidades}
+              seleccionada={seleccionada}
+              setSeleccionada={setSeleccionada}
               cargar={getEstadosOportunidad}
             />
           </>
         }
         Detalle={
           <DetalleEstadoOportunidad
-            estadoInicial={estados.seleccionada}
-            emitir={emitir}
+            estadoInicial={seleccionada}
+            publicar={emitir}
           />
         }
       />
-      <QModalConfirmacion
-        nombre="borrarEstadoOportunidad"
-        abierto={estado === "confirmarBorrado"}
-        titulo="Confirmar borrar"
-        mensaje="¿Está seguro de que desea borrar este estado de oportunidad?"
-        onCerrar={() => setEstado("lista")}
-        onAceptar={onBorrarConfirmado}
-      />
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      >
-        <AltaEstadoOportunidad emitir={emitir} />
-      </QModal>
+      <AltaEstadoOportunidad emitir={emitir} activo={estado === "creando"} />
     </div>
   );
 };

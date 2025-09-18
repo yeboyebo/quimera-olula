@@ -18,6 +18,8 @@ export const TabGeneral = ({ contacto }: TabGeneralProps) => {
       <quimera-formulario>
         <QInput label="Nombre" {...uiProps("nombre")} />
         <QInput label="Email" {...uiProps("email")} />
+        <QInput label="NIF" {...uiProps("nif")} />
+        <QInput label="Teléfono" {...uiProps("telefono1")} />
       </quimera-formulario>
     </div>
   );
