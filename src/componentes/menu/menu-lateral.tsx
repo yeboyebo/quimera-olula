@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import { menuFactory } from "../../app.ts";
 import { puede } from "../../contextos/comun/dominio.ts";
-import {
-  ElementoMenu,
-  ElementoMenuPadre,
-  elementosDelMenu,
-} from "../../contextos/comun/menu.ts";
 import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import "./menu-lateral.css";
+import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
+
+const elementosDelMenu: ElementoMenu[] = menuFactory();
 
 export const MenuLateral = () => {
   const [busqueda, setBusqueda] = useState("");

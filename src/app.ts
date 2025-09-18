@@ -1,12 +1,17 @@
+import { ElementoMenu } from "./componentes/menu/menu.ts";
+
 const APP = import.meta.env.VITE_APP_NAME || "olula";
 
-console.log(`Iniciando aplicación: <-${APP}->`);
-
-let factory = null;
+let Factory = null;
 try {
-    factory = await import(`./apps/${APP}/factory.ts`);
+    Factory = (await import(`./apps/${APP}/factory.ts`)).default;
 } catch {
     console.error(`Error al cargar la fábrica de la aplicación: ${APP}`);
 }
 
-export const appFactory = () => factory.default
+const factory = new Factory();
+
+type ContextFactory = { menu?: ElementoMenu[] };
+
+export const appFactory = () => factory;
+export const menuFactory = () => Object.values(factory).map(v => (v as ContextFactory)?.menu).filter(Boolean).flat();

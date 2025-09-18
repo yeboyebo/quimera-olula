@@ -1,3 +1,4 @@
+import { menuVentas } from "./menu.ts";
 import { metaPedido } from "./pedido/dominio.ts";
 import { payloadPatchPedido, pedidoDesdeAPI } from "./pedido/infraestructura_base.ts";
 import { TabDatosBase as PedidoTabDatosBase } from "./pedido/vistas/DetallePedido/TabDatos.tsx";
@@ -11,4 +12,5 @@ export class FactoryVentasOlula {
     static metaTablaPedido = metaTablaPedido
     static api_payloadPatchPedido = payloadPatchPedido
     static metaPedido = metaPedido
+    static menu = menuVentas
 }
