@@ -44,7 +44,7 @@ export const metaLead: MetaModelo<Lead> = {
         telefono_2: { requerido: false },
         email: { requerido: false, tipo: "email" },
         web: { requerido: false },
-        contacto_id: { requerido: false },
+        contacto_id: { requerido: false, tipo: "autocompletar" },
         fuente_id: { requerido: true },
         responsable_id: { requerido: false },
     },

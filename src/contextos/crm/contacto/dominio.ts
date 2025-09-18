@@ -1,12 +1,13 @@
+import { MetaTabla } from "../../../componentes/atomos/qtabla.tsx";
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { Contacto, NuevoContacto } from "./diseño.ts";
 
 
-export const contactoVacio = (): Contacto => ({
+export const contactoVacio: Contacto = {
     id: '',
     nombre: '',
     email: '',
-});
+};
 
 export const initEstadoContacto = (contacto: Contacto): EstadoModelo<Contacto> => {
     return initEstadoModelo(contacto);
@@ -31,6 +32,11 @@ export const metaNuevoContacto: MetaModelo<NuevoContacto> = {
     },
 };
 
-export const initEstadoContactoVacio = () => initEstadoContacto(contactoVacio())
+export const initEstadoContactoVacio = () => initEstadoContacto(contactoVacio)
 
 
+export const metaTablaContacto: MetaTabla<Contacto> = [
+    { id: "id", cabecera: "Id" },
+    { id: "nombre", cabecera: "Nombre" },
+    { id: "email", cabecera: "Email" },
+];

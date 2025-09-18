@@ -38,12 +38,12 @@ export const AltaOportunidadVenta = ({
   });
 
   const cancelar = () => {
-    emitir("ALTA_CANCELADA");
+    emitir("creacion_cancelada");
     oportunidadventa.init();
   };
 
   return (
-    <Mostrar modo="modal" activo={activo} onCerrar={cancelar}>
+    <Mostrar modo="modal" activo={!!activo} onCerrar={cancelar}>
       <FormAltaOportunidadVenta
         emitir={emitir}
         oportunidadventa={oportunidadventa}
@@ -72,7 +72,7 @@ export const FormAltaOportunidadVenta = ({
   };
 
   const cancelar = () => {
-    emitir("ALTA_CANCELADA");
+    emitir("creacion_cancelada");
     oportunidadventa.init();
   };
 

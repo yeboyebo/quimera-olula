@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
@@ -20,16 +19,11 @@ import {
   useMaquina4,
 } from "../../../comun/useMaquina.ts";
 import { Contacto } from "../diseño.ts";
+import { metaTablaContacto } from "../dominio.ts";
 import { getContactos } from "../infraestructura.ts";
 import { AltaContacto } from "./AltaContacto.tsx";
 import { DetalleContacto } from "./DetalleContacto/DetalleContacto.tsx";
 import "./MaestroConDetalleContacto.css";
-
-const metaTablaContacto: MetaTabla<Contacto> = [
-  { id: "id", cabecera: "Id" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "email", cabecera: "Email" },
-];
 
 type Estado = "Inactivo" | "Creando";
 

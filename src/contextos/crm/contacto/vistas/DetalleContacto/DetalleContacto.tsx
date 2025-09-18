@@ -53,7 +53,7 @@ export const DetalleContacto = ({
   const contactoId = contactoInicial?.id ?? params.id;
   const titulo = (contacto: Entidad) => contacto.nombre as string;
   const { intentar } = useContext(ContextoError);
-  const contacto = useModelo(metaContacto, contactoVacio());
+  const contacto = useModelo(metaContacto, contactoVacio);
   const { modelo, init, modificado, valido } = contacto;
 
   const [emitir, { estado }] = useMaquina4<Estado, Contexto>({

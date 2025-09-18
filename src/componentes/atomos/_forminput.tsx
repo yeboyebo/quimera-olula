@@ -72,7 +72,7 @@ export const FormInput = ({
       case "rango":
         return "";
       default:
-        return undefined;
+        return "";
     }
   };
 
