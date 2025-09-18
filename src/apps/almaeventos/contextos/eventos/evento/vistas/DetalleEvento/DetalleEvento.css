@@ -1,0 +1,20 @@
+.DetalleEvento {
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.DetalleEvento .maestro-botones {
+  display: flex;
+  gap: 1rem;
+}
+
+.DetalleEvento .maestro-botones.alinear-derecha {
+  justify-content: flex-end;
+}
+
+/* Tablet - 1024px breakpoint */
+@media (max-width: 1024px) {}
+
+/* Móvil - 768px breakpoint */
+@media (max-width: 768px) {}

@@ -1,0 +1,157 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { QBoton } from "../../../../../../../componentes/atomos/qboton.tsx";
+import { Detalle } from "../../../../../../../componentes/detalle/Detalle.tsx";
+import { Tab, Tabs } from "../../../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { Entidad } from "../../../../../../../contextos/comun/diseño.ts";
+import { useModelo } from "../../../../../../../contextos/comun/useModelo.ts";
+import { Evento } from "../../diseño.ts";
+import { abrirHojaRuta, eventoVacio, metaEvento } from "../../dominio.ts";
+import { deleteEvento, getEvento, patchEvento } from "../../infraestructura.ts";
+import "./DetalleEvento.css";
+import { TabDatos } from "./TabDatos.tsx";
+import { TabRuta } from "./TabRuta.tsx";
+import { TabTrabajadores } from "./TabTrabajadores.tsx";
+
+export const DetalleEvento = () => {
+  const params = useParams();
+  const evento = useModelo(metaEvento, eventoVacio);
+  const { modelo, init, modificado, valido } = evento;
+    const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+      "edicion"
+    );
+  const eventoId = params.id;
+  const titulo = (evento: Entidad) => evento.descripcion as string;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEventos = async () => {
+      if (!eventoId) return;
+      const eventoData = await getEvento(eventoId);
+      init(eventoData);
+    };
+    fetchEventos();
+  }, [eventoId, init]);
+
+  const onGuardarClicked = async () => {
+    await patchEvento(modelo.evento_id, modelo);
+    const evento_guardado = await getEvento(modelo.evento_id);
+    init(evento_guardado);
+    // emitir("EVENTO_CAMBIADO", evento_guardado);
+  };
+
+  const onBorrarConfirmado = async () => {
+    await deleteEvento(modelo.evento_id);
+    const pantalla = window.location.pathname.includes("calendario") ? "calendario" : "eventos"; 
+    navigate(`/eventos/${pantalla}`, { replace: true });
+    // emitir("EVENTO_BORRADO", modelo);
+    // setEstado("edicion");
+  };
+
+  const onRecargarEvento = async () => {
+    if (!eventoId) return;
+    const eventoRecargado = await getEvento(eventoId);
+    init(eventoRecargado);
+    // emitir(EVENTO_CAMBIADO", eventoRecargado);
+  };  
+
+  const onImprimirHojaRutaClicked = async () => {
+    try {
+      // await descargarYAbrirHojaRuta(modelo.evento_id);
+      await abrirHojaRuta(modelo.evento_id);
+    } catch (error) {
+      console.error('Error al obtener la hoja de ruta:', error);
+    }
+  }; 
+
+
+
+  
+  return (
+    <div className="DetalleEvento">
+      <Detalle
+        id={eventoId}
+        obtenerTitulo={titulo}
+        setEntidad={(c) => init(c as Evento)}
+        entidad={modelo}
+        cargar={getEvento}
+        className="detalle-evento"
+        // cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+      >
+        {!!eventoId && (
+          <>
+            <div>
+              <div className="maestro-botones alinear-derecha">
+                <QBoton onClick={() => setEstado("confirmarBorrado")}>
+                  Borrar
+                </QBoton>
+                <QBoton onClick={onImprimirHojaRutaClicked}>
+                  Imprimir hoja de ruta
+                </QBoton>              
+              </div>
+            </div>
+            <Tabs
+              children={[
+                <Tab
+                  key="tab-1"
+                  label="Datos"
+                  children={
+                    <TabDatos
+                      evento={evento}
+                      // emitirEvento={emitir}
+                      recargarEvento={onRecargarEvento}
+                    />
+                  }
+                />,
+                <Tab
+                  key="tab-2"
+                  label="Trabajadores"
+                  children={
+                    <TabTrabajadores evento={evento} 
+                    // emitirEvento={emitir} 
+                    recargarEvento={onRecargarEvento}
+                    />
+                  }
+                />,
+                <Tab
+                  key="tab-3"
+                  label="Hoja de ruta"
+                  children={
+                    <TabRuta evento={evento} 
+                    // emitirEvento={emitir} 
+                    recargarEvento={onRecargarEvento}
+                    />
+                  }
+                />,
+              ]}
+            />
+            {evento.modificado && (
+              <div className="maestro-botones">
+                <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
+                  Guardar
+                </QBoton>
+                <QBoton
+                  tipo="reset"
+                  variante="texto"
+                  onClick={() => init()}
+                  deshabilitado={!modificado}
+                >
+                  Cancelar
+                </QBoton>
+              </div>
+            )}
+            <QModalConfirmacion
+              nombre="borrarEvento"
+              abierto={estado === "confirmarBorrado"}
+              titulo="Confirmar borrar"
+              mensaje="¿Está seguro de que desea borrar este evento?"
+              onCerrar={() => setEstado("edicion")}
+              onAceptar={onBorrarConfirmado}
+            />
+          </>
+        )}
+      </Detalle>
+    </div>
+  );
+};

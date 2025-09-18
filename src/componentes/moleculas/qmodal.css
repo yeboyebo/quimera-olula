@@ -62,3 +62,23 @@ quimera-modal {
         cursor: pointer;
     }
 }
+
+/* Responsive: Tablet */
+@media (max-width: 1024px) {
+    quimera-modal dialog {
+        max-width: calc(100vw - 4rem);
+        min-width: calc(100vw - 4rem);
+        width: calc(100vw - 4rem);
+        margin: auto;
+    }
+}
+
+/* Responsive: Móvil */
+@media (max-width: 768px) {
+    quimera-modal dialog {
+        max-width: calc(100vw - 2rem);
+        min-width: calc(100vw - 2rem);
+        width: calc(100vw - 2rem);
+        margin: auto;
+    }
+}

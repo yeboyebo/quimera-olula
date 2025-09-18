@@ -1,6 +1,6 @@
 import { Permiso } from "../administracion/diseño.ts";
 import { permisosGrupo } from "../usuarios/login/infraestructura.ts";
-import { Direccion, Entidad, Modelo, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -331,6 +331,16 @@ export const formatearMoneda = (cantidad: number, divisa: string): string => {
     }).format(cantidad);
 };
 
+export const formatearFecha = (fecha: string): string => {
+    if (!fecha) return fecha;
+    const date = new Date(fecha);
+    return date.toLocaleDateString("es-ES");
+};
+
+export const formatearHora = (hora: string): string => {
+    if (!hora) return hora;
+    return hora.substring(0, 5); // "14:30:00" -> "14:30"
+};
 
 export const calcularPaginacionSimplificada = (
     total: number | undefined,
@@ -393,4 +403,17 @@ export const puede = (regla: string): boolean => {
     }
 
     return true;
+};
+
+type RelacionDeCampos = Record<string, string>;
+export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Criteria) => Criteria => {
+    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro => clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+    const transformarFiltro = (filtro: Filtro): Filtro => filtro.map(transformarClausula);
+    const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
+
+    return (criteria) => ({
+        filtros: transformarFiltro(criteria.filtros),
+        orden: transformarOrden(criteria.orden),
+        paginacion: criteria.paginacion
+    })
 };
