@@ -1,4 +1,4 @@
-import { appFactory } from "../../../../app.ts";
+import { appFactory } from "../../../../../app.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Presupuesto } from "../../diseño.ts";
 

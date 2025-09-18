@@ -5,7 +5,7 @@ const baseUrl = ApiUrls.VENTAS.PEDIDO;;
 
 type LineaPedidoAPI = LineaPedido
 
-import { appFactory } from "../../app.ts";
+import { appFactory } from "../../../app.ts";
 import ApiUrls from "../../comun/api/urls.ts";
 import { Filtro, Orden, Paginacion } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";

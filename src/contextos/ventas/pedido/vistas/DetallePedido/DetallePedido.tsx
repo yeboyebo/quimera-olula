@@ -15,8 +15,8 @@ import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 import { useContext, useState } from "react";
+import { appFactory } from "../../../../../app.ts";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { appFactory } from "../../../../app.ts";
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
 type ParamOpcion = {

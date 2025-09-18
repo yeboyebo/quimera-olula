@@ -1,6 +1,8 @@
-import { FactoryBase } from "../base/factory.ts";
+import { FactoryOlula } from "../olula/factory.ts";
 import { FactoryVentasGUA } from "./contextos/ventas/factory.ts";
 
-export class FactoryGUA extends FactoryBase {
+export class FactoryGUA extends FactoryOlula {
     static Ventas = FactoryVentasGUA
 }
+
+export default FactoryGUA;
