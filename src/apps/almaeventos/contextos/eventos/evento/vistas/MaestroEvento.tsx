@@ -31,7 +31,7 @@ export const MaestroEvento = () => {
       }
     };
     fetchEventos();
-  }, [paginacion]);
+  }, [paginacion, eventos]);
 
   // Definir la máquina de estados
   const maquina: Maquina<Estado> = {

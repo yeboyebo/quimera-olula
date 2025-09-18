@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 
-import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
 import { MetaTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../../../componentes/maestro/Listado.tsx";
@@ -91,10 +90,10 @@ export const MaestroConDetalleTrabajadorEvento = () => {
         Maestro={
           <>
             <h2>Trabajadores por evento</h2>
-            <div className="maestro-botones">
-              {/* <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton> */}
+            {/* <div className="maestro-botones">
+              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton> 
               <QBoton onClick={() => emitir("DESCARGA_EXCEL_INICIADA")}>Descargar</QBoton>
-            </div>
+            </div> */}
             <Listado
               metaTabla={metaTablaTrabajadorEvento}
               entidades={trabajadoresEvento.lista}
@@ -102,7 +101,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
               seleccionada={trabajadoresEvento.seleccionada}
               setSeleccionada={trabajadoresEvento.seleccionar}
               cargar={getTrabajadoresEvento}
-              tamañoPagina={8}
+              tamañoPagina={9}
             />
           </>
         }
