@@ -31,6 +31,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     creando: {
       alta_cancelada: "inactivo",
       contacto_creado: "inactivo",
+      creacion_cancelada: "inactivo",
     },
     editando: {
       edicion_cancelada: "inactivo",

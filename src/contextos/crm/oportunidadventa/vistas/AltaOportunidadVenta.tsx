@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
+import { Usuario } from "../../../comun/componentes/usuario.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
@@ -96,6 +97,10 @@ export const FormAltaOportunidadVenta = ({
         <QInput
           label="probailidad (%)"
           {...oportunidadventa.uiProps("probabilidad")}
+        />
+        <Usuario
+          {...oportunidadventa.uiProps("responsable_id")}
+          label="Responsable"
         />
       </quimera-formulario>
       <div className="botones">

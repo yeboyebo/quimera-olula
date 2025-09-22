@@ -42,6 +42,7 @@ export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
         fecha_cierre: { requerido: true, tipo: "fecha" },
         estado_id: { requerido: true, tipo: "selector" },
         cliente_id: { requerido: true, tipo: "autocompletar" },
+        responsable_id: { requerido: true, tipo: "autocompletar" },
     },
 };
 
@@ -53,6 +54,7 @@ export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
         probabilidad: { requerido: true, tipo: "numero" },
         estado_id: { requerido: true, tipo: "selector" },
         fecha_cierre: { requerido: true, tipo: "fecha" },
+        responsable_id: { requerido: true, tipo: "autocompletar" },
     },
 };
 

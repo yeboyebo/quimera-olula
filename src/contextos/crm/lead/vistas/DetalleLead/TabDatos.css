@@ -59,4 +59,12 @@
     quimera-input[nombre="telefono_2"] {
         grid-column: span 4;
     }
+
+    quimera-input[nombre="nombre"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="email"] {
+        grid-column: span 6;
+    }
 }

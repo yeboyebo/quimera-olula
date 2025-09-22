@@ -77,7 +77,7 @@ const FormAltaAccion = ({
     };
     const id = await intentar(() => postAccion(modelo));
     const accionCreada = await getAccion(id);
-    emitir("estado_oportunidad_creado", accionCreada);
+    emitir("accion_creada", accionCreada);
     accion.init();
   };
 
