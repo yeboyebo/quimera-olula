@@ -47,5 +47,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+  },
+  resolve: {
+    alias: {
+      "@quimera/olula": "/src/contextos",
+      "@quimera/componentes": "/src/componentes",
+    }
   }
 });
