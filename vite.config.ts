@@ -50,8 +50,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@quimera/olula": "/src/contextos",
-      "@quimera/componentes": "/src/componentes",
+      "@quimera/lib": "/src/contextos/comun",
+      "@quimera/ctx": "/src/contextos/",
+      "@quimera/app": "/src/apps/",
+      "@quimera/comp": "/src/componentes",
     }
   }
 });

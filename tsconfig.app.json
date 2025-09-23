@@ -25,10 +25,16 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@quimera/olula/*": [
+      "@quimera/lib/*": [
+        "src/contextos/comun/*"
+      ],
+      "@quimera/ctx/*": [
         "src/contextos/*"
       ],
-      "@quimera/componentes/*": [
+      "@quimera/app/*": [
+        "src/apps/*"
+      ],
+      "@quimera/comp/*": [
         "src/componentes/*"
       ],
     }
