@@ -7,11 +7,11 @@ const MINUTOS_REFRESCO = 15;
 const MINUTOS = 60 * 1000;
 const baseUrl = '/auth';
 
-type PeticionLogin = { id: string; contraseña: string; };
+type PeticionLogin = { id: string; password: string; };
 type RespuestaLogin = { token_acceso: string; token_refresco: string; };
 
 export const login: Login = async (id: string, contraseña: string) => {
-    const payload = { id, contraseña: btoa(contraseña) };
+    const payload = { id, password: btoa(contraseña) };
     const callback: (_: RespuestaLogin) => UsuarioLogin = (respuesta) => ({ id: "_", tokenAcceso: respuesta.token_acceso, tokenRefresco: respuesta.token_refresco });
 
     return RestAPI.post<PeticionLogin>(`${baseUrl}/login`, payload).then(callback as unknown as (_: { id: string; }) => UsuarioLogin);
