@@ -34,7 +34,7 @@ export const getAlbaran: GetAlbaran = async (id) => {
 export const getAlbaranes: GetAlbaranes = async (
   filtro: Filtro,
   orden: Orden,
-  paginacion?: Paginacion
+  paginacion: Paginacion
 ) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 

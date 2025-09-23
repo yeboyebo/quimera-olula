@@ -1,5 +1,5 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion } from "../../../comun/diseño.ts";
 import { OportunidadVenta as OportunidadVentaTipo } from "../../oportunidadventa/diseño.ts";
 import { getOportunidadesVenta } from "../../oportunidadventa/infraestructura.ts";
 
@@ -24,11 +24,13 @@ export const OportunidadVenta = ({
     const criteria = {
       filtro: input ? [["descripcion", "~", input]] : [],
       orden: ["id"],
+      paginacion: { pagina: 1, limite: 10 },
     };
 
     const { datos } = await getOportunidadesVenta(
       criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+      criteria.orden as Orden,
+      criteria.paginacion as Paginacion
     );
     return datos.map((oportunidad: OportunidadVentaTipo) => ({
       valor: oportunidad.id,

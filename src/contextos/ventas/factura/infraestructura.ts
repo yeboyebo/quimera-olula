@@ -23,7 +23,7 @@ export const getFactura: GetFactura = async (id) => {
 export const getFacturas: GetFacturas = async (
   filtro: Filtro,
   orden: Orden,
-  paginacion?: Paginacion
+  paginacion: Paginacion
 ) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 

@@ -3,7 +3,7 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion } from "../../../comun/diseño.ts";
 import { getClientes } from "../../../ventas/cliente/infraestructura.ts";
 import { Cliente as ClienteAuto } from "../../../ventas/comun/componentes/cliente.tsx";
 
@@ -36,11 +36,13 @@ export const Cliente = ({
     const criteria = {
       filtro: ["nombre", texto],
       orden: ["id", "DESC"],
+      paginacion: { pagina: 1, limite: 10 },
     };
 
     const { datos } = await getClientes(
       criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+      criteria.orden as Orden,
+      criteria.paginacion as Paginacion
     );
 
     return datos.map((cliente) => ({

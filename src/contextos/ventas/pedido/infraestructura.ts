@@ -24,7 +24,7 @@ export const getPedido: GetPedido = async (id) => {
 export const getPedidos: GetPedidos = async (
   filtro: Filtro,
   orden: Orden,
-  paginacion?: Paginacion
+  paginacion: Paginacion
 ) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 

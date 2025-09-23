@@ -20,7 +20,7 @@ export const getPresupuesto: GetPresupuesto = async (id) =>
 export const getPresupuestos: GetPresupuestos = async (
   filtro: Filtro,
   orden: Orden,
-  paginacion?: Paginacion
+  paginacion: Paginacion
 ) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 

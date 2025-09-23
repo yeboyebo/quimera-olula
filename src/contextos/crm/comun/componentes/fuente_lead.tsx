@@ -21,9 +21,10 @@ export const FuenteLead = ({
 
   useEffect(() => {
     const cargarOpcionesFuenteLead = async () => {
-      const opciones = await getFuentesLead([], []).then(
-        (respuesta) => respuesta.datos
-      );
+      const opciones = await getFuentesLead([], [], {
+        pagina: 1,
+        limite: 100,
+      }).then((respuesta) => respuesta.datos);
       const opcionesMapeadas = opciones.map((opcion) => ({
         valor: String(opcion.id),
         descripcion: String(opcion.descripcion),

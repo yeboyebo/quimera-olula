@@ -34,17 +34,22 @@ export const Producto = ({
       const criteria = {
         filtro: [] as unknown as Filtro,
         orden: ["descripcion", "ASC"] as Orden,
+        paginacion: { pagina: 1, limite: 10 },
       };
-      
-      const productos = await getProductos(criteria.filtro, criteria.orden);      
+
+      const productos = await getProductos(
+        criteria.filtro,
+        criteria.orden,
+        criteria.paginacion
+      );
       const opciones = productos?.datos?.map((producto) => ({
         valor: producto.id,
         descripcion: producto.descripcion,
       }));
-      
+
       setOpcionesProducto(opciones);
     };
-    
+
     cargarOpciones();
   }, []);
 

@@ -6,12 +6,15 @@ import { Listado } from "../../../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ContextoError } from "../../../../../../contextos/comun/contexto.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
+import {
+  Maquina,
+  useMaquina,
+} from "../../../../../../contextos/comun/useMaquina.ts";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip";
 import { TrabajadorEvento } from "../diseño.ts";
 import {
   getTrabajadoresEvento,
-  patchTrabajadorEvento
+  patchTrabajadorEvento,
 } from "../infraestructura.ts";
 import { DetalleTrabajadorEvento } from "./DetalleTrabajadorEvento/DetalleTrabajadorEvento.tsx";
 import "./MaestroConDetalleTrabajadorEvento.css";
@@ -22,7 +25,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const trabajadoresEvento = useLista<TrabajadorEvento>([]);
   const { intentar } = useContext(ContextoError);
-  
+
   const maquina: Maquina<Estado> = {
     alta: {
       TRABAJADOR_EVENTO_CREADO: (payload: unknown) => {
@@ -34,7 +37,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
     },
     lista: {
       ALTA_INICIADA: "alta",
-      TRABAJADOR_EVENTO_CAMBIADO: (payload: unknown) => {        
+      TRABAJADOR_EVENTO_CAMBIADO: (payload: unknown) => {
         const trabajadorEvento = payload as TrabajadorEvento;
         trabajadoresEvento.modificar(trabajadorEvento);
       },
@@ -53,34 +56,54 @@ export const MaestroConDetalleTrabajadorEvento = () => {
   // Función para cambiar el estado de liquidado
   const cambiarEstadoLiquidado = async (trabajadorEvento: TrabajadorEvento) => {
     const nuevoValor = !trabajadorEvento.liquidado;
-    await intentar(() => patchTrabajadorEvento(trabajadorEvento.id, { liquidado: nuevoValor }));
+    await intentar(() =>
+      patchTrabajadorEvento(trabajadorEvento.id, { liquidado: nuevoValor })
+    );
     // Actualizar la UI
-    emitir("TRABAJADOR_EVENTO_CAMBIADO", {...trabajadorEvento, liquidado: nuevoValor});
-
+    emitir("TRABAJADOR_EVENTO_CAMBIADO", {
+      ...trabajadorEvento,
+      liquidado: nuevoValor,
+    });
   };
 
   const metaTablaTrabajadorEvento: MetaTabla<TrabajadorEvento> = [
     // { id: "id", cabecera: "Código" },
-    { id: "nombre", cabecera: "Nombre", tipo: "texto", ancho: "200px", render: (t) => <TextoConTooltip texto={t.nombre} /> },
-    { id: "descripcion", cabecera: "Evento", tipo: "texto", ancho: "250px", render: (t) => <TextoConTooltip texto={t.descripcion} /> },
+    {
+      id: "nombre",
+      cabecera: "Nombre",
+      tipo: "texto",
+      ancho: "200px",
+      render: (t) => <TextoConTooltip texto={t.nombre} />,
+    },
+    {
+      id: "descripcion",
+      cabecera: "Evento",
+      tipo: "texto",
+      ancho: "250px",
+      render: (t) => <TextoConTooltip texto={t.descripcion} />,
+    },
     { id: "fecha", cabecera: "Fecha", tipo: "fecha", ancho: "80px" },
     { id: "coste", cabecera: "Coste/Hora", tipo: "moneda", ancho: "100px" },
-    { 
-      id: "liquidado", 
+    {
+      id: "liquidado",
       cabecera: "Liquidado",
       tipo: "booleano",
       ancho: "80px",
       render: (trabajadorEvento) => (
-        <div 
+        <div
           className="accion-celda"
-          onClick={() => {cambiarEstadoLiquidado(trabajadorEvento)}}
+          onClick={() => {
+            cambiarEstadoLiquidado(trabajadorEvento);
+          }}
         >
-          {trabajadorEvento.liquidado ? 
-            <QIcono nombre="verdadero" color="green" /> : 
-            <QIcono nombre="falso" color="red" />}
+          {trabajadorEvento.liquidado ? (
+            <QIcono nombre="verdadero" color="green" />
+          ) : (
+            <QIcono nombre="falso" color="red" />
+          )}
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -101,7 +124,6 @@ export const MaestroConDetalleTrabajadorEvento = () => {
               seleccionada={trabajadoresEvento.seleccionada}
               setSeleccionada={trabajadoresEvento.seleccionar}
               cargar={getTrabajadoresEvento}
-              tamañoPagina={9}
             />
           </>
         }
