@@ -1,6 +1,4 @@
-import { ElementoMenu } from "../../componentes/menu/menu.ts";
-
-export const menuVentas: ElementoMenu[] = [{
+export const menuVentas = [{
     nombre: "Ventas",
     icono: "fichero",
     subelementos: [
