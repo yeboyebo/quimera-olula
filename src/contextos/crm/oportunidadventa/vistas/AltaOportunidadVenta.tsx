@@ -6,6 +6,7 @@ import { Usuario } from "../../../comun/componentes/usuario.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
+import { Cliente } from "../../comun/componentes/cliente_con_nombre.tsx";
 import { EstadoOportunidad } from "../../comun/componentes/estado_oportunidad_venta.tsx";
 import { NuevaOportunidadVenta } from "../diseño.ts";
 import {
@@ -84,6 +85,14 @@ export const FormAltaOportunidadVenta = ({
         <QInput
           label="Descripción"
           {...oportunidadventa.uiProps("descripcion")}
+        />
+        <Cliente
+          {...oportunidadventa.uiProps("cliente_id", "nombre_cliente")}
+          label="Seleccionar cliente"
+        />
+        <QInput
+          label="Cliente"
+          {...oportunidadventa.uiProps("nombre_cliente")}
         />
         <EstadoOportunidad
           label="Estado"

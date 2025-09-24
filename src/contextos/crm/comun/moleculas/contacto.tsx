@@ -3,12 +3,12 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
 import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
-import { EmitirEvento } from "../../../comun/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "../../../comun/useMaquina.ts";
-import { useModelo } from "../../../comun/useModelo.ts";
+import { useModelo, ValorControl } from "../../../comun/useModelo.ts";
 import { ContactoSelector } from "../../../ventas/comun/componentes/contacto.tsx";
+import { Contacto } from "../../contacto/diseño.ts";
 import { contactoVacio, metaContacto } from "../../contacto/dominio.ts";
-import { getContacto } from "../../contacto/infraestructura.ts";
+import { getContacto, patchContacto } from "../../contacto/infraestructura.ts";
 import { AltaContacto } from "../../contacto/vistas/AltaContacto.tsx";
 import { TabGeneral } from "../../contacto/vistas/DetalleContacto/TabGeneral.tsx";
 import "./contacto.css";
@@ -42,30 +42,48 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 
 export const MoleculaContacto = ({
   contactoId = null,
-  publicar = () => {},
+  onChange,
 }: {
   contactoId?: string | null;
-  publicar?: EmitirEvento;
+  onChange: (valor: ValorControl) => void;
 }) => {
   const { intentar } = useContext(ContextoError);
   const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });
   const contacto = useModelo(metaContacto, contactoVacio);
-  const { uiProps, init } = contacto;
+  const { uiProps, init, modelo, valido, modificado } = contacto;
+
+  const emitir_contacto = (evento: string, payload: unknown) => {
+    console.log("Emitir contacto", evento, payload);
+    if (evento === "contacto_creado") {
+      emitir("contacto_creado");
+      onChange((payload as Contacto).id);
+    } else if (evento === "contacto_cambiado") {
+      emitir("contacto_guardado");
+      onChange((payload as Contacto).id);
+    } else {
+      emitir(evento, payload);
+    }
+  };
+
+  const onGuardarClicked = async () => {
+    await intentar(() => patchContacto(modelo.id, modelo));
+    onRecargarContacto();
+    emitir("contacto_guardado");
+  };
 
   const onChangeContacto = (
     opcion: { valor: string; descripcion: string } | null
   ) => {
     if (opcion?.valor === contacto.modelo.id) return;
-    uiProps("id").onChange(opcion);
-    publicar("contacto_cambiado", opcion);
+    onChange(opcion ? opcion.valor : null);
   };
 
   const onRecargarContacto = async () => {
     const contactoRecargado = await getContacto(contacto.modelo.id);
     init(contactoRecargado);
-    publicar("contacto_cambiado", contactoRecargado);
+    emitir_contacto("contacto_cambiado", contactoRecargado);
   };
 
   useEffect(() => {
@@ -79,7 +97,7 @@ export const MoleculaContacto = ({
     if (contactoId) cargaContacto();
     else init(contactoVacio);
   }, [contactoId, emitir, intentar, init]);
-  // console.log(contacto);
+
   return (
     <div className="MoleculaContacto">
       <div className="MoleculaContactoCampos">
@@ -109,7 +127,7 @@ export const MoleculaContacto = ({
       </div>
 
       <AltaContacto
-        publicar={emitir}
+        publicar={emitir_contacto}
         activo={estado === "creando"}
         key={contactoId}
       />
@@ -118,11 +136,27 @@ export const MoleculaContacto = ({
         activo={estado === "editando"}
         onCerrar={() => emitir("edicion_cancelada")}
       >
-        <TabGeneral
-          contacto={contacto}
-          emitirContacto={publicar}
-          recargarContacto={onRecargarContacto}
-        />
+        <>
+          <TabGeneral
+            contacto={contacto}
+            recargarContacto={onRecargarContacto}
+          />
+          {contacto.modificado && (
+            <div className="maestro-botones ">
+              <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
+                Guardar
+              </QBoton>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => init()}
+                deshabilitado={!modificado}
+              >
+                Cancelar
+              </QBoton>
+            </div>
+          )}
+        </>
       </Mostrar>
     </div>
   );

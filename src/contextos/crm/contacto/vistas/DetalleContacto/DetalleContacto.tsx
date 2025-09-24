@@ -104,7 +104,6 @@ export const DetalleContacto = ({
                   children={
                     <TabGeneral
                       contacto={contacto}
-                      emitirContacto={publicar}
                       recargarContacto={onRecargarContacto}
                     />
                   }

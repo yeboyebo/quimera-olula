@@ -1,11 +1,11 @@
 .Lead .TabMasDatos {
 
     quimera-select[nombre="estado_id"] {
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 4;
     }
 
     quimera-select[nombre="fuente_id"] {
-        grid-column: span 6;
+        grid-column: span 4;
     }
 
     .MoleculaContacto {
@@ -33,7 +33,7 @@
     }
 
     quimera-input[nombre="ciudad"] {
-        grid-column: 1 / span 3;
+        grid-column: 1 / span 4;
     }
 
     quimera-input[nombre="cod_postal"] {
@@ -41,7 +41,7 @@
     }
 
     quimera-input[nombre="provincia"] {
-        grid-column: span 3;
+        grid-column: span 4;
     }
 
     quimera-autocompletar[nombre="pais_id"] {

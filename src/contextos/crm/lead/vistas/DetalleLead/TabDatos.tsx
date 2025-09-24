@@ -1,6 +1,5 @@
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { PaisSelector } from "../../../../comun/componentes/pais/pais.tsx";
-import { EmitirEvento } from "../../../../comun/diseño.ts";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Cliente } from "../../../../ventas/comun/componentes/cliente.tsx";
 import { EstadoLead } from "../../../comun/componentes/estado_lead.tsx";
@@ -10,13 +9,7 @@ import { TipoEntidadLead } from "../../../comun/componentes/tipo_entidad_lead.ts
 import { MoleculaContacto } from "../../../comun/moleculas/contacto.tsx";
 import { Lead } from "../../diseño.ts";
 import "./TabDatos.css";
-export const TabDatos = ({
-  lead,
-  publicar = () => {},
-}: {
-  lead: HookModelo<Lead>;
-  publicar?: EmitirEvento;
-}) => {
+export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
   const { uiProps, modelo } = lead;
   return (
     <div className="TabMasDatos">
@@ -25,7 +18,7 @@ export const TabDatos = ({
         <FuenteLead {...uiProps("fuente_id")} />
         <MoleculaContacto
           contactoId={modelo.contacto_id as string | null}
-          publicar={publicar}
+          onChange={uiProps("contacto_id").onChange}
         />
         <TipoEntidadLead {...uiProps("tipo")} />
         {modelo.tipo === "Cliente" && modelo.cliente_id ? (
@@ -34,7 +27,11 @@ export const TabDatos = ({
           // <Proveedor {...uiProps("proveedor_id", "nombre")} />
           <></>
         )}
-        <QInput label="Nombre" {...uiProps("nombre")} />
+        <QInput
+          label="Nombre"
+          {...uiProps("nombre")}
+          deshabilitado={!!modelo.cliente_id}
+        />
         <QInput label="CIF/NIF" {...uiProps("id_fiscal")} />
         <QInput label="Dirección" {...uiProps("direccion")} />
         <QInput label="Ciudad" {...uiProps("ciudad")} />

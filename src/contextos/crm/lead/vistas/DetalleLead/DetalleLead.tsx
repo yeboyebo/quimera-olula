@@ -32,6 +32,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
       contacto_cambiado: ({ payload }) =>
         console.log("Contacto cambiado", payload),
+      contacto_creado: ({ payload }) => console.log("Contacto creado", payload),
     },
     borrando: {
       borrado_cancelado: "edicion",
@@ -92,7 +93,7 @@ export const DetalleLead = ({
               <Tab
                 key="tab-1"
                 label="Datos"
-                children={<TabDatos lead={lead} publicar={emitir} />}
+                children={<TabDatos lead={lead} />}
               />,
               <Tab
                 key="tab-3"

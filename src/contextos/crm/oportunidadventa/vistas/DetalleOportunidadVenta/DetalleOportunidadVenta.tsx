@@ -66,12 +66,12 @@ export const DetalleOportunidadVenta = ({
     await intentar(() => patchOportunidadVenta(modelo.id, modelo));
     const oportunidad_guardada = await getOportunidadVenta(modelo.id);
     init(oportunidad_guardada);
-    emitir("oportunidad_cambiada", oportunidad_guardada);
+    publicar("oportunidad_cambiada", oportunidad_guardada);
   };
 
   const onBorrarConfirmado = async () => {
     await intentar(() => deleteOportunidadVenta(modelo.id));
-    emitir("oportunidad_borrada", modelo);
+    publicar("oportunidad_borrada", modelo);
     emitir("borrado_cancelado");
   };
 
