@@ -135,7 +135,7 @@ export const TabAcciones = ({ lead }: { lead: HookModelo<Lead> }) => {
       />
 
       <BajaAccion
-        emitir={emitir}
+        publicar={emitir}
         activo={estado === "Borrando"}
         idAccion={acciones.idActivo || undefined}
       />

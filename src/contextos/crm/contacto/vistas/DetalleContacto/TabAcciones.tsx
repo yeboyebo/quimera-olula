@@ -141,7 +141,7 @@ export const TabAcciones = ({
       />
 
       <BajaAccion
-        emitir={emitir}
+        publicar={emitir}
         activo={estado === "Borrando"}
         idAccion={acciones.idActivo || undefined}
       />
