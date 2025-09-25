@@ -61,7 +61,7 @@ export const Listado = <T extends Entidad>({
   setSeleccionada,
   tamañoPagina = 10,
   cargar,
-  modo,
+  modo = "tabla",
 }: MaestroProps<T>) => {
   // const modoInicial: Modo =
   //   modoProp ||
