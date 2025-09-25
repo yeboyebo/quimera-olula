@@ -83,7 +83,7 @@ export type QTarjetasProps<T extends Entidad> = {
   onSeleccion?: (entidad: T) => void;
   orden: Orden;
   onOrdenar?: (clave: string) => void;
-  paginacion?: Paginacion;
+  paginacion: Paginacion;
   onPaginacion?: (pagina: number, limite: number) => void;
   totalEntidades?: number;
 };

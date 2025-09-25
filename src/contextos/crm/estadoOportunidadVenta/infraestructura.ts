@@ -18,7 +18,7 @@ export const getEstadoOportunidad = async (id: string): Promise<EstadoOportunida
 export const getEstadosOportunidad = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<EstadoOportunidad> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 

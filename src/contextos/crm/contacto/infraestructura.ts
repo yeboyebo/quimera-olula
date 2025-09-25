@@ -31,7 +31,7 @@ export const getContacto = async (id: string): Promise<Contacto> =>
 export const getContactos = async (
   filtro: Filtro,
   orden: Orden,
-  paginacion?: Paginacion
+  paginacion: Paginacion
 ): RespuestaLista<Contacto> => {
   const q = criteriaQuery(filtro, orden, paginacion);
 

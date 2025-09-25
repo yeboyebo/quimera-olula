@@ -33,7 +33,7 @@ export const getIncidencia: GetIncidencia = async (id) =>
 
 
 export const getIncidencias: GetIncidencias = async (
-    filtro, orden, paginacion?
+    filtro, orden, paginacion
 ) => {
 
     const q = criteriaQuery(filtro, orden, paginacion);

@@ -1,4 +1,4 @@
-import { Filtro, Orden, RespuestaLista } from "../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Albaran extends Venta {
@@ -14,7 +14,7 @@ export type CambioClienteAlbaran = CambioClienteVenta;
 
 export type NuevaLineaAlbaran = NuevaLineaVenta;
 
-export type GetAlbaranes = (filtro: Filtro, orden: Orden) => RespuestaLista<Albaran>;
+export type GetAlbaranes = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Albaran>;
 
 export type GetAlbaran = (id: string) => Promise<Albaran>;
 

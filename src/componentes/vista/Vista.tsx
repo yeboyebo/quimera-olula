@@ -1,15 +1,18 @@
 import { PropsWithChildren, useState } from "react";
 // import { Contexto, ContextoSet } from "../../contextos/comun/contexto.ts";
-import { ContextoError, Intentar, QError } from "../../contextos/comun/contexto.ts";
+import { Outlet } from "react-router";
+import {
+  ContextoError,
+  Intentar,
+  QError,
+} from "../../contextos/comun/contexto.ts";
 
 // import { Entidad } from "../../contextos/comun/diseño.ts";
 import { QModal } from "../moleculas/qmodal.tsx";
 import { Plantilla } from "../plantilla/Plantilla.tsx";
 import { Slot } from "../slot/Slot.tsx";
 
-export const Vista = ({
-  children,
-}: PropsWithChildren<object>) => {
+export const Vista = ({ children }: PropsWithChildren<object>) => {
   const slots = { hijos: children };
   const [error, setError] = useState<QError | null>(null);
 
@@ -22,7 +25,7 @@ export const Vista = ({
   //     throw error;
   //   }
   // }
-  const intentar:Intentar = async (f) => {
+  const intentar: Intentar = async (f) => {
     try {
       const result = await f();
       return result;
@@ -34,13 +37,14 @@ export const Vista = ({
       });
       throw error;
     }
-  }
+  };
+
+  const contenido = children ?? <Outlet />;
 
   return (
-    
-    <ContextoError.Provider value={{error, setError, intentar }}>
+    <ContextoError.Provider value={{ error, setError, intentar }}>
       <Slot nombre="contenido" {...slots}>
-        <Plantilla>{children}</Plantilla>
+        <Plantilla>{contenido}</Plantilla>
       </Slot>
       <QModal
         nombre="error"

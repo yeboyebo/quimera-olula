@@ -21,9 +21,10 @@ export const EstadoLead = ({
 
   useEffect(() => {
     const cargarOpcionesEstadoLead = async () => {
-      const opciones = await getEstadosLead([], []).then(
-        (respuesta) => respuesta.datos
-      );
+      const opciones = await getEstadosLead([], [], {
+        pagina: 1,
+        limite: 100,
+      }).then((respuesta) => respuesta.datos);
       const opcionesMapeadas = opciones.map((opcion) => ({
         valor: String(opcion.id),
         descripcion: String(opcion.descripcion),

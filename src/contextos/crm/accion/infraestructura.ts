@@ -10,7 +10,7 @@ export const getAccion = async (id: string): Promise<Accion> =>
 export const getAcciones = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<Accion> => {
     const q = criteriaQuery(filtro, orden, paginacion);
     return await RestAPI.get<{ datos: Accion[]; total: number }>(ApiUrls.CRM.ACCION + q);

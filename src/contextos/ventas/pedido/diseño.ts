@@ -14,7 +14,7 @@ export type CambioClientePedido = CambioClienteVenta
 
 export type NuevaLineaPedido = NuevaLineaVenta
 
-export type GetPedidos = (filtro: Filtro, orden: Orden, paginacion?: Paginacion) => RespuestaLista<Pedido>;
+export type GetPedidos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Pedido>;
 
 export type GetPedido = (id: string) => Promise<Pedido>;
 

@@ -12,7 +12,7 @@ export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta>
 export const getOportunidadesVenta = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<OportunidadVenta> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 

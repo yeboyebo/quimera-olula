@@ -6,11 +6,12 @@ import { Listado } from "../../../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
-import { Trabajador } from "../diseño.ts";
 import {
-  getTrabajadores
-} from "../infraestructura.ts";
+  Maquina,
+  useMaquina,
+} from "../../../../../../contextos/comun/useMaquina.ts";
+import { Trabajador } from "../diseño.ts";
+import { getTrabajadores } from "../infraestructura.ts";
 import { AltaTrabajador } from "./AltaTrabajador.tsx";
 import { DetalleTrabajador } from "./DetalleTrabajador/DetalleTrabajador.tsx";
 // import "./MaestroConDetalleTrabajador.css";
@@ -18,7 +19,7 @@ import { DetalleTrabajador } from "./DetalleTrabajador/DetalleTrabajador.tsx";
 const metaTablaTrabajador: MetaTabla<Trabajador> = [
   // { id: "id", cabecera: "Código" },
   { id: "nombre", cabecera: "Nombre" },
-  { id: "coste", cabecera: "Coste/Hora" }
+  { id: "coste", cabecera: "Coste/Hora" },
 ];
 type Estado = "lista" | "alta";
 
@@ -37,7 +38,7 @@ export const MaestroConDetalleTrabajador = () => {
     },
     lista: {
       ALTA_INICIADA: "alta",
-      TRABAJADOR_CAMBIADO: (payload: unknown) => {        
+      TRABAJADOR_CAMBIADO: (payload: unknown) => {
         const trabajador = payload as Trabajador;
         trabajadores.modificar(trabajador);
       },
@@ -70,7 +71,6 @@ export const MaestroConDetalleTrabajador = () => {
               seleccionada={trabajadores.seleccionada}
               setSeleccionada={trabajadores.seleccionar}
               cargar={getTrabajadores}
-              // tamañoPagina={10}
             />
           </>
         }

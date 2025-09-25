@@ -28,7 +28,8 @@ export const Cliente = ({
 
     const { datos } = await getClientes(
       criteria.filtro as unknown as Filtro,
-      criteria.orden
+      criteria.orden,
+      { pagina: 1, limite: 10 }
     );
 
     if (!Array.isArray(datos)) {
