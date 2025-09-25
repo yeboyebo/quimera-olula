@@ -1,4 +1,4 @@
-import { ElementoMenu } from "./componentes/menu/menu.ts";
+import { ElementoMenu } from "@quimera/comp/menu/menu.ts";
 
 const APP = import.meta.env.VITE_APP_NAME || "olula";
 
@@ -14,4 +14,4 @@ const factory = new Factory();
 type ContextFactory = { menu?: ElementoMenu[] };
 
 export const appFactory = () => factory;
-export const menuFactory = () => Object.values(factory).map(v => (v as ContextFactory)?.menu).filter(Boolean).flat();
+export const menuFactory = () => Object.values(factory).map(v => (v as ContextFactory)?.menu).filter(Boolean).flat() as ElementoMenu[];
