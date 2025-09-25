@@ -77,7 +77,7 @@ export const MaestroConDetalleCliente = () => {
     // },
   ].filter(Boolean);
 
-  const modo = "tabla";
+  const modo = "tarjetas";
 
   return (
     <div className="Cliente">

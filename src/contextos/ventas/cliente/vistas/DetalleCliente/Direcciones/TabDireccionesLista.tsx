@@ -1,3 +1,4 @@
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
 import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { QuimeraAcciones } from "../../../../../../componentes/moleculas/qacciones.tsx";
 import {
@@ -64,7 +65,13 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <QuimeraAcciones acciones={acciones} />
+      <div
+        className="TabDireccionesLista maestro-botones"
+        style={{ alignItems: "center" }}
+      >
+        <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
+        <QuimeraAcciones acciones={acciones} vertical />
+      </div>
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}
