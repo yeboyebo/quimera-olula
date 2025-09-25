@@ -17,8 +17,7 @@ import {
   patchEstadoOportunidad,
 } from "../../infraestructura.ts";
 import { BorrarEstadoOportunidad } from "./BorrarEstadoOportunidad.tsx";
-
-// Máquina de estados y contexto
+import "./DetalleEstadoOportunidad.css";
 
 type Estado = "Edicion" | "Borrando";
 type Contexto = Record<string, unknown>;
