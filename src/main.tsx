@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
-import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos//eventos/producto/vistas/MaestroConDetalleProducto.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import { CalendarioEventos } from "./apps/almaeventos/contextos/eventos/calendario_eventos/vistas/CalendarioEventos.tsx";
 import { DetalleEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/DetalleEvento/DetalleEvento.tsx";
 import { MaestroEvento } from "./apps/almaeventos/contextos/eventos/evento/vistas/MaestroEvento.tsx";
+import { MaestroConDetalleProducto } from "./apps/almaeventos/contextos/eventos/producto/vistas/MaestroConDetalleProducto.tsx";
 import { MaestroConDetalleTrabajador } from "./apps/almaeventos/contextos/eventos/trabajador/vistas/MaestroConDetalleTrabajador.tsx";
 import { MaestroConDetalleTrabajadorEvento } from "./apps/almaeventos/contextos/eventos/trabajador_evento/vistas/MaestroConDetalleTrabajadorEvento.tsx";
 import { Historias } from "./componentes/historias/historias.tsx";
@@ -24,286 +24,83 @@ import { Login } from "./contextos/usuarios/login/vistas/Login.tsx";
 import { Logout } from "./contextos/usuarios/usuario/vistas/Logout.tsx";
 import Perfil from "./contextos/usuarios/usuario/vistas/Perfil.tsx";
 import { MaestroConDetalleAlbaran } from "./contextos/ventas/albaran/vistas/MaestroConDetalleAlbaran.tsx";
-import { DetalleCliente } from "./contextos/ventas/cliente/vistas/DetalleCliente/DetalleCliente.tsx";
 import { MaestroConDetalleCliente } from "./contextos/ventas/cliente/vistas/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleFactura } from "./contextos/ventas/factura/vistas/MaestroConDetalleFactura.tsx";
 import { MaestroConDetallePedido } from "./contextos/ventas/pedido/vistas/MaestroConDetallePedido.tsx";
 import { MaestroConDetallePresupuesto } from "./contextos/ventas/presupuesto/vistas/MaestroConDetallePresupuesto.tsx";
 import "./index.css";
 
+const rutas = createBrowserRouter([
+  {
+    path: "/",
+    Component: Vista,
+    children: [
+      { index: true, Component: Indice },
+      {
+        path: "ventas",
+        children: [
+          { path: "cliente", Component: MaestroConDetalleCliente },
+          { path: "presupuesto", Component: MaestroConDetallePresupuesto },
+          { path: "pedido", Component: MaestroConDetallePedido },
+          { path: "albaran", Component: MaestroConDetalleAlbaran },
+          { path: "factura", Component: MaestroConDetalleFactura },
+        ],
+      },
+      {
+        path: "crm",
+        children: [
+          {
+            path: "oportunidadventa",
+            Component: MaestroConDetalleOportunidadVenta,
+          },
+          {
+            path: "estadooportunidadventa",
+            Component: MaestroConDetalleEstadoOportunidad,
+          },
+          { path: "cliente", Component: MaestroConDetalleClienteCRM },
+          { path: "contacto", Component: MaestroConDetalleContacto },
+          { path: "accion", Component: MaestroConDetalleAccion },
+          { path: "lead", Component: MaestroConDetalleLead },
+          { path: "incidencia", Component: MaestroConDetalleIncidencia },
+        ],
+      },
+      {
+        path: "almacen",
+        children: [
+          {
+            path: "transferencias",
+            Component: MaestroDetalleTransferenciasStock,
+          },
+        ],
+      },
+      { path: "login", Component: Login },
+      { path: "logout", Component: Logout },
+      { path: "usuario/perfil", Component: Perfil },
+      {
+        path: "administracion/grupos",
+        Component: MaestroConDetalleGruposReglas,
+      },
+      { path: "docs/componentes", Component: Historias },
+      {
+        path: "eventos",
+        children: [
+          { path: "calendario", Component: CalendarioEventos },
+          { path: "eventos", Component: MaestroEvento },
+          { path: "evento/:id", Component: DetalleEvento },
+          { path: "producto", Component: MaestroConDetalleProducto },
+          { path: "trabajador", Component: MaestroConDetalleTrabajador },
+          {
+            path: "trabajador_evento",
+            Component: MaestroConDetalleTrabajadorEvento,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route
-          index
-          element={
-            <Vista>
-              <Indice />
-            </Vista>
-          }
-        />
-        <Route path="ventas">
-          <Route path="cliente">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleCliente />
-                </Vista>
-              }
-            />
-            <Route
-              path=":id"
-              element={
-                <Vista>
-                  <DetalleCliente />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="pedido">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetallePedido />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="presupuesto">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetallePresupuesto />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="albaran">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleAlbaran />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="factura">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleFactura />
-                </Vista>
-              }
-            />
-          </Route>
-        </Route>
-        <Route path="crm">
-          <Route path="oportunidadventa">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleOportunidadVenta />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="estadooportunidadventa">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleEstadoOportunidad />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="cliente">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleClienteCRM />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="contacto">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleContacto />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="accion">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleAccion />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="lead">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleLead />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="incidencia">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleIncidencia />
-                </Vista>
-              }
-            />
-          </Route>
-        </Route>
-        <Route path="almacen">
-          <Route
-            path="transferencias"
-            element={
-              <Vista>
-                <MaestroDetalleTransferenciasStock />
-              </Vista>
-            }
-          />
-        </Route>
-        <Route path="login">
-          <Route
-            index
-            element={
-              <Vista>
-                <Login />
-              </Vista>
-            }
-          />
-        </Route>
-        <Route path="logout">
-          <Route
-            index
-            element={
-              <Vista>
-                <Logout />
-              </Vista>
-            }
-          />
-        </Route>
-        <Route path="usuario">
-          <Route path="perfil">
-            <Route
-              index
-              element={
-                <Vista>
-                  <Perfil />
-                </Vista>
-              }
-            />
-          </Route>
-        </Route>
-        <Route path="administracion">
-          <Route path="grupos">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleGruposReglas />
-                </Vista>
-              }
-            />
-          </Route>
-        </Route>
-        <Route path="docs/componentes" element={<Historias />} />
-        <Route path="eventos">
-          <Route path="calendario">
-            <Route
-              index
-              element={
-                <Vista>
-                  <CalendarioEventos />
-                </Vista>
-              }
-            />
-            <Route path="evento">
-              <Route
-                path=":id"
-                element={
-                  <Vista>
-                    <DetalleEvento />
-                  </Vista>
-                }
-              />
-            </Route>
-          </Route>          
-          <Route path="eventos">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroEvento />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="evento">
-            <Route
-              path=":id"
-              element={
-                <Vista>
-                  <DetalleEvento />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="producto">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleProducto />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="trabajador">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleTrabajador />
-                </Vista>
-              }
-            />
-          </Route>
-          <Route path="trabajador_evento">
-            <Route
-              index
-              element={
-                <Vista>
-                  <MaestroConDetalleTrabajadorEvento />
-                </Vista>
-              }
-            />
-          </Route>          
-        </Route>
-
-      </Routes>
-    </BrowserRouter>
+    <RouterProvider router={rutas} />
   </StrictMode>
 );

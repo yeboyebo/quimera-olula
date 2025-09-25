@@ -49,7 +49,7 @@ export const obtenerTransferenciaStock: ObtenerTransferenciaStock = async (id) =
     );
 
 export const obtenerTransferenciasStock: ObtenerTransferenciasStock = async (
-    filtros, orden, paginacion?
+    filtros, orden, paginacion
 ) => {
     const criteria = transformarCriteria(camposTransferenciaToAPI)({ filtros, orden, paginacion });
     const q = criteriaQuery(criteria.filtros, criteria.orden, criteria.paginacion);
@@ -119,7 +119,7 @@ export const obtenerLineaTransferenciaStock: ObtenerLineaTransferenciaStock = as
     );
 
 export const obtenerLineasTransferenciaStock: ObtenerLineasTransferenciaStock = async (
-    id, filtros, orden, paginacion?
+    id, filtros, orden, paginacion
 ) => {
     const criteria = transformarCriteria(camposLineaTransferenciaToAPI)({ filtros, orden, paginacion });
     const q = criteriaQuery(criteria.filtros, criteria.orden, criteria.paginacion);

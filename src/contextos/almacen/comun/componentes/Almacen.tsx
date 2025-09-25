@@ -22,6 +22,7 @@ export const Almacen = ({
     const criteria: Criteria = {
       filtros: [["nombre", "~", texto]],
       orden: ["id"],
+      paginacion: { limite: 10, pagina: 1 },
     };
 
     const almacenes = await obtenerAlmacenes(criteria.filtros, criteria.orden);

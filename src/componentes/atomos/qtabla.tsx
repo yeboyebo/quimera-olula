@@ -1,6 +1,11 @@
 import { ReactNode } from "react";
 import { Entidad, Orden, Paginacion } from "../../contextos/comun/diseño.ts";
-import { calcularPaginacionSimplificada, formatearFecha, formatearHora, formatearMoneda } from "../../contextos/comun/dominio.ts";
+import {
+  calcularPaginacionSimplificada,
+  formatearFecha,
+  formatearHora,
+  formatearMoneda,
+} from "../../contextos/comun/dominio.ts";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 
@@ -46,7 +51,13 @@ const cabecera = <T extends Entidad>(
 };
 
 const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
-  const renderColumna = ({ id, render, tipo, divisa, ancho }: MetaColumna<T>) => {
+  const renderColumna = ({
+    id,
+    render,
+    tipo,
+    divisa,
+    ancho,
+  }: MetaColumna<T>) => {
     let datos = render?.(entidad as T) ?? (entidad[id] as string);
 
     // Formateo automático según tipo
@@ -61,7 +72,11 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     }
 
     return (
-      <td key={[entidad.id, id].join("-")} className={`${tipo ?? ""} ${id}`} style={ancho ? { width: ancho } : undefined}>
+      <td
+        key={[entidad.id, id].join("-")}
+        className={`${tipo ?? ""} ${id}`}
+        style={ancho ? { width: ancho } : undefined}
+      >
         {datos}
       </td>
     );
@@ -166,41 +181,60 @@ export const QTabla = <T extends Entidad>({
   totalEntidades = 0,
 }: QTablaProps<T>) => {
   // Detectar si hay anchos específicos
-  const tieneAnchosFijos = metaTabla.some(col => col.ancho);
-  
+  const tieneAnchosFijos = metaTabla.some((col) => col.ancho);
+
   // Completar columnas sin ancho
-  const metaTablaCompleta = tieneAnchosFijos 
-    ? metaTabla.map(col => {
-      if (col.ancho) return col;
-      
-      const hayPorcentajes = metaTabla.some(c => c.ancho?.includes('%'));
-      const anchos = hayPorcentajes ? 
-        { texto: "20%", fecha: "10%", hora: "8%", moneda: "12%", numero: "10%", booleano: "8%", defecto: "15%" } :
-        { texto: "150px", fecha: "90px", hora: "80px", moneda: "120px", numero: "100px", booleano: "100px", defecto: "150px" };
-      
-      return { ...col, ancho: anchos[col.tipo as keyof typeof anchos] || anchos.defecto };
-    }) 
+  const metaTablaCompleta = tieneAnchosFijos
+    ? metaTabla.map((col) => {
+        if (col.ancho) return col;
+
+        const hayPorcentajes = metaTabla.some((c) => c.ancho?.includes("%"));
+        const anchos = hayPorcentajes
+          ? {
+              texto: "20%",
+              fecha: "10%",
+              hora: "8%",
+              moneda: "12%",
+              numero: "10%",
+              booleano: "8%",
+              defecto: "15%",
+            }
+          : {
+              texto: "150px",
+              fecha: "90px",
+              hora: "80px",
+              moneda: "120px",
+              numero: "100px",
+              booleano: "100px",
+              defecto: "150px",
+            };
+
+        return {
+          ...col,
+          ancho: anchos[col.tipo as keyof typeof anchos] || anchos.defecto,
+        };
+      })
     : metaTabla;
-  
+
   return (
     <quimera-tabla>
       <div className="tabla-contenedor-scroll">
-      <table data-anchos-fijos={tieneAnchosFijos}>
-        <thead>
-          <tr>{cabecera(metaTablaCompleta, orden, onOrdenar)}</tr>
-        </thead>
-        <tbody data-cargando={cargando}>
-          {datos.map((entidad: T) => (
-            <tr
-              key={entidad.id}
-              onClick={() => onSeleccion && onSeleccion(entidad)}
-              data-seleccionada={entidad.id === seleccionadaId}
-            >
-              {fila(entidad, metaTablaCompleta)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <table data-anchos-fijos={tieneAnchosFijos}>
+          <thead>
+            <tr>{cabecera(metaTablaCompleta, orden, onOrdenar)}</tr>
+          </thead>
+          <tbody data-cargando={cargando}>
+            {datos.map((entidad: T) => (
+              <tr
+                key={entidad.id}
+                onClick={() => onSeleccion && onSeleccion(entidad)}
+                data-seleccionada={entidad.id === seleccionadaId}
+              >
+                {fila(entidad, metaTablaCompleta)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       {paginacion &&
         paginacionControlador(totalEntidades, paginacion, onPaginacion)}

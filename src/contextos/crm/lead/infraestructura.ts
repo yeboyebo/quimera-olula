@@ -59,7 +59,7 @@ export const getLead = async (id: string): Promise<Lead> =>
 export const getLeads = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
@@ -100,7 +100,7 @@ export const getAccionesLead = async (leadId: string): Promise<Accion[]> => {
 export const getFuentesLead = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
@@ -111,7 +111,7 @@ export const getFuentesLead = async (
 export const getEstadosLead = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<Lead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 

@@ -16,7 +16,7 @@ export const getTrabajador = async (id: string): Promise<Trabajador> =>
 export const getTrabajadores = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<Trabajador> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 

@@ -1,4 +1,4 @@
-import { Direccion, Entidad, Filtro, Modelo, Orden, RespuestaLista } from "../../comun/diseño.ts";
+import { Direccion, Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
 
 export interface Presupuesto extends Entidad {
   id: string;
@@ -59,7 +59,7 @@ export type Cliente = {
   direccion_id: string;
 }
 
-export type GetPresupuestos = (filtro: Filtro, orden: Orden) => RespuestaLista<Presupuesto>;
+export type GetPresupuestos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Presupuesto>;
 
 export type GetPresupuesto = (id: string) => Promise<Presupuesto>;
 

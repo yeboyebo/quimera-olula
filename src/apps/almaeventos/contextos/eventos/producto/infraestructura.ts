@@ -16,7 +16,7 @@ export const getProducto = async (id: string): Promise<Producto> =>
 export const getProductos = async (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<Producto> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 

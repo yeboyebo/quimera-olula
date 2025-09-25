@@ -42,7 +42,7 @@ export type NuevaLineaTransferenciaStock_API = Omit<LineaTransferenciaStock_API,
 export type ObtenerTransferenciasStock = (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ) => RespuestaLista<TransferenciaStock>;
 
 export type ObtenerTransferenciaStock = (id: string) => Promise<TransferenciaStock>;
@@ -54,7 +54,7 @@ export type ObtenerLineasTransferenciaStock = (
     id: string,
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ) => RespuestaLista<LineaTransferenciaStock>;
 
 export type ObtenerLineaTransferenciaStock = (id: string, idLinea: string) => Promise<LineaTransferenciaStock>;
