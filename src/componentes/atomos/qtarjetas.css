@@ -5,6 +5,7 @@ quimera-tarjetas {
 
     width: 100%;
     display: block;
+    overflow: hidden;
     margin-top: 100px;
 }
 

@@ -1,0 +1,57 @@
+maestro-detalle[tipo="tabla"] {
+    display: flex;
+    gap: 1rem;
+    overflow: auto;
+    /* max-height: 100vh; */
+
+    .Maestro {
+        max-height: calc(94vh - var(--alto-header));
+        overflow-y: auto;
+        flex-basis: 50%;
+        flex-shrink: 1;
+        max-width: 48vw;
+        flex-grow: 1;
+        min-width: 0;
+    }
+
+    .Detalle {
+        max-height: calc(94vh - var(--alto-header));
+        overflow-y: auto;
+        flex-basis: 50%;
+        max-width: 48vw;
+        flex-shrink: 1;
+        flex-grow: 1;
+        min-width: 0;
+        border-left: 1px solid var(--gris-2);
+        padding-left: 1rem;
+    }
+
+    .maestro-botones,
+    .botones {
+        display: flex;
+        margin-top: 1rem;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        justify-content: flex-end;
+    }
+
+
+    .maestro-botones button {
+        font-size: 1rem;
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+    maestro-detalle {
+        flex-direction: column;
+    }
+
+    .Maestro,
+    .Detalle {
+        flex-basis: 100%;
+        max-width: 98vw !important;
+        border-left: none;
+        padding-left: none;
+    }
+}

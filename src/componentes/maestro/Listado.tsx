@@ -8,7 +8,6 @@ import {
   Paginacion,
   RespuestaLista,
 } from "../../contextos/comun/diseño.ts";
-import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
@@ -44,6 +43,7 @@ export type MaestroProps<T extends Entidad> = {
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
   tamañoPagina?: number;
+  modo?: Modo;
   cargar: (
     filtro: Filtro,
     orden: Orden,
@@ -61,15 +61,17 @@ export const Listado = <T extends Entidad>({
   setSeleccionada,
   tamañoPagina = 10,
   cargar,
+  modo,
 }: MaestroProps<T>) => {
-  const modoInicial: Modo =
-    metaTabla && tarjeta
-      ? "tabla"
-      : metaTabla
-      ? "tabla"
-      : tarjeta
-      ? "tarjetas"
-      : "tabla";
+  // const modoInicial: Modo =
+  //   modoProp ||
+  //   (metaTabla && tarjeta
+  //     ? "tabla"
+  //     : metaTabla
+  //     ? "tabla"
+  //     : tarjeta
+  //     ? "tarjetas"
+  //     : "tabla");
 
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
@@ -78,7 +80,7 @@ export const Listado = <T extends Entidad>({
     criteria.paginacion || { limite: tamañoPagina, pagina: 1 }
   );
   const [totalRegistros, setTotalRegistros] = useState(0);
-  const [modo, setModo] = useState<Modo>(modoInicial);
+  // const [modo, setModo] = useState<Modo>(modoInicial);
   const { setError } = useContext(ContextoError);
 
   useEffect(() => {
@@ -181,7 +183,7 @@ export const Listado = <T extends Entidad>({
 
   return (
     <div className="Listado">
-      {tarjeta && metaTabla && (
+      {/* {tarjeta && metaTabla && (
         <div className="cambio-modo">
           <span
             className="cambio-modo-icono"
@@ -192,7 +194,7 @@ export const Listado = <T extends Entidad>({
             <QIcono nombre={"lista"} tamaño="sm" />
           </span>
         </div>
-      )}
+      )} */}
       <MaestroFiltros
         campos={obtenerCampos(entidades[0])}
         filtro={filtro}

@@ -77,10 +77,13 @@ export const MaestroConDetalleCliente = () => {
     // },
   ].filter(Boolean);
 
+  const modo = "tabla";
+
   return (
     <div className="Cliente">
       <MaestroDetalleResponsive<Cliente>
         seleccionada={clientes.seleccionada}
+        modo={modo}
         Maestro={
           <>
             <h2>Clientes</h2>
@@ -89,6 +92,7 @@ export const MaestroConDetalleCliente = () => {
             </div>
             <Listado
               metaTabla={metaTablaCliente}
+              modo={modo}
               tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
               entidades={clientes.lista}
               setEntidades={clientes.setLista}
