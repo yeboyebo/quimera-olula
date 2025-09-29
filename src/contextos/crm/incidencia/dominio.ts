@@ -1,3 +1,4 @@
+import { MetaTabla } from "../../../componentes/atomos/qtabla.tsx";
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { Incidencia, NuevaIncidencia } from "./diseño.ts";
 
@@ -49,38 +50,10 @@ export const metaNuevaIncidencia: MetaModelo<NuevaIncidencia> = {
     },
 };
 
-// export type NuevaAccion = {
-//     fecha: string;
-//     descripcion: string;
-//     tipo: string;
-//     estado: "Pendiente" | "En Progreso" | "Completada" | "Cancelada";
-//     contacto_id?: string;
-//     cliente_id?: string;
-//     incidencia_id: string;
-//     usuario_id?: string;
-// };
-
-// export const nuevaAccionVacia: NuevaAccion = {
-//     fecha: "",
-//     descripcion: "",
-//     tipo: "Tarea",
-//     estado: "Pendiente",
-//     contacto_id: "",
-//     cliente_id: "",
-//     incidencia_id: "",
-//     usuario_id: "",
-// };
-
-// export const metaNuevaAccion: MetaModelo<NuevaAccion> = {
-//     campos: {
-//         fecha: { requerido: true, tipo: "fecha" },
-//         descripcion: { requerido: true, validacion: (accion: NuevaAccion) => stringNoVacio(accion.descripcion) },
-//         tipo: { requerido: true },
-//         estado: { requerido: true },
-//         contacto_id: { requerido: false },
-//         cliente_id: { requerido: false },
-//         incidencia_id: { requerido: true, bloqueado: true },
-//         usuario_id: { requerido: false }
-//     },
-// };
-
+export const metaTablaIncidencia: MetaTabla<Incidencia> = [
+    { id: "id", cabecera: "Código" },
+    { id: "descripcion", cabecera: "Descripcion" },
+    { id: "nombre", cabecera: "Nombre" },
+    { id: "estado", cabecera: "Estado" },
+    { id: "prioridad", cabecera: "Prioridad" },
+];

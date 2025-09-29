@@ -137,7 +137,7 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
       />
 
       <BajaAccion
-        emitir={emitir}
+        publicar={emitir}
         activo={estado === "Borrando"}
         idAccion={acciones.idActivo || undefined}
       />

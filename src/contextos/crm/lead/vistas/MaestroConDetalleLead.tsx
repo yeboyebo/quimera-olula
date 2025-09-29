@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
+import { ListaSeleccionable } from "../../../comun/diseño.ts";
+import {
+  cambiarItem,
+  cargar,
+  getSeleccionada,
+  incluirItem,
+  listaSeleccionableVacia,
+  quitarItem,
+  seleccionarItem,
+} from "../../../comun/entidad.ts";
+import { pipe } from "../../../comun/funcional.ts";
+import {
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "../../../comun/useMaquina.ts";
 import { Lead } from "../diseño.ts";
 import { getLeads } from "../infraestructura.ts";
 import { AltaLead } from "./AltaLead.tsx";
@@ -20,70 +33,104 @@ const metaTablaLead: MetaTabla<Lead> = [
   { id: "fuente_id", cabecera: "Fuente" },
 ];
 
-type Estado = "lista" | "alta";
+type Estado = "inactivo" | "creando";
 
-export const MaestroConDetalleLead = () => {
-  const [estado, setEstado] = useState<Estado>("lista");
-  const leads = useLista<Lead>([]);
+type Contexto = {
+  leads: ListaSeleccionable<Lead>;
+};
 
-  const maquina: Maquina<Estado> = {
-    alta: {
-      LEAD_CREADO: (payload: unknown) => {
-        const lead = payload as Lead;
-        leads.añadir(lead);
-        return "lista";
+const setLeads =
+  (aplicable: (leads: ListaSeleccionable<Lead>) => ListaSeleccionable<Lead>) =>
+  (maquina: Maquina3<Estado, Contexto>) => {
+    return {
+      ...maquina,
+      contexto: {
+        ...maquina.contexto,
+        leads: aplicable(maquina.contexto.leads),
       },
-      ALTA_CANCELADA: "lista",
-    },
-    lista: {
-      ALTA_INICIADA: "alta",
-      LEAD_CAMBIADO: (payload: unknown) => {
-        const lead = payload as Lead;
-        leads.modificar(lead);
-      },
-      LEAD_BORRADO: (payload: unknown) => {
-        const lead = payload as Lead;
-        leads.eliminar(lead);
-      },
-      CANCELAR_SELECCION: () => {
-        leads.limpiarSeleccion();
-      },
-    },
+    };
   };
 
-  const emitir = useMaquina(maquina, estado, setEstado);
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "inactivo",
+    contexto: {
+      leads: listaSeleccionableVacia<Lead>(),
+    },
+  },
+  estados: {
+    inactivo: {
+      crear: "creando",
+      lead_cambiado: ({ maquina, payload }) =>
+        pipe(maquina, setLeads(cambiarItem(payload as Lead))),
+      lead_seleccionado: ({ maquina, payload }) =>
+        pipe(maquina, setLeads(seleccionarItem(payload as Lead))),
+      lead_borrado: ({ maquina }) => {
+        const { leads } = maquina.contexto;
+        if (!leads.idActivo) {
+          return maquina;
+        }
+        return pipe(maquina, setLeads(quitarItem(leads.idActivo)));
+      },
+      leads_cargados: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("inactivo" as Estado),
+          setLeads(cargar(payload as Lead[]))
+        ),
+    },
+    creando: {
+      lead_creado: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("inactivo" as Estado),
+          setLeads(incluirItem(payload as Lead, {}))
+        ),
+      creacion_cancelada: "inactivo",
+    },
+  },
+};
+
+export const MaestroConDetalleLead = () => {
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
+  const { leads } = contexto;
+
+  const setEntidades = useCallback(
+    (payload: Lead[]) => emitir("leads_cargados", payload),
+    [emitir]
+  );
+  const setSeleccionada = useCallback(
+    (payload: Lead) => emitir("lead_seleccionado", payload),
+    [emitir]
+  );
+
+  const seleccionada = getSeleccionada(leads);
 
   return (
     <div className="Lead">
       <MaestroDetalleResponsive<Lead>
-        seleccionada={leads.seleccionada}
+        seleccionada={seleccionada}
         Maestro={
           <>
             <h2>Leads</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
+              <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaLead}
               entidades={leads.lista}
-              setEntidades={leads.setLista}
-              seleccionada={leads.seleccionada}
-              setSeleccionada={leads.seleccionar}
+              setEntidades={setEntidades}
+              seleccionada={seleccionada}
+              setSeleccionada={setSeleccionada}
               cargar={getLeads}
             />
           </>
         }
-        Detalle={
-          <DetalleLead leadInicial={leads.seleccionada} emitir={emitir} />
-        }
+        Detalle={<DetalleLead leadInicial={seleccionada} publicar={emitir} />}
       />
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      >
-        <AltaLead emitir={emitir} />
-      </QModal>
+      <AltaLead emitir={emitir} activo={estado === "creando"} />
     </div>
   );
 };

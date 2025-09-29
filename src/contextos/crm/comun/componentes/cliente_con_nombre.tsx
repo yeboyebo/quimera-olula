@@ -12,7 +12,8 @@ interface ClienteProps {
   valor: string;
   nombre?: string;
   label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  deshabilitado?: boolean;
+  onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 interface ClienteConNombreProps {
@@ -29,6 +30,7 @@ export const Cliente = ({
   valor,
   nombre = "cliente_id",
   label = "Cliente",
+  deshabilitado = false,
   onChange,
   ...props
 }: ClienteProps) => {
@@ -45,6 +47,11 @@ export const Cliente = ({
       criteria.paginacion as Paginacion
     );
 
+    if (!Array.isArray(datos)) {
+      console.error("Los clientes no son un array:", datos);
+      return [];
+    }
+
     return datos.map((cliente) => ({
       valor: cliente.id,
       descripcion: cliente.nombre,
@@ -59,6 +66,7 @@ export const Cliente = ({
       valor={valor}
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
       {...props}
     />
   );

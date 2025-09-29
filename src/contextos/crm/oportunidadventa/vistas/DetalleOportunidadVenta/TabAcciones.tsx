@@ -8,7 +8,7 @@ import {
   incluirItem,
   listaSeleccionableVacia,
   quitarItem,
-  seleccionarItem
+  seleccionarItem,
 } from "../../../../comun/entidad.ts";
 import { pipe } from "../../../../comun/funcional.ts";
 import {
@@ -140,7 +140,7 @@ export const TabAcciones = ({
       />
 
       <BajaAccion
-        emitir={emitir}
+        publicar={emitir}
         activo={estado === "Borrando"}
         idAccion={acciones.idActivo || undefined}
       />

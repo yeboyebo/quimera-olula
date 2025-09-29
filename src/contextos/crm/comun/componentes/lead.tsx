@@ -23,7 +23,7 @@ export const LeadSelector = ({
     if (valor.length < 3) return [];
 
     const criteria = {
-      filtro: ["id", "~", valor],
+      filtro: ["nombre", "~", valor],
       orden: ["id"],
       paginacion: { pagina: 1, limite: 10 },
     };

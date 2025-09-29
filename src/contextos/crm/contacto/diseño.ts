@@ -5,11 +5,15 @@ export interface Contacto extends Entidad {
   id: string;
   nombre: string;
   email: string;
+  nif?: string
+  telefono1?: string;
 };
 
 export type NuevoContacto = {
   nombre: string;
   email: string;
+  nif?: string;
+  telefono1?: string;
 };
 
 export type GetContacto = (id: string) => Promise<Contacto>;

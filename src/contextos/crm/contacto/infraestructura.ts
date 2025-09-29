@@ -41,12 +41,7 @@ export const getContactos = async (
 
 
 export const patchContacto = async (id: string, contacto: Contacto) =>
-  await RestAPI.patch(`${baseUrlContactos}/${id}`, {
-    cambios: {
-      nombre: contacto.nombre,
-      email: contacto.email,
-    },
-  }, "Error al guardar contacto");
+  await RestAPI.patch(`${baseUrlContactos}/${id}`, contacto, "Error al guardar contacto");
 
 export const postContacto = async (contacto: Partial<Contacto>): Promise<string> => {
   return await RestAPI.post(baseUrlContactos, contactoToAPI(contacto as Contacto), "Error al guardar contacto").then(

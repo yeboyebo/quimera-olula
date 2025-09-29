@@ -4,14 +4,14 @@ import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.t
 import { criteriaQuery, criteriaQueryUrl } from "../../comun/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
-import { Lead, LeadAPI } from "./diseño.ts";
+import { Lead, LeadAPI, LeadToAPI } from "./diseño.ts";
 
 export const leadFromAPI = (l: LeadAPI): Lead => ({
     ...l,
     direccion: l.direccion?.direccion ?? "",
     cod_postal: l.direccion?.cod_postal ?? null,
     ciudad: l.direccion?.ciudad ?? "",
-    provincia_id: l.direccion?.provincia_id ?? "",
+    provincia_id: l.direccion?.provincia_id != null ? String(l.direccion.provincia_id) : null,
     provincia: l.direccion?.provincia ?? "",
     pais_id: l.direccion?.pais_id ?? "",
     pais: l.direccion?.pais ?? null,
@@ -19,7 +19,7 @@ export const leadFromAPI = (l: LeadAPI): Lead => ({
     telefono_2: l.direccion?.telefono_2 ?? "",
 });
 
-export const leadToAPI = (l: Lead): LeadAPI => {
+export const leadToAPI = (l: Lead): LeadToAPI => {
     const {
         direccion,
         cod_postal,
@@ -29,22 +29,24 @@ export const leadToAPI = (l: Lead): LeadAPI => {
         pais_id,
         pais,
         telefono_1,
-        telefono_2,
         ...rest
     } = l;
     return {
         ...rest,
         proveedor_id: (rest.proveedor_id ?? "") as string,
         direccion: {
-            direccion: direccion ?? "",
+            nombre_via: direccion ?? "",
             cod_postal: cod_postal ?? "",
             ciudad: ciudad ?? "",
-            provincia_id: provincia_id ?? "",
+            provincia_id: provincia_id ? String(provincia_id) : null,
             provincia: provincia ?? "",
             pais_id: pais_id ?? "",
             pais: pais ?? "",
-            telefono_1: telefono_1 ?? "",
-            telefono_2: telefono_2 ?? "",
+            telefono: telefono_1 ?? "",
+            tipo_via: "",
+            numero: "",
+            otros: "",
+            apartado: "",
         },
     };
 };
@@ -73,11 +75,7 @@ export const postLead = async (lead: Partial<Lead>): Promise<string> => {
 
 export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> => {
     const apiLead = leadToAPI(lead as Lead);
-    // Convierte nulls a ""
-    const leadSinNulls = Object.fromEntries(
-        Object.entries(apiLead).map(([k, v]) => [k, v === null ? "" : v])
-    );
-    await RestAPI.patch(`${ApiUrls.CRM.LEAD}/${id}`, leadSinNulls, "Error al guardar lead");
+    await RestAPI.patch(`${ApiUrls.CRM.LEAD}/${id}`, apiLead, "Error al guardar lead");
 };
 
 export const deleteLead = async (id: string): Promise<void> =>

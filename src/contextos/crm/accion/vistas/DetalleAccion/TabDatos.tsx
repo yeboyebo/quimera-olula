@@ -1,4 +1,3 @@
-import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
 import { HookModelo } from "../../../../comun/useModelo.ts";
 import { Cliente } from "../../../../ventas/comun/componentes/cliente.tsx";
 import { ContactoSelector } from "../../../../ventas/comun/componentes/contacto.tsx";
@@ -12,7 +11,7 @@ export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
   return (
     <div className="TabDatos">
       <quimera-formulario>
-        <QInput label="Responsable" {...uiProps("usuario_id")} deshabilitado />
+        {/* <QInput label="Responsable" {...uiProps("responsable_id")} deshabilitado /> */}
         <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
         <ContactoSelector {...uiProps("contacto_id", "nombre_contacto")} />
         <OportunidadVenta

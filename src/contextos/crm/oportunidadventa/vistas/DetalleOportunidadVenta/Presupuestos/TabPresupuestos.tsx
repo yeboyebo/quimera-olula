@@ -7,8 +7,12 @@ import { Presupuesto } from "../../../../../../contextos/ventas/presupuesto/dise
 import { useLista } from "../../../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../../../comun/useMaquina.ts";
 import { HookModelo } from "../../../../../comun/useModelo.ts";
+import { getPresupuesto } from "../../../../../ventas/presupuesto/infraestructura.ts";
 import { OportunidadVenta } from "../../../diseño.ts";
-import { getPresupuestosOportunidad } from "../../../infraestructura.ts";
+import {
+  crearPresupuestoOportunidad,
+  getPresupuestosOportunidad,
+} from "../../../infraestructura.ts";
 import { TabPresupuestosAcciones } from "./TabPresupuestosAcciones.tsx";
 // import { TabPresupuestosAcciones } from "./TabPresupuestosAcciones.tsx";
 
@@ -48,12 +52,12 @@ export const TabPresupuestos = ({
     },
     alta: {
       CREAR_PRESUPUESTO: async () => {
-        // const nuevoPresupuestoId = await crearPresupuestoOportunidad(
-        //   oportunidad.modelo.id,
-        //   oportunidad.modelo.cliente_id || ""
-        // );
-        // const nuevoPresupuesto = await getPresupuesto(nuevoPresupuestoId);
-        // presupuestos.añadir(nuevoPresupuesto);
+        const nuevoPresupuestoId = await crearPresupuestoOportunidad(
+          oportunidad.modelo.id,
+          oportunidad.modelo.cliente_id || ""
+        );
+        const nuevoPresupuesto = await getPresupuesto(nuevoPresupuestoId);
+        presupuestos.añadir(nuevoPresupuesto);
         return "lista" as Estado;
       },
       ALTA_CANCELADA: "lista",

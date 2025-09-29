@@ -17,6 +17,7 @@ const iconos: Record<string, string> = {
   candado: "lock-alt",
   candado_abierto: "lock-open-alt",
   editar: "edit",
+  editar_2: "edit-alt",
   eliminar: "trash",
   guardar: "save",
   copiar: "copy",
@@ -34,6 +35,8 @@ const iconos: Record<string, string> = {
   minus: "minus",
   lista: "list-ul",
   tarjeta: "credit-card",
+  ver: "show",
+  crear: "plus",
   tabla: "table",
 };
 

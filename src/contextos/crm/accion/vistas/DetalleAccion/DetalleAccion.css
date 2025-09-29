@@ -7,4 +7,12 @@
     quimera-select[nombre="tipo"] {
         grid-column: span 6;
     }
+
+    quimera-input[nombre="descripcion"] {
+        grid-column: 1 / span 9;
+    }
+
+    quimera-input[nombre="fecha"] {
+        grid-column: span 3;
+    }
 }

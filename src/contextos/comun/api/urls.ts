@@ -17,6 +17,7 @@ class ApiUrls {
     static readonly CACHE_COMUN = `/cache/comun`;
     static readonly COMUN_DIVISA = `/comun/divisa`;
     static readonly COMUN_EJERCICIO_FACTURACION = `/comun/ejercicio_facturacion`;
+    static readonly COMUN_PAIS = `/comun/pais`;
 
     // Almacén
     static readonly ALMACEN_STOCK = `/almacen/stock`;
