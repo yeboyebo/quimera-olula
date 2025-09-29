@@ -1,0 +1,128 @@
+import { useContext } from "react";
+import { useParams } from "react-router";
+import { QBoton } from "../../../../../../src/componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../../../src/componentes/atomos/qinput.tsx";
+import { Detalle } from "../../../../../../src/componentes/detalle/Detalle.tsx";
+import {
+  Tab,
+  Tabs,
+} from "../../../../../../src/componentes/detalle/tabs/Tabs.tsx";
+import { ContextoError } from "../../../../../../src/contextos/comun/contexto.ts";
+import {
+  EmitirEvento,
+  Entidad,
+} from "../../../../../../src/contextos/comun/diseño.ts";
+import {
+  ConfigMaquina4,
+  useMaquina4,
+} from "../../../../../../src/contextos/comun/useMaquina.ts";
+import { useModelo } from "../../../../../../src/contextos/comun/useModelo.ts";
+import { Usuario } from "../../diseño";
+import { metaUsuario, usuarioVacio } from "../../dominio";
+import { getUsuario, patchUsuario } from "../../infraestructura";
+import { BorrarUsuario } from "./BorrarUsuario";
+
+type Estado = "editando" | "borrando";
+type Contexto = Record<string, unknown>;
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "editando",
+    contexto: {},
+  },
+  estados: {
+    editando: {
+      borrar: "borrando",
+      usuario_guardado: ({ publicar }) => publicar("usuario_cambiado"),
+      cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
+    },
+    borrando: {
+      borrado_cancelado: "editando",
+      usuario_borrado: ({ publicar }) => publicar("usuario_borrado"),
+    },
+  },
+};
+
+const titulo = (usuario: Entidad) => usuario.nombre as string;
+
+export const DetalleUsuario = ({
+  usuarioInicial = null,
+  emitir = () => {},
+}: {
+  usuarioInicial?: Usuario | null;
+  emitir?: EmitirEvento;
+}) => {
+  const params = useParams();
+  const usuarioId = usuarioInicial?.id ?? params.id;
+  const { intentar } = useContext(ContextoError);
+
+  const usuario = useModelo(metaUsuario, usuarioVacio);
+  const { modelo, uiProps, init, modificado, valido } = usuario;
+
+  const [emitirUsuario, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar: emitir,
+  });
+
+  const guardar = async () => {
+    await intentar(() => patchUsuario(modelo.id, modelo));
+    const usuario_guardado = await getUsuario(modelo.id);
+    init(usuario_guardado);
+    emitirUsuario("usuario_guardado", usuario_guardado);
+  };
+
+  return (
+    <Detalle
+      id={usuarioId}
+      obtenerTitulo={titulo}
+      setEntidad={(m) => init(m)}
+      entidad={modelo}
+      cargar={getUsuario}
+      cerrarDetalle={() => emitirUsuario("cancelar_seleccion")}
+    >
+      {!!usuarioId && (
+        <div className="DetalleUsuario">
+          <div className="maestro-botones ">
+            <QBoton onClick={() => emitirUsuario("borrar")}>Borrar</QBoton>
+          </div>
+          <Tabs
+            children={[
+              <Tab
+                key="tab-1"
+                label="Datos"
+                children={
+                  <>
+                    <quimera-formulario>
+                      <QInput label="Nombre" {...uiProps("nombre")} />
+                    </quimera-formulario>
+                  </>
+                }
+              />,
+              //   <Tab
+              //     key="tab-2"
+              //     label="Observaciones"
+              //     children={<TabObservaciones oportunidad={oportunidad} />}
+              //   />,
+            ]}
+          ></Tabs>
+
+          {modificado && (
+            <div className="botones maestro-botones">
+              <QBoton onClick={guardar} deshabilitado={!valido}>
+                Guardar
+              </QBoton>
+              <QBoton tipo="reset" variante="texto" onClick={() => init()}>
+                Cancelar
+              </QBoton>
+            </div>
+          )}
+          <BorrarUsuario
+            emitir={emitirUsuario}
+            activo={estado === "borrando"}
+            usuario={modelo}
+          />
+        </div>
+      )}
+    </Detalle>
+  );
+};

@@ -1,4 +1,4 @@
-import { MetaModelo } from "../comun/dominio.ts";
+import { MetaModelo } from "../../comun/dominio.ts";
 import { CategoriaReglas, Grupo, Permiso, Regla, ReglaAnidada, ReglaConValor } from "./diseño.ts";
 
 

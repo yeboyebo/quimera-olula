@@ -1,6 +1,6 @@
 import { QAutocompletar } from "../../../componentes/moleculas/qautocompletar.tsx";
+import { getUsuarios } from "../../auth/usuario/infraestructura.ts";
 import { Filtro } from "../../comun/diseño.ts";
-import { getUsuarios } from "../../usuarios/usuario/infraestructura.ts";
 
 interface UsuarioProps {
   descripcion?: string;

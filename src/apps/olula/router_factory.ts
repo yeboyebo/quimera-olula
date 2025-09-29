@@ -1,10 +1,10 @@
 import { Historias } from '@quimera/comp/historias/historias.tsx';
-import { MaestroConDetalleGruposReglas } from '@quimera/ctx/administracion/vistas/MaestroConDetalleGruposReglas.tsx';
 import { RouterFactoryAlmacenOlula } from '@quimera/ctx/almacen/router_factory.ts';
+import { MaestroConDetalleGruposReglas } from '@quimera/ctx/auth/grupos/vistas/MaestroConDetalleGruposReglas.tsx';
+import { Login } from '@quimera/ctx/auth/login/vistas/Login';
+import { Logout } from '@quimera/ctx/auth/usuario/vistas/Logout';
+import { Perfil } from '@quimera/ctx/auth/usuario/vistas/Perfil';
 import { RouterFactoryCrmOlula } from '@quimera/ctx/crm/router_factory.ts';
-import { Login } from '@quimera/ctx/usuarios/login/vistas/Login.tsx';
-import { Logout } from '@quimera/ctx/usuarios/usuario/vistas/Logout.tsx';
-import { Perfil } from '@quimera/ctx/usuarios/usuario/vistas/Perfil.tsx';
 import { RouterFactoryVentasOlula } from '@quimera/ctx/ventas/router_factory.ts';
 import { Indice } from '@quimera/lib/Indice.tsx';
 

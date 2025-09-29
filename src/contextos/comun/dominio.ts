@@ -1,5 +1,5 @@
 import { Permiso } from "../administracion/diseño.ts";
-import { permisosGrupo } from "../usuarios/login/infraestructura.ts";
+import { permisosGrupo } from "../auth/login/infraestructura.ts";
 import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
