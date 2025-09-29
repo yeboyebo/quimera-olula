@@ -4,7 +4,7 @@ import { FactoryVentasOlula } from '@quimera/ctx/ventas/factory.ts';
 
 
 export class FactoryOlula {
-    Inicio = { menu: { nombre: "Inicio", url: "/", icono: "inicio" } };
+    Inicio = { menu: { "Inicio": { url: "/", icono: "inicio" } } };
     Ventas = FactoryVentasOlula;
     Almacen = FactoryAlmacenOlula;
     Crm = FactoryCrmOlula;

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { QBoton } from "../atomos/qboton.tsx";
-import { Plantilla } from "../plantilla/Plantilla.tsx";
 import {
   AtributosHistoria,
   ComponenteHistoria,
@@ -157,16 +156,14 @@ export const Historias = () => {
   };
 
   return (
-    <Plantilla>
-      <quimera-historias>
-        <ul>
-          <a href="#" onClick={toggleTema}>
-            Cambiar tema a {tema === "light" ? "oscuro" : "claro"}
-          </a>
-          {renderMenu(setSeleccionada)}
-        </ul>
-        {seleccionada ? renderComponente(seleccionada, tema) : null}
-      </quimera-historias>
-    </Plantilla>
+    <quimera-historias>
+      <ul>
+        <a href="#" onClick={toggleTema}>
+          Cambiar tema a {tema === "light" ? "oscuro" : "claro"}
+        </a>
+        {renderMenu(setSeleccionada)}
+      </ul>
+      {seleccionada ? renderComponente(seleccionada, tema) : null}
+    </quimera-historias>
   );
 };
