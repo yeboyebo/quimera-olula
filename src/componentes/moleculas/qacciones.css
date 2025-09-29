@@ -1,7 +1,5 @@
 quimera-acciones {
     display: flex;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
     gap: 1rem;
     justify-content: flex-end;
 
@@ -11,8 +9,16 @@ quimera-acciones {
     }
 
     .acciones {
+        margin: var(--espaciado-xs) 0px;
+
         quimera-boton {
             margin: 0 5px;
+
+            button {
+                font-size: 0.8rem;
+                cursor: pointer;
+                padding: var(--espaciado-s);
+            }
         }
     }
 

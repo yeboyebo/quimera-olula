@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import { Entidad, Filtro } from "../../../contextos/comun/diseño.ts";
 import { QBoton } from "../../atomos/qboton.tsx";
+import { QIcono } from "../../atomos/qicono.tsx";
 import {
   CampoFormularioGenerico,
   OpcionCampo,
@@ -61,8 +62,9 @@ export const MaestroFiltros = ({
     const etiqueta = camposFormateados.find((campo) => campo[0] === clave)?.[1];
     return (
       <div key={clave} onClick={() => borrarFiltro(clave)}>
-        <span>{etiqueta}:</span>
-        <span>{valor}</span>
+        <span className="tag">{etiqueta}:</span>
+        <span className="valor">{valor}</span>
+        <QIcono nombre="cerrar" tamaño="xs" />
       </div>
     );
   });
@@ -79,6 +81,21 @@ export const MaestroFiltros = ({
     cambiarFiltro(campo, valor, "~");
   };
 
+  const renderResetearFiltro = () => {
+    if (filtro.length === 0) return null;
+
+    return (
+      <QBoton
+        tipo="reset"
+        variante="texto"
+        tamaño="pequeño"
+        onClick={resetearFiltro}
+      >
+        Limpiar
+      </QBoton>
+    );
+  };
+
   return (
     <div className="MaestroFiltros">
       <form onSubmit={onBuscar} onReset={resetearFiltro}>
@@ -87,11 +104,11 @@ export const MaestroFiltros = ({
         <QBoton tipo="submit" tamaño="pequeño">
           Buscar
         </QBoton>
-        <QBoton tipo="reset" variante="texto" tamaño="pequeño">
-          Limpiar
-        </QBoton>
       </form>
-      <etiquetas-filtro>{filtrosActuales}</etiquetas-filtro>
+      <etiquetas-filtro>
+        {filtrosActuales}
+        {renderResetearFiltro()}
+      </etiquetas-filtro>
     </div>
   );
 };

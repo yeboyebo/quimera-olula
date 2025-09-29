@@ -9,7 +9,7 @@ import { GrupoIvaNegocio } from "../../../comun/componentes/grupo_iva_negocio.ts
 import { Presupuesto } from "../../diseño.ts";
 import "./TabDatos.css";
 
-interface TabDatosProps {
+export interface TabDatosProps {
   presupuesto: HookModelo<Presupuesto>;
 }
 

@@ -189,7 +189,7 @@ export const Listado = <T extends Entidad>({
               setModo((modo) => (modo === "tabla" ? "tarjetas" : "tabla"))
             }
           >
-            <QIcono nombre={"lista"} tamaño="sm" />
+            <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
           </span>
         </div>
       )}

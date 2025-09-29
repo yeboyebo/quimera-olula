@@ -37,6 +37,7 @@ const iconos: Record<string, string> = {
   tarjeta: "credit-card",
   ver: "show",
   crear: "plus",
+  tabla: "table",
 };
 
 export const QIcono = ({

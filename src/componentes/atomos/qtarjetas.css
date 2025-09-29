@@ -5,7 +5,12 @@ quimera-tarjetas {
 
     width: 100%;
     display: block;
-    margin-top: 100px;
+
+    .lista-contenedor-scroll {
+        overflow-y: scroll;
+        max-height: 64vh;
+        width: 100%;
+    }
 }
 
 quimera-tarjeta {
@@ -24,6 +29,7 @@ quimera-tarjeta {
 quimera-tarjeta.seleccionada {
     border-color: var(--color-primario);
     box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.10);
+    background: var(--gris-0);
 }
 
 quimera-tarjetas .cargando,

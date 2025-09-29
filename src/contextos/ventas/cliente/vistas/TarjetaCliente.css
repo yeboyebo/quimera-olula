@@ -1,8 +1,14 @@
 .tarjeta-cliente {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.5rem 0;
+    flex-direction: row;
+    gap: var(--espaciado-l);
+    padding: var(--espaciado-s) 0;
+
+    .columna {
+        width: max-content;
+        display: block;
+        float: left;
+    }
 }
 
 .tarjeta-titulo {

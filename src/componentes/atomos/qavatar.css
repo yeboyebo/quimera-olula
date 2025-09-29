@@ -1,0 +1,27 @@
+.q-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--color-primario-claro);
+    color: #424242;
+    font-weight: 500;
+}
+
+.q-avatar.sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+}
+
+.q-avatar.md {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+}
+
+.q-avatar.lg {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+}
