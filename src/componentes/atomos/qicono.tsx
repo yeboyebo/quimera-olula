@@ -25,21 +25,34 @@ const iconos: Record<string, string> = {
   cerrar_sesion: "arrow-out-up-square-half",
   verdadero: "check",
   falso: "x",
-  atras: 'chevron-left',
-  adelante: 'chevron-right',
-  menu: 'menu',
-  calendario_vacio: 'calendar-alt',
+  atras: "chevron-left",
+  adelante: "chevron-right",
+  menu: "menu",
+  calendario_vacio: "calendar-alt",
   check: "check",
   x_circle: "x-circle",
   minus: "minus",
   lista: "list-ul",
   tarjeta: "credit-card",
+  tabla: "table",
 };
 
-export const QIcono = ({ nombre, tamaño = "md", color, style, props }: QIconoProps) => {
+export const QIcono = ({
+  nombre,
+  tamaño = "md",
+  color,
+  style,
+  props,
+}: QIconoProps) => {
   return (
     <quimera-icono>
-      <box-icon name={iconos[nombre]} size={tamaño} color={color} style={style} {...props}></box-icon>
+      <box-icon
+        name={iconos[nombre]}
+        size={tamaño}
+        color={color}
+        style={style}
+        {...props}
+      ></box-icon>
     </quimera-icono>
   );
 };

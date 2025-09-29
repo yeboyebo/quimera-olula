@@ -1,10 +1,20 @@
 .MaestroFiltros {
     float: right;
+    max-width: 50%;
 
     form {
         display: flex;
         gap: 0.5rem;
         align-items: center;
+        justify-content: flex-end;
+
+        quimera-select {
+            max-width: 60%;
+        }
+
+        quimera-input {
+            max-width: 60%;
+        }
     }
 }
 
@@ -17,7 +27,7 @@ etiquetas-filtro {
     margin-top: var(--espaciado-s);
 
     &>div {
-        min-width: 125px;
+        min-width: 100px;
         display: flex;
         justify-content: space-between;
         color: var(--color-fondo);
@@ -26,5 +36,35 @@ etiquetas-filtro {
         padding: var(--espaciado-xxs) var(--espaciado-xs);
         background-color: var(--color-primario);
         font-size: 0.9rem;
+        position: relative;
+        min-height: 30px;
+
+        &:hover {
+            background-color: var(--color-primario-hover);
+            cursor: pointer;
+        }
+
+        .tag {
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            font-size: 0.6rem;
+        }
+
+        .valor {
+            position: relative;
+            top: 10px;
+            left: 0px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        quimera-icono {
+            position: absolute;
+            right: 2px;
+            top: -2px;
+            fill: #fff;
+        }
+
     }
 }
