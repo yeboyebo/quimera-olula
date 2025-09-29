@@ -55,7 +55,6 @@ export const MoleculaContacto = ({
   const { uiProps, init, modelo, valido, modificado } = contacto;
 
   const emitir_contacto = (evento: string, payload: unknown) => {
-    console.log("Emitir contacto", evento, payload);
     if (evento === "contacto_creado") {
       emitir("contacto_creado");
       onChange((payload as Contacto).id);

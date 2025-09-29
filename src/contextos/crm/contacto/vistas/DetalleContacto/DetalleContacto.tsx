@@ -70,7 +70,6 @@ export const DetalleContacto = ({
   const onRecargarContacto = async () => {
     const contactoRecargado = await getContacto(modelo.id);
     init(contactoRecargado);
-    console.log("contactoRecargado", contactoRecargado);
     publicar("contacto_cambiado", contactoRecargado);
   };
 
