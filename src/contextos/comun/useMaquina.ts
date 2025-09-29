@@ -62,7 +62,7 @@ export function useMaquina<Estado extends string>(
 //     return [emitir, estado, setEstado];
 // }
 
-type ContextoBase = Record<string, unknown>
+export type ContextoBase = Record<string, unknown>
 type ParamsOnEvento<E extends string, C extends ContextoBase> = {
     maquina: Maquina3<E, C>;
     payload?: unknown;
