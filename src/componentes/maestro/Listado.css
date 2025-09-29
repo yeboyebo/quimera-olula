@@ -1,16 +1,14 @@
 .Listado {
     .cambio-modo {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 0.5rem;
-
-
+        float: right;
+        margin-left: var(--espaciado-s);
     }
 
     .cambio-modo-icono {
         cursor: pointer;
         display: inline-flex;
         align-items: center;
+        fill: var(--color-primario);
     }
 
 }
