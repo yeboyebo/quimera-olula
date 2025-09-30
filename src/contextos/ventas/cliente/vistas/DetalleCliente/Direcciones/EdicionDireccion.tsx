@@ -6,7 +6,6 @@ import { useModelo } from "../../../../../comun/useModelo.ts";
 import { DirCliente } from "../../../diseño.ts";
 import { metaDireccion } from "../../../dominio.ts";
 import { actualizarDireccion } from "../../../infraestructura.ts";
-// import "./TabComercial.css";
 
 export const EdicionDireccion = ({
   clienteId,
@@ -25,7 +24,7 @@ export const EdicionDireccion = ({
 
   const guardar = async () => {
     await actualizarDireccion(clienteId, direccionEditada.modelo);
-    emitir("DIRECCION_ACTUALIZADA", direccionEditada.modelo);
+    emitir("direccion_actualizada", direccionEditada.modelo);
   };
 
   const opciones = [
@@ -65,7 +64,7 @@ export const EdicionDireccion = ({
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("EDICION_CANCELADA")}
+          onClick={() => emitir("edicion_cancelada")}
         >
           Cancelar
         </QBoton>

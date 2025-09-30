@@ -3,32 +3,17 @@ import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QuimeraAcciones } from "../../../../componentes/moleculas/qacciones.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
-import { Entidad } from "../../../../contextos/comun/diseño.ts";
 import { puede } from "../../../comun/dominio.ts";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Cliente } from "../diseño.ts";
+import { metaTablaCliente } from "../dominio.ts";
 import { getClientes } from "../infraestructura.ts";
-import { AltaCliente } from "./AltaCliente.tsx";
+import { AltaCliente } from "./CrearCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 import { TarjetaCliente } from "./TarjetaCliente.tsx";
 
-const metaTablaCliente = [
-  { id: "id", cabecera: "Id" },
-  { id: "nombre", cabecera: "Nombre" },
-  {
-    id: "id_fiscal",
-    cabecera: "Id Fiscal",
-    render: (entidad: Entidad) =>
-      `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}`,
-  },
-  { id: "telefono1", cabecera: "Teléfono" },
-  { id: "email", cabecera: "Email" },
-  { id: "nombre_agente", cabecera: "Nombre del Agente" },
-  { id: "forma_pago", cabecera: "Forma de Pago" },
-  { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
-];
 type Estado = "lista" | "alta";
 export const MaestroConDetalleCliente = () => {
   const [estado, setEstado] = useState<Estado>("lista");
@@ -36,24 +21,24 @@ export const MaestroConDetalleCliente = () => {
 
   const maquina: Maquina<Estado> = {
     alta: {
-      CLIENTE_CREADO: (payload: unknown) => {
+      cliente_creado: (payload: unknown) => {
         const cliente = payload as Cliente;
         clientes.añadir(cliente);
         return "lista";
       },
-      ALTA_CANCELADA: "lista",
+      alta_cancelada: "lista",
     },
     lista: {
-      ALTA_INICIADA: "alta",
-      CLIENTE_CAMBIADO: (payload: unknown) => {
+      alta_iniciada: "alta",
+      cliente_cambiado: (payload: unknown) => {
         const cliente = payload as Cliente;
         clientes.modificar(cliente);
       },
-      CLIENTE_BORRADO: (payload: unknown) => {
+      cliente_borrado: (payload: unknown) => {
         const cliente = payload as Cliente;
         clientes.eliminar(cliente);
       },
-      CANCELAR_SELECCION: () => {
+      cancelar_seleccion: () => {
         clientes.limpiarSeleccion();
       },
     },
@@ -66,15 +51,9 @@ export const MaestroConDetalleCliente = () => {
   const acciones = [
     puedeCrear && {
       texto: "Nuevo",
-      onClick: () => emitir("ALTA_INICIADA"),
+      onClick: () => emitir("alta_iniciada"),
       variante: "borde" as const,
     },
-    // {
-    //   icono: "eliminar",
-    //   texto: "Borrar",
-    //   onClick: () => emitir("BORRADO_SOLICITADO"),
-    //   deshabilitado: true,
-    // },
   ].filter(Boolean);
 
   return (
@@ -108,7 +87,7 @@ export const MaestroConDetalleCliente = () => {
       <QModal
         nombre="modal"
         abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
+        onCerrar={() => emitir("alta_cancelada")}
       >
         <AltaCliente emitir={emitir} />
       </QModal>

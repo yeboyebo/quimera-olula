@@ -24,7 +24,7 @@ export const EdicionCuentaBanco = ({
 
   const guardar = async () => {
     await intentar(() => patchCuentaBanco(clienteId, modelo));
-    emitir("CUENTA_ACTUALIZADA", modelo);
+    emitir("cuenta_actualizada", modelo);
   };
 
   return (
@@ -40,7 +40,7 @@ export const EdicionCuentaBanco = ({
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("EDICION_CANCELADA")}
+          onClick={() => emitir("edicion_cancelada")}
         >
           Cancelar
         </QBoton>

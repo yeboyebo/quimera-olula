@@ -25,7 +25,7 @@ export const AltaCuentaBanco = ({
   const guardar = async () => {
     const id = await postCuentaBanco(clienteId, modelo);
     const cuentaCreada = await getCuentaBanco(clienteId, id);
-    emitir("CUENTA_CREADA", cuentaCreada);
+    emitir("cuenta_creada", cuentaCreada);
   };
 
   return (
@@ -43,7 +43,7 @@ export const AltaCuentaBanco = ({
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("ALTA_CANCELADA")}
+          onClick={() => emitir("alta_cancelada")}
         >
           Cancelar
         </QBoton>

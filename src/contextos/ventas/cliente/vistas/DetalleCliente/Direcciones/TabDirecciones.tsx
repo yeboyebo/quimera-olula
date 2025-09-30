@@ -10,11 +10,11 @@ import {
   getDirecciones,
   setDirFacturacion,
 } from "../../../infraestructura.ts";
-import { AltaDireccion } from "./AltaDireccion.tsx";
+import { AltaDireccion } from "./CrearDireccion.tsx";
 import { EdicionDireccion } from "./EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
 
-type Estado = "lista" | "alta" | "edicion" | "confirmarBorrado";
+type Estado = "lista" | "alta" | "edicion" | "confirmar_borrado";
 
 export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
   const direcciones = useLista<DirCliente>([]);
@@ -37,14 +37,14 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
 
   const maquina: Maquina<Estado> = {
     lista: {
-      ALTA_SOLICITADA: "alta",
-      EDICION_SOLICITADA: "edicion",
-      DIRECCION_SELECCIONADA: (payload: unknown) => {
+      alta_solicitada: "alta",
+      edicion_solicitada: "edicion",
+      direccion_seleccionada: (payload: unknown) => {
         const direccion = payload as DirCliente;
         direcciones.seleccionar(direccion);
       },
-      BORRADO_SOLICITADO: "confirmarBorrado",
-      FACTURACION_SOLICITADA: async () => {
+      borrado_solicitado: "confirmar_borrado",
+      facturacion_solicitada: async () => {
         if (!direcciones.seleccionada) return;
         const idDireccion = direcciones.seleccionada.id;
         if (!idDireccion) return;
@@ -53,22 +53,22 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
       },
     },
     alta: {
-      DIRECCION_CREADA: async (payload: unknown) => {
+      direccion_creada: async (payload: unknown) => {
         const nuevaDireccion = payload as DirCliente;
         direcciones.añadir(nuevaDireccion);
         return "lista" as Estado;
       },
-      ALTA_CANCELADA: "lista",
+      alta_cancelada: "lista",
     },
     edicion: {
-      DIRECCION_ACTUALIZADA: async (payload: unknown) => {
+      direccion_actualizada: async (payload: unknown) => {
         const direccionActualizada = payload as DirCliente;
         direcciones.modificar(direccionActualizada);
         return "lista" as Estado;
       },
-      EDICION_CANCELADA: "lista",
+      edicion_cancelada: "lista",
     },
-    confirmarBorrado: {},
+    confirmar_borrado: {},
   };
 
   const confirmarBorrado = async () => {
@@ -100,7 +100,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
       <QModal
         nombre="edicionDireccion"
         abierto={estado === "edicion"}
-        onCerrar={() => emitir("EDICION_CANCELADA")}
+        onCerrar={() => emitir("edicion_cancelada")}
       >
         {direcciones.seleccionada && (
           <EdicionDireccion
@@ -113,19 +113,14 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
       <QModal
         nombre="altaDireccion"
         abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
-      ></QModal>
-      <QModal
-        nombre="altaDireccion"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
+        onCerrar={() => emitir("alta_cancelada")}
       >
         <h2 className="titulo-modal">Nueva dirección</h2>
         <AltaDireccion clienteId={clienteId} emitir={emitir} />
       </QModal>
       <QModalConfirmacion
         nombre="confirmarBorrarDireccion"
-        abierto={estado === "confirmarBorrado"}
+        abierto={estado === "confirmar_borrado"}
         titulo="Confirmar borrado"
         mensaje="¿Está seguro de que desea borrar esta dirección?"
         onCerrar={() => setEstado("lista")}

@@ -8,7 +8,7 @@ import { Agente } from "../../comun/componentes/agente.tsx";
 import { TipoIdFiscal } from "../../comun/componentes/tipoIdFiscal.tsx";
 import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
 import { getCliente, postCliente } from "../infraestructura.ts";
-import "./AltaCliente.css";
+import "./CrearCliente.css";
 
 export const AltaCliente = ({
   emitir = () => {},
@@ -22,7 +22,7 @@ export const AltaCliente = ({
     const id = await intentar(() => postCliente(nuevoCliente.modelo));
     nuevoCliente.init(nuevoClienteVacio);
     const clienteCreado = await getCliente(id);
-    emitir("CLIENTE_CREADO", clienteCreado);
+    emitir("cliente_creado", clienteCreado);
   };
 
   return (
@@ -46,7 +46,7 @@ export const AltaCliente = ({
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("ALTA_CANCELADA")}
+          onClick={() => emitir("alta_cancelada")}
         >
           Cancelar
         </QBoton>

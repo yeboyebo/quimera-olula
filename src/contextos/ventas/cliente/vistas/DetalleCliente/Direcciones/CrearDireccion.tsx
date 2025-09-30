@@ -19,7 +19,7 @@ export const AltaDireccion = ({
   const guardar = async () => {
     const id = await postDireccion(clienteId, modelo);
     const direccionCreada = await getDireccion(clienteId, id);
-    emitir("DIRECCION_CREADA", direccionCreada);
+    emitir("direccion_creada", direccionCreada);
   };
 
   return (
@@ -36,7 +36,7 @@ export const AltaDireccion = ({
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("ALTA_CANCELADA")}
+          onClick={() => emitir("alta_cancelada")}
         >
           Cancelar
         </QBoton>

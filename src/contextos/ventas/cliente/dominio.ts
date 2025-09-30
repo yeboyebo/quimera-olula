@@ -1,8 +1,23 @@
+import { Entidad } from "@quimera/lib/diseño.ts";
 import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "../../comun/dominio.ts";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 
-
+export const metaTablaCliente = [
+    { id: "id", cabecera: "Id" },
+    { id: "nombre", cabecera: "Nombre" },
+    {
+        id: "id_fiscal",
+        cabecera: "Id Fiscal",
+        render: (entidad: Entidad) =>
+            `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}`,
+    },
+    { id: "telefono1", cabecera: "Teléfono" },
+    { id: "email", cabecera: "Email" },
+    { id: "nombre_agente", cabecera: "Nombre del Agente" },
+    { id: "forma_pago", cabecera: "Forma de Pago" },
+    { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
+];
 
 export const idFiscalValidoGeneral = (tipo: string, valor: string) => {
     return idFiscalValido(tipo)(valor) && tipoIdFiscalValido(tipo) === true;
