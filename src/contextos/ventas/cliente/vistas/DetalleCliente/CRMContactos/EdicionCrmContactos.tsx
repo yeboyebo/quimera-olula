@@ -21,7 +21,7 @@ export const EdicionCrmContactos = ({
 
   const guardar = async () => {
     await intentar(() => patchCrmContacto(modelo));
-    emitir("CONTACTO_ACTUALIZADO", modelo);
+    emitir("contacto_actualizado", modelo);
   };
 
   return (
@@ -38,7 +38,7 @@ export const EdicionCrmContactos = ({
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("EDICION_CANCELADA")}
+          onClick={() => emitir("edicion_cancelada")}
         >
           Cancelar
         </QBoton>

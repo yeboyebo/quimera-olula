@@ -1,32 +1,16 @@
 import { useState } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
 import { useLista } from "../../../comun/useLista.ts";
 import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Factura } from "../diseño.ts";
+import { metaTablaFactura } from "../dominio.ts";
 import { getFacturas } from "../infraestructura.ts";
-import { AltaFactura } from "./AltaFactura.tsx";
+import { AltaFactura } from "./CrearFactura.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
-
-const metaTablaFactura: MetaTabla<Factura> = [
-  {
-    id: "codigo",
-    cabecera: "Código",
-  },
-  {
-    id: "nombre_cliente",
-    cabecera: "Cliente",
-  },
-  {
-    id: "total",
-    cabecera: "Total",
-    tipo: "moneda",
-  },
-];
 
 type Estado = "lista" | "alta";
 export const MaestroConDetalleFactura = () => {

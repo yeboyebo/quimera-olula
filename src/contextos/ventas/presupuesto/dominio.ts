@@ -1,3 +1,4 @@
+import { MetaTabla } from "@quimera/comp/atomos/qtabla.tsx";
 import { Direccion } from "../../comun/diseño.ts";
 import {
     initEstadoModelo,
@@ -9,6 +10,21 @@ import {
 } from "../../comun/dominio.ts";
 import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
 
+export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
+    {
+        id: "codigo",
+        cabecera: "Código",
+    },
+    {
+        id: "nombre_cliente",
+        cabecera: "Cliente",
+    },
+    {
+        id: "total",
+        cabecera: "Total",
+        tipo: "moneda",
+    },
+];
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",

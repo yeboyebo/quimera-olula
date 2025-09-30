@@ -23,7 +23,7 @@ export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
 
   const guardar = async () => {
     const id = await intentar(() => postCrmContacto(modelo));
-    emitir("CONTACTO_CREADO", await getCrmContacto(id));
+    emitir("contacto_creado", await getCrmContacto(id));
   };
 
   return (
@@ -40,7 +40,7 @@ export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("ALTA_CANCELADA")}
+          onClick={() => emitir("alta_cancelada")}
         >
           Cancelar
         </QBoton>

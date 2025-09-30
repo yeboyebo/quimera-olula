@@ -4,7 +4,6 @@ import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
 
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
 import {
@@ -23,25 +22,10 @@ import {
   Maquina3,
   useMaquina4,
 } from "../../../comun/useMaquina.ts";
+import { metaTablaPresupuesto } from "../dominio.ts";
 import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
 import { TabDatosProps } from "./DetallePresupuesto/TabDatosBase.tsx";
-
-const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
-  {
-    id: "codigo",
-    cabecera: "Código",
-  },
-  {
-    id: "nombre_cliente",
-    cabecera: "Cliente",
-  },
-  {
-    id: "total",
-    cabecera: "Total",
-    tipo: "moneda",
-  },
-];
 
 type Estado = "Inactivo" | "Creando";
 

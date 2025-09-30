@@ -8,7 +8,7 @@ import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import { metaNuevaFactura, nuevaFacturaVacia } from "../dominio.ts";
 import { getFactura, postFactura } from "../infraestructura.ts";
-import "./AltaFactura.css";
+import "./CrearFactura.css";
 
 export const AltaFactura = ({
   publicar = () => {},
