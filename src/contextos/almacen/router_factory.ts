@@ -1,5 +1,7 @@
-import { routerAlmacen } from "./router.ts"
+import { MaestroDetalleTransferenciasStock } from "./transferencias/vistas/MaestroDetalleTransferenciasStock.tsx"
 
 export class RouterFactoryAlmacenOlula {
-    static router = routerAlmacen
+    static router = {
+        "almacen/transferencias": MaestroDetalleTransferenciasStock,
+    }
 }
