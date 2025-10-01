@@ -4,7 +4,10 @@ import { QTabla } from "../../../../../../componentes/atomos/qtabla.tsx";
 import { QModal } from "../../../../../../componentes/moleculas/qmodal.tsx";
 import { ContextoError } from "../../../../../../contextos/comun/contexto.ts";
 import { useLista } from "../../../../../../contextos/comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../../../../contextos/comun/useMaquina.ts";
+import {
+  Maquina,
+  useMaquina,
+} from "../../../../../../contextos/comun/useMaquina.ts";
 import { Evento } from "../diseño.ts";
 import { getEvento, getEventos, patchEvento } from "../infraestructura.ts";
 import { AltaEvento } from "./AltaEvento.tsx";
@@ -24,14 +27,15 @@ export const MaestroEvento = () => {
   // Cargar eventos al montar el componente
   useEffect(() => {
     const fetchEventos = async () => {
-      const respuesta = await getEventos([], [], paginacion);      
+      const respuesta = await getEventos([], ["finicio", "DESC"], paginacion);
       eventos.setLista(respuesta.datos);
       if (respuesta.total && respuesta.total > 0) {
         setTotalRegistros(respuesta.total);
       }
     };
     fetchEventos();
-  }, [paginacion, eventos]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paginacion]);
 
   // Definir la máquina de estados
   const maquina: Maquina<Estado> = {
@@ -68,14 +72,18 @@ export const MaestroEvento = () => {
 
   // Manejador para cambios en campos booleanos
   const campoEventoChanged = async (eventoActualizado: Evento) => {
-    await intentar(() => patchEvento(eventoActualizado.evento_id, eventoActualizado));
+    await intentar(() =>
+      patchEvento(eventoActualizado.evento_id, eventoActualizado)
+    );
     const evento_guardado = await getEvento(eventoActualizado.evento_id);
     init(evento_guardado);
     emitir("EVENTO_CAMBIADO", evento_guardado);
   };
 
-  // console.log('mimensaje_evento', eventos);
-  
+  console.log(
+    "mimensaje_evento",
+    eventos.lista.map((e) => e.fecha_inicio)
+  );
 
   return (
     <div className="Evento">
@@ -83,7 +91,7 @@ export const MaestroEvento = () => {
         <h2>Eventos</h2>
         <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
       </div>
-      
+
       <QTabla
         metaTabla={getMetaTablaEvento(campoEventoChanged)}
         datos={eventos.lista}
@@ -95,7 +103,7 @@ export const MaestroEvento = () => {
         onPaginacion={(pagina, limite) => setPaginacion({ pagina, limite })}
         totalEntidades={totalRegistros}
       />
-      
+
       <QModal
         nombre="modal"
         abierto={estado === "alta"}
