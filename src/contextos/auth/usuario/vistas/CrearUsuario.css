@@ -1,0 +1,16 @@
+.Usuario .CrearUsuario {
+
+    quimera-input[nombre="id"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="nombre"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="email"] {
+        grid-column: 1 / span 8;
+    }
+
+
+}

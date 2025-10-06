@@ -14,6 +14,7 @@ export const usuarioFromAPI = (c: UsuarioApi): Usuario => ({
 
 export const usuarioToApi = (usuario: Usuario): UsuarioAPI => ({
     ...usuario,
+    usuario_id: usuario.id,
 });
 
 export const logout: Logout = async (tokenRefresco: string) => {
@@ -35,7 +36,8 @@ export const getUsuarios: GetUsuarios = async (filtro, orden, paginacion) => {
 };
 
 export const postUsuario: PostUsuario = async (usuario) => {
-    return await RestAPI.post(baseUrlUsuario, usuario, "Error al guardar Usuario").then(
+    const apiUsuario = usuarioToApi(usuario as Usuario);
+    return await RestAPI.post(baseUrlUsuario, apiUsuario, "Error al guardar Usuario").then(
         (respuesta) => respuesta.id
     );
 };

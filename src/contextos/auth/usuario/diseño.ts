@@ -3,12 +3,14 @@ import { Entidad, Filtro, Orden, Paginacion, RespuestaLista2 } from "../../comun
 export interface Usuario extends Entidad {
   id: string;
   nombre: string;
+  email: string;
   grupo_id: string;
 };
 
 export interface UsuarioApi {
   id: string;
   nombre: string;
+  email: string;
   grupo_id: string;
 };
 
@@ -18,6 +20,7 @@ export type GetUsuarios = (f: Filtro, o: Orden, p?: Paginacion) => Promise<Respu
 export interface UsuarioAPI extends Entidad {
   id: string;
   nombre: string;
+  email: string;
   grupo_id: string;
 }
 

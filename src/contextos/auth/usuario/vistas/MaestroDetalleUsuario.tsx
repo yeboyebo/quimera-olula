@@ -19,16 +19,10 @@ import {
   useMaquina4,
 } from "../../../../../src/contextos/comun/useMaquina.ts";
 import { Usuario } from "../diseño.ts";
+import { metaTablaUsuario } from "../dominio.ts";
 import { getUsuarios } from "../infraestructura.ts";
 import { CrearUsuario } from "./CrearUsuario";
 import { DetalleUsuario } from "./DetalleUsuario/DetalleUsuario";
-
-const metaTablaUsuario = [
-  { id: "id", cabecera: "ID" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "descripcion", cabecera: "Descripción" },
-  { id: "estado", cabecera: "Estado" },
-];
 
 type Estado = "inactivo" | "creando" | "borrando";
 type Contexto = { usuarios: ListaSeleccionable<Usuario> };
@@ -110,12 +104,6 @@ export const MaestroConDetalleUsuario = () => {
             <h2>Módulos</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!seleccionada}
-                onClick={() => emitir("borrar")}
-              >
-                Borrar
-              </QBoton>
             </div>
             <Listado
               metaTabla={metaTablaUsuario}

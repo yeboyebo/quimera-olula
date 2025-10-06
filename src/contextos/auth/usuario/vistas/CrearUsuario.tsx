@@ -11,6 +11,7 @@ import {
 import { Usuario } from "../diseño";
 import { metaNuevoUsuario, nuevoUsuarioVacio } from "../dominio.ts";
 import { getUsuario, postUsuario } from "../infraestructura";
+import "./CrearUsuario.css";
 
 export const CrearUsuario = ({
   emitir = () => {},
@@ -59,7 +60,9 @@ const FormAltaUsuario = ({
     <div className="CrearUsuario">
       <h2>Nuevo Usuario</h2>
       <quimera-formulario>
+        <QInput label="Identificador" {...usuario.uiProps("id")} />
         <QInput label="Nombre" {...usuario.uiProps("nombre")} />
+        <QInput label="Email" {...usuario.uiProps("email")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={crear} deshabilitado={!usuario.valido}>

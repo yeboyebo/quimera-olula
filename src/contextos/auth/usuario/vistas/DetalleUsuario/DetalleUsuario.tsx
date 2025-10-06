@@ -1,12 +1,9 @@
+import { Grupo } from "@quimera/ctx/auth/comun/componentes/grupo.tsx";
 import { useContext } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../../src/componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../../src/componentes/atomos/qinput.tsx";
 import { Detalle } from "../../../../../../src/componentes/detalle/Detalle.tsx";
-import {
-  Tab,
-  Tabs,
-} from "../../../../../../src/componentes/detalle/tabs/Tabs.tsx";
 import { ContextoError } from "../../../../../../src/contextos/comun/contexto.ts";
 import {
   EmitirEvento,
@@ -21,6 +18,7 @@ import { Usuario } from "../../diseño";
 import { metaUsuario, usuarioVacio } from "../../dominio";
 import { getUsuario, patchUsuario } from "../../infraestructura";
 import { BorrarUsuario } from "./BorrarUsuario";
+import "./DetalleUsuario.css";
 
 type Estado = "editando" | "borrando";
 type Contexto = Record<string, unknown>;
@@ -43,7 +41,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   },
 };
 
-const titulo = (usuario: Entidad) => usuario.nombre as string;
+const titulo = (usuario: Entidad) => usuario.id as string;
 
 export const DetalleUsuario = ({
   usuarioInicial = null,
@@ -68,7 +66,8 @@ export const DetalleUsuario = ({
     await intentar(() => patchUsuario(modelo.id, modelo));
     const usuario_guardado = await getUsuario(modelo.id);
     init(usuario_guardado);
-    emitirUsuario("usuario_guardado", usuario_guardado);
+    console.log("emitir usuario_guardado", usuario_guardado);
+    emitir("usuario_cambiado", usuario_guardado);
   };
 
   return (
@@ -85,26 +84,12 @@ export const DetalleUsuario = ({
           <div className="maestro-botones ">
             <QBoton onClick={() => emitirUsuario("borrar")}>Borrar</QBoton>
           </div>
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Datos"
-                children={
-                  <>
-                    <quimera-formulario>
-                      <QInput label="Nombre" {...uiProps("nombre")} />
-                    </quimera-formulario>
-                  </>
-                }
-              />,
-              //   <Tab
-              //     key="tab-2"
-              //     label="Observaciones"
-              //     children={<TabObservaciones oportunidad={oportunidad} />}
-              //   />,
-            ]}
-          ></Tabs>
+
+          <quimera-formulario>
+            <QInput label="Nombre" {...uiProps("nombre")} />
+            <QInput label="Email" {...uiProps("email")} />
+            <Grupo {...uiProps("grupo_id")} />
+          </quimera-formulario>
 
           {modificado && (
             <div className="botones maestro-botones">
