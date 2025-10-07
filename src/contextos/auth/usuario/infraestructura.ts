@@ -53,3 +53,9 @@ export const patchUsuario: PatchUsuario = async (id, usuario) => {
 export const deleteUsuario: DeleteUsuario = async (id) => {
     await RestAPI.delete(`${baseUrlUsuario}/${id}`, "Error al borrar Usuario");
 };
+
+export const generarTokenUsuario = async (id: string) => {
+    return await RestAPI.post(`${baseUrlUsuario}/${id}/token`, {}, "Error al generar token").then(
+        (respuesta) => respuesta
+    );
+}
