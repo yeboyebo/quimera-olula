@@ -30,9 +30,11 @@ const metaTablaCliente = [
   { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
 ];
 type Estado = "lista" | "alta";
+type Modo = "tabla" | "tarjetas";
 export const MaestroConDetalleCliente = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const clientes = useLista<Cliente>([]);
+  const [modo, setModo] = useState<Modo>("tarjetas");
 
   const maquina: Maquina<Estado> = {
     alta: {
@@ -77,7 +79,7 @@ export const MaestroConDetalleCliente = () => {
     // },
   ].filter(Boolean);
 
-  const modo = "tarjetas";
+  // const modo = "tarjetas";
 
   return (
     <div className="Cliente">
@@ -93,6 +95,7 @@ export const MaestroConDetalleCliente = () => {
             <Listado
               metaTabla={metaTablaCliente}
               modo={modo}
+              setModo={setModo}
               tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
               entidades={clientes.lista}
               setEntidades={clientes.setLista}

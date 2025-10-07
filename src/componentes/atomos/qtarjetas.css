@@ -5,17 +5,12 @@ quimera-tarjetas {
 
     width: 100%;
     display: block;
-<<<<<<< HEAD
-    overflow: hidden;
-    margin-top: 100px;
-=======
 
     .lista-contenedor-scroll {
         overflow-y: scroll;
         max-height: 64vh;
         width: 100%;
     }
->>>>>>> main
 }
 
 quimera-tarjeta {

@@ -8,6 +8,7 @@ import {
   Paginacion,
   RespuestaLista,
 } from "../../contextos/comun/diseño.ts";
+import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
@@ -43,6 +44,7 @@ export type MaestroProps<T extends Entidad> = {
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
   modo?: Modo;
+  setModo?: (modo: Modo) => void;
   cargar: (
     filtro: Filtro,
     orden: Orden,
@@ -64,6 +66,7 @@ export const Listado = <T extends Entidad>({
   setSeleccionada,
   cargar,
   modo = "tabla",
+  setModo,
 }: MaestroProps<T>) => {
   // const modoInicial: Modo =
   //   modoProp ||
@@ -183,18 +186,18 @@ export const Listado = <T extends Entidad>({
 
   return (
     <div className="Listado">
-      {/* {tarjeta && metaTabla && (
+      {tarjeta && metaTabla && (
         <div className="cambio-modo">
           <span
             className="cambio-modo-icono"
             onClick={() =>
-              setModo((modo) => (modo === "tabla" ? "tarjetas" : "tabla"))
+              setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
             }
           >
             <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
           </span>
         </div>
-      )} */}
+      )}
       <MaestroFiltros
         campos={obtenerCampos(entidades[0])}
         filtro={filtro}
