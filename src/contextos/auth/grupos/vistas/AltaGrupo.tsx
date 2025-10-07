@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { QBoton } from "../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../componentes/atomos/qinput.tsx";
-import { ContextoError } from "../../comun/contexto.ts";
-import { EmitirEvento } from "../../comun/diseño.ts";
-import { useModelo } from "../../comun/useModelo.ts";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
+import { EmitirEvento } from "../../../comun/diseño.ts";
+import { useModelo } from "../../../comun/useModelo.ts";
 import { grupoVacio, metaNuevoGrupo } from "../dominio.ts";
 import { postGrupo } from "../infraestructura.ts";
 import "./AltaGrupo.css";

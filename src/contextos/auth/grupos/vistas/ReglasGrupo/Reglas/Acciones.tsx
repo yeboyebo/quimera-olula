@@ -1,6 +1,6 @@
-import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
-import { QIcono } from "../../../../../componentes/atomos/qicono.tsx";
-import { EmitirEvento } from "../../../../comun/diseño.ts";
+import { QBoton } from "../../../../../../componentes/atomos/qboton.tsx";
+import { QIcono } from "../../../../../../componentes/atomos/qicono.tsx";
+import { EmitirEvento } from "../../../../../comun/diseño.ts";
 import {
   CategoriaReglas,
   ReglaAnidada,

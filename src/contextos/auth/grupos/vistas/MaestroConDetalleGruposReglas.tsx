@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { QBoton } from "../../../componentes/atomos/qboton.tsx";
-import { Listado } from "../../../componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "../../../componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "../../../componentes/moleculas/qmodal.tsx";
-import { useLista } from "../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../comun/useMaquina.ts";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { Listado } from "../../../../componentes/maestro/Listado.tsx";
+import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
+import { QModal } from "../../../../componentes/moleculas/qmodal.tsx";
+import { useLista } from "../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
 import { Grupo, Regla } from "../diseño.ts";
 import { getGrupos, getReglas } from "../infraestructura.ts";
 import { AltaGrupo } from "./AltaGrupo.tsx";
