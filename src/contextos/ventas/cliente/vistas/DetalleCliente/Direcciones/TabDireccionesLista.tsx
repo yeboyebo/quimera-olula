@@ -7,6 +7,7 @@ import {
 } from "../../../../../comun/dominio.ts";
 import { DirCliente } from "../../../diseño.ts";
 import { puedoMarcarDireccionFacturacion } from "../../../dominio.ts";
+import "./TabDirecciones.css";
 
 const metaTablaDirecciones = [
   {
@@ -40,11 +41,6 @@ export const TabDireccionesLista = ({
 }) => {
   const acciones = [
     {
-      texto: "Nueva",
-      variante: "borde" as const,
-      onClick: () => emitir("ALTA_SOLICITADA"),
-    },
-    {
       texto: "Editar",
       onClick: () => seleccionada && emitir("EDICION_SOLICITADA"),
       deshabilitado: !seleccionada,
@@ -65,13 +61,11 @@ export const TabDireccionesLista = ({
 
   return (
     <>
-      <div
-        className="TabDireccionesLista maestro-botones"
-        style={{ alignItems: "center" }}
-      >
+      <div className="TabDireccionesLista maestro-botones">
         <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
+
       <QTabla
         metaTabla={metaTablaDirecciones}
         datos={direcciones}

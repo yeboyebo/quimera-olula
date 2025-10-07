@@ -16,19 +16,19 @@
     }
 
     quimera-input[nombre="telefono1"] {
-        grid-column: 1 / span 6;
+        grid-column: span 3;
     }
 
     quimera-input[nombre="telefono2"] {
-        grid-column: span 6;
+        grid-column: span 3;
     }
 
     quimera-input[nombre="email"] {
-        grid-column: span 12;
+        grid-column: 1 / span 6;
     }
 
     quimera-input[nombre="web"] {
-        grid-column: span 12;
+        grid-column: span 6;
     }
 
     quimera-input[nombre="observaciones"] {

@@ -38,7 +38,7 @@ export type GetIncidencia = (id: string) => Promise<Incidencia>;
 export type GetIncidencias = (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
 ) => RespuestaLista<Incidencia>;
 
 export type GetAccionesIncidencia = (id: string) => Promise<Accion[]>;

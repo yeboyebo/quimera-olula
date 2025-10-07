@@ -42,24 +42,26 @@ export type MaestroProps<T extends Entidad> = {
   setEntidades: (entidades: T[]) => void;
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
-  tamañoPagina?: number;
   modo?: Modo;
   cargar: (
     filtro: Filtro,
     orden: Orden,
-    paginacion?: Paginacion
+    paginacion: Paginacion
   ) => RespuestaLista<T>;
 };
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  criteria = { filtros: [], orden: ["id", "DESC"] },
+  criteria = {
+    filtros: [],
+    orden: ["id", "DESC"],
+    paginacion: { limite: 10, pagina: 1 },
+  },
   tarjeta,
   entidades,
   setEntidades,
   seleccionada,
   setSeleccionada,
-  tamañoPagina = 10,
   cargar,
   modo = "tabla",
 }: MaestroProps<T>) => {
@@ -76,9 +78,7 @@ export const Listado = <T extends Entidad>({
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
-  const [paginacion, setPaginacion] = useState<Paginacion>(
-    criteria.paginacion || { limite: tamañoPagina, pagina: 1 }
-  );
+  const [paginacion, setPaginacion] = useState<Paginacion>(criteria.paginacion);
   const [totalRegistros, setTotalRegistros] = useState(0);
   // const [modo, setModo] = useState<Modo>(modoInicial);
   const { setError } = useContext(ContextoError);
@@ -191,7 +191,7 @@ export const Listado = <T extends Entidad>({
               setModo((modo) => (modo === "tabla" ? "tarjetas" : "tabla"))
             }
           >
-            <QIcono nombre={"lista"} tamaño="sm" />
+            <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
           </span>
         </div>
       )} */}

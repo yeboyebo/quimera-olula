@@ -62,7 +62,7 @@ export function useMaquina<Estado extends string>(
 //     return [emitir, estado, setEstado];
 // }
 
-type ContextoBase = Record<string, unknown>
+export type ContextoBase = Record<string, unknown>
 type ParamsOnEvento<E extends string, C extends ContextoBase> = {
     maquina: Maquina3<E, C>;
     payload?: unknown;
@@ -179,7 +179,7 @@ export function useMaquina4<Estado extends string, Contexto extends ContextoBase
     );
 
     const emitir = useConstant(() => (evento: string, payload: unknown) => {
-        // console.log("Evento recibido:", evento, "con payload:", payload);
+        console.log("Evento recibido:", evento, "con payload:", payload);
         dispatch({ evento, payload })
     });
 

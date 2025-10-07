@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
+import { Usuario } from "../../../comun/componentes/usuario.tsx";
 import { ContextoError } from "../../../comun/contexto.ts";
 import { EmitirEvento } from "../../../comun/diseño.ts";
 import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
+import { Cliente } from "../../comun/componentes/cliente_con_nombre.tsx";
 import { EstadoOportunidad } from "../../comun/componentes/estado_oportunidad_venta.tsx";
 import { NuevaOportunidadVenta } from "../diseño.ts";
 import {
@@ -38,12 +40,12 @@ export const AltaOportunidadVenta = ({
   });
 
   const cancelar = () => {
-    emitir("ALTA_CANCELADA");
+    emitir("creacion_cancelada");
     oportunidadventa.init();
   };
 
   return (
-    <Mostrar modo="modal" activo={activo} onCerrar={cancelar}>
+    <Mostrar modo="modal" activo={!!activo} onCerrar={cancelar}>
       <FormAltaOportunidadVenta
         emitir={emitir}
         oportunidadventa={oportunidadventa}
@@ -72,7 +74,7 @@ export const FormAltaOportunidadVenta = ({
   };
 
   const cancelar = () => {
-    emitir("ALTA_CANCELADA");
+    emitir("creacion_cancelada");
     oportunidadventa.init();
   };
 
@@ -83,6 +85,14 @@ export const FormAltaOportunidadVenta = ({
         <QInput
           label="Descripción"
           {...oportunidadventa.uiProps("descripcion")}
+        />
+        <Cliente
+          {...oportunidadventa.uiProps("cliente_id", "nombre_cliente")}
+          label="Seleccionar cliente"
+        />
+        <QInput
+          label="Cliente"
+          {...oportunidadventa.uiProps("nombre_cliente")}
         />
         <EstadoOportunidad
           label="Estado"
@@ -96,6 +106,10 @@ export const FormAltaOportunidadVenta = ({
         <QInput
           label="probailidad (%)"
           {...oportunidadventa.uiProps("probabilidad")}
+        />
+        <Usuario
+          {...oportunidadventa.uiProps("responsable_id")}
+          label="Responsable"
         />
       </quimera-formulario>
       <div className="botones">

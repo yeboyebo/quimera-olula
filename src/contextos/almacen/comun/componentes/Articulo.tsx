@@ -22,6 +22,7 @@ export const Articulo = ({
     const criteria: Criteria = {
       filtros: [["descripcion", "~", texto]],
       orden: ["id"],
+      paginacion: { limite: 10, pagina: 1 },
     };
 
     const articulos = await obtenerArticulosAlmacen(

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
@@ -6,7 +5,7 @@ import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
+import { ConfigMaquina4, useMaquina4 } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { EstadoAccion } from "../../../comun/componentes/estado_accion.tsx";
 import { TipoAccion } from "../../../comun/componentes/tipo_accion.tsx";
@@ -22,57 +21,72 @@ import "./DetalleAccion.css";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-type Estado = "Inactivo" | "Borrando" | "confimarFinalizar";
+type Estado = "inactivo" | "borrando" | "confirmar_finalizar";
+type Contexto = Record<string, unknown>;
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "inactivo",
+    contexto: {},
+  },
+  estados: {
+    inactivo: {
+      borrar: "borrando",
+      finalizar: "confirmar_finalizar",
+      cancelar: ({ publicar }) => publicar("cancelar"),
+    },
+    borrando: {
+      borrado_cancelado: "inactivo",
+      accion_borrada: ({ publicar }) => publicar("accion_borrada"),
+    },
+    confirmar_finalizar: {
+      finalizacion_cancelada: "inactivo",
+      accion_finalizada: ({ publicar }) => publicar("accion_cambiada"),
+    },
+  },
+};
 
 export const DetalleAccion = ({
   accionInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   accionInicial?: Accion | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-  const [estado, setEstado] = useState<Estado>("Inactivo");
   const accionId = accionInicial?.id ?? params.id;
   const titulo = (accion: Entidad) => accion.descripcion as string;
 
   const accion = useModelo(metaAccion, accionVacia);
-  const { modelo, init } = accion;
+  const { modelo, init, modificado, valido, uiProps } = accion;
 
-  const maquina: Maquina<Estado> = {
-    Inactivo: {
-      borrar: "Borrando",
-      finalizar: "confimarFinalizar",
-      guardar: async () => {
-        await patchAccion(modelo.id, modelo);
-        recargarCabecera();
-      },
-      cancelar: () => {
-        init();
-      },
-    },
-    Borrando: {
-      borrado_cancelado: "Inactivo",
-      accion_borrada: async () => {
-        emitir("accion_borrada", modelo);
-      },
-    },
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar: publicar,
+  });
 
-    confimarFinalizar: {},
+  const guardar = async () => {
+    await patchAccion(modelo.id, modelo);
+    recargarCabecera();
+    publicar("accion_cambiada", modelo);
   };
-  const emitirAccion = useMaquina(maquina, estado, setEstado);
+
+  const cancelar = () => {
+    init();
+    emitir("cancelar");
+  };
 
   const recargarCabecera = async () => {
     const nuevaAccion = await getAccion(modelo.id);
     init(nuevaAccion);
-    emitir("accion_cambiada", nuevaAccion);
+    publicar("accion_cambiada", nuevaAccion);
   };
 
   const finalizarConfirmado = async () => {
     await finalizarAccion(modelo.id);
     const accion_finalizada = await getAccion(modelo.id);
     init(accion_finalizada);
-    emitir("accion_cambiada", accion_finalizada);
+    emitir("accion_finalizada", accion_finalizada);
   };
 
   return (
@@ -82,13 +96,13 @@ export const DetalleAccion = ({
       setEntidad={(a) => init(a)}
       entidad={modelo}
       cargar={getAccion}
-      cerrarDetalle={() => emitir("seleccion_cancelada")}
+      cerrarDetalle={() => publicar("seleccion_cancelada")}
     >
       {!!accionId && (
         <>
           <div className="botones maestro-botones ">
-            <QBoton onClick={() => emitirAccion("finalizar")}>Finalizar</QBoton>
-            <QBoton onClick={() => emitirAccion("borrar")}>Borrar</QBoton>
+            <QBoton onClick={() => emitir("finalizar")}>Finalizar</QBoton>
+            <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
 
           <Tabs
@@ -99,13 +113,10 @@ export const DetalleAccion = ({
                 children={
                   <div className="TabDatos">
                     <quimera-formulario>
-                      <EstadoAccion {...accion.uiProps("estado")} />
-                      <TipoAccion {...accion.uiProps("tipo")} />
-                      <QInput
-                        label="Descripción"
-                        {...accion.uiProps("descripcion")}
-                      />
-                      <QInput label="Fecha" {...accion.uiProps("fecha")} />
+                      <QInput label="Descripción" {...uiProps("descripcion")} />
+                      <QInput label="Fecha" {...uiProps("fecha")} />
+                      <EstadoAccion {...uiProps("estado")} />
+                      <TipoAccion {...uiProps("tipo")} />
                     </quimera-formulario>
                   </div>
                 }
@@ -122,42 +133,27 @@ export const DetalleAccion = ({
               />,
             ]}
           ></Tabs>
-          {accion.modificado && (
+          {modificado && (
             <div className="botones maestro-botones">
-              <QBoton
-                onClick={() => emitirAccion("guardar")}
-                deshabilitado={!accion.valido}
-              >
+              <QBoton onClick={guardar} deshabilitado={!valido}>
                 Guardar
               </QBoton>
-              <QBoton
-                tipo="reset"
-                variante="texto"
-                onClick={() => emitirAccion("cancelar")}
-              >
+              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
                 Cancelar
               </QBoton>
             </div>
           )}
           <QModalConfirmacion
             nombre="finalizarAccion"
-            abierto={estado === "confimarFinalizar"}
+            abierto={estado === "confirmar_finalizar"}
             titulo="Finalizar acción"
             mensaje="¿Está seguro de que desea finalizar esta acción?"
-            onCerrar={() => setEstado("Inactivo")}
+            onCerrar={() => emitir("finalizacion_cancelada")}
             onAceptar={finalizarConfirmado}
           />
-          {/* <QModalConfirmacion
-            nombre="borrarAccion"
-            abierto={estado === "confirmarBorrado"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar esta acción?"
-            onCerrar={() => setEstado("defecto")}
-            onAceptar={onBorrarAccion}
-          /> */}
           <BajaAccion
-            emitir={emitirAccion}
-            activo={estado === "Borrando"}
+            publicar={emitir}
+            activo={estado === "borrando"}
             idAccion={modelo.id}
           />
         </>

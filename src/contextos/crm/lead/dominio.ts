@@ -1,5 +1,5 @@
 import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
-import { Lead } from "./diseño.ts";
+import { Lead, NuevoLead } from "./diseño.ts";
 
 export const leadVacio: Lead = {
     id: "",
@@ -12,7 +12,7 @@ export const leadVacio: Lead = {
     direccion: "",
     cod_postal: "",
     ciudad: "",
-    provincia_id: "",
+    provincia_id: null,
     provincia: "",
     pais_id: "",
     pais: "",
@@ -29,7 +29,7 @@ export const metaLead: MetaModelo<Lead> = {
     campos: {
         tipo: { requerido: true, bloqueado: true },
         estado_id: { requerido: true },
-        nombre: { requerido: false },
+        nombre: { requerido: true },
         id_fiscal: { requerido: false },
         cliente_id: { requerido: false },
         proveedor_id: { requerido: false },
@@ -44,7 +44,7 @@ export const metaLead: MetaModelo<Lead> = {
         telefono_2: { requerido: false },
         email: { requerido: false, tipo: "email" },
         web: { requerido: false },
-        contacto_id: { requerido: false },
+        contacto_id: { requerido: false, tipo: "autocompletar" },
         fuente_id: { requerido: true },
         responsable_id: { requerido: false },
     },
@@ -55,15 +55,11 @@ export const initEstadoLead = (lead: Lead): EstadoModelo<Lead> =>
 
 export const initEstadoLeadVacio = () => initEstadoLead(leadVacio);
 
-export type NuevoLead = {
-    cliente_id: string;
-    tipo: string;
-    fuente_id: string;
-    estado_id: string;
-};
+
 
 export const nuevoLeadVacio: NuevoLead = {
     cliente_id: "",
+    nombre: "",
     tipo: "Cliente",
     fuente_id: "",
     estado_id: "",
@@ -71,7 +67,8 @@ export const nuevoLeadVacio: NuevoLead = {
 
 export const metaNuevoLead: MetaModelo<NuevoLead> = {
     campos: {
-        cliente_id: { requerido: true, tipo: "autocompletar" },
+        cliente_id: { requerido: false, tipo: "autocompletar" },
+        nombre: { requerido: true },
         tipo: { requerido: true, bloqueado: true },
         fuente_id: { requerido: true, tipo: "selector" },
         estado_id: { requerido: true, tipo: "selector" },

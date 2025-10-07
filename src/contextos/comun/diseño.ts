@@ -14,7 +14,7 @@ export type EntidadAccion = {
 export type Criteria = {
   filtros: Filtro;
   orden: Orden;
-  paginacion?: Paginacion;
+  paginacion: Paginacion;
 }
 
 export type ClausulaFiltro = [string, string, string?];

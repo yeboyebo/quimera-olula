@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
@@ -11,7 +10,7 @@ import {
   incluirItem,
   listaSeleccionableVacia,
   quitarItem,
-  seleccionarItem
+  seleccionarItem,
 } from "../../../comun/entidad.ts";
 import { pipe } from "../../../comun/funcional.ts";
 import {
@@ -20,17 +19,10 @@ import {
   useMaquina4,
 } from "../../../comun/useMaquina.ts";
 import { Incidencia } from "../diseño.ts";
+import { metaTablaIncidencia } from "../dominio.ts";
 import { getIncidencias } from "../infraestructura.ts";
 import { CrearIncidencia } from "./CrearIncidencia.tsx";
 import { DetalleIncidencia } from "./DetalleIncidencia/DetalleIncidencia.tsx";
-
-const metaTablaIncidencia: MetaTabla<Incidencia> = [
-  { id: "id", cabecera: "Código" },
-  { id: "descripcion", cabecera: "Descripcion" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "estado", cabecera: "Estado" },
-  { id: "prioridad", cabecera: "Prioridad" },
-];
 
 type Estado = "Inactivo" | "Creando";
 
@@ -65,24 +57,15 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     Inactivo: {
       crear: "Creando",
       incidencia_cambiada: ({ maquina, payload }) =>
-        pipe(
-          maquina,
-          setIncidencias(cambiarItem(payload as Incidencia))
-        ),
+        pipe(maquina, setIncidencias(cambiarItem(payload as Incidencia))),
       incidencia_seleccionada: ({ maquina, payload }) =>
-        pipe(
-          maquina,
-          setIncidencias(seleccionarItem(payload as Incidencia))
-        ),
+        pipe(maquina, setIncidencias(seleccionarItem(payload as Incidencia))),
       incidencia_borrada: ({ maquina }) => {
         const { incidencias } = maquina.contexto;
         if (!incidencias.idActivo) {
           return maquina;
         }
-        return pipe(
-          maquina,
-          setIncidencias(quitarItem(incidencias.idActivo))
-        );
+        return pipe(maquina, setIncidencias(quitarItem(incidencias.idActivo)));
       },
       incidencias_cargadas: ({ maquina, payload, setEstado }) =>
         pipe(
@@ -104,7 +87,6 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 };
 
 export const MaestroConDetalleIncidencia = () => {
-
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });

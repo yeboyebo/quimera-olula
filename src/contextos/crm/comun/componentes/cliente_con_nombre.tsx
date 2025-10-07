@@ -3,7 +3,7 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QIcono } from "../../../../componentes/atomos/qicono.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion } from "../../../comun/diseño.ts";
 import { getClientes } from "../../../ventas/cliente/infraestructura.ts";
 import { Cliente as ClienteAuto } from "../../../ventas/comun/componentes/cliente.tsx";
 
@@ -12,7 +12,8 @@ interface ClienteProps {
   valor: string;
   nombre?: string;
   label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  deshabilitado?: boolean;
+  onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 interface ClienteConNombreProps {
@@ -29,6 +30,7 @@ export const Cliente = ({
   valor,
   nombre = "cliente_id",
   label = "Cliente",
+  deshabilitado = false,
   onChange,
   ...props
 }: ClienteProps) => {
@@ -36,12 +38,19 @@ export const Cliente = ({
     const criteria = {
       filtro: ["nombre", texto],
       orden: ["id", "DESC"],
+      paginacion: { pagina: 1, limite: 10 },
     };
 
     const { datos } = await getClientes(
       criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+      criteria.orden as Orden,
+      criteria.paginacion as Paginacion
     );
+
+    if (!Array.isArray(datos)) {
+      console.error("Los clientes no son un array:", datos);
+      return [];
+    }
 
     return datos.map((cliente) => ({
       valor: cliente.id,
@@ -57,6 +66,7 @@ export const Cliente = ({
       valor={valor}
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      deshabilitado={deshabilitado}
       {...props}
     />
   );

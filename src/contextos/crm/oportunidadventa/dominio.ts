@@ -41,18 +41,23 @@ export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
         probabilidad: { requerido: true, tipo: "numero" },
         fecha_cierre: { requerido: true, tipo: "fecha" },
         estado_id: { requerido: true, tipo: "selector" },
-        cliente_id: { requerido: true, tipo: "autocompletar" },
+        cliente_id: { requerido: false, tipo: "autocompletar" },
+        responsable_id: { requerido: true, tipo: "autocompletar" },
+        nombre_cliente: { requerido: true, validacion: (oportunidad: OportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
     },
 };
 
 export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
     campos: {
         descripcion: { requerido: true, validacion: (oportunidad: NuevaOportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
+        nombre_cliente: { requerido: true, validacion: (oportunidad: NuevaOportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
         valor_defecto: { requerido: true },
         importe: { requerido: false, tipo: "moneda" },
         probabilidad: { requerido: true, tipo: "numero" },
         estado_id: { requerido: true, tipo: "selector" },
         fecha_cierre: { requerido: true, tipo: "fecha" },
+        cliente_id: { requerido: false, tipo: "autocompletar" },
+        responsable_id: { requerido: true, tipo: "autocompletar" },
     },
 };
 

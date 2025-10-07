@@ -71,7 +71,7 @@ export const getCliente: GetCliente = async (id) =>
 export const getClientes = async (
   filtro: Filtro,
   orden: Orden,
-  paginacion?: Paginacion
+  paginacion: Paginacion
 ): RespuestaLista<Cliente> => {
   const q = criteriaQuery(filtro, orden, paginacion);
 

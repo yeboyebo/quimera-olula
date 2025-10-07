@@ -83,7 +83,7 @@ export type QTarjetasProps<T extends Entidad> = {
   onSeleccion?: (entidad: T) => void;
   orden: Orden;
   onOrdenar?: (clave: string) => void;
-  paginacion?: Paginacion;
+  paginacion: Paginacion;
   onPaginacion?: (pagina: number, limite: number) => void;
   totalEntidades?: number;
 };
@@ -105,15 +105,17 @@ export const QTarjetas = <T extends Entidad>({
       ) : datos.length === 0 ? (
         <div className="no-datos">No hay datos</div>
       ) : (
-        datos.map((entidad) => (
-          <quimera-tarjeta
-            key={entidad.id}
-            className={entidad.id === seleccionadaId ? "seleccionada" : ""}
-            onClick={() => onSeleccion && onSeleccion(entidad)}
-          >
-            {tarjeta(entidad)}
-          </quimera-tarjeta>
-        ))
+        <div className="lista-contenedor-scroll">
+          {datos.map((entidad) => (
+            <quimera-tarjeta
+              key={entidad.id}
+              className={entidad.id === seleccionadaId ? "seleccionada" : ""}
+              onClick={() => onSeleccion && onSeleccion(entidad)}
+            >
+              {tarjeta(entidad)}
+            </quimera-tarjeta>
+          ))}
+        </div>
       )}
       {paginacionControlador(totalEntidades, paginacion!, onPaginacion)}
     </quimera-tarjetas>

@@ -4,7 +4,7 @@
         grid-column: 1 / span 12;
     }
 
-    quimera-autocompletar[nombre="usuario_id"] {
+    quimera-autocompletar[nombre="responsable_id"] {
         grid-column: span 6;
     }
 

@@ -1,9 +1,12 @@
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "../../../../../componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "../../../../comun/contexto.ts";
 import { EmitirEvento, Entidad } from "../../../../comun/diseño.ts";
-import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
+import { ConfigMaquina4, useMaquina4 } from "../../../../comun/useMaquina.ts";
 import { useModelo } from "../../../../comun/useModelo.ts";
 import { OportunidadVenta } from "../../diseño.ts";
 import { metaOportunidadVenta, oportunidadVentaVacia } from "../../dominio.ts";
@@ -13,22 +16,38 @@ import {
   patchOportunidadVenta,
 } from "../../infraestructura.ts";
 // import "./DetalleOportunidadVenta.css";
-import { useContext, useState } from "react";
-import { QModalConfirmacion } from "../../../../../componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "../../../../comun/contexto.ts";
 import { TabPresupuestos } from "./Presupuestos/TabPresupuestos.tsx";
 import { TabAcciones } from "./TabAcciones.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-type Estado = "defecto" | "confirmarBorrado";
+type Estado = "edicion" | "borrando";
+type Contexto = Record<string, unknown>;
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "edicion",
+    contexto: {},
+  },
+  estados: {
+    edicion: {
+      borrar: "borrando",
+      oportunidad_guardada: ({ publicar }) => publicar("oportunidad_cambiada"),
+      cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
+    },
+    borrando: {
+      borrado_cancelado: "edicion",
+      oportunidad_borrada: ({ publicar }) => publicar("oportunidad_borrada"),
+    },
+  },
+};
 
 export const DetalleOportunidadVenta = ({
   oportunidadInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   oportunidadInicial?: OportunidadVenta | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
   const oportunidadId = oportunidadInicial?.id ?? params.id;
@@ -36,34 +55,24 @@ export const DetalleOportunidadVenta = ({
   const { intentar } = useContext(ContextoError);
 
   const oportunidad = useModelo(metaOportunidadVenta, oportunidadVentaVacia);
-  const { modelo, init } = oportunidad;
-  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
-    "edicion"
-  );
+  const { modelo, init, valido } = oportunidad;
 
-  const maquina: Maquina<Estado> = {
-    defecto: {
-      GUARDAR_INICIADO: async () => {
-        await intentar(() => patchOportunidadVenta(modelo.id, modelo));
-        recargarCabecera();
-      },
-    },
-    confirmarBorrado: {
-      BORRAR_CANCELADO: "defecto",
-    },
-  };
-  const emitirOportunidad = useMaquina(maquina, "defecto", () => {});
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar: publicar,
+  });
 
-  const recargarCabecera = async () => {
-    const nuevaOportunidad = await getOportunidadVenta(modelo.id);
-    init(nuevaOportunidad);
-    emitir("OPORTUNIDAD_CAMBIADA", nuevaOportunidad);
+  const onGuardarClicked = async () => {
+    await intentar(() => patchOportunidadVenta(modelo.id, modelo));
+    const oportunidad_guardada = await getOportunidadVenta(modelo.id);
+    init(oportunidad_guardada);
+    publicar("oportunidad_cambiada", oportunidad_guardada);
   };
 
   const onBorrarConfirmado = async () => {
     await intentar(() => deleteOportunidadVenta(modelo.id));
-    emitir("oportunidad_borrada", modelo);
-    setEstado("edicion");
+    publicar("oportunidad_borrada", modelo);
+    emitir("borrado_cancelado");
   };
 
   return (
@@ -73,14 +82,12 @@ export const DetalleOportunidadVenta = ({
       setEntidad={(o) => init(o)}
       entidad={modelo}
       cargar={getOportunidadVenta}
-      cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+      cerrarDetalle={() => emitir("cancelar_seleccion")}
     >
       {!!oportunidadId && (
         <>
           <div className="maestro-botones ">
-            <QBoton onClick={() => setEstado("confirmarBorrado")}>
-              Borrar
-            </QBoton>
+            <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
           <Tabs
             children={[
@@ -108,10 +115,7 @@ export const DetalleOportunidadVenta = ({
           ></Tabs>
           {oportunidad.modificado && (
             <div className="botones maestro-botones">
-              <QBoton
-                onClick={() => emitirOportunidad("GUARDAR_INICIADO")}
-                deshabilitado={!oportunidad.valido}
-              >
+              <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
                 Guardar
               </QBoton>
               <QBoton tipo="reset" variante="texto" onClick={() => init()}>
@@ -121,10 +125,10 @@ export const DetalleOportunidadVenta = ({
           )}
           <QModalConfirmacion
             nombre="borrarOportunidad"
-            abierto={estado === "confirmarBorrado"}
+            abierto={estado === "borrando"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar esta oportunidad de venta?"
-            onCerrar={() => setEstado("edicion")}
+            onCerrar={() => emitir("borrado_cancelado")}
             onAceptar={onBorrarConfirmado}
           />
         </>

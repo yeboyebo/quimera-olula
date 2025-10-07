@@ -1,5 +1,5 @@
 import { QAutocompletar } from "../../../../componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "../../../comun/diseño.ts";
+import { Filtro, Orden, Paginacion } from "../../../comun/diseño.ts";
 import { getLeads } from "../../lead/infraestructura.ts";
 
 interface LeadSelectorProps {
@@ -23,13 +23,15 @@ export const LeadSelector = ({
     if (valor.length < 3) return [];
 
     const criteria = {
-      filtro: ["id", "~", valor],
+      filtro: ["nombre", "~", valor],
       orden: ["id"],
+      paginacion: { pagina: 1, limite: 10 },
     };
 
     const { datos: leads } = await getLeads(
       criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+      criteria.orden as Orden,
+      criteria.paginacion as Paginacion
     );
 
     return leads.map((lead) => ({

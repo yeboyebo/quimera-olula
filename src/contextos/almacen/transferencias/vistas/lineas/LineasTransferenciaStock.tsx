@@ -44,7 +44,7 @@ export const LineasTransferenciaStock = ({
   const seleccionada = getSeleccionada(lineas);
 
   const obtenerLineas = useCallback(
-    (...args: [Filtro, Orden, Paginacion?]) =>
+    (...args: [Filtro, Orden, Paginacion]) =>
       obtenerLineasTransferenciaStock(transferencia.modelo.id, ...args),
     [transferencia]
   );

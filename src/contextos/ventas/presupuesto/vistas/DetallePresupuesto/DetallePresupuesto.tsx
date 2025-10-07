@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { JSX, useContext, useState } from "react";
 import { useParams } from "react-router";
 import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
 import { Detalle } from "../../../../../componentes/detalle/Detalle.tsx";
@@ -22,7 +22,7 @@ import { Lineas } from "./Lineas/Lineas.tsx";
 
 import { ContextoError } from "../../../../comun/contexto.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
-import { TabDatos } from "./TabDatos.tsx";
+import { TabDatosProps } from "./TabDatosBase.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 type ParamOpcion = {
@@ -33,9 +33,11 @@ export type ValorControl = null | string | ParamOpcion;
 type Estado = "defecto";
 
 export const DetallePresupuesto = ({
+  TabDatos,
   presupuestoInicial = null,
   publicar = () => {},
 }: {
+  TabDatos: (props: TabDatosProps) => JSX.Element;
   presupuestoInicial?: Presupuesto | null;
   publicar?: EmitirEvento;
 }) => {

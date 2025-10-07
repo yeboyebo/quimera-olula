@@ -2,8 +2,8 @@ import "./menu-usuario.css";
 
 import { Link } from "react-router";
 import { puede } from "../../contextos/comun/dominio.ts";
-import { ElementoMenu, ElementoMenuPadre } from "../../contextos/comun/menu.ts";
 import { QIcono } from "../atomos/qicono.tsx";
+import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 
 const elementosDelMenu = [
   {

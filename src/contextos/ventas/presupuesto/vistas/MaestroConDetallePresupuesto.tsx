@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { JSX, useCallback } from "react";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getPresupuestos } from "../infraestructura.ts";
@@ -7,11 +7,25 @@ import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
-import { cambiarItem, cargar, getSeleccionada, incluirItem, listaSeleccionableVacia, quitarItem, quitarSeleccion, seleccionarItem } from "../../../comun/entidad.ts";
+import {
+  cambiarItem,
+  cargar,
+  getSeleccionada,
+  incluirItem,
+  listaSeleccionableVacia,
+  quitarItem,
+  quitarSeleccion,
+  seleccionarItem,
+} from "../../../comun/entidad.ts";
 import { pipe } from "../../../comun/funcional.ts";
-import { ConfigMaquina4, Maquina3, useMaquina4 } from "../../../comun/useMaquina.ts";
+import {
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "../../../comun/useMaquina.ts";
 import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
+import { TabDatosProps } from "./DetallePresupuesto/TabDatosBase.tsx";
 
 const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
   {
@@ -62,20 +76,11 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     Inactivo: {
       crear: "Creando",
       presupuesto_cambiado: ({ maquina, payload }) =>
-        pipe(
-          maquina,
-          setPresupuestos(cambiarItem(payload as Presupuesto))
-        ),
+        pipe(maquina, setPresupuestos(cambiarItem(payload as Presupuesto))),
       presupuesto_seleccionado: ({ maquina, payload }) =>
-        pipe(
-          maquina,
-          setPresupuestos(seleccionarItem(payload as Presupuesto))
-        ),
+        pipe(maquina, setPresupuestos(seleccionarItem(payload as Presupuesto))),
       seleccion_presupuesto_cancelada: ({ maquina }) =>
-        pipe(
-          maquina,
-          setPresupuestos(quitarSeleccion())
-        ),
+        pipe(maquina, setPresupuestos(quitarSeleccion())),
       presupuesto_borrado: ({ maquina }) => {
         const { presupuestos } = maquina.contexto;
         if (!presupuestos.idActivo) {
@@ -105,10 +110,15 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   },
 };
 
-export const MaestroConDetallePresupuesto = () => {
-  
+export interface MaestroConDetallePresupuestoProps {
+  TabDatos: (props: TabDatosProps) => JSX.Element;
+}
+
+export const MaestroConDetallePresupuesto = ({
+  TabDatos,
+}: MaestroConDetallePresupuestoProps) => {
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
-      config: configMaquina,
+    config: configMaquina,
   });
   const { presupuestos } = contexto;
 
@@ -131,9 +141,7 @@ export const MaestroConDetallePresupuesto = () => {
           <>
             <h2>Presupuestos</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear")}>
-                Crear Presupuesto
-              </QBoton>
+              <QBoton onClick={() => emitir("crear")}>Crear Presupuesto</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaPresupuesto}
@@ -147,6 +155,7 @@ export const MaestroConDetallePresupuesto = () => {
         }
         Detalle={
           <DetallePresupuesto
+            TabDatos={TabDatos}
             presupuestoInicial={seleccionada}
             publicar={emitir}
           />

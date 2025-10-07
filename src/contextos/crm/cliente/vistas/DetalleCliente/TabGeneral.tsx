@@ -8,7 +8,7 @@ import "./TabGeneral.css";
 
 interface TabGeneralProps {
   cliente: HookModelo<Cliente>;
-  emitirCliente: EmitirEvento;
+  emitir: EmitirEvento;
   recargarCliente: () => void;
 }
 
