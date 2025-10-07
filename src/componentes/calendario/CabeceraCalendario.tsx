@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { QBoton } from '../atomos/qboton.tsx';
-import { QIcono } from '../atomos/qicono.tsx';
-import { SelectorModo } from './SelectorModo.tsx';
-import { ModoCalendario } from './tipos.ts';
+import React, { useEffect, useRef, useState } from "react";
+import { QBoton } from "../atomos/qboton.tsx";
+import { QIcono } from "../atomos/qicono.tsx";
+import { SelectorModo } from "./SelectorModo.tsx";
+import { ModoCalendario } from "./tipos.ts";
 
 interface CabeceraBotones {
   izqModo?: React.ReactNode[];
@@ -31,7 +31,14 @@ interface CabeceraCalendarioProps {
   onAbrirPlayground?: () => void;
 }
 
-export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: CabeceraCalendarioProps) => {
+// Wrapper defensivo para componentes externos
+const ComponenteSeguro: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => <div>{children}</div>;
+
+export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (
+  props: CabeceraCalendarioProps
+) => {
   const {
     modoAnio,
     modoVista,
@@ -56,44 +63,63 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
   // Cerrar dropdown al hacer click fuera
   useEffect(() => {
     const handleClickFuera = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownAbierto(false);
       }
     };
 
     if (dropdownAbierto) {
-      document.addEventListener('mousedown', handleClickFuera);
+      document.addEventListener("mousedown", handleClickFuera);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickFuera);
+      document.removeEventListener("mousedown", handleClickFuera);
     };
   }, [dropdownAbierto]);
 
-  const _mostrarCambioModo = mostrarCambioModo !== undefined ? mostrarCambioModo : true;
-  const _mostrarControlesNavegacion = mostrarControlesNavegacion !== undefined ? mostrarControlesNavegacion : true;
-  const _mostrarBotonHoy = mostrarBotonHoy !== undefined ? mostrarBotonHoy : true;
+  const _mostrarCambioModo =
+    mostrarCambioModo !== undefined ? mostrarCambioModo : true;
+  const _mostrarControlesNavegacion =
+    mostrarControlesNavegacion !== undefined
+      ? mostrarControlesNavegacion
+      : true;
+  const _mostrarBotonHoy =
+    mostrarBotonHoy !== undefined ? mostrarBotonHoy : true;
   const _botones = botones || {};
-  const {
-    izqModo = [],
-    derModo = [],
-    izqHoy = [],
-    derHoy = [],
-  } = _botones;
+  const { izqModo = [], derModo = [], izqHoy = [], derHoy = [] } = _botones;
   return (
     <div className="calendario-cabecera">
-      {(izqModo.length > 0 || derModo.length > 0 || (modoVista && setModoVista && _mostrarCambioModo)) && (
+      {(izqModo.length > 0 ||
+        derModo.length > 0 ||
+        (modoVista && setModoVista && _mostrarCambioModo)) && (
         <div className="cabecera-izquierda">
-          {izqModo}
+          {izqModo.map((componente, index) => (
+            <ComponenteSeguro key={`izq-modo-${index}`}>
+              {componente}
+            </ComponenteSeguro>
+          ))}
           {modoVista && setModoVista && _mostrarCambioModo && (
             <div className="dropdown-modo" ref={dropdownRef}>
               <QBoton onClick={() => setDropdownAbierto(!dropdownAbierto)}>
-                {modoVista === 'semana' ? 'Semana' : modoVista === 'mes' ? 'Mes' : 'Año'}
-                <span style={{ marginLeft: '8px' }}>{dropdownAbierto ? '▲' : '▼'}</span>
+                {modoVista === "semana"
+                  ? "Semana"
+                  : modoVista === "mes"
+                  ? "Mes"
+                  : "Año"}
+                <span style={{ marginLeft: "8px" }}>
+                  {dropdownAbierto ? "▲" : "▼"}
+                </span>
               </QBoton>
-              <div className={`dropdown-modo-contenido ${dropdownAbierto ? 'abierto' : ''}`}>
-                <SelectorModo 
-                  modoActual={modoVista} 
+              <div
+                className={`dropdown-modo-contenido ${
+                  dropdownAbierto ? "abierto" : ""
+                }`}
+              >
+                <SelectorModo
+                  modoActual={modoVista}
                   onCambioModo={(nuevoModo) => {
                     setModoVista(nuevoModo);
                     setDropdownAbierto(false);
@@ -104,7 +130,11 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
               </div>
             </div>
           )}
-          {derModo}
+          {derModo.map((componente, index) => (
+            <ComponenteSeguro key={`der-modo-${index}`}>
+              {componente}
+            </ComponenteSeguro>
+          ))}
         </div>
       )}
       <div className="calendario-navegacion">
@@ -114,7 +144,9 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
               <QIcono nombre="atras" />
             </QBoton>
             <h2 className="calendario-navegacion-mes-anio">
-              {modoAnio ? fechaActual.getFullYear() : formatearMesAño(fechaActual)}
+              {modoAnio
+                ? fechaActual.getFullYear()
+                : formatearMesAño(fechaActual)}
             </h2>
             <QBoton onClick={() => navegarTiempo(1)}>
               <QIcono nombre="adelante" />
@@ -122,21 +154,29 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (props: Cab
           </>
         )}
       </div>
-      {(izqHoy.length > 0 || _mostrarBotonHoy || derHoy.length > 0 || playground) && (
+      {(izqHoy.length > 0 ||
+        _mostrarBotonHoy ||
+        derHoy.length > 0 ||
+        playground) && (
         <div className="cabecera-derecha">
-          {izqHoy}
+          {izqHoy.map((componente, index) => (
+            <ComponenteSeguro key={`izq-hoy-${index}`}>
+              {componente}
+            </ComponenteSeguro>
+          ))}
           {_mostrarBotonHoy && <QBoton onClick={irAHoy}>Hoy</QBoton>}
           {playground && (
-            <QBoton 
-              onClick={onAbrirPlayground}
-              variante="borde"
-            >
+            <QBoton onClick={onAbrirPlayground} variante="borde">
               📚 Playground
             </QBoton>
           )}
-          {derHoy}
+          {derHoy.map((componente, index) => (
+            <ComponenteSeguro key={`der-hoy-${index}`}>
+              {componente}
+            </ComponenteSeguro>
+          ))}
         </div>
       )}
     </div>
   );
-}
+};

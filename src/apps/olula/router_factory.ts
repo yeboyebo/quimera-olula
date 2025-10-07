@@ -7,10 +7,11 @@ import { Logout } from '@quimera/ctx/auth/usuario/vistas/Logout';
 import { Perfil } from '@quimera/ctx/auth/usuario/vistas/Perfil';
 import { RouterFactoryCrmOlula } from '@quimera/ctx/crm/router_factory.ts';
 import { RouterFactoryVentasOlula } from '@quimera/ctx/ventas/router_factory.ts';
-import { Indice } from '@quimera/lib/Indice.tsx';
+// import { Indice } from '@quimera/lib/Indice.tsx';
+import { FondoInicio } from '@quimera/lib/FondoInicio.tsx';
 
 export class RouterFactoryOlula {
-    Inicio = { router: { "": Indice } };
+    Inicio = { router: { "": FondoInicio } };
     Auth = RouterFactoryAuthOlula;
     Ventas = RouterFactoryVentasOlula;
     Almacen = RouterFactoryAlmacenOlula;
