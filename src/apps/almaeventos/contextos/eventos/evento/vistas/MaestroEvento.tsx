@@ -80,11 +80,6 @@ export const MaestroEvento = () => {
     emitir("EVENTO_CAMBIADO", evento_guardado);
   };
 
-  console.log(
-    "mimensaje_evento",
-    eventos.lista.map((e) => e.fecha_inicio)
-  );
-
   return (
     <div className="Evento">
       <div className="cabecera-maestro">
