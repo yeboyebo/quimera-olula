@@ -70,7 +70,6 @@ export const DetalleUsuario = ({
     await intentar(() => patchUsuario(modelo.id, modelo));
     const usuario_guardado = await getUsuario(modelo.id);
     init(usuario_guardado);
-    console.log("emitir usuario_guardado", usuario_guardado);
     emitir("usuario_cambiado", usuario_guardado);
   };
 

@@ -1,4 +1,4 @@
-import { Permiso } from "../administracion/diseño.ts";
+import { Permiso } from "../auth/grupos/diseño.ts";
 import { permisosGrupo } from "../auth/login/infraestructura.ts";
 import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
 

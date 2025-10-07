@@ -5,13 +5,13 @@ import { CategoriaReglas, Grupo, Permiso, Regla, ReglaAnidada, ReglaConValor } f
 
 export const grupoVacio: Grupo = {
     id: "",
-    descripcion: "",
+    nombre: "",
 };
 
 export const metaNuevoGrupo: MetaModelo<Grupo> = {
     campos: {
         id: { requerido: true },
-        descripcion: { requerido: false },
+        nombre: { requerido: false },
     },
 };
 
