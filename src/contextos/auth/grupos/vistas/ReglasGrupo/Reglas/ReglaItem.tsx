@@ -1,6 +1,6 @@
 import { CategoriaReglas, ReglaAnidada } from "../../../diseño.ts";
 import { AccionesRegla } from "./Acciones.tsx";
-import { SubReglaItem } from "./SubReglaItem";
+import { SubReglaItem } from "./SubReglaItem.tsx";
 
 export const ReglaItem = ({
   regla,

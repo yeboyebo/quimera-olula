@@ -1,17 +1,17 @@
-import { MetaModelo } from "../comun/dominio.ts";
+import { MetaModelo } from "../../comun/dominio.ts";
 import { CategoriaReglas, Grupo, Permiso, Regla, ReglaAnidada, ReglaConValor } from "./diseño.ts";
 
 
 
 export const grupoVacio: Grupo = {
     id: "",
-    descripcion: "",
+    nombre: "",
 };
 
 export const metaNuevoGrupo: MetaModelo<Grupo> = {
     campos: {
         id: { requerido: true },
-        descripcion: { requerido: false },
+        nombre: { requerido: false },
     },
 };
 

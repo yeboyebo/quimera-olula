@@ -12,7 +12,7 @@ const elementosDelMenu = [
     subelementos: [
       {
         nombre: "Grupos",
-        url: "/administracion/grupos",
+        url: "/auth/grupo",
         regla: "contexto.recibo_venta",
       },
     ],

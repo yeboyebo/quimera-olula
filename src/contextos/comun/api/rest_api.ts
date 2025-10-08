@@ -1,4 +1,4 @@
-import { tokenAcceso } from "../../usuarios/login/infraestructura.ts";
+import { tokenAcceso } from "../../auth/login/infraestructura.ts";
 import type { API } from "./diseño.ts";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";

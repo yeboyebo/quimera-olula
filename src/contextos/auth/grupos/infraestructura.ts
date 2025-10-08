@@ -1,6 +1,6 @@
-import { RestAPI } from "../comun/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "../comun/diseño.ts";
-import { criteriaQuery } from "../comun/infraestructura.ts";
+import { RestAPI } from "../../comun/api/rest_api.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "../../comun/diseño.ts";
+import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Grupo, Permiso, Regla } from "./diseño.ts";
 
 const baseUrl = `/auth`;
