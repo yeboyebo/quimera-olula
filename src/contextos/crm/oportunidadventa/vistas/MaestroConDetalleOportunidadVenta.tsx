@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { Listado } from "../../../../componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "../../../../componentes/maestro/MaestroDetalle.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
 import {
   cambiarItem,
@@ -23,10 +22,10 @@ import { metaTablaOportunidadVenta } from "../dominio.ts";
 import { getOportunidadesVenta } from "../infraestructura.ts";
 import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "./DetalleOportunidadVenta/DetalleOportunidadVenta.tsx";
+import { TarjetaOportunidadVenta } from "./TarjetaOportunidadVenta.tsx";
 // import "./MaestroConDetalleOportunidadVenta.css";
 
 type Estado = "inactivo" | "creando";
-
 type Contexto = {
   oportunidades: ListaSeleccionable<OportunidadVenta>;
 };
@@ -115,24 +114,24 @@ export const MaestroConDetalleOportunidadVenta = () => {
 
   return (
     <div className="OportunidadVenta">
-      <MaestroDetalleResponsive<OportunidadVenta>
+      <MaestroDetalle<OportunidadVenta>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Oportunidades de Venta</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaOportunidadVenta}
-              entidades={oportunidades.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getOportunidadesVenta}
-            />
           </>
         }
+        metaTabla={metaTablaOportunidadVenta}
+        tarjeta={(oportunidad) => (
+          <TarjetaOportunidadVenta oportunidad={oportunidad} />
+        )}
+        entidades={oportunidades.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getOportunidadesVenta}
         Detalle={
           <DetalleOportunidadVenta
             oportunidadInicial={seleccionada}
