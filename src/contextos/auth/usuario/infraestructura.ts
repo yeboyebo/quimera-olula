@@ -2,7 +2,7 @@ import { RestAPI } from "../../comun/api/rest_api.ts";
 import { RespuestaLista2 } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Logout } from "../login/diseño.ts";
-import { DeleteUsuario, GetUsuario, GetUsuarios, PatchUsuario, PostUsuario, Usuario, UsuarioAPI, UsuarioApi } from "./diseño.ts";
+import { DeleteUsuario, GenerarTokenUsuario, GetUsuario, GetUsuarios, PatchUsuario, PostUsuario, Usuario, UsuarioAPI, UsuarioApi } from "./diseño.ts";
 
 
 const baseUrl = '/auth';
@@ -54,9 +54,9 @@ export const deleteUsuario: DeleteUsuario = async (id) => {
     await RestAPI.delete(`${baseUrlUsuario}/${id}`, "Error al borrar Usuario");
 };
 
-// export const generarTokenUsuario: GenerarTokenUsuario = async (id) => {
-//     const payload = { id, expiracion: '2027-05-08' }
-//     return await RestAPI.post(`/auth/token`, payload, "Error al generar token").then(
-//         (respuesta) => respuesta
-//     );
-// }
+export const generarTokenUsuario: GenerarTokenUsuario = async (id, expiracion) => {
+    const payload = { id, expiracion };
+    const callback = (respuesta: { token: string }) => respuesta.token as string;
+    return RestAPI.post(`/auth/token`, payload, "Error al generar token")
+        .then(callback as unknown as (_: { id: string }) => string);
+}

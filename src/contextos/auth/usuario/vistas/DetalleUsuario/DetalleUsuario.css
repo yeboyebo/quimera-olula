@@ -10,4 +10,36 @@
     quimera-select[nombre="grupo_id"] {
         grid-column: span 6;
     }
+
+}
+
+quimera-modal[nombre="generarToken"] {
+    dialog {
+        max-width: 400px;
+    }
+
+    quimera-textarea[nombre="token"] textarea {
+        font-size: 0.9em;
+        height: 100px;
+    }
+
+}
+
+.token-generado {
+    margin-top: 16px;
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 8px;
+    }
+}
+
+.token-textarea {
+    width: 100%;
+    /* font-family: monospace; */
+    font-size: 0.9em;
+    height: 100px;
+    margin-top: 12px;
+    border: none;
 }
