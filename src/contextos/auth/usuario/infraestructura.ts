@@ -54,8 +54,9 @@ export const deleteUsuario: DeleteUsuario = async (id) => {
     await RestAPI.delete(`${baseUrlUsuario}/${id}`, "Error al borrar Usuario");
 };
 
-export const generarTokenUsuario = async (id: string) => {
-    return await RestAPI.post(`${baseUrlUsuario}/${id}/token`, {}, "Error al generar token").then(
-        (respuesta) => respuesta
-    );
-}
+// export const generarTokenUsuario: GenerarTokenUsuario = async (id) => {
+//     const payload = { id, expiracion: '2027-05-08' }
+//     return await RestAPI.post(`/auth/token`, payload, "Error al generar token").then(
+//         (respuesta) => respuesta
+//     );
+// }

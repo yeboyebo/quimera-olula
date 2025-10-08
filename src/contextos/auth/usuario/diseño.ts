@@ -30,3 +30,4 @@ export type GetUsuario = (id: string) => Promise<Usuario>;
 export type PostUsuario = (usuario: Partial<Usuario>) => Promise<string>;
 export type PatchUsuario = (id: string, usuario: Partial<Usuario>) => Promise<void>;
 export type DeleteUsuario = (id: string) => Promise<void>;
+export type GenerarTokenUsuario = (id: string) => Promise<void>;

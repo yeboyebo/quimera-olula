@@ -16,11 +16,7 @@ import {
 import { useModelo } from "../../../../../../src/contextos/comun/useModelo.ts";
 import { Usuario } from "../../diseño";
 import { metaUsuario, usuarioVacio } from "../../dominio";
-import {
-  generarTokenUsuario,
-  getUsuario,
-  patchUsuario,
-} from "../../infraestructura";
+import { getUsuario, patchUsuario } from "../../infraestructura";
 import { BorrarUsuario } from "./BorrarUsuario";
 import "./DetalleUsuario.css";
 
@@ -74,8 +70,10 @@ export const DetalleUsuario = ({
   };
 
   const generarToken = async () => {
-    const token_generado = await intentar(() => generarTokenUsuario(modelo.id));
-    emitir("token_generado", token_generado);
+    console.log("Generando token...");
+    // const token_generado = await intentar(() => generarTokenUsuario(modelo.id));
+    // console.log("Token generado:", token_generado.token);
+    // emitir("token_generado", token_generado);
   };
 
   return (
