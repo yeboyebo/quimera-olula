@@ -1,45 +1,129 @@
-maestro-detalle[tipo="tabla"] {
+/* MaestroDetalle.css */
+maestro-detalle {
     display: flex;
     gap: 1rem;
     overflow: auto;
     height: -webkit-fill-available;
+    transition: all 0.3s ease;
+}
 
+/* Modo tabla (50/50 fijo) */
+maestro-detalle[tipo="tabla"] {
     .Maestro {
         max-height: calc(94vh - var(--alto-header));
-        flex-basis: 50%;
-        flex-shrink: 1;
-        max-width: 48vw;
-        flex-grow: 1;
+        flex: 1 1 50%;
+        max-width: 50%;
         min-width: 0;
     }
 
     .Detalle {
         max-height: calc(94vh - var(--alto-header));
         overflow-y: auto;
-        flex-basis: 50%;
-        max-width: 48vw;
-        flex-shrink: 1;
-        flex-grow: 1;
+        flex: 1 1 50%;
+        max-width: 50%;
         min-width: 0;
         border-left: 1px solid var(--gris-2);
         padding-left: 1rem;
     }
+}
 
-    .maestro-botones,
-    .botones {
-        display: flex;
-        margin-top: var(--espaciado-s);
-        gap: 0.5rem;
-        margin-bottom: var(--espaciado-s);
-        justify-content: flex-end;
+/* Modo maestro-dinamico (20/80 al seleccionar) */
+maestro-detalle[tipo="maestro-dinamico"] {
+    .Maestro {
+        max-height: calc(94vh - var(--alto-header));
+        flex: 1 1 50%;
+        max-width: 50%;
+        min-width: 0;
+        transition: all 0.3s ease;
     }
 
-
-    .maestro-botones button {
-        font-size: 0.8rem;
-        cursor: pointer;
-        padding: var(--espaciado-s);
+    .Maestro.contraido {
+        flex: 0 1 20%;
+        max-width: 20%;
     }
+
+    .Detalle {
+        max-height: calc(94vh - var(--alto-header));
+        overflow-y: auto;
+        flex: 0 1 0%;
+        max-width: 0%;
+        min-width: 0;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .Detalle.expandido {
+        flex: 1 1 80%;
+        max-width: 80%;
+        opacity: 1;
+        border-left: 1px solid var(--gris-2);
+        padding-left: 1rem;
+    }
+}
+
+/* Modo pantalla-completa (100% maestro o 100% detalle) */
+maestro-detalle[tipo="pantalla-completa"] {
+    .Maestro {
+        max-height: calc(94vh - var(--alto-header));
+        flex: 1 1 100%;
+        min-width: 0;
+        transition: all 0.3s ease;
+    }
+
+    .Maestro.oculto {
+        display: none;
+    }
+
+    .Detalle {
+        max-height: calc(94vh - var(--alto-header));
+        overflow-y: auto;
+        flex: 1 1 100%;
+        min-width: 0;
+        transition: all 0.3s ease;
+    }
+
+    .Detalle.oculto {
+        display: none;
+    }
+}
+
+.maestro-botones,
+.botones {
+    display: flex;
+    margin-top: var(--espaciado-s);
+    gap: 0.5rem;
+    margin-bottom: var(--espaciado-s);
+    justify-content: flex-end;
+}
+
+.maestro-botones button {
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: var(--espaciado-s);
+}
+
+.selector-modos {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: var(--gris-0);
+    border-radius: 4px;
+}
+
+.selector-modos button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gris-2);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.selector-modos button.activo {
+    background: var(--color-primario);
+    color: var(--color-secundario);
+    border-color: var(--color-primario);
 }
 
 @media (max-width: 768px) {
@@ -49,11 +133,21 @@ maestro-detalle[tipo="tabla"] {
 
     .Maestro,
     .Detalle {
-        flex-basis: 100%;
+        flex-basis: 100% !important;
         max-width: 100vw !important;
-        border-left: none;
+        border-left: none !important;
         padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
-        ;
+    }
+
+    .Maestro.contraido,
+    .Detalle.expandido {
+        flex-basis: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .selector-modos {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 }

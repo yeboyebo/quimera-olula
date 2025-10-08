@@ -82,6 +82,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
           setEstado("inactivo" as Estado),
           setOportunidades(cargar(payload as OportunidadVenta[]))
         ),
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setOportunidades((oportunidades) => ({
+            ...oportunidades,
+            idActivo: null,
+          }))
+        ),
     },
     creando: {
       oportunidad_creada: ({ maquina, payload, setEstado }) =>
@@ -124,6 +132,10 @@ export const MaestroConDetalleOportunidadVenta = () => {
             </div>
           </>
         }
+        modoVisualizacion="tabla"
+        modoDisposicion="maestro-dinamico"
+        setModoVisualizacion={(modo) => console.log("Vista:", modo)}
+        setModoDisposicion={(modo) => console.log("Disposición:", modo)}
         metaTabla={metaTablaOportunidadVenta}
         tarjeta={(oportunidad) => (
           <TarjetaOportunidadVenta oportunidad={oportunidad} />

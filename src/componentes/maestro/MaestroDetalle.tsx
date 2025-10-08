@@ -1,40 +1,15 @@
-import {
-  Criteria,
-  Entidad,
-  Filtro,
-  Orden,
-  Paginacion,
-  RespuestaLista,
-} from "@quimera/lib/diseño.ts";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { MetaTabla } from "../atomos/qtabla.tsx";
+// MaestroDetalle.tsx
+import { Entidad } from "@quimera/lib/diseño.ts";
+import { useEffect, useRef, useState } from "react";
 import { QModal } from "../moleculas/qmodal.tsx";
+import {
+  MaestroDetalleProps,
+  ModoDisposicion,
+  ModoVisualizacion,
+} from "./diseño.tsx";
 import { Listado } from "./Listado.tsx";
 import "./MaestroDetalle.css";
 import { useEsMovil } from "./useEsMovil.ts";
-
-type Modo = "tabla" | "tarjetas";
-
-export type MaestroDetalleProps<T extends Entidad> = {
-  seleccionada: T | null;
-  preMaestro?: ReactNode;
-  Detalle: ReactNode;
-  metaTabla?: MetaTabla<T>;
-  tarjeta?: (entidad: T) => React.ReactNode;
-  criteria?: Criteria;
-  entidades: T[];
-  setEntidades: (entidades: T[]) => void;
-  setSeleccionada: (seleccionada: T) => void;
-  modo?: Modo;
-  setModo?: (modo: Modo) => void;
-  cargar: (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-  ) => RespuestaLista<T>;
-  nombreModal?: string;
-  onCerrarDetalle?: () => void;
-};
 
 export function MaestroDetalle<T extends Entidad>(
   props: MaestroDetalleProps<T>
@@ -49,70 +24,118 @@ export function MaestroDetalle<T extends Entidad>(
     entidades,
     setEntidades,
     setSeleccionada,
-    modo: modoProp,
-    setModo: setModoProp,
+    modoVisualizacion: modoVisualizacionProp,
+    setModoVisualizacion: setModoVisualizacionProp,
+    modoDisposicion: modoDisposicionProp = "tabla",
+    setModoDisposicion: setModoDisposicionProp,
     cargar,
     nombreModal = "detalle",
     onCerrarDetalle,
   } = props;
 
   const esMovil = useEsMovil();
-  const [modo, setModo] = useState<Modo>(modoProp ?? "tarjetas");
+  const [modoVisualizacion, setModoVisualizacion] = useState<ModoVisualizacion>(
+    modoVisualizacionProp ?? "tarjetas"
+  );
+  const [modoDisposicion, setModoDisposicion] =
+    useState<ModoDisposicion>(modoDisposicionProp);
   const [modalAbierto, setModalAbierto] = useState(false);
   const prevSeleccionada = useRef<T | null>(null);
 
   useEffect(() => {
-    if (modo === "tarjetas") {
+    if (modoDisposicion === "modal") {
       if (seleccionada && seleccionada !== prevSeleccionada.current) {
         setModalAbierto(true);
-      } else if (!seleccionada) {
+      } else if (!seleccionada && prevSeleccionada.current) {
         setModalAbierto(false);
       }
-      prevSeleccionada.current = seleccionada;
     }
-  }, [seleccionada, modo]);
 
-  //   useEffect(() => {
-  //     if (modoProp && modoProp !== modo) {
-  //       setModo(modoProp);
-  //     }
-  //   }, [modoProp]);
+    prevSeleccionada.current = seleccionada;
+  }, [seleccionada, modoDisposicion]);
 
-  const handleSetModo = (nuevoModo: Modo) => {
-    setModo(nuevoModo);
-    if (setModoProp) setModoProp(nuevoModo);
+  const handleSetModoVisualizacion = (nuevoModo: ModoVisualizacion) => {
+    setModoVisualizacion(nuevoModo);
+    if (setModoVisualizacionProp) setModoVisualizacionProp(nuevoModo);
   };
 
-  // Selector de modo
-  //   const selectorModo = (
-  //     <div style={{ marginBottom: 8 }}>
-  //       <button
-  //         onClick={() => handleSetModo("tabla")}
-  //         disabled={modo === "tabla"}
-  //         style={{ marginRight: 4 }}
-  //       >
-  //         Tabla
-  //       </button>
-  //       <button
-  //         onClick={() => handleSetModo("tarjetas")}
-  //         disabled={modo === "tarjetas"}
-  //       >
-  //         Tarjetas
-  //       </button>
-  //     </div>
-  //   );
+  const handleSetModoDisposicion = (nuevoModo: ModoDisposicion) => {
+    setModoDisposicion(nuevoModo);
+    if (setModoDisposicionProp) setModoDisposicionProp(nuevoModo);
+  };
 
-  if (modo === "tarjetas") {
+  const handleCerrarDetalle = () => {
+    setModalAbierto(false);
+    if (onCerrarDetalle) {
+      onCerrarDetalle();
+    }
+  };
+
+  // Selector de modos
+  const SelectorModos = () => (
+    <div className="selector-modos">
+      <div>
+        <strong>Disposición:</strong>
+        <button
+          onClick={() => handleSetModoDisposicion("tabla")}
+          className={modoDisposicion === "tabla" ? "activo" : ""}
+        >
+          50/50
+        </button>
+        <button
+          onClick={() => handleSetModoDisposicion("maestro-dinamico")}
+          className={modoDisposicion === "maestro-dinamico" ? "activo" : ""}
+        >
+          20/80
+        </button>
+        <button
+          onClick={() => handleSetModoDisposicion("modal")}
+          className={modoDisposicion === "modal" ? "activo" : ""}
+        >
+          Modal
+        </button>
+        <button
+          onClick={() => handleSetModoDisposicion("pantalla-completa")}
+          className={modoDisposicion === "pantalla-completa" ? "activo" : ""}
+        >
+          100%
+        </button>
+      </div>
+    </div>
+  );
+
+  // Lógica unificada para todos los modos
+  const mostrarMaestro =
+    modoDisposicion !== "modal" &&
+    (!esMovil || !seleccionada || modoDisposicion === "pantalla-completa");
+
+  const mostrarDetalle =
+    modoDisposicion !== "modal" && (!esMovil || seleccionada);
+
+  // Clases condicionales
+  const claseMaestro = `
+    Maestro 
+    ${modoDisposicion === "maestro-dinamico" && seleccionada ? "contraido" : ""}
+    ${modoDisposicion === "pantalla-completa" && seleccionada ? "oculto" : ""}
+  `;
+
+  const claseDetalle = `
+    Detalle 
+    ${modoDisposicion === "maestro-dinamico" && seleccionada ? "expandido" : ""}
+    ${modoDisposicion === "pantalla-completa" && !seleccionada ? "oculto" : ""}
+  `;
+
+  if (modoDisposicion === "modal") {
     return (
-      <maestro-detalle tipo="tarjetas">
+      <maestro-detalle tipo="pantalla-completa">
         <div className="Maestro">
           {preMaestro}
-          {/* {selectorModo} */}
+          <SelectorModos />
           <Listado
             metaTabla={metaTabla}
             criteria={criteria}
-            modo={modo}
-            setModo={handleSetModo}
+            modo={modoVisualizacion}
+            setModo={handleSetModoVisualizacion}
             tarjeta={tarjeta}
             entidades={entidades}
             setEntidades={setEntidades}
@@ -124,12 +147,7 @@ export function MaestroDetalle<T extends Entidad>(
         <QModal
           nombre={nombreModal}
           abierto={modalAbierto}
-          onCerrar={() => {
-            setModalAbierto(false);
-            if (onCerrarDetalle) {
-              onCerrarDetalle();
-            }
-          }}
+          onCerrar={handleCerrarDetalle}
         >
           {Detalle}
         </QModal>
@@ -138,16 +156,16 @@ export function MaestroDetalle<T extends Entidad>(
   }
 
   return (
-    <maestro-detalle tipo="tabla">
-      {(!esMovil || !seleccionada) && (
-        <div className="Maestro">
+    <maestro-detalle tipo={modoDisposicion}>
+      {mostrarMaestro && (
+        <div className={claseMaestro}>
           {preMaestro}
-          {/* {selectorModo} */}
+          <SelectorModos />
           <Listado
             metaTabla={metaTabla}
             criteria={criteria}
-            modo={modo}
-            setModo={handleSetModo}
+            modo={modoVisualizacion}
+            setModo={handleSetModoVisualizacion}
             tarjeta={tarjeta}
             entidades={entidades}
             setEntidades={setEntidades}
@@ -157,7 +175,8 @@ export function MaestroDetalle<T extends Entidad>(
           />
         </div>
       )}
-      {(!esMovil || seleccionada) && <div className="Detalle">{Detalle}</div>}
+
+      {mostrarDetalle && <div className={claseDetalle}>{Detalle}</div>}
     </maestro-detalle>
   );
 }
