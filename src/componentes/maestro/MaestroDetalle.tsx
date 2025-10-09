@@ -1,4 +1,3 @@
-// MaestroDetalle.tsx
 import { Entidad } from "@quimera/lib/diseño.ts";
 import { useEffect, useRef, useState } from "react";
 import { QModal } from "../moleculas/qmodal.tsx";
@@ -71,7 +70,6 @@ export function MaestroDetalle<T extends Entidad>(
     }
   };
 
-  // Selector de modos
   const SelectorModos = () => (
     <div className="selector-modos">
       <div>
@@ -104,7 +102,6 @@ export function MaestroDetalle<T extends Entidad>(
     </div>
   );
 
-  // Lógica unificada para todos los modos
   const mostrarMaestro =
     modoDisposicion !== "modal" &&
     (!esMovil || !seleccionada || modoDisposicion === "pantalla-completa");
@@ -112,7 +109,6 @@ export function MaestroDetalle<T extends Entidad>(
   const mostrarDetalle =
     modoDisposicion !== "modal" && (!esMovil || seleccionada);
 
-  // Clases condicionales
   const claseMaestro = `
     Maestro 
     ${modoDisposicion === "maestro-dinamico" && seleccionada ? "contraido" : ""}

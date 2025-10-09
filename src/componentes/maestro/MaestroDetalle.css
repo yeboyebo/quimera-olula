@@ -1,4 +1,3 @@
-/* MaestroDetalle.css */
 maestro-detalle {
     display: flex;
     gap: 1rem;
@@ -31,8 +30,8 @@ maestro-detalle[tipo="tabla"] {
 maestro-detalle[tipo="maestro-dinamico"] {
     .Maestro {
         max-height: calc(94vh - var(--alto-header));
-        flex: 1 1 50%;
-        max-width: 50%;
+        flex: 1 1 100%;
+        max-width: 100%;
         min-width: 0;
         transition: all 0.3s ease;
     }
@@ -61,7 +60,7 @@ maestro-detalle[tipo="maestro-dinamico"] {
     }
 }
 
-/* Modo pantalla-completa (100% maestro o 100% detalle) */
+/* Modo pantalla-completa (100%) */
 maestro-detalle[tipo="pantalla-completa"] {
     .Maestro {
         max-height: calc(94vh - var(--alto-header));

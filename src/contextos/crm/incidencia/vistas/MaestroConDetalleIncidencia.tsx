@@ -1,7 +1,6 @@
+import { MaestroDetalle } from "@quimera/comp/maestro/MaestroDetalle.tsx";
 import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { Listado } from "../../../../componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
 import {
   cambiarItem,
@@ -23,6 +22,7 @@ import { metaTablaIncidencia } from "../dominio.ts";
 import { getIncidencias } from "../infraestructura.ts";
 import { CrearIncidencia } from "./CrearIncidencia.tsx";
 import { DetalleIncidencia } from "./DetalleIncidencia/DetalleIncidencia.tsx";
+import { TarjetaIncidencia } from "./TarjetaIncidencia.tsx";
 
 type Estado = "Inactivo" | "Creando";
 
@@ -105,7 +105,35 @@ export const MaestroConDetalleIncidencia = () => {
 
   return (
     <div className="Incidencia">
-      <MaestroDetalleResponsive<Incidencia>
+      <MaestroDetalle<Incidencia>
+        seleccionada={seleccionada}
+        preMaestro={
+          <>
+            <h2>Incidencias</h2>
+            <div className="maestro-botones">
+              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
+            </div>
+          </>
+        }
+        modoVisualizacion="tabla"
+        modoDisposicion="maestro-dinamico"
+        setModoVisualizacion={(modo) => console.log("Vista:", modo)}
+        setModoDisposicion={(modo) => console.log("Disposición:", modo)}
+        metaTabla={metaTablaIncidencia}
+        tarjeta={(incidencia) => <TarjetaIncidencia incidencia={incidencia} />}
+        entidades={incidencias.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getIncidencias}
+        Detalle={
+          <DetalleIncidencia
+            key={seleccionada?.id}
+            incidenciaInicial={seleccionada}
+            publicar={emitir}
+          />
+        }
+      />
+      {/* <MaestroDetalleResponsive<Incidencia>
         seleccionada={seleccionada}
         Maestro={
           <>
@@ -130,7 +158,7 @@ export const MaestroConDetalleIncidencia = () => {
             publicar={emitir}
           />
         }
-      />
+      /> */}
       <CrearIncidencia publicar={emitir} activo={estado === "Creando"} />
     </div>
   );
