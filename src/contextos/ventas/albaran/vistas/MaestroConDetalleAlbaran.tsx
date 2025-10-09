@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
@@ -109,10 +110,14 @@ export const MaestroConDetalleAlbaran = () => {
   });
   const { albaranes } = contexto;
 
-  const setEntidades = (payload: Albaran[]) =>
-    emitir("albaranes_cargados", payload);
-  const setSeleccionada = (payload: Albaran) =>
-    emitir("albaran_seleccionado", payload);
+  const setEntidades = useCallback(
+    (payload: Albaran[]) => emitir("albaranes_cargados", payload),
+    [emitir]
+  );
+  const setSeleccionada = useCallback(
+    (payload: Albaran) => emitir("albaran_seleccionado", payload),
+    [emitir]
+  );
 
   const seleccionada = getSeleccionada(albaranes);
 
