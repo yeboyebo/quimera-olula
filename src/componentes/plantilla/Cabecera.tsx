@@ -21,7 +21,7 @@ export const Cabecera = () => {
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          <span>Quimera</span> Olula
+          <span>Olula</span>
         </Link>
         <button
           id="boton-menu-usuario"

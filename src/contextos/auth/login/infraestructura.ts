@@ -1,6 +1,6 @@
-import { Permiso } from "../../administracion/diseño.ts";
 import { RestAPI } from "../../comun/api/rest_api.ts";
 import { RespuestaLista } from "../../comun/diseño.ts";
+import { Permiso } from "../grupos/diseño.ts";
 import { Login, Logout, RefrescarToken, UsuarioLogin, UsuarioRefresco } from "./diseño.ts";
 
 const MINUTOS_REFRESCO = 15;

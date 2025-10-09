@@ -16,7 +16,7 @@ export const getEvento = async (evento_id: string): Promise<Evento> =>
 
 export const getEventos = async (
     filtro: Filtro,
-    orden: Orden = ["fecha_inicio", "ASC"],
+    orden: Orden = ["finicio", "DESC"],
     paginacion: Paginacion
 ): RespuestaLista<Evento> => {
     const q = criteriaQuery(filtro, orden, paginacion);
