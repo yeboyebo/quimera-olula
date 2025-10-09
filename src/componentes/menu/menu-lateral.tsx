@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { menuFactory } from "../../app.ts";
 import { puede } from "../../contextos/comun/dominio.ts";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -10,6 +10,7 @@ import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 const elementosDelMenu: ElementoMenu[] = menuFactory();
 
 export const MenuLateral = () => {
+  const rutaActual = useLocation().pathname;
   const [busqueda, setBusqueda] = useState("");
 
   const renderBuscador = () => (
@@ -39,11 +40,11 @@ export const MenuLateral = () => {
 
     if ("url" in elemento && elemento.url) {
       if (!cumpleFiltro) return null;
-      const path = window.location.pathname;
+
       return (
         <li
           key={elemento.nombre}
-          className={path === elemento.url ? "activo" : ""}
+          className={rutaActual === elemento.url ? "activo" : ""}
         >
           <Link to={elemento.url}>
             {icono} {elemento.nombre}

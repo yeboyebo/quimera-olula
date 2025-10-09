@@ -1,4 +1,4 @@
-import { EmitirEvento } from "../../../../comun/diseño.ts";
+import { EmitirEvento } from "../../../../../comun/diseño.ts";
 import { CategoriaReglas, Grupo } from "../../../diseño.ts";
 import { Categoria } from "./Categoria.tsx";
 import "./ReglasOrganizadas.css";

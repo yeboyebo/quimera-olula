@@ -1,8 +1,8 @@
-import { Entidad } from "../comun/diseño.ts";
+import { Entidad } from "../../comun/diseño.ts";
 
 export interface Grupo extends Entidad {
     id: string;
-    descripcion: string;
+    nombre: string;
 }
 
 export interface Regla extends Entidad {

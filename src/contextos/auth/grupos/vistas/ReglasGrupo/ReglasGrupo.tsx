@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { ContextoError } from "../../../comun/contexto.ts";
-import { useLista } from "../../../comun/useLista.ts";
-import { Maquina, useMaquina } from "../../../comun/useMaquina.ts";
+import { ContextoError } from "../../../../comun/contexto.ts";
+import { useLista } from "../../../../comun/useLista.ts";
+import { Maquina, useMaquina } from "../../../../comun/useMaquina.ts";
 import { CategoriaReglas, Grupo, Regla, ReglaAnidada } from "../../diseño.ts";
 import { getReglasPorGrupoPermiso } from "../../dominio.ts";
 import { getPermisosGrupo, putPermiso } from "../../infraestructura.ts";
