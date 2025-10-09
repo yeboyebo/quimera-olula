@@ -1,0 +1,28 @@
+.fondo-inicio {
+    width: 80%;
+    margin: 0 auto;
+    color: var(--mg-6);
+    font-size: 15rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* gap: -2rem; */
+}
+
+.logo-imagen {
+    width: 600px;
+    height: auto;
+    margin-bottom: -4rem;
+}
+
+.texto-logo {
+    color: var(--mg-6);
+    font-size: 15rem;
+    font-weight: bold;
+    -webkit-text-stroke: 1px black;
+    /* Borde negro */
+    /* text-stroke is not supported in most browsers, so it's removed */
+}
