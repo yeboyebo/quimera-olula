@@ -21,7 +21,7 @@ export const MaestroConDetalleCliente = () => {
 
   const maquina: Maquina<Estado> = {
     alta: {
-      cliente_creado: (payload: unknown) => {
+      cliente_creado: (payload) => {
         const cliente = payload as Cliente;
         clientes.añadir(cliente);
         return "lista";
@@ -30,11 +30,11 @@ export const MaestroConDetalleCliente = () => {
     },
     lista: {
       alta_iniciada: "alta",
-      cliente_cambiado: (payload: unknown) => {
+      cliente_cambiado: (payload) => {
         const cliente = payload as Cliente;
         clientes.modificar(cliente);
       },
-      cliente_borrado: (payload: unknown) => {
+      cliente_borrado: (payload) => {
         const cliente = payload as Cliente;
         clientes.eliminar(cliente);
       },

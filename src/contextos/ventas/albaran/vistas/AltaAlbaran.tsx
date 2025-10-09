@@ -21,7 +21,7 @@ export const AltaAlbaran = ({
   const guardar = async () => {
     const id = await intentar(() => postAlbaran(nuevoAlbaran.modelo));
     const albaranCreado = await getAlbaran(id);
-    publicar("ALBARAN_CREADO", albaranCreado);
+    publicar("albaran_creado", albaranCreado);
   };
 
   return (
@@ -42,7 +42,7 @@ export const AltaAlbaran = ({
         <QBoton onClick={guardar} deshabilitado={!nuevoAlbaran.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={() => publicar("alta_cancelada")} variante="texto">
           Cancelar
         </QBoton>
       </div>

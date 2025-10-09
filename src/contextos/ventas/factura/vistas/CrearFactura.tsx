@@ -21,7 +21,7 @@ export const AltaFactura = ({
   const guardar = async () => {
     const id = await intentar(() => postFactura(nuevaFactura.modelo));
     const facturaCreada = await getFactura(id);
-    publicar("FACTURA_CREADA", facturaCreada);
+    publicar("factura_creada", facturaCreada);
   };
 
   return (
@@ -42,7 +42,7 @@ export const AltaFactura = ({
         <QBoton onClick={guardar} deshabilitado={!nuevaFactura.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={() => publicar("alta_cancelada")} variante="texto">
           Cancelar
         </QBoton>
       </div>

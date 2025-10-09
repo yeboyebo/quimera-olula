@@ -23,9 +23,10 @@ import {
   useMaquina4,
 } from "../../../comun/useMaquina.ts";
 import { metaTablaPresupuesto } from "../dominio.ts";
-import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
+import { CrearPresupuesto } from "./CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
 import { TabDatosProps } from "./DetallePresupuesto/TabDatosBase.tsx";
+import "./MaestroConDetallePresupuesto.css";
 
 type Estado = "Inactivo" | "Creando";
 

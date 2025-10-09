@@ -1,27 +1,25 @@
 import { useContext } from "react";
 
-import { QBoton } from "../../../../../componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../../componentes/atomos/qinput.tsx";
-import { Mostrar } from "../../../../../componentes/moleculas/Mostrar.tsx";
-import { ContextoError } from "../../../../comun/contexto.ts";
-import { EmitirEvento } from "../../../../comun/diseño.ts";
-import { HookModelo, useModelo } from "../../../../comun/useModelo.ts";
-import { Cliente } from "../../../comun/componentes/cliente.tsx";
-import { DirCliente } from "../../../comun/componentes/dirCliente.tsx";
-import { NuevoPresupuesto } from "../../diseño.ts";
-import { metaNuevoPresupuesto, nuevoPresupuestoVacio } from "../../dominio.ts";
-import { getPresupuesto, postPresupuesto } from "../../infraestructura.ts";
+import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
+import { QInput } from "../../../../componentes/atomos/qinput.tsx";
+import { Mostrar } from "../../../../componentes/moleculas/Mostrar.tsx";
+import { ContextoError } from "../../../comun/contexto.ts";
+import { EmitirEvento } from "../../../comun/diseño.ts";
+import { HookModelo, useModelo } from "../../../comun/useModelo.ts";
+import { Cliente } from "../../comun/componentes/cliente.tsx";
+import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
+import { NuevoPresupuesto } from "../diseño.ts";
+import { metaNuevoPresupuesto, nuevoPresupuestoVacio } from "../dominio.ts";
+import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
 import "./CrearPresupuesto.css";
-
 
 export const CrearPresupuesto = ({
   publicar = () => {},
-  activo= false
+  activo = false,
 }: {
   publicar?: EmitirEvento;
   activo: boolean;
 }) => {
-
   const presupuesto = useModelo(metaNuevoPresupuesto, {
     ...nuevoPresupuestoVacio,
   });
@@ -31,15 +29,9 @@ export const CrearPresupuesto = ({
     publicar("creacion_presupuesto_cancelada");
   };
 
-
   return (
-    <Mostrar modo="modal" activo={activo}
-      onCerrar={cancelar}
-    >
-      <FormAltaPresupuesto
-        publicar={publicar}
-        presupuesto={presupuesto}
-        />
+    <Mostrar modo="modal" activo={activo} onCerrar={cancelar}>
+      <FormAltaPresupuesto publicar={publicar} presupuesto={presupuesto} />
     </Mostrar>
   );
 };
@@ -51,7 +43,6 @@ const FormAltaPresupuesto = ({
   publicar?: EmitirEvento;
   presupuesto: HookModelo<NuevoPresupuesto>;
 }) => {
-
   const { intentar } = useContext(ContextoError);
 
   const crear = async () => {
@@ -64,7 +55,7 @@ const FormAltaPresupuesto = ({
     presupuesto.init();
   };
 
-  const cancelar = () => { 
+  const cancelar = () => {
     publicar("creacion_presupuesto_cancelada");
     presupuesto.init();
   };
@@ -75,7 +66,7 @@ const FormAltaPresupuesto = ({
       <quimera-formulario>
         <Cliente
           {...presupuesto.uiProps("cliente_id", "nombre")}
-          nombre="clientePresupuesto" 
+          nombre="clientePresupuesto"
         />
         <DirCliente
           clienteId={presupuesto.modelo.cliente_id}
@@ -94,4 +85,3 @@ const FormAltaPresupuesto = ({
     </div>
   );
 };
-

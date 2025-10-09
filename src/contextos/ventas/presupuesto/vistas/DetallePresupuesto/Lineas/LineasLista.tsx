@@ -43,7 +43,7 @@ export const LineasLista = ({
   emitir: (evento: string, payload?: unknown) => void;
 }) => {
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
+    emitir("cambio_cantidad_solicitado", { linea, cantidad });
   };
 
   return (
@@ -53,7 +53,7 @@ export const LineasLista = ({
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
-        onSeleccion={(linea) => emitir("LINEA_SELECCIONADA", linea)}
+        onSeleccion={(linea) => emitir("linea_seleccionada", linea)}
         orden={["id", "ASC"]}
         onOrdenar={
           (_: string) => null

@@ -39,7 +39,7 @@ const cabecera = <T extends Entidad>(
       key={id}
       data-modo="columna"
       data-orden={id === colOrdenada ? sentido : ""}
-      className={`${tipo ?? ""} ${id}`}
+      className={`${id} ${tipo ?? ""}`}
       style={ancho ? { width: ancho } : undefined}
       onClick={() => onOrdenar && onOrdenar(id)}
     >
@@ -74,7 +74,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     return (
       <td
         key={[entidad.id, id].join("-")}
-        className={`${tipo ?? ""} ${id}`}
+        className={`${id} ${tipo ?? ""}`}
         style={ancho ? { width: ancho } : undefined}
       >
         {datos}

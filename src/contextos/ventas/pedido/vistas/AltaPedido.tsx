@@ -18,7 +18,7 @@ export const AltaPedido = ({
   const guardar = async () => {
     const id = await postPedido(nuevoPedido.modelo);
     const pedidoCreado = await getPedido(id);
-    publicar("PEDIDO_CREADO", pedidoCreado);
+    publicar("pedido_creado", pedidoCreado);
   };
 
   return (
@@ -37,7 +37,7 @@ export const AltaPedido = ({
         <QBoton onClick={guardar} deshabilitado={!nuevoPedido.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={() => publicar("alta_cancelada")} variante="texto">
           Cancelar
         </QBoton>
       </div>
