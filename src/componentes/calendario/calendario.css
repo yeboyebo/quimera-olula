@@ -383,7 +383,7 @@
   }
 
 
-  */ .calendario-dias,
+  .calendario-dias,
   .calendario-semana {
     overflow-x: auto;
     display: flex;
