@@ -25,6 +25,7 @@ export interface UsuarioAPI extends Entidad {
 }
 
 export type GetUsuario = (id: string) => Promise<Usuario>;
+export type GetTokenUsuario = (id: string) => Promise<string>;
 
 
 export type PostUsuario = (usuario: Partial<Usuario>) => Promise<string>;

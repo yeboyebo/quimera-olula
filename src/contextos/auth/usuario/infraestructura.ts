@@ -2,7 +2,7 @@ import { RestAPI } from "../../comun/api/rest_api.ts";
 import { RespuestaLista2 } from "../../comun/diseño.ts";
 import { criteriaQuery } from "../../comun/infraestructura.ts";
 import { Logout } from "../login/diseño.ts";
-import { DeleteUsuario, GenerarTokenUsuario, GetUsuario, GetUsuarios, PatchUsuario, PostUsuario, Usuario, UsuarioAPI, UsuarioApi } from "./diseño.ts";
+import { DeleteUsuario, GenerarTokenUsuario, GetTokenUsuario, GetUsuario, GetUsuarios, PatchUsuario, PostUsuario, Usuario, UsuarioAPI, UsuarioApi } from "./diseño.ts";
 
 
 const baseUrl = '/auth';
@@ -60,3 +60,8 @@ export const generarTokenUsuario: GenerarTokenUsuario = async (id, expiracion) =
     return RestAPI.post(`/auth/token`, payload, "Error al generar token")
         .then(callback as unknown as (_: { id: string }) => string);
 }
+
+export const getTokenUsuario: GetTokenUsuario = async (id) =>
+    await RestAPI.get<{ token: string }>(`/auth/usuario/${id}/token_refresco`).then((respuesta) =>
+        respuesta.token
+    );

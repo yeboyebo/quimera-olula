@@ -1,3 +1,4 @@
+import { QDate } from "@quimera/comp/atomos/qdate.tsx";
 import { QModal } from "@quimera/comp/moleculas/qmodal.tsx";
 import { Grupo } from "@quimera/ctx/auth/comun/componentes/grupo.tsx";
 import { useContext, useState } from "react";
@@ -19,13 +20,14 @@ import { Usuario } from "../../diseño";
 import { metaUsuario, usuarioVacio } from "../../dominio";
 import {
   generarTokenUsuario,
+  getTokenUsuario,
   getUsuario,
   patchUsuario,
 } from "../../infraestructura";
 import { BorrarUsuario } from "./BorrarUsuario";
 import "./DetalleUsuario.css";
 
-type Estado = "editando" | "borrando" | "generar_token";
+type Estado = "editando" | "borrando" | "generar_token" | "consultar_token";
 type Contexto = Record<string, unknown>;
 
 const configMaquina: ConfigMaquina4<Estado, Contexto> = {
@@ -37,6 +39,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     editando: {
       borrar: "borrando",
       generar_token: "generar_token",
+      consultar_token: "consultar_token",
       usuario_guardado: ({ publicar }) => publicar("usuario_cambiado"),
       cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
     },
@@ -45,6 +48,9 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       usuario_borrado: ({ publicar }) => publicar("usuario_borrado"),
     },
     generar_token: {
+      cancelar: "editando",
+    },
+    consultar_token: {
       cancelar: "editando",
     },
   },
@@ -72,7 +78,6 @@ export const DetalleUsuario = ({
   });
 
   const [expiracion, setExpiracion] = useState("");
-  const [expiracionError, setExpiracionError] = useState("");
   const [tokenGenerado, setTokenGenerado] = useState<string | null>(null);
 
   // Expresión regular ISO: YYYY-MM-DD, opcionalmente T[HH:MM[:SS]]Z
@@ -87,7 +92,6 @@ export const DetalleUsuario = ({
 
   const onExpiracionChange = (valor: string) => {
     setExpiracion(valor);
-    setExpiracionError(validarExpiracion(valor));
   };
 
   const onGenerar = async () => {
@@ -96,10 +100,7 @@ export const DetalleUsuario = ({
       generarTokenUsuario(modelo.id, expiracion)
     );
     setTokenGenerado(token);
-    // emitir("token_generado", token);
     setExpiracion("");
-    setExpiracionError("");
-    console.log("Token generado:", token);
   };
 
   const guardar = async () => {
@@ -114,6 +115,30 @@ export const DetalleUsuario = ({
     emitirUsuario("generar_token");
   };
 
+  const abrirConsultaToken = async () => {
+    emitirUsuario("consultar_token");
+    const token = await getTokenUsuario(modelo.id);
+    setTokenGenerado(token);
+  };
+
+  // const acciones = [
+  //   {
+  //     texto: "Generar Token",
+  //     onClick: () => abrirGenerarToken,
+  //     deshabilitado: false,
+  //   },
+  //   {
+  //     texto: "Consultar Token Refresco",
+  //     onClick: abrirConsultaToken,
+  //     deshabilitado: false,
+  //   },
+  //   {
+  //     texto: "Borrar",
+  //     onClick: () => emitirUsuario("borrar"),
+  //     deshabilitado: false,
+  //   },
+  // ];
+
   return (
     <Detalle
       id={usuarioId}
@@ -127,7 +152,9 @@ export const DetalleUsuario = ({
         <div className="DetalleUsuario">
           <div className="maestro-botones ">
             <QBoton onClick={abrirGenerarToken}>Generar Token</QBoton>
+            <QBoton onClick={abrirConsultaToken}>Token Refresco</QBoton>
             <QBoton onClick={() => emitirUsuario("borrar")}>Borrar</QBoton>
+            {/* <QuimeraAcciones acciones={acciones} vertical /> */}
           </div>
 
           <quimera-formulario>
@@ -157,18 +184,15 @@ export const DetalleUsuario = ({
             onCerrar={() => {
               emitirUsuario("cancelar");
               setExpiracion("");
-              setExpiracionError("");
               setTokenGenerado(null);
             }}
           >
-            <h2>Generar token</h2>
-            <QInput
+            <h2>Generar token refresco</h2>
+            <QDate
               nombre="expiracion"
               label="Expiración"
               valor={expiracion}
               onChange={onExpiracionChange}
-              textoValidacion={expiracionError}
-              tipo="texto"
             />
             <div className="botones">
               <QBoton
@@ -183,7 +207,6 @@ export const DetalleUsuario = ({
                 onClick={() => {
                   emitirUsuario("cancelar");
                   setExpiracion("");
-                  setExpiracionError("");
                   setTokenGenerado(null);
                 }}
               >
@@ -192,13 +215,37 @@ export const DetalleUsuario = ({
             </div>
             {tokenGenerado && (
               <div className="token-generado">
-                <label htmlFor="token-generado">Token generado</label>
+                <label htmlFor="token-generado">Token refresco generado</label>
                 <textarea
                   id="token-generado"
                   className="token-textarea"
                   name="token"
                   value={tokenGenerado}
                   readOnly
+                  onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+                />
+              </div>
+            )}
+          </QModal>
+          <QModal
+            nombre="generarToken"
+            abierto={estado === "consultar_token"}
+            onCerrar={() => {
+              emitirUsuario("cancelar");
+              setExpiracion("");
+              setTokenGenerado(null);
+            }}
+          >
+            <h2>Token refresco</h2>
+            {tokenGenerado && (
+              <div className="token-generado">
+                <textarea
+                  id="token-generado"
+                  className="token-textarea"
+                  name="token"
+                  value={tokenGenerado}
+                  readOnly
+                  onClick={(e) => (e.target as HTMLTextAreaElement).select()}
                 />
               </div>
             )}
