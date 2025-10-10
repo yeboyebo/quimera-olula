@@ -19,7 +19,9 @@ export const BorrarUsuario = ({
     if (usuario.id) {
       await intentar(() => deleteUsuario(usuario.id));
     }
+
     emitir("usuario_borrado");
+    emitir("borrado_cancelado");
   };
 
   return (
