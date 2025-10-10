@@ -3,8 +3,8 @@ import { RouterFactoryAlmacenOlula } from '@quimera/ctx/almacen/router_factory.t
 import { RouterFactoryAuthOlula } from '@quimera/ctx/auth/router_factory.ts';
 import { RouterFactoryCrmOlula } from '@quimera/ctx/crm/router_factory.ts';
 import { RouterFactoryVentasOlula } from '@quimera/ctx/ventas/router_factory.ts';
-// import { Indice } from '@quimera/lib/Indice.tsx';
 import { FondoInicio } from '@quimera/lib/FondoInicio.tsx';
+
 export class RouterFactoryOlula {
     Inicio = { router: { "": FondoInicio } };
     Auth = RouterFactoryAuthOlula;
