@@ -11,7 +11,7 @@ import { MetaTabla } from "../atomos/qtabla.tsx";
 
 export type ModoVisualizacion = "tabla" | "tarjetas";
 export type ModoDisposicion =
-  | "tabla"
+  | "maestro-50"
   | "maestro-dinamico"
   | "pantalla-completa"
   | "modal";

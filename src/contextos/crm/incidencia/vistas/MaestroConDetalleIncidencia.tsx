@@ -73,6 +73,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
           setEstado("Inactivo" as Estado),
           setIncidencias(cargar(payload as Incidencia[]))
         ),
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setIncidencias((incidencias) => ({
+            ...incidencias,
+            idActivo: null,
+          }))
+        ),
     },
     Creando: {
       incidencia_creada: ({ maquina, payload, setEstado }) =>
@@ -115,10 +123,6 @@ export const MaestroConDetalleIncidencia = () => {
             </div>
           </>
         }
-        modoVisualizacion="tabla"
-        modoDisposicion="maestro-dinamico"
-        setModoVisualizacion={(modo) => console.log("Vista:", modo)}
-        setModoDisposicion={(modo) => console.log("Disposición:", modo)}
         metaTabla={metaTablaIncidencia}
         tarjeta={(incidencia) => <TarjetaIncidencia incidencia={incidencia} />}
         entidades={incidencias.lista}
@@ -133,32 +137,6 @@ export const MaestroConDetalleIncidencia = () => {
           />
         }
       />
-      {/* <MaestroDetalleResponsive<Incidencia>
-        seleccionada={seleccionada}
-        Maestro={
-          <>
-            <h2>Incidencias</h2>
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
-            </div>
-            <Listado
-              metaTabla={metaTablaIncidencia}
-              entidades={incidencias.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getIncidencias}
-            />
-          </>
-        }
-        Detalle={
-          <DetalleIncidencia
-            key={seleccionada?.id}
-            incidenciaInicial={seleccionada}
-            publicar={emitir}
-          />
-        }
-      /> */}
       <CrearIncidencia publicar={emitir} activo={estado === "Creando"} />
     </div>
   );

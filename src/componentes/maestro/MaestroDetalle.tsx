@@ -1,11 +1,7 @@
 import { Entidad } from "@quimera/lib/diseño.ts";
 import { useEffect, useRef, useState } from "react";
 import { QModal } from "../moleculas/qmodal.tsx";
-import {
-  MaestroDetalleProps,
-  ModoDisposicion,
-  ModoVisualizacion,
-} from "./diseño.tsx";
+import { MaestroDetalleProps, ModoVisualizacion } from "./diseño.tsx";
 import { Listado } from "./Listado.tsx";
 import "./MaestroDetalle.css";
 import { useEsMovil } from "./useEsMovil.ts";
@@ -23,21 +19,30 @@ export function MaestroDetalle<T extends Entidad>(
     entidades,
     setEntidades,
     setSeleccionada,
-    modoVisualizacion: modoVisualizacionProp,
+    modoVisualizacion: modoVisualizacionProp = tarjeta ? "tarjetas" : "tabla",
     setModoVisualizacion: setModoVisualizacionProp,
-    modoDisposicion: modoDisposicionProp = "tabla",
-    setModoDisposicion: setModoDisposicionProp,
+    modoDisposicion: modoDisposicionProp,
+    // setModoDisposicion: setModoDisposicionProp,
     cargar,
     nombreModal = "detalle",
     onCerrarDetalle,
   } = props;
 
   const esMovil = useEsMovil();
+
+  const getModoDisposicionInicial = () => {
+    if (modoDisposicionProp) return modoDisposicionProp;
+    return modoVisualizacionProp === "tabla"
+      ? "pantalla-completa"
+      : "maestro-dinamico";
+  };
+
   const [modoVisualizacion, setModoVisualizacion] = useState<ModoVisualizacion>(
-    modoVisualizacionProp ?? "tarjetas"
+    modoVisualizacionProp ?? "tabla"
   );
-  const [modoDisposicion, setModoDisposicion] =
-    useState<ModoDisposicion>(modoDisposicionProp);
+  const [modoDisposicion, setModoDisposicion] = useState<string>(
+    getModoDisposicionInicial()
+  );
   const [modalAbierto, setModalAbierto] = useState(false);
   const prevSeleccionada = useRef<T | null>(null);
 
@@ -56,11 +61,10 @@ export function MaestroDetalle<T extends Entidad>(
   const handleSetModoVisualizacion = (nuevoModo: ModoVisualizacion) => {
     setModoVisualizacion(nuevoModo);
     if (setModoVisualizacionProp) setModoVisualizacionProp(nuevoModo);
-  };
 
-  const handleSetModoDisposicion = (nuevoModo: ModoDisposicion) => {
-    setModoDisposicion(nuevoModo);
-    if (setModoDisposicionProp) setModoDisposicionProp(nuevoModo);
+    setModoDisposicion(
+      nuevoModo === "tabla" ? "pantalla-completa" : "maestro-dinamico"
+    );
   };
 
   const handleCerrarDetalle = () => {
@@ -69,38 +73,6 @@ export function MaestroDetalle<T extends Entidad>(
       onCerrarDetalle();
     }
   };
-
-  const SelectorModos = () => (
-    <div className="selector-modos">
-      <div>
-        <strong>Disposición:</strong>
-        <button
-          onClick={() => handleSetModoDisposicion("tabla")}
-          className={modoDisposicion === "tabla" ? "activo" : ""}
-        >
-          50/50
-        </button>
-        <button
-          onClick={() => handleSetModoDisposicion("maestro-dinamico")}
-          className={modoDisposicion === "maestro-dinamico" ? "activo" : ""}
-        >
-          20/80
-        </button>
-        <button
-          onClick={() => handleSetModoDisposicion("modal")}
-          className={modoDisposicion === "modal" ? "activo" : ""}
-        >
-          Modal
-        </button>
-        <button
-          onClick={() => handleSetModoDisposicion("pantalla-completa")}
-          className={modoDisposicion === "pantalla-completa" ? "activo" : ""}
-        >
-          100%
-        </button>
-      </div>
-    </div>
-  );
 
   const mostrarMaestro =
     modoDisposicion !== "modal" &&
@@ -126,7 +98,6 @@ export function MaestroDetalle<T extends Entidad>(
       <maestro-detalle tipo="pantalla-completa">
         <div className="Maestro">
           {preMaestro}
-          <SelectorModos />
           <Listado
             metaTabla={metaTabla}
             criteria={criteria}
@@ -156,7 +127,6 @@ export function MaestroDetalle<T extends Entidad>(
       {mostrarMaestro && (
         <div className={claseMaestro}>
           {preMaestro}
-          <SelectorModos />
           <Listado
             metaTabla={metaTabla}
             criteria={criteria}

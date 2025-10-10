@@ -37,8 +37,8 @@ maestro-detalle[tipo="maestro-dinamico"] {
     }
 
     .Maestro.contraido {
-        flex: 0 1 20%;
-        max-width: 20%;
+        flex: 0 1 30%;
+        max-width: 30%;
     }
 
     .Detalle {
@@ -52,8 +52,8 @@ maestro-detalle[tipo="maestro-dinamico"] {
     }
 
     .Detalle.expandido {
-        flex: 1 1 80%;
-        max-width: 80%;
+        flex: 1 1 70%;
+        max-width: 70%;
         opacity: 1;
         border-left: 1px solid var(--gris-2);
         padding-left: 1rem;
@@ -79,6 +79,7 @@ maestro-detalle[tipo="pantalla-completa"] {
         flex: 1 1 100%;
         min-width: 0;
         transition: all 0.3s ease;
+        padding: 0 465px;
     }
 
     .Detalle.oculto {

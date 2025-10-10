@@ -133,9 +133,9 @@ export const MaestroConDetalleOportunidadVenta = () => {
           </>
         }
         modoVisualizacion="tabla"
-        modoDisposicion="maestro-dinamico"
-        setModoVisualizacion={(modo) => console.log("Vista:", modo)}
-        setModoDisposicion={(modo) => console.log("Disposición:", modo)}
+        modoDisposicion="maestro-50"
+        // setModoVisualizacion={(modo) => console.log("Vista:", modo)}
+        // setModoDisposicion={(modo) => console.log("Disposición:", modo)}
         metaTabla={metaTablaOportunidadVenta}
         tarjeta={(oportunidad) => (
           <TarjetaOportunidadVenta oportunidad={oportunidad} />
