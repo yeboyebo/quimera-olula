@@ -30,7 +30,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install Dependecies
-        run: pnpm install --filter @olula/almaeventos
+        run: pnpm install
 
       - name: Build
         run: pnpm run --filter @olula/almaeventos build
