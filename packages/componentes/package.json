@@ -1,0 +1,19 @@
+{
+    "name": "@olula/componentes",
+    "version": "0.0.1",
+    "type": "module",
+    "main": "./index.ts",
+    "types": "./**/declarations.d.ts",
+    "exports": {
+        "./*": "./src/*"
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "type-check": "tsc -p ./tsconfig.json --noEmit",
+        "ci": "pnpm lint && pnpm type-check && pnpm test run",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "@olula/lib": "workspace:*"
+    }
+}

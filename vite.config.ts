@@ -51,12 +51,4 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
   },
-  resolve: {
-    alias: {
-      "@quimera/lib": "/src/contextos/comun",
-      "@quimera/ctx": "/src/contextos/",
-      "@quimera/app": "/src/apps/",
-      "@quimera/comp": "/src/componentes",
-    }
-  }
 });

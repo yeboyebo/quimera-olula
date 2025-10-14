@@ -20,20 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "paths": {
-      "@quimera/lib/*": [
-        "src/contextos/comun/*"
-      ],
-      "@quimera/ctx/*": [
-        "src/contextos/*"
-      ],
-      "@quimera/app/*": [
-        "src/apps/*"
-      ],
-      "@quimera/comp/*": [
-        "src/componentes/*"
-      ],
-    }
   },
   "include": [
     "vite.config.ts"
