@@ -28,7 +28,7 @@ import { BorrarUsuario } from "./BorrarUsuario";
 import "./DetalleUsuario.css";
 
 type Estado = "editando" | "borrando" | "generar_token" | "consultar_token";
-type Contexto = Record<string, unknown>;
+type Contexto = Record<string, Usuario>;
 
 const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   inicial: {
