@@ -1,15 +1,12 @@
 {
-  "name": "@olula/quimera",
+  "name": "@olula/core",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint src",
-    "type-check": "tsc -p tsconfig.app.json --noEmit",
-    "ci": "pnpm lint && pnpm type-check && pnpm test run",
-    "preview": "vite preview",
-    "test": "vitest"
+    "lint": "pnpm -r run lint",
+    "type-check": "pnpm -r run type-check",
+    "ci": "pnpm -r run ci",
+    "test": "pnpm -r run test"
   },
   "dependencies": {
     "react": "^19.1.0",

@@ -21,7 +21,6 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_DEBUG: false
-          envkey_VITE_APP_NAME: "almaeventos"
           envkey_VITE_API_URL:  "https://api.aeproducciones.es"
           file_name: .env
           fail_on_empty: false
@@ -31,10 +30,10 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install Dependecies
-        run: pnpm install
+        run: pnpm install --filter @olula/almaeventos
 
       - name: Build
-        run: pnpm build
+        run: pnpm run --filter @olula/almaeventos build
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

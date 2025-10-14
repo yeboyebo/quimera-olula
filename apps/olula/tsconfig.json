@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.app.json",
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "#/*": [
+                "../node_modules/@olula/ctx/src/*"
+            ],
+        }
+    },
+    "include": [
+        ".",
+        "../../vite.config.ts"
+    ]
+}

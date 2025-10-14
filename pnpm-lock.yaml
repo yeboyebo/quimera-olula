@@ -67,6 +67,62 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(jsdom@26.1.0)(terser@5.44.0)
 
+  apps/almaeventos:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+
+  apps/guanabana:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+
+  apps/olula:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+
+  packages/componentes:
+    dependencies:
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../lib
+
+  packages/contextos:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../componentes
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../lib
+
+  packages/lib: {}
+
 packages:
 
   '@ampproject/remapping@2.3.0':
