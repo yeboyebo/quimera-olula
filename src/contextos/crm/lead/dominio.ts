@@ -1,3 +1,4 @@
+import { MetaTabla } from "@quimera/comp/atomos/qtabla.tsx";
 import { EstadoModelo, initEstadoModelo, MetaModelo } from "../../comun/dominio.ts";
 import { Lead, NuevoLead } from "./diseño.ts";
 
@@ -76,3 +77,10 @@ export const metaNuevoLead: MetaModelo<NuevoLead> = {
     },
 };
 
+export const metaTablaLead: MetaTabla<Lead> = [
+    { id: "id", cabecera: "Código" },
+    { id: "nombre", cabecera: "Nombre" },
+    { id: "tipo", cabecera: "Tipo" },
+    { id: "estado_id", cabecera: "Estado" },
+    { id: "fuente_id", cabecera: "Fuente" },
+];

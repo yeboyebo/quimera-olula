@@ -21,25 +21,11 @@ import {
   useMaquina4,
 } from "../../../comun/useMaquina.ts";
 import { Albaran } from "../diseño.ts";
+import { metaTablaAlbaran } from "../dominio.ts";
 import { getAlbaranes } from "../infraestructura.ts";
 import { AltaAlbaran } from "./AltaAlbaran.tsx";
 import { DetalleAlbaran } from "./DetalleAlbaran/DetalleAlbaran.tsx";
 import "./MaestroConDetalleAlbaran.css";
-
-const metaTablaAlbaran = [
-  {
-    id: "codigo",
-    cabecera: "Código",
-  },
-  {
-    id: "nombre_cliente",
-    cabecera: "Cliente",
-  },
-  {
-    id: "total",
-    cabecera: "Total",
-  },
-];
 
 type Estado = "Inactivo" | "Creando";
 type Contexto = {

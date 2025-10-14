@@ -24,12 +24,17 @@ export const AltaAlbaran = ({
     publicar("albaran_creado", albaranCreado);
   };
 
+  const cancelar = () => {
+    publicar("alta_cancelada");
+    nuevoAlbaran.init();
+  };
+
   return (
     <div className="AltaAlbaran">
       <h2>Nuevo Albarán</h2>
       <quimera-formulario>
         <Cliente
-          {...nuevoAlbaran.uiProps("cliente_id")}
+          {...nuevoAlbaran.uiProps("cliente_id", "nombre")}
           nombre="albaran_cliente_id"
         />
         <DirCliente
@@ -42,7 +47,7 @@ export const AltaAlbaran = ({
         <QBoton onClick={guardar} deshabilitado={!nuevoAlbaran.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("alta_cancelada")} variante="texto">
+        <QBoton onClick={cancelar} variante="texto">
           Cancelar
         </QBoton>
       </div>

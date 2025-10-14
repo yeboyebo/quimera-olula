@@ -20,6 +20,7 @@ export const BorrarPresupuesto = ({
       await intentar(() => borrarPresupuesto(presupuesto.id));
     }
     publicar("presupuesto_borrado");
+    publicar("cancelar_borrado");
   };
 
   return (

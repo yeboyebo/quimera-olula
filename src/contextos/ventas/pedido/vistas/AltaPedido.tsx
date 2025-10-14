@@ -1,3 +1,5 @@
+import { ContextoError } from "@quimera/lib/contexto.ts";
+import { useContext } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
 import { QInput } from "../../../../componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "../../../comun/diseño.ts";
@@ -14,22 +16,31 @@ export const AltaPedido = ({
   publicar?: EmitirEvento;
 }) => {
   const nuevoPedido = useModelo(metaNuevoPedido, nuevoPedidoVacio);
+  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await postPedido(nuevoPedido.modelo);
+    const id = await intentar(() => postPedido(nuevoPedido.modelo));
     const pedidoCreado = await getPedido(id);
     publicar("pedido_creado", pedidoCreado);
+  };
+
+  const cancelar = () => {
+    publicar("alta_cancelada");
+    nuevoPedido.init();
   };
 
   return (
     <div className="AltaPedido">
       <h2>Nuevo Pedido</h2>
       <quimera-formulario>
-        <Cliente {...nuevoPedido.uiProps("cliente_id, nombre")} />
+        <Cliente
+          {...nuevoPedido.uiProps("cliente_id", "nombre")}
+          nombre="ClientePedido"
+        />
         <DirCliente
           clienteId={nuevoPedido.modelo.cliente_id}
           {...nuevoPedido.uiProps("direccion_id")}
-          nombre="alta_pedido_direccion_id"
+          // nombre="alta_pedido_direccion_id"
         />
         <QInput label="Empresa" {...nuevoPedido.uiProps("empresa_id")} />
       </quimera-formulario>
@@ -37,7 +48,7 @@ export const AltaPedido = ({
         <QBoton onClick={guardar} deshabilitado={!nuevoPedido.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("alta_cancelada")} variante="texto">
+        <QBoton onClick={cancelar} variante="texto">
           Cancelar
         </QBoton>
       </div>

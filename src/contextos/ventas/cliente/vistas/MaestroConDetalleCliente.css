@@ -1,0 +1,11 @@
+.Cliente {
+    td.id {
+        text-align: center;
+        width: 20%;
+    }
+
+    td.nombre {
+        text-transform: capitalize;
+        width: 40%;
+    }
+}

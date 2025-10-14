@@ -1,0 +1,15 @@
+.Albaran {
+    td.codigo {
+        text-align: center;
+        width: 20%;
+    }
+
+    td.nombre_cliente {
+        text-transform: capitalize;
+    }
+
+    td.total {
+        text-align: right;
+        width: 20%;
+    }
+}

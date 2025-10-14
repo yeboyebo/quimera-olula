@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { QBoton } from "../../../../componentes/atomos/qboton.tsx";
-import { MetaTabla } from "../../../../componentes/atomos/qtabla.tsx";
 import { Listado } from "../../../../componentes/maestro/Listado.tsx";
 import { MaestroDetalleResponsive } from "../../../../componentes/maestro/MaestroDetalleResponsive.tsx";
 import { ListaSeleccionable } from "../../../comun/diseño.ts";
@@ -20,18 +19,11 @@ import {
   useMaquina4,
 } from "../../../comun/useMaquina.ts";
 import { Lead } from "../diseño.ts";
+import { metaTablaLead } from "../dominio.ts";
 import { getLeads } from "../infraestructura.ts";
 import { AltaLead } from "./AltaLead.tsx";
 import { DetalleLead } from "./DetalleLead/DetalleLead.tsx";
 // import "./MaestroConDetalleLead.css";
-
-const metaTablaLead: MetaTabla<Lead> = [
-  { id: "id", cabecera: "Código" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "tipo", cabecera: "Tipo" },
-  { id: "estado_id", cabecera: "Estado" },
-  { id: "fuente_id", cabecera: "Fuente" },
-];
 
 type Estado = "inactivo" | "creando";
 
