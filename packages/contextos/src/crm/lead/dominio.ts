@@ -1,4 +1,5 @@
-import { EstadoModelo, initEstadoModelo, MetaModelo } from "@olula/lib/dominio.ts";
+import { MetaTabla } from "@olula/componentes/index.js";
+import { EstadoModelo, initEstadoModelo, MetaModelo } from "@olula/lib/dominio.js";
 import { Lead, NuevoLead } from "./diseño.ts";
 
 export const leadVacio: Lead = {
@@ -76,3 +77,10 @@ export const metaNuevoLead: MetaModelo<NuevoLead> = {
     },
 };
 
+export const metaTablaLead: MetaTabla<Lead> = [
+    { id: "id", cabecera: "Código" },
+    { id: "nombre", cabecera: "Nombre" },
+    { id: "tipo", cabecera: "Tipo" },
+    { id: "estado_id", cabecera: "Estado" },
+    { id: "fuente_id", cabecera: "Fuente" },
+];

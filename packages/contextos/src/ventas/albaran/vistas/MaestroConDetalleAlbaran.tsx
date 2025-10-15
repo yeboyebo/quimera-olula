@@ -1,96 +1,142 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { useLista } from "@olula/lib/useLista.ts";
-import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { useState } from "react";
+import {
+  Listado,
+  MaestroDetalleResponsive,
+  QBoton,
+  QModal,
+} from "@olula/componentes/index.js";
+import { ListaSeleccionable } from "@olula/lib/diseño.js";
+import {
+  cambiarItem,
+  cargar,
+  getSeleccionada,
+  incluirItem,
+  listaSeleccionableVacia,
+  quitarItem,
+  quitarSeleccion,
+  seleccionarItem,
+} from "@olula/lib/entidad.js";
+import { pipe } from "@olula/lib/funcional.js";
+import {
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "@olula/lib/useMaquina.js";
+import { useCallback } from "react";
 import { Albaran } from "../diseño.ts";
+import { metaTablaAlbaran } from "../dominio.ts";
 import { getAlbaranes } from "../infraestructura.ts";
 import { AltaAlbaran } from "./AltaAlbaran.tsx";
 import { DetalleAlbaran } from "./DetalleAlbaran/DetalleAlbaran.tsx";
 import "./MaestroConDetalleAlbaran.css";
 
-const metaTablaAlbaran = [
-  {
-    id: "codigo",
-    cabecera: "Código",
-  },
-  {
-    id: "nombre_cliente",
-    cabecera: "Cliente",
-  },
-  {
-    id: "total",
-    cabecera: "Total",
-  },
-];
+type Estado = "Inactivo" | "Creando";
+type Contexto = {
+  albaranes: ListaSeleccionable<Albaran>;
+};
 
-type Estado = "lista" | "alta";
-export const MaestroConDetalleAlbaran = () => {
-  const [estado, setEstado] = useState<Estado>("lista");
-  const albaranes = useLista<Albaran>([]);
-
-  const maquina: Maquina<Estado> = {
-    alta: {
-      ALBARAN_CREADO: (payload: unknown) => {
-        const albaran = payload as Albaran;
-        albaranes.añadir(albaran);
-        return "lista";
+const setAlbaranes =
+  (
+    aplicable: (
+      albaranes: ListaSeleccionable<Albaran>
+    ) => ListaSeleccionable<Albaran>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => {
+    return {
+      ...maquina,
+      contexto: {
+        ...maquina.contexto,
+        albaranes: aplicable(maquina.contexto.albaranes),
       },
-      ALTA_CANCELADA: "lista",
-    },
-    lista: {
-      ALTA_INICIADA: "alta",
-      ALBARAN_CAMBIADO: (payload: unknown) => {
-        const albaran = payload as Albaran;
-        albaranes.modificar(albaran);
-      },
-      ALBARAN_BORRADO: (payload: unknown) => {
-        const albaran = payload as Albaran;
-        albaranes.eliminar(albaran);
-      },
-      CANCELAR_SELECCION: () => {
-        albaranes.limpiarSeleccion();
-      },
-    },
+    };
   };
 
-  const emitir = useMaquina(maquina, estado, setEstado);
-  const emision = (evento: string, payload?: unknown) => () =>
-    emitir(evento, payload);
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "Inactivo",
+    contexto: {
+      albaranes: listaSeleccionableVacia<Albaran>(),
+    },
+  },
+  estados: {
+    Inactivo: {
+      crear: "Creando",
+      albaran_cambiado: ({ maquina, payload }) =>
+        pipe(maquina, setAlbaranes(cambiarItem(payload as Albaran))),
+      albaran_seleccionado: ({ maquina, payload }) =>
+        pipe(maquina, setAlbaranes(seleccionarItem(payload as Albaran))),
+      cancelar_seleccion: ({ maquina }) =>
+        pipe(maquina, setAlbaranes(quitarSeleccion())),
+      albaran_borrado: ({ maquina }) => {
+        const { albaranes } = maquina.contexto;
+        if (!albaranes.idActivo) {
+          return maquina;
+        }
+        return pipe(maquina, setAlbaranes(quitarItem(albaranes.idActivo)));
+      },
+      albaranes_cargados: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo" as Estado),
+          setAlbaranes(cargar(payload as Albaran[]))
+        ),
+    },
+    Creando: {
+      albaran_creado: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo" as Estado),
+          setAlbaranes(incluirItem(payload as Albaran, {}))
+        ),
+      alta_cancelada: "Inactivo",
+    },
+  },
+};
+
+export const MaestroConDetalleAlbaran = () => {
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
+  const { albaranes } = contexto;
+
+  const setEntidades = useCallback(
+    (payload: Albaran[]) => emitir("albaranes_cargados", payload),
+    [emitir]
+  );
+  const setSeleccionada = useCallback(
+    (payload: Albaran) => emitir("albaran_seleccionado", payload),
+    [emitir]
+  );
+
+  const seleccionada = getSeleccionada(albaranes);
 
   return (
     <div className="Albaran">
       <MaestroDetalleResponsive<Albaran>
-        seleccionada={albaranes.seleccionada}
+        seleccionada={seleccionada}
         Maestro={
           <>
             <h2>Albaranes</h2>
             <div className="maestro-botones">
-              <QBoton onClick={emision("ALTA_INICIADA")}>Crear Albarán</QBoton>
+              <QBoton onClick={() => emitir("crear")}>Crear Albarán</QBoton>
             </div>
             <Listado
               metaTabla={metaTablaAlbaran}
               entidades={albaranes.lista}
-              setEntidades={albaranes.setLista}
-              seleccionada={albaranes.seleccionada}
-              setSeleccionada={albaranes.seleccionar}
+              setEntidades={setEntidades}
+              seleccionada={seleccionada}
+              setSeleccionada={setSeleccionada}
               cargar={getAlbaranes}
             />
           </>
         }
         Detalle={
-          <DetalleAlbaran
-            albaranInicial={albaranes.seleccionada}
-            emitir={emitir}
-          />
+          <DetalleAlbaran albaranInicial={seleccionada} emitir={emitir} />
         }
       />
       <QModal
         nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={emision("ALTA_CANCELADA")}
+        abierto={estado === "Creando"}
+        onCerrar={() => emitir("alta_cancelada")}
       >
         <AltaAlbaran publicar={emitir} />
       </QModal>
