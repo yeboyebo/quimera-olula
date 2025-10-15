@@ -1,8 +1,22 @@
-import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
+import { Entidad } from "@olula/lib/diseño.js";
+import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 
+export const metaTablaCliente = [
+    { id: "id", cabecera: "Id" },
+    { id: "nombre", cabecera: "Nombre" },
+    { id: "email", cabecera: "Email" },
+    { id: "telefono1", cabecera: "Teléfono" },
+    {
+        id: "id_fiscal",
+        cabecera: "Id Fiscal",
+        render: (entidad: Entidad) =>
+            `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}`,
+    },
 
+
+];
 
 export const idFiscalValidoGeneral = (tipo: string, valor: string) => {
     return idFiscalValido(tipo)(valor) && tipoIdFiscalValido(tipo) === true;

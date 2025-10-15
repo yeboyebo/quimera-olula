@@ -1,4 +1,5 @@
-import { MetaModelo } from "@olula/lib/dominio.ts";
+import { MetaTabla } from "@olula/componentes/index.js";
+import { MetaModelo } from "@olula/lib/dominio.js";
 import {
     cambioClienteVentaVacio,
     metaCambioClienteVenta,
@@ -43,3 +44,19 @@ export const metaAlbaran: MetaModelo<Albaran> = {
 export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
 
 export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = metaNuevaLineaVenta;
+
+export const metaTablaAlbaran: MetaTabla<Albaran> = [
+    {
+        id: "codigo",
+        cabecera: "Código",
+    },
+    {
+        id: "nombre_cliente",
+        cabecera: "Cliente",
+    },
+    {
+        id: "total",
+        cabecera: "Total",
+        tipo: "moneda",
+    },
+];

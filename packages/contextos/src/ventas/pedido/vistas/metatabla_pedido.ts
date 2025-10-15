@@ -5,15 +5,17 @@ export const metaTablaPedido = [
         cabecera: "Código",
     },
     {
-        id: "servido",
-        cabecera: "Servido",
-    },
-    {
         id: "nombre_cliente",
         cabecera: "Cliente",
     },
+    // {
+    //     id: "servido",
+    //     cabecera: "Servido",
+    // },
     {
         id: "total",
         cabecera: "Total",
+        tipo: "moneda",
     },
+
 ];

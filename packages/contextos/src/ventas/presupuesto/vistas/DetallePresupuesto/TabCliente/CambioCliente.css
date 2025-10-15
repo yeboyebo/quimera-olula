@@ -1,5 +1,5 @@
 .CambioCliente {
-    quimera-autocompletar[nombre="cliente_id"] {
+    quimera-autocompletar[nombre="cliente_id_cambio"] {
         grid-column: span 12;
     }
 }
