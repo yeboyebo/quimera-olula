@@ -68,22 +68,11 @@ export const Listado = <T extends Entidad>({
   modo = "tabla",
   setModo,
 }: MaestroProps<T>) => {
-  // const modoInicial: Modo =
-  //   modoProp ||
-  //   (metaTabla && tarjeta
-  //     ? "tabla"
-  //     : metaTabla
-  //     ? "tabla"
-  //     : tarjeta
-  //     ? "tarjetas"
-  //     : "tabla");
-
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
   const [paginacion, setPaginacion] = useState<Paginacion>(criteria.paginacion);
   const [totalRegistros, setTotalRegistros] = useState(0);
-  // const [modo, setModo] = useState<Modo>(modoInicial);
   const { setError } = useContext(ContextoError);
 
   useEffect(() => {
