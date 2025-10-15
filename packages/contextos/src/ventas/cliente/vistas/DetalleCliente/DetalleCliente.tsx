@@ -36,7 +36,7 @@ export const DetalleCliente = ({
 
   const cliente = useModelo(metaCliente, clienteVacio());
   const { modelo, init, modificado, valido } = cliente;
-  const [estado, setEstado] = useState<"confirmarBorrado" | "edicion">(
+  const [estado, setEstado] = useState<"confirmar_borrado" | "edicion">(
     "edicion"
   );
 
@@ -44,18 +44,18 @@ export const DetalleCliente = ({
     await intentar(() => patchCliente(modelo.id, modelo));
     const cliente_guardado = await getCliente(modelo.id);
     init(cliente_guardado);
-    emitir("CLIENTE_CAMBIADO", cliente_guardado);
+    emitir("cliente_cambiado", cliente_guardado);
   };
 
   const onRecargarCliente = async () => {
     const clienteRecargado = await getCliente(modelo.id);
     init(clienteRecargado);
-    emitir("CLIENTE_CAMBIADO", clienteRecargado);
+    emitir("cliente_cambiado", clienteRecargado);
   };
 
   const onBorrarConfirmado = async () => {
     await deleteCliente(modelo.id);
-    emitir("CLIENTE_BORRADO", modelo);
+    emitir("cliente_borrado", modelo);
     setEstado("edicion");
   };
 
@@ -68,12 +68,12 @@ export const DetalleCliente = ({
         entidad={modelo}
         cargar={getCliente}
         className="detalle-cliente"
-        cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+        cerrarDetalle={() => emitir("cancelar_seleccion")}
       >
         {!!clienteId && (
           <div className="DetalleCliente">
             <div className="maestro-botones ">
-              <QBoton onClick={() => setEstado("confirmarBorrado")}>
+              <QBoton onClick={() => setEstado("confirmar_borrado")}>
                 Borrar
               </QBoton>
             </div>
@@ -141,7 +141,7 @@ export const DetalleCliente = ({
             )}
             <QModalConfirmacion
               nombre="borrarCliente"
-              abierto={estado === "confirmarBorrado"}
+              abierto={estado === "confirmar_borrado"}
               titulo="Confirmar borrar"
               mensaje="¿Está seguro de que desea borrar este cliente?"
               onCerrar={() => setEstado("edicion")}

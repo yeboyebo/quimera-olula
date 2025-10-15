@@ -33,7 +33,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     edicion: {
       borrar: "borrando",
       oportunidad_guardada: ({ publicar }) => publicar("oportunidad_cambiada"),
-      cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
+      cancelar_seleccion: ({ publicar }) => publicar("seleccion_cancelada"),
     },
     borrando: {
       borrado_cancelado: "edicion",

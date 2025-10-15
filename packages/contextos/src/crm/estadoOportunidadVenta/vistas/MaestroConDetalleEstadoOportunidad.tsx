@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -110,33 +109,24 @@ export const MaestroConDetalleEstadoOportunidad = () => {
 
   const seleccionada = getSeleccionada(estados);
 
-  // const onBorrarConfirmado = async () => {
-  //   if (!seleccionada) return;
-  //   await intentar(() => deleteEstadoOportunidad(seleccionada.id));
-  //   emitir("estado_oportunidad_borrado", seleccionada);
-  //   emitir("borrado_confirmado");
-  // };
-
   return (
     <div className="EstadoOportunidad">
-      <MaestroDetalleResponsive<EstadoOportunidad>
+      <MaestroDetalle<EstadoOportunidad>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Estados de Oportunidad</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaEstadoOportunidad}
-              entidades={estados.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getEstadosOportunidad}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaEstadoOportunidad}
+        entidades={estados.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getEstadosOportunidad}
         Detalle={
           <DetalleEstadoOportunidad
             estadoInicial={seleccionada}

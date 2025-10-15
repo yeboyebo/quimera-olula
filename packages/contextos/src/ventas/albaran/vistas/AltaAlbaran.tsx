@@ -21,7 +21,12 @@ export const AltaAlbaran = ({
   const guardar = async () => {
     const id = await intentar(() => postAlbaran(nuevoAlbaran.modelo));
     const albaranCreado = await getAlbaran(id);
-    publicar("ALBARAN_CREADO", albaranCreado);
+    publicar("albaran_creado", albaranCreado);
+  };
+
+  const cancelar = () => {
+    publicar("alta_cancelada");
+    nuevoAlbaran.init();
   };
 
   return (
@@ -29,7 +34,7 @@ export const AltaAlbaran = ({
       <h2>Nuevo Albarán</h2>
       <quimera-formulario>
         <Cliente
-          {...nuevoAlbaran.uiProps("cliente_id")}
+          {...nuevoAlbaran.uiProps("cliente_id", "nombre")}
           nombre="albaran_cliente_id"
         />
         <DirCliente
@@ -42,7 +47,7 @@ export const AltaAlbaran = ({
         <QBoton onClick={guardar} deshabilitado={!nuevoAlbaran.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={cancelar} variante="texto">
           Cancelar
         </QBoton>
       </div>
