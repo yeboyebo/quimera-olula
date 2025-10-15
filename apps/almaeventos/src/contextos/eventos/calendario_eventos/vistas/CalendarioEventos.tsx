@@ -87,7 +87,7 @@ export const CalendarioEventos = () => {
         calendarioId="calendario-eventos-principal"
         datos={eventos}
         cargando={cargando}
-        playground={true}
+        // playground={true}
         config={{
           // inicioSemana: "domingo",
           // seleccion: {tipo: 'rango'},
