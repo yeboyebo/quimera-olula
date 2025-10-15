@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QBoton } from "../atomos/qboton.tsx";
-import { QIcono } from "../atomos/qicono.tsx";
 import { SelectorModo } from "./SelectorModo.tsx";
 import { ModoCalendario } from "./tipos.ts";
 
@@ -140,17 +139,13 @@ export const CabeceraCalendario: React.FC<CabeceraCalendarioProps> = (
       <div className="calendario-navegacion">
         {_mostrarControlesNavegacion && (
           <>
-            <QBoton onClick={() => navegarTiempo(-1)}>
-              <QIcono nombre="atras" />
-            </QBoton>
+            <QBoton onClick={() => navegarTiempo(-1)}>{"<"}</QBoton>
             <h2 className="calendario-navegacion-mes-anio">
               {modoAnio
                 ? fechaActual.getFullYear()
                 : formatearMesAño(fechaActual)}
             </h2>
-            <QBoton onClick={() => navegarTiempo(1)}>
-              <QIcono nombre="adelante" />
-            </QBoton>
+            <QBoton onClick={() => navegarTiempo(1)}>{">"}</QBoton>
           </>
         )}
       </div>
