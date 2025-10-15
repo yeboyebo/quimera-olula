@@ -7,7 +7,7 @@ maestro-detalle {
 }
 
 /* Modo tabla (50/50 fijo) */
-maestro-detalle[tipo="tabla"] {
+maestro-detalle[tipo="maestro-50"] {
     .Maestro {
         max-height: calc(94vh - var(--alto-header));
         flex: 1 1 50%;
