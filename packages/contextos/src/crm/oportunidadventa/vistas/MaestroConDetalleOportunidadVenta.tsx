@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -23,10 +22,10 @@ import { metaTablaOportunidadVenta } from "../dominio.ts";
 import { getOportunidadesVenta } from "../infraestructura.ts";
 import { AltaOportunidadVenta } from "./AltaOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "./DetalleOportunidadVenta/DetalleOportunidadVenta.tsx";
+import { TarjetaOportunidadVenta } from "./TarjetaOportunidadVenta.tsx";
 // import "./MaestroConDetalleOportunidadVenta.css";
 
 type Estado = "inactivo" | "creando";
-
 type Contexto = {
   oportunidades: ListaSeleccionable<OportunidadVenta>;
 };
@@ -83,6 +82,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
           setEstado("inactivo" as Estado),
           setOportunidades(cargar(payload as OportunidadVenta[]))
         ),
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setOportunidades((oportunidades) => ({
+            ...oportunidades,
+            idActivo: null,
+          }))
+        ),
     },
     creando: {
       oportunidad_creada: ({ maquina, payload, setEstado }) =>
@@ -115,24 +122,28 @@ export const MaestroConDetalleOportunidadVenta = () => {
 
   return (
     <div className="OportunidadVenta">
-      <MaestroDetalleResponsive<OportunidadVenta>
+      <MaestroDetalle<OportunidadVenta>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Oportunidades de Venta</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaOportunidadVenta}
-              entidades={oportunidades.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getOportunidadesVenta}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        // modoDisposicion="maestro-50"
+        // setModoVisualizacion={(modo) => console.log("Vista:", modo)}
+        // setModoDisposicion={(modo) => console.log("Disposición:", modo)}
+        metaTabla={metaTablaOportunidadVenta}
+        tarjeta={(oportunidad) => (
+          <TarjetaOportunidadVenta oportunidad={oportunidad} />
+        )}
+        entidades={oportunidades.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getOportunidadesVenta}
         Detalle={
           <DetalleOportunidadVenta
             oportunidadInicial={seleccionada}

@@ -68,7 +68,7 @@ export const DetalleCliente = ({
         entidad={modelo}
         cargar={getCliente}
         className="detalle-cliente"
-        cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
+        // cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
       >
         {!!clienteId && (
           <div className="DetalleCliente">
