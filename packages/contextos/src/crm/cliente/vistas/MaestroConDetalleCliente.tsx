@@ -1,5 +1,4 @@
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { Entidad, ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -100,21 +99,19 @@ export const MaestroConDetalleClienteCRM = () => {
 
   return (
     <div className="Cliente">
-      <MaestroDetalleResponsive<Cliente>
+      <MaestroDetalle<Cliente>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Clientes</h2>
-            <Listado
-              metaTabla={metaTablaCliente}
-              entidades={clientes.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getClientes}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaCliente}
+        entidades={clientes.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getClientes}
         Detalle={
           <DetalleCliente clienteInicial={seleccionada} publicar={emitir} />
         }

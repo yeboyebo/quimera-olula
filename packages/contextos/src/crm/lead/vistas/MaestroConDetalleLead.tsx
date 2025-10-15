@@ -1,7 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -110,24 +109,22 @@ export const MaestroConDetalleLead = () => {
 
   return (
     <div className="Lead">
-      <MaestroDetalleResponsive<Lead>
+      <MaestroDetalle<Lead>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Leads</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaLead}
-              entidades={leads.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getLeads}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaLead}
+        entidades={leads.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getLeads}
         Detalle={<DetalleLead leadInicial={seleccionada} publicar={emitir} />}
       />
       <AltaLead emitir={emitir} activo={estado === "creando"} />
