@@ -10,9 +10,20 @@ import { getEvento, postEvento } from "../infraestructura.ts";
 
 export const AltaEvento = ({
   emitir = () => {},
+  fechaInicial = null,
 }: {
   emitir?: EmitirEvento;
+  fechaInicial?: Date | null;
 }) => {
+  const fechaAString = (fecha: Date): string => {
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    return `${año}-${mes}-${dia}`;
+  };
+  nuevoEventoVacio.fecha_inicio = fechaInicial
+    ? fechaAString(fechaInicial)
+    : "";
   const nuevoEvento = useModelo(metaNuevoEvento, nuevoEventoVacio);
   const { intentar } = useContext(ContextoError);
 
