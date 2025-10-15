@@ -24,7 +24,7 @@ export const AltaLinea = ({
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
-          onClick={() => emitir("ALTA_LISTA", modelo)}
+          onClick={() => emitir("alta_lista", modelo)}
           deshabilitado={!valido}
         >
           Guardar

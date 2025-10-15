@@ -1,7 +1,7 @@
+import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { Direccion } from "@olula/lib/diseño.ts";
 import {
     initEstadoModelo,
-    // makeValidador,
     MetaModelo,
     modeloEsEditable,
     modeloEsValido,
@@ -9,6 +9,21 @@ import {
 } from "@olula/lib/dominio.ts";
 import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
 
+export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
+    {
+        id: "codigo",
+        cabecera: "Código",
+    },
+    {
+        id: "nombre_cliente",
+        cabecera: "Cliente",
+    },
+    {
+        id: "total",
+        cabecera: "Total",
+        tipo: "moneda",
+    },
+];
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",

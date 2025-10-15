@@ -1,8 +1,9 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
-import { ListaSeleccionable } from "@olula/lib/diseño.ts";
+import {
+  Listado,
+  MaestroDetalleResponsive,
+  QBoton,
+} from "@olula/componentes/index.js";
+import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
   cambiarItem,
   cargar,
@@ -20,18 +21,10 @@ import {
 } from "@olula/lib/useMaquina.ts";
 import { useCallback } from "react";
 import { Lead } from "../diseño.ts";
+import { metaTablaLead } from "../dominio.ts";
 import { getLeads } from "../infraestructura.ts";
 import { AltaLead } from "./AltaLead.tsx";
 import { DetalleLead } from "./DetalleLead/DetalleLead.tsx";
-// import "./MaestroConDetalleLead.css";
-
-const metaTablaLead: MetaTabla<Lead> = [
-  { id: "id", cabecera: "Código" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "tipo", cabecera: "Tipo" },
-  { id: "estado_id", cabecera: "Estado" },
-  { id: "fuente_id", cabecera: "Fuente" },
-];
 
 type Estado = "inactivo" | "creando";
 
