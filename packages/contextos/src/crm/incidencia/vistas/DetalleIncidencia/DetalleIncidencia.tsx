@@ -31,6 +31,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     Editando: {
       borrar: "Borrando",
       incidencia_guardada: ({ publicar }) => publicar("incidencia_guardada"),
+      cancelar_seleccion: ({ publicar }) => publicar("seleccion_cancelada"),
     },
     Borrando: {
       borrado_cancelado: "Editando",
@@ -84,7 +85,7 @@ export const DetalleIncidencia = ({
       setEntidad={(accionInicial) => init(accionInicial)}
       entidad={modelo}
       cargar={getIncidencia}
-      cerrarDetalle={() => publicar("cancelar_seleccion")}
+      cerrarDetalle={() => emitir("cancelar_seleccion")}
     >
       {!!incidenciaId && (
         <>

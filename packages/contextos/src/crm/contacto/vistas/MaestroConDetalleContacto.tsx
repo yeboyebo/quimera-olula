@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -106,24 +105,22 @@ export const MaestroConDetalleContacto = () => {
 
   return (
     <div className="Contacto">
-      <MaestroDetalleResponsive<Contacto>
+      <MaestroDetalle<Contacto>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Contactos</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaContacto}
-              entidades={contactos.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getContactos}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaContacto}
+        entidades={contactos.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getContactos}
         Detalle={
           <DetalleContacto contactoInicial={seleccionada} publicar={emitir} />
         }

@@ -1,7 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { getSeleccionada } from "@olula/lib/entidad.ts";
 import { useCallback } from "react";
 import { TransferenciaStock } from "../diseño.ts";
@@ -52,24 +51,22 @@ export const MaestroDetalleTransferenciasStock = () => {
 
   return (
     <div className="TransferenciaStock">
-      <MaestroDetalleResponsive<TransferenciaStock>
+      <MaestroDetalle<TransferenciaStock>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Transferencias</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaTransferenciaStock}
-              entidades={transferencias.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={obtenerTransferenciasStock}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaTransferenciaStock}
+        entidades={transferencias.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={obtenerTransferenciasStock}
         Detalle={
           <DetalleTransferenciaStock
             key={seleccionada?.id}

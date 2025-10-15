@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
@@ -45,9 +44,9 @@ export const MaestroConDetalleGruposReglas = () => {
 
   return (
     <div className="GruposReglas">
-      <MaestroDetalleResponsive
+      <MaestroDetalle
         seleccionada={grupos.seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Grupos</h2>
             <div className="maestro-botones">
@@ -55,16 +54,15 @@ export const MaestroConDetalleGruposReglas = () => {
                 Nuevo Grupo
               </QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaGrupos}
-              entidades={grupos.lista}
-              setEntidades={grupos.setLista}
-              seleccionada={grupos.seleccionada}
-              setSeleccionada={grupos.seleccionar}
-              cargar={getGrupos}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        modoDisposicion="maestro-50"
+        metaTabla={metaTablaGrupos}
+        entidades={grupos.lista}
+        setEntidades={grupos.setLista}
+        setSeleccionada={grupos.seleccionar}
+        cargar={getGrupos}
         Detalle={
           <ReglasGrupo
             reglas={reglas}
@@ -72,6 +70,7 @@ export const MaestroConDetalleGruposReglas = () => {
           />
         }
       />
+
       <QModal
         nombre="modal"
         abierto={estado === "alta"}
