@@ -25,21 +25,27 @@ cd quimera-olula
 pnpm install
 ```
 
-> Nota: Para cambiar la ruta de la API, crear un fichero `.env` e informar la propiedad `VITE_API_URL`
-
 ## Contribución
 
 - Hacer un fork del repositorio
 - Envíar una pull request
 
-## Uso
+## Uso (todo el workspace)
 
-- `pnpm dev`. Levantar la aplicación en desarrollo
 - `pnpm lint`. Lanzar el linter
 - `pnpm type-check`. Lanzar el type-checker
 - `pnpm run ci`. Lanzar todos los comprobadores de CI
 - `pnpm test`. Lanza los tests en modo continuo
-- `pnpm build`. Crear un desplegable
+
+> También es posible lanzar estos comandos por aplicación (ver --filter de abajo)
+
+## Uso por aplicación
+
+- `pnpm run --filter @olula/**nombre_app** dev`. Levantar **nombre_app** en desarrollo
+- `pnpm run --filter @olula/**nombre_app** build`. Crear un desplegable de **nombre_app**
+- `pnpm run --filter @olula/**nombre_app** preview`. Visualizar la última build de **nombre_app**
+
+> Nota: Para cambiar la ruta de la API, crear un fichero `.env` en la raiz de **nombre_app** e informar la propiedad `VITE_API_URL`
 
 ## URLs
 
