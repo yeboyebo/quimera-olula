@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Calendario } from "@olula/componentes/calendario/calendario.tsx";
-import { EjemploSeleccionCalendario } from "@olula/componentes/calendario/ejemplos/EjemploSeleccionCalendario.tsx";
+import { EstadoSeleccion } from "@olula/componentes/calendario/tipos.ts";
 import { MaestroFiltros } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltros.tsx";
 import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.ts";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -23,6 +23,7 @@ export const CalendarioEventos = () => {
   );
   const [filtro, setFiltro] = useState<Filtro>([]);
   const [estado, setEstado] = useState<Estado>("calendario");
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null);
   const esMovil = useEsMovil(640);
   const camposFiltro = ["descripcionref", "referencia"];
 
@@ -79,6 +80,15 @@ export const CalendarioEventos = () => {
   };
   const resetearFiltro = () => setFiltro([]);
 
+  // Manejar selección del calendario
+  const manejarSeleccionCalendario = (seleccion: EstadoSeleccion) => {
+    if (seleccion.esValida && seleccion.fechas.length > 0) {
+      setFechaSeleccionada(seleccion.fechas[0]);
+    } else {
+      setFechaSeleccionada(null);
+    }
+  };
+
   // Generar enlace a calendario
 
   return (
@@ -89,6 +99,10 @@ export const CalendarioEventos = () => {
         cargando={cargando}
         // playground={true}
         config={{
+          // ✅ Activar selección simple
+          seleccion: {
+            tipo: "simple",
+          },
           // inicioSemana: "domingo",
           // seleccion: {tipo: 'rango'},
           maxDatosVisibles: 5,
@@ -138,6 +152,8 @@ export const CalendarioEventos = () => {
             // modoCalendario: 'anio'
           },
         }}
+        // ✅ Capturar selección
+        onSeleccionCambio={manejarSeleccionCalendario}
         renderDato={(dato: EventoCalendario) => (
           <div
             // onClick={() => window.location.href = `/eventos/calendario/evento/${dato.evento_id}`}
@@ -159,7 +175,8 @@ export const CalendarioEventos = () => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <AltaEvento emitir={emitir} />
+        {/* ✅ Pasar fecha seleccionada */}
+        <AltaEvento emitir={emitir} fechaInicial={fechaSeleccionada} />
       </QModal>
 
       <QModal
@@ -170,7 +187,7 @@ export const CalendarioEventos = () => {
         {eventoAbierto && <FichaEventoAbierto evento={eventoAbierto} />}
       </QModal>
 
-      <QModal
+      {/* <QModal
         nombre="ejemploSeleccion"
         abierto={estado === "ejemplo_seleccion"}
         onCerrar={() => emitir("VOLVER_CALENDARIO")}
@@ -194,7 +211,7 @@ export const CalendarioEventos = () => {
           </div>
           <EjemploSeleccionCalendario />
         </div>
-      </QModal>
+      </QModal> */}
     </div>
   );
 };
