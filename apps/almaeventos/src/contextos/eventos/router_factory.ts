@@ -8,6 +8,7 @@ import { MaestroConDetalleTrabajadorEvento } from "./trabajador_evento/vistas/Ma
 export class RouterFactoryEventosAlma {
     static router = {
         "eventos/calendario": CalendarioEventos,
+        "eventos/calendario/evento/:id": DetalleEvento,
         "eventos/eventos": MaestroEvento,
         "eventos/evento/:id": DetalleEvento,
         "eventos/producto": MaestroConDetalleProducto,
