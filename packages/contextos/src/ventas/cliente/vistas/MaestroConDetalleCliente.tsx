@@ -1,8 +1,6 @@
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { Entidad } from "@olula/lib/diseño.ts";
 import { puede } from "@olula/lib/dominio.ts";
 import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
@@ -14,21 +12,6 @@ import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 import { TarjetaCliente } from "./TarjetaCliente.tsx";
 
-const metaTablaCliente = [
-  { id: "id", cabecera: "Id" },
-  { id: "nombre", cabecera: "Nombre" },
-  {
-    id: "id_fiscal",
-    cabecera: "Id Fiscal",
-    render: (entidad: Entidad) =>
-      `${entidad.tipo_id_fiscal}: ${entidad.id_fiscal}`,
-  },
-  { id: "telefono1", cabecera: "Teléfono" },
-  { id: "email", cabecera: "Email" },
-  { id: "nombre_agente", cabecera: "Nombre del Agente" },
-  { id: "forma_pago", cabecera: "Forma de Pago" },
-  { id: "grupo_iva_negocio_id", cabecera: "Grupo IVA Negocio" },
-];
 type Estado = "lista" | "alta";
 export const MaestroConDetalleCliente = () => {
   const [estado, setEstado] = useState<Estado>("lista");
@@ -36,24 +19,24 @@ export const MaestroConDetalleCliente = () => {
 
   const maquina: Maquina<Estado> = {
     alta: {
-      CLIENTE_CREADO: (payload: unknown) => {
+      cliente_creado: (payload) => {
         const cliente = payload as Cliente;
         clientes.añadir(cliente);
         return "lista";
       },
-      ALTA_CANCELADA: "lista",
+      alta_cancelada: "lista",
     },
     lista: {
-      ALTA_INICIADA: "alta",
-      CLIENTE_CAMBIADO: (payload: unknown) => {
+      alta_iniciada: "alta",
+      cliente_cambiado: (payload) => {
         const cliente = payload as Cliente;
         clientes.modificar(cliente);
       },
-      CLIENTE_BORRADO: (payload: unknown) => {
+      cliente_borrado: (payload) => {
         const cliente = payload as Cliente;
         clientes.eliminar(cliente);
       },
-      CANCELAR_SELECCION: () => {
+      cancelar_seleccion: () => {
         clientes.limpiarSeleccion();
       },
     },
@@ -66,38 +49,31 @@ export const MaestroConDetalleCliente = () => {
   const acciones = [
     puedeCrear && {
       texto: "Nuevo",
-      onClick: () => emitir("ALTA_INICIADA"),
+      onClick: () => emitir("alta_iniciada"),
       variante: "borde" as const,
     },
-    // {
-    //   icono: "eliminar",
-    //   texto: "Borrar",
-    //   onClick: () => emitir("BORRADO_SOLICITADO"),
-    //   deshabilitado: true,
-    // },
   ].filter(Boolean);
+
+  // const modo = "tarjetas";
 
   return (
     <div className="Cliente">
-      <MaestroDetalleResponsive<Cliente>
-        seleccionada={clientes.seleccionada}
-        Maestro={
+      <MaestroDetalle<Cliente>
+        preMaestro={
           <>
             <h2>Clientes</h2>
             <div className="maestro-botones">
               <QuimeraAcciones acciones={acciones} />
             </div>
-            <Listado
-              metaTabla={metaTablaCliente}
-              tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
-              entidades={clientes.lista}
-              setEntidades={clientes.setLista}
-              seleccionada={clientes.seleccionada}
-              setSeleccionada={clientes.seleccionar}
-              cargar={getClientes}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
+        entidades={clientes.lista}
+        setEntidades={clientes.setLista}
+        seleccionada={clientes.seleccionada}
+        setSeleccionada={clientes.seleccionar}
+        cargar={getClientes}
         Detalle={
           <DetalleCliente
             clienteInicial={clientes.seleccionada}
@@ -108,7 +84,7 @@ export const MaestroConDetalleCliente = () => {
       <QModal
         nombre="modal"
         abierto={estado === "alta"}
-        onCerrar={() => emitir("ALTA_CANCELADA")}
+        onCerrar={() => emitir("alta_cancelada")}
       >
         <AltaCliente emitir={emitir} />
       </QModal>

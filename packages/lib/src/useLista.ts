@@ -106,7 +106,6 @@ export function useLista<E extends Entidad>(
         if (!esMovil && lista.length > 0) {
             setIdSeleccionada(lista[0].id);
         }
-        // setIdSeleccionada(lista[0] ? lista[0].id : null);
     }, [setEntidades, setIdSeleccionada]);
 
     const seleccionada = useCallback(() => {

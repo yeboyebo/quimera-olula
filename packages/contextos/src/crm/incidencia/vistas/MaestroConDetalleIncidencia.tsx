@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -23,6 +22,7 @@ import { metaTablaIncidencia } from "../dominio.ts";
 import { getIncidencias } from "../infraestructura.ts";
 import { CrearIncidencia } from "./CrearIncidencia.tsx";
 import { DetalleIncidencia } from "./DetalleIncidencia/DetalleIncidencia.tsx";
+import { TarjetaIncidencia } from "./TarjetaIncidencia.tsx";
 
 type Estado = "Inactivo" | "Creando";
 
@@ -73,6 +73,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
           setEstado("Inactivo" as Estado),
           setIncidencias(cargar(payload as Incidencia[]))
         ),
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setIncidencias((incidencias) => ({
+            ...incidencias,
+            idActivo: null,
+          }))
+        ),
     },
     Creando: {
       incidencia_creada: ({ maquina, payload, setEstado }) =>
@@ -105,24 +113,22 @@ export const MaestroConDetalleIncidencia = () => {
 
   return (
     <div className="Incidencia">
-      <MaestroDetalleResponsive<Incidencia>
+      <MaestroDetalle<Incidencia>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Incidencias</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaIncidencia}
-              entidades={incidencias.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getIncidencias}
-            />
           </>
         }
+        metaTabla={metaTablaIncidencia}
+        tarjeta={(incidencia) => <TarjetaIncidencia incidencia={incidencia} />}
+        entidades={incidencias.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getIncidencias}
         Detalle={
           <DetalleIncidencia
             key={seleccionada?.id}

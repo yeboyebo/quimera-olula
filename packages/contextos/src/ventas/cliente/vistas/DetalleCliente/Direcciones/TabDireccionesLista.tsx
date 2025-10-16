@@ -39,18 +39,18 @@ export const TabDireccionesLista = ({
   const acciones = [
     {
       texto: "Editar",
-      onClick: () => seleccionada && emitir("EDICION_SOLICITADA"),
+      onClick: () => seleccionada && emitir("edicion_solicitada"),
       deshabilitado: !seleccionada,
     },
     {
       icono: "eliminar",
       texto: "Borrar",
-      onClick: () => emitir("BORRADO_SOLICITADO"),
+      onClick: () => emitir("borrado_solicitado"),
       deshabilitado: !seleccionada,
     },
     {
       texto: "Facturación",
-      onClick: () => emitir("FACTURACION_SOLICITADA"),
+      onClick: () => emitir("facturacion_solicitada"),
       deshabilitado:
         !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada),
     },
@@ -59,7 +59,7 @@ export const TabDireccionesLista = ({
   return (
     <>
       <div className="TabDireccionesLista maestro-botones">
-        <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
+        <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 
@@ -68,7 +68,7 @@ export const TabDireccionesLista = ({
         datos={direcciones}
         cargando={cargando}
         seleccionadaId={seleccionada?.id}
-        onSeleccion={(direccion) => emitir("DIRECCION_SELECCIONADA", direccion)}
+        onSeleccion={(direccion) => emitir("direccion_seleccionada", direccion)}
         orden={["id", "ASC"]}
         onOrdenar={() => null}
       />

@@ -33,7 +33,7 @@ export const EdicionLinea = ({
       </quimera-formulario>
       <div className="botones maestro-botones ">
         <QBoton
-          onClick={() => emitir("EDICION_LISTA", modelo)}
+          onClick={() => emitir("edicion_lista", modelo)}
           deshabilitado={!valido}
         >
           Guardar

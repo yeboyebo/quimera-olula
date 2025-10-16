@@ -21,7 +21,12 @@ export const AltaFactura = ({
   const guardar = async () => {
     const id = await intentar(() => postFactura(nuevaFactura.modelo));
     const facturaCreada = await getFactura(id);
-    publicar("FACTURA_CREADA", facturaCreada);
+    publicar("factura_creada", facturaCreada);
+  };
+
+  const cancelar = () => {
+    publicar("alta_cancelada");
+    nuevaFactura.init();
   };
 
   return (
@@ -29,7 +34,7 @@ export const AltaFactura = ({
       <h2>Nueva Factura</h2>
       <quimera-formulario>
         <Cliente
-          {...nuevaFactura.uiProps("cliente_id")}
+          {...nuevaFactura.uiProps("cliente_id", "nombre")}
           nombre="factura_cliente_id"
         />
         <DirCliente
@@ -42,7 +47,7 @@ export const AltaFactura = ({
         <QBoton onClick={guardar} deshabilitado={!nuevaFactura.valido}>
           Guardar
         </QBoton>
-        <QBoton onClick={() => publicar("ALTA_CANCELADA")} variante="texto">
+        <QBoton onClick={cancelar} variante="texto">
           Cancelar
         </QBoton>
       </div>

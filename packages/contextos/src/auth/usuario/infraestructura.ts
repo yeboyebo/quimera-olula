@@ -2,7 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { RespuestaLista2 } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { Logout } from "../login/diseño.ts";
-import { DeleteUsuario, GetUsuario, GetUsuarios, PatchUsuario, PostUsuario, Usuario, UsuarioAPI, UsuarioApi } from "./diseño.ts";
+import { DeleteUsuario, GenerarTokenUsuario, GetTokenUsuario, GetUsuario, GetUsuarios, PatchUsuario, PostUsuario, Usuario, UsuarioAPI, UsuarioApi } from "./diseño.ts";
 
 
 const baseUrl = '/auth';
@@ -54,8 +54,14 @@ export const deleteUsuario: DeleteUsuario = async (id) => {
     await RestAPI.delete(`${baseUrlUsuario}/${id}`, "Error al borrar Usuario");
 };
 
-export const generarTokenUsuario = async (id: string) => {
-    return await RestAPI.post(`${baseUrlUsuario}/${id}/token`, {}, "Error al generar token").then(
-        (respuesta) => respuesta
-    );
+export const generarTokenUsuario: GenerarTokenUsuario = async (id, expiracion) => {
+    const payload = { id, expiracion };
+    const callback = (respuesta: { token: string }) => respuesta.token as string;
+    return RestAPI.post(`/auth/token`, payload, "Error al generar token")
+        .then(callback as unknown as (_: { id: string }) => string);
 }
+
+export const getTokenUsuario: GetTokenUsuario = async (id) =>
+    await RestAPI.get<{ token: string }>(`/auth/usuario/${id}/token_refresco`).then((respuesta) =>
+        respuesta.token
+    );
