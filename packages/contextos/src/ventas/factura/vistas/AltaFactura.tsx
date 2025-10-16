@@ -8,7 +8,7 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { metaNuevaFactura, nuevaFacturaVacia } from "../dominio.ts";
 import { getFactura, postFactura } from "../infraestructura.ts";
-import "./CrearFactura.css";
+import "./AltaFactura.css";
 
 export const AltaFactura = ({
   publicar = () => {},

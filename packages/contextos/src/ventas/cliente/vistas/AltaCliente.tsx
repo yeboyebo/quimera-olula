@@ -8,7 +8,7 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
 import { getCliente, postCliente } from "../infraestructura.ts";
-import "./CrearCliente.css";
+import "./AltaCliente.css";
 
 export const AltaCliente = ({
   emitir = () => {},

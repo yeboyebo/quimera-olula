@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
@@ -23,7 +22,7 @@ import { useCallback } from "react";
 import { Factura } from "../diseño.ts";
 import { metaTablaFactura } from "../dominio.ts";
 import { getFacturas } from "../infraestructura.ts";
-import { AltaFactura } from "./CrearFactura.tsx";
+import { AltaFactura } from "./AltaFactura.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 
@@ -109,24 +108,22 @@ export const MaestroConDetalleFactura = () => {
 
   return (
     <div className="Factura">
-      <MaestroDetalleResponsive<Factura>
+      <MaestroDetalle<Factura>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Facturas</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Crear Factura</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaFactura}
-              entidades={facturas.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getFacturas}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaFactura}
+        entidades={facturas.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getFacturas}
         Detalle={
           <DetalleFactura facturaInicial={seleccionada} emitir={emitir} />
         }

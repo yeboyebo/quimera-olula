@@ -1,9 +1,5 @@
-import {
-  Listado,
-  MaestroDetalleResponsive,
-  QBoton,
-  QModal,
-} from "@olula/componentes/index.js";
+import { QBoton, QModal } from "@olula/componentes/index.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
   cambiarItem,
@@ -111,24 +107,22 @@ export const MaestroConDetalleAlbaran = () => {
 
   return (
     <div className="Albaran">
-      <MaestroDetalleResponsive<Albaran>
+      <MaestroDetalle<Albaran>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Albaranes</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Crear Albarán</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaAlbaran}
-              entidades={albaranes.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getAlbaranes}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        metaTabla={metaTablaAlbaran}
+        entidades={albaranes.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getAlbaranes}
         Detalle={
           <DetalleAlbaran albaranInicial={seleccionada} emitir={emitir} />
         }

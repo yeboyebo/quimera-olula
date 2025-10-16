@@ -1,5 +1,4 @@
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "@olula/componentes/maestro/MaestroDetalleResponsive.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { puede } from "@olula/lib/dominio.ts";
@@ -7,19 +6,16 @@ import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
 import { useState } from "react";
 import { Cliente } from "../diseño.ts";
-import { metaTablaCliente } from "../dominio.ts";
 import { getClientes } from "../infraestructura.ts";
-import { AltaCliente } from "./CrearCliente.tsx";
+import { AltaCliente } from "./AltaCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 import { TarjetaCliente } from "./TarjetaCliente.tsx";
 
 type Estado = "lista" | "alta";
-type Modo = "tabla" | "tarjetas";
 export const MaestroConDetalleCliente = () => {
   const [estado, setEstado] = useState<Estado>("lista");
   const clientes = useLista<Cliente>([]);
-  const [modo, setModo] = useState<Modo>("tarjetas");
 
   const maquina: Maquina<Estado> = {
     alta: {
@@ -62,28 +58,22 @@ export const MaestroConDetalleCliente = () => {
 
   return (
     <div className="Cliente">
-      <MaestroDetalleResponsive<Cliente>
-        seleccionada={clientes.seleccionada}
-        modo={modo}
-        Maestro={
+      <MaestroDetalle<Cliente>
+        preMaestro={
           <>
             <h2>Clientes</h2>
             <div className="maestro-botones">
               <QuimeraAcciones acciones={acciones} />
             </div>
-            <Listado
-              metaTabla={metaTablaCliente}
-              modo={modo}
-              setModo={setModo}
-              tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
-              entidades={clientes.lista}
-              setEntidades={clientes.setLista}
-              seleccionada={clientes.seleccionada}
-              setSeleccionada={clientes.seleccionar}
-              cargar={getClientes}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
+        entidades={clientes.lista}
+        setEntidades={clientes.setLista}
+        seleccionada={clientes.seleccionada}
+        setSeleccionada={clientes.seleccionar}
+        cargar={getClientes}
         Detalle={
           <DetalleCliente
             clienteInicial={clientes.seleccionada}
