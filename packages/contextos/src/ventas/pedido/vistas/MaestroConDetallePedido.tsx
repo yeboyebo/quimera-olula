@@ -122,6 +122,7 @@ export const MaestroConDetallePedido = () => {
           </>
         }
         modoVisualizacion="tabla"
+        modoDisposicion="maestro-50"
         metaTabla={appFactory.app.Ventas.metaTablaPedido as MetaTabla<Pedido>}
         entidades={pedidos.lista}
         setEntidades={setEntidades}
