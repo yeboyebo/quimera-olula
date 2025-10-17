@@ -1,6 +1,4 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { QBoton } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
@@ -18,20 +16,11 @@ import {
   useMaquina4,
 } from "@olula/lib/useMaquina.ts";
 import { HookModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useContext } from "react";
-import {
-  LineaPedido as Linea,
-  LineaPedido,
-  NuevaLineaPedido,
-  Pedido,
-} from "../../../diseño.ts";
-import {
-  deleteLinea,
-  getLineas,
-  patchLinea,
-  postLinea,
-} from "../../../infraestructura.ts";
+import { useContext, useEffect } from "react";
+import { LineaPedido as Linea, Pedido } from "../../../diseño.ts";
+import { getLineas } from "../../../infraestructura.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
+import { BajaLinea } from "./BajaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
@@ -116,34 +105,32 @@ export const Lineas = ({
   const { intentar } = useContext(ContextoError);
 
   const lineas = useLista<Linea>([]);
-  const { setLista } = lineas;
 
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });
 
-  const cargarLineas = useCallback(async () => {
-    const nuevasLineas = await getLineas(pedidoId);
-    setLista(nuevasLineas);
-    emitir("lineas_cargadas", nuevasLineas);
-    onCabeceraModificada();
-  }, [pedidoId, setLista, emitir, onCabeceraModificada]);
+  useEffect(() => {
+    const cargarLineas = async () => {
+      const nuevasLineas = await intentar(() => getLineas(pedidoId));
+      emitir("lineas_cargadas", nuevasLineas);
+    };
 
-  // useEffect(() => {
-  //   if (pedidoId) cargarLineas();
-  // }, [pedidoId, cargarLineas]);
+    emitir("cargar");
+    cargarLineas();
+  }, [pedidoId, emitir, intentar]);
 
-  const crearLinea = async (payload: NuevaLineaPedido) => {
-    const idLinea = await intentar(() => postLinea(pedidoId, payload));
-    await cargarLineas();
-    emitir("linea_creada", idLinea);
-  };
+  // const crearLinea = async (payload: NuevaLineaPedido) => {
+  //   const idLinea = await intentar(() => postLinea(pedidoId, payload));
+  //   await cargarLineas();
+  //   emitir("linea_creada", idLinea);
+  // };
 
-  const editarLinea = async (payload: LineaPedido) => {
-    await intentar(() => patchLinea(pedidoId, payload));
-    await cargarLineas();
-    emitir("linea_editada", payload);
-  };
+  // const editarLinea = async (payload: LineaPedido) => {
+  //   await intentar(() => patchLinea(pedidoId, payload));
+  //   await cargarLineas();
+  //   emitir("linea_editada", payload);
+  // };
 
   // const cambiarCantidadLinea = async (linea: LineaPedido, cantidad: number) => {
   //   await intentar(() => patchCantidadLinea(pedidoId, linea, cantidad));
@@ -151,13 +138,13 @@ export const Lineas = ({
   //   emitir("linea_cambiada", contexto.lineas.lista);
   // };
 
-  const borrarLinea = async () => {
-    const lineaId = lineas.seleccionada?.id;
-    if (!lineaId) return;
-    await intentar(() => deleteLinea(pedidoId, lineaId));
-    await cargarLineas();
-    emitir("linea_borrada");
-  };
+  // const borrarLinea = async () => {
+  //   const lineaId = lineas.seleccionada?.id;
+  //   if (!lineaId) return;
+  //   await intentar(() => deleteLinea(pedidoId, lineaId));
+  //   await cargarLineas();
+  //   emitir("linea_borrada");
+  // };
 
   return (
     <>
@@ -183,36 +170,34 @@ export const Lineas = ({
         seleccionada={lineas.seleccionada?.id}
         emitir={emitir}
       />
-      {estado === "Creando" && (
-        <QModal
-          nombre="modal"
-          abierto={true}
-          onCerrar={() => emitir("creacion_cancelada")}
-        >
-          <AltaLinea guardar={crearLinea} emitir={emitir} />
-        </QModal>
-      )}
-      {estado === "Editando" && lineas.seleccionada && (
-        <QModal
-          nombre="modal"
-          abierto={true}
-          onCerrar={() => emitir("edicion_cancelada")}
-        >
-          <EdicionLinea
-            guardar={editarLinea}
-            emitir={emitir}
-            lineaInicial={lineas.seleccionada}
-          />
-        </QModal>
-      )}
-      <QModalConfirmacion
+
+      <AltaLinea
+        publicar={emitir}
+        activo={estado === "Creando"}
+        idPedido={pedidoId}
+      />
+
+      <EdicionLinea
+        publicar={emitir}
+        activo={estado === "Editando" && lineas.seleccionada}
+        lineaSeleccionada={lineas.seleccionada}
+        idPedido={pedidoId}
+      />
+
+      <BajaLinea
+        publicar={emitir}
+        activo={estado === "ConfirmandoBorrado"}
+        idLinea={lineas.seleccionada?.id}
+        idPedido={pedidoId}
+      />
+      {/* <QModalConfirmacion
         nombre="confirmarBorrarLinea"
         abierto={estado === "ConfirmandoBorrado"}
         titulo="Confirmar borrado"
-        mensaje="¿Está seguro de que desea borrar esta línea?"
+        mensaje="¿Está seguronCabeceraModificadao de que desea borrar esta línea?"
         onCerrar={() => emitir("borrado_cancelado")}
         onAceptar={borrarLinea}
-      />
+      /> */}
     </>
   );
 };
