@@ -1,5 +1,4 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MetaTabla } from "@olula/componentes/index.ts";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ListaSeleccionable } from "@olula/lib/diseño.js";
@@ -13,15 +12,16 @@ import {
   quitarSeleccion,
   seleccionarItem,
 } from "@olula/lib/entidad.js";
-import { FactoryCtx } from "@olula/lib/factory_ctx.js";
+// import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { pipe } from "@olula/lib/funcional.js";
 import {
   ConfigMaquina4,
   Maquina3,
   useMaquina4,
 } from "@olula/lib/useMaquina.ts";
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import { Pedido } from "../diseño.ts";
+import { metaTablaPedido } from "../dominio.ts";
 import { getPedidos } from "../infraestructura.ts";
 import { AltaPedido } from "./AltaPedido.tsx";
 import { DetallePedido } from "./DetallePedido/DetallePedido.tsx";
@@ -91,7 +91,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 };
 
 export const MaestroConDetallePedido = () => {
-  const appFactory = useContext(FactoryCtx);
+  // const appFactory = useContext(FactoryCtx);
 
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
@@ -123,7 +123,8 @@ export const MaestroConDetallePedido = () => {
         }
         modoVisualizacion="tabla"
         modoDisposicion="maestro-50"
-        metaTabla={appFactory.app.Ventas.metaTablaPedido as MetaTabla<Pedido>}
+        // metaTabla={appFactory.app.Ventas.metaTablaPedido as MetaTabla<Pedido>}
+        metaTabla={metaTablaPedido}
         entidades={pedidos.lista}
         setEntidades={setEntidades}
         setSeleccionada={setSeleccionada}

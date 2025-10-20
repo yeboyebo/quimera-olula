@@ -7,21 +7,23 @@ import {
   nuevaLineaPedidoVacia,
 } from "../../../dominio.ts";
 
-import { getLineas, postLinea } from "#/ventas/presupuesto/infraestructura.ts";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useContext } from "react";
+import { getLineas, postLinea } from "../../../infraestructura.ts";
 import "./AltaLinea.css";
 
 export const AltaLinea = ({
   activo = false,
   publicar,
   idPedido,
+  refrescarCabecera,
 }: {
   activo: boolean;
   publicar: EmitirEvento;
   idPedido: string;
+  refrescarCabecera: () => void;
 }) => {
   const { modelo, uiProps, valido, init } = useModelo(metaNuevaLineaPedido, {
     ...nuevaLineaPedidoVacia,
@@ -32,8 +34,10 @@ export const AltaLinea = ({
   const crear = async () => {
     await intentar(() => postLinea(idPedido, modelo));
     const lineasCargadas = await getLineas(idPedido);
+    publicar("linea_creada");
     publicar("lineas_cargadas", lineasCargadas);
     init();
+    refrescarCabecera();
   };
 
   const cancelar = () => {

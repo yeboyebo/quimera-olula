@@ -4,20 +4,19 @@ import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
   cambiarItem,
   cargar,
+  getSeleccionada,
   listaSeleccionableVacia,
   quitarItem,
   seleccionarItem,
 } from "@olula/lib/entidad.ts";
 import { pipe } from "@olula/lib/funcional.js";
-import { useLista } from "@olula/lib/useLista.ts";
 import {
   ConfigMaquina4,
   Maquina3,
   useMaquina4,
 } from "@olula/lib/useMaquina.ts";
-import { HookModelo } from "@olula/lib/useModelo.js";
 import { useContext, useEffect } from "react";
-import { LineaPedido as Linea, Pedido } from "../../../diseño.ts";
+import { LineaPedido as Linea } from "../../../diseño.ts";
 import { getLineas } from "../../../infraestructura.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
 import { BajaLinea } from "./BajaLinea.tsx";
@@ -84,7 +83,8 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       creacion_cancelada: "Inactivo",
     },
     Editando: {
-      linea_editada: "Inactivo",
+      linea_cambiada: ({ maquina, payload }) =>
+        pipe(maquina, setLineas(cambiarItem(payload as Linea))),
       edicion_cancelada: "Inactivo",
     },
     ConfirmandoBorrado: {
@@ -95,20 +95,21 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 };
 
 export const Lineas = ({
+  pedidoId,
+  pedidoValido,
   onCabeceraModificada,
-  pedido,
 }: {
   onCabeceraModificada: () => void;
-  pedido: HookModelo<Pedido>;
+  pedidoId: string;
+  pedidoValido?: boolean;
 }) => {
-  const pedidoId = pedido?.modelo?.id;
   const { intentar } = useContext(ContextoError);
-
-  const lineas = useLista<Linea>([]);
 
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });
+
+  const { lineas } = contexto;
 
   useEffect(() => {
     const cargarLineas = async () => {
@@ -120,45 +121,21 @@ export const Lineas = ({
     cargarLineas();
   }, [pedidoId, emitir, intentar]);
 
-  // const crearLinea = async (payload: NuevaLineaPedido) => {
-  //   const idLinea = await intentar(() => postLinea(pedidoId, payload));
-  //   await cargarLineas();
-  //   emitir("linea_creada", idLinea);
-  // };
-
-  // const editarLinea = async (payload: LineaPedido) => {
-  //   await intentar(() => patchLinea(pedidoId, payload));
-  //   await cargarLineas();
-  //   emitir("linea_editada", payload);
-  // };
-
-  // const cambiarCantidadLinea = async (linea: LineaPedido, cantidad: number) => {
-  //   await intentar(() => patchCantidadLinea(pedidoId, linea, cantidad));
-  //   await cargarLineas();
-  //   emitir("linea_cambiada", contexto.lineas.lista);
-  // };
-
-  // const borrarLinea = async () => {
-  //   const lineaId = lineas.seleccionada?.id;
-  //   if (!lineaId) return;
-  //   await intentar(() => deleteLinea(pedidoId, lineaId));
-  //   await cargarLineas();
-  //   emitir("linea_borrada");
-  // };
+  const seleccionada = getSeleccionada(lineas);
 
   return (
     <>
-      {pedido.editable && (
+      {pedidoValido && (
         <div className="botones maestro-botones ">
           <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
           <QBoton
-            deshabilitado={!lineas.seleccionada}
+            deshabilitado={!seleccionada}
             onClick={() => emitir("editar")}
           >
             Editar
           </QBoton>
           <QBoton
-            deshabilitado={!lineas.seleccionada}
+            deshabilitado={!seleccionada}
             onClick={() => emitir("borrar")}
           >
             Borrar
@@ -166,38 +143,33 @@ export const Lineas = ({
         </div>
       )}
       <LineasLista
-        lineas={contexto.lineas.lista}
-        seleccionada={lineas.seleccionada?.id}
+        lineas={lineas.lista}
+        seleccionada={seleccionada?.id}
         emitir={emitir}
       />
-
       <AltaLinea
         publicar={emitir}
         activo={estado === "Creando"}
         idPedido={pedidoId}
+        refrescarCabecera={onCabeceraModificada}
       />
 
-      <EdicionLinea
-        publicar={emitir}
-        activo={estado === "Editando" && lineas.seleccionada}
-        lineaSeleccionada={lineas.seleccionada}
-        idPedido={pedidoId}
-      />
-
+      {seleccionada && (
+        <EdicionLinea
+          publicar={emitir}
+          activo={estado === "Editando" && seleccionada !== null}
+          lineaSeleccionada={seleccionada}
+          idPedido={pedidoId}
+          refrescarCabecera={onCabeceraModificada}
+        />
+      )}
       <BajaLinea
         publicar={emitir}
         activo={estado === "ConfirmandoBorrado"}
-        idLinea={lineas.seleccionada?.id}
+        idLinea={seleccionada?.id}
         idPedido={pedidoId}
+        refrescarCabecera={onCabeceraModificada}
       />
-      {/* <QModalConfirmacion
-        nombre="confirmarBorrarLinea"
-        abierto={estado === "ConfirmandoBorrado"}
-        titulo="Confirmar borrado"
-        mensaje="¿Está seguronCabeceraModificadao de que desea borrar esta línea?"
-        onCerrar={() => emitir("borrado_cancelado")}
-        onAceptar={borrarLinea}
-      /> */}
     </>
   );
 };

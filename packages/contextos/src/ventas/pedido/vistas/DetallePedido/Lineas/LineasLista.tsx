@@ -16,6 +16,10 @@ export const LineasLista = ({
     emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
   };
 
+  const setSeleccionada = (linea: Linea) => {
+    emitir("linea_seleccionada", linea);
+  };
+
   return (
     <>
       <QTabla
@@ -23,12 +27,9 @@ export const LineasLista = ({
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
-        onSeleccion={(linea) => emitir("LINEA_SELECCIONADA", linea)}
+        onSeleccion={setSeleccionada}
         orden={["id", "ASC"]}
-        onOrdenar={
-          (_: string) => null
-          //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
-        }
+        onOrdenar={(_: string) => null}
       />
     </>
   );

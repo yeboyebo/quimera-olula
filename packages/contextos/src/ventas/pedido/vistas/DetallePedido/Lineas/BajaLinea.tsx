@@ -8,11 +8,13 @@ export const BajaLinea = ({
   activo = false,
   idLinea,
   idPedido,
+  refrescarCabecera,
 }: {
   publicar: (evento: string, payload?: unknown) => void;
   idLinea?: string;
   idPedido: string;
   activo?: boolean;
+  refrescarCabecera: () => void;
 }) => {
   const { intentar } = useContext(ContextoError);
 
@@ -20,7 +22,10 @@ export const BajaLinea = ({
     if (idLinea) {
       await intentar(() => deleteLinea(idPedido, idLinea));
     }
+
+    publicar("borrado_confirmado");
     publicar("linea_borrada");
+    refrescarCabecera();
   };
 
   return (
