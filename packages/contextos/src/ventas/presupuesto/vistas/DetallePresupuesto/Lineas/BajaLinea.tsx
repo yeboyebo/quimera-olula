@@ -7,12 +7,12 @@ export const BajaLinea = ({
   publicar,
   activo = false,
   idLinea,
-  idPedido,
+  idPresupuesto,
   refrescarCabecera,
 }: {
   publicar: (evento: string, payload?: unknown) => void;
   idLinea?: string;
-  idPedido: string;
+  idPresupuesto: string;
   activo?: boolean;
   refrescarCabecera: () => void;
 }) => {
@@ -20,7 +20,7 @@ export const BajaLinea = ({
 
   const borrar = async () => {
     if (idLinea) {
-      await intentar(() => deleteLinea(idPedido, idLinea));
+      await intentar(() => deleteLinea(idPresupuesto, idLinea));
     }
 
     publicar("borrado_confirmado");

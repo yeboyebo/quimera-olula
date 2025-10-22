@@ -1,128 +1,147 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { QBoton } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { useLista } from "@olula/lib/useLista.ts";
-import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
-  Factura,
-  LineaFactura as Linea,
-  LineaFactura,
-  NuevaLineaFactura,
-} from "../../../diseño.ts";
+  cambiarItem,
+  cargar,
+  getSeleccionada,
+  listaSeleccionableVacia,
+  quitarItem,
+  seleccionarItem,
+} from "@olula/lib/entidad.ts";
+import { pipe } from "@olula/lib/funcional.js";
 import {
-  deleteLinea,
-  getLineas,
-  patchCantidadLinea,
-  patchLinea,
-  postLinea,
-} from "../../../infraestructura.ts";
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "@olula/lib/useMaquina.ts";
+import { useContext, useEffect } from "react";
+import { LineaFactura as Linea } from "../../../diseño.ts";
+import { getLineas } from "../../../infraestructura.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
+import { BajaLinea } from "./BajaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
-type Estado = "lista" | "alta" | "edicion" | "confirmarBorrado";
+type Estado = "Inactivo" | "Creando" | "Editando" | "ConfirmandoBorrado";
+type Contexto = {
+  lineas: ListaSeleccionable<Linea>;
+};
+
+const setLineas =
+  (
+    aplicable: (lineas: ListaSeleccionable<Linea>) => ListaSeleccionable<Linea>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => ({
+    ...maquina,
+    contexto: {
+      ...maquina.contexto,
+      lineas: aplicable(maquina.contexto.lineas),
+    },
+  });
+
+const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+  inicial: {
+    estado: "Inactivo",
+    contexto: {
+      lineas: listaSeleccionableVacia<Linea>(),
+    },
+  },
+  estados: {
+    Inactivo: {
+      crear: "Creando",
+      linea_seleccionada: ({ maquina, payload }) =>
+        pipe(maquina, setLineas(seleccionarItem(payload as Linea))),
+      linea_cambiada: ({ maquina, payload }) =>
+        pipe(maquina, setLineas(cambiarItem(payload as Linea))),
+      linea_borrada: ({ maquina }) => {
+        const { lineas } = maquina.contexto;
+        if (!lineas.idActivo) {
+          return maquina;
+        }
+        return pipe(maquina, setLineas(quitarItem(lineas.idActivo)));
+      },
+      lineas_cargadas: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo" as Estado),
+          setLineas(cargar(payload as Linea[]))
+        ),
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setLineas((lineas) => ({
+            ...lineas,
+            idActivo: null,
+          }))
+        ),
+      editar: "Editando",
+      borrar: "ConfirmandoBorrado",
+    },
+    Creando: {
+      linea_creada: "Inactivo",
+      creacion_cancelada: "Inactivo",
+    },
+    Editando: {
+      edicion_confirmada: "Inactivo",
+      edicion_cancelada: "Inactivo",
+    },
+    ConfirmandoBorrado: {
+      borrado_confirmado: "Inactivo",
+      borrado_cancelado: "Inactivo",
+    },
+  },
+};
+
 export const Lineas = ({
+  facturaId,
+  facturaEditable,
   onCabeceraModificada,
-  factura,
 }: {
   onCabeceraModificada: () => void;
-  factura: HookModelo<Factura>;
+  facturaId: string;
+  facturaEditable?: boolean;
 }) => {
-  const [estado, setEstado] = useState<Estado>("lista");
-  const lineas = useLista<Linea>([]);
-  const facturaId = factura?.modelo?.id;
   const { intentar } = useContext(ContextoError);
 
-  const { setLista } = lineas;
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+  });
 
-  const refrescarLineas = async (idLinea?: string) => {
-    const nuevasLineas = await getLineas(facturaId);
-    lineas.refrescar(nuevasLineas, idLinea);
+  const { lineas } = contexto;
+
+  useEffect(() => {
+    const cargarLineas = async () => {
+      const nuevasLineas = await intentar(() => getLineas(facturaId));
+      emitir("lineas_cargadas", nuevasLineas);
+    };
+
+    emitir("cargar");
+    cargarLineas();
+  }, [facturaId, emitir, intentar]);
+
+  const seleccionada = getSeleccionada(lineas);
+
+  const refrescarCabecera = async () => {
+    const lineasCargadas = await getLineas(facturaId);
+    emitir("lineas_cargadas", lineasCargadas);
     onCabeceraModificada();
   };
 
-  const cargar = useCallback(async () => {
-    const nuevasLineas = await getLineas(facturaId);
-    setLista(nuevasLineas);
-  }, [facturaId, setLista]);
-
-  useEffect(() => {
-    if (facturaId) cargar();
-  }, [facturaId, cargar]);
-
-  const onBorrarConfirmado = async () => {
-    if (!lineas.seleccionada) return;
-    const lineaId = lineas.seleccionada.id;
-    if (!lineaId) return;
-    await intentar(() => deleteLinea(facturaId, lineaId));
-    await refrescarLineas();
-    setEstado("lista");
-  };
-
-  const maquina: Maquina<Estado> = {
-    alta: {
-      ALTA_LISTA: async (payload: unknown) => {
-        const idLinea = await postLinea(
-          facturaId,
-          payload as NuevaLineaFactura
-        );
-        await refrescarLineas(idLinea);
-        return "lista" as Estado;
-      },
-    },
-    edicion: {
-      EDICION_LISTA: async (payload: unknown) => {
-        const linea = payload as LineaFactura;
-        await patchLinea(facturaId, linea);
-        await refrescarLineas();
-        return "lista" as Estado;
-      },
-      EDICION_CANCELADA: "lista",
-    },
-    lista: {
-      ALTA_SOLICITADA: "alta",
-      EDICION_SOLICITADA: "edicion",
-      LINEA_SELECCIONADA: (payload: unknown) => {
-        const linea = payload as Linea;
-        lineas.seleccionar(linea);
-      },
-      CAMBIO_CANTIDAD_SOLICITADO: async (payload: unknown) => {
-        const { linea, cantidad } = payload as {
-          linea: LineaFactura;
-          cantidad: number;
-        };
-        await patchCantidadLinea(facturaId, linea, cantidad);
-        await refrescarLineas();
-      },
-      BORRADO_SOLICITADO: () => "confirmarBorrado",
-    },
-    confirmarBorrado: {
-      BORRADO_CONFIRMADO: async () => {
-        await onBorrarConfirmado();
-        return "lista" as Estado;
-      },
-      BORRADO_CANCELADO: "lista",
-    },
-  };
-  const emitir = useMaquina(maquina, estado, setEstado);
-
   return (
     <>
-      {factura.editable && (
+      {facturaEditable && (
         <div className="botones maestro-botones ">
-          <QBoton onClick={() => emitir("ALTA_SOLICITADA")}>Nueva</QBoton>
+          <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
           <QBoton
-            deshabilitado={!lineas.seleccionada}
-            onClick={() => emitir("EDICION_SOLICITADA")}
+            deshabilitado={!seleccionada}
+            onClick={() => emitir("editar")}
           >
             Editar
           </QBoton>
           <QBoton
-            deshabilitado={!lineas.seleccionada}
-            onClick={() => emitir("BORRADO_SOLICITADO")}
+            deshabilitado={!seleccionada}
+            onClick={() => emitir("borrar")}
           >
             Borrar
           </QBoton>
@@ -130,32 +149,33 @@ export const Lineas = ({
       )}
       <LineasLista
         lineas={lineas.lista}
-        seleccionada={lineas.seleccionada ? lineas.seleccionada.id : undefined}
+        seleccionada={seleccionada?.id}
         emitir={emitir}
+        idFactura={facturaId}
+        refrescarCabecera={refrescarCabecera}
       />
-      {lineas.seleccionada && (
-        <QModal
-          nombre="modal"
-          abierto={estado === "edicion"}
-          onCerrar={() => emitir("EDICION_CANCELADA")}
-        >
-          <EdicionLinea emitir={emitir} lineaInicial={lineas.seleccionada} />
-        </QModal>
+      <AltaLinea
+        publicar={emitir}
+        activo={estado === "Creando"}
+        idFactura={facturaId}
+        refrescarCabecera={refrescarCabecera}
+      />
+
+      {seleccionada && (
+        <EdicionLinea
+          publicar={emitir}
+          activo={estado === "Editando" && seleccionada !== null}
+          lineaSeleccionada={seleccionada}
+          idFactura={facturaId}
+          refrescarCabecera={refrescarCabecera}
+        />
       )}
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => setEstado("lista")}
-      >
-        <AltaLinea emitir={emitir} />
-      </QModal>
-      <QModalConfirmacion
-        nombre="confirmarBorrarLinea"
-        abierto={estado === "confirmarBorrado"}
-        titulo="Confirmar borrado"
-        mensaje="¿Está seguro de que desea borrar esta línea?"
-        onCerrar={() => emitir("BORRADO_CANCELADO")}
-        onAceptar={() => emitir("BORRADO_CONFIRMADO")}
+      <BajaLinea
+        publicar={emitir}
+        activo={estado === "ConfirmandoBorrado"}
+        idLinea={seleccionada?.id}
+        idFactura={facturaId}
+        refrescarCabecera={refrescarCabecera}
       />
     </>
   );

@@ -1,19 +1,28 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useContext } from "react";
 import { LineaPedido as Linea } from "../../../diseño.ts";
+import { patchCantidadLinea } from "../../../infraestructura.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
   emitir,
+  idPedido,
+  refrescarCabecera,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   emitir: EmitirEvento;
+  idPedido: string;
+  refrescarCabecera: () => void;
 }) => {
+  const { intentar } = useContext(ContextoError);
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
+    await intentar(() => patchCantidadLinea(idPedido, linea, cantidad));
+    refrescarCabecera();
   };
 
   const setSeleccionada = (linea: Linea) => {

@@ -11,7 +11,7 @@ import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useContext } from "react";
-import { getLineas, postLinea } from "../../../infraestructura.ts";
+import { postLinea } from "../../../infraestructura.ts";
 import "./AltaLinea.css";
 
 export const AltaLinea = ({
@@ -33,9 +33,7 @@ export const AltaLinea = ({
 
   const crear = async () => {
     await intentar(() => postLinea(idPedido, modelo));
-    const lineasCargadas = await getLineas(idPedido);
     publicar("linea_creada");
-    publicar("lineas_cargadas", lineasCargadas);
     init();
     refrescarCabecera();
   };

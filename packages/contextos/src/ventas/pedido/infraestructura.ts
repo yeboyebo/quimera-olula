@@ -12,6 +12,7 @@ const baseUrl = new ApiUrls().PEDIDO;
 
 export const lineaPedidoFromAPI = (l: LineaPedidoAPI): LineaPedido => l;
 export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => p;
+// export const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
 
 export const getPedido: GetPedido = async (id) => {
   // const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;

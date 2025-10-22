@@ -9,7 +9,7 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useEffect } from "react";
 import { LineaPedido } from "../../../diseño.ts";
 import { metaLineaPedido } from "../../../dominio.ts";
-import { getLineas, patchLinea } from "../../../infraestructura.ts";
+import { patchLinea } from "../../../infraestructura.ts";
 import "./EdicionLinea.css";
 export const EdicionLinea = ({
   publicar,
@@ -31,9 +31,7 @@ export const EdicionLinea = ({
   );
   const guardar = async (linea: LineaPedido) => {
     await intentar(() => patchLinea(idPedido, linea));
-    const lineasCargadas = await getLineas(idPedido);
-    publicar("edicion_cancelada");
-    publicar("lineas_cargadas", lineasCargadas);
+    publicar("edicion_confirmada");
     refrescarCabecera();
   };
 

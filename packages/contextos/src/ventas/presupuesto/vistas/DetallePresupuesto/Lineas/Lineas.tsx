@@ -1,141 +1,147 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { QBoton } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { useLista } from "@olula/lib/useLista.ts";
-import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.js";
-import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useEffect } from "react";
+import { ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
-  LineaPresupuesto as Linea,
-  LineaPresupuesto,
-  NuevaLinea,
-  Presupuesto,
-} from "../../../diseño.ts";
+  cambiarItem,
+  cargar,
+  getSeleccionada,
+  listaSeleccionableVacia,
+  quitarItem,
+  seleccionarItem,
+} from "@olula/lib/entidad.ts";
+import { pipe } from "@olula/lib/funcional.js";
 import {
-  deleteLinea,
-  getLineas,
-  patchCantidadLinea,
-  patchLinea,
-  postLinea,
-} from "../../../infraestructura.ts";
+  ConfigMaquina4,
+  Maquina3,
+  useMaquina4,
+} from "@olula/lib/useMaquina.ts";
+import { useContext, useEffect } from "react";
+import { LineaPresupuesto as Linea } from "../../../diseño.ts";
+import { getLineas } from "../../../infraestructura.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
+import { BajaLinea } from "./BajaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
-type Estado = "Lista" | "Alta" | "Edicion" | "ConfirmarBorrado";
-type Contexto = Record<string, unknown>;
+type Estado = "Inactivo" | "Creando" | "Editando" | "ConfirmandoBorrado";
+type Contexto = {
+  lineas: ListaSeleccionable<Linea>;
+};
+
+const setLineas =
+  (
+    aplicable: (lineas: ListaSeleccionable<Linea>) => ListaSeleccionable<Linea>
+  ) =>
+  (maquina: Maquina3<Estado, Contexto>) => ({
+    ...maquina,
+    contexto: {
+      ...maquina.contexto,
+      lineas: aplicable(maquina.contexto.lineas),
+    },
+  });
 
 const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   inicial: {
-    estado: "Lista",
-    contexto: {},
+    estado: "Inactivo",
+    contexto: {
+      lineas: listaSeleccionableVacia<Linea>(),
+    },
   },
   estados: {
-    Alta: {
-      alta_lista: "Lista",
+    Inactivo: {
+      crear: "Creando",
+      linea_seleccionada: ({ maquina, payload }) =>
+        pipe(maquina, setLineas(seleccionarItem(payload as Linea))),
+      linea_cambiada: ({ maquina, payload }) =>
+        pipe(maquina, setLineas(cambiarItem(payload as Linea))),
+      linea_borrada: ({ maquina }) => {
+        const { lineas } = maquina.contexto;
+        if (!lineas.idActivo) {
+          return maquina;
+        }
+        return pipe(maquina, setLineas(quitarItem(lineas.idActivo)));
+      },
+      lineas_cargadas: ({ maquina, payload, setEstado }) =>
+        pipe(
+          maquina,
+          setEstado("Inactivo" as Estado),
+          setLineas(cargar(payload as Linea[]))
+        ),
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setLineas((lineas) => ({
+            ...lineas,
+            idActivo: null,
+          }))
+        ),
+      editar: "Editando",
+      borrar: "ConfirmandoBorrado",
     },
-    Edicion: {
-      edicion_lista: "Lista",
-      edicion_cancelada: "Lista",
+    Creando: {
+      linea_creada: "Inactivo",
+      creacion_cancelada: "Inactivo",
     },
-    Lista: {
-      alta_solicitada: "Alta",
-      edicion_solicitada: "Edicion",
-      linea_seleccionada: "Lista",
-      cambio_cantidad_solicitado: "Lista",
-      borrado_solicitado: "ConfirmarBorrado",
+    Editando: {
+      edicion_confirmada: "Inactivo",
+      edicion_cancelada: "Inactivo",
     },
-    ConfirmarBorrado: {
-      borrado_confirmado: "Lista",
-      borrado_cancelado: "Lista",
+    ConfirmandoBorrado: {
+      borrado_confirmado: "Inactivo",
+      borrado_cancelado: "Inactivo",
     },
   },
 };
 
 export const Lineas = ({
+  presupuestoId,
+  presupuestoEditable,
   onCabeceraModificada,
-  presupuesto,
 }: {
   onCabeceraModificada: () => void;
-  presupuesto: HookModelo<Presupuesto>;
+  presupuestoId: string;
+  presupuestoEditable?: boolean;
 }) => {
-  const lineas = useLista<Linea>([]);
-  const presupuestoId = presupuesto?.modelo?.id;
   const { intentar } = useContext(ContextoError);
 
-  const { setLista } = lineas;
-
-  const refrescarLineas = async (idLinea?: string) => {
-    const nuevasLineas = await getLineas(presupuestoId);
-    lineas.refrescar(nuevasLineas, idLinea);
-    onCabeceraModificada();
-  };
-
-  const cargar = useCallback(async () => {
-    const nuevasLineas = await getLineas(presupuestoId);
-    setLista(nuevasLineas);
-  }, [presupuestoId, setLista]);
-
-  useEffect(() => {
-    if (presupuestoId) cargar();
-  }, [presupuestoId, cargar]);
-
-  const altaLinea = async (nuevaLinea: NuevaLinea) => {
-    const idLinea = await intentar(() => postLinea(presupuestoId, nuevaLinea));
-    await refrescarLineas(idLinea);
-    emitir("alta_lista");
-  };
-
-  const edicionLinea = async (linea: LineaPresupuesto) => {
-    await intentar(() => patchLinea(presupuestoId, linea));
-    await refrescarLineas();
-    emitir("edicion_lista");
-  };
-
-  const cambioCantidad = async (payload: {
-    linea: LineaPresupuesto;
-    cantidad: number;
-  }) => {
-    await intentar(() =>
-      patchCantidadLinea(presupuestoId, payload.linea, payload.cantidad)
-    );
-    await refrescarLineas();
-    emitir("cambio_cantidad_solicitado");
-  };
-
-  const seleccionarLinea = (linea: Linea) => {
-    lineas.seleccionar(linea);
-    emitir("linea_seleccionada");
-  };
-
-  const onBorrarConfirmado = async () => {
-    if (!lineas.seleccionada) return;
-    const lineaId = lineas.seleccionada.id;
-    if (!lineaId) return;
-    await intentar(() => deleteLinea(presupuestoId, lineaId));
-    await refrescarLineas();
-    emitir("borrado_confirmado");
-  };
-
-  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });
 
+  const { lineas } = contexto;
+
+  useEffect(() => {
+    const cargarLineas = async () => {
+      const nuevasLineas = await intentar(() => getLineas(presupuestoId));
+      emitir("lineas_cargadas", nuevasLineas);
+    };
+
+    emitir("cargar");
+    cargarLineas();
+  }, [presupuestoId, emitir, intentar]);
+
+  const seleccionada = getSeleccionada(lineas);
+
+  const refrescarCabecera = async () => {
+    const lineasCargadas = await getLineas(presupuestoId);
+    emitir("lineas_cargadas", lineasCargadas);
+    onCabeceraModificada();
+  };
+
   return (
     <>
-      {presupuesto.editable && (
+      {presupuestoEditable && (
         <div className="botones maestro-botones ">
-          <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
+          <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
           <QBoton
-            onClick={() => lineas.seleccionada && emitir("edicion_solicitada")}
-            deshabilitado={!lineas.seleccionada}
+            deshabilitado={!seleccionada}
+            onClick={() => emitir("editar")}
           >
             Editar
           </QBoton>
           <QBoton
-            deshabilitado={!lineas.seleccionada}
-            onClick={() => lineas.seleccionada && emitir("borrado_solicitado")}
+            deshabilitado={!seleccionada}
+            onClick={() => emitir("borrar")}
           >
             Borrar
           </QBoton>
@@ -143,52 +149,33 @@ export const Lineas = ({
       )}
       <LineasLista
         lineas={lineas.lista}
-        seleccionada={lineas.seleccionada ? lineas.seleccionada.id : undefined}
-        emitir={(evento, payload) => {
-          if (evento === "alta_lista") altaLinea(payload as NuevaLinea);
-          else if (evento === "edicion_lista")
-            edicionLinea(payload as LineaPresupuesto);
-          else if (evento === "cambio_cantidad_solicitado")
-            cambioCantidad(
-              payload as { linea: LineaPresupuesto; cantidad: number }
-            );
-          else if (evento === "linea_seleccionada")
-            seleccionarLinea(payload as Linea);
-        }}
+        seleccionada={seleccionada?.id}
+        emitir={emitir}
+        idPresupuesto={presupuestoId}
+        refrescarCabecera={refrescarCabecera}
       />
-      {lineas.seleccionada && (
-        <QModal
-          nombre="modal"
-          abierto={estado === "Edicion"}
-          onCerrar={() => emitir("edicion_cancelada")}
-        >
-          <EdicionLinea
-            emitir={(evento, payload) => {
-              if (evento === "edicion_lista")
-                edicionLinea(payload as LineaPresupuesto);
-            }}
-            lineaInicial={lineas.seleccionada}
-          />
-        </QModal>
-      )}
-      <QModal
-        nombre="modal"
-        abierto={estado === "Alta"}
-        onCerrar={() => emitir("edicion_cancelada")}
-      >
-        <AltaLinea
-          emitir={(evento, payload) => {
-            if (evento === "alta_lista") altaLinea(payload as NuevaLinea);
-          }}
+      <AltaLinea
+        publicar={emitir}
+        activo={estado === "Creando"}
+        idPresupuesto={presupuestoId}
+        refrescarCabecera={refrescarCabecera}
+      />
+
+      {seleccionada && (
+        <EdicionLinea
+          publicar={emitir}
+          activo={estado === "Editando" && seleccionada !== null}
+          lineaSeleccionada={seleccionada}
+          idPresupuesto={presupuestoId}
+          refrescarCabecera={refrescarCabecera}
         />
-      </QModal>
-      <QModalConfirmacion
-        nombre="confirmarBorrarLinea"
-        abierto={estado === "ConfirmarBorrado"}
-        titulo="Confirmar borrado"
-        mensaje="¿Está seguro de que desea borrar esta línea?"
-        onCerrar={() => emitir("borrado_cancelado")}
-        onAceptar={onBorrarConfirmado}
+      )}
+      <BajaLinea
+        publicar={emitir}
+        activo={estado === "ConfirmandoBorrado"}
+        idLinea={seleccionada?.id}
+        idPresupuesto={presupuestoId}
+        refrescarCabecera={refrescarCabecera}
       />
     </>
   );

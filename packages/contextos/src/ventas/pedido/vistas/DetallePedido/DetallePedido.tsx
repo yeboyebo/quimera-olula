@@ -150,13 +150,13 @@ export const DetallePedido = ({
           {pedidoId && (
             <Lineas
               pedidoId={pedidoId}
-              pedidoValido={pedido.valido}
+              pedidoEditable={pedido.editable}
               onCabeceraModificada={recargarCabecera}
             />
           )}
 
           <QModalConfirmacion
-            nombre="borrarFactura"
+            nombre="borrarPedido"
             abierto={estado === "ConfirmarBorrado"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar este pedido?"

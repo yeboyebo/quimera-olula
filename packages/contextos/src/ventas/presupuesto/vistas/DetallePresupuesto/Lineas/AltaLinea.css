@@ -3,7 +3,7 @@
         max-width: 500px;
     }
 
-    quimera-autocompletar[nombre="referencia"] {
+    quimera-autocompletar[nombre="referencia_nueva_linea_presupuesto"] {
         grid-column: span 9;
     }
 

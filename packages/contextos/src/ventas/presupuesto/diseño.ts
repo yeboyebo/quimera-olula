@@ -1,4 +1,5 @@
-import { Direccion, Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { NuevaLineaVenta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Entidad {
   id: string;
@@ -49,10 +50,12 @@ export interface LineaPresupuesto extends Entidad {
   grupo_iva_producto_id: string;
 };
 
-export interface NuevaLinea extends Modelo {
-  referencia: string;
-  cantidad: number;
-};
+export type NuevaLinea = NuevaLineaVenta
+
+// export interface NuevaLinea extends Modelo {
+//   referencia: string;
+//   cantidad: number;
+// };
 
 export type Cliente = {
   cliente_id: string;

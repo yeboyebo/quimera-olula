@@ -83,8 +83,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       creacion_cancelada: "Inactivo",
     },
     Editando: {
-      linea_cambiada: ({ maquina, payload }) =>
-        pipe(maquina, setLineas(cambiarItem(payload as Linea))),
+      edicion_confirmada: "Inactivo",
       edicion_cancelada: "Inactivo",
     },
     ConfirmandoBorrado: {
@@ -96,12 +95,12 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 
 export const Lineas = ({
   pedidoId,
-  pedidoValido,
+  pedidoEditable,
   onCabeceraModificada,
 }: {
   onCabeceraModificada: () => void;
   pedidoId: string;
-  pedidoValido?: boolean;
+  pedidoEditable?: boolean;
 }) => {
   const { intentar } = useContext(ContextoError);
 
@@ -123,9 +122,15 @@ export const Lineas = ({
 
   const seleccionada = getSeleccionada(lineas);
 
+  const refrescarCabecera = async () => {
+    const lineasCargadas = await getLineas(pedidoId);
+    emitir("lineas_cargadas", lineasCargadas);
+    onCabeceraModificada();
+  };
+
   return (
     <>
-      {pedidoValido && (
+      {pedidoEditable && (
         <div className="botones maestro-botones ">
           <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
           <QBoton
@@ -146,12 +151,14 @@ export const Lineas = ({
         lineas={lineas.lista}
         seleccionada={seleccionada?.id}
         emitir={emitir}
+        idPedido={pedidoId}
+        refrescarCabecera={refrescarCabecera}
       />
       <AltaLinea
         publicar={emitir}
         activo={estado === "Creando"}
         idPedido={pedidoId}
-        refrescarCabecera={onCabeceraModificada}
+        refrescarCabecera={refrescarCabecera}
       />
 
       {seleccionada && (
@@ -160,7 +167,7 @@ export const Lineas = ({
           activo={estado === "Editando" && seleccionada !== null}
           lineaSeleccionada={seleccionada}
           idPedido={pedidoId}
-          refrescarCabecera={onCabeceraModificada}
+          refrescarCabecera={refrescarCabecera}
         />
       )}
       <BajaLinea
@@ -168,7 +175,7 @@ export const Lineas = ({
         activo={estado === "ConfirmandoBorrado"}
         idLinea={seleccionada?.id}
         idPedido={pedidoId}
-        refrescarCabecera={onCabeceraModificada}
+        refrescarCabecera={refrescarCabecera}
       />
     </>
   );
