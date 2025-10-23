@@ -1,4 +1,4 @@
-import { MetaModelo, stringNoVacio } from "../../../../src/contextos/comun/dominio.ts";
+import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
 import { Modulo } from "./diseño";
 
 export const moduloVacio: Modulo = {
