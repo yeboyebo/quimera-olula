@@ -1,3 +1,4 @@
+import { MetaTabla } from "@olula/componentes/index.js";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import {
     cambioClienteVentaVacio,
@@ -48,5 +49,24 @@ export const metaLineaPedido: MetaModelo<LineaPedido> = metaLineaVenta;
 export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = metaNuevaLineaVenta;
 
 
+export const metaTablaPedido: MetaTabla<Pedido> = [
+    {
+        id: "codigo",
+        cabecera: "Código",
+    },
+    {
+        id: "nombre_cliente",
+        cabecera: "Cliente",
+    },
+    // {
+    //     id: "servido",
+    //     cabecera: "Servido",
+    // },
+    {
+        id: "total",
+        cabecera: "Total",
+        tipo: "moneda",
+    },
 
+];
 

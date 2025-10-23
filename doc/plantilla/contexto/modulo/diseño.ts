@@ -1,4 +1,4 @@
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "../../../../src/contextos/comun/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 
 export interface Modulo extends Entidad {
     id: string;

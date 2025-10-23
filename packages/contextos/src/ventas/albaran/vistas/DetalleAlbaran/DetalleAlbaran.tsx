@@ -145,7 +145,11 @@ export const DetalleAlbaran = ({
             total={Number(modelo.total ?? 0)}
             divisa={String(modelo.coddivisa ?? "EUR")}
           />
-          <Lineas albaran={albaran} onCabeceraModificada={recargarCabecera} />
+          <Lineas
+            albaranId={albaranId}
+            albaranEditable={true}
+            onCabeceraModificada={recargarCabecera}
+          />
           <QModalConfirmacion
             nombre="borrarAlbaran"
             abierto={estado === "ConfirmarBorrado"}

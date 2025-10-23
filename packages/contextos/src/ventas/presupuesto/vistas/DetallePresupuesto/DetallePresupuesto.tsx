@@ -1,6 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { QModalConfirmacion } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.js";
@@ -12,10 +13,10 @@ import { Presupuesto } from "../../diseño.ts";
 import { metaPresupuesto, presupuestoVacio } from "../../dominio.ts";
 import {
   aprobarPresupuesto,
+  borrarPresupuesto,
   getPresupuesto,
   patchPresupuesto,
 } from "../../infraestructura.ts";
-import { BorrarPresupuesto } from "../BorrarPresupuesto.tsx";
 import "./DetallePresupuesto.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
@@ -42,6 +43,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     },
     borrando: {
       cancelar_borrado: "editando",
+      borrar_confirmado: "editando",
       presupuesto_borrado: ({ publicar }) => publicar("presupuesto_borrado"),
     },
   },
@@ -62,8 +64,8 @@ export const DetallePresupuesto = ({
   const presupuestoId = presupuestoInicial?.id ?? params.id;
   const titulo = (presupuesto: Entidad) => presupuesto.codigo as string;
 
-  const ctxPresupuesto = useModelo(metaPresupuesto, presupuestoVacio());
-  const { modelo, init } = ctxPresupuesto;
+  const presupuesto = useModelo(metaPresupuesto, presupuestoVacio());
+  const { modelo, init } = presupuesto;
 
   const recargarCabecera = async () => {
     const nuevoPresupuesto = await getPresupuesto(modelo.id);
@@ -81,6 +83,12 @@ export const DetallePresupuesto = ({
     await intentar(() => patchPresupuesto(modelo.id, modelo));
     await recargarCabecera();
     emitir("presupuesto_guardado");
+  };
+
+  const onBorrarConfirmado = async () => {
+    await intentar(() => borrarPresupuesto(modelo.id));
+    emitir("presupuesto_borrado", modelo);
+    emitir("borrar_confirmado");
   };
 
   const cancelar = () => {
@@ -118,7 +126,7 @@ export const DetallePresupuesto = ({
                 label="Cliente"
                 children={
                   <TabCliente
-                    presupuesto={ctxPresupuesto}
+                    presupuesto={presupuesto}
                     publicar={() => recargarCabecera()}
                   />
                 }
@@ -126,18 +134,18 @@ export const DetallePresupuesto = ({
               <Tab
                 key="tab-2"
                 label="Datos"
-                children={<TabDatos presupuesto={ctxPresupuesto} />}
+                children={<TabDatos presupuesto={presupuesto} />}
               />,
               <Tab
                 key="tab-3"
                 label="Observaciones"
-                children={<TabObservaciones ctxPresupuesto={ctxPresupuesto} />}
+                children={<TabObservaciones presupuesto={presupuesto} />}
               />,
             ]}
           ></Tabs>
-          {ctxPresupuesto.modificado && (
+          {presupuesto.modificado && (
             <div className="botones maestro-botones ">
-              <QBoton onClick={guardar} deshabilitado={!ctxPresupuesto.valido}>
+              <QBoton onClick={guardar} deshabilitado={!presupuesto.valido}>
                 Guardar
               </QBoton>
               <QBoton tipo="reset" variante="texto" onClick={cancelar}>
@@ -153,13 +161,18 @@ export const DetallePresupuesto = ({
             divisa={String(modelo.coddivisa ?? "EUR")}
           />
           <Lineas
-            presupuesto={ctxPresupuesto}
+            presupuestoId={presupuestoId}
+            presupuestoEditable={presupuesto.editable}
             onCabeceraModificada={recargarCabecera}
           />
-          <BorrarPresupuesto
-            publicar={emitir}
-            activo={estado === "borrando"}
-            presupuesto={modelo}
+
+          <QModalConfirmacion
+            nombre="borrarPresupuesto"
+            abierto={estado === "borrando"}
+            titulo="Confirmar borrar"
+            mensaje="¿Está seguro de que desea borrar este pedido?"
+            onCerrar={() => emitir("cancelar_borrado")}
+            onAceptar={onBorrarConfirmado}
           />
         </>
       )}

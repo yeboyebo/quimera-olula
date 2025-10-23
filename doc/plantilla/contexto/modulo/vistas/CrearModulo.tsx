@@ -1,13 +1,9 @@
+import { QBoton, QInput } from "@olula/componentes/index.js";
+import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
-import { QBoton } from "../../../../../src/componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../../src/componentes/atomos/qinput.tsx";
-import { Mostrar } from "../../../../../src/componentes/moleculas/Mostrar.tsx";
-import { ContextoError } from "../../../../../src/contextos/comun/contexto.ts";
-import { EmitirEvento } from "../../../../../src/contextos/comun/diseño.ts";
-import {
-  HookModelo,
-  useModelo,
-} from "../../../../../src/contextos/comun/useModelo.ts";
 import { Modulo } from "../diseño";
 import { metaNuevoModulo, nuevoModuloVacio } from "../dominio.ts";
 import { getModulo, postModulo } from "../infraestructura";

@@ -7,6 +7,8 @@ import {
     modeloEsValido,
     stringNoVacio
 } from "@olula/lib/dominio.ts";
+
+import { NuevaLineaVenta } from "../venta/diseño.ts";
 import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
 
 export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
@@ -77,10 +79,17 @@ export const cambioClienteVacio = (): CambioCliente => ({
     direccion_id: "",
 });
 
-export const nuevaLineaVacia = (): NuevaLinea => ({
+export const nuevaLineaVentaVacia: NuevaLineaVenta = {
     referencia: "",
     cantidad: 1,
-});
+};
+
+export const nuevaLineaVacia: NuevaLinea = nuevaLineaVentaVacia;
+
+// export const nuevaLineaVacia = (): NuevaLinea => ({
+//     referencia: "",
+//     cantidad: 1,
+// });
 
 export const validadoresPresupuesto = {
     cliente_id: (valor: string) => stringNoVacio(valor),

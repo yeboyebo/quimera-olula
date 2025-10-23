@@ -5,18 +5,17 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
-import { MetaModelo } from "@olula/lib/dominio.ts";
-import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
-import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
-import { JSX, useContext } from "react";
+import { useModelo } from "@olula/lib/useModelo.ts";
+import { useContext } from "react";
 import { useParams } from "react-router";
 import { Pedido } from "../../diseño.ts";
-import { pedidoVacio } from "../../dominio.ts";
+import { metaPedido, pedidoVacio } from "../../dominio.ts";
 import { borrarPedido, getPedido, patchPedido } from "../../infraestructura.ts";
 import "./DetallePedido.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
+import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 type ParamOpcion = {
@@ -34,11 +33,11 @@ export const DetallePedido = ({
   pedidoInicial?: Pedido | null;
   emitir?: EmitirEvento;
 }) => {
-  const appFactory = useContext(FactoryCtx);
+  // const appFactory = useContext(FactoryCtx);
 
-  const TabDatos = appFactory.app.Ventas.PedidoTabDatos as (props: {
-    pedido: HookModelo<Pedido>;
-  }) => JSX.Element;
+  // const TabDatos = appFactory.app.Ventas.PedidoTabDatos as (props: {
+  //   pedido: HookModelo<Pedido>;
+  // }) => JSX.Element;
 
   const params = useParams();
   const { intentar } = useContext(ContextoError);
@@ -46,10 +45,7 @@ export const DetallePedido = ({
   const pedidoId = pedidoInicial?.id ?? params.id;
   const titulo = (pedido: Entidad) => pedido.codigo as string;
 
-  const pedido = useModelo(
-    appFactory.app.Ventas.metaPedido as MetaModelo<Pedido>,
-    pedidoVacio
-  );
+  const pedido = useModelo(metaPedido, pedidoVacio);
   const { modelo, init } = pedido;
 
   const configMaquina: ConfigMaquina4<Estado, Contexto> = {
@@ -151,9 +147,16 @@ export const DetallePedido = ({
             total={Number(modelo.total ?? 0)}
             divisa={String(modelo.coddivisa ?? "EUR")}
           />
-          <Lineas pedido={pedido} onCabeceraModificada={recargarCabecera} />
+          {pedidoId && (
+            <Lineas
+              pedidoId={pedidoId}
+              pedidoEditable={pedido.editable}
+              onCabeceraModificada={recargarCabecera}
+            />
+          )}
+
           <QModalConfirmacion
-            nombre="borrarFactura"
+            nombre="borrarPedido"
             abierto={estado === "ConfirmarBorrado"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar este pedido?"
