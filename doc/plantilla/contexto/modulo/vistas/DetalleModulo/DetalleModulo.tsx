@@ -1,22 +1,13 @@
+import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
+import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { QInput } from "@olula/componentes/index.js";
+import { QBoton } from "@olula/componentes/index.ts";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
+import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
+import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
-import { QBoton } from "../../../../../../src/componentes/atomos/qboton.tsx";
-import { QInput } from "../../../../../../src/componentes/atomos/qinput.tsx";
-import { Detalle } from "../../../../../../src/componentes/detalle/Detalle.tsx";
-import {
-  Tab,
-  Tabs,
-} from "../../../../../../src/componentes/detalle/tabs/Tabs.tsx";
-import { ContextoError } from "../../../../../../src/contextos/comun/contexto.ts";
-import {
-  EmitirEvento,
-  Entidad,
-} from "../../../../../../src/contextos/comun/diseño.ts";
-import {
-  ConfigMaquina4,
-  useMaquina4,
-} from "../../../../../../src/contextos/comun/useMaquina.ts";
-import { useModelo } from "../../../../../../src/contextos/comun/useModelo.ts";
 import { Modulo } from "../../diseño";
 import { metaModulo, moduloVacio } from "../../dominio";
 import { getModulo, patchModulo } from "../../infraestructura";
@@ -49,10 +40,10 @@ const titulo = (modulo: Entidad) => modulo.nombre as string;
 
 export const DetalleModulo = ({
   moduloInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   moduloInicial?: Modulo | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
   const moduloId = moduloInicial?.id ?? params.id;
@@ -61,16 +52,16 @@ export const DetalleModulo = ({
   const modulo = useModelo(metaModulo, moduloVacio);
   const { modelo, uiProps, init, modificado, valido } = modulo;
 
-  const [emitirModulo, { estado }] = useMaquina4<Estado, Contexto>({
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
-    publicar: emitir,
+    publicar: publicar,
   });
 
   const guardar = async () => {
     await intentar(() => patchModulo(modelo.id, modelo));
     const modulo_guardado = await getModulo(modelo.id);
     init(modulo_guardado);
-    emitirModulo("modulo_guardado", modulo_guardado);
+    emitir("modulo_guardado", modulo_guardado);
   };
 
   return (
@@ -80,12 +71,12 @@ export const DetalleModulo = ({
       setEntidad={(m) => init(m)}
       entidad={modelo}
       cargar={getModulo}
-      cerrarDetalle={() => emitirModulo("cancelar_seleccion")}
+      cerrarDetalle={() => publicar("seleccion_cancelada")}
     >
       {!!moduloId && (
         <div className="DetalleModulo">
           <div className="maestro-botones ">
-            <QBoton onClick={() => emitirModulo("borrar")}>Borrar</QBoton>
+            <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
           <Tabs
             children={[
@@ -121,7 +112,7 @@ export const DetalleModulo = ({
             </div>
           )}
           <BorrarModulo
-            emitir={emitirModulo}
+            publicar={emitir}
             activo={estado === "borrando"}
             modulo={modelo}
           />

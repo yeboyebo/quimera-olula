@@ -1,6 +1,48 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { ContextoError } from "@olula/lib/contexto.js";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useContext } from "react";
 import { LineaPresupuesto as Linea } from "../../../diseño.ts";
-import { EditarCantidadLineaPresupuesto } from "./EditarCantidadLineaPresupuesto.tsx";
+import { patchCantidadLinea } from "../../../infraestructura.ts";
+import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
+
+export const LineasLista = ({
+  lineas,
+  seleccionada,
+  emitir,
+  idPresupuesto,
+  refrescarCabecera,
+}: {
+  lineas: Linea[];
+  seleccionada?: string;
+  emitir: EmitirEvento;
+  idPresupuesto: string;
+  refrescarCabecera: () => void;
+}) => {
+  const { intentar } = useContext(ContextoError);
+  const cambiarCantidad = async (linea: Linea, cantidad: number) => {
+    await intentar(() => patchCantidadLinea(idPresupuesto, linea, cantidad));
+    refrescarCabecera();
+  };
+
+  const setSeleccionada = (linea: Linea) => {
+    emitir("linea_seleccionada", linea);
+  };
+
+  return (
+    <>
+      <QTabla
+        metaTabla={getMetaTablaLineas(cambiarCantidad)}
+        datos={lineas}
+        cargando={false}
+        seleccionadaId={seleccionada}
+        onSeleccion={setSeleccionada}
+        orden={["id", "ASC"]}
+        onOrdenar={(_: string) => null}
+      />
+    </>
+  );
+};
 
 const getMetaTablaLineas = (
   cambiarCantidad: (linea: Linea, cantidad: number) => void
@@ -15,7 +57,7 @@ const getMetaTablaLineas = (
       id: "cantidad",
       cabecera: "Cantidad",
       render: (linea: Linea) => (
-        <EditarCantidadLineaPresupuesto
+        <EditarCantidadLinea
           linea={linea}
           onCantidadEditada={cambiarCantidad}
         />
@@ -31,35 +73,4 @@ const getMetaTablaLineas = (
     },
     { id: "pvp_total", cabecera: "Total" },
   ];
-};
-
-export const LineasLista = ({
-  lineas,
-  seleccionada,
-  emitir,
-}: {
-  lineas: Linea[];
-  seleccionada?: string;
-  emitir: (evento: string, payload?: unknown) => void;
-}) => {
-  const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    emitir("cambio_cantidad_solicitado", { linea, cantidad });
-  };
-
-  return (
-    <>
-      <QTabla
-        metaTabla={getMetaTablaLineas(cambiarCantidad)}
-        datos={lineas}
-        cargando={false}
-        seleccionadaId={seleccionada}
-        onSeleccion={(linea) => emitir("linea_seleccionada", linea)}
-        orden={["id", "ASC"]}
-        onOrdenar={
-          (_: string) => null
-          //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
-        }
-      />
-    </>
-  );
 };

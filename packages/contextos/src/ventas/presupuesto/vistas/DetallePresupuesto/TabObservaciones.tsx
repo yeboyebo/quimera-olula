@@ -4,11 +4,11 @@ import { Presupuesto } from "../../diseño.ts";
 import "./TabObservaciones.css";
 
 interface TabClienteProps {
-  ctxPresupuesto: HookModelo<Presupuesto>;
+  presupuesto: HookModelo<Presupuesto>;
 }
 
-export const TabObservaciones = ({ ctxPresupuesto }: TabClienteProps) => {
-  const { uiProps } = ctxPresupuesto;
+export const TabObservaciones = ({ presupuesto }: TabClienteProps) => {
+  const { uiProps } = presupuesto;
 
   return (
     <div className="TabObservaciones">

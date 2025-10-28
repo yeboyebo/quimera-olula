@@ -1,5 +1,0 @@
-###
-
-GET http://localhost:8005/quimera/ventas/cliente
-
-###

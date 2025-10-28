@@ -1,8 +1,5 @@
-import { useCallback } from "react";
-import { QBoton } from "../../../../../src/componentes/atomos/qboton.tsx";
-import { Listado } from "../../../../../src/componentes/maestro/Listado.tsx";
-import { MaestroDetalleResponsive } from "../../../../../src/componentes/maestro/MaestroDetalleResponsive.tsx";
-import { ListaSeleccionable } from "../../../../../src/contextos/comun/diseño.ts";
+import { MaestroDetalle, QBoton } from "@olula/componentes/index.ts";
+import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
   cargar,
@@ -11,13 +8,14 @@ import {
   listaSeleccionableVacia,
   quitarItem,
   seleccionarItem,
-} from "../../../../../src/contextos/comun/entidad.ts";
-import { pipe } from "../../../../../src/contextos/comun/funcional.ts";
+} from "@olula/lib/entidad.ts";
+import { pipe } from "@olula/lib/funcional.ts";
 import {
   ConfigMaquina4,
   Maquina3,
   useMaquina4,
-} from "../../../../../src/contextos/comun/useMaquina.ts";
+} from "@olula/lib/useMaquina.ts";
+import { useCallback } from "react";
 import { Modulo } from "../diseño.ts";
 import { getModulos } from "../infraestructura.ts";
 import { CrearModulo } from "./CrearModulo";
@@ -69,6 +67,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       modulos_cargados: ({ maquina, payload }) =>
         pipe(maquina, setModulos(cargar(payload as Modulo[]))),
       borrar: "borrando",
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setModulos((modulos) => ({
+            ...modulos,
+            idActivo: null,
+          }))
+        ),
     },
     creando: {
       modulo_creado: ({ maquina, payload, setEstado }) =>
@@ -103,31 +109,29 @@ export const MaestroConDetalleModulo = () => {
 
   return (
     <div className="Modulo">
-      <MaestroDetalleResponsive<Modulo>
+      <MaestroDetalle<Modulo>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
-            <h2>Módulos</h2>
+            <h2>Modulos</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
-              <QBoton
-                deshabilitado={!seleccionada}
-                onClick={() => emitir("borrar")}
-              >
-                Borrar
-              </QBoton>
+              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaModulo}
-              entidades={modulos.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getModulos}
-            />
           </>
         }
-        Detalle={<DetalleModulo moduloInicial={seleccionada} emitir={emitir} />}
+        metaTabla={metaTablaModulo}
+        // tarjeta={(modulo) => <TarjetaModulo modulo={modulo} />}
+        entidades={modulo.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getModulos}
+        Detalle={
+          <DetalleModulo
+            key={seleccionada?.id}
+            moduloInicial={seleccionada}
+            publicar={emitir}
+          />
+        }
       />
       <CrearModulo emitir={emitir} activo={estado === "creando"} />
     </div>

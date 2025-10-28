@@ -6,13 +6,16 @@ import ApiUrls from "../comun/urls.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 type LineaPedidoAPI = LineaPedido
+type PedidoAPI = Pedido
 
 const baseUrl = new ApiUrls().PEDIDO;
 
 export const lineaPedidoFromAPI = (l: LineaPedidoAPI): LineaPedido => l;
+export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => p;
+// export const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
 
 export const getPedido: GetPedido = async (id) => {
-  const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
+  // const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
 
   return RestAPI.get<{ datos: Pedido }>(
     `${baseUrl}/${id}`).then((respuesta) => {
@@ -25,7 +28,7 @@ export const getPedidos: GetPedidos = async (
   orden: Orden,
   paginacion: Paginacion
 ) => {
-  const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
+  // const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
 
   const q = criteriaQuery(filtro, orden, paginacion);
 

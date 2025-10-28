@@ -1,6 +1,6 @@
+import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
 import { useContext } from "react";
-import { QModalConfirmacion } from "../../../../../../src/componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "../../../../../../src/contextos/comun/contexto.ts";
 import { Modulo } from "../../diseño";
 import { deleteModulo } from "../../infraestructura";
 
