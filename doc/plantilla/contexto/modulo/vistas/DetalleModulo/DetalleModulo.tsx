@@ -71,7 +71,7 @@ export const DetalleModulo = ({
       setEntidad={(m) => init(m)}
       entidad={modelo}
       cargar={getModulo}
-      cerrarDetalle={() => emitir("cancelar_seleccion")}
+      cerrarDetalle={() => publicar("seleccion_cancelada")}
     >
       {!!moduloId && (
         <div className="DetalleModulo">

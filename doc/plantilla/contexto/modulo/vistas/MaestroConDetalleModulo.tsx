@@ -67,6 +67,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       modulos_cargados: ({ maquina, payload }) =>
         pipe(maquina, setModulos(cargar(payload as Modulo[]))),
       borrar: "borrando",
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setModulos((modulos) => ({
+            ...modulos,
+            idActivo: null,
+          }))
+        ),
     },
     creando: {
       modulo_creado: ({ maquina, payload, setEstado }) =>
