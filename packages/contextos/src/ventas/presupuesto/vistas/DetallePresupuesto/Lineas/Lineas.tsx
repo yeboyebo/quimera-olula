@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
@@ -122,23 +123,26 @@ export const Lineas = ({
     config: configMaquina,
   });
 
+  const acciones = [
+    {
+      texto: "Editar",
+      onClick: () => emitir("edicion_solicitada"),
+      deshabilitado: !lineas.seleccionada,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      onClick: () => emitir("borrado_solicitado"),
+      deshabilitado: !lineas.seleccionada,
+    },
+  ];
+
   return (
     <>
       {presupuesto.editable && (
         <div className="botones maestro-botones ">
           <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
-          <QBoton
-            onClick={() => lineas.seleccionada && emitir("edicion_solicitada")}
-            deshabilitado={!lineas.seleccionada}
-          >
-            Editar
-          </QBoton>
-          <QBoton
-            deshabilitado={!lineas.seleccionada}
-            onClick={() => lineas.seleccionada && emitir("borrado_solicitado")}
-          >
-            Borrar
-          </QBoton>
+          <QuimeraAcciones acciones={acciones} vertical />
         </div>
       )}
       <LineasLista

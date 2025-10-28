@@ -1,5 +1,5 @@
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { Direccion } from "@olula/lib/diseño.ts";
+import { Direccion } from "@olula/lib/diseño.js";
 import {
     initEstadoModelo,
     MetaModelo,
@@ -7,7 +7,7 @@ import {
     modeloEsValido,
     stringNoVacio
 } from "@olula/lib/dominio.ts";
-import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, NuevoPresupuestoClienteNoRegistrado, Presupuesto } from "./diseño.ts";
 
 export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
     {
@@ -48,7 +48,17 @@ export const presupuestoVacio = (): Presupuesto => ({
     nombre_cliente: '',
     id_fiscal: '',
     direccion_id: '',
-    direccion: direccionVacia(),
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia_id: 0,
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
     agente_id: '',
     nombre_agente: '',
     divisa_id: '',
@@ -144,5 +154,29 @@ export const initEstadoPresupuestoVacio = () => {
     // return initEstadoModelo(presupuestoVacio(), metaPresupuesto);
 };
 
+export const nuevoPresupuestoClienteNoRegistradoVacio: NuevoPresupuestoClienteNoRegistrado = {
+    empresa_id: "1",
+    nombre_cliente: "",
+    id_fiscal: "",
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia_id: null,
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
+};
 
 
+export const metaNuevoPresupuestoClienteNoRegistrado: MetaModelo<NuevoPresupuestoClienteNoRegistrado> = {
+    campos: {
+        cliente_nombre: { requerido: true },
+        direccion_nombre_via: { requerido: true },
+        empresa_id: { requerido: true },
+
+    }
+};

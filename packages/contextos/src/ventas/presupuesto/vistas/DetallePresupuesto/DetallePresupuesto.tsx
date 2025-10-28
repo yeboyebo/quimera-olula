@@ -1,6 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.js";
@@ -92,6 +93,20 @@ export const DetallePresupuesto = ({
     publicar,
   });
 
+  const acciones = [
+    {
+      texto: "Aprobar",
+      onClick: () => aprobar,
+      deshabilitado: modelo.aprobado,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      onClick: () => emitir("borrar_presupuesto"),
+      deshabilitado: modelo.aprobado,
+    },
+  ];
+
   return (
     <Detalle
       id={presupuestoId}
@@ -103,14 +118,7 @@ export const DetallePresupuesto = ({
     >
       {!!presupuestoId && (
         <>
-          {!modelo.aprobado && (
-            <div className="botones maestro-botones ">
-              <QBoton onClick={aprobar}>Aprobar</QBoton>
-              <QBoton onClick={() => emitir("borrar_presupuesto")}>
-                Borrar
-              </QBoton>
-            </div>
-          )}
+          {!modelo.aprobado && <QuimeraAcciones acciones={acciones} vertical />}
           <Tabs
             children={[
               <Tab
