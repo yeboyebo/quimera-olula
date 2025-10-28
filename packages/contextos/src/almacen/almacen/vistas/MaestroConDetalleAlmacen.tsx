@@ -123,7 +123,6 @@ export const MaestroConDetalleAlmacen = () => {
           </>
         }
         metaTabla={metaTablaAlmacen}
-        // tarjeta={(almacen) => <TarjetaAlmacen almacen={almacen} />}
         entidades={almacenes.lista}
         setEntidades={setEntidades}
         setSeleccionada={setSeleccionada}

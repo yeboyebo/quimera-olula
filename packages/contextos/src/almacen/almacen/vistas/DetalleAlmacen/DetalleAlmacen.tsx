@@ -79,7 +79,7 @@ export const DetalleAlmacen = ({
       setEntidad={(accionInicial) => init(accionInicial)}
       entidad={modelo}
       cargar={getAlmacen}
-      cerrarDetalle={() => emitir("cancelar_seleccion")}
+      cerrarDetalle={() => publicar("seleccion_cancelada")}
     >
       {!!almacenId && (
         <>
