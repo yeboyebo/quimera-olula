@@ -145,7 +145,11 @@ export const DetalleFactura = ({
             total={Number(modelo.total ?? 0)}
             divisa={String(modelo.coddivisa ?? "EUR")}
           />
-          <Lineas factura={factura} onCabeceraModificada={recargarCabecera} />
+          <Lineas
+            onCabeceraModificada={recargarCabecera}
+            facturaId={facturaId}
+            facturaEditable={true}
+          />
           <QModalConfirmacion
             nombre="borrarFactura"
             abierto={estado === "ConfirmarBorrado"}

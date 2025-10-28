@@ -1,6 +1,6 @@
-import { RestAPI } from "../../../../src/contextos/comun/api/rest_api.ts";
-import ApiUrls from "../../../../src/contextos/comun/api/urls.ts";
-import { criteriaQuery } from "../../../../src/contextos/comun/infraestructura.ts";
+import { RestAPI } from "@olula/lib/api/rest_api.ts";
+import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import ApiUrls from "../comun/urls.ts";
 import {
     DeleteModulo,
     GetModulo,

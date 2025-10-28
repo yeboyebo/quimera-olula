@@ -119,6 +119,7 @@ export const MaestroConDetalleFactura = () => {
           </>
         }
         modoVisualizacion="tabla"
+        modoDisposicion="maestro-50"
         metaTabla={metaTablaFactura}
         entidades={facturas.lista}
         setEntidades={setEntidades}

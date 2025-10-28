@@ -1,19 +1,32 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useContext } from "react";
 import { LineaAlbaran as Linea } from "../../../diseño.ts";
+import { patchCantidadLinea } from "../../../infraestructura.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
   emitir,
+  idAlbaran,
+  refrescarCabecera,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   emitir: EmitirEvento;
+  idAlbaran: string;
+  refrescarCabecera: () => void;
 }) => {
+  const { intentar } = useContext(ContextoError);
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    emitir("CAMBIO_CANTIDAD_SOLICITADO", { linea, cantidad });
+    await intentar(() => patchCantidadLinea(idAlbaran, linea, cantidad));
+    refrescarCabecera();
+  };
+
+  const setSeleccionada = (linea: Linea) => {
+    emitir("linea_seleccionada", linea);
   };
 
   return (
@@ -23,12 +36,9 @@ export const LineasLista = ({
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
-        onSeleccion={(linea) => emitir("LINEA_SELECCIONADA", linea)}
+        onSeleccion={setSeleccionada}
         orden={["id", "ASC"]}
-        onOrdenar={
-          (_: string) => null
-          //   setOrden({ [clave]: orden[clave] === "ASC" ? "DESC" : "ASC" })
-        }
+        onOrdenar={(_: string) => null}
       />
     </>
   );

@@ -45,6 +45,7 @@ export const EditarCantidadLinea = ({
         textoValidacion={estado}
         condensado
         onChange={handleChange}
+        autoSeleccion
         onBlur={submit}
       />
     </quimera-formulario>

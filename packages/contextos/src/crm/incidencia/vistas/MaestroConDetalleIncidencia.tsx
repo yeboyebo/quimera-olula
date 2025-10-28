@@ -1,5 +1,4 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { MaestroDetalle, QBoton } from "@olula/componentes/index.ts";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
