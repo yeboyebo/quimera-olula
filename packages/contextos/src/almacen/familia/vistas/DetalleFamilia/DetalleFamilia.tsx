@@ -8,11 +8,11 @@ import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
-import { Almacen } from "../../diseño.ts";
-import { almacenVacio, metaAlmacen } from "../../dominio.ts";
-import { getAlmacen, patchAlmacen } from "../../infraestructura.ts";
-import { BorrarAlmacen } from "./BorrarAlmacen.tsx";
-import "./DetalleAlmacen.css";
+import { Familia } from "../../diseño.ts";
+import { familiaVacia, metaFamilia } from "../../dominio.ts";
+import { getFamilia, patchFamilia } from "../../infraestructura.ts";
+import { BorrarFamilia } from "./BorrarFamilia.tsx";
+import "./DetalleFamilia.css";
 
 type Estado = "Editando" | "Borrando";
 type Contexto = Record<string, unknown>;
@@ -24,35 +24,35 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   estados: {
     Editando: {
       borrar: "Borrando",
-      almacen_guardado: ({ publicar }) => publicar("almacen_guardado"),
+      familia_guardada: ({ publicar }) => publicar("familia_guardada"),
       cancelar_seleccion: ({ publicar }) => publicar("seleccion_cancelada"),
     },
     Borrando: {
       borrado_cancelado: "Editando",
-      almacen_borrado: ({ publicar }) => publicar("almacen_borrado"),
+      familia_borrada: ({ publicar }) => publicar("familia_borrada"),
     },
   },
 };
 
-const titulo = (almacen: Entidad) => almacen.descripcion as string;
+const titulo = (familia: Entidad) => familia.descripcion as string;
 
-export const DetalleAlmacen = ({
-  almacenInicial = null,
+export const DetalleFamilia = ({
+  familiaInicial = null,
   publicar = () => {},
 }: {
-  almacenInicial?: Almacen | null;
+  familiaInicial?: Familia | null;
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
   const { intentar } = useContext(ContextoError);
 
-  const almacen = useModelo(metaAlmacen, almacenVacio);
-  const { modelo, uiProps, init } = almacen;
+  const familia = useModelo(metaFamilia, familiaVacia);
+  const { modelo, uiProps, init } = familia;
 
   const guardar = async () => {
-    await intentar(() => patchAlmacen(modelo.id, modelo));
+    await intentar(() => patchFamilia(modelo.id, modelo));
     recargarCabecera();
-    emitir("almacen_guardado");
+    emitir("familia_guardada");
   };
 
   const cancelar = () => {
@@ -65,58 +65,58 @@ export const DetalleAlmacen = ({
   });
 
   const recargarCabecera = async () => {
-    const nuevaAlmacen = await intentar(() => getAlmacen(modelo.id));
-    init(nuevaAlmacen);
-    publicar("almacen_cambiado", nuevaAlmacen);
+    const nuevaFamilia = await intentar(() => getFamilia(modelo.id));
+    init(nuevaFamilia);
+    publicar("familia_cambiada", nuevaFamilia);
   };
 
-  const almacenId = almacenInicial?.id ?? params.id;
+  const familiaId = familiaInicial?.id ?? params.id;
 
   return (
     <Detalle
-      id={almacenId}
+      id={familiaId}
       obtenerTitulo={titulo}
       setEntidad={(accionInicial) => init(accionInicial)}
       entidad={modelo}
-      cargar={getAlmacen}
+      cargar={getFamilia}
       cerrarDetalle={() => publicar("seleccion_cancelada")}
     >
-      {!!almacenId && (
+      {!!familiaId && (
         <>
           <div className="maestro-botones ">
             <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
-          <div className="DetalleAlmacen">
+          <div className="DetalleFamilia">
             <Tabs
               children={[
                 <Tab key="general" label="General">
                   <quimera-formulario>
                     <QInput label="Código" {...uiProps("id")} />
-                    <QInput label="Nombre" {...uiProps("nombre")} />
+                    <QInput label="Descripción" {...uiProps("descripcion")} />
                   </quimera-formulario>
                 </Tab>,
               ]}
             ></Tabs>
           </div>
-          {almacen.modificado && (
+          {familia.modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!almacen.valido}>
+              <QBoton onClick={guardar} deshabilitado={!familia.valido}>
                 Guardar
               </QBoton>
               <QBoton
                 tipo="reset"
                 variante="texto"
                 onClick={cancelar}
-                deshabilitado={!almacen.modificado}
+                deshabilitado={!familia.modificado}
               >
                 Cancelar
               </QBoton>
             </div>
           )}
-          <BorrarAlmacen
+          <BorrarFamilia
             publicar={emitir}
             activo={estado === "Borrando"}
-            almacen={modelo}
+            familia={modelo}
           />
         </>
       )}
