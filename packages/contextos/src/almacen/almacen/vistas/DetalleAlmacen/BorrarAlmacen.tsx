@@ -5,11 +5,11 @@ import { Almacen } from "../../diseño.ts";
 import { deleteAlmacen } from "../../infraestructura.ts";
 
 export const BorrarAlmacen = ({
-  emitir,
+  publicar,
   activo = false,
   almacen,
 }: {
-  emitir: (evento: string, payload?: unknown) => void;
+  publicar: (evento: string, payload?: unknown) => void;
   almacen: Almacen;
   activo: boolean;
 }) => {
@@ -19,7 +19,7 @@ export const BorrarAlmacen = ({
     if (almacen.id) {
       await intentar(() => deleteAlmacen(almacen.id));
     }
-    emitir("modulo_borrado");
+    publicar("almacen_borrado");
   };
 
   return (
@@ -27,8 +27,8 @@ export const BorrarAlmacen = ({
       nombre="confirmarBorrarAlmacen"
       abierto={activo}
       titulo="Confirmar borrado"
-      mensaje="¿Está seguro de que desea borrar este módulo?"
-      onCerrar={() => emitir("borrado_cancelado")}
+      mensaje="¿Está seguro de que desea borrar esta almacen?"
+      onCerrar={() => publicar("borrado_cancelado")}
       onAceptar={borrar}
     />
   );

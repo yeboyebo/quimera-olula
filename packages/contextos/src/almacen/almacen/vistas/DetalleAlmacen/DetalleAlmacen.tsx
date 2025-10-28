@@ -11,117 +11,114 @@ import { useParams } from "react-router";
 import { Almacen } from "../../diseño.ts";
 import { almacenVacio, metaAlmacen } from "../../dominio.ts";
 import { getAlmacen, patchAlmacen } from "../../infraestructura.ts";
-import { BorrarAlmacen } from "./BorrarAlmacen";
+import { BorrarAlmacen } from "./BorrarAlmacen.tsx";
 import "./DetalleAlmacen.css";
 
-// Máquina de estados y contexto
-
-type Estado = "editando" | "borrando";
+type Estado = "Editando" | "Borrando";
 type Contexto = Record<string, unknown>;
-
 const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   inicial: {
-    estado: "editando",
+    estado: "Editando",
     contexto: {},
   },
   estados: {
-    editando: {
-      borrar: "borrando",
-      almacen_guardado: ({ publicar }) => publicar("almacen_cambiado"),
-      cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
+    Editando: {
+      borrar: "Borrando",
+      almacen_guardado: ({ publicar }) => publicar("almacen_guardado"),
+      cancelar_seleccion: ({ publicar }) => publicar("seleccion_cancelada"),
     },
-    borrando: {
-      borrado_cancelado: "editando",
+    Borrando: {
+      borrado_cancelado: "Editando",
       almacen_borrado: ({ publicar }) => publicar("almacen_borrado"),
     },
   },
 };
 
-const titulo = (almacen: Entidad) => almacen.nombre as string;
+const titulo = (almacen: Entidad) => almacen.descripcion as string;
 
 export const DetalleAlmacen = ({
   almacenInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   almacenInicial?: Almacen | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-  const almacenId = almacenInicial?.id ?? params.id;
   const { intentar } = useContext(ContextoError);
 
   const almacen = useModelo(metaAlmacen, almacenVacio);
-  const { modelo, uiProps, init, modificado, valido } = almacen;
-
-  const [emitirAlmacen, { estado }] = useMaquina4<Estado, Contexto>({
-    config: configMaquina,
-    publicar: emitir,
-  });
+  const { modelo, uiProps, init } = almacen;
 
   const guardar = async () => {
     await intentar(() => patchAlmacen(modelo.id, modelo));
-    const almacen_guardado = await getAlmacen(modelo.id);
-    init(almacen_guardado);
-    emitirAlmacen("almacen_guardado", almacen_guardado);
+    recargarCabecera();
+    emitir("almacen_guardado");
   };
+
+  const cancelar = () => {
+    init();
+  };
+
+  const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
+    config: configMaquina,
+    publicar,
+  });
+
+  const recargarCabecera = async () => {
+    const nuevaAlmacen = await intentar(() => getAlmacen(modelo.id));
+    init(nuevaAlmacen);
+    publicar("almacen_cambiado", nuevaAlmacen);
+  };
+
+  const almacenId = almacenInicial?.id ?? params.id;
 
   return (
     <Detalle
       id={almacenId}
       obtenerTitulo={titulo}
-      setEntidad={(m) => init(m)}
+      setEntidad={(accionInicial) => init(accionInicial)}
       entidad={modelo}
       cargar={getAlmacen}
-      cerrarDetalle={() => {
-        console.log("mimensaje_ssssssssssssss_emito");
-
-        emitirAlmacen("cancelar_seleccion");
-      }}
+      cerrarDetalle={() => emitir("cancelar_seleccion")}
     >
       {!!almacenId && (
-        <div className="DetalleAlmacen">
+        <>
           <div className="maestro-botones ">
-            <QBoton onClick={() => emitirAlmacen("borrar")}>Borrar</QBoton>
+            <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Datos"
-                children={
-                  <>
-                    {/* <quimera-formulario> */}
+          <div className="DetalleAlmacen">
+            <Tabs
+              children={[
+                <Tab key="general" label="General">
+                  <quimera-formulario>
                     <QInput label="Nombre" {...uiProps("nombre")} />
                     <QInput label="Descripción" {...uiProps("descripcion")} />
-                    <QInput label="Estado" {...uiProps("estado")} />
-                    {/* </quimera-formulario> */}
-                  </>
-                }
-              />,
-              //   <Tab
-              //     key="tab-2"
-              //     label="Observaciones"
-              //     children={<TabObservaciones oportunidad={oportunidad} />}
-              //   />,
-            ]}
-          ></Tabs>
-
-          {modificado && (
+                  </quimera-formulario>
+                </Tab>,
+              ]}
+            ></Tabs>
+          </div>
+          {almacen.modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton onClick={guardar} deshabilitado={!almacen.valido}>
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={() => init()}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={cancelar}
+                deshabilitado={!almacen.modificado}
+              >
                 Cancelar
               </QBoton>
             </div>
           )}
           <BorrarAlmacen
-            emitir={emitirAlmacen}
-            activo={estado === "borrando"}
+            publicar={emitir}
+            activo={estado === "Borrando"}
             almacen={modelo}
           />
-        </div>
+        </>
       )}
     </Detalle>
   );

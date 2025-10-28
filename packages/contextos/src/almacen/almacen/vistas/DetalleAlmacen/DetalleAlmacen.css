@@ -1,4 +1,4 @@
-.Almacen {
+.DetalleAlmacen {
 
     quimera-input[nombre="descripcion"] {
         grid-column: 1 / span 12;

@@ -48,7 +48,7 @@ const FormAltaAlmacen = ({
     };
     const id = await intentar(() => postAlmacen(modelo));
     const almacenCreada = await getAlmacen(id);
-    publicar("almacen_creada", almacenCreada);
+    publicar("almacen_creado", almacenCreada);
     almacen.init();
   };
 

@@ -1,5 +1,4 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { MaestroDetalle, QBoton } from "@olula/componentes/index.ts";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -27,13 +26,13 @@ import { DetalleAlmacen } from "./DetalleAlmacen/DetalleAlmacen.tsx";
 type Estado = "Inactivo" | "Creando";
 
 type Contexto = {
-  obtenerAlmacenes: ListaSeleccionable<Almacen>;
+  almacenes: ListaSeleccionable<Almacen>;
 };
 
 const setAlmacenes =
   (
     aplicable: (
-      obtenerAlmacenes: ListaSeleccionable<Almacen>
+      almacenes: ListaSeleccionable<Almacen>
     ) => ListaSeleccionable<Almacen>
   ) =>
   (maquina: Maquina3<Estado, Contexto>) => {
@@ -41,7 +40,7 @@ const setAlmacenes =
       ...maquina,
       contexto: {
         ...maquina.contexto,
-        obtenerAlmacenes: aplicable(maquina.contexto.obtenerAlmacenes),
+        almacenes: aplicable(maquina.contexto.almacenes),
       },
     };
   };
@@ -50,27 +49,24 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   inicial: {
     estado: "Inactivo",
     contexto: {
-      obtenerAlmacenes: listaSeleccionableVacia<Almacen>(),
+      almacenes: listaSeleccionableVacia<Almacen>(),
     },
   },
   estados: {
     Inactivo: {
       crear: "Creando",
-      almacen_cambiada: ({ maquina, payload }) =>
+      almacen_cambiado: ({ maquina, payload }) =>
         pipe(maquina, setAlmacenes(cambiarItem(payload as Almacen))),
-      almacen_seleccionada: ({ maquina, payload }) =>
+      almacen_seleccionado: ({ maquina, payload }) =>
         pipe(maquina, setAlmacenes(seleccionarItem(payload as Almacen))),
-      almacen_borrada: ({ maquina }) => {
-        const { obtenerAlmacenes } = maquina.contexto;
-        if (!obtenerAlmacenes.idActivo) {
+      almacen_borrado: ({ maquina }) => {
+        const { almacenes } = maquina.contexto;
+        if (!almacenes.idActivo) {
           return maquina;
         }
-        return pipe(
-          maquina,
-          setAlmacenes(quitarItem(obtenerAlmacenes.idActivo))
-        );
+        return pipe(maquina, setAlmacenes(quitarItem(almacenes.idActivo)));
       },
-      obtenerAlmacenes_cargadas: ({ maquina, payload, setEstado }) =>
+      almacenes_cargados: ({ maquina, payload, setEstado }) =>
         pipe(
           maquina,
           setEstado("Inactivo" as Estado),
@@ -79,14 +75,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       seleccion_cancelada: ({ maquina }) =>
         pipe(
           maquina,
-          setAlmacenes((obtenerAlmacenes) => ({
-            ...obtenerAlmacenes,
+          setAlmacenes((almacenes) => ({
+            ...almacenes,
             idActivo: null,
           }))
         ),
     },
     Creando: {
-      almacen_creada: ({ maquina, payload, setEstado }) =>
+      almacen_creado: ({ maquina, payload, setEstado }) =>
         pipe(
           maquina,
           setEstado("Inactivo" as Estado),
@@ -101,18 +97,18 @@ export const MaestroConDetalleAlmacen = () => {
   const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
   });
-  const { obtenerAlmacenes } = contexto;
+  const { almacenes } = contexto;
 
   const setEntidades = useCallback(
-    (payload: Almacen[]) => emitir("obtenerAlmacenes_cargadas", payload),
+    (payload: Almacen[]) => emitir("almacenes_cargados", payload),
     [emitir]
   );
   const setSeleccionada = useCallback(
-    (payload: Almacen) => emitir("almacen_seleccionada", payload),
+    (payload: Almacen) => emitir("almacen_seleccionado", payload),
     [emitir]
   );
 
-  const seleccionada = getSeleccionada(obtenerAlmacenes);
+  const seleccionada = getSeleccionada(almacenes);
 
   return (
     <div className="Almacen">
@@ -128,7 +124,7 @@ export const MaestroConDetalleAlmacen = () => {
         }
         metaTabla={metaTablaAlmacen}
         // tarjeta={(almacen) => <TarjetaAlmacen almacen={almacen} />}
-        entidades={obtenerAlmacenes.lista}
+        entidades={almacenes.lista}
         setEntidades={setEntidades}
         setSeleccionada={setSeleccionada}
         cargar={getAlmacenes}
@@ -136,7 +132,7 @@ export const MaestroConDetalleAlmacen = () => {
           <DetalleAlmacen
             key={seleccionada?.id}
             almacenInicial={seleccionada}
-            emitir={emitir}
+            publicar={emitir}
           />
         }
       />
