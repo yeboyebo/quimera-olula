@@ -7,10 +7,8 @@ import {
     modeloEsValido,
     stringNoVacio
 } from "@olula/lib/dominio.ts";
-import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, NuevoPresupuestoClienteNoRegistrado, Presupuesto } from "./diseño.ts";
-
 import { NuevaLineaVenta } from "../venta/diseño.ts";
-
+import { CambioCliente, LineaPresupuesto, NuevaLinea, NuevoPresupuesto, NuevoPresupuestoClienteNoRegistrado, Presupuesto } from "./diseño.ts";
 
 export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
     {

@@ -45,7 +45,7 @@ export const CambioCliente = ({
         direccion_id: modelo.direccion_id,
       };
     }
-    console.log("Guardar cambio de cliente", cambios);
+
     await intentar(() => patchCambiarCliente(presupuestoId, cambios));
     const nuevoPresupuesto = await getPresupuesto(presupuestoId);
     publicar("presupuesto_cambiado", nuevoPresupuesto);
