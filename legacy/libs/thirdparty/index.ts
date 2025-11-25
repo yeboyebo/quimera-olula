@@ -131,7 +131,8 @@ export {
   Type as SwipeListType,
   TrailingActions
 } from "react-swipeable-list";
-export const adaptV4Theme = v => v;
+
+export const adaptV4Theme = (v: unknown) => v;
 
 // Re-export keyboard pickers as aliases (they no longer exist separately in MUI v7)
 export {
@@ -142,12 +143,12 @@ export {
 
 // //////////////////////////////////////////////////////////////////////////////////
 
-export const isWidthUp = breakpoint => {
+export const isWidthUp = (breakpoint: number) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useMediaQuery(theme => theme.breakpoints.up(breakpoint));
 };
 
-export const Hidden = ({ mdUp, smDown, children }) => {
+export const Hidden = ({ mdUp, smDown, children }: { mdUp?: boolean; smDown?: boolean; children: React.ReactNode }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const hiddenMdUp = mdUp && useMediaQuery(theme => theme.breakpoints.up("md"));
   // eslint-disable-next-line react-hooks/rules-of-hooks
