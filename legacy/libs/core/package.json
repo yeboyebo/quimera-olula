@@ -9,6 +9,8 @@
   "dependencies": {
     "@quimera/comps": "workspace:*",
     "@quimera/styles": "workspace:*",
-    "@quimera/thirdparty": "workspace:*"
+    "@quimera/thirdparty": "workspace:*",
+    "jquery": "^3.6.0",
+    "prop-types": "^15.7.2"
   }
 }
