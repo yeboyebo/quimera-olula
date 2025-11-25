@@ -7,7 +7,7 @@ import {
   isSameMonth,
   setDay,
   subDays,
-} from "date-fns";
+} from "@quimera/thirdparty";
 import { util } from "quimera";
 import { applyBunch, shortcutsBunch, shortcutsState } from "quimera/lib";
 

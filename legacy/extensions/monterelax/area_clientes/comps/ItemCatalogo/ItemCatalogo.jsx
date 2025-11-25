@@ -1,10 +1,10 @@
 import { Box } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { Typography } from "@quimera/thirdparty";
-import { navigate } from "hookrouter";
+import { navigate } from "quimera";
 import { useAppValue, useStateValue, useWidth, util } from "quimera";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@quimera/thirdparty";
 
 const useStyles = makeStyles(theme => ({
   card: {

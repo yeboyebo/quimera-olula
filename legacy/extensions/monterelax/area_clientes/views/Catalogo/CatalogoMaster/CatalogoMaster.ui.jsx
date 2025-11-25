@@ -1,9 +1,8 @@
 import { Box, Fab, Grid, Icon } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
+import { InfiniteScroll, useTranslation } from "@quimera/thirdparty";
 import Quimera, { useStateValue, useWidth, util } from "quimera";
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles(theme => ({
   button: {

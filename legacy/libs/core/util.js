@@ -1,5 +1,4 @@
-import { formatRelative } from "date-fns";
-import * as locales from "date-fns/locale";
+import { formatRelative, localesFns as locales } from "@quimera/thirdparty";
 
 const user = JSON.parse(localStorage.getItem("user"));
 const localSettings = {};
@@ -731,19 +730,19 @@ const funciones = {
   camelId: id =>
     id
       ? id
-        .toString()
-        .replace(/\/\w+/g, "")
-        .split(".")
-        .map(s => capitalize(s))
-        .join("")
+          .toString()
+          .replace(/\/\w+/g, "")
+          .split(".")
+          .map(s => capitalize(s))
+          .join("")
       : "",
   // getStateValue: (field, state, def) => field ? field.split('.').reduce((val, prop) => val[prop], state) : def,
   getStateValue: (field, state, def) =>
     field
       ? field
-        .replace("/", ".")
-        .split(".")
-        .reduce((val, prop) => (val ? val[prop] : undefined), state)
+          .replace("/", ".")
+          .split(".")
+          .reduce((val, prop) => (val ? val[prop] : undefined), state)
       : def,
   lastStateField: field =>
     field.indexOf("/") !== -1 ? field.replace("/", ".").split(".").pop() : field,
@@ -899,10 +898,12 @@ const funciones = {
     if (address === null || address === undefined) {
       return "";
     }
-    const dirLinea1 = `${address.dirTipoVia ?? ""} ${address.direccion ?? ""} ${address.dirNum ?? ""
-      }`.trim();
-    const dirLinea2 = `${address.codPostal ? `C.P. ${address.codPostal}` : ""} ${address.ciudad ?? ""
-      } ${address.provincia ?? ""}`.trim();
+    const dirLinea1 = `${address.dirTipoVia ?? ""} ${address.direccion ?? ""} ${
+      address.dirNum ?? ""
+    }`.trim();
+    const dirLinea2 = `${address.codPostal ? `C.P. ${address.codPostal}` : ""} ${
+      address.ciudad ?? ""
+    } ${address.provincia ?? ""}`.trim();
 
     if (inline) {
       return `${dirLinea1}, ${dirLinea2}`;

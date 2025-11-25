@@ -1,10 +1,8 @@
 import { Button, CircularProgress, Field, Grid, Icon, Paper, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Box } from "@quimera/thirdparty";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { Box, useTranslation } from "@quimera/thirdparty";
+import Quimera, { getSchemas, navigate, useStateValue, util } from "quimera";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles(theme => ({
   root: {

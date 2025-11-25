@@ -1,7 +1,6 @@
 import { Box, Container, Field, Typography } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { navigate, useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 function TareasTerminal({ idTareaProp, useStyles }) {
   const [{ tarea, modoBuscar }, dispatch] = useStateValue();

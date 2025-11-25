@@ -16,6 +16,7 @@
     "@quimera-extension/base-ventas": "workspace:*",
     "@quimera-extension/base-almacen": "workspace:*",
     "@quimera-extension/base-area_clientes": "workspace:*",
-    "@quimera-extension/sanhigia-devol_pedidos": "workspace:*"
+    "@quimera-extension/sanhigia-devol_pedidos": "workspace:*",
+    "react-swipeable-list": "^1.5.0"
   }
 }

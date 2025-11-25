@@ -1,6 +1,6 @@
 import { Box, Field } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import Plot from "react-plotly.js";
+import { Plot } from "@quimera/thirdparty";
+import Quimera, { useStateValue } from "quimera";
 
 function BiSegmentos() {
   const [{ data }] = useStateValue();
@@ -42,7 +42,7 @@ function BiSegmentos() {
               displaylogo: false,
               displayModeBar: false,
             }}
-            // onRelayout={handleRelayout}
+          // onRelayout={handleRelayout}
           />
         ) : (
           ""

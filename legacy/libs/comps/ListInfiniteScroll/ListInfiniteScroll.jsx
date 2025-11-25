@@ -1,6 +1,4 @@
-import { Box } from "@quimera/thirdparty";
-import React from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { Box, InfiniteScroll } from "@quimera/thirdparty";
 
 function ListInfiniteScroll({ next, hasMore, children, scrollableTarget = false, infiniteScrollProps, loader, ...props }) {
   const dataLength = Array.isArray(children) ? children.length : 0;

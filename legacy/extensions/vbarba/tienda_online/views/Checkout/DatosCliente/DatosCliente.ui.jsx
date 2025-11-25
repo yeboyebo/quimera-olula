@@ -1,10 +1,8 @@
-import { Box, Field, QSection, Typography } from "@quimera/comps";
 import { Direccion } from "@quimera-extension/base-area_clientes";
 import { FormaEnvio } from "@quimera-extension/base-tienda_nativa";
-import { FormaPago } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useAppValue, useStateValue, util } from "quimera";
-import React from "react";
-import { useTranslation } from "react-i18next";
+import { Box, Field, QSection, Typography } from "@quimera/comps";
+import { useTranslation } from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 
 function DatosCliente({ useStyles }) {
   const [{ carrito }, dispatch] = useStateValue();

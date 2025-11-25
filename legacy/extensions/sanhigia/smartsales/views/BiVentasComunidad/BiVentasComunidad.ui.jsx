@@ -1,7 +1,6 @@
 import { Box } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import Plot from "react-plotly.js";
+import { Plot } from "@quimera/thirdparty";
+import Quimera, { navigate, useStateValue } from "quimera";
 
 function BiVentasComunidad() {
   const [{ data }] = useStateValue();
@@ -75,7 +74,7 @@ function BiVentasComunidad() {
                 displaylogo: false,
                 displayModeBar: false,
               }}
-              // onRelayout={handleRelayout}
+            // onRelayout={handleRelayout}
             />
           ) : (
             ""

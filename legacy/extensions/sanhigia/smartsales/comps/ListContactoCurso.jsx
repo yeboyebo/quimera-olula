@@ -1,10 +1,8 @@
 import { Box, Icon, QListItem, QTitleBox, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Divider } from "@quimera/thirdparty";
-import { navigate } from "hookrouter";
-import { useStateValue, util } from "quimera";
+import { Divider, InfiniteScroll } from "@quimera/thirdparty";
+import { navigate, useStateValue, util } from "quimera";
 import { ACL } from "quimera/lib";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles(theme => ({
   box: {

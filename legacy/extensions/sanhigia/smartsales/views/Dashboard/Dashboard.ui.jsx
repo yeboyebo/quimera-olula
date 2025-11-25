@@ -11,8 +11,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import Quimera, { navigate, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import {

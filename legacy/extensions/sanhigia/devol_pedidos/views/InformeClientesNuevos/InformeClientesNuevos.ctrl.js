@@ -1,5 +1,5 @@
 import { getSchemas } from "quimera";
-// import { navigate } from 'hookrouter'
+// import { navigate } from 'quimera'
 
 export const state = parent => ({
   ...parent,

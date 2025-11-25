@@ -1,10 +1,10 @@
-import { Box, Button, Field, Grid, Icon, QBox } from "@quimera/comps";
 import { QArticulo } from "@quimera-extension/base-almacen";
 import { Cliente } from "@quimera-extension/base-ventas";
 import { SearchRecomSubfamilia } from "@quimera-extension/sanhigia-smartsales";
-import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
+import { Box, Button, Field, Grid, Icon, QBox } from "@quimera/comps";
+import { Plot } from "@quimera/thirdparty";
+import Quimera, { useStateValue, useWidth } from "quimera";
 import { useEffect, useState } from "react";
-import Plot from "react-plotly.js";
 
 import initialData from "./initial-data";
 

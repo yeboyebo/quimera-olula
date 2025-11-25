@@ -1,8 +1,7 @@
 import { Box, Button } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@quimera/thirdparty";
+import Quimera, { navigate, useStateValue } from "quimera";
+import { useEffect } from "react";
 
 function Producto({ referencia, useStyles }) {
   const [{ producto }, dispatch] = useStateValue();

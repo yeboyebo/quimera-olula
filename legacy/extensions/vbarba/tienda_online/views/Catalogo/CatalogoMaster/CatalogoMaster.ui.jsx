@@ -1,9 +1,7 @@
 import { Box, Button, Fab, Grid, Icon, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { A, navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
-import { Trans, useTranslation } from "react-i18next";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { InfiniteScroll, Trans, useTranslation } from "@quimera/thirdparty";
+import Quimera, { A, navigate, useStateValue, useWidth, util } from "quimera";
 import "./CatalogoMaster.style.scss";
 
 import { altoCabeceraMaster } from "../../../static/local";

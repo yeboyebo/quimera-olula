@@ -14,8 +14,7 @@ import {
   Snackbar,
   Typography,
 } from "@quimera/thirdparty";
-import { A } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useStateValue, useWidth } from "quimera";
+import Quimera, { A, useAppValue, useStateValue, useWidth } from "quimera";
 import React, { useEffect } from "react";
 
 const TransitionConfirm = React.forwardRef(function Transition(props, ref) {
@@ -86,7 +85,7 @@ function Header({ useStyles }) {
         }
         autoHideDuration={8000}
         style={{ zIndex: 9998 /* Para que si estamos en modal se muestre */ }}
-        /*  message={appState.mensaje} */
+      /*  message={appState.mensaje} */
       >
         {appState.tipoMensaje ? (
           <Alert elevation={6} variant="filled" severity={appState.tipoMensaje}>

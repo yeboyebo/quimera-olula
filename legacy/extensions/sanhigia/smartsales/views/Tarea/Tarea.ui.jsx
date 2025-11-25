@@ -1,8 +1,7 @@
 import { Box, Button, Container, Field, Grid } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import { A, navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { A, getSchemas, navigate, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import {

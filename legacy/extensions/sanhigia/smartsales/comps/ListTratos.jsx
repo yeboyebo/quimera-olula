@@ -1,6 +1,5 @@
 import { Typography } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import { useStateValue } from "quimera";
+import { navigate, useStateValue } from "quimera";
 
 import { List } from "./";
 

@@ -1,8 +1,7 @@
 import { makeStyles } from "@quimera/styles";
-import { Box } from "@quimera/thirdparty";
+import { Box, InfiniteScroll } from "@quimera/thirdparty";
 import { useAppValue, util } from "quimera";
 import React from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles(_theme => ({
   cursorPointer: {

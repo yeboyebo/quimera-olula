@@ -1,4 +1,4 @@
-import { subDays } from "date-fns";
+import { subDays } from "@quimera/thirdparty";
 import { util } from "quimera";
 // import $ from 'jquery'
 

@@ -1,6 +1,5 @@
 import { Field, Icon } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import { useStateValue } from "quimera";
+import { navigate, useStateValue } from "quimera";
 
 export default function SearchContacto({ navigation, ...props }) {
   const [{ search }] = useStateValue();

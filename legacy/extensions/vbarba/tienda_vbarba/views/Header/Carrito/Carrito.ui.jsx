@@ -1,10 +1,9 @@
-import { Box, Button, Icon, Typography } from "@quimera/comps";
-import { useTheme } from "@quimera/styles";
 import { Totales } from "@quimera-extension/base-area_clientes";
 import { ChipNoDisponible } from "@quimera-extension/vbarba-tienda_online";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useWidth, util } from "quimera";
-import { useTranslation } from "react-i18next";
+import { Box, Button, Icon, Typography } from "@quimera/comps";
+import { useTheme } from "@quimera/styles";
+import { useTranslation } from "@quimera/thirdparty";
+import Quimera, { navigate, useAppValue, useWidth, util } from "quimera";
 
 import { noImage } from "../../../static/local";
 

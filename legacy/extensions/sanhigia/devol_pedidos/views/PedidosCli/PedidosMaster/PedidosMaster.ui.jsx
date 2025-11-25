@@ -1,7 +1,6 @@
 import { Avatar, Box, QBox, QBoxButton, QListModel } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
+import Quimera, { useStateValue, useWidth } from "quimera";
 import { useCallback } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 import { ListItemPedido } from "../../../comps";
 

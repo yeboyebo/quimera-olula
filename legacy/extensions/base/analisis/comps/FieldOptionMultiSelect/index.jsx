@@ -1,7 +1,7 @@
 import { Box, Icon, IconButton, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
+import { DragDropContext, Draggable, Droppable } from "@quimera/thirdparty";
 import { useStateValue } from "quimera";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 // import { useCallback, useEffect, useState } from "react";
 

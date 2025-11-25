@@ -1,3 +1,5 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
+import { DocAgente, DocClienteYDir, DocDirCliente, DocFecha } from "@quimera-extension/base-ventas";
 import {
   Box,
   Field,
@@ -9,12 +11,9 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { List } from "@quimera/thirdparty";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import { DocAgente, DocClienteYDir, DocDirCliente, DocFecha } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import { InfiniteScroll, List } from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import React, { useCallback, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 import { Evento, LineaPedidoCliComp, ListItemLineaHistoricoPedido } from "../../comps/";
 

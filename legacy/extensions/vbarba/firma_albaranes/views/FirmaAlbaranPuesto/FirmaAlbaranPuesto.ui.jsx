@@ -1,8 +1,7 @@
 import { Box, Button, Field, Grid, Icon, IconButton, QTitleBox, Typography } from "@quimera/comps";
-import { Backdrop, CircularProgress, ListItemText } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect, useState } from "react";
-import SignaturePad from "react-signature-canvas";
+import { Backdrop, CircularProgress, ListItemText, SignaturePad } from "@quimera/thirdparty";
+import Quimera, { useStateValue } from "quimera";
+import { useEffect, useState } from "react";
 // import { Contacto } from "../../comps";
 
 function FirmaAlbaranPuesto({

@@ -1,7 +1,6 @@
-import { navigate } from "hookrouter";
-
 import { API } from "../lib";
 import util from "../util";
+import { navigate } from "./router";
 import { interpreter } from "./staticApi";
 
 export default class BaseController {
@@ -136,7 +135,7 @@ export default class BaseController {
   }
 
   //   import { API } from '../lib'
-  // import { navigate } from 'hookrouter'
+  // import { navigate } from 'quimera'
   // import { interpreter } from './staticApi'
   // import util from '../util'
 

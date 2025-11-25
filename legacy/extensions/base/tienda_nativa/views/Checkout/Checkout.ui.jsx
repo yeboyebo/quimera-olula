@@ -1,8 +1,7 @@
 import { Box, Container, Grid, Typography } from "@quimera/comps";
-import { A } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useStateValue, useWidth } from "quimera";
-import React, { useEffect } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "@quimera/thirdparty";
+import Quimera, { A, useAppValue, useStateValue, useWidth } from "quimera";
+import { useEffect } from "react";
 
 function Checkout({ callbackChanged, useStyles }) {
   const [{ smState, lineasCarrito }, dispatch] = useStateValue();

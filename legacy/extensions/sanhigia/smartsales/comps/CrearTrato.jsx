@@ -8,8 +8,7 @@ import {
   LinearProgress,
   Typography,
 } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import { getSchemas, useWidth } from "quimera";
+import { getSchemas, navigate, useWidth } from "quimera";
 import { API } from "quimera/lib";
 import { useEffect, useState } from "react";
 

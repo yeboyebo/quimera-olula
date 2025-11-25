@@ -1,7 +1,6 @@
 import { Box, Button, Icon, Typography } from "@quimera/comps";
 import { useTheme } from "@quimera/styles";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useWidth } from "quimera";
+import Quimera, { navigate, useAppValue, useWidth } from "quimera";
 
 function Carrito({ onGoingToCheckout }) {
   const theme = useTheme();

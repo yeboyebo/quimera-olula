@@ -1,6 +1,5 @@
 import { AppBar, AppMenu, Drawer, HideOnScroll, Icon, Toolbar, Typography } from "@quimera/comps";
-import { A } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useWidth } from "quimera";
+import Quimera, { A, useAppValue, useWidth } from "quimera";
 import { useState } from "react";
 
 function Header({ useStyles }) {

@@ -1,4 +1,4 @@
-import { Slide, useScrollTrigger } from "@mui/material";
+import { Slide, useScrollTrigger } from "@quimera/thirdparty";
 
 function HideOnScroll({ children }) {
   // const { children, window } = props

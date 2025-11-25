@@ -1,8 +1,7 @@
 import { Box, Button, Grid, Typography } from "@quimera/comps";
-import { CircularProgress } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
+import { CircularProgress, DragDropContext } from "@quimera/thirdparty";
+import Quimera, { useStateValue } from "quimera";
+import { useEffect } from "react";
 
 function EnviarDocumentoEmail({
   opcionesDocProp,

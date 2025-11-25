@@ -1,8 +1,7 @@
 import { Box, Button, Field, Grid, Icon, IconButton } from "@quimera/comps";
-import { Backdrop, CircularProgress } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect, useState } from "react";
-import SignaturePad from "react-signature-canvas";
+import { Backdrop, CircularProgress, SignaturePad } from "@quimera/thirdparty";
+import Quimera, { useStateValue } from "quimera";
+import { useEffect, useState } from "react";
 
 import { Contacto } from "../../comps";
 

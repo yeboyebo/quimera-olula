@@ -1,6 +1,5 @@
 import DateFnsUtils from "@date-io/date-fns";
 import { MuiPickersUtilsProvider } from "@quimera/thirdparty";
-import React from "react";
 
 import BaseField from "../BaseField";
 import TimeField from "./TimeField";

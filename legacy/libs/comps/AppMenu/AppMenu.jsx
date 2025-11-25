@@ -1,8 +1,6 @@
 import { makeStyles, useTheme } from "@quimera/styles";
-import { A } from "hookrouter";
-import { useAppValue, useWidth } from "quimera";
+import { A, useAppValue, useWidth } from "quimera";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { Can, MultiIcon } from "../";
 

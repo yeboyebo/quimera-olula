@@ -1,8 +1,7 @@
 import { Button, CircularProgress, Field, Grid, Typography } from "@quimera/comps";
-import { Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth } from "quimera";
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { Dialog, DialogActions, DialogContent, DialogTitle, useTranslation } from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue, useWidth } from "quimera";
+import { useEffect } from "react";
 
 import { AgenciasTransporte, TarifasAgencias } from "../../../comps";
 

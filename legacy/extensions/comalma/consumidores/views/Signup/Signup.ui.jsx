@@ -1,10 +1,9 @@
+import { SelectorValores } from "@quimera-extension/base-almacen";
 import { Box, Button, Field, Grid, Icon, Paper, Typography } from "@quimera/comps";
 import { clsx, makeStyles } from "@quimera/styles";
-import { SelectorValores } from "@quimera-extension/base-almacen";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@quimera/thirdparty";
+import Quimera, { getSchemas, navigate, useStateValue, useWidth, util } from "quimera";
+import { useEffect, useState } from "react";
 
 import initialData from "./initial-data";
 

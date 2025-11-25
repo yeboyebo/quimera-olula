@@ -1,7 +1,6 @@
-import { Box, Button, Container, Field } from "@quimera/comps";
 import { Cliente } from "@quimera-extension/base-ventas";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import { Box, Button, Container, Field } from "@quimera/comps";
+import Quimera, { getSchemas, navigate, useStateValue, util } from "quimera";
 import { ACL } from "quimera/lib";
 import { useEffect } from "react";
 

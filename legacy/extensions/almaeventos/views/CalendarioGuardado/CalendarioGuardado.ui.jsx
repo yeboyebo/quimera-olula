@@ -11,10 +11,9 @@ import {
   QTitleBox,
   Typography,
 } from "@quimera/comps";
-import { CircularProgress, List, Tooltip } from "@quimera/thirdparty";
-import { isToday } from "date-fns";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import { CircularProgress, List, Tooltip, isToday } from "@quimera/thirdparty";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
+import { useEffect } from "react";
 
 function CalendarioGuardado({ useStyles, hash }) {
   const [

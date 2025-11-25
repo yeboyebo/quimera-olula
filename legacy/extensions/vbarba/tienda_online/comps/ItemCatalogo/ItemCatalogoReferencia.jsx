@@ -1,9 +1,8 @@
 import { Box, Button, Field, Icon, IconButton } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Typography } from "@quimera/thirdparty";
+import { Typography, useTranslation } from "@quimera/thirdparty";
 import { useAppValue, useStateValue, util } from "quimera";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 import { ChipNoDisponible } from "../../comps";
 

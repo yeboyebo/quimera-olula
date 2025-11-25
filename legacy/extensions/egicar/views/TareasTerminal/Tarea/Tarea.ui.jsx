@@ -1,4 +1,3 @@
-import { List } from "@mui/material";
 import {
   Box,
   Button,
@@ -14,8 +13,8 @@ import {
   QTitleBox,
   Typography,
 } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { useStateValue, useWidth } from "quimera";
+import { List } from "@quimera/thirdparty";
+import Quimera, { navigate, useStateValue, useWidth } from "quimera";
 
 import { ListItemTramo } from "../../../comps";
 

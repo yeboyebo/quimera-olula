@@ -1,7 +1,5 @@
 import { useMediaQuery } from "@mui/material";
 export { TreeItem, TreeView } from "@mui/lab";
-export { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-export { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 export {
   Alert,
   AppBar,
@@ -87,7 +85,8 @@ export {
   Tooltip,
   Typography,
   useMediaQuery,
-  Zoom,
+  useScrollTrigger,
+  Zoom
 } from "@mui/material";
 export { createTheme } from "@mui/material/styles";
 export { makeStyles, ThemeProvider, useTheme } from "@mui/styles";
@@ -95,19 +94,42 @@ export {
   DatePicker,
   DateTimePicker,
   LocalizationProvider as MuiPickersUtilsProvider,
-  TimePicker,
+  TimePicker
 } from "@mui/x-date-pickers";
+export { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+export { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 export { Chart } from "chart.js";
 export { default as ChartAnnotation } from "chartjs-plugin-annotation";
 export { default as clsx } from "clsx";
+export * as d3 from "d3";
+export {
+  addDays,
+  addMonths,
+  differenceInDays,
+  endOfMonth,
+  format,
+  formatRelative,
+  getDay,
+  isSameMonth,
+  isToday,
+  setDay,
+  subDays,
+  subMonths
+} from "date-fns";
+export * as localesFns from "date-fns/locale";
+export { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+export { initReactI18next, Trans, useTranslation } from "react-i18next";
+export { default as InfiniteScroll } from "react-infinite-scroll-component";
 export { NumericFormat as NumberFormat } from "react-number-format";
+export { default as Plot } from "react-plotly.js";
+export { default as SignaturePad } from "react-signature-canvas";
 export {
   LeadingActions,
   SwipeableList,
   SwipeableListItem,
   SwipeAction,
   Type as SwipeListType,
-  TrailingActions,
+  TrailingActions
 } from "react-swipeable-list";
 export const adaptV4Theme = v => v;
 
@@ -115,17 +137,20 @@ export const adaptV4Theme = v => v;
 export {
   DatePicker as KeyboardDatePicker,
   DateTimePicker as KeyboardDateTimePicker,
-  TimePicker as KeyboardTimePicker,
+  TimePicker as KeyboardTimePicker
 } from "@mui/x-date-pickers";
 
 // //////////////////////////////////////////////////////////////////////////////////
 
 export const isWidthUp = breakpoint => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useMediaQuery(theme => theme.breakpoints.up(breakpoint));
 };
 
 export const Hidden = ({ mdUp, smDown, children }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const hiddenMdUp = mdUp && useMediaQuery(theme => theme.breakpoints.up("md"));
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const hiddenSmDown = smDown && useMediaQuery(theme => theme.breakpoints.down("sm"));
   const hidden = hiddenMdUp || hiddenSmDown;
 

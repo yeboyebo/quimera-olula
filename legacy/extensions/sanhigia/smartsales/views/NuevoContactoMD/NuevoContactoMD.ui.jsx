@@ -1,9 +1,8 @@
+import { Cliente } from "@quimera-extension/base-ventas";
 import { Box, Button, Field, Grid, Icon, QSection } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { Cliente } from "@quimera-extension/base-ventas";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect, useState } from "react";
+import Quimera, { getSchemas, navigate, useStateValue, util } from "quimera";
+import { useEffect, useState } from "react";
 
 function NuevoContactoMD({ callbackCerrado, codCliente = false }) {
   const schemaContacto = getSchemas().contacto;

@@ -1,8 +1,7 @@
 // import { useEffect } from 'react'
 import { Box, Button } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import Plot from "react-plotly.js";
+import { Plot } from "@quimera/thirdparty";
+import Quimera, { navigate, useStateValue } from "quimera";
 
 function BiDetalleVentasComunidad({ comunidad, codFamilia }) {
   const [{ data, poblaciones, offset, limit }] = useStateValue();

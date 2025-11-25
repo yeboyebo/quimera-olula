@@ -1,7 +1,6 @@
 import { Box, Field, Icon, IconButton, Typography } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React from "react";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "@quimera/thirdparty";
+import Quimera, { useStateValue } from "quimera";
 // import { Grid, Button, Column, Field, Table, Dialog, DialogContent, IconButton, Icon, Typography } from '@quimera/comps'
 
 function EmailsDisponibles({ useStyles }) {

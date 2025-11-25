@@ -1,8 +1,7 @@
 import { Button, Field, Grid, Typography } from "@quimera/comps";
-import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, useTranslation } from "@quimera/thirdparty";
+import Quimera, { useStateValue, useWidth } from "quimera";
+import { useEffect } from "react";
 
 import { Ubicacion } from "../../../comps";
 

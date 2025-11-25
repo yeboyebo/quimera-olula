@@ -1,6 +1,6 @@
 import { makeStyles } from "@quimera/styles";
 import { Tooltip } from "@quimera/thirdparty";
-import { A } from "hookrouter";
+import { A } from "quimera";
 import React from "react";
 
 const useStyles = makeStyles(_theme => ({

@@ -16,9 +16,8 @@ import {
   Table,
 } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Checkbox, FormControlLabel, List } from "@quimera/thirdparty";
+import { Checkbox, FormControlLabel, InfiniteScroll, List } from "@quimera/thirdparty";
 import Quimera, { getSchemas, useStateValue, useWidth } from "quimera";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 import {
   AgenteSmartsales,

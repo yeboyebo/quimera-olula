@@ -1,8 +1,7 @@
+import { Cliente } from "@quimera-extension/base-ventas";
 import { Box, Button, Container, Field, Icon } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { Cliente } from "@quimera-extension/base-ventas";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue } from "quimera";
+import Quimera, { getSchemas, navigate, useStateValue } from "quimera";
 import { useEffect, useState } from "react";
 
 import { ConfirmButton, MainBox } from "../../comps";

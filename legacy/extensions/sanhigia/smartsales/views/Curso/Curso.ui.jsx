@@ -14,8 +14,7 @@ import {
   Table,
   Typography,
 } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { getSchemas, navigate, useStateValue, useWidth, util } from "quimera";
 import { useEffect } from "react";
 
 import {

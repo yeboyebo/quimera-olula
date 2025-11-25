@@ -1,7 +1,6 @@
 import { Box, Chip, Dialog, Filter, FilterBox, QBox, QListItem } from "@quimera/comps";
-import { Checkbox, FormControlLabel, List } from "@quimera/thirdparty";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { Checkbox, FormControlLabel, InfiniteScroll, List } from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 
 import { AgenteSmartsales, Contacto } from "../../../comps";
 

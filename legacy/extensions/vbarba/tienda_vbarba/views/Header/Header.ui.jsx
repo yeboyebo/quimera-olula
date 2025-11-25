@@ -1,4 +1,3 @@
-import { useScrollTrigger } from "@mui/material";
 import { SelectorIdioma } from "@quimera-extension/base-tienda_nativa";
 import {
   AppBar,
@@ -12,10 +11,9 @@ import {
   Toolbar,
   Typography,
 } from "@quimera/comps";
-import { A, navigate } from "hookrouter";
-import Quimera, { useAppValue, useWidth, util } from "quimera";
+import { useScrollTrigger, useTranslation } from "@quimera/thirdparty";
+import Quimera, { A, navigate, useAppValue, useWidth, util } from "quimera";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { SlidingBorder } from "../../comps";
 import './Header.style.scss';

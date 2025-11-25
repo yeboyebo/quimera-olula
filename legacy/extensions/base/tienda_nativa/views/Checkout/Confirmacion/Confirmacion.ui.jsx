@@ -1,9 +1,6 @@
-import { Typography, Button, Grid } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import { Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { navigate } from "hookrouter";
+import { Button, Grid, Typography } from "@quimera/comps";
+import { Dialog, DialogActions, DialogContent, DialogTitle, useTranslation } from "@quimera/thirdparty";
+import Quimera, { navigate, useStateValue } from "quimera";
 
 function Confirmacion({ useStyles }) {
   const [, dispatch] = useStateValue();

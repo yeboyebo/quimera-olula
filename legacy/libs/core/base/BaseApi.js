@@ -1,7 +1,6 @@
-import { navigate } from "hookrouter";
-
 import { API } from "../lib";
 import util from "../util";
+import { navigate } from "./router";
 import { interpreter } from "./staticApi";
 
 export default class BaseApi {
@@ -252,9 +251,9 @@ export default class BaseApi {
           Array.isArray(grape.success)
             ? grape.success.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
             : dispatch({
-              type: grape.success,
-              payload: { ...payload, response },
-            });
+                type: grape.success,
+                payload: { ...payload, response },
+              });
         },
         error: response => {
           console.log("Error get", response);
@@ -262,13 +261,13 @@ export default class BaseApi {
             ? Array.isArray(grape.error)
               ? grape.error.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
               : dispatch({
-                type: grape.error,
-                payload: { ...payload, response },
-              })
+                  type: grape.error,
+                  payload: { ...payload, response },
+                })
             : util.appDispatch({
-              type: "mostrarMensaje",
-              payload: { mensaje: response, tipoMensaje: "error" },
-            });
+                type: "mostrarMensaje",
+                payload: { mensaje: response, tipoMensaje: "error" },
+              });
         },
       });
     }
@@ -292,9 +291,9 @@ export default class BaseApi {
             Array.isArray(grape.success)
               ? grape.success.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
               : dispatch({
-                type: grape.success,
-                payload: { ...payload, response },
-              });
+                  type: grape.success,
+                  payload: { ...payload, response },
+                });
           },
           error: response => {
             console.log("Error patch", response);
@@ -302,13 +301,13 @@ export default class BaseApi {
               ? Array.isArray(grape.error)
                 ? grape.error.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
                 : dispatch({
-                  type: grape.error,
-                  payload: { ...payload, response },
-                })
+                    type: grape.error,
+                    payload: { ...payload, response },
+                  })
               : util.appDispatch({
-                type: "mostrarMensaje",
-                payload: { mensaje: response, tipoMensaje: "error" },
-              });
+                  type: "mostrarMensaje",
+                  payload: { mensaje: response, tipoMensaje: "error" },
+                });
           },
         },
       );
@@ -327,9 +326,9 @@ export default class BaseApi {
             Array.isArray(grape.success)
               ? grape.success.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
               : dispatch({
-                type: grape.success,
-                payload: { ...payload, response },
-              });
+                  type: grape.success,
+                  payload: { ...payload, response },
+                });
           },
           error: response => {
             console.log("Error post", response);
@@ -337,13 +336,13 @@ export default class BaseApi {
               ? Array.isArray(grape.error)
                 ? grape.error.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
                 : dispatch({
-                  type: grape.error,
-                  payload: { ...payload, response },
-                })
+                    type: grape.error,
+                    payload: { ...payload, response },
+                  })
               : util.appDispatch({
-                type: "mostrarMensaje",
-                payload: { mensaje: response, tipoMensaje: "error" },
-              });
+                  type: "mostrarMensaje",
+                  payload: { mensaje: response, tipoMensaje: "error" },
+                });
           },
         },
       );
@@ -364,9 +363,9 @@ export default class BaseApi {
             Array.isArray(grape.success)
               ? grape.success.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
               : dispatch({
-                type: grape.success,
-                payload: { ...payload, response },
-              });
+                  type: grape.success,
+                  payload: { ...payload, response },
+                });
           },
           error: response => {
             console.log("Error delete", response);
@@ -374,13 +373,13 @@ export default class BaseApi {
               ? Array.isArray(grape.error)
                 ? grape.error.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
                 : dispatch({
-                  type: grape.error,
-                  payload: { ...payload, response },
-                })
+                    type: grape.error,
+                    payload: { ...payload, response },
+                  })
               : util.appDispatch({
-                type: "mostrarMensaje",
-                payload: { mensaje: response, tipoMensaje: "error" },
-              });
+                  type: "mostrarMensaje",
+                  payload: { mensaje: response, tipoMensaje: "error" },
+                });
           },
         },
       );
@@ -413,9 +412,9 @@ export default class BaseApi {
               Array.isArray(grape.success)
                 ? grape.success.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
                 : dispatch({
-                  type: grape.success,
-                  payload: { ...payload, response },
-                });
+                    type: grape.success,
+                    payload: { ...payload, response },
+                  });
             }
           },
           error: response => {
@@ -424,13 +423,13 @@ export default class BaseApi {
               ? Array.isArray(grape.error)
                 ? grape.error.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
                 : dispatch({
-                  type: grape.error,
-                  payload: { ...payload, response },
-                })
+                    type: grape.error,
+                    payload: { ...payload, response },
+                  })
               : util.appDispatch({
-                type: "mostrarMensaje",
-                payload: { mensaje: response, tipoMensaje: "error" },
-              });
+                  type: "mostrarMensaje",
+                  payload: { mensaje: response, tipoMensaje: "error" },
+                });
           },
         },
       );
@@ -617,9 +616,9 @@ export default class BaseApi {
           Array.isArray(grape.success)
             ? grape.success.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
             : dispatch({
-              type: grape.success,
-              payload: { ...payload, response },
-            });
+                type: grape.success,
+                payload: { ...payload, response },
+              });
         api = api.success(r => success(r));
       }
       if (grape.error) {
@@ -628,13 +627,13 @@ export default class BaseApi {
             ? Array.isArray(grape.error)
               ? grape.error.map(a => this.eatGrape(a, { ...payload, response }, dispatch))
               : dispatch({
-                type: grape.error,
-                payload: { ...payload, response },
-              })
+                  type: grape.error,
+                  payload: { ...payload, response },
+                })
             : util.appDispatch({
-              type: "mostrarMensaje",
-              payload: { mensaje: response, tipoMensaje: "error" },
-            });
+                type: "mostrarMensaje",
+                payload: { mensaje: response, tipoMensaje: "error" },
+              });
         api = api.error(r => error(r));
       }
 

@@ -1,8 +1,8 @@
 import { Box, Button, Menu, MenuItem } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
+import { useTranslation } from "@quimera/thirdparty";
 import { getLanguages } from "quimera";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 const useStyles = makeStyles(theme => ({
   botonIdiomaActual: {

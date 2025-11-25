@@ -1,8 +1,7 @@
 import { Box, Button } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue } from "quimera";
+import { Plot } from "@quimera/thirdparty";
+import Quimera, { navigate, useStateValue } from "quimera";
 import { useEffect } from "react";
-import Plot from "react-plotly.js";
 
 function BiDetalleVentasAgente({ codAgente, codFamilia }) {
   const [{ data }, dispatch] = useStateValue();

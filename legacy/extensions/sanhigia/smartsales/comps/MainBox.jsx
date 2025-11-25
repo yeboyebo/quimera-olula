@@ -1,6 +1,6 @@
-import { Box, Typography, Icon, IconButton } from "@quimera/comps";
+import { Box, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { navigate } from "hookrouter";
+import { navigate } from "quimera";
 
 const useStyles = makeStyles(theme => ({
   mainBox: {

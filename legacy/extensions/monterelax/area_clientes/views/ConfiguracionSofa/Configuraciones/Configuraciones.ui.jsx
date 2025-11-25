@@ -1,9 +1,8 @@
+import { SelectorValores } from "@quimera-extension/base-almacen";
 import { Box, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { CircularProgress, Tooltip } from "@quimera/thirdparty";
-import { SelectorValores } from "@quimera-extension/base-almacen";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { CircularProgress, Draggable, Droppable, Tooltip } from "@quimera/thirdparty";
+import Quimera, { useStateValue, util } from "quimera";
 
 const useStyles = makeStyles(theme => ({
   avatar: {

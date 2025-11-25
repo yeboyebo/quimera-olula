@@ -1,7 +1,7 @@
-import { Box, Filter, FilterBox } from "@quimera/comps";
 import { Cliente } from "@quimera-extension/base-ventas";
-import * as d3 from "d3";
-import Quimera, { getSchemas, PropValidation, useStateValue } from "quimera";
+import { Box, Filter, FilterBox } from "@quimera/comps";
+import d3 from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue } from "quimera";
 import React, { useEffect } from "react";
 
 const marks = [

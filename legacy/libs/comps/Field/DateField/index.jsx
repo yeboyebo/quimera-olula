@@ -1,10 +1,5 @@
-import DateFnsUtils from "@date-io/date-fns";
-// import esLocale from 'date-fns/locale/es'
-// import { MuiPickersUtilsProvider } from "@quimera/thirdparty";
-import { LocalizationProvider } from "@quimera/thirdparty";
-import { AdapterDateFns } from "@quimera/thirdparty";
+import { AdapterDateFns, LocalizationProvider } from "@quimera/thirdparty";
 import { useStateValue, util } from "quimera";
-import React from "react";
 
 import BaseField from "../BaseField";
 import DateField from "./DateField";

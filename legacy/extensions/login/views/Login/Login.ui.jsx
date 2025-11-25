@@ -1,7 +1,6 @@
 import { Alert, Button, Field, Grid, Icon, Paper, Snackbar, Typography } from "@quimera/comps";
 import { clsx } from "@quimera/styles";
-import { A } from "hookrouter";
-import Quimera, { useStateValue, util } from "quimera";
+import Quimera, { A, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 function Login({ onLogin, useStyles, ...props }) {

@@ -9,8 +9,7 @@ import {
   Toolbar,
   Typography,
 } from "@quimera/comps";
-import { A, navigate } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useWidth, util } from "quimera";
+import Quimera, { A, navigate, useAppValue, useWidth, util } from "quimera";
 import { useState } from "react";
 
 import { SelectorIdioma } from "../../comps";

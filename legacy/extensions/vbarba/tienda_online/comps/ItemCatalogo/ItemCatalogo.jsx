@@ -1,12 +1,11 @@
 import "./ItemCatalogo.style.scss";
 
+import { SelectorValores } from "@quimera-extension/base-almacen";
 import { Box, Button, Collapse, Dialog, DialogTitle, Grid, Icon, IconButton } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Divider, Typography } from "@quimera/thirdparty";
-import { SelectorValores } from "@quimera-extension/base-almacen";
+import { Divider, Typography, useTranslation } from "@quimera/thirdparty";
 import { useStateValue, util } from "quimera";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 import {
   colores,
@@ -254,7 +253,7 @@ function ItemCatalogo({ renderAvatar, model, modelName, selected = false, ...pro
                 <Box
                   border={0}
                   borderColor="blue"
-                  style={{ overflow: "hidden", backgroundColor: "white" }}    display="flex"
+                  style={{ overflow: "hidden", backgroundColor: "white" }} display="flex"
                   justifyContent="center"
                   width={1}
                   className="ItemCatalogoBodyImagen"

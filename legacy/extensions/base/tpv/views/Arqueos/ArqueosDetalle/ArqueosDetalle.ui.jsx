@@ -1,4 +1,4 @@
-import AccessTimeIcon from "@mui/material-icons/AccessTime";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { Box, Button, Field, Grid, Icon, QBox, QSection, Typography } from "@quimera/comps";
 import { Tab, Tabs } from "@quimera/thirdparty";
 import Quimera, { useStateValue, useWidth, util } from "quimera";

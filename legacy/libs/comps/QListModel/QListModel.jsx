@@ -1,7 +1,6 @@
-import { List } from "@quimera/thirdparty";
+import { InfiniteScroll, List } from "@quimera/thirdparty";
 import { useStateValue, util } from "quimera";
 import { useCallback } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 import { Box, QTitleBox } from "../";
 

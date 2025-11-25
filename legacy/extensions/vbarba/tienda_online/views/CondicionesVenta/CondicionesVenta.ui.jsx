@@ -1,6 +1,6 @@
 import { Box, Dialog, DialogContent, DialogTitle, Grid, Icon, IconButton } from "@quimera/comps";
-import Quimera, { PropValidation, useAppValue, useStateValue } from "quimera";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "@quimera/thirdparty";
+import Quimera, { useAppValue, useStateValue } from "quimera";
 
 function CondicionesVenta({ useStyles, ...props }) {
   const classes = useStyles();

@@ -1,6 +1,6 @@
 import { Box, QListItem, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { navigate } from "hookrouter";
+import { navigate } from "quimera";
 
 const useStyles = makeStyles(theme => ({
   box: {

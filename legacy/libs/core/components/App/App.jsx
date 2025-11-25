@@ -1,8 +1,8 @@
 import { adaptV4Theme, createTheme, ThemeProvider } from "@quimera/styles";
+import { initReactI18next } from "@quimera/thirdparty";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { useEffect, useState } from "react";
-import { initReactI18next } from "react-i18next";
 
 import { AppProvider } from "../../contexts";
 import {

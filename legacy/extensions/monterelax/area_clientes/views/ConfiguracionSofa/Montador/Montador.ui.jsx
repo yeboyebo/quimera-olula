@@ -1,8 +1,7 @@
 import { Box, Icon, IconButton } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Tooltip, Typography } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable, Tooltip, Typography } from "@quimera/thirdparty";
+import Quimera, { useStateValue, util } from "quimera";
 
 const useStyles = makeStyles(theme => ({
   avatar: {

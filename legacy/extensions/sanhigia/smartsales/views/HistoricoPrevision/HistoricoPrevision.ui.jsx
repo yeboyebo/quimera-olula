@@ -1,6 +1,6 @@
-import Quimera, { PropValidation, useStateValue } from "quimera";
+import { Plot } from "@quimera/thirdparty";
+import Quimera, { useStateValue } from "quimera";
 import { useEffect } from "react";
-import Plot from "react-plotly.js";
 
 function HistoricoPrevision({ fechaInicio, fechaFin, codFamilia, codSubfamilia }) {
   const [{ dataHistoricoPrevision, layoutHistoricoPrevision }, dispatch] = useStateValue();

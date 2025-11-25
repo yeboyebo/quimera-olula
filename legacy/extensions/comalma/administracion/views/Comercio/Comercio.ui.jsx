@@ -6,6 +6,7 @@
 //   QListModel,
 //   Grid
 // } from "@quimera/comps";
+import { SelectorValores } from "@quimera-extension/base-almacen";
 import {
   Box,
   Button,
@@ -22,10 +23,9 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { SelectorValores } from "@quimera-extension/base-almacen";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useEffect, useState } from "react";
 
 function Comercio({ callbackChanged, idComercio, initComercio, useStyles }) {
   const [{ comercio, modalCambiarPassword, nuevoPassword, repeatedPassword }, dispatch] =

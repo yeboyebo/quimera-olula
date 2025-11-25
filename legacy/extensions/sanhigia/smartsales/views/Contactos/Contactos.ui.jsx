@@ -1,6 +1,5 @@
 import { Box, Container, Typography } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useStateValue } from "quimera";
+import Quimera, { navigate, useStateValue } from "quimera";
 import { useEffect } from "react";
 
 import {

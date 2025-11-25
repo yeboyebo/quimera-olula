@@ -1,9 +1,7 @@
 import { Box, Button, Grid, Icon, Typography } from "@quimera/comps";
-import { Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
-import { useTranslation } from "react-i18next";
+import { Dialog, DialogActions, DialogContent, DialogTitle, DragDropContext, useTranslation } from "@quimera/thirdparty";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useEffect } from "react";
 
 import { QTela } from "../../comps";
 

@@ -1,3 +1,5 @@
+import { Familia, QArticulo, SelectorValores } from "@quimera-extension/base-almacen";
+import { Cliente, DirCliente } from "@quimera-extension/base-ventas";
 import {
   Box,
   Button,
@@ -10,10 +12,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { Familia, QArticulo, SelectorValores } from "@quimera-extension/base-almacen";
-import { Cliente, DirCliente } from "@quimera-extension/base-ventas";
-import { A, navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { A, getSchemas, navigate, useStateValue, useWidth, util } from "quimera";
 import { useEffect } from "react";
 
 import { FieldValue, ListTareas } from "../../comps";

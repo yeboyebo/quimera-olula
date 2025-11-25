@@ -1,5 +1,6 @@
 import "./TratoCampania.style.scss";
 
+import { Familia } from "@quimera-extension/base-almacen";
 import {
   Box,
   Button,
@@ -16,9 +17,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { Familia } from "@quimera-extension/base-almacen";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, navigate, useStateValue, util } from "quimera";
 import { ACL } from "quimera/lib";
 import { useEffect } from "react";
 

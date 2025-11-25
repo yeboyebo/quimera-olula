@@ -1,6 +1,5 @@
 import { Can } from "@quimera/comps";
-import { A } from "hookrouter";
-import Quimera from "quimera";
+import Quimera, { A } from "quimera";
 
 export default function Header({ useStyles }) {
   const classes = useStyles();

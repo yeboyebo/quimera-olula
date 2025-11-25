@@ -1,9 +1,7 @@
 import { Box, QListItem, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { CircularProgress, List } from "@quimera/thirdparty";
-import { navigate } from "hookrouter";
-import React from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { CircularProgress, InfiniteScroll, List } from "@quimera/thirdparty";
+import { navigate } from "quimera";
 
 const valorTrato = v => {
   if (v < 1_000) {

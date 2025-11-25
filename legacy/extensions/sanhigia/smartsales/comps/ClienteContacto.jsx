@@ -1,7 +1,6 @@
 import { Box, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { navigate } from "hookrouter";
-import { useStateValue, util } from "quimera";
+import { navigate, useStateValue, util } from "quimera";
 import { API } from "quimera/lib";
 import { useEffect, useState } from "react";
 

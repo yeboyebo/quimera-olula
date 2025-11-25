@@ -1,6 +1,5 @@
 import { Box } from "@quimera/thirdparty";
-import { usePath, useRoutes } from "hookrouter";
-import Quimera, { useAppValue, useStateValue, useWidth, util } from "quimera";
+import Quimera, { useAppValue, usePath, useRoutes, useStateValue, useWidth, util } from "quimera";
 import { buildView, getRoutes } from "quimera/hooks";
 import { ACL } from "quimera/lib";
 import { useEffect } from "react";

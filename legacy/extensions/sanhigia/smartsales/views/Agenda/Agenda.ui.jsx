@@ -1,6 +1,5 @@
 import { Container } from "@quimera/comps";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, QArray, useStateValue, util } from "quimera";
+import Quimera, { navigate, QArray, useStateValue, util } from "quimera";
 import { useEffect, useState } from "react";
 
 import { Calendar, FabButton, FilterFab, ListTareas, ListTratos, MainBox } from "../../comps";

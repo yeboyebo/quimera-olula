@@ -1,5 +1,7 @@
 import "./Campania.style.scss";
 
+import { QArticulo, SelectorValores, Subfamilia } from "@quimera-extension/base-almacen";
+import { Agente } from "@quimera-extension/base-ventas";
 import {
   Box,
   Button,
@@ -17,13 +19,9 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@quimera/thirdparty";
-import { QArticulo, SelectorValores, Subfamilia } from "@quimera-extension/base-almacen";
-import { Agente } from "@quimera-extension/base-ventas";
-import { navigate } from "hookrouter";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import { FormControl, FormControlLabel, FormLabel, Plot, Radio, RadioGroup } from "@quimera/thirdparty";
+import Quimera, { getSchemas, navigate, useStateValue, useWidth, util } from "quimera";
 import { useEffect } from "react";
-import Plot from "react-plotly.js";
 
 import { QProductoOfertar, TipoTrato } from "../../comps";
 
@@ -721,8 +719,8 @@ function Campania({ callbackChanged, initCampania, origen, useStyles }) {
                       <Grid item xs={12}>
                         <Box>
                           <Typography variant="overline">{`${lista?.name}${campania?.buffer?.productos[lista?.key]?.refs?.length > 0
-                              ? `(${campania.buffer.productos[lista?.key].tipo})`
-                              : ""
+                            ? `(${campania.buffer.productos[lista?.key].tipo})`
+                            : ""
                             }`}</Typography>
                           {(campania?.buffer?.productos?.[lista?.key]?.refs ?? []).map(
                             (producto, idx) => (

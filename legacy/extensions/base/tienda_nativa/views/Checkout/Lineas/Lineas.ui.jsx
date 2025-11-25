@@ -1,9 +1,6 @@
 import { Box, Button } from "@quimera/comps";
-import { List } from "@quimera/thirdparty";
-import { navigate } from "hookrouter";
-import Quimera, { PropValidation, useAppValue, useStateValue } from "quimera";
-import React from "react";
-import { useTranslation } from "react-i18next";
+import { List, useTranslation } from "@quimera/thirdparty";
+import Quimera, { navigate, useAppValue, useStateValue } from "quimera";
 
 function Lineas({ useStyles }) {
   const [confirmando, dispatch] = useStateValue();
