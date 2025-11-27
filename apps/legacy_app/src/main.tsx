@@ -1,3 +1,4 @@
+import { authMiddleware } from "#/auth/middlewares.ts";
 import { Vista } from "@olula/componentes/index.ts";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
@@ -14,6 +15,7 @@ const root = createRoot(document.getElementById("root")!);
 const rutas = createBrowserRouter([
   {
     path: "/",
+    middleware: [authMiddleware],
     Component: Vista,
     children: [...router, ...routerLegacy] as RouteObject[],
   },

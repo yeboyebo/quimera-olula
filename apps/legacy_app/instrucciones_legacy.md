@@ -94,6 +94,7 @@ import { routerLegacy } from "./legacy.tsx";
 const rutas = createBrowserRouter([
   {
     path: "/",
+    middleware: [authMiddleware],
     Component: Vista,
     children: [...router, ...routerLegacy] as RouteObject[],
   },
