@@ -9,5 +9,8 @@ export default mergeConfig(config, {
         alias: {
             '#': '/src',
         }
+    },
+    test: {
+        setupFiles: ["../../setupTests.ts"]
     }
 });
