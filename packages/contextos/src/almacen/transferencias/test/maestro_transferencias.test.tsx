@@ -36,7 +36,6 @@ describe("Maestro de transferencias", () => {
 
   test("debe renderizar la cabecera", async () => {
     render(<MaestroDetalleTransferenciasStock />);
-
     // buscamos una cabecera "Transferencias"
     await screen.findByRole("heading", { name: "Transferencias" });
   });
