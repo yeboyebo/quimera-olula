@@ -22,6 +22,7 @@ describe("Maquina Listado de transferencias", () => {
             }
         )
     });
+
     test("añadir transferencia", () => {
         pipe(
             inicial,
@@ -43,6 +44,5 @@ describe("Maquina Listado de transferencias", () => {
                 expect(transferencias.lista[0].id).toBe("20250A001");
             }
         );
-
     })
 });
