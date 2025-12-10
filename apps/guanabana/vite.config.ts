@@ -9,5 +9,8 @@ export default mergeConfig(config, {
         alias: {
             '#': '@olula/ctx',
         }
+    },
+    test: {
+        setupFiles: ["../../setupTests.ts"]
     }
 });
