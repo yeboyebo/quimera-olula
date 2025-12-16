@@ -10,6 +10,7 @@ import schemas from "./static/schemas";
 import * as Articulo from "./views/Articulo";
 import * as Articulos from "./views/Articulos";
 import * as CambiarFinca from "./views/CambiarFinca";
+import * as FirmaParteCarro from "./views/FirmaParteCarro";
 import * as ParteCarro from "./views/ParteCarro";
 import * as ParteCarroNuevo from "./views/ParteCarroNuevo";
 import * as PartesCarros from "./views/PartesCarros";
@@ -17,7 +18,6 @@ import * as PartesCarrosFiltro from "./views/PartesCarros/PartesCarrosFiltro";
 import * as PartesCarrosMaster from "./views/PartesCarros/PartesCarrosMaster";
 import * as Stock from "./views/Stock";
 import * as Stocks from "./views/Stocks";
-import * as FirmaParteCarro from "./views/FirmaParteCarro";
 
 export * from "./comps";
 
@@ -39,7 +39,6 @@ export default {
     "PartesCarros/PartesCarrosFiltro": PartesCarrosFiltro,
   },
   routes: {
-    "/": { type: "view", view: "Home" },
     "/cambiarFinca": { type: "view", view: "CambiarFinca" },
     "/partesCarros": { type: "view", view: "PartesCarros" },
     "/partesCarros/:idParte": { type: "view", view: "PartesCarros" },

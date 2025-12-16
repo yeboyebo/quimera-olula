@@ -1,6 +1,6 @@
 import { Field, Grid, QSection } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 function ToCarritoNuevo({ callbackGuardado, useStyles, ...props }) {
   const [{ carrito }, dispatch] = useStateValue();
@@ -30,7 +30,7 @@ function ToCarritoNuevo({ callbackGuardado, useStyles, ...props }) {
         actionPrefix="nuevoCarrito"
         alwaysActive
         dynamicComp={() => (
-          <Grid container>
+          <Grid container direction="column" spacing={2}>
             <Grid item xs={12}>
               <Field.Schema id="carrito.buffer/referencia" schema={schema} fullWidth />
             </Grid>

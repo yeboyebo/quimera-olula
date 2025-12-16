@@ -1,9 +1,9 @@
 import { AppMenu, Container } from "@quimera/comps";
-import Quimera, { PropValidation, useAppValue } from "quimera";
+import Quimera, { useAppValue } from "quimera";
 
 function Home() {
   const [{ menus }] = useAppValue();
-  console.log("hola mundo");
+  console.log("menus", menus);
   return (
     <Quimera.Template id="Home">
       <Container maxWidth="md" className="container">
