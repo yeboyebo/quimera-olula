@@ -1,3 +1,10 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
+import {
+  DocAgente,
+  DocClienteYDir,
+  DocFecha,
+  LineaPedidoCliComp,
+} from "@quimera-extension/base-ventas";
 import {
   Box,
   Dialog,
@@ -12,15 +19,8 @@ import {
   Typography,
 } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import {
-  DocAgente,
-  DocClienteYDir,
-  DocFecha,
-  LineaPedidoCliComp,
-} from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useCallback, useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useCallback, useEffect } from "react";
 
 function PedidoCli({ callbackChanged, idPedido, initPedido, useStyles }) {
   const [
@@ -133,6 +133,13 @@ function PedidoCli({ callbackChanged, idPedido, initPedido, useStyles }) {
                 disabled={!editableGenerarPediProv}
               />
               <QBoxButton id="enviarEmail" title="Enviar por email" icon="email" />
+              <button
+                onClick={() => (window.location.href = `/ventas/albaranar-pedido/${pedido.data.idPedido}`)}
+              >
+                <Icon >
+                  shop
+                </Icon>
+              </button>
             </>
           }
         >
