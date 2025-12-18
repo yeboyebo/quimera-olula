@@ -9,6 +9,7 @@ type QIconoProps = {
 };
 
 const iconos: Record<string, string> = {
+  añadir: "plus-circle",
   buscar: "search-alt-2",
   cerrar: "x",
   inicio: "home",
@@ -38,6 +39,10 @@ const iconos: Record<string, string> = {
   ver: "show",
   crear: "plus",
   tabla: "table",
+  arriba: "chevron-up",
+  abajo: "chevron-down",
+  izquierda: "chevron-left",
+  derecha: "chevron-right",
 };
 
 export const QIcono = ({

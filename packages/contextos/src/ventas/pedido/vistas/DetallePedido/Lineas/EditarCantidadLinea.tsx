@@ -2,7 +2,7 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useEffect, useState } from "react";
 import { LineaPedido as Linea } from "../../../diseño.ts";
 
-const validacion = (cantidadRaw: string) => {
+const validacionPorDefecto = (cantidadRaw: string) => {
   const cantidad = parseInt(cantidadRaw);
 
   return isNaN(cantidad) || cantidad <= 0
@@ -13,9 +13,11 @@ const validacion = (cantidadRaw: string) => {
 export const EditarCantidadLinea = ({
   linea,
   onCantidadEditada,
+  validacion,
 }: {
   linea: Linea;
   onCantidadEditada: (linea: Linea, cantidad: number) => void;
+  validacion?: (cantidadRaw: string) => string;
 }) => {
   const [estado, setEstado] = useState("");
   const [valor, setValor] = useState(linea.cantidad.toString());
@@ -24,9 +26,11 @@ export const EditarCantidadLinea = ({
   }, [linea.cantidad]);
 
   const handleChange = (v: string) => {
-    const nuevoEstado = validacion(v);
+    const nuevoEstado = validacion ? validacion(v) : validacionPorDefecto(v);
     setEstado(nuevoEstado);
-    setValor(v);
+    if (nuevoEstado === "") {
+      setValor(v);
+    }
   };
 
   const submit = (valor: string) => {
