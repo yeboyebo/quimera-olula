@@ -21,9 +21,20 @@ export const Cabecera = () => {
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          {/* <span>Olula</span> */}
           <img src="/olula_header_blanco.png" alt="Olula | Inicio" />
         </Link>
+        {/* <img
+          src="/olula_header_blanco.png"
+          alt="Olula | Inicio"
+          onClick={() => {
+            if (window.location.pathname === "/") {
+              window.location.reload();
+            } else {
+              window.location.href = "/";
+            }
+          }}
+          style={{ cursor: "pointer" }}
+        /> */}
         <button
           id="boton-menu-usuario"
           aria-label="Abrir menú usuario"

@@ -1,8 +1,8 @@
+import { DirCliente } from "@quimera-extension/base-ventas";
 import { Grid, Icon, QSection } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { DirCliente } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 import { Cliente } from "../../comps";
 
@@ -31,7 +31,7 @@ function AlbaranesCliNuevo({ callbackGuardado, useStyles, ...props }) {
         actionPrefix="nuevoAlbaran"
         alwaysActive
         dynamicComp={() => (
-          <Grid container>
+          <Grid container direction="column" spacing={2}>
             <Grid item xs={12}>
               <Cliente
                 id="albaran.buffer/codCliente"

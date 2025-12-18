@@ -2,3 +2,16 @@
   --main-color: #6666FF;
   --secondary-color: #ce001e;
 }
+
+// .MuiButton-root {
+
+//   --variant-containedBg: #ce001e !important;
+// }
+
+.MuiButton-containedPrimary:not(.Mui-disabled) {
+  --variant-containedBg: var(--secondary-color);
+}
+
+.MuiButton-containedSecondary:not(.Mui-disabled) {
+  --variant-containedBg: var(--main-color);
+}

@@ -1,3 +1,4 @@
+import { QProveedor } from "@quimera-extension/base-almacen";
 import {
   Box,
   Button,
@@ -11,8 +12,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import { QProveedor } from "@quimera-extension/base-almacen";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { InputImagenConPortada } from "../../comps";
@@ -86,8 +86,8 @@ function Articulo({
               variant="h6"
             >{`${articulo.buffer.referencia} / ${articulo.buffer.descripcion} / ${articulo.buffer.precioRef} €`}</Typography>
           </Grid>
-          <Grid container align="center" justifyContent="flex-end">
-            <Grid item container xs={6} justifyContent="flex-start" style={{ gap: 8 }}>
+          <Grid container align="center" justifyContent="flex-end" style={{ gap: 8 }}>
+            <Grid item xs={6} justifyContent="flex-start" style={{ gap: 8 }}>
               <Grid item>
                 <Button
                   id="publicadoWeb"
@@ -98,7 +98,7 @@ function Articulo({
                 />
               </Grid>
             </Grid>
-            <Grid item container xs={6} justifyContent="flex-end" style={{ gap: 8 }}>
+            <Grid item container style={{ gap: 8 }}>
               <InputImagenConPortada
                 tieneFoto={articulo.buffer.tieneFoto}
                 onImagenChange={(files, esPortada) => {
@@ -118,20 +118,19 @@ function Articulo({
           </Grid>
         </Box>
         <Box pt={2}>
-          <Grid item container xs={12} pb={1} justifyContent="flex-start">
-            <Grid item container xs={12} pb={1} justifyContent="space-between">
+          <Grid container justifyContent="flex-start">
+            <Grid item xs={12} pb={1} justifyContent="space-between">
               <Typography variant="subtittle1">General</Typography>
               <Typography variant="subtittle1">{`Visible web: ${articulo.buffer.publicadoWeb ? "Si" : "No"
                 }`}</Typography>
             </Grid>
           </Grid>
-          <Grid container driection="row" className={classes.cajaStock}>
+          <Grid container driection="column" justifyContent="space-between" style={{ display: "block" }}>
             <Grid
               container
-              item
               xs={12}
               direction="row"
-              justifyContent="flex-start"
+              justifyContent="space-between"
               style={{ gap: 20 }}
             >
               <Box flexGrow={1}>
@@ -165,7 +164,6 @@ function Articulo({
             </Grid>
             <Grid
               container
-              item
               xs={12}
               direction="row"
               justifyContent="flex-start"
@@ -237,7 +235,6 @@ function Articulo({
             </Grid>
             <Grid
               container
-              item
               xs={12}
               direction="row"
               justifyContent="flex-start"
