@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { CircularProgress, LinearProgress } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
 import { useCallback, useEffect } from "react";
 
 import { QAlmacenesVbarba, QArticuloVbarba } from "../../comps";
@@ -89,8 +89,17 @@ function Stocks({ useStyles, idRefStockProp, referenciaArticulo }) {
           MasterComponent={
             <Container>
               <Box mx={1} my={1}>
-                <Grid container driection="row" alignItems="center" justifyContent="space-between">
-                  <Grid item xs={12} md={4}>
+                <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
+                  <Grid item sx={{
+                    flex: '0 0 33.333%',
+                    maxWidth: '33.333%',
+                    width: '33.333%',
+                    '@media (max-width: 900px)': {
+                      flex: '0 0 100%',
+                      maxWidth: '100%',
+                      width: '100%'
+                    }
+                  }}>
                     <QArticuloVbarba
                       id="referencia"
                       label={`Lectura${lectura ? ` (${lectura})` : ""}`}
@@ -99,25 +108,32 @@ function Stocks({ useStyles, idRefStockProp, referenciaArticulo }) {
                       fullWidth
                     />
                   </Grid>
+
                   <Grid
                     item
-                    container
                     xs={6}
                     md={4}
                     pb={1}
-                    justifyContent={mobile ? "flex-start" : "flex-end"}
-                    style={{ margin: mobile ? "30px 0px 10px 0px" : "inherit" }}
+                    style={{
+                      textAlign: mobile ? "left" : "center",
+                      margin: mobile ? "30px 0px 10px 0px" : "inherit"
+                    }}
                   >
-                    <Typography variant="subtittle1">{`Finca: ${miFinca?.descripcion}`}</Typography>
+                    <Typography variant="subtittle1">
+                      {`Finca: ${miFinca?.descripcion}`}
+                    </Typography>
                   </Grid>
+
+
                   <Grid
                     item
-                    container
                     xs={6}
                     md={4}
                     pb={1}
-                    justifyContent="flex-end"
-                    style={{ margin: mobile ? "30px 0px 10px 0px" : "inherit" }}
+                    style={{
+                      textAlign: "right",
+                      margin: mobile ? "30px 0px 10px 0px" : "inherit"
+                    }}
                   >
                     <Button
                       id="crearStocks"

@@ -1,4 +1,5 @@
-export { default as BaseApi } from "./BaseApi";
-export { default as BaseController } from "./BaseController";
-export * from "./router";
-export { default as Templates } from "./Templates";
+export { default as BaseApi } from "./BaseApi.js";
+export { default as BaseController } from "./BaseController.js";
+export * from "./router.jsx";
+export { default as Templates } from "./Templates.js";
+

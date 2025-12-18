@@ -1,12 +1,14 @@
 export * from './comps'
-import schemas from './static/schemas'
 import AppMenu from './static/appmenu'
+import schemas from './static/schemas'
 
 import * as Inventario from './views/Inventario'
 import * as Inventarios from './views/Inventarios'
 import * as LineaInventario from './views/LineaInventario'
 import * as LineaInventarioNueva from './views/LineaInventarioNueva'
 
+import core from "@quimera-extension/core"
+import login from "@quimera-extension/login"
 import * as InventariosMaster from './views/Inventarios/InventariosMaster'
 
 export default {
@@ -28,6 +30,7 @@ export default {
     '/almacen/inventarios': { type: 'view', view: 'Inventarios' },
     '/almacen/inventarios/:codInventario': { type: 'view', view: 'Inventarios' }
   },
+  dependencies: [core, login],
   rules: {
     'Inventarios:visit': (check: (rule: string) => boolean) => check('inventarios'),
   },

@@ -1,7 +1,7 @@
 import { Field, Grid, Icon, QSection, Typography } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 import { Agente, Cliente, Proveedor } from "../../comps";
 // import { Grid, Button, Column, Field, Table, Dialog, DialogContent, IconButton, Icon, Typography } from '@quimera/comps'
@@ -42,7 +42,7 @@ function ParteCarroNuevo({ callbackGuardado, useStyles, ...props }) {
         actionPrefix="nuevoParte"
         alwaysActive
         dynamicComp={() => (
-          <Grid container>
+          <Grid container direction="column" spacing={2}>
             <Grid item xs={12}>
               <Field.Select
                 id="buscarPor"

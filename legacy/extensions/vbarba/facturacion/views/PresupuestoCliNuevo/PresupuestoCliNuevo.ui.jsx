@@ -1,6 +1,6 @@
 import { Grid, Icon, QSection } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { Cliente } from "../../comps";
@@ -31,7 +31,7 @@ function PresupuestoCliNuevo({ callbackGuardado, useStyles, ...props }) {
         actionPrefix="nuevoPresupuesto"
         alwaysActive
         dynamicComp={() => (
-          <Grid container>
+          <Grid container direction="column" spacing={2}>
             <Grid item xs={12}>
               <Cliente
                 id="presupuesto.buffer/codCliente"

@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import Quimera, { useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { QAlmacenesVbarba } from "../../comps";
@@ -93,7 +93,7 @@ function Stock({ idStock, initStock, referencia, callbackChanged, callbackVolver
     <Quimera.Template id="Stock">
       <Container>
         <Box mt={1}>
-          <Grid container driection="row" style={{ marginBottom: "10px" }}>
+          <Grid container direction="column" style={{ marginBottom: "10px" }}>
             <Grid item container xs={12} md={2} pb={1} justifyContent="flex-start">
               <Typography variant="subtittle1">{`Finca: ${miFinca.descripcion}`}</Typography>
             </Grid>
@@ -150,7 +150,7 @@ function Stock({ idStock, initStock, referencia, callbackChanged, callbackVolver
           </Grid>
         </Box>
         <Box>
-          <Grid container driection="row" className={classes.cajaStock}>
+          <Grid container direction="column" className={classes.cajaStock}>
             <Grid item container xs={12} pb={1} justifyContent="space-between">
               <Typography variant="subtittle1">{`Total Stock: ${totalStockFinca}`}</Typography>
             </Grid>
@@ -200,6 +200,7 @@ function Stock({ idStock, initStock, referencia, callbackChanged, callbackVolver
                     id={`cambiarCantidadStock${almacen.codalmacen}`}
                     value={almacen.cantidad}
                     onClick={event => event.target.select()}
+                    variant="standard"
                     onChange={e =>
                       dispatch({
                         type: "onCantidadStockChanged",
