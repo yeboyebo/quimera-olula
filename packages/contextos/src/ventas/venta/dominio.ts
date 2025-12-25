@@ -1,5 +1,6 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { direccionVacia } from "../presupuesto/dominio.ts";
+import { NuevoPagoEfectivo } from "../ventaTpv/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
 
 export const ventaVacia: Venta = {
@@ -57,6 +58,8 @@ export const metaVenta: MetaModelo<Venta> = {
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
         cantidad: { tipo: "numero", requerido: true },
+        pvp_unitario: { tipo: "moneda", requerido: true },
+        dto_porcentual: { tipo: "numero", requerido: false },
         referencia: { requerido: true },
     }
 };
@@ -80,5 +83,11 @@ export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     campos: {
         cantidad: { tipo: "numero", requerido: true },
         referencia: { requerido: true },
+    }
+};
+
+export const metaNuevoPagoEfecctivo: MetaModelo<NuevoPagoEfectivo> = {
+    campos: {
+        importe: { tipo: "numero", requerido: true },
     }
 };

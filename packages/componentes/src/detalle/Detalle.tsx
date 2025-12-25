@@ -27,6 +27,7 @@ export function Detalle<T extends Entidad>({
   const { detalle } = estilos;
 
   useEffect(() => {
+
     if (id && (!entidad || id !== entidad.id)) {
       const load = async () => {
         const cliente = await cargar(id);

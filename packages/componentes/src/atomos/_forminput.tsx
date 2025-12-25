@@ -16,6 +16,7 @@ export type FormFieldProps = {
     evento: React.ChangeEvent<HTMLInputElement>
   ) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
+  onEnterKeyUp?: (valor: string, evento: React.KeyboardEvent<HTMLElement>) => void;
 };
 
 const tiposFormInput = {
@@ -63,6 +64,7 @@ export const FormInput = ({
   onChange,
   onBlur,
   onInput,
+  onEnterKeyUp,
 }: InputProps) => {
   const obtenerValorPorDefecto = () => {
     if (valor !== undefined && valor !== "" && valor != null) return valor;
@@ -97,6 +99,12 @@ export const FormInput = ({
     onInput?.((e.target as HTMLInputElement).value, e);
   };
 
+  const manejarKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onEnterKeyUp?.(e.target.value, e);
+    }
+  };
+
   return (
     <input
       type={tiposFormInput[tipo] ?? "text"}
@@ -114,6 +122,7 @@ export const FormInput = ({
       onBlur={manejarBlur}
       onFocus={manejarFocus}
       onInput={manejarInput}
+      onKeyUp={manejarKeyUp}
     />
   );
 };
