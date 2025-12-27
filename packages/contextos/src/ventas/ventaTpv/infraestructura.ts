@@ -91,7 +91,7 @@ export const postPago: PostPago = async (id, pago) => {
   const body = {
     importe: pago.importe,
     fecha: (new Date().toISOString()).slice(0, 10),
-    forma_pago_id: pago.idFormaPago
+    forma_pago: pago.formaPago
   }
   return await RestAPI.post(`${baseUrl}/${id}/pago`,
     body,

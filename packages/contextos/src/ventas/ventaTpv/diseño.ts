@@ -30,7 +30,7 @@ export type NuevoPagoEfectivo = {
 
 type PagoTpv = {
     importe: number;
-    idFormaPago: string;
+    formaPago: string;
 }
 
 export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<VentaTpv>;

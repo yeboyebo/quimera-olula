@@ -35,7 +35,7 @@ export const AltaPago = ({
   const crear = async () => {
     await intentar(() => postPago(idVenta, {
       importe: Number(modelo.importe),
-      idFormaPago: "efectivo",
+      formaPago: "EFECTIVO",
     }));
     publicar("pago_creado");
     init();
