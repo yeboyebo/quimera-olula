@@ -38,12 +38,21 @@ export const quitarItemDeLista = <E extends Entidad>(listaS: ListaSeleccionable<
 
 
 export const cargar = <E extends Entidad>(entidades: E[]) =>
-    (_: ListaSeleccionable<E>): ListaSeleccionable<E> =>
-        cargarLista(entidades);
-
-export const cargarLista = <E extends Entidad>(entidades: E[]) => ({
+    (lsAnterior: ListaSeleccionable<E>): ListaSeleccionable<E> => {
+        let idActivo = null;
+        if (lsAnterior.idActivo) {
+            const indice = lsAnterior.lista.findIndex(e => e.id === lsAnterior.idActivo);
+            if (entidades.length > indice) {
+                idActivo = entidades[indice].id;
+            } else if (entidades.length > 0) {
+                idActivo = entidades[entidades.length - 1].id;
+            }
+        }
+        return cargarLista(entidades, idActivo);
+    }
+export const cargarLista = <E extends Entidad>(entidades: E[], idActivo: string | null) => ({
     lista: entidades,
-    idActivo: null,
+    idActivo,
 });
 
 
