@@ -18,7 +18,9 @@ export const LineasLista = ({
   idFactura: string;
   refrescarCabecera: () => void;
 }) => {
+  
   const { intentar } = useContext(ContextoError);
+
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
     await intentar(() => patchCantidadLinea(idFactura, linea, cantidad));
     refrescarCabecera();

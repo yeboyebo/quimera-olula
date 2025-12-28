@@ -15,13 +15,11 @@ export const AltaPago = ({
   activo = false,
   publicar,
   idVenta,
-  refrescarCabecera,
   pendiente,
 }: {
   activo: boolean;
   publicar: EmitirEvento;
   idVenta: string;
-  refrescarCabecera: () => void;
   pendiente: number
 }) => {
 
@@ -38,13 +36,13 @@ export const AltaPago = ({
       formaPago: "EFECTIVO",
     }));
     publicar("pago_creado");
-    init();
-    refrescarCabecera();
+    // init();
+    // refrescarCabecera();
   };
 
   const cancelar = () => {
     publicar("pago_cancelado");
-    init();
+    // init();
   };
 
   useEffect(() => {

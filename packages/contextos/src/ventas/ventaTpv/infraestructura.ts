@@ -3,17 +3,19 @@ import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { Factura } from "../factura/diseño.ts";
-import { DeleteLinea, GetLineasFactura, GetVentasTpv, GetVentaTpv, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv } from "./diseño.ts";
+import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv } from "./diseño.ts";
 
 const baseUrlFactura = new ApiUrls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
 
 
 type LineaFacturaAPI = LineaFactura;
-
+type PagoVentaTpvAPI = PagoVentaTpv
 type VentaTpvAPI = VentaTpv
+
 export const ventaDesdeAPI = (p: VentaTpvAPI): VentaTpv => p;
 export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
+export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => p;
 
 export const getVenta: GetVentaTpv = async (id) => {
   return RestAPI.get<{ datos: VentaTpv }>(
@@ -86,6 +88,12 @@ export const getLineas: GetLineasFactura = async (id) =>
       return lineas;
     });
 
+export const getPagos: GetPagosVentaTpv = async (id) =>
+  await RestAPI.get<{ datos: PagoVentaTpvAPI[] }>(
+    `${baseUrl}/${id}/pagos`).then((respuesta) => {
+      const lineas = respuesta.datos.map((d) => pagoVentaTpvDesdeAPI(d));
+      return lineas;
+    });
 
 export const postPago: PostPago = async (id, pago) => {
   const body = {
@@ -165,10 +173,14 @@ export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad
   await RestAPI.patch(`${baseUrlFactura}/${id}/linea/${linea.id}`, payload, "Error al actualizar cantidad de la línea de factura");
 };
 
-export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
+export const deleteLinea: DeleteLinea = async (id, lineaId): Promise<void> => {
   await RestAPI.patch(`${baseUrlFactura}/${id}/linea/borrar`, {
     lineas: [lineaId]
-  }, "Error al borrar línea de factura");
+  }, "Error al borrar línea de venta");
+};
+
+export const deletePago: DeletePago = async (id, idPago): Promise<void> => {
+  await RestAPI.delete(`${baseUrl}/${id}/pago/${idPago}`, "Error al borrar pago de factura");
 };
 
 export const patchFactura = async (id: string, factura: Factura) => {

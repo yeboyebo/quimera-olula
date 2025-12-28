@@ -1,4 +1,4 @@
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { Factura } from "../factura/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
@@ -9,6 +9,14 @@ export interface VentaTpv extends Venta {
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
 }
+
+export interface PagoVentaTpv extends Entidad {
+    id: string;
+    importe: number;
+    forma_pago: string;
+    fecha: string;
+}
+
 
 export type NuevaVentaTpv = {
     agente_id: string;
@@ -39,6 +47,8 @@ export type GetVentaTpv = (id: string) => Promise<VentaTpv>;
 
 export type GetLineasFactura = (id: string) => Promise<LineaFactura[]>;
 
+export type GetPagosVentaTpv = (id: string) => Promise<PagoVentaTpv[]>;
+
 export type PostVentaTpv = () => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
@@ -58,3 +68,5 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type DeletePago = (id: string, idPago: string) => Promise<void>;

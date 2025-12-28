@@ -150,7 +150,7 @@ export const MaestroConDetalleVentaTpv = () => {
         setSeleccionada={setSeleccionada}
         cargar={getVentas}
         Detalle={
-          <DetalleVentaTpv ventaInicial={seleccionada} emitir={emitir} />
+          <DetalleVentaTpv ventaInicial={seleccionada} publicar={emitir} />
         }
       />
       {/* <QModal
