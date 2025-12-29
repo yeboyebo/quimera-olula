@@ -7,11 +7,11 @@ import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useContext, useEffect } from "react";
-import { nuevoPagoEfectivoVacio } from "../../dominio.ts";
-import { postPago } from "../../infraestructura.ts";
-import "./AltaPago.css";
+import { nuevoPagoEfectivoVacio } from "../../../dominio.ts";
+import { postPago } from "../../../infraestructura.ts";
+import "./AltaPagoTarjeta.css";
 
-export const AltaPago = ({
+export const AltaPagoTarjeta = ({
   activo = false,
   publicar,
   idVenta,
@@ -23,7 +23,7 @@ export const AltaPago = ({
   pendiente: number
 }) => {
 
-  const { modelo, uiProps, valido, init, dispatch } = useModelo(metaNuevoPagoEfecctivo, {
+  const { modelo, uiProps, valido, dispatch } = useModelo(metaNuevoPagoEfecctivo, {
     ...nuevoPagoEfectivoVacio,
     factura_id: idVenta,
   });
@@ -31,29 +31,36 @@ export const AltaPago = ({
   const { intentar } = useContext(ContextoError);
 
   const crear = async () => {
-    await intentar(() => postPago(idVenta, {
-      importe: Number(modelo.importe),
-      formaPago: "EFECTIVO",
+    const pagado = Number(modelo.importe) < pendiente
+      ? Number(modelo.importe)
+      : pendiente;
+    const idPago = await intentar(() => postPago(idVenta, {
+      importe: pagado,
+      formaPago: "TARJETA",
     }));
-    publicar("pago_creado");
-    // init();
-    // refrescarCabecera();
+    publicar("pago_creado", idPago);
   };
 
   const cancelar = () => {
     publicar("pago_cancelado");
-    // init();
   };
 
   useEffect(() => {
-    console.log("AltaPago", activo);
     if (activo) {
-      dispatch({
-            type: "set_campo",
-            payload: { campo:'importe', valor:pendiente.toString() },
-        });
+      setImporte(pendiente);
     }
   }, [activo]);
+
+  const setImporte = (v: number) => {
+    dispatch({
+      type: "set_campo",
+      payload: { campo: "importe", valor: v.toString() },
+    });
+  }
+
+  const limpiar = () => {
+    setImporte(0);  
+  }
 
   return (
     <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
@@ -61,7 +68,12 @@ export const AltaPago = ({
         <h2>Nuevo pago</h2>
         <quimera-formulario>
           <QInput label="Importe" {...uiProps("importe")} />
+          
         </quimera-formulario>
+        <div className="botones maestro-botones ">
+          {`A Pagar: ${pendiente}€`}
+          <QBoton onClick={limpiar}>Limpiar</QBoton>
+        </div>
         <div className="botones maestro-botones ">
           <QBoton onClick={crear} deshabilitado={!valido}>
             Guardar

@@ -179,7 +179,7 @@ export function useMaquina4<Estado extends string, Contexto extends ContextoBase
     );
 
     const emitir = useConstant(() => (evento: string, payload: unknown) => {
-        console.log("Evento recibido:", evento, "con payload:", payload);
+        // console.log("Evento recibido:", evento, "con payload:", payload);
         dispatch({ evento, payload })
     });
 
@@ -230,4 +230,105 @@ const useConstant = <T>(compute: () => T): T => {
     return ref.current;
 };
 
+type OnEvento5<E extends string> = (payload?: unknown) => E;
+export type ConfigMaquina5<E extends string> = {
+    // inicial: E,
+    estados: Record<E, Record<string, E | OnEvento5<E>>>;
+}
 
+export const calcularEstado = <Estado extends string>(maquina: ConfigMaquina5<Estado>, estado: Estado, evento: string, payload: unknown) => {
+    // console.log("Evento recibido5:", evento, "con payload:", payload);
+    // console.log("Estado actual:", estado);
+
+    if (!(evento in maquina.estados[estado])) {
+        return estado;
+    }
+    const proceso = maquina.estados[estado][evento];
+
+    const nuevoEstado = proceso ?
+        typeof proceso === 'string'
+            ? proceso
+            : proceso(payload)
+        : estado;
+
+    return nuevoEstado;
+}
+
+// type ParamsOnEvento5 = {
+//     payload?: unknown;
+//     // setEstado: (estado: E) => (maquina: Maquina3<E, C>) => Maquina3<E, C>;
+//     publicar: ProcesarEvento;
+// }
+
+
+
+// type OpcionesMaquina5<Estado extends string> = {
+//     config: ConfigMaquina5<Estado>,
+//     publicar?: ProcesarEvento
+// }
+
+// export function useMaquina5<Estado extends string>(
+//     {
+//         config,
+//     }: OpcionesMaquina5<Estado>,
+// ): [
+//         ProcesarEvento,
+//         Estado
+//     ] {
+
+//     const [estado, setEstado] = useState<Estado>(config.inicial);
+
+
+//     const emitir = useConstant(() => (evento: string, payload: unknown) => {
+//         console.log("Evento recibido5:", evento, "con payload:", payload);
+//         console.log("Estado actual:", estado);
+
+//         if (!(evento in config.estados[estado])) {
+//             console.log("Evento no válido para el estado actual");
+//             return;
+//         }
+//         const proceso = config.estados[estado][evento];
+
+//         const nuevoEstado = proceso ?
+//             typeof proceso === 'string'
+//                 ? proceso
+//                 : proceso(payload)
+//             : estado;
+
+//         if (nuevoEstado === estado) {
+//             console.log("Estado igual al anterior");
+//             return;
+//         }
+//         console.log("Nuevo estado:", nuevoEstado);
+//         setEstado(nuevoEstado);
+//     });
+//     // const emitir = useCallback(() => (evento: string, payload: unknown) => {
+//     //     console.log("Evento recibido5:", evento, "con payload:", payload);
+//     //     console.log("Estado actual:", estado);
+
+//     //     if (!(evento in config.estados[estado])) {
+//     //         console.log("Evento no válido para el estado actual");
+//     //         return;
+//     //     }
+//     //     const proceso = config.estados[estado][evento];
+
+//     //     const nuevoEstado = proceso ?
+//     //         typeof proceso === 'string'
+//     //             ? proceso
+//     //             : proceso(payload)
+//     //         : estado;
+
+//     //     if (nuevoEstado === estado) {
+//     //         console.log("Estado igual al anterior");
+//     //         return;
+//     //     }
+//     //     console.log("Nuevo estado:", nuevoEstado);
+//     //     setEstado(nuevoEstado);
+//     // }, [estado, setEstado]);
+
+
+//     return [
+//         emitir,
+//         estado
+//     ];
+// }

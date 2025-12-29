@@ -84,14 +84,17 @@ import { LineasLista } from "./LineasLista.tsx";
 //   },
 // };
 import { Contexto, Estado, configMaquina } from "../../../dominio.ts";
+import { EstadoVentaTpv } from "../DetalleVentaTpv.tsx";
 
 export const Lineas = ({
   facturaId,
   facturaEditable,
+  estadoVenta,
   onCabeceraModificada,
 }: {
   onCabeceraModificada: () => void;
   facturaId: string;
+  estadoVenta: EstadoVentaTpv;
   facturaEditable?: boolean;
 }) => {
   const { intentar } = useContext(ContextoError);
@@ -134,7 +137,7 @@ export const Lineas = ({
 
   return (
     <>
-      {facturaEditable && (
+      {estadoVenta !== "EMITIDA" && (
         <div className="botones maestro-botones ">
           <QInput label='Barcode' nombre='barcode' onEnterKeyUp={
             (barcode)=>alta_rapida_clicked(barcode)
