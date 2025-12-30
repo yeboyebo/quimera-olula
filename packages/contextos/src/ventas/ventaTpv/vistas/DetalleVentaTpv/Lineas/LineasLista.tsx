@@ -8,26 +8,24 @@ import { patchCantidadLinea } from "../../../infraestructura.ts";
 export const LineasLista = ({
   lineas,
   seleccionada,
-  emitir,
+  publicar,
   idFactura,
-  refrescarCabecera,
 }: {
   lineas: Linea[];
   seleccionada?: string;
-  emitir: EmitirEvento;
+  publicar: EmitirEvento;
   idFactura: string;
-  refrescarCabecera: () => void;
 }) => {
   
   const { intentar } = useContext(ContextoError);
 
   const cambiarCantidad = async (linea: Linea, cantidad: number) => {
     await intentar(() => patchCantidadLinea(idFactura, linea, cantidad));
-    refrescarCabecera();
+    publicar("linea_cambiada");
   };
 
   const setSeleccionada = (linea: Linea) => {
-    emitir("linea_seleccionada", linea);
+    publicar("linea_seleccionada", linea);
   };
 
   return (

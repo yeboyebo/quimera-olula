@@ -1,24 +1,15 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.ts";
-import { useContext } from "react";
 import { PagoVentaTpv } from "../../../diseño.ts";
 
 export const PagosLista = ({
   pagos,
-  // seleccionado,
   publicar,
-  idVenta,
-  // refrescarCabecera,
 }: {
   pagos: ListaSeleccionable<PagoVentaTpv>;
-  // seleccionado?: string;
   publicar: EmitirEvento;
-  idVenta: string;
-  // refrescarCabecera: () => void;
 }) => {
   
-  const { intentar } = useContext(ContextoError);
 
   const setSeleccionado = (pago: PagoVentaTpv) => {
     publicar("pago_seleccionado", pago);

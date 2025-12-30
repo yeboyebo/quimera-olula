@@ -10,7 +10,7 @@ import {
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { postLinea } from "../../../infraestructura.ts";
 import "./AltaLinea.css";
 
@@ -18,12 +18,10 @@ export const AltaLinea = ({
   activo = false,
   publicar,
   idFactura,
-  refrescarCabecera,
 }: {
   activo: boolean;
   publicar: EmitirEvento;
   idFactura: string;
-  refrescarCabecera: () => void;
 }) => {
   const { modelo, uiProps, valido, init } = useModelo(metaNuevaLineaFactura, {
     ...nuevaLineaFacturaVacia,
@@ -34,14 +32,17 @@ export const AltaLinea = ({
   const crear = async () => {
     await intentar(() => postLinea(idFactura, modelo));
     publicar("linea_creada");
-    init();
-    refrescarCabecera();
   };
 
   const cancelar = () => {
-    publicar("creacion_cancelada");
-    init();
+    publicar("alta_linea_cancelada");
   };
+
+  useEffect(() => {
+    if (activo) {
+      init();
+    }
+  }, [activo]);
 
   return (
     <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>

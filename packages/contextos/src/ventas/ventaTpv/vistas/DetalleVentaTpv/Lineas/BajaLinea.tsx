@@ -8,13 +8,11 @@ export const BajaLinea = ({
   activo = false,
   idLinea,
   idFactura,
-  refrescarCabecera,
 }: {
   publicar: (evento: string, payload?: unknown) => void;
   idLinea?: string;
   idFactura: string;
   activo?: boolean;
-  refrescarCabecera: () => void;
 }) => {
   const { intentar } = useContext(ContextoError);
 
@@ -23,8 +21,7 @@ export const BajaLinea = ({
       await intentar(() => deleteLinea(idFactura, idLinea));
     }
 
-    publicar("borrado_confirmado");
-    refrescarCabecera();
+    publicar("linea_borrada");
   };
 
   return (
@@ -33,7 +30,7 @@ export const BajaLinea = ({
       abierto={activo}
       titulo="Confirmar borrado"
       mensaje="¿Está seguro de que desea borrar esta línea?"
-      onCerrar={() => publicar("borrado_cancelado")}
+      onCerrar={() => publicar("baja_linea_cancelada")}
       onAceptar={borrar}
     />
   );

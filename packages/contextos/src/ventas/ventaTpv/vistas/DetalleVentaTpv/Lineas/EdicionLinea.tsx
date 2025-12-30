@@ -14,23 +14,22 @@ export const EdicionLinea = ({
   activo,
   lineaSeleccionada,
   idFactura,
-  refrescarCabecera,
 }: {
   lineaSeleccionada: LineaFactura;
   publicar: EmitirEvento;
   activo: boolean;
   idFactura: string;
-  refrescarCabecera: () => void;
 }) => {
+
   const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido, init } = useModelo(
     metaLineaFactura,
     lineaSeleccionada
   );
+
   const guardar = async (linea: LineaFactura) => {
     await intentar(() => patchLinea(idFactura, linea));
-    publicar("edicion_confirmada");
-    refrescarCabecera();
+    publicar("linea_cambiada");
   };
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export const EdicionLinea = ({
   }, [lineaSeleccionada, init]);
 
   const cancelar = () => {
-    publicar("edicion_cancelada");
+    publicar("cambio_linea_cancelado");
     init();
   };
 
@@ -47,7 +46,6 @@ export const EdicionLinea = ({
       <div className="EdicionLinea">
         <h2>Edición de línea</h2>
         <quimera-formulario>
-          {/* <Articulo {...uiProps("referencia", "descripcion")} /> */}
           <div id='titulo'>
           <h3>{`${lineaSeleccionada.descripcion}`}</h3>
           {`Ref: ${lineaSeleccionada.referencia}`}

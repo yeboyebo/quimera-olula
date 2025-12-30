@@ -19,6 +19,9 @@ export const PendienteVenta = ({
   return (
     <div className="pendientes-venta">
       <div className="botones maestro-botones ">
+      <QBoton onClick={() => publicar("devolucion_solicitada")}>
+        Devolución
+      </QBoton>
       <QBoton onClick={() => publicar("pago_efectivo_solicitado")}>
         P. Efectivo 
       </QBoton>

@@ -9,15 +9,17 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
-import { PagoVentaTpv, VentaTpv } from "../../diseño.ts";
+import { LineaFactura, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
 import { metaVentaTpv, ventaTpvVacia } from "../../dominio.ts";
 import {
+    getLineas,
     getPagos,
     getVenta,
     patchFactura
 } from "../../infraestructura.ts";
 import { BajaVentaTpv } from "./BajaVentaTpv.tsx";
 import "./DetalleVentaTpv.css";
+import { DevolucionVenta } from "./Devolucion/DevolucionVenta.tsx";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { AltaPagoEfectivo } from "./Pagos/AltaPagoEfectivo.tsx";
 import { AltaPagoTarjeta } from "./Pagos/AltaPagoTarjeta.tsx";
@@ -31,6 +33,8 @@ import { TabDatos } from "./TabDatos.tsx";
 export type EstadoVentaTpv = (
   "ABIERTA" | "BORRANDO_VENTA" | "PAGANDO_EFECTIVO"
   | "BORRANDO_PAGO" | "PAGANDO_TARJETA" | "EMITIDA"
+  | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+  | "DEVOLVIENDO_VENTA"
 );
 
 const abiertaOEmitida = (payload: unknown ) => {
@@ -41,9 +45,13 @@ const abiertaOEmitida = (payload: unknown ) => {
 const maquina: ConfigMaquina5<EstadoVentaTpv> = {
     estados: {
         ABIERTA: {
+            alta_linea_solicitada: "CREANDO_LINEA",
+            baja_linea_solicitada: "BORRANDO_LINEA",
+            cambio_linea_solicitado: "CAMBIANDO_LINEA",
+            borrar_solicitado: "BORRANDO_VENTA",
+            devolucion_solicitada: "DEVOLVIENDO_VENTA",
             guardar_iniciado: "ABIERTA",
             cliente_venta_cambiado: "ABIERTA",
-            borrar_solicitado: "BORRANDO_VENTA",
             pago_efectivo_solicitado: "PAGANDO_EFECTIVO",
             pago_tarjeta_solicitado: "PAGANDO_TARJETA",
             borrar_pago_solicitado: "BORRANDO_PAGO",
@@ -74,6 +82,26 @@ const maquina: ConfigMaquina5<EstadoVentaTpv> = {
             pago_borrado: "ABIERTA",
             pago_borrado_cancelado: "ABIERTA",
         },
+
+        DEVOLVIENDO_VENTA: {
+            venta_devuelta: "ABIERTA",
+            devolucion_cancelada: "ABIERTA",
+        },
+
+        CREANDO_LINEA: {
+            linea_creada: "ABIERTA",
+            alta_linea_cancelada: "ABIERTA",
+        }
+,
+        CAMBIANDO_LINEA: {
+            linea_cambiada: "ABIERTA",
+            cambio_linea_cancelado: "ABIERTA",
+        },
+
+        BORRANDO_LINEA: {
+            linea_borrada: "ABIERTA",
+            baja_linea_cancelada: "ABIERTA",
+        },
     },
 };
 
@@ -88,8 +116,9 @@ export const DetalleVentaTpv = ({
     const params = useParams();
     const { intentar } = useContext(ContextoError);
 
-    const [pagos, setPagos] = useState<ListaSeleccionable<PagoVentaTpv>>({ lista:[], idActivo: null });
     const [estado, setEstado] = useState<EstadoVentaTpv>("ABIERTA");
+    const [pagos, setPagos] = useState<ListaSeleccionable<PagoVentaTpv>>({ lista:[], idActivo: null });
+    const [lineas, setLineas] = useState<ListaSeleccionable<LineaFactura>>({ lista:[], idActivo: null });
 
     const ventaId = ventaInicial?.id ?? params.id;
     const titulo = (venta: Entidad) => venta.codigo as string;
@@ -105,6 +134,16 @@ export const DetalleVentaTpv = ({
             setPagos(cargar(nuevosPagos, idActivo));
         } ,
         [ventaId, setPagos, intentar, getPagos]
+    );
+
+    const recargarLineas = useCallback(
+        async (idActivo: string | undefined = undefined) => {
+            const nuevasLineas = ventaId
+                ? await intentar(() => getLineas(ventaId))
+                : [];
+            setLineas(cargar(nuevasLineas, idActivo));
+        } ,
+        [ventaId, setLineas, intentar, getLineas]
     );
     
     const procesarEstado = useCallback(
@@ -140,6 +179,13 @@ export const DetalleVentaTpv = ({
                     await recargarPagos(payload as string);
                     await recargarCabecera();
                     break;
+
+                case "linea_creada":
+                case "linea_borrada":
+                case "linea_cambiada":
+                    await recargarLineas(payload as string);
+                    await recargarCabecera();
+                    break;
                 
                 case "pago_seleccionado": {
                     setPagos(seleccionarItem(payload as PagoVentaTpv));
@@ -149,6 +195,15 @@ export const DetalleVentaTpv = ({
                 case "venta_borrada":
                     publicar("factura_borrada");
                     break;
+
+                case "venta_devuelta":
+                    await recargarCabecera();
+                    break;
+
+                case "linea_seleccionada": {
+                    setLineas(seleccionarItem(payload as LineaFactura));
+                    break;
+                }
             }
         },
         [recargarPagos, recargarCabecera, setPagos, publicar]
@@ -191,6 +246,17 @@ export const DetalleVentaTpv = ({
         };
         cargarPagos();
     }, [ventaId, intentar, getPagos, setPagos]);
+
+    useEffect(() => {
+        const cargarLineas = async () => {
+        const nuevasLineas = ventaId ? 
+            await intentar(() => getLineas(ventaId))
+            : [];
+
+            setLineas(cargar(nuevasLineas));
+        };
+        cargarLineas();
+    }, [ventaId, emitir, intentar, getLineas]);
   
 
     return (
@@ -258,16 +324,15 @@ export const DetalleVentaTpv = ({
                     />
                     )}
                 <Lineas
-                    onCabeceraModificada={recargarCabecera}
                     facturaId={ventaId}
-                    facturaEditable={true}
+                    lineas={lineas}
+                    publicar={emitir}
                     estadoVenta={estado}
                 />
                 <BajaVentaTpv
                     publicar={emitir}
                     activo={estado === "BORRANDO_VENTA"}
                     idVenta={ventaId}
-                    // refrescarCabecera={refrescarCabecera}
                 />
                 <AltaPagoEfectivo
                     publicar={emitir}
@@ -285,6 +350,11 @@ export const DetalleVentaTpv = ({
                     publicar={emitir}
                     activo={estado === "BORRANDO_PAGO"}
                     idPago={pagos.idActivo || undefined}
+                    idVenta={venta.modelo.id}
+                />
+                <DevolucionVenta 
+                    publicar={emitir}
+                    activo={estado === "DEVOLVIENDO_VENTA"}
                     idVenta={venta.modelo.id}
                 />
             </div>

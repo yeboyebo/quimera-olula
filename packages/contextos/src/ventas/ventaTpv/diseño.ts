@@ -6,8 +6,18 @@ export interface VentaTpv extends Venta {
     pendiente: number;
     pagado: number;
 }
+
+
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
+}
+
+export interface LineaADevolver extends LineaFactura {
+    aDevolver: number;
+}
+
+export interface VentaTpvADevolver extends VentaTpv {
+    lineas: LineaFactura[];
 }
 
 export interface PagoVentaTpv extends Entidad {
@@ -45,6 +55,8 @@ export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion
 
 export type GetVentaTpv = (id: string) => Promise<VentaTpv>;
 
+export type GetVentaTpvADevolver = (id: string) => Promise<VentaTpvADevolver>;
+
 export type GetLineasFactura = (id: string) => Promise<LineaFactura[]>;
 
 export type GetPagosVentaTpv = (id: string) => Promise<PagoVentaTpv[]>;
@@ -60,6 +72,8 @@ export type PostLineaPorBarcode = (id: string, lineaPorBarcode: LineaPorBarcode)
 export type PatchFactura = (id: string, factura: Factura) => Promise<void>;
 
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
+
+export type PatchDevolverVenta = (id: string, venta: VentaTpv, lineasADevolver: LineaADevolver[]) => Promise<void>;
 
 export type PatchLinea = (id: string, linea: LineaFactura) => Promise<void>;
 

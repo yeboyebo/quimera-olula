@@ -3,7 +3,7 @@ import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { Factura } from "../factura/diseño.ts";
-import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv } from "./diseño.ts";
+import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchLinea, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrlFactura = new ApiUrls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
@@ -12,8 +12,10 @@ const baseUrl = new ApiUrls().VENTA;
 type LineaFacturaAPI = LineaFactura;
 type PagoVentaTpvAPI = PagoVentaTpv
 type VentaTpvAPI = VentaTpv
+type VentaTpvADevolverAPI = VentaTpvADevolver
 
 export const ventaDesdeAPI = (p: VentaTpvAPI): VentaTpv => p;
+export const ventaADevolverDesdeAPI = (p: VentaTpvADevolverAPI): VentaTpvADevolver => p;
 export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
 export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => p;
 
@@ -21,6 +23,13 @@ export const getVenta: GetVentaTpv = async (id) => {
   return RestAPI.get<{ datos: VentaTpv }>(
     `${baseUrl}/${id}`).then((respuesta) => {
       return ventaDesdeAPI(respuesta.datos);
+    });
+};
+
+export const getVentaADevolver: GetVentaTpvADevolver = async (codigo) => {
+  return RestAPI.get<{ datos: VentaTpvADevolver }>(
+    `${baseUrl}/${codigo}/a_devolver`).then((respuesta) => {
+      return ventaADevolverDesdeAPI(respuesta.datos);
     });
 };
 
@@ -81,6 +90,18 @@ export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
   }, "Error al cambiar cliente de la factura");
 };
 
+export const patchDevolverVenta: PatchDevolverVenta = async (id, venta, lineasADevolver) => {
+  await RestAPI.patch(`${baseUrlFactura}/${id}/rectificar`, {
+    rectificada_id: venta.id,
+    lineas_rectificadas: lineasADevolver.filter(
+      (l) => l.aDevolver > 0
+    ).
+      map((l) => ({
+        id: l.id,
+        cantidad: l.aDevolver * -1
+      }))
+  }, "Error al cambiar cliente de la factura");
+}
 export const getLineas: GetLineasFactura = async (id) =>
   await RestAPI.get<{ datos: LineaFacturaAPI[] }>(
     `${baseUrl}/${id}/lineas`).then((respuesta) => {
