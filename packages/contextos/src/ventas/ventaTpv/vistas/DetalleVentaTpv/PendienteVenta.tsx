@@ -1,33 +1,59 @@
 import { QBoton } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { formatearMoneda } from "@olula/lib/dominio.ts";
+import { HookModelo } from "@olula/lib/useModelo.js";
+import { VentaTpv } from "../../diseño.ts";
 import "./PendienteVenta.css";
 
 interface PendienteVentaProps {
-  total: number;
-  pagado: number;
-  divisa: string;
+  // total: number;
+  // pagado: number;
+  // divisa: string;
+  venta: HookModelo<VentaTpv>;
   publicar: EmitirEvento,
 }
 
 export const PendienteVenta = ({
-  total,
-  pagado,
-  divisa,
+  venta,
   publicar,
 }: PendienteVentaProps) => {
+
+  const total = venta.modelo.total;
+  const pagado = venta.modelo.pagado;
+  const divisa = venta.modelo.divisa_id || "EUR";
+
+  const pendiente = total - pagado;
+
+  console.log(venta.modelo);
+
   return (
     <div className="pendientes-venta">
       <div className="botones maestro-botones ">
-      <QBoton onClick={() => publicar("devolucion_solicitada")}>
-        Devolución
-      </QBoton>
-      <QBoton onClick={() => publicar("pago_efectivo_solicitado")}>
-        P. Efectivo 
-      </QBoton>
-      <QBoton onClick={() => publicar("pago_tarjeta_solicitado")}>
-        P. Tarjeta 
-      </QBoton>
+
+        {venta.modelo.total >= 0 && (
+          <QBoton onClick={() => publicar("devolucion_solicitada")}>
+            Devolución
+          </QBoton>
+        )}
+
+        {pendiente < 0 && (
+          <QBoton onClick={() => publicar("emision_de_vale_solicitada")}>
+            Emitir Vale
+          </QBoton>
+        )}
+
+        {pendiente > 0 && (
+          <>
+            <QBoton onClick={() => publicar("pago_efectivo_solicitado")}>
+              P. Efectivo 
+            </QBoton>
+
+            <QBoton onClick={() => publicar("pago_tarjeta_solicitado")}>
+              P. Tarjeta 
+            </QBoton>
+          </>
+        )}
+
       </div>
       <div className="pendientes-venta-item">
         <label>Total:</label>

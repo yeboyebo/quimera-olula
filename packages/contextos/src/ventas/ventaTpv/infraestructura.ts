@@ -3,7 +3,7 @@ import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { Factura } from "../factura/diseño.ts";
-import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchLinea, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchLinea, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrlFactura = new ApiUrls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
@@ -102,6 +102,17 @@ export const patchDevolverVenta: PatchDevolverVenta = async (id, venta, lineasAD
       }))
   }, "Error al cambiar cliente de la factura");
 }
+
+export const postEmitirVale: PostEmitirVale = async (venta) => {
+  await RestAPI.post(
+    `${baseUrl}/${venta.id}/emitir_vale`,
+    {
+      punto_venta_id: puntoVentaLocal.obtener(),
+    },
+    "Error al cambiar cliente de la factura"
+  );
+}
+
 export const getLineas: GetLineasFactura = async (id) =>
   await RestAPI.get<{ datos: LineaFacturaAPI[] }>(
     `${baseUrl}/${id}/lineas`).then((respuesta) => {

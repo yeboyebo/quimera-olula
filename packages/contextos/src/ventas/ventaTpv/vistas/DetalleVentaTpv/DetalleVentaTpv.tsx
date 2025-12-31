@@ -24,6 +24,7 @@ import { Lineas } from "./Lineas/Lineas.tsx";
 import { AltaPagoEfectivo } from "./Pagos/AltaPagoEfectivo.tsx";
 import { AltaPagoTarjeta } from "./Pagos/AltaPagoTarjeta.tsx";
 import { BajaPago } from "./Pagos/BajaPago.tsx";
+import { EmisionVale } from "./Pagos/EmisionVale.tsx";
 import { Pagos } from "./Pagos/Pagos.tsx";
 import { PendienteVenta } from "./PendienteVenta.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
@@ -34,6 +35,7 @@ export type EstadoVentaTpv = (
   "ABIERTA" | "BORRANDO_VENTA" | "PAGANDO_EFECTIVO"
   | "BORRANDO_PAGO" | "PAGANDO_TARJETA" | "EMITIDA"
   | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+  | "EMITIENDO_VALE"
   | "DEVOLVIENDO_VENTA"
 );
 
@@ -50,6 +52,7 @@ const maquina: ConfigMaquina5<EstadoVentaTpv> = {
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
             borrar_solicitado: "BORRANDO_VENTA",
             devolucion_solicitada: "DEVOLVIENDO_VENTA",
+            emision_de_vale_solicitada: "EMITIENDO_VALE",
             guardar_iniciado: "ABIERTA",
             cliente_venta_cambiado: "ABIERTA",
             pago_efectivo_solicitado: "PAGANDO_EFECTIVO",
@@ -69,12 +72,12 @@ const maquina: ConfigMaquina5<EstadoVentaTpv> = {
         },
 
         PAGANDO_EFECTIVO: {
-            pago_creado: "ABIERTA",
+            pago_creado: abiertaOEmitida,
             pago_cancelado: "ABIERTA",
         },
 
         PAGANDO_TARJETA: {
-            pago_creado: "ABIERTA",
+            pago_creado: abiertaOEmitida,
             pago_cancelado: "ABIERTA",
         },
 
@@ -101,6 +104,11 @@ const maquina: ConfigMaquina5<EstadoVentaTpv> = {
         BORRANDO_LINEA: {
             linea_borrada: "ABIERTA",
             baja_linea_cancelada: "ABIERTA",
+        },
+
+        EMITIENDO_VALE: {
+            vale_emitido: abiertaOEmitida,
+            emision_de_vale_cancelada: "ABIERTA",
         },
     },
 };
@@ -149,6 +157,7 @@ export const DetalleVentaTpv = ({
     const procesarEstado = useCallback(
         (evento: string, payload?: unknown) => {
             const nuevoEstado = calcularEstado(maquina, estado, evento, payload); 
+            console.log("Procesar estado evento:", evento, "estado actual:", estado, " a ", nuevoEstado);
             if (nuevoEstado !== estado) setEstado(nuevoEstado);
         },
         [estado, setEstado]
@@ -161,24 +170,24 @@ export const DetalleVentaTpv = ({
             init(nuevaVenta);
             procesarEstado("venta_cargada", nuevaVenta);
             publicar("venta_cambiada", nuevaVenta);
+            return nuevaVenta;
         },
         [init, getVenta, modelo, procesarEstado]
     );
  
-    const postEvento = useCallback(
+    const preEvento = useCallback(
         async (evento: string, payload?: unknown) => {
 
             switch (evento) {
                 case "pagos_cargados":
                 case "pago_borrado":
                     await recargarPagos();
-                    await recargarCabecera();
-                    break;
+                    return await recargarCabecera();
 
                 case "pago_creado":
+                case "vale_emitido":
                     await recargarPagos(payload as string);
-                    await recargarCabecera();
-                    break;
+                    return await recargarCabecera();
 
                 case "linea_creada":
                 case "linea_borrada":
@@ -211,10 +220,10 @@ export const DetalleVentaTpv = ({
 
     const emitir = useCallback(
         async (evento: string, payload?: unknown) => {
-            procesarEstado(evento, payload);
-            postEvento(evento, payload);
+            const nuevoPayload = await preEvento(evento, payload);
+            procesarEstado(evento, nuevoPayload ?? payload);
         },
-        [procesarEstado, postEvento]
+        [procesarEstado, preEvento]
     );
 
     const getVentaUI = useCallback(
@@ -315,14 +324,14 @@ export const DetalleVentaTpv = ({
                     total={Number(modelo.total ?? 0)}
                     divisa={String(modelo.coddivisa ?? "EUR")}
                 />
+
                 { estado !== "EMITIDA" && (
                     <PendienteVenta 
                         publicar={emitir}
-                        total={Number(modelo.total ?? 0)}
-                        divisa={String(modelo.coddivisa ?? "EUR")}
-                        pagado={Number(modelo.pagado ?? 0)}
+                        venta={venta}
                     />
-                    )}
+                )}
+                
                 <Lineas
                     facturaId={ventaId}
                     lineas={lineas}
@@ -356,6 +365,12 @@ export const DetalleVentaTpv = ({
                     publicar={emitir}
                     activo={estado === "DEVOLVIENDO_VENTA"}
                     idVenta={venta.modelo.id}
+                />
+
+                <EmisionVale
+                    publicar={emitir}
+                    activo={estado === "EMITIENDO_VALE"}
+                    venta={venta}
                 />
             </div>
         )}

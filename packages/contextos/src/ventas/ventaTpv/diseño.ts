@@ -69,6 +69,8 @@ export type PostPago = (id: string, pago: PagoTpv) => Promise<string>;
 
 export type PostLineaPorBarcode = (id: string, lineaPorBarcode: LineaPorBarcode) => Promise<string>;
 
+export type PostEmitirVale = (venta: VentaTpv) => Promise<void>;
+
 export type PatchFactura = (id: string, factura: Factura) => Promise<void>;
 
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
