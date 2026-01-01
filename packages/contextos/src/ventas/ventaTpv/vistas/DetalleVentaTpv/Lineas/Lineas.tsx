@@ -12,8 +12,8 @@ import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
 import { LineaFactura } from "#/ventas/factura/diseño.ts";
+import { EstadoVentaTpv } from "#/ventas/ventaTpv/diseño.ts";
 import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.js";
-import { EstadoVentaTpv } from "../DetalleVentaTpv.tsx";
 
 export const Lineas = ({
         facturaId,
@@ -37,7 +37,7 @@ export const Lineas = ({
             barcode: barcode,
             cantidad: 1
         }));
-        publicar("linea_cambiada")
+        publicar("linea_creada")
     };
 
     return (

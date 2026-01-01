@@ -1,4 +1,4 @@
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, ListaSeleccionable, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { Factura } from "../factura/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
@@ -86,3 +86,22 @@ export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: num
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type DeletePago = (id: string, idPago: string) => Promise<void>;
+
+export type EstadoVentaTpv = (
+    'INICIAL' |
+    "ABIERTA" | "BORRANDO_VENTA" | "PAGANDO_EFECTIVO"
+    | "BORRANDO_PAGO" | "PAGANDO_TARJETA" | "EMITIDA"
+    | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+    | "EMITIENDO_VALE"
+    | "DEVOLVIENDO_VENTA"
+);
+
+export type ContextoVentaTpv = {
+    estado: EstadoVentaTpv,
+    venta: VentaTpv;
+    ventaInicial: VentaTpv;
+    pagos: ListaSeleccionable<PagoVentaTpv>;
+    lineas: ListaSeleccionable<LineaFactura>;
+    eventos: [string, unknown][];
+    // publicar: EmitirEvento;
+};

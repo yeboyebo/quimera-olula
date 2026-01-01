@@ -3,18 +3,13 @@ import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad, ListaSeleccionable } from "@olula/lib/diseño.ts";
-import { cargar, seleccionarItem } from "@olula/lib/entidad.js";
-import { calcularEstado, ConfigMaquina5 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
-import { LineaFactura, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
-import { metaVentaTpv, ventaTpvVacia } from "../../dominio.ts";
+import { ContextoVentaTpv, EstadoVentaTpv, LineaFactura, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
+import { metaVentaTpv, procesarEvento, ventaTpvVacia } from "../../dominio.ts";
 import {
-    getLineas,
-    getPagos,
-    getVenta,
     patchFactura
 } from "../../infraestructura.ts";
 import { BajaVentaTpv } from "./BajaVentaTpv.tsx";
@@ -29,90 +24,6 @@ import { Pagos } from "./Pagos/Pagos.tsx";
 import { PendienteVenta } from "./PendienteVenta.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
-
-
-export type EstadoVentaTpv = (
-  "ABIERTA" | "BORRANDO_VENTA" | "PAGANDO_EFECTIVO"
-  | "BORRANDO_PAGO" | "PAGANDO_TARJETA" | "EMITIDA"
-  | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
-  | "EMITIENDO_VALE"
-  | "DEVOLVIENDO_VENTA"
-);
-
-const abiertaOEmitida = (payload: unknown ) => {
-    const venta = payload as VentaTpv;
-    return venta.abierta ? "ABIERTA" : "EMITIDA";
-}
-
-const maquina: ConfigMaquina5<EstadoVentaTpv> = {
-    estados: {
-        ABIERTA: {
-            alta_linea_solicitada: "CREANDO_LINEA",
-            baja_linea_solicitada: "BORRANDO_LINEA",
-            cambio_linea_solicitado: "CAMBIANDO_LINEA",
-            borrar_solicitado: "BORRANDO_VENTA",
-            devolucion_solicitada: "DEVOLVIENDO_VENTA",
-            emision_de_vale_solicitada: "EMITIENDO_VALE",
-            guardar_iniciado: "ABIERTA",
-            cliente_venta_cambiado: "ABIERTA",
-            pago_efectivo_solicitado: "PAGANDO_EFECTIVO",
-            pago_tarjeta_solicitado: "PAGANDO_TARJETA",
-            borrar_pago_solicitado: "BORRANDO_PAGO",
-            pagos_cargados: "ABIERTA",
-            venta_cargada: abiertaOEmitida
-        },
-
-        EMITIDA: {
-            venta_cargada: abiertaOEmitida
-        },
-
-        BORRANDO_VENTA: {
-            venta_borrada: "ABIERTA",
-            borrar_cancelado: "ABIERTA",
-        },
-
-        PAGANDO_EFECTIVO: {
-            pago_creado: abiertaOEmitida,
-            pago_cancelado: "ABIERTA",
-        },
-
-        PAGANDO_TARJETA: {
-            pago_creado: abiertaOEmitida,
-            pago_cancelado: "ABIERTA",
-        },
-
-        BORRANDO_PAGO: {
-            pago_borrado: "ABIERTA",
-            pago_borrado_cancelado: "ABIERTA",
-        },
-
-        DEVOLVIENDO_VENTA: {
-            venta_devuelta: "ABIERTA",
-            devolucion_cancelada: "ABIERTA",
-        },
-
-        CREANDO_LINEA: {
-            linea_creada: "ABIERTA",
-            alta_linea_cancelada: "ABIERTA",
-        }
-,
-        CAMBIANDO_LINEA: {
-            linea_cambiada: "ABIERTA",
-            cambio_linea_cancelado: "ABIERTA",
-        },
-
-        BORRANDO_LINEA: {
-            linea_borrada: "ABIERTA",
-            baja_linea_cancelada: "ABIERTA",
-        },
-
-        EMITIENDO_VALE: {
-            vale_emitido: abiertaOEmitida,
-            emision_de_vale_cancelada: "ABIERTA",
-        },
-    },
-};
-
 
 export const DetalleVentaTpv = ({
     ventaInicial = null,
@@ -132,150 +43,69 @@ export const DetalleVentaTpv = ({
     const titulo = (venta: Entidad) => venta.codigo as string;
 
     const venta = useModelo(metaVentaTpv, ventaTpvVacia);
-    const { modelo, init } = venta;
+    const { modelo, init, modeloInicial } = venta;
 
-    const recargarPagos = useCallback(
-        async (idActivo: string | undefined = undefined) => {
-            const nuevosPagos = ventaId
-                ? await intentar(() => getPagos(ventaId))
-                : [];
-            setPagos(cargar(nuevosPagos, idActivo));
-        } ,
-        [ventaId, setPagos, intentar, getPagos]
-    );
 
-    const recargarLineas = useCallback(
-        async (idActivo: string | undefined = undefined) => {
-            const nuevasLineas = ventaId
-                ? await intentar(() => getLineas(ventaId))
-                : [];
-            setLineas(cargar(nuevasLineas, idActivo));
-        } ,
-        [ventaId, setLineas, intentar, getLineas]
-    );
-    
-    const procesarEstado = useCallback(
-        (evento: string, payload?: unknown) => {
-            const nuevoEstado = calcularEstado(maquina, estado, evento, payload); 
-            console.log("Procesar estado evento:", evento, "estado actual:", estado, " a ", nuevoEstado);
-            if (nuevoEstado !== estado) setEstado(nuevoEstado);
-        },
-        [estado, setEstado]
-    );
-    console.log("Estado UI:", estado);
-
-    const recargarCabecera = useCallback(
-        async () => {
-            const nuevaVenta = await getVenta(modelo.id);
-            init(nuevaVenta);
-            procesarEstado("venta_cargada", nuevaVenta);
-            publicar("venta_cambiada", nuevaVenta);
-            return nuevaVenta;
-        },
-        [init, getVenta, modelo, procesarEstado]
-    );
- 
-    const preEvento = useCallback(
-        async (evento: string, payload?: unknown) => {
-
-            switch (evento) {
-                case "pagos_cargados":
-                case "pago_borrado":
-                    await recargarPagos();
-                    return await recargarCabecera();
-
-                case "pago_creado":
-                case "vale_emitido":
-                    await recargarPagos(payload as string);
-                    return await recargarCabecera();
-
-                case "linea_creada":
-                case "linea_borrada":
-                case "linea_cambiada":
-                    await recargarLineas(payload as string);
-                    await recargarCabecera();
-                    break;
-                
-                case "pago_seleccionado": {
-                    setPagos(seleccionarItem(payload as PagoVentaTpv));
-                    break;
-                }
-
-                case "venta_borrada":
-                    publicar("factura_borrada");
-                    break;
-
-                case "venta_devuelta":
-                    await recargarCabecera();
-                    break;
-
-                case "linea_seleccionada": {
-                    setLineas(seleccionarItem(payload as LineaFactura));
-                    break;
-                }
-            }
-        },
-        [recargarPagos, recargarCabecera, setPagos, publicar]
-    );
+    console.log('FUERA', venta.modelo, venta.modeloInicial);
 
     const emitir = useCallback(
-        async (evento: string, payload?: unknown) => {
-            const nuevoPayload = await preEvento(evento, payload);
-            procesarEstado(evento, nuevoPayload ?? payload);
-        },
-        [procesarEstado, preEvento]
-    );
+        async (evento: string, payload?: unknown, inicial: boolean = false) => {
+            console.log('venta.modeloInicial INICIO:', venta.modelo, venta.modeloInicial);
+            const contexto: ContextoVentaTpv = {
+                estado: inicial ? 'INICIAL' : estado,
+                venta: venta.modelo,
+                ventaInicial: venta.modeloInicial,
+                lineas: lineas,
+                pagos: pagos,
+                eventos: [],
+            }
+            console.log("Evento recibido:", evento, "con payload:", payload); //procesarEvento
+            const nuevoContexto = await intentar(
+                () => procesarEvento(evento, payload, contexto)
+            );
+            setEstado(nuevoContexto.estado);
+            setLineas(nuevoContexto.lineas);
+            setPagos(nuevoContexto.pagos);
+            if (nuevoContexto.venta !== venta.modelo) {
+                console.log("Venta Iniciada:", nuevoContexto.venta);
+                init(nuevoContexto.venta);
+                console.log("Modelo inicial:", venta.modeloInicial);
+            } else {
+                console.log("Venta sin cambios:", venta.modelo);
+            }
+            nuevoContexto.eventos.map((evento) => publicar(evento[0], evento[1]));
 
-    const getVentaUI = useCallback(
-        async (id: string) => {
-            const nuevaVenta = await getVenta(id);
-            emitir("venta_cargada", nuevaVenta);
-            return nuevaVenta;
         },
-        [init, getVenta, emitir]
+        [venta, setPagos, setLineas, publicar]
     );
 
     const guardar = async () => {
         await intentar(() => patchFactura(modelo.id, modelo));
-        await recargarCabecera();
+        emitir("venta_cambiada");
     };
 
     const cancelar = () => {
-        init();
-        publicar("cancelar_seleccion");
+        emitir("edicion_de_venta_cancelada");
     };
 
-    useEffect(() => {
-        const cargarPagos = async () => {
-            const nuevosPagos = ventaId
-            ? await intentar(() => getPagos(ventaId))
-            : [];
-
-            setPagos(cargar(nuevosPagos));
-        };
-        cargarPagos();
-    }, [ventaId, intentar, getPagos, setPagos]);
 
     useEffect(() => {
-        const cargarLineas = async () => {
-        const nuevasLineas = ventaId ? 
-            await intentar(() => getLineas(ventaId))
-            : [];
-
-            setLineas(cargar(nuevasLineas));
-        };
-        cargarLineas();
-    }, [ventaId, emitir, intentar, getLineas]);
+        if (ventaId && ventaId !== venta.modelo.id) {
+            emitir("venta_id_cambiada", ventaId, true);
+        }
+    }, [ventaId, emitir]);
   
+    console.log('Estado:', estado);
 
     return (
         <Detalle
             id={ventaId}
             obtenerTitulo={titulo}
-            setEntidad={(f) => init(f)}
+            // setEntidad={(f) => (init(f))}
+            setEntidad={() => {}}
             entidad={modelo}
-            cargar={getVentaUI}   
-            cerrarDetalle={cancelar}
+            // cargar={getVentaUI}   
+            cerrarDetalle={()=> emitir("venta_deseleccionada", null, true)}
         >
         {!!ventaId && (
             <div className="DetalleFactura">

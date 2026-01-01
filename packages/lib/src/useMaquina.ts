@@ -236,6 +236,13 @@ export type ConfigMaquina5<E extends string> = {
     estados: Record<E, Record<string, E | OnEvento5<E>>>;
 }
 
+type OnEvento6<E extends string, C extends Record<string, unknown>> = (payload?: unknown, contexto?: C) => Promise<[E, C]>;
+export type ConfigMaquina6<E extends string, C extends Record<string, unknown>> = {
+    // inicial: E,
+    estados: Record<E, Record<string, E | OnEvento6<E, C>>>;
+}
+
+
 export const calcularEstado = <Estado extends string>(maquina: ConfigMaquina5<Estado>, estado: Estado, evento: string, payload: unknown) => {
     // console.log("Evento recibido5:", evento, "con payload:", payload);
     // console.log("Estado actual:", estado);
