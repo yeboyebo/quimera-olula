@@ -43,14 +43,12 @@ export const DetalleVentaTpv = ({
     const titulo = (venta: Entidad) => venta.codigo as string;
 
     const venta = useModelo(metaVentaTpv, ventaTpvVacia);
-    const { modelo, init, modeloInicial } = venta;
+    const { modelo, init } = venta;
 
-
-    console.log('FUERA', venta.modelo, venta.modeloInicial);
 
     const emitir = useCallback(
         async (evento: string, payload?: unknown, inicial: boolean = false) => {
-            console.log('venta.modeloInicial INICIO:', venta.modelo, venta.modeloInicial);
+
             const contexto: ContextoVentaTpv = {
                 estado: inicial ? 'INICIAL' : estado,
                 venta: venta.modelo,
@@ -59,7 +57,6 @@ export const DetalleVentaTpv = ({
                 pagos: pagos,
                 eventos: [],
             }
-            console.log("Evento recibido:", evento, "con payload:", payload); //procesarEvento
             const nuevoContexto = await intentar(
                 () => procesarEvento(evento, payload, contexto)
             );
@@ -67,11 +64,7 @@ export const DetalleVentaTpv = ({
             setLineas(nuevoContexto.lineas);
             setPagos(nuevoContexto.pagos);
             if (nuevoContexto.venta !== venta.modelo) {
-                console.log("Venta Iniciada:", nuevoContexto.venta);
                 init(nuevoContexto.venta);
-                console.log("Modelo inicial:", venta.modeloInicial);
-            } else {
-                console.log("Venta sin cambios:", venta.modelo);
             }
             nuevoContexto.eventos.map((evento) => publicar(evento[0], evento[1]));
 

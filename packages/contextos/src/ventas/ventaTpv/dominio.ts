@@ -1,7 +1,6 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { cargar, seleccionarItem } from "@olula/lib/entidad.js";
-import { pipe } from "@olula/lib/funcional.js";
 import { Factura } from "../factura/diseño.ts";
 
 import {
@@ -77,11 +76,11 @@ type ProcesarEvento2 = (evento: string, payload: unknown, contexto: ContextoVent
     Promise<ContextoVentaTpv>;
 
 type ProcesarContexto = (contexto: ContextoVentaTpv) => ContextoVentaTpv;
+type ProcesarContextoAsync = (contexto: ContextoVentaTpv) => Promise<ContextoVentaTpv>;
 
 export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto) => {
 
     const estado = contexto.estado;
-    const eventos: [string, unknown][] = [];
 
     console.log("Procesar evento:", evento, payload, 'estado actual', estado);
 
@@ -95,336 +94,324 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
         }
     }
 
-    const setVenta: (venta: VentaTpv) => ProcesarContexto = (venta) => {
+    const cargarVenta: (idVenta: string) => ProcesarContextoAsync = (idVenta: string) =>
+        async (contexto) => {
 
-        return (contexto: ContextoVentaTpv) => {
+
+            const venta = await getVenta(idVenta);
             return {
                 ...contexto,
-                venta
+                venta,
             }
+        }
+
+    const refrescarVenta: ProcesarContextoAsync = async (contexto) => {
+
+        const venta = await getVenta(contexto.venta.id);
+        return {
+            ...contexto,
+            venta,
+            eventos: [...contexto.eventos, ["venta_cambiada", venta]]
         }
     }
 
-    const setPagos: (pagos: PagoVentaTpv[]) => ProcesarContexto = (pagos: PagoVentaTpv[]) => {
-
-        return (contexto: ContextoVentaTpv) => {
-            return {
-                ...contexto,
-                pagos: cargar(pagos)(contexto.pagos),
-            }
+    const abiertaOEmitidaContexto: ProcesarContextoAsync = async (contexto) => {
+        return {
+            ...contexto,
+            estado: abiertaOEmitida(contexto.venta),
         }
     }
 
-    const setLineas: (lineas: LineaFactura[]) => ProcesarContexto = (lineas: LineaFactura[]) => {
+    const refrescarPagos: ProcesarContextoAsync = async (contexto) => {
 
-        return (contexto: ContextoVentaTpv) => {
-            return {
-                ...contexto,
-                lineas: cargar(lineas)(contexto.lineas),
-            }
+        const pagos = await getPagos(contexto.venta.id);
+        return {
+            ...contexto,
+            pagos: cargar(pagos)(contexto.pagos),
         }
     }
 
-    const setEventos: (eventos: [string, unknown][]) => ProcesarContexto = (eventos) => {
+    const refrescarLineas: ProcesarContextoAsync = async (contexto) => {
 
-        return (contexto: ContextoVentaTpv) => {
-            return {
-                ...contexto,
-                eventos
-            }
+        const lineas = await getLineas(contexto.venta.id);
+        return {
+            ...contexto,
+            lineas: cargar(lineas)(contexto.lineas),
         }
     }
 
-    const getContextoVacio: () => ContextoVentaTpv = () => {
-        return pipe(
-            contexto,
-            setEstado('INICIAL'),
-            setVenta(ventaTpvVacia),
-            setPagos([]),
-            setLineas([]),
-            setEventos(eventos),
-        )
+    const getContextoVacio: ProcesarContextoAsync = async (contexto) => {
+
+        const listaVaciaPagos: PagoVentaTpv[] = [];
+        const listaVaciaLineas: LineaFactura[] = [];
+
+        return {
+            ...contexto,
+            estado: 'INICIAL',
+            venta: ventaTpvVacia,
+            pagos: cargar(listaVaciaPagos)(contexto.pagos),
+            lineas: cargar(listaVaciaLineas)(contexto.lineas),
+        }
     }
 
-    switch (estado) {
+    const publicar: (evento: string, payload: unknown) => ProcesarContextoAsync = (evento, payload) =>
 
-        case "INICIAL":
+        async (contexto) => {
 
-            switch (evento) {
-
-                case 'venta_id_cambiada':
-                    const idVenta = payload as string;
-                    if (idVenta) {
-                        const venta = await getVenta(idVenta);
-                        const pagos = await getPagos(idVenta);
-                        const lineas = await getLineas(idVenta);
-                        return pipe(
-                            contexto,
-                            setEstado(abiertaOEmitida(venta)),
-                            setVenta(venta),
-                            setPagos(pagos),
-                            setLineas(lineas),
-                        )
-                    } else {
-                        return getContextoVacio();
-                    }
-
-                case 'venta_deseleccionada':
-                    eventos.push(['cancelar_seleccion', null]);
-                    return getContextoVacio();
+            return {
+                ...contexto,
+                eventos: [...contexto.eventos, [evento, payload]]
             }
-            break;
+        }
 
-        case "ABIERTA":
+    const usarMaquina: () => Promise<ContextoVentaTpv | EstadoVentaTpv | (ProcesarContextoAsync | EstadoVentaTpv)[]> = async () => {
 
-            switch (evento) {
-                case 'alta_linea_solicitada':
-                    return setEstado("CREANDO_LINEA")(contexto);
+        switch (estado) {
 
-                case 'baja_linea_solicitada':
-                    return setEstado("BORRANDO_LINEA")(contexto);
+            case "INICIAL":
 
-                case 'cambio_linea_solicitado':
-                    return setEstado("CAMBIANDO_LINEA")(contexto);
+                switch (evento) {
 
-                case 'borrar_solicitado':
-                    return setEstado("BORRANDO_VENTA")(contexto);
+                    case 'venta_id_cambiada':
+                        const idVenta = payload as string;
+                        if (idVenta) {
+                            return [
+                                cargarVenta(idVenta),
+                                refrescarPagos,
+                                refrescarLineas,
+                                abiertaOEmitidaContexto,
+                            ]
+                        } else {
+                            return [getContextoVacio];
+                        }
 
-                case 'devolucion_solicitada':
-                    return setEstado("DEVOLVIENDO_VENTA")(contexto);
-
-                case 'emision_de_vale_solicitada':
-                    return setEstado("EMITIENDO_VALE")(contexto);
-
-                case 'pago_efectivo_solicitado':
-                    return setEstado("PAGANDO_EFECTIVO")(contexto);
-
-                case 'pago_tarjeta_solicitado':
-                    return setEstado("PAGANDO_TARJETA")(contexto);
-
-                case 'borrar_pago_solicitado':
-                    return setEstado("BORRANDO_PAGO")(contexto);
-
-                case 'venta_cargada':
-                    return pipe(
-                        contexto,
-                        setEstado(abiertaOEmitida(payload as VentaTpv)),
-                    )
-
-
-                case "venta_cambiada": {
-                    const venta = await getVenta(contexto.venta.id);
-                    return pipe(
-                        contexto,
-                        setVenta(venta),
-                    )
+                    case 'venta_deseleccionada':
+                        return [
+                            getContextoVacio,
+                            publicar('cancelar_seleccion', null)
+                        ]
+                    // eventos.push(['cancelar_seleccion', null]);
+                    // return getContextoVacio();
                 }
+                break;
 
-                case "edicion_de_venta_cancelada": {
-                    console.log("edicion de venta cancelada", contexto.ventaInicial);
-                    return pipe(
-                        contexto,
-                        setVenta(contexto.ventaInicial),
-                    )
-                    // return [estado, contextoVacio(), eventos];
+            case "ABIERTA":
+
+                switch (evento) {
+                    case 'alta_linea_solicitada':
+                        return "CREANDO_LINEA";
+
+                    case 'baja_linea_solicitada':
+                        return "BORRANDO_LINEA";
+
+                    case 'cambio_linea_solicitado':
+                        return "CAMBIANDO_LINEA";
+
+                    case 'borrar_solicitado':
+                        return "BORRANDO_VENTA";
+
+                    case 'devolucion_solicitada':
+                        return "DEVOLVIENDO_VENTA";
+
+                    case 'emision_de_vale_solicitada':
+                        return "EMITIENDO_VALE";
+
+                    case 'pago_efectivo_solicitado':
+                        return "PAGANDO_EFECTIVO";
+
+                    case 'pago_tarjeta_solicitado':
+                        return "PAGANDO_TARJETA"
+
+                    case 'borrar_pago_solicitado':
+                        return "BORRANDO_PAGO"
+
+                    case 'venta_cargada':
+                        return abiertaOEmitida(payload as VentaTpv)
+
+
+                    case "venta_cambiada": {
+                        return [refrescarVenta]
+                    }
+
+                    case "edicion_de_venta_cancelada": {
+                        return {
+                            ...contexto,
+                            venta: contexto.ventaInicial,
+                        }
+                    }
+
+                    case 'pago_seleccionado':
+                        return {
+                            ...contexto,
+                            pagos: seleccionarItem(payload as PagoVentaTpv)(contexto.pagos)
+                        }
+
+                    case 'linea_seleccionada':
+                        return {
+                            ...contexto,
+                            lineas: seleccionarItem(payload as LineaFactura)(contexto.lineas)
+                        }
+
+                    case 'linea_creada':
+                        return [
+                            refrescarVenta,
+                            refrescarLineas
+                        ]
                 }
-
-                case 'pago_seleccionado':
-                    return {
-                        ...contexto,
-                        pagos: seleccionarItem(payload as PagoVentaTpv)(contexto.pagos)
-                    }
-
-                case 'linea_seleccionada':
-                    return {
-                        ...contexto,
-                        lineas: seleccionarItem(payload as LineaFactura)(contexto.lineas)
-                    }
-
-                case 'linea_creada':
-                    const lineas = await getLineas(contexto.venta.id);
-                    const venta = await getVenta(contexto.venta.id);
-                    const contextoNuevo: ContextoVentaTpv = { ...contexto, venta, lineas: cargar(lineas)(contexto.lineas) };
-                    eventos.push(["venta_cambiada", venta]);
-                    return pipe(
-                        contextoNuevo,
-                        setEstado(abiertaOEmitida(venta)),
-                        setVenta(venta),
-                        setLineas(lineas),
-                        setEventos(eventos),
-                    )
-            }
-            break;
+                break;
 
 
-        case "EMITIDA":
-            switch (evento) {
-                case 'venta_cargada':
-                    return pipe(
-                        contexto,
-                        setEstado(abiertaOEmitida(payload as VentaTpv)),
-                    )
-            }
-            break;
+            case "EMITIDA":
+                switch (evento) {
+                    case 'venta_cargada':
+                        return abiertaOEmitida(payload as VentaTpv);
+                }
+                break;
 
-        case "BORRANDO_VENTA":
+            case "BORRANDO_VENTA":
 
-            switch (evento) {
+                switch (evento) {
 
-                case 'venta_borrada':
-                    eventos.push(["factura_borrada", null]);
-                    return pipe(
-                        contexto,
-                        setEstado('INICIAL'),
-                        setVenta(ventaTpvVacia),
-                        setPagos([]),
-                        setLineas([]),
-                        setEventos(eventos),
-                    )
+                    case 'venta_borrada':
+                        return [
+                            getContextoVacio,
+                            publicar('factura_borrada', null)
+                        ]
 
-                case 'borrar_cancelado':
-                    return setEstado("ABIERTA")(contexto);
-            }
-            break;
+                    case 'borrar_cancelado':
+                        return "ABIERTA";
+                }
+                break;
 
-        case "PAGANDO_TARJETA":
-        case "PAGANDO_EFECTIVO":
+            case "PAGANDO_TARJETA":
+            case "PAGANDO_EFECTIVO":
 
-            switch (evento) {
+                switch (evento) {
 
-                case 'pago_creado':
-                    return pipe(
-                        contexto,
-                        setEstado(abiertaOEmitida(payload as VentaTpv)),
-                    )
+                    case 'pago_creado':
+                        return [
+                            refrescarVenta,
+                            refrescarPagos,
+                            abiertaOEmitidaContexto
+                        ]
 
-                case 'pago_cancelado':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+                    case 'pago_cancelado':
+                        return 'ABIERTA';
+                }
+                break;
 
 
-        case "BORRANDO_PAGO":
+            case "BORRANDO_PAGO":
 
-            switch (evento) {
+                switch (evento) {
 
-                case 'pago_borrado':
-                    const pagos = await getPagos(contexto.venta.id);
-                    const venta = await getVenta(contexto.venta.id);
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                        setVenta(venta),
-                        setPagos(pagos),
-                    )
+                    case 'pago_borrado':
+                        return [
+                            "ABIERTA",
+                            refrescarVenta,
+                            refrescarPagos
+                        ]
 
-                case 'pago_borrado_cancelado':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+                    case 'pago_borrado_cancelado':
+                        return 'ABIERTA';
+                }
+                break;
 
-        case "DEVOLVIENDO_VENTA":
+            case "DEVOLVIENDO_VENTA":
 
-            switch (evento) {
+                switch (evento) {
 
-                case 'venta_devuelta':
-                case 'devolucion_cancelada':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+                    case 'venta_devuelta':
+                        return [
+                            "ABIERTA",
+                            refrescarVenta,
+                            refrescarLineas
+                        ]
 
-        case "CREANDO_LINEA":
+                    case 'devolucion_cancelada':
+                        return 'ABIERTA';
+                }
+                break;
 
-            switch (evento) {
+            case "CREANDO_LINEA":
 
-                case 'linea_creada':
-                    const lineas = await getLineas(contexto.venta.id);
-                    const venta = await getVenta(contexto.venta.id);
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                        setVenta(venta),
-                        setLineas(lineas),
-                    )
+                switch (evento) {
 
-                case 'alta_linea_cancelada':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+                    case 'linea_creada':
+                        return [
+                            "ABIERTA",
+                            refrescarVenta,
+                            refrescarLineas
+                        ]
 
-        case "CAMBIANDO_LINEA":
-            switch (evento) {
-                case 'linea_cambiada':
-                    const lineas = await getLineas(contexto.venta.id);
-                    const venta = await getVenta(contexto.venta.id);
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                        setVenta(venta),
-                        setLineas(lineas),
-                    )
+                    case 'alta_linea_cancelada':
+                        return 'ABIERTA';
+                }
+                break;
 
-                case 'cambio_linea_cancelado':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+            case "CAMBIANDO_LINEA":
+                switch (evento) {
+                    case 'linea_cambiada':
+                        return [
+                            "ABIERTA",
+                            refrescarVenta,
+                            refrescarLineas
+                        ]
 
-        case "BORRANDO_LINEA":
-            switch (evento) {
-                case 'linea_borrada':
-                    const lineas = await getLineas(contexto.venta.id);
-                    const venta = await getVenta(contexto.venta.id);
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                        setVenta(venta),
-                        setLineas(lineas),
-                    )
+                    case 'cambio_linea_cancelado':
+                        return 'ABIERTA';
+                }
+                break;
 
-                case 'baja_linea_cancelada':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+            case "BORRANDO_LINEA":
+                switch (evento) {
+                    case 'linea_borrada':
+                        return [
+                            "ABIERTA",
+                            refrescarVenta,
+                            refrescarLineas
+                        ]
 
-        case "EMITIENDO_VALE":
-            switch (evento) {
-                case 'vale_emitido':
-                    const pagos = await getPagos(contexto.venta.id);
-                    const venta = await getVenta(contexto.venta.id);
-                    return pipe(
-                        contexto,
-                        setEstado(abiertaOEmitida(venta)),
-                        setVenta(venta),
-                        setPagos(pagos),
-                    )
+                    case 'baja_linea_cancelada':
+                        return 'ABIERTA';
+                }
+                break;
 
-                case 'emision_de_vale_cancelada':
-                    return pipe(
-                        contexto,
-                        setEstado('ABIERTA'),
-                    )
-            }
-            break;
+            case "EMITIENDO_VALE":
+                switch (evento) {
+                    case 'vale_emitido':
+                        return [
+                            "ABIERTA",
+                            refrescarVenta,
+                            refrescarPagos
+                        ]
+
+                    case 'emision_de_vale_cancelada':
+                        return 'ABIERTA';
+                }
+                break;
+        }
+        return contexto;
     }
-    return contexto;
+
+    const resultado = await usarMaquina();
+
+    if (typeof resultado === 'string') {
+        return setEstado(resultado)(contexto);
+    }
+    else if (Array.isArray(resultado)) {
+        let nuevoContexto = contexto;
+        for (const proceso of resultado as ProcesarContextoAsync[]) {
+            if (typeof proceso === 'string') {
+                nuevoContexto = setEstado(proceso)(nuevoContexto);
+            } else {
+                nuevoContexto = await proceso(nuevoContexto);
+            }
+        }
+        return nuevoContexto;
+    } else {
+        return resultado;
+    }
 };
 
 const abiertaOEmitida = (payload: unknown) => {
