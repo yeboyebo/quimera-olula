@@ -1,11 +1,14 @@
+import { Factura } from "#/ventas/factura/diseño.ts";
+import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { Entidad, Filtro, ListaSeleccionable, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { Factura } from "../factura/diseño.ts";
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { MetaModelo } from "@olula/lib/dominio.js";
 
 export interface VentaTpv extends Venta {
     pendiente: number;
     pagado: number;
 }
+
+
 
 
 export interface LineaFactura extends LineaVenta {
@@ -46,10 +49,30 @@ export type NuevoPagoEfectivo = {
     importe: number;
 }
 
+export type NuevoPagoVale = {
+    importe: number;
+    vale_id: string;
+}
+
 type PagoTpv = {
     importe: number;
     formaPago: string;
+    idVale?: string
 }
+
+export const metaNuevoPagoEfecctivo: MetaModelo<NuevoPagoEfectivo> = {
+    campos: {
+        importe: { tipo: "numero", requerido: true },
+    }
+};
+
+export const metaNuevoPagoVale: MetaModelo<NuevoPagoEfectivo> = {
+    campos: {
+        importe: { tipo: "numero", requerido: true },
+        vale_id: { requerido: true },
+    }
+};
+
 
 export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<VentaTpv>;
 
@@ -88,12 +111,12 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 export type DeletePago = (id: string, idPago: string) => Promise<void>;
 
 export type EstadoVentaTpv = (
-    'INICIAL' |
-    "ABIERTA" | "BORRANDO_VENTA" | "PAGANDO_EFECTIVO"
-    | "BORRANDO_PAGO" | "PAGANDO_TARJETA" | "EMITIDA"
+    'INICIAL' | "ABIERTA" | "EMITIDA"
+    | "BORRANDO_VENTA"
+    | "PAGANDO_EN_EFECTIVO" | "PAGANDO_CON_TARJETA" | "PAGANDO_CON_VALE"
+    | "BORRANDO_PAGO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
-    | "EMITIENDO_VALE"
-    | "DEVOLVIENDO_VENTA"
+    | "DEVOLVIENDO_VENTA" | "EMITIENDO_VALE"
 );
 
 export type ContextoVentaTpv = {

@@ -1,6 +1,9 @@
+import { EstadoVentaTpv } from "#/tpv/ventaTpv/diseño.ts";
+import { LineaFactura } from "#/ventas/factura/diseño.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QBoton } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
     getSeleccionada
 } from "@olula/lib/entidad.ts";
@@ -10,10 +13,6 @@ import { AltaLinea } from "./AltaLinea.tsx";
 import { BajaLinea } from "./BajaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
-
-import { LineaFactura } from "#/ventas/factura/diseño.ts";
-import { EstadoVentaTpv } from "#/ventas/ventaTpv/diseño.ts";
-import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.js";
 
 export const Lineas = ({
         facturaId,
@@ -47,7 +46,6 @@ export const Lineas = ({
             <QInput label='Barcode' nombre='barcode' onEnterKeyUp={
                 (barcode)=>alta_rapida_clicked(barcode)
                 }>
-
             </QInput>
             <QBoton onClick={() => publicar("alta_linea_solicitada")}>Nueva</QBoton>
             <QBoton

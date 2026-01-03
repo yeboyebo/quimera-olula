@@ -51,6 +51,10 @@ export const PendienteVenta = ({
             <QBoton onClick={() => publicar("pago_tarjeta_solicitado")}>
               P. Tarjeta 
             </QBoton>
+
+            <QBoton onClick={() => publicar("pago_vale_solicitado")}>
+              P. Vale 
+            </QBoton>
           </>
         )}
 

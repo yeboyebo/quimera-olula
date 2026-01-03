@@ -1,3 +1,4 @@
+import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
@@ -6,7 +7,6 @@ import { EmitirEvento, Entidad, ListaSeleccionable } from "@olula/lib/diseño.ts
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
 import { ContextoVentaTpv, EstadoVentaTpv, LineaFactura, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
 import { metaVentaTpv, procesarEvento, ventaTpvVacia } from "../../dominio.ts";
 import {
@@ -18,6 +18,7 @@ import { DevolucionVenta } from "./Devolucion/DevolucionVenta.tsx";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { AltaPagoEfectivo } from "./Pagos/AltaPagoEfectivo.tsx";
 import { AltaPagoTarjeta } from "./Pagos/AltaPagoTarjeta.tsx";
+import { AltaPagoVale } from "./Pagos/AltaPagoVale.tsx";
 import { BajaPago } from "./Pagos/BajaPago.tsx";
 import { EmisionVale } from "./Pagos/EmisionVale.tsx";
 import { Pagos } from "./Pagos/Pagos.tsx";
@@ -44,7 +45,6 @@ export const DetalleVentaTpv = ({
 
     const venta = useModelo(metaVentaTpv, ventaTpvVacia);
     const { modelo, init } = venta;
-
 
     const emitir = useCallback(
         async (evento: string, payload?: unknown, inicial: boolean = false) => {
@@ -168,16 +168,25 @@ export const DetalleVentaTpv = ({
                 />
                 <AltaPagoEfectivo
                     publicar={emitir}
-                    activo={estado === "PAGANDO_EFECTIVO"}
+                    activo={estado === "PAGANDO_EN_EFECTIVO"}
                     idVenta={ventaId}
                     pendiente={modelo.total - modelo.pagado}
                 />
                 <AltaPagoTarjeta
                     publicar={emitir}
-                    activo={estado === "PAGANDO_TARJETA"}
+                    activo={estado === "PAGANDO_CON_TARJETA"}
                     idVenta={ventaId}
                     pendiente={modelo.total - modelo.pagado}
                 />
+                {
+                    estado === "PAGANDO_CON_VALE" &&
+                    <AltaPagoVale
+                        publicar={emitir}
+                        activo={estado === "PAGANDO_CON_VALE"}
+                        idVenta={ventaId}
+                        pendiente={modelo.total - modelo.pagado}
+                    />
+                }
                 <BajaPago
                     publicar={emitir}
                     activo={estado === "BORRANDO_PAGO"}

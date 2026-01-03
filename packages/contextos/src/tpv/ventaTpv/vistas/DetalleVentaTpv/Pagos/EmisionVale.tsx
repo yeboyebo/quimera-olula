@@ -1,5 +1,5 @@
-import { VentaTpv } from "#/ventas/ventaTpv/diseño.ts";
-import { postEmitirVale } from "#/ventas/ventaTpv/infraestructura.ts";
+import { VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
+import { postEmitirVale } from "#/tpv/ventaTpv/infraestructura.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { HookModelo } from "@olula/lib/useModelo.js";

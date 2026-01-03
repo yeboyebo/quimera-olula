@@ -1,11 +1,13 @@
+import { Factura } from "#/ventas/factura/diseño.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
+// import ApiUrls from "../comun/urls.ts";
+import ApiUrls from "#/tpv/comun/urls.ts";
+import Ventas_Urls from "#/ventas/comun/urls.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
-import ApiUrls from "../comun/urls.ts";
-import { Factura } from "../factura/diseño.ts";
 import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchLinea, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
-const baseUrlFactura = new ApiUrls().FACTURA;
+const baseUrlFactura = new Ventas_Urls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
 
 
@@ -32,6 +34,7 @@ export const getVentaADevolver: GetVentaTpvADevolver = async (codigo) => {
       return ventaADevolverDesdeAPI(respuesta.datos);
     });
 };
+
 
 const CLAVE_PUNTO_VENTA = "punto-venta-tpv-local";
 
@@ -131,7 +134,8 @@ export const postPago: PostPago = async (id, pago) => {
   const body = {
     importe: pago.importe,
     fecha: (new Date().toISOString()).slice(0, 10),
-    forma_pago: pago.formaPago
+    forma_pago: pago.formaPago,
+    vale_id: pago.idVale
   }
   return await RestAPI.post(`${baseUrl}/${id}/pago`,
     body,

@@ -6,7 +6,6 @@ class Ventas_Urls {
     readonly PEDIDO = `/ventas/pedido`;
     readonly FACTURA = `/ventas/factura`;
     readonly ARTICULO = `/ventas/articulo`;
-    readonly VENTA = `/tpv/venta`;
 }
 
 export default Ventas_Urls;

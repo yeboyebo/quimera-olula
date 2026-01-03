@@ -1,5 +1,5 @@
-import { LineaADevolver, VentaTpv } from "#/ventas/ventaTpv/diseño.ts";
-import { getVentaADevolver, patchDevolverVenta } from "#/ventas/ventaTpv/infraestructura.ts";
+import { LineaADevolver, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
+import { getVentaADevolver, patchDevolverVenta } from "#/tpv/ventaTpv/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal, QTabla } from "@olula/componentes/index.js";

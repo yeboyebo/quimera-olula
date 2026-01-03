@@ -1,25 +1,19 @@
+import { Factura } from "#/ventas/factura/diseño.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { cargar, seleccionarItem } from "@olula/lib/entidad.js";
-import { Factura } from "../factura/diseño.ts";
 
-import {
-    cambioClienteVentaVacio,
-    metaCambioClienteVenta,
-    metaLineaVenta,
-    metaNuevaLineaVenta,
-    metaNuevoPagoEfecctivo,
-    metaVenta,
-    nuevaLineaVentaVacia,
-    ventaVacia
-} from "../venta/dominio.ts";
+import { nuevaLineaVentaVacia } from "#/ventas/presupuesto/dominio.ts";
+import { cambioClienteVentaVacio, metaCambioClienteVenta, metaLineaVenta, metaNuevaLineaVenta, metaVenta, ventaVacia } from "#/ventas/venta/dominio.ts";
 import {
     CambioClienteFactura,
     ContextoVentaTpv,
     EstadoVentaTpv,
     LineaFactura,
+    metaNuevoPagoEfecctivo,
     NuevaLineaFactura,
     NuevoPagoEfectivo,
+    NuevoPagoVale,
     PagoVentaTpv,
     VentaTpv
 } from "./diseño.ts";
@@ -33,6 +27,11 @@ export const ventaTpvVacia: VentaTpv = {
 
 export const nuevoPagoEfectivoVacio: NuevoPagoEfectivo = {
     importe: 0
+}
+
+export const nuevoPagoValeVacio: NuevoPagoVale = {
+    importe: 0,
+    vale_id: ""
 }
 
 
@@ -76,7 +75,7 @@ type ProcesarEvento2 = (evento: string, payload: unknown, contexto: ContextoVent
     Promise<ContextoVentaTpv>;
 
 type ProcesarContexto = (contexto: ContextoVentaTpv) => ContextoVentaTpv;
-type ProcesarContextoAsync = (contexto: ContextoVentaTpv) => Promise<ContextoVentaTpv>;
+type ProcesarContextoAsync = (contexto: ContextoVentaTpv, payload?: unknown) => Promise<ContextoVentaTpv>;
 
 export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto) => {
 
@@ -96,7 +95,6 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
 
     const cargarVenta: (idVenta: string) => ProcesarContextoAsync = (idVenta: string) =>
         async (contexto) => {
-
 
             const venta = await getVenta(idVenta);
             return {
@@ -139,6 +137,23 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
             lineas: cargar(lineas)(contexto.lineas),
         }
     }
+
+    const seleccionarPago: ProcesarContextoAsync = async (contexto, pago) => {
+
+        return {
+            ...contexto,
+            pagos: seleccionarItem(pago as PagoVentaTpv)(contexto.pagos)
+        }
+    }
+
+    const seleccionarLinea: (linea: LineaFactura) => ProcesarContextoAsync = (linea) =>
+        async (contexto) => {
+
+            return {
+                ...contexto,
+                lineas: seleccionarItem(linea)(contexto.lineas)
+            }
+        }
 
     const getContextoVacio: ProcesarContextoAsync = async (contexto) => {
 
@@ -190,8 +205,6 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
                             getContextoVacio,
                             publicar('cancelar_seleccion', null)
                         ]
-                    // eventos.push(['cancelar_seleccion', null]);
-                    // return getContextoVacio();
                 }
                 break;
 
@@ -217,17 +230,19 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
                         return "EMITIENDO_VALE";
 
                     case 'pago_efectivo_solicitado':
-                        return "PAGANDO_EFECTIVO";
+                        return "PAGANDO_EN_EFECTIVO";
+
+                    case 'pago_vale_solicitado':
+                        return "PAGANDO_CON_VALE";
 
                     case 'pago_tarjeta_solicitado':
-                        return "PAGANDO_TARJETA"
+                        return "PAGANDO_CON_TARJETA"
 
                     case 'borrar_pago_solicitado':
                         return "BORRANDO_PAGO"
 
                     case 'venta_cargada':
                         return abiertaOEmitida(payload as VentaTpv)
-
 
                     case "venta_cambiada": {
                         return [refrescarVenta]
@@ -241,16 +256,12 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
                     }
 
                     case 'pago_seleccionado':
-                        return {
-                            ...contexto,
-                            pagos: seleccionarItem(payload as PagoVentaTpv)(contexto.pagos)
-                        }
+                        // return [seleccionarPago(payload as PagoVentaTpv)]
+                        return [seleccionarPago]
+
 
                     case 'linea_seleccionada':
-                        return {
-                            ...contexto,
-                            lineas: seleccionarItem(payload as LineaFactura)(contexto.lineas)
-                        }
+                        return [seleccionarLinea(payload as LineaFactura)]
 
                     case 'linea_creada':
                         return [
@@ -283,8 +294,9 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
                 }
                 break;
 
-            case "PAGANDO_TARJETA":
-            case "PAGANDO_EFECTIVO":
+            case "PAGANDO_CON_TARJETA":
+            case "PAGANDO_EN_EFECTIVO":
+            case "PAGANDO_CON_VALE":
 
                 switch (evento) {
 
@@ -405,7 +417,7 @@ export const procesarEvento: ProcesarEvento2 = async (evento, payload, contexto)
             if (typeof proceso === 'string') {
                 nuevoContexto = setEstado(proceso)(nuevoContexto);
             } else {
-                nuevoContexto = await proceso(nuevoContexto);
+                nuevoContexto = await proceso(nuevoContexto, payload);
             }
         }
         return nuevoContexto;

@@ -1,11 +1,10 @@
-import { PagoVentaTpv, VentaTpv } from "#/ventas/ventaTpv/diseño.ts";
+import { EstadoVentaTpv, PagoVentaTpv, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
 import { QBoton } from "@olula/componentes/index.ts";
 import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.js";
 import {
   getSeleccionada
 } from "@olula/lib/entidad.ts";
 import { HookModelo } from "@olula/lib/useModelo.js";
-import { EstadoVentaTpv } from "../DetalleVentaTpv.tsx";
 import { PagosLista } from "./PagosLista.tsx";
 export const Pagos = ({
   pagos,
@@ -44,7 +43,7 @@ export const Pagos = ({
       <PagosLista
         pagos={pagos}
         publicar={publicar}
-        idVenta={venta.modelo.id}
+        // idVenta={venta.modelo.id}
       />
 
     </>

@@ -1,6 +1,5 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { direccionVacia } from "../presupuesto/dominio.ts";
-import { NuevoPagoEfectivo } from "../ventaTpv/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
 
 export const ventaVacia: Venta = {
@@ -86,8 +85,3 @@ export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     }
 };
 
-export const metaNuevoPagoEfecctivo: MetaModelo<NuevoPagoEfectivo> = {
-    campos: {
-        importe: { tipo: "numero", requerido: true },
-    }
-};
