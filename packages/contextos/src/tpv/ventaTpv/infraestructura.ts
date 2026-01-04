@@ -14,10 +14,22 @@ const baseUrl = new ApiUrls().VENTA;
 type LineaFacturaAPI = LineaFactura;
 type PagoVentaTpvAPI = PagoVentaTpv
 type VentaTpvAPI = VentaTpv
-type VentaTpvADevolverAPI = VentaTpvADevolver
+// type VentaTpvADevolverAPI = VentaTpvADevolver
+interface VentaTpvADevolverAPI extends VentaTpvAPI {
+  lineas: LineaFacturaAPI[];
+}
 
 export const ventaDesdeAPI = (p: VentaTpvAPI): VentaTpv => p;
-export const ventaADevolverDesdeAPI = (p: VentaTpvADevolverAPI): VentaTpvADevolver => p;
+export const ventaADevolverDesdeAPI = (venta: VentaTpvADevolverAPI): VentaTpvADevolver => (
+  {
+    ...venta,
+    lineas: venta.lineas.map(l => ({
+      ...l,
+      aDevolver: 0
+    }))
+  }
+)
+
 export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
 export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => p;
 
@@ -29,7 +41,7 @@ export const getVenta: GetVentaTpv = async (id) => {
 };
 
 export const getVentaADevolver: GetVentaTpvADevolver = async (codigo) => {
-  return RestAPI.get<{ datos: VentaTpvADevolver }>(
+  return RestAPI.get<{ datos: VentaTpvADevolverAPI }>(
     `${baseUrl}/${codigo}/a_devolver`).then((respuesta) => {
       return ventaADevolverDesdeAPI(respuesta.datos);
     });
@@ -93,17 +105,17 @@ export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
   }, "Error al cambiar cliente de la factura");
 };
 
-export const patchDevolverVenta: PatchDevolverVenta = async (id, venta, lineasADevolver) => {
+export const patchDevolverVenta: PatchDevolverVenta = async (id, ventaADevolver) => {
   await RestAPI.patch(`${baseUrlFactura}/${id}/rectificar`, {
-    rectificada_id: venta.id,
-    lineas_rectificadas: lineasADevolver.filter(
+    rectificada_id: ventaADevolver.id,
+    lineas_rectificadas: ventaADevolver.lineas.filter(
       (l) => l.aDevolver > 0
     ).
       map((l) => ({
         id: l.id,
         cantidad: l.aDevolver * -1
       }))
-  }, "Error al cambiar cliente de la factura");
+  }, "Error al devolver la venta");
 }
 
 export const postEmitirVale: PostEmitirVale = async (venta) => {
@@ -112,7 +124,7 @@ export const postEmitirVale: PostEmitirVale = async (venta) => {
     {
       punto_venta_id: puntoVentaLocal.obtener(),
     },
-    "Error al cambiar cliente de la factura"
+    "Error al emitir el vale"
   );
 }
 

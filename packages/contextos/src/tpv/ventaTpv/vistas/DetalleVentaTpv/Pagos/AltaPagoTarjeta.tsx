@@ -1,55 +1,35 @@
+import { metaNuevoPagoEfectivo, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { useModelo } from "@olula/lib/useModelo.ts";
-
-import { metaNuevoPagoEfecctivo } from "#/tpv/ventaTpv/diseño.ts";
 import { QModal } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useContext, useEffect } from "react";
+import { redondeaMoneda } from "@olula/lib/dominio.js";
+import { useModelo } from "@olula/lib/useModelo.ts";
+import { useEffect } from "react";
 import { nuevoPagoEfectivoVacio } from "../../../dominio.ts";
-import { postPago } from "../../../infraestructura.ts";
 import "./AltaPagoTarjeta.css";
 
 export const AltaPagoTarjeta = ({
-  activo = false,
   publicar,
-  idVenta,
-  pendiente,
+  venta,
 }: {
-  activo: boolean;
   publicar: EmitirEvento;
-  idVenta: string;
-  pendiente: number
+  venta: VentaTpv;
 }) => {
 
-  const { modelo, uiProps, valido, dispatch } = useModelo(metaNuevoPagoEfecctivo, {
-    ...nuevoPagoEfectivoVacio,
-    factura_id: idVenta,
-  });
+  const { modelo, uiProps, valido, dispatch } = useModelo(
+    metaNuevoPagoEfectivo, nuevoPagoEfectivoVacio
+  );
 
-  const { intentar } = useContext(ContextoError);
+  const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
-  const crear = async () => {
-    const pagado = Number(modelo.importe) < pendiente
-      ? Number(modelo.importe)
-      : pendiente;
-    const idPago = await intentar(() => postPago(idVenta, {
-      importe: pagado,
-      formaPago: "TARJETA",
-    }));
-    publicar("pago_creado", idPago);
+  const pagar = () => {
+    publicar("pago_con_tarjeta_listo", modelo);
   };
 
   const cancelar = () => {
     publicar("pago_cancelado");
   };
-
-  useEffect(() => {
-    if (activo) {
-      setImporte(pendiente);
-    }
-  }, [activo]);
 
   const setImporte = (v: number) => {
     dispatch({
@@ -62,24 +42,37 @@ export const AltaPagoTarjeta = ({
     setImporte(0);  
   }
 
+  useEffect(() => {
+    dispatch({
+      type: "set_campo",
+      payload: { campo: "importe", valor: pendiente.toString() },
+    });
+  }, [])
+
   return (
-    <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+
       <div className="AltaPago">
-        <h2>Nuevo pago</h2>
+
+        <h2>Pago con tarjeta</h2>
+
         <quimera-formulario>
           <QInput label="Importe" {...uiProps("importe")} />
-          
         </quimera-formulario>
+
         <div className="botones maestro-botones ">
           {`A Pagar: ${pendiente}€`}
           <QBoton onClick={limpiar}>Limpiar</QBoton>
         </div>
+
         <div className="botones maestro-botones ">
-          <QBoton onClick={crear} deshabilitado={!valido}>
-            Guardar
+          <QBoton onClick={pagar} deshabilitado={!valido}>
+            Pagar
           </QBoton>
         </div>
+
       </div>
+
     </QModal>
   );
 };

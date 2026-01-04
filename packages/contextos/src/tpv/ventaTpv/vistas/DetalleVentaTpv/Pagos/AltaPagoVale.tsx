@@ -4,46 +4,30 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 
 import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import { getVale } from "#/tpv/vale/infraestructura.ts";
-import { metaNuevoPagoVale } from "#/tpv/ventaTpv/diseño.ts";
+import { metaNuevoPagoVale, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
 import { nuevoPagoValeVacio } from "#/tpv/ventaTpv/dominio.ts";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { redondeaMoneda } from "@olula/lib/dominio.js";
 import { useContext, useState } from "react";
-import { postPago } from "../../../infraestructura.ts";
 import "./AltaPagoVale.css";
 
 export const AltaPagoVale = ({
-    activo = false,
     publicar,
-    idVenta,
-    pendiente,
+    venta,
 }: {
-    activo: boolean;
     publicar: EmitirEvento;
-    idVenta: string;
-    pendiente: number
+    venta: VentaTpv;
 }) => {
 
-    const { modelo, uiProps, valido, dispatch, init } = useModelo(metaNuevoPagoVale, {
-        ...nuevoPagoValeVacio,
-    });
+    const { modelo, uiProps, valido, dispatch, init } = useModelo(metaNuevoPagoVale, nuevoPagoValeVacio);
   
     const { intentar } = useContext(ContextoError);
 
     const [vale, setVale] = useState<ValeTpv | null>(null);
 
-    const crear = async () => {
-
-        const idPago = await intentar(() => postPago(
-                idVenta, {
-                importe: modelo.importe,
-                formaPago: "VALE",
-                idVale: modelo.vale_id
-            }
-        ));
-        publicar("pago_creado", idPago);
-    };
+    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
     const buscarVale = async (barcode: string) => {
         if (!barcode) {
@@ -72,23 +56,16 @@ export const AltaPagoVale = ({
         init(nuevoPagoValeVacio);
     }
     
-    // useEffect(() => {
-    //     if (activo && modelo !== nuevoPagoValeVacio) {
-    //         limpiar();
-    //     }
-    // }, [activo, modelo, limpiar]);
-    
     return (
-        <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
+        <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
         <div className="AltaPago">
             <h2>Nuevo pago</h2>
             <quimera-formulario>
             <QInput label="Importe" {...uiProps("importe")} />
             
-            <QInput label='Vale' nombre='vale_id' onEnterKeyUp={
-                (barcode)=>buscarVale(barcode)
-                }>
-            </QInput>
+            <QInput label='Vale' nombre='vale_id' 
+                onEnterKeyUp={(barcode)=>buscarVale(barcode)}
+            />
             </quimera-formulario>
             <div className="botones maestro-botones ">
             {`A Pagar: ${pendiente}€`}
@@ -101,7 +78,8 @@ export const AltaPagoVale = ({
             <QBoton onClick={limpiar}>Limpiar</QBoton>
             </div>
             <div className="botones maestro-botones ">
-            <QBoton onClick={crear} deshabilitado={!valido}>
+            <QBoton onClick={() => publicar("pago_con_vale_listo", modelo)}
+                deshabilitado={!valido}>
                 Pagar
             </QBoton>
             </div>

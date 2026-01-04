@@ -37,7 +37,7 @@ export const PendienteVenta = ({
         )}
 
         {pendiente < 0 && (
-          <QBoton onClick={() => publicar("emision_de_vale_solicitada")}>
+          <QBoton onClick={() => publicar("emision_de_vale_solicitada", venta.modelo)}>
             Emitir Vale
           </QBoton>
         )}

@@ -20,7 +20,7 @@ export interface LineaADevolver extends LineaFactura {
 }
 
 export interface VentaTpvADevolver extends VentaTpv {
-    lineas: LineaFactura[];
+    lineas: LineaADevolver[];
 }
 
 export interface PagoVentaTpv extends Entidad {
@@ -60,7 +60,7 @@ type PagoTpv = {
     idVale?: string
 }
 
-export const metaNuevoPagoEfecctivo: MetaModelo<NuevoPagoEfectivo> = {
+export const metaNuevoPagoEfectivo: MetaModelo<NuevoPagoEfectivo> = {
     campos: {
         importe: { tipo: "numero", requerido: true },
     }
@@ -69,7 +69,7 @@ export const metaNuevoPagoEfecctivo: MetaModelo<NuevoPagoEfectivo> = {
 export const metaNuevoPagoVale: MetaModelo<NuevoPagoEfectivo> = {
     campos: {
         importe: { tipo: "numero", requerido: true },
-        vale_id: { requerido: true },
+        vale_id: { tipo: "texto", requerido: true },
     }
 };
 
@@ -98,7 +98,7 @@ export type PatchFactura = (id: string, factura: Factura) => Promise<void>;
 
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
 
-export type PatchDevolverVenta = (id: string, venta: VentaTpv, lineasADevolver: LineaADevolver[]) => Promise<void>;
+export type PatchDevolverVenta = (id: string, venta: VentaTpvADevolver) => Promise<void>;
 
 export type PatchLinea = (id: string, linea: LineaFactura) => Promise<void>;
 
@@ -116,7 +116,8 @@ export type EstadoVentaTpv = (
     | "PAGANDO_EN_EFECTIVO" | "PAGANDO_CON_TARJETA" | "PAGANDO_CON_VALE"
     | "BORRANDO_PAGO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
-    | "DEVOLVIENDO_VENTA" | "EMITIENDO_VALE"
+    | "DEVOLVIENDO_VENTA"
+    // | "EMITIENDO_VALE"
 );
 
 export type ContextoVentaTpv = {

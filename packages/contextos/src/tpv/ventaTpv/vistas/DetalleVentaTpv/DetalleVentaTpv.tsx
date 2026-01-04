@@ -4,14 +4,16 @@ import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad, ListaSeleccionable } from "@olula/lib/diseño.ts";
+import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { ContextoVentaTpv, EstadoVentaTpv, LineaFactura, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
-import { metaVentaTpv, procesarEvento, ventaTpvVacia } from "../../dominio.ts";
+import { metaVentaTpv, ventaTpvVacia } from "../../dominio.ts";
 import {
     patchFactura
 } from "../../infraestructura.ts";
+import { getMaquina } from "../../maquina.ts";
 import { BajaVentaTpv } from "./BajaVentaTpv.tsx";
 import "./DetalleVentaTpv.css";
 import { DevolucionVenta } from "./Devolucion/DevolucionVenta.tsx";
@@ -20,11 +22,12 @@ import { AltaPagoEfectivo } from "./Pagos/AltaPagoEfectivo.tsx";
 import { AltaPagoTarjeta } from "./Pagos/AltaPagoTarjeta.tsx";
 import { AltaPagoVale } from "./Pagos/AltaPagoVale.tsx";
 import { BajaPago } from "./Pagos/BajaPago.tsx";
-import { EmisionVale } from "./Pagos/EmisionVale.tsx";
 import { Pagos } from "./Pagos/Pagos.tsx";
 import { PendienteVenta } from "./PendienteVenta.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
+
+const maquina = getMaquina();  
 
 export const DetalleVentaTpv = ({
     ventaInicial = null,
@@ -58,7 +61,7 @@ export const DetalleVentaTpv = ({
                 eventos: [],
             }
             const nuevoContexto = await intentar(
-                () => procesarEvento(evento, payload, contexto)
+                () => procesarEvento(maquina, evento, payload, contexto)
             );
             setEstado(nuevoContexto.estado);
             setLineas(nuevoContexto.lineas);
@@ -126,7 +129,7 @@ export const DetalleVentaTpv = ({
                     <Tab
                         key="tab-3"
                         label="Pagos"
-                        children={<Pagos pagos={pagos} venta={venta} estado={estado} publicar={emitir} />}
+                        children={<Pagos pagos={pagos} estado={estado} publicar={emitir} />}
                     />,
                     ]}
                 ></Tabs>
@@ -166,44 +169,47 @@ export const DetalleVentaTpv = ({
                     activo={estado === "BORRANDO_VENTA"}
                     idVenta={ventaId}
                 />
-                <AltaPagoEfectivo
-                    publicar={emitir}
-                    activo={estado === "PAGANDO_EN_EFECTIVO"}
-                    idVenta={ventaId}
-                    pendiente={modelo.total - modelo.pagado}
-                />
-                <AltaPagoTarjeta
-                    publicar={emitir}
-                    activo={estado === "PAGANDO_CON_TARJETA"}
-                    idVenta={ventaId}
-                    pendiente={modelo.total - modelo.pagado}
-                />
+                {
+                    estado === "PAGANDO_EN_EFECTIVO" &&
+                    <AltaPagoEfectivo
+                        publicar={emitir}
+                        venta={modelo}
+                    />
+                }
+                {
+                    estado === "PAGANDO_CON_TARJETA" &&
+                    <AltaPagoTarjeta
+                        publicar={emitir}
+                        venta={modelo}
+                    />
+                }
                 {
                     estado === "PAGANDO_CON_VALE" &&
                     <AltaPagoVale
                         publicar={emitir}
-                        activo={estado === "PAGANDO_CON_VALE"}
-                        idVenta={ventaId}
-                        pendiente={modelo.total - modelo.pagado}
+                        venta={modelo}
                     />
                 }
-                <BajaPago
-                    publicar={emitir}
-                    activo={estado === "BORRANDO_PAGO"}
-                    idPago={pagos.idActivo || undefined}
-                    idVenta={venta.modelo.id}
-                />
-                <DevolucionVenta 
-                    publicar={emitir}
-                    activo={estado === "DEVOLVIENDO_VENTA"}
-                    idVenta={venta.modelo.id}
-                />
+                {
+                    estado === "BORRANDO_PAGO" &&
+                    <BajaPago
+                        publicar={emitir}
+                        idPago={pagos.idActivo || undefined}
+                    />
+                }
+                {
+                    estado === "DEVOLVIENDO_VENTA" &&
+                    <DevolucionVenta 
+                        publicar={emitir}
+                        venta={modelo}
+                    />
+                }
 
-                <EmisionVale
+                {/* <EmisionVale
                     publicar={emitir}
                     activo={estado === "EMITIENDO_VALE"}
                     venta={venta}
-                />
+                /> */}
             </div>
         )}
         </Detalle>

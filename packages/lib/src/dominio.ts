@@ -1,5 +1,5 @@
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
-import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -280,7 +280,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
             return "Formato Email incorrecto";
         }
     }
-    if (tipoCampo && ["fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
+    if (tipoCampo && ["texto", "fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
         return "Campo requerido";
     }
 
@@ -311,11 +311,6 @@ export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) =
 export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
     const valor_inicial = estado.valor_inicial;
     const valor = estado.valor;
-    // for (const key in valor) {
-    //     if (valor[key] !== valor_inicial[key]) {
-    //         console.log(`Campo modificado: ${key}, valor: ${valor[key]}, valor inicial: ${valor_inicial[key]}`);
-    //     }
-    // }
 
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
@@ -328,6 +323,20 @@ export const formatearMoneda = (cantidad: number, divisa: string): string => {
         style: "currency",
         currency: divisa,
     }).format(cantidad);
+};
+
+function decimalesPorMoneda(divisa: string): number {
+    const numberFormatUSD = new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: divisa
+    });
+    return numberFormatUSD.formatToParts(1)
+        .find(part => part.type === "fraction")
+        ?.value.length ?? 0;
+}
+
+export const redondeaMoneda = (cantidad: number, divisa: string): number => {
+    const decimales = decimalesPorMoneda(divisa);
+    return parseFloat(cantidad.toFixed(decimales));
 };
 
 export const formatearFecha = (fecha: string): string => {
@@ -419,3 +428,79 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
         paginacion: criteria.paginacion
     })
 };
+
+type ProcesarContextoSinc<E extends string, C extends Contexto<E>> = (contexto: C) => C;
+export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEstado: string) => ProcesarContextoSinc<E, C> = (nuevoEstado) => {
+
+    return (contexto) => {
+        return {
+            ...contexto,
+            estado: nuevoEstado
+        }
+    }
+}
+
+
+export const ejecutarListaProcesos = async <E extends string, C extends Contexto<E>>(
+    contexto: C,
+    procesos: (ProcesarContexto<E, C> | E)[],
+    payload?: unknown
+) => {
+
+    let nuevoContexto = contexto;
+    for (const proceso of procesos) {
+        if (typeof proceso === 'string') {
+            nuevoContexto = setEstadoMaquina<E, C>(proceso)(nuevoContexto);
+        } else {
+            nuevoContexto = await proceso(nuevoContexto, payload);
+        }
+    }
+    return nuevoContexto;
+}
+
+export const procesarEvento = async <E extends string, C extends Contexto<E>>(
+    maquina: Maquina<E, C>,
+    evento: string,
+    payload: unknown,
+    contexto: C
+) => {
+
+    const estado = contexto.estado;
+
+    console.log("Procesar evento:", evento, payload, 'estado actual', estado);
+
+    const usarMaquina = () => {
+
+        return maquina[contexto.estado][evento];
+
+    }
+
+    const resultado = usarMaquina();
+
+    if (typeof resultado === 'string') {
+
+        return setEstadoMaquina<E, C>(resultado)(contexto);
+
+    } else if (typeof resultado === 'function') {
+
+        return await resultado(contexto, payload);
+
+    } else if (Array.isArray(resultado)) {
+
+        return ejecutarListaProcesos(contexto, resultado, payload);
+
+    } else {
+
+        return resultado;
+    }
+};
+
+export const publicar = <E extends string, C extends Contexto<E>>(evento: string, payload?: unknown) =>
+
+    async (contexto: C) => {
+
+        return {
+            ...contexto,
+            eventos: [...contexto.eventos, [evento, payload]]
+        }
+    }

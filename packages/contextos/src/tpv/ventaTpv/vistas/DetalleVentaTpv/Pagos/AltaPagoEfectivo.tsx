@@ -1,60 +1,40 @@
+import { metaNuevoPagoEfectivo, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { useModelo } from "@olula/lib/useModelo.ts";
-
-import { metaNuevoPagoEfecctivo } from "#/tpv/ventaTpv/diseño.ts";
 import { QModal } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useContext, useEffect } from "react";
+import { redondeaMoneda } from "@olula/lib/dominio.js";
+import { useModelo } from "@olula/lib/useModelo.ts";
 import { nuevoPagoEfectivoVacio } from "../../../dominio.ts";
-import { postPago } from "../../../infraestructura.ts";
 import "./AltaPagoEfectivo.css";
 
 export const AltaPagoEfectivo = ({
-  activo = false,
   publicar,
-  idVenta,
-  pendiente,
+  venta,
 }: {
-  activo: boolean;
   publicar: EmitirEvento;
-  idVenta: string;
-  pendiente: number
+  venta: VentaTpv;
 }) => {
 
-  const { modelo, uiProps, valido, dispatch } = useModelo(metaNuevoPagoEfecctivo, {
-    ...nuevoPagoEfectivoVacio,
-    factura_id: idVenta,
-  });
+  const { modelo, uiProps, valido, dispatch } = useModelo(
+    metaNuevoPagoEfectivo, nuevoPagoEfectivoVacio
+  );
 
-  const { intentar } = useContext(ContextoError);
+  const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
-  const crear = async () => {
-    const pagado = Number(modelo.importe) < pendiente
-      ? Number(modelo.importe)
-      : pendiente;
-    const idPago = await intentar(() => postPago(idVenta, {
-      importe: pagado,
-      formaPago: "EFECTIVO",
-    }));
-    publicar("pago_creado", idPago);
+  const crear = () => {
+    publicar("pago_en_efectivo_listo", modelo);
   };
 
   const cancelar = () => {
     publicar("pago_cancelado");
   };
 
-  useEffect(() => {
-    if (activo) {
-      limpiar();
-    }
-  }, [activo]);
-
   const sumar = (valor: number) => {
     return () => {
-      const importe = Number(modelo.importe) + valor;
-      setImporte(importe);
+      setImporte(
+        Number(modelo.importe) + valor
+      );
     };
   }
 
@@ -74,17 +54,21 @@ export const AltaPagoEfectivo = ({
     : 0;
 
   return (
-    <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+
       <div className="AltaPago">
-        <h2>Nuevo pago</h2>
+
+        <h2>Pagar en efectivo</h2>
+
         <quimera-formulario>
           <QInput label="Importe" {...uiProps("importe")} />
-          
         </quimera-formulario>
+
         <div className="botones maestro-botones ">
           {`Pendiente: ${pendiente}€. Cambio: ${cambio}€`}
           <QBoton onClick={limpiar}>Limpiar</QBoton>
         </div>
+
         <div className="botones maestro-botones ">
           <QBoton onClick={sumar(0.01)}>0,01€</QBoton>
           <QBoton onClick={sumar(0.02)}>0,02€</QBoton>
@@ -95,6 +79,7 @@ export const AltaPagoEfectivo = ({
           <QBoton onClick={sumar(1)}>1€</QBoton>
           <QBoton onClick={sumar(2)}>2€</QBoton>
         </div>
+
         <div className="botones maestro-botones ">
           <QBoton onClick={sumar(5)}>5€</QBoton>
           <QBoton onClick={sumar(10)}>10€</QBoton>
@@ -104,12 +89,15 @@ export const AltaPagoEfectivo = ({
           <QBoton onClick={sumar(200)}>200€</QBoton>
           <QBoton onClick={sumar(500)}>500€</QBoton>
         </div>
+
         <div className="botones maestro-botones ">
           <QBoton onClick={crear} deshabilitado={!valido}>
-            Guardar
+            Pagar
           </QBoton>
         </div>
+
       </div>
+
     </QModal>
   );
 };

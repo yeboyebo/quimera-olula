@@ -30,7 +30,7 @@ export const PagosLista = ({
   );
 };
 
-export const ItemPagoVentaTpv = ({
+const ItemPagoVentaTpv = ({
   pago,
 }: {
   pago: PagoVentaTpv;

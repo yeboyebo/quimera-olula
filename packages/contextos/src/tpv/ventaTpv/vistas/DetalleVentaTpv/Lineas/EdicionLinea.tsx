@@ -9,6 +9,7 @@ import { LineaFactura } from "../../../diseño.ts";
 import { metaLineaFactura } from "../../../dominio.ts";
 import { patchLinea } from "../../../infraestructura.ts";
 import "./EdicionLinea.css";
+
 export const EdicionLinea = ({
   publicar,
   activo,

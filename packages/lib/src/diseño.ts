@@ -82,3 +82,18 @@ export type ListaSeleccionable<E extends Entidad> = {
   lista: E[];
   idActivo: string | null;
 }
+
+type ContextoEstado<E extends string> = {
+  estado: E;
+}
+type EventoMaquina = [string, unknown?]
+type ContextoEventos = {
+  eventos: EventoMaquina[]
+}
+
+export type Contexto<E extends string> = Record<string, unknown> & ContextoEstado<E> & ContextoEventos
+
+export type ProcesarContexto<E extends string, C extends Contexto<E>> = (contexto: C, payload?: unknown) => Promise<C>;
+
+export type Maquina<E extends string, C extends Contexto<E>> =
+  Record<E, Record<string, E | ProcesarContexto<E, C> | (E | ProcesarContexto<E, C>)[]>>
