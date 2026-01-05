@@ -36,7 +36,17 @@ export const metaTablaTramoLineaPedido: MetaTabla<Tramo> = [
 export const transformarLineasAlbaran = (lineas: LineaAlbaranarPedido[]): LineasAlabaranPatch[] => {
     return lineas.map(linea => ({
         id: linea.id,
-        cantidad: linea.servida || 0,
+        cantidad: linea.a_enviar || 0,
         lotes: []
     }));
 }
+
+export const obtenerClaseEstadoAlbaranado = (linea: LineaAlbaranarPedido) => {
+    const aEnviar = linea.a_enviar || 0;
+    const servida = linea.servida || 0;
+    if (linea.cerrada) return "cerrada";
+    if (aEnviar + servida === linea.cantidad) return "completa";
+    if (aEnviar + servida > 0 && aEnviar + servida < linea.cantidad)
+        return "modificada";
+    return "";
+};

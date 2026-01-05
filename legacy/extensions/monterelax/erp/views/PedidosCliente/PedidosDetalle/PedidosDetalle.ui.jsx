@@ -1,3 +1,4 @@
+import { ListItemLineaPedido } from "@quimera-extension/base-area_clientes";
 import { Box, Field, Grid, Icon, IconButton, QBox, Typography } from "@quimera/comps";
 import {
   Button,
@@ -10,9 +11,7 @@ import {
   Tab,
   Tabs,
 } from "@quimera/thirdparty";
-import { ListItemLineaPedido } from "@quimera-extension/base-area_clientes";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
 
 function PedidosDetalle({ useStyles }) {
   const [{ indiceTab, lineas, albaranes, pedidos }, dispatch] = useStateValue();
@@ -51,7 +50,7 @@ function PedidosDetalle({ useStyles }) {
                 </Tabs>
                 {indiceTab === 0 && (
                   <Box>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} direction="column" >
                       <Grid item xs={12}>
                         <Field.Text
                           id={`pedidos.dict.${pedidos.current}.nombreCliente`}
@@ -137,7 +136,7 @@ function PedidosDetalle({ useStyles }) {
                               pedidos.dict[pedidos.current].estado === "CARGADO" ||
                               pedidos.dict[pedidos.current].reclamado ||
                               pedidos.dict[pedidos.current].mx_fechaprevistainicial >=
-                                pedidos.dict[pedidos.current].fechasalidareal
+                              pedidos.dict[pedidos.current].fechasalidareal
                             }
                             id="reclamar"
                             variant="contained"
@@ -164,8 +163,8 @@ function PedidosDetalle({ useStyles }) {
                           height={1}
                           visibility={
                             pedidos.dict[pedidos.current].fechasalidareal === null &&
-                            pedidos.dict[pedidos.current].estado !== "CARGADO" &&
-                            pedidos.dict[pedidos.current].estado !== "TERMINADO"
+                              pedidos.dict[pedidos.current].estado !== "CARGADO" &&
+                              pedidos.dict[pedidos.current].estado !== "TERMINADO"
                               ? "visible"
                               : "hidden"
                           }

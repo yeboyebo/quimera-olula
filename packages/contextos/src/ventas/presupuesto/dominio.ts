@@ -88,6 +88,12 @@ export const cambioClienteVacio = (): CambioCliente => ({
     direccion_id: "",
 });
 
+export const cambioCliente = (presupuesto: Presupuesto): CambioCliente => ({
+    cliente_id: presupuesto.cliente_id,
+    nombre_cliente: presupuesto.nombre_cliente,
+    direccion_id: presupuesto.direccion_id,
+});
+
 export const nuevaLineaVentaVacia: NuevaLineaVenta = {
     referencia: "",
     cantidad: 1,

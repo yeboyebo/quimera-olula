@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from "@quimera/comps";
 import { Avatar, List, ListItem, ListItemText } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import Quimera, { useStateValue, util } from "quimera";
 
 function ArqueosPagos({ useStyles }) {
   const [{ pagos }, dispatch] = useStateValue();
@@ -16,7 +16,7 @@ function ArqueosPagos({ useStyles }) {
 
   return (
     <Quimera.Template id="ArqueosPagos">
-      <Grid container spacing={0}>
+      <Grid container spacing={0} direction="column">
         <Grid item xs={12}>
           {pagos.idList.length > 0 ? (
             <List>

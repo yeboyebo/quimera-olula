@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useReducer, useRef, useState } from "react";
 
 import { Modelo, TipoInput } from "./diseño.ts";
 import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
@@ -14,6 +14,11 @@ export function useModelo<T extends Modelo>(
         modeloInicialProp
     );
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
+
+    // Probando para evitar bucle cuando se usa init en useEffect
+    const modeloInicialPropRef = useRef(modeloInicialProp);
+    modeloInicialPropRef.current = modeloInicialProp;
+
     const entidad = {
         valor: modelo,
         valor_inicial: modeloInicial,
@@ -80,15 +85,27 @@ export function useModelo<T extends Modelo>(
             descripcion: secundario ? modelo[secundario] as string : undefined,
         }
     }
-    const init = useCallback((modelo?: T) => {
+
+    const init = useCallback((nuevoModelo?: T) => {
+        const modeloAUsar = nuevoModelo || modeloInicialPropRef.current;
         dispatch({
             type: "init",
             payload: {
-                entidad: modelo || modeloInicialProp
+                entidad: modeloAUsar
             }
-        })
-        setModeloInicial(modelo || modeloInicialProp);
-    }, [modeloInicialProp]);
+        });
+        setModeloInicial(modeloAUsar);
+    }, []); // Vacío porque usamos ref
+
+    // const init = useCallback((modelo?: T) => {
+    //     dispatch({
+    //         type: "init",
+    //         payload: {
+    //             entidad: modelo || modeloInicialProp
+    //         }
+    //     })
+    //     setModeloInicial(modelo || modeloInicialProp);
+    // }, [modeloInicialProp]);
 
     return {
         modelo,

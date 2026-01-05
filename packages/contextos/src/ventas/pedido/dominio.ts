@@ -1,5 +1,5 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { MetaModelo } from "@olula/lib/dominio.ts";
+import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import {
     cambioClienteVentaVacio,
     metaCambioClienteVenta,
@@ -40,9 +40,13 @@ export const metaPedido: MetaModelo<Pedido> = {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
     },
-
+    editable: (pedido: Pedido, _?: string) => {
+        return !pedido.aprobado;
+    },
 };
 
+export const editable = modeloEsEditable<Pedido>(metaPedido);
+export const pedidoValido = modeloEsValido<Pedido>(metaPedido);
 
 export const metaLineaPedido: MetaModelo<LineaPedido> = metaLineaVenta;
 

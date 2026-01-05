@@ -64,15 +64,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
             ...lineas,
             lista: lineas.lista.map((l) => {
               if (l.id !== id) return l;
-              const servida = (tramos || []).reduce(
+              const a_enviar = (tramos || []).reduce(
                 (acc, t) => acc + (Number(t.cantidad) || 0),
                 0
               );
-              const a_enviar = Math.max(0, (l.cantidad || 0) - servida);
+              // const a_enviar = Math.max(0, (l.cantidad || 0) - servida);
               return {
                 ...l,
                 tramos,
-                servida,
                 a_enviar,
               } as Linea;
             }),

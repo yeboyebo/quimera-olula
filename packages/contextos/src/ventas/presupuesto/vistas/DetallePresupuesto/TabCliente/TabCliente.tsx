@@ -1,14 +1,19 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
+import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
+import {
+  getPresupuesto,
+  patchCambiarCliente,
+} from "#/ventas/presupuesto/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
+import { useContext } from "react";
 import { Presupuesto } from "../../../diseño.ts";
 import { editable } from "../../../dominio.ts";
-import { CambioCliente } from "./CambioCliente.tsx";
 import "./TabCliente.css";
 
 interface TabClienteProps {
@@ -39,12 +44,22 @@ export const TabCliente = ({
   publicar = () => {},
 }: TabClienteProps) => {
   const { modelo, uiProps } = presupuesto;
-  // const { intentar } = useContext(ContextoError);
+  const { intentar } = useContext(ContextoError);
 
   const [emitir, { estado }] = useMaquina4<Estado, Contexto>({
     config: configMaquina,
     publicar,
   });
+
+  const onGuardarCambioCliente = async (
+    ventaId: string,
+    cambios: Partial<Presupuesto>
+  ) => {
+    await intentar(() => patchCambiarCliente(ventaId, cambios));
+    const nuevoPresupuesto = await getPresupuesto(ventaId);
+    publicar("presupuesto_cambiado", nuevoPresupuesto);
+    emitir("cambio_cliente_listo");
+  };
 
   return (
     <div className="TabCliente">
@@ -75,17 +90,13 @@ export const TabCliente = ({
           </>
         )}
       </quimera-formulario>
-      <QModal
-        nombre="modal"
-        abierto={estado === "cambiando_cliente"}
-        onCerrar={() => emitir("cambio_cliente_cancelado")}
-      >
-        <CambioCliente
-          presupuesto={presupuesto}
-          publicar={publicar}
-          emitir={emitir}
-        />
-      </QModal>
+
+      <CambioClienteVenta
+        venta={presupuesto}
+        onGuardar={onGuardarCambioCliente}
+        onCancelar={() => emitir("cambio_cliente_listo")}
+        activo={estado === "cambiando_cliente"}
+      />
     </div>
   );
 };

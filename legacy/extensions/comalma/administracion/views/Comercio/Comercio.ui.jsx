@@ -261,7 +261,7 @@ function Comercio({ callbackChanged, idComercio, initComercio, useStyles }) {
             </QModelBox>
           </Grid>
           {/* <Box>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               <Grid item xs={6} sm={6} md={3} lg={2}>
                 <Box component="div" className={classes.mediaContainer}>
                   <div className={classes.mediaContainerTitle}>Tipo</div>

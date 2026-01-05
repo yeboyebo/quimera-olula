@@ -1,8 +1,7 @@
+import { Cliente } from "@quimera-extension/base-ventas";
 import { Box, Button, Field, Grid, Typography } from "@quimera/comps";
 import { AppBar, FormControlLabel, Switch } from "@quimera/thirdparty";
-import { Cliente } from "@quimera-extension/base-ventas";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { useStateValue } from "quimera";
 
 import Pedidos from "../../../comps/Pedidos";
 import initialData from "./../filtro-estados";
@@ -16,7 +15,7 @@ function FiltroMaster({ useStyles }) {
       <AppBar position="sticky" className={classes.appBar}>
         <Box px={1}>
           <Box>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               {!filtroReferencia ? (
                 <>
                   <Grid item xs={6}>

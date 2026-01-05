@@ -1,7 +1,7 @@
-import { Box, Button, Collapse, Field, Grid, Icon, QSection } from "@quimera/comps";
 import { SelectorValores } from "@quimera-extension/base-almacen";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import { Box, Button, Collapse, Field, Grid, Icon, QSection } from "@quimera/comps";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useEffect } from "react";
 
 import { Proyecto, S17Articulo } from "../../comps";
 
@@ -79,7 +79,7 @@ function LineaParteNueva({
           actionPrefix="lineaExpandida"
           alwaysActive
           dynamicComp={() => (
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               <Grid item xs={12}>
                 <S17Articulo
                   id="linea.buffer/referencia"
