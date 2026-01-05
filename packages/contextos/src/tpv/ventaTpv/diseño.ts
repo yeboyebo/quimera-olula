@@ -1,11 +1,13 @@
 import { Factura } from "#/ventas/factura/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
-import { Entidad, Filtro, ListaSeleccionable, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { MetaModelo } from "@olula/lib/dominio.js";
 
 export interface VentaTpv extends Venta {
     pendiente: number;
     pagado: number;
+    lineas: LineaFactura[];
+    pagos: PagoVentaTpv[];
 }
 
 
@@ -124,8 +126,9 @@ export type ContextoVentaTpv = {
     estado: EstadoVentaTpv,
     venta: VentaTpv;
     ventaInicial: VentaTpv;
-    pagos: ListaSeleccionable<PagoVentaTpv>;
-    lineas: ListaSeleccionable<LineaFactura>;
+    pagoActivo: PagoVentaTpv | null;
+    lineaActiva: LineaFactura | null;
+    // pagos: ListaSeleccionable<PagoVentaTpv>;
+    // lineas: ListaSeleccionable<LineaFactura>;
     eventos: [string, unknown][];
-    // publicar: EmitirEvento;
 };

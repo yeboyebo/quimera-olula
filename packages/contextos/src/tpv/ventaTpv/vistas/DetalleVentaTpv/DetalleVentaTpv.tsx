@@ -3,16 +3,13 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, Entidad, ListaSeleccionable } from "@olula/lib/diseño.ts";
+import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { ContextoVentaTpv, EstadoVentaTpv, LineaFactura, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
 import { metaVentaTpv, ventaTpvVacia } from "../../dominio.ts";
-import {
-    patchFactura
-} from "../../infraestructura.ts";
 import { getMaquina } from "../../maquina.ts";
 import { BajaVentaTpv } from "./BajaVentaTpv.tsx";
 import "./DetalleVentaTpv.css";
@@ -40,8 +37,8 @@ export const DetalleVentaTpv = ({
     const { intentar } = useContext(ContextoError);
 
     const [estado, setEstado] = useState<EstadoVentaTpv>("ABIERTA");
-    const [pagos, setPagos] = useState<ListaSeleccionable<PagoVentaTpv>>({ lista:[], idActivo: null });
-    const [lineas, setLineas] = useState<ListaSeleccionable<LineaFactura>>({ lista:[], idActivo: null });
+    const [lineaActiva, setLineaActiva] = useState<LineaFactura | null>(null);
+    const [pagoActivo, setPagoActivo] = useState<PagoVentaTpv | null>(null);
 
     const ventaId = ventaInicial?.id ?? params.id;
     const titulo = (venta: Entidad) => venta.codigo as string;
@@ -56,34 +53,31 @@ export const DetalleVentaTpv = ({
                 estado: inicial ? 'INICIAL' : estado,
                 venta: venta.modelo,
                 ventaInicial: venta.modeloInicial,
-                lineas: lineas,
-                pagos: pagos,
+                pagoActivo,
+                lineaActiva,
                 eventos: [],
             }
             const nuevoContexto = await intentar(
                 () => procesarEvento(maquina, evento, payload, contexto)
             );
             setEstado(nuevoContexto.estado);
-            setLineas(nuevoContexto.lineas);
-            setPagos(nuevoContexto.pagos);
+            setPagoActivo(nuevoContexto.pagoActivo);
+            setLineaActiva(nuevoContexto.lineaActiva);
             if (nuevoContexto.venta !== venta.modelo) {
                 init(nuevoContexto.venta);
             }
             nuevoContexto.eventos.map((evento) => publicar(evento[0], evento[1]));
-
         },
-        [venta, setPagos, setLineas, publicar]
+        [venta, setPagoActivo, setLineaActiva, publicar]
     );
 
     const guardar = async () => {
-        await intentar(() => patchFactura(modelo.id, modelo));
-        emitir("venta_cambiada");
+        emitir("edicion_de_venta_lista", modelo);
     };
 
     const cancelar = () => {
         emitir("edicion_de_venta_cancelada");
     };
-
 
     useEffect(() => {
         if (ventaId && ventaId !== venta.modelo.id) {
@@ -91,16 +85,12 @@ export const DetalleVentaTpv = ({
         }
     }, [ventaId, emitir]);
   
-    console.log('Estado:', estado);
-
     return (
         <Detalle
             id={ventaId}
             obtenerTitulo={titulo}
-            // setEntidad={(f) => (init(f))}
             setEntidad={() => {}}
             entidad={modelo}
-            // cargar={getVentaUI}   
             cerrarDetalle={()=> emitir("venta_deseleccionada", null, true)}
         >
         {!!ventaId && (
@@ -118,18 +108,24 @@ export const DetalleVentaTpv = ({
                         key="tab-1"
                         label="Cliente"
                         children={
-                        <TabCliente factura={venta} publicar={emitir} />
+                        <TabCliente venta={venta} publicar={emitir} />
                         }
                     />,
                     <Tab
                         key="tab-2"
                         label="Datos"
-                        children={<TabDatos factura={venta} />}
+                        children={<TabDatos venta={venta} />}
                     />,
                     <Tab
                         key="tab-3"
                         label="Pagos"
-                        children={<Pagos pagos={pagos} estado={estado} publicar={emitir} />}
+                        children={
+                            <Pagos pagoActivo={pagoActivo}
+                                pagos={venta.modelo.pagos}
+                                estado={estado}
+                                publicar={emitir}
+                            />
+                        }
                     />,
                     ]}
                 ></Tabs>
@@ -159,16 +155,18 @@ export const DetalleVentaTpv = ({
                 )}
                 
                 <Lineas
-                    facturaId={ventaId}
-                    lineas={lineas}
+                    venta={venta.modelo}
+                    lineaActiva={lineaActiva}
                     publicar={emitir}
                     estadoVenta={estado}
                 />
-                <BajaVentaTpv
-                    publicar={emitir}
-                    activo={estado === "BORRANDO_VENTA"}
-                    idVenta={ventaId}
-                />
+                {
+                    estado === "BORRANDO_VENTA" &&
+                    <BajaVentaTpv
+                        publicar={emitir}
+                        venta = {modelo}
+                    />
+                }
                 {
                     estado === "PAGANDO_EN_EFECTIVO" &&
                     <AltaPagoEfectivo
@@ -194,7 +192,7 @@ export const DetalleVentaTpv = ({
                     estado === "BORRANDO_PAGO" &&
                     <BajaPago
                         publicar={emitir}
-                        idPago={pagos.idActivo || undefined}
+                        idPago={pagoActivo?.id || undefined}
                     />
                 }
                 {
@@ -204,12 +202,6 @@ export const DetalleVentaTpv = ({
                         venta={modelo}
                     />
                 }
-
-                {/* <EmisionVale
-                    publicar={emitir}
-                    activo={estado === "EMITIENDO_VALE"}
-                    venta={venta}
-                /> */}
             </div>
         )}
         </Detalle>

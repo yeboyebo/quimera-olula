@@ -1,12 +1,14 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { PagoVentaTpv } from "../../../diseño.ts";
 
 export const PagosLista = ({
   pagos,
+  pagoActivo,
   publicar,
 }: {
-  pagos: ListaSeleccionable<PagoVentaTpv>;
+  pagos: PagoVentaTpv[];
+  pagoActivo: PagoVentaTpv | null;
   publicar: EmitirEvento;
 }) => {
   
@@ -19,9 +21,9 @@ export const PagosLista = ({
     <>
       <QTabla
         metaTabla={getMetaTablaPagos()}
-        datos={pagos.lista}
+        datos={pagos}
         cargando={false}
-        seleccionadaId={pagos.idActivo || undefined}
+        seleccionadaId={pagoActivo?.id || undefined}
         onSeleccion={setSeleccionado}
         orden={["id", "ASC"]}
         onOrdenar={(_: string) => null}

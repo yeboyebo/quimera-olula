@@ -1,33 +1,23 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { useContext } from "react";
-import { borrarFactura } from "../../infraestructura.ts";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { VentaTpv } from "../../diseño.ts";
 
 export const BajaVentaTpv = ({
   publicar,
-  activo = false,
-  idVenta,
+  venta,
 }: {
-  publicar: (evento: string, payload?: unknown) => void;
-  idVenta: string;
-  activo?: boolean;
+  venta: VentaTpv;
+  publicar: EmitirEvento;
 }) => {
-
-  const { intentar } = useContext(ContextoError);
-
-  const borrar = async () => {
-        await intentar(() => borrarFactura(idVenta));
-        publicar("venta_borrada");
-    };
 
   return (
      <QModalConfirmacion
         nombre="borrarVenta"
-        abierto={activo}
-        titulo="Confirmar borrar"
-        mensaje="¿Está seguro de que desea borrar esta venta?"
+        abierto={true}
+        titulo="Borrar venta"
+        mensaje={`¿Está seguro de que desea borrar la venta ${venta.codigo}?`}
         onCerrar={() => publicar("borrar_cancelado")}
-        onAceptar={borrar}
+        onAceptar={() => publicar("borrado_de_venta_listo")}
     />
   );
 };

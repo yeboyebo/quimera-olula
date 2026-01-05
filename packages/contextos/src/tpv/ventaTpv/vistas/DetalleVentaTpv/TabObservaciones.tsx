@@ -1,24 +1,27 @@
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { Factura } from "../../diseño.ts";
+import { VentaTpv } from "../../diseño.ts";
 import "./TabObservaciones.css";
 
 interface TabClienteProps {
-  factura: HookModelo<Factura>;
+  venta: HookModelo<VentaTpv>;
 }
 
-export const TabObservaciones = ({ factura }: TabClienteProps) => {
-  const { uiProps } = factura;
+export const TabObservaciones = ({ venta }: TabClienteProps) => {
 
-  return (
-    <>
-      <quimera-formulario>
-        <QTextArea
-          label="Observaciones"
-          rows={5}
-          {...uiProps("observaciones")}
-        />
-      </quimera-formulario>
-    </>
-  );
+    const { uiProps } = venta;
+
+    return (
+        <>
+            <quimera-formulario>
+                
+                <QTextArea
+                    label="Observaciones"
+                    rows={5}
+                    {...uiProps("observaciones")}
+                />
+                
+            </quimera-formulario>
+        </>
+    );
 };

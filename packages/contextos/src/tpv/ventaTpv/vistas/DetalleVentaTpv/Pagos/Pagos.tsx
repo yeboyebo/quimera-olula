@@ -1,22 +1,19 @@
 import { EstadoVentaTpv, PagoVentaTpv } from "#/tpv/ventaTpv/diseño.ts";
 import { QBoton } from "@olula/componentes/index.ts";
-import { EmitirEvento, ListaSeleccionable } from "@olula/lib/diseño.js";
-import {
-  getSeleccionada
-} from "@olula/lib/entidad.ts";
+import { EmitirEvento } from "@olula/lib/diseño.js";
 import { PagosLista } from "./PagosLista.tsx";
 export const Pagos = ({
   pagos,
+  pagoActivo,
   estado,
   publicar= () => { },
 }: {
-  pagos: ListaSeleccionable<PagoVentaTpv>;
+  pagos: PagoVentaTpv[];
+  pagoActivo: PagoVentaTpv | null;
   estado: EstadoVentaTpv;
   publicar?: EmitirEvento;
 
 }) => {
-
-  const seleccionado = getSeleccionada(pagos);
 
   return (
     <>
@@ -24,13 +21,13 @@ export const Pagos = ({
         <div className="botones maestro-botones ">
           <QBoton onClick={() => publicar("pago_efectivo_solicitado")}>Nuevo</QBoton>
           <QBoton
-            deshabilitado={!seleccionado}
+            deshabilitado={!pagoActivo}
             onClick={() => publicar("editar_pago_solicitado")}
           >
             Editar
           </QBoton>
           <QBoton
-            deshabilitado={!seleccionado}
+            deshabilitado={!pagoActivo}
             onClick={() => publicar("borrar_pago_solicitado")}
           >
             Borrar
@@ -39,9 +36,9 @@ export const Pagos = ({
       )}
       <PagosLista
         pagos={pagos}
+        pagoActivo={pagoActivo}
         publicar={publicar}
       />
-
     </>
   );
 };

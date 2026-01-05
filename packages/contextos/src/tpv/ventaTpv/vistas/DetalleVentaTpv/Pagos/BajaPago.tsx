@@ -1,10 +1,11 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { EmitirEvento } from "@olula/lib/diseño.js";
 
 export const BajaPago = ({
   publicar,
   idPago,
 }: {
-  publicar: (evento: string, payload?: unknown) => void;
+  publicar: EmitirEvento;
   idPago?: string;
 }) => {
 

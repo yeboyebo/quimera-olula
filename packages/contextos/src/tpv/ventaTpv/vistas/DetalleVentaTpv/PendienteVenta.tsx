@@ -28,13 +28,8 @@ export const PendienteVenta = ({
 
   return (
     <div className="pendientes-venta">
+      
       <div className="botones maestro-botones ">
-
-        {venta.modelo.total >= 0 && (
-          <QBoton onClick={() => publicar("devolucion_solicitada")}>
-            Devolución
-          </QBoton>
-        )}
 
         {pendiente < 0 && (
           <QBoton onClick={() => publicar("emision_de_vale_solicitada", venta.modelo)}>
@@ -63,14 +58,17 @@ export const PendienteVenta = ({
         <label>Total:</label>
         <span>{formatearMoneda(total, divisa)}</span>
       </div>
+
       <div className="pendientes-venta-item">
         <label>Pagado:</label>
         <span>{formatearMoneda(pagado, divisa)}</span>
       </div>
+
       <div className="pendientes-venta-item">
         <label>Pendiente:</label>
         <span>{formatearMoneda(total - pagado, divisa)}</span>
       </div>
+      
     </div>
   );
 };

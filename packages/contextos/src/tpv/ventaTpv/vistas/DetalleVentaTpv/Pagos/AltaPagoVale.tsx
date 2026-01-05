@@ -22,6 +22,8 @@ export const AltaPagoVale = ({
 }) => {
 
     const { modelo, uiProps, valido, dispatch, init } = useModelo(metaNuevoPagoVale, nuevoPagoValeVacio);
+
+    const [pagando, setPagando] = useState(false);
   
     const { intentar } = useContext(ContextoError);
 
@@ -30,26 +32,35 @@ export const AltaPagoVale = ({
     const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
     const buscarVale = async (barcode: string) => {
+
         if (!barcode) {
             return;
         }
+
         const vale = await intentar(() => getVale(barcode))
         setVale(vale);
+
         dispatch({
             type: "set_campo",
             payload: { campo: "vale_id", valor: vale.id },
         });
+        
         const saldoPendiente = vale.saldo_pendiente;
         const importe = Math.min(saldoPendiente, pendiente);
-        console.log('importe', importe);
+        
         dispatch({
             type: "set_campo",
             payload: { campo: "importe", valor: importe.toString() },
         });
     };
 
+    const pagar = () => {
+        setPagando(true);
+        publicar("pago_con_vale_listo", modelo);
+    };
+
     const cancelar = () => {
-        publicar("pago_cancelado");
+        !pagando && publicar("pago_cancelado");
     };
 
     const limpiar = () => {
@@ -78,7 +89,7 @@ export const AltaPagoVale = ({
             <QBoton onClick={limpiar}>Limpiar</QBoton>
             </div>
             <div className="botones maestro-botones ">
-            <QBoton onClick={() => publicar("pago_con_vale_listo", modelo)}
+            <QBoton onClick={pagar}
                 deshabilitado={!valido}>
                 Pagar
             </QBoton>

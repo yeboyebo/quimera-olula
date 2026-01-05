@@ -5,29 +5,42 @@ import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.ts
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { Factura } from "../../diseño.ts";
+import { VentaTpv } from "../../diseño.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
-  factura: HookModelo<Factura>;
+  venta: HookModelo<VentaTpv>;
 }
 
-export const TabDatos = ({ factura }: TabDatosProps) => {
-  const { uiProps } = factura;
+export const TabDatos = ({ venta }: TabDatosProps) => {
+    
+    const { uiProps } = venta;
 
-  return (
-    <div className="TabDatos">
-      <quimera-formulario>
-        <QDate label="Fecha" {...uiProps("fecha")} />
-        <div id="espacio_fecha" />
-        <Divisa {...uiProps("divisa_id")} />
-        <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
-        <QInput {...uiProps("total_divisa_empresa")} label="Total €" />
-        <Agente {...uiProps("agente_id", "nombre_agente")} />
-        <div id="espacio_agente" />
-        <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
-        <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
-      </quimera-formulario>
-    </div>
-  );
+    return (
+        <div className="TabDatos">
+
+        <quimera-formulario>
+
+            <QDate label="Fecha" {...uiProps("fecha")} />
+
+            <div id="espacio_fecha" />
+
+            <Divisa {...uiProps("divisa_id")} />
+            
+            <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
+            
+            <QInput {...uiProps("total_divisa_empresa")} label="Total €" />
+            
+            <Agente {...uiProps("agente_id", "nombre_agente")} />
+            
+            <div id="espacio_agente" />
+
+            <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
+
+            <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
+
+        </quimera-formulario>
+
+        </div>
+    );
 };

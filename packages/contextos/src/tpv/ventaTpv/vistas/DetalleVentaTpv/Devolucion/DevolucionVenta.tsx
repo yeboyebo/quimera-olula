@@ -9,8 +9,6 @@ import { useContext, useState } from "react";
 import { CantidadADevolver } from "./CantidadADevolver.tsx";
 import "./DevolucionVenta.css";
 
-
-
 export const DevolucionVenta = (
     {
         publicar,
@@ -24,6 +22,7 @@ export const DevolucionVenta = (
     const { intentar } = useContext(ContextoError);
 
     const [ventaADevolver, setVentaADevolver] = useState<VentaTpvADevolver | null>(null);
+    const [devolviendo, setDevolviendo] = useState(false);
 
     const buscarVenta = async (codVenta: string) => {
         const v = await intentar(() => getVentaADevolver(codVenta));
@@ -31,16 +30,12 @@ export const DevolucionVenta = (
     };
 
     const devolver = async () => {
+        setDevolviendo(true);
         publicar("devolucion_lista", ventaADevolver);
-        // if (!ventaADevolver) {
-        //     return;
-        // }
-        // await intentar(() => patchDevolverVenta(venta.id, ventaADevolver, ventaADevolver.lineas));
-        // publicar("venta_devuelta", ventaADevolver);
     };
 
     const cancelar = () => {
-        publicar("devolucion_cancelada");
+        !devolviendo && publicar("devolucion_cancelada");
     };
 
     const cambiarCantidadADevolver = (linea: LineaADevolver, aDevolver: number) => {
