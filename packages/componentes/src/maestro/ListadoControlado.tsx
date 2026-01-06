@@ -38,17 +38,11 @@ type MaestroProps<T extends Entidad> = {
   criteria?: Criteria;
   entidades: T[];
   totalEntidades: number;
-  // setEntidades: (entidades: T[]) => void;
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
   modo?: Modo;
   setModo?: (modo: Modo) => void;
   recargar: (criteria: Criteria) => void;
-  // cargar: (
-  //   filtro: Filtro,
-  //   orden: Orden,
-  //   paginacion: Paginacion
-  // ) => RespuestaLista<T>;
 };
 
 export const ListadoControlado = <T extends Entidad>({
@@ -95,15 +89,11 @@ export const ListadoControlado = <T extends Entidad>({
                 datos={datos}
                 cargando={cargando}
                 seleccionadaId={seleccionada?.id}
-                // onSeleccion={(entidad) => setSeleccionada(entidad as T)}
                 onSeleccion={(entidad) => setSeleccionada(entidad as T)}
                 paginacion={criteria_.paginacion}
                 onPaginacion={(pagina, limite) => {
                     cambiarCriteria({ ...criteria_, paginacion: { pagina, limite } });
-                    // setPaginacion({ pagina, limite });
-                    // recargar(filtro, orden, { ...paginacion, pagina, limite });
                 }}
-                // totalEntidades={totalRegistros}
                 totalEntidades={entidades.length}
                 orden={criteria_.orden}
                 onOrdenar={(clave) => {
@@ -113,9 +103,6 @@ export const ListadoControlado = <T extends Entidad>({
                         ? "DESC"
                         : "ASC";
 
-                    // setOrden([clave, sentido]);
-                    // setPaginacion({ ...paginacion, pagina: 1 });
-                    // recargar(filtro, [clave, sentido], { ...paginacion, pagina: 1 });
                     cambiarCriteria({
                         ...criteria_,
                         orden: [clave, sentido],
@@ -129,38 +116,32 @@ export const ListadoControlado = <T extends Entidad>({
         if (modo == "tabla" && metaTabla) {
         return (
             <QTabla
-            metaTabla={metaTabla}
-            datos={datos}
-            cargando={cargando}
-            seleccionadaId={seleccionada?.id}
-            onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-            orden={criteria_.orden}
-            onOrdenar={(clave) => {
-                const [antigua_clave, antiguo_sentido] = criteria_.orden ?? [null, null];
-                const sentido =
-                antigua_clave === clave && antiguo_sentido === "ASC"
-                    ? "DESC"
-                    : "ASC";
-
-                // setOrden([clave, sentido]);
-                // setPaginacion({ ...paginacion, pagina: 1 });
-                // recargar(filtro, [clave, sentido], { ...paginacion, pagina: 1 });
-                cambiarCriteria({
-                    ...criteria_,
-                    orden: [clave, sentido],
-                    paginacion: { ...criteria_.paginacion, pagina: 1 },
-                });
-            }}
-            paginacion={criteria_.paginacion}
-            onPaginacion={(pagina, limite) => {
-                // setPaginacion({ pagina, limite });
-                // recargar(filtro, orden, { ...paginacion, pagina, limite });
-                cambiarCriteria({
-                    ...criteria_,
-                    paginacion: { pagina, limite },
-                });
-            }}
-            totalEntidades={totalEntidades}
+                metaTabla={metaTabla}
+                datos={datos}
+                cargando={cargando}
+                seleccionadaId={seleccionada?.id}
+                onSeleccion={(entidad) => setSeleccionada(entidad as T)}
+                orden={criteria_.orden}
+                onOrdenar={(clave) => {
+                    const [antigua_clave, antiguo_sentido] = criteria_.orden ?? [null, null];
+                    const sentido =
+                    antigua_clave === clave && antiguo_sentido === "ASC"
+                        ? "DESC"
+                        : "ASC";
+                    cambiarCriteria({
+                        ...criteria_,
+                        orden: [clave, sentido],
+                        paginacion: { ...criteria_.paginacion, pagina: 1 },
+                    });
+                }}
+                paginacion={criteria_.paginacion}
+                onPaginacion={(pagina, limite) => {
+                    cambiarCriteria({
+                        ...criteria_,
+                        paginacion: { pagina, limite },
+                    });
+                }}
+                totalEntidades={totalEntidades}
             />
         );
         }
@@ -175,7 +156,7 @@ export const ListadoControlado = <T extends Entidad>({
             <span
                 className="cambio-modo-icono"
                 onClick={() =>
-                setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
+                    setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
                 }
             >
                 <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
@@ -190,25 +171,18 @@ export const ListadoControlado = <T extends Entidad>({
                     ...criteria_.filtros.filter(([k]) => k !== clave),
                     [clave, operador, valor],
                 ];
-                // setFiltro(nuevoFiltro);
-                // recargar(nuevoFiltro, orden, paginacion);
                 cambiarCriteria({
                     ...criteria_,
                     filtros: nuevoFiltro,
                 });
             }}
             borrarFiltro={(clave) => {
-                // setFiltro(filtro.filter(([k]) => k !== clave));
-                // recargar(filtro.filter(([k]) => k !== clave), orden, paginacion);
                 cambiarCriteria({
                     ...criteria_,
                     filtros: criteria_.filtros.filter(([k]) => k !== clave),
                 });
             }}
             resetearFiltro={() => {
-                // setFiltro(criteria.filtros);
-                // setPaginacion({ ...paginacion, pagina: 1 });
-                // recargar(criteria.filtros, orden, { ...paginacion, pagina: 1 });
                 cambiarCriteria({
                     ...criteria_,
                     filtros: criteria.filtros,

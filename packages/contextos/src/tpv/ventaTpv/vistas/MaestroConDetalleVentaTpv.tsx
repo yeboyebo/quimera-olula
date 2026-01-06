@@ -64,29 +64,29 @@ export const MaestroConDetalleVentaTpv = () => {
 
     return ( 
         <div className="Factura"> 
-        <MaestroDetalleControlado<VentaTpv>
-            seleccionada={ctx.ventaActiva}
-            preMaestro={
-                <>
-                    <h2>Ventas TPV</h2>
-                    <h2>Punto de venta {miPuntoVentaLocal} </h2>
-                    <h2>Agente {miAgenteActivo} </h2>
-                    <div className="maestro-botones">
-                        <QBoton onClick={crear}>Nueva Venta</QBoton>
-                    </div>
-                </>
-            }
-            modoVisualizacion="tabla"
-            modoDisposicion="maestro-50"
-            metaTabla={metaTablaFactura}
-            entidades={ctx.ventas}
-            totalEntidades={ctx.totalVentas}
-            Detalle={
-                <DetalleVentaTpv ventaInicial={ctx.ventaActiva} publicar={emitir} />
-            }
-            recargar={recargar}
-            setSeleccionada={setSeleccionada}
-        />
+            <MaestroDetalleControlado<VentaTpv>
+                seleccionada={ctx.ventaActiva}
+                preMaestro={
+                    <>
+                        <h2>Ventas TPV</h2>
+                        <h2>Punto de venta {miPuntoVentaLocal} </h2>
+                        <h2>Agente {miAgenteActivo} </h2>
+                        <div className="maestro-botones">
+                            <QBoton onClick={crear}>Nueva Venta</QBoton>
+                        </div>
+                    </>
+                }
+                modoVisualizacion="tabla"
+                modoDisposicion="maestro-50"
+                metaTabla={metaTablaFactura}
+                entidades={ctx.ventas}
+                totalEntidades={ctx.totalVentas}
+                Detalle={
+                    <DetalleVentaTpv ventaInicial={ctx.ventaActiva} publicar={emitir} />
+                }
+                recargar={recargar}
+                setSeleccionada={setSeleccionada}
+            />
         </div>
     );
 };
