@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { QBoton } from "../atomos/qboton.tsx";
 import { QModal } from "./qmodal.tsx";
 
@@ -22,15 +23,26 @@ export const QModalConfirmacion = ({
   labelAceptar = "Aceptar",
   labelCancelar = "Cancelar",
 }: QModalConfirmacionProps) => {
+
+  const [aceptado, setAceptado] = useState(false) 
+
+  const aceptar = () => {
+    setAceptado(true)
+    onAceptar()
+  }
+  const cancelar = () => {
+    if (!aceptado) onCerrar()
+  }
+
   return (
-    <QModal nombre={nombre} abierto={abierto} onCerrar={onCerrar}>
+    <QModal nombre={nombre} abierto={abierto} onCerrar={cancelar}>
       <h2>{titulo}</h2>
       <div className="mensaje">{mensaje}</div>
       <div className="botones">
-        <QBoton onClick={onAceptar}>{labelAceptar}</QBoton>
-        <QBoton tipo="reset" variante="texto" onClick={onCerrar}>
+        <QBoton tipo="reset" variante="texto" onClick={cancelar}>
           {labelCancelar}
         </QBoton>
+        <QBoton onClick={aceptar}>{labelAceptar}</QBoton>
       </div>
     </QModal>
   );

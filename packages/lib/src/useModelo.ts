@@ -30,7 +30,6 @@ export function useModelo<T extends Modelo>(
             }
         }
 
-
         dispatch({
             type: "set_campo",
             payload: { campo, valor: valor as string },
@@ -44,6 +43,7 @@ export function useModelo<T extends Modelo>(
         }
     };
     const uiProps = (campo: string, secundario?: string) => {
+
         const validacion = validacionCampoModelo(meta)(modelo, campo);
         const valido = validacion === true;
         const valor = modelo[campo] as string;
@@ -81,6 +81,7 @@ export function useModelo<T extends Modelo>(
         }
     }
     const init = useCallback((modelo?: T) => {
+        // if (modelo === modeloInicial) return;
         dispatch({
             type: "init",
             payload: {
@@ -88,11 +89,11 @@ export function useModelo<T extends Modelo>(
             }
         })
         setModeloInicial(modelo || modeloInicialProp);
-    }, [modeloInicialProp]);
+    }, [dispatch, setModeloInicial, modeloInicialProp]);
 
     return {
         modelo,
-        modeloInicial: modeloInicialProp,
+        modeloInicial: modeloInicial || modeloInicialProp,
         uiProps,
         init,
         dispatch,
