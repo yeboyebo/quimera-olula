@@ -10,7 +10,7 @@ import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { redondeaMoneda } from "@olula/lib/dominio.js";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import "./AltaPagoVale.css";
 
 export const AltaPagoVale = ({
@@ -59,9 +59,12 @@ export const AltaPagoVale = ({
         publicar("pago_con_vale_listo", modelo);
     };
 
-    const cancelar = () => {
-        !pagando && publicar("pago_cancelado");
-    };
+    const cancelar = useCallback(
+        () => {
+            if (!pagando) publicar("pago_cancelado");
+        },
+        [pagando, publicar]
+    );
 
     const limpiar = () => {
         init(nuevoPagoValeVacio);

@@ -5,7 +5,7 @@ import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { redondeaMoneda } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { nuevoPagoEfectivoVacio } from "../../../dominio.ts";
 import "./AltaPagoTarjeta.css";
 
@@ -29,9 +29,12 @@ export const AltaPagoTarjeta = ({
         publicar("pago_con_tarjeta_listo", modelo);
     };
 
-    const cancelar = () => {
-        !pagando && publicar("pago_cancelado");
-    };
+    const cancelar = useCallback(
+        () => {
+            if (!pagando) publicar("pago_cancelado");
+        },
+        [pagando, publicar]
+    );
 
     const setImporte = (v: number) => {
         dispatch({

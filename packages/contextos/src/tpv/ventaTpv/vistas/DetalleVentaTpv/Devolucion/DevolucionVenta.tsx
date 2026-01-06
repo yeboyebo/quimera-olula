@@ -5,7 +5,7 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal, QTabla } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { CantidadADevolver } from "./CantidadADevolver.tsx";
 import "./DevolucionVenta.css";
 
@@ -29,14 +29,17 @@ export const DevolucionVenta = (
         setVentaADevolver(v);
     };
 
-    const devolver = async () => {
+    const devolver = () => {
         setDevolviendo(true);
         publicar("devolucion_lista", ventaADevolver);
     };
 
-    const cancelar = () => {
-        !devolviendo && publicar("devolucion_cancelada");
-    };
+    const cancelar = useCallback(
+        () => {
+            if (!devolviendo) publicar("devolucion_cancelada");
+        },
+        [devolviendo, publicar]
+    );    
 
     const cambiarCantidadADevolver = (linea: LineaADevolver, aDevolver: number) => {
 

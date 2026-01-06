@@ -61,7 +61,6 @@ export const Lineas = ({
                 lineas={venta.lineas}
                 seleccionada={lineaActiva?.id}
                 publicar={publicar}
-                idFactura={venta.id}
             />
             {estadoVenta === "CREANDO_LINEA" &&
                 <AltaLinea

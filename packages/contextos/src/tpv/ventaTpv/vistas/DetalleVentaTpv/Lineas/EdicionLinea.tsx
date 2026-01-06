@@ -3,7 +3,7 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { LineaFactura } from "../../../diseño.ts";
 import { metaLineaFactura } from "../../../dominio.ts";
 import "./EdicionLinea.css";
@@ -28,9 +28,12 @@ export const EdicionLinea = ({
         publicar("cambio_de_linea_listo", modelo);
     };
 
-    const cancelar = () => {
-        !cambiando && publicar("cambio_de_linea_cancelado");
-    };
+    const cancelar = useCallback(
+        () => {
+            if (!cambiando) publicar("cambio_de_linea_cancelado");
+        },
+        [cambiando, publicar]
+    );
 
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>

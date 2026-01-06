@@ -1,28 +1,23 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useContext } from "react";
 import { LineaFactura as Linea } from "../../../diseño.ts";
-import { patchCantidadLinea } from "../../../infraestructura.ts";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
   publicar,
-  idFactura,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   publicar: EmitirEvento;
-  idFactura: string;
 }) => {
   
-  const { intentar } = useContext(ContextoError);
+  // const { intentar } = useContext(ContextoError);
 
-  const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    await intentar(() => patchCantidadLinea(idFactura, linea, cantidad));
-    publicar("linea_cambiada");
-  };
+  // const cambiarCantidad = async (linea: Linea, cantidad: number) => {
+  //   await intentar(() => patchCantidadLinea(idFactura, linea, cantidad));
+  //   publicar("linea_cambiada");
+  // };
 
   const setSeleccionada = (linea: Linea) => {
     publicar("linea_seleccionada", linea);
@@ -31,7 +26,8 @@ export const LineasLista = ({
   return (
     <>
       <QTabla
-        metaTabla={getMetaTablaLineas(cambiarCantidad)}
+        // metaTabla={getMetaTablaLineas(cambiarCantidad)}
+        metaTabla={getMetaTablaLineas()}
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
@@ -76,7 +72,7 @@ export const LineaVenta = ({
 };
 
 const getMetaTablaLineas = (
-  cambiarCantidad: (linea: Linea, cantidad: number) => void
+  // cambiarCantidad: (linea: Linea, cantidad: number) => void
 ) => {
   return [
     {

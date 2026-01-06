@@ -55,7 +55,6 @@ export const DetalleVentaTpv = ({
                 ventaInicial: venta.modeloInicial,
                 pagoActivo,
                 lineaActiva,
-                eventos: [],
             }
             const [nuevoContexto, eventos] = await intentar(
                 () => procesarEvento(maquina, contexto, evento, payload)
@@ -68,7 +67,7 @@ export const DetalleVentaTpv = ({
             }
             eventos.map((evento) => publicar(evento[0], evento[1]));
         },
-        [venta, setPagoActivo, setLineaActiva, publicar]
+        [venta, pagoActivo, setPagoActivo, lineaActiva, setLineaActiva, estado, setEstado, init, intentar, publicar]
     );
 
     const guardar = async () => {
@@ -83,7 +82,7 @@ export const DetalleVentaTpv = ({
         if (ventaId && ventaId !== venta.modelo.id) {
             emitir("venta_id_cambiada", ventaId, true);
         }
-    }, [ventaId, emitir]);
+    }, [ventaId, emitir, venta.modelo.id]);
   
     return (
         <Detalle

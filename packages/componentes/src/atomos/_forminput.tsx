@@ -101,7 +101,10 @@ export const FormInput = ({
 
   const manejarKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      onEnterKeyUp?.(e.target.value, e);
+      const evento = e.target as unknown as {
+        value: string;
+      };
+      onEnterKeyUp?.(evento.value, e);
     }
   };
 

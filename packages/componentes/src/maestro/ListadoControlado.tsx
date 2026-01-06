@@ -40,7 +40,6 @@ type MaestroProps<T extends Entidad> = {
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
   modo?: Modo;
-  setModo?: (modo: Modo) => void;
   recargar: (criteria: Criteria) => void;
 };
 
@@ -54,7 +53,6 @@ export const ListadoControlado = <T extends Entidad>({
   setSeleccionada,
   modo = "tabla",
   recargar,
-  setModo,
 }: MaestroProps<T>) => {
 
     const cargando = false;
@@ -66,7 +64,7 @@ export const ListadoControlado = <T extends Entidad>({
             setCriteria(c);
             recargar(c);
         },
-        [criteria_, setCriteria, recargar]
+        [setCriteria, recargar]
     );
 
 

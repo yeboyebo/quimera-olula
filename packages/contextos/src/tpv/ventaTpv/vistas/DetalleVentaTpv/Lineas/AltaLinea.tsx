@@ -9,7 +9,7 @@ import {
 
 import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import "./AltaLinea.css";
 
 export const AltaLinea = ({
@@ -25,9 +25,12 @@ export const AltaLinea = ({
         publicar("alta_de_linea_lista", modelo);
     };
 
-    const cancelar = () => {
-        !creando && publicar("alta_de_linea_cancelada");
-    };
+    const cancelar = useCallback(
+        () => {
+            if (!creando) publicar("alta_de_linea_cancelada");
+        },
+        [creando, publicar]
+    );
 
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>

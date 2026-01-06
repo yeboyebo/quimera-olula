@@ -3,7 +3,7 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto, procesarEvento, publicar } from "@olula/lib/dominio.js";
+import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ContextoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "../dominio.ts";
@@ -11,10 +11,11 @@ import { agenteActivo, puntoVentaLocal } from "../infraestructura.ts";
 import { getMaquina } from "../maquinaMaestro.ts";
 import { DetalleVentaTpv } from "./DetalleVentaTpv/DetalleVentaTpv.tsx";
 import "./MaestroConDetalleVentaTpv.css";
+
 puntoVentaLocal.actualizar('000001');
 agenteActivo.actualizar('000001');
-let miPuntoVentaLocal = puntoVentaLocal.obtener() ;
-let miAgenteActivo = agenteActivo.obtener() ;
+const miPuntoVentaLocal = puntoVentaLocal.obtener() ;
+const miAgenteActivo = agenteActivo.obtener() ;
 
 const maquina = getMaquina();  
 
@@ -32,13 +33,12 @@ export const MaestroConDetalleVentaTpv = () => {
     const emitir = useCallback(
         async (evento: string, payload?: unknown) => {
 
-            const [nuevoContexto, eventos] = await intentar(
+            const [nuevoContexto, _] = await intentar(
                 () => procesarEvento(maquina, ctx, evento, payload, )
             );
             setCtx(nuevoContexto);
-            eventos.map((evento) => publicar(evento[0], evento[1]));
         },
-        [ctx, setCtx, intentar, publicar]
+        [ctx, setCtx, intentar]
     );
     
     const crear = useCallback(

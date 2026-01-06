@@ -32,9 +32,10 @@ export function MaestroDetalleControlado<T extends Entidad>(
     // const [modoVisualizacion, setModoVisualizacion] = useState<ModoVisualizacion>(
     //     modoVisualizacionProp ?? "tabla"
     // );
-    const [modoDisposicion, setModoDisposicion] = useState<string>(
-        getModoDisposicionInicial()
-    );
+    // const [modoDisposicion, setModoDisposicion] = useState<string>(
+    //     getModoDisposicionInicial()
+    // );
+    const modoDisposicion = getModoDisposicionInicial();
     const [modalAbierto, setModalAbierto] = useState(false);
     const prevSeleccionada = useRef<T | null>(null);
 
