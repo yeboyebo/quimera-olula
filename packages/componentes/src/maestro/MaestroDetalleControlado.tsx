@@ -1,8 +1,7 @@
 import { Entidad } from "@olula/lib/diseño.ts";
 import { useEffect, useRef, useState } from "react";
 import { QModal } from "../moleculas/qmodal.tsx";
-import { MaestroDetalleControladoProps, ModoVisualizacion } from "./diseño.tsx";
-import { ListadoControlado } from "./ListadoControlado.tsx";
+import { MaestroDetalleControladoProps } from "./diseño.tsx";
 import "./MaestroDetalle.css";
 import { useEsMovil } from "./useEsMovil.ts";
 
@@ -11,34 +10,28 @@ export function MaestroDetalleControlado<T extends Entidad>(
 ) {
     const {
         seleccionada,
-        preMaestro,
+        Maestro,
         Detalle,
-        metaTabla,
-        tarjeta,
-        criteria,
-        entidades,
-        totalEntidades = 0,
-        modoVisualizacion: modoVisualizacionProp = tarjeta ? "tarjetas" : "tabla",
-        setModoVisualizacion: setModoVisualizacionProp,
+        // modoVisualizacion: modoVisualizacionProp = tarjeta ? "tarjetas" : "tabla",
+        // setModoVisualizacion: setModoVisualizacionProp,
         modoDisposicion: modoDisposicionProp,
         nombreModal = "detalle",
         onCerrarDetalle,
-        recargar,
-        setSeleccionada,
     } = props;
 
     const esMovil = useEsMovil();
 
     const getModoDisposicionInicial = () => {
         if (modoDisposicionProp) return modoDisposicionProp;
-        return modoVisualizacionProp === "tabla"
-        ? "pantalla-completa"
-        : "maestro-dinamico";
+        return "maestro-dinamico";
+        // return modoVisualizacionProp === "tabla"
+        //     ? "pantalla-completa"
+        //     : "maestro-dinamico";
     };
 
-    const [modoVisualizacion, setModoVisualizacion] = useState<ModoVisualizacion>(
-        modoVisualizacionProp ?? "tabla"
-    );
+    // const [modoVisualizacion, setModoVisualizacion] = useState<ModoVisualizacion>(
+    //     modoVisualizacionProp ?? "tabla"
+    // );
     const [modoDisposicion, setModoDisposicion] = useState<string>(
         getModoDisposicionInicial()
     );
@@ -57,19 +50,19 @@ export function MaestroDetalleControlado<T extends Entidad>(
         prevSeleccionada.current = seleccionada;
     }, [seleccionada, modoDisposicion]);
 
-    const handleSetModoVisualizacion = (nuevoModo: ModoVisualizacion) => {
-        setModoVisualizacion(nuevoModo);
-        if (setModoVisualizacionProp) setModoVisualizacionProp(nuevoModo);
+    // const handleSetModoVisualizacion = (nuevoModo: ModoVisualizacion) => {
+    //     setModoVisualizacion(nuevoModo);
+    //     if (setModoVisualizacionProp) setModoVisualizacionProp(nuevoModo);
 
-        setModoDisposicion(
-        nuevoModo === "tabla" ? "pantalla-completa" : "maestro-dinamico"
-        );
-    };
+    //     setModoDisposicion(
+    //         nuevoModo === "tabla" ? "pantalla-completa" : "maestro-dinamico"
+    //     );
+    // };
 
     const handleCerrarDetalle = () => {
         setModalAbierto(false);
         if (onCerrarDetalle) {
-        onCerrarDetalle();
+            onCerrarDetalle();
         }
     };
 
@@ -94,54 +87,34 @@ export function MaestroDetalleControlado<T extends Entidad>(
 
     if (modoDisposicion === "modal") {
         return (
-        <maestro-detalle tipo="pantalla-completa">
-            <div className="Maestro">
-            {preMaestro}
-            <ListadoControlado
-                metaTabla={metaTabla}
-                criteria={criteria}
-                modo={modoVisualizacion}
-                setModo={handleSetModoVisualizacion}
-                tarjeta={tarjeta}
-                entidades={entidades}
-                totalEntidades={totalEntidades}
-                seleccionada={seleccionada}
-                setSeleccionada={setSeleccionada}
-                recargar={recargar}
-            />
-            </div>
-            <QModal
-            nombre={nombreModal}
-            abierto={modalAbierto}
-            onCerrar={handleCerrarDetalle}
-            >
-            {Detalle}
-            </QModal>
-        </maestro-detalle>
+            <maestro-detalle tipo="pantalla-completa">
+                <div className="Maestro">
+                    {Maestro}
+                </div>
+                <QModal
+                    nombre={nombreModal}
+                    abierto={modalAbierto}
+                    onCerrar={handleCerrarDetalle}
+                >
+                    {Detalle}
+                </QModal>
+            </maestro-detalle>
         );
     }
 
     return (
         <maestro-detalle tipo={modoDisposicion}>
-        {mostrarMaestro && (
-            <div className={claseMaestro}>
-            {preMaestro}
-            <ListadoControlado
-                metaTabla={metaTabla}
-                criteria={criteria}
-                modo={modoVisualizacion}
-                setModo={handleSetModoVisualizacion}
-                tarjeta={tarjeta}
-                entidades={entidades}
-                totalEntidades={totalEntidades}
-                seleccionada={seleccionada}
-                setSeleccionada={setSeleccionada}
-                recargar={recargar}
-            />
-            </div>
-        )}
+            {mostrarMaestro && (
+                <div className={claseMaestro}>
+                    {Maestro}
+                </div>
+            )}
 
-        {mostrarDetalle && <div className={claseDetalle}>{Detalle}</div>}
+            {mostrarDetalle && (
+                <div className={claseDetalle}>
+                    {Detalle}
+                </div>
+            )}
         </maestro-detalle>
     );
 }

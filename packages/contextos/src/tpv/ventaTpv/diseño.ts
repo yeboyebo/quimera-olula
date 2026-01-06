@@ -128,7 +128,6 @@ export type ContextoVentaTpv = {
     ventaInicial: VentaTpv;
     pagoActivo: PagoVentaTpv | null;
     lineaActiva: LineaFactura | null;
-    eventos: [string, unknown][];
 };
 
 export type ContextoMaestroVentasTpv = {
@@ -136,5 +135,4 @@ export type ContextoMaestroVentasTpv = {
     ventas: VentaTpv[];
     totalVentas: number;
     ventaActiva: VentaTpv | null;
-    eventos: [string, unknown][];
 };

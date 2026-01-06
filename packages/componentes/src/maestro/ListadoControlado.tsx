@@ -5,7 +5,6 @@ import {
 } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useState } from "react";
-import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
@@ -151,7 +150,7 @@ export const ListadoControlado = <T extends Entidad>({
 
     return (
         <div className="Listado">
-        {tarjeta && metaTabla && (
+        {/* {tarjeta && metaTabla && (
             <div className="cambio-modo">
             <span
                 className="cambio-modo-icono"
@@ -162,7 +161,7 @@ export const ListadoControlado = <T extends Entidad>({
                 <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
             </span>
             </div>
-        )}
+        )} */}
         <MaestroFiltros
             campos={obtenerCampos(entidades[0])}
             filtro={criteria_.filtros}

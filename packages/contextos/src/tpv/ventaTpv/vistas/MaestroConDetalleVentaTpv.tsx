@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
@@ -26,7 +27,6 @@ export const MaestroConDetalleVentaTpv = () => {
         ventas: [],
         totalVentas: 0,
         ventaActiva: null,
-        eventos: [],
     })
 
     const emitir = useCallback(
@@ -62,11 +62,12 @@ export const MaestroConDetalleVentaTpv = () => {
         emitir("recarga_de_ventas_solicitada", criteriaDefecto);   
     }, [])
 
+    // const [modoListado, setModoListado] = useState('tabla')
+
     return ( 
         <div className="Factura"> 
             <MaestroDetalleControlado<VentaTpv>
-                seleccionada={ctx.ventaActiva}
-                preMaestro={
+                Maestro={
                     <>
                         <h2>Ventas TPV</h2>
                         <h2>Punto de venta {miPuntoVentaLocal} </h2>
@@ -74,18 +75,25 @@ export const MaestroConDetalleVentaTpv = () => {
                         <div className="maestro-botones">
                             <QBoton onClick={crear}>Nueva Venta</QBoton>
                         </div>
+                        <ListadoControlado
+                            metaTabla={metaTablaFactura}
+                            criteria={criteriaDefecto}
+                            modo={'tabla'}
+                            // setModo={handleSetModoVisualizacion}
+                            // tarjeta={tarjeta}
+                            entidades={ctx.ventas}
+                            totalEntidades={ctx.totalVentas}
+                            seleccionada={ctx.ventaActiva}
+                            setSeleccionada={setSeleccionada}
+                            recargar={recargar}
+                        />
                     </>
                 }
-                modoVisualizacion="tabla"
-                modoDisposicion="maestro-50"
-                metaTabla={metaTablaFactura}
-                entidades={ctx.ventas}
-                totalEntidades={ctx.totalVentas}
                 Detalle={
                     <DetalleVentaTpv ventaInicial={ctx.ventaActiva} publicar={emitir} />
                 }
-                recargar={recargar}
-                setSeleccionada={setSeleccionada}
+                seleccionada={ctx.ventaActiva}
+                modoDisposicion="maestro-50"
             />
         </div>
     );

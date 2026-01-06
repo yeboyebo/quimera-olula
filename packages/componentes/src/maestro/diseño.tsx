@@ -41,20 +41,12 @@ export type MaestroDetalleProps<T extends Entidad> = {
 
 export type MaestroDetalleControladoProps<T extends Entidad> = {
   seleccionada: T | null;
-  preMaestro?: ReactNode;
+  Maestro: ReactNode;
   Detalle: ReactNode;
-  metaTabla?: MetaTabla<T>;
-  tarjeta?: (entidad: T) => React.ReactNode;
-  criteria?: Criteria;
-  entidades: T[];
-  totalEntidades: number;
   modoVisualizacion?: ModoVisualizacion;
-  setModoVisualizacion?: (modo: ModoVisualizacion) => void;
+  // setModoVisualizacion?: (modo: ModoVisualizacion) => void;
   modoDisposicion?: ModoDisposicion;
   setModoDisposicion?: (modo: ModoDisposicion) => void;
   nombreModal?: string;
   onCerrarDetalle?: () => void;
-  recargar: (criteria: Criteria) => void;
-  setSeleccionada: (seleccionada: T) => void;
-
 };
