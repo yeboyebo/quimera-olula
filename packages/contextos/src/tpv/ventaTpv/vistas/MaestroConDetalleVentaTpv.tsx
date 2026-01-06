@@ -1,8 +1,8 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
-import { procesarEvento, publicar } from "@olula/lib/dominio.js";
+import { Criteria } from "@olula/lib/diseño.js";
+import { criteriaDefecto, procesarEvento, publicar } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ContextoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "../dominio.ts";
@@ -52,18 +52,14 @@ export const MaestroConDetalleVentaTpv = () => {
     );
 
     const recargar = useCallback(
-        async (filtro: Filtro, orden: Orden, paginacion: Paginacion) => {
-            emitir("recarga_ventas_solicitada", {filtro, orden, paginacion});
+        async (criteria: Criteria) => {
+            emitir("recarga_de_ventas_solicitada", criteria);
         },
         [emitir]
     );
 
     useEffect(() => {
-        emitir("recarga_ventas_solicitada", {
-            filtro: [],
-            orden: ["id", "DESC"],
-            paginacion: { limite: 10, pagina: 1 }
-        });   
+        emitir("recarga_de_ventas_solicitada", criteriaDefecto);   
     }, [])
 
     return ( 

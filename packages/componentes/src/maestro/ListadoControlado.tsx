@@ -1,11 +1,10 @@
 import {
-  Criteria,
-  Entidad,
-  Filtro,
-  Orden,
-  Paginacion
+    Criteria,
+    Entidad,
+    Filtro
 } from "@olula/lib/diseño.ts";
-import { useState } from "react";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { useCallback, useState } from "react";
 import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
@@ -44,7 +43,7 @@ type MaestroProps<T extends Entidad> = {
   setSeleccionada: (seleccionada: T) => void;
   modo?: Modo;
   setModo?: (modo: Modo) => void;
-  recargar: (filtro: Filtro, orden: Orden, paginacion: Paginacion) => void;
+  recargar: (criteria: Criteria) => void;
   // cargar: (
   //   filtro: Filtro,
   //   orden: Orden,
@@ -54,11 +53,7 @@ type MaestroProps<T extends Entidad> = {
 
 export const ListadoControlado = <T extends Entidad>({
   metaTabla,
-  criteria = {
-    filtros: [],
-    orden: ["id", "DESC"],
-    paginacion: { limite: 10, pagina: 1 },
-  },
+  criteria = criteriaDefecto,
   tarjeta,
   entidades,
   totalEntidades,
@@ -68,154 +63,160 @@ export const ListadoControlado = <T extends Entidad>({
   recargar,
   setModo,
 }: MaestroProps<T>) => {
-  const [cargando, setCargando] = useState(false);
-  const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
-  const [orden, setOrden] = useState<Orden>(criteria.orden);
-  const [paginacion, setPaginacion] = useState<Paginacion>(criteria.paginacion);
-  // const [totalRegistros, setTotalRegistros] = useState(0);
-  // const { setError } = useContext(ContextoError);
 
-  // useEffect(() => {
-  //   let hecho = false;
-  //   setCargando(true);
-  //   cargar(filtro, orden, paginacion)
-  //     .then(({ datos, total }) => {
-  //       if (hecho) return;
-  //       if (datos.length > 0) {
-  //         setEntidades(datos as T[]);
-  //         if (total && total > 0) {
-  //           setTotalRegistros(total);
-  //         }
-  //       }
-  //       setCargando(false);
-  //     })
-  //     .catch((error) => {
-  //       if (hecho) return;
-  //       const apiError = error as QError;
-  //       setError({
-  //         nombre: apiError.nombre,
-  //         descripcion: apiError.descripcion,
-  //       });
-  //     });
+    const cargando = false;
 
-  //   return () => {
-  //     hecho = true;
-  //   };
-  // }, [filtro, orden, paginacion, cargar, setEntidades, setError]);
+    const [criteria_, setCriteria] = useState<Criteria>(criteria);
 
-  const entidadesFiltradas = entidades.filter((entidad) =>
-    filtrarEntidad(entidad, filtro)
-  );
+    const cambiarCriteria = useCallback(
+        (c: Criteria) => {
+            setCriteria(c);
+            recargar(c);
+        },
+        [criteria_, setCriteria, recargar]
+    );
 
-  const renderEntidades = () => {
-    if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
 
-    const datos = entidadesFiltradas.length
-      ? entidadesFiltradas
-      : datosCargando<T>();
+    const entidadesFiltradas = entidades.filter((entidad) =>
+        filtrarEntidad(entidad, criteria_.filtros)
+    );
 
-    if (modo == "tarjetas" && tarjeta) {
-      return (
-        <QTarjetas
-          tarjeta={tarjeta}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          // onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-          onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-          paginacion={paginacion}
-          onPaginacion={(pagina, limite) => {
-            setPaginacion({ pagina, limite });
-            recargar(filtro, orden, { ...paginacion, pagina, limite });
-          }}
-          // totalEntidades={totalRegistros}
-          totalEntidades={entidades.length}
-          orden={orden}
-          onOrdenar={(clave) => {
-            const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
-            const sentido =
-              antigua_clave === clave && antiguo_sentido === "ASC"
-                ? "DESC"
-                : "ASC";
+    const renderEntidades = () => {
+        if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
 
-            setOrden([clave, sentido]);
-            setPaginacion({ ...paginacion, pagina: 1 });
-            recargar(filtro, [clave, sentido], { ...paginacion, pagina: 1 });
-          }}
+        const datos = entidadesFiltradas.length
+        ? entidadesFiltradas
+        : datosCargando<T>();
+
+        if (modo == "tarjetas" && tarjeta) {
+        return (
+            <QTarjetas
+                tarjeta={tarjeta}
+                datos={datos}
+                cargando={cargando}
+                seleccionadaId={seleccionada?.id}
+                // onSeleccion={(entidad) => setSeleccionada(entidad as T)}
+                onSeleccion={(entidad) => setSeleccionada(entidad as T)}
+                paginacion={criteria_.paginacion}
+                onPaginacion={(pagina, limite) => {
+                    cambiarCriteria({ ...criteria_, paginacion: { pagina, limite } });
+                    // setPaginacion({ pagina, limite });
+                    // recargar(filtro, orden, { ...paginacion, pagina, limite });
+                }}
+                // totalEntidades={totalRegistros}
+                totalEntidades={entidades.length}
+                orden={criteria_.orden}
+                onOrdenar={(clave) => {
+                    const [antigua_clave, antiguo_sentido] = criteria_.orden ?? [null, null];
+                    const sentido =
+                    antigua_clave === clave && antiguo_sentido === "ASC"
+                        ? "DESC"
+                        : "ASC";
+
+                    // setOrden([clave, sentido]);
+                    // setPaginacion({ ...paginacion, pagina: 1 });
+                    // recargar(filtro, [clave, sentido], { ...paginacion, pagina: 1 });
+                    cambiarCriteria({
+                        ...criteria_,
+                        orden: [clave, sentido],
+                        paginacion: { ...criteria_.paginacion, pagina: 1 },
+                    });
+                }}
+            />
+        );
+        }
+
+        if (modo == "tabla" && metaTabla) {
+        return (
+            <QTabla
+            metaTabla={metaTabla}
+            datos={datos}
+            cargando={cargando}
+            seleccionadaId={seleccionada?.id}
+            onSeleccion={(entidad) => setSeleccionada(entidad as T)}
+            orden={criteria_.orden}
+            onOrdenar={(clave) => {
+                const [antigua_clave, antiguo_sentido] = criteria_.orden ?? [null, null];
+                const sentido =
+                antigua_clave === clave && antiguo_sentido === "ASC"
+                    ? "DESC"
+                    : "ASC";
+
+                // setOrden([clave, sentido]);
+                // setPaginacion({ ...paginacion, pagina: 1 });
+                // recargar(filtro, [clave, sentido], { ...paginacion, pagina: 1 });
+                cambiarCriteria({
+                    ...criteria_,
+                    orden: [clave, sentido],
+                    paginacion: { ...criteria_.paginacion, pagina: 1 },
+                });
+            }}
+            paginacion={criteria_.paginacion}
+            onPaginacion={(pagina, limite) => {
+                // setPaginacion({ pagina, limite });
+                // recargar(filtro, orden, { ...paginacion, pagina, limite });
+                cambiarCriteria({
+                    ...criteria_,
+                    paginacion: { pagina, limite },
+                });
+            }}
+            totalEntidades={totalEntidades}
+            />
+        );
+        }
+
+        return null;
+    };
+
+    return (
+        <div className="Listado">
+        {tarjeta && metaTabla && (
+            <div className="cambio-modo">
+            <span
+                className="cambio-modo-icono"
+                onClick={() =>
+                setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
+                }
+            >
+                <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
+            </span>
+            </div>
+        )}
+        <MaestroFiltros
+            campos={obtenerCampos(entidades[0])}
+            filtro={criteria_.filtros}
+            cambiarFiltro={(clave, valor, operador = "~") => {
+                const nuevoFiltro: Filtro = [
+                    ...criteria_.filtros.filter(([k]) => k !== clave),
+                    [clave, operador, valor],
+                ];
+                // setFiltro(nuevoFiltro);
+                // recargar(nuevoFiltro, orden, paginacion);
+                cambiarCriteria({
+                    ...criteria_,
+                    filtros: nuevoFiltro,
+                });
+            }}
+            borrarFiltro={(clave) => {
+                // setFiltro(filtro.filter(([k]) => k !== clave));
+                // recargar(filtro.filter(([k]) => k !== clave), orden, paginacion);
+                cambiarCriteria({
+                    ...criteria_,
+                    filtros: criteria_.filtros.filter(([k]) => k !== clave),
+                });
+            }}
+            resetearFiltro={() => {
+                // setFiltro(criteria.filtros);
+                // setPaginacion({ ...paginacion, pagina: 1 });
+                // recargar(criteria.filtros, orden, { ...paginacion, pagina: 1 });
+                cambiarCriteria({
+                    ...criteria_,
+                    filtros: criteria.filtros,
+                    paginacion: { ...criteria_.paginacion, pagina: 1 },
+                });
+            }}
         />
-      );
-    }
-
-    if (modo == "tabla" && metaTabla) {
-      return (
-        <QTabla
-          metaTabla={metaTabla}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-          orden={orden}
-          onOrdenar={(clave) => {
-            const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
-            const sentido =
-              antigua_clave === clave && antiguo_sentido === "ASC"
-                ? "DESC"
-                : "ASC";
-
-            setOrden([clave, sentido]);
-            setPaginacion({ ...paginacion, pagina: 1 });
-            recargar(filtro, [clave, sentido], { ...paginacion, pagina: 1 });
-          }}
-          paginacion={paginacion}
-          onPaginacion={(pagina, limite) => {
-            setPaginacion({ pagina, limite });
-            recargar(filtro, orden, { ...paginacion, pagina, limite });
-          }}
-          totalEntidades={totalEntidades}
-        />
-      );
-    }
-
-    return null;
-  };
-
-  return (
-    <div className="Listado">
-      {tarjeta && metaTabla && (
-        <div className="cambio-modo">
-          <span
-            className="cambio-modo-icono"
-            onClick={() =>
-              setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
-            }
-          >
-            <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
-          </span>
+        {renderEntidades()}
         </div>
-      )}
-      <MaestroFiltros
-        campos={obtenerCampos(entidades[0])}
-        filtro={filtro}
-        cambiarFiltro={(clave, valor, operador = "~") => {
-          const nuevoFiltro: Filtro = [
-            ...filtro.filter(([k]) => k !== clave),
-            [clave, operador, valor],
-          ];
-          setFiltro(nuevoFiltro);
-          recargar(nuevoFiltro, orden, paginacion);
-        }}
-        borrarFiltro={(clave) => {
-          setFiltro(filtro.filter(([k]) => k !== clave));
-          recargar(filtro.filter(([k]) => k !== clave), orden, paginacion);
-        }}
-        resetearFiltro={() => {
-          setFiltro(criteria.filtros);
-          setPaginacion({ ...paginacion, pagina: 1 });
-          recargar(criteria.filtros, orden, { ...paginacion, pagina: 1 });
-          // setEntidades([]);
-        }}
-      />
-      {renderEntidades()}
-    </div>
-  );
+    );
 };

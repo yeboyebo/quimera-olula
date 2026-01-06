@@ -440,6 +440,12 @@ export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEs
     }
 }
 
+export const criteriaDefecto: Criteria = {
+    filtros: [],
+    orden: ["id", "DESC"],
+    paginacion: { limite: 10, pagina: 1 },
+}
+
 export const ejecutarListaProcesos = async <E extends string, C extends Contexto<E>>(
     contexto: C,
     procesos: (ProcesarContexto<E, C> | E)[],

@@ -27,7 +27,7 @@ export const getMaquina: () => Maquina<EstadoMaestroVentasTpv, ContextoMaestroVe
 
             venta_creada: incluirVentaEnLista,
 
-            recarga_ventas_solicitada: recargarVentas,
+            recarga_de_ventas_solicitada: recargarVentas,
 
             creacion_de_venta_solicitada: crearVenta,
         },

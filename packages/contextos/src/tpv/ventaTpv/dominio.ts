@@ -4,7 +4,7 @@ import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.
 
 import { nuevaLineaVentaVacia } from "#/ventas/presupuesto/dominio.ts";
 import { cambioClienteVentaVacio, metaCambioClienteVenta, metaLineaVenta, metaNuevaLineaVenta, metaVenta, ventaVacia } from "#/ventas/venta/dominio.ts";
-import { EventoMaquina, Filtro, Orden, Paginacion, ProcesarContexto } from "@olula/lib/diseño.js";
+import { Criteria, ProcesarContexto, ResultadoProcesoContexto } from "@olula/lib/diseño.js";
 import {
     CambioClienteFactura,
     ContextoMaestroVentasTpv,
@@ -75,10 +75,12 @@ export const metaTablaFactura: MetaTabla<Factura> = [
     },
 ];
 
-type ProcesarContextoVentaTpv = ProcesarContexto<EstadoVentaTpv, ContextoVentaTpv>;
-type ProcesarContextoMaestroVentasTpv = ProcesarContexto<EstadoMaestroVentasTpv, ContextoMaestroVentasTpv>;
+type ProcesarVentaTpv = ProcesarContexto<EstadoVentaTpv, ContextoVentaTpv>;
+type ProcesarVentasTpv = ProcesarContexto<EstadoMaestroVentasTpv, ContextoMaestroVentasTpv>;
 
-const cargarVenta: (idVenta: string) => ProcesarContextoVentaTpv = (idVenta) =>
+const pipeVentaTpv = ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>;
+
+const cargarVenta: (_: string) => ProcesarVentaTpv = (idVenta) =>
     async (contexto) => {
 
         const venta = await getVenta(idVenta);
@@ -88,7 +90,7 @@ const cargarVenta: (idVenta: string) => ProcesarContextoVentaTpv = (idVenta) =>
         }
     }
 
-export const refrescarVenta: ProcesarContextoVentaTpv = async (contexto) => {
+export const refrescarVenta: ProcesarVentaTpv = async (contexto) => {
 
     const venta = await getVenta(contexto.venta.id);
     return [
@@ -103,7 +105,7 @@ export const refrescarVenta: ProcesarContextoVentaTpv = async (contexto) => {
     ]
 }
 
-export const cancelarcambioVenta: ProcesarContextoVentaTpv = async (contexto) => {
+export const cancelarcambioVenta: ProcesarVentaTpv = async (contexto) => {
 
     return {
         ...contexto,
@@ -111,14 +113,14 @@ export const cancelarcambioVenta: ProcesarContextoVentaTpv = async (contexto) =>
     }
 }
 
-export const abiertaOEmitidaContexto: ProcesarContextoVentaTpv = async (contexto) => {
+export const abiertaOEmitidaContexto: ProcesarVentaTpv = async (contexto) => {
     return {
         ...contexto,
         estado: contexto.venta.abierta ? "ABIERTA" : "EMITIDA"
     }
 }
 
-export const refrescarPagos: ProcesarContextoVentaTpv = async (contexto) => {
+export const refrescarPagos: ProcesarVentaTpv = async (contexto) => {
 
     const pagos = await getPagos(contexto.venta.id);
     return {
@@ -127,11 +129,10 @@ export const refrescarPagos: ProcesarContextoVentaTpv = async (contexto) => {
             ...contexto.venta,
             pagos,
         },
-        // pagos: cargar(pagos)(contexto.pagos),
     }
 }
 
-export const refrescarLineas: ProcesarContextoVentaTpv = async (contexto) => {
+export const refrescarLineas: ProcesarVentaTpv = async (contexto) => {
 
     const lineas = await getLineas(contexto.venta.id);
     return {
@@ -143,7 +144,7 @@ export const refrescarLineas: ProcesarContextoVentaTpv = async (contexto) => {
     }
 }
 
-export const activarPago: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const activarPago: ProcesarVentaTpv = async (contexto, payload) => {
 
     const pagoActivo = payload as PagoVentaTpv;
     return {
@@ -152,7 +153,7 @@ export const activarPago: ProcesarContextoVentaTpv = async (contexto, payload) =
     }
 }
 
-const activarPagoPorIndice = (indice: number) => async (contexto: ContextoVentaTpv) => {
+const activarPagoPorIndice: (_: number) => ProcesarVentaTpv = (indice) => async (contexto) => {
 
     const pagos = contexto.venta.pagos;
     const pagoActivo = pagos.length > 0
@@ -168,25 +169,30 @@ const activarPagoPorIndice = (indice: number) => async (contexto: ContextoVentaT
 }
 
 
-export const pagarConVale: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const pagarConVale: ProcesarVentaTpv = async (contexto, payload) => {
 
     const pagoConVale = payload as NuevoPagoVale;
     return await pagar(contexto, pagoConVale.importe, "VALE", pagoConVale.vale_id);
 }
 
-export const pagarEnEfectivo: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const pagarEnEfectivo: ProcesarVentaTpv = async (contexto, payload) => {
 
     const pagoEnEfectivo = payload as NuevoPagoEfectivo;
     return await pagar(contexto, pagoEnEfectivo.importe, "EFECTIVO");
 }
 
-export const pagarConTarjeta: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const pagarConTarjeta: ProcesarVentaTpv = async (contexto, payload) => {
 
     const pagoConTarjeta = payload as NuevoPagoEfectivo;
     return await pagar(contexto, pagoConTarjeta.importe, "TARJETA");
 }
 
-export const pagar = async (contexto: ContextoVentaTpv, importe: number, formaPago: string, idVale?: string): Promise<ContextoVentaTpv | [ContextoVentaTpv, EventoMaquina[]]> => {
+export const pagar = async (
+    contexto: ContextoVentaTpv,
+    importe: number,
+    formaPago: string,
+    idVale?: string
+): Promise<ResultadoProcesoContexto<EstadoVentaTpv, ContextoVentaTpv>> => {
 
     await postPago(
         contexto.venta.id,
@@ -197,33 +203,33 @@ export const pagar = async (contexto: ContextoVentaTpv, importe: number, formaPa
         }
     );
 
-    return ejecutarListaProcesos(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarPagos,
         abiertaOEmitidaContexto,
     ]);
 }
 
-export const devolverVenta: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const devolverVenta: ProcesarVentaTpv = async (contexto, payload) => {
 
     const ventaADevolver = payload as VentaTpvADevolver;
     await patchDevolverVenta(contexto.venta.id, ventaADevolver)
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarLineas,
         'ABIERTA',
     ]);
 }
 
-export const borrarPago: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const borrarPago: ProcesarVentaTpv = async (contexto, payload) => {
 
     const idPago = payload as string;
     await deletePago(contexto.venta.id, idPago);
 
     const indicePagoActivo = contexto.venta.pagos.findIndex(l => l.id === idPago);
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarPagos,
         activarPagoPorIndice(indicePagoActivo),
@@ -231,33 +237,33 @@ export const borrarPago: ProcesarContextoVentaTpv = async (contexto, payload) =>
     ]);
 }
 
-export const cambiarVenta: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const cambiarVenta: ProcesarVentaTpv = async (contexto, payload) => {
 
     const venta = payload as VentaTpv;
     await patchFactura(contexto.venta.id, venta)
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         'ABIERTA',
     ]);
 }
 
-export const borrarVenta: ProcesarContextoVentaTpv = async (contexto) => {
+export const borrarVenta: ProcesarVentaTpv = async (contexto) => {
 
     await borrarFactura(contexto.venta.id);
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         getContextoVacio,
         publicar('venta_borrada', null)
     ]);
 }
 
-export const crearLinea: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const crearLinea: ProcesarVentaTpv = async (contexto, payload) => {
 
     const nuevaLinea = payload as NuevaLineaFactura;
     const idLinea = await postLinea(contexto.venta.id, nuevaLinea);
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarLineas,
         activarLineaPorId(idLinea),
@@ -265,7 +271,7 @@ export const crearLinea: ProcesarContextoVentaTpv = async (contexto, payload) =>
     ]);
 }
 
-export const crearLineaPorBarcode: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const crearLineaPorBarcode: ProcesarVentaTpv = async (contexto, payload) => {
 
     const barcode = payload as string;
     const idLinea = await postLineaPorBarcode(contexto.venta.id, {
@@ -273,7 +279,7 @@ export const crearLineaPorBarcode: ProcesarContextoVentaTpv = async (contexto, p
         cantidad: 1
     });
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarLineas,
         activarLineaPorId(idLinea),
@@ -281,12 +287,12 @@ export const crearLineaPorBarcode: ProcesarContextoVentaTpv = async (contexto, p
     ]);
 }
 
-export const cambiarLinea: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const cambiarLinea: ProcesarVentaTpv = async (contexto, payload) => {
 
     const linea = payload as LineaFactura;
     await patchLinea(contexto.venta.id, linea)
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarLineas,
         'ABIERTA',
@@ -294,14 +300,14 @@ export const cambiarLinea: ProcesarContextoVentaTpv = async (contexto, payload) 
 }
 
 
-export const borrarLinea: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const borrarLinea: ProcesarVentaTpv = async (contexto, payload) => {
 
     const idLinea = payload as string;
     await deleteLinea(contexto.venta.id, idLinea);
 
     const indiceLineaActiva = contexto.venta.lineas.findIndex(l => l.id === idLinea);
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarLineas,
         activarLineaPorIndice(indiceLineaActiva),
@@ -309,12 +315,12 @@ export const borrarLinea: ProcesarContextoVentaTpv = async (contexto, payload) =
     ]);
 }
 
-export const emitirVale: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const emitirVale: ProcesarVentaTpv = async (contexto, payload) => {
 
     const venta = payload as VentaTpv
     await postEmitirVale(venta)
 
-    return ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv>(contexto, [
+    return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarPagos,
         abiertaOEmitidaContexto,
@@ -322,7 +328,7 @@ export const emitirVale: ProcesarContextoVentaTpv = async (contexto, payload) =>
 }
 
 
-export const activarLinea: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const activarLinea: ProcesarVentaTpv = async (contexto, payload) => {
 
     const lineaActiva = payload as LineaFactura;
     return {
@@ -357,7 +363,7 @@ const activarLineaPorId = (id: string) => async (contexto: ContextoVentaTpv) => 
     }
 }
 
-export const getContextoVacio: ProcesarContextoVentaTpv = async (contexto) => {
+export const getContextoVacio: ProcesarVentaTpv = async (contexto) => {
 
     return {
         ...contexto,
@@ -368,24 +374,28 @@ export const getContextoVacio: ProcesarContextoVentaTpv = async (contexto) => {
     }
 }
 
-export const cargarContexto: ProcesarContextoVentaTpv = async (contexto, payload) => {
+export const cargarContexto: ProcesarVentaTpv = async (contexto, payload) => {
 
     const idVenta = payload as string;
     if (idVenta) {
-        return ejecutarListaProcesos(contexto, [
-            cargarVenta(idVenta),
-            refrescarPagos,
-            refrescarLineas,
-            abiertaOEmitidaContexto,
-            activarLineaPorIndice(0),
-            activarPagoPorIndice(0),
-        ], payload);
+        return pipeVentaTpv(
+            contexto,
+            [
+                cargarVenta(idVenta),
+                refrescarPagos,
+                refrescarLineas,
+                abiertaOEmitidaContexto,
+                activarLineaPorIndice(0),
+                activarPagoPorIndice(0),
+            ],
+            payload
+        );
     } else {
         return getContextoVacio(contexto);
     }
 }
 
-export const cambiarVentaEnLista: ProcesarContextoMaestroVentasTpv = async (contexto, payload) => {
+export const cambiarVentaEnLista: ProcesarVentasTpv = async (contexto, payload) => {
 
     const venta = payload as VentaTpv;
     return {
@@ -394,19 +404,7 @@ export const cambiarVentaEnLista: ProcesarContextoMaestroVentasTpv = async (cont
     }
 }
 
-export const cambiarVentaEnLista2: ProcesarContextoMaestroVentasTpv = async (contexto, payload) => {
-
-    const venta = payload as VentaTpv;
-    return [
-        {
-            ...contexto,
-            ventas: contexto.ventas.map(v => v.id === venta.id ? venta : v)
-        },
-        []
-    ]
-}
-
-export const activarVenta: ProcesarContextoMaestroVentasTpv = async (contexto, payload) => {
+export const activarVenta: ProcesarVentasTpv = async (contexto, payload) => {
 
     const ventaActiva = payload as VentaTpv;
     return {
@@ -415,7 +413,7 @@ export const activarVenta: ProcesarContextoMaestroVentasTpv = async (contexto, p
     }
 }
 
-export const desactivarVentaActiva: ProcesarContextoMaestroVentasTpv = async (contexto) => {
+export const desactivarVentaActiva: ProcesarVentasTpv = async (contexto) => {
 
     return {
         ...contexto,
@@ -423,7 +421,7 @@ export const desactivarVentaActiva: ProcesarContextoMaestroVentasTpv = async (co
     }
 }
 
-export const quitarVentaDeLista: ProcesarContextoMaestroVentasTpv = async (contexto, payload) => {
+export const quitarVentaDeLista: ProcesarVentasTpv = async (contexto, payload) => {
 
     const ventaBorrada = payload as VentaTpv;
     return {
@@ -433,14 +431,10 @@ export const quitarVentaDeLista: ProcesarContextoMaestroVentasTpv = async (conte
     }
 }
 
-export const recargarVentas: ProcesarContextoMaestroVentasTpv = async (contexto, payload) => {
+export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
 
-    const paramsRecarga = payload as {
-        filtro: Filtro,
-        orden: Orden,
-        paginacion: Paginacion
-    }
-    const resultado = await getVentas(paramsRecarga.filtro, paramsRecarga.orden, paramsRecarga.paginacion);
+    const criteria = payload as Criteria;
+    const resultado = await getVentas(criteria.filtros, criteria.orden, criteria.paginacion);
     const ventasCargadas = resultado.datos
 
     return {
@@ -453,7 +447,7 @@ export const recargarVentas: ProcesarContextoMaestroVentasTpv = async (contexto,
     }
 }
 
-export const incluirVentaEnLista: ProcesarContextoMaestroVentasTpv = async (contexto, payload) => {
+export const incluirVentaEnLista: ProcesarVentasTpv = async (contexto, payload) => {
 
     const venta = payload as VentaTpv;
     return {
@@ -462,7 +456,7 @@ export const incluirVentaEnLista: ProcesarContextoMaestroVentasTpv = async (cont
     }
 }
 
-export const crearVenta: ProcesarContextoMaestroVentasTpv = async (contexto) => {
+export const crearVenta: ProcesarVentasTpv = async (contexto) => {
 
     const idVenta = await postVenta();
     const venta = await getVenta(idVenta);

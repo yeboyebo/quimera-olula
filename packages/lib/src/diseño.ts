@@ -91,8 +91,9 @@ export type EventoMaquina = [string, unknown?]
 
 export type Contexto<E extends string> = Record<string, unknown> & ContextoEstado<E>
 
+export type ResultadoProcesoContexto<E extends string, C extends Contexto<E>> = C | [C, EventoMaquina[]]
 
-export type ProcesarContexto<E extends string, C extends Contexto<E>> = (contexto: C, payload?: unknown) => Promise<C | [C, EventoMaquina[]]>;
+export type ProcesarContexto<E extends string, C extends Contexto<E>> = (contexto: C, payload?: unknown) => Promise<ResultadoProcesoContexto<E, C>>;
 
 export type Maquina<E extends string, C extends Contexto<E>> =
     Record<E, Record<string, E | ProcesarContexto<E, C> | (E | ProcesarContexto<E, C>)[]>>

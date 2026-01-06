@@ -54,7 +54,7 @@ export type MaestroDetalleControladoProps<T extends Entidad> = {
   setModoDisposicion?: (modo: ModoDisposicion) => void;
   nombreModal?: string;
   onCerrarDetalle?: () => void;
-  recargar: (filtro: Filtro, orden: Orden, paginacion: Paginacion) => void;
+  recargar: (criteria: Criteria) => void;
   setSeleccionada: (seleccionada: T) => void;
 
 };
