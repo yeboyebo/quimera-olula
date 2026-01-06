@@ -4,7 +4,7 @@ import {
   Filtro,
   Orden,
   Paginacion,
-  RespuestaLista,
+  RespuestaLista
 } from "@olula/lib/diseño.ts";
 import { ReactNode } from "react";
 import { MetaTabla } from "../atomos/qtabla.tsx";
@@ -37,4 +37,24 @@ export type MaestroDetalleProps<T extends Entidad> = {
   ) => RespuestaLista<T>;
   nombreModal?: string;
   onCerrarDetalle?: () => void;
+};
+
+export type MaestroDetalleControladoProps<T extends Entidad> = {
+  seleccionada: T | null;
+  preMaestro?: ReactNode;
+  Detalle: ReactNode;
+  metaTabla?: MetaTabla<T>;
+  tarjeta?: (entidad: T) => React.ReactNode;
+  criteria?: Criteria;
+  entidades: T[];
+  totalEntidades: number;
+  modoVisualizacion?: ModoVisualizacion;
+  setModoVisualizacion?: (modo: ModoVisualizacion) => void;
+  modoDisposicion?: ModoDisposicion;
+  setModoDisposicion?: (modo: ModoDisposicion) => void;
+  nombreModal?: string;
+  onCerrarDetalle?: () => void;
+  recargar: (filtro: Filtro, orden: Orden, paginacion: Paginacion) => void;
+  setSeleccionada: (seleccionada: T) => void;
+
 };

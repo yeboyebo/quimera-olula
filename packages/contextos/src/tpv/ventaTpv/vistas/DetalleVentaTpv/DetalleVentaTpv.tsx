@@ -57,8 +57,8 @@ export const DetalleVentaTpv = ({
                 lineaActiva,
                 eventos: [],
             }
-            const nuevoContexto = await intentar(
-                () => procesarEvento(maquina, evento, payload, contexto)
+            const [nuevoContexto, eventos] = await intentar(
+                () => procesarEvento(maquina, contexto, evento, payload)
             );
             setEstado(nuevoContexto.estado);
             setPagoActivo(nuevoContexto.pagoActivo);
@@ -66,7 +66,7 @@ export const DetalleVentaTpv = ({
             if (nuevoContexto.venta !== venta.modelo) {
                 init(nuevoContexto.venta);
             }
-            nuevoContexto.eventos.map((evento) => publicar(evento[0], evento[1]));
+            eventos.map((evento) => publicar(evento[0], evento[1]));
         },
         [venta, setPagoActivo, setLineaActiva, publicar]
     );

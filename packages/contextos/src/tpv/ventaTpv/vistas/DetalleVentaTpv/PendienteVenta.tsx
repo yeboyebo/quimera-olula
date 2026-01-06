@@ -24,8 +24,6 @@ export const PendienteVenta = ({
 
   const pendiente = total - pagado;
 
-  console.log(venta.modelo);
-
   return (
     <div className="pendientes-venta">
       

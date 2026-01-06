@@ -1,5 +1,5 @@
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
-import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -440,30 +440,42 @@ export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEs
     }
 }
 
-
 export const ejecutarListaProcesos = async <E extends string, C extends Contexto<E>>(
     contexto: C,
     procesos: (ProcesarContexto<E, C> | E)[],
     payload?: unknown
-) => {
+): Promise<[C, EventoMaquina[]]> => {
 
-    let nuevoContexto = contexto;
+    const eventos: EventoMaquina[] = [];
+
+    let x: [C, EventoMaquina[]] = [contexto, eventos];
     for (const proceso of procesos) {
         if (typeof proceso === 'string') {
-            nuevoContexto = setEstadoMaquina<E, C>(proceso)(nuevoContexto);
+            x = [
+                {
+                    ...x[0],
+                    estado: proceso
+                },
+                x[1]
+            ]
         } else {
-            nuevoContexto = await proceso(nuevoContexto, payload);
+            const resultado = await proceso(x[0], payload);
+            if (Array.isArray(resultado)) {
+                x = [resultado[0], [...x[1], ...resultado[1]]];
+            } else {
+                x = [resultado, x[1]];
+            }
         }
     }
-    return nuevoContexto;
+    return x;
 }
 
 export const procesarEvento = async <E extends string, C extends Contexto<E>>(
     maquina: Maquina<E, C>,
+    contexto: C,
     evento: string,
     payload: unknown,
-    contexto: C
-) => {
+): Promise<[C, EventoMaquina[]]> => {
 
     const estado = contexto.estado;
 
@@ -472,35 +484,32 @@ export const procesarEvento = async <E extends string, C extends Contexto<E>>(
     const usarMaquina = () => {
 
         return maquina[contexto.estado][evento];
-
     }
 
-    const resultado = usarMaquina();
+    const respuesta = usarMaquina();
 
-    if (typeof resultado === 'string') {
+    if (typeof respuesta === 'string') {
 
-        return setEstadoMaquina<E, C>(resultado)(contexto);
+        return [{ ...contexto, estado: respuesta }, []];
 
-    } else if (typeof resultado === 'function') {
+    } else if (typeof respuesta === 'function') {
 
-        return await resultado(contexto, payload);
+        return ejecutarListaProcesos(contexto, [respuesta], payload);
 
-    } else if (Array.isArray(resultado)) {
+    } else if (Array.isArray(respuesta)) {
 
-        return ejecutarListaProcesos(contexto, resultado, payload);
+        return ejecutarListaProcesos(contexto, respuesta, payload);
 
     } else {
-
-        return resultado;
+        throw new Error('No se pudo procesar el evento');
     }
 };
 
-export const publicar = <E extends string, C extends Contexto<E>>(evento: string, payload?: unknown) =>
+export const publicar = <E extends string, C extends Contexto<E>>(evento: string, payload?: unknown) => {
 
-    async (contexto: C) => {
-
-        return {
-            ...contexto,
-            eventos: [...contexto.eventos, [evento, payload]]
-        }
+    const f: ProcesarContexto<E, C> = async (contexto) => {
+        return [contexto, [[evento, payload]]]
     }
+
+    return f
+}

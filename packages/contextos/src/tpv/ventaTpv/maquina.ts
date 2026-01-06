@@ -35,7 +35,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             venta_deseleccionada: [
                 getContextoVacio,
-                publicar('cancelar_seleccion', null)
+                publicar('venta_deselaccionada', null)
             ]
         },
 

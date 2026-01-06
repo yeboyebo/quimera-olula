@@ -10,9 +10,6 @@ export interface VentaTpv extends Venta {
     pagos: PagoVentaTpv[];
 }
 
-
-
-
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
 }
@@ -119,7 +116,10 @@ export type EstadoVentaTpv = (
     | "BORRANDO_PAGO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
     | "DEVOLVIENDO_VENTA"
-    // | "EMITIENDO_VALE"
+);
+
+export type EstadoMaestroVentasTpv = (
+    'INICIAL'
 );
 
 export type ContextoVentaTpv = {
@@ -128,7 +128,13 @@ export type ContextoVentaTpv = {
     ventaInicial: VentaTpv;
     pagoActivo: PagoVentaTpv | null;
     lineaActiva: LineaFactura | null;
-    // pagos: ListaSeleccionable<PagoVentaTpv>;
-    // lineas: ListaSeleccionable<LineaFactura>;
+    eventos: [string, unknown][];
+};
+
+export type ContextoMaestroVentasTpv = {
+    estado: EstadoMaestroVentasTpv;
+    ventas: VentaTpv[];
+    totalVentas: number;
+    ventaActiva: VentaTpv | null;
     eventos: [string, unknown][];
 };

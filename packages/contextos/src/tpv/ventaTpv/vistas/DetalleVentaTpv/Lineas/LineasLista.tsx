@@ -85,7 +85,6 @@ const getMetaTablaLineas = (
       render: (linea: Linea) => (
         <LineaVenta
           linea={linea}
-          // onCantidadEditada={cambiarCantidad}
         />
       ),
     },
