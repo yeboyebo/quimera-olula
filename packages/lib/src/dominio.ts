@@ -423,7 +423,7 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({
-        filtros: transformarFiltro(criteria.filtros),
+        filtro: transformarFiltro(criteria.filtro),
         orden: transformarOrden(criteria.orden),
         paginacion: criteria.paginacion
     })
@@ -441,7 +441,7 @@ export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEs
 }
 
 export const criteriaDefecto: Criteria = {
-    filtros: [],
+    filtro: [],
     orden: ["id", "DESC"],
     paginacion: { limite: 10, pagina: 1 },
 }

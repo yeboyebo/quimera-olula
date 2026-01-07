@@ -434,7 +434,7 @@ export const quitarVentaDeLista: ProcesarVentasTpv = async (contexto, payload) =
 export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
 
     const criteria = payload as Criteria;
-    const resultado = await getVentas(criteria.filtros, criteria.orden, criteria.paginacion);
+    const resultado = await getVentas(criteria.filtro, criteria.orden, criteria.paginacion);
     const ventasCargadas = resultado.datos
 
     return {
