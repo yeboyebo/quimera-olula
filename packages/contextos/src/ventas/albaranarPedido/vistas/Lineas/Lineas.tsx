@@ -99,7 +99,13 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   },
 };
 
-export const Lineas = ({ pedidoId }: { pedido: Pedido; pedidoId: string }) => {
+export const Lineas = ({
+  pedido,
+  pedidoId,
+}: {
+  pedido: Pedido;
+  pedidoId: string;
+}) => {
   const { intentar } = useContext(ContextoError);
 
   const [emitir, { contexto, estado }] = useMaquina4<Estado, Contexto>({
@@ -126,12 +132,38 @@ export const Lineas = ({ pedidoId }: { pedido: Pedido; pedidoId: string }) => {
     emitir("albaranado_cancelado");
   };
 
+  console.log("Lineas albaranar pedido:", lineas);
+
+  const validarLineasParaEnviar = (lineas: Linea[]) => {
+    console.log("Validando lineas para enviar:", lineas);
+    if (!Array.isArray(lineas) || lineas.length === 0) {
+      return false;
+    }
+
+    return lineas.some((linea) => {
+      return (
+        linea.a_enviar !== undefined &&
+        linea.a_enviar !== null &&
+        linea.a_enviar > 0
+      );
+    });
+  };
+
+  const puedeEnviar = validarLineasParaEnviar(lineas.lista);
+  console.log("Puede enviar:", puedeEnviar);
+
   return (
     <div className="DetalleAlbaranarPedido">
       <div className="CabeceraPedido">
         {/* <div>{pedido.nombre_cliente}</div> */}
         <div className="botones maestro-botones ">
-          <QBoton onClick={() => emitir("albaranado_solicitado")}>
+          <QBoton
+            deshabilitado={
+              !puedeEnviar ||
+              (pedido.servido !== "PENDIENTE" && pedido.servido !== "PARCIAL")
+            }
+            onClick={() => emitir("albaranado_solicitado")}
+          >
             Generar Albaran
           </QBoton>
         </div>
