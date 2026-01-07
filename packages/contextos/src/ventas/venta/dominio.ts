@@ -57,6 +57,8 @@ export const metaVenta: MetaModelo<Venta> = {
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
         cantidad: { tipo: "numero", requerido: true },
+        pvp_unitario: { tipo: "moneda", requerido: true },
+        dto_porcentual: { tipo: "numero", requerido: false },
         referencia: { requerido: true },
     }
 };
@@ -82,3 +84,4 @@ export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
         referencia: { requerido: true },
     }
 };
+

@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useRef, useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 
 import { Modelo, TipoInput } from "./diseño.ts";
 import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
@@ -14,11 +14,6 @@ export function useModelo<T extends Modelo>(
         modeloInicialProp
     );
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
-
-    // Probando para evitar bucle cuando se usa init en useEffect
-    const modeloInicialPropRef = useRef(modeloInicialProp);
-    modeloInicialPropRef.current = modeloInicialProp;
-
     const entidad = {
         valor: modelo,
         valor_inicial: modeloInicial,
@@ -35,7 +30,6 @@ export function useModelo<T extends Modelo>(
             }
         }
 
-
         dispatch({
             type: "set_campo",
             payload: { campo, valor: valor as string },
@@ -49,6 +43,7 @@ export function useModelo<T extends Modelo>(
         }
     };
     const uiProps = (campo: string, secundario?: string) => {
+
         const validacion = validacionCampoModelo(meta)(modelo, campo);
         const valido = validacion === true;
         const valor = modelo[campo] as string;
@@ -85,31 +80,20 @@ export function useModelo<T extends Modelo>(
             descripcion: secundario ? modelo[secundario] as string : undefined,
         }
     }
-
-    const init = useCallback((nuevoModelo?: T) => {
-        const modeloAUsar = nuevoModelo || modeloInicialPropRef.current;
+    const init = useCallback((modelo?: T) => {
+        // if (modelo === modeloInicial) return;
         dispatch({
             type: "init",
             payload: {
-                entidad: modeloAUsar
+                entidad: modelo || modeloInicialProp
             }
-        });
-        setModeloInicial(modeloAUsar);
-    }, []); // Vacío porque usamos ref
-
-    // const init = useCallback((modelo?: T) => {
-    //     dispatch({
-    //         type: "init",
-    //         payload: {
-    //             entidad: modelo || modeloInicialProp
-    //         }
-    //     })
-    //     setModeloInicial(modelo || modeloInicialProp);
-    // }, [modeloInicialProp]);
+        })
+        setModeloInicial(modelo || modeloInicialProp);
+    }, [dispatch, setModeloInicial, modeloInicialProp]);
 
     return {
         modelo,
-        modeloInicial: modeloInicialProp,
+        modeloInicial: modeloInicial || modeloInicialProp,
         uiProps,
         init,
         dispatch,
