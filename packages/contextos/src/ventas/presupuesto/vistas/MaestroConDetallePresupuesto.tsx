@@ -1,4 +1,6 @@
+import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
@@ -19,7 +21,6 @@ import {
 } from "@olula/lib/useMaquina.ts";
 import { JSX, useCallback } from "react";
 import { Presupuesto } from "../diseño.ts";
-import { metaTablaPresupuesto } from "../dominio.ts";
 import { getPresupuestos } from "../infraestructura.ts";
 import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
@@ -115,6 +116,43 @@ export const MaestroConDetallePresupuesto = ({
   );
 
   const seleccionada = getSeleccionada(presupuestos);
+
+  const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
+    {
+      id: "estado",
+      cabecera: "",
+      render: (presupuesto: Presupuesto) => (
+        <ColumnaEstadoTabla
+          estados={{
+            aprobado: (
+              <QIcono nombre={"copiar"} tamaño="sm" color="var(--gris-7)" />
+            ),
+            pendiente: (
+              <QIcono
+                nombre={"circulo_relleno"}
+                tamaño="sm"
+                color="var(--rojo-7)"
+              />
+            ),
+          }}
+          estadoActual={presupuesto.aprobado ? "aprobado" : "pendiente"}
+        />
+      ),
+    },
+    {
+      id: "codigo",
+      cabecera: "Código",
+    },
+    {
+      id: "nombre_cliente",
+      cabecera: "Cliente",
+    },
+    {
+      id: "total",
+      cabecera: "Total",
+      tipo: "moneda",
+    },
+  ];
 
   return (
     <div className="Presupuesto">
