@@ -1,7 +1,7 @@
 import { useCallback, useReducer, useState } from "react";
 
 import { Modelo, TipoInput } from "./diseño.ts";
-import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
+import { Accion, makeReductor, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
 
 
 export function useModelo<T extends Modelo>(
@@ -10,7 +10,7 @@ export function useModelo<T extends Modelo>(
 ): HookModelo<T> {
 
     const [modelo, dispatch] = useReducer(
-        makeReductor2(meta),
+        makeReductor(meta),
         modeloInicialProp
     );
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
@@ -83,7 +83,7 @@ export function useModelo<T extends Modelo>(
     const init = useCallback((modelo?: T) => {
         // if (modelo === modeloInicial) return;
         dispatch({
-            type: "init",
+            type: "set",
             payload: {
                 entidad: modelo || modeloInicialProp
             }
@@ -91,11 +91,22 @@ export function useModelo<T extends Modelo>(
         setModeloInicial(modelo || modeloInicialProp);
     }, [dispatch, setModeloInicial, modeloInicialProp]);
 
+    const set = useCallback((modelo: T) => {
+        // if (modelo === modeloInicial) return;
+        dispatch({
+            type: "set",
+            payload: {
+                entidad: modelo
+            }
+        })
+    }, [dispatch]);
+
     return {
         modelo,
         modeloInicial: modeloInicial || modeloInicialProp,
         uiProps,
         init,
+        set,
         dispatch,
         modificado: modeloModificado(entidad),
         valido: modeloEsValido(meta)(entidad.valor),
@@ -108,6 +119,7 @@ export type HookModelo<T extends Modelo> = {
     modeloInicial: T,
     uiProps: (campo: string, secundario?: string) => UiProps,
     init: (entidad?: T) => void,
+    set: (entidad: T) => void,
     dispatch: (action: Accion<T>) => void
     modificado: boolean,
     valido: boolean,
@@ -134,42 +146,3 @@ export type UiProps = {
     descripcion?: string;
 }
 
-// export const initModelo = <T extends Entidad>(setPresupuesto: ((modelo: T) => void), valorInicial: T) => (valor?: T) =>
-//     setPresupuesto(valor || valorInicial);
-
-// export const getUiProps = <T extends Modelo>(meta: MetaModelo<T>, modelo: T, modeloInicial: T, setModelo: ((modelo: T) => void)) => (campo: string, secundario?: string) => {
-
-//     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
-
-//         let valor = _valor || '';
-//         let descripcion: string | undefined = undefined;
-//         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
-//             valor = _valor.valor;
-//             if (segundo) {
-//                 descripcion = _valor.descripcion;
-//             }
-//         }
-//         const nuevoModelo = (segundo && descripcion)
-//             ? { ...modelo, [campo]: valor, [segundo]: descripcion }
-//             : { ...modelo, [campo]: valor };
-//         setModelo(nuevoModelo);
-//     };
-//     const validacion = campoModeloEsValido(meta)(modelo, campo);
-//     const valido = validacion === true;
-//     const textoValidacion = typeof validacion === "string" ? validacion : "";
-//     const valor = modelo[campo] as string;
-//     const editable = modeloEsEditable<T>(meta)(modelo, campo);
-
-//     const cambiado = valor !== modeloInicial[campo];
-//     return {
-//         nombre: campo,
-//         valor: valor,
-//         deshabilitado: !editable,
-//         valido: cambiado && valido,
-//         erroneo: !valido,
-//         advertido: false,
-//         textoValidacion: textoValidacion,
-//         onChange: setCampo(campo, secundario),
-//         descripcion: secundario ? modelo[secundario] as string : undefined,
-//     }
-// }
