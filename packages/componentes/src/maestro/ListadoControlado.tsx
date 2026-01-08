@@ -34,6 +34,7 @@ type Modo = "tabla" | "tarjetas";
 type MaestroProps<T extends Entidad> = {
     metaTabla?: MetaTabla<T>;
     metaFiltro?: boolean;
+    cargando?: boolean;
     tarjeta?: (entidad: T) => React.ReactNode;
     criteriaInicial: Criteria;
     entidades: T[];
@@ -47,6 +48,7 @@ type MaestroProps<T extends Entidad> = {
 export const ListadoControlado = <T extends Entidad>({
     metaTabla,
     metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
+    cargando = false,
     criteriaInicial = criteriaDefecto,
     tarjeta,
     entidades,
@@ -57,7 +59,6 @@ export const ListadoControlado = <T extends Entidad>({
     onCriteriaChanged,
 }: MaestroProps<T>) => {
 
-    const cargando = false;
 
     const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
 
