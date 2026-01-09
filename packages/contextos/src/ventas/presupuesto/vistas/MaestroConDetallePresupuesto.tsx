@@ -125,13 +125,17 @@ export const MaestroConDetallePresupuesto = ({
         <ColumnaEstadoTabla
           estados={{
             aprobado: (
-              <QIcono nombre={"copiar"} tamaño="sm" color="var(--gris-7)" />
+              <QIcono
+                nombre={"circulo_relleno"}
+                tamaño="sm"
+                color="var(--color-deshabilitado-oscuro)"
+              />
             ),
             pendiente: (
               <QIcono
                 nombre={"circulo_relleno"}
                 tamaño="sm"
-                color="var(--rojo-7)"
+                color="var(--color-exito-oscuro)"
               />
             ),
           }}
