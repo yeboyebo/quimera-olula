@@ -95,13 +95,13 @@ export const MaestroConDetallePresupuesto = () => {
             </div>
             <ListadoControlado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
-              criteria={criteriaDefecto}
+              criteriaInicial={criteriaDefecto}
               modo={"tabla"}
               entidades={ctx.presupuestos}
               totalEntidades={ctx.totalPresupuestos}
               seleccionada={ctx.presupuestoActivo}
-              setSeleccionada={setSeleccionada}
-              recargar={recargar}
+              onSeleccion={setSeleccionada}
+              onCriteriaChanged={recargar}
             />
           </>
         }
