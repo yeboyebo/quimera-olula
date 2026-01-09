@@ -30,5 +30,10 @@
   "include": [
     "packages/**/*",
     "apps/**/*",
+  ],
+  "exclude": [
+    "**/dev-dist/**",
+    "**/dist/**",
+    "**/node_modules/**"
   ]
 }

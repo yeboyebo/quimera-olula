@@ -55,7 +55,7 @@ export const MaestroConDetallePresupuesto = () => {
     emitir("recarga_de_presupuestos_solicitada", criteriaDefecto);
   }, []);
 
-  const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
+  const metaTablaPresupuesto = [
     {
       id: "estado",
       cabecera: "",
@@ -82,7 +82,7 @@ export const MaestroConDetallePresupuesto = () => {
       ),
     },
     ...metaTablaBase,
-  ];
+  ] as MetaTabla<Presupuesto>;
 
   return (
     <div className="Presupuesto">
@@ -93,7 +93,7 @@ export const MaestroConDetallePresupuesto = () => {
             <div className="maestro-botones">
               <QBoton onClick={crear}>Nuevo Presupuesto</QBoton>
             </div>
-            <ListadoControlado
+            <ListadoControlado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
               criteria={criteriaDefecto}
               modo={"tabla"}
