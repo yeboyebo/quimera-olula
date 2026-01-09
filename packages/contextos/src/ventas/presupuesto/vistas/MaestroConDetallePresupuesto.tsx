@@ -40,13 +40,13 @@ export const MaestroConDetallePresupuesto = () => {
   const crear = useCallback(() => setCreandoPresupuesto(true), [emitir]);
 
   const setSeleccionada = useCallback(
-    (payload: Presupuesto) => emitir("presupuesto_seleccionado", payload),
+    (payload: Presupuesto) => void emitir("presupuesto_seleccionado", payload),
     [emitir]
   );
 
   const recargar = useCallback(
-    async (criteria: Criteria) => {
-      emitir("recarga_de_presupuestos_solicitada", criteria);
+    (criteria: Criteria) => {
+      void emitir("recarga_de_presupuestos_solicitada", criteria);
     },
     [emitir]
   );
