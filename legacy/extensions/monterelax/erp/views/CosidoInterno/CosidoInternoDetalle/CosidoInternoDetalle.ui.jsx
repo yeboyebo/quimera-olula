@@ -1,6 +1,5 @@
 import { Box, Button, Field, Grid, Icon, QBox } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, useWidth } from "quimera";
 // import { Grid, Button, Column, Field, Table, Dialog, DialogContent, IconButton, Icon, Typography } from '@quimera/comps'
 
 function CosidoInternoDetalle({ useStyles }) {
@@ -26,7 +25,7 @@ function CosidoInternoDetalle({ useStyles }) {
             botonesCabecera={mobile ? [{ id: "atras", icon: "arrow_back", disabled: false }] : []}
           >
             <Box>
-              <Grid container spacing={1}>
+              <Grid container spacing={1} direction="column" >
                 <Grid item xs={12}>
                   <Field.Text
                     id={`unidades.dict.${unidades.current}.modelo`}

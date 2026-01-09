@@ -1,6 +1,6 @@
 import { Box, Field, Grid, QBox, QSection } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useEffect } from "react";
 
 import { Consumidores } from "../../comps";
 
@@ -53,7 +53,7 @@ function VentaNueva({ callbackGuardado, callbackCerrado, desdeMaster, useStyles,
           actionPrefix="nuevaVenta"
           alwaysActive
           dynamicComp={() => (
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               {!nuevoConsumidor && (
                 <Grid item xs={12}>
                   <Consumidores
@@ -82,7 +82,7 @@ function VentaNueva({ callbackGuardado, callbackCerrado, desdeMaster, useStyles,
                 <Field.Schema id="venta.buffer/codTicket" label="Ticket(opcional)" fullWidth />
               </Grid> */}
               {nuevoConsumidor && (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema
                       id="venta.buffer/nombreConsumidor"

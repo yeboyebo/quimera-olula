@@ -45,7 +45,7 @@ export const DetallePedido = ({
   const pedidoId = pedidoInicial?.id ?? params.id;
   const titulo = (pedido: Entidad) => pedido.codigo as string;
 
-  const pedido = useModelo(metaPedido, pedidoVacio);
+  const pedido = useModelo(metaPedido, pedidoVacio());
   const { modelo, init } = pedido;
 
   const configMaquina: ConfigMaquina4<Estado, Contexto> = {

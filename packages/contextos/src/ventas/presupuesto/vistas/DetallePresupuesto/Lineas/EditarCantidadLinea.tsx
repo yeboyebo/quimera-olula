@@ -4,7 +4,6 @@ import { LineaPresupuesto as Linea } from "../../../diseño.ts";
 
 const validacion = (cantidadRaw: string) => {
   const cantidad = parseInt(cantidadRaw);
-
   return isNaN(cantidad) || cantidad <= 0
     ? "Debe tener una cantidad mayor que cero."
     : "";
@@ -19,6 +18,7 @@ export const EditarCantidadLinea = ({
 }) => {
   const [estado, setEstado] = useState("");
   const [valor, setValor] = useState(linea.cantidad.toString());
+
   useEffect(() => {
     setValor(linea.cantidad.toString());
   }, [linea.cantidad]);
@@ -46,7 +46,7 @@ export const EditarCantidadLinea = ({
         condensado
         onChange={handleChange}
         autoSeleccion
-        onBlur={submit}
+        onBlur={() => submit(valor)}
       />
     </quimera-formulario>
   );

@@ -21,7 +21,7 @@ type MetaColumna<T extends Entidad> = {
     | "booleano"
     | undefined;
   divisa?: string;
-  ancho?: string; // Ancho específico para esta columna
+  ancho?: string;
   render?: (entidad: T) => string | ReactNode;
 };
 

@@ -1,6 +1,6 @@
 :root {
-  --main-color: #6666FF;
-  --secondary-color: #ce001e;
+  --main-color: #ce001e;
+  --secondary-color: #6666FF;
 }
 
 // .MuiButton-root {
@@ -9,9 +9,13 @@
 // }
 
 .MuiButton-containedPrimary:not(.Mui-disabled) {
-  --variant-containedBg: var(--secondary-color);
+  --variant-containedBg: var(--main-color);
 }
 
 .MuiButton-containedSecondary:not(.Mui-disabled) {
-  --variant-containedBg: var(--main-color);
+  --variant-containedBg: var(--secondary-color);
+}
+
+.MuiIcon-colorPrimary:not(.Mui-disabled) {
+  color: var(--main-color) !important;
 }

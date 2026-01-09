@@ -23,9 +23,11 @@ import "./CrearPresupuesto.css";
 export const CrearPresupuesto = ({
   publicar = () => {},
   activo = false,
+  onCancelar = () => {},
 }: {
   publicar?: EmitirEvento;
   activo: boolean;
+  onCancelar?: () => void;
 }) => {
   const [modoNoRegistrado, setModoNoRegistrado] = useState(false);
   const presupuestoRegistrado = useModelo(
@@ -49,7 +51,7 @@ export const CrearPresupuesto = ({
     presupuestoRegistrado.init(nuevoPresupuestoVacio);
     presupuestoNoRegistrado.init(nuevoPresupuestoClienteNoRegistradoVacio);
     setModoNoRegistrado(false);
-    publicar("creacion_presupuesto_cancelada");
+    onCancelar();
   };
 
   return (

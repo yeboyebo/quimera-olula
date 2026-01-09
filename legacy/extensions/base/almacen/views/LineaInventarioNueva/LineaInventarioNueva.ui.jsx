@@ -1,7 +1,7 @@
-import { Box, Collapse, Field, Grid, Icon, IconButton, QSection } from "@quimera/comps";
 import { QArticulo } from "@quimera-extension/base-almacen";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect, useRef } from "react";
+import { Box, Collapse, Field, Grid, Icon, IconButton, QSection } from "@quimera/comps";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { useEffect, useRef } from "react";
 
 function LineaInventarioNueva({ callbackGuardada, codInventario, useStyles }) {
   const [{ inline, linea, focusArticulo }, dispatch] = useStateValue();
@@ -52,7 +52,7 @@ function LineaInventarioNueva({ callbackGuardada, codInventario, useStyles }) {
           actionPrefix="lineaExpandida"
           alwaysActive
           dynamicComp={() => (
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               <Grid item xs={9}>
                 <QArticulo
                   id="linea.buffer/referencia"

@@ -1,7 +1,7 @@
-import { Box, Field, Grid, Icon, IconButton } from "@quimera/comps";
 import { Direccion } from "@quimera-extension/base-area_clientes";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect, useState } from "react";
+import { Box, Field, Grid, Icon, IconButton } from "@quimera/comps";
+import Quimera, { useStateValue, util } from "quimera";
+import { useEffect, useState } from "react";
 
 import { DirCliente as QDirCliente } from '@quimera-extension/base-ventas';
 import schemas from "../../../static/schemas";
@@ -20,7 +20,7 @@ function DirCliente({ modelName, useStyles }) {
   return (
     <Quimera.Template id="DirCliente">
       <Box>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} direction="column" >
           <Grid item xs={12}>
             <Box display="flex" justifyContent="space-between">
               <Box width={1}>

@@ -1,3 +1,4 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
 import {
   Box,
   Button,
@@ -9,8 +10,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { ProveedorArticulo, QArticuloVbarba } from "../../comps";
@@ -43,7 +43,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
         </Box>
       )}
       <Collapse in={linea.buffer._status !== "deleting"}>
-        <Grid container spacing={0}>
+        <Grid container spacing={0} direction="column">
           <Grid item xs={12}>
             <Box display="flex" justifyContent="right" mt={1}>
               {!disabled && (
@@ -67,7 +67,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               actionPrefix="linea/articulo"
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={12}>
                     <QArticuloVbarba
                       id="linea.buffer.referencia"
@@ -105,7 +105,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               actionPrefix="linea/cantidad"
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer.cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
@@ -142,7 +142,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               mr={1}
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer.dtoLineal" schema={schema} fullWidth />
                   </Grid>
@@ -171,7 +171,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               actionPrefix="linea/Impuestos"
               alwaysInactive={true}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer.codImpuesto" schema={schema} fullWidth />
                   </Grid>

@@ -1,7 +1,6 @@
 import { Box, Button, Field, Grid, Typography } from "@quimera/comps";
 import { AppBar } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, util } from "quimera";
 
 import CuentaBanco from "../../../comps/CuentaBanco";
 import FormasPago from "../../../comps/FormasPago";
@@ -16,7 +15,7 @@ function DashboardFiltro({ useStyles }) {
       <AppBar position="sticky" className={classes.appBar}>
         <Box px={1}>
           <Box>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               <Grid item xs={6}>
                 <Field.Select
                   id="bufferFiltro.intervaloFecha"

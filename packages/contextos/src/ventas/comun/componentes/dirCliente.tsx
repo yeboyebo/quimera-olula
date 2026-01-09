@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getDirecciones } from "../../cliente/infraestructura.ts";
 
 interface DireccionesProps {
-  clienteId: string | null;
+  clienteId: string | undefined;
   valor?: string;
   nombre?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;

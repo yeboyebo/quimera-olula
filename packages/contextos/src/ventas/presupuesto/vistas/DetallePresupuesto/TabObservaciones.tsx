@@ -3,11 +3,11 @@ import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Presupuesto } from "../../diseño.ts";
 import "./TabObservaciones.css";
 
-interface TabClienteProps {
+interface TabObservacionesProps {
   presupuesto: HookModelo<Presupuesto>;
 }
 
-export const TabObservaciones = ({ presupuesto }: TabClienteProps) => {
+export const TabObservaciones = ({ presupuesto }: TabObservacionesProps) => {
   const { uiProps } = presupuesto;
 
   return (

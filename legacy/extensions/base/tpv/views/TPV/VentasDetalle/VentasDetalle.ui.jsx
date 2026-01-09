@@ -1,3 +1,5 @@
+import { ListItemLineaPedido, Totales } from "@quimera-extension/base-area_clientes";
+import { Cliente, DirCliente } from "@quimera-extension/base-ventas";
 import {
   Box,
   Button,
@@ -12,9 +14,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { Avatar, List, ListItem, ListItemText } from "@quimera/thirdparty";
-import { ListItemLineaPedido, Totales } from "@quimera-extension/base-area_clientes";
-import { Cliente, DirCliente } from "@quimera-extension/base-ventas";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
 
 import schemas from "../../../static/schemas";
 
@@ -45,7 +45,7 @@ function VentasDetalle({ useStyles }) {
         >
           <Box px={0} my={1}>
             <Box width={1} border={0} borderColor="gray" height={"calc(100%)"}>
-              <Grid container spacing={0}>
+              <Grid container spacing={0} direction="column">
                 <Grid item xs={12}>
                   <Grid
                     container
