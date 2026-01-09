@@ -1,6 +1,6 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QIcono } from "@olula/componentes/index.js";
+import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
@@ -8,7 +8,6 @@ import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ContextoMaestroPresupuesto, Presupuesto } from "../diseño.ts";
-import { metaTablaPresupuesto } from "../dominio.ts";
 import { getMaquina } from "../maquinaMaestro.ts";
 import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
@@ -55,7 +54,7 @@ export const MaestroConDetallePresupuesto = () => {
     emitir("recarga_de_presupuestos_solicitada", criteriaDefecto);
   }, []);
 
-  const metaTablaExtendida = [
+  const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
     {
       id: "estado",
       cabecera: "",
@@ -81,7 +80,19 @@ export const MaestroConDetallePresupuesto = () => {
         />
       ),
     },
-    ...metaTablaPresupuesto,
+    {
+      id: "codigo",
+      cabecera: "Código",
+    },
+    {
+      id: "nombre_cliente",
+      cabecera: "Cliente",
+    },
+    {
+      id: "total",
+      cabecera: "Total",
+      tipo: "moneda",
+    },
   ];
 
   return (
@@ -94,7 +105,7 @@ export const MaestroConDetallePresupuesto = () => {
               <QBoton onClick={crear}>Nuevo Presupuesto</QBoton>
             </div>
             <ListadoControlado
-              metaTabla={metaTablaExtendida}
+              metaTabla={metaTablaPresupuesto}
               criteria={criteriaDefecto}
               modo={"tabla"}
               entidades={ctx.presupuestos}
