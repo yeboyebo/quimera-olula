@@ -1,5 +1,5 @@
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
-import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -280,7 +280,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
             return "Formato Email incorrecto";
         }
     }
-    if (tipoCampo && ["fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
+    if (tipoCampo && ["texto", "fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
         return "Campo requerido";
     }
 
@@ -311,11 +311,6 @@ export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) =
 export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
     const valor_inicial = estado.valor_inicial;
     const valor = estado.valor;
-    // for (const key in valor) {
-    //     if (valor[key] !== valor_inicial[key]) {
-    //         console.log(`Campo modificado: ${key}, valor: ${valor[key]}, valor inicial: ${valor_inicial[key]}`);
-    //     }
-    // }
 
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
@@ -328,6 +323,20 @@ export const formatearMoneda = (cantidad: number, divisa: string): string => {
         style: "currency",
         currency: divisa,
     }).format(cantidad);
+};
+
+function decimalesPorMoneda(divisa: string): number {
+    const numberFormatUSD = new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: divisa
+    });
+    return numberFormatUSD.formatToParts(1)
+        .find(part => part.type === "fraction")
+        ?.value.length ?? 0;
+}
+
+export const redondeaMoneda = (cantidad: number, divisa: string): number => {
+    const decimales = decimalesPorMoneda(divisa);
+    return parseFloat(cantidad.toFixed(decimales));
 };
 
 export const formatearFecha = (fecha: string): string => {
@@ -419,3 +428,94 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
         paginacion: criteria.paginacion
     })
 };
+
+type ProcesarContextoSinc<E extends string, C extends Contexto<E>> = (contexto: C) => C;
+export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEstado: string) => ProcesarContextoSinc<E, C> = (nuevoEstado) => {
+
+    return (contexto) => {
+        return {
+            ...contexto,
+            estado: nuevoEstado
+        }
+    }
+}
+
+export const criteriaDefecto: Criteria = {
+    filtros: [],
+    orden: ["id", "DESC"],
+    paginacion: { limite: 10, pagina: 1 },
+}
+
+export const ejecutarListaProcesos = async <E extends string, C extends Contexto<E>>(
+    contexto: C,
+    procesos: (ProcesarContexto<E, C> | E)[],
+    payload?: unknown
+): Promise<[C, EventoMaquina[]]> => {
+
+    const eventos: EventoMaquina[] = [];
+
+    let x: [C, EventoMaquina[]] = [contexto, eventos];
+    for (const proceso of procesos) {
+        if (typeof proceso === 'string') {
+            x = [
+                {
+                    ...x[0],
+                    estado: proceso
+                },
+                x[1]
+            ]
+        } else {
+            const resultado = await proceso(x[0], payload);
+            if (Array.isArray(resultado)) {
+                x = [resultado[0], [...x[1], ...resultado[1]]];
+            } else {
+                x = [resultado, x[1]];
+            }
+        }
+    }
+    return x;
+}
+
+export const procesarEvento = async <E extends string, C extends Contexto<E>>(
+    maquina: Maquina<E, C>,
+    contexto: C,
+    evento: string,
+    payload: unknown,
+): Promise<[C, EventoMaquina[]]> => {
+
+    const estado = contexto.estado;
+
+    console.log("Procesar evento:", evento, payload, 'estado actual', estado);
+
+    const usarMaquina = () => {
+
+        return maquina[contexto.estado][evento];
+    }
+
+    const respuesta = usarMaquina();
+
+    if (typeof respuesta === 'string') {
+
+        return [{ ...contexto, estado: respuesta }, []];
+
+    } else if (typeof respuesta === 'function') {
+
+        return ejecutarListaProcesos(contexto, [respuesta], payload);
+
+    } else if (Array.isArray(respuesta)) {
+
+        return ejecutarListaProcesos(contexto, respuesta, payload);
+
+    } else {
+        throw new Error('No se pudo procesar el evento');
+    }
+};
+
+export const publicar = <E extends string, C extends Contexto<E>>(evento: string, payload?: unknown) => {
+
+    const f: ProcesarContexto<E, C> = async (contexto) => {
+        return [contexto, [[evento, payload]]]
+    }
+
+    return f
+}
