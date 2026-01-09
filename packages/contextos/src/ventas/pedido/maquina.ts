@@ -1,44 +1,41 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { ContextoPresupuesto, EstadoPresupuesto } from "./diseño.ts";
+import { ContextoPedido, EstadoPedido } from "./diseño.ts";
 import {
-    abiertoOAprobadoContexto,
+    abiertoOServido,
     activarLinea,
-    aprobarPresupuesto,
     borrarLinea,
-    borrarPresupuesto,
+    borrarPedido,
     cambiarCantidadLinea,
     cambiarCliente,
-    cambiarDivisa,
     cambiarLinea,
-    cambiarPresupuesto,
-    cancelarCambioPresupuesto,
+    cancelarCambioPedido,
     cargarContexto,
     crearLinea,
     getContextoVacio,
     refrescarLineas,
-    refrescarPresupuesto
+    refrescarPedido
 } from "./dominio.ts";
 
 
-export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> = () => {
+export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
 
     return {
 
         INICIAL: {
 
-            presupuesto_id_cambiado: [cargarContexto],
+            pedido_id_cambiado: [cargarContexto],
 
-            presupuesto_deseleccionado: [
+            pedido_deseleccionado: [
                 getContextoVacio,
-                publicar('presupuesto_deseleccionado', null)
+                publicar('pedido_deseleccionado', null)
             ]
         },
 
         ABIERTO: {
 
             linea_creada: [
-                refrescarPresupuesto,
+                refrescarPedido,
                 refrescarLineas
             ],
 
@@ -48,21 +45,17 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
 
-            borrar_solicitado: "BORRANDO_PRESUPUESTO",
-
-            aprobacion_solicitada: "APROBANDO_PRESUPUESTO",
-
-            cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
+            borrar_solicitado: "BORRANDO_PEDIDO",
 
             cambio_cliente_listo: cambiarCliente,
 
-            presupuesto_cargado: [abiertoOAprobadoContexto],
+            pedido_cargado: [abiertoOServido],
 
-            presupuesto_cambiado: [refrescarPresupuesto],
+            pedido_cambiado: [refrescarPedido],
 
-            edicion_de_presupuesto_lista: [cambiarPresupuesto],
+            edicion_de_pedido_lista: [cambiarLinea],
 
-            edicion_de_presupuesto_cancelada: [cancelarCambioPresupuesto],
+            edicion_de_pedido_cancelada: [cancelarCambioPedido],
 
             linea_seleccionada: [activarLinea],
 
@@ -71,30 +64,16 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
         },
 
-        APROBADO: {
+        SERVIDO: {
 
-            presupuesto_cargado: [abiertoOAprobadoContexto],
+            pedido_cargado: [abiertoOServido],
         },
 
-        BORRANDO_PRESUPUESTO: {
+        BORRANDO_PEDIDO: {
 
-            borrado_de_presupuesto_listo: borrarPresupuesto,
+            borrado_de_pedido_listo: borrarPedido,
 
             borrar_cancelado: "ABIERTO",
-        },
-
-        APROBANDO_PRESUPUESTO: {
-
-            aprobacion_lista: aprobarPresupuesto,
-
-            aprobacion_cancelada: "ABIERTO",
-        },
-
-        CAMBIANDO_DIVISA: {
-
-            cambio_divisa_listo: cambiarDivisa,
-
-            cambio_divisa_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_CLIENTE: {

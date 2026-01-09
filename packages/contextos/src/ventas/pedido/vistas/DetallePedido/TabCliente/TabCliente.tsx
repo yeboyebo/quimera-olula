@@ -51,12 +51,9 @@ export const TabCliente = ({
     publicar,
   });
 
-  const onGuardarCambioCliente = async (
-    ventaId: string,
-    cambios: Partial<Pedido>
-  ) => {
-    await intentar(() => patchCambiarCliente(ventaId, cambios));
-    const nuevoPedido = await getPedido(ventaId);
+  const onGuardarCambioCliente = async (cambios: Partial<Pedido>) => {
+    await intentar(() => patchCambiarCliente(modelo.id, cambios));
+    const nuevoPedido = await getPedido(modelo.id);
     publicar("pedido_cambiado", nuevoPedido);
     emitir("cambio_cliente_listo");
   };

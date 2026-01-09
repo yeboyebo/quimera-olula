@@ -35,6 +35,7 @@ export interface Presupuesto extends Entidad {
   pais_id: string;
   apartado: string;
   telefono: string;
+  lineas: LineaPresupuesto[];
 }
 
 export interface PresupuestoAPI {
@@ -153,3 +154,29 @@ export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>
 
 export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
 
+export type EstadoPresupuesto = (
+  'INICIAL' | "ABIERTO" | "APROBADO"
+  | "BORRANDO_PRESUPUESTO"
+  | "APROBANDO_PRESUPUESTO"
+  | "CAMBIANDO_DIVISA"
+  | "CAMBIANDO_CLIENTE"
+  | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+);
+
+export type EstadoMaestroPresupuesto = (
+  'INICIAL'
+);
+
+export type ContextoPresupuesto = {
+  estado: EstadoPresupuesto,
+  presupuesto: Presupuesto;
+  presupuestoInicial: Presupuesto;
+  lineaActiva: LineaPresupuesto | null;
+};
+
+export type ContextoMaestroPresupuesto = {
+  estado: EstadoMaestroPresupuesto;
+  presupuestos: Presupuesto[];
+  totalPresupuestos: number;
+  presupuestoActivo: Presupuesto | null;
+};

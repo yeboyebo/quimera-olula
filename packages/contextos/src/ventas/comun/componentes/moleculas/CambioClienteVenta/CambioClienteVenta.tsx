@@ -22,7 +22,7 @@ export interface VentaConCliente extends Modelo {
 export interface CambioClienteProps<T extends VentaConCliente> {
   venta: HookModelo<T>;
   activo?: boolean;
-  onGuardar: (ventaId: string, cambios: Partial<T>) => Promise<void>;
+  onGuardar: (cambios: Partial<T>) => Promise<void>;
   onCancelar?: () => void;
   titulo?: string;
   permitirClienteNoRegistrado?: boolean;
@@ -35,12 +35,10 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
   onCancelar,
   titulo = "Cambiar cliente",
 }: CambioClienteProps<T>) => {
-  const ventaId = venta.modelo.id;
   const { modelo, uiProps, valido, init } = useModelo(
     metaCambioCliente,
     cambioClienteVacio()
   );
-  console.log("CambioClienteVenta modelo", modelo);
 
   const inicializarFormulario = useCallback(() => {
     if (!activo) return;
@@ -50,22 +48,9 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
       nombre_cliente: venta.modelo.nombre_cliente,
       direccion_id: venta.modelo.direccion_id,
     });
-    // const valoresIniciales = [
-    //   { campo: "nombre_cliente", valor: venta.modelo.nombre_cliente },
-    //   { campo: "direccion_id", valor: venta.modelo.direccion_id },
-    //   { campo: "cliente_id", valor: venta.modelo.cliente_id },
-    // ];
-
-    // valoresIniciales.forEach(({ campo, valor }) => {
-    //   dispatch({
-    //     type: "set_campo",
-    //     payload: { campo, valor },
-    //   });
-    // });
   }, [activo, venta.modelo, init]);
 
   useEffect(() => {
-    console.log("CambioClienteVenta", activo);
     if (activo) {
       inicializarFormulario();
     }
@@ -95,7 +80,7 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
 
   const guardar = async () => {
     const cambios = prepararCambios();
-    onGuardar(ventaId, cambios);
+    onGuardar(cambios);
     init(cambioClienteVacio());
   };
 

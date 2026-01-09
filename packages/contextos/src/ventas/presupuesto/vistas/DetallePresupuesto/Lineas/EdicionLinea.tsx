@@ -3,60 +3,57 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { LineaPresupuesto } from "../../../diseño.ts";
 import { metaLinea } from "../../../dominio.ts";
-import { patchLinea } from "../../../infraestructura.ts";
 import "./EdicionLinea.css";
+
 export const EdicionLinea = ({
   publicar,
-  activo,
-  lineaSeleccionada,
-  idPresupuesto,
-  refrescarCabecera,
+  linea,
 }: {
-  lineaSeleccionada: LineaPresupuesto;
+  linea: LineaPresupuesto;
   publicar: EmitirEvento;
-  activo: boolean;
-  idPresupuesto: string;
-  refrescarCabecera: () => void;
 }) => {
-  const { intentar } = useContext(ContextoError);
-  const { modelo, uiProps, valido, init } = useModelo(
-    metaLinea,
-    lineaSeleccionada
-  );
-  const guardar = async (linea: LineaPresupuesto) => {
-    await intentar(() => patchLinea(idPresupuesto, linea));
-    publicar("edicion_confirmada");
-    refrescarCabecera();
+  const { modelo, uiProps, valido } = useModelo(metaLinea, linea);
+
+  const [cambiando, setCambiando] = useState(false);
+
+  const cambiar = () => {
+    setCambiando(true);
+    publicar("cambio_de_linea_listo", modelo);
   };
 
-  useEffect(() => {
-    init(lineaSeleccionada);
-  }, [lineaSeleccionada, init]);
-
-  const cancelar = () => {
-    publicar("edicion_cancelada");
-    init();
-  };
+  const cancelar = useCallback(() => {
+    if (!cambiando) publicar("cambio_de_linea_cancelado");
+  }, [cambiando, publicar]);
 
   return (
-    <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
       <div className="EdicionLinea">
-        <h2>Edición de línea</h2>
+        <h2>Editar línea</h2>
+
         <quimera-formulario>
+          <div id="titulo">
+            <h3>{`${linea.descripcion}`}</h3>
+            {`Ref: ${linea.referencia}`}
+          </div>
+
           <Articulo {...uiProps("referencia", "descripcion")} />
+
           <QInput label="Cantidad" {...uiProps("cantidad")} />
+
           <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} />
+
           <QInput label="Precio" {...uiProps("pvp_unitario")} />
+
           <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
         </quimera-formulario>
+
         <div className="botones maestro-botones ">
-          <QBoton onClick={() => guardar(modelo)} deshabilitado={!valido}>
+          <QBoton onClick={cambiar} deshabilitado={!valido}>
             Guardar
           </QBoton>
         </div>
