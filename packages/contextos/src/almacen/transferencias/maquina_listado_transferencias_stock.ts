@@ -1,4 +1,3 @@
-
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
     cambiarItem,
@@ -17,9 +16,9 @@ import {
 } from "@olula/lib/useMaquina.ts";
 import { TransferenciaStock } from "./diseño.ts";
 
-type Estado = "Inactivo" | "Creando";
+export type Estado = "Inactivo" | "Creando";
 
-type Contexto = {
+export type Contexto = {
     transferencias: ListaSeleccionable<TransferenciaStock>;
 };
 
@@ -39,7 +38,7 @@ const setTransferencias =
             };
         };
 
-const configMaquina: ConfigMaquina4<Estado, Contexto> = {
+export const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     inicial: {
         estado: "Inactivo",
         contexto: {

@@ -69,7 +69,7 @@ type ParamsOnEvento<E extends string, C extends ContextoBase> = {
     setEstado: (estado: E) => (maquina: Maquina3<E, C>) => Maquina3<E, C>;
     publicar: ProcesarEvento;
 }
-type OnEvento3<E extends string, C extends ContextoBase> = ({
+export type OnEvento3<E extends string, C extends ContextoBase> = ({
     maquina, payload, setEstado }: ParamsOnEvento<E, C>
 ) => Maquina3<E, C> | void;
 
