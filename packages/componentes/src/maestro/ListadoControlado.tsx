@@ -1,17 +1,17 @@
 import {
     Criteria,
-    Entidad,
-    Filtro
+    Entidad
 } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useState } from "react";
-import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
+import { MetaTabla } from "../atomos/qtabla.tsx";
+import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { expandirEntidad } from "../detalle/helpers.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
-import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
+import { MaestroFiltrosControlado } from "./maestroFiltros/MaestroFiltrosControlado.tsx";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -33,43 +33,45 @@ type Modo = "tabla" | "tarjetas";
 
 type MaestroProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
+  metaFiltro?: boolean;
   tarjeta?: (entidad: T) => React.ReactNode;
-  criteria?: Criteria;
+  criteriaInicial: Criteria;
   entidades: T[];
   totalEntidades: number;
   seleccionada: T | null;
-  setSeleccionada: (seleccionada: T) => void;
+  onSeleccion: (seleccionada: T) => void;
   modo?: Modo;
-  recargar: (criteria: Criteria) => void;
+  onCriteriaChanged: (criteria: Criteria) => void;
 };
 
 export const ListadoControlado = <T extends Entidad>({
   metaTabla,
-  criteria = criteriaDefecto,
+  metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
+  criteriaInicial = criteriaDefecto,
   tarjeta,
   entidades,
   totalEntidades,
   seleccionada,
-  setSeleccionada,
+  onSeleccion,
   modo = "tabla",
-  recargar,
+  onCriteriaChanged,
 }: MaestroProps<T>) => {
 
     const cargando = false;
 
-    const [criteria_, setCriteria] = useState<Criteria>(criteria);
+    const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
 
     const cambiarCriteria = useCallback(
         (c: Criteria) => {
             setCriteria(c);
-            recargar(c);
+            onCriteriaChanged(c);
         },
-        [setCriteria, recargar]
+        [setCriteria, onCriteriaChanged]
     );
 
 
     const entidadesFiltradas = entidades.filter((entidad) =>
-        filtrarEntidad(entidad, criteria_.filtros)
+        filtrarEntidad(entidad, criteria.filtros)
     );
 
     const renderEntidades = () => {
@@ -80,67 +82,49 @@ export const ListadoControlado = <T extends Entidad>({
         : datosCargando<T>();
 
         if (modo == "tarjetas" && tarjeta) {
-        return (
-            <QTarjetas
-                tarjeta={tarjeta}
-                datos={datos}
-                cargando={cargando}
-                seleccionadaId={seleccionada?.id}
-                onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-                paginacion={criteria_.paginacion}
-                onPaginacion={(pagina, limite) => {
-                    cambiarCriteria({ ...criteria_, paginacion: { pagina, limite } });
-                }}
-                totalEntidades={entidades.length}
-                orden={criteria_.orden}
-                onOrdenar={(clave) => {
-                    const [antigua_clave, antiguo_sentido] = criteria_.orden ?? [null, null];
-                    const sentido =
-                    antigua_clave === clave && antiguo_sentido === "ASC"
-                        ? "DESC"
-                        : "ASC";
-
-                    cambiarCriteria({
-                        ...criteria_,
-                        orden: [clave, sentido],
-                        paginacion: { ...criteria_.paginacion, pagina: 1 },
-                    });
-                }}
-            />
-        );
+            return (
+                <QTarjetas
+                    tarjeta={tarjeta}
+                    datos={datos}
+                    cargando={cargando}
+                    seleccionadaId={seleccionada?.id}
+                    onSeleccion={onSeleccion}
+                    paginacion={criteria.paginacion}
+                    onPaginacion={(pagina, limite) => {
+                        cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
+                    }}
+                    totalEntidades={entidades.length}
+                    orden={criteria.orden}
+                />
+            );
         }
 
         if (modo == "tabla" && metaTabla) {
-        return (
-            <QTabla
-                metaTabla={metaTabla}
-                datos={datos}
-                cargando={cargando}
-                seleccionadaId={seleccionada?.id}
-                onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-                orden={criteria_.orden}
-                onOrdenar={(clave) => {
-                    const [antigua_clave, antiguo_sentido] = criteria_.orden ?? [null, null];
-                    const sentido =
-                    antigua_clave === clave && antiguo_sentido === "ASC"
-                        ? "DESC"
-                        : "ASC";
-                    cambiarCriteria({
-                        ...criteria_,
-                        orden: [clave, sentido],
-                        paginacion: { ...criteria_.paginacion, pagina: 1 },
-                    });
-                }}
-                paginacion={criteria_.paginacion}
-                onPaginacion={(pagina, limite) => {
-                    cambiarCriteria({
-                        ...criteria_,
-                        paginacion: { pagina, limite },
-                    });
-                }}
-                totalEntidades={totalEntidades}
-            />
-        );
+            return (
+                <QTablaControlada
+                    metaTabla={metaTabla}
+                    datos={datos}
+                    cargando={cargando}
+                    seleccionadaId={seleccionada?.id}
+                    onSeleccion={onSeleccion}
+                    orden={criteria.orden}
+                    onOrdenChanged={(orden) => {
+                        cambiarCriteria({
+                            ...criteria,
+                            orden,
+                            paginacion: { ...criteria.paginacion, pagina: 1 },
+                        });
+                    }}
+                    paginacion={criteria.paginacion}
+                    onPaginacionChanged={(paginacion) => {
+                        cambiarCriteria({
+                            ...criteria,
+                            paginacion,
+                        });
+                    }}
+                    totalEntidades={totalEntidades}
+                />
+            );
         }
 
         return null;
@@ -160,33 +144,19 @@ export const ListadoControlado = <T extends Entidad>({
             </span>
             </div>
         )} */}
-        <MaestroFiltros
-            campos={obtenerCampos(entidades[0])}
-            filtro={criteria_.filtros}
-            cambiarFiltro={(clave, valor, operador = "~") => {
-                const nuevoFiltro: Filtro = [
-                    ...criteria_.filtros.filter(([k]) => k !== clave),
-                    [clave, operador, valor],
-                ];
-                cambiarCriteria({
-                    ...criteria_,
-                    filtros: nuevoFiltro,
-                });
-            }}
-            borrarFiltro={(clave) => {
-                cambiarCriteria({
-                    ...criteria_,
-                    filtros: criteria_.filtros.filter(([k]) => k !== clave),
-                });
-            }}
-            resetearFiltro={() => {
-                cambiarCriteria({
-                    ...criteria_,
-                    filtros: criteria.filtros,
-                    paginacion: { ...criteria_.paginacion, pagina: 1 },
-                });
-            }}
-        />
+        {metaFiltro && (
+            <MaestroFiltrosControlado
+                campos={obtenerCampos(entidades[0])}
+                filtro={criteria.filtros}
+                filtroInicial={criteriaInicial.filtros}
+                onFiltroChanged={(filtro) => {
+                    cambiarCriteria({
+                        ...criteria,
+                        filtros: filtro,
+                    });
+                }}
+            />
+        )}
         {renderEntidades()}
         </div>
     );

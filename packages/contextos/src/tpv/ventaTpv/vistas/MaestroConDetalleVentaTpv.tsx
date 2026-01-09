@@ -77,15 +77,16 @@ export const MaestroConDetalleVentaTpv = () => {
                         </div>
                         <ListadoControlado
                             metaTabla={metaTablaFactura}
-                            criteria={criteriaDefecto}
+                            metaFiltro={true}
+                            criteriaInicial={criteriaDefecto}
                             modo={'tabla'}
                             // setModo={handleSetModoVisualizacion}
                             // tarjeta={tarjeta}
                             entidades={ctx.ventas}
                             totalEntidades={ctx.totalVentas}
                             seleccionada={ctx.ventaActiva}
-                            setSeleccionada={setSeleccionada}
-                            recargar={recargar}
+                            onSeleccion={setSeleccionada}
+                            onCriteriaChanged={recargar}
                         />
                     </>
                 }
