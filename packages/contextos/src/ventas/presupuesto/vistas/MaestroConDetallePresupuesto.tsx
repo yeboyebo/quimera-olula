@@ -8,6 +8,7 @@ import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ContextoMaestroPresupuesto, Presupuesto } from "../diseño.ts";
+import { metaTablaPresupuesto as metaTablaBase } from "../dominio.ts";
 import { getMaquina } from "../maquinaMaestro.ts";
 import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
@@ -80,19 +81,7 @@ export const MaestroConDetallePresupuesto = () => {
         />
       ),
     },
-    {
-      id: "codigo",
-      cabecera: "Código",
-    },
-    {
-      id: "nombre_cliente",
-      cabecera: "Cliente",
-    },
-    {
-      id: "total",
-      cabecera: "Total",
-      tipo: "moneda",
-    },
+    ...metaTablaBase,
   ];
 
   return (
