@@ -83,6 +83,7 @@ export const DetalleVentaTpv = ({
             emitir("venta_id_cambiada", ventaId, true);
         }
     }, [ventaId, emitir, venta.modelo.id]);
+
   
     return (
         <Detalle

@@ -50,6 +50,8 @@ export type NuevoPagoEfectivo = {
 
 export type NuevoPagoVale = {
     importe: number;
+    saldoVale: number;
+    aPagar: number;
     vale_id: string;
 }
 
@@ -65,12 +67,7 @@ export const metaNuevoPagoEfectivo: MetaModelo<NuevoPagoEfectivo> = {
     }
 };
 
-export const metaNuevoPagoVale: MetaModelo<NuevoPagoEfectivo> = {
-    campos: {
-        importe: { tipo: "numero", requerido: true },
-        vale_id: { tipo: "texto", requerido: true },
-    }
-};
+
 
 
 export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<VentaTpv>;

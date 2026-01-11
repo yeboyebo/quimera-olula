@@ -49,10 +49,10 @@ export const obtenerTransferenciaStock: ObtenerTransferenciaStock = async (id) =
     );
 
 export const obtenerTransferenciasStock: ObtenerTransferenciasStock = async (
-    filtros, orden, paginacion
+    filtro, orden, paginacion
 ) => {
-    const criteria = transformarCriteria(camposTransferenciaToAPI)({ filtros, orden, paginacion });
-    const q = criteriaQuery(criteria.filtros, criteria.orden, criteria.paginacion);
+    const criteria = transformarCriteria(camposTransferenciaToAPI)({ filtro, orden, paginacion });
+    const q = criteriaQuery(criteria.filtro, criteria.orden, criteria.paginacion);
     const respuesta = await RestAPI.get<{ datos: TransferenciaStock_API[]; total: number }>(baseUrlTransferencias + q);
 
     return { datos: respuesta.datos.map(transferenciaStockFromAPI), total: respuesta.total };
@@ -119,10 +119,10 @@ export const obtenerLineaTransferenciaStock: ObtenerLineaTransferenciaStock = as
     );
 
 export const obtenerLineasTransferenciaStock: ObtenerLineasTransferenciaStock = async (
-    id, filtros, orden, paginacion
+    id, filtro, orden, paginacion
 ) => {
-    const criteria = transformarCriteria(camposLineaTransferenciaToAPI)({ filtros, orden, paginacion });
-    const q = criteriaQuery(criteria.filtros, criteria.orden, criteria.paginacion);
+    const criteria = transformarCriteria(camposLineaTransferenciaToAPI)({ filtro, orden, paginacion });
+    const q = criteriaQuery(criteria.filtro, criteria.orden, criteria.paginacion);
     const respuesta = await RestAPI.get<{ datos: LineaTransferenciaStock_API[]; total: number }>(`${baseUrlTransferencias}/${id}/linea` + q);
 
     return { datos: respuesta.datos.map(lineaTransferenciaStockFromAPI), total: respuesta.total };

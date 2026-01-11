@@ -82,44 +82,11 @@ export type MetaModelo<T extends Modelo> = {
 
 export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
 
-    return (estado: EstadoModelo<T>, accion: Accion<T>): EstadoModelo<T> => {
-
-        switch (accion.type) {
-
-            case "init": {
-                return initEstadoModelo<T>(
-                    accion.payload.entidad,
-                    // meta
-                );
-            }
-
-            case "set_campo": {
-                const valor = convertirValorCampo<T>(
-                    accion.payload.valor,
-                    accion.payload.campo,
-                    meta.campos
-                );
-                return cambiarEstadoModelo<T>(
-                    estado,
-                    accion.payload.campo,
-                    valor,
-                );
-            }
-
-            default: {
-                return { ...estado };
-            }
-        }
-    }
-}
-
-export const makeReductor2 = <T extends Modelo>(meta: MetaModelo<T>) => {
-
     return (estado: T, accion: Accion<T>): T => {
 
         switch (accion.type) {
 
-            case "init": {
+            case "set": {
                 return accion.payload.entidad;
             }
 
@@ -186,7 +153,7 @@ export const cambiarEstadoModelo = <T extends Modelo>(
 }
 
 export type Accion<T extends Modelo> = {
-    type: 'init';
+    type: 'set';
     payload: {
         entidad: T
     }
@@ -240,9 +207,6 @@ export const validacionDefecto = (validacion: ValidacionCampo, valor: string): V
         textoValidacion: valido ? "" : "Campo requerido",
     }
 }
-
-// export type ValidadorCampo<T extends Modelo> = (estado: EstadoModelo<T>) => ValidacionCampo;
-// export type ValidadorCampos<T extends Modelo> = Record<string, ValidadorCampo<T>>;
 
 
 export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo?: string) => {
@@ -423,7 +387,7 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({
-        filtros: transformarFiltro(criteria.filtros),
+        filtro: transformarFiltro(criteria.filtro),
         orden: transformarOrden(criteria.orden),
         paginacion: criteria.paginacion
     })
@@ -441,7 +405,7 @@ export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEs
 }
 
 export const criteriaDefecto: Criteria = {
-    filtros: [],
+    filtro: [],
     orden: ["id", "DESC"],
     paginacion: { limite: 10, pagina: 1 },
 }

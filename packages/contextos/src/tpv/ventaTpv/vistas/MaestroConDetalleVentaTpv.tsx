@@ -17,11 +17,23 @@ agenteActivo.actualizar('000001');
 const miPuntoVentaLocal = puntoVentaLocal.obtener() ;
 const miAgenteActivo = agenteActivo.obtener() ;
 
-const maquina = getMaquina();  
+const maquina = getMaquina();
+
+const criteriaBaseVentas = {
+    ...criteriaDefecto,
+    filtro: {
+        ...criteriaDefecto.filtro,
+        punto_venta_id: 'x'
+    },
+    orden: ["codigo", "DESC"]
+    
+}
 
 export const MaestroConDetalleVentaTpv = () => {
 
     const { intentar } = useContext(ContextoError);
+
+    const [cargando, setCargando] = useState(false);
 
     const [ctx, setCtx] = useState<ContextoMaestroVentasTpv>({
         estado: "INICIAL",
@@ -38,7 +50,7 @@ export const MaestroConDetalleVentaTpv = () => {
             );
             setCtx(nuevoContexto);
         },
-        [ctx, setCtx, intentar]
+        [ctx, setCtx, setCargando,intentar]
     );
     
     const crear = useCallback(
@@ -53,16 +65,16 @@ export const MaestroConDetalleVentaTpv = () => {
 
     const recargar = useCallback(
         async (criteria: Criteria) => {
-            emitir("recarga_de_ventas_solicitada", criteria);
+            setCargando(true);
+            await emitir("recarga_de_ventas_solicitada", criteria);
+            setCargando(false);
         },
-        [emitir]
+        [emitir, setCargando]
     );
 
     useEffect(() => {
-        emitir("recarga_de_ventas_solicitada", criteriaDefecto);   
+        recargar(criteriaBaseVentas);
     }, [])
-
-    // const [modoListado, setModoListado] = useState('tabla')
 
     return ( 
         <div className="Factura"> 
@@ -78,6 +90,7 @@ export const MaestroConDetalleVentaTpv = () => {
                         <ListadoControlado
                             metaTabla={metaTablaFactura}
                             metaFiltro={true}
+                            cargando={cargando}
                             criteriaInicial={criteriaDefecto}
                             modo={'tabla'}
                             // setModo={handleSetModoVisualizacion}
