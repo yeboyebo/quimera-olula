@@ -1,25 +1,28 @@
 import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
     calcularPaginacionSimplificada,
-    formatearFecha,
-    formatearHora,
-    formatearMoneda,
+    formatearFechaHora,
+    formatearFechaString,
+    formatearHoraString,
+    formatearMoneda
 } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 
+type TipoColumna = "texto" | "numero" | "moneda" | "fecha" | "hora" | "fechahora" | "booleano" ;
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
-  tipo?:
-    | "texto"
-    | "numero"
-    | "moneda"
-    | "fecha"
-    | "hora"
-    | "booleano"
-    | undefined;
+  tipo?: TipoColumna;
+    // | "texto"
+    // | "numero"
+    // | "moneda"
+    // | "fecha"
+    // | "hora"
+    // | "fechahora"
+    // | "booleano"
+    // | undefined;
   divisa?: string;
   ancho?: string; // Ancho específico para esta columna
   render?: (entidad: T) => string | ReactNode;
@@ -57,7 +60,37 @@ const cabecera = <T extends Entidad>(
     return metaTabla.map(renderCabecera);
 };
 
-const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
+const a_string = (valor: unknown, tipo?:TipoColumna, divisa?: string): string => {
+
+    let formateado = "";
+
+    if (tipo === "moneda" && typeof valor === "number") {
+        formateado = formatearMoneda(valor, divisa ?? "EUR");
+    } else if (tipo === "fecha" && typeof valor === "string") {
+        formateado = formatearFechaString(valor);
+    } else if (tipo === "hora" && typeof valor === "string") {
+        formateado = formatearHoraString(valor);
+    } else if (tipo === "numero" && typeof valor === "number") {
+        formateado = valor.toLocaleString();
+    } else if (typeof valor === "boolean") {
+        formateado = valor ? "Sí" : "No";
+    } else if (tipo === "fechahora") {
+        formateado = formatearFechaHora(valor as Date);
+    } else if (typeof valor === 'string') {
+        formateado = valor;
+    } else if (typeof valor === 'number') {
+        formateado = valor.toString();
+    } else if (typeof valor === 'undefined') {
+        formateado = '';
+    } else {
+        throw new Error(`Tipo de dato desconocido: ${tipo}`);
+    }
+
+    return formateado;
+}
+
+const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>, cargando: boolean) => {
+
     const renderColumna = ({
         id,
         render,
@@ -65,18 +98,10 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
         divisa,
         ancho,
     }: MetaColumna<T>) => {
-        let datos = render?.(entidad as T) ?? (entidad[id] as string);
 
-        // Formateo automático según tipo
-        if (tipo === "moneda" && typeof datos === "number") {
-        datos = formatearMoneda(datos, divisa ?? "EUR");
-        } else if (tipo === "fecha" && typeof datos === "string") {
-        datos = formatearFecha(datos);
-        } else if (tipo === "hora" && typeof datos === "string") {
-        datos = formatearHora(datos);
-        } else if (tipo === "numero" && typeof datos === "number") {
-        datos = datos.toLocaleString();
-        }
+        let valorCelda = cargando
+            ? entidad[id] as string
+            : render?.(entidad as T) ?? a_string(entidad[id] as string, tipo, divisa);
 
         return (
             <td
@@ -84,7 +109,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
                 className={`${id} ${tipo ?? ""}`}
                 style={ancho ? { width: ancho } : undefined}
             >
-                {datos}
+                {valorCelda}
             </td>
         );
     };
@@ -264,7 +289,7 @@ export const QTablaControlada = <T extends Entidad>({
                                 onClick={() => onSeleccion && onSeleccion(entidad)}
                                 data-seleccionada={entidad.id === seleccionadaId}
                             >
-                                {fila(entidad, metaTablaCompleta)}
+                                {fila(entidad, metaTablaCompleta, cargando)}
                             </tr>
                         ))}
                     </tbody>

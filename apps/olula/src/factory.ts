@@ -10,8 +10,8 @@ export class FactoryOlula {
     Inicio = { menu: { "Inicio": { url: "/", icono: "inicio" } } };
     Almacen = FactoryAlmacenOlula;
     Crm = FactoryCrmOlula;
-    TPV = FactoryTpvOlula;
     Ventas = FactoryVentasOlula;
+    TPV = FactoryTpvOlula;
     Auth = FactoryAuthOlula;
 }
 

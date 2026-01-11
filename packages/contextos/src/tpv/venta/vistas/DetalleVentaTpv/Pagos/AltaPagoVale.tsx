@@ -1,7 +1,7 @@
 import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import { getVale } from "#/tpv/vale/infraestructura.ts";
-import { VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
-import { metaNuevoPagoVale, nuevoPagoValeVacio } from "#/tpv/ventaTpv/dominio.ts";
+import { VentaTpv } from "#/tpv/venta/diseño";
+import { metaNuevoPagoVale, nuevoPagoValeVacio } from "#/tpv/venta/dominio";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";

@@ -19,8 +19,8 @@ const datosCargando = <T extends Entidad>() =>
             ({
                 id: i.toString(),
                 ...Object.fromEntries(
-                new Array(10).fill(null).map((_, j) => [j, "U00A0"])
-                ),
+                    new Array(10).fill(null).map((_, j) => [j, "U00A0"])
+                )
             } as T)
     );
 

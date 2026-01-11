@@ -1,7 +1,9 @@
-import { MaestroConDetalleVentaTpv } from "../tpv/ventaTpv/vistas/MaestroConDetalleVentaTpv.tsx";
+import { MaestroConDetalleArqueoTpv } from "./arqueo/vistas/Maestro/MaestroConDetalleArqueoTpv.tsx";
+import { MaestroConDetalleVentaTpv } from "./venta/vistas/MaestroConDetalleVentaTpv.tsx";
 
 export class RouterFactoryTpvOlula {
     static router = {
         "tpv/venta": MaestroConDetalleVentaTpv,
+        "tpv/arqueo": MaestroConDetalleArqueoTpv,
     }
 }

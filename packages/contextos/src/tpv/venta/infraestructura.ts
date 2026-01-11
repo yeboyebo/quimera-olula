@@ -1,10 +1,10 @@
-import { Factura } from "#/ventas/factura/diseño.ts";
-import { RestAPI } from "@olula/lib/api/rest_api.ts";
-// import ApiUrls from "../comun/urls.ts";
 import ApiUrls from "#/tpv/comun/urls.ts";
 import Ventas_Urls from "#/ventas/comun/urls.ts";
+import { Factura } from "#/ventas/factura/diseño.ts";
+import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
 import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchLinea, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrlFactura = new Ventas_Urls().FACTURA;
@@ -46,33 +46,6 @@ export const getVentaADevolver: GetVentaTpvADevolver = async (codigo) => {
             return ventaADevolverDesdeAPI(respuesta.datos);
         });
 };
-
-
-const CLAVE_PUNTO_VENTA = "punto-venta-tpv-local";
-
-export const puntoVentaLocal = {
-    actualizar: (puntoVentaId: string) => {
-        localStorage.setItem(CLAVE_PUNTO_VENTA, puntoVentaId);
-    },
-    obtener: () => localStorage.getItem(CLAVE_PUNTO_VENTA),
-    borrar: () => {
-        localStorage.removeItem(CLAVE_PUNTO_VENTA);
-    },
-}
-
-const CLAVE_AGENTE_TPV = "agente-tpv-local";
-
-export const agenteActivo = {
-    actualizar: (AgenteId: string) => {
-        localStorage.setItem(CLAVE_AGENTE_TPV, AgenteId);
-    },
-    obtener: () => localStorage.getItem(CLAVE_AGENTE_TPV),
-    borrar: () => {
-        localStorage.removeItem(CLAVE_PUNTO_VENTA);
-    },
-}
-
-
 
 export const getVentas: GetVentasTpv = async (
     filtro: Filtro,

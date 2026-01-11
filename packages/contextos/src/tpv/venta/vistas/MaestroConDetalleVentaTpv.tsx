@@ -1,3 +1,4 @@
+import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
@@ -7,7 +8,6 @@ import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ContextoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "../dominio.ts";
-import { agenteActivo, puntoVentaLocal } from "../infraestructura.ts";
 import { getMaquina } from "../maquinaMaestro.ts";
 import { DetalleVentaTpv } from "./DetalleVentaTpv/DetalleVentaTpv.tsx";
 import "./MaestroConDetalleVentaTpv.css";

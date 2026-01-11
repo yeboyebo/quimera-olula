@@ -1,4 +1,4 @@
-import { metaNuevoPagoEfectivo, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
+import { metaNuevoPagoEfectivo, VentaTpv } from "#/tpv/venta/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";

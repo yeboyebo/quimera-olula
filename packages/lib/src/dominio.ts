@@ -303,15 +303,37 @@ export const redondeaMoneda = (cantidad: number, divisa: string): number => {
     return parseFloat(cantidad.toFixed(decimales));
 };
 
-export const formatearFecha = (fecha: string): string => {
+export const formatearFechaString = (fecha: string): string => {
     if (!fecha) return fecha;
     const date = new Date(fecha);
-    return date.toLocaleDateString("es-ES");
+    return formatearFechaDate(date);
 };
 
-export const formatearHora = (hora: string): string => {
+export const formatearFechaDate = (date: Date): string => {
+    return date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+};
+
+export const formatearFechaHoraString = (fechahora: string): string => {
+    if (!fechahora) return fechahora;
+    const date = new Date(fechahora);
+    return formatearFechaHora(date);
+};
+
+export const formatearFechaHora = (date: Date): string => {
+    return `${formatearFechaDate(date)} ${formatearHoraDate(date)}`;
+};
+
+export const formatearHoraString = (hora: string): string => {
     if (!hora) return hora;
     return hora.substring(0, 5); // "14:30:00" -> "14:30"
+};
+
+export const formatearHoraDate = (date: Date): string => {
+    return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 };
 
 export const calcularPaginacionSimplificada = (
@@ -471,7 +493,9 @@ export const procesarEvento = async <E extends string, C extends Contexto<E>>(
         return ejecutarListaProcesos(contexto, respuesta, payload);
 
     } else {
-        throw new Error('No se pudo procesar el evento');
+        throw new Error(
+            `No se pudo procesar el evento ${evento} en el estado ${estado}.`
+        );
     }
 };
 
