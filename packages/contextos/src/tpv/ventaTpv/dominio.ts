@@ -88,6 +88,10 @@ export const metaTablaFactura: MetaTabla<Factura> = [
         cabecera: "Código",
     },
     {
+        id: "fecha",
+        cabecera: "Fecha",
+    },
+    {
         id: "nombre_cliente",
         cabecera: "Cliente",
     },
@@ -273,11 +277,12 @@ export const cambiarVenta: ProcesarVentaTpv = async (contexto, payload) => {
 
 export const borrarVenta: ProcesarVentaTpv = async (contexto) => {
 
-    await borrarFactura(contexto.venta.id);
+    const venta = contexto.venta;
+    await borrarFactura(venta.id);
 
     return pipeVentaTpv(contexto, [
         getContextoVacio,
-        publicar('venta_borrada', null)
+        publicar('venta_borrada', venta)
     ]);
 }
 

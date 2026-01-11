@@ -17,7 +17,17 @@ agenteActivo.actualizar('000001');
 const miPuntoVentaLocal = puntoVentaLocal.obtener() ;
 const miAgenteActivo = agenteActivo.obtener() ;
 
-const maquina = getMaquina();  
+const maquina = getMaquina();
+
+const criteriaBaseVentas = {
+    ...criteriaDefecto,
+    filtro: {
+        ...criteriaDefecto.filtro,
+        punto_venta_id: 'x'
+    },
+    orden: ["codigo", "DESC"]
+    
+}
 
 export const MaestroConDetalleVentaTpv = () => {
 
@@ -63,7 +73,7 @@ export const MaestroConDetalleVentaTpv = () => {
     );
 
     useEffect(() => {
-        recargar(criteriaDefecto);
+        recargar(criteriaBaseVentas);
     }, [])
 
     return ( 
