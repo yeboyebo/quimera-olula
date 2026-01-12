@@ -23,7 +23,7 @@ function ArqueosDetalle({ useStyles }) {
         >
           <Box px={0} my={1}>
             <Box width={1} border={0} borderColor="gray" height={"calc(100%)"}>
-              <Grid container spacing={0}>
+              <Grid container spacing={0} direction="column">
                 <Grid item xs={12}>
                   <Box display="flex" justifyContent="space-between">
                     <Box display="flex" alignItems="center">
@@ -130,7 +130,7 @@ function ArqueosDetalle({ useStyles }) {
                 <Grid item xs={12}>
                   <QSection alwaysInactive>
                     <Box display="flex" alignItems="center" justifyContent="center">
-                      <Grid container spacing={0}>
+                      <Grid container spacing={0} direction="column">
                         <Grid item xs={4}>
                           <Typography>EN CAJA</Typography>
                           <Box

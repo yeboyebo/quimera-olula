@@ -1,6 +1,5 @@
 import { Box, Field, Filter, FilterBox, Grid } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { getSchemas, useStateValue } from "quimera";
 
 import { CampanasFieldSelect } from "../../../comps";
 
@@ -21,7 +20,7 @@ function ConsultaComprasFiltro() {
             },
           }}
         >
-          <Grid container spacing={1}>
+          <Grid container spacing={1} direction="column" >
             <Grid item xs={12}>
               <CampanasFieldSelect id="idCampana" label="Campaña" fullWidth async />
             </Grid>

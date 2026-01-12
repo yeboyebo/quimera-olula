@@ -1,4 +1,4 @@
-.Presupuesto .TabCliente .CambioCliente {
+.TabCliente .CambioCliente {
     quimera-autocompletar[nombre="cliente_id_cambio"] {
         grid-column: span 12;
     }

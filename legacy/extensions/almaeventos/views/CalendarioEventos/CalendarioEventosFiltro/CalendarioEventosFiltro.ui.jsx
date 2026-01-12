@@ -1,6 +1,5 @@
 import { Box, FilterBox, Grid } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { getSchemas, useStateValue } from "quimera";
 
 import { EventosFieldSelect } from "../../../comps";
 
@@ -21,7 +20,7 @@ function CalendarioEventosFiltro() {
         //   },
         // }}
         >
-          <Grid container spacing={1}>
+          <Grid container spacing={1} direction="column" >
             <Grid item xs={12}>
               <EventosFieldSelect id="articuloProyectoFiltro" label="Producto" fullWidth async />
             </Grid>

@@ -1,18 +1,18 @@
+import { SelectorValores } from "@quimera-extension/base-almacen";
 import {
   Box,
   Button,
   Collapse,
+  Field,
   Grid,
   Icon,
   LinearProgress,
   QSection,
   Typography,
-  Field,
 } from "@quimera/comps";
-import { SelectorValores } from "@quimera-extension/base-almacen";
 // import { QArticulo } from "@quimera-extension/base-almacen";
 // import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import { useEffect } from "react";
 
 import { Proyecto, S17Articulo } from "../../comps";
@@ -52,7 +52,7 @@ function s17LineaParte({ callbackGuardada, disabled, lineaInicial, useStyles }) 
         </Box>
       )}
       <Collapse in={linea.buffer._status !== "deleting"}>
-        <Grid container spacing={0}>
+        <Grid container spacing={0} direction="column">
           <Grid item xs={12}>
             <Box display="flex" justifyContent="right" mt={1}>
               {!disabled && (
@@ -115,7 +115,7 @@ function s17LineaParte({ callbackGuardada, disabled, lineaInicial, useStyles }) 
                 actionPrefix="linea/referencia"
                 alwaysInactive={false}
                 dynamicComp={() => (
-                  <Grid container spacing={1}>
+                  <Grid container spacing={1} direction="column" >
                     <Grid item xs={12}>
                       <S17Articulo
                         id="linea.buffer/referencia"
@@ -144,7 +144,7 @@ function s17LineaParte({ callbackGuardada, disabled, lineaInicial, useStyles }) 
                 actionPrefix="linea/proyecto"
                 alwaysInactive={false}
                 dynamicComp={() => (
-                  <Grid container spacing={1}>
+                  <Grid container spacing={1} direction="column" >
                     <Grid item xs={12}>
                       <Proyecto
                         id="linea.buffer/proyecto"

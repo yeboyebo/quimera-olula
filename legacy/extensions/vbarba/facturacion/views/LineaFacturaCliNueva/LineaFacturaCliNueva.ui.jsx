@@ -1,6 +1,6 @@
 import { Box, Collapse, Field, Grid, Icon, IconButton, QSection, Typography } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 import {
   FieldConNavegacionEnter,
@@ -71,7 +71,7 @@ function LineaFacturaCliNueva({ callbackGuardada, idFactura, useStyles }) {
           actionPrefix="lineaExpandida"
           alwaysActive
           dynamicComp={() => (
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               <Grid item xs={9}>
                 <QArticuloVbarbaMarcado
                   id="linea.buffer/referencia"

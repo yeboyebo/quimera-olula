@@ -3,6 +3,7 @@ interface BoxIcon extends NodoComun {
     size?: string;
     color?: string;
     style?: React.CSSProperties;
+    type?: 'solid' | 'regular' | 'logo';
 }
 
 declare namespace React {

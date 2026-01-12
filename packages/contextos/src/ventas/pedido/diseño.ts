@@ -3,6 +3,7 @@ import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } fr
 
 export interface Pedido extends Venta {
   servido: string;
+  lineas: LineaPedido[];
 }
 export interface LineaPedido extends LineaVenta {
   otro_campo?: string;
@@ -35,5 +36,30 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaPedido, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type EstadoPedido = (
+  'INICIAL' | "ABIERTO" | "SERVIDO"
+  | "BORRANDO_PEDIDO"
+  | "CAMBIANDO_CLIENTE"
+  | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+);
+
+export type EstadoMaestroPedido = (
+  'INICIAL'
+);
+
+export type ContextoPedido = {
+  estado: EstadoPedido,
+  pedido: Pedido;
+  pedidoInicial: Pedido;
+  lineaActiva: LineaPedido | null;
+};
+
+export type ContextoMaestroPedido = {
+  estado: EstadoMaestroPedido;
+  pedidos: Pedido[];
+  totalPedidos: number;
+  pedidoActivo: Pedido | null;
+};
 
 

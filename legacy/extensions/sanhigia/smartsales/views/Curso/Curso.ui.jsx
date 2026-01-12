@@ -90,7 +90,7 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
         botonesCabecera={[{ icon: "arrow_back", id: "atras", text: "Atrás" }]}
         sideButtons={<></>}
       >
-        <Grid container spacing={0}>
+        <Grid container spacing={0} direction="column">
           {/* <Grid item xs={12} sm={12}>
             <QSection
               title={`Nombre Curso`}

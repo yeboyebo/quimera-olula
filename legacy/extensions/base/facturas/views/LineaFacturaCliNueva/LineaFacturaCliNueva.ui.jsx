@@ -54,7 +54,7 @@ function LineaFacturaCliNueva({ callbackGuardada, idFactura, useStyles }) {
           actionPrefix="lineaExpandida"
           alwaysActive
           dynamicComp={() => (
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               <Grid item xs={9}>
                 <QArticulo
                   id="linea.buffer/referencia"

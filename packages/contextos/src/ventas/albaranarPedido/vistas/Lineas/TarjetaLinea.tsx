@@ -3,6 +3,7 @@ import { QIcono, QTabla } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useState } from "react";
 import { LineaAlbaranarPedido, Tramo } from "../../diseño.ts";
+import { obtenerClaseEstadoAlbaranado } from "../../dominio.ts";
 import "./TarjetaLinea.css";
 
 export const TarjetaLinea = ({
@@ -14,7 +15,7 @@ export const TarjetaLinea = ({
 }) => {
   const { tramos } = linea;
   const servida = linea.servida || 0;
-  const aEnviar = linea.cantidad - servida;
+  const aEnviar = linea.a_enviar || 0;
   const [mostrarTramos, setMostrarTramos] = useState(false);
 
   const validarCantidadTramo =
@@ -50,7 +51,7 @@ export const TarjetaLinea = ({
   };
 
   const addTramo = () => {
-    if (aEnviar == 0) {
+    if (aEnviar + servida == linea.cantidad) {
       alert("No hay cantidad disponible para añadir más tramos.");
       return;
     }
@@ -60,7 +61,7 @@ export const TarjetaLinea = ({
         crypto && typeof crypto.randomUUID === "function"
           ? crypto.randomUUID()
           : Date.now().toString(),
-      cantidad: aEnviar,
+      cantidad: linea.cantidad - servida - aEnviar,
     };
     const actuales = linea.tramos ?? [];
     publicar("tramos_actualizados", {
@@ -101,14 +102,9 @@ export const TarjetaLinea = ({
       },
     ];
   };
-
-  const claseTarjeta = `tarjeta-cabecera-info ${
-    servida === linea.cantidad
-      ? "completa"
-      : servida > 0 && servida < linea.cantidad
-      ? "modificada"
-      : ""
-  }`.trim();
+  const claseTarjeta = `tarjeta-cabecera-info ${obtenerClaseEstadoAlbaranado(
+    linea
+  )}`.trim();
 
   return (
     <div className="TarjetaLinea">
@@ -122,7 +118,7 @@ export const TarjetaLinea = ({
         <div className="tarjeta-cabecera-acciones">
           <button
             onClick={addTramo}
-            disabled={aEnviar == 0}
+            disabled={linea.cerrada || aEnviar + servida == linea.cantidad}
             title={
               aEnviar == 0
                 ? "No hay cantidad disponible"
@@ -133,12 +129,14 @@ export const TarjetaLinea = ({
           </button>
           <button
             onClick={() => setMostrarTramos(!mostrarTramos)}
-            disabled={servida == 0}
+            disabled={aEnviar == 0}
           >
             <QIcono
               nombre={mostrarTramos ? "abajo" : "derecha"}
               tamaño="sm"
-              color={servida == 0 ? "#ccc" : "#333"}
+              color={
+                aEnviar == 0 ? "--color-deshabilitado" : "--color-primario"
+              }
             />
           </button>
         </div>

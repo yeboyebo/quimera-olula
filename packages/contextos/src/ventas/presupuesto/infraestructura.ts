@@ -23,6 +23,7 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   numero: p.direccion?.numero ?? "",
   otros: p.direccion?.otros ?? "",
   apartado: p.direccion?.apartado ?? "",
+  lineas: [],
 });
 
 export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
@@ -227,6 +228,7 @@ export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Pro
 }
 
 export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => {
+  console.log("Actualizando presupuesto:", presupuesto);
   const payload = {
     cambios: {
       agente_id: presupuesto.agente_id,
@@ -244,6 +246,7 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       observaciones: presupuesto.observaciones,
     },
   };
+  console.log("Payload de actualización:", payload);
 
   await RestAPI.patch(`${baseUrl}/${id}`, payload, "Error al actualizar presupuesto");
 };

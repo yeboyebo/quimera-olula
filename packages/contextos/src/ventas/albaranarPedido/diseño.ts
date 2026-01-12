@@ -3,6 +3,7 @@ import { LineaVenta } from "../venta/diseño.ts";
 
 export interface LineaAlbaranarPedido extends LineaVenta {
     servida?: number;
+    cerrada?: boolean;
     a_enviar?: number;
     tramos?: Tramo[];
 }

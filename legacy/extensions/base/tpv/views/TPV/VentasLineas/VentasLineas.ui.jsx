@@ -1,6 +1,6 @@
-import { Box, DeleteButton, Field, Grid, Icon, QSection, Typography } from "@quimera/comps";
 import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import { Box, DeleteButton, Field, Grid, Icon, QSection, Typography } from "@quimera/comps";
+import Quimera, { useStateValue, util } from "quimera";
 
 import { TpvArticulo } from "../../../comps";
 import schemas from "../../../static/schemas";
@@ -21,7 +21,7 @@ function VentasLineas({ useStyles }) {
             actionPrefix="lineaArticulo"
             alwaysInactive={venta.cerrada}
             dynamicComp={() => (
-              <Grid container spacing={1}>
+              <Grid container spacing={1} direction="column" >
                 <Grid item xs={12}>
                   <TpvArticulo id="lineasBuffer.referencia" label="Artículo" fullWidth />
                 </Grid>
@@ -70,7 +70,7 @@ function VentasLineas({ useStyles }) {
             actionPrefix="lineaDescuento"
             alwaysInactive={venta.cerrada}
             dynamicComp={() => (
-              <Grid container spacing={1}>
+              <Grid container spacing={1} direction="column" >
                 <Grid item xs={6}>
                   <Field.Schema id="lineasBuffer.dtoLineal" schema={schemas.lineas} fullWidth />
                 </Grid>
@@ -98,7 +98,7 @@ function VentasLineas({ useStyles }) {
             actionPrefix="lineaImpuesto"
             alwaysInactive={venta.cerrada}
             dynamicComp={() => (
-              <Grid container spacing={1}>
+              <Grid container spacing={1} direction="column" >
                 <Grid item xs={6}>
                   <Field.Schema id="lineasBuffer.codImpuesto" schema={schemas.lineas} fullWidth />
                 </Grid>

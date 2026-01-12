@@ -21,7 +21,7 @@ function Checkout({ callbackChanged, useStyles }) {
   const edicion = (
     <Box mt={2}>
       <Container maxWidth="lg">
-        <Grid container spacing={1}>
+        <Grid container spacing={1} direction="column" >
           <Grid item sm={12} md={6}>
             <Quimera.SubView id="Checkout/DatosCliente" />
           </Grid>
