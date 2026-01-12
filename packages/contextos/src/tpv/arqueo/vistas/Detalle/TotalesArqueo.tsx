@@ -12,9 +12,9 @@ export const TotalesArqueo = ({
   // publicar,
 }: TotalesArqueoProps) => {
 
-  const efectivo = arqueo.totalEfectivo;
-  const tarjeta = arqueo.totalTarjeta;
-  const vales = arqueo.totalVales;
+  const efectivo = arqueo.pagosEfectivo;
+  const tarjeta = arqueo.pagosTarjeta;
+  const vales = arqueo.pagosVale;
   const divisa = 'EUR';
 
   return (

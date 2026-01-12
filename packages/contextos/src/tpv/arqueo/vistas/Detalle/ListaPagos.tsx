@@ -26,12 +26,14 @@ export const ListaPagos = ({
                 datos: respuesta.datos,
                 total: respuesta.total < 0 ? pagos.total : respuesta.total 
             });
+        } else {
+            setPagos({ datos: [], total: 0 });
         }
     }, [arqueoId, intentar, pagos, setPagos]);
     
     useEffect(() => {
-        if (arqueoId && arqueoId !== arqueoIdAnterior) {
-            setArqueoIdAnterior(arqueoId);
+        if (arqueoId !== arqueoIdAnterior) {
+            setArqueoIdAnterior(arqueoId ?? null);
             cargarPagos();
         }
     }, [arqueoId, cargarPagos, arqueoIdAnterior, setArqueoIdAnterior]);

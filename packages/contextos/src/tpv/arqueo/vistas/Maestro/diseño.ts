@@ -18,7 +18,7 @@ export const metaTablaArqueo: MetaTabla<ArqueoTpv> = [
         cabecera: "Código",
     },
     {
-        id: "fechahora_inicio",
+        id: "fechahoraApertura",
         cabecera: "Apertura",
         tipo: "fechahora",
     },

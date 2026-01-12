@@ -2,16 +2,22 @@ import ApiUrls from "#/tpv/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
-import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv } from "./diseño.ts";
+import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchCerrarArqueo, PatchReabrirArqueo } from "./diseño.ts";
 
 type ArqueoTpvAPI = {
     id: string;
-    tiempo_inicio: string;
-    tiempo_fin: string | null;
+    fechahora_apertura: string;
+    agente_apertura_id: string;
+    fechahora_cierre: string | null;
+    agente_cierre_id: string | null;
     abierto: boolean;
-    total_efectivo: number;
-    total_tarjeta: number;
-    total_vales: number;
+    pagos_efectivo: number;
+    pagos_tarjeta: number;
+    pagos_vale: number;
+    recuento_efectivo: number;
+    recuento_tarjeta: number;
+    recuento_vales: number;
+    movimiento_cierre: number;
 
 }
 
@@ -19,12 +25,18 @@ const baseUrl = new ApiUrls().ARQUEO;
 
 export const arqueoDesdeAPI = (a: ArqueoTpvAPI): ArqueoTpv => ({
     id: a.id,
-    fechahora_inicio: new Date(a.tiempo_inicio),
-    fechahora_fin: a.tiempo_fin ? new Date(a.tiempo_fin) : null,
+    fechahoraApertura: new Date(a.fechahora_apertura),
+    idAgenteApertura: a.agente_apertura_id,
+    fechahoraCierre: a.fechahora_cierre ? new Date(a.fechahora_cierre) : null,
+    idAgenteCierre: a.agente_cierre_id,
     abierto: a.abierto,
-    totalEfectivo: a.total_efectivo,
-    totalTarjeta: a.total_tarjeta,
-    totalVales: a.total_vales,
+    pagosEfectivo: a.pagos_efectivo,
+    pagosTarjeta: a.pagos_tarjeta,
+    pagosVale: a.pagos_vale,
+    recuentoEfectivo: a.recuento_efectivo,
+    recuentoTarjeta: a.recuento_tarjeta,
+    recuentoVales: a.recuento_vales,
+    movimientoCierre: a.movimiento_cierre
 });
 
 export const getArqueos: GetArqueosTpv = async (
@@ -70,4 +82,25 @@ export const getPagosArqueo: GetPagosArqueoTpv = async (id, criteria) => {
         datos: pagosApi.datos.map(pagoDesdeAPI),
         total: pagosApi.total
     };
+}
+
+export const patchCerrarArqueo: PatchCerrarArqueo = async (id, cierre) => {
+
+    await RestAPI.patch(
+        `${baseUrl}/${id}/cerrar`,
+        {
+            agente_id: cierre.idAgenteCierre,
+            movimiento_cierre: cierre.movimientoCierre
+        },
+        "Error al cerrar arqueo"
+    );
+}
+
+export const patchReabrirArqueo: PatchReabrirArqueo = async (id) => {
+
+    await RestAPI.patch(
+        `${baseUrl}/${id}/reabrir`,
+        {},
+        "Error al reabrir arqueo"
+    );
 }

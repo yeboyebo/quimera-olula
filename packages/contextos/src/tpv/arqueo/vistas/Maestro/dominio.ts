@@ -37,3 +37,13 @@ export const desactivarArqueoActivo: ProcesarArqueosTpv = async (contexto) => {
         arqueoActivo: null
     }
 }
+
+export const cambiarArqueoEnLista: ProcesarArqueosTpv = async (contexto, payload) => {
+
+    const arqueo = payload as ArqueoTpv;
+    return {
+        ...contexto,
+        arqueos: contexto.arqueos.map(a => a.id === arqueo.id ? arqueo : a)
+    }
+}
+

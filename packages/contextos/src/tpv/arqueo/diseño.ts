@@ -1,13 +1,21 @@
 import { Criteria, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.js";
+import { CierreArqueoTpv } from "./vistas/Detalle/diseño.ts";
 
 export interface ArqueoTpv extends Entidad {
     id: string;
-    fechahora_inicio: Date;
-    fechahora_fin: Date | null;
+    fechahoraApertura: Date;
+    idAgenteApertura: string;
+    fechahoraCierre: Date | null;
+    idAgenteCierre: string | null;
     abierto: boolean;
-    totalEfectivo: number;
-    totalTarjeta: number;
-    totalVales: number;
+    pagosEfectivo: number;
+    pagosTarjeta: number;
+    pagosVale: number;
+    recuentoEfectivo: number;
+    recuentoTarjeta: number;
+    recuentoVales: number;
+    movimientoCierre: number;
+
 }
 
 export interface PagoArqueoTpv extends Entidad {
@@ -23,3 +31,7 @@ export type GetArqueoTpv = (id: string) => Promise<ArqueoTpv>;
 export type GetArqueosTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<ArqueoTpv>;
 
 export type GetPagosArqueoTpv = (id: string, criteria: Criteria) => RespuestaLista<PagoArqueoTpv>;
+
+export type PatchCerrarArqueo = (id: string, cierre: CierreArqueoTpv) => Promise<void>;
+
+export type PatchReabrirArqueo = (id: string) => Promise<void>;

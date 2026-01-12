@@ -1,7 +1,7 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
-import { getArqueo } from "../../infraestructura.ts";
-import { arqueoTpvVacio, ContextoArqueoTpv, EstadoArqueoTpv } from "./diseño.ts";
+import { getArqueo, patchCerrarArqueo, patchReabrirArqueo } from "../../infraestructura.ts";
+import { arqueoTpvVacio, CierreArqueoTpv, ContextoArqueoTpv, EstadoArqueoTpv } from "./diseño.ts";
 
 type ProcesarArqueoTpv = ProcesarContexto<EstadoArqueoTpv, ContextoArqueoTpv>;
 
@@ -15,8 +15,6 @@ export const cargarContexto: ProcesarArqueoTpv = async (contexto, payload) => {
             contexto,
             [
                 cargarArqueo(idArqueo),
-                // refrescarPagos,
-                // activarPagoPorIndice(0),
                 abiertoOCerrado,
             ],
             payload
@@ -36,6 +34,21 @@ const cargarArqueo: (_: string) => ProcesarArqueoTpv = (idArqueo) =>
         }
     }
 
+export const refrescarArqueo: ProcesarArqueoTpv = async (contexto) => {
+
+    const arqueo = await getArqueo(contexto.arqueo.id);
+    return [
+        {
+            ...contexto,
+            arqueo: {
+                ...contexto.arqueo,
+                ...arqueo
+            },
+        },
+        [["arqueo_cambiado", arqueo]]
+    ]
+}
+
 export const abiertoOCerrado: ProcesarArqueoTpv = async (contexto) => {
     return {
         ...contexto,
@@ -52,4 +65,25 @@ export const getContextoVacio: ProcesarArqueoTpv = async (contexto) => {
         arqueoInicial: arqueoTpvVacio,
         pagoActivo: null,
     }
+}
+
+export const cerrarArqueo: ProcesarArqueoTpv = async (contexto, payload) => {
+
+    const cierre = payload as CierreArqueoTpv;
+
+    await patchCerrarArqueo(contexto.arqueo.id, cierre);
+
+    return pipeArqueoTpv(contexto, [
+        refrescarArqueo,
+        'CERRADO',
+    ]);
+}
+
+export const reabrirArqueo: ProcesarArqueoTpv = async (contexto) => {
+
+    await patchReabrirArqueo(contexto.arqueo.id);
+
+    return pipeArqueoTpv(contexto, [
+        refrescarArqueo,
+    ]);
 }

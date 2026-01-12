@@ -49,7 +49,7 @@ export const MaestroConDetalleArqueoTpv = () => {
             );
             setCtx(nuevoContexto);
         },
-        [ctx, setCtx, setCargando,intentar]
+        [ctx, setCtx, intentar]
     );
     
     const crear = useCallback(

@@ -99,7 +99,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>, carg
         ancho,
     }: MetaColumna<T>) => {
 
-        const valorCelda = cargando
+        const valorCelda = cargando && typeof entidad[id] == "string"
             ? entidad[id] as string
             : render?.(entidad as T) ?? a_string(entidad[id] as string, tipo, divisa);
 

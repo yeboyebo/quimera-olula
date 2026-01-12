@@ -8,9 +8,11 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { ArqueoTpv } from "../../diseño.ts";
 import "./ArqueoTpv.css";
+import { CerrarArqueoTpv } from "./CerrarArqueoTpv.tsx";
 import { arqueoTpvVacio, ContextoArqueoTpv, EstadoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
 import { ListaPagos } from "./ListaPagos.tsx";
 import { getMaquina } from "./maquina.ts";
+import { ReabrirArqueoTpv } from "./ReabrirArqueoTpv.tsx";
 import { TotalesArqueo } from "./TotalesArqueo.tsx";
 
 const maquina = getMaquina();  
@@ -95,7 +97,20 @@ export const DetalleArqueoTpv = ({
                         <QBoton onClick={() => emitir("borrar_solicitado")}>
                             Borrar
                         </QBoton> 
+                        <QBoton onClick={() => emitir("cierre_solicitado")}>
+                            Cerrar
+                        </QBoton> 
                     </div>
+                    
+                )}
+
+                { estado === "CERRADO" && (
+                    <div className="botones maestro-botones ">
+                        <QBoton onClick={() => emitir("reapertura_solicitada")}>
+                            Reabrir
+                        </QBoton> 
+                    </div>
+                    
                 )}
                 {/* <Tabs
                     children={[
@@ -142,14 +157,19 @@ export const DetalleArqueoTpv = ({
                     arqueoId={modelo.id}
                 /> 
 
-                {/* {
-                    estado === "BORRANDO_ARQUEO" &&
-                    <BajaArqueoTpv
+                {
+                    estado === "CERRANDO" &&
+                    <CerrarArqueoTpv
                         publicar={emitir}
-                        arqueo = {modelo}
                     />
                 }
                 {
+                    estado === "REABRIENDO" &&
+                    <ReabrirArqueoTpv
+                        publicar={emitir}
+                    />
+                }
+                {/*{
                     estado === "RECONTANDO" &&
                     <AltaPagoEfectivo
                         publicar={emitir}
