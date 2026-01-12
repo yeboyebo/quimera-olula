@@ -55,7 +55,7 @@ export type MaestroProps<T extends Entidad> = {
 export const Listado = <T extends Entidad>({
   metaTabla,
   criteria = {
-    filtros: [],
+    filtro: [],
     orden: ["id", "DESC"],
     paginacion: { limite: 10, pagina: 1 },
   },
@@ -69,7 +69,7 @@ export const Listado = <T extends Entidad>({
   setModo,
 }: MaestroProps<T>) => {
   const [cargando, setCargando] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
+  const [filtro, setFiltro] = useState<Filtro>(criteria.filtro);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
   const [paginacion, setPaginacion] = useState<Paginacion>(criteria.paginacion);
   const [totalRegistros, setTotalRegistros] = useState(0);
@@ -201,7 +201,7 @@ export const Listado = <T extends Entidad>({
           setFiltro(filtro.filter(([k]) => k !== clave));
         }}
         resetearFiltro={() => {
-          setFiltro(criteria.filtros);
+          setFiltro(criteria.filtro);
           setPaginacion({ ...paginacion, pagina: 1 });
           setEntidades([]);
         }}

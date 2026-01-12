@@ -1,3 +1,4 @@
+import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
@@ -5,29 +6,39 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { ContextoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
-import { metaTablaFactura } from "../dominio.ts";
-import { agenteActivo, puntoVentaLocal } from "../infraestructura.ts";
-import { getMaquina } from "../maquinaMaestro.ts";
-import { DetalleVentaTpv } from "./DetalleVentaTpv/DetalleVentaTpv.tsx";
-import "./MaestroConDetalleVentaTpv.css";
+import { ArqueoTpv } from "../../diseño.ts";
+import { DetalleArqueoTpv } from "../Detalle/ArqueoTpv.tsx";
+import "./MaestroConDetalleArqueoTpv.css";
+import { ContextoMaestroArqueosTpv, metaTablaArqueo } from "./diseño.ts";
+import { getMaquina } from "./maquina.ts";
 
 puntoVentaLocal.actualizar('000001');
 agenteActivo.actualizar('000001');
-const miPuntoVentaLocal = puntoVentaLocal.obtener() ;
+const miPuntoArqueoLocal = puntoVentaLocal.obtener() ;
 const miAgenteActivo = agenteActivo.obtener() ;
 
-const maquina = getMaquina();  
+const maquina = getMaquina();
 
-export const MaestroConDetalleVentaTpv = () => {
+const criteriaBaseArqueos = {
+    ...criteriaDefecto,
+    // filtro: {
+    //     ...criteriaDefecto.filtro,
+    //     punto_arqueo_id: 'x'
+    // },
+    // orden: ["codigo", "DESC"]
+}
+
+export const MaestroConDetalleArqueoTpv = () => {
 
     const { intentar } = useContext(ContextoError);
 
-    const [ctx, setCtx] = useState<ContextoMaestroVentasTpv>({
+    const [cargando, setCargando] = useState(false);
+
+    const [ctx, setCtx] = useState<ContextoMaestroArqueosTpv>({
         estado: "INICIAL",
-        ventas: [],
-        totalVentas: 0,
-        ventaActiva: null,
+        arqueos: [],
+        totalArqueos: 0,
+        arqueoActivo: null,
     })
 
     const emitir = useCallback(
@@ -42,58 +53,59 @@ export const MaestroConDetalleVentaTpv = () => {
     );
     
     const crear = useCallback(
-        () => emitir("creacion_de_venta_solicitada"),
+        () => emitir("creacion_de_arqueo_solicitada"),
         [emitir]
     );
 
     const setSeleccionada = useCallback(
-        (payload: VentaTpv) => emitir("venta_seleccionada", payload),
+        (payload: ArqueoTpv) => emitir("arqueo_seleccionado", payload),
         [emitir]
     );
 
     const recargar = useCallback(
         async (criteria: Criteria) => {
-            emitir("recarga_de_ventas_solicitada", criteria);
+            setCargando(true);
+            await emitir("recarga_de_arqueos_solicitada", criteria);
+            setCargando(false);
         },
-        [emitir]
+        [emitir, setCargando]
     );
 
     useEffect(() => {
-        emitir("recarga_de_ventas_solicitada", criteriaDefecto);   
+        recargar(criteriaBaseArqueos);
     }, [])
 
-    // const [modoListado, setModoListado] = useState('tabla')
-
     return ( 
-        <div className="Factura"> 
-            <MaestroDetalleControlado<VentaTpv>
+        <div className="Arqueo"> 
+            <MaestroDetalleControlado<ArqueoTpv>
                 Maestro={
                     <>
-                        <h2>Ventas TPV</h2>
-                        <h2>Punto de venta {miPuntoVentaLocal} </h2>
+                        <h2>Arqueos TPV</h2>
+                        <h2>Punto de arqueo {miPuntoArqueoLocal} </h2>
                         <h2>Agente {miAgenteActivo} </h2>
                         <div className="maestro-botones">
-                            <QBoton onClick={crear}>Nueva Venta</QBoton>
+                            <QBoton onClick={crear}>Abrir arqueo</QBoton>
                         </div>
                         <ListadoControlado
-                            metaTabla={metaTablaFactura}
+                            metaTabla={metaTablaArqueo}
                             metaFiltro={true}
+                            cargando={cargando}
                             criteriaInicial={criteriaDefecto}
                             modo={'tabla'}
                             // setModo={handleSetModoVisualizacion}
                             // tarjeta={tarjeta}
-                            entidades={ctx.ventas}
-                            totalEntidades={ctx.totalVentas}
-                            seleccionada={ctx.ventaActiva}
+                            entidades={ctx.arqueos}
+                            totalEntidades={ctx.totalArqueos}
+                            seleccionada={ctx.arqueoActivo}
                             onSeleccion={setSeleccionada}
                             onCriteriaChanged={recargar}
                         />
                     </>
                 }
                 Detalle={
-                    <DetalleVentaTpv ventaInicial={ctx.ventaActiva} publicar={emitir} />
+                    <DetalleArqueoTpv arqueoInicial={ctx.arqueoActivo} publicar={emitir} />
                 }
-                seleccionada={ctx.ventaActiva}
+                seleccionada={ctx.arqueoActivo}
                 modoDisposicion="maestro-50"
             />
         </div>

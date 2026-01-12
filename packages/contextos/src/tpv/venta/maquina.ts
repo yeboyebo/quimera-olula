@@ -148,16 +148,5 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             borrado_de_linea_cancelado: "ABIERTA",
         },
-
-        // EMITIENDO_VALE: {
-
-        //     vale_emitido: [
-        //         "ABIERTA",
-        //         refrescarVenta,
-        //         refrescarPagos
-        //     ],
-
-        //     emision_de_vale_cancelada: "ABIERTA",
-        // },
     }
 }

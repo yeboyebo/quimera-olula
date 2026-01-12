@@ -1,4 +1,4 @@
-import { EstadoVentaTpv, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
+import { EstadoVentaTpv, VentaTpv } from "#/tpv/venta/diseño.ts";
 import { LineaFactura } from "#/ventas/factura/diseño.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QBoton } from "@olula/componentes/index.ts";
