@@ -99,7 +99,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>, carg
         ancho,
     }: MetaColumna<T>) => {
 
-        let valorCelda = cargando
+        const valorCelda = cargando
             ? entidad[id] as string
             : render?.(entidad as T) ?? a_string(entidad[id] as string, tipo, divisa);
 
@@ -124,10 +124,15 @@ const Paginador = (
     paginacion: Paginacion,
     onPaginacionChanged?: (paginacion: Paginacion) => void
 ) => {
+
     if (!onPaginacionChanged || totalEntidades === undefined || totalEntidades <= 0) {
         return null;
     }
     const { pagina, limite } = paginacion;
+
+    if (limite > totalEntidades) {
+        return null;
+    }
     const { paginasMostradas, totalPaginas } = calcularPaginacionSimplificada(
         totalEntidades,
         pagina,

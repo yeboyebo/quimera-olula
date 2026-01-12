@@ -9,7 +9,9 @@ import { useParams } from "react-router";
 import { ArqueoTpv } from "../../diseño.ts";
 import "./ArqueoTpv.css";
 import { arqueoTpvVacio, ContextoArqueoTpv, EstadoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
+import { ListaPagos } from "./ListaPagos.tsx";
 import { getMaquina } from "./maquina.ts";
+import { TotalesArqueo } from "./TotalesArqueo.tsx";
 
 const maquina = getMaquina();  
 
@@ -87,7 +89,7 @@ export const DetalleArqueoTpv = ({
             cerrarDetalle={()=> emitir("arqueo_deseleccionado", null, true)}
         >
         {!!arqueoId && (
-            <div className="Detalle">
+            <div className="DetalleArqueo">
                 { estado === "ABIERTO" && (
                     <div className="botones maestro-botones ">
                         <QBoton onClick={() => emitir("borrar_solicitado")}>
@@ -133,12 +135,12 @@ export const DetalleArqueoTpv = ({
                     </div>
                 )}
 
-                {/* <TotalesVenta
-                    neto={Number(modelo.neto ?? 0)}
-                    totalIva={Number(modelo.total_iva ?? 0)}
-                    total={Number(modelo.total ?? 0)}
-                    divisa={String(modelo.coddivisa ?? "EUR")}
-                /> */}
+                <TotalesArqueo
+                    arqueo={modelo}
+                />  
+                <ListaPagos
+                    arqueoId={modelo.id}
+                /> 
 
                 {/* {
                     estado === "BORRANDO_ARQUEO" &&

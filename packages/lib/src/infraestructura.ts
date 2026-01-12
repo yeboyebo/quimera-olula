@@ -1,6 +1,10 @@
 import { RestAPI } from "./api/rest_api.ts";
 import { Criteria, Filtro, OpcionCampo, Orden, Paginacion } from "./diseño.ts";
 
+export const criteriaAQueryString = (criteria: Criteria): string => {
+    return criteriaQuery(criteria.filtro, criteria.orden, criteria.paginacion);
+}
+
 export const criteriaQuery = (filtro?: Filtro, orden?: Orden, paginacion?: Paginacion): string => {
     if (!filtro && !orden) {
         return "";

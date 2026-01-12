@@ -3,7 +3,7 @@ import {
     Entidad
 } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MetaTabla } from "../atomos/qtabla.tsx";
 import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
@@ -36,6 +36,7 @@ type MaestroProps<T extends Entidad> = {
     metaFiltro?: boolean;
     cargando?: boolean;
     tarjeta?: (entidad: T) => React.ReactNode;
+    idReiniciarCriteria?: string
     criteriaInicial: Criteria;
     entidades: T[];
     totalEntidades: number;
@@ -49,6 +50,7 @@ export const ListadoControlado = <T extends Entidad>({
     metaTabla,
     metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
     cargando = false,
+    idReiniciarCriteria,
     criteriaInicial = criteriaDefecto,
     tarjeta,
     entidades,
@@ -130,6 +132,12 @@ export const ListadoControlado = <T extends Entidad>({
 
         return null;
     };
+
+    useEffect(() => {
+        if (idReiniciarCriteria) {
+            setCriteria(criteriaInicial);
+        }
+    }, [idReiniciarCriteria, criteriaInicial, setCriteria]);
 
     return (
         <div className="Listado">
