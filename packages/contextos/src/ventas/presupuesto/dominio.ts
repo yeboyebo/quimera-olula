@@ -336,7 +336,7 @@ export const quitarPresupuestoDeLista: ProcesarPresupuestos = async (contexto, p
 
 export const recargarPresupuestos: ProcesarPresupuestos = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getPresupuestos(criteria.filtros, criteria.orden, criteria.paginacion);
+    const resultado = await getPresupuestos(criteria.filtro, criteria.orden, criteria.paginacion);
     const presupuestosCargados = resultado.datos;
 
     return {
