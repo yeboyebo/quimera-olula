@@ -74,7 +74,7 @@ const a_string = (valor: unknown, tipo?:TipoColumna, divisa?: string): string =>
         formateado = valor.toLocaleString();
     } else if (typeof valor === "boolean") {
         formateado = valor ? "Sí" : "No";
-    } else if (tipo === "fechahora") {
+    } else if (tipo === "fechahora" && typeof valor === 'object') {
         formateado = formatearFechaHora(valor as Date);
     } else if (typeof valor === 'string') {
         formateado = valor;
