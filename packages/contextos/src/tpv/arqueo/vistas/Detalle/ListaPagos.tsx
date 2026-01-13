@@ -39,19 +39,22 @@ export const ListaPagos = ({
     }, [arqueoId, cargarPagos, arqueoIdAnterior, setArqueoIdAnterior]);
 
     return (
-        <ListadoControlado
-            metaTabla={getMetaTablaPagos()}
-            metaFiltro={true}
-            cargando={false}
-            criteriaInicial={criteriaDefecto}
-            idReiniciarCriteria={arqueoId}
-            modo={'tabla'}
-            entidades={pagos.datos}
-            totalEntidades={pagos.total}
-            seleccionada={null}
-            onSeleccion={()=>{}}
-            onCriteriaChanged={cargarPagos}
-        />
+        <>
+            <h3>Pagos</h3>
+            <ListadoControlado
+                metaTabla={getMetaTablaPagos()}
+                metaFiltro={true}
+                cargando={false}
+                criteriaInicial={criteriaDefecto}
+                idReiniciarCriteria={arqueoId}
+                modo={'tabla'}
+                entidades={pagos.datos}
+                totalEntidades={pagos.total}
+                seleccionada={null}
+                onSeleccion={()=>{}}
+                onCriteriaChanged={cargarPagos}
+            />
+        </>
     );
 };
 
