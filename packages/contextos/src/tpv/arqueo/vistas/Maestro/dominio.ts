@@ -1,6 +1,6 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { ArqueoTpv } from "../../diseño.ts";
-import { getArqueos } from "../../infraestructura.ts";
+import { getArqueo, getArqueos, postArqueo } from "../../infraestructura.ts";
 import { ContextoMaestroArqueosTpv, EstadoMaestroArqueosTpv } from "./diseño.ts";
 
 type ProcesarArqueosTpv = ProcesarContexto<EstadoMaestroArqueosTpv, ContextoMaestroArqueosTpv>;
@@ -18,6 +18,17 @@ export const recargarArqueos: ProcesarArqueosTpv = async (contexto, payload) => 
         arqueoActivo: contexto.arqueoActivo
             ? arqueosCargados.find(v => v.id === contexto.arqueoActivo?.id) ?? null
             : null
+    }
+}
+
+export const crearArqueo: ProcesarArqueosTpv = async (contexto) => {
+
+    const idArqueo = await postArqueo();
+    const arqueo = await getArqueo(idArqueo);
+    return {
+        ...contexto,
+        arqueos: [arqueo, ...contexto.arqueos],
+        arqueoActivo: arqueo
     }
 }
 

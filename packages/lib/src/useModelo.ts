@@ -25,24 +25,46 @@ export function useModelo<T extends Modelo>(
         let valor = _valor || null;
         let descripcion: string | undefined = undefined;
 
+        const valorAnterior = modelo[campo];
+
         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
             valor = _valor.valor;
             if (segundo) {
                 descripcion = _valor.descripcion;
             }
         }
-
+        let nuevoModelo = {
+            ...modelo,
+            [campo]: valor,
+        } as T
+        if (segundo && descripcion) {
+            nuevoModelo = {
+                ...nuevoModelo,
+                [segundo]: descripcion,
+            } as T
+        }
+        if (meta.onChange) {
+            const otros = typeof _valor === "object" ? _valor as Record<string, unknown> : {};
+            nuevoModelo = meta.onChange(nuevoModelo as T, campo, valorAnterior, otros);
+        }
         dispatch({
-            type: "set_campo",
-            payload: { campo, valor: valor as string },
+            type: "set",
+            payload: {
+                entidad: nuevoModelo,
+            },
         });
 
-        if (segundo && descripcion) {
-            dispatch({
-                type: "set_campo",
-                payload: { campo: segundo, valor: descripcion },
-            });
-        }
+        // dispatch({
+        //     type: "set_campo",
+        //     payload: { campo, valor: valor as string },
+        // });
+
+        // if (segundo && descripcion) {
+        //     dispatch({
+        //         type: "set_campo",
+        //         payload: { campo: segundo, valor: descripcion },
+        //     });
+        // }
     };
     const uiProps = (campo: string, secundario?: string) => {
 

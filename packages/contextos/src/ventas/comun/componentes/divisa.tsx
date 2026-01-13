@@ -22,9 +22,10 @@ export const Divisa = ({
   useEffect(() => {
     const cargarOpcionesDivisa = async () => {
       const opciones = await obtenerOpcionesSelector("divisa")();
-      const opcionesMapeadas = opciones.map((opcion) => ({
+      const opcionesMapeadas = opciones.map((opcion, i) => ({
         valor: opcion[0],
         descripcion: opcion[1],
+        // tasa_conversion: i * 3.02
       }));
       setOpcionesDivisa(opcionesMapeadas);
     };
