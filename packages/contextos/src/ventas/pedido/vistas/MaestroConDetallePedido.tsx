@@ -1,4 +1,6 @@
+import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -7,7 +9,7 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
 import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
 import { Pedido } from "../diseño.ts";
-import { metaTablaPedido } from "../dominio.ts";
+import { metaTablaPedido as metaTablaBase } from "../dominio.ts";
 import { getMaquina } from "../maquinaMaestro.ts";
 import { AltaPedido } from "./AltaPedido.tsx";
 import { DetallePedido } from "./DetallePedido/DetallePedido.tsx";
@@ -36,6 +38,35 @@ export const MaestroConDetallePedido = () => {
   useEffect(() => {
     emitir("recarga_de_pedidos_solicitada", criteriaDefecto);
   }, []);
+
+  const metaTablaPedido = [
+    {
+      id: "estado",
+      cabecera: "",
+      render: (pedido: Pedido) => (
+        <ColumnaEstadoTabla
+          estados={{
+            aprobado: (
+              <QIcono
+                nombre={"circulo_relleno"}
+                tamaño="sm"
+                color="var(--color-deshabilitado-oscuro)"
+              />
+            ),
+            pendiente: (
+              <QIcono
+                nombre={"circulo_relleno"}
+                tamaño="sm"
+                color="var(--color-exito-oscuro)"
+              />
+            ),
+          }}
+          estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
+        />
+      ),
+    },
+    ...metaTablaBase,
+  ] as MetaTabla<Pedido>;
 
   return (
     <div className="Pedido">

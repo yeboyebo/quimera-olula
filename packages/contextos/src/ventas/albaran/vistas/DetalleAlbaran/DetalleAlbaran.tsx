@@ -2,138 +2,84 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
-import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.js";
-import { useModelo } from "@olula/lib/useModelo.js";
-import { useContext } from "react";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
 import { Albaran } from "../../diseño.ts";
-import { albaranVacio, metaAlbaran } from "../../dominio.ts";
-import {
-  borrarAlbaran,
-  getAlbaran,
-  patchAlbaran,
-} from "../../infraestructura.ts";
+import { editable } from "../../dominio.ts";
+import { useAlbaran } from "../../hooks/useAlbaran.ts";
 import "./DetalleAlbaran.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-type ParamOpcion = {
-  valor: string;
-  descripcion?: string;
-};
-export type ValorControl = null | string | ParamOpcion;
-type Estado = "Defecto" | "ConfirmarBorrado";
-type Contexto = Record<string, unknown>;
-
 export const DetalleAlbaran = ({
   albaranInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   albaranInicial?: Albaran | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-  const { intentar } = useContext(ContextoError);
 
-  const albaranId = albaranInicial?.id ?? params.id;
-  const titulo = (albaran: Entidad) => albaran.codigo as string;
-
-  const albaran = useModelo(metaAlbaran, albaranVacio);
-  const { modelo, init } = albaran;
-
-  const configMaquina: ConfigMaquina4<Estado, Contexto> = {
-    inicial: {
-      estado: "Defecto",
-      contexto: {},
-    },
-    estados: {
-      Defecto: {
-        guardar_iniciado: "Defecto",
-        cliente_albaran_cambiado: "Defecto",
-        borrar_solicitado: "ConfirmarBorrado",
-      },
-      ConfirmarBorrado: {
-        borrar_confirmado: "Defecto",
-        borrar_cancelado: "Defecto",
-      },
-    },
-  };
-
-  const [emitirAlbaran, { estado }] = useMaquina4<Estado, Contexto>({
-    config: configMaquina,
+  const albaran = useAlbaran({
+    albaranId: albaranInicial?.id ?? params.id,
+    albaranInicial,
+    publicar,
   });
 
-  const recargarCabecera = async () => {
-    const nuevoAlbaran = await getAlbaran(modelo.id);
-    init(nuevoAlbaran);
-    emitir("albaran_cambiado", nuevoAlbaran);
-  };
+  const { modelo, estado, lineaActiva, emitir } = albaran;
 
-  const guardar = async () => {
-    await intentar(() => patchAlbaran(modelo.id, modelo));
-    await recargarCabecera();
-    emitirAlbaran("guardar_iniciado");
-  };
+  const titulo = (albaran: Albaran) => albaran.codigo || "Nuevo Albarán";
 
-  const cancelar = () => {
-    init();
-    emitir("cancelar_seleccion");
-  };
+  const handleBorrar = useCallback(() => {
+    emitir("borrar_solicitado");
+  }, [emitir]);
 
-  const onBorrarConfirmado = async () => {
-    await borrarAlbaran(modelo.id);
-    emitir("albaran_borrado", modelo);
-    emitirAlbaran("borrar_confirmado");
-  };
+  const handleGuardar = useCallback(() => {
+    emitir("edicion_de_albaran_lista", modelo);
+  }, [emitir, modelo]);
+
+  const handleCancelar = useCallback(() => {
+    emitir("edicion_de_albaran_cancelada");
+  }, [emitir]);
 
   return (
     <Detalle
-      id={albaranId}
+      id={albaranInicial?.id ?? params.id}
       obtenerTitulo={titulo}
-      setEntidad={(a) => init(a)}
+      setEntidad={() => {}}
       entidad={modelo}
-      cargar={getAlbaran}
-      cerrarDetalle={cancelar}
+      cerrarDetalle={() => emitir("albaran_deseleccionado", null)}
     >
-      {!!albaranId && (
-        <div className="DetalleAlbaran">
-          <div className="botones maestro-botones ">
-            <QBoton onClick={() => emitirAlbaran("borrar_solicitado")}>
+      {!!(albaranInicial?.id ?? params.id) && (
+        <>
+          <div className="acciones-rapidas">
+            <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
               Borrar
             </QBoton>
           </div>
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Cliente"
-                children={
-                  <TabCliente albaran={albaran} publicar={emitirAlbaran} />
-                }
-              />,
-              <Tab
-                key="tab-2"
-                label="Datos"
-                children={<TabDatos albaran={albaran} />}
-              />,
-              <Tab
-                key="tab-3"
-                label="Observaciones"
-                children={<TabObservaciones albaran={albaran} />}
-              />,
-            ]}
-          ></Tabs>
-          {albaran.modificado && (
-            <div className="botones maestro-botones ">
-              <QBoton onClick={guardar} deshabilitado={!albaran.valido}>
-                Guardar
-              </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+
+          <Tabs>
+            <Tab label="Cliente">
+              <TabCliente albaran={albaran} publicar={emitir} />
+            </Tab>
+
+            <Tab label="Datos">
+              <TabDatos albaran={albaran} />
+            </Tab>
+
+            <Tab label="Observaciones">
+              <TabObservaciones albaran={albaran} />
+            </Tab>
+          </Tabs>
+
+          {editable(modelo) && (
+            <div className="botones maestro-botones">
+              <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
+              <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
                 Cancelar
               </QBoton>
             </div>
@@ -143,22 +89,25 @@ export const DetalleAlbaran = ({
             neto={Number(modelo.neto ?? 0)}
             totalIva={Number(modelo.total_iva ?? 0)}
             total={Number(modelo.total ?? 0)}
-            divisa={String(modelo.coddivisa ?? "EUR")}
+            divisa={String(modelo.divisa_id || "EUR")}
           />
+
           <Lineas
-            albaranId={albaranId}
-            albaranEditable={true}
-            onCabeceraModificada={recargarCabecera}
+            albaran={modelo}
+            lineaActiva={lineaActiva}
+            publicar={emitir}
+            estadoAlbaran={estado}
           />
+
           <QModalConfirmacion
             nombre="borrarAlbaran"
-            abierto={estado === "ConfirmarBorrado"}
+            abierto={estado === "BORRANDO_ALBARAN"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar este albarán?"
-            onCerrar={() => emitirAlbaran("borrar_cancelado")}
-            onAceptar={onBorrarConfirmado}
+            onCerrar={() => emitir("borrar_cancelado")}
+            onAceptar={() => emitir("borrado_de_albaran_listo")}
           />
-        </div>
+        </>
       )}
     </Detalle>
   );

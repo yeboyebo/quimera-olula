@@ -1,52 +1,39 @@
 import { Articulo } from "#/ventas/comun/componentes/articulo.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { QModal } from "@olula/componentes/index.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
+import { useCallback, useState } from "react";
 import {
   metaNuevaLineaPedido,
   nuevaLineaPedidoVacia,
 } from "../../../dominio.ts";
-
-import { QModal } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
-import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useContext } from "react";
-import { postLinea } from "../../../infraestructura.ts";
 import "./AltaLinea.css";
 
 export const AltaLinea = ({
-  activo = false,
   publicar,
-  idPedido,
-  refrescarCabecera,
 }: {
-  activo: boolean;
-  publicar: EmitirEvento;
-  idPedido: string;
-  refrescarCabecera: () => void;
+  publicar: (evento: string, payload?: unknown) => void;
 }) => {
-  const { modelo, uiProps, valido, init } = useModelo(metaNuevaLineaPedido, {
-    ...nuevaLineaPedidoVacia,
-    pedido_id: idPedido,
-  });
-  const { intentar } = useContext(ContextoError);
+  const { modelo, uiProps, valido } = useModelo(
+    metaNuevaLineaPedido,
+    nuevaLineaPedidoVacia
+  );
+  const [creando, setCreando] = useState(false);
 
   const crear = async () => {
-    await intentar(() => postLinea(idPedido, modelo));
-    publicar("linea_creada");
-    init();
-    refrescarCabecera();
+    setCreando(true);
+    publicar("alta_de_linea_lista", modelo);
   };
 
-  const cancelar = () => {
-    publicar("creacion_cancelada");
-    init();
-  };
+  const cancelar = useCallback(() => {
+    if (!creando) publicar("alta_de_linea_cancelada");
+  }, [creando, publicar]);
 
   return (
-    <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
       <div className="AltaLinea">
-        <h2>Nueva línea</h2>
+        <h2>Crear línea</h2>
         <quimera-formulario>
           <Articulo
             {...uiProps("referencia", "descripcion")}
@@ -56,7 +43,7 @@ export const AltaLinea = ({
         </quimera-formulario>
         <div className="botones maestro-botones ">
           <QBoton onClick={crear} deshabilitado={!valido}>
-            Guardar
+            Crear
           </QBoton>
         </div>
       </div>

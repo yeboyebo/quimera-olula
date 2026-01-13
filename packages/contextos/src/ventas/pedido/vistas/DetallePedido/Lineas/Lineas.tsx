@@ -25,7 +25,7 @@ export const Lineas = ({
 
   return (
     <>
-      {estadoPedido === "ABIERTO" && (
+      {estadoPedido === "ABIERTO" && pedido.servido != "TOTAL" && (
         <div className="botones maestro-botones ">
           <QBoton onClick={() => publicar("alta_linea_solicitada")}>
             Nueva
@@ -52,7 +52,7 @@ export const Lineas = ({
         seleccionada={lineaActiva?.id}
         publicar={publicar}
         onCambioCantidad={handleCambioCantidad}
-        pedidoEditable={estadoPedido === "ABIERTO"}
+        pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
       />
 
       {estadoPedido === "CREANDO_LINEA" && <AltaLinea publicar={publicar} />}

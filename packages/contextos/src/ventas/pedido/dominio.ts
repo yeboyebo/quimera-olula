@@ -75,7 +75,8 @@ export const metaPedido: MetaModelo<Pedido> = {
         fecha: { tipo: "fecha", requerido: false },
     },
     editable: (pedido: Pedido, _?: string) => {
-        return pedido.servido === 'No';
+        const servido = pedido.servido?.toUpperCase();
+        return servido !== 'TOTAL' && servido !== 'SERVIDO';
     },
 };
 
@@ -126,9 +127,11 @@ export const cancelarCambioPedido: ProcesarPedido = async (contexto) => {
 }
 
 export const abiertoOServido: ProcesarPedido = async (contexto) => {
+    const servido = contexto.pedido.servido?.toUpperCase();
+    const esServido = servido === 'SI' || servido === 'SERVIDO';
     return {
         ...contexto,
-        estado: contexto.pedido.servido === 'Si' ? "SERVIDO" : "ABIERTO"
+        estado: esServido ? "SERVIDO" : "ABIERTO"
     }
 }
 

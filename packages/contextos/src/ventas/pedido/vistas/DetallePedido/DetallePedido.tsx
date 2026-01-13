@@ -2,11 +2,13 @@ import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Pedido } from "../../diseño.ts";
+import { editable } from "../../dominio.ts";
 import { usePedido } from "../../hooks/usePedido.ts";
 import "./DetallePedido.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
@@ -22,6 +24,7 @@ export const DetallePedido = ({
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
+  const navigate = useNavigate();
 
   const pedido = usePedido({
     pedidoId: pedidoInicial?.id ?? params.id,
@@ -33,10 +36,6 @@ export const DetallePedido = ({
 
   const titulo = (pedido: Pedido) => pedido.codigo || "Nuevo Pedido";
 
-  const handleBorrar = useCallback(() => {
-    emitir("borrar_solicitado");
-  }, [emitir]);
-
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_pedido_lista", modelo);
   }, [emitir, modelo]);
@@ -44,6 +43,25 @@ export const DetallePedido = ({
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_pedido_cancelada");
   }, [emitir]);
+
+  const handleAlbaranar = useCallback(() => {
+    const id = modelo.id ?? params.id;
+    if (id) navigate(`/ventas/albaranar-pedido/${id}`);
+  }, [navigate, modelo, params.id]);
+
+  const acciones = [
+    {
+      texto: "Albaranar",
+      onClick: handleAlbaranar,
+      deshabilitado: false,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      onClick: () => emitir("borrar_solicitado"),
+      deshabilitado: false,
+    },
+  ];
 
   return (
     <Detalle
@@ -55,11 +73,12 @@ export const DetallePedido = ({
     >
       {!!(pedidoInicial?.id ?? params.id) && (
         <>
-          <div className="acciones-rapidas">
+          {/* <div className="acciones-rapidas">
             <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
               Borrar
             </QBoton>
-          </div>
+          </div> */}
+          {editable(modelo) && <QuimeraAcciones acciones={acciones} vertical />}
 
           <Tabs>
             <Tab label="Cliente">
@@ -75,7 +94,7 @@ export const DetallePedido = ({
             </Tab>
           </Tabs>
 
-          {estado === "ABIERTO" && (
+          {editable(modelo) && (
             <div className="botones maestro-botones">
               <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
               <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>

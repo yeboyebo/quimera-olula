@@ -9,6 +9,7 @@ import {
     cambiarCantidadLinea,
     cambiarCliente,
     cambiarLinea,
+    cambiarPedido,
     cancelarCambioPedido,
     cargarContexto,
     crearLinea,
@@ -53,7 +54,7 @@ export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
 
             pedido_cambiado: [refrescarPedido],
 
-            edicion_de_pedido_lista: [cambiarLinea],
+            edicion_de_pedido_lista: [cambiarPedido],
 
             edicion_de_pedido_cancelada: [cancelarCambioPedido],
 

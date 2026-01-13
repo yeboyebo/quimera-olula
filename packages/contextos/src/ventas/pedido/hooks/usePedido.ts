@@ -36,12 +36,10 @@ export const usePedido = (options: UsePedidoOptions = {}) => {
                 lineaActiva,
             };
 
-            console.log("Estado:", estado, "->", payload);
             const [nuevoContexto, eventos] = await intentar(() =>
                 procesarEvento(maquina, contexto, evento, payload)
             );
 
-            console.log("Nuevo estado:", nuevoContexto.estado);
             setEstado(nuevoContexto.estado);
             setLineaActiva(nuevoContexto.lineaActiva);
 
