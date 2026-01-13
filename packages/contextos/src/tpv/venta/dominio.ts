@@ -35,8 +35,31 @@ export const nuevoPagoEfectivoVacio: NuevoPagoEfectivo = {
 
 export const nuevoPagoValeVacio: NuevoPagoVale = {
     importe: 0,
+    saldoVale: 0,
+    aPagar: 0,
     vale_id: ""
 }
+
+const validacionNuevoPagoVale = (pago: NuevoPagoVale) => {
+    if (pago.importe < 0) {
+        return "El importe no puede ser negativo";
+    }
+    if (pago.importe > pago.saldoVale) {
+        return "El importe no puede ser mayor que el saldo del vale";
+    }
+    if (pago.importe > pago.aPagar) {
+        return "El importe no puede ser mayor que el importe a pagar";
+    }
+    return true;
+}
+
+export const metaNuevoPagoVale: MetaModelo<NuevoPagoVale> = {
+    campos: {
+        importe: { tipo: "numero", requerido: true, validacion: validacionNuevoPagoVale },
+        saldoVale: { tipo: "numero", requerido: true },
+        vale_id: { tipo: "texto", requerido: true },
+    }
+};
 
 
 export const cambioClienteFacturaVacio: CambioClienteFactura = cambioClienteVentaVacio;
@@ -63,6 +86,10 @@ export const metaTablaFactura: MetaTabla<Factura> = [
     {
         id: "codigo",
         cabecera: "Código",
+    },
+    {
+        id: "fecha",
+        cabecera: "Fecha",
     },
     {
         id: "nombre_cliente",
@@ -250,11 +277,12 @@ export const cambiarVenta: ProcesarVentaTpv = async (contexto, payload) => {
 
 export const borrarVenta: ProcesarVentaTpv = async (contexto) => {
 
-    await borrarFactura(contexto.venta.id);
+    const venta = contexto.venta;
+    await borrarFactura(venta.id);
 
     return pipeVentaTpv(contexto, [
         getContextoVacio,
-        publicar('venta_borrada', null)
+        publicar('venta_borrada', venta)
     ]);
 }
 
@@ -434,7 +462,7 @@ export const quitarVentaDeLista: ProcesarVentasTpv = async (contexto, payload) =
 export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
 
     const criteria = payload as Criteria;
-    const resultado = await getVentas(criteria.filtros, criteria.orden, criteria.paginacion);
+    const resultado = await getVentas(criteria.filtro, criteria.orden, criteria.paginacion);
     const ventasCargadas = resultado.datos
 
     return {

@@ -82,44 +82,11 @@ export type MetaModelo<T extends Modelo> = {
 
 export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
 
-    return (estado: EstadoModelo<T>, accion: Accion<T>): EstadoModelo<T> => {
-
-        switch (accion.type) {
-
-            case "init": {
-                return initEstadoModelo<T>(
-                    accion.payload.entidad,
-                    // meta
-                );
-            }
-
-            case "set_campo": {
-                const valor = convertirValorCampo<T>(
-                    accion.payload.valor,
-                    accion.payload.campo,
-                    meta.campos
-                );
-                return cambiarEstadoModelo<T>(
-                    estado,
-                    accion.payload.campo,
-                    valor,
-                );
-            }
-
-            default: {
-                return { ...estado };
-            }
-        }
-    }
-}
-
-export const makeReductor2 = <T extends Modelo>(meta: MetaModelo<T>) => {
-
     return (estado: T, accion: Accion<T>): T => {
 
         switch (accion.type) {
 
-            case "init": {
+            case "set": {
                 return accion.payload.entidad;
             }
 
@@ -186,7 +153,7 @@ export const cambiarEstadoModelo = <T extends Modelo>(
 }
 
 export type Accion<T extends Modelo> = {
-    type: 'init';
+    type: 'set';
     payload: {
         entidad: T
     }
@@ -240,9 +207,6 @@ export const validacionDefecto = (validacion: ValidacionCampo, valor: string): V
         textoValidacion: valido ? "" : "Campo requerido",
     }
 }
-
-// export type ValidadorCampo<T extends Modelo> = (estado: EstadoModelo<T>) => ValidacionCampo;
-// export type ValidadorCampos<T extends Modelo> = Record<string, ValidadorCampo<T>>;
 
 
 export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo?: string) => {
@@ -339,15 +303,37 @@ export const redondeaMoneda = (cantidad: number, divisa: string): number => {
     return parseFloat(cantidad.toFixed(decimales));
 };
 
-export const formatearFecha = (fecha: string): string => {
+export const formatearFechaString = (fecha: string): string => {
     if (!fecha) return fecha;
     const date = new Date(fecha);
-    return date.toLocaleDateString("es-ES");
+    return formatearFechaDate(date);
 };
 
-export const formatearHora = (hora: string): string => {
+export const formatearFechaDate = (date: Date): string => {
+    return date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+};
+
+export const formatearFechaHoraString = (fechahora: string): string => {
+    if (!fechahora) return fechahora;
+    const date = new Date(fechahora);
+    return formatearFechaHora(date);
+};
+
+export const formatearFechaHora = (date: Date): string => {
+    return `${formatearFechaDate(date)} ${formatearHoraDate(date)}`;
+};
+
+export const formatearHoraString = (hora: string): string => {
     if (!hora) return hora;
     return hora.substring(0, 5); // "14:30:00" -> "14:30"
+};
+
+export const formatearHoraDate = (date: Date): string => {
+    return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 };
 
 export const calcularPaginacionSimplificada = (
@@ -423,7 +409,7 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({
-        filtros: transformarFiltro(criteria.filtros),
+        filtro: transformarFiltro(criteria.filtro),
         orden: transformarOrden(criteria.orden),
         paginacion: criteria.paginacion
     })
@@ -441,7 +427,7 @@ export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEs
 }
 
 export const criteriaDefecto: Criteria = {
-    filtros: [],
+    filtro: [],
     orden: ["id", "DESC"],
     paginacion: { limite: 10, pagina: 1 },
 }
@@ -507,7 +493,9 @@ export const procesarEvento = async <E extends string, C extends Contexto<E>>(
         return ejecutarListaProcesos(contexto, respuesta, payload);
 
     } else {
-        throw new Error('No se pudo procesar el evento');
+        throw new Error(
+            `No se pudo procesar el evento ${evento} en el estado ${estado}.`
+        );
     }
 };
 

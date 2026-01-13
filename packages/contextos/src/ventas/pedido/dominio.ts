@@ -326,7 +326,7 @@ export const quitarPedidoDeLista: ProcesarPedidos = async (contexto, payload) =>
 
 export const recargarPedidos: ProcesarPedidos = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getPedidos(criteria.filtros, criteria.orden, criteria.paginacion);
+    const resultado = await getPedidos(criteria.filtro, criteria.orden, criteria.paginacion);
     const pedidosCargados = resultado.datos;
 
     return {

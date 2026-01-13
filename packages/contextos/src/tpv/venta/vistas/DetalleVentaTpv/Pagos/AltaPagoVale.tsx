@@ -1,15 +1,14 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { useModelo } from "@olula/lib/useModelo.ts";
-
 import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import { getVale } from "#/tpv/vale/infraestructura.ts";
-import { metaNuevoPagoVale, VentaTpv } from "#/tpv/ventaTpv/diseño.ts";
-import { nuevoPagoValeVacio } from "#/tpv/ventaTpv/dominio.ts";
+import { VentaTpv } from "#/tpv/venta/diseño";
+import { metaNuevoPagoVale, nuevoPagoValeVacio } from "#/tpv/venta/dominio";
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { redondeaMoneda } from "@olula/lib/dominio.js";
+import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import "./AltaPagoVale.css";
 
@@ -20,8 +19,13 @@ export const AltaPagoVale = ({
     publicar: EmitirEvento;
     venta: VentaTpv;
 }) => {
+    
+    const aPagar = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
-    const { modelo, uiProps, valido, dispatch, init } = useModelo(metaNuevoPagoVale, nuevoPagoValeVacio);
+    const { modelo, uiProps, valido, set, init } = useModelo(metaNuevoPagoVale, {
+        ...nuevoPagoValeVacio,
+        aPagar,
+    });
 
     const [pagando, setPagando] = useState(false);
   
@@ -29,7 +33,6 @@ export const AltaPagoVale = ({
 
     const [vale, setVale] = useState<ValeTpv | null>(null);
 
-    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
     const buscarVale = async (barcode: string) => {
 
@@ -40,18 +43,15 @@ export const AltaPagoVale = ({
         const vale = await intentar(() => getVale(barcode))
         setVale(vale);
 
-        dispatch({
-            type: "set_campo",
-            payload: { campo: "vale_id", valor: vale.id },
-        });
-        
         const saldoPendiente = vale.saldo_pendiente;
-        const importe = Math.min(saldoPendiente, pendiente);
+        const importe = Math.min(saldoPendiente, aPagar);
         
-        dispatch({
-            type: "set_campo",
-            payload: { campo: "importe", valor: importe.toString() },
-        });
+        set({
+            ...modelo,
+            importe: importe,
+            vale_id: vale.id,
+            saldoVale: vale.saldo_pendiente
+        })
     };
 
     const pagar = () => {
@@ -68,6 +68,7 @@ export const AltaPagoVale = ({
 
     const limpiar = () => {
         init(nuevoPagoValeVacio);
+        setVale(null);
     }
     
     return (
@@ -82,11 +83,11 @@ export const AltaPagoVale = ({
             />
             </quimera-formulario>
             <div className="botones maestro-botones ">
-            {`A Pagar: ${pendiente}€`}
+            {`A Pagar: ${aPagar}€`}
                 <br/>
             {
                 vale
-                    ? `Vale: ${vale.id}. Saldo inicial ${vale.saldo_inicial}€. Saldo pendiente ${vale.saldo_pendiente}€`
+                    ? `Vale: ${vale.id}. Saldo inicial ${vale.saldo_inicial}€. Saldo aPagar ${vale.saldo_aPagar}€`
                     : 'No hay vale seleccionado'
             }
             <QBoton onClick={limpiar}>Limpiar</QBoton>

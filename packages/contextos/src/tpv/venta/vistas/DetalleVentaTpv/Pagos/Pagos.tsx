@@ -1,4 +1,4 @@
-import { EstadoVentaTpv, PagoVentaTpv } from "#/tpv/ventaTpv/diseño.ts";
+import { EstadoVentaTpv, PagoVentaTpv } from "#/tpv/venta/diseño.ts";
 import { QBoton } from "@olula/componentes/index.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { PagosLista } from "./PagosLista.tsx";

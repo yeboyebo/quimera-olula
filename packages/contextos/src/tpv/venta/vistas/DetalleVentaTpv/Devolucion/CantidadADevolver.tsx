@@ -1,4 +1,4 @@
-import { LineaADevolver } from "#/tpv/ventaTpv/diseño.ts";
+import { LineaADevolver } from "#/tpv/venta/diseño";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useEffect, useState } from "react";
 
