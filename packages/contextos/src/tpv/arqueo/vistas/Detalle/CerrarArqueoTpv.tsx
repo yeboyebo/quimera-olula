@@ -17,7 +17,7 @@ export const CerrarArqueoTpv = ({
 
     const { modelo, uiProps, valido, init } = useModelo(metaCierreArqueoTpv, {
         ...cierreArqueoTpvVacio,
-        agenteCierreId: agenteActivo.obtener(),
+        idAgenteCierre: agenteActivo.obtener() ?? '',
     });
 
     const [cerrando, setCerrando] = useState(false);
@@ -37,7 +37,7 @@ export const CerrarArqueoTpv = ({
     const limpiar = () => {
         init({
             ...cierreArqueoTpvVacio,
-            agenteCierreId: agenteActivo.obtener(),
+            idAgenteCierre: agenteActivo.obtener() ?? '',
         });
     }
     

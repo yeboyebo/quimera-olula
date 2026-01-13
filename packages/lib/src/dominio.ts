@@ -71,12 +71,13 @@ type Campo<T extends Modelo> = {
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
 }
-type TipoCampo = string | boolean | number | null;
+export type TipoValorCampo = string | boolean | number | null;
 
 export type MetaModelo<T extends Modelo> = {
     campos?: Record<string, Campo<T>>;
     editable?: (modelo: T, campo?: string) => boolean;
     validacion?: (modelo: T) => string | boolean;
+    onChange?: (modelo: T, campo: string, valorAnterior: unknown, otros?: Record<string, unknown>) => T;
 }
 
 
@@ -140,7 +141,7 @@ export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
 export const cambiarEstadoModelo = <T extends Modelo>(
     estado: EstadoModelo<T>,
     campo: string,
-    valor: TipoCampo,
+    valor: TipoValorCampo,
 ): EstadoModelo<T> => {
 
     return {

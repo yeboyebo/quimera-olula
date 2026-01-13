@@ -19,7 +19,7 @@ export const nuevaFamiliaVacia: NuevaFamilia = {
     descripcion: "",
 };
 
-export const metaNuevaFamilia: MetaModelo<Partial<Familia>> = {
+export const metaNuevaFamilia: MetaModelo<NuevaFamilia> = {
     campos: {
         descripcion: { requerido: true, validacion: (m) => stringNoVacio(m.descripcion || "") },
     },
