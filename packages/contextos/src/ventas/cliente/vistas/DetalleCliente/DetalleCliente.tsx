@@ -2,18 +2,11 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
-import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext, useState } from "react";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useCallback, useState } from "react";
 import { useParams } from "react-router";
 import { Cliente } from "../../diseño.ts";
-import { clienteVacio, metaCliente } from "../../dominio.ts";
-import {
-  deleteCliente,
-  getCliente,
-  patchCliente,
-} from "../../infraestructura.ts";
+import { useCliente } from "../../hooks/useCliente.ts";
 import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
@@ -23,59 +16,55 @@ import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   clienteInicial?: Cliente | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-  const { intentar } = useContext(ContextoError);
 
-  const clienteId = clienteInicial?.id ?? params.id;
-  const titulo = (cliente: Entidad) => cliente.nombre as string;
+  const cliente = useCliente({
+    clienteId: clienteInicial?.id ?? params.id,
+    clienteInicial,
+    publicar,
+  });
 
-  const cliente = useModelo(metaCliente, clienteVacio());
-  const { modelo, init, modificado, valido } = cliente;
-  const [estado, setEstado] = useState<"confirmar_borrado" | "edicion">(
-    "edicion"
-  );
+  const { modelo, modificado, valido, emitir } = cliente;
 
-  const onGuardarClicked = async () => {
-    await intentar(() => patchCliente(modelo.id, modelo));
-    const cliente_guardado = await getCliente(modelo.id);
-    init(cliente_guardado);
-    emitir("cliente_cambiado", cliente_guardado);
-  };
+  const titulo = (cliente: Cliente) => cliente.nombre as string;
 
-  const onRecargarCliente = async () => {
-    const clienteRecargado = await getCliente(modelo.id);
-    init(clienteRecargado);
-    emitir("cliente_cambiado", clienteRecargado);
-  };
+  const [confirmacionEstado, setConfirmacionEstado] = useState<boolean>(false);
 
-  const onBorrarConfirmado = async () => {
-    await deleteCliente(modelo.id);
-    emitir("cliente_borrado", modelo);
-    setEstado("edicion");
-  };
+  const handleGuardar = useCallback(() => {
+    emitir("edicion_de_cliente_lista", modelo);
+  }, [emitir, modelo]);
+
+  const handleCancelar = useCallback(() => {
+    emitir("edicion_de_cliente_cancelada");
+  }, [emitir]);
+
+  const handleBorrar = useCallback(() => {
+    setConfirmacionEstado(true);
+  }, []);
+
+  const handleBorrarConfirmado = useCallback(() => {
+    emitir("borrar_solicitado");
+    setConfirmacionEstado(false);
+  }, [emitir]);
 
   return (
     <div className="DetalleCliente">
       <Detalle
-        id={clienteId}
+        id={clienteInicial?.id ?? params.id}
         obtenerTitulo={titulo}
-        setEntidad={(c) => init(c as Cliente)}
+        setEntidad={() => {}}
         entidad={modelo}
-        cargar={getCliente}
-        className="detalle-cliente"
-        cerrarDetalle={() => emitir("cancelar_seleccion")}
+        cerrarDetalle={() => emitir("cliente_deseleccionado", null)}
       >
-        {!!clienteId && (
+        {!!(clienteInicial?.id ?? params.id) && (
           <div className="DetalleCliente">
-            <div className="maestro-botones ">
-              <QBoton onClick={() => setEstado("confirmar_borrado")}>
-                Borrar
-              </QBoton>
+            <div className="maestro-botones">
+              <QBoton onClick={handleBorrar}>Borrar</QBoton>
             </div>
             <Tabs
               children={[
@@ -85,54 +74,58 @@ export const DetalleCliente = ({
                   children={
                     <TabGeneral
                       cliente={cliente}
-                      emitirCliente={emitir}
-                      recargarCliente={onRecargarCliente}
+                      emitirCliente={publicar}
+                      recargarCliente={() =>
+                        emitir("cliente_id_cambiado", modelo.id)
+                      }
                     />
-                  }
-                />,
-                <Tab
-                  key="tab-1"
-                  label="Comercial"
-                  children={
-                    <TabComercial cliente={cliente} emitirCliente={emitir} />
                   }
                 />,
                 <Tab
                   key="tab-2"
-                  label="Direcciones"
-                  children={<TabDirecciones clienteId={clienteId} />}
+                  label="Comercial"
+                  children={
+                    <TabComercial cliente={cliente} emitirCliente={publicar} />
+                  }
                 />,
                 <Tab
                   key="tab-3"
+                  label="Direcciones"
+                  children={<TabDirecciones clienteId={modelo.id} />}
+                />,
+                <Tab
+                  key="tab-4"
                   label="Cuentas Bancarias"
                   children={
                     <TabCuentasBanco
                       cliente={cliente}
-                      emitirCliente={emitir}
-                      recargarCliente={onRecargarCliente}
+                      emitirCliente={publicar}
+                      recargarCliente={() =>
+                        emitir("cliente_id_cambiado", modelo.id)
+                      }
                     />
                   }
                 />,
                 <Tab
-                  key="tab-4"
+                  key="tab-5"
                   label="Agenda"
                   children={
                     <div className="detalle-cliente-tab-contenido">
-                      <TabCrmContactos clienteId={clienteId} />
+                      <TabCrmContactos clienteId={modelo.id} />
                     </div>
                   }
                 />,
               ]}
             />
-            {cliente.modificado && (
-              <div className="maestro-botones ">
-                <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>
+            {modificado && (
+              <div className="maestro-botones">
+                <QBoton onClick={handleGuardar} deshabilitado={!valido}>
                   Guardar
                 </QBoton>
                 <QBoton
                   tipo="reset"
                   variante="texto"
-                  onClick={() => init()}
+                  onClick={handleCancelar}
                   deshabilitado={!modificado}
                 >
                   Cancelar
@@ -141,11 +134,11 @@ export const DetalleCliente = ({
             )}
             <QModalConfirmacion
               nombre="borrarCliente"
-              abierto={estado === "confirmar_borrado"}
+              abierto={confirmacionEstado}
               titulo="Confirmar borrar"
               mensaje="¿Está seguro de que desea borrar este cliente?"
-              onCerrar={() => setEstado("edicion")}
-              onAceptar={onBorrarConfirmado}
+              onCerrar={() => setConfirmacionEstado(false)}
+              onAceptar={handleBorrarConfirmado}
             />
           </div>
         )}

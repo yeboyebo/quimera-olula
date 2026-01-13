@@ -1,87 +1,79 @@
-import { QBoton } from "@olula/componentes/index.js";
-import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { puede } from "@olula/lib/dominio.ts";
-import { useLista } from "@olula/lib/useLista.ts";
-import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { useState } from "react";
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
+import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
+import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
+import { Criteria } from "@olula/lib/diseño.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { useCallback, useEffect } from "react";
 import { Cliente } from "../diseño.ts";
 import { metaTablaCliente } from "../dominio.ts";
-import { getClientes } from "../infraestructura.ts";
+import { getMaquina } from "../maquinaMaestro.ts";
 import { AltaCliente } from "./AltaCliente.tsx";
 import { DetalleCliente } from "./DetalleCliente/DetalleCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 
-type Estado = "lista" | "alta";
 export const MaestroConDetalleCliente = () => {
-  const [estado, setEstado] = useState<Estado>("lista");
-  const clientes = useLista<Cliente>([]);
+  const { ctx, emitir } = useMaestro(getMaquina, {
+    estado: "INICIAL",
+    clientes: [],
+    totalClientes: 0,
+    clienteActivo: null,
+  });
 
-  const maquina: Maquina<Estado> = {
-    alta: {
-      cliente_creado: (payload) => {
-        const cliente = payload as Cliente;
-        clientes.añadir(cliente);
-        return "lista";
-      },
-      alta_cancelada: "lista",
+  const setSeleccionada = useCallback(
+    (payload: Cliente) => void emitir("cliente_seleccionado", payload),
+    [emitir]
+  );
+
+  const recargar = useCallback(
+    (criteria: Criteria) => {
+      void emitir("recarga_de_clientes_solicitada", criteria);
     },
-    lista: {
-      alta_iniciada: "alta",
-      cliente_cambiado: (payload) => {
-        const cliente = payload as Cliente;
-        clientes.modificar(cliente);
-      },
-      cliente_borrado: (payload) => {
-        const cliente = payload as Cliente;
-        clientes.eliminar(cliente);
-      },
-      cancelar_seleccion: () => {
-        clientes.limpiarSeleccion();
-      },
-    },
-  };
+    [emitir]
+  );
 
-  const emitir = useMaquina(maquina, estado, setEstado);
-
-  const puedeCrear = puede("ventas.cliente.crear");
+  useEffect(() => {
+    emitir("recarga_de_clientes_solicitada", criteriaDefecto);
+  }, []);
 
   return (
     <div className="Cliente">
-      <MaestroDetalle<Cliente>
-        preMaestro={
+      <MaestroDetalleControlado<Cliente>
+        Maestro={
           <>
             <h2>Clientes</h2>
             <div className="maestro-botones">
-              {puedeCrear && (
-                <QBoton onClick={() => emitir("alta_iniciada")}>Nuevo</QBoton>
-              )}
+              <QBoton onClick={() => emitir("creacion_de_cliente_solicitada")}>
+                Nuevo Cliente
+              </QBoton>
             </div>
+            <ListadoControlado<Cliente>
+              metaTabla={metaTablaCliente}
+              criteriaInicial={criteriaDefecto}
+              modo={"tabla"}
+              entidades={ctx.clientes}
+              totalEntidades={ctx.totalClientes}
+              seleccionada={ctx.clienteActivo}
+              onSeleccion={setSeleccionada}
+              onCriteriaChanged={recargar}
+            />
           </>
         }
-        modoVisualizacion="tabla"
-        modoDisposicion="maestro-50"
-        metaTabla={metaTablaCliente}
-        // tarjeta={(cliente) => <TarjetaCliente cliente={cliente} />}
-        entidades={clientes.lista}
-        setEntidades={clientes.setLista}
-        seleccionada={clientes.seleccionada}
-        setSeleccionada={clientes.seleccionar}
-        cargar={getClientes}
         Detalle={
           <DetalleCliente
-            clienteInicial={clientes.seleccionada}
-            emitir={emitir}
+            clienteInicial={ctx.clienteActivo}
+            publicar={emitir}
           />
         }
+        seleccionada={ctx.clienteActivo}
+        modoDisposicion="maestro-50"
       />
-      <QModal
-        nombre="modal"
-        abierto={estado === "alta"}
-        onCerrar={() => emitir("alta_cancelada")}
-      >
-        <AltaCliente emitir={emitir} />
-      </QModal>
+
+      <AltaCliente
+        publicar={emitir}
+        onCancelar={() => emitir("creacion_cancelada")}
+        activo={ctx.estado === "CREANDO_CLIENTE"}
+      />
     </div>
   );
 };
