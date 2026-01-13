@@ -1,6 +1,20 @@
+import { Direccion } from "@olula/lib/diseño.js";
 import { MetaModelo } from "@olula/lib/dominio.ts";
-import { direccionVacia } from "../presupuesto/dominio.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+
+export const direccionVacia = (): Direccion => ({
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia_id: 0,
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
+});
 
 export const ventaVacia: Venta = {
     id: '',

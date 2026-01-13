@@ -2,8 +2,10 @@ import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Albaran extends Venta {
-    otro_campo?: string;
+    idfactura: string | null;
+    lineas: LineaAlbaran[];
 }
+
 export interface LineaAlbaran extends LineaVenta {
     otro_campo?: string;
 }
@@ -35,3 +37,28 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaAlbaran, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type EstadoAlbaran = (
+    'INICIAL' | "ABIERTO" | "FACTURADO"
+    | "BORRANDO_ALBARAN"
+    | "CAMBIANDO_CLIENTE"
+    | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+);
+
+export type EstadoMaestroAlbaran = (
+    'INICIAL' | 'CREANDO_ALBARAN'
+);
+
+export type ContextoAlbaran = {
+    estado: EstadoAlbaran;
+    albaran: Albaran;
+    albaranInicial: Albaran;
+    lineaActiva: LineaAlbaran | null;
+};
+
+export type ContextoMaestroAlbaran = {
+    estado: EstadoMaestroAlbaran;
+    albaranes: Albaran[];
+    totalAlbaranes: number;
+    albaranActivo: Albaran | null;
+};

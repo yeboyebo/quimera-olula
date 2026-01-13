@@ -1,7 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "@olula/componentes/index.js";
+import {
+  QModalConfirmacion,
+  QuimeraAcciones,
+} from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
@@ -34,13 +37,13 @@ export const DetallePresupuesto = ({
   const titulo = (presupuesto: Presupuesto) =>
     presupuesto.codigo || "Nuevo Presupuesto";
 
-  const handleAprobar = useCallback(() => {
-    emitir("aprobacion_solicitada", modelo);
-  }, [emitir, modelo]);
+  // const handleAprobar = useCallback(() => {
+  //   emitir("aprobacion_solicitada", modelo);
+  // }, [emitir, modelo]);
 
-  const handleBorrar = useCallback(() => {
-    emitir("borrar_solicitado");
-  }, [emitir]);
+  // const handleBorrar = useCallback(() => {
+  //   emitir("borrar_solicitado");
+  // }, [emitir]);
 
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_presupuesto_lista", modelo);
@@ -49,6 +52,20 @@ export const DetallePresupuesto = ({
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_presupuesto_cancelada");
   }, [emitir]);
+
+  const acciones = [
+    {
+      texto: "Aprobar",
+      onClick: () => emitir("aprobacion_solicitada", modelo),
+      deshabilitado: modelo.aprobado,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      onClick: () => emitir("borrar_solicitado"),
+      deshabilitado: modelo.aprobado,
+    },
+  ];
 
   return (
     <Detalle
@@ -60,14 +77,7 @@ export const DetallePresupuesto = ({
     >
       {!!(presupuestoInicial?.id ?? params.id) && (
         <>
-          {!modelo.aprobado && (
-            <div className="acciones-rapidas">
-              <QBoton onClick={handleAprobar}>Aprobar</QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
-                Borrar
-              </QBoton>
-            </div>
-          )}
+          {!modelo.aprobado && <QuimeraAcciones acciones={acciones} vertical />}
 
           <Tabs>
             <Tab label="Cliente">

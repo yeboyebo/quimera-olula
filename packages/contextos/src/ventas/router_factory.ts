@@ -13,5 +13,9 @@ export class RouterFactoryVentasOlula {
         "ventas/albaran": MaestroConDetalleAlbaran,
         "ventas/factura": MaestroConDetalleFactura,
         "ventas/albaranar-pedido/:id": DetalleAlbaranarPedido,
+        "ventas/pedido/:id": MaestroConDetallePedido,
+        "ventas/presupuesto/:id": MaestroConDetallePresupuesto,
+        "ventas/albaran/:id": MaestroConDetalleAlbaran,
+        "ventas/factura/:id": MaestroConDetalleFactura,
     }
 }

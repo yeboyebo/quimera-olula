@@ -1,43 +1,11 @@
 import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { NuevaLineaVenta } from "../venta/diseño.ts";
+import { NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
-export interface Presupuesto extends Entidad {
-  id: string;
-  codigo: string;
-  fecha: string;
+export interface Presupuesto extends Venta {
   fecha_salida: string;
-  cliente_id: string;
-  nombre_cliente: string;
-  id_fiscal: string;
-  direccion_id: string;
-  agente_id: string;
-  nombre_agente: string;
-  divisa_id: string;
-  tasa_conversion: number;
-  total: number;
-  neto: number;
-  total_iva: number;
-  total_irpf: number;
-  total_divisa_empresa: number;
-  forma_pago_id: string;
-  nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
   aprobado: boolean;
-  observaciones: string;
-  nombre_via: string;
-  tipo_via: string;
-  numero: string;
-  otros: string;
-  cod_postal: string;
-  ciudad: string;
-  provincia_id: number;
-  provincia: string;
-  pais_id: string;
-  apartado: string;
-  telefono: string;
   lineas: LineaPresupuesto[];
 }
-
 export interface PresupuestoAPI {
   id: string;
   codigo: string;
@@ -164,7 +132,7 @@ export type EstadoPresupuesto = (
 );
 
 export type EstadoMaestroPresupuesto = (
-  'INICIAL'
+  'INICIAL' | 'CREANDO_PRESUPUESTO'
 );
 
 export type ContextoPresupuesto = {

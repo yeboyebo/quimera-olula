@@ -2,7 +2,8 @@ import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
-    otro_campo?: string;
+    editable?: boolean;
+    lineas?: LineaFactura[];
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
@@ -35,3 +36,24 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type EstadoFactura = (
+    'INICIAL' | 'CONSULTANDO' | 'BORRANDO_FACTURA'
+);
+
+export type EstadoMaestroFactura = (
+    'INICIAL' | 'CREANDO_FACTURA'
+);
+
+export type ContextoFactura = {
+    estado: EstadoFactura;
+    factura: Factura;
+    facturaInicial: Factura;
+};
+
+export type ContextoMaestroFactura = {
+    estado: EstadoMaestroFactura;
+    facturas: Factura[];
+    totalFacturas: number;
+    facturaActiva: Factura | null;
+};

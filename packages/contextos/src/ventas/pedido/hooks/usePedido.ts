@@ -3,36 +3,36 @@ import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ContextoPresupuesto, EstadoPresupuesto, LineaPresupuesto, Presupuesto } from "../diseño.ts";
-import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
+import { ContextoPedido, EstadoPedido, LineaPedido, Pedido } from "../diseño.ts";
+import { metaPedido, pedidoVacio } from "../dominio.ts";
 import { getMaquina } from "../maquina.ts";
 
-interface UsePresupuestoOptions {
-    presupuestoId?: string;
-    presupuestoInicial?: Presupuesto | null;
+interface UsePedidoOptions {
+    pedidoId?: string;
+    pedidoInicial?: Pedido | null;
     publicar?: EmitirEvento;
 }
 
-export const usePresupuesto = (options: UsePresupuestoOptions = {}) => {
-    const { presupuestoId, presupuestoInicial, publicar } = options;
+export const usePedido = (options: UsePedidoOptions = {}) => {
+    const { pedidoId, pedidoInicial, publicar } = options;
     const { intentar } = useContext(ContextoError);
     const maquina = getMaquina();
 
     const modelo = useModelo(
-        metaPresupuesto,
-        presupuestoInicial || presupuestoVacio()
+        metaPedido,
+        pedidoInicial || pedidoVacio()
     );
 
-    const [estado, setEstado] = useState<EstadoPresupuesto>("INICIAL");
-    const [lineaActiva, setLineaActiva] = useState<LineaPresupuesto | null>(null);
-    const presupuestoIdCargadoRef = useRef<string | null>(null);
+    const [estado, setEstado] = useState<EstadoPedido>("INICIAL");
+    const [lineaActiva, setLineaActiva] = useState<LineaPedido | null>(null);
+    const pedidoIdCargadoRef = useRef<string | null>(null);
 
     const emitir = useCallback(
         async (evento: string, payload?: unknown, inicial: boolean = false): Promise<EventoMaquina[]> => {
-            const contexto: ContextoPresupuesto = {
+            const contexto: ContextoPedido = {
                 estado: inicial ? 'INICIAL' : estado,
-                presupuesto: modelo.modelo,
-                presupuestoInicial: modelo.modeloInicial,
+                pedido: modelo.modelo,
+                pedidoInicial: modelo.modeloInicial,
                 lineaActiva,
             };
 
@@ -43,8 +43,8 @@ export const usePresupuesto = (options: UsePresupuestoOptions = {}) => {
             setEstado(nuevoContexto.estado);
             setLineaActiva(nuevoContexto.lineaActiva);
 
-            if (nuevoContexto.presupuesto !== modelo.modelo) {
-                modelo.init(nuevoContexto.presupuesto);
+            if (nuevoContexto.pedido !== modelo.modelo) {
+                modelo.init(nuevoContexto.pedido);
             }
 
             if (publicar) {
@@ -57,11 +57,11 @@ export const usePresupuesto = (options: UsePresupuestoOptions = {}) => {
     );
 
     useEffect(() => {
-        if (presupuestoId && presupuestoId !== presupuestoIdCargadoRef.current) {
-            presupuestoIdCargadoRef.current = presupuestoId;
-            emitir("presupuesto_id_cambiado", presupuestoId, true);
+        if (pedidoId && pedidoId !== pedidoIdCargadoRef.current) {
+            pedidoIdCargadoRef.current = pedidoId;
+            emitir("pedido_id_cambiado", pedidoId, true);
         }
-    }, [presupuestoId, emitir]);
+    }, [pedidoId, emitir]);
 
     return {
         ...modelo,
@@ -70,4 +70,3 @@ export const usePresupuesto = (options: UsePresupuestoOptions = {}) => {
         emitir,
     };
 };
-
