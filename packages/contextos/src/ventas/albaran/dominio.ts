@@ -33,6 +33,7 @@ import {
     patchCambiarCliente,
     patchCantidadLinea,
     patchLinea,
+    postAlbaran,
     postLinea
 } from "./infraestructura.ts";
 
