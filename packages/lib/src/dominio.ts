@@ -283,7 +283,6 @@ export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
 
 export const formatearMoneda = (cantidad: number, divisa: string): string => {
     const divisaValida = divisa && divisa.trim() ? divisa.trim().toUpperCase() : "EUR";
-    console.log("Formatear moneda:", cantidad, divisaValida);
     const locale = divisaValida === "EUR" ? "es-ES" : "en-US";
     return new Intl.NumberFormat(locale, {
         style: "currency",

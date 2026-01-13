@@ -1,138 +1,82 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
+import { MetaTabla } from "@olula/componentes/index.js";
+import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
+import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { ListaSeleccionable } from "@olula/lib/diseño.js";
-import {
-  cambiarItem,
-  cargar,
-  getSeleccionada,
-  incluirItem,
-  listaSeleccionableVacia,
-  quitarItem,
-  quitarSeleccion,
-  seleccionarItem,
-} from "@olula/lib/entidad.js";
-import { pipe } from "@olula/lib/funcional.js";
-import {
-  ConfigMaquina4,
-  Maquina3,
-  useMaquina4,
-} from "@olula/lib/useMaquina.ts";
-import { useCallback } from "react";
+import { Criteria } from "@olula/lib/diseño.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { useCallback, useEffect } from "react";
+import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
 import { Factura } from "../diseño.ts";
-import { metaTablaFactura } from "../dominio.ts";
-import { getFacturas } from "../infraestructura.ts";
+import { metaTablaFactura as metaTablaBase } from "../dominio.ts";
+import { getMaquina } from "../maquinaMaestro.ts";
 import { AltaFactura } from "./AltaFactura.tsx";
 import { DetalleFactura } from "./DetalleFactura/DetalleFactura.tsx";
 import "./MaestroConDetalleFactura.css";
 
-type Estado = "Inactivo" | "Creando";
-type Contexto = {
-  facturas: ListaSeleccionable<Factura>;
-};
-
-const setFacturas =
-  (
-    aplicable: (
-      facturas: ListaSeleccionable<Factura>
-    ) => ListaSeleccionable<Factura>
-  ) =>
-  (maquina: Maquina3<Estado, Contexto>) => {
-    return {
-      ...maquina,
-      contexto: {
-        ...maquina.contexto,
-        facturas: aplicable(maquina.contexto.facturas),
-      },
-    };
-  };
-
-const configMaquina: ConfigMaquina4<Estado, Contexto> = {
-  inicial: {
-    estado: "Inactivo",
-    contexto: {
-      facturas: listaSeleccionableVacia<Factura>(),
-    },
-  },
-  estados: {
-    Inactivo: {
-      crear: "Creando",
-      factura_cambiada: ({ maquina, payload }) =>
-        pipe(maquina, setFacturas(cambiarItem(payload as Factura))),
-      factura_seleccionada: ({ maquina, payload }) =>
-        pipe(maquina, setFacturas(seleccionarItem(payload as Factura))),
-      cancelar_seleccion: ({ maquina }) =>
-        pipe(maquina, setFacturas(quitarSeleccion())),
-      factura_borrada: ({ maquina }) => {
-        const { facturas } = maquina.contexto;
-        if (!facturas.idActivo) {
-          return maquina;
-        }
-        return pipe(maquina, setFacturas(quitarItem(facturas.idActivo)));
-      },
-      facturas_cargadas: ({ maquina, payload, setEstado }) =>
-        pipe(
-          maquina,
-          setEstado("Inactivo" as Estado),
-          setFacturas(cargar(payload as Factura[]))
-        ),
-    },
-    Creando: {
-      factura_creada: ({ maquina, payload, setEstado }) =>
-        pipe(
-          maquina,
-          setEstado("Inactivo" as Estado),
-          setFacturas(incluirItem(payload as Factura, {}))
-        ),
-      alta_cancelada: "Inactivo",
-    },
-  },
-};
-
 export const MaestroConDetalleFactura = () => {
-  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
-    config: configMaquina,
+  const { ctx, emitir } = useMaestroVenta(getMaquina, {
+    estado: "INICIAL",
+    facturas: [],
+    totalFacturas: 0,
+    facturaActiva: null,
   });
-  const { facturas } = contexto;
 
-  const setEntidades = useCallback(
-    (payload: Factura[]) => emitir("facturas_cargadas", payload),
-    [emitir]
-  );
   const setSeleccionada = useCallback(
-    (payload: Factura) => emitir("factura_seleccionada", payload),
+    (payload: Factura) => void emitir("factura_seleccionada", payload),
     [emitir]
   );
 
-  const seleccionada = getSeleccionada(facturas);
+  const recargar = useCallback(
+    (criteria: Criteria) => {
+      void emitir("recarga_de_facturas_solicitada", criteria);
+    },
+    [emitir]
+  );
+
+  useEffect(() => {
+    emitir("recarga_de_facturas_solicitada", criteriaDefecto);
+  }, []);
+
+  const metaTablaFactura = metaTablaBase as MetaTabla<Factura>;
 
   return (
     <div className="Factura">
-      <MaestroDetalle<Factura>
-        seleccionada={seleccionada}
-        preMaestro={
+      <MaestroDetalleControlado<Factura>
+        Maestro={
           <>
             <h2>Facturas</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear")}>Crear Factura</QBoton>
+              <QBoton onClick={() => emitir("crear_factura_solicitado")}>
+                Nueva Factura
+              </QBoton>
             </div>
+            <ListadoControlado<Factura>
+              metaTabla={metaTablaFactura}
+              criteriaInicial={criteriaDefecto}
+              modo={"tabla"}
+              entidades={ctx.facturas}
+              totalEntidades={ctx.totalFacturas}
+              seleccionada={ctx.facturaActiva}
+              onSeleccion={setSeleccionada}
+              onCriteriaChanged={recargar}
+            />
           </>
         }
-        modoVisualizacion="tabla"
-        modoDisposicion="maestro-50"
-        metaTabla={metaTablaFactura}
-        entidades={facturas.lista}
-        setEntidades={setEntidades}
-        setSeleccionada={setSeleccionada}
-        cargar={getFacturas}
         Detalle={
-          <DetalleFactura facturaInicial={seleccionada} emitir={emitir} />
+          <DetalleFactura
+            facturaInicial={ctx.facturaActiva}
+            publicar={emitir}
+          />
         }
+        seleccionada={ctx.facturaActiva}
+        modoDisposicion="maestro-50"
       />
+
       <QModal
         nombre="modal"
-        abierto={estado === "Creando"}
-        onCerrar={() => emitir("alta_cancelada")}
+        abierto={ctx.estado === "CREANDO_FACTURA"}
+        onCerrar={() => emitir("creacion_cancelada")}
       >
         <AltaFactura publicar={emitir} />
       </QModal>
