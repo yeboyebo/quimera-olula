@@ -64,7 +64,6 @@ const a_string = (
   divisa?: string
 ): string => {
   let formateado = "";
-  console.log("Formateando valor:", valor, "de tipo:", tipo);
 
   if (tipo === "moneda" && typeof valor === "number") {
     formateado = formatearMoneda(valor, divisa ?? "EUR");
