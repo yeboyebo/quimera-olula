@@ -3,139 +3,82 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
-import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
-import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { Pedido } from "../../diseño.ts";
-import { metaPedido, pedidoVacio } from "../../dominio.ts";
-import { borrarPedido, getPedido, patchPedido } from "../../infraestructura.ts";
+import { usePedido } from "../../hooks/usePedido.ts";
 import "./DetallePedido.css";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-type ParamOpcion = {
-  valor: string;
-  descripcion?: string;
-};
-export type ValorControl = null | string | ParamOpcion;
-type Estado = "Defecto" | "ConfirmarBorrado";
-type Contexto = Record<string, unknown>;
-
 export const DetallePedido = ({
   pedidoInicial = null,
-  emitir = () => {},
+  publicar = () => {},
 }: {
   pedidoInicial?: Pedido | null;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
-  // const appFactory = useContext(FactoryCtx);
-
-  // const TabDatos = appFactory.app.Ventas.PedidoTabDatos as (props: {
-  //   pedido: HookModelo<Pedido>;
-  // }) => JSX.Element;
-
   const params = useParams();
-  const { intentar } = useContext(ContextoError);
 
-  const pedidoId = pedidoInicial?.id ?? params.id;
-  const titulo = (pedido: Entidad) => pedido.codigo as string;
-
-  const pedido = useModelo(metaPedido, pedidoVacio());
-  const { modelo, init } = pedido;
-
-  const configMaquina: ConfigMaquina4<Estado, Contexto> = {
-    inicial: {
-      estado: "Defecto",
-      contexto: {},
-    },
-    estados: {
-      Defecto: {
-        guardar_iniciado: "Defecto",
-        cliente_pedido_cambiado: "Defecto",
-        borrar_solicitado: "ConfirmarBorrado",
-      },
-      ConfirmarBorrado: {
-        borrar_confirmado: "Defecto",
-        borrar_cancelado: "Defecto",
-      },
-    },
-  };
-
-  const [emitirPedido, { estado }] = useMaquina4<Estado, Contexto>({
-    config: configMaquina,
+  const pedido = usePedido({
+    pedidoId: pedidoInicial?.id ?? params.id,
+    pedidoInicial,
+    publicar,
   });
 
-  const recargarCabecera = async () => {
-    const nuevoPedido = await getPedido(modelo.id);
-    init(nuevoPedido);
-    emitir("pedido_cambiado", nuevoPedido);
-  };
+  const { modelo, estado, lineaActiva, emitir } = pedido;
 
-  const guardar = async () => {
-    await intentar(() => patchPedido(modelo.id, modelo));
-    await recargarCabecera();
-    emitirPedido("guardar_iniciado");
-  };
+  const titulo = (pedido: Pedido) => pedido.codigo || "Nuevo Pedido";
 
-  const cancelar = () => {
-    init();
-    emitir("cancelar_seleccion");
-  };
+  const handleBorrar = useCallback(() => {
+    emitir("borrar_solicitado");
+  }, [emitir]);
 
-  const onBorrarConfirmado = async () => {
-    await intentar(() => borrarPedido(modelo.id));
-    emitir("pedido_borrado", modelo);
-    emitirPedido("borrar_confirmado");
-  };
+  const handleGuardar = useCallback(() => {
+    emitir("edicion_de_pedido_lista", modelo);
+  }, [emitir, modelo]);
+
+  const handleCancelar = useCallback(() => {
+    emitir("edicion_de_pedido_cancelada");
+  }, [emitir]);
 
   return (
     <Detalle
-      id={pedidoId}
+      id={pedidoInicial?.id ?? params.id}
       obtenerTitulo={titulo}
-      setEntidad={(p) => init(p)}
+      setEntidad={() => {}}
       entidad={modelo}
-      cargar={getPedido}
-      cerrarDetalle={cancelar}
+      cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
-      {!!pedidoId && (
+      {!!(pedidoInicial?.id ?? params.id) && (
         <>
-          <div className="botones maestro-botones ">
-            <QBoton onClick={() => emitirPedido("borrar_solicitado")}>
+          <div className="acciones-rapidas">
+            <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
               Borrar
             </QBoton>
           </div>
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Cliente"
-                children={
-                  <TabCliente pedido={pedido} publicar={emitirPedido} />
-                }
-              />,
-              <Tab
-                key="tab-2"
-                label="Datos"
-                children={<TabDatos pedido={pedido} />}
-              />,
-              <Tab
-                key="tab-3"
-                label="Observaciones"
-                children={<TabObservaciones pedido={pedido} />}
-              />,
-            ]}
-          ></Tabs>
-          {pedido.modificado && (
-            <div className="botones maestro-botones ">
-              <QBoton onClick={guardar} deshabilitado={!pedido.valido}>
-                Guardar
-              </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+
+          <Tabs>
+            <Tab label="Cliente">
+              <TabCliente pedido={pedido} publicar={emitir} />
+            </Tab>
+
+            <Tab label="Datos">
+              <TabDatos pedido={pedido} />
+            </Tab>
+
+            <Tab label="Observaciones">
+              <TabObservaciones pedido={pedido} />
+            </Tab>
+          </Tabs>
+
+          {estado === "ABIERTO" && (
+            <div className="botones maestro-botones">
+              <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
+              <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
                 Cancelar
               </QBoton>
             </div>
@@ -147,21 +90,21 @@ export const DetallePedido = ({
             total={Number(modelo.total ?? 0)}
             divisa={String(modelo.coddivisa ?? "EUR")}
           />
-          {pedidoId && (
-            <Lineas
-              pedidoId={pedidoId}
-              pedidoEditable={pedido.editable}
-              onCabeceraModificada={recargarCabecera}
-            />
-          )}
+
+          <Lineas
+            pedido={modelo}
+            lineaActiva={lineaActiva}
+            publicar={emitir}
+            estadoPedido={estado}
+          />
 
           <QModalConfirmacion
             nombre="borrarPedido"
-            abierto={estado === "ConfirmarBorrado"}
+            abierto={estado === "BORRANDO_PEDIDO"}
             titulo="Confirmar borrar"
             mensaje="¿Está seguro de que desea borrar este pedido?"
-            onCerrar={() => emitirPedido("borrar_cancelado")}
-            onAceptar={onBorrarConfirmado}
+            onCerrar={() => emitir("borrar_cancelado")}
+            onAceptar={() => emitir("borrado_de_pedido_listo")}
           />
         </>
       )}

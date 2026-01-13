@@ -357,6 +357,20 @@ export const incluirPresupuestoEnLista: ProcesarPresupuestos = async (contexto, 
     }
 }
 
+export const abrirModalCreacion: ProcesarPresupuestos = async (contexto) => {
+    return {
+        ...contexto,
+        estado: 'CREANDO_PRESUPUESTO'
+    }
+}
+
+export const cerrarModalCreacion: ProcesarPresupuestos = async (contexto) => {
+    return {
+        ...contexto,
+        estado: 'INICIAL'
+    }
+}
+
 export const crearPresupuesto: ProcesarPresupuestos = async (contexto, payload) => {
     const presupuestoNuevo = payload as NuevoPresupuesto;
     const idPresupuesto = await postPresupuesto(presupuestoNuevo);

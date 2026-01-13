@@ -45,7 +45,7 @@ export type EstadoPedido = (
 );
 
 export type EstadoMaestroPedido = (
-  'INICIAL'
+  'INICIAL' | 'CREANDO_PEDIDO'
 );
 
 export type ContextoPedido = {

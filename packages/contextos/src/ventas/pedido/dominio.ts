@@ -347,6 +347,20 @@ export const incluirPedidoEnLista: ProcesarPedidos = async (contexto, payload) =
     }
 }
 
+export const abrirModalCreacion: ProcesarPedidos = async (contexto) => {
+    return {
+        ...contexto,
+        estado: 'CREANDO_PEDIDO'
+    }
+}
+
+export const cerrarModalCreacion: ProcesarPedidos = async (contexto) => {
+    return {
+        ...contexto,
+        estado: 'INICIAL'
+    }
+}
+
 export const crearPedido: ProcesarPedidos = async (contexto, payload) => {
     const pedidoNuevo = payload as NuevoPedido;
     const idPedido = await postPedido(pedidoNuevo);

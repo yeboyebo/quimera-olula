@@ -164,7 +164,7 @@ export type EstadoPresupuesto = (
 );
 
 export type EstadoMaestroPresupuesto = (
-  'INICIAL'
+  'INICIAL' | 'CREANDO_PRESUPUESTO'
 );
 
 export type ContextoPresupuesto = {
