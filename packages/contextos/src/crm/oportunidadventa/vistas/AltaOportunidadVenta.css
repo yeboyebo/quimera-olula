@@ -3,12 +3,12 @@
         grid-column: 1 / span 6;
     }
 
-    quimera-input[nombre="nombre_cliente"] {
-        grid-column: 1 / span 12;
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: span 11;
     }
 
-    quimera-autocompletar[nombre="cliente_id"] {
-        grid-column: 1 / span 12;
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: span 11;
     }
 
     quimera-input[nombre="importe"] {
@@ -16,7 +16,7 @@
     }
 
     quimera-input[nombre="fecha_cierre"] {
-        grid-column: 1 / span 6;
+        grid-column: span 6;
     }
 
     quimera-input[nombre="probabilidad"] {
