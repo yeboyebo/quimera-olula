@@ -2,6 +2,7 @@ import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/d
 import { Accion } from "../accion/diseño.ts";
 
 export type PrioridadIncidencia = "alta" | "media" | "baja";
+export type EstadoIncidencia = "nueva" | "en_espera" | "asignada" | "rechazada" | "cerrada";
 
 export interface Incidencia extends Entidad {
     id: string;
@@ -10,6 +11,7 @@ export interface Incidencia extends Entidad {
     nombre: string;
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
+    estado: EstadoIncidencia;
     fecha: string
 }
 
@@ -21,6 +23,7 @@ export interface IncidenciaAPI extends Entidad {
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
     fecha: string;
+    estado: EstadoIncidencia;
 }
 
 export type NuevaIncidencia = {
@@ -29,6 +32,7 @@ export type NuevaIncidencia = {
     nombre: string;
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
+    estado: EstadoIncidencia;
     fecha: string;
 };
 
