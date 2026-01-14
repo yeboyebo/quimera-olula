@@ -6,6 +6,7 @@ import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
+import { pipe } from "@olula/lib/funcional.js";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useParams } from "react-router";
@@ -41,7 +42,12 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     },
     confirmar_finalizar: {
       finalizacion_cancelada: "inactivo",
-      accion_finalizada: ({ publicar }) => publicar("accion_cambiada"),
+      accion_finalizada: ({ maquina, setEstado, publicar, payload }) =>
+        pipe(
+          publicar("accion_cambiada", payload),
+          () => maquina,
+          setEstado("inactivo")
+        ),
     },
   },
 };
