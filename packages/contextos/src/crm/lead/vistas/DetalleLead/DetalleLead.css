@@ -1,10 +1,5 @@
-.Lead .TabDatos {
-
-    quimera-select[nombre="estado_id"] {
-        grid-column: 1 / span 6;
-    }
-
-    quimera-select[nombre="fuente_id"] {
-        grid-column: span 6;
+.Lead .TabObservaciones {
+    quimera-textarea[nombre="observaciones"] {
+        grid-column: span 12;
     }
 }
