@@ -1,9 +1,11 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ArqueoTpv } from "../../diseño.ts";
-import { getArqueo, getArqueos, postArqueo } from "../../infraestructura.ts";
+import { ArqueoTpv } from "../diseño.ts";
+import { getArqueo, getArqueos, postArqueo } from "../infraestructura.ts";
 import { ContextoMaestroArqueosTpv, EstadoMaestroArqueosTpv } from "./diseño.ts";
 
 type ProcesarArqueosTpv = ProcesarContexto<EstadoMaestroArqueosTpv, ContextoMaestroArqueosTpv>;
+
+
 
 export const recargarArqueos: ProcesarArqueosTpv = async (contexto, payload) => {
 

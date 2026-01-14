@@ -4,7 +4,7 @@ import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
 import { PostVentaTpv } from "../venta/diseño.ts";
-import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchCerrarArqueo, PatchReabrirArqueo, PostArqueoTpv } from "./diseño.ts";
+import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PostArqueoTpv } from "./diseño.ts";
 
 type ArqueoTpvAPI = {
     id: string;
@@ -19,6 +19,7 @@ type ArqueoTpvAPI = {
     recuento_efectivo: number;
     recuento_tarjeta: number;
     recuento_vales: number;
+    recuento_caja: Record<string, number>;
     movimiento_cierre: number;
 
 }
@@ -38,6 +39,7 @@ export const arqueoDesdeAPI = (a: ArqueoTpvAPI): ArqueoTpv => ({
     recuentoEfectivo: a.recuento_efectivo,
     recuentoTarjeta: a.recuento_tarjeta,
     recuentoVales: a.recuento_vales,
+    recuentoCaja: a.recuento_caja,
     movimientoCierre: a.movimiento_cierre
 });
 
@@ -84,6 +86,21 @@ export const getPagosArqueo: GetPagosArqueoTpv = async (id, criteria) => {
         datos: pagosApi.datos.map(pagoDesdeAPI),
         total: pagosApi.total
     };
+}
+
+export const patchArqueo: PatchArqueo = async (arqueo: ArqueoTpv) => {
+
+    console.log('arqueo.recuentoTarjeta', arqueo.recuentoTarjeta);
+
+    await RestAPI.patch(
+        `${baseUrl}/${arqueo.id}`,
+        {
+            recuento_tarjeta: arqueo.recuentoTarjeta,
+            recuento_vales: arqueo.recuentoVales,
+            recuento_efectivo: arqueo.recuentoCaja
+        },
+        "Error al cambiar el arqueo"
+    );
 }
 
 export const patchCerrarArqueo: PatchCerrarArqueo = async (id, cierre) => {
