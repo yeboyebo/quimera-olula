@@ -27,7 +27,7 @@ export const BajaOportunidadVenta = ({
       abierto={activo}
       titulo="Confirmar borrado"
       mensaje="¿Está seguro de que desea borrar esta oportunidad de venta?"
-      onCerrar={() => emitir("oportunidad_borrada")}
+      onCerrar={() => emitir("borrado_cancelado")}
       onAceptar={borrar}
     />
   );

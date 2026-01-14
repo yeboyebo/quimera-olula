@@ -58,8 +58,10 @@ export const getPresupuestosOportunidad = async (oportunidadId: string): Promise
 
 export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente_id: string): Promise<string> => {
     const nuevoPresupuesto: Partial<NuevoPresupuesto> = {
-        cliente_id: oportunidadId,
-        direccion_id: cliente_id,
+        cliente: {
+            cliente_id: oportunidadId,
+            direccion_id: cliente_id,
+        },
         empresa_id: "1",
     };
 
