@@ -6,17 +6,17 @@ import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { ArqueoTpv } from "../../diseño.ts";
+import { CerrarArqueoTpv } from "../Cerrar/CerrarArqueoTpv.tsx";
+import { ArqueoTpv } from "../diseño.ts";
+import { moneda } from "../dominio.ts";
+import { ReabrirArqueoTpv } from "../Reabrir/ReabrirArqueoTpv.tsx";
+import { RecuentoArqueoTpv } from "../Recuento/RecuentoArqueoTpv.tsx";
 import "./ArqueoTpv.css";
-import { CerrarArqueoTpv } from "./CerrarArqueoTpv.tsx";
+import { ListaPagos } from "./comps/ListaPagos.tsx";
+import { ResumenRecuento } from "./comps/ResumenRecuento.tsx";
+import { TotalesArqueo } from "./comps/TotalesArqueo.tsx";
 import { arqueoTpvVacio, ContextoArqueoTpv, EstadoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
-import { moneda } from "./dominio.ts";
-import { ListaPagos } from "./ListaPagos.tsx";
 import { getMaquina } from "./maquina.ts";
-import { ReabrirArqueoTpv } from "./ReabrirArqueoTpv.tsx";
-import { RecuentoArqueoTpv } from "./Recuento/RecuentoArqueoTpv.tsx";
-import { ResumenRecuento } from "./ResumenRecuento.tsx";
-import { TotalesArqueo } from "./TotalesArqueo.tsx";
 
 const maquina = getMaquina();  
 
@@ -110,33 +110,6 @@ export const DetalleArqueoTpv = ({
                     
                 )}
 
-                {/* <Tabs
-                    children={[
-                    <Tab
-                        key="tab-1"
-                        label="Cliente"
-                        children={
-                        <TabCliente arqueo={arqueo} publicar={emitir} />
-                        }
-                    />,
-                    <Tab
-                        key="tab-2"
-                        label="Datos"
-                        children={<TabDatos arqueo={arqueo} />}
-                    />,
-                    <Tab
-                        key="tab-3"
-                        label="Pagos"
-                        children={
-                            <Pagos pagoActivo={pagoActivo}
-                                pagos={arqueo.modelo.pagos}
-                                estado={estado}
-                                publicar={emitir}
-                            />
-                        }
-                    />,
-                    ]}
-                ></Tabs> */}
                 {arqueo.modificado && (
                     <div className="botones maestro-botones ">
                     <QBoton onClick={guardar} deshabilitado={!arqueo.valido}>
@@ -164,12 +137,14 @@ export const DetalleArqueoTpv = ({
                 {
                     estado === "CERRANDO" &&
                     <CerrarArqueoTpv
+                        arqueo={modelo}
                         publicar={emitir}
                     />
                 }
                 {
                     estado === "REABRIENDO" &&
                     <ReabrirArqueoTpv
+                        arqueo={modelo}
                         publicar={emitir}
                     />
                 }
@@ -180,20 +155,7 @@ export const DetalleArqueoTpv = ({
                         arqueo={modelo}
                     />
                 }
-                {/*{
-                    estado === "RECONTANDO" &&
-                    <AltaPagoEfectivo
-                        publicar={emitir}
-                        arqueo={modelo}
-                    />
-                }
-                {
-                    estado === "CERRANDO" &&
-                    <AltaPagoTarjeta
-                        publicar={emitir}
-                        arqueo={modelo}
-                    />
-                } */}
+
             </div>
         )}
         </Detalle>

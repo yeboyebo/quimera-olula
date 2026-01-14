@@ -1,5 +1,4 @@
 import { Criteria, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.js";
-import { CierreArqueoTpv } from "./vistas/Detalle/diseño.ts";
 
 export interface ArqueoTpv extends Entidad {
     id: string;
@@ -25,6 +24,11 @@ export interface PagoArqueoTpv extends Entidad {
     formaPago: string;
     fecha: Date;
     codigoVenta: string;
+}
+
+export type CierreArqueoTpv = {
+    idAgenteCierre: string,
+    movimientoCierre: number
 }
 
 export type GetArqueoTpv = (id: string) => Promise<ArqueoTpv>;

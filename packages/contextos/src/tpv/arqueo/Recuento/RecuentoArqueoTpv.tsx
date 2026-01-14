@@ -31,11 +31,11 @@ export const RecuentoArqueoTpv = ({
   
     const aceptar = useCallback(
         async () => {
-        setRecontando(true);
-        await intentar(() => guardarRecuento(arqueo, modelo));
-        publicar("recuento_hecho");
-    },
-        [arqueo, intentar, modelo, publicar]
+            setRecontando(true);
+            await intentar(() => guardarRecuento(arqueo, modelo));
+            publicar("recuento_hecho");
+        },
+        [arqueo, intentar, modelo, publicar, setRecontando]
     );
 
     const cancelar = useCallback(
