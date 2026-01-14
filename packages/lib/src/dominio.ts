@@ -64,17 +64,18 @@ export type EstadoModelo<T extends Modelo> = {
 
 
 // export type Validador<T extends Modelo> = (estado: EstadoModelo<T>, campo: string) => Validacion;
-type Campo<T extends Modelo> = {
+export type MetaCampo<T extends Modelo> = {
     nombre?: string;
     tipo?: TipoInput;
     requerido?: boolean;
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
+    positivo?: boolean
 }
 export type TipoValorCampo = string | boolean | number | null;
 
 export type MetaModelo<T extends Modelo> = {
-    campos?: Record<string, Campo<T>>;
+    campos?: Record<string, MetaCampo<T>>;
     editable?: (modelo: T, campo?: string) => boolean;
     validacion?: (modelo: T) => string | boolean;
     onChange?: (modelo: T, campo: string, valorAnterior: unknown, otros?: Record<string, unknown>) => T;
@@ -110,7 +111,7 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
     }
 }
 
-const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, Campo<T>>) => {
+const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, MetaCampo<T>>) => {
     if (!campos) return valor;
     if (!(campo in campos)) return valor;
 
@@ -200,14 +201,14 @@ export const campoModeloAInput = <T extends Modelo>(
     }
 }
 
-export const validacionDefecto = (validacion: ValidacionCampo, valor: string): ValidacionCampo => {
-    const valido = !validacion.requerido || stringNoVacio(valor);
-    return {
-        ...validacion,
-        valido,
-        textoValidacion: valido ? "" : "Campo requerido",
-    }
-}
+// export const validacionDefecto = (validacion: ValidacionCampo, valor: string): ValidacionCampo => {
+//     const valido = !validacion.requerido || stringNoVacio(valor);
+//     return {
+//         ...validacion,
+//         valido,
+//         textoValidacion: valido ? "" : "Campo requerido",
+//     }
+// }
 
 
 export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo?: string) => {
@@ -245,8 +246,16 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
             return "Formato Email incorrecto";
         }
     }
+
     if (tipoCampo && ["texto", "fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
         return "Campo requerido";
+    }
+
+    if (tipoCampo === "numero" && campos[campo]?.positivo) {
+        const numero = Number(valor);
+        if (!isNaN(numero) && numero < 0) {
+            return "El número debe ser positivo";
+        }
     }
 
     const validacion = campos[campo]?.validacion

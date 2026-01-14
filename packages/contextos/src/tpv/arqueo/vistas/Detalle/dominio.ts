@@ -1,11 +1,15 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, formatearMoneda } from "@olula/lib/dominio.js";
 import { getArqueo, patchCerrarArqueo, patchReabrirArqueo } from "../../infraestructura.ts";
 import { arqueoTpvVacio, CierreArqueoTpv, ContextoArqueoTpv, EstadoArqueoTpv } from "./diseño.ts";
 
 type ProcesarArqueoTpv = ProcesarContexto<EstadoArqueoTpv, ContextoArqueoTpv>;
 
 const pipeArqueoTpv = ejecutarListaProcesos<EstadoArqueoTpv, ContextoArqueoTpv>;
+
+const idDivisa = 'EUR';
+
+export const moneda = (v: number) => formatearMoneda(v, idDivisa);
 
 export const cargarContexto: ProcesarArqueoTpv = async (contexto, payload) => {
 
@@ -37,6 +41,7 @@ const cargarArqueo: (_: string) => ProcesarArqueoTpv = (idArqueo) =>
 export const refrescarArqueo: ProcesarArqueoTpv = async (contexto) => {
 
     const arqueo = await getArqueo(contexto.arqueo.id);
+    console.log("Recyuento vales", arqueo.recuentoVales);
     return [
         {
             ...contexto,

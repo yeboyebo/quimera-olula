@@ -5,7 +5,8 @@ import {
     cargarContexto,
     cerrarArqueo,
     getContextoVacio,
-    reabrirArqueo
+    reabrirArqueo,
+    refrescarArqueo
 } from "./dominio.ts";
 
 
@@ -39,7 +40,12 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
         BORRANDO_ARQUEO: {},
 
-        RECONTANDO: {},
+        RECONTANDO: {
+
+            "recuento_cancelado": "ABIERTO",
+
+            "recuento_hecho": [refrescarArqueo, "ABIERTO"],
+        },
 
         CERRANDO: {
 

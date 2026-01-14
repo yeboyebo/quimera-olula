@@ -14,6 +14,7 @@ export interface ArqueoTpv extends Entidad {
     recuentoEfectivo: number;
     recuentoTarjeta: number;
     recuentoVales: number;
+    recuentoCaja: Record<string, number>;
     movimientoCierre: number;
 
 }
@@ -31,6 +32,8 @@ export type GetArqueoTpv = (id: string) => Promise<ArqueoTpv>;
 export type GetArqueosTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<ArqueoTpv>;
 
 export type GetPagosArqueoTpv = (id: string, criteria: Criteria) => RespuestaLista<PagoArqueoTpv>;
+
+export type PatchArqueo = (arqueo: ArqueoTpv) => Promise<void>;
 
 export type PatchCerrarArqueo = (id: string, cierre: CierreArqueoTpv) => Promise<void>;
 

@@ -10,9 +10,12 @@ import { ArqueoTpv } from "../../diseño.ts";
 import "./ArqueoTpv.css";
 import { CerrarArqueoTpv } from "./CerrarArqueoTpv.tsx";
 import { arqueoTpvVacio, ContextoArqueoTpv, EstadoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
+import { moneda } from "./dominio.ts";
 import { ListaPagos } from "./ListaPagos.tsx";
 import { getMaquina } from "./maquina.ts";
 import { ReabrirArqueoTpv } from "./ReabrirArqueoTpv.tsx";
+import { RecuentoArqueoTpv } from "./Recuento/RecuentoArqueoTpv.tsx";
+import { ResumenRecuento } from "./ResumenRecuento.tsx";
 import { TotalesArqueo } from "./TotalesArqueo.tsx";
 
 const maquina = getMaquina();  
@@ -30,7 +33,6 @@ export const DetalleArqueoTpv = ({
     const [arqueoIdAnterior, setArqueoIdAnterior] = useState<string | null>(null);
 
     const [estado, setEstado] = useState<EstadoArqueoTpv>("INICIAL");
-    // const [pagoActivo, setPagoActivo] = useState<PagoArqueoTpv | null>(null);
 
     const arqueoId = arqueoInicial?.id ?? params.id;
     const titulo = (arqueo: Entidad) => `Arqueo ${arqueo.id} estado: ${estado}`; 
@@ -45,13 +47,11 @@ export const DetalleArqueoTpv = ({
                 estado: inicial ? 'INICIAL' : estado,
                 arqueo: arqueo.modelo,
                 arqueoInicial: arqueo.modeloInicial,
-                // pagoActivo,
             }
             const [nuevoContexto, eventos] = await intentar(
                 () => procesarEvento(maquina, contexto, evento, payload)
             );
             setEstado(nuevoContexto.estado);
-            // setPagoActivo(nuevoContexto.pagoActivo);
             if (nuevoContexto.arqueo !== arqueo.modelo) {
                 init(nuevoContexto.arqueo);
             }
@@ -67,12 +67,6 @@ export const DetalleArqueoTpv = ({
     const cancelar = () => {
         emitir("edicion_de_arqueo_cancelada");
     };
-
-    // useEffect(() => {
-    //     if (arqueoId && arqueoId !== arqueo.modelo.id) {
-    //         emitir("id_arqueo_cambiado", arqueoId, true);
-    //     }
-    // }, [arqueoId, emitir, arqueo.modelo.id]);
 
     useEffect(() => {
         if (arqueoId && arqueoId !== arqueoIdAnterior) {
@@ -94,11 +88,14 @@ export const DetalleArqueoTpv = ({
             <div className="DetalleArqueo">
                 { estado === "ABIERTO" && (
                     <div className="botones maestro-botones ">
-                        <QBoton onClick={() => emitir("borrar_solicitado")}>
-                            Borrar
+                        <QBoton onClick={() => emitir("recuento_solicitado")}>
+                            Recuento de caja
                         </QBoton> 
                         <QBoton onClick={() => emitir("cierre_solicitado")}>
                             Cerrar
+                        </QBoton> 
+                        <QBoton onClick={() => emitir("borrar_solicitado")}>
+                            Borrar
                         </QBoton> 
                     </div>
                     
@@ -112,6 +109,7 @@ export const DetalleArqueoTpv = ({
                     </div>
                     
                 )}
+
                 {/* <Tabs
                     children={[
                     <Tab
@@ -150,9 +148,15 @@ export const DetalleArqueoTpv = ({
                     </div>
                 )}
 
+                <ResumenRecuento
+                    arqueo={modelo}
+                />
+                {`Diferencias Efectivo: ${moneda(modelo.recuentoEfectivo - modelo.pagosEfectivo)}  -  `}
+                {`Diferencias Tarjeta: ${moneda(modelo.recuentoTarjeta - modelo.pagosTarjeta)}  -  `}
+                {`Diferencias Vale: ${moneda(modelo.recuentoVales - modelo.pagosVale)}`}
                 <TotalesArqueo
                     arqueo={modelo}
-                />  
+                />
                 <ListaPagos
                     arqueoId={modelo.id}
                 /> 
@@ -167,6 +171,13 @@ export const DetalleArqueoTpv = ({
                     estado === "REABRIENDO" &&
                     <ReabrirArqueoTpv
                         publicar={emitir}
+                    />
+                }
+                {
+                    estado === "RECONTANDO" &&
+                    <RecuentoArqueoTpv
+                        publicar={emitir}
+                        arqueo={modelo}
                     />
                 }
                 {/*{
