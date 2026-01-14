@@ -1,6 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
+import { QCheckbox } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
@@ -30,8 +31,8 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
   estados: {
     Edicion: {
       borrar: "Borrando",
-      estado_oportunidad_guardado: ({ publicar }) =>
-        publicar("estado_oportunidad_cambiado"),
+      estado_oportunidad_guardado: ({ publicar, payload }) =>
+        publicar("estado_oportunidad_cambiado", payload),
       cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
     },
     Borrando: {
@@ -96,7 +97,7 @@ export const DetalleEstadoOportunidad = ({
                 label="Probabilidad (%)"
                 {...estadoOportunidad.uiProps("probabilidad")}
               />
-              <QInput
+              <QCheckbox
                 label="Valor por defecto"
                 {...estadoOportunidad.uiProps("valor_defecto")}
               />
@@ -115,7 +116,7 @@ export const DetalleEstadoOportunidad = ({
         </>
       )}
       <BorrarEstadoOportunidad
-        publicar={publicar}
+        publicar={emitir}
         activo={estado === "Borrando"}
         EstadoOportunidad={modelo}
       />

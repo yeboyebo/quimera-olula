@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { QCheckbox } from "@olula/componentes/index.js";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
@@ -55,7 +56,7 @@ export const AltaEstadoOportunidad = ({
             label="Probabilidad (%)"
             {...estadoOportunidad.uiProps("probabilidad")}
           />
-          <QInput
+          <QCheckbox
             label="Valor por Defecto"
             {...estadoOportunidad.uiProps("valor_defecto")}
           />

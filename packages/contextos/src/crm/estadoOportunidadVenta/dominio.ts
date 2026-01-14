@@ -42,5 +42,5 @@ export const metaTablaEstadoOportunidad: MetaTabla<EstadoOportunidad> = [
     { id: "id", cabecera: "Código" },
     { id: "descripcion", cabecera: "Descripción" },
     { id: "probabilidad", cabecera: "Probabilidad", tipo: "numero" },
-    { id: "valor_defecto", cabecera: "Por defecto" },
+    { id: "valor_defecto", cabecera: "Por defecto", tipo: "booleano" },
 ];

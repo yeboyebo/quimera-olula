@@ -8,9 +8,7 @@
         grid-column: span 6;
     }
 
-    quimera-input[nombre="valor_defecto"] {
+    quimera-checkbox[nombre="valor_defecto"] {
         grid-column: 1 / span 6;
     }
-
-
 }
