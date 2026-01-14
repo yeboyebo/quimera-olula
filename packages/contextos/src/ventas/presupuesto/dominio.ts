@@ -177,7 +177,7 @@ export const cambiarPresupuesto: ProcesarPresupuesto = async (contexto, payload)
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
-        // refrescarLineas,
+        refrescarLineas,
         'ABIERTO',
     ]);
 }

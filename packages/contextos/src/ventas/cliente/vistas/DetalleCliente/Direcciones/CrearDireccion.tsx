@@ -2,10 +2,8 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { metaNuevaDireccion, nuevaDireccionVacia } from "../../../dominio.ts";
-import { getDireccion, postDireccion } from "../../../infraestructura.ts";
 
 export const AltaDireccion = ({
-  clienteId,
   emitir,
 }: {
   clienteId: string;
@@ -17,9 +15,7 @@ export const AltaDireccion = ({
   );
 
   const guardar = async () => {
-    const id = await postDireccion(clienteId, modelo);
-    const direccionCreada = await getDireccion(clienteId, id);
-    emitir("direccion_creada", direccionCreada);
+    emitir("crear_direccion", modelo);
   };
 
   return (

@@ -1,4 +1,5 @@
 import { Maquina } from "@olula/lib/diseño.js";
+import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
 import {
     activarDireccion,
     actualizarDireccion,
@@ -7,9 +8,9 @@ import {
     cancelarConfirmacion,
     cancelarEdicion,
     cargarDirecciones,
+    crearDireccion,
     marcarDireccionFacturacion,
 } from "./dominio.ts";
-import { ContextoDirecciones, EstadoDirecciones } from "./tipos.ts";
 
 export const getMaquina: () => Maquina<EstadoDirecciones, ContextoDirecciones> = () => {
 
@@ -30,13 +31,13 @@ export const getMaquina: () => Maquina<EstadoDirecciones, ContextoDirecciones> =
         },
 
         alta: {
-            direccion_creada: [cargarDirecciones, "lista"],
+            crear_direccion: [crearDireccion, "lista"],
 
             alta_cancelada: cancelarAlta,
         },
 
         edicion: {
-            direccion_actualizada: [actualizarDireccion, "lista"],
+            actualizar_direccion: [actualizarDireccion, "lista"],
 
             edicion_cancelada: cancelarEdicion,
         },

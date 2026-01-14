@@ -52,6 +52,8 @@ export const DetalleCliente = ({
     setConfirmacionEstado(false);
   }, [emitir]);
 
+  console.log("Renderizando DetalleCliente", cliente.modelo.id);
+
   return (
     <div className="DetalleCliente">
       <Detalle
@@ -91,27 +93,19 @@ export const DetalleCliente = ({
                 <Tab
                   key="tab-3"
                   label="Direcciones"
-                  children={<TabDirecciones clienteId={modelo.id} />}
+                  children={<TabDirecciones clienteId={cliente.modelo.id} />}
                 />,
                 <Tab
                   key="tab-4"
                   label="Cuentas Bancarias"
-                  children={
-                    <TabCuentasBanco
-                      cliente={cliente}
-                      emitirCliente={publicar}
-                      recargarCliente={() =>
-                        emitir("cliente_id_cambiado", modelo.id)
-                      }
-                    />
-                  }
+                  children={<TabCuentasBanco clienteId={cliente.modelo.id} />}
                 />,
                 <Tab
                   key="tab-5"
                   label="Agenda"
                   children={
                     <div className="detalle-cliente-tab-contenido">
-                      <TabCrmContactos clienteId={modelo.id} />
+                      <TabCrmContactos clienteId={cliente.modelo.id} />
                     </div>
                   }
                 />,

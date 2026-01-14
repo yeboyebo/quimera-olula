@@ -1,11 +1,8 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
 import { CrmContacto } from "../../../diseño.ts";
 import { metaCrmContacto } from "../../../dominio.ts";
-import { patchCrmContacto } from "../../../infraestructura.ts";
 
 interface EdicionCrmContactosProps {
   contacto: CrmContacto;
@@ -17,11 +14,9 @@ export const EdicionCrmContactos = ({
   emitir,
 }: EdicionCrmContactosProps) => {
   const { modelo, uiProps, valido } = useModelo(metaCrmContacto, contacto);
-  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    await intentar(() => patchCrmContacto(modelo));
-    emitir("contacto_actualizado", modelo);
+    emitir("actualizar_contacto", modelo);
   };
 
   return (

@@ -10,15 +10,13 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
 
   return (
     <div className="TabDirecciones">
-      {estado === "lista" && (
-        <TabDireccionesLista
-          clienteId={clienteId}
-          direcciones={ctx.direcciones}
-          seleccionada={ctx.direccionActiva}
-          emitir={emitir}
-          cargando={ctx.cargando}
-        />
-      )}
+      <TabDireccionesLista
+        clienteId={clienteId}
+        direcciones={ctx.direcciones}
+        seleccionada={ctx.direccionActiva}
+        emitir={emitir}
+        cargando={ctx.cargando}
+      />
 
       <QModal
         nombre="crearDireccion"

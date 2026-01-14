@@ -2,34 +2,39 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ContextoDirecciones } from "./diseño.ts";
+import { ContextoCuentasBanco } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
-interface UseDireccionesOptions {
+interface UseCuentasBancoOptions {
     clienteId: string;
     publicar?: EmitirEvento;
 }
 
-export const useDirecciones = (options: UseDireccionesOptions) => {
+export const useCuentasBanco = (options: UseCuentasBancoOptions) => {
     const { clienteId, publicar } = options;
     const { intentar } = useContext(ContextoError);
     const maquina = getMaquina();
 
-    const [ctx, setCtx] = useState<ContextoDirecciones>({
+    const [ctx, setCtx] = useState<ContextoCuentasBanco>({
         estado: "lista",
-        direcciones: [],
-        direccionActiva: null,
+        cuentas: [],
+        cuentaActiva: null,
         cargando: true,
         clienteId,
     });
 
+    const ctxRef = useRef<ContextoCuentasBanco>(ctx);
     const clienteIdRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        ctxRef.current = ctx;
+    }, [ctx]);
 
     const emitir = useCallback(
         async (evento: string, payload?: unknown, inicial: boolean = false): Promise<EventoMaquina[]> => {
-            const contexto: ContextoDirecciones = {
-                ...ctx,
-                estado: inicial ? "lista" : ctx.estado,
+            const contexto: ContextoCuentasBanco = {
+                ...ctxRef.current,
+                estado: inicial ? "lista" : ctxRef.current.estado,
                 clienteId,
             };
 
@@ -45,13 +50,15 @@ export const useDirecciones = (options: UseDireccionesOptions) => {
 
             return eventos;
         },
-        [ctx, maquina, intentar, publicar, clienteId]
+        [maquina, intentar, publicar, clienteId]
     );
 
     useEffect(() => {
+        console.log("useCuentasBanco - useEffect clienteId", clienteId, clienteIdRef.current);
         if (clienteId && clienteId !== clienteIdRef.current) {
+            console.log("useCuentasBanco - emitir cargar_cuentas");
             clienteIdRef.current = clienteId;
-            emitir("cargar_direcciones", clienteId, true);
+            emitir("cargar_cuentas", clienteId, true);
         }
     }, [clienteId, emitir]);
 
