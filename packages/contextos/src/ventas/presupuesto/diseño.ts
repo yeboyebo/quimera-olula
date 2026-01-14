@@ -64,9 +64,13 @@ export interface PresupuestoAPI {
 }
 
 export type NuevoPresupuesto = {
+  cliente: NuevoPresupuestoClienteRegistrado | NuevoPresupuestoClienteNoRegistrado;
+  empresa_id: string;
+}
+
+export type NuevoPresupuestoClienteRegistrado = {
   cliente_id: string;
   direccion_id: string;
-  empresa_id: string;
 };
 
 export type NuevoPresupuestoClienteNoRegistrado = {
