@@ -10,7 +10,7 @@ import {
   QTitleBox,
   Typography,
 } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 function LineaInventario({ callbackGuardada, disabled, lineaInicial, useStyles }) {
@@ -41,7 +41,7 @@ function LineaInventario({ callbackGuardada, disabled, lineaInicial, useStyles }
         </Box>
       )}
       <Collapse in={linea.buffer?._status !== "deleting"}>
-        <Grid container spacing={0}>
+        <Grid container spacing={0} direction="column">
           <Grid item xs={12}>
             <Box display="flex" justifyContent="right" mt={1}>
               {!disabled && (
@@ -70,7 +70,7 @@ function LineaInventario({ callbackGuardada, disabled, lineaInicial, useStyles }
               actionPrefix="linea/cantidad"
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer/cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>

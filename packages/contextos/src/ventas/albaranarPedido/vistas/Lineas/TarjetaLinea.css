@@ -21,6 +21,10 @@
         }
 
         &.modificada {
+            color: var(--color-advertencia);
+        }
+
+        &.cerrada {
             color: var(--color-advertencia-oscuro);
         }
     }

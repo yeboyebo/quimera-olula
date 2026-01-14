@@ -1,38 +1,28 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { ContextoError } from "@olula/lib/contexto.js";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useContext } from "react";
 import { LineaPresupuesto as Linea } from "../../../diseño.ts";
-import { patchCantidadLinea } from "../../../infraestructura.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
-  emitir,
-  idPresupuesto,
-  refrescarCabecera,
+  publicar,
+  onCambioCantidad,
+  presupuestoEditable,
 }: {
   lineas: Linea[];
   seleccionada?: string;
-  emitir: EmitirEvento;
-  idPresupuesto: string;
-  refrescarCabecera: () => void;
+  publicar: (evento: string, payload?: unknown) => void;
+  onCambioCantidad?: (linea: Linea, cantidad: number) => void;
+  presupuestoEditable?: boolean;
 }) => {
-  const { intentar } = useContext(ContextoError);
-  const cambiarCantidad = async (linea: Linea, cantidad: number) => {
-    await intentar(() => patchCantidadLinea(idPresupuesto, linea, cantidad));
-    refrescarCabecera();
-  };
-
   const setSeleccionada = (linea: Linea) => {
-    emitir("linea_seleccionada", linea);
+    publicar("linea_seleccionada", linea);
   };
 
   return (
     <>
       <QTabla
-        metaTabla={getMetaTablaLineas(cambiarCantidad)}
+        metaTabla={getMetaTablaLineas(onCambioCantidad, presupuestoEditable)}
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
@@ -45,7 +35,8 @@ export const LineasLista = ({
 };
 
 const getMetaTablaLineas = (
-  cambiarCantidad: (linea: Linea, cantidad: number) => void
+  onCambioCantidad?: (linea: Linea, cantidad: number) => void,
+  presupuestoEditable?: boolean
 ) => {
   return [
     {
@@ -56,21 +47,34 @@ const getMetaTablaLineas = (
     {
       id: "cantidad",
       cabecera: "Cantidad",
-      render: (linea: Linea) => (
-        <EditarCantidadLinea
-          linea={linea}
-          onCantidadEditada={cambiarCantidad}
-        />
-      ),
+      render: (linea: Linea) =>
+        presupuestoEditable && onCambioCantidad ? (
+          <EditarCantidadLinea
+            linea={linea}
+            onCantidadEditada={onCambioCantidad}
+          />
+        ) : (
+          <span>{linea.cantidad}</span>
+        ),
     },
-    { id: "pvp_unitario", cabecera: "Precio" },
-    { id: "grupo_iva_producto_id", cabecera: "IVA" },
+    {
+      id: "pvp_unitario",
+      cabecera: "Precio",
+    },
+    {
+      id: "grupo_iva_producto_id",
+      cabecera: "IVA",
+    },
     {
       id: "dto_porcentual",
       cabecera: "% Dto.",
       render: (linea: Linea) =>
         linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
     },
-    { id: "pvp_total", cabecera: "Total" },
+    {
+      id: "pvp_total",
+      cabecera: "Total",
+      tipo: "moneda" as const,
+    },
   ];
 };

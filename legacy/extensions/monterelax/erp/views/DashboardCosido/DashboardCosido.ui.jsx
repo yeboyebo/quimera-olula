@@ -1,7 +1,7 @@
 import { Backdrop, Box, CircularProgress, Paper } from "@quimera/comps";
 import { Grid, Hidden } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 function DashboardCosido({ tipo, useStyles }) {
   const [{ cargandoDatos, mediaPiezas, totalPiezas }, dispatch] = useStateValue();
@@ -39,7 +39,7 @@ function DashboardCosido({ tipo, useStyles }) {
             </Paper>
           </Box>
         </Hidden>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} direction="column" >
           <Grid item xs={6} sm={6} md={4}>
             <Box component="div" className={classes.mediaContainer}>
               <div className={classes.mediaContainerTitle}>Media UP Cosidas</div>

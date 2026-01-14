@@ -14,7 +14,7 @@ export const DetalleAlbaranarPedido = () => {
   const titulo = (pedido: Entidad) =>
     `${pedido.nombre_cliente} ${pedido.codigo as string}`;
 
-  const pedido = useModelo(metaPedido, pedidoVacio);
+  const pedido = useModelo(metaPedido, pedidoVacio());
   const { modelo, init } = pedido;
 
   return (

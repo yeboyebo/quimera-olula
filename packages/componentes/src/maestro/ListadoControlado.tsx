@@ -3,7 +3,7 @@ import {
     Entidad
 } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MetaTabla } from "../atomos/qtabla.tsx";
 import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
@@ -14,50 +14,53 @@ import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltrosControlado } from "./maestroFiltros/MaestroFiltrosControlado.tsx";
 
 const datosCargando = <T extends Entidad>() =>
-  new Array(10).fill(null).map(
-    (_, i) =>
-      ({
-        id: i.toString(),
-        ...Object.fromEntries(
-          new Array(10).fill(null).map((_, j) => [j, "U00A0"])
-        ),
-      } as T)
-  );
+    new Array(10).fill(null).map(
+        (_, i) =>
+            ({
+                id: i.toString(),
+                ...Object.fromEntries(
+                    new Array(10).fill(null).map((_, j) => [j, "U00A0"])
+                )
+            } as T)
+    );
 
 const obtenerCampos = (entidad: Entidad | null): string[] => {
-  if (!entidad) return [];
-  return expandirEntidad(entidad).map(([clave]) => clave);
+    if (!entidad) return [];
+    return expandirEntidad(entidad).map(([clave]) => clave);
 };
 
 type Modo = "tabla" | "tarjetas";
 
 type MaestroProps<T extends Entidad> = {
-  metaTabla?: MetaTabla<T>;
-  metaFiltro?: boolean;
-  tarjeta?: (entidad: T) => React.ReactNode;
-  criteriaInicial: Criteria;
-  entidades: T[];
-  totalEntidades: number;
-  seleccionada: T | null;
-  onSeleccion: (seleccionada: T) => void;
-  modo?: Modo;
-  onCriteriaChanged: (criteria: Criteria) => void;
+    metaTabla?: MetaTabla<T>;
+    metaFiltro?: boolean;
+    cargando?: boolean;
+    tarjeta?: (entidad: T) => React.ReactNode;
+    idReiniciarCriteria?: string
+    criteriaInicial: Criteria;
+    entidades: T[];
+    totalEntidades: number;
+    seleccionada: T | null;
+    onSeleccion: (seleccionada: T) => void;
+    modo?: Modo;
+    onCriteriaChanged: (criteria: Criteria) => void;
 };
 
 export const ListadoControlado = <T extends Entidad>({
-  metaTabla,
-  metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
-  criteriaInicial = criteriaDefecto,
-  tarjeta,
-  entidades,
-  totalEntidades,
-  seleccionada,
-  onSeleccion,
-  modo = "tabla",
-  onCriteriaChanged,
+    metaTabla,
+    metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
+    cargando = false,
+    idReiniciarCriteria,
+    criteriaInicial = criteriaDefecto,
+    tarjeta,
+    entidades,
+    totalEntidades,
+    seleccionada,
+    onSeleccion,
+    modo = "tabla",
+    onCriteriaChanged,
 }: MaestroProps<T>) => {
 
-    const cargando = false;
 
     const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
 
@@ -71,7 +74,7 @@ export const ListadoControlado = <T extends Entidad>({
 
 
     const entidadesFiltradas = entidades.filter((entidad) =>
-        filtrarEntidad(entidad, criteria.filtros)
+        filtrarEntidad(entidad, criteria.filtro)
     );
 
     const renderEntidades = () => {
@@ -130,6 +133,12 @@ export const ListadoControlado = <T extends Entidad>({
         return null;
     };
 
+    useEffect(() => {
+        if (idReiniciarCriteria) {
+            setCriteria(criteriaInicial);
+        }
+    }, [idReiniciarCriteria, criteriaInicial, setCriteria]);
+
     return (
         <div className="Listado">
         {/* {tarjeta && metaTabla && (
@@ -147,12 +156,12 @@ export const ListadoControlado = <T extends Entidad>({
         {metaFiltro && (
             <MaestroFiltrosControlado
                 campos={obtenerCampos(entidades[0])}
-                filtro={criteria.filtros}
-                filtroInicial={criteriaInicial.filtros}
+                filtro={criteria.filtro}
+                filtroInicial={criteriaInicial.filtro}
                 onFiltroChanged={(filtro) => {
                     cambiarCriteria({
                         ...criteria,
-                        filtros: filtro,
+                        filtro,
                     });
                 }}
             />

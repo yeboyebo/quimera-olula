@@ -27,9 +27,11 @@ export const Vista = ({ children }: PropsWithChildren<object>) => {
       return result;
     } catch (error) {
       const apiError = error as QError;
+      const errorJS = error as Error;
+      console.log("apiError", apiError);
       setError({
-        nombre: apiError.nombre,
-        descripcion: apiError.descripcion,
+        nombre: apiError.nombre ?? 'Error',
+        descripcion: apiError.descripcion ?? errorJS.message,
       });
       throw error;
     }

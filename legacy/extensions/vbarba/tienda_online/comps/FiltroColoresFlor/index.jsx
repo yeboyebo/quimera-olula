@@ -2,7 +2,6 @@ import { Avatar, Grid, Icon, IconButton, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { util } from "quimera";
 import { useFilterValue } from "quimera/hooks";
-import React from "react";
 import { QExpandButton } from "../";
 
 const useStyles = makeStyles(theme => ({
@@ -82,7 +81,7 @@ function FiltroColoresFlor({ id, label, operator, options, selected = false }) {
     }
 
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={1} direction="column" >
         {selected}
       </Grid>
     );
@@ -93,7 +92,7 @@ function FiltroColoresFlor({ id, label, operator, options, selected = false }) {
       titulo={util.translate(label)}
       className={classes.cajaAvatares}
       repose={renderSeleccionados}>
-      <Grid container spacing={1}>
+      <Grid container spacing={1} direction="column" >
         {options.map(option => (
           <Grid item key={option.value}>
             <Avatar

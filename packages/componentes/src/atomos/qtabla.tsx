@@ -1,9 +1,9 @@
 import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
   calcularPaginacionSimplificada,
-  formatearFecha,
-  formatearHora,
-  formatearMoneda,
+  formatearFechaString,
+  formatearHoraString,
+  formatearMoneda
 } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
 import { QBoton } from "./qboton.tsx";
@@ -18,10 +18,11 @@ type MetaColumna<T extends Entidad> = {
     | "moneda"
     | "fecha"
     | "hora"
+    | "fechahora"
     | "booleano"
     | undefined;
   divisa?: string;
-  ancho?: string; // Ancho específico para esta columna
+  ancho?: string;
   render?: (entidad: T) => string | ReactNode;
 };
 
@@ -64,9 +65,9 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     if (tipo === "moneda" && typeof datos === "number") {
       datos = formatearMoneda(datos, divisa ?? "EUR");
     } else if (tipo === "fecha" && typeof datos === "string") {
-      datos = formatearFecha(datos);
+      datos = formatearFechaString(datos);
     } else if (tipo === "hora" && typeof datos === "string") {
-      datos = formatearHora(datos);
+      datos = formatearHoraString(datos);
     } else if (tipo === "numero" && typeof datos === "number") {
       datos = datos.toLocaleString();
     } else if (tipo === "booleano" && typeof datos === "boolean") {
