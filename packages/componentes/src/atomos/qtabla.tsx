@@ -69,6 +69,8 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
       datos = formatearHora(datos);
     } else if (tipo === "numero" && typeof datos === "number") {
       datos = datos.toLocaleString();
+    } else if (tipo === "booleano" && typeof datos === "boolean") {
+      datos = datos ? "Sí" : "No";
     }
 
     return (
