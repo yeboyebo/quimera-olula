@@ -251,7 +251,6 @@ export const cancelarCambioCliente: ProcesarCliente = async (contexto) => {
 }
 
 export const abiertoContexto: ProcesarCliente = async (contexto) => {
-    console.log("Abierto contexto cliente");
     return {
         ...contexto,
         estado: "ABIERTO"
@@ -268,7 +267,6 @@ export const getContextoVacio: ProcesarCliente = async (contexto) => {
 }
 
 export const cargarContexto: ProcesarCliente = async (contexto, payload) => {
-    console.log("Cargando contexto cliente", payload);
     const idCliente = payload as string;
     if (idCliente) {
         return pipeCliente(

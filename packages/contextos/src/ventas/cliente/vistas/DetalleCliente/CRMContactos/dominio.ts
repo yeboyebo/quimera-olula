@@ -60,6 +60,7 @@ export const borrarContacto: ProcesarCrmContactos = async (contexto) => {
 
     return pipeCrmContactos(contexto, [
         cargarCrmContactos,
+        'lista'
     ]);
 }
 

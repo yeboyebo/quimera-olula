@@ -24,7 +24,6 @@ export const cargarDirecciones: ProcesarDirecciones = async (contexto) => {
 }
 
 export const activarDireccion: ProcesarDirecciones = async (contexto, payload) => {
-    console.log("Activando direccion con payload:", payload);
     const direccionActiva = payload as DirCliente;
     return {
         ...contexto,
@@ -47,6 +46,7 @@ export const actualizarDireccion: ProcesarDirecciones = async (contexto, payload
 
     return pipeDirecciones(contexto, [
         cargarDirecciones,
+        'lista'
     ]);
 }
 
@@ -58,6 +58,7 @@ export const borrarDireccion: ProcesarDirecciones = async (contexto, _payload) =
 
     return pipeDirecciones(contexto, [
         cargarDirecciones,
+        'lista'
     ]);
 }
 

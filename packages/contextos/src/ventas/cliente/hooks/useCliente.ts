@@ -38,7 +38,6 @@ export const useCliente = (options: UseClienteOptions = {}) => {
             const [nuevoContexto, eventos] = await intentar(() =>
                 procesarEvento(maquina, contexto, evento, payload)
             );
-
             setEstado(nuevoContexto.estado);
 
             if (nuevoContexto.cliente !== modelo.modelo) {

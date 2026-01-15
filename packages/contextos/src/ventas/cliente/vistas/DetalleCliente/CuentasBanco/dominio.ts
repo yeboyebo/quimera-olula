@@ -58,6 +58,7 @@ export const borrarCuenta: ProcesarCuentasBanco = async (contexto) => {
 
     return pipeCuentasBanco(contexto, [
         cargarCuentasBanco,
+        'lista'
     ]);
 }
 

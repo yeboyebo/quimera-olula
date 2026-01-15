@@ -4,22 +4,18 @@ import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { DirCliente } from "../../../diseño.ts";
 import { metaDireccion } from "../../../dominio.ts";
-import { actualizarDireccion } from "../../../infraestructura.ts";
 
 export const EdicionDireccion = ({
-  clienteId,
   direccion,
   emitir,
 }: {
-  clienteId: string;
   direccion: DirCliente;
   emitir: (evento: string, payload?: unknown) => void;
 }) => {
   const direccionEditada = useModelo(metaDireccion, direccion);
 
   const guardar = async () => {
-    await actualizarDireccion(clienteId, direccionEditada.modelo);
-    emitir("direccion_actualizada", direccionEditada.modelo);
+    emitir("actualizar_direccion", direccionEditada.modelo);
   };
 
   const opciones = [

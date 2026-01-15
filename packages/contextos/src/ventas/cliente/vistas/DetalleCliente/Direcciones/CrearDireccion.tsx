@@ -6,7 +6,6 @@ import { metaNuevaDireccion, nuevaDireccionVacia } from "../../../dominio.ts";
 export const AltaDireccion = ({
   emitir,
 }: {
-  clienteId: string;
   emitir: (evento: string, payload?: unknown) => void;
 }) => {
   const { modelo, uiProps, valido } = useModelo(

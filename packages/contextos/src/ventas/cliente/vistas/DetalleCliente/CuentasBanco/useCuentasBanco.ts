@@ -54,9 +54,7 @@ export const useCuentasBanco = (options: UseCuentasBancoOptions) => {
     );
 
     useEffect(() => {
-        console.log("useCuentasBanco - useEffect clienteId", clienteId, clienteIdRef.current);
         if (clienteId && clienteId !== clienteIdRef.current) {
-            console.log("useCuentasBanco - emitir cargar_cuentas");
             clienteIdRef.current = clienteId;
             emitir("cargar_cuentas", clienteId, true);
         }

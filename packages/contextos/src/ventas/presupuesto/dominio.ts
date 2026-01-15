@@ -101,7 +101,6 @@ export const abiertoOAprobadoContexto: ProcesarPresupuesto = async (contexto) =>
 }
 
 export const refrescarLineas: ProcesarPresupuesto = async (contexto) => {
-    console.log("Refrescando líneas del presupuesto");
     const lineas = await getLineas(contexto.presupuesto.id);
     return {
         ...contexto,
@@ -276,7 +275,6 @@ export const borrarLinea: ProcesarPresupuesto = async (contexto, payload) => {
 // Para el maestro
 
 export const cambiarPresupuestoEnLista: ProcesarPresupuestos = async (contexto, payload) => {
-    console.log("Cambiando presupuesto en la lista");
     const presupuesto = payload as Presupuesto;
     return {
         ...contexto,

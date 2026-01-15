@@ -19,7 +19,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
     {
       icono: "eliminar",
       texto: "Borrar",
-      onClick: () => emitir("confirmar_borrado  "),
+      onClick: () => emitir("borrado_solicitado"),
       deshabilitado: !ctx.cuentaActiva,
     },
     {
@@ -53,7 +53,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <AltaCuentaBanco clienteId={clienteId} emitir={emitir} />
+        <AltaCuentaBanco emitir={emitir} />
       </QModal>
 
       <QModal

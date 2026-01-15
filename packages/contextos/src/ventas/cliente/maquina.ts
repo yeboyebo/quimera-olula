@@ -43,6 +43,8 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
             confirmar_baja_solicitado: "CONFIRMANDO_BAJA",
 
             borrar_solicitado: "BORRANDO_CLIENTE",
+
+            baja_cancelada: "ABIERTO",
         },
 
         CONFIRMANDO_BAJA: {

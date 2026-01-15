@@ -15,7 +15,7 @@ interface BajaClienteProps {
   emitirCliente: EmitirEvento;
 }
 
-export const BajaCliente = ({ cliente, emitirCliente }: BajaClienteProps) => {
+export const BajaCliente = ({ emitirCliente }: BajaClienteProps) => {
   const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: "" });
 
   const { modelo, valido, uiProps } = bajaCliente;

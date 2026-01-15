@@ -25,7 +25,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     {
       icono: "eliminar",
       texto: "Borrar",
-      onClick: () => emitir("confirmar_borrado"),
+      onClick: () => emitir("borrado_solicitado"),
       deshabilitado: !ctx.contactoActivo,
     },
     {
@@ -46,7 +46,6 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
           <QuimeraAcciones acciones={acciones} vertical />
         </div>
         <TabCrmContactosLista
-          clienteId={clienteId}
           contactos={ctx.contactos}
           seleccionado={ctx.contactoActivo}
           emitir={emitir}

@@ -29,9 +29,9 @@ export const DetalleCliente = ({
     publicar,
   });
 
-  const { modelo, modificado, valido, emitir } = cliente;
+  const { modelo, modificado, valido, emitir, estado } = cliente;
 
-  const titulo = (cliente: Cliente) => cliente.nombre as string;
+  const titulo = (cliente: Cliente) => (cliente.nombre as string) + estado;
 
   const [confirmacionEstado, setConfirmacionEstado] = useState<boolean>(false);
 
@@ -74,7 +74,7 @@ export const DetalleCliente = ({
                   children={
                     <TabGeneral
                       cliente={cliente}
-                      emitirCliente={publicar}
+                      emitirCliente={emitir}
                       recargarCliente={() =>
                         emitir("cliente_id_cambiado", modelo.id)
                       }
@@ -85,7 +85,7 @@ export const DetalleCliente = ({
                   key="tab-2"
                   label="Comercial"
                   children={
-                    <TabComercial cliente={cliente} emitirCliente={publicar} />
+                    <TabComercial cliente={cliente} emitirCliente={emitir} />
                   }
                 />,
                 <Tab

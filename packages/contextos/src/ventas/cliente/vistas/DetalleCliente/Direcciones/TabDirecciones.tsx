@@ -23,7 +23,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <AltaDireccion clienteId={clienteId} emitir={emitir} />
+        <AltaDireccion emitir={emitir} />
       </QModal>
 
       <QModal
@@ -32,11 +32,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         onCerrar={() => emitir("edicion_cancelada")}
       >
         {ctx.direccionActiva && (
-          <EdicionDireccion
-            clienteId={clienteId}
-            direccion={ctx.direccionActiva}
-            emitir={emitir}
-          />
+          <EdicionDireccion direccion={ctx.direccionActiva} emitir={emitir} />
         )}
       </QModal>
 

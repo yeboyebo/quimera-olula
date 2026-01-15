@@ -28,7 +28,7 @@ export const getMaquina: () => Maquina<EstadoCrmContactos, ContextoCrmContactos>
 
             contacto_seleccionado: activarContacto,
 
-            confirmar_borrado: "confirmar_borrado",
+            borrado_solicitado: "confirmar_borrado",
 
             eliminar_asociacion: "confirmar_eliminar_asociacion",
 
