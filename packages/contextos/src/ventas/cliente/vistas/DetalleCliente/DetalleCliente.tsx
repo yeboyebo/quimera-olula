@@ -29,9 +29,9 @@ export const DetalleCliente = ({
     publicar,
   });
 
-  const { modelo, modificado, valido, emitir, estado } = cliente;
+  const { modelo, modificado, valido, emitir } = cliente;
 
-  const titulo = (cliente: Cliente) => (cliente.nombre as string) + estado;
+  const titulo = (cliente: Cliente) => cliente.nombre as string;
 
   const [confirmacionEstado, setConfirmacionEstado] = useState<boolean>(false);
 
