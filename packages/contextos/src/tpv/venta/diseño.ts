@@ -1,7 +1,6 @@
 import { Factura } from "#/ventas/factura/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { MetaModelo } from "@olula/lib/dominio.js";
 
 export interface VentaTpv extends Venta {
     pendiente: number;
@@ -42,18 +41,18 @@ export type LineaPorBarcode = {
 
 export type CambioClienteFactura = CambioClienteVenta;
 
-export type NuevaLineaFactura = NuevaLineaVenta;
+// export type NuevaLineaFactura = NuevaLineaVenta;
 
-export type NuevoPagoEfectivo = {
-    importe: number;
-}
+// export type NuevoPagoEfectivo = {
+//     importe: number;
+// }
 
-export type NuevoPagoVale = {
-    importe: number;
-    saldoVale: number;
-    aPagar: number;
-    vale_id: string;
-}
+// export type NuevoPagoVale = {
+//     importe: number;
+//     saldoVale: number;
+//     aPagar: number;
+//     vale_id: string;
+// }
 
 type PagoTpv = {
     importe: number;
@@ -61,11 +60,11 @@ type PagoTpv = {
     idVale?: string
 }
 
-export const metaNuevoPagoEfectivo: MetaModelo<NuevoPagoEfectivo> = {
-    campos: {
-        importe: { tipo: "numero", requerido: true },
-    }
-};
+// export const metaNuevoPagoEfectivo: MetaModelo<NuevoPagoEfectivo> = {
+//     campos: {
+//         importe: { tipo: "numero", requerido: true },
+//     }
+// };
 
 
 
