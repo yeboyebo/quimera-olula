@@ -47,7 +47,7 @@ export const QSelect = ({
     </option>
   ));
 
-  const manejarChage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const manejarChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const opcion = opciones.find((opcion) => opcion.valor === e.target.value);
     if (!opcion) {
       onChange?.(null, e);
@@ -77,7 +77,7 @@ export const QSelect = ({
           value={onChange ? valor : undefined}
           required={!opcional}
           disabled={deshabilitado}
-          onChange={manejarChage}
+          onChange={manejarChange}
           onBlur={manejarBlur}
         >
           <option hidden value="">

@@ -1,182 +1,69 @@
 import { QBoton } from "@olula/componentes/index.ts";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { ListaSeleccionable } from "@olula/lib/diseño.js";
-import {
-  cambiarItem,
-  cargar,
-  getSeleccionada,
-  listaSeleccionableVacia,
-  quitarItem,
-  seleccionarItem,
-} from "@olula/lib/entidad.ts";
-import { pipe } from "@olula/lib/funcional.js";
-import {
-  ConfigMaquina4,
-  Maquina3,
-  useMaquina4,
-} from "@olula/lib/useMaquina.ts";
-import { useContext, useEffect } from "react";
-import { LineaPedido as Linea } from "../../../diseño.ts";
-import { getLineas } from "../../../infraestructura.ts";
+import { LineaPedido, Pedido } from "../../../diseño.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
 import { BajaLinea } from "./BajaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
-type Estado = "Inactivo" | "Creando" | "Editando" | "ConfirmandoBorrado";
-type Contexto = {
-  lineas: ListaSeleccionable<Linea>;
-};
-
-const setLineas =
-  (
-    aplicable: (lineas: ListaSeleccionable<Linea>) => ListaSeleccionable<Linea>
-  ) =>
-  (maquina: Maquina3<Estado, Contexto>) => ({
-    ...maquina,
-    contexto: {
-      ...maquina.contexto,
-      lineas: aplicable(maquina.contexto.lineas),
-    },
-  });
-
-const configMaquina: ConfigMaquina4<Estado, Contexto> = {
-  inicial: {
-    estado: "Inactivo",
-    contexto: {
-      lineas: listaSeleccionableVacia<Linea>(),
-    },
-  },
-  estados: {
-    Inactivo: {
-      crear: "Creando",
-      linea_seleccionada: ({ maquina, payload }) =>
-        pipe(maquina, setLineas(seleccionarItem(payload as Linea))),
-      linea_cambiada: ({ maquina, payload }) =>
-        pipe(maquina, setLineas(cambiarItem(payload as Linea))),
-      linea_borrada: ({ maquina }) => {
-        const { lineas } = maquina.contexto;
-        if (!lineas.idActivo) {
-          return maquina;
-        }
-        return pipe(maquina, setLineas(quitarItem(lineas.idActivo)));
-      },
-      lineas_cargadas: ({ maquina, payload, setEstado }) =>
-        pipe(
-          maquina,
-          setEstado("Inactivo" as Estado),
-          setLineas(cargar(payload as Linea[]))
-        ),
-      seleccion_cancelada: ({ maquina }) =>
-        pipe(
-          maquina,
-          setLineas((lineas) => ({
-            ...lineas,
-            idActivo: null,
-          }))
-        ),
-      editar: "Editando",
-      borrar: "ConfirmandoBorrado",
-    },
-    Creando: {
-      linea_creada: "Inactivo",
-      creacion_cancelada: "Inactivo",
-    },
-    Editando: {
-      edicion_confirmada: "Inactivo",
-      edicion_cancelada: "Inactivo",
-    },
-    ConfirmandoBorrado: {
-      borrado_confirmado: "Inactivo",
-      borrado_cancelado: "Inactivo",
-    },
-  },
-};
-
 export const Lineas = ({
-  pedidoId,
-  pedidoEditable,
-  onCabeceraModificada,
+  pedido,
+  lineaActiva,
+  estadoPedido,
+  publicar,
 }: {
-  onCabeceraModificada: () => void;
-  pedidoId: string;
-  pedidoEditable?: boolean;
+  pedido: Pedido;
+  lineaActiva: LineaPedido | null;
+  estadoPedido: string;
+  publicar: (evento: string, payload?: unknown) => void;
 }) => {
-  const { intentar } = useContext(ContextoError);
-
-  const [emitir, { estado, contexto }] = useMaquina4<Estado, Contexto>({
-    config: configMaquina,
-  });
-
-  const { lineas } = contexto;
-
-  useEffect(() => {
-    const cargarLineas = async () => {
-      const nuevasLineas = await intentar(() => getLineas(pedidoId));
-      emitir("lineas_cargadas", nuevasLineas);
-    };
-
-    emitir("cargar");
-    cargarLineas();
-  }, [pedidoId, emitir, intentar]);
-
-  const seleccionada = getSeleccionada(lineas);
-
-  const refrescarCabecera = async () => {
-    const lineasCargadas = await getLineas(pedidoId);
-    emitir("lineas_cargadas", lineasCargadas);
-    onCabeceraModificada();
+  const handleCambioCantidad = (linea: LineaPedido, cantidad: number) => {
+    publicar("cambio_cantidad_linea_solicitado", {
+      lineaId: linea.id,
+      cantidad: cantidad,
+    });
   };
 
   return (
     <>
-      {pedidoEditable && (
+      {estadoPedido === "ABIERTO" && pedido.servido != "TOTAL" && (
         <div className="botones maestro-botones ">
-          <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
+          <QBoton onClick={() => publicar("alta_linea_solicitada")}>
+            Nueva
+          </QBoton>
+
           <QBoton
-            deshabilitado={!seleccionada}
-            onClick={() => emitir("editar")}
+            deshabilitado={!lineaActiva}
+            onClick={() => publicar("cambio_linea_solicitado")}
           >
             Editar
           </QBoton>
+
           <QBoton
-            deshabilitado={!seleccionada}
-            onClick={() => emitir("borrar")}
+            deshabilitado={!lineaActiva}
+            onClick={() => publicar("baja_linea_solicitada")}
           >
             Borrar
           </QBoton>
         </div>
       )}
+
       <LineasLista
-        lineas={lineas.lista}
-        seleccionada={seleccionada?.id}
-        emitir={emitir}
-        idPedido={pedidoId}
-        refrescarCabecera={refrescarCabecera}
-      />
-      <AltaLinea
-        publicar={emitir}
-        activo={estado === "Creando"}
-        idPedido={pedidoId}
-        refrescarCabecera={refrescarCabecera}
+        lineas={pedido.lineas || []}
+        seleccionada={lineaActiva?.id}
+        publicar={publicar}
+        onCambioCantidad={handleCambioCantidad}
+        pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
       />
 
-      {seleccionada && (
-        <EdicionLinea
-          publicar={emitir}
-          activo={estado === "Editando" && seleccionada !== null}
-          lineaSeleccionada={seleccionada}
-          idPedido={pedidoId}
-          refrescarCabecera={refrescarCabecera}
-        />
+      {estadoPedido === "CREANDO_LINEA" && <AltaLinea publicar={publicar} />}
+
+      {lineaActiva && estadoPedido === "CAMBIANDO_LINEA" && (
+        <EdicionLinea publicar={publicar} linea={lineaActiva} />
       )}
-      <BajaLinea
-        publicar={emitir}
-        activo={estado === "ConfirmandoBorrado"}
-        idLinea={seleccionada?.id}
-        idPedido={pedidoId}
-        refrescarCabecera={refrescarCabecera}
-      />
+
+      {lineaActiva && estadoPedido === "BORRANDO_LINEA" && (
+        <BajaLinea publicar={publicar} idLinea={lineaActiva.id} />
+      )}
     </>
   );
 };

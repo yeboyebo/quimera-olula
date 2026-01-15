@@ -3,6 +3,7 @@ import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { GetLineasPedido } from "../pedido/diseño.ts";
+import { CambioCliente } from "../presupuesto/diseño.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -142,7 +143,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
   );
 };
 
-export const patchCambiarCliente = async (id: string, cambio: Albaran) => {
+export const patchCambiarCliente = async (id: string, cambio: CambioCliente) => {
   const payload = {
     cambios: {
       cliente_id: cambio.cliente_id,

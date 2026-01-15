@@ -1,5 +1,5 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ArqueoTpv } from "../../diseño.ts";
+import { ArqueoTpv } from "../diseño.ts";
 
 export type EstadoMaestroArqueosTpv = (
     'INICIAL'

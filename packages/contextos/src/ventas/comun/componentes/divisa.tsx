@@ -25,6 +25,7 @@ export const Divisa = ({
       const opcionesMapeadas = opciones.map((opcion) => ({
         valor: opcion[0],
         descripcion: opcion[1],
+        // tasa_conversion: i * 3.02
       }));
       setOpcionesDivisa(opcionesMapeadas);
     };

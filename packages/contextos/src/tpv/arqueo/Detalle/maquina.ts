@@ -3,9 +3,8 @@ import { publicar } from "@olula/lib/dominio.js";
 import { ContextoArqueoTpv, EstadoArqueoTpv } from "./diseño.ts";
 import {
     cargarContexto,
-    cerrarArqueo,
     getContextoVacio,
-    reabrirArqueo
+    refrescarArqueo
 } from "./dominio.ts";
 
 
@@ -39,13 +38,18 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
         BORRANDO_ARQUEO: {},
 
-        RECONTANDO: {},
+        RECONTANDO: {
+
+            "recuento_cancelado": "ABIERTO",
+
+            "recuento_hecho": [refrescarArqueo, "ABIERTO"],
+        },
 
         CERRANDO: {
 
             cierre_cancelado: "ABIERTO",
 
-            cierre_listo: cerrarArqueo,
+            cierre_hecho: [refrescarArqueo, "CERRADO"],
 
         },
 
@@ -53,7 +57,7 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
             reapertura_cancelada: "CERRADO",
 
-            reapertura_lista: [reabrirArqueo, "ABIERTO"],
+            reapertura_hecha: [refrescarArqueo, "ABIERTO"],
 
         },
     }

@@ -3,41 +3,24 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { ContextoMaestroPresupuesto, Presupuesto } from "../diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { useCallback, useEffect } from "react";
+import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
+import { Presupuesto } from "../diseño.ts";
 import { metaTablaPresupuesto as metaTablaBase } from "../dominio.ts";
 import { getMaquina } from "../maquinaMaestro.ts";
 import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
 import "./MaestroConDetallePresupuesto.css";
 
-const maquina = getMaquina();
-
 export const MaestroConDetallePresupuesto = () => {
-  const [creandoPresupuesto, setCreandoPresupuesto] = useState(false);
-  const { intentar } = useContext(ContextoError);
-
-  const [ctx, setCtx] = useState<ContextoMaestroPresupuesto>({
+  const { ctx, emitir } = useMaestroVenta(getMaquina, {
     estado: "INICIAL",
     presupuestos: [],
     totalPresupuestos: 0,
     presupuestoActivo: null,
   });
-
-  const emitir = useCallback(
-    async (evento: string, payload?: unknown) => {
-      const [nuevoContexto, _] = await intentar(() =>
-        procesarEvento(maquina, ctx, evento, payload)
-      );
-      setCtx(nuevoContexto);
-    },
-    [ctx, setCtx, intentar]
-  );
-
-  const crear = useCallback(() => setCreandoPresupuesto(true), [emitir]);
 
   const setSeleccionada = useCallback(
     (payload: Presupuesto) => void emitir("presupuesto_seleccionado", payload),
@@ -91,7 +74,9 @@ export const MaestroConDetallePresupuesto = () => {
           <>
             <h2>Presupuestos</h2>
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo Presupuesto</QBoton>
+              <QBoton onClick={() => emitir("crear_presupuesto_solicitado")}>
+                Nuevo Presupuesto
+              </QBoton>
             </div>
             <ListadoControlado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
@@ -117,8 +102,8 @@ export const MaestroConDetallePresupuesto = () => {
 
       <CrearPresupuesto
         publicar={emitir}
-        onCancelar={() => setCreandoPresupuesto(false)}
-        activo={creandoPresupuesto}
+        onCancelar={() => emitir("creacion_cancelada")}
+        activo={ctx.estado === "CREANDO_PRESUPUESTO"}
       />
     </div>
   );

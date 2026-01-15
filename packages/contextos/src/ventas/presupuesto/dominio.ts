@@ -1,7 +1,8 @@
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { Criteria, Direccion, ProcesarContexto } from "@olula/lib/diseño.js";
+import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
 import { NuevaLineaVenta } from "../venta/diseño.ts";
+import { ventaVacia } from "../venta/dominio.ts";
 import {
     CambioCliente,
     ContextoMaestroPresupuesto,
@@ -47,39 +48,9 @@ export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
 ];
 
 export const presupuestoVacio = (): Presupuesto => ({
-    id: '',
-    codigo: '',
-    fecha: '',
-    fecha_salida: '',
-    cliente_id: '',
-    nombre_cliente: '',
-    id_fiscal: '',
-    direccion_id: '',
-    nombre_via: "",
-    tipo_via: "",
-    numero: "",
-    otros: "",
-    cod_postal: "",
-    ciudad: "",
-    provincia_id: 0,
-    provincia: "",
-    pais_id: "",
-    apartado: "",
-    telefono: "",
-    agente_id: '',
-    nombre_agente: '',
-    divisa_id: '',
-    tasa_conversion: 1,
+    ...ventaVacia,
     aprobado: false,
-    total: 0,
-    total_divisa_empresa: 0,
-    neto: 0,
-    total_iva: 0,
-    total_irpf: 0,
-    forma_pago_id: '',
-    nombre_forma_pago: '',
-    grupo_iva_negocio_id: '',
-    observaciones: '',
+    fecha_salida: "",
     lineas: [],
 })
 
@@ -130,6 +101,7 @@ export const abiertoOAprobadoContexto: ProcesarPresupuesto = async (contexto) =>
 }
 
 export const refrescarLineas: ProcesarPresupuesto = async (contexto) => {
+    console.log("Refrescando líneas del presupuesto");
     const lineas = await getLineas(contexto.presupuesto.id);
     return {
         ...contexto,
@@ -205,6 +177,7 @@ export const cambiarPresupuesto: ProcesarPresupuesto = async (contexto, payload)
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
+        // refrescarLineas,
         'ABIERTO',
     ]);
 }
@@ -214,7 +187,7 @@ export const borrarPresupuesto: ProcesarPresupuesto = async (contexto) => {
 
     return pipePresupuesto(contexto, [
         getContextoVacio,
-        publicar('presupuesto_borrado', null)
+        publicar('presupuesto_borrado', contexto.presupuesto)
     ]);
 }
 
@@ -303,6 +276,7 @@ export const borrarLinea: ProcesarPresupuesto = async (contexto, payload) => {
 // Para el maestro
 
 export const cambiarPresupuestoEnLista: ProcesarPresupuestos = async (contexto, payload) => {
+    console.log("Cambiando presupuesto en la lista");
     const presupuesto = payload as Presupuesto;
     return {
         ...contexto,
@@ -357,6 +331,20 @@ export const incluirPresupuestoEnLista: ProcesarPresupuestos = async (contexto, 
     }
 }
 
+export const abrirModalCreacion: ProcesarPresupuestos = async (contexto) => {
+    return {
+        ...contexto,
+        estado: 'CREANDO_PRESUPUESTO'
+    }
+}
+
+export const cerrarModalCreacion: ProcesarPresupuestos = async (contexto) => {
+    return {
+        ...contexto,
+        estado: 'INICIAL'
+    }
+}
+
 export const crearPresupuesto: ProcesarPresupuestos = async (contexto, payload) => {
     const presupuestoNuevo = payload as NuevoPresupuesto;
     const idPresupuesto = await postPresupuesto(presupuestoNuevo);
@@ -367,22 +355,6 @@ export const crearPresupuesto: ProcesarPresupuestos = async (contexto, payload) 
         presupuestoActivo: presupuesto
     }
 }
-
-export const direccionVacia = (): Direccion => ({
-    nombre_via: "",
-    tipo_via: "",
-    numero: "",
-    otros: "",
-    cod_postal: "",
-    ciudad: "",
-    provincia_id: 0,
-    provincia: "",
-    pais_id: "",
-    apartado: "",
-    telefono: "",
-});
-
-
 
 export const nuevoPresupuestoVacio: NuevoPresupuesto = {
     cliente_id: "",

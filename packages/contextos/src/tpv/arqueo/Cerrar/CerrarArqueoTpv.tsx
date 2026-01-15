@@ -1,31 +1,40 @@
+import { ArqueoTpv } from "#/tpv/arqueo/diseño.ts";
+import { patchCerrarArqueo } from "#/tpv/arqueo/infraestructura.ts";
 import { agenteActivo } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import "./CerrarArqueoTpv.css";
 import { cierreArqueoTpvVacio, metaCierreArqueoTpv } from "./diseño.ts";
 
 export const CerrarArqueoTpv = ({
+    arqueo,
     publicar,
 }: {
+    arqueo: ArqueoTpv,
     publicar: EmitirEvento;
 }) => {
-    
+    const { intentar } = useContext(ContextoError);
 
     const { modelo, uiProps, valido, init } = useModelo(metaCierreArqueoTpv, {
         ...cierreArqueoTpvVacio,
-        agenteCierreId: agenteActivo.obtener(),
+        idAgenteCierre: agenteActivo.obtener() ?? '',
     });
 
     const [cerrando, setCerrando] = useState(false);
   
-    const cerrar = () => {
-        setCerrando(true);
-        publicar("cierre_listo", modelo);
-    };
+    const cerrar = useCallback(
+        async () => {
+            setCerrando(true);
+            await intentar(() => patchCerrarArqueo(arqueo.id, modelo));
+            publicar("cierre_hecho");
+        },
+        [arqueo, intentar, modelo, publicar, setCerrando]
+    );
 
     const cancelar = useCallback(
         () => {
@@ -37,7 +46,7 @@ export const CerrarArqueoTpv = ({
     const limpiar = () => {
         init({
             ...cierreArqueoTpvVacio,
-            agenteCierreId: agenteActivo.obtener(),
+            idAgenteCierre: agenteActivo.obtener() ?? '',
         });
     }
     

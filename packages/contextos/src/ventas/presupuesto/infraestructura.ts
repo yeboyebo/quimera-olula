@@ -28,33 +28,23 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
 
 export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
   const {
-    nombre_via,
-    cod_postal,
-    ciudad,
-    provincia_id,
-    provincia,
-    pais_id,
-    telefono,
-    tipo_via,
-    numero,
-    otros,
-    apartado,
+    direccion,
     ...rest
   } = l;
   return {
     ...rest,
     direccion: {
-      nombre_via: nombre_via ?? "",
-      cod_postal: cod_postal ?? "",
-      ciudad: ciudad ?? "",
-      provincia_id: provincia_id ?? null,
-      provincia: provincia ?? "",
-      pais_id: pais_id ?? "",
-      telefono: telefono ?? "",
-      tipo_via: tipo_via ?? "",
-      numero: numero ?? "",
-      otros: otros ?? "",
-      apartado: apartado ?? "",
+      nombre_via: direccion?.nombre_via ?? "",
+      cod_postal: direccion?.cod_postal ?? "",
+      ciudad: direccion?.ciudad ?? "",
+      provincia_id: direccion?.provincia_id ?? null,
+      provincia: direccion?.provincia ?? "",
+      pais_id: direccion?.pais_id ?? "",
+      telefono: direccion?.telefono ?? "",
+      tipo_via: direccion?.tipo_via ?? "",
+      numero: direccion?.numero ?? "",
+      otros: direccion?.otros ?? "",
+      apartado: direccion?.apartado ?? "",
     },
   };
 };
@@ -228,7 +218,6 @@ export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Pro
 }
 
 export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => {
-  console.log("Actualizando presupuesto:", presupuesto);
   const payload = {
     cambios: {
       agente_id: presupuesto.agente_id,
@@ -246,7 +235,6 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       observaciones: presupuesto.observaciones,
     },
   };
-  console.log("Payload de actualización:", payload);
 
   await RestAPI.patch(`${baseUrl}/${id}`, payload, "Error al actualizar presupuesto");
 };

@@ -1,5 +1,5 @@
 import { MetaModelo } from "@olula/lib/dominio.js";
-import { ArqueoTpv } from "../../diseño.ts";
+import { ArqueoTpv } from "../diseño.ts";
 
 export const metaArqueoTpv: MetaModelo<ArqueoTpv> = {
     campos: {},
@@ -15,6 +15,23 @@ export const arqueoTpvVacio: ArqueoTpv = {
     pagosEfectivo: 0,
     pagosTarjeta: 0,
     pagosVale: 0,
+    recuentoCaja: {
+        b500: 0,
+        b200: 0,
+        b100: 0,
+        b50: 0,
+        b20: 0,
+        b10: 0,
+        b5: 0,
+        m2: 0,
+        m1: 0,
+        m050: 0,
+        m020: 0,
+        m010: 0,
+        m005: 0,
+        m002: 0,
+        m001: 0
+    },
     recuentoEfectivo: 0,
     recuentoTarjeta: 0,
     recuentoVales: 0,
@@ -35,19 +52,4 @@ export type ContextoArqueoTpv = {
     // pagoActivo: PagoVentaTpv | null;
 };
 
-export type CierreArqueoTpv = {
-    idAgenteCierre: string,
-    movimientoCierre: number
-}
 
-export const metaCierreArqueoTpv: MetaModelo<CierreArqueoTpv> = {
-    campos: {
-        idAgenteCierre: { requerido: true, },
-        movimientoCierre: { requerido: true, tipo: "moneda" },
-    },
-};
-
-export const cierreArqueoTpvVacio: CierreArqueoTpv = {
-    idAgenteCierre: "",
-    movimientoCierre: 0
-};

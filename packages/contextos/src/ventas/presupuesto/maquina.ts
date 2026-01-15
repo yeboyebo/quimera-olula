@@ -32,7 +32,7 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
             presupuesto_deseleccionado: [
                 getContextoVacio,
                 publicar('presupuesto_deseleccionado', null)
-            ]
+            ],
         },
 
         ABIERTO: {
