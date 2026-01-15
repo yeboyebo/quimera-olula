@@ -61,7 +61,6 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
   //   permitirClienteNoRegistrado && !esClienteRegistrado;
 
   const prepararCambios = (): Partial<T> => {
-    console.log("modelo cambio cliente", modelo);
     if (esClienteRegistrado) {
       return {
         cliente_id: modelo.cliente_id,

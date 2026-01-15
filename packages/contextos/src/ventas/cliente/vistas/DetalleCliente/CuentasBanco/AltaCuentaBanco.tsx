@@ -5,7 +5,6 @@ import {
   metaNuevaCuentaBanco,
   nuevaCuentaBancoVacia,
 } from "../../../dominio.ts";
-import { getCuentaBanco, postCuentaBanco } from "../../../infraestructura.ts";
 import "./TabCuentasBanco.css";
 
 interface AltaCuentaBancoProps {
@@ -13,19 +12,14 @@ interface AltaCuentaBancoProps {
   emitir: (evento: string, payload?: unknown) => void;
 }
 
-export const AltaCuentaBanco = ({
-  clienteId,
-  emitir,
-}: AltaCuentaBancoProps) => {
+export const AltaCuentaBanco = ({ emitir }: AltaCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(
     metaNuevaCuentaBanco,
     nuevaCuentaBancoVacia
   );
 
   const guardar = async () => {
-    const id = await postCuentaBanco(clienteId, modelo);
-    const cuentaCreada = await getCuentaBanco(clienteId, id);
-    emitir("cuenta_creada", cuentaCreada);
+    emitir("crear_cuenta", modelo);
   };
 
   return (

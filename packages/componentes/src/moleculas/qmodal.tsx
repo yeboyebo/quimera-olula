@@ -15,6 +15,7 @@ export const QModal = ({
   children,
 }: PropsWithChildren<QModalProps>) => {
   const refModal = useRef<HTMLDialogElement>(null);
+  const cerradoPorEstadoRef = useRef(false);
   const attrs = { nombre };
 
   useEffect(() => {
@@ -22,10 +23,12 @@ export const QModal = ({
     if (!modal) return;
 
     if (!abierto) {
+      cerradoPorEstadoRef.current = true;
       modal.close();
       return;
     }
 
+    cerradoPorEstadoRef.current = false;
     modal.showModal();
   }, [abierto]);
 
@@ -34,6 +37,10 @@ export const QModal = ({
     if (!modal) return;
 
     const manejarClose = () => {
+      if (cerradoPorEstadoRef.current) {
+        cerradoPorEstadoRef.current = false;
+        return;
+      }
       onCerrar?.();
     };
 

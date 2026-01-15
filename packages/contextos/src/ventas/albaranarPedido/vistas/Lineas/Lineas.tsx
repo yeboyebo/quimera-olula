@@ -127,15 +127,11 @@ export const Lineas = ({
   const seleccionada = getSeleccionada(lineas);
 
   const albaranarPedido = () => {
-    console.log("Albaranar pedido", lineas.lista);
     intentar(() => patchAlbaranarPedido(pedidoId, lineas.lista));
     emitir("albaranado_cancelado");
   };
 
-  console.log("Lineas albaranar pedido:", lineas);
-
   const validarLineasParaEnviar = (lineas: Linea[]) => {
-    console.log("Validando lineas para enviar:", lineas);
     if (!Array.isArray(lineas) || lineas.length === 0) {
       return false;
     }
@@ -150,7 +146,6 @@ export const Lineas = ({
   };
 
   const puedeEnviar = validarLineasParaEnviar(lineas.lista);
-  console.log("Puede enviar:", puedeEnviar);
 
   return (
     <div className="DetalleAlbaranarPedido">
