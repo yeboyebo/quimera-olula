@@ -1,5 +1,5 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { CuentaBanco } from "../../../diseño.ts";
+import { CuentaBanco } from "../../diseño.ts";
 
 const metaTablaCuentasBanco = [
   { id: "descripcion", cabecera: "Descripcion" },

@@ -1,30 +1,35 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { metaNuevaDireccion, nuevaDireccionVacia } from "../../../dominio.ts";
+import {
+  metaNuevaCuentaBanco,
+  nuevaCuentaBancoVacia,
+} from "../../dominio.ts";
+import "./TabCuentasBanco.css";
 
-export const AltaDireccion = ({
-  emitir,
-}: {
+interface AltaCuentaBancoProps {
   emitir: (evento: string, payload?: unknown) => void;
-}) => {
+}
+
+export const AltaCuentaBanco = ({ emitir }: AltaCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(
-    metaNuevaDireccion,
-    nuevaDireccionVacia
+    metaNuevaCuentaBanco,
+    nuevaCuentaBancoVacia
   );
 
   const guardar = async () => {
-    emitir("crear_direccion", modelo);
+    emitir("crear_cuenta", modelo);
   };
 
   return (
-    <div className="AltaDireccion">
+    <div className="alta-cuenta-banco">
+      <h2>Nueva Cuenta Bancaria</h2>
       <quimera-formulario>
-        <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
-        <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
-        <QInput label="Ciudad" {...uiProps("ciudad")} />
+        <QInput label="Descripción" {...uiProps("descripcion")} />
+        <QInput label="IBAN" {...uiProps("iban")} />
+        <QInput label="BIC" {...uiProps("bic")} />
       </quimera-formulario>
-      <div className="botones maestro-botones">
+      <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
         </QBoton>

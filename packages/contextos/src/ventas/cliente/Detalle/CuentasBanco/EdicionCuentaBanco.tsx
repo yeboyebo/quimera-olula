@@ -1,32 +1,29 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import {
-  metaNuevaCuentaBanco,
-  nuevaCuentaBancoVacia,
-} from "../../../dominio.ts";
+import { CuentaBanco } from "../../diseño.ts";
+import { metaCuentaBanco } from "../../dominio.ts";
 import "./TabCuentasBanco.css";
 
-interface AltaCuentaBancoProps {
+interface EdicionCuentaBancoProps {
   clienteId: string;
+  cuenta: CuentaBanco;
   emitir: (evento: string, payload?: unknown) => void;
 }
 
-export const AltaCuentaBanco = ({ emitir }: AltaCuentaBancoProps) => {
-  const { modelo, uiProps, valido } = useModelo(
-    metaNuevaCuentaBanco,
-    nuevaCuentaBancoVacia
-  );
+export const EdicionCuentaBanco = ({
+  cuenta,
+  emitir,
+}: EdicionCuentaBancoProps) => {
+  const { modelo, uiProps, valido } = useModelo(metaCuentaBanco, cuenta);
 
   const guardar = async () => {
-    emitir("crear_cuenta", modelo);
+    emitir("actualizar_cuenta", modelo);
   };
 
   return (
-    <div className="alta-cuenta-banco">
-      <h2>Nueva Cuenta Bancaria</h2>
+    <div className="EdicionCuentaBanco">
       <quimera-formulario>
-        <QInput label="Descripción" {...uiProps("descripcion")} />
         <QInput label="IBAN" {...uiProps("iban")} />
         <QInput label="BIC" {...uiProps("bic")} />
       </quimera-formulario>
@@ -37,7 +34,7 @@ export const AltaCuentaBanco = ({ emitir }: AltaCuentaBancoProps) => {
         <QBoton
           tipo="reset"
           variante="texto"
-          onClick={() => emitir("alta_cancelada")}
+          onClick={() => emitir("edicion_cancelada")}
         >
           Cancelar
         </QBoton>

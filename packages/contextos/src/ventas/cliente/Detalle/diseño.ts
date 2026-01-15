@@ -1,0 +1,16 @@
+import { Cliente } from "../diseño.ts";
+
+export type EstadoDetalleCliente =
+    | "INICIAL"
+    | "ABIERTO"
+    | "CREANDO_CLIENTE"
+    | "BAJANDO_CLIENTE"
+    | "BORRANDO_CLIENTE"
+    | "EDITANDO_CLIENTE"
+    | "GUARDANDO_CLIENTE";
+
+export type ContextoDetalleCliente = {
+    estado: EstadoDetalleCliente;
+    cliente: Cliente;
+    clienteInicial: Cliente;
+};

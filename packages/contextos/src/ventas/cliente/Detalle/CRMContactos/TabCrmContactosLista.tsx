@@ -1,5 +1,5 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { CrmContacto } from "../../../diseño.ts";
+import { CrmContacto } from "../../diseño.ts";
 
 const metaTablaCrmContactos = [
   { id: "id", cabecera: "ID" },

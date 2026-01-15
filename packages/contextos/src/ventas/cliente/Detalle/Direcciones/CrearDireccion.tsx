@@ -1,34 +1,30 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import {
-  metaNuevoCrmContacto,
-  nuevoCrmContactoVacio,
-} from "../../../dominio.ts";
+import { metaNuevaDireccion, nuevaDireccionVacia } from "../../dominio.ts";
 
-interface AltaCrmContactosProps {
-  clienteId: string;
+export const AltaDireccion = ({
+  emitir,
+}: {
   emitir: (evento: string, payload?: unknown) => void;
-}
-
-export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
+}) => {
   const { modelo, uiProps, valido } = useModelo(
-    metaNuevoCrmContacto,
-    nuevoCrmContactoVacio
+    metaNuevaDireccion,
+    nuevaDireccionVacia
   );
 
   const guardar = async () => {
-    emitir("crear_contacto", modelo);
+    emitir("crear_direccion", modelo);
   };
 
   return (
-    <div className="alta-crm-contactos">
-      <h2>Nuevo Contacto CRM</h2>
+    <div className="AltaDireccion">
       <quimera-formulario>
-        <QInput label="Nombre" {...uiProps("nombre")} />
-        <QInput label="Email" {...uiProps("email")} />
+        <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
+        <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
+        <QInput label="Ciudad" {...uiProps("ciudad")} />
       </quimera-formulario>
-      <div className="botones">
+      <div className="botones maestro-botones">
         <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
         </QBoton>

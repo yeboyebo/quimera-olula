@@ -1,6 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
-import { CuentaBanco } from "../../../diseño.ts";
+import { CuentaBanco } from "../../diseño.ts";
 import {
     deleteCuentaBanco,
     desmarcarCuentaDomiciliacion,
@@ -8,7 +8,7 @@ import {
     getCuentasBanco,
     patchCuentaBanco,
     postCuentaBanco,
-} from "../../../infraestructura.ts";
+} from "../../infraestructura.ts";
 import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
 
 type ProcesarCuentasBanco = ProcesarContexto<EstadoCuentasBanco, ContextoCuentasBanco>;

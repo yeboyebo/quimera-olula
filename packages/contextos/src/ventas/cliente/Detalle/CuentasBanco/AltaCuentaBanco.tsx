@@ -4,10 +4,11 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import {
   metaNuevaCuentaBanco,
   nuevaCuentaBancoVacia,
-} from "../../../dominio.ts";
+} from "../../dominio.ts";
 import "./TabCuentasBanco.css";
 
 interface AltaCuentaBancoProps {
+  clienteId: string;
   emitir: (evento: string, payload?: unknown) => void;
 }
 

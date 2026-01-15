@@ -1,25 +1,30 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { Cliente } from "../../diseño.ts";
 import { useCliente } from "../../hooks/useCliente.ts";
+import { BajaCliente } from "../Baja/BajaCliente.tsx";
+import { BorrarCliente } from "../Borrar/BorrarCliente.tsx";
+import { CrearCliente } from "../Crear/CrearCliente.tsx";
 import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
 import { TabDirecciones } from "./Direcciones/TabDirecciones.tsx";
+import { EstadoDetalleCliente } from "./diseño.ts";
 import { TabComercial } from "./TabComercial.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,
   publicar = () => {},
+  estadoMaquina = "INICIAL",
 }: {
   clienteInicial?: Cliente | null;
   publicar?: EmitirEvento;
+  estadoMaquina?: EstadoDetalleCliente;
 }) => {
   const params = useParams();
 
@@ -33,8 +38,6 @@ export const DetalleCliente = ({
 
   const titulo = (cliente: Cliente) => cliente.nombre as string;
 
-  const [confirmacionEstado, setConfirmacionEstado] = useState<boolean>(false);
-
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_cliente_lista", modelo);
   }, [emitir, modelo]);
@@ -43,14 +46,16 @@ export const DetalleCliente = ({
     emitir("edicion_de_cliente_cancelada");
   }, [emitir]);
 
-  const handleBorrar = useCallback(() => {
-    setConfirmacionEstado(true);
-  }, []);
+  const handleCrearCliente: EmitirEvento = useCallback(
+    (evento: string, datos?: unknown) => {
+      if (evento === "cliente_creado") {
+        publicar("cliente_creado", datos);
+      }
+    },
+    [publicar]
+  );
 
-  const handleBorrarConfirmado = useCallback(() => {
-    emitir("borrar_solicitado");
-    setConfirmacionEstado(false);
-  }, [emitir]);
+  if (!clienteInicial) return null;
 
   return (
     <div className="DetalleCliente">
@@ -64,7 +69,12 @@ export const DetalleCliente = ({
         {!!(clienteInicial?.id ?? params.id) && (
           <div className="DetalleCliente">
             <div className="maestro-botones">
-              <QBoton onClick={handleBorrar}>Borrar</QBoton>
+              <QBoton onClick={() => publicar("baja_solicitada")}>
+                Dar de Baja
+              </QBoton>
+              <QBoton onClick={() => publicar("borrado_solicitado")}>
+                Borrar
+              </QBoton>
             </div>
             <Tabs
               children={[
@@ -124,14 +134,30 @@ export const DetalleCliente = ({
                 </QBoton>
               </div>
             )}
-            <QModalConfirmacion
-              nombre="borrarCliente"
-              abierto={confirmacionEstado}
-              titulo="Confirmar borrar"
-              mensaje="¿Está seguro de que desea borrar este cliente?"
-              onCerrar={() => setConfirmacionEstado(false)}
-              onAceptar={handleBorrarConfirmado}
-            />
+
+            {estadoMaquina === "CREANDO_CLIENTE" && (
+              <CrearCliente
+                activo={true}
+                publicar={handleCrearCliente}
+                onCancelar={() => publicar("creacion_cancelada")}
+              />
+            )}
+
+            {estadoMaquina === "BAJANDO_CLIENTE" && (
+              <BajaCliente
+                cliente={modelo}
+                publicar={publicar}
+                onCancelar={() => publicar("baja_cancelada")}
+              />
+            )}
+
+            {estadoMaquina === "BORRANDO_CLIENTE" && (
+              <BorrarCliente
+                cliente={modelo}
+                publicar={publicar}
+                onCancelar={() => publicar("borrado_cancelado")}
+              />
+            )}
           </div>
         )}
       </Detalle>

@@ -2,8 +2,8 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { DirCliente } from "../../../diseño.ts";
-import { metaDireccion } from "../../../dominio.ts";
+import { DirCliente } from "../../diseño.ts";
+import { metaDireccion } from "../../dominio.ts";
 
 export const EdicionDireccion = ({
   direccion,

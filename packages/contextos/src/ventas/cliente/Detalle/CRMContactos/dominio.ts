@@ -3,14 +3,14 @@ import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
 import {
     desvincularContactoCliente,
     vincularContactoCliente,
-} from "../../../../../crm/cliente/infraestructura.ts";
-import { CrmContacto } from "../../../diseño.ts";
+} from "../../../../crm/cliente/infraestructura.ts";
+import { CrmContacto } from "../../diseño.ts";
 import {
     deleteCrmContacto,
     getCrmContactosCliente,
     patchCrmContacto,
     postCrmContacto,
-} from "../../../infraestructura.ts";
+} from "../../infraestructura.ts";
 import { ContextoCrmContactos, EstadoCrmContactos } from "./diseño.ts";
 
 type ProcesarCrmContactos = ProcesarContexto<EstadoCrmContactos, ContextoCrmContactos>;

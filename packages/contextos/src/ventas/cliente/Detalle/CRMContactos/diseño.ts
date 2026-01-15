@@ -1,4 +1,4 @@
-import { CrmContacto } from "../../../diseño.ts";
+import { CrmContacto } from "../../diseño.ts";
 
 export type EstadoCrmContactos = "lista" | "alta" | "edicion" | "confirmar_borrado" | "confirmar_eliminar_asociacion" | "asociar";
 

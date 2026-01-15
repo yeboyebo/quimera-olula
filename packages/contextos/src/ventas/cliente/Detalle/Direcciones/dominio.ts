@@ -1,13 +1,13 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
-import { DirCliente } from "../../../diseño.ts";
+import { DirCliente } from "../../diseño.ts";
 import {
     actualizarDireccion as actualizarDireccionAPI,
     deleteDireccion,
     getDirecciones,
     postDireccion,
     setDirFacturacion,
-} from "../../../infraestructura.ts";
+} from "../../infraestructura.ts";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
 
 type ProcesarDirecciones = ProcesarContexto<EstadoDirecciones, ContextoDirecciones>;

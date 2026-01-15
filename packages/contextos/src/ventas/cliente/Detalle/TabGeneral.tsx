@@ -7,7 +7,6 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Cliente, EstadoCliente } from "../../diseño.ts";
-import { BajaCliente } from "./BajaCliente.tsx";
 import "./TabGeneral.css";
 
 type ClienteConEstado = HookModelo<Cliente> & {

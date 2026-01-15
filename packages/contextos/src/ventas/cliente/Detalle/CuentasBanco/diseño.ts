@@ -1,4 +1,4 @@
-import { CuentaBanco } from "../../../diseño.ts";
+import { CuentaBanco } from "../../diseño.ts";
 
 export type EstadoCuentasBanco = "lista" | "alta" | "edicion" | "confirmar_borrado";
 
