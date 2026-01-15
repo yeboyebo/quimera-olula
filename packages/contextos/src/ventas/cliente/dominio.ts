@@ -4,6 +4,8 @@ import { ejecutarListaProcesos, EstadoModelo, initEstadoModelo, MetaModelo, publ
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
 import { Cliente, ContextoCliente, ContextoMaestroCliente, CrmContacto, CuentaBanco, DirCliente, EstadoCliente, EstadoMaestroCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
 import {
+    darDeAltaCliente,
+    darDeBajaCliente,
     deleteCliente,
     getCliente,
     getClientes,
@@ -249,6 +251,7 @@ export const cancelarCambioCliente: ProcesarCliente = async (contexto) => {
 }
 
 export const abiertoContexto: ProcesarCliente = async (contexto) => {
+    console.log("Abierto contexto cliente");
     return {
         ...contexto,
         estado: "ABIERTO"
@@ -265,6 +268,7 @@ export const getContextoVacio: ProcesarCliente = async (contexto) => {
 }
 
 export const cargarContexto: ProcesarCliente = async (contexto, payload) => {
+    console.log("Cargando contexto cliente", payload);
     const idCliente = payload as string;
     if (idCliente) {
         return pipeCliente(
@@ -296,6 +300,25 @@ export const borrarCliente: ProcesarCliente = async (contexto) => {
     return pipeCliente(contexto, [
         getContextoVacio,
         publicar('cliente_borrado', null)
+    ]);
+}
+
+export const darDeAltaClienteProceso: ProcesarCliente = async (contexto) => {
+    await darDeAltaCliente(contexto.cliente.id);
+
+    return pipeCliente(contexto, [
+        cargarCliente(contexto.cliente.id),
+        abiertoContexto,
+    ]);
+}
+
+export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload) => {
+    const fechaBaja = payload as string;
+    await darDeBajaCliente(contexto.cliente.id, fechaBaja);
+
+    return pipeCliente(contexto, [
+        cargarCliente(contexto.cliente.id),
+        abiertoContexto,
     ]);
 }
 

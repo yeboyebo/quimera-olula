@@ -52,8 +52,6 @@ export const DetalleCliente = ({
     setConfirmacionEstado(false);
   }, [emitir]);
 
-  console.log("Renderizando DetalleCliente", cliente.modelo.id);
-
   return (
     <div className="DetalleCliente">
       <Detalle

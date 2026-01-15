@@ -2,7 +2,7 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Cliente, ContextoCliente, EstadoCliente } from "../diseño.ts";
 import { clienteVacio, metaCliente } from "../dominio.ts";
 import { getMaquina } from "../maquina.ts";
@@ -18,13 +18,14 @@ export const useCliente = (options: UseClienteOptions = {}) => {
     const { intentar } = useContext(ContextoError);
     const maquina = getMaquina();
 
+    const [idClienteAnterior, setIdClienteAnterior] = useState<string | null>(null);
+
     const modelo = useModelo(
         metaCliente,
         clienteInicial || clienteVacio()
     );
 
     const [estado, setEstado] = useState<EstadoCliente>("INICIAL");
-    const clienteIdCargadoRef = useRef<string | null>(null);
 
     const emitir = useCallback(
         async (evento: string, payload?: unknown, inicial: boolean = false): Promise<EventoMaquina[]> => {
@@ -54,11 +55,11 @@ export const useCliente = (options: UseClienteOptions = {}) => {
     );
 
     useEffect(() => {
-        if (clienteId && clienteId !== clienteIdCargadoRef.current) {
-            clienteIdCargadoRef.current = clienteId;
+        if (clienteId && clienteId !== idClienteAnterior) {
+            setIdClienteAnterior(clienteId);
             emitir("cliente_id_cambiado", clienteId, true);
         }
-    }, [clienteId, emitir]);
+    }, [clienteId, emitir, idClienteAnterior]);
 
     return {
         ...modelo,

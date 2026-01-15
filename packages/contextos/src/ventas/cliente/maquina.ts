@@ -7,6 +7,8 @@ import {
     cambiarCliente,
     cancelarCambioCliente,
     cargarContexto,
+    darDeAltaClienteProceso,
+    darDeBajaClienteProceso,
     getContextoVacio,
     refrescarCliente,
 } from "./dominio.ts";
@@ -36,7 +38,18 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
 
             edicion_de_cliente_cancelada: [cancelarCambioCliente],
 
+            dar_de_alta_solicitado: [darDeAltaClienteProceso],
+
+            confirmar_baja_solicitado: "CONFIRMANDO_BAJA",
+
             borrar_solicitado: "BORRANDO_CLIENTE",
+        },
+
+        CONFIRMANDO_BAJA: {
+
+            dar_de_baja_solicitado: [darDeBajaClienteProceso, "ABIERTO"],
+
+            baja_cancelada: "ABIERTO",
         },
 
         EDITANDO_CLIENTE: {

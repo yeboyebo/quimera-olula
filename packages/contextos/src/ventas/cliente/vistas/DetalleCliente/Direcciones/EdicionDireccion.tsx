@@ -2,11 +2,12 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useEffect } from "react";
 import { DirCliente } from "../../../diseño.ts";
 import { metaDireccion } from "../../../dominio.ts";
+import { actualizarDireccion } from "../../../infraestructura.ts";
 
 export const EdicionDireccion = ({
+  clienteId,
   direccion,
   emitir,
 }: {
@@ -14,14 +15,11 @@ export const EdicionDireccion = ({
   direccion: DirCliente;
   emitir: (evento: string, payload?: unknown) => void;
 }) => {
-  const direccionEditada = useModelo(metaDireccion);
-
-  useEffect(() => {
-    direccionEditada.init(direccion);
-  }, [direccion, direccionEditada]);
+  const direccionEditada = useModelo(metaDireccion, direccion);
 
   const guardar = async () => {
-    emitir("actualizar_direccion", direccionEditada.modelo);
+    await actualizarDireccion(clienteId, direccionEditada.modelo);
+    emitir("direccion_actualizada", direccionEditada.modelo);
   };
 
   const opciones = [

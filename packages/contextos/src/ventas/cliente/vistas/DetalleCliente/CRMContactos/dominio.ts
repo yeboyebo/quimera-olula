@@ -86,14 +86,16 @@ export const desvincularContacto: ProcesarCrmContactos = async (contexto) => {
 export const cancelarAlta: ProcesarCrmContactos = async (contexto) => {
     return {
         ...contexto,
-        contactoActivo: null
+        contactoActivo: null,
+        estado: "lista"
     }
 }
 
 export const cancelarEdicion: ProcesarCrmContactos = async (contexto) => {
     return {
         ...contexto,
-        contactoActivo: null
+        contactoActivo: null,
+        estado: "lista"
     }
 }
 

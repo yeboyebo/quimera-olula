@@ -37,24 +37,22 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
 
   return (
     <div className="CrmContactos">
-      {estado === "lista" && (
-        <>
-          <div className="detalle-cliente-tab-contenido maestro-botones">
-            <QBoton onClick={() => emitir("alta_solicitada")}>Nuevo</QBoton>
-            <QBoton onClick={() => emitir("asociar_solicitado")}>
-              Asociar Contacto
-            </QBoton>
-            <QuimeraAcciones acciones={acciones} vertical />
-          </div>
-          <TabCrmContactosLista
-            clienteId={clienteId}
-            contactos={ctx.contactos}
-            seleccionado={ctx.contactoActivo}
-            emitir={emitir}
-            cargando={ctx.cargando}
-          />
-        </>
-      )}
+      <>
+        <div className="detalle-cliente-tab-contenido maestro-botones">
+          <QBoton onClick={() => emitir("alta_solicitada")}>Nuevo</QBoton>
+          <QBoton onClick={() => emitir("asociar_solicitado")}>
+            Asociar Contacto
+          </QBoton>
+          <QuimeraAcciones acciones={acciones} vertical />
+        </div>
+        <TabCrmContactosLista
+          clienteId={clienteId}
+          contactos={ctx.contactos}
+          seleccionado={ctx.contactoActivo}
+          emitir={emitir}
+          cargando={ctx.cargando}
+        />
+      </>
 
       <QModalConfirmacion
         nombre="confirmacionBorrarContacto"

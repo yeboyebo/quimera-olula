@@ -37,7 +37,7 @@ export const getMaquina: () => Maquina<EstadoDirecciones, ContextoDirecciones> =
         },
 
         edicion: {
-            actualizar_direccion: [actualizarDireccion, "lista"],
+            direccion_actualizada: [actualizarDireccion],
 
             edicion_cancelada: cancelarEdicion,
         },

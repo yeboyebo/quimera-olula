@@ -82,14 +82,16 @@ export const desmarcarDomiciliacionProceso: ProcesarCuentasBanco = async (contex
 export const cancelarAlta: ProcesarCuentasBanco = async (contexto) => {
     return {
         ...contexto,
-        cuentaActiva: null
+        cuentaActiva: null,
+        estado: "lista"
     }
 }
 
 export const cancelarEdicion: ProcesarCuentasBanco = async (contexto) => {
     return {
         ...contexto,
-        cuentaActiva: null
+        cuentaActiva: null,
+        estado: "lista"
     }
 }
 

@@ -8,7 +8,6 @@ import { TabCuentasBancoLista } from "./TabCuentasBancoLista";
 import { useCuentasBanco } from "./useCuentasBanco.ts";
 
 export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
-  console.log("Renderizando TabCuentasBanco", clienteId);
   const { ctx, estado, emitir } = useCuentasBanco({ clienteId });
 
   const acciones = [
@@ -36,22 +35,19 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
 
   return (
     <div className="CuentasBanco">
-      {estado === "lista" && (
-        <>
-          <div className="detalle-cliente-tab-contenido maestro-botones">
-            <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
-            <QuimeraAcciones acciones={acciones} vertical />
-          </div>
-          <TabCuentasBancoLista
-            clienteId={clienteId}
-            cuentas={ctx.cuentas}
-            seleccionada={ctx.cuentaActiva}
-            emitir={emitir}
-            cargando={ctx.cargando}
-          />
-        </>
-      )}
-
+      <>
+        <div className="detalle-cliente-tab-contenido maestro-botones">
+          <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
+          <QuimeraAcciones acciones={acciones} vertical />
+        </div>
+        <TabCuentasBancoLista
+          clienteId={clienteId}
+          cuentas={ctx.cuentas}
+          seleccionada={ctx.cuentaActiva}
+          emitir={emitir}
+          cargando={ctx.cargando}
+        />
+      </>
       <QModal
         nombre="altaCuentaBanco"
         abierto={estado === "alta"}

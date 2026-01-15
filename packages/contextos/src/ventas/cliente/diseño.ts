@@ -113,7 +113,8 @@ export type EstadoCliente =
   | "ABIERTO"
   | "EDITANDO_CLIENTE"
   | "GUARDANDO_CLIENTE"
-  | "BORRANDO_CLIENTE";
+  | "BORRANDO_CLIENTE"
+  | "CONFIRMANDO_BAJA";
 
 // Contexto de la máquina
 export type ContextoCliente = {

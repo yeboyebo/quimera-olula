@@ -24,6 +24,8 @@ export const getMaquina: () => Maquina<EstadoCrmContactos, ContextoCrmContactos>
 
             edicion_solicitada: "edicion",
 
+            edicion_cancelada: "lista",
+
             contacto_seleccionado: activarContacto,
 
             confirmar_borrado: "confirmar_borrado",
@@ -40,7 +42,7 @@ export const getMaquina: () => Maquina<EstadoCrmContactos, ContextoCrmContactos>
         },
 
         edicion: {
-            actualizar_contacto: [actualizarContacto, "lista"],
+            actualizar_contacto: [actualizarContacto],
 
             edicion_cancelada: cancelarEdicion,
         },

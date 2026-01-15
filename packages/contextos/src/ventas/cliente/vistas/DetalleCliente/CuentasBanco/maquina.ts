@@ -40,7 +40,7 @@ export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco>
         },
 
         edicion: {
-            actualizar_cuenta: [actualizarCuenta, "lista"],
+            actualizar_cuenta: [actualizarCuenta],
 
             edicion_cancelada: cancelarEdicion,
         },
