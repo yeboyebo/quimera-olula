@@ -24,6 +24,7 @@ import {
     NuevaLineaFactura
 } from "./diseño.ts";
 import {
+    borrarFactura as borrarFacturaFuncion,
     getFactura,
     getFacturas,
     getLineas
@@ -153,7 +154,7 @@ export const cargarContexto: ProcesarFactura = async (contexto, payload) => {
 }
 
 export const borrarFactura: ProcesarFactura = async (contexto) => {
-    await deleteFactura(contexto.factura.id);
+    await borrarFacturaFuncion(contexto.factura.id);
 
     return pipeFactura(contexto, [
         getContextoVacio,

@@ -20,7 +20,7 @@ export const nuevoAlmacenVacio: NuevoAlmacen = {
     nombre: "",
 };
 
-export const metaNuevoAlmacen: MetaModelo<Partial<Almacen>> = {
+export const metaNuevoAlmacen: MetaModelo<NuevoAlmacen> = {
     campos: {
         id: { requerido: true, validacion: (m) => stringNoVacio(m.id || "") },
         nombre: { requerido: true, validacion: (m) => stringNoVacio(m.nombre || "") },

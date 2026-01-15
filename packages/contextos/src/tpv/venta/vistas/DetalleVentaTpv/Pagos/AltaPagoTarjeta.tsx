@@ -5,7 +5,7 @@ import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { redondeaMoneda } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { nuevoPagoEfectivoVacio } from "../../../dominio.ts";
 import "./AltaPagoTarjeta.css";
 
@@ -17,12 +17,16 @@ export const AltaPagoTarjeta = ({
   venta: VentaTpv;
 }) => {
 
+    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
+    
     const { modelo, uiProps, valido, dispatch } = useModelo(
-        metaNuevoPagoEfectivo, nuevoPagoEfectivoVacio
+        metaNuevoPagoEfectivo, {
+            ...nuevoPagoEfectivoVacio,
+            importe: pendiente
+        }
     );
     const [pagando, setPagando] = useState(false);
 
-    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
     const pagar = () => {
         setPagando(true);
@@ -46,13 +50,6 @@ export const AltaPagoTarjeta = ({
     const limpiar = () => {
         setImporte(0);  
     }
-
-    useEffect(() => {
-        dispatch({
-            type: "set_campo",
-            payload: { campo: "importe", valor: pendiente.toString() },
-        });
-    }, [])
 
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>

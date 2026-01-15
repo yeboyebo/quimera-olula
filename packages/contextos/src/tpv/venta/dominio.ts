@@ -68,12 +68,24 @@ export const nuevaLineaFacturaVacia: NuevaLineaFactura = nuevaLineaVentaVacia;
 
 export const metaCambioClienteFactura: MetaModelo<CambioClienteFactura> = metaCambioClienteVenta;
 
+const onChangeVentaTpv = (venta: VentaTpv, campo: string, _: unknown, otros?: Record<string, unknown>) => {
+    if (campo === "divisa_id" && otros) {
+        return {
+            ...venta,
+            tasa_conversion: otros.tasa_conversion as number
+        }
+    }
+    return venta;
+}
+
 export const metaVentaTpv: MetaModelo<VentaTpv> = {
     campos: {
         fecha: { tipo: "fecha", requerido: false },
         ...metaVenta.campos,
     },
+    onChange: onChangeVentaTpv
 };
+
 
 export const metaLineaFactura: MetaModelo<LineaFactura> = metaLineaVenta;
 

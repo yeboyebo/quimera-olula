@@ -1,36 +1,37 @@
 import { formatearMoneda } from "@olula/lib/dominio.ts";
 import { ArqueoTpv } from "../../diseño.ts";
-import "./TotalesArqueo.css";
+import "./ResumenRecuento.css";
 
-interface TotalesArqueoProps {
+interface ResumenRecuentoProps {
   arqueo: ArqueoTpv;
   // publicar: EmitirEvento,
 }
 
-export const TotalesArqueo = ({
+export const ResumenRecuento = ({
   arqueo,
   // publicar,
-}: TotalesArqueoProps) => {
+}: ResumenRecuentoProps) => {
 
-  const efectivo = arqueo.pagosEfectivo;
-  const tarjeta = arqueo.pagosTarjeta;
-  const vales = arqueo.pagosVale;
+  const efectivo = arqueo.recuentoEfectivo;
+  const tarjeta = arqueo.recuentoTarjeta;
+  const vales = arqueo.recuentoVales;
   const divisa = 'EUR';
 
   return (
-    <div className="totales-arqueo">
+    <div className="resumen-recuento">
+      <h3>Resumen Recuento</h3><br></br>
       
-      <div className="totales-arqueo-item">
+      <div className="resumen-recuento-item">
         <label>Efectivo:</label>
         <span>{formatearMoneda(efectivo, divisa)}</span>
       </div>
 
-      <div className="totales-arqueo-item">
+      <div className="resumen-recuento-item">
         <label>Tarjeta:</label>
         <span>{formatearMoneda(tarjeta, divisa)}</span>
       </div>
 
-      <div className="totales-arqueo-item">
+      <div className="resumen-recuento-item">
         <label>Vale:</label>
         <span>{formatearMoneda(vales, divisa)}</span>
       </div>

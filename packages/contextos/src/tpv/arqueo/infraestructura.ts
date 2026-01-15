@@ -2,7 +2,9 @@ import ApiUrls from "#/tpv/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
-import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchCerrarArqueo, PatchReabrirArqueo } from "./diseño.ts";
+import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
+import { PostVentaTpv } from "../venta/diseño.ts";
+import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PostArqueoTpv } from "./diseño.ts";
 
 type ArqueoTpvAPI = {
     id: string;
@@ -17,6 +19,7 @@ type ArqueoTpvAPI = {
     recuento_efectivo: number;
     recuento_tarjeta: number;
     recuento_vales: number;
+    recuento_caja: Record<string, number>;
     movimiento_cierre: number;
 
 }
@@ -36,6 +39,7 @@ export const arqueoDesdeAPI = (a: ArqueoTpvAPI): ArqueoTpv => ({
     recuentoEfectivo: a.recuento_efectivo,
     recuentoTarjeta: a.recuento_tarjeta,
     recuentoVales: a.recuento_vales,
+    recuentoCaja: a.recuento_caja,
     movimientoCierre: a.movimiento_cierre
 });
 
@@ -84,6 +88,21 @@ export const getPagosArqueo: GetPagosArqueoTpv = async (id, criteria) => {
     };
 }
 
+export const patchArqueo: PatchArqueo = async (arqueo: ArqueoTpv) => {
+
+    console.log('arqueo.recuentoTarjeta', arqueo.recuentoTarjeta);
+
+    await RestAPI.patch(
+        `${baseUrl}/${arqueo.id}`,
+        {
+            recuento_tarjeta: arqueo.recuentoTarjeta,
+            recuento_vales: arqueo.recuentoVales,
+            recuento_efectivo: arqueo.recuentoCaja
+        },
+        "Error al cambiar el arqueo"
+    );
+}
+
 export const patchCerrarArqueo: PatchCerrarArqueo = async (id, cierre) => {
 
     await RestAPI.patch(
@@ -104,3 +123,23 @@ export const patchReabrirArqueo: PatchReabrirArqueo = async (id) => {
         "Error al reabrir arqueo"
     );
 }
+
+export const postArqueo: PostArqueoTpv = async () => {
+    const respuesta = await RestAPI.post(
+        baseUrl,
+        {
+            agente_id: agenteActivo.obtener(),
+            punto_venta_id: puntoVentaLocal.obtener(),
+        },
+        "Error al crear arqueo"
+    );
+    return respuesta.id;
+}
+
+export const postVenta: PostVentaTpv = async () => {
+    const payload = {
+        agente_id: agenteActivo.obtener(),
+        punto_venta_id: puntoVentaLocal.obtener(),
+    };
+    return await RestAPI.post(baseUrl, payload, "Error al crear la venta").then((respuesta) => respuesta.id);
+};
