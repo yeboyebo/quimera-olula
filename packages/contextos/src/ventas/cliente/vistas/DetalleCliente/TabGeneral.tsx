@@ -4,43 +4,36 @@ import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useContext, useState } from "react";
-import { Cliente } from "../../diseño.ts";
-import { darDeAltaCliente } from "../../infraestructura.ts";
+import { Cliente, EstadoCliente } from "../../diseño.ts";
 import { BajaCliente } from "./BajaCliente.tsx";
 import "./TabGeneral.css";
 
+type ClienteConEstado = HookModelo<Cliente> & {
+  estado: EstadoCliente;
+  emitir: (evento: string, payload?: unknown) => Promise<EventoMaquina[]>;
+};
+
 interface TabGeneralProps {
-  cliente: HookModelo<Cliente>;
+  cliente: ClienteConEstado;
   emitirCliente: EmitirEvento;
   recargarCliente: () => void;
 }
 
-export const TabGeneral = ({ cliente, recargarCliente }: TabGeneralProps) => {
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const { intentar } = useContext(ContextoError);
-
-  const onCancelar = () => {
-    setMostrarModal(false);
-  };
-
+export const TabGeneral = ({ cliente, emitirCliente }: TabGeneralProps) => {
   const { uiProps } = cliente;
 
   const onDarDeBajaClicked = async () => {
-    setMostrarModal(true);
+    emitirCliente("confirmar_baja_solicitado");
   };
 
   const onDarAltaClicked = async () => {
-    await intentar(() => darDeAltaCliente(cliente.modelo.id));
-    recargarCliente();
+    emitirCliente("dar_de_alta_solicitado");
   };
 
-  const onBajaRealizada = async () => {
-    setMostrarModal(false);
-    recargarCliente();
+  const onCancelarBaja = () => {
+    emitirCliente("baja_cancelada");
   };
 
   return (
@@ -64,9 +57,13 @@ export const TabGeneral = ({ cliente, recargarCliente }: TabGeneralProps) => {
           <QBoton onClick={onDarDeBajaClicked}>Dar de baja</QBoton>
         )}
       </quimera-formulario>
-      <QModal nombre="modal" abierto={mostrarModal} onCerrar={onCancelar}>
+      <QModal
+        nombre="modal"
+        abierto={cliente.estado === "CONFIRMANDO_BAJA"}
+        onCerrar={onCancelarBaja}
+      >
         <h2>Dar de baja</h2>
-        <BajaCliente cliente={cliente} onBajaRealizada={onBajaRealizada} />
+        <BajaCliente cliente={cliente} emitirCliente={emitirCliente} />
       </QModal>
     </div>
   );

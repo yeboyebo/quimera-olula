@@ -1,0 +1,13 @@
+.Factura .PagarEfectivoVentaTpv {
+    quimera-formulario {
+        max-width: 500px;
+    }
+
+    quimera-autocompletar[nombre="referencia_nueva_linea_pedido"] {
+        grid-column: span 9;
+    }
+
+    quimera-input[nombre="cantidad"] {
+        grid-column: span 3;
+    }
+}

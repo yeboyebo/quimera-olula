@@ -7,6 +7,5 @@ const baseUrl = new ApiUrls().PEDIDO;
 
 export const patchAlbaranarPedido: PatchAlbaranarPedido = async (id, lineas) => {
     const cambios = { lineas: transformarLineasAlbaran(lineas) };
-    console.log("Cambios albaranar pedido:", cambios);
     await RestAPI.patch(`${baseUrl}/${id}/albaranar`, cambios, "Error al cambiar cliente del pedido");
 }

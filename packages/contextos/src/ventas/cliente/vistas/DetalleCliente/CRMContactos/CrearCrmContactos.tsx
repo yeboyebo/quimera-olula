@@ -1,16 +1,12 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
 import {
   metaNuevoCrmContacto,
   nuevoCrmContactoVacio,
 } from "../../../dominio.ts";
-import { getCrmContacto, postCrmContacto } from "../../../infraestructura.ts";
 
 interface AltaCrmContactosProps {
-  clienteId: string;
   emitir: (evento: string, payload?: unknown) => void;
 }
 
@@ -19,11 +15,9 @@ export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
     metaNuevoCrmContacto,
     nuevoCrmContactoVacio
   );
-  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    const id = await intentar(() => postCrmContacto(modelo));
-    emitir("contacto_creado", await getCrmContacto(id));
+    emitir("crear_contacto", modelo);
   };
 
   return (

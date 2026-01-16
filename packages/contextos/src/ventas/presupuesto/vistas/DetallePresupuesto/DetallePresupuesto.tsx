@@ -37,14 +37,6 @@ export const DetallePresupuesto = ({
   const titulo = (presupuesto: Presupuesto) =>
     presupuesto.codigo || "Nuevo Presupuesto";
 
-  // const handleAprobar = useCallback(() => {
-  //   emitir("aprobacion_solicitada", modelo);
-  // }, [emitir, modelo]);
-
-  // const handleBorrar = useCallback(() => {
-  //   emitir("borrar_solicitado");
-  // }, [emitir]);
-
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_presupuesto_lista", modelo);
   }, [emitir, modelo]);

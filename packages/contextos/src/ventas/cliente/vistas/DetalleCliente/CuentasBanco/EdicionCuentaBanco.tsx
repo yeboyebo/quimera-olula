@@ -1,11 +1,8 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
 import { CuentaBanco } from "../../../diseño.ts";
 import { metaCuentaBanco } from "../../../dominio.ts";
-import { patchCuentaBanco } from "../../../infraestructura.ts";
 import "./TabCuentasBanco.css";
 
 interface EdicionCuentaBancoProps {
@@ -15,16 +12,13 @@ interface EdicionCuentaBancoProps {
 }
 
 export const EdicionCuentaBanco = ({
-  clienteId,
   cuenta,
   emitir,
 }: EdicionCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(metaCuentaBanco, cuenta);
-  const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
-    await intentar(() => patchCuentaBanco(clienteId, modelo));
-    emitir("cuenta_actualizada", modelo);
+    emitir("actualizar_cuenta", modelo);
   };
 
   return (
