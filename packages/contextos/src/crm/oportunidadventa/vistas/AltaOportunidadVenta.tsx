@@ -1,5 +1,5 @@
 import { Usuario } from "#/comun/componentes/usuario.tsx";
-import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
+import { ClienteConNombre } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
 import { EstadoOportunidad } from "#/crm/comun/componentes/estado_oportunidad_venta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -86,27 +86,23 @@ export const FormAltaOportunidadVenta = ({
           label="Descripción"
           {...oportunidadventa.uiProps("descripcion")}
         />
-        <Cliente
+        <ClienteConNombre
           {...oportunidadventa.uiProps("cliente_id", "nombre_cliente")}
           label="Seleccionar cliente"
-        />
-        <QInput
-          label="Cliente"
-          {...oportunidadventa.uiProps("nombre_cliente")}
         />
         <EstadoOportunidad
           label="Estado"
           {...oportunidadventa.uiProps("estado_id")}
         />
-        <QInput label="Total" {...oportunidadventa.uiProps("importe")} />
+        <QInput
+          label="Probabilidad (%)"
+          {...oportunidadventa.uiProps("probabilidad")}
+        />
         <QInput
           {...oportunidadventa.uiProps("fecha_cierre")}
           label="Fecha Cierre"
         />
-        <QInput
-          label="probailidad (%)"
-          {...oportunidadventa.uiProps("probabilidad")}
-        />
+        <QInput label="Total" {...oportunidadventa.uiProps("importe")} />
         <Usuario
           {...oportunidadventa.uiProps("responsable_id")}
           label="Responsable"
