@@ -100,12 +100,7 @@ export const DetalleContacto = ({
                 <Tab
                   key="tab-1"
                   label="General"
-                  children={
-                    <TabGeneral
-                      contacto={contacto}
-                      recargarContacto={onRecargarContacto}
-                    />
-                  }
+                  children={<TabGeneral contacto={contacto} />}
                 />,
                 <Tab
                   key="tab-2"
