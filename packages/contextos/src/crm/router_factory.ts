@@ -3,7 +3,7 @@ import { MaestroConDetalleClienteCRM } from "./cliente/vistas/MaestroConDetalleC
 import { MaestroConDetalleContacto } from "./contacto/vistas/MaestroConDetalleContacto.tsx"
 import { MaestroConDetalleEstadoOportunidad } from "./estadoOportunidadVenta/vistas/MaestroConDetalleEstadoOportunidad.tsx"
 import { MaestroConDetalleIncidencia } from "./incidencia/vistas/MaestroConDetalleIncidencia.tsx"
-import { MaestroConDetalleLead } from "./lead/vistas/MaestroConDetalleLead.tsx"
+import { MaestroLeads } from "./lead/Maestro/MaestroLeads.tsx"
 import { MaestroConDetalleOportunidadVenta } from "./oportunidadventa/vistas/MaestroConDetalleOportunidadVenta.tsx"
 
 export class RouterFactoryCrmOlula {
@@ -13,7 +13,7 @@ export class RouterFactoryCrmOlula {
         "crm/cliente": MaestroConDetalleClienteCRM,
         "crm/contacto": MaestroConDetalleContacto,
         "crm/accion": MaestroConDetalleAccion,
-        "crm/lead": MaestroConDetalleLead,
+        "crm/lead": MaestroLeads,
         "crm/incidencia": MaestroConDetalleIncidencia,
     }
 }

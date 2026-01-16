@@ -18,8 +18,8 @@ import {
 } from "@olula/lib/useMaquina.ts";
 import { useCallback } from "react";
 import { Lead } from "../diseño.ts";
-import { metaTablaLead } from "../dominio.ts";
 import { getLeads } from "../infraestructura.ts";
+import { metaTablaLead } from "../Maestro/maestro.ts";
 import { AltaLead } from "./AltaLead.tsx";
 import { DetalleLead } from "./DetalleLead/DetalleLead.tsx";
 

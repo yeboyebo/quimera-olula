@@ -1,14 +1,9 @@
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Lead } from "../../diseño.ts";
-// import "./TabObservaciones.css";
 
-export const TabObservaciones = ({
-  oportunidad,
-}: {
-  oportunidad: HookModelo<Lead>;
-}) => {
-  const { uiProps } = oportunidad;
+export const TabObservaciones = ({ lead }: { lead: HookModelo<Lead> }) => {
+  const { uiProps } = lead;
 
   return (
     <div className="TabObservaciones">

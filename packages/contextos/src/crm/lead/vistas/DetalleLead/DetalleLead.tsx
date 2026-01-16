@@ -8,13 +8,13 @@ import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
+import { TabDatos } from "../../Detalle/Tabs/TabDatos.tsx";
+import { TabObservaciones } from "../../Detalle/Tabs/TabObservaciones.tsx";
 import { Lead } from "../../diseño.ts";
 import { leadVacio, metaLead } from "../../dominio.ts";
 import { deleteLead, getLead, patchLead } from "../../infraestructura.ts";
 import "./DetalleLead.css";
 import { TabAcciones } from "./TabAcciones.tsx";
-import { TabDatos } from "./TabDatos.tsx";
-import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabOportunidades } from "./TabOportunidades.tsx";
 
 type Estado = "edicion" | "borrando";
