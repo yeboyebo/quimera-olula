@@ -1,5 +1,6 @@
 import { AgenteTpvActual } from "#/tpv/agente/agente_actual/AgenteTpvActual.tsx";
-import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
+import { puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
+import { PuntoVentaTpvActual } from "#/tpv/punto_de_venta/punto_actual/PuntoVentaTpvActual.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
@@ -13,10 +14,7 @@ import { metaTablaFactura } from "./maestro.ts";
 import "./MaestroConDetalleVentaTpv.css";
 import { getMaquina } from "./maquina.ts";
 
-puntoVentaLocal.actualizar('000001');
-agenteActivo.actualizar('000001');
 const miPuntoVentaLocal = puntoVentaLocal.obtener() ;
-const miAgenteActivo = agenteActivo.obtener() ;
 
 const maquina = getMaquina();
 
@@ -83,7 +81,7 @@ export const MaestroConDetalleVentaTpv = () => {
                 Maestro={
                     <>
                         <h2>Ventas TPV</h2>
-                        <h2>Punto de venta {miPuntoVentaLocal} </h2>
+                        <PuntoVentaTpvActual/>
                         <AgenteTpvActual/>
                         <div className="maestro-botones">
                             <QBoton onClick={crear}>Nueva Venta</QBoton>

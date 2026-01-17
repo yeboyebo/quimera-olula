@@ -1,8 +1,9 @@
 class Tpv_Urls {
-    readonly VENTA = `/tpv/venta`;
-    readonly VALE = `/tpv/vale`;
-    readonly ARQUEO = `/tpv/arqueo`;
     readonly AGENTE = `/tpv/agente`;
+    readonly ARQUEO = `/tpv/arqueo`;
+    readonly PUNTO_VENTA = `/tpv/punto_venta`;
+    readonly VALE = `/tpv/vale`;
+    readonly VENTA = `/tpv/venta`;
 }
 
 export default Tpv_Urls;

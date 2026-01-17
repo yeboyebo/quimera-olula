@@ -1,5 +1,5 @@
 import { AgenteTpv as TipoAgenteTpv } from "#/tpv/agente/diseño.ts";
-import { getAgentesTpv } from "#/tpv/agente/infraestructura.ts";
+import { getPuntosVentaTpv } from "#/tpv/punto_de_venta/infraestructura.ts";
 import { QSelect } from "@olula/componentes/index.js";
 import { Criteria } from "@olula/lib/diseño.js";
 import { useEffect, useState } from "react";
@@ -13,22 +13,22 @@ interface ArticuloProps {
     onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
-type OpcionAgente = {
+type OpcionPuntoVenta = {
     valor: string;
     descripcion: string;
-    agente: TipoAgenteTpv
+    punto: TipoAgenteTpv
 }
 
-export const AgenteTpv = ({
+export const PuntoVentaTpv = ({
     descripcion = "",
     valor,
-    nombre = "agente_tpv",
-    label = "Agente",
+    nombre = "punto_venta_tpv",
+    label = "Punto de venta",
     onChange,
     ...props
 }: ArticuloProps) => {
 
-    const [agentes, setAgentes] = useState<OpcionAgente[]>([]);
+    const [agentes, setAgentes] = useState<OpcionPuntoVenta[]>([]);
 
     useEffect(() => {
         const obtenerOpciones = async () => {
@@ -38,13 +38,13 @@ export const AgenteTpv = ({
                 paginacion: { limite: 1000, pagina: 1 },
             };
 
-            const agentes_ = await getAgentesTpv(criteria);
+            const puntos_ = await getPuntosVentaTpv(criteria);
 
             setAgentes(
-                agentes_.datos.map((agente) => ({
-                    valor: agente.id,
-                    descripcion: agente.nombre,
-                    agente: agente,
+                puntos_.datos.map((punto) => ({
+                    valor: punto.id,
+                    descripcion: punto.nombre,
+                    punto: punto,
                 }))
             );
         };

@@ -5,7 +5,7 @@ import { CambioAgenteActual } from "./diseño.ts";
 // export const CambioAgenteActualVacio: {};
 export const metaCambioAgenteActual: MetaModelo<CambioAgenteActual> = {
     campos: {
-        idAgente: { requerido: true },
+        idPunto: { requerido: true },
         // agente: { requerido: true },
     },
     onChange: (cambioAgente, campo, _, otros) => {

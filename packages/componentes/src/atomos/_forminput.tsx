@@ -12,7 +12,7 @@ export type FormFieldProps = {
   condensado?: boolean;
   autoSeleccion?: boolean;
   autoFocus?: boolean;
-  ref?: React.RefObject<HTMLInputElement | null>;
+  ref?: React.RefObject<HTMLInputElement | HTMLSelectElement | null>;
   onChange?: (
     valor: string,
     evento: React.ChangeEvent<HTMLInputElement>
@@ -137,7 +137,7 @@ export const FormInput = ({
       onInput={manejarInput}
       onKeyUp={manejarKeyUp}
       autoFocus={autoFocus}
-      ref={ref}
+      ref={ref as React.RefObject<HTMLInputElement>}
     />
   );
 };

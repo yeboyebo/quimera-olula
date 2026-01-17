@@ -1,14 +1,13 @@
 import { AgenteTpv as CompAgenteTpv } from "#/tpv/comun/componentes/AgenteTpv.tsx";
-import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
+import { agenteActivo } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/index.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useState } from "react";
 import { AgenteTpv } from "../diseño.ts";
 import { metaCambioAgenteActual } from "./agente_actual.ts";
+import "./AgenteTpvActual.css";
 
-puntoVentaLocal.actualizar('000001');
-// agenteActivo.actualizar('000001');
 const miAgenteActivo = agenteActivo.obtener() ;
 
 
@@ -26,21 +25,19 @@ export const AgenteTpvActual = () => {
 
     return (
         <div className="AgenteActual"> 
-            {
-                cambiando
-                    ?   <CambiarAgenteTpv 
-                            agenteActual={agente}
-                            cambiar={cambiarAgente}
-                            cancelar={() => setCambiando(false)}
+            { cambiando
+                ?   <CambiarAgenteTpv 
+                        agenteActual={agente}
+                        cambiar={cambiarAgente}
+                        cancelar={() => setCambiando(false)}
+                    />
+                :   <div className='inactivo'>
+                        <h2>{agente?.nombre ?? ''} </h2>
+                        <QBoton texto='...'
+                            onClick={() => setCambiando(true)}
+                            tamaño='pequeño'
                         />
-                    : ( 
-                        <>
-                            <h2>Agente {agente?.nombre ?? ''} </h2>
-                            <QBoton texto='...'
-                                onClick={() => setCambiando(true)}
-                            />
-                        </>
-                    )
+                    </div>
             }
         </div>
     );
@@ -59,6 +56,7 @@ const CambiarAgenteTpv = ({
 
     const { modelo, uiProps, valido } = useModelo(metaCambioAgenteActual, {
         idAgente: agenteActual?.id ?? null,
+        nombre: agenteActual?.nombre ?? null,
         agente: agenteActual,
     });
 
@@ -69,8 +67,8 @@ const CambiarAgenteTpv = ({
     };
 
     return (
-        <div className="AgenteActual"> 
-        {modelo.idAgente}
+        <div className='seccion-activa'> 
+
             <quimera-formulario>
                 <CompAgenteTpv 
                     {...uiProps("idAgente", "nombre")}
@@ -78,14 +76,16 @@ const CambiarAgenteTpv = ({
                     ref={focus}
                 />
             </quimera-formulario>
-            <div >
+
+            <div className='maestro-botones'>
                 <QBoton texto="Cancelar"
                     onClick={cancelar}
                 />
-                <QBoton texto="Cambiar agente actual"
+                <QBoton texto="Cambiar"
                     onClick={cambiarAgente} deshabilitado={!valido}
                 />
             </div>
+
         </div>
     );
 };
