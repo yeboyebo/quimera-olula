@@ -1,3 +1,4 @@
+import { divisaTpv } from "#/tpv/comun/dominio.ts";
 import { MetaModelo } from "@olula/lib/dominio.js";
 
 export type NuevoPagoEfectivo = {
@@ -6,6 +7,6 @@ export type NuevoPagoEfectivo = {
 
 export const metaNuevoPagoEfectivo: MetaModelo<NuevoPagoEfectivo> = {
     campos: {
-        importe: { tipo: "numero", requerido: true },
+        importe: { requerido: true, tipo: "moneda", divisa: divisaTpv },
     }
 };

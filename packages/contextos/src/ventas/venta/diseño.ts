@@ -3,7 +3,7 @@ import { Direccion, Entidad } from "@olula/lib/diseño.ts";
 export interface Venta extends Entidad {
     id: string;
     codigo: string;
-    fecha: string;
+    fecha: Date;
     cliente_id: string;
     nombre_cliente: string;
     id_fiscal: string;

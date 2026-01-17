@@ -126,6 +126,8 @@ quimera-checkbox {
 quimera-input {
 
     &[tipo='numero'],
+    &[tipo='entero'],
+    &[tipo='decimal'],
     &[tipo='moneda'] {
         input {
             text-align: right;
@@ -135,4 +137,8 @@ quimera-input {
             text-align: right;
         }
     }
+}
+
+.input_ {
+    display: flex;
 }

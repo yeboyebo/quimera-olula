@@ -1,12 +1,11 @@
 import { Articulo } from "#/ventas/comun/componentes/articulo.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { useModelo } from "@olula/lib/useModelo.ts";
-
-
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useFocus } from "@olula/lib/useFocus.ts";
+import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import { VentaTpv } from "../diseño.ts";
 import { postLinea } from "../infraestructura.ts";
@@ -41,6 +40,8 @@ export const CrearLineaVentaTpv = ({
         [creando, publicar]
     );
 
+    const focus = useFocus();   
+
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
 
@@ -49,9 +50,10 @@ export const CrearLineaVentaTpv = ({
             <h2>Crear línea</h2>
 
             <quimera-formulario>
-                <Articulo
+                <Articulo 
                     {...uiProps("referencia", "descripcion")}
                     nombre="referencia_nueva_linea_pedido"
+                    ref={focus}
                 />
                 <QInput label="Cantidad" {...uiProps("cantidad")} />
             </quimera-formulario>
@@ -67,3 +69,4 @@ export const CrearLineaVentaTpv = ({
         </QModal>
     );
 };
+

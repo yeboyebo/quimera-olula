@@ -1,6 +1,6 @@
+import { getAgentesTpv } from "#/tpv/agente/infraestructura.ts";
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "@olula/lib/diseño.ts";
-import { getTagsArticulo } from "../../articulo/infraestructura.ts";
+import { Criteria } from "@olula/lib/diseño.js";
 interface ArticuloProps {
   descripcion?: string;
   valor: string;
@@ -10,28 +10,27 @@ interface ArticuloProps {
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
-export const Articulo = ({
+export const AgenteTpv = ({
   descripcion = "",
   valor,
-  nombre = "referencia",
-  label = "Artículo",
+  nombre = "agente_tpv",
+  label = "Agente",
   onChange,
   ...props
 }: ArticuloProps) => {
   const obtenerOpciones = async (texto: string) => {
-    const criteria = {
+    const criteria: Criteria = {
       filtro: ["descripcion", "~", texto],
       orden: ["id"],
+      paginacion: { limite: 1000, pagina: 1 },
     };
 
-    const articulos = await getTagsArticulo(
-      criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
-    );
+    const agentes = await getAgentesTpv(criteria);
 
-    return articulos.map((articulo) => ({
-      valor: articulo.id,
-      descripcion: articulo.descripcion,
+    return agentes.datos.map((agente) => ({
+      valor: agente.id,
+      descripcion: agente.nombre,
+      agente: agente,
     }));
   };
 

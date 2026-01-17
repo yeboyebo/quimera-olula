@@ -1,3 +1,5 @@
+import { AgenteTpv } from "../agente/diseño.ts";
+
 const CLAVE_PUNTO_VENTA = "punto-venta-tpv-local";
 
 export const puntoVentaLocal = {
@@ -13,10 +15,20 @@ export const puntoVentaLocal = {
 const CLAVE_AGENTE_TPV = "agente-tpv-local";
 
 export const agenteActivo = {
-    actualizar: (AgenteId: string) => {
-        localStorage.setItem(CLAVE_AGENTE_TPV, AgenteId);
+
+    actualizar: (agente: AgenteTpv) => {
+        localStorage.setItem(CLAVE_AGENTE_TPV, JSON.stringify(agente));
     },
-    obtener: () => localStorage.getItem(CLAVE_AGENTE_TPV),
+
+    obtener: (): AgenteTpv | null => {
+        const agenteStorage = localStorage.getItem(CLAVE_AGENTE_TPV);
+        if (agenteStorage) {
+            const agente = JSON.parse(agenteStorage);
+            return agente
+        }
+        return null;
+    },
+
     borrar: () => {
         localStorage.removeItem(CLAVE_PUNTO_VENTA);
     },

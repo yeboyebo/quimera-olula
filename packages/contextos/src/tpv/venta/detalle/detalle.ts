@@ -23,8 +23,8 @@ const onChangeVentaTpv = (venta: VentaTpv, campo: string, _: unknown, otros?: Re
 
 export const metaVentaTpv: MetaModelo<VentaTpv> = {
     campos: {
-        fecha: { tipo: "fecha", requerido: false },
         ...metaVenta.campos,
+        fecha: { tipo: "fecha", requerido: true },
     },
     onChange: onChangeVentaTpv
 };

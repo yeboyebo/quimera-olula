@@ -1,7 +1,7 @@
 import { useCallback, useReducer, useRef, useState } from "react";
 
-import { Modelo, TipoInput } from "./diseño.ts";
-import { Accion, makeReductor, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
+import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
+import { Accion, convertirCampoDesdeUI, convertirCampoHaciaUI, formatoValorCampoValido, makeReductor, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
 
 
 export function useModelo<T extends Modelo>(
@@ -25,6 +25,7 @@ export function useModelo<T extends Modelo>(
         let valor = _valor || null;
         let descripcion: string | undefined = undefined;
 
+
         const valorAnterior = modelo[campo];
 
         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
@@ -33,9 +34,17 @@ export function useModelo<T extends Modelo>(
                 descripcion = _valor.descripcion;
             }
         }
+        if (!formatoValorCampoValido(meta)(campo, valor)) {
+            console.log(`El valor de ${campo} ${valor} no es válido`);
+            return;
+        }
+        console.log(`El valor de ${campo} ${valor} SI es válido`);
+
+        const valorModelo = convertirCampoDesdeUI(meta)(campo, valor as string);
+
         let nuevoModelo = {
             ...modelo,
-            [campo]: valor,
+            [campo]: valorModelo,
         } as T
         if (segundo && descripcion) {
             nuevoModelo = {
@@ -70,7 +79,7 @@ export function useModelo<T extends Modelo>(
 
         const validacion = validacionCampoModelo(meta)(modelo, campo);
         const valido = validacion === true;
-        const valor = modelo[campo] as string;
+        const valor = modelo[campo];
         const textoValidacion = valor === modeloInicial[campo]
             ? ''
             : typeof validacion === "string"
@@ -79,7 +88,7 @@ export function useModelo<T extends Modelo>(
         const editable = modeloEsEditable<T>(meta)(modelo, campo);
         const cambiado = valor !== modeloInicial[campo];
         const campos = meta.campos || {};
-        const tipoMeta = campo in campos && campos[campo]?.tipo
+        const tipoCampo = campo in campos && campos[campo]?.tipo
             ? campos[campo].tipo
             : "texto";
 
@@ -88,12 +97,15 @@ export function useModelo<T extends Modelo>(
             "dolar": "moneda",
         };
 
-        // const tipo = conversionTipo[tipoMeta] || tipoMeta;
-        const tipo = (conversionTipo[tipoMeta as keyof typeof conversionTipo] || tipoMeta) as TipoInput;
+        // const tipo = conversionTipo[tipoCampo] || tipoCampo;
+        const tipo = (conversionTipo[tipoCampo as keyof typeof conversionTipo] || tipoCampo) as TipoInput;
+        const valorUI = convertirCampoHaciaUI(meta)(campo, valor);
+
+        console.log('> UI campo', campo, 'valor', valor, 'valorUI', valorUI);
 
         return {
             nombre: campo,
-            valor: valor,
+            valor: valorUI,
             tipo: tipo,
             deshabilitado: !editable,
             valido: cambiado && valido,
@@ -114,16 +126,6 @@ export function useModelo<T extends Modelo>(
         });
         setModeloInicial(modeloAUsar);
     }, []); // Vacío porque usamos ref
-    // const init = useCallback((modelo?: T) => {
-    //     // if (modelo === modeloInicial) return;
-    //     dispatch({
-    //         type: "init",
-    //         payload: {
-    //             entidad: modelo || modeloInicialProp
-    //         }
-    //     })
-    //     setModeloInicial(modelo || modeloInicialProp);
-    // }, [dispatch, setModeloInicial, modeloInicialProp]);
 
     const set = useCallback((modelo: T) => {
         // if (modelo === modeloInicial) return;
@@ -169,7 +171,7 @@ export type ValorControl = null | string | ParamOpcion;
 
 export type UiProps = {
     nombre: string;
-    valor: string;
+    valor: ValorCampoUI;
     tipo: TipoInput;
     textoValidacion: string;
     deshabilitado: boolean;
