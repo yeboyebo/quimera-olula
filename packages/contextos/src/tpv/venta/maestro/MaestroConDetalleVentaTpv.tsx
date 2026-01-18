@@ -1,5 +1,4 @@
 import { AgenteTpvActual } from "#/tpv/agente/agente_actual/AgenteTpvActual.tsx";
-import { puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { PuntoVentaTpvActual } from "#/tpv/punto_de_venta/punto_actual/PuntoVentaTpvActual.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
@@ -14,8 +13,6 @@ import { metaTablaFactura } from "./maestro.ts";
 import "./MaestroConDetalleVentaTpv.css";
 import { getMaquina } from "./maquina.ts";
 
-const miPuntoVentaLocal = puntoVentaLocal.obtener() ;
-
 const maquina = getMaquina();
 
 const criteriaBaseVentas = {
@@ -27,12 +24,14 @@ const criteriaBaseVentas = {
     orden: ["codigo", "DESC"]
     
 }
+type Layout = "TABLA" | "TARJETA";
 
 export const MaestroConDetalleVentaTpv = () => {
 
     const { intentar } = useContext(ContextoError);
 
     const [cargando, setCargando] = useState(false);
+    const [layout, setLayout] = useState<Layout>("TARJETA");
 
     const [ctx, setCtx] = useState<ContextoMaestroVentasTpv>({
         estado: "INICIAL",
@@ -51,6 +50,11 @@ export const MaestroConDetalleVentaTpv = () => {
         },
         [ctx, setCtx, setCargando,intentar]
     );
+
+    const cambiarLayout = useCallback(
+        () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
+        [layout, setLayout]
+    );
     
     const crear = useCallback(
         () => emitir("creacion_de_venta_solicitada"),
@@ -64,15 +68,15 @@ export const MaestroConDetalleVentaTpv = () => {
 
     const recargar = useCallback(
         async (criteria: Criteria) => {
-            setCargando(true);
             await emitir("recarga_de_ventas_solicitada", criteria);
-            setCargando(false);
         },
-        [emitir, setCargando]
+        [emitir]
     );
-
+    
     useEffect(() => {
+        setCargando(true);
         recargar(criteriaBaseVentas);
+        setCargando(false);
     }, [])
 
     return ( 
@@ -81,6 +85,12 @@ export const MaestroConDetalleVentaTpv = () => {
                 Maestro={
                     <>
                         <h2>Ventas TPV</h2>
+                        <div className="maestro-botones">
+                            <QBoton 
+                                texto={layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
+                                onClick={cambiarLayout}
+                            />
+                        </div>
                         <PuntoVentaTpvActual/>
                         <AgenteTpvActual/>
                         <div className="maestro-botones">
@@ -91,9 +101,9 @@ export const MaestroConDetalleVentaTpv = () => {
                             metaFiltro={true}
                             cargando={cargando}
                             criteriaInicial={criteriaDefecto}
-                            modo={'tabla'}
+                            modo={layout === "TARJETA" ? 'tarjetas' : 'tabla'}
                             // setModo={handleSetModoVisualizacion}
-                            // tarjeta={tarjeta}
+                            tarjeta={TarjetaVentaTpv}
                             entidades={ctx.ventas}
                             totalEntidades={ctx.totalVentas}
                             seleccionada={ctx.ventaActiva}
@@ -105,9 +115,22 @@ export const MaestroConDetalleVentaTpv = () => {
                 Detalle={
                     <DetalleVentaTpv ventaInicial={ctx.ventaActiva} publicar={emitir} />
                 }
+                layout={layout}
                 seleccionada={ctx.ventaActiva}
                 modoDisposicion="maestro-50"
             />
         </div>
     );
 };
+
+
+const TarjetaVentaTpv = (
+    venta: VentaTpv ,
+) => {
+
+    return (
+        <div className="tarjeta-venta">
+            {venta.codigo}
+        </div>
+    )
+}
