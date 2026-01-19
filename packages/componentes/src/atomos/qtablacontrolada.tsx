@@ -1,6 +1,7 @@
 import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
   calcularPaginacionSimplificada,
+  formatearFechaDate,
   formatearFechaHora,
   formatearFechaString,
   formatearHoraString,
@@ -65,10 +66,13 @@ const a_string = (
 ): string => {
   let formateado = "";
 
+
   if (tipo === "moneda" && typeof valor === "number") {
     formateado = formatearMoneda(valor, divisa ?? "EUR");
   } else if (tipo === "fecha" && typeof valor === "string") {
     formateado = formatearFechaString(valor);
+  } else if (tipo === "fecha" && typeof valor === "object") {
+    formateado = formatearFechaDate(valor as Date);
   } else if (tipo === "hora" && typeof valor === "string") {
     formateado = formatearHoraString(valor);
   } else if (tipo === "numero" && typeof valor === "number") {

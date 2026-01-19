@@ -49,4 +49,5 @@ export type MaestroDetalleControladoProps<T extends Entidad> = {
   setModoDisposicion?: (modo: ModoDisposicion) => void;
   nombreModal?: string;
   onCerrarDetalle?: () => void;
+  layout?: "TARJETA" | "TABLA";
 };

@@ -9,15 +9,19 @@ interface DivisasProps {
   getProps?: (campo: string) => Record<string, unknown>;
 }
 
+type OpcionDivisa = {
+  valor: string;
+  descripcion: string;
+}
+
 export const Divisa = ({
   valor,
   nombre = "divisa_id",
   onChange,
   ...props
 }: DivisasProps) => {
-  const [opcionesDivisa, setOpcionesDivisa] = useState<
-    { valor: string; descripcion: string }[]
-  >([]);
+
+  const [opcionesDivisa, setOpcionesDivisa] = useState<OpcionDivisa[]>([]);
 
   useEffect(() => {
     const cargarOpcionesDivisa = async () => {

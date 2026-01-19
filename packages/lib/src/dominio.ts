@@ -1,5 +1,5 @@
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
-import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -71,8 +71,10 @@ export type MetaCampo<T extends Modelo> = {
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
     positivo?: boolean
+    divisa?: string
+    decimales?: number
 }
-export type TipoValorCampo = string | boolean | number | null;
+// export type TipoValorCampo = string | boolean | number | null;
 
 export type MetaModelo<T extends Modelo> = {
     campos?: Record<string, MetaCampo<T>>;
@@ -82,7 +84,7 @@ export type MetaModelo<T extends Modelo> = {
 }
 
 
-export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
+export const makeReductor = <T extends Modelo>() => {
 
     return (estado: T, accion: Accion<T>): T => {
 
@@ -92,17 +94,17 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
                 return accion.payload.entidad;
             }
 
-            case "set_campo": {
-                const valor = convertirValorCampo<T>(
-                    accion.payload.valor,
-                    accion.payload.campo,
-                    meta.campos
-                );
-                return {
-                    ...estado,
-                    [accion.payload.campo]: valor
-                }
-            }
+            // case "set_campo": {
+            //     const valor = convertirValorCampo<T>(
+            //         accion.payload.valor,
+            //         accion.payload.campo,
+            //         meta.campos
+            //     );
+            //     return {
+            //         ...estado,
+            //         [accion.payload.campo]: valor
+            //     }
+            // }
 
             default: {
                 return { ...estado };
@@ -111,25 +113,25 @@ export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
     }
 }
 
-const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, MetaCampo<T>>) => {
-    if (!campos) return valor;
-    if (!(campo in campos)) return valor;
+// const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, MetaCampo<T>>) => {
+//     if (!campos) return valor;
+//     if (!(campo in campos)) return valor;
 
-    if (valor === null) {
-        return null;
-    }
+//     if (valor === null) {
+//         return null;
+//     }
 
-    switch (campos[campo].tipo) {
-        case 'checkbox':
-            return valor === 'true'
-        case 'numero': {
-            const numero = parseFloat(valor);
-            return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
-        }
-        default:
-            return valor;
-    }
-}
+//     switch (campos[campo].tipo) {
+//         case 'checkbox':
+//             return valor === 'true'
+//         case 'numero': {
+//             const numero = parseFloat(valor);
+//             return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
+//         }
+//         default:
+//             return valor;
+//     }
+// }
 
 export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
     const estado = {
@@ -139,20 +141,20 @@ export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
     return estado;
 }
 
-export const cambiarEstadoModelo = <T extends Modelo>(
-    estado: EstadoModelo<T>,
-    campo: string,
-    valor: TipoValorCampo,
-): EstadoModelo<T> => {
+// export const cambiarEstadoModelo = <T extends Modelo>(
+//     estado: EstadoModelo<T>,
+//     campo: string,
+//     valor: TipoValorCampo,
+// ): EstadoModelo<T> => {
 
-    return {
-        ...estado,
-        valor: {
-            ...estado.valor,
-            [campo]: valor
-        }
-    }
-}
+//     return {
+//         ...estado,
+//         valor: {
+//             ...estado.valor,
+//             [campo]: valor
+//         }
+//     }
+// }
 
 export type Accion<T extends Modelo> = {
     type: 'set';
@@ -224,6 +226,144 @@ export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (mode
             ? meta.editable(modelo)
             : true;
 }
+
+export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: string | null): unknown => {
+
+    if (!meta.campos) {
+        if (valor === '') {
+            return null;
+        }
+        return valor;
+    }
+
+    if (!meta.campos[campo]) {
+        if (valor === '') {
+            return null;
+        }
+        return valor;
+    }
+
+    if (!meta.campos[campo].tipo) {
+        if (valor === '') {
+            return null;
+        }
+        return valor;
+    }
+
+    const tipo = meta.campos[campo].tipo;
+
+    switch (tipo) {
+        case 'checkbox': {
+            return valor; // Ver un caso y cambiar a boolean
+        }
+        case 'moneda':
+        case 'decimal':
+        case 'numero': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+            const numero = parseFloat(valor);
+
+            if (isNaN(numero)) {
+                throw new Error('No es un número');
+            }
+
+            return numero;
+
+        }
+        case 'entero': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+            const numero = parseInt(valor);
+
+            if (isNaN(numero)) {
+                throw new Error('No es un número entero');
+            }
+
+            return numero;
+        }
+        case 'fecha': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+            return new Date(Date.parse(valor));
+        }
+        default:
+            return valor;
+    }
+}
+
+
+export const formatoValorCampoValido = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): boolean => {
+
+    const metaCampo = meta.campos?.[campo];
+    const tipoCampo = metaCampo?.tipo;
+
+    if (valor === null) {
+        return true;
+    }
+
+    if (tipoCampo === 'moneda') {
+
+        const divisa = metaCampo?.divisa || 'EUR';
+        const decimales = decimalesPorMoneda(divisa);
+        return valorDecimalEsValido(String(valor), decimales);
+
+    } else if (tipoCampo === 'decimal') {
+
+        const decimales = metaCampo?.decimales;
+        if (!decimales) {
+            return true;
+        }
+        return valorDecimalEsValido(String(valor), decimales);
+
+        // } else if (tipoCampo === 'entero') {
+        //     return valorEnteroEsValido(String(valor));
+    }
+    return true;
+}
+
+// const valorEnteroEsValido = (valor: string): boolean => {
+//     return new RegExp(`^\\d+$`).test(String(valor));
+// }
+
+const valorDecimalEsValido = (valor: string, decimales: number): boolean => {
+    return new RegExp(`^(\\d?)+(\\.\\d{0,${decimales}})?$`).test(String(valor));
+}
+// No permite .23 y es incómodo de editar
+// const valorDecimalEsValido2 = (valor: string, decimales: number): boolean => {
+//     return new RegExp(`^\\d+(\\.\\d{0,${decimales}})?$`).test(String(valor));
+// }
+
+export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): ValorCampoUI => {
+
+    if (valor === null || valor === undefined) {
+        return '';
+    }
+    const tipoCampo = meta.campos?.[campo]?.tipo;
+    switch (tipoCampo) {
+
+        case 'texto':
+            return String(valor) || '';
+
+        case 'numero':
+        case 'moneda':
+        case 'decimal':
+        case 'entero':
+            return Number(valor).toString();
+
+        case 'checkbox':
+            return (valor as boolean).toString();
+
+        case 'fecha':
+            return (valor as Date).toISOString().split('T')[0];
+
+        default:
+            return valor as string;
+    }
+}
+
 
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
@@ -415,8 +555,12 @@ export const puede = (regla: string): boolean => {
 
 type RelacionDeCampos = Record<string, string>;
 export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Criteria) => Criteria => {
-    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro => clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+
+    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro =>
+        clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+
     const transformarFiltro = (filtro: Filtro): Filtro => filtro.map(transformarClausula);
+
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({

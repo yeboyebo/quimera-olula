@@ -61,6 +61,8 @@ export type EmitirEvento = (evento: string, payload?: unknown) => void
 export type TipoInput =
     | "texto"
     | "numero"
+    | "entero"
+    | "decimal"
     | "fecha"
     | "hora"
     | "fecha_hora"
@@ -77,6 +79,7 @@ export type TipoInput =
     | "autocompletar"
     | "selector";
 
+export type ValorCampoUI = string;
 
 export type ListaSeleccionable<E extends Entidad> = {
     lista: E[];

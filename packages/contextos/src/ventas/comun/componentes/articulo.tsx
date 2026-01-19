@@ -6,6 +6,7 @@ interface ArticuloProps {
   valor: string;
   nombre?: string;
   label?: string;
+  ref?: React.RefObject<HTMLInputElement | null>;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 

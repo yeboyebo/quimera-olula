@@ -12,6 +12,7 @@ type LineaPresupuestoAPI = LineaPresupuesto
 // export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => p;
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
+  fecha: new Date(p.fecha),
   nombre_via: p.direccion?.nombre_via ?? "",
   cod_postal: p.direccion?.cod_postal ?? null,
   ciudad: p.direccion?.ciudad ?? "",
@@ -33,6 +34,7 @@ export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
   } = l;
   return {
     ...rest,
+    fecha: rest.fecha.toISOString(),
     direccion: {
       nombre_via: direccion?.nombre_via ?? "",
       cod_postal: direccion?.cod_postal ?? "",

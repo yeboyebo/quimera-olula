@@ -28,6 +28,7 @@ export const QSelect = ({
   valido,
   opcional,
   condensado,
+  ref,
   onChange,
   onBlur,
 }: QSelectProps) => {
@@ -79,6 +80,7 @@ export const QSelect = ({
           disabled={deshabilitado}
           onChange={manejarChange}
           onBlur={manejarBlur}
+          ref={ref as React.RefObject<HTMLSelectElement>}
         >
           <option hidden value="">
             -{placeholder}-
