@@ -10,7 +10,7 @@ export function useModelo<T extends Modelo>(
 ): HookModelo<T> {
 
     const [modelo, dispatch] = useReducer(
-        makeReductor(meta),
+        makeReductor(),
         modeloInicialProp
     );
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);

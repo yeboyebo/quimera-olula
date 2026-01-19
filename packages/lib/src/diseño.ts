@@ -18,7 +18,7 @@ export type Criteria = {
 }
 
 export type ClausulaFiltro = [string, string, string?];
-export type Filtro = ClausulaFiltro | ClausulaFiltro[];
+export type Filtro = ClausulaFiltro[];
 
 export type Orden = string[];
 

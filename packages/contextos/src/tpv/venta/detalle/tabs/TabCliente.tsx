@@ -8,6 +8,7 @@ import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useState } from "react";
 
+import { CambioClienteVenta } from "#/ventas/venta/diseño.ts";
 import { VentaTpv } from "../../diseño.ts";
 import { patchCambiarCliente } from "../../infraestructura.ts";
 import { CambioCliente } from "./CambioCliente.tsx";
@@ -35,7 +36,7 @@ export const TabCliente = ({
         CAMBIO_CLIENTE_CANCELADO: "edicion",
 
         CAMBIO_CLIENTE_LISTO: async (payload: unknown) => {
-            const cambioCliente = payload as TipoCambioCliente;
+            const cambioCliente = payload as CambioClienteVenta;
             await patchCambiarCliente(modelo.id, cambioCliente);
             publicar("CLIENTE_FACTURA_CAMBIADO", modelo);
             return "edicion" as Estado;

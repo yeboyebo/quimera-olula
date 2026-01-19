@@ -84,7 +84,7 @@ export type MetaModelo<T extends Modelo> = {
 }
 
 
-export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
+export const makeReductor = <T extends Modelo>() => {
 
     return (estado: T, accion: Accion<T>): T => {
 
@@ -555,8 +555,12 @@ export const puede = (regla: string): boolean => {
 
 type RelacionDeCampos = Record<string, string>;
 export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Criteria) => Criteria => {
-    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro => clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+
+    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro =>
+        clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+
     const transformarFiltro = (filtro: Filtro): Filtro => filtro.map(transformarClausula);
+
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({

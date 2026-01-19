@@ -1,6 +1,6 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { PagoVentaTpv } from "../../../diseño.ts";
+import { PagoVentaTpv } from "../../diseño.ts";
 
 export const PagosLista = ({
   pagos,

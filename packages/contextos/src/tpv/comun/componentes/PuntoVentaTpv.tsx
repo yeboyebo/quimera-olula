@@ -5,7 +5,6 @@ import { Criteria } from "@olula/lib/diseño.js";
 import { useEffect, useState } from "react";
 
 interface ArticuloProps {
-    descripcion?: string;
     valor: string;
     nombre?: string;
     label?: string;
@@ -20,7 +19,6 @@ type OpcionPuntoVenta = {
 }
 
 export const PuntoVentaTpv = ({
-    descripcion = "",
     valor,
     nombre = "punto_venta_tpv",
     label = "Punto de venta",
