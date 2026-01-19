@@ -1,7 +1,7 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Cliente } from "../diseño.ts";
 import { deleteCliente } from "../infraestructura.ts";
 
@@ -17,10 +17,8 @@ export const BorrarCliente = ({
   onCancelar = () => {},
 }: BorrarClienteProps) => {
   const { intentar } = useContext(ContextoError);
-  const [borrando, setBorrando] = useState(false);
 
   const borrar = async () => {
-    setBorrando(true);
     await intentar(() => deleteCliente(cliente.id));
     publicar("cliente_borrado", { clienteId: cliente.id });
     onCancelar();

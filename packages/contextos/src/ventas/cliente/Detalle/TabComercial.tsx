@@ -5,7 +5,7 @@ import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.ts
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { Cliente } from "../../diseño.ts";
+import { Cliente } from "../diseño.ts";
 import "./TabComercial.css";
 
 interface TabComercialProps {

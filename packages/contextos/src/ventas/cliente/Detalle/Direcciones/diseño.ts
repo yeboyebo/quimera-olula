@@ -1,4 +1,4 @@
-import { DirCliente } from "../../diseño.ts";
+import { DirCliente } from "../diseño.ts";
 
 export type EstadoDirecciones = "lista" | "alta" | "edicion" | "confirmar_borrado";
 

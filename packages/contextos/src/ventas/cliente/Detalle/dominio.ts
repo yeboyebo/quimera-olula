@@ -4,7 +4,6 @@ export {
     cambiarCliente,
     cancelarCambioCliente,
     cargarContexto,
-    getContextoVacio,
-    refrescarCliente
+    getContextoVacio, metaDireccion, metaNuevaCuentaBanco, metaNuevaDireccion, metaNuevoCrmContacto, nuevaCuentaBancoVacia, nuevaDireccionVacia, nuevoCrmContactoVacio, puedoMarcarDireccionFacturacion, refrescarCliente
 } from "../dominio.ts";
 

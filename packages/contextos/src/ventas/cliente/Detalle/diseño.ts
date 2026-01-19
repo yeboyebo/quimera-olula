@@ -1,4 +1,4 @@
-import { Cliente } from "../diseño.ts";
+import { Cliente, CrmContacto, CuentaBanco, DirCliente } from "../diseño.ts";
 
 export type EstadoDetalleCliente =
     | "INICIAL"
@@ -14,3 +14,6 @@ export type ContextoDetalleCliente = {
     cliente: Cliente;
     clienteInicial: Cliente;
 };
+
+// Re-export for convenience
+export type { CrmContacto, CuentaBanco, DirCliente };

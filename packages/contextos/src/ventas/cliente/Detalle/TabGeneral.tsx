@@ -3,10 +3,9 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { Cliente, EstadoCliente } from "../../diseño.ts";
+import { Cliente, EstadoCliente } from "../diseño.ts";
 import "./TabGeneral.css";
 
 type ClienteConEstado = HookModelo<Cliente> & {
@@ -24,15 +23,11 @@ export const TabGeneral = ({ cliente, emitirCliente }: TabGeneralProps) => {
   const { uiProps } = cliente;
 
   const onDarDeBajaClicked = async () => {
-    emitirCliente("confirmar_baja_solicitado");
+    emitirCliente("baja_solicitada");
   };
 
   const onDarAltaClicked = async () => {
     emitirCliente("dar_de_alta_solicitado");
-  };
-
-  const onCancelarBaja = () => {
-    emitirCliente("baja_cancelada");
   };
 
   return (
@@ -56,14 +51,6 @@ export const TabGeneral = ({ cliente, emitirCliente }: TabGeneralProps) => {
           <QBoton onClick={onDarDeBajaClicked}>Dar de baja</QBoton>
         )}
       </quimera-formulario>
-      <QModal
-        nombre="modal"
-        abierto={cliente.estado === "CONFIRMANDO_BAJA"}
-        onCerrar={onCancelarBaja}
-      >
-        <h2>Dar de baja</h2>
-        <BajaCliente cliente={cliente} emitirCliente={emitirCliente} />
-      </QModal>
     </div>
   );
 };

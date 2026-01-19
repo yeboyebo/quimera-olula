@@ -1,5 +1,0 @@
-.Cliente .BajaCliente {
-    quimera-date[nombre="fecha_baja"] {
-        grid-column: 1 / span 6;
-    }
-}
