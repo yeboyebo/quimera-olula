@@ -1,5 +1,4 @@
-.Contacto .AltaContacto {
-
+.CrearContacto {
     quimera-input[nombre="nombre"] {
         grid-column: 1 / span 6;
     }
