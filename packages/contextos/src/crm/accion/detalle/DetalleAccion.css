@@ -1,5 +1,4 @@
-.Accion .TabDatos {
-
+.DetalleAccion .TabDatos {
     quimera-select[nombre="estado"] {
         grid-column: 1 / span 6;
     }
@@ -17,7 +16,7 @@
     }
 }
 
-.Accion .TabObservaciones {
+.DetalleAccion .TabObservaciones {
     quimera-textarea[nombre="observaciones"] {
         grid-column: span 12;
     }

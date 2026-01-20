@@ -1,14 +1,13 @@
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Accion } from "../../diseño.ts";
-// import "./TabObservaciones.css";
 
 export const TabObservaciones = ({
-  oportunidad,
+  accion,
 }: {
-  oportunidad: HookModelo<Accion>;
+  accion: HookModelo<Accion>;
 }) => {
-  const { uiProps } = oportunidad;
+  const { uiProps } = accion;
 
   return (
     <div className="TabObservaciones">
