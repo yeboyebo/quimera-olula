@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { boolAString, direccionCompleta } from "@olula/lib/dominio.ts";
-import { DirCliente } from "../diseño.ts";
+import { DirCliente } from "../../diseño.ts";
 import { puedoMarcarDireccionFacturacion } from "./dominio.ts";
 import "./TabDirecciones.css";
 

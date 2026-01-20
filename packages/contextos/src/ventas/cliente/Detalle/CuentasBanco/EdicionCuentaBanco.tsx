@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { CuentaBanco } from "../diseño.ts";
+import { CuentaBanco } from "../../diseño.ts";
 import { metaCuentaBanco } from "./dominio.ts";
 import "./TabCuentasBanco.css";
 

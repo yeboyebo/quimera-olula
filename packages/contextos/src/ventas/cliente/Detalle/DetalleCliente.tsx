@@ -6,11 +6,11 @@ import { useCallback } from "react";
 import { useParams } from "react-router";
 import { BorrarCliente } from "../Borrar/BorrarCliente.tsx";
 import { Cliente } from "../diseño.ts";
-import { useCliente } from "../hooks/useCliente.ts";
 import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
 import { TabDirecciones } from "./Direcciones/TabDirecciones.tsx";
+import { useCliente } from "./hooks/useCliente.ts";
 import { TabComercial } from "./TabComercial.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
 

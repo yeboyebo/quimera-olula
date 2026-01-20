@@ -1,6 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.js";
-import { Cliente, ContextoCliente, EstadoCliente } from "../diseño.ts";
+import { Cliente } from "../diseño.ts";
 import { clienteVacio } from "../dominio.ts";
 import {
     darDeAltaCliente,
@@ -8,6 +8,7 @@ import {
     getCliente,
     patchCliente
 } from "../infraestructura.ts";
+import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 
 type ProcesarCliente = ProcesarContexto<EstadoCliente, ContextoCliente>;
 
@@ -95,7 +96,7 @@ export const borrarCliente: ProcesarCliente = async (contexto) => {
 
     return pipeCliente(contexto, [
         getContextoVacio,
-        publicar('cliente_borrado', null)
+        publicar('cliente_borrado', contexto.cliente)
     ]);
 }
 

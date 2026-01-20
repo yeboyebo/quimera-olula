@@ -3,9 +3,10 @@ import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { getMaquina } from "../Detalle/maquina.ts";
-import { Cliente, ContextoCliente, EstadoCliente } from "../diseño.ts";
-import { clienteVacio, metaCliente } from "../dominio.ts";
+import { Cliente } from "../../diseño.ts";
+import { clienteVacio, metaCliente } from "../../dominio.ts";
+import { ContextoCliente, EstadoCliente } from "../diseño.ts";
+import { getMaquina } from "../maquina.ts";
 
 interface UseClienteOptions {
     clienteId?: string;

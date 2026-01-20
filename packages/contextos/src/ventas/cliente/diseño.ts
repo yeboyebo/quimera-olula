@@ -107,26 +107,8 @@ export type GetCliente = (id: string) => Promise<Cliente>;
 export type PostCliente = (cliente: NuevoCliente) => Promise<string>;
 export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;
 
-// Estados de la máquina
-export type EstadoCliente =
-  | "INICIAL"
-  | "ABIERTO"
-  | "BAJANDO_CLIENTE"
-  | "BORRANDO_CLIENTE"
-  | "EDITANDO_CLIENTE"
-  | "GUARDANDO_CLIENTE"
-
-// Contexto de la máquina
-export type ContextoCliente = {
-  estado: EstadoCliente;
-  cliente: Cliente;
-  clienteInicial: Cliente;
-};
-
-// Estados maestro
 export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE";
 
-// Contexto maestro
 export type ContextoMaestroCliente = {
   estado: EstadoMaestroCliente;
   clientes: Cliente[];

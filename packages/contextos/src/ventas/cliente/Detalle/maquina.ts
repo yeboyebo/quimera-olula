@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { ContextoCliente, EstadoCliente } from "../diseño.ts";
+import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 import {
     abiertoContexto,
     borrarCliente,
