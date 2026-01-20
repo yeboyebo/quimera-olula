@@ -1,11 +1,6 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { CrmContacto } from "../../diseño.ts";
-
-const metaTablaCrmContactos = [
-  { id: "id", cabecera: "ID" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "email", cabecera: "Email" },
-];
+import { metaTablaCrmContactos } from "./dominio.ts";
 
 export const TabCrmContactosLista = ({
   contactos,

@@ -1,8 +1,14 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { Cliente, ContextoMaestroCliente, EstadoMaestroCliente } from "../diseño.ts";
+import { Cliente } from "../diseño.ts";
 
-// Re-export for convenience
-export type { ContextoMaestroCliente, EstadoMaestroCliente };
+export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE";
+
+export type ContextoMaestroCliente = {
+    estado: EstadoMaestroCliente;
+    clientes: Cliente[];
+    clienteActivo: Cliente | null;
+    totalClientes: number;
+};
 
 export const metaTablaCliente: MetaTabla<Cliente> = [
     { id: "id", cabecera: "Id" },

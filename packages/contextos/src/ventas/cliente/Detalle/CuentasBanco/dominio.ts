@@ -30,6 +30,11 @@ export const nuevaCuentaBancoVacia: NuevaCuentaBanco = {
     bic: '',
 }
 
+export const metaTablaCuentasBanco = [
+    { id: "descripcion", cabecera: "Descripcion" },
+    { id: "iban", cabecera: "IBAN" },
+    { id: "bic", cabecera: "BIC" },
+];
 
 type ProcesarCuentasBanco = ProcesarContexto<EstadoCuentasBanco, ContextoCuentasBanco>;
 

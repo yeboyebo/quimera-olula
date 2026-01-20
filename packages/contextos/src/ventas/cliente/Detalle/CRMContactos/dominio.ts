@@ -32,6 +32,13 @@ export const nuevoCrmContactoVacio: NuevoCrmContacto = {
     email: '',
 }
 
+export const metaTablaCrmContactos = [
+    { id: "id", cabecera: "ID" },
+    { id: "nombre", cabecera: "Nombre" },
+    { id: "email", cabecera: "Email" },
+];
+
+
 type ProcesarCrmContactos = ProcesarContexto<EstadoCrmContactos, ContextoCrmContactos>;
 
 const pipeCrmContactos = ejecutarListaProcesos<EstadoCrmContactos, ContextoCrmContactos>;

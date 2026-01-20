@@ -1,4 +1,3 @@
-// Dominio de maestro
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.ts";
 import { Cliente } from "../diseño.ts";
 import { getClientes } from "../infraestructura.ts";

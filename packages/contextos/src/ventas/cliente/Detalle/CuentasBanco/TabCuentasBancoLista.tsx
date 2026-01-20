@@ -1,11 +1,6 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { CuentaBanco } from "../../diseño.ts";
-
-const metaTablaCuentasBanco = [
-  { id: "descripcion", cabecera: "Descripcion" },
-  { id: "iban", cabecera: "IBAN" },
-  { id: "bic", cabecera: "BIC" },
-];
+import { metaTablaCuentasBanco } from "./dominio.ts";
 
 export const TabCuentasBancoLista = ({
   cuentas,

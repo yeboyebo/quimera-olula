@@ -106,12 +106,3 @@ export type NuevoCrmContacto = {
 export type GetCliente = (id: string) => Promise<Cliente>;
 export type PostCliente = (cliente: NuevoCliente) => Promise<string>;
 export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;
-
-export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE";
-
-export type ContextoMaestroCliente = {
-  estado: EstadoMaestroCliente;
-  clientes: Cliente[];
-  clienteActivo: Cliente | null;
-  totalClientes: number;
-};
