@@ -1,16 +1,17 @@
 import { ContextoError } from '@olula/lib/contexto.ts';
-import { Contexto, EventoMaquina, Maquina } from '@olula/lib/diseño.ts';
+import { Contexto, EmitirEvento, EventoMaquina, Maquina } from '@olula/lib/diseño.ts';
 import { procesarEvento } from '@olula/lib/dominio.js';
 import { useCallback, useContext, useState } from 'react';
 
 export interface UseMaquinaReturn<Estado extends string, C extends Contexto<Estado>> {
     ctx: C;
-    emitir: (evento: string, payload?: unknown) => Promise<EventoMaquina[]>;
+    emitir: EmitirEvento;
 }
 
 export function useMaquina<Estado extends string, C extends Contexto<Estado>>(
     getMaquina: () => Maquina<Estado, C>,
     contextoInicial: C,
+    publicar: EmitirEvento = () => { },
 ): UseMaquinaReturn<Estado, C> {
 
     const { intentar } = useContext(ContextoError);
@@ -29,13 +30,15 @@ export function useMaquina<Estado extends string, C extends Contexto<Estado>>(
 
         setCtx(nuevoContexto);
 
+        if (publicar) {
+            eventos.forEach(([nombre, datos]) => publicar(nombre, datos));
+        }
+
         return eventos;
-    }, [ctx, maquina, intentar]);
+    }, [ctx, maquina, intentar, publicar]);
 
     return {
-        ctx: {
-            ...ctx,
-        },
-        emitir,
+        ctx,
+        emitir
     };
 }

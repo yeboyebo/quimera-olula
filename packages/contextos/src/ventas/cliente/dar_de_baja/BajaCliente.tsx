@@ -5,9 +5,9 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Cliente } from "../diseño.ts";
-import { metaDarDeBaja } from "../dominio.ts";
 import { darDeBajaCliente } from "../infraestructura.ts";
 import "./BajaCliente.css";
+import { metaDarDeBaja } from "./dominio.ts";
 
 interface BajaClienteProps {
   cliente: Cliente;

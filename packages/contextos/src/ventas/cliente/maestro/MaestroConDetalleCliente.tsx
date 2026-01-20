@@ -5,8 +5,8 @@ import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDeta
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect, useState } from "react";
-import { CrearCliente } from "../Crear/CrearCliente.tsx";
-import { DetalleCliente } from "../Detalle/DetalleCliente.tsx";
+import { CrearCliente } from "../crear/CrearCliente.tsx";
+import { DetalleCliente } from "../detalle/DetalleCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import { metaTablaCliente } from "./diseño.ts";
 import "./MaestroConDetalleCliente.css";

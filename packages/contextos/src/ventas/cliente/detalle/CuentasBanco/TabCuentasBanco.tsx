@@ -4,7 +4,7 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { CrearCuentaBanco } from "./CrearCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
-import { TabCuentasBancoLista } from "./TabCuentasBancoLista";
+import { TabCuentasBancoLista } from "./TabCuentasBancoLista.tsx";
 import { useCuentasBanco } from "./useCuentasBanco.ts";
 
 export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
