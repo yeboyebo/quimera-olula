@@ -1,4 +1,3 @@
-import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { TipoIdFiscal } from "#/ventas/comun/componentes/tipoIdFiscal.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -48,7 +47,7 @@ export const CrearCliente = ({
           <TipoIdFiscal {...nuevoCliente.uiProps("tipo_id_fiscal")} />
           <QInput label="ID Fiscal" {...nuevoCliente.uiProps("id_fiscal")} />
           <QInput label="Empresa" {...nuevoCliente.uiProps("empresa_id")} />
-          <Agente {...nuevoCliente.uiProps("agente_id", "nombre_agente")} />
+          {/* <Agente {...nuevoCliente.uiProps("agente_id", "nombre_agente")} /> */}
         </quimera-formulario>
         <div className="botones">
           <QBoton

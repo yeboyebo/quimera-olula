@@ -124,7 +124,7 @@ export type ContextoCliente = {
 };
 
 // Estados maestro
-export type EstadoMaestroCliente = "INICIAL";
+export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE";
 
 // Contexto maestro
 export type ContextoMaestroCliente = {

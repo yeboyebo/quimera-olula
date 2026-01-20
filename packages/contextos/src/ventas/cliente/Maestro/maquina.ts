@@ -18,6 +18,12 @@ export const getMaquina: () => Maquina<EstadoMaestroCliente, ContextoMaestroClie
             cliente_borrado: quitarClienteDeLista,
             cliente_creado: incluirClienteEnLista,
             recarga_de_clientes_solicitada: recargarClientes,
+            creacion_solicitada: "CREANDO_CLIENTE",
+        },
+
+        CREANDO_CLIENTE: {
+            cliente_creado: [incluirClienteEnLista, "INICIAL"],
+            creacion_cancelada: "INICIAL",
         },
     };
 };
