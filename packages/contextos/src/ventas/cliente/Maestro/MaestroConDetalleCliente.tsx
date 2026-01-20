@@ -5,7 +5,6 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { CrearCliente } from "../Crear/CrearCliente.tsx";
 import { DetalleCliente } from "../Detalle/DetalleCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import { ContextoMaestroCliente, metaTablaCliente } from "./diseño.ts";
@@ -81,20 +80,11 @@ export const MaestroConDetalleCliente = () => {
           <DetalleCliente
             clienteInicial={ctx.clienteActivo}
             publicar={emitir}
-            estadoMaquina={ctx.estado}
           />
         }
         seleccionada={ctx.clienteActivo}
         modoDisposicion="maestro-50"
       />
-
-      {ctx.estado === "CREANDO_CLIENTE" && (
-        <CrearCliente
-          publicar={emitir}
-          onCancelar={() => emitir("creacion_cancelada")}
-          activo={true}
-        />
-      )}
     </div>
   );
 };

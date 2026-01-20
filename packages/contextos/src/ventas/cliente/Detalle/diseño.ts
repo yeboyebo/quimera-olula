@@ -1,19 +1,6 @@
-import { Cliente, CrmContacto, CuentaBanco, DirCliente } from "../diseño.ts";
-
-export type EstadoDetalleCliente =
-    | "INICIAL"
-    | "ABIERTO"
-    | "CREANDO_CLIENTE"
-    | "BAJANDO_CLIENTE"
-    | "BORRANDO_CLIENTE"
-    | "EDITANDO_CLIENTE"
-    | "GUARDANDO_CLIENTE";
-
-export type ContextoDetalleCliente = {
-    estado: EstadoDetalleCliente;
-    cliente: Cliente;
-    clienteInicial: Cliente;
-};
+import { ContextoCliente, CrmContacto, CuentaBanco, DirCliente, EstadoCliente } from "../diseño.ts";
 
 // Re-export for convenience
+export type EstadoDetalleCliente = EstadoCliente;
+export type ContextoDetalleCliente = ContextoCliente;
 export type { CrmContacto, CuentaBanco, DirCliente };

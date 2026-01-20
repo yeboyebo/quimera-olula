@@ -111,10 +111,11 @@ export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;
 export type EstadoCliente =
   | "INICIAL"
   | "ABIERTO"
+  | "BAJANDO_CLIENTE"
+  | "BORRANDO_CLIENTE"
+  | "DANDO_DE_ALTA"
   | "EDITANDO_CLIENTE"
   | "GUARDANDO_CLIENTE"
-  | "BORRANDO_CLIENTE"
-  | "CONFIRMANDO_BAJA";
 
 // Contexto de la máquina
 export type ContextoCliente = {
@@ -124,7 +125,7 @@ export type ContextoCliente = {
 };
 
 // Estados maestro
-export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE" | "BAJANDO_CLIENTE" | "BORRANDO_CLIENTE";
+export type EstadoMaestroCliente = "INICIAL";
 
 // Contexto maestro
 export type ContextoMaestroCliente = {

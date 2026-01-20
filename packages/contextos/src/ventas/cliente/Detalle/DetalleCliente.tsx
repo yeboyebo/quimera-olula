@@ -6,25 +6,21 @@ import { useCallback } from "react";
 import { useParams } from "react-router";
 import { BajaCliente } from "../Baja/BajaCliente.tsx";
 import { BorrarCliente } from "../Borrar/BorrarCliente.tsx";
-import { CrearCliente } from "../Crear/CrearCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import { useCliente } from "../hooks/useCliente.ts";
 import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
 import { TabDirecciones } from "./Direcciones/TabDirecciones.tsx";
-import { EstadoDetalleCliente } from "./diseño.ts";
 import { TabComercial } from "./TabComercial.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,
   publicar = () => {},
-  estadoMaquina = "INICIAL",
 }: {
   clienteInicial?: Cliente | null;
   publicar?: EmitirEvento;
-  estadoMaquina?: EstadoDetalleCliente;
 }) => {
   const params = useParams();
 
@@ -34,7 +30,7 @@ export const DetalleCliente = ({
     publicar,
   });
 
-  const { modelo, modificado, valido, emitir } = cliente;
+  const { modelo, modificado, valido, emitir, estado } = cliente;
 
   const titulo = (cliente: Cliente) => cliente.nombre as string;
 
@@ -45,15 +41,6 @@ export const DetalleCliente = ({
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_cliente_cancelada");
   }, [emitir]);
-
-  const handleCrearCliente: EmitirEvento = useCallback(
-    (evento: string, datos?: unknown) => {
-      if (evento === "cliente_creado") {
-        publicar("cliente_creado", datos);
-      }
-    },
-    [publicar]
-  );
 
   if (!clienteInicial) return null;
 
@@ -69,10 +56,10 @@ export const DetalleCliente = ({
         {!!(clienteInicial?.id ?? params.id) && (
           <div className="DetalleCliente">
             <div className="maestro-botones">
-              <QBoton onClick={() => publicar("baja_solicitada")}>
+              <QBoton onClick={() => emitir("baja_solicitada")}>
                 Dar de Baja
               </QBoton>
-              <QBoton onClick={() => publicar("borrado_solicitado")}>
+              <QBoton onClick={() => emitir("borrado_solicitado")}>
                 Borrar
               </QBoton>
             </div>
@@ -135,28 +122,35 @@ export const DetalleCliente = ({
               </div>
             )}
 
-            {estadoMaquina === "CREANDO_CLIENTE" && (
-              <CrearCliente
-                activo={true}
-                publicar={handleCrearCliente}
-                onCancelar={() => publicar("creacion_cancelada")}
-              />
-            )}
-
-            {estadoMaquina === "BAJANDO_CLIENTE" && (
+            {estado === "BAJANDO_CLIENTE" && (
               <BajaCliente
                 cliente={modelo}
-                publicar={publicar}
-                onCancelar={() => publicar("baja_cancelada")}
+                publicar={emitir}
+                onCancelar={() => emitir("baja_cancelada")}
               />
             )}
 
-            {estadoMaquina === "BORRANDO_CLIENTE" && (
+            {estado === "BORRANDO_CLIENTE" && (
               <BorrarCliente
                 cliente={modelo}
-                publicar={publicar}
-                onCancelar={() => publicar("borrado_cancelado")}
+                publicar={emitir}
+                onCancelar={() => emitir("borrado_cancelado")}
               />
+            )}
+
+            {estado === "DANDO_DE_ALTA" && (
+              <div className="modal-confirmacion">
+                <p>¿Está seguro de que desea dar de alta al cliente?</p>
+                <QBoton onClick={() => emitir("cliente_dado_de_alta")}>
+                  Dar de alta
+                </QBoton>
+                <QBoton
+                  variante="texto"
+                  onClick={() => emitir("alta_cancelada")}
+                >
+                  Cancelar
+                </QBoton>
+              </div>
             )}
           </div>
         )}
