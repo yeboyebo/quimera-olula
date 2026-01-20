@@ -113,7 +113,6 @@ export type EstadoCliente =
   | "ABIERTO"
   | "BAJANDO_CLIENTE"
   | "BORRANDO_CLIENTE"
-  | "DANDO_DE_ALTA"
   | "EDITANDO_CLIENTE"
   | "GUARDANDO_CLIENTE"
 

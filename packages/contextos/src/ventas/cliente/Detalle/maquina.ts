@@ -3,13 +3,14 @@ import { publicar } from "@olula/lib/dominio.js";
 import { ContextoCliente, EstadoCliente } from "../diseño.ts";
 import {
     abiertoContexto,
+    borrarCliente,
     cambiarCliente,
     cancelarCambioCliente,
     cargarContexto,
     darDeAltaClienteProceso,
     getContextoVacio,
     refrescarCliente,
-} from "../dominio.ts";
+} from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
     return {
@@ -35,7 +36,7 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
 
             borrado_solicitado: "BORRANDO_CLIENTE",
 
-            dar_de_alta_solicitado: "DANDO_DE_ALTA",
+            dar_de_alta_solicitado: [darDeAltaClienteProceso],
         },
 
         BAJANDO_CLIENTE: {
@@ -45,15 +46,9 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
         },
 
         BORRANDO_CLIENTE: {
-            cliente_borrado: [publicar("cliente_borrado", null), "ABIERTO"],
+            borrado_de_cliente_listo: borrarCliente,
 
             borrado_cancelado: "ABIERTO",
-        },
-
-        DANDO_DE_ALTA: {
-            cliente_dado_de_alta: [darDeAltaClienteProceso, "ABIERTO"],
-
-            alta_cancelada: "ABIERTO",
         },
 
         EDITANDO_CLIENTE: {

@@ -3,8 +3,10 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
+import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
+import { BajaCliente } from "../Baja/BajaCliente.tsx";
 import { Cliente, EstadoCliente } from "../diseño.ts";
 import "./TabGeneral.css";
 
@@ -30,6 +32,10 @@ export const TabGeneral = ({ cliente, emitirCliente }: TabGeneralProps) => {
     emitirCliente("dar_de_alta_solicitado");
   };
 
+  const onCancelarBaja = () => {
+    cliente.emitir("baja_cancelada");
+  };
+
   return (
     <div className="TabGeneral">
       <quimera-formulario>
@@ -51,6 +57,15 @@ export const TabGeneral = ({ cliente, emitirCliente }: TabGeneralProps) => {
           <QBoton onClick={onDarDeBajaClicked}>Dar de baja</QBoton>
         )}
       </quimera-formulario>
+
+      <QModal
+        nombre="modal"
+        abierto={cliente.estado === "BAJANDO_CLIENTE"}
+        onCerrar={onCancelarBaja}
+      >
+        <h2>Dar de baja</h2>
+        <BajaCliente cliente={cliente.modelo} publicar={cliente.emitir} />
+      </QModal>
     </div>
   );
 };

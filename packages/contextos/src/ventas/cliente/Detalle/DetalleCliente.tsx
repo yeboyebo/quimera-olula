@@ -4,7 +4,6 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
-import { BajaCliente } from "../Baja/BajaCliente.tsx";
 import { BorrarCliente } from "../Borrar/BorrarCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import { useCliente } from "../hooks/useCliente.ts";
@@ -56,9 +55,6 @@ export const DetalleCliente = ({
         {!!(clienteInicial?.id ?? params.id) && (
           <div className="DetalleCliente">
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("baja_solicitada")}>
-                Dar de Baja
-              </QBoton>
               <QBoton onClick={() => emitir("borrado_solicitado")}>
                 Borrar
               </QBoton>
@@ -122,35 +118,12 @@ export const DetalleCliente = ({
               </div>
             )}
 
-            {estado === "BAJANDO_CLIENTE" && (
-              <BajaCliente
-                cliente={modelo}
-                publicar={emitir}
-                onCancelar={() => emitir("baja_cancelada")}
-              />
-            )}
-
             {estado === "BORRANDO_CLIENTE" && (
               <BorrarCliente
                 cliente={modelo}
                 publicar={emitir}
                 onCancelar={() => emitir("borrado_cancelado")}
               />
-            )}
-
-            {estado === "DANDO_DE_ALTA" && (
-              <div className="modal-confirmacion">
-                <p>¿Está seguro de que desea dar de alta al cliente?</p>
-                <QBoton onClick={() => emitir("cliente_dado_de_alta")}>
-                  Dar de alta
-                </QBoton>
-                <QBoton
-                  variante="texto"
-                  onClick={() => emitir("alta_cancelada")}
-                >
-                  Cancelar
-                </QBoton>
-              </div>
             )}
           </div>
         )}

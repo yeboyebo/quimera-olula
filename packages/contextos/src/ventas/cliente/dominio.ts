@@ -206,9 +206,6 @@ export const metaDarDeBaja: MetaModelo<FormBaja> = {
 export const initEstadoClienteVacio = () => initEstadoCliente(clienteVacio())
 
 
-// ============================================================
-// PROCESADORES DE EVENTOS PARA MÁQUINA
-// ============================================================
 
 type ProcesarCliente = ProcesarContexto<EstadoCliente, ContextoCliente>;
 type ProcesarClientes = ProcesarContexto<EstadoMaestroCliente, ContextoMaestroCliente>;

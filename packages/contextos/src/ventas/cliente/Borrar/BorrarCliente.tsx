@@ -20,7 +20,7 @@ export const BorrarCliente = ({
 
   const borrar = async () => {
     await intentar(() => deleteCliente(cliente.id));
-    publicar("cliente_borrado", { clienteId: cliente.id });
+    publicar("borrado_de_cliente_listo", { cliente });
     onCancelar();
   };
 

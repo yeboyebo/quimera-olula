@@ -1,4 +1,5 @@
 import { Maquina } from "@olula/lib/diseño.js";
+import { ContextoMaestroCliente, EstadoMaestroCliente } from "./diseño.ts";
 import {
     activarCliente,
     cambiarClienteEnLista,
@@ -6,8 +7,7 @@ import {
     incluirClienteEnLista,
     quitarClienteDeLista,
     recargarClientes,
-} from "../dominio.ts";
-import { ContextoMaestroCliente, EstadoMaestroCliente } from "./diseño.ts";
+} from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroCliente, ContextoMaestroCliente> = () => {
     return {
