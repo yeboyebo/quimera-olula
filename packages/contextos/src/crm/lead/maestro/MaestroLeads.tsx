@@ -1,41 +1,26 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { CrearLead } from "../Crear/CrearLead.tsx";
-import { DetalleLead } from "../Detalle/DetalleLead.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { useCallback, useEffect, useState } from "react";
+import { CrearLead } from "../crear/CrearLead.tsx";
+import { DetalleLead } from "../detalle/DetalleLead.tsx";
 import { Lead } from "../diseño.ts";
-import { ContextoMaestroLeads } from "./diseño.ts";
 import { metaTablaLead } from "./maestro.ts";
 import "./MaestroLeads.css";
 import { getMaquina } from "./maquina.ts";
 
-const maquina = getMaquina();
-
 export const MaestroLeads = () => {
-  const { intentar } = useContext(ContextoError);
-
   const [cargando, setCargando] = useState(false);
 
-  const [ctx, setCtx] = useState<ContextoMaestroLeads>({
+  const { ctx, emitir } = useMaestro(getMaquina, {
     estado: "INICIAL",
     leads: [],
     totalLeads: 0,
     activo: null,
   });
-
-  const emitir = useCallback(
-    async (evento: string, payload?: unknown) => {
-      const [nuevoContexto, _] = await intentar(() =>
-        procesarEvento(maquina, ctx, evento, payload)
-      );
-      setCtx(nuevoContexto);
-    },
-    [ctx, setCtx, intentar]
-  );
 
   const crear = useCallback(
     () => emitir("creacion_de_lead_solicitada"),
@@ -85,7 +70,7 @@ export const MaestroLeads = () => {
             />
           </>
         }
-        Detalle={<DetalleLead inicial={ctx.activo} />}
+        Detalle={<DetalleLead inicial={ctx.activo} publicar={emitir} />}
         seleccionada={ctx.activo}
         modoDisposicion="maestro-50"
       />

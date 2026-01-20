@@ -1,5 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
+import { pipe } from "@olula/lib/funcional.js";
 import { Lead } from "../diseño.ts";
 import { getLead, patchLead } from "../infraestructura.ts";
 import { ContextoDetalleLead, EstadoDetalleLead } from "./diseño.ts";
@@ -57,37 +58,37 @@ type ProcesarLead = ProcesarContexto<EstadoDetalleLead, ContextoDetalleLead>;
 
 const pipeLead = ejecutarListaProcesos<EstadoDetalleLead, ContextoDetalleLead>;
 
+const conLead = (lead: Lead) => (ctx: ContextoDetalleLead) => ({ ...ctx, lead });
+const conEstado = (estado: EstadoDetalleLead) => (ctx: ContextoDetalleLead) => ({ ...ctx, estado });
+
 const cargarLead: (_: string) => ProcesarLead = (id) =>
     async (contexto) => {
         const lead = await getLead(id);
 
-        return {
-            ...contexto,
-            lead,
-        }
+        return pipe(
+            contexto,
+            conLead(lead)
+        )
     }
 
 export const refrescarLead: ProcesarLead = async (contexto) => {
     const lead = await getLead(contexto.lead.id);
 
     return [
-        {
-            ...contexto,
-            lead: {
+        pipe(
+            contexto,
+            conLead({
                 ...contexto.lead,
                 ...lead
-            },
-        },
+            })
+        ),
         [["lead_cambiado", lead]]
     ]
 }
 
 export const cancelarCambioLead: ProcesarLead = async (contexto) => {
 
-    return {
-        ...contexto,
-        lead: contexto.inicial
-    }
+    return conLead(contexto.inicial)(contexto);
 }
 
 export const cambiarLead: ProcesarLead = async (contexto, payload) => {
@@ -110,27 +111,21 @@ export const onLeadBorrado: ProcesarLead = async (contexto) => {
 }
 
 export const getContextoVacio: ProcesarLead = async (contexto) => {
-    return {
-        ...contexto,
-        estado: 'INICIAL',
-        lead: leadVacio,
-    }
+    return pipe(
+        contexto,
+        conEstado("INICIAL"),
+        conLead(leadVacio)
+    )
 }
 
 export const cargarContexto: ProcesarLead = async (contexto, payload) => {
     const id = payload as string;
 
-    if (id) {
-        return pipeLead(
-            contexto,
-            [
-                cargarLead(id),
-            ],
-            payload
-        );
-    } else {
-        return getContextoVacio(contexto);
-    }
+    if (!id) return getContextoVacio(contexto);
+
+    return pipeLead(
+        contexto,
+        [cargarLead(id)],
+        payload
+    );
 }
-
-

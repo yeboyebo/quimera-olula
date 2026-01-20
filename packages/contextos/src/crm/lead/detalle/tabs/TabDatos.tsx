@@ -3,7 +3,6 @@ import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
 import { EstadoLead } from "#/crm/comun/componentes/estado_lead.tsx";
 import { FuenteLead } from "#/crm/comun/componentes/fuente_lead.tsx";
 import { TipoEntidadLead } from "#/crm/comun/componentes/tipo_entidad_lead.tsx";
-import { MoleculaContacto } from "#/crm/comun/moleculas/contacto.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Lead } from "../../diseño.ts";
@@ -11,15 +10,16 @@ import "./TabDatos.css";
 
 export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
   const { uiProps, modelo } = lead;
+
   return (
     <div className="TabMasDatos">
       <quimera-formulario>
         <EstadoLead {...uiProps("estado_id")} />
         <FuenteLead {...uiProps("fuente_id")} />
-        <MoleculaContacto
+        {/* <MoleculaContacto
           contactoId={modelo.contacto_id as string | null}
           onChange={uiProps("contacto_id").onChange}
-        />
+        /> */}
         <TipoEntidadLead {...uiProps("tipo")} />
         {modelo.tipo === "Cliente" && modelo.cliente_id ? (
           <Cliente {...uiProps("cliente_id", "nombre")} />

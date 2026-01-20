@@ -15,8 +15,8 @@ export const BorrarLead = ({
   const borrar_ = useCallback(async () => {
     await deleteLead(lead.id);
 
-    publicar("lead_borrado", lead);
-  }, [publicar, lead]);
+    publicar("lead_borrado", lead.id);
+  }, [publicar, lead.id]);
 
   const cancelar_ = useCallback(
     () => publicar("borrado_lead_cancelado"),

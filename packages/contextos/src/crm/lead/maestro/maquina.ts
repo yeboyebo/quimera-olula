@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroLeads, EstadoMaestroLeads } from "./diseño.ts";
-import { activarLead, cambiarLeadEnLista, crearLead, desactivarLeadActivo, quitarLeadDeLista, recargarLeads } from "./maestro.ts";
+import { activarLead, cambiarLeadEnLista, desactivarLeadActivo, incluirLeadEnLista, quitarLeadDeLista, recargarLeads } from "./maestro.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroLeads, ContextoMaestroLeads> = () => {
     return {
@@ -20,7 +20,7 @@ export const getMaquina: () => Maquina<EstadoMaestroLeads, ContextoMaestroLeads>
         CREANDO: {
             creacion_lead_cancelada: "INICIAL",
 
-            lead_creado: [crearLead, "INICIAL"],
+            lead_creado: [incluirLeadEnLista, activarLead, "INICIAL"],
         }
     }
 }

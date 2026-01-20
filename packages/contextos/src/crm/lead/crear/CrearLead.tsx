@@ -4,22 +4,30 @@ import { FuenteLead } from "#/crm/comun/componentes/fuente_lead.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useContext, useState } from "react";
+import { getLead, postLead } from "../infraestructura.ts";
 import "./CrearLead.css";
 import { metaNuevoLead, nuevoLeadVacio } from "./crear.ts";
 
 export const CrearLead = ({ publicar }: { publicar: EmitirEvento }) => {
+  const { intentar } = useContext(ContextoError);
+
   const { modelo, uiProps, valido } = useModelo(metaNuevoLead, nuevoLeadVacio);
+  const [creando, setCreando] = useState(false);
 
   const crear = useCallback(async () => {
-    publicar("lead_creado", modelo);
-  }, [modelo, publicar]);
+    setCreando(true);
+    const id = await intentar(() => postLead(modelo));
+    const lead = await intentar(() => getLead(id));
+    publicar("lead_creado", lead);
+  }, [modelo, publicar, intentar]);
 
   const cancelar = useCallback(() => {
-    publicar("creacion_lead_cancelada");
-  }, [publicar]);
+    if (!creando) publicar("creacion_lead_cancelada");
+  }, [creando, publicar]);
 
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>

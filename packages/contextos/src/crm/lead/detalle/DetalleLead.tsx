@@ -1,25 +1,26 @@
+import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
-import { Entidad } from "@olula/lib/diseño.js";
-import { procesarEvento } from "@olula/lib/dominio.js";
+import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { BorrarLead } from "../Borrar/BorrarLead.tsx";
+import { BorrarLead } from "../borrar/BorrarLead.tsx";
 import { Lead } from "../diseño.ts";
 import { TabAcciones } from "../vistas/DetalleLead/TabAcciones.tsx";
 import { TabOportunidades } from "../vistas/DetalleLead/TabOportunidades.tsx";
 import { leadVacio, metaLead } from "./detalle.ts";
-import { ContextoDetalleLead } from "./diseño.ts";
+import "./DetalleLead.css";
 import { getMaquina } from "./maquina.ts";
-import { TabDatos } from "./Tabs/TabDatos.tsx";
-import { TabObservaciones } from "./Tabs/TabObservaciones.tsx";
+import { TabDatos } from "./tabs/TabDatos.tsx";
+import { TabObservaciones } from "./tabs/TabObservaciones.tsx";
 
-const maquina = getMaquina();
-
-export const DetalleLead = ({ inicial = null }: { inicial: Lead | null }) => {
+export const DetalleLead = ({
+  inicial = null,
+  publicar,
+}: {
+  inicial: Lead | null;
+  publicar: EmitirEvento;
+}) => {
   const params = useParams();
-  const { intentar } = useContext(ContextoError);
 
   const leadId = inicial?.id ?? params.id;
   const titulo = (lead: Entidad) => lead.nombre as string;
@@ -27,21 +28,15 @@ export const DetalleLead = ({ inicial = null }: { inicial: Lead | null }) => {
   const lead = useModelo(metaLead, leadVacio);
   const { modelo, modeloInicial, modificado, valido } = lead;
 
-  const [ctx, setCtx] = useState<ContextoDetalleLead>({
+  const { ctx, emitir } = useMaestro(getMaquina, {
     estado: "INICIAL",
     lead: modelo,
     inicial: modeloInicial,
   });
 
-  const emitir = useCallback(
-    async (evento: string, payload?: unknown) => {
-      const [nuevoContexto, _] = await intentar(() =>
-        procesarEvento(maquina, ctx, evento, payload)
-      );
-      setCtx(nuevoContexto);
-    },
-    [ctx, setCtx, intentar]
-  );
+  // if (nuevoContexto.venta !== venta.modelo) {
+  //   init(nuevoContexto.venta);
+  // }
 
   const guardar = async () => {
     emitir("lead_cambiado", modelo);
@@ -51,11 +46,15 @@ export const DetalleLead = ({ inicial = null }: { inicial: Lead | null }) => {
     emitir("edicion_lead_cancelada");
   };
 
-  useEffect(() => {
-    if (leadId && leadId !== modelo.id) {
-      emitir("lead_id_cambiado", leadId);
-    }
-  }, [leadId, emitir, modelo.id]);
+  if (leadId && leadId !== modelo.id) {
+    emitir("lead_id_cambiado", leadId);
+  }
+
+  // useEffect(() => {
+  //     if (ventaId && ventaId !== venta.modelo.id) {
+  //         emitir("venta_id_cambiada", ventaId, true);
+  //     }
+  // }, [ventaId, emitir, venta.modelo.id]);
 
   return (
     <Detalle
@@ -66,7 +65,7 @@ export const DetalleLead = ({ inicial = null }: { inicial: Lead | null }) => {
       cerrarDetalle={() => emitir("edicion_lead_cancelada", null)}
     >
       {!!leadId && (
-        <>
+        <div className="DetalleLead">
           <div className="maestro-botones ">
             <QBoton onClick={() => emitir("borrado_lead_solicitado")}>
               Borrar
@@ -109,7 +108,7 @@ export const DetalleLead = ({ inicial = null }: { inicial: Lead | null }) => {
           {ctx.estado === "BORRANDO" && (
             <BorrarLead publicar={emitir} lead={modelo} />
           )}
-        </>
+        </div>
       )}
     </Detalle>
   );
