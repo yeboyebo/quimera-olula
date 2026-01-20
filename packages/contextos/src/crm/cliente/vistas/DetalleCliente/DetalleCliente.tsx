@@ -1,20 +1,16 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useParams } from "react-router";
 import { TabCrmContactos } from "../../../../ventas/cliente/vistas/DetalleCliente/CRMContactos/TabCrmContactos.tsx";
 import { TabDirecciones } from "../../../../ventas/cliente/vistas/DetalleCliente/Direcciones/TabDirecciones.tsx";
+import { BorrarCliente } from "../../borrar/BorrarCliente.tsx";
 import { Cliente } from "../../diseño.ts";
 import { clienteVacio, metaCliente } from "../../dominio.ts";
-import {
-  deleteCliente,
-  getCliente,
-  patchCliente,
-} from "../../infraestructura.ts";
+import { getCliente, patchCliente } from "../../infraestructura.ts";
 import "./DetalleCliente.css";
 import { TabAcciones } from "./TabAcciones.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
@@ -37,7 +33,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       cancelar_seleccion: ({ publicar }) => publicar("cancelar_seleccion"),
     },
     borrando: {
-      borrado_cancelado: "edicion",
+      borrado_cliente_cancelado: "edicion",
       cliente_borrado: ({ publicar }) => publicar("cliente_borrado"),
     },
   },
@@ -72,12 +68,6 @@ export const DetalleCliente = ({
     const clienteRecargado = await getCliente(modelo.id);
     init(clienteRecargado);
     emitir("cliente_guardado", clienteRecargado);
-  };
-
-  const onBorrarConfirmado = async () => {
-    await deleteCliente(modelo.id);
-    emitir("cliente_borrado", modelo);
-    emitir("borrado_cancelado");
   };
 
   return (
@@ -154,14 +144,10 @@ export const DetalleCliente = ({
                 </QBoton>
               </div>
             )}
-            <QModalConfirmacion
-              nombre="borrarCliente"
-              abierto={estado === "borrando"}
-              titulo="Confirmar borrar"
-              mensaje="¿Está seguro de que desea borrar este cliente?"
-              onCerrar={() => emitir("borrado_cancelado")}
-              onAceptar={onBorrarConfirmado}
-            />
+
+            {estado === "borrando" && (
+              <BorrarCliente publicar={emitir} cliente={modelo} />
+            )}
           </div>
         )}
       </Detalle>
