@@ -1,6 +1,6 @@
 import { EstadoAccion } from "#/crm/comun/componentes/estado_accion.tsx";
 import { TipoAccion } from "#/crm/comun/componentes/tipo_accion.tsx";
-import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import {
   Detalle,
   QBoton,
@@ -33,17 +33,21 @@ export const DetalleAccion = ({
   const titulo = (accion: Entidad) => accion.descripcion as string;
 
   const accion = useModelo(metaAccion, accionVacia);
-  const { modelo, modeloInicial, modificado, uiProps, valido } = accion;
+  const { modelo, modeloInicial, modificado, uiProps, valido, init } = accion;
 
-  const { ctx, emitir } = useMaestro(getMaquina, {
-    estado: "INICIAL",
-    accion: modelo,
-    inicial: modeloInicial,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      accion: modelo,
+      inicial: modeloInicial,
+    },
+    publicar
+  );
 
-  // if (nuevoContexto.venta !== venta.modelo) {
-  //   init(nuevoContexto.venta);
-  // }
+  if (ctx.accion !== modelo) {
+    init(ctx.accion);
+  }
 
   const guardar = async () => {
     emitir("accion_cambiada", modelo);
@@ -56,12 +60,6 @@ export const DetalleAccion = ({
   if (accionId && accionId !== modelo.id) {
     emitir("accion_id_cambiada", accionId);
   }
-
-  // useEffect(() => {
-  //     if (ventaId && ventaId !== venta.modelo.id) {
-  //         emitir("venta_id_cambiada", ventaId, true);
-  //     }
-  // }, [ventaId, emitir, venta.modelo.id]);
 
   return (
     <Detalle

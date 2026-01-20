@@ -1,4 +1,4 @@
-import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import {
   Detalle,
   QBoton,
@@ -31,18 +31,22 @@ export const DetalleEstadoOportunidad = ({
     metaEstadoOportunidad,
     estadoOportunidadVacio
   );
-  const { modelo, modeloInicial, modificado, uiProps, valido } =
+  const { modelo, modeloInicial, modificado, uiProps, valido, init } =
     estado_oportunidad;
 
-  const { ctx, emitir } = useMaestro(getMaquina, {
-    estado: "INICIAL",
-    estado_oportunidad: modelo,
-    inicial: modeloInicial,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      estado_oportunidad: modelo,
+      inicial: modeloInicial,
+    },
+    publicar
+  );
 
-  // if (nuevoContexto.venta !== venta.modelo) {
-  //   init(nuevoContexto.venta);
-  // }
+  if (ctx.estado_oportunidad !== modelo) {
+    init(ctx.estado_oportunidad);
+  }
 
   const guardar = async () => {
     emitir("estado_oportunidad_cambiado", modelo);
@@ -55,12 +59,6 @@ export const DetalleEstadoOportunidad = ({
   if (estadoOportunidadId && estadoOportunidadId !== modelo.id) {
     emitir("estado_oportunidad_id_cambiado", estadoOportunidadId);
   }
-
-  // useEffect(() => {
-  //     if (ventaId && ventaId !== venta.modelo.id) {
-  //         emitir("venta_id_cambiada", ventaId, true);
-  //     }
-  // }, [ventaId, emitir, venta.modelo.id]);
 
   return (
     <Detalle

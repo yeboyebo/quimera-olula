@@ -1,4 +1,4 @@
-import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
@@ -26,17 +26,21 @@ export const DetalleLead = ({
   const titulo = (lead: Entidad) => lead.nombre as string;
 
   const lead = useModelo(metaLead, leadVacio);
-  const { modelo, modeloInicial, modificado, valido } = lead;
+  const { modelo, modeloInicial, modificado, valido, init } = lead;
 
-  const { ctx, emitir } = useMaestro(getMaquina, {
-    estado: "INICIAL",
-    lead: modelo,
-    inicial: modeloInicial,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      lead: modelo,
+      inicial: modeloInicial,
+    },
+    publicar
+  );
 
-  // if (nuevoContexto.venta !== venta.modelo) {
-  //   init(nuevoContexto.venta);
-  // }
+  if (ctx.lead !== modelo) {
+    init(ctx.lead);
+  }
 
   const guardar = async () => {
     emitir("lead_cambiado", modelo);
@@ -49,12 +53,6 @@ export const DetalleLead = ({
   if (leadId && leadId !== modelo.id) {
     emitir("lead_id_cambiado", leadId);
   }
-
-  // useEffect(() => {
-  //     if (ventaId && ventaId !== venta.modelo.id) {
-  //         emitir("venta_id_cambiada", ventaId, true);
-  //     }
-  // }, [ventaId, emitir, venta.modelo.id]);
 
   return (
     <Detalle

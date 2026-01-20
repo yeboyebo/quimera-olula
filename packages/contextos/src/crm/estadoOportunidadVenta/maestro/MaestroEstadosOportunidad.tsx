@@ -1,5 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { useMaestro } from "@olula/componentes/hook/useMaestro.js";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
@@ -16,7 +16,7 @@ import { getMaquina } from "./maquina.ts";
 export const MaestroEstadosOportunidad = () => {
   const [cargando, setCargando] = useState(false);
 
-  const { ctx, emitir } = useMaestro(getMaquina, {
+  const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     estados_oportunidad: [],
     totalEstadosOportunidad: 0,
