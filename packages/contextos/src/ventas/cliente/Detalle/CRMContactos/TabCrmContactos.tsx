@@ -4,7 +4,7 @@ import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { useState } from "react";
-import { AltaCrmContactos } from "./AltaCrmContactos.tsx";
+import { CrearCrmContactos } from "./CrearCrmContactos.tsx";
 import { EdicionCrmContactos } from "./EdicionCrmContactos.tsx";
 import { TabCrmContactosLista } from "./TabCrmContactosLista.tsx";
 import { useCrmContactos } from "./useCrmContactos.ts";
@@ -76,7 +76,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <AltaCrmContactos clienteId={clienteId} emitir={emitir} />
+        <CrearCrmContactos emitir={emitir} />
       </QModal>
 
       <QModal

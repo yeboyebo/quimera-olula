@@ -1,6 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
-import { CuentaBanco } from "../../diseño.ts";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
+import { CuentaBanco, NuevaCuentaBanco } from "../../diseño.ts";
 import {
     deleteCuentaBanco,
     desmarcarCuentaDomiciliacion,
@@ -10,6 +10,26 @@ import {
     postCuentaBanco,
 } from "../../infraestructura.ts";
 import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
+
+export const metaCuentaBanco: MetaModelo<CuentaBanco> = {
+    campos: {
+        iban: { requerido: true },
+        bic: { requerido: true },
+    }
+};
+
+export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
+    campos: {
+        cuenta: { requerido: true },
+    }
+};
+
+export const nuevaCuentaBancoVacia: NuevaCuentaBanco = {
+    descripcion: '',
+    iban: '',
+    bic: '',
+}
+
 
 type ProcesarCuentasBanco = ProcesarContexto<EstadoCuentasBanco, ContextoCuentasBanco>;
 

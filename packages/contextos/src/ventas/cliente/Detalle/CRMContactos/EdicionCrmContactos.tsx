@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { CrmContacto } from "../../diseño.ts";
-import { metaCrmContacto } from "../../dominio.ts";
+import { metaCrmContacto } from "./dominio.ts";
 
 interface EdicionCrmContactosProps {
   contacto: CrmContacto;

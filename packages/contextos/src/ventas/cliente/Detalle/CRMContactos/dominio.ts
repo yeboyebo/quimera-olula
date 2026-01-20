@@ -1,10 +1,10 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
 import {
     desvincularContactoCliente,
     vincularContactoCliente,
 } from "../../../../crm/cliente/infraestructura.ts";
-import { CrmContacto } from "../../diseño.ts";
+import { CrmContacto, NuevoCrmContacto } from "../../diseño.ts";
 import {
     deleteCrmContacto,
     getCrmContactosCliente,
@@ -12,6 +12,25 @@ import {
     postCrmContacto,
 } from "../../infraestructura.ts";
 import { ContextoCrmContactos, EstadoCrmContactos } from "./diseño.ts";
+
+export const metaCrmContacto: MetaModelo<CrmContacto> = {
+    campos: {
+        nombre: { requerido: true },
+        email: { requerido: true, tipo: "email" },
+    }
+};
+
+export const metaNuevoCrmContacto: MetaModelo<NuevoCrmContacto> = {
+    campos: {
+        nombre: { requerido: true },
+        email: { requerido: true, tipo: "email" },
+    }
+};
+
+export const nuevoCrmContactoVacio: NuevoCrmContacto = {
+    nombre: '',
+    email: '',
+}
 
 type ProcesarCrmContactos = ProcesarContexto<EstadoCrmContactos, ContextoCrmContactos>;
 

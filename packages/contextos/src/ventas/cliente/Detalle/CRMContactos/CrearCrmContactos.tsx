@@ -1,13 +1,13 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { metaNuevoCrmContacto, nuevoCrmContactoVacio } from "../dominio.ts";
+import { metaNuevoCrmContacto, nuevoCrmContactoVacio } from "./dominio.ts";
 
-interface AltaCrmContactosProps {
+interface CrearCrmContactosProps {
   emitir: (evento: string, payload?: unknown) => void;
 }
 
-export const AltaCrmContactos = ({ emitir }: AltaCrmContactosProps) => {
+export const CrearCrmContactos = ({ emitir }: CrearCrmContactosProps) => {
   const { modelo, uiProps, valido } = useModelo(
     metaNuevoCrmContacto,
     nuevoCrmContactoVacio

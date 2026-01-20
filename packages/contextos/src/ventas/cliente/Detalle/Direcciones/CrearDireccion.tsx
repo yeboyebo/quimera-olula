@@ -1,9 +1,9 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { metaNuevaDireccion, nuevaDireccionVacia } from "../dominio.ts";
+import { metaNuevaDireccion, nuevaDireccionVacia } from "./dominio.ts";
 
-export const AltaDireccion = ({
+export const CrearDireccion = ({
   emitir,
 }: {
   emitir: (evento: string, payload?: unknown) => void;
@@ -18,7 +18,7 @@ export const AltaDireccion = ({
   };
 
   return (
-    <div className="AltaDireccion">
+    <div className="CrearDireccion">
       <quimera-formulario>
         <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
         <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />

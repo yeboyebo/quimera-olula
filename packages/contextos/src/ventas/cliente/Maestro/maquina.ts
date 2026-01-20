@@ -12,7 +12,7 @@ import {
 export const getMaquina: () => Maquina<EstadoMaestroCliente, ContextoMaestroCliente> = () => {
     return {
         INICIAL: {
-            cliente_id_cambiado: cambiarClienteEnLista,
+            cliente_cambiado: cambiarClienteEnLista,
             cliente_seleccionado: [activarCliente],
             cliente_deseleccionado: desactivarClienteActivo,
             cliente_borrado: quitarClienteDeLista,

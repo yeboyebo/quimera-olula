@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { AltaCuentaBanco } from "./CrearCuentaBanco.tsx";
+import { CrearCuentaBanco } from "./CrearCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
 import { TabCuentasBancoLista } from "./TabCuentasBancoLista";
 import { useCuentasBanco } from "./useCuentasBanco.ts";
@@ -53,7 +53,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <AltaCuentaBanco emitir={emitir} />
+        <CrearCuentaBanco emitir={emitir} />
       </QModal>
 
       <QModal

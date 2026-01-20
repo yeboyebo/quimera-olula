@@ -1,6 +1,6 @@
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { AltaDireccion } from "./CrearDireccion.tsx";
+import { CrearDireccion } from "./CrearDireccion.tsx";
 import { EdicionDireccion } from "./EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
 import { useDirecciones } from "./useDirecciones.ts";
@@ -23,7 +23,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <AltaDireccion emitir={emitir} />
+        <CrearDireccion emitir={emitir} />
       </QModal>
 
       <QModal

@@ -1,6 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
-import { DirCliente } from "../../diseño.ts";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
+import { DirCliente, NuevaDireccion } from "../../diseño.ts";
 import {
     actualizarDireccion as actualizarDireccionAPI,
     deleteDireccion,
@@ -9,6 +9,31 @@ import {
     setDirFacturacion,
 } from "../../infraestructura.ts";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
+
+export const metaDireccion: MetaModelo<DirCliente> = {
+    campos: {
+        tipo_via: { requerido: true },
+        nombre_via: { requerido: true },
+        ciudad: { requerido: true },
+    }
+};
+
+export const metaNuevaDireccion: MetaModelo<NuevaDireccion> = {
+    campos: {
+        nombre_via: { requerido: true },
+        ciudad: { requerido: true },
+    }
+};
+
+export const nuevaDireccionVacia: NuevaDireccion = {
+    nombre_via: '',
+    tipo_via: '',
+    ciudad: '',
+}
+
+export const puedoMarcarDireccionFacturacion = (direccion: DirCliente) => {
+    return !direccion.dir_facturacion;
+}
 
 type ProcesarDirecciones = ProcesarContexto<EstadoDirecciones, ContextoDirecciones>;
 

@@ -1,17 +1,8 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { Criteria, Entidad, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, EstadoModelo, initEstadoModelo, MetaModelo, publicar, stringNoVacio } from "@olula/lib/dominio.js";
+import { Entidad } from "@olula/lib/diseño.js";
+import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { idFiscalValido, tipoIdFiscalValido } from "../../valores/idfiscal.ts";
-import { Cliente, ContextoCliente, ContextoMaestroCliente, CrmContacto, CuentaBanco, DirCliente, EstadoCliente, EstadoMaestroCliente, FormBaja, NuevaCuentaBanco, NuevaDireccion, NuevoCliente, NuevoCrmContacto } from "./diseño.ts";
-import {
-    darDeAltaCliente,
-    darDeBajaCliente,
-    deleteCliente,
-    getCliente,
-    getClientes,
-    patchCliente,
-    postCliente,
-} from "./infraestructura.ts";
+import { Cliente, DirCliente, FormBaja, NuevaDireccion, NuevoCliente } from "./diseño.ts";
 
 export const metaTablaCliente: MetaTabla<Cliente> = [
     { id: "id", cabecera: "Id" },
@@ -28,10 +19,6 @@ export const metaTablaCliente: MetaTabla<Cliente> = [
 
 export const idFiscalValidoGeneral = (tipo: string, valor: string) => {
     return idFiscalValido(tipo)(valor) && tipoIdFiscalValido(tipo) === true;
-}
-
-export const puedoMarcarDireccionFacturacion = (direccion: DirCliente) => {
-    return !direccion.dir_facturacion;
 }
 
 
@@ -75,24 +62,6 @@ export const nuevoClienteVacio: NuevoCliente = {
     tipo_id_fiscal: '',
     agente_id: '',
 }
-
-export const nuevaDireccionVacia: NuevaDireccion = {
-    nombre_via: '',
-    tipo_via: '',
-    ciudad: '',
-}
-
-export const nuevaCuentaBancoVacia: NuevaCuentaBanco = {
-    descripcion: '',
-    iban: '',
-    bic: '',
-}
-
-export const nuevoCrmContactoVacio: NuevoCrmContacto = {
-    nombre: '',
-    email: '',
-}
-
 export const validadoresDireccion = {
     nuevaDireccion: (valor: NuevaDireccion) => (
         validadoresDireccion.tipo_via(valor.tipo_via) &&
@@ -154,48 +123,6 @@ export const metaNuevoCliente: MetaModelo<NuevoCliente> = {
     }
 };
 
-export const metaDireccion: MetaModelo<DirCliente> = {
-    campos: {
-        tipo_via: { requerido: true },
-        nombre_via: { requerido: true },
-        ciudad: { requerido: true },
-    }
-};
-
-export const metaNuevaDireccion: MetaModelo<NuevaDireccion> = {
-    campos: {
-        nombre_via: { requerido: true },
-        ciudad: { requerido: true },
-    }
-};
-
-export const metaCuentaBanco: MetaModelo<CuentaBanco> = {
-    campos: {
-        iban: { requerido: true },
-        bic: { requerido: true },
-    }
-};
-
-export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
-    campos: {
-        cuenta: { requerido: true },
-    }
-};
-
-export const metaCrmContacto: MetaModelo<CrmContacto> = {
-    campos: {
-        nombre: { requerido: true },
-        email: { requerido: true, tipo: "email" },
-    }
-};
-
-export const metaNuevoCrmContacto: MetaModelo<NuevoCrmContacto> = {
-    campos: {
-        nombre: { requerido: true },
-        email: { requerido: true, tipo: "email" },
-    }
-};
-
 export const metaDarDeBaja: MetaModelo<FormBaja> = {
     campos: {
         fecha_baja: { requerido: true, tipo: "fecha" },
@@ -207,182 +134,5 @@ export const initEstadoClienteVacio = () => initEstadoCliente(clienteVacio())
 
 
 
-type ProcesarCliente = ProcesarContexto<EstadoCliente, ContextoCliente>;
-type ProcesarClientes = ProcesarContexto<EstadoMaestroCliente, ContextoMaestroCliente>;
-
-const pipeCliente = ejecutarListaProcesos<EstadoCliente, ContextoCliente>;
-
-const clienteVacioObjeto: Cliente = clienteVacio();
-
-export const clienteVacioContexto = (): Cliente => ({ ...clienteVacioObjeto });
-
-const cargarCliente: (_: string) => ProcesarCliente = (idCliente) =>
-    async (contexto) => {
-        const cliente = await getCliente(idCliente);
-        return {
-            ...contexto,
-            cliente,
-            clienteInicial: cliente,
-        }
-    }
-
-export const refrescarCliente: ProcesarCliente = async (contexto) => {
-    const cliente = await getCliente(contexto.cliente.id);
-    return [
-        {
-            ...contexto,
-            cliente: {
-                ...contexto.cliente,
-                ...cliente
-            },
-        },
-        [["cliente_cambiado", cliente]]
-    ]
-}
-
-export const cancelarCambioCliente: ProcesarCliente = async (contexto) => {
-    return {
-        ...contexto,
-        cliente: contexto.clienteInicial
-    }
-}
-
-export const abiertoContexto: ProcesarCliente = async (contexto) => {
-    return {
-        ...contexto,
-        estado: "ABIERTO"
-    }
-}
-
-export const getContextoVacio: ProcesarCliente = async (contexto) => {
-    return {
-        ...contexto,
-        estado: 'INICIAL',
-        cliente: clienteVacioContexto(),
-        clienteInicial: clienteVacioContexto(),
-    }
-}
-
-export const cargarContexto: ProcesarCliente = async (contexto, payload) => {
-    const idCliente = payload as string;
-    if (idCliente) {
-        return pipeCliente(
-            contexto,
-            [
-                cargarCliente(idCliente),
-                abiertoContexto,
-            ],
-            payload
-        );
-    } else {
-        return getContextoVacio(contexto);
-    }
-}
-
-export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
-    const cliente = payload as Cliente;
-    await patchCliente(contexto.cliente.id, cliente);
-
-    return pipeCliente(contexto, [
-        refrescarCliente,
-        'ABIERTO',
-    ]);
-}
-
-export const borrarCliente: ProcesarCliente = async (contexto) => {
-    await deleteCliente(contexto.cliente.id);
-
-    return pipeCliente(contexto, [
-        getContextoVacio,
-        publicar('cliente_borrado', null)
-    ]);
-}
-
-export const darDeAltaClienteProceso: ProcesarCliente = async (contexto) => {
-    await darDeAltaCliente(contexto.cliente.id);
-
-    return pipeCliente(contexto, [
-        cargarCliente(contexto.cliente.id),
-        abiertoContexto,
-    ]);
-}
-
-export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload) => {
-    const fechaBaja = payload as string;
-    await darDeBajaCliente(contexto.cliente.id, fechaBaja);
-
-    return pipeCliente(contexto, [
-        cargarCliente(contexto.cliente.id),
-        abiertoContexto,
-    ]);
-}
-
-// Para el maestro
-
-export const cambiarClienteEnLista: ProcesarClientes = async (contexto, payload) => {
-    const cliente = payload as Cliente;
-    return {
-        ...contexto,
-        clientes: contexto.clientes.map(c => c.id === cliente.id ? cliente : c)
-    }
-}
-
-export const activarCliente: ProcesarClientes = async (contexto, payload) => {
-    const clienteActivo = payload as Cliente;
-    return {
-        ...contexto,
-        clienteActivo
-    }
-}
-
-export const desactivarClienteActivo: ProcesarClientes = async (contexto) => {
-    return {
-        ...contexto,
-        clienteActivo: null
-    }
-}
-
-export const quitarClienteDeLista: ProcesarClientes = async (contexto, payload) => {
-    const clienteBorrado = payload as Cliente;
-    return {
-        ...contexto,
-        clientes: contexto.clientes.filter(c => c.id !== clienteBorrado.id),
-        clienteActivo: null
-    }
-}
-
-export const recargarClientes: ProcesarClientes = async (contexto, payload) => {
-    const criteria = payload as Criteria;
-    const resultado = await getClientes(criteria.filtro, criteria.orden, criteria.paginacion);
-    const clientesCargados = resultado.datos;
-
-    return {
-        ...contexto,
-        clientes: clientesCargados,
-        totalClientes: resultado.total == -1 ? contexto.totalClientes : resultado.total,
-        clienteActivo: contexto.clienteActivo
-            ? clientesCargados.find(c => c.id === contexto.clienteActivo?.id) ?? null
-            : null
-    }
-}
-
-export const incluirClienteEnLista: ProcesarClientes = async (contexto, payload) => {
-    const cliente = payload as Cliente;
-    return {
-        ...contexto,
-        clientes: [cliente, ...contexto.clientes]
-    }
-}
-
-export const crearCliente: ProcesarClientes = async (contexto, payload) => {
-    const clienteNuevo = payload as NuevoCliente;
-    const idCliente = await postCliente(clienteNuevo);
-    const cliente = await getCliente(idCliente);
-    return {
-        ...contexto,
-        clientes: [cliente, ...contexto.clientes],
-        clienteActivo: cliente
-    }
-}
 
 

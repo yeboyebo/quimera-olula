@@ -1,4 +1,3 @@
-// Dominio de detalle
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.js";
 import { Cliente, ContextoCliente, EstadoCliente } from "../diseño.ts";
@@ -6,9 +5,8 @@ import { clienteVacio } from "../dominio.ts";
 import {
     darDeAltaCliente,
     darDeBajaCliente,
-    deleteCliente,
     getCliente,
-    patchCliente,
+    patchCliente
 } from "../infraestructura.ts";
 
 type ProcesarCliente = ProcesarContexto<EstadoCliente, ContextoCliente>;
@@ -93,7 +91,7 @@ export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
 }
 
 export const borrarCliente: ProcesarCliente = async (contexto) => {
-    await deleteCliente(contexto.cliente.id);
+    // await deleteCliente(contexto.cliente.id);
 
     return pipeCliente(contexto, [
         getContextoVacio,
@@ -120,15 +118,4 @@ export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload
     ]);
 }
 
-// Re-export meta functions que se usan en sub-contextos
-export {
-    metaDireccion,
-    metaNuevaCuentaBanco,
-    metaNuevaDireccion,
-    metaNuevoCrmContacto,
-    nuevaCuentaBancoVacia,
-    nuevaDireccionVacia,
-    nuevoCrmContactoVacio,
-    puedoMarcarDireccionFacturacion
-} from "../dominio.ts";
 

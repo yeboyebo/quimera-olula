@@ -1,14 +1,14 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { metaNuevaCuentaBanco, nuevaCuentaBancoVacia } from "../dominio.ts";
+import { metaNuevaCuentaBanco, nuevaCuentaBancoVacia } from "./dominio.ts";
 import "./TabCuentasBanco.css";
 
-interface AltaCuentaBancoProps {
+interface CrearCuentaBancoProps {
   emitir: (evento: string, payload?: unknown) => void;
 }
 
-export const AltaCuentaBanco = ({ emitir }: AltaCuentaBancoProps) => {
+export const CrearCuentaBanco = ({ emitir }: CrearCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(
     metaNuevaCuentaBanco,
     nuevaCuentaBancoVacia
