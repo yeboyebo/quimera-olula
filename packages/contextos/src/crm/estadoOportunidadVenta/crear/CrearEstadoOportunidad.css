@@ -1,5 +1,4 @@
-.AltaEstadoOportunidad,
-.DetalleEstadoOportunidad {
+.CrearEstadoOportunidad {
     quimera-input[nombre="descripcion"] {
         grid-column: 1 / span 6;
     }
