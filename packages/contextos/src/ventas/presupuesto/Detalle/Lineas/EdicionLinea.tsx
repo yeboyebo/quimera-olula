@@ -6,8 +6,8 @@ import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
-import { LineaPresupuesto } from "../../../diseño.ts";
-import { metaLinea } from "../../../dominio.ts";
+import { metaLinea } from "../../dominio.ts";
+import { LineaPresupuesto } from "../diseño.ts";
 import "./EdicionLinea.css";
 
 export const EdicionLinea = ({

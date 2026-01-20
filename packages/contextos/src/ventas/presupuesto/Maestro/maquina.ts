@@ -5,7 +5,6 @@ import {
     activarPresupuesto,
     cambiarPresupuestoEnLista,
     cerrarModalCreacion,
-    crearPresupuesto,
     desactivarPresupuestoActivo,
     incluirPresupuestoEnLista,
     quitarPresupuestoDeLista,
@@ -30,8 +29,6 @@ export const getMaquina: () => Maquina<EstadoMaestroPresupuesto, ContextoMaestro
             presupuesto_creado: incluirPresupuestoEnLista,
 
             recarga_de_presupuestos_solicitada: recargarPresupuestos,
-
-            creacion_de_presupuesto_solicitada: crearPresupuesto,
 
             crear_presupuesto_solicitado: abrirModalCreacion,
         },

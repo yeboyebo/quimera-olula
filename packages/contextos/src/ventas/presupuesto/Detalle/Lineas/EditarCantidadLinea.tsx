@@ -1,6 +1,6 @@
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useEffect, useState } from "react";
-import { LineaPresupuesto as Linea } from "../../../diseño.ts";
+import { LineaPresupuesto as Linea } from "../diseño.ts";
 
 const validacion = (cantidadRaw: string) => {
   const cantidad = parseInt(cantidadRaw);

@@ -8,10 +8,10 @@ import {
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
-import { TotalesVenta } from "../../../venta/vistas/TotalesVenta.tsx";
-import { Presupuesto } from "../../diseño.ts";
-import { usePresupuesto } from "../../hooks/usePresupuesto.ts";
+import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import "./DetallePresupuesto.css";
+import { Presupuesto } from "./diseño.ts";
+import { usePresupuesto } from "./hooks/usePresupuesto.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatosBase.tsx";

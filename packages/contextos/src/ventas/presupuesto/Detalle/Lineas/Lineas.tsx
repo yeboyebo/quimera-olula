@@ -1,5 +1,5 @@
 import { QBoton } from "@olula/componentes/index.ts";
-import { LineaPresupuesto, Presupuesto } from "../../../diseño.ts";
+import { LineaPresupuesto, Presupuesto } from "../diseño.ts";
 import { AltaLinea } from "./AltaLinea.tsx";
 import { BajaLinea } from "./BajaLinea.tsx";
 import { EdicionLinea } from "./EdicionLinea.tsx";

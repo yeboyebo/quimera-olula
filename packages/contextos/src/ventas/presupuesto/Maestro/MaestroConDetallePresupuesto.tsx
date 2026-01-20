@@ -1,21 +1,23 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
-import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
-import { Presupuesto } from "../diseño.ts";
-import { metaTablaPresupuesto as metaTablaBase } from "../dominio.ts";
-import { getMaquina } from "../maquinaMaestro.ts";
-import { CrearPresupuesto } from "./DetallePresupuesto/CrearPresupuesto.tsx";
-import { DetallePresupuesto } from "./DetallePresupuesto/DetallePresupuesto.tsx";
+import { CrearPresupuesto } from "../Crear/CrearPresupuesto.tsx";
+import { DetallePresupuesto } from "../Detalle/DetallePresupuesto.tsx";
+import {
+  metaTablaPresupuesto as metaTablaBase,
+  Presupuesto,
+} from "./diseño.ts";
 import "./MaestroConDetallePresupuesto.css";
+import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetallePresupuesto = () => {
-  const { ctx, emitir } = useMaestroVenta(getMaquina, {
+  const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     presupuestos: [],
     totalPresupuestos: 0,

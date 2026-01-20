@@ -5,19 +5,19 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useState } from "react";
-import { Cliente } from "../../../comun/componentes/cliente.tsx";
-import { DirCliente } from "../../../comun/componentes/dirCliente.tsx";
+import { Cliente } from "../../comun/componentes/cliente.tsx";
+import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import {
   NuevoPresupuesto,
   NuevoPresupuestoClienteNoRegistrado,
-} from "../../diseño.ts";
+} from "../diseño.ts";
 import {
   metaNuevoPresupuesto,
   metaNuevoPresupuestoClienteNoRegistrado,
   nuevoPresupuestoClienteNoRegistradoVacio,
   nuevoPresupuestoVacio,
-} from "../../dominio.ts";
-import { getPresupuesto, postPresupuesto } from "../../infraestructura.ts";
+} from "../dominio.ts";
+import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
 import "./CrearPresupuesto.css";
 
 export const CrearPresupuesto = ({

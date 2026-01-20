@@ -4,7 +4,7 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
-import { metaNuevaLinea, nuevaLineaVacia } from "../../../dominio.ts";
+import { metaNuevaLinea, nuevaLineaVacia } from "../../dominio.ts";
 import "./AltaLinea.css";
 
 export const AltaLinea = ({
