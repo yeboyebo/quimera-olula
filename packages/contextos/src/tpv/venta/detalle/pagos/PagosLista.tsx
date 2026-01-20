@@ -11,8 +11,6 @@ export const PagosLista = ({
   pagoActivo: PagoVentaTpv | null;
   publicar: EmitirEvento;
 }) => {
-  
-
   const setSeleccionado = (pago: PagoVentaTpv) => {
     publicar("pago_seleccionado", pago);
   };
@@ -32,17 +30,8 @@ export const PagosLista = ({
   );
 };
 
-const ItemPagoVentaTpv = ({
-  pago,
-}: {
-  pago: PagoVentaTpv;
-}) => {
-
-  return (
-    <>
-      {`${pago.forma_pago}: ${pago.importe}€`}
-    </>
-  );
+const ItemPagoVentaTpv = ({ pago }: { pago: PagoVentaTpv }) => {
+  return <>{`${pago.forma_pago}: ${pago.importe}€`}</>;
 };
 
 const getMetaTablaPagos = () => {
@@ -50,11 +39,7 @@ const getMetaTablaPagos = () => {
     {
       id: "pago",
       cabecera: "Pagos",
-      render: (pago: PagoVentaTpv) => (
-        <ItemPagoVentaTpv
-          pago={pago}
-        />
-      ),
+      render: (pago: PagoVentaTpv) => <ItemPagoVentaTpv pago={pago} />,
     },
   ];
 };

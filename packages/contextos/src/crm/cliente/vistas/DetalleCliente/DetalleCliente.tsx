@@ -6,8 +6,8 @@ import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useParams } from "react-router";
-import { TabCrmContactos } from "../../../../ventas/cliente/vistas/DetalleCliente/CRMContactos/TabCrmContactos.tsx";
-import { TabDirecciones } from "../../../../ventas/cliente/vistas/DetalleCliente/Direcciones/TabDirecciones.tsx";
+import { TabCrmContactos } from "../../../../ventas/cliente/detalle/CRMContactos/TabCrmContactos.tsx";
+import { TabDirecciones } from "../../../../ventas/cliente/detalle/Direcciones/TabDirecciones.tsx";
 import { Cliente } from "../../diseño.ts";
 import { clienteVacio, metaCliente } from "../../dominio.ts";
 import {
