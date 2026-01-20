@@ -1,39 +1,11 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
-import { DirCliente, NuevaDireccion } from "../../diseño.ts";
-import {
-    actualizarDireccion as actualizarDireccionAPI,
-    deleteDireccion,
-    getDirecciones,
-    postDireccion,
-    setDirFacturacion,
-} from "../../infraestructura.ts";
+import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
+import { DirCliente } from "../../diseño.ts";
+import { getDirecciones, setDirFacturacion } from "../../infraestructura.ts";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
 
-export const metaDireccion: MetaModelo<DirCliente> = {
-    campos: {
-        tipo_via: { requerido: true },
-        nombre_via: { requerido: true },
-        ciudad: { requerido: true },
-    }
-};
-
-export const metaNuevaDireccion: MetaModelo<NuevaDireccion> = {
-    campos: {
-        nombre_via: { requerido: true },
-        ciudad: { requerido: true },
-    }
-};
-
-export const nuevaDireccionVacia: NuevaDireccion = {
-    nombre_via: '',
-    tipo_via: '',
-    ciudad: '',
-}
-
-export const puedoMarcarDireccionFacturacion = (direccion: DirCliente) => {
-    return !direccion.dir_facturacion;
-}
+export { metaNuevaDireccion, nuevaDireccionVacia } from "../../crear_direccion/dominio.ts";
+export { metaDireccion } from "../../editar_direccion/dominio.ts";
 
 type ProcesarDirecciones = ProcesarContexto<EstadoDirecciones, ContextoDirecciones>;
 
@@ -56,51 +28,11 @@ export const activarDireccion: ProcesarDirecciones = async (contexto, payload) =
     }
 }
 
-export const crearDireccion: ProcesarDirecciones = async (contexto, payload) => {
-    const nuevaDireccion = payload as DirCliente;
-    await postDireccion(contexto.clienteId, nuevaDireccion);
-
-    return pipeDirecciones(contexto, [
-        cargarDirecciones,
-    ]);
-}
-
-export const actualizarDireccion: ProcesarDirecciones = async (contexto, payload) => {
-    const direccionActualizada = payload as DirCliente;
-    await actualizarDireccionAPI(contexto.clienteId, direccionActualizada);
-
-    return pipeDirecciones(contexto, [
-        cargarDirecciones,
-        'lista'
-    ]);
-}
-
-export const borrarDireccion: ProcesarDirecciones = async (contexto, _payload) => {
-    const idDireccion = contexto.direccionActiva?.id;
-    if (!idDireccion) return contexto;
-
-    await deleteDireccion(contexto.clienteId, idDireccion);
-
-    return pipeDirecciones(contexto, [
-        cargarDirecciones,
-        'lista'
-    ]);
-}
-
-export const marcarDireccionFacturacion: ProcesarDirecciones = async (contexto) => {
-    if (!contexto.direccionActiva?.id) return contexto;
-
-    await setDirFacturacion(contexto.clienteId, contexto.direccionActiva.id);
-
-    return pipeDirecciones(contexto, [
-        cargarDirecciones,
-    ]);
-}
-
 export const cancelarAlta: ProcesarDirecciones = async (contexto) => {
     return {
         ...contexto,
-        direccionActiva: null
+        direccionActiva: null,
+        estado: "lista"
     }
 }
 
@@ -113,5 +45,43 @@ export const cancelarEdicion: ProcesarDirecciones = async (contexto) => {
 }
 
 export const cancelarConfirmacion: ProcesarDirecciones = async (contexto) => {
-    return contexto;
+    return {
+        ...contexto,
+        estado: "lista"
+    }
+}
+
+export const direccionCreada: ProcesarDirecciones = async (contexto) => {
+    return pipeDirecciones(contexto, [
+        cargarDirecciones,
+        "lista"
+    ]);
+}
+
+export const direccionActualizada: ProcesarDirecciones = async (contexto) => {
+    return pipeDirecciones(contexto, [
+        cargarDirecciones,
+        "lista"
+    ]);
+}
+
+export const borrarDireccion: ProcesarDirecciones = async (contexto) => {
+    return pipeDirecciones(contexto, [
+        cargarDirecciones,
+        "lista"
+    ]);
+}
+
+export const puedoMarcarDireccionFacturacion = (direccion: DirCliente) => {
+    return !direccion.dir_facturacion;
+}
+
+export const marcarDireccionFacturacion: ProcesarDirecciones = async (contexto) => {
+    if (!contexto.direccionActiva?.id) return contexto;
+
+    await setDirFacturacion(contexto.clienteId, contexto.direccionActiva.id);
+
+    return pipeDirecciones(contexto, [
+        cargarDirecciones,
+    ]);
 }

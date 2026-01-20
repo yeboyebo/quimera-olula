@@ -1,21 +1,35 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
+import { useCallback, useContext, useState } from "react";
+import { postDireccion } from "../infraestructura.ts";
 import { metaNuevaDireccion, nuevaDireccionVacia } from "./dominio.ts";
 
 export const CrearDireccion = ({
-  emitir,
+  clienteId,
+  publicar,
 }: {
-  emitir: (evento: string, payload?: unknown) => void;
+  clienteId: string;
+  publicar: EmitirEvento;
 }) => {
+  const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido } = useModelo(
     metaNuevaDireccion,
     nuevaDireccionVacia
   );
+  const [creando, setCreando] = useState(false);
 
-  const guardar = async () => {
-    emitir("crear_direccion", modelo);
-  };
+  const guardar = useCallback(async () => {
+    await intentar(() => postDireccion(clienteId, modelo));
+    setCreando(true);
+    publicar("direccion_creada");
+  }, [modelo, publicar, clienteId, intentar]);
+
+  const cancelar = useCallback(() => {
+    if (!creando) publicar("alta_cancelada");
+  }, [creando, publicar]);
 
   return (
     <div className="CrearDireccion">
@@ -28,11 +42,7 @@ export const CrearDireccion = ({
         <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar
         </QBoton>
-        <QBoton
-          tipo="reset"
-          variante="texto"
-          onClick={() => emitir("alta_cancelada")}
-        >
+        <QBoton tipo="reset" variante="texto" onClick={cancelar}>
           Cancelar
         </QBoton>
       </div>

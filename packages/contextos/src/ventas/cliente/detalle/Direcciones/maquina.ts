@@ -2,13 +2,13 @@ import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
 import {
     activarDireccion,
-    actualizarDireccion,
     borrarDireccion,
     cancelarAlta,
     cancelarConfirmacion,
     cancelarEdicion,
     cargarDirecciones,
-    crearDireccion,
+    direccionActualizada,
+    direccionCreada,
     marcarDireccionFacturacion,
 } from "./dominio.ts";
 
@@ -28,16 +28,22 @@ export const getMaquina: () => Maquina<EstadoDirecciones, ContextoDirecciones> =
             borrado_solicitado: "confirmar_borrado",
 
             facturacion_solicitada: marcarDireccionFacturacion,
+
+            direccion_creada: direccionCreada,
+
+            direccion_actualizada: direccionActualizada,
+
+            borrado_de_direccion_listo: borrarDireccion,
         },
 
         alta: {
-            crear_direccion: [crearDireccion, "lista"],
+            direccion_creada: direccionCreada,
 
             alta_cancelada: cancelarAlta,
         },
 
         edicion: {
-            actualizar_direccion: [actualizarDireccion],
+            direccion_actualizada: direccionActualizada,
 
             edicion_cancelada: cancelarEdicion,
         },

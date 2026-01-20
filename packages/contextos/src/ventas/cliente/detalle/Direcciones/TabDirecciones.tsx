@@ -1,12 +1,14 @@
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { CrearDireccion } from "./CrearDireccion.tsx";
-import { EdicionDireccion } from "./EdicionDireccion.tsx";
+import { BorrarDireccion } from "../../borrar_direccion/BorrarDireccion.tsx";
+import { CrearDireccion } from "../../crear_direccion/CrearDireccion.tsx";
+import { EdicionDireccion } from "../../editar_direccion/EdicionDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
 import { useDirecciones } from "./useDirecciones.ts";
 
 export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
-  const { ctx, estado, emitir } = useDirecciones({ clienteId });
+  const { ctx, estado, emitir } = useDirecciones({
+    clienteId,
+  });
 
   return (
     <div className="TabDirecciones">
@@ -23,7 +25,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <CrearDireccion emitir={emitir} />
+        <CrearDireccion clienteId={clienteId} publicar={emitir} />
       </QModal>
 
       <QModal
@@ -32,18 +34,22 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         onCerrar={() => emitir("edicion_cancelada")}
       >
         {ctx.direccionActiva && (
-          <EdicionDireccion direccion={ctx.direccionActiva} emitir={emitir} />
+          <EdicionDireccion 
+            direccion={ctx.direccionActiva} 
+            clienteId={clienteId}
+            publicar={emitir} 
+          />
         )}
       </QModal>
 
-      <QModalConfirmacion
-        nombre="confirmarBorradoDireccion"
-        abierto={estado === "confirmar_borrado"}
-        titulo="Confirmar borrar"
-        mensaje="¿Está seguro de que desea borrar esta dirección?"
-        onCerrar={() => emitir("borrado_cancelado")}
-        onAceptar={() => emitir("borrado_confirmado")}
-      />
+      {estado === "confirmar_borrado" && ctx.direccionActiva && (
+        <BorrarDireccion
+          direccion={ctx.direccionActiva}
+          clienteId={clienteId}
+          publicar={emitir}
+          onCancelar={() => emitir("borrado_cancelado")}
+        />
+      )}
     </div>
   );
 };

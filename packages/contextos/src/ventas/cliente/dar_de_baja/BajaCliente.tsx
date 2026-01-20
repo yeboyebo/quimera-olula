@@ -20,13 +20,16 @@ export const BajaCliente = ({
   publicar = () => {},
   onCancelar = () => {},
 }: BajaClienteProps) => {
-  const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: "" });
+  const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: null });
   const { intentar } = useContext(ContextoError);
 
   const { modelo, valido, uiProps } = bajaCliente;
 
   const guardar = async () => {
-    await intentar(() => darDeBajaCliente(cliente.id, modelo.fecha_baja));
+    if (modelo.fecha_baja === null) return;
+    await intentar(() =>
+      darDeBajaCliente(cliente.id, modelo.fecha_baja as Date)
+    );
     publicar("cliente_dado_de_baja", {
       clienteId: cliente.id,
       fecha_baja: modelo.fecha_baja,

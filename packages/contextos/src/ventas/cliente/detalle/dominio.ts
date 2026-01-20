@@ -162,7 +162,7 @@ export const darDeAltaClienteProceso: ProcesarCliente = async (contexto) => {
 
 export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload) => {
     const fechaBaja = payload as string;
-    await darDeBajaCliente(contexto.cliente.id, fechaBaja);
+    await darDeBajaCliente(contexto.cliente.id, new Date(fechaBaja));
 
     return pipeCliente(contexto, [
         cargarCliente(contexto.cliente.id),

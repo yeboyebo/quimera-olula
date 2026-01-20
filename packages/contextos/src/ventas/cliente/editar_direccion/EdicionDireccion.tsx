@@ -1,22 +1,38 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { DirCliente } from "../../diseño.ts";
+import { useCallback, useContext, useState } from "react";
+import { DirCliente } from "../diseño.ts";
+import { actualizarDireccion } from "../infraestructura.ts";
 import { metaDireccion } from "./dominio.ts";
 
 export const EdicionDireccion = ({
   direccion,
-  emitir,
+  clienteId,
+  publicar,
 }: {
   direccion: DirCliente;
-  emitir: (evento: string, payload?: unknown) => void;
+  clienteId: string;
+  publicar: EmitirEvento;
 }) => {
+  const { intentar } = useContext(ContextoError);
   const direccionEditada = useModelo(metaDireccion, direccion);
+  const [editando, setEditando] = useState(false);
 
-  const guardar = async () => {
-    emitir("actualizar_direccion", direccionEditada.modelo);
-  };
+  const guardar = useCallback(async () => {
+    await intentar(() =>
+      actualizarDireccion(clienteId, direccionEditada.modelo)
+    );
+    setEditando(true);
+    publicar("direccion_actualizada");
+  }, [direccionEditada.modelo, publicar, clienteId, intentar]);
+
+  const cancelar = useCallback(() => {
+    if (!editando) publicar("edicion_cancelada");
+  }, [editando, publicar]);
 
   const opciones = [
     { valor: "Calle", descripcion: "Calle" },
@@ -52,11 +68,7 @@ export const EdicionDireccion = ({
         <QBoton deshabilitado={!direccionEditada.valido} onClick={guardar}>
           Guardar
         </QBoton>
-        <QBoton
-          tipo="reset"
-          variante="texto"
-          onClick={() => emitir("edicion_cancelada")}
-        >
+        <QBoton tipo="reset" variante="texto" onClick={cancelar}>
           Cancelar
         </QBoton>
       </div>
