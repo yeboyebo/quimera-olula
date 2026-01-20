@@ -5,6 +5,7 @@ import { LineaFactura } from "#/ventas/factura/diseño.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QBoton } from "@olula/componentes/index.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { CambiarLineaTpv } from "../../cambiar_linea/CambiarLineaTpv.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
@@ -21,9 +22,16 @@ export const Lineas = ({
     }
 ) => {
 
-    const alta_rapida_clicked = (barcode:string) => {
-        publicar("alta_de_linea_por_barcode_lista", barcode)
+    const altaRapida = (barcode:string) => {
+        publicar("alta_de_linea_por_barcode_lista", barcode);
+        if (focus?.current) {
+            const control = focus.current as HTMLInputElement;
+            control.value = '';
+        }
+        
     };
+
+    const focus = useFocus();
 
     return (
         <>
@@ -36,7 +44,8 @@ export const Lineas = ({
                         </QBoton>
                     )}
                     <QInput label='Barcode' nombre='barcode'
-                        onEnterKeyUp={(barcode)=>alta_rapida_clicked(barcode)}
+                        onEnterKeyUp={altaRapida}
+                        ref={focus}
                     />
                     
                     <QBoton

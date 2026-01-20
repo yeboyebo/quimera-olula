@@ -13,7 +13,7 @@ export interface Cliente extends Entidad {
   forma_pago_id: string;
   grupo_iva_negocio_id: string;
   de_baja: boolean;
-  fecha_baja: string | null;
+  fecha_baja: Date | null;
   grupo_id: string;
   telefono1: string;
   telefono2: string;
@@ -67,7 +67,7 @@ export type NuevaDireccion = {
 };
 
 export type FormBaja = {
-  fecha_baja: string;
+  fecha_baja: Date | null;
 }
 
 export interface CuentaBanco extends Entidad {
@@ -106,30 +106,3 @@ export type NuevoCrmContacto = {
 export type GetCliente = (id: string) => Promise<Cliente>;
 export type PostCliente = (cliente: NuevoCliente) => Promise<string>;
 export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;
-
-// Estados de la máquina
-export type EstadoCliente =
-  | "INICIAL"
-  | "ABIERTO"
-  | "EDITANDO_CLIENTE"
-  | "GUARDANDO_CLIENTE"
-  | "BORRANDO_CLIENTE"
-  | "CONFIRMANDO_BAJA";
-
-// Contexto de la máquina
-export type ContextoCliente = {
-  estado: EstadoCliente;
-  cliente: Cliente;
-  clienteInicial: Cliente;
-};
-
-// Estados maestro
-export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE";
-
-// Contexto maestro
-export type ContextoMaestroCliente = {
-  estado: EstadoMaestroCliente;
-  clientes: Cliente[];
-  clienteActivo: Cliente | null;
-  totalClientes: number;
-};

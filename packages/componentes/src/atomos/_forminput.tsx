@@ -11,6 +11,8 @@ export type FormFieldProps = {
   opcional?: boolean;
   condensado?: boolean;
   autoSeleccion?: boolean;
+  autoFocus?: boolean;
+  ref?: React.RefObject<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null>;
   onChange?: (
     valor: string,
     evento: React.ChangeEvent<HTMLInputElement>
@@ -22,6 +24,8 @@ export type FormFieldProps = {
 const tiposFormInput = {
   texto: "text",
   numero: "number",
+  entero: "number",
+  decimal: "number",
   fecha: "date",
   hora: "time",
   fecha_hora: "datetime-local",
@@ -48,6 +52,7 @@ export type FormInputProps = FormFieldProps & {
 
 type InputProps = Omit<FormInputProps, "label"> & {
   checked?: boolean;
+  autoFocus?: boolean;
 };
 
 export const FormInput = ({
@@ -61,6 +66,8 @@ export const FormInput = ({
   lista,
   autocompletar,
   autoSeleccion,
+  autoFocus,
+  ref,
   onChange,
   onBlur,
   onInput,
@@ -88,6 +95,9 @@ export const FormInput = ({
   };
 
   const manejarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (tipo == "fecha") {
+      console.log('Evento fecha', e);
+    }
     onChange?.(e.target.value, e);
   };
 
@@ -107,7 +117,7 @@ export const FormInput = ({
       onEnterKeyUp?.(evento.value, e);
     }
   };
-
+  
   return (
     <input
       type={tiposFormInput[tipo] ?? "text"}
@@ -126,6 +136,8 @@ export const FormInput = ({
       onFocus={manejarFocus}
       onInput={manejarInput}
       onKeyUp={manejarKeyUp}
+      autoFocus={autoFocus}
+      ref={ref as React.RefObject<HTMLInputElement>}
     />
   );
 };

@@ -20,7 +20,7 @@ export const PagarEfectivoVentaTpv = ({
   venta: VentaTpv;
 }) => {
 
-    const { modelo, uiProps, valido, dispatch } = useModelo(
+    const { modelo, uiProps, valido, set } = useModelo(
         metaNuevoPagoEfectivo, nuevoPagoEfectivoVacio
     );
 
@@ -63,9 +63,9 @@ export const PagarEfectivoVentaTpv = ({
     }
 
     const setImporte = (v: number) => {
-        dispatch({
-            type: "set_campo",
-            payload: { campo: "importe", valor: v.toString() },
+        set({
+            ...modelo,
+            importe: v,
         });
     }
 

@@ -12,9 +12,7 @@ import "./MaestroConDetalleArqueoTpv.css";
 import { ContextoMaestroArqueosTpv, metaTablaArqueo } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
-puntoVentaLocal.actualizar('000001');
-agenteActivo.actualizar('000001');
-const miPuntoArqueoLocal = puntoVentaLocal.obtener() ;
+const puntoVentaActivo = puntoVentaLocal.obtener() ;
 const miAgenteActivo = agenteActivo.obtener() ;
 
 const maquina = getMaquina();
@@ -81,8 +79,8 @@ export const MaestroConDetalleArqueoTpv = () => {
                 Maestro={
                     <>
                         <h2>Arqueos TPV</h2>
-                        <h2>Punto de arqueo {miPuntoArqueoLocal} </h2>
-                        <h2>Agente {miAgenteActivo} </h2>
+                        <h2>Punto de arqueo {puntoVentaActivo?.nombre} </h2>
+                        <h2>Agente {miAgenteActivo?.nombre} </h2>
                         <div className="maestro-botones">
                             <QBoton onClick={crear}>Abrir arqueo</QBoton>
                         </div>

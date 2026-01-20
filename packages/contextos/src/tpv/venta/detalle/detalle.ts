@@ -23,8 +23,8 @@ const onChangeVentaTpv = (venta: VentaTpv, campo: string, _: unknown, otros?: Re
 
 export const metaVentaTpv: MetaModelo<VentaTpv> = {
     campos: {
-        fecha: { tipo: "fecha", requerido: false },
         ...metaVenta.campos,
+        fecha: { tipo: "fecha", requerido: true },
     },
     onChange: onChangeVentaTpv
 };
@@ -230,14 +230,15 @@ export const crearLineaPorBarcode: ProcesarVentaTpv = async (contexto, payload) 
     ]);
 }
 
-export const onLineaCambiada: ProcesarVentaTpv = async (contexto, _) => {
+export const onLineaCambiada: ProcesarVentaTpv = async (contexto, payload) => {
 
-    // const linea = payload as LineaFactura;
+    const linea = payload as LineaFactura;
     // await patchLinea(contexto.venta.id, linea)
 
     return pipeVentaTpv(contexto, [
         refrescarVenta,
         refrescarLineas,
+        activarLineaPorId(linea.id),
         'ABIERTA',
     ]);
 }
