@@ -13,10 +13,10 @@ import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
+import { BorrarIncidencia } from "../../borrar/BorrarIncidencia.tsx";
 import { Incidencia } from "../../diseño.ts";
 import { incidenciaVacia, metaIncidencia } from "../../dominio.ts";
 import { getIncidencia, patchIncidencia } from "../../infraestructura.ts";
-import { BorrarIncidencia } from "./BorrarIncidencia.tsx";
 import "./DetalleIncidencia.css";
 import { TabAcciones } from "./TabAcciones.tsx";
 
@@ -34,7 +34,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       cancelar_seleccion: ({ publicar }) => publicar("seleccion_cancelada"),
     },
     Borrando: {
-      borrado_cancelado: "Editando",
+      borrado_incidencia_cancelado: "Editando",
       incidencia_borrada: ({ publicar }) => publicar("incidencia_borrada"),
     },
   },
@@ -151,11 +151,10 @@ export const DetalleIncidencia = ({
               </QBoton>
             </div>
           )}
-          <BorrarIncidencia
-            publicar={emitir}
-            activo={estado === "Borrando"}
-            incidencia={modelo}
-          />
+
+          {estado === "Borrando" && (
+            <BorrarIncidencia publicar={emitir} incidencia={modelo} />
+          )}
         </>
       )}
     </Detalle>

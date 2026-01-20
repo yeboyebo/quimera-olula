@@ -26,16 +26,6 @@ export interface IncidenciaAPI extends Entidad {
     estado: EstadoIncidencia;
 }
 
-export type NuevaIncidencia = {
-    descripcion: string;
-    descripcion_larga: string;
-    nombre: string;
-    responsable_id: string | null;
-    prioridad: PrioridadIncidencia;
-    estado: EstadoIncidencia;
-    fecha: string;
-};
-
 
 export type GetIncidencia = (id: string) => Promise<Incidencia>;
 
