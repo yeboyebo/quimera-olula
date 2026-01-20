@@ -1,7 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
@@ -11,11 +10,11 @@ import { useParams } from "react-router";
 import { OportunidadVenta } from "../../diseño.ts";
 import { metaOportunidadVenta, oportunidadVentaVacia } from "../../dominio.ts";
 import {
-  deleteOportunidadVenta,
   getOportunidadVenta,
   patchOportunidadVenta,
 } from "../../infraestructura.ts";
 // import "./DetalleOportunidadVenta.css";
+import { BorrarOportunidadVenta } from "../../borrar/BorrarOportunidadVenta.tsx";
 import { TabPresupuestos } from "./Presupuestos/TabPresupuestos.tsx";
 import { TabAcciones } from "./TabAcciones.tsx";
 import { TabDatos } from "./TabDatos.tsx";
@@ -36,7 +35,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       cancelar_seleccion: ({ publicar }) => publicar("seleccion_cancelada"),
     },
     borrando: {
-      borrado_cancelado: "edicion",
+      borrado_oportunidad_cancelado: "edicion",
       oportunidad_borrada: ({ publicar }) => publicar("oportunidad_borrada"),
     },
   },
@@ -67,12 +66,6 @@ export const DetalleOportunidadVenta = ({
     const oportunidad_guardada = await getOportunidadVenta(modelo.id);
     init(oportunidad_guardada);
     publicar("oportunidad_cambiada", oportunidad_guardada);
-  };
-
-  const onBorrarConfirmado = async () => {
-    await intentar(() => deleteOportunidadVenta(modelo.id));
-    publicar("oportunidad_borrada", modelo);
-    emitir("borrado_cancelado");
   };
 
   return (
@@ -123,14 +116,9 @@ export const DetalleOportunidadVenta = ({
               </QBoton>
             </div>
           )}
-          <QModalConfirmacion
-            nombre="borrarOportunidad"
-            abierto={estado === "borrando"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar esta oportunidad de venta?"
-            onCerrar={() => emitir("borrado_cancelado")}
-            onAceptar={onBorrarConfirmado}
-          />
+          {estado === "borrando" && (
+            <BorrarOportunidadVenta oportunidad={modelo} publicar={emitir} />
+          )}
         </>
       )}
     </Detalle>

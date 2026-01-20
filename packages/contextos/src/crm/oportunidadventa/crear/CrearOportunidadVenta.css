@@ -1,4 +1,4 @@
-.AltaOportunidadVenta {
+.CrearOportunidadVenta {
     quimera-select[nombre="estado_id"] {
         grid-column: 1 / span 6;
     }
