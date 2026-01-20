@@ -19,7 +19,7 @@ export const direccionVacia = (): Direccion => ({
 export const ventaVacia: Venta = {
     id: '',
     codigo: '',
-    fecha: '',
+    fecha: new Date(),
     cliente_id: '',
     nombre_cliente: '',
     id_fiscal: '',
@@ -94,8 +94,8 @@ export const metaCambioClienteVenta: MetaModelo<CambioClienteVenta> = {
 
 export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
-        referencia: { requerido: true },
+        cantidad: { requerido: true, tipo: "entero", decimales: 2 },
+        referencia: { requerido: true, tipo: "texto" },
     }
 };
 

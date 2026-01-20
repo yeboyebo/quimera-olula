@@ -14,6 +14,7 @@ export const metaTablaFactura: MetaTabla<Factura> = [
     {
         id: "fecha",
         cabecera: "Fecha",
+        tipo: "fecha",
     },
     {
         id: "nombre_cliente",
