@@ -106,21 +106,21 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
         CREANDO_LINEA: {
 
-            alta_de_linea_lista: crearLinea,
+            linea_creada: crearLinea,
 
             alta_de_linea_cancelada: "ABIERTO",
         },
 
         CAMBIANDO_LINEA: {
 
-            cambio_de_linea_listo: cambiarLinea,
+            linea_actualizada: cambiarLinea,
 
             cambio_de_linea_cancelado: "ABIERTO",
         },
 
         BORRANDO_LINEA: {
 
-            borrado_de_linea_listo: borrarLinea,
+            linea_borrada: borrarLinea,
 
             borrado_de_linea_cancelado: "ABIERTO",
         },

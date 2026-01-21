@@ -1,5 +1,6 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { getPresupuestos } from "../infraestructura.ts";
+import { NuevoPresupuesto } from "../diseño.ts";
+import { getPresupuesto, getPresupuestos, postPresupuesto } from "../infraestructura.ts";
 import { ContextoMaestroPresupuesto, EstadoMaestroPresupuesto, Presupuesto } from "./diseño.ts";
 
 type ProcesarPresupuestos = ProcesarContexto<EstadoMaestroPresupuesto, ContextoMaestroPresupuesto>;
@@ -69,6 +70,18 @@ export const abrirModalCreacion: ProcesarPresupuestos = async (contexto) => {
 export const cerrarModalCreacion: ProcesarPresupuestos = async (contexto) => {
     return {
         ...contexto,
+        estado: 'INICIAL'
+    }
+}
+
+export const crearPresupuestoProceso: ProcesarPresupuestos = async (contexto, payload) => {
+    const presupuestoNuevo = payload as NuevoPresupuesto;
+    const idPresupuesto = await postPresupuesto(presupuestoNuevo);
+    const presupuesto = await getPresupuesto(idPresupuesto);
+    return {
+        ...contexto,
+        presupuestos: [presupuesto, ...contexto.presupuestos],
+        presupuestoActivo: presupuesto,
         estado: 'INICIAL'
     }
 }

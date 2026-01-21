@@ -3,7 +3,7 @@ import { DetalleAlbaranarPedido } from "./albaranarPedido/vistas/DetalleAlbarana
 import { MaestroConDetalleCliente } from "./cliente/maestro/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleFactura } from "./factura/vistas/MaestroConDetalleFactura.tsx";
 import { MaestroConDetallePedido } from "./pedido/vistas/MaestroConDetallePedido.tsx";
-import { MaestroConDetallePresupuesto } from "./presupuesto/Maestro/MaestroConDetallePresupuesto.tsx";
+import { MaestroConDetallePresupuesto } from "./presupuesto/maestro/MaestroConDetallePresupuesto.tsx";
 
 export class RouterFactoryVentasOlula {
     static router = {

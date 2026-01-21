@@ -5,7 +5,7 @@ import { Agente } from "../../comun/componentes/agente.tsx";
 import { Divisa } from "../../comun/componentes/divisa.tsx";
 import { FormaPago } from "../../comun/componentes/formapago.tsx";
 import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
-import { Presupuesto } from "./diseño.ts";
+import { Presupuesto } from "../diseño.ts";
 import "./TabDatos.css";
 
 export interface TabDatosProps {

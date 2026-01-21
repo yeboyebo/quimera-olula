@@ -1,28 +1,51 @@
+import { ventaVacia } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
-import { presupuestoVacio } from "../dominio.ts";
+import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
+import { CambioCliente, LineaPresupuesto, Presupuesto } from "../diseño.ts";
 import {
     aprobarPresupuesto as aprobarPresupuestoFuncion,
     borrarPresupuesto as borrarPresupuestoFuncion,
-    deleteLinea,
     getLineas,
     getPresupuesto,
     patchCambiarCliente,
     patchCambiarDivisa,
     patchCantidadLinea,
-    patchLinea,
-    patchPresupuesto,
-    postLinea
+    patchPresupuesto
 } from "../infraestructura.ts";
-import { CambioCliente, ContextoPresupuesto, EstadoPresupuesto, LineaPresupuesto, NuevaLinea, Presupuesto } from "./diseño.ts";
+import { ContextoPresupuesto, EstadoPresupuesto } from "./diseño.ts";
 
-type ProcesarPresupuesto = ProcesarContexto<EstadoPresupuesto, ContextoPresupuesto>;
+export const metaPresupuesto: MetaModelo<Presupuesto> = {
+    campos: {
+        fecha: { tipo: "fecha", requerido: false },
+        fecha_salida: { tipo: "fecha", requerido: false },
+        tasa_conversion: { tipo: "numero", requerido: true },
+        total_divisa_empresa: { tipo: "numero", bloqueado: true },
+        codigo: { bloqueado: true },
+        id_fiscal: { bloqueado: true, requerido: true },
+        cliente_id: { bloqueado: true, requerido: true },
+        divisa_id: { requerido: true },
+    },
+};
 
-const pipePresupuesto = ejecutarListaProcesos<EstadoPresupuesto, ContextoPresupuesto>;
+export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
+
+
+export const presupuestoVacio = (): Presupuesto => ({
+    ...ventaVacia,
+    aprobado: false,
+    fecha_salida: new Date(),
+    lineas: [],
+})
 
 const presupuestoVacioObjeto: Presupuesto = presupuestoVacio();
 
 export const presupuestoVacioContexto = (): Presupuesto => ({ ...presupuestoVacioObjeto });
+
+
+
+type ProcesarPresupuesto = ProcesarContexto<EstadoPresupuesto, ContextoPresupuesto>;
+
+const pipePresupuesto = ejecutarListaProcesos<EstadoPresupuesto, ContextoPresupuesto>;
 
 const cargarPresupuesto: (_: string) => ProcesarPresupuesto = (idPresupuesto) =>
     async (contexto) => {
@@ -181,8 +204,9 @@ export const cambiarCliente: ProcesarPresupuesto = async (contexto, payload) => 
 }
 
 export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
-    const nuevaLinea = payload as NuevaLinea;
-    const idLinea = await postLinea(contexto.presupuesto.id, nuevaLinea);
+    // const nuevaLinea = payload as NuevaLinea;
+    // const idLinea = await postLinea(contexto.presupuesto.id, nuevaLinea);
+    const idLinea = payload as string;
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
@@ -192,9 +216,9 @@ export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
     ]);
 }
 
-export const cambiarLinea: ProcesarPresupuesto = async (contexto, payload) => {
-    const linea = payload as LineaPresupuesto;
-    await patchLinea(contexto.presupuesto.id, linea);
+export const cambiarLinea: ProcesarPresupuesto = async (contexto) => {
+    // const linea = payload as LineaPresupuesto;
+    // await patchLinea(contexto.presupuesto.id, linea);
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
@@ -221,7 +245,7 @@ export const cambiarCantidadLinea: ProcesarPresupuesto = async (contexto, payloa
 
 export const borrarLinea: ProcesarPresupuesto = async (contexto, payload) => {
     const idLinea = payload as string;
-    await deleteLinea(contexto.presupuesto.id, idLinea);
+    // await deleteLinea(contexto.presupuesto.id, idLinea);
 
     const indiceLineaActiva = (contexto.presupuesto.lineas as LineaPresupuesto[]).findIndex((l: LineaPresupuesto) => l.id === idLinea);
 

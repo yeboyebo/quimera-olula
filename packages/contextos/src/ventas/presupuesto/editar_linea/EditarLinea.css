@@ -1,4 +1,4 @@
-.Presupuesto .EdicionLinea {
+.Presupuesto .EditarLinea {
     quimera-autocompletar[nombre="referencia"] {
         grid-column: span 12;
     }

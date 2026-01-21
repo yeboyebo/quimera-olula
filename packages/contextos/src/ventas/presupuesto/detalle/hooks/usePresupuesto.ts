@@ -3,8 +3,9 @@ import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { metaPresupuesto, presupuestoVacio } from "../../dominio.ts";
-import { ContextoPresupuesto, EstadoPresupuesto, LineaPresupuesto, Presupuesto } from "../diseño.ts";
+import { LineaPresupuesto, Presupuesto } from "../../diseño.ts";
+import { ContextoPresupuesto, EstadoPresupuesto } from "../diseño.ts";
+import { metaPresupuesto, presupuestoVacio } from "../dominio.ts";
 import { getMaquina } from "../maquina.ts";
 
 interface UsePresupuestoOptions {

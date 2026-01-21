@@ -1,5 +1,5 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { LineaPresupuesto as Linea } from "../diseño.ts";
+import { LineaPresupuesto as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
 export const LineasLista = ({

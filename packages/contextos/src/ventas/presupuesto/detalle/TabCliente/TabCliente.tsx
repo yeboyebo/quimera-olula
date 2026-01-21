@@ -5,8 +5,8 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useState } from "react";
-import { editable } from "../../dominio.ts";
-import { Presupuesto } from "../diseño.ts";
+import { Presupuesto } from "../../diseño.ts";
+import { editable } from "../dominio.ts";
 import "./TabCliente.css";
 
 interface TabClienteProps {

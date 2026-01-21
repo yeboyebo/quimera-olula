@@ -1,8 +1,8 @@
 import { QBoton } from "@olula/componentes/index.ts";
-import { LineaPresupuesto, Presupuesto } from "../diseño.ts";
-import { AltaLinea } from "./AltaLinea.tsx";
-import { BajaLinea } from "./BajaLinea.tsx";
-import { EdicionLinea } from "./EdicionLinea.tsx";
+import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
+import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
+import { LineaPresupuesto, Presupuesto } from "../../diseño.ts";
+import { EditarLinea } from "../../editar_linea/EditarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
 export const Lineas = ({
@@ -58,15 +58,23 @@ export const Lineas = ({
       />
 
       {estadoPresupuesto === "CREANDO_LINEA" && (
-        <AltaLinea publicar={publicar} />
+        <CrearLinea presupuestoId={presupuesto.id} publicar={publicar} />
       )}
 
       {lineaActiva && estadoPresupuesto === "CAMBIANDO_LINEA" && (
-        <EdicionLinea publicar={publicar} linea={lineaActiva} />
+        <EditarLinea
+          presupuestoId={presupuesto.id}
+          publicar={publicar}
+          linea={lineaActiva}
+        />
       )}
 
       {lineaActiva && estadoPresupuesto === "BORRANDO_LINEA" && (
-        <BajaLinea publicar={publicar} idLinea={lineaActiva.id} />
+        <BorrarLinea
+          presupuestoId={presupuesto.id}
+          publicar={publicar}
+          idLinea={lineaActiva.id}
+        />
       )}
     </>
   );

@@ -1,5 +1,5 @@
 import { FactoryVentasOlula } from "#/ventas/factory.ts";
-import { TabDatosBase as PresupuestoTabDatos } from "#/ventas/presupuesto/Detalle/TabDatosBase.tsx";
+import { TabDatosBase as PresupuestoTabDatos } from "#/ventas/presupuesto/detalle/TabDatosBase.tsx";
 import { metaPedidoGUA } from "./pedido/dominio.ts";
 import { payloadPatchPedidoGUA } from "./pedido/infraestructura.ts";
 import { metaTablaPedidoGUA } from "./pedido/vistas/metatabla_pedido.ts";

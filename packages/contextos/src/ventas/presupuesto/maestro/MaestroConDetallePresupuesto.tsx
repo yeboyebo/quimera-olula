@@ -7,8 +7,8 @@ import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDeta
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
-import { CrearPresupuesto } from "../Crear/CrearPresupuesto.tsx";
-import { DetallePresupuesto } from "../Detalle/DetallePresupuesto.tsx";
+import { CrearPresupuesto } from "../crear/CrearPresupuesto.tsx";
+import { DetallePresupuesto } from "../detalle/DetallePresupuesto.tsx";
 import {
   metaTablaPresupuesto as metaTablaBase,
   Presupuesto,

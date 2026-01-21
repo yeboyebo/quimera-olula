@@ -1,0 +1,14 @@
+import { MetaModelo } from "@olula/lib/dominio.js";
+import { LineaPresupuesto } from "../diseño.ts";
+
+export const metaLinea: MetaModelo<LineaPresupuesto> = {
+    campos: {
+        id: { requerido: true },
+        referencia: { requerido: true },
+        descripcion: { requerido: true },
+        cantidad: { requerido: true },
+        pvp_unitario: { requerido: true },
+        dto_porcentual: { requerido: false },
+        grupo_iva_producto_id: { requerido: true },
+    }
+};
