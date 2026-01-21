@@ -3,36 +3,41 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useState } from "react";
-import { LineaPedido as Linea } from "../../../diseño.ts";
-import { metaLineaPedido as metaLinea } from "../../../dominio.ts";
-import "./EdicionLinea.css";
+import { useCallback, useContext, useState } from "react";
+import { LineaPedido } from "../diseño.ts";
+import { patchLinea } from "../infraestructura.ts";
+import { metaLinea } from "./dominio.ts";
+import "./EditarLinea.css";
 
-export const EdicionLinea = ({
+export const EditarLinea = ({
+  pedidoId,
   publicar,
   linea,
 }: {
-  linea: Linea;
+  pedidoId: string;
+  linea: LineaPedido;
   publicar: EmitirEvento;
 }) => {
+  const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido } = useModelo(metaLinea, linea);
-
   const [cambiando, setCambiando] = useState(false);
 
-  const cambiar = () => {
+  const cambiar = useCallback(async () => {
+    await intentar(() => patchLinea(pedidoId, modelo));
     setCambiando(true);
-    publicar("cambio_de_linea_listo", modelo);
-  };
+    publicar("cambio_linea_listo");
+  }, [modelo, publicar, pedidoId, intentar]);
 
   const cancelar = useCallback(() => {
-    if (!cambiando) publicar("cambio_de_linea_cancelado");
+    if (!cambiando) publicar("cambio_linea_cancelado");
   }, [cambiando, publicar]);
 
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-      <div className="EdicionLinea">
+      <div className="EditarLinea">
         <h2>Editar línea</h2>
 
         <quimera-formulario>

@@ -8,9 +8,9 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { metaNuevoPedido, nuevoPedidoVacio } from "../dominio.ts";
 import { getPedido, postPedido } from "../infraestructura.ts";
-import "./AltaPedido.css";
+import "./CrearPedido.css";
 
-export const AltaPedido = ({
+export const CrearPedido = ({
   publicar = () => {},
 }: {
   publicar?: EmitirEvento;
@@ -30,7 +30,7 @@ export const AltaPedido = ({
   };
 
   return (
-    <div className="AltaPedido">
+    <div className="CrearPedido">
       <h2>Nuevo Pedido</h2>
       <quimera-formulario>
         <Cliente

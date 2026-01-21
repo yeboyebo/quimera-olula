@@ -5,7 +5,7 @@ import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.ts
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { Pedido } from "../../diseño.ts";
+import { Pedido } from "../diseño.ts";
 import "./TabDatos.css";
 
 export interface TabDatosProps {

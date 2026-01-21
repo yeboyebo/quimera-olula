@@ -1,8 +1,8 @@
 import { QBoton } from "@olula/componentes/index.ts";
-import { LineaPedido, Pedido } from "../../../diseño.ts";
-import { AltaLinea } from "./AltaLinea.tsx";
-import { BajaLinea } from "./BajaLinea.tsx";
-import { EdicionLinea } from "./EdicionLinea.tsx";
+import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
+import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
+import { LineaPedido, Pedido } from "../../diseño.ts";
+import { EditarLinea } from "../../editar_linea/EditarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
 export const Lineas = ({
@@ -55,14 +55,24 @@ export const Lineas = ({
         pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
       />
 
-      {estadoPedido === "CREANDO_LINEA" && <AltaLinea publicar={publicar} />}
+      {estadoPedido === "CREANDO_LINEA" && (
+        <CrearLinea pedidoId={pedido.id} publicar={publicar} />
+      )}
 
       {lineaActiva && estadoPedido === "CAMBIANDO_LINEA" && (
-        <EdicionLinea publicar={publicar} linea={lineaActiva} />
+        <EditarLinea
+          pedidoId={pedido.id}
+          publicar={publicar}
+          linea={lineaActiva}
+        />
       )}
 
       {lineaActiva && estadoPedido === "BORRANDO_LINEA" && (
-        <BajaLinea publicar={publicar} idLinea={lineaActiva.id} />
+        <BorrarLinea
+          pedidoId={pedido.id}
+          publicar={publicar}
+          idLinea={lineaActiva.id}
+        />
       )}
     </>
   );

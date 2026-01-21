@@ -2,37 +2,41 @@ import { Articulo } from "#/ventas/comun/componentes/articulo.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useState } from "react";
-import {
-  metaNuevaLineaPedido,
-  nuevaLineaPedidoVacia,
-} from "../../../dominio.ts";
-import "./AltaLinea.css";
+import { useCallback, useContext, useState } from "react";
+import { postLinea } from "../infraestructura.ts";
+import "./CrearLinea.css";
+import { metaNuevaLinea, nuevaLineaVacia } from "./dominio.ts";
 
-export const AltaLinea = ({
+export const CrearLinea = ({
+  pedidoId,
   publicar,
 }: {
-  publicar: (evento: string, payload?: unknown) => void;
+  pedidoId: string;
+  publicar: EmitirEvento;
 }) => {
+  const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido } = useModelo(
-    metaNuevaLineaPedido,
-    nuevaLineaPedidoVacia
+    metaNuevaLinea,
+    nuevaLineaVacia
   );
   const [creando, setCreando] = useState(false);
 
-  const crear = async () => {
+  const crear = useCallback(async () => {
+    await intentar(() => postLinea(pedidoId, modelo));
     setCreando(true);
-    publicar("alta_de_linea_lista", modelo);
-  };
+    publicar("alta_linea_lista");
+  }, [modelo, publicar, pedidoId, intentar]);
 
   const cancelar = useCallback(() => {
-    if (!creando) publicar("alta_de_linea_cancelada");
+    if (!creando) publicar("alta_linea_cancelada");
   }, [creando, publicar]);
 
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-      <div className="AltaLinea">
+      <div className="CrearLinea">
         <h2>Crear línea</h2>
         <quimera-formulario>
           <Articulo

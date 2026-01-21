@@ -7,10 +7,10 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Pedido } from "../../diseño.ts";
-import { editable } from "../../dominio.ts";
-import { usePedido } from "../../hooks/usePedido.ts";
+import { Pedido } from "../diseño.ts";
+import { editable } from "../dominio.ts";
 import "./DetallePedido.css";
+import { usePedido } from "./hooks/usePedido.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatos.tsx";

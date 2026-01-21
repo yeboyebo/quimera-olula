@@ -8,12 +8,12 @@ import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
 import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
+import { CrearPedido } from "../crear/CrearPedido.tsx";
+import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
-import { metaTablaPedido as metaTablaBase } from "../dominio.ts";
-import { getMaquina } from "../maquinaMaestro.ts";
-import { AltaPedido } from "./AltaPedido.tsx";
-import { DetallePedido } from "./DetallePedido/DetallePedido.tsx";
 import "./MaestroConDetallePedido.css";
+import { getMaquina } from "./maquina.ts";
+import { metaTablaPedido as metaTablaBase } from "./metatabla_pedido.ts";
 
 export const MaestroConDetallePedido = () => {
   const { ctx, emitir } = useMaestroVenta(getMaquina, {
@@ -103,7 +103,7 @@ export const MaestroConDetallePedido = () => {
         abierto={ctx.estado === "CREANDO_PEDIDO"}
         onCerrar={() => emitir("creacion_cancelada")}
       >
-        <AltaPedido publicar={emitir} />
+        <CrearPedido publicar={emitir} />
       </QModal>
     </div>
   );

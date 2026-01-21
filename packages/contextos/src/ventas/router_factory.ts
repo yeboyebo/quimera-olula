@@ -2,7 +2,7 @@ import { MaestroConDetalleAlbaran } from "./albaran/vistas/MaestroConDetalleAlba
 import { DetalleAlbaranarPedido } from "./albaranarPedido/vistas/DetalleAlbaranarPedido.tsx";
 import { MaestroConDetalleCliente } from "./cliente/maestro/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleFactura } from "./factura/vistas/MaestroConDetalleFactura.tsx";
-import { MaestroConDetallePedido } from "./pedido/vistas/MaestroConDetallePedido.tsx";
+import { MaestroConDetallePedido } from "./pedido/maestro/MaestroConDetallePedido.tsx";
 import { MaestroConDetallePresupuesto } from "./presupuesto/maestro/MaestroConDetallePresupuesto.tsx";
 
 export class RouterFactoryVentasOlula {

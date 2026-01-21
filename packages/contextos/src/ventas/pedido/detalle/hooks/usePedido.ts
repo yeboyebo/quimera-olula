@@ -3,7 +3,8 @@ import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ContextoPedido, EstadoPedido, LineaPedido, Pedido } from "../diseño.ts";
+import { LineaPedido, Pedido } from "../../diseño.ts";
+import { ContextoPedido, EstadoPedido } from "../diseño.ts";
 import { metaPedido, pedidoVacio } from "../dominio.ts";
 import { getMaquina } from "../maquina.ts";
 

@@ -35,11 +35,6 @@ export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
 
         ABIERTO: {
 
-            linea_creada: [
-                refrescarPedido,
-                refrescarLineas
-            ],
-
             alta_linea_solicitada: "CREANDO_LINEA",
 
             baja_linea_solicitada: "BORRANDO_LINEA",
@@ -86,23 +81,28 @@ export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
 
         CREANDO_LINEA: {
 
-            alta_de_linea_lista: crearLinea,
+            alta_linea_lista: [
+                crearLinea,
+                refrescarPedido,
+                refrescarLineas,
+                "ABIERTO"
+            ],
 
-            alta_de_linea_cancelada: "ABIERTO",
+            alta_linea_cancelada: "ABIERTO",
         },
 
         CAMBIANDO_LINEA: {
 
-            cambio_de_linea_listo: cambiarLinea,
+            cambio_linea_listo: cambiarLinea,
 
-            cambio_de_linea_cancelado: "ABIERTO",
+            cambio_linea_cancelado: "ABIERTO",
         },
 
         BORRANDO_LINEA: {
 
-            borrado_de_linea_listo: borrarLinea,
+            borrado_linea_listo: borrarLinea,
 
-            borrado_de_linea_cancelado: "ABIERTO",
+            borrado_linea_cancelado: "ABIERTO",
         },
 
     }

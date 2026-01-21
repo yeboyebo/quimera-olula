@@ -1,6 +1,6 @@
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { Pedido } from "../../diseño.ts";
+import { Pedido } from "../diseño.ts";
 import "./TabObservaciones.css";
 
 interface TabClienteProps {
