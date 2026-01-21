@@ -32,7 +32,7 @@ export const DetalleAccion = ({
   const accionId = inicial?.id ?? params.id;
   const titulo = (accion: Entidad) => accion.descripcion as string;
 
-  const accion = useModelo(metaAccion, accionVacia);
+  const accion = useModelo(metaAccion, inicial ?? accionVacia);
   const { modelo, modeloInicial, modificado, uiProps, valido, init } = accion;
 
   const { ctx, emitir } = useMaquina(
@@ -45,7 +45,7 @@ export const DetalleAccion = ({
     publicar
   );
 
-  if (ctx.accion !== modelo) {
+  if (ctx.accion !== modeloInicial) {
     init(ctx.accion);
   }
 

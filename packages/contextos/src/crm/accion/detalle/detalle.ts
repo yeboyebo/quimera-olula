@@ -7,7 +7,7 @@ import { ContextoDetalleAccion, EstadoDetalleAccion } from "./diseño.ts";
 
 export const accionVacia: Accion = {
     id: "",
-    fecha: "",
+    fecha: new Date(),
     descripcion: "",
     estado: "",
     observaciones: "",
@@ -86,7 +86,7 @@ export const onAccionBorrada: ProcesarAccion = async (contexto) => {
 
     return pipeAccion(contexto, [
         getContextoVacio,
-        publicar('accion_borrada', accion)
+        publicar('accion_borrada', accion.id)
     ]);
 }
 

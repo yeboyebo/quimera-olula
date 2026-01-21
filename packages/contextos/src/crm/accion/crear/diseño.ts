@@ -1,5 +1,5 @@
 export type NuevaAccion = {
-    fecha: string;
+    fecha: Date;
     descripcion: string;
     tipo: string;
     estado: "Pendiente" | "En Progreso" | "Completada" | "Cancelada";

@@ -7,7 +7,7 @@ import { ContextoMaestroAcciones, EstadoMaestroAcciones } from "./diseño.ts";
 
 export const metaTablaAccion: MetaTabla<Accion> = [
     { id: "id", cabecera: "Código" },
-    { id: "fecha", cabecera: "Fecha" },
+    { id: "fecha", cabecera: "Fecha", tipo: "fecha" },
     { id: "descripcion", cabecera: "Descripción" },
     { id: "tipo", cabecera: "Tipo" },
     { id: "estado", cabecera: "Estado" },
@@ -69,11 +69,13 @@ export const cambiarAccionEnLista: ProcesarAcciones = async (contexto, payload) 
 }
 
 export const quitarAccionDeLista: ProcesarAcciones = async (contexto, payload) => {
-    const idBorrado = payload as string;
+    // const borrada = payload as Accion;
+    const idBorrada = payload as string;
 
     return pipe(
         contexto,
-        conAcciones(contexto.acciones.filter(accion => accion.id !== idBorrado)),
+        // conAcciones(contexto.acciones.filter(accion => accion.id !== borrada.id)),
+        conAcciones(contexto.acciones.filter(accion => accion.id !== idBorrada)),
         conActiva(null)
     )
 }

@@ -2,7 +2,7 @@ import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { NuevaAccion } from "./diseño.ts";
 
 export const nuevaAccionVacia: NuevaAccion = {
-    fecha: "",
+    fecha: new Date(),
     descripcion: "",
     tipo: "Tarea",
     estado: "Pendiente",

@@ -11,7 +11,7 @@ export const getMaquina: () => Maquina<EstadoMaestroAcciones, ContextoMaestroAcc
 
             accion_deseleccionada: desactivarAccionActiva,
 
-            accion_borrada: quitarAccionDeLista,
+            accion_borrada: [quitarAccionDeLista, desactivarAccionActiva],
 
             recarga_de_acciones_solicitada: recargarAcciones,
 

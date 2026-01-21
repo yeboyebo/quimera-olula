@@ -24,7 +24,7 @@ export const getMaquina: () => Maquina<EstadoDetalleAccion, ContextoDetalleAccio
         FINALIZANDO: {
             finalizado_accion_cancelado: "INICIAL",
 
-            accion_finalizada: refrescarAccion,
+            accion_finalizada: [refrescarAccion, "INICIAL"],
         },
     }
 }
