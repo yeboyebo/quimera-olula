@@ -26,7 +26,6 @@ export const useCrmContactos = (options: UseCrmContactosOptions) => {
     const ctxRef = useRef<ContextoCrmContactos>(ctx);
     const clienteIdRef = useRef<string | null>(null);
 
-    // Actualizar ref cuando ctx cambia
     useEffect(() => {
         ctxRef.current = ctx;
     }, [ctx]);

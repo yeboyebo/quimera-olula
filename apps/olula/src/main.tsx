@@ -3,6 +3,7 @@ import { Vista } from "@olula/componentes/index.ts";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
 import { crearMenu, MenuContextFactory } from "@olula/lib/menu.ts";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
 import { FactoryOlula } from "./factory.ts";
@@ -34,9 +35,9 @@ const App = () => {
 };
 
 root.render(
-  // <StrictMode>
-  <FactoryProvider>
-    <App />
-  </FactoryProvider>
-  // </StrictMode>
+  <StrictMode>
+    <FactoryProvider>
+      <App />
+    </FactoryProvider>
+  </StrictMode>
 );

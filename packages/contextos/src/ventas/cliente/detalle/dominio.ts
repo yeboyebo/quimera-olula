@@ -1,7 +1,7 @@
+import { idFiscalValido, tipoIdFiscalValido } from "#/valores/idfiscal.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
-import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
 import { Cliente } from "../diseño.ts";
-import { clienteVacio } from "../dominio.ts";
 import {
     darDeAltaCliente,
     darDeBajaCliente,
@@ -10,13 +10,64 @@ import {
 } from "../infraestructura.ts";
 import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 
+export const metaCliente: MetaModelo<Cliente> = {
+    campos: {
+        nombre: { requerido: true },
+        id_fiscal: {
+            requerido: true,
+            validacion: (cliente: Cliente) => idFiscalValido(cliente.tipo_id_fiscal)(cliente.id_fiscal),
+        },
+        tipo_id_fiscal: {
+            requerido: true,
+            validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
+        },
+        nombre_agente: { bloqueado: true },
+        email: { tipo: "email" },
+        fecha_baja: { tipo: "fecha" },
+        telefono1: { tipo: "telefono" },
+    }
+};
+
+
+export const clienteVacio = (): Cliente => ({
+    id: '',
+    nombre: '',
+    nombre_comercial: null,
+    id_fiscal: '',
+    agente_id: null,
+    nombre_agente: null,
+    divisa_id: '',
+    tipo_id_fiscal: '',
+    serie_id: '',
+    forma_pago_id: '',
+    grupo_iva_negocio_id: '',
+    de_baja: false,
+    fecha_baja: null,
+    grupo_id: '',
+    telefono1: '',
+    telefono2: '',
+    email: '',
+    web: '',
+    observaciones: '',
+    copiasfactura: 0,
+    fechabaja: '',
+    contacto_id: '',
+    cuenta_domiciliada: '',
+    descripcion_cuenta: '',
+    debaja: false,
+    forma_pago: '',
+    divisa: '',
+    grupo_iva_negocio: '',
+    serie: '',
+    grupo: '',
+})
+
+
 type ProcesarCliente = ProcesarContexto<EstadoCliente, ContextoCliente>;
 
 const pipeCliente = ejecutarListaProcesos<EstadoCliente, ContextoCliente>;
 
-const clienteVacioObjeto: Cliente = clienteVacio();
-
-export const clienteVacioContexto = (): Cliente => ({ ...clienteVacioObjeto });
+export const clienteVacioContexto = (): Cliente => ({ ...clienteVacio() });
 
 const cargarCliente: (_: string) => ProcesarCliente = (idCliente) =>
     async (contexto) => {
@@ -111,7 +162,7 @@ export const darDeAltaClienteProceso: ProcesarCliente = async (contexto) => {
 
 export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload) => {
     const fechaBaja = payload as string;
-    await darDeBajaCliente(contexto.cliente.id, fechaBaja);
+    await darDeBajaCliente(contexto.cliente.id, new Date(fechaBaja));
 
     return pipeCliente(contexto, [
         cargarCliente(contexto.cliente.id),

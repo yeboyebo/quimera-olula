@@ -6,7 +6,7 @@ import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { BajaCliente } from "../Baja/BajaCliente.tsx";
+import { BajaCliente } from "../dar_de_baja/BajaCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import "./TabGeneral.css";
 import { EstadoCliente } from "./diseño.ts";

@@ -4,7 +4,7 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
-import { BorrarCliente } from "../Borrar/BorrarCliente.tsx";
+import { BorrarCliente } from "../borrar/BorrarCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";

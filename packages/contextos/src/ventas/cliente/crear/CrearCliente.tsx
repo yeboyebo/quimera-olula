@@ -6,9 +6,9 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
-import { metaNuevoCliente, nuevoClienteVacio } from "../dominio.ts";
 import { getCliente, postCliente } from "../infraestructura.ts";
 import "./CrearCliente.css";
+import { metaNuevoCliente, nuevoClienteVacio } from "./dominio.ts";
 
 interface CrearClienteProps {
   publicar?: EmitirEvento;

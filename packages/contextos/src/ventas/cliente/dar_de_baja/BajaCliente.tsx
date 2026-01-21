@@ -5,9 +5,9 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Cliente } from "../diseño.ts";
-import { metaDarDeBaja } from "../dominio.ts";
 import { darDeBajaCliente } from "../infraestructura.ts";
 import "./BajaCliente.css";
+import { metaDarDeBaja } from "./dominio.ts";
 
 interface BajaClienteProps {
   cliente: Cliente;
@@ -20,13 +20,16 @@ export const BajaCliente = ({
   publicar = () => {},
   onCancelar = () => {},
 }: BajaClienteProps) => {
-  const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: "" });
+  const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: null });
   const { intentar } = useContext(ContextoError);
 
   const { modelo, valido, uiProps } = bajaCliente;
 
   const guardar = async () => {
-    await intentar(() => darDeBajaCliente(cliente.id, modelo.fecha_baja));
+    if (modelo.fecha_baja === null) return;
+    await intentar(() =>
+      darDeBajaCliente(cliente.id, modelo.fecha_baja as Date)
+    );
     publicar("cliente_dado_de_baja", {
       clienteId: cliente.id,
       fecha_baja: modelo.fecha_baja,
