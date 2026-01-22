@@ -146,7 +146,12 @@ export const TabAcciones = ({
       )}
 
       {estado === "Borrando" && (
-        <BorrarAccion publicar={emitir} id={acciones.idActivo || ""} />
+        <BorrarAccion
+          publicar={emitir}
+          accion={
+            acciones.lista.find((accion) => accion.id === acciones.idActivo)!
+          }
+        />
       )}
 
       <QTabla

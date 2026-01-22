@@ -33,11 +33,11 @@ export const Oportunidades = ({
         </QBoton>
       </div>
 
-      <OportunidadesLista
+      {/* <OportunidadesLista
         oportunidades={[]}
         seleccionada={oportunidadActiva?.id}
         publicar={publicar}
-      />
+      /> */}
 
       {estadoLead === "CREANDO_OPORTUNIDAD" && (
         <CrearOportunidadVenta
