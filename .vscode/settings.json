@@ -13,6 +13,7 @@
     "source.removeUnusedImports": "explicit",
     "source.fixAll.eslint": "explicit"
   },
+  "editor.tabSize": 4,
   // otros formatters
   "[css][scss][less]": {
     "editor.defaultFormatter": "vscode.css-language-features",
