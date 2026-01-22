@@ -18,7 +18,7 @@ export const MoleculaContacto = ({
   const { intentar } = useContext(ContextoError);
 
   const contacto = useModelo(metaContacto, contactoVacio);
-  const { uiProps, init, valido, modificado } = contacto;
+  // const { uiProps, init, valido, modificado } = contacto;
 
   const [ctx, setCtx] = useState<ContextoContactoCrm>({
     estado: "INICIAL",
