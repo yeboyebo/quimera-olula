@@ -30,8 +30,6 @@ export const DetalleArqueoTpv = ({
     const params = useParams();
     const { intentar } = useContext(ContextoError);
 
-    const [arqueoIdAnterior, setArqueoIdAnterior] = useState<string | null>(null);
-
     const [estado, setEstado] = useState<EstadoArqueoTpv>("INICIAL");
 
     const arqueoId = arqueoInicial?.id ?? params.id;
@@ -69,11 +67,10 @@ export const DetalleArqueoTpv = ({
     };
 
     useEffect(() => {
-        if (arqueoId && arqueoId !== arqueoIdAnterior) {
-            setArqueoIdAnterior(arqueoId);
+        if (arqueoId && arqueoId !== arqueo.modelo.id) {
             emitir("id_arqueo_cambiado", arqueoId, true);
         }
-    }, [arqueoId, arqueoIdAnterior, emitir]);
+    }, [arqueoId, arqueo.modelo.id, emitir]);
 
   
     return (
