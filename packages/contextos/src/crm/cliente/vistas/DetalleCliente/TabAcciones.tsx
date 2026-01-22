@@ -138,7 +138,12 @@ export const TabAcciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
       )}
 
       {estado === "Borrando" && (
-        <BorrarAccion publicar={emitir} id={acciones.idActivo || ""} />
+        <BorrarAccion
+          publicar={emitir}
+          accion={
+            acciones.lista.find((accion) => accion.id === acciones.idActivo)!
+          }
+        />
       )}
 
       <QTabla

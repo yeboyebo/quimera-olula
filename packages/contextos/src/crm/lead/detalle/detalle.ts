@@ -106,7 +106,7 @@ export const onLeadBorrado: ProcesarLead = async (contexto) => {
 
     return pipeLead(contexto, [
         getContextoVacio,
-        publicar('lead_borrado', lead)
+        publicar('lead_borrado', lead.id)
     ]);
 }
 

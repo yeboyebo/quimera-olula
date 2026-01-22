@@ -86,49 +86,37 @@ export const DetalleCliente = ({
             <div className="maestro-botones ">
               <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
             </div>
-            <Tabs
-              children={[
-                <Tab
-                  key="tab-1"
-                  label="General"
-                  children={
-                    <TabGeneral
-                      cliente={cliente}
-                      emitir={publicar}
-                      recargarCliente={onRecargarCliente}
-                    />
-                  }
-                />,
-                <Tab
-                  key="tab-1"
-                  label="Contactos"
-                  children={<TabCrmContactos clienteId={clienteId} />}
-                />,
-                <Tab
-                  key="tab-2"
-                  label="Direcciones"
-                  children={<TabDirecciones clienteId={clienteId} />}
-                />,
-                <Tab
-                  key="tab-4"
-                  label="Oportunidades"
-                  children={
-                    <div className="detalle-cliente-tab-contenido">
-                      <TabOportunidades cliente={cliente} />
-                    </div>
-                  }
-                />,
-                <Tab
-                  key="tab-4"
-                  label="Acciones"
-                  children={
-                    <div className="detalle-cliente-tab-contenido">
-                      <TabAcciones cliente={cliente} />
-                    </div>
-                  }
-                />,
-              ]}
-            />
+
+            <Tabs>
+              <Tab label="General">
+                <TabGeneral
+                  cliente={cliente}
+                  emitir={publicar}
+                  recargarCliente={onRecargarCliente}
+                />
+              </Tab>
+
+              <Tab label="Contactos">
+                <TabCrmContactos clienteId={clienteId} />
+              </Tab>
+
+              <Tab label="Direcciones">
+                <TabDirecciones clienteId={clienteId} />
+              </Tab>
+
+              <Tab label="Oportunidades">
+                <div className="detalle-cliente-tab-contenido">
+                  <TabOportunidades cliente={cliente} />
+                </div>
+              </Tab>
+
+              <Tab label="Acciones">
+                <div className="detalle-cliente-tab-contenido">
+                  <TabAcciones cliente={cliente} />
+                </div>
+              </Tab>
+            </Tabs>
+
             {cliente.modificado && (
               <div className="maestro-botones ">
                 <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>

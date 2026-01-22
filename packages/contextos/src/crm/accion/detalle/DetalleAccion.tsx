@@ -80,34 +80,26 @@ export const DetalleAccion = ({
             </QBoton>
           </div>
 
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Datos"
-                children={
-                  <div className="TabDatos">
-                    <quimera-formulario>
-                      <QInput label="Descripción" {...uiProps("descripcion")} />
-                      <QInput label="Fecha" {...uiProps("fecha")} />
-                      <EstadoAccion {...uiProps("estado")} />
-                      <TipoAccion {...uiProps("tipo")} />
-                    </quimera-formulario>
-                  </div>
-                }
-              />,
-              <Tab
-                key="tab-2"
-                label="Más datos"
-                children={<TabDatos accion={accion} />}
-              />,
-              <Tab
-                key="tab-3"
-                label="Observaciones"
-                children={<TabObservaciones accion={accion} />}
-              />,
-            ]}
-          ></Tabs>
+          <Tabs>
+            <Tab label="Datos">
+              <div className="TabDatos">
+                <quimera-formulario>
+                  <QInput label="Descripción" {...uiProps("descripcion")} />
+                  <QInput label="Fecha" {...uiProps("fecha")} />
+                  <EstadoAccion {...uiProps("estado")} />
+                  <TipoAccion {...uiProps("tipo")} />
+                </quimera-formulario>
+              </div>
+            </Tab>
+
+            <Tab label="Más datos">
+              <TabDatos accion={accion} />
+            </Tab>
+
+            <Tab label="Observaciones">
+              <TabObservaciones accion={accion} />
+            </Tab>
+          </Tabs>
 
           {modificado && (
             <div className="botones maestro-botones">

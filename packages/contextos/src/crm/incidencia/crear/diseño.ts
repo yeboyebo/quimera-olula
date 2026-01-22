@@ -7,5 +7,5 @@ export type NuevaIncidencia = {
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
     estado: EstadoIncidencia;
-    fecha: string;
+    fecha: Date;
 };

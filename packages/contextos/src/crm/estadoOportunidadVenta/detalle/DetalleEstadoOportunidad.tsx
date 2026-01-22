@@ -44,7 +44,7 @@ export const DetalleEstadoOportunidad = ({
     publicar
   );
 
-  if (ctx.estado_oportunidad !== modelo) {
+  if (ctx.estado_oportunidad !== modeloInicial) {
     init(ctx.estado_oportunidad);
   }
 

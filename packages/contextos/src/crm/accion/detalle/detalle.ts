@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, publicar, stringNoVacio } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { Accion } from "../diseño.ts";
 import { getAccion, patchAccion } from "../infraestructura.ts";
@@ -78,15 +78,6 @@ export const cambiarAccion: ProcesarAccion = async (contexto, payload) => {
     return pipeAccion(contexto, [
         refrescarAccion,
         "INICIAL",
-    ]);
-}
-
-export const onAccionBorrada: ProcesarAccion = async (contexto) => {
-    const accion = contexto.accion;
-
-    return pipeAccion(contexto, [
-        getContextoVacio,
-        publicar('accion_borrada', accion.id)
     ]);
 }
 

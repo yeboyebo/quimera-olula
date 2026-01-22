@@ -1,7 +1,6 @@
 import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { NuevaIncidencia } from "./diseño.ts";
 
-
 export const nuevaIncidenciaVacia: NuevaIncidencia = {
     descripcion: "",
     nombre: "",
@@ -9,7 +8,7 @@ export const nuevaIncidenciaVacia: NuevaIncidencia = {
     responsable_id: null,
     descripcion_larga: "",
     estado: "nueva",
-    fecha: (new Date()).toISOString().split("T")[0],
+    fecha: new Date(),
 };
 
 export const metaNuevaIncidencia: MetaModelo<NuevaIncidencia> = {

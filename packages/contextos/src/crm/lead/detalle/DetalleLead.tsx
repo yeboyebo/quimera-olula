@@ -38,7 +38,7 @@ export const DetalleLead = ({
     publicar
   );
 
-  if (ctx.lead !== modelo) {
+  if (ctx.lead !== modeloInicial) {
     init(ctx.lead);
   }
 
@@ -69,30 +69,25 @@ export const DetalleLead = ({
               Borrar
             </QBoton>
           </div>
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Datos"
-                children={<TabDatos lead={lead} />}
-              />,
-              <Tab
-                key="tab-3"
-                label="Observaciones"
-                children={<TabObservaciones lead={lead} />}
-              />,
-              <Tab
-                key="tab-4"
-                label="Oportunidades de Venta"
-                children={<TabOportunidades lead={lead} />}
-              />,
-              <Tab
-                key="tab-5"
-                label="Acciones"
-                children={<TabAcciones lead={lead} />}
-              />,
-            ]}
-          ></Tabs>
+
+          <Tabs>
+            <Tab label="Datos">
+              <TabDatos lead={lead} />
+            </Tab>
+
+            <Tab label="Observaciones">
+              <TabObservaciones lead={lead} />
+            </Tab>
+
+            <Tab label="Oportunidades de Venta">
+              <TabOportunidades lead={lead} />
+            </Tab>
+
+            <Tab label="Acciones">
+              <TabAcciones lead={lead} />
+            </Tab>
+          </Tabs>
+
           {modificado && (
             <div className="botones maestro-botones">
               <QBoton onClick={guardar} deshabilitado={!valido}>

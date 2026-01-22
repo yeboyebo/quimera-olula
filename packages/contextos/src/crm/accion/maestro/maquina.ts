@@ -1,17 +1,17 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroAcciones, EstadoMaestroAcciones } from "./diseño.ts";
-import { activarAccion, cambiarAccionEnLista, desactivarAccionActiva, incluirAccionEnLista, quitarAccionDeLista, recargarAcciones } from "./maestro.ts";
+import { Acciones, recargarAcciones } from "./maestro.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroAcciones, ContextoMaestroAcciones> = () => {
     return {
         INICIAL: {
-            accion_cambiada: cambiarAccionEnLista,
+            accion_cambiada: [Acciones.cambiar],
 
-            accion_seleccionada: activarAccion,
+            accion_seleccionada: [Acciones.activar],
 
-            accion_deseleccionada: desactivarAccionActiva,
+            accion_deseleccionada: [Acciones.desactivar],
 
-            accion_borrada: [quitarAccionDeLista, desactivarAccionActiva],
+            accion_borrada: [Acciones.quitar],
 
             recarga_de_acciones_solicitada: recargarAcciones,
 
@@ -20,7 +20,7 @@ export const getMaquina: () => Maquina<EstadoMaestroAcciones, ContextoMaestroAcc
         CREANDO: {
             creacion_accion_cancelada: "INICIAL",
 
-            accion_creada: [incluirAccionEnLista, activarAccion, "INICIAL"],
+            accion_creada: [Acciones.incluir, Acciones.activar, "INICIAL"],
         }
     }
 }

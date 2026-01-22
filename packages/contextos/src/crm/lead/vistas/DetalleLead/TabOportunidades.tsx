@@ -145,7 +145,11 @@ export const TabOportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
 
       {estado === "Borrando" && (
         <BorrarOportunidadVenta
-          id={oportunidades.idActivo || ""}
+          oportunidad={
+            oportunidades.lista.find(
+              (oportunidad) => oportunidad.id === oportunidades.idActivo
+            )!
+          }
           publicar={emitir}
         />
       )}

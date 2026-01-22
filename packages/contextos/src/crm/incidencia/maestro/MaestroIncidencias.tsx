@@ -4,10 +4,11 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearIncidencia } from "../crear/CrearIncidencia.tsx";
+import { DetalleIncidencia } from "../detalle/DetalleIncidencia.tsx";
 import { Incidencia } from "../diseño.ts";
-import { DetalleIncidencia } from "../vistas/DetalleIncidencia/DetalleIncidencia.tsx";
 import { metaTablaIncidencia } from "./maestro.ts";
 import "./MaestroIncidencias.css";
 import { getMaquina } from "./maquina.ts";
@@ -17,9 +18,7 @@ export const MaestroIncidencias = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    incidencias: [],
-    totalIncidencias: 0,
-    activa: null,
+    incidencias: listaEntidadesInicial<Incidencia>(),
   });
 
   const crear = useCallback(
@@ -64,18 +63,21 @@ export const MaestroIncidencias = () => {
               // tarjeta={(incidencia) => (
               //   <TarjetaIncidencia incidencia={incidencia} />
               // )}
-              entidades={ctx.incidencias}
-              totalEntidades={ctx.totalIncidencias}
-              seleccionada={ctx.activa}
+              entidades={ctx.incidencias.lista}
+              totalEntidades={ctx.incidencias.total}
+              seleccionada={ctx.incidencias.activo}
               onSeleccion={setSeleccionado}
               onCriteriaChanged={recargar}
             />
           </>
         }
         Detalle={
-          <DetalleIncidencia incidenciaInicial={ctx.activa} publicar={emitir} />
+          <DetalleIncidencia
+            inicial={ctx.incidencias.activo}
+            publicar={emitir}
+          />
         }
-        seleccionada={ctx.activa}
+        seleccionada={ctx.incidencias.activo}
         modoDisposicion="maestro-50"
       />
       {ctx.estado === "CREANDO" && <CrearIncidencia publicar={emitir} />}

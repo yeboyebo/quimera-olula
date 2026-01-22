@@ -5,7 +5,8 @@ import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { NuevoPresupuesto, Presupuesto } from "../../ventas/presupuesto/diseño.ts";
 import { Accion } from "../accion/diseño.ts";
 import UrlsCrmClass from "../comun/urls.ts";
-import { EstadoOportunidad, NuevaOportunidadVenta, OportunidadVenta } from "./diseño.ts";
+import { NuevaOportunidadVenta } from "./crear/diseño.ts";
+import { EstadoOportunidad, OportunidadVenta } from "./diseño.ts";
 
 const UrlsCrm = new UrlsCrmClass();
 const UrlsVentas = new UrlsVentasClass();
@@ -58,10 +59,8 @@ export const getPresupuestosOportunidad = async (oportunidadId: string): Promise
 
 export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente_id: string): Promise<string> => {
     const nuevoPresupuesto: Partial<NuevoPresupuesto> = {
-        cliente: {
-            cliente_id: oportunidadId,
-            direccion_id: cliente_id,
-        },
+        cliente_id: oportunidadId,
+        direccion_id: cliente_id,
         empresa_id: "1",
     };
 

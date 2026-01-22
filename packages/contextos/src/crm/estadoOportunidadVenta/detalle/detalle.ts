@@ -73,7 +73,7 @@ export const onEstadoOportunidadBorrado: ProcesarEstadoOportunidad = async (cont
 
     return pipeEstadoOportunidad(contexto, [
         getContextoVacio,
-        publicar('estado_oportunidad_borrado', estado_oportunidad)
+        publicar('estado_oportunidad_borrado', estado_oportunidad.id)
     ]);
 }
 

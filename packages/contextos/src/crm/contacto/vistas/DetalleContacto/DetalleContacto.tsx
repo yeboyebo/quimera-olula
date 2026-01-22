@@ -85,42 +85,31 @@ export const DetalleContacto = ({
             <div className="maestro-botones ">
               <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
             </div>
-            <Tabs
-              children={[
-                <Tab
-                  key="tab-1"
-                  label="General"
-                  children={<TabGeneral contacto={contacto} />}
-                />,
-                <Tab
-                  key="tab-2"
-                  label="Clientes"
-                  children={
-                    <div className="detalle-cliente-tab-contenido">
-                      <TabClientes contacto={contacto} />
-                    </div>
-                  }
-                />,
-                <Tab
-                  key="tab-4"
-                  label="Oportunidades"
-                  children={
-                    <div className="detalle-cliente-tab-contenido">
-                      <TabOportunidades contacto={contacto} />
-                    </div>
-                  }
-                />,
-                <Tab
-                  key="tab-5"
-                  label="Acciones"
-                  children={
-                    <div className="detalle-cliente-tab-contenido">
-                      <TabAcciones contacto={contacto} />
-                    </div>
-                  }
-                />,
-              ]}
-            />
+
+            <Tabs>
+              <Tab label="General">
+                <TabGeneral contacto={contacto} />
+              </Tab>
+
+              <Tab label="Clientes">
+                <div className="detalle-cliente-tab-contenido">
+                  <TabClientes contacto={contacto} />
+                </div>
+              </Tab>
+
+              <Tab label="Oportunidades">
+                <div className="detalle-cliente-tab-contenido">
+                  <TabOportunidades contacto={contacto} />
+                </div>
+              </Tab>
+
+              <Tab label="Acciones">
+                <div className="detalle-cliente-tab-contenido">
+                  <TabAcciones contacto={contacto} />
+                </div>
+              </Tab>
+            </Tabs>
+
             {contacto.modificado && (
               <div className="maestro-botones ">
                 <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>

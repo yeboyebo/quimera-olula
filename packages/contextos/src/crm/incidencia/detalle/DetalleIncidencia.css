@@ -8,7 +8,6 @@
         grid-column: 1 / span 12;
     }
 
-
     quimera-date[nombre="fecha"] {
         grid-column: span 4;
     }

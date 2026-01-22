@@ -82,30 +82,25 @@ export const DetalleOportunidadVenta = ({
           <div className="maestro-botones ">
             <QBoton onClick={() => emitir("borrar")}>Borrar</QBoton>
           </div>
-          <Tabs
-            children={[
-              <Tab
-                key="tab-1"
-                label="Datos"
-                children={<TabDatos oportunidad={oportunidad} />}
-              />,
-              <Tab
-                key="tab-2"
-                label="Observaciones"
-                children={<TabObservaciones oportunidad={oportunidad} />}
-              />,
-              <Tab
-                key="tab-3"
-                label="Acciones"
-                children={<TabAcciones oportunidad={oportunidad} />}
-              />,
-              <Tab
-                key="tab-4"
-                label="Presupuestos"
-                children={<TabPresupuestos oportunidad={oportunidad} />}
-              />,
-            ]}
-          ></Tabs>
+
+          <Tabs>
+            <Tab label="Datos">
+              <TabDatos oportunidad={oportunidad} />
+            </Tab>
+
+            <Tab label="Observaciones">
+              <TabObservaciones oportunidad={oportunidad} />
+            </Tab>
+
+            <Tab label="Acciones">
+              <TabAcciones oportunidad={oportunidad} />
+            </Tab>
+
+            <Tab label="Presupuestos">
+              <TabPresupuestos oportunidad={oportunidad} />
+            </Tab>
+          </Tabs>
+
           {oportunidad.modificado && (
             <div className="botones maestro-botones">
               <QBoton onClick={onGuardarClicked} deshabilitado={!valido}>

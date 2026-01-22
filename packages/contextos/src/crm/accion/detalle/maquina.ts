@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { cambiarAccion, cargarContexto, getContextoVacio, onAccionBorrada, refrescarAccion } from "./detalle.ts";
+import { cambiarAccion, cargarContexto, getContextoVacio, refrescarAccion } from "./detalle.ts";
 import { ContextoDetalleAccion, EstadoDetalleAccion } from "./diseño.ts";
 
 export const getMaquina: () => Maquina<EstadoDetalleAccion, ContextoDetalleAccion> = () => {
@@ -19,7 +19,7 @@ export const getMaquina: () => Maquina<EstadoDetalleAccion, ContextoDetalleAccio
         BORRANDO: {
             borrado_accion_cancelado: "INICIAL",
 
-            accion_borrada: onAccionBorrada,
+            accion_borrada: [getContextoVacio, publicar('accion_borrada', (_, accionId) => accionId)],
         },
         FINALIZANDO: {
             finalizado_accion_cancelado: "INICIAL",
