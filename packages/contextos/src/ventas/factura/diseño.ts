@@ -38,7 +38,13 @@ export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: num
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type EstadoFactura = (
-    'INICIAL' | 'CONSULTANDO' | 'BORRANDO_FACTURA'
+    'INICIAL'
+    | 'ABIERTO'
+    | 'BORRANDO_FACTURA'
+    | 'CAMBIANDO_CLIENTE'
+    | 'CREANDO_LINEA'
+    | 'CAMBIANDO_LINEA'
+    | 'BORRANDO_LINEA'
 );
 
 export type EstadoMaestroFactura = (
@@ -49,6 +55,7 @@ export type ContextoFactura = {
     estado: EstadoFactura;
     factura: Factura;
     facturaInicial: Factura;
+    lineaActiva: LineaFactura | null;
 };
 
 export type ContextoMaestroFactura = {

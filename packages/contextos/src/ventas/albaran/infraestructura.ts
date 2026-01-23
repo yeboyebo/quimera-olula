@@ -20,14 +20,18 @@ import {
 const baseUrl = new ApiUrls().ALBARAN;
 
 type LineaAlbaranAPI = LineaAlbaran;
-type AlbaranAPI = Albaran
+type AlbaranAPI = Albaran & { fecha: string };
 
-export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => p;
+export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
+  ...p,
+  fecha: new Date(Date.parse(p.fecha)),
+  lineas: [],
+});
 
 export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => l;
 
 export const getAlbaran: GetAlbaran = async (id) => {
-  return RestAPI.get<{ datos: Albaran }>(`${baseUrl}/${id}`).then((respuesta) => {
+  return RestAPI.get<{ datos: AlbaranAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
     return albaranDesdeAPI(respuesta.datos);
   });
 };
@@ -39,7 +43,7 @@ export const getAlbaranes: GetAlbaranes = async (
 ) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
-  const respuesta = await RestAPI.get<{ datos: Albaran[]; total: number }>(baseUrl + q);
+  const respuesta = await RestAPI.get<{ datos: AlbaranAPI[]; total: number }>(baseUrl + q);
   return { datos: respuesta.datos.map(albaranDesdeAPI), total: respuesta.total };
 };
 

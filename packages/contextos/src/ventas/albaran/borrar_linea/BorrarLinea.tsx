@@ -1,0 +1,37 @@
+import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useContext } from "react";
+import { deleteLinea } from "../infraestructura.ts";
+
+export const BorrarLinea = ({
+  publicar,
+  idLinea,
+  albaranId,
+}: {
+  publicar: EmitirEvento;
+  idLinea: string;
+  albaranId: string;
+}) => {
+  const { intentar } = useContext(ContextoError);
+
+  const borrar = async () => {
+    await intentar(() => deleteLinea(albaranId, idLinea));
+    publicar("borrado_linea_listo", idLinea);
+  };
+
+  const cancelar = () => {
+    publicar("borrar_linea_cancelado");
+  };
+
+  return (
+    <QModalConfirmacion
+      nombre="confirmarBorrarLinea"
+      abierto={true}
+      titulo="Borrar línea"
+      mensaje="¿Está seguro de que desea borrar esta línea?"
+      onCerrar={cancelar}
+      onAceptar={borrar}
+    />
+  );
+};

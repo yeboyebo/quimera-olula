@@ -1,4 +1,4 @@
-import { EditarCantidadLinea } from "#/ventas/pedido/vistas/DetallePedido/Lineas/EditarCantidadLinea.tsx";
+import { EditarCantidadLinea } from "#/ventas/pedido/detalle/Lineas/EditarCantidadLinea.tsx";
 import { QIcono, QTabla } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useState } from "react";
