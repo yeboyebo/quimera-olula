@@ -7,7 +7,6 @@ export const useTimerRefresco = ({ segundos_refresco = 3 }: { segundos_refresco?
 
     useEffect(() => {
         timerRef.current = setInterval(async () => {
-            console.log("Hola amigos")
             await comprobarToken().catch((_e) => {
                 throw redirect("/login")
             })
