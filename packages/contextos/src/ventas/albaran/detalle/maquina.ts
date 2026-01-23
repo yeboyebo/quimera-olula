@@ -88,21 +88,21 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
 
             alta_linea_lista: [crearLinea],
 
-            alta_linea_cancelada: "ABIERTO",
+            crear_linea_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_LINEA: {
 
-            cambio_linea_listo: cambiarLinea,
+            linea_actualizada: cambiarLinea,
 
-            cambio_linea_cancelado: "ABIERTO",
+            editar_linea_cancelado: "ABIERTO",
         },
 
         BORRANDO_LINEA: {
 
-            borrado_linea_listo: borrarLinea,
+            linea_borrada: borrarLinea,
 
-            borrado_linea_cancelado: "ABIERTO",
+            borrar_linea_cancelado: "ABIERTO",
         },
 
     }

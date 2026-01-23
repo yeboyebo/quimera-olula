@@ -1,8 +1,6 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import {
     Albaran,
-    ContextoMaestroAlbaran,
-    EstadoMaestroAlbaran,
     NuevoAlbaran
 } from "../diseño.ts";
 import {
@@ -10,6 +8,7 @@ import {
     getAlbaranes,
     postAlbaran
 } from "../infraestructura.ts";
+import { ContextoMaestroAlbaran, EstadoMaestroAlbaran } from "./diseño.ts";
 
 type ProcesarAlbaranes = ProcesarContexto<EstadoMaestroAlbaran, ContextoMaestroAlbaran>;
 

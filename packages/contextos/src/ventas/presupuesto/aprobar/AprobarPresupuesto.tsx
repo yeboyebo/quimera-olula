@@ -2,9 +2,9 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { useContext } from "react";
 import { Presupuesto } from "../diseño.ts";
-import { borrarPresupuesto } from "../infraestructura.ts";
+import { aprobarPresupuesto } from "../infraestructura.ts";
 
-export const BorrarPresupuesto = ({
+export const AprobarPresupuesto = ({
   publicar,
   presupuesto,
 }: {
@@ -13,22 +13,21 @@ export const BorrarPresupuesto = ({
 }) => {
   const { intentar } = useContext(ContextoError);
 
-  const borrar = async () => {
+  const aprobar = async () => {
     if (presupuesto.id) {
-      await intentar(() => borrarPresupuesto(presupuesto.id));
+      await intentar(() => aprobarPresupuesto(presupuesto.id));
     }
-    publicar("presupuesto_borrado");
-    publicar("borrar_presupuesto_cancelado");
+    publicar("aprobacion_lista");
   };
 
   return (
     <QModalConfirmacion
-      nombre="confirmarBorrarPresupuesto"
+      nombre="confirmarAprobarPresupuesto"
       abierto={true}
-      titulo="Confirmar borrar"
-      mensaje="¿Está seguro de que desea borrar este presupuesto?"
-      onCerrar={() => publicar("borrar_presupuesto_cancelado")}
-      onAceptar={borrar}
+      titulo="Confirmar aprobación"
+      mensaje="¿Está seguro de que desea aprobar este presupuesto?"
+      onCerrar={() => publicar("aprobacion_cancelada")}
+      onAceptar={aprobar}
     />
   );
 };

@@ -1,8 +1,8 @@
 import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import { metaVenta } from "../../venta/dominio.ts";
-import { ContextoFactura, EstadoFactura, Factura } from "../diseño.ts";
+import { ContextoFactura, EstadoFactura, Factura, LineaFactura } from "../diseño.ts";
 
-export type { ContextoFactura, EstadoFactura, Factura };
+export type { ContextoFactura, EstadoFactura, Factura, LineaFactura };
 
 export const metaFactura: MetaModelo<Factura> = {
     campos: {

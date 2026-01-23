@@ -54,6 +54,7 @@ export const Lineas = ({
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
         albaranEditable={esEditable}
+        publicar={publicar}
       />
 
       {estadoAlbaran === "CREANDO_LINEA" && (

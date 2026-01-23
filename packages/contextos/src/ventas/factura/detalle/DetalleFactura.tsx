@@ -1,11 +1,11 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
+import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
 import "./DetalleFactura.css";
 import { editable } from "./diseño.ts";
@@ -30,7 +30,7 @@ export const DetalleFactura = ({
     publicar,
   });
 
-  const { modelo, estado, emitir } = factura;
+  const { modelo, estado, lineaActiva, emitir } = factura;
 
   const titulo = (factura: Factura) => factura.codigo || "Nueva Factura";
 
@@ -94,19 +94,14 @@ export const DetalleFactura = ({
 
           <Lineas
             factura={modelo}
-            lineaActiva={null}
+            lineaActiva={lineaActiva}
             estadoFactura={estado}
             publicar={emitir}
           />
 
-          <QModalConfirmacion
-            nombre="borrarFactura"
-            abierto={estado === "BORRANDO_FACTURA"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar esta factura?"
-            onCerrar={() => emitir("borrar_cancelado")}
-            onAceptar={() => emitir("borrado_de_factura_listo")}
-          />
+          {estado === "BORRANDO_FACTURA" && (
+            <BorrarFactura factura={modelo} publicar={emitir} />
+          )}
         </>
       )}
     </Detalle>

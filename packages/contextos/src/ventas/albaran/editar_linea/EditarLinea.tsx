@@ -30,7 +30,7 @@ export const EditarLinea = ({
   }, [modelo, publicar, albaranId, intentar]);
 
   const cancelar = useCallback(() => {
-    publicar("cambio_linea_cancelado");
+    publicar("editar_linea_cancelado");
   }, [publicar]);
 
   return (

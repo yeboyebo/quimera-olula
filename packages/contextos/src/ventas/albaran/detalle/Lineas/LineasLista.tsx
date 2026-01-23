@@ -1,5 +1,4 @@
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { publicar } from "@olula/lib/dominio.js";
 import { LineaAlbaran as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
@@ -8,11 +7,13 @@ export const LineasLista = ({
   seleccionada,
   onCambioCantidad,
   albaranEditable,
+  publicar,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   onCambioCantidad?: (linea: Linea, cantidad: number) => void;
   albaranEditable?: boolean;
+  publicar: (evento: string, payload?: unknown) => void;
 }) => {
   const setSeleccionada = (linea: Linea) => {
     publicar("linea_seleccionada", linea);

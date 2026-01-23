@@ -3,10 +3,10 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
+import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
 import "./DetallePedido.css";
 import { editable } from "./dominio.ts";
@@ -117,14 +117,9 @@ export const DetallePedido = ({
             estadoPedido={estado}
           />
 
-          <QModalConfirmacion
-            nombre="borrarPedido"
-            abierto={estado === "BORRANDO_PEDIDO"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar este pedido?"
-            onCerrar={() => emitir("borrar_cancelado")}
-            onAceptar={() => emitir("borrado_de_pedido_listo")}
-          />
+          {estado === "BORRANDO_PEDIDO" && (
+            <BorrarPedido pedido={modelo} publicar={emitir} />
+          )}
         </>
       )}
     </Detalle>

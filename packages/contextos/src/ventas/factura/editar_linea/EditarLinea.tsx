@@ -27,7 +27,7 @@ export const EditarLinea = ({
   };
 
   const cancelar = useCallback(() => {
-    if (!cambiando) publicar("cambio_de_linea_cancelado");
+    if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
   return (

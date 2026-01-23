@@ -21,7 +21,7 @@ export const BorrarLinea = ({
   };
 
   const cancelar = () => {
-    publicar("borrado_linea_cancelado");
+    publicar("borrar_linea_cancelado");
   };
 
   return (

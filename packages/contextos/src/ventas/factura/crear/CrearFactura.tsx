@@ -25,7 +25,7 @@ export const CrearFactura = ({
   };
 
   const cancelar = () => {
-    publicar("alta_cancelada");
+    publicar("creacion_factura_cancelada");
     nuevaFactura.init();
   };
 

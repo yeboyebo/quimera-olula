@@ -3,8 +3,6 @@ import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import {
     Albaran,
     CambioClienteAlbaran,
-    ContextoAlbaran,
-    EstadoAlbaran,
     LineaAlbaran
 } from "../diseño.ts";
 import { albaranVacioContexto } from "../dominio.ts";
@@ -16,6 +14,7 @@ import {
     patchCambiarCliente,
     patchCantidadLinea
 } from "../infraestructura.ts";
+import { ContextoAlbaran, EstadoAlbaran } from "./diseño.ts";
 
 type ProcesarAlbaran = ProcesarContexto<EstadoAlbaran, ContextoAlbaran>;
 
@@ -151,7 +150,7 @@ export const cambiarCliente: ProcesarAlbaran = async (contexto, payload) => {
 }
 
 export const crearLinea: ProcesarAlbaran = async (contexto) => {
-    // La llamada API ya se hace en el componente CrearLinea.tsx
+
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
@@ -160,7 +159,7 @@ export const crearLinea: ProcesarAlbaran = async (contexto) => {
 }
 
 export const cambiarLinea: ProcesarAlbaran = async (contexto) => {
-    // La llamada API ya se hace en el componente EditarLinea.tsx
+
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
@@ -191,7 +190,7 @@ export const cambiarCantidadLinea: ProcesarAlbaran = async (contexto, payload) =
 }
 
 export const borrarLinea: ProcesarAlbaran = async (contexto, payload) => {
-    // La llamada API ya se hace en el componente BorrarLinea.tsx
+
     const idLinea = payload as string;
     const indiceLineaActiva = (contexto.albaran.lineas as LineaAlbaran[]).findIndex((l: LineaAlbaran) => l.id === idLinea);
 

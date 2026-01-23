@@ -1,14 +1,13 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import {
-  QModalConfirmacion,
-  QuimeraAcciones,
-} from "@olula/componentes/index.js";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
+import { AprobarPresupuesto } from "../aprobar/AprobarPresupuesto.tsx";
+import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
 import "./DetallePresupuesto.css";
 import { usePresupuesto } from "./hooks/usePresupuesto.ts";
@@ -111,23 +110,13 @@ export const DetallePresupuesto = ({
             estadoPresupuesto={estado}
           />
 
-          <QModalConfirmacion
-            nombre="borrarPresupuesto"
-            abierto={estado === "BORRANDO_PRESUPUESTO"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar este presupuesto?"
-            onCerrar={() => emitir("borrar_cancelado")}
-            onAceptar={() => emitir("borrado_de_presupuesto_listo")}
-          />
+          {estado === "BORRANDO_PRESUPUESTO" && (
+            <BorrarPresupuesto presupuesto={modelo} publicar={emitir} />
+          )}
 
-          <QModalConfirmacion
-            nombre="aprobarPresupuesto"
-            abierto={estado === "APROBANDO_PRESUPUESTO"}
-            titulo="Confirmar aprobación"
-            mensaje="¿Está seguro de que desea aprobar este presupuesto?"
-            onCerrar={() => emitir("aprobacion_cancelada")}
-            onAceptar={() => emitir("aprobacion_lista")}
-          />
+          {estado === "APROBANDO_PRESUPUESTO" && (
+            <AprobarPresupuesto presupuesto={modelo} publicar={emitir} />
+          )}
         </>
       )}
     </Detalle>

@@ -25,7 +25,7 @@ export const BorrarLinea = ({
       abierto={true}
       titulo="Borrar línea"
       mensaje="¿Está seguro de que desea borrar esta línea?"
-      onCerrar={() => publicar("borrado_linea_cancelado")}
+      onCerrar={() => publicar("borrar_linea_cancelado")}
       onAceptar={borrar}
     />
   );

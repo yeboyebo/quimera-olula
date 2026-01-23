@@ -54,6 +54,7 @@ export const Lineas = ({
         presupuestoEditable={
           estadoPresupuesto === "ABIERTO" && !presupuesto.aprobado
         }
+        publicar={publicar}
       />
 
       {estadoPresupuesto === "CREANDO_LINEA" && (

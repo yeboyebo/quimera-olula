@@ -32,7 +32,7 @@ export const EditarLinea = ({
   }, [modelo, publicar, pedidoId, intentar]);
 
   const cancelar = useCallback(() => {
-    if (!cambiando) publicar("cambio_linea_cancelado");
+    if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
   return (

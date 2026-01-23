@@ -32,7 +32,7 @@ export const EditarLinea = ({
   }, [modelo, publicar, presupuestoId, intentar]);
 
   const cancelar = useCallback(() => {
-    if (!cambiando) publicar("edicion_linea_cancelada");
+    if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
   return (

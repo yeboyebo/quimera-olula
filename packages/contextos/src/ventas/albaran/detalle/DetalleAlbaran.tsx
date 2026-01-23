@@ -1,11 +1,11 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
+import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
 import { editable } from "../dominio.ts";
 import "./DetalleAlbaran.css";
@@ -99,14 +99,9 @@ export const DetalleAlbaran = ({
             estadoAlbaran={estado}
           />
 
-          <QModalConfirmacion
-            nombre="borrarAlbaran"
-            abierto={estado === "BORRANDO_ALBARAN"}
-            titulo="Confirmar borrar"
-            mensaje="¿Está seguro de que desea borrar este albarán?"
-            onCerrar={() => emitir("borrar_cancelado")}
-            onAceptar={() => emitir("borrado_de_albaran_listo")}
-          />
+          {estado === "BORRANDO_ALBARAN" && (
+            <BorrarAlbaran albaran={modelo} publicar={emitir} />
+          )}
         </>
       )}
     </Detalle>

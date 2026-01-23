@@ -1,63 +1,20 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
+import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { NuevoPresupuesto } from "../diseño.ts";
 import { getPresupuesto, getPresupuestos, postPresupuesto } from "../infraestructura.ts";
 import { ContextoMaestroPresupuesto, EstadoMaestroPresupuesto, Presupuesto } from "./diseño.ts";
 
 type ProcesarPresupuestos = ProcesarContexto<EstadoMaestroPresupuesto, ContextoMaestroPresupuesto>;
 
-export const cambiarPresupuestoEnLista: ProcesarPresupuestos = async (contexto, payload) => {
-    const presupuesto = payload as Presupuesto;
-    return {
-        ...contexto,
-        presupuestos: contexto.presupuestos.map(p => p.id === presupuesto.id ? presupuesto : p)
-    }
-}
+const conPresupuestos = (fn: ProcesarListaEntidades<Presupuesto>) => (ctx: ContextoMaestroPresupuesto) => ({ ...ctx, presupuestos: fn(ctx.presupuestos) });
 
-export const activarPresupuesto: ProcesarPresupuestos = async (contexto, payload) => {
-    const presupuestoActivo = payload as Presupuesto;
-    return {
-        ...contexto,
-        presupuestoActivo
-    }
-}
-
-export const desactivarPresupuestoActivo: ProcesarPresupuestos = async (contexto) => {
-    return {
-        ...contexto,
-        presupuestoActivo: null
-    }
-}
-
-export const quitarPresupuestoDeLista: ProcesarPresupuestos = async (contexto, payload) => {
-    const presupuestoBorrado = payload as Presupuesto;
-    return {
-        ...contexto,
-        presupuestos: contexto.presupuestos.filter(p => p.id !== presupuestoBorrado.id),
-        presupuestoActivo: null
-    }
-}
+export const Presupuestos = accionesListaEntidades(conPresupuestos);
 
 export const recargarPresupuestos: ProcesarPresupuestos = async (contexto, payload) => {
     const criteria = payload as Criteria;
     const resultado = await getPresupuestos(criteria.filtro, criteria.orden, criteria.paginacion);
-    const presupuestosCargados = resultado.datos;
 
-    return {
-        ...contexto,
-        presupuestos: presupuestosCargados,
-        totalPresupuestos: resultado.total == -1 ? contexto.totalPresupuestos : resultado.total,
-        presupuestoActivo: contexto.presupuestoActivo
-            ? presupuestosCargados.find(p => p.id === contexto.presupuestoActivo?.id) ?? null
-            : null
-    }
-}
-
-export const incluirPresupuestoEnLista: ProcesarPresupuestos = async (contexto, payload) => {
-    const presupuesto = payload as Presupuesto;
-    return {
-        ...contexto,
-        presupuestos: [presupuesto, ...contexto.presupuestos]
-    }
+    return Presupuestos.recargar(contexto, resultado);
 }
 
 export const abrirModalCreacion: ProcesarPresupuestos = async (contexto) => {
@@ -78,10 +35,16 @@ export const crearPresupuestoProceso: ProcesarPresupuestos = async (contexto, pa
     const presupuestoNuevo = payload as NuevoPresupuesto;
     const idPresupuesto = await postPresupuesto(presupuestoNuevo);
     const presupuesto = await getPresupuesto(idPresupuesto);
+
+    const resultado = await Presupuestos.incluir(contexto, presupuesto);
+    const nuevoContexto = Array.isArray(resultado) ? resultado[0] : resultado;
+
     return {
-        ...contexto,
-        presupuestos: [presupuesto, ...contexto.presupuestos],
-        presupuestoActivo: presupuesto,
-        estado: 'INICIAL'
-    }
+        ...nuevoContexto,
+        presupuestos: {
+            ...nuevoContexto.presupuestos,
+            activo: presupuesto
+        },
+        estado: 'INICIAL' as EstadoMaestroPresupuesto
+    };
 }

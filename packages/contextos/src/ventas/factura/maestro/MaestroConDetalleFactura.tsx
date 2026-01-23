@@ -76,7 +76,7 @@ export const MaestroConDetalleFactura = () => {
       <QModal
         nombre="modal"
         abierto={ctx.estado === "CREANDO_FACTURA"}
-        onCerrar={() => emitir("creacion_cancelada")}
+        onCerrar={() => emitir("creacion_factura_cancelada")}
       >
         <CrearFactura publicar={emitir} />
       </QModal>

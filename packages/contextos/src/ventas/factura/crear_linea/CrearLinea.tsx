@@ -24,7 +24,7 @@ export const CrearLinea = ({
   };
 
   const cancelar = useCallback(() => {
-    if (!creando) publicar("alta_de_linea_cancelada");
+    if (!creando) publicar("crear_linea_cancelado");
   }, [creando, publicar]);
 
   return (

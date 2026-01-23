@@ -37,7 +37,7 @@ export const getMaquina: () => Maquina<EstadoMaestroFactura, ContextoMaestroFact
 
             factura_creada: [incluirFacturaEnLista, 'INICIAL'],
 
-            creacion_cancelada: cerrarModalCreacion,
+            creacion_factura_cancelada: cerrarModalCreacion,
         },
 
     }

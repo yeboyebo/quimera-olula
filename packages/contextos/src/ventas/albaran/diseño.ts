@@ -38,7 +38,3 @@ export type PatchCantidadLinea = (id: string, linea: LineaAlbaran, cantidad: num
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
-// Re-exportar tipos contexto desde sus ubicaciones especializadas
-export type { ContextoAlbaran, EstadoAlbaran } from "./detalle/diseño.ts";
-export type { ContextoMaestroAlbaran, EstadoMaestroAlbaran } from "./maestro/diseño.ts";
-

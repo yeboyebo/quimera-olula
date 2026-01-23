@@ -4,7 +4,7 @@ import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { facturaVacia } from "../../dominio.ts";
-import { ContextoFactura, EstadoFactura, Factura, metaFactura } from "../diseño.ts";
+import { ContextoFactura, EstadoFactura, Factura, LineaFactura, metaFactura } from "../diseño.ts";
 import { getMaquina } from "../maquina.ts";
 
 interface UseFacturaOptions {
@@ -24,6 +24,7 @@ export const useFactura = (options: UseFacturaOptions = {}) => {
     );
 
     const [estado, setEstado] = useState<EstadoFactura>("INICIAL");
+    const [lineaActiva, setLineaActiva] = useState<LineaFactura | null>(null);
     const facturaIdCargadoRef = useRef<string | null>(null);
 
     const emitir = useCallback(
@@ -32,6 +33,7 @@ export const useFactura = (options: UseFacturaOptions = {}) => {
                 estado: inicial ? 'INICIAL' : estado,
                 factura: modelo.modelo,
                 facturaInicial: modelo.modeloInicial,
+                lineaActiva,
             };
 
             const [nuevoContexto, eventos] = await intentar(() =>
@@ -39,6 +41,7 @@ export const useFactura = (options: UseFacturaOptions = {}) => {
             );
 
             setEstado(nuevoContexto.estado);
+            setLineaActiva(nuevoContexto.lineaActiva ?? null);
 
             if (nuevoContexto.factura !== modelo.modelo) {
                 modelo.init(nuevoContexto.factura);
@@ -50,7 +53,7 @@ export const useFactura = (options: UseFacturaOptions = {}) => {
 
             return eventos;
         },
-        [estado, modelo, intentar, publicar, maquina]
+        [estado, lineaActiva, modelo, intentar, publicar, maquina]
     );
 
     useEffect(() => {
@@ -63,6 +66,7 @@ export const useFactura = (options: UseFacturaOptions = {}) => {
     return {
         ...modelo,
         estado,
+        lineaActiva,
         emitir,
     };
 };

@@ -80,7 +80,7 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
             borrado_de_presupuesto_listo: borrarPresupuesto,
 
-            borrar_cancelado: "ABIERTO",
+            borrar_presupuesto_cancelado: "ABIERTO",
         },
 
         APROBANDO_PRESUPUESTO: {
@@ -108,21 +108,21 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
             linea_creada: crearLinea,
 
-            alta_de_linea_cancelada: "ABIERTO",
+            crear_linea_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_LINEA: {
 
             linea_actualizada: cambiarLinea,
 
-            cambio_de_linea_cancelado: "ABIERTO",
+            editar_linea_cancelado: "ABIERTO",
         },
 
         BORRANDO_LINEA: {
 
             linea_borrada: borrarLinea,
 
-            borrado_de_linea_cancelado: "ABIERTO",
+            borrar_linea_cancelado: "ABIERTO",
         },
 
     }

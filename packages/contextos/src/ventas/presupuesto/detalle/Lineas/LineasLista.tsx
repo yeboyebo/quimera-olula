@@ -1,6 +1,5 @@
 import { QTablaControlada } from "@olula/componentes/atomos/qtablacontrolada.tsx";
 import { Orden } from "@olula/lib/diseño.ts";
-import { publicar } from "@olula/lib/dominio.js";
 import { LineaPresupuesto as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
@@ -9,13 +8,16 @@ export const LineasLista = ({
   seleccionada,
   onCambioCantidad,
   presupuestoEditable,
+  publicar,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   onCambioCantidad?: (linea: Linea, cantidad: number) => void;
   presupuestoEditable?: boolean;
+  publicar: (evento: string, payload?: unknown) => void;
 }) => {
   const setSeleccionada = (linea: Linea) => {
+    console.log("Linea seleccionada:", linea);
     publicar("linea_seleccionada", linea);
   };
 

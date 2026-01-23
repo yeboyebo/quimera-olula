@@ -6,6 +6,7 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect } from "react";
 import { CrearPresupuesto } from "../crear/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "../detalle/DetallePresupuesto.tsx";
@@ -19,9 +20,7 @@ import { getMaquina } from "./maquina.ts";
 export const MaestroConDetallePresupuesto = () => {
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    presupuestos: [],
-    totalPresupuestos: 0,
-    presupuestoActivo: null,
+    presupuestos: listaEntidadesInicial<Presupuesto>(),
   });
 
   const setSeleccionada = useCallback(
@@ -84,9 +83,9 @@ export const MaestroConDetallePresupuesto = () => {
               metaTabla={metaTablaPresupuesto}
               criteriaInicial={criteriaDefecto}
               modo={"tabla"}
-              entidades={ctx.presupuestos}
-              totalEntidades={ctx.totalPresupuestos}
-              seleccionada={ctx.presupuestoActivo}
+              entidades={ctx.presupuestos.lista}
+              totalEntidades={ctx.presupuestos.total}
+              seleccionada={ctx.presupuestos.activo}
               onSeleccion={setSeleccionada}
               onCriteriaChanged={recargar}
             />
@@ -94,11 +93,11 @@ export const MaestroConDetallePresupuesto = () => {
         }
         Detalle={
           <DetallePresupuesto
-            presupuestoInicial={ctx.presupuestoActivo}
+            presupuestoInicial={ctx.presupuestos.activo}
             publicar={emitir}
           />
         }
-        seleccionada={ctx.presupuestoActivo}
+        seleccionada={ctx.presupuestos.activo}
       />
 
       <CrearPresupuesto

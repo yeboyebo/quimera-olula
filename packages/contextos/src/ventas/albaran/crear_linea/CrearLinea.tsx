@@ -31,7 +31,7 @@ export const CrearLinea = ({
   }, [modelo, publicar, albaranId, intentar]);
 
   const cancelar = useCallback(() => {
-    if (!creando) publicar("alta_linea_cancelada");
+    if (!creando) publicar("crear_linea_cancelado");
   }, [creando, publicar]);
 
   return (
