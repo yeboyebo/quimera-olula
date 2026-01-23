@@ -1,4 +1,4 @@
-import { cambioClienteVentaVacio, metaLineaVenta, metaNuevaVenta, metaVenta, nuevaLineaVentaVacia, nuevaVentaVacia, ventaVacia } from "#/ventas/presupuesto/detalle/dominio.ts";
+import { cambioClienteVentaVacio, metaLineaVenta, metaVenta, nuevaLineaVentaVacia, ventaVacia } from "#/ventas/presupuesto/detalle/dominio.ts";
 import { metaCambioClienteVenta, metaNuevaLineaVenta } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, modeloEsValido, publicar } from "@olula/lib/dominio.ts";
@@ -6,7 +6,6 @@ import {
     CambioClientePedido,
     LineaPedido,
     NuevaLineaPedido,
-    NuevoPedido,
     Pedido
 } from "../diseño.ts";
 import {
@@ -26,13 +25,13 @@ export const pedidoVacio = (): Pedido => ({
     lineas: [],
 })
 
-export const nuevoPedidoVacio: NuevoPedido = nuevaVentaVacia;
+
 
 export const cambioClientePedidoVacio: CambioClientePedido = cambioClienteVentaVacio;
 
 export const nuevaLineaPedidoVacia: NuevaLineaPedido = nuevaLineaVentaVacia;
 
-export const metaNuevoPedido: MetaModelo<NuevoPedido> = metaNuevaVenta;
+
 
 export const metaCambioClientePedido: MetaModelo<CambioClientePedido> = metaCambioClienteVenta;
 
@@ -168,6 +167,7 @@ export const cambiarPedido: ProcesarPedido = async (contexto, payload) => {
 
     return pipePedido(contexto, [
         refrescarPedido,
+        refrescarLineas,
         'ABIERTO',
     ]);
 }
@@ -187,6 +187,7 @@ export const cambiarCliente: ProcesarPedido = async (contexto, payload) => {
 
     return pipePedido(contexto, [
         refrescarPedido,
+        refrescarLineas,
         'ABIERTO',
     ]);
 }

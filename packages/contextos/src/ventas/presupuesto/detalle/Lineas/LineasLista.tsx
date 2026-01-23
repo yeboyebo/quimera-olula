@@ -1,17 +1,17 @@
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { QTablaControlada } from "@olula/componentes/atomos/qtablacontrolada.tsx";
+import { Orden } from "@olula/lib/diseño.ts";
+import { publicar } from "@olula/lib/dominio.js";
 import { LineaPresupuesto as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
-  publicar,
   onCambioCantidad,
   presupuestoEditable,
 }: {
   lineas: Linea[];
   seleccionada?: string;
-  publicar: (evento: string, payload?: unknown) => void;
   onCambioCantidad?: (linea: Linea, cantidad: number) => void;
   presupuestoEditable?: boolean;
 }) => {
@@ -19,16 +19,18 @@ export const LineasLista = ({
     publicar("linea_seleccionada", linea);
   };
 
+  const ordenPorDefecto: Orden = ["id", "ASC"];
+
   return (
     <>
-      <QTabla
+      <QTablaControlada
         metaTabla={getMetaTablaLineas(onCambioCantidad, presupuestoEditable)}
         datos={lineas}
         cargando={false}
         seleccionadaId={seleccionada}
         onSeleccion={setSeleccionada}
-        orden={["id", "ASC"]}
-        onOrdenar={(_: string) => null}
+        orden={ordenPorDefecto}
+        onOrdenChanged={() => null}
       />
     </>
   );

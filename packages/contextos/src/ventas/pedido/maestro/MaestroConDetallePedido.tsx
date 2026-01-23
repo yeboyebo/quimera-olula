@@ -95,13 +95,12 @@ export const MaestroConDetallePedido = () => {
           <DetallePedido pedidoInicial={ctx.pedidoActivo} publicar={emitir} />
         }
         seleccionada={ctx.pedidoActivo}
-        modoDisposicion="maestro-50"
       />
 
       <QModal
         nombre="modal"
         abierto={ctx.estado === "CREANDO_PEDIDO"}
-        onCerrar={() => emitir("creacion_cancelada")}
+        onCerrar={() => emitir("creacion_pedido_cancelada")}
       >
         <CrearPedido publicar={emitir} />
       </QModal>

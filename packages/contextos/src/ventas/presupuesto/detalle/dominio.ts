@@ -262,6 +262,7 @@ export const aprobarPresupuesto: ProcesarPresupuesto = async (contexto) => {
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
+        refrescarLineas,
         'APROBADO',
     ]);
 }
@@ -272,6 +273,7 @@ export const cambiarDivisa: ProcesarPresupuesto = async (contexto, payload) => {
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
+        refrescarLineas,
         'ABIERTO',
     ]);
 }
@@ -282,6 +284,7 @@ export const cambiarCliente: ProcesarPresupuesto = async (contexto, payload) => 
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
+        refrescarLineas,
         'ABIERTO',
     ]);
 }

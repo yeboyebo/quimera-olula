@@ -50,7 +50,6 @@ export const Lineas = ({
       <LineasLista
         lineas={pedido.lineas || []}
         seleccionada={lineaActiva?.id}
-        publicar={publicar}
         onCambioCantidad={handleCambioCantidad}
         pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
       />

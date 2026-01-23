@@ -95,7 +95,6 @@ const FormAltaPresupuesto = ({
     const presupuestoCreada = await getPresupuesto(id);
     publicar("presupuesto_creado", presupuestoCreada);
 
-    // Reiniciar ambos modelos
     presupuestoRegistrado.init(nuevoPresupuestoVacio);
     presupuestoNoRegistrado.init(nuevoPresupuestoClienteNoRegistradoVacio);
   };

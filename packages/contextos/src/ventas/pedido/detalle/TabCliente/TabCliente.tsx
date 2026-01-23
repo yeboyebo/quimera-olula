@@ -4,26 +4,26 @@ import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioC
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useState } from "react";
 import { Pedido } from "../../diseño.ts";
-import { editable } from "../../dominio.ts";
+import { EstadoPedido } from "../diseño.ts";
+import { editable } from "../dominio.ts";
 import "./TabCliente.css";
 
 interface TabClienteProps {
   pedido: HookModelo<Pedido>;
+  estado: EstadoPedido;
   publicar?: (evento: string, payload?: unknown) => void;
 }
 
 export const TabCliente = ({
   pedido,
+  estado,
   publicar = () => {},
 }: TabClienteProps) => {
   const { modelo, uiProps } = pedido;
-  const [cambiandoCliente, setCambiandoCliente] = useState(false);
 
   const onGuardarCambioCliente = async (cambios: Partial<Pedido>) => {
     publicar("cambio_cliente_listo", cambios);
-    setCambiandoCliente(false);
   };
 
   return (
@@ -35,7 +35,7 @@ export const TabCliente = ({
         <div className="botones maestro-botones">
           <QBoton
             deshabilitado={!editable(modelo)}
-            onClick={() => setCambiandoCliente(true)}
+            onClick={() => publicar("cambio_cliente_solicitado")}
           >
             Cambiar Cliente
           </QBoton>
@@ -56,11 +56,11 @@ export const TabCliente = ({
         )}
       </quimera-formulario>
 
-      {cambiandoCliente && (
+      {estado === "CAMBIANDO_CLIENTE" && (
         <CambioClienteVenta
           venta={pedido}
           onGuardar={onGuardarCambioCliente}
-          onCancelar={() => setCambiandoCliente(false)}
+          onCancelar={() => publicar("cambio_cliente_cancelado")}
         />
       )}
     </div>

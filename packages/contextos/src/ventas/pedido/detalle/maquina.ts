@@ -14,7 +14,6 @@ import {
     cargarContexto,
     crearLinea,
     getContextoVacio,
-    refrescarLineas,
     refrescarPedido
 } from "./dominio.ts";
 
@@ -43,7 +42,7 @@ export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
 
             borrar_solicitado: "BORRANDO_PEDIDO",
 
-            cambio_cliente_listo: cambiarCliente,
+            cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
 
             pedido_cargado: [abiertoOServido],
 
@@ -81,12 +80,7 @@ export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
 
         CREANDO_LINEA: {
 
-            alta_linea_lista: [
-                crearLinea,
-                refrescarPedido,
-                refrescarLineas,
-                "ABIERTO"
-            ],
+            alta_linea_lista: [crearLinea],
 
             alta_linea_cancelada: "ABIERTO",
         },

@@ -54,11 +54,11 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
             cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
 
-            cambio_cliente_listo: cambiarCliente,
+            cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
 
             presupuesto_cargado: [abiertoOAprobadoContexto],
 
-            presupuesto_cambiado: [refrescarPresupuesto],
+            presupuesto_cambiado: [refrescarPresupuesto, "ABIERTO"],
 
             edicion_de_presupuesto_lista: [cambiarPresupuesto],
 
@@ -99,7 +99,7 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
         CAMBIANDO_CLIENTE: {
 
-            cambio_cliente_listo: cambiarCliente,
+            cambio_cliente_listo: [cambiarCliente],
 
             cambio_cliente_cancelado: "ABIERTO",
         },

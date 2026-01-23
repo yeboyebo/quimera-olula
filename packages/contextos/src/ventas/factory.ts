@@ -1,6 +1,6 @@
 import { menuVentas } from "./menu.ts";
 import { TabDatosBase as PedidoTabDatosBase } from "./pedido/detalle/TabDatos.tsx";
-import { metaPedido } from "./pedido/dominio.ts";
+import { metaPedido } from "./pedido/detalle/dominio.ts";
 import { payloadPatchPedido, pedidoDesdeAPI } from "./pedido/infraestructura_base.ts";
 import { metaTablaPedido } from "./pedido/maestro/metatabla_pedido.ts";
 

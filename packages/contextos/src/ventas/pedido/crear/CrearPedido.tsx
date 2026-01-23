@@ -6,9 +6,9 @@ import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
-import { metaNuevoPedido, nuevoPedidoVacio } from "../dominio.ts";
 import { getPedido, postPedido } from "../infraestructura.ts";
 import "./CrearPedido.css";
+import { metaNuevoPedido, nuevoPedidoVacio } from "./dominio.ts";
 
 export const CrearPedido = ({
   publicar = () => {},
@@ -25,7 +25,7 @@ export const CrearPedido = ({
   };
 
   const cancelar = () => {
-    publicar("alta_cancelada");
+    publicar("creacion_pedido_cancelada");
     nuevoPedido.init();
   };
 

@@ -34,8 +34,7 @@ export const DetallePresupuesto = ({
 
   const { modelo, estado, lineaActiva, emitir } = presupuesto;
 
-  const titulo = (presupuesto: Presupuesto) =>
-    presupuesto.codigo || "Nuevo Presupuesto";
+  const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
 
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_presupuesto_lista", modelo);
@@ -73,7 +72,11 @@ export const DetallePresupuesto = ({
 
           <Tabs>
             <Tab label="Cliente">
-              <TabCliente presupuesto={presupuesto} publicar={emitir} />
+              <TabCliente
+                presupuesto={presupuesto}
+                estado={estado}
+                publicar={emitir}
+              />
             </Tab>
 
             <Tab label="Datos">

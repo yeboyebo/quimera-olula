@@ -40,7 +40,7 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
 
             pedido_creado: [incluirPedidoEnLista, 'INICIAL'],
 
-            creacion_cancelada: cerrarModalCreacion,
+            creacion_pedido_cancelada: cerrarModalCreacion,
         },
     }
 }

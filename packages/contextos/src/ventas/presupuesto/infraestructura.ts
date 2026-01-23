@@ -6,7 +6,6 @@ import { CambiarArticuloLinea, CambiarCantidadLinea, CambioCliente, DeleteLinea,
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
-// type PresupuestoAPI = Presupuesto
 type LineaPresupuestoAPI = LineaPresupuesto;
 
 // export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => p;

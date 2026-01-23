@@ -50,7 +50,6 @@ export const Lineas = ({
       <LineasLista
         lineas={presupuesto.lineas || []}
         seleccionada={lineaActiva?.id}
-        publicar={publicar}
         onCambioCantidad={handleCambioCantidad}
         presupuestoEditable={
           estadoPresupuesto === "ABIERTO" && !presupuesto.aprobado

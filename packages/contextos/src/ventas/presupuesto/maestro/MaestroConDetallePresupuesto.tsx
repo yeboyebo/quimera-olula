@@ -99,12 +99,11 @@ export const MaestroConDetallePresupuesto = () => {
           />
         }
         seleccionada={ctx.presupuestoActivo}
-        modoDisposicion="maestro-50"
       />
 
       <CrearPresupuesto
         publicar={emitir}
-        onCancelar={() => emitir("creacion_cancelada")}
+        onCancelar={() => emitir("creacion_presupuesto_cancelada")}
         activo={ctx.estado === "CREANDO_PRESUPUESTO"}
       />
     </div>

@@ -37,7 +37,7 @@ export const getMaquina: () => Maquina<EstadoMaestroPresupuesto, ContextoMaestro
 
             presupuesto_creado: [incluirPresupuestoEnLista, 'INICIAL'],
 
-            creacion_cancelada: cerrarModalCreacion,
+            creacion_presupuesto_cancelada: cerrarModalCreacion,
         },
     }
 }

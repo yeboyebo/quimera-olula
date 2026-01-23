@@ -1,4 +1,4 @@
-import { metaPedido } from "#/ventas/pedido/dominio.ts";
+import { metaPedido } from "#/ventas/pedido/detalle/dominio.ts";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { PedidoGUA } from "./diseño.ts";
 

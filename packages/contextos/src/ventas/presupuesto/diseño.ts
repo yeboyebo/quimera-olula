@@ -88,11 +88,6 @@ export interface LineaPresupuesto extends Entidad {
 
 export type NuevaLinea = NuevaLineaVenta
 
-// export interface NuevaLinea extends Modelo {
-//   referencia: string;
-//   cantidad: number;
-// };
-
 export type Cliente = {
   cliente_id: string;
   direccion_id: string;

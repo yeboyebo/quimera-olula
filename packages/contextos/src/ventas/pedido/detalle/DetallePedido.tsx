@@ -8,8 +8,8 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Pedido } from "../diseño.ts";
-import { editable } from "../dominio.ts";
 import "./DetallePedido.css";
+import { editable } from "./dominio.ts";
 import { usePedido } from "./hooks/usePedido.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
@@ -82,7 +82,7 @@ export const DetallePedido = ({
 
           <Tabs>
             <Tab label="Cliente">
-              <TabCliente pedido={pedido} publicar={emitir} />
+              <TabCliente pedido={pedido} estado={estado} publicar={emitir} />
             </Tab>
 
             <Tab label="Datos">
