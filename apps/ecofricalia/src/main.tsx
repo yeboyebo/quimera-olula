@@ -1,4 +1,5 @@
 import { authMiddleware } from "#/auth/middlewares.ts";
+import { useTimerRefresco } from "#/auth/useTimerRefresco.ts";
 import { Vista } from "@olula/componentes/index.ts";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
@@ -22,6 +23,8 @@ const rutas = createBrowserRouter([
 
 // eslint-disable-next-line react-refresh/only-export-components
 const App = () => {
+  useTimerRefresco();
+
   FactoryObj.setMenu(
     crearMenu(
       new FactoryEcofricalia() as unknown as Record<string, MenuContextFactory>
