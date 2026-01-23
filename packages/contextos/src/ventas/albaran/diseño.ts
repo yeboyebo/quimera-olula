@@ -38,27 +38,3 @@ export type PatchCantidadLinea = (id: string, linea: LineaAlbaran, cantidad: num
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
-export type EstadoAlbaran = (
-    'INICIAL' | "ABIERTO" | "FACTURADO"
-    | "BORRANDO_ALBARAN"
-    | "CAMBIANDO_CLIENTE"
-    | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
-);
-
-export type EstadoMaestroAlbaran = (
-    'INICIAL' | 'CREANDO_ALBARAN'
-);
-
-export type ContextoAlbaran = {
-    estado: EstadoAlbaran;
-    albaran: Albaran;
-    albaranInicial: Albaran;
-    lineaActiva: LineaAlbaran | null;
-};
-
-export type ContextoMaestroAlbaran = {
-    estado: EstadoMaestroAlbaran;
-    albaranes: Albaran[];
-    totalAlbaranes: number;
-    albaranActivo: Albaran | null;
-};

@@ -37,29 +37,4 @@ export type PatchCantidadLinea = (id: string, linea: LineaPedido, cantidad: numb
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
-export type EstadoPedido = (
-  'INICIAL' | "ABIERTO" | "SERVIDO"
-  | "BORRANDO_PEDIDO"
-  | "CAMBIANDO_CLIENTE"
-  | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
-);
-
-export type EstadoMaestroPedido = (
-  'INICIAL' | 'CREANDO_PEDIDO'
-);
-
-export type ContextoPedido = {
-  estado: EstadoPedido,
-  pedido: Pedido;
-  pedidoInicial: Pedido;
-  lineaActiva: LineaPedido | null;
-};
-
-export type ContextoMaestroPedido = {
-  estado: EstadoMaestroPedido;
-  pedidos: Pedido[];
-  totalPedidos: number;
-  pedidoActivo: Pedido | null;
-};
-
 

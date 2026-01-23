@@ -1,8 +1,9 @@
 import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
-  fecha_salida: string;
+  fecha_salida: Date;
   aprobado: boolean;
   lineas: LineaPresupuesto[];
 }
@@ -88,11 +89,6 @@ export interface LineaPresupuesto extends Entidad {
 
 export type NuevaLinea = NuevaLineaVenta
 
-// export interface NuevaLinea extends Modelo {
-//   referencia: string;
-//   cantidad: number;
-// };
-
 export type Cliente = {
   cliente_id: string;
   direccion_id: string;
@@ -122,29 +118,13 @@ export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>
 
 export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
 
-export type EstadoPresupuesto = (
-  'INICIAL' | "ABIERTO" | "APROBADO"
-  | "BORRANDO_PRESUPUESTO"
-  | "APROBANDO_PRESUPUESTO"
-  | "CAMBIANDO_DIVISA"
-  | "CAMBIANDO_CLIENTE"
-  | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
-);
 
 export type EstadoMaestroPresupuesto = (
   'INICIAL' | 'CREANDO_PRESUPUESTO'
 );
 
-export type ContextoPresupuesto = {
-  estado: EstadoPresupuesto,
-  presupuesto: Presupuesto;
-  presupuestoInicial: Presupuesto;
-  lineaActiva: LineaPresupuesto | null;
-};
 
 export type ContextoMaestroPresupuesto = {
   estado: EstadoMaestroPresupuesto;
-  presupuestos: Presupuesto[];
-  totalPresupuestos: number;
-  presupuestoActivo: Presupuesto | null;
+  presupuestos: ListaEntidades<Presupuesto>;
 };

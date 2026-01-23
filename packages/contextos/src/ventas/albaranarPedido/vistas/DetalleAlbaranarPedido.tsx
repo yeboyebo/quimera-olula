@@ -2,7 +2,7 @@ import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Entidad } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useParams } from "react-router";
-import { metaPedido, pedidoVacio } from "../../pedido/dominio.ts";
+import { metaPedido, pedidoVacio } from "../../pedido/detalle/dominio.ts";
 import { getPedido } from "../../pedido/infraestructura.ts";
 import "./DetalleAlbaranarPedido.css";
 import { Lineas } from "./Lineas/Lineas.tsx";

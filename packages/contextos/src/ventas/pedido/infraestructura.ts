@@ -6,18 +6,19 @@ import ApiUrls from "../comun/urls.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 type LineaPedidoAPI = LineaPedido
-type PedidoAPI = Pedido
+type PedidoAPI = Pedido & { fecha: string };
 
 const baseUrl = new ApiUrls().PEDIDO;
 
 export const lineaPedidoFromAPI = (l: LineaPedidoAPI): LineaPedido => l;
-export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => p;
-// export const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
+export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => ({
+  ...p,
+  fecha: new Date(Date.parse(p.fecha)),
+  lineas: [],
+})
 
 export const getPedido: GetPedido = async (id) => {
-  // const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
-
-  return RestAPI.get<{ datos: Pedido }>(
+  return RestAPI.get<{ datos: PedidoAPI }>(
     `${baseUrl}/${id}`).then((respuesta) => {
       return pedidoDesdeAPI(respuesta.datos);
     });
@@ -28,11 +29,9 @@ export const getPedidos: GetPedidos = async (
   orden: Orden,
   paginacion: Paginacion
 ) => {
-  // const pedidoDesdeAPI = FactoryObj.app.Ventas.pedidoDesdeAPI as (p: Pedido) => Pedido;
-
   const q = criteriaQuery(filtro, orden, paginacion);
 
-  const respuesta = await RestAPI.get<{ datos: Pedido[]; total: number }>(baseUrl + q);
+  const respuesta = await RestAPI.get<{ datos: PedidoAPI[]; total: number }>(baseUrl + q);
   return { datos: respuesta.datos.map(pedidoDesdeAPI), total: respuesta.total };
 };
 

@@ -6,13 +6,13 @@ import { CambiarArticuloLinea, CambiarCantidadLinea, CambioCliente, DeleteLinea,
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
-// type PresupuestoAPI = Presupuesto
-type LineaPresupuestoAPI = LineaPresupuesto
+type LineaPresupuestoAPI = LineaPresupuesto;
 
 // export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => p;
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
-  fecha: new Date(p.fecha),
+  fecha: new Date(Date.parse(p.fecha)),
+  fecha_salida: new Date(Date.parse(p.fecha_salida)),
   nombre_via: p.direccion?.nombre_via ?? "",
   cod_postal: p.direccion?.cod_postal ?? null,
   ciudad: p.direccion?.ciudad ?? "",
@@ -35,6 +35,7 @@ export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
   return {
     ...rest,
     fecha: rest.fecha.toISOString(),
+    fecha_salida: rest.fecha_salida.toISOString(),
     direccion: {
       nombre_via: direccion?.nombre_via ?? "",
       cod_postal: direccion?.cod_postal ?? "",

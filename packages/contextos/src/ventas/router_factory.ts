@@ -1,9 +1,9 @@
-import { MaestroConDetalleAlbaran } from "./albaran/vistas/MaestroConDetalleAlbaran.tsx";
+import { MaestroConDetalleAlbaran } from "./albaran/maestro/MaestroConDetalleAlbaran.tsx";
 import { DetalleAlbaranarPedido } from "./albaranarPedido/vistas/DetalleAlbaranarPedido.tsx";
 import { MaestroConDetalleCliente } from "./cliente/maestro/MaestroConDetalleCliente.tsx";
-import { MaestroConDetalleFactura } from "./factura/vistas/MaestroConDetalleFactura.tsx";
-import { MaestroConDetallePedido } from "./pedido/vistas/MaestroConDetallePedido.tsx";
-import { MaestroConDetallePresupuesto } from "./presupuesto/vistas/MaestroConDetallePresupuesto.tsx";
+import { MaestroConDetalleFactura } from "./factura/maestro/MaestroConDetalleFactura.tsx";
+import { MaestroConDetallePedido } from "./pedido/maestro/MaestroConDetallePedido.tsx";
+import { MaestroConDetallePresupuesto } from "./presupuesto/maestro/MaestroConDetallePresupuesto.tsx";
 
 export class RouterFactoryVentasOlula {
     static router = {
