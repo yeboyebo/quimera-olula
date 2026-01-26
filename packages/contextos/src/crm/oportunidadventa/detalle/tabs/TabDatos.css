@@ -1,4 +1,4 @@
-.OportunidadVenta .TabDatos {
+.DetalleOportunidad .TabDatos {
 
     quimera-autocompletar[nombre="cliente_id"] {
         grid-column: 1 / span 5;

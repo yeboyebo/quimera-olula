@@ -18,16 +18,17 @@ export const TabDatos = ({
     <div className="TabDatos">
       <quimera-formulario>
         <QInput label="Descripción" {...uiProps("descripcion")} />
-        {modelo.cliente_id ? (
+
+        {modelo.cliente_id && (
           <Cliente
             {...uiProps("cliente_id", "nombre_cliente")}
             label="Seleccionar cliente"
             deshabilitado
           />
-        ) : (
-          <></>
         )}
+
         <QInput label="Cliente" {...uiProps("nombre_cliente")} />
+
         <LeadSelector
           {...uiProps("tarjeta_id")}
           label="Lead"
@@ -39,11 +40,12 @@ export const TabDatos = ({
           label="Contacto"
           descripcion={oportunidad.modelo.nombre_contacto ?? undefined}
         />
+
         <EstadoOportunidad label="Estado" {...uiProps("estado_id")} />
+
         <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
         <QInput label="Fecha Cierre" {...uiProps("fecha_cierre")} />
         <QInput label="Total" {...uiProps("importe")} />
-        {/* <Usuario {...uiProps("usuario_id")} label="Responsable" /> */}
       </quimera-formulario>
     </div>
   );

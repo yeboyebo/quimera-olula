@@ -7,8 +7,8 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
+import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { OportunidadVenta } from "../diseño.ts";
-import { DetalleOportunidadVenta } from "../vistas/DetalleOportunidadVenta/DetalleOportunidadVenta.tsx";
 import { TarjetaOportunidadVenta } from "../vistas/TarjetaOportunidadVenta.tsx";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
@@ -73,7 +73,7 @@ export const MaestroOportunidades = () => {
         }
         Detalle={
           <DetalleOportunidadVenta
-            oportunidadInicial={ctx.oportunidades.activo}
+            inicial={ctx.oportunidades.activo}
             publicar={emitir}
           />
         }
