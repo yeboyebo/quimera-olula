@@ -1,3 +1,4 @@
+import { UiProps, ValorControl } from "useModelo.ts";
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
 import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
 
@@ -364,7 +365,115 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
     }
 }
 
+const getUiProps = <M extends Modelo>(
+    modelo: M,
+    modeloInicial: M,
+    meta: MetaModelo<M>,
+    onModeloCambiado: (modelo: M) => void,
+    onModeloListo?: (modelo: M) => Promise<void>
+) =>
+    (campo: string, secundario?: string): UiProps => {
 
+        const validacion = validacionCampoModelo(meta)(modelo, campo);
+        const valido = validacion === true;
+        const valor = modelo[campo];
+        const textoValidacion = valor === modeloInicial[campo]
+            ? ''
+            : typeof validacion === "string"
+                ? validacion
+                : '';
+        const editable = modeloEsEditable(meta)(modelo, campo);
+        const cambiado = valor !== modeloInicial[campo];
+        const campos = meta.campos || {};
+        const tipoCampo = campo in campos && campos[campo]?.tipo
+            ? campos[campo].tipo
+            : "texto";
+
+        const conversionTipo = {
+            "boolean": "checkbox",
+            "dolar": "moneda",
+        };
+
+        const tipo = (conversionTipo[tipoCampo as keyof typeof conversionTipo] || tipoCampo) as TipoInput;
+        const valorUI = convertirCampoHaciaUI(meta)(campo, valor);
+
+        return {
+            nombre: campo,
+            valor: valorUI,
+            tipo: tipo,
+            deshabilitado: !editable,
+            valido: cambiado && valido,
+            erroneo: !valido,
+            advertido: false,
+            textoValidacion: textoValidacion,
+            onChange: setCampo(modelo, meta, onModeloCambiado, campo, secundario),
+            evaluarCambio: evaluarCambio(modelo, modeloInicial, meta, onModeloListo),
+            descripcion: secundario ? modelo[secundario] as string : undefined,
+        }
+    }
+
+const evaluarCambio = <M extends Modelo>(
+    modelo: M,
+    modeloInicial: M,
+    meta: MetaModelo<M>,
+    onModeloListo?: (modelo: M) => Promise<void>
+) =>
+    async () => {
+        console.log('onModeloListo init');
+        if (!onModeloListo) {
+            console.log('No hay onModeloListo');
+            return;
+        }
+        console.log('idagente', modelo.idAgente, modeloInicial.idAgente);
+        console.log('modificado', modeloModificado(modeloInicial, modelo));
+        console.log('valido', modeloEsValido(meta)(modelo));
+        if (modeloModificado(modeloInicial, modelo) && modeloEsValido(meta)(modelo)) {
+            await onModeloListo(modelo);
+        }
+    }
+
+const setCampo = <M extends Modelo>(
+    modelo: M,
+    meta: MetaModelo<M>,
+    onModeloCambiado: (modelo: M) => void,
+    campo: string,
+    segundo?: string
+) => async (_valor: ValorControl): Promise<void> => {
+
+    let valor = _valor || null;
+    let descripcion: string | undefined = undefined;
+
+
+    const valorAnterior = modelo[campo];
+
+    if (typeof _valor === "object" && _valor && 'valor' in _valor) {
+        valor = _valor.valor;
+        if (segundo) {
+            descripcion = _valor.descripcion;
+        }
+    }
+    if (!formatoValorCampoValido(meta)(campo, valor)) {
+        return;
+    }
+
+    const valorModelo = convertirCampoDesdeUI(meta)(campo, valor as string);
+
+    let nuevoModelo = {
+        ...modelo,
+        [campo]: valorModelo,
+    } as M
+    if (segundo && descripcion) {
+        nuevoModelo = {
+            ...nuevoModelo,
+            [segundo]: descripcion,
+        } as M
+    }
+    if (meta.onChange) {
+        const otros = typeof _valor === "object" ? _valor as Record<string, unknown> : {};
+        nuevoModelo = meta.onChange(nuevoModelo as M, campo, valorAnterior, otros);
+    }
+    onModeloCambiado(nuevoModelo);
+};
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
     const campos = meta.campos || {};
@@ -419,12 +528,43 @@ export const modeloEsValido = <T extends Modelo>(meta: MetaModelo<T>) => (modelo
 }
 
 export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) => (estado: EstadoModelo<T>) => {
-    return modeloModificado(estado) && modeloEsValido(meta)(estado.valor);
+    return modeloModificado(estado.valor_inicial, estado.valor) && modeloEsValido(meta)(estado.valor);
 }
 
-export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
-    const valor_inicial = estado.valor_inicial;
-    const valor = estado.valor;
+export const getFormProps = <M extends Modelo>(
+    modelo: M,
+    modeloInicial: M,
+    meta: MetaModelo<M>,
+    onModeloCambiado: (modelo: M) => void,
+    onFormListo?: (modelo: M) => Promise<void>
+): FormModelo => {
+    return {
+        uiProps: getUiProps(
+            modelo,
+            modeloInicial,
+            meta,
+            onModeloCambiado,
+            onFormListo
+        ),
+        modificado: modeloModificado(modeloInicial, modelo),
+        valido: modeloEsValido(meta)(modelo),
+        editable: modeloEsEditable(meta)(modelo),
+    } as const;
+}
+
+
+export type FormModelo = {
+    uiProps: (campo: string, secundario?: string) => UiProps,
+    modificado: boolean,
+    valido: boolean,
+    editable: boolean,
+}
+
+export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T) => {
+
+    Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
+
+    // console.log('modeloModificado2', Object.keys(valor).filter((k) => valor[k] !== valor_inicial[k]));
 
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])

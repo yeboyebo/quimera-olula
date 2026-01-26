@@ -1,15 +1,43 @@
-import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.ts";
+import { ejecutarListaProcesos, FormModelo, getFormProps, MetaModelo, publicar } from "@olula/lib/dominio.ts";
 
 import { cambioClienteVentaVacio, metaCambioClienteVenta, metaVenta } from "#/ventas/venta/dominio.ts";
-import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { CambioClienteFactura, ContextoVentaTpv, EstadoVentaTpv, LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
+import { EmitirEvento, ProcesarContexto } from "@olula/lib/diseño.js";
+import { accionesListaEntidades, ListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { CambioClienteFactura, LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
-import { getLineas, getPagos, getVenta, patchFactura, postEmitirVale, postLineaPorBarcode } from "../infraestructura.ts";
+import { getLineas, getPagos, getVenta, patchVenta, postEmitirVale, postLineaPorBarcode } from "../infraestructura.ts";
 
 
 export const cambioClienteFacturaVacio: CambioClienteFactura = cambioClienteVentaVacio;
 
 export const metaCambioClienteFactura: MetaModelo<CambioClienteFactura> = metaCambioClienteVenta;
+
+
+
+export type EstadoVentaTpv = (
+    'INICIAL' | "ABIERTA" | "EMITIDA"
+    | "BORRANDO_VENTA"
+    | "PAGANDO_EN_EFECTIVO" | "PAGANDO_CON_TARJETA" | "PAGANDO_CON_VALE"
+    | "BORRANDO_PAGO" | "CAMBIANDO_CLIENTE"
+    | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
+    | "DEVOLVIENDO_VENTA"
+);
+
+export type ContextoVentaTpv = {
+    estado: EstadoVentaTpv,
+    venta: VentaTpv;
+    ventaInicial: VentaTpv;
+    pagos: ListaEntidades<PagoVentaTpv>
+    lineas: ListaEntidades<LineaFactura>;
+};
+
+const conPagos = (fn: ProcesarListaEntidades<PagoVentaTpv>) => (ctx: ContextoVentaTpv) => ({ ...ctx, pagos: fn(ctx.pagos) });
+
+export const Pagos = accionesListaEntidades(conPagos);
+
+const conLineas = (fn: ProcesarListaEntidades<LineaFactura>) => (ctx: ContextoVentaTpv) => ({ ...ctx, lineas: fn(ctx.lineas) });
+
+export const Lineas = accionesListaEntidades(conLineas);
 
 const onChangeVentaTpv = (venta: VentaTpv, campo: string, _: unknown, otros?: Record<string, unknown>) => {
     if (campo === "divisa_id" && otros) {
@@ -41,23 +69,36 @@ const cargarVenta: (_: string) => ProcesarVentaTpv = (idVenta) =>
         return {
             ...contexto,
             venta,
+            ventaInicial: venta
         }
     }
 
-export const refrescarVenta: ProcesarVentaTpv = async (contexto) => {
+export const refrescarCabecera: ProcesarVentaTpv = async (contexto) => {
 
     const venta = await getVenta(contexto.venta.id);
     return [
         {
             ...contexto,
-            venta: {
-                ...contexto.venta,
-                ...venta
-            },
+            venta,
+            ventaInicial: venta
         },
         [["venta_cambiada", venta]]
     ]
 }
+
+// export const refrescarVentaCambiada: ProcesarVentaTpv = async (contexto) => {
+
+//     const venta = await getVenta(contexto.venta.id);
+//     return [
+//         {
+//             ...contexto,
+//             venta,
+//             ventaInicial: venta
+//         },
+//         [["venta_cambiada", venta]]
+//     ]
+// }
+
 
 export const cancelarcambioVenta: ProcesarVentaTpv = async (contexto) => {
 
@@ -79,9 +120,10 @@ export const refrescarPagos: ProcesarVentaTpv = async (contexto) => {
     const pagos = await getPagos(contexto.venta.id);
     return {
         ...contexto,
-        venta: {
-            ...contexto.venta,
-            pagos,
+        pagos: {
+            lista: pagos,
+            total: pagos.length,
+            activo: null
         },
     }
 }
@@ -91,9 +133,10 @@ export const refrescarLineas: ProcesarVentaTpv = async (contexto) => {
     const lineas = await getLineas(contexto.venta.id);
     return {
         ...contexto,
-        venta: {
-            ...contexto.venta,
-            lineas
+        lineas: {
+            lista: lineas,
+            total: lineas.length,
+            activo: null
         }
     }
 }
@@ -109,7 +152,7 @@ export const activarPago: ProcesarVentaTpv = async (contexto, payload) => {
 
 const activarPagoPorIndice: (_: number) => ProcesarVentaTpv = (indice) => async (contexto) => {
 
-    const pagos = contexto.venta.pagos;
+    const pagos = contexto.pagos.lista;
     const pagoActivo = pagos.length > 0
         ? indice >= 0 && indice < pagos.length
             ? pagos[indice]
@@ -122,93 +165,62 @@ const activarPagoPorIndice: (_: number) => ProcesarVentaTpv = (indice) => async 
     }
 }
 
+export const getFormVenta = (contexto: ContextoVentaTpv, setCtx: (ctx: ContextoVentaTpv) => void, emitir: EmitirEvento): FormModelo => {
 
-// export const pagarConVale: ProcesarVentaTpv = async (contexto, payload) => {
+    const { venta, ventaInicial } = contexto
+    const meta = metaVentaTpv;
 
-//     const pagoConVale = payload as NuevoPagoVale;
-//     return await pagar(contexto, pagoConVale.importe, "VALE", pagoConVale.vale_id);
-// }
+    function onModeloCambiado(venta: VentaTpv) {
+        setCtx({ ...contexto, venta });
+    }
 
-// export const pagarEnEfectivo: ProcesarVentaTpv = async (contexto, payload) => {
+    async function autoGuardado(venta2: VentaTpv) {
+        await emitir("edicion_de_venta_lista", venta2);
+    }
 
-//     const pagoEnEfectivo = payload as NuevoPagoEfectivo;
-//     return await pagar(contexto, pagoEnEfectivo.importe, "EFECTIVO");
-// }
-
-// export const pagarConTarjeta: ProcesarVentaTpv = async (contexto, payload) => {
-
-//     const pagoConTarjeta = payload as NuevoPagoEfectivo;
-//     return await pagar(contexto, pagoConTarjeta.importe, "TARJETA");
-// }
-
-// const pagar = async (
-//     contexto: ContextoVentaTpv,
-//     importe: number,
-//     formaPago: string,
-//     idVale?: string
-// ): Promise<ResultadoProcesoContexto<EstadoVentaTpv, ContextoVentaTpv>> => {
-
-//     await postPago(
-//         contexto.venta.id,
-//         {
-//             importe,
-//             formaPago,
-//             idVale
-//         }
-//     );
-
-//     return pipeVentaTpv(contexto, [
-//         refrescarVenta,
-//         refrescarPagos,
-//         abiertaOEmitidaContexto,
-//     ]);
-// }
-
-export const onPagoBorrado: ProcesarVentaTpv = async (contexto, payload) => {
-
-    const idPago = payload as string;
-    // await deletePago(contexto.venta.id, idPago);
-
-    const indicePagoActivo = contexto.venta.pagos.findIndex(l => l.id === idPago);
-
-    return pipeVentaTpv(contexto, [
-        refrescarVenta,
-        refrescarPagos,
-        activarPagoPorIndice(indicePagoActivo),
-        'ABIERTA',
-    ]);
+    return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
 }
+
+
+
 
 export const cambiarVenta: ProcesarVentaTpv = async (contexto, payload) => {
 
     const venta = payload as VentaTpv;
-    await patchFactura(contexto.venta.id, venta)
+    await patchVenta(contexto.venta.id, venta)
 
     return pipeVentaTpv(contexto, [
-        refrescarVenta,
+        refrescarCabecera,
         'ABIERTA',
     ]);
 }
 
+
+// export const cambiarVenta2: ProcesarVentaTpv = async (contexto, payload) => {
+
+//     const venta = payload as VentaTpv;
+//     return {
+//         ...contexto,
+//         venta
+//     }
+// }
+
 export const onVentaBorrada: ProcesarVentaTpv = async (contexto) => {
 
     const venta = contexto.venta;
-    // await borrarFactura(venta.id);
 
     return pipeVentaTpv(contexto, [
         getContextoVacio,
-        publicar('venta_borrada', venta)
+        publicar('venta_borrada', venta.id)
     ]);
 }
 
 export const onLineaCreada: ProcesarVentaTpv = async (contexto, payload) => {
 
-    // const nuevaLinea = payload as NuevaLineaFactura;
-    // const idLinea = await postLinea(contexto.venta.id, nuevaLinea);
     const idLinea = payload as string;
 
     return pipeVentaTpv(contexto, [
-        refrescarVenta,
+        refrescarCabecera,
         refrescarLineas,
         activarLineaPorId(idLinea),
     ]);
@@ -223,7 +235,7 @@ export const crearLineaPorBarcode: ProcesarVentaTpv = async (contexto, payload) 
     });
 
     return pipeVentaTpv(contexto, [
-        refrescarVenta,
+        refrescarCabecera,
         refrescarLineas,
         activarLineaPorId(idLinea),
         'ABIERTA',
@@ -233,10 +245,9 @@ export const crearLineaPorBarcode: ProcesarVentaTpv = async (contexto, payload) 
 export const onLineaCambiada: ProcesarVentaTpv = async (contexto, payload) => {
 
     const linea = payload as LineaFactura;
-    // await patchLinea(contexto.venta.id, linea)
 
     return pipeVentaTpv(contexto, [
-        refrescarVenta,
+        refrescarCabecera,
         refrescarLineas,
         activarLineaPorId(linea.id),
         'ABIERTA',
@@ -248,10 +259,10 @@ export const onLineaBorrada: ProcesarVentaTpv = async (contexto, payload) => {
 
     const idLinea = payload as string;
 
-    const indiceLineaActiva = contexto.venta.lineas.findIndex(l => l.id === idLinea);
+    const indiceLineaActiva = contexto.lineas.lista.findIndex(l => l.id === idLinea);
 
     return pipeVentaTpv(contexto, [
-        refrescarVenta,
+        refrescarCabecera,
         refrescarLineas,
         activarLineaPorIndice(indiceLineaActiva),
         'ABIERTA',
@@ -264,25 +275,16 @@ export const emitirVale: ProcesarVentaTpv = async (contexto, payload) => {
     await postEmitirVale(venta)
 
     return pipeVentaTpv(contexto, [
-        refrescarVenta,
+        refrescarCabecera,
         refrescarPagos,
         abiertaOEmitidaContexto,
     ]);
 }
 
 
-export const activarLinea: ProcesarVentaTpv = async (contexto, payload) => {
-
-    const lineaActiva = payload as LineaFactura;
-    return {
-        ...contexto,
-        lineaActiva
-    }
-}
-
 const activarLineaPorIndice = (indice: number) => async (contexto: ContextoVentaTpv) => {
 
-    const lineas = contexto.venta.lineas;
+    const lineas = contexto.lineas.lista;
     const lineaActiva = lineas.length > 0
         ? indice >= 0 && indice < lineas.length
             ? lineas[indice]
@@ -291,18 +293,24 @@ const activarLineaPorIndice = (indice: number) => async (contexto: ContextoVenta
 
     return {
         ...contexto,
-        lineaActiva
+        lineas: {
+            ...contexto.lineas,
+            activo: lineaActiva
+        }
     }
 }
 
 const activarLineaPorId = (id: string) => async (contexto: ContextoVentaTpv) => {
 
-    const lineas = contexto.venta.lineas;
-    const lineaActiva = lineas.find(l => l.id === id) ?? null;
+    const lineas = contexto.lineas;
+    const lineaActiva = lineas.lista.find(l => l.id === id) ?? null;
 
     return {
         ...contexto,
-        lineaActiva
+        lineas: {
+            ...contexto.lineas,
+            activo: lineaActiva
+        }
     }
 }
 

@@ -44,12 +44,29 @@ export const incluirEnListaEntidades = <T extends Entidad>(prev: ListaEntidades<
 export const quitarDeListaEntidades = <T extends Entidad>(prev: ListaEntidades<T>, payload?: unknown): ListaEntidades<T> => {
     const idBorrada = payload as string;
 
+    const indiceEntidadActiva = prev.lista.findIndex(l => l.id === idBorrada);
+
     return pipe(
         prev,
         conLista(prev.lista.filter(elemento => elemento.id !== idBorrada)),
         conTotal(prev.total - 1),
-        conActivo(null as unknown as T),
+        activarEntidadPorIndice(indiceEntidadActiva),
     )
+}
+
+const activarEntidadPorIndice = <T extends Entidad>(indice: number): ProcesarListaEntidades<T> => (prev) => {
+
+    const lista = prev.lista;
+    const entidadActiva = lista.length > 0
+        ? indice >= 0 && indice < lista.length
+            ? lista[indice]
+            : lista[lista.length - 1]
+        : null
+
+    return {
+        ...prev,
+        activo: entidadActiva
+    }
 }
 
 export const cambiarEnListaEntidades = <T extends Entidad>(prev: ListaEntidades<T>, payload?: unknown): ListaEntidades<T> => {
