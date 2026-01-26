@@ -7,6 +7,7 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearEstadoOportunidad } from "../crear/CrearEstadoOportunidad.tsx";
 // import { DetalleEstadoOportunidad } from "../Detalle/DetalleEstadoOportunidad.tsx";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { DetalleEstadoOportunidad } from "../detalle/DetalleEstadoOportunidad.tsx";
 import { EstadoOportunidad } from "../diseño.ts";
 import { metaTablaEstadoOportunidad } from "./maestro.ts";
@@ -18,9 +19,7 @@ export const MaestroEstadosOportunidad = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    estados_oportunidad: [],
-    totalEstadosOportunidad: 0,
-    activo: null,
+    estados_oportunidad: listaEntidadesInicial<EstadoOportunidad>(),
   });
 
   const crear = useCallback(
@@ -64,18 +63,21 @@ export const MaestroEstadosOportunidad = () => {
               modo={"tabla"}
               // setModo={handleSetModoVisualizacion}
               // tarjeta={tarjeta}
-              entidades={ctx.estados_oportunidad}
-              totalEntidades={ctx.totalEstadosOportunidad}
-              seleccionada={ctx.activo}
+              entidades={ctx.estados_oportunidad.lista}
+              totalEntidades={ctx.estados_oportunidad.total}
+              seleccionada={ctx.estados_oportunidad.activo}
               onSeleccion={setSeleccionado}
               onCriteriaChanged={recargar}
             />
           </>
         }
         Detalle={
-          <DetalleEstadoOportunidad inicial={ctx.activo} publicar={emitir} />
+          <DetalleEstadoOportunidad
+            inicial={ctx.estados_oportunidad.activo}
+            publicar={emitir}
+          />
         }
-        seleccionada={ctx.activo}
+        seleccionada={ctx.estados_oportunidad.activo}
         modoDisposicion="maestro-50"
       />
       {ctx.estado === "CREANDO" && <CrearEstadoOportunidad publicar={emitir} />}

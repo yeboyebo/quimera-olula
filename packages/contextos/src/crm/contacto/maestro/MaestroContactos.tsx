@@ -4,6 +4,7 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearContacto } from "../crear/CrearContacto.tsx";
 import { Contacto } from "../diseño.ts";
@@ -17,9 +18,7 @@ export const MaestroContactos = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    contactos: [],
-    totalContactos: 0,
-    activo: null,
+    contactos: listaEntidadesInicial<Contacto>(),
   });
 
   const crear = useCallback(
@@ -62,18 +61,21 @@ export const MaestroContactos = () => {
               modo={"tabla"}
               // setModo={handleSetModoVisualizacion}
               // tarjeta={tarjeta}
-              entidades={ctx.contactos}
-              totalEntidades={ctx.totalContactos}
-              seleccionada={ctx.activo}
+              entidades={ctx.contactos.lista}
+              totalEntidades={ctx.contactos.total}
+              seleccionada={ctx.contactos.activo}
               onSeleccion={setSeleccionado}
               onCriteriaChanged={recargar}
             />
           </>
         }
         Detalle={
-          <DetalleContacto contactoInicial={ctx.activo} publicar={emitir} />
+          <DetalleContacto
+            contactoInicial={ctx.contactos.activo}
+            publicar={emitir}
+          />
         }
-        seleccionada={ctx.activo}
+        seleccionada={ctx.contactos.activo}
         modoDisposicion="maestro-50"
       />
 

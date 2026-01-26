@@ -4,6 +4,7 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearLead } from "../crear/CrearLead.tsx";
 import { DetalleLead } from "../detalle/DetalleLead.tsx";
@@ -17,9 +18,7 @@ export const MaestroLeads = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    leads: [],
-    totalLeads: 0,
-    activo: null,
+    leads: listaEntidadesInicial<Lead>(),
   });
 
   const crear = useCallback(
@@ -62,16 +61,16 @@ export const MaestroLeads = () => {
               modo={"tabla"}
               // setModo={handleSetModoVisualizacion}
               // tarjeta={tarjeta}
-              entidades={ctx.leads}
-              totalEntidades={ctx.totalLeads}
-              seleccionada={ctx.activo}
+              entidades={ctx.leads.lista}
+              totalEntidades={ctx.leads.total}
+              seleccionada={ctx.leads.activo}
               onSeleccion={setSeleccionado}
               onCriteriaChanged={recargar}
             />
           </>
         }
-        Detalle={<DetalleLead inicial={ctx.activo} publicar={emitir} />}
-        seleccionada={ctx.activo}
+        Detalle={<DetalleLead inicial={ctx.leads.activo} publicar={emitir} />}
+        seleccionada={ctx.leads.activo}
         modoDisposicion="maestro-50"
       />
       {ctx.estado === "CREANDO" && <CrearLead publicar={emitir} />}
