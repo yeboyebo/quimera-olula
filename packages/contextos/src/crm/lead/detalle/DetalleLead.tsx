@@ -5,11 +5,11 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useParams } from "react-router";
 import { BorrarLead } from "../borrar/BorrarLead.tsx";
 import { Lead } from "../diseño.ts";
-import { TabAcciones } from "../vistas/DetalleLead/TabAcciones.tsx";
-import { TabOportunidades } from "../vistas/DetalleLead/TabOportunidades.tsx";
+import { Acciones } from "./acciones/Acciones.tsx";
 import { leadVacio, metaLead } from "./detalle.ts";
 import "./DetalleLead.css";
 import { getMaquina } from "./maquina.ts";
+import { Oportunidades } from "./oportunidades/Oportunidades.tsx";
 import { TabDatos } from "./tabs/TabDatos.tsx";
 import { TabObservaciones } from "./tabs/TabObservaciones.tsx";
 
@@ -80,11 +80,11 @@ export const DetalleLead = ({
             </Tab>
 
             <Tab label="Oportunidades de Venta">
-              <TabOportunidades lead={lead} />
+              <Oportunidades lead={lead} />
             </Tab>
 
             <Tab label="Acciones">
-              <TabAcciones lead={lead} />
+              <Acciones lead={lead} />
             </Tab>
           </Tabs>
 
