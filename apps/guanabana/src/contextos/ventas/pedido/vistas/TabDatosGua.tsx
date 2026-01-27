@@ -1,5 +1,5 @@
+import { TabDatosBase } from "#/ventas/pedido/detalle/TabDatos.tsx";
 import { Pedido } from "#/ventas/pedido/diseño.ts";
-import { TabDatosBase } from "#/ventas/pedido/vistas/DetallePedido/TabDatos.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 

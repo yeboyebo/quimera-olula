@@ -1,0 +1,5 @@
+.Pedido .CrearPedido {
+    quimera-autocompletar[nombre="ClientePedido"] {
+        grid-column: span 12;
+    }
+}

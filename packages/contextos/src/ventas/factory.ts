@@ -1,8 +1,8 @@
 import { menuVentas } from "./menu.ts";
-import { metaPedido } from "./pedido/dominio.ts";
+import { TabDatosBase as PedidoTabDatosBase } from "./pedido/detalle/TabDatos.tsx";
+import { metaPedido } from "./pedido/detalle/dominio.ts";
 import { payloadPatchPedido, pedidoDesdeAPI } from "./pedido/infraestructura_base.ts";
-import { TabDatosBase as PedidoTabDatosBase } from "./pedido/vistas/DetallePedido/TabDatos.tsx";
-import { metaTablaPedido } from "./pedido/vistas/metatabla_pedido.ts";
+import { metaTablaPedido } from "./pedido/maestro/metatabla_pedido.ts";
 
 export class FactoryVentasOlula {
     static PedidoTabDatos = PedidoTabDatosBase
