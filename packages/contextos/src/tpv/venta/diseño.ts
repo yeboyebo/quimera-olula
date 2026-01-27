@@ -1,7 +1,8 @@
+import { ClienteFacturaRegistrado } from "#/ventas/factura/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
-import { ClienteVentaNoRegistrado, ClienteVentaRegistrado } from "../comun/diseño.ts";
+import { ClienteVentaNoRegistrado } from "../../ventas/comun/diseño.ts";
 
 export interface VentaTpv extends Venta {
     pendiente: number;
@@ -96,7 +97,7 @@ export type PostEmitirVale = (venta: VentaTpv) => Promise<void>;
 
 export type PatchVenta = (id: string, venta: VentaTpv) => Promise<void>;
 
-export type PatchVentaClienteRegistrado = (id: string, cliente: ClienteVentaRegistrado) => Promise<void>;
+export type PatchVentaClienteRegistrado = (id: string, cliente: ClienteFacturaRegistrado) => Promise<void>;
 
 export type PatchVentaClienteNoRegistrado = (id: string, cliente: ClienteVentaNoRegistrado) => Promise<void>;
 

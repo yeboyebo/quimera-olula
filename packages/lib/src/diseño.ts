@@ -1,4 +1,4 @@
-export type Modelo = {
+export interface Modelo {
     [clave: string]: unknown;
 };
 

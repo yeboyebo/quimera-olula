@@ -8,7 +8,7 @@ import { EmitirEvento } from "@olula/lib/diseño.js";
 import { FormModelo } from "@olula/lib/dominio.js";
 import { VentaTpv } from "../../diseño.ts";
 import { EstadoVentaTpv } from "../detalle.ts";
-import { CambiarCliente } from "./cambiar_cliente/CambioCliente.tsx";
+import { CambiarCliente } from "./cambiar_cliente/CambiarClienteVentaTpv.tsx";
 import "./TabCliente.css";
 
 interface TabClienteProps {
@@ -31,40 +31,33 @@ export const TabCliente = ({
     return (
         <div className="TabCliente">
             <quimera-formulario>
-            <CompAgenteTpv 
-                {...uiProps("idAgente", "agente")}
-                nombre="tpv_venta_agente_id"
-            />
-            <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
-            <QInput {...uiProps("id_fiscal")} label="ID Fiscal" />
-            <div id="cambiar_cliente" className="botones maestro-botones">
-                <QBoton
-                deshabilitado={!editable}
-                onClick={() => publicar("cambio_cliente_solicitado")}
-                >
-                C
-                </QBoton>
-            </div>
+                <CompAgenteTpv 
+                    {...uiProps("idAgente", "agente")}
+                    nombre="tpv_venta_agente_id"
+                />
+                <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
+                <QInput {...uiProps("id_fiscal")} label="ID Fiscal" />
+                <div id="cambiar_cliente" className="botones maestro-botones">
+                    <QBoton
+                    deshabilitado={!editable}
+                    onClick={() => publicar("cambio_cliente_solicitado")}
+                    >
+                    C
+                    </QBoton>
+                </div>
 
-            <DirCliente
-                clienteId={venta.cliente_id}
-                {...uiProps("direccion_id")}
-            />
+                <DirCliente
+                    clienteId={venta.cliente_id}
+                    {...uiProps("direccion_id")}
+                />
             </quimera-formulario>
 
-            {/* <QModal
-                nombre="modal"
-                abierto={estado === "CAMBIANDO_CLIENTE"}
-                onCerrar={() => publicar("cambio_cliente_cancelado")}
-            > */}
-            {
-            estado === "CAMBIANDO_CLIENTE" &&
+            { estado === "CAMBIANDO_CLIENTE" &&
                 <CambiarCliente
                     venta={venta}
                     publicar={publicar}
                 />
             }
-            {/* </QModal> */}
         </div>
     );
 };
