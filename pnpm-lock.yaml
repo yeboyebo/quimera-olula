@@ -109,6 +109,18 @@ importers:
         specifier: workspace:@quimera/core@*
         version: link:../../legacy/libs/core
 
+  apps/ecofricalia:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+
   apps/guanabana:
     dependencies:
       '@olula/componentes':
@@ -125,6 +137,24 @@ importers:
         version: link:../olula
 
   apps/legacy_app:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+      quimera:
+        specifier: workspace:@quimera/core@*
+        version: link:../../legacy/libs/core
+
+  apps/monterelax_area_clientes:
     dependencies:
       '@olula/componentes':
         specifier: workspace:*
@@ -584,6 +614,9 @@ importers:
       '@quimera-extension/login':
         specifier: workspace:*
         version: link:../../extensions/login
+      '@quimera-extension/monterelax-area_clientes':
+        specifier: workspace:*
+        version: link:../../extensions/monterelax/area_clientes
       '@quimera-extension/monterelax-erp':
         specifier: workspace:*
         version: link:../../extensions/monterelax/erp
