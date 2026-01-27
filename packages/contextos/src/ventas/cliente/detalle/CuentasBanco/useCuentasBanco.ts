@@ -1,6 +1,7 @@
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ContextoCuentasBanco } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
@@ -17,8 +18,7 @@ export const useCuentasBanco = (options: UseCuentasBancoOptions) => {
 
     const [ctx, setCtx] = useState<ContextoCuentasBanco>({
         estado: "lista",
-        cuentas: [],
-        cuentaActiva: null,
+        cuentas: listaEntidadesInicial(),
         cargando: true,
         clienteId,
     });
