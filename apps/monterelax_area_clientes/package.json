@@ -1,5 +1,5 @@
 {
-    "name": "@olula/monterelax",
+    "name": "@olula/monterelax_area_clientes",
     "version": "0.0.1",
     "type": "module",
     "types": "./**/declarations.d.ts",
