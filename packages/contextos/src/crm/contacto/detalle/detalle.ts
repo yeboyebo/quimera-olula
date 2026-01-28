@@ -54,11 +54,6 @@ export const refrescarContacto: ProcesarContacto = async (contexto) => {
     ]
 }
 
-export const cancelarCambioContacto: ProcesarContacto = async (contexto) => {
-
-    return conContacto(contexto.inicial)(contexto);
-}
-
 export const cambiarContacto: ProcesarContacto = async (contexto, payload) => {
     const contacto = payload as Contacto;
     await patchContacto(contexto.contacto.id, contacto)

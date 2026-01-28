@@ -81,11 +81,6 @@ export const refrescarOportunidad: ProcesarOportunidad = async (contexto) => {
     ]
 }
 
-export const cancelarCambioOportunidad: ProcesarOportunidad = async (contexto) => {
-
-    return conOportunidad(contexto.inicial)(contexto);
-}
-
 export const cambiarOportunidad: ProcesarOportunidad = async (contexto, payload) => {
     const oportunidad = payload as OportunidadVenta;
     await patchOportunidadVenta(contexto.oportunidad.id, oportunidad)

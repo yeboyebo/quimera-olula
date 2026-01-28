@@ -31,7 +31,6 @@ export const DetalleIncidencia = ({
     {
       estado: "INICIAL",
       incidencia: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );

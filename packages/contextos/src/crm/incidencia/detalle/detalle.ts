@@ -59,11 +59,6 @@ export const refrescarIncidencia: ProcesarIncidencia = async (contexto) => {
     ]
 }
 
-export const cancelarCambioIncidencia: ProcesarIncidencia = async (contexto) => {
-
-    return conIncidencia(contexto.inicial)(contexto);
-}
-
 export const cambiarIncidencia: ProcesarIncidencia = async (contexto, payload) => {
     const incidencia = payload as Incidencia;
     await patchIncidencia(contexto.incidencia.id, incidencia)

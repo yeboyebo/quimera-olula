@@ -53,11 +53,6 @@ export const refrescarEstadoOportunidad: ProcesarEstadoOportunidad = async (cont
     ]
 }
 
-export const cancelarCambioEstadoOportunidad: ProcesarEstadoOportunidad = async (contexto) => {
-
-    return conEstadoOportunidad(contexto.inicial)(contexto);
-}
-
 export const cambiarEstadoOportunidad: ProcesarEstadoOportunidad = async (contexto, payload) => {
     const estado_oportunidad = payload as EstadoOportunidad;
     await patchEstadoOportunidad(contexto.estado_oportunidad.id, estado_oportunidad)

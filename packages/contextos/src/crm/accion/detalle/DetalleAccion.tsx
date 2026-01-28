@@ -40,7 +40,6 @@ export const DetalleAccion = ({
     {
       estado: "INICIAL",
       accion: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );

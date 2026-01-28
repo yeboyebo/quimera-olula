@@ -33,7 +33,6 @@ export const DetalleContacto = ({
     {
       estado: "INICIAL",
       contacto: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );

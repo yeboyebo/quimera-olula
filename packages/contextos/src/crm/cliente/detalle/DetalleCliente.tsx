@@ -34,7 +34,6 @@ export const DetalleCliente = ({
     {
       estado: "INICIAL",
       cliente: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );

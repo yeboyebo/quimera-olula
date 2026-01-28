@@ -75,11 +75,6 @@ export const refrescarCliente: ProcesarCliente = async (contexto) => {
     ]
 }
 
-export const cancelarCambioCliente: ProcesarCliente = async (contexto) => {
-
-    return conCliente(contexto.inicial)(contexto);
-}
-
 export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
     const cliente = payload as Cliente;
     await patchCliente(contexto.cliente.id, cliente)

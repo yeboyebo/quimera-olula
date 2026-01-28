@@ -86,11 +86,6 @@ export const refrescarLead: ProcesarLead = async (contexto) => {
     ]
 }
 
-export const cancelarCambioLead: ProcesarLead = async (contexto) => {
-
-    return conLead(contexto.inicial)(contexto);
-}
-
 export const cambiarLead: ProcesarLead = async (contexto, payload) => {
     const lead = payload as Lead;
     await patchLead(contexto.lead.id, lead)

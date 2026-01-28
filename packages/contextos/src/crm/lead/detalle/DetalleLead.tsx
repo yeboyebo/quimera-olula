@@ -33,7 +33,6 @@ export const DetalleLead = ({
     {
       estado: "INICIAL",
       lead: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );

@@ -33,7 +33,6 @@ export const DetalleOportunidadVenta = ({
     {
       estado: "INICIAL",
       oportunidad: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );

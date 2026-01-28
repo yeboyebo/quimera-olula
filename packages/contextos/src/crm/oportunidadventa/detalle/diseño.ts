@@ -5,5 +5,4 @@ export type EstadoDetalleOportunidad = "INICIAL" | "BORRANDO";
 export type ContextoDetalleOportunidad = {
     estado: EstadoDetalleOportunidad;
     oportunidad: OportunidadVenta;
-    inicial: OportunidadVenta;
 };
