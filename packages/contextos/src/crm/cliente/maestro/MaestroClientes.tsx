@@ -6,8 +6,8 @@ import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
+import { DetalleCliente } from "../detalle/DetalleCliente.tsx";
 import { Cliente } from "../diseño.ts";
-import { DetalleCliente } from "../vistas/DetalleCliente/DetalleCliente.tsx";
 import { metaTablaCliente } from "./maestro.ts";
 import "./MaestroClientes.css";
 import { getMaquina } from "./maquina.ts";
@@ -69,10 +69,7 @@ export const MaestroClientes = () => {
           </>
         }
         Detalle={
-          <DetalleCliente
-            clienteInicial={ctx.clientes.activo}
-            publicar={emitir}
-          />
+          <DetalleCliente inicial={ctx.clientes.activo} publicar={emitir} />
         }
         seleccionada={ctx.clientes.activo}
         modoDisposicion="maestro-50"

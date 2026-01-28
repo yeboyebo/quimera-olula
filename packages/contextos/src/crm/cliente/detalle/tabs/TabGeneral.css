@@ -1,4 +1,4 @@
-.Cliente .TabGeneral {
+.DetalleCliente .TabGeneral {
     quimera-input[nombre="nombre"] {
         grid-column: span 12;
     }

@@ -9,7 +9,6 @@ import "./TabGeneral.css";
 interface TabGeneralProps {
   cliente: HookModelo<Cliente>;
   emitir: EmitirEvento;
-  recargarCliente: () => void;
 }
 
 export const TabGeneral = ({ cliente }: TabGeneralProps) => {

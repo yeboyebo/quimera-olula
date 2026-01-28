@@ -7,8 +7,8 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearContacto } from "../crear/CrearContacto.tsx";
+import { DetalleContacto } from "../detalle/DetalleContacto.tsx";
 import { Contacto } from "../diseño.ts";
-import { DetalleContacto } from "../vistas/DetalleContacto/DetalleContacto.tsx";
 import { metaTablaContacto } from "./maestro.ts";
 import "./MaestroContactos.css";
 import { getMaquina } from "./maquina.ts";
@@ -70,10 +70,7 @@ export const MaestroContactos = () => {
           </>
         }
         Detalle={
-          <DetalleContacto
-            contactoInicial={ctx.contactos.activo}
-            publicar={emitir}
-          />
+          <DetalleContacto inicial={ctx.contactos.activo} publicar={emitir} />
         }
         seleccionada={ctx.contactos.activo}
         modoDisposicion="maestro-50"

@@ -1,4 +1,4 @@
-.Contacto .TabGeneral {
+.DetalleContacto .TabGeneral {
     quimera-input[nombre="nombre"] {
         grid-column: 1 / span 8;
     }
