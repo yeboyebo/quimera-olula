@@ -1,11 +1,10 @@
 import { AgenteTpv as CompAgenteTpv } from "#/tpv/comun/componentes/AgenteTpv.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { FormModelo } from "@olula/lib/dominio.js";
+import { direccionCompleta, FormModelo } from "@olula/lib/dominio.js";
 import { CambiarCliente } from "../../cambiar_cliente/CambiarClienteVentaTpv.tsx";
 import { VentaTpv } from "../../diseño.ts";
 import { EstadoVentaTpv } from "../detalle.ts";
@@ -46,10 +45,14 @@ export const TabCliente = ({
                     </QBoton>
                 </div>
 
-                <DirCliente
+                <div id='direccion'>
+                    {direccionCompleta(venta.direccion)}
+                </div>
+
+                {/* <DirCliente
                     clienteId={venta.cliente_id}
                     {...uiProps("direccion_id")}
-                />
+                /> */}
             </quimera-formulario>
 
             { estado === "CAMBIANDO_CLIENTE" &&

@@ -20,6 +20,10 @@
         grid-column: span 3;
     }
 
+    div[id="direccion"] {
+        grid-column: span 12;
+    }
+
 
     div[id="cambiar_cliente"] {
         grid-column: span 1;
