@@ -22,16 +22,6 @@ export const MaestroOportunidades = () => {
     oportunidades: listaEntidadesInicial<OportunidadVenta>(),
   });
 
-  const crear = useCallback(
-    () => emitir("creacion_de_oportunidad_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionada = useCallback(
-    (payload: OportunidadVenta) => emitir("oportunidad_seleccionada", payload),
-    [emitir]
-  );
-
   const recargar = useCallback(
     async (criteria: Criteria) => {
       setCargando(true);
@@ -51,9 +41,15 @@ export const MaestroOportunidades = () => {
         Maestro={
           <>
             <h2>Oportunidades de Venta</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nueva</QBoton>
+              <QBoton
+                onClick={() => emitir("creacion_de_oportunidad_solicitada")}
+              >
+                Nueva
+              </QBoton>
             </div>
+
             <ListadoControlado<OportunidadVenta>
               metaTabla={metaTablaOportunidadVenta}
               metaFiltro={true}
@@ -66,7 +62,9 @@ export const MaestroOportunidades = () => {
               entidades={ctx.oportunidades.lista}
               totalEntidades={ctx.oportunidades.total}
               seleccionada={ctx.oportunidades.activo}
-              onSeleccion={setSeleccionada}
+              onSeleccion={(payload) =>
+                emitir("oportunidad_seleccionada", payload)
+              }
               onCriteriaChanged={recargar}
             />
           </>
@@ -80,6 +78,7 @@ export const MaestroOportunidades = () => {
         seleccionada={ctx.oportunidades.activo}
         modoDisposicion="maestro-50"
       />
+
       {ctx.estado === "CREANDO" && <CrearOportunidadVenta publicar={emitir} />}
     </div>
   );

@@ -21,16 +21,6 @@ export const MaestroContactos = () => {
     contactos: listaEntidadesInicial<Contacto>(),
   });
 
-  const crear = useCallback(
-    () => emitir("creacion_de_contacto_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionado = useCallback(
-    (payload: Contacto) => emitir("contacto_seleccionado", payload),
-    [emitir]
-  );
-
   const recargar = useCallback(
     async (criteria: Criteria) => {
       setCargando(true);
@@ -50,9 +40,13 @@ export const MaestroContactos = () => {
         Maestro={
           <>
             <h2>Contactos</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_contacto_solicitada")}>
+                Nuevo
+              </QBoton>
             </div>
+
             <ListadoControlado<Contacto>
               metaTabla={metaTablaContacto}
               metaFiltro={true}
@@ -64,7 +58,9 @@ export const MaestroContactos = () => {
               entidades={ctx.contactos.lista}
               totalEntidades={ctx.contactos.total}
               seleccionada={ctx.contactos.activo}
-              onSeleccion={setSeleccionado}
+              onSeleccion={(payload) =>
+                emitir("contacto_seleccionado", payload)
+              }
               onCriteriaChanged={recargar}
             />
           </>

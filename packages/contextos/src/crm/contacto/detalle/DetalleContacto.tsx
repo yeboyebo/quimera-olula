@@ -42,14 +42,6 @@ export const DetalleContacto = ({
     init(ctx.contacto);
   }
 
-  const guardar = async () => {
-    emitir("contacto_cambiado", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_contacto_cancelada");
-  };
-
   if (contactoId && contactoId !== modelo.id) {
     emitir("contacto_id_cambiado", contactoId);
   }
@@ -90,10 +82,17 @@ export const DetalleContacto = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("contacto_cambiado", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_contacto_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>

@@ -21,16 +21,6 @@ export const MaestroAcciones = () => {
     acciones: listaEntidadesInicial<Accion>(),
   });
 
-  const crear = useCallback(
-    () => emitir("creacion_de_accion_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionado = useCallback(
-    (payload: Accion) => emitir("accion_seleccionada", payload),
-    [emitir]
-  );
-
   const recargar = useCallback(
     async (criteria: Criteria) => {
       setCargando(true);
@@ -50,9 +40,13 @@ export const MaestroAcciones = () => {
         Maestro={
           <>
             <h2>Acciones</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nueva</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_accion_solicitada")}>
+                Nueva
+              </QBoton>
             </div>
+
             <ListadoControlado<Accion>
               metaTabla={metaTablaAccion}
               metaFiltro={true}
@@ -64,7 +58,7 @@ export const MaestroAcciones = () => {
               entidades={ctx.acciones.lista}
               totalEntidades={ctx.acciones.total}
               seleccionada={ctx.acciones.activo}
-              onSeleccion={setSeleccionado}
+              onSeleccion={(payload) => emitir("accion_seleccionada", payload)}
               onCriteriaChanged={recargar}
             />
           </>

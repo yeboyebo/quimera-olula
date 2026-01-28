@@ -43,14 +43,6 @@ export const DetalleCliente = ({
     init(ctx.cliente);
   }
 
-  const guardar = async () => {
-    emitir("cliente_cambiado", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_cliente_cancelada");
-  };
-
   if (clienteId && clienteId !== modelo.id) {
     emitir("cliente_id_cambiado", clienteId);
   }
@@ -95,10 +87,17 @@ export const DetalleCliente = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("cliente_cambiado", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_cliente_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>

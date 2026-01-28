@@ -42,14 +42,6 @@ export const DetalleOportunidadVenta = ({
     init(ctx.oportunidad);
   }
 
-  const guardar = async () => {
-    emitir("oportunidad_cambiada", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_oportunidad_cancelada");
-  };
-
   if (oportunidadId && oportunidadId !== modelo.id) {
     emitir("oportunidad_id_cambiado", oportunidadId);
   }
@@ -90,10 +82,17 @@ export const DetalleOportunidadVenta = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("oportunidad_cambiada", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_oportunidad_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>

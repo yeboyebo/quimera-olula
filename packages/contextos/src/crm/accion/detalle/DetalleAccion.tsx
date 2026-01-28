@@ -49,14 +49,6 @@ export const DetalleAccion = ({
     init(ctx.accion);
   }
 
-  const guardar = async () => {
-    emitir("accion_cambiada", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_accion_cancelada");
-  };
-
   if (accionId && accionId !== modelo.id) {
     emitir("accion_id_cambiada", accionId);
   }
@@ -103,10 +95,17 @@ export const DetalleAccion = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("accion_cambiada", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_accion_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>

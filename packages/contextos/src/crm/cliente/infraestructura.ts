@@ -53,8 +53,8 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
 export const deleteCliente = async (id: string): Promise<void> =>
   await RestAPI.delete(`${UrlsVentas.CLIENTE}/${id}`, "Error al borrar cliente");
 
-export const getOportunidadesVentaCliente = async (clienteId: string): Promise<OportunidadVenta[]> =>
-  await RestAPI.get<{ datos: OportunidadVenta[] }>(`${UrlsCrm.CLIENTE}/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta.datos);
+export const getOportunidadesVentaCliente = async (clienteId: string): RespuestaLista<OportunidadVenta> =>
+  await RestAPI.get<{ datos: OportunidadVenta[], total: number }>(`${UrlsCrm.CLIENTE}/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta);
 
 export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta> =>
   await RestAPI.get<{ datos: OportunidadVenta }>(`${UrlsCrm.OPORTUNIDAD_VENTA}/${id}`).then((respuesta) => respuesta.datos);
@@ -81,5 +81,5 @@ export const getAccionesCliente = async (clienteId: string) => {
   const filtro = ['cliente_id', clienteId] as unknown as Filtro;
   const orden = [] as Orden;
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: Accion[] }>(UrlsCrm.ACCION + q).then((respuesta) => respuesta.datos);
+  return RestAPI.get<{ datos: Accion[], total: number }>(UrlsCrm.ACCION + q).then((respuesta) => respuesta);
 };

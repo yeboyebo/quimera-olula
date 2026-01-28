@@ -14,13 +14,6 @@ export const getMaquina: () => Maquina<EstadoMaestroClientes, ContextoMaestroCli
             cliente_borrado: [Clientes.quitar],
 
             recarga_de_clientes_solicitada: recargarClientes,
-
-            creacion_de_cliente_solicitada: "CREANDO",
-        },
-        CREANDO: {
-            creacion_cliente_cancelada: "INICIAL",
-
-            cliente_creado: [Clientes.incluir, Clientes.activar, "INICIAL"],
         }
     }
 }

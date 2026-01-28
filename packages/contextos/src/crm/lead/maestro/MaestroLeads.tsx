@@ -21,16 +21,6 @@ export const MaestroLeads = () => {
     leads: listaEntidadesInicial<Lead>(),
   });
 
-  const crear = useCallback(
-    () => emitir("creacion_de_lead_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionado = useCallback(
-    (payload: Lead) => emitir("lead_seleccionado", payload),
-    [emitir]
-  );
-
   const recargar = useCallback(
     async (criteria: Criteria) => {
       setCargando(true);
@@ -50,9 +40,13 @@ export const MaestroLeads = () => {
         Maestro={
           <>
             <h2>Leads</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_lead_solicitada")}>
+                Nuevo
+              </QBoton>
             </div>
+
             <ListadoControlado<Lead>
               metaTabla={metaTablaLead}
               metaFiltro={true}
@@ -64,7 +58,7 @@ export const MaestroLeads = () => {
               entidades={ctx.leads.lista}
               totalEntidades={ctx.leads.total}
               seleccionada={ctx.leads.activo}
-              onSeleccion={setSeleccionado}
+              onSeleccion={(payload) => emitir("lead_seleccionado", payload)}
               onCriteriaChanged={recargar}
             />
           </>
@@ -73,6 +67,7 @@ export const MaestroLeads = () => {
         seleccionada={ctx.leads.activo}
         modoDisposicion="maestro-50"
       />
+
       {ctx.estado === "CREANDO" && <CrearLead publicar={emitir} />}
     </div>
   );

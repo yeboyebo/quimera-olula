@@ -42,14 +42,6 @@ export const DetalleLead = ({
     init(ctx.lead);
   }
 
-  const guardar = async () => {
-    emitir("lead_cambiado", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_lead_cancelada");
-  };
-
   if (leadId && leadId !== modelo.id) {
     emitir("lead_id_cambiado", leadId);
   }
@@ -90,10 +82,17 @@ export const DetalleLead = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("lead_cambiado", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_lead_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>
