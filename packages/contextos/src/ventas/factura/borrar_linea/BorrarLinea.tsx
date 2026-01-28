@@ -1,11 +1,11 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 
 export const BorrarLinea = ({
   publicar,
   idLinea,
 }: {
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
   idLinea: string;
 }) => {
   return (

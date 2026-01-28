@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { NuevaFamilia } from "../diseño.ts";
@@ -11,10 +11,10 @@ import { getFamilia, postFamilia } from "../infraestructura.ts";
 import "./CrearFamilia.css";
 
 export const CrearFamilia = ({
-  publicar = () => {},
+  publicar = async () => {},
   activo = false,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   activo: boolean;
 }) => {
   const familia = useModelo(metaNuevaFamilia, {
@@ -34,10 +34,10 @@ export const CrearFamilia = ({
 };
 
 const FormAltaFamilia = ({
-  publicar = () => {},
+  publicar = async () => {},
   familia,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   familia: HookModelo<NuevaFamilia>;
 }) => {
   const { intentar } = useContext(ContextoError);

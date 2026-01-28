@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/index.ts";
+import { EmitirEvento } from "@olula/lib/diseño.js";
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { LineaPresupuesto, Presupuesto } from "../../diseño.ts";
@@ -14,7 +15,7 @@ export const Lineas = ({
   presupuesto: Presupuesto;
   lineaActiva: LineaPresupuesto | null;
   estadoPresupuesto: string;
-  publicar: (evento: string, payload?: unknown) => void;
+  publicar: EmitirEvento;
 }) => {
   const handleCambioCantidad = (linea: LineaPresupuesto, cantidad: number) => {
     publicar("cambio_cantidad_linea_solicitado", {

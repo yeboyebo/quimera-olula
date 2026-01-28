@@ -22,7 +22,7 @@ const maquina = getMaquina();
 
 export const DetalleArqueoTpv = ({
     arqueoInicial = null,
-    publicar = () => {},
+    publicar = async () => {},
 }: {
     arqueoInicial?: ArqueoTpv | null;
     publicar?: EmitirEvento;

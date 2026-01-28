@@ -6,9 +6,9 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { FormModelo } from "@olula/lib/dominio.js";
+import { CambiarCliente } from "../../cambiar_cliente/CambiarClienteVentaTpv.tsx";
 import { VentaTpv } from "../../diseño.ts";
 import { EstadoVentaTpv } from "../detalle.ts";
-import { CambiarCliente } from "./cambiar_cliente/CambiarClienteVentaTpv.tsx";
 import "./TabCliente.css";
 
 interface TabClienteProps {

@@ -4,8 +4,8 @@ import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
 import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { FormModelo } from "@olula/lib/dominio.js";
 import { VentaTpv } from "../../diseño.ts";
-import { FormModelo } from "../detalle.ts";
 import "./TabDatos.css";
 
 interface TabDatosProps {
@@ -13,7 +13,7 @@ interface TabDatosProps {
     form: FormModelo;
 }
 
-export const TabDatos = ({ venta, form }: TabDatosProps) => {
+export const TabDatos = ({ form }: TabDatosProps) => {
     
     const { uiProps } = form;
 

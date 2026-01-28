@@ -3,7 +3,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
@@ -23,10 +23,10 @@ const titulo = (transferencia: TransferenciaStock) =>
 
 export const DetalleTransferenciaStock = ({
   inicial: inicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   inicial?: TransferenciaStock | null;
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
 }) => {
   const params = useParams();
   const { intentar } = useContext(ContextoError);

@@ -20,9 +20,9 @@ export const CrearFactura = ({
     const guardar = async(alta: ModeloAltaFacturaNoRegistrada | ModeloAltaFacturaRegistrada) => {
         
         if ('idCliente' in alta) {
-            const registrado = alta as ModeloAltaFacturaRegistrada
-            await intentar(() => crearFacturaRegistrada(registrado))
-            publicar("factura_creada", registrado);
+            const registrada = alta as ModeloAltaFacturaRegistrada
+            await intentar(() => crearFacturaRegistrada(registrada))
+            publicar("factura_creada", registrada);
 
         } else {
             throw new Error("No implementado");

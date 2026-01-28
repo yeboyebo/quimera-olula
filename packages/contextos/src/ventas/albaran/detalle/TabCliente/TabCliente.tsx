@@ -3,7 +3,7 @@ import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Albaran } from "../../diseño.ts";
 import { editable } from "../../dominio.ts";
@@ -13,13 +13,13 @@ import "./TabCliente.css";
 interface TabClienteProps {
   albaran: HookModelo<Albaran>;
   estado: EstadoAlbaran;
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
 }
 
 export const TabCliente = ({
   albaran,
   estado,
-  publicar = () => {},
+  publicar = async () => {},
 }: TabClienteProps) => {
   const { modelo, uiProps } = albaran;
 

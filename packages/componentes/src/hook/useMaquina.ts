@@ -37,7 +37,7 @@ export function useMaquina<Estado extends string, C extends Contexto<Estado>>(
         }
 
         // return eventos;
-    }, [ctx, maquina, intentar, publicar]);
+    }, [ctx, maquina, intentar, publicar, contextoInicial.estado]);
 
     return {
         ctx,

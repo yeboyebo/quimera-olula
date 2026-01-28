@@ -1,6 +1,7 @@
-import { UiProps, ValorControl } from "useModelo.ts";
+// import { UiProps, ValorControl } from "useModelo.ts";
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
 import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
+import { UiProps, ValorControl } from "./useModelo.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {

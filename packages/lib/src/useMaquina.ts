@@ -6,7 +6,7 @@ export type Maquina<E extends string> = Record<E, Record<string, E | OnEvento<E>
 
 
 
-type ProcesarEvento = (evento: string, payload?: unknown) => void;
+export type ProcesarEvento = (evento: string, payload?: unknown) => void;
 export function useMaquina<Estado extends string>(
     maquina: Maquina<Estado>,
     estado: Estado,

@@ -40,7 +40,7 @@ const titulo = (modulo: Entidad) => modulo.nombre as string;
 
 export const DetalleModulo = ({
   moduloInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   moduloInicial?: Modulo | null;
   publicar?: EmitirEvento;
