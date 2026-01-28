@@ -98,6 +98,7 @@ export const DetalleLead = ({
               </QBoton>
             </div>
           )}
+
           {ctx.estado === "BORRANDO" && (
             <BorrarLead publicar={emitir} lead={modelo} />
           )}
