@@ -1,11 +1,13 @@
+import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { AgenteTpvActual } from "#/tpv/agente/agente_actual/AgenteTpvActual.tsx";
 import { PuntoVentaTpvActual } from "#/tpv/punto_de_venta/punto_actual/PuntoVentaTpvActual.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { criteriaDefecto, formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { DetalleVentaTpv } from "../detalle/DetalleVentaTpv.tsx";
@@ -29,30 +31,13 @@ type Layout = "TABLA" | "TARJETA";
 
 export const MaestroConDetalleVentaTpv = () => {
 
-    // const { intentar } = useContext(ContextoError);
-
     const [cargando, setCargando] = useState(false);
     const [layout, setLayout] = useState<Layout>("TARJETA");
 
-    // const [ctx, setCtx] = useState<ContextoMaestroVentasTpv>({
     const { ctx, emitir } = useMaquina(getMaquina, {
         estado: "INICIAL",
         ventas: listaEntidadesInicial<VentaTpv>()
-        // ventas: [],
-        // totalVentas: 0,
-        // ventaActiva: null,
     })
-
-    // const emitir = useCallback(
-    //     async (evento: string, payload?: unknown) => {
-
-    //         const [nuevoContexto, _] = await intentar(
-    //             () => procesarEvento(maquina, ctx, evento, payload, )
-    //         );
-    //         setCtx(nuevoContexto);
-    //     },
-    //     [ctx, setCtx, setCargando,intentar]
-    // );
 
     const cambiarLayout = useCallback(
         () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
@@ -133,7 +118,64 @@ const TarjetaVentaTpv = (
 
     return (
         <div className="tarjeta-venta">
-            {venta.codigo}
+            <div className="tarjeta-venta-izquierda">
+                <ColumnaEstadoTabla
+                    estados={{
+                        abierta,
+                        cerrada,
+                    }}
+                    estadoActual={venta.abierta ? "abierta" : "cerrada"}
+                />
+                <div className='tarjeta-venta-izquierda-textos'>
+                    <div>
+                    {`${venta.codigo} - ${formatearFechaDate(venta.fecha)}`}
+                    </div>
+                    { venta.nombre_cliente !== 'VENTA AL CONTADO' &&
+                        <div>
+                            {venta.nombre_cliente}
+                        </div>
+                    }
+                </div>
+            </div>
+            <div className="tarjeta-venta-derecha">
+                {`${formatearMoneda(venta.total, venta.divisa_id)}`}
+            </div>
         </div>
     )
 }
+
+const abierta = (
+    <QIcono
+        nombre={"circulo_relleno"}
+        tamaño="sm"
+        color="var(--color-exito-oscuro)"
+    />
+)
+
+const cerrada = (
+    <QIcono
+        nombre={"circulo_relleno"}
+        tamaño="sm"
+        color="var(--color-deshabilitado-oscuro)"
+    />
+)
+
+{/* <ColumnaEstadoTabla
+    estados={{
+    aprobado: (
+        <QIcono
+        nombre={"circulo_relleno"}
+        tamaño="sm"
+        color="var(--color-deshabilitado-oscuro)"
+        />
+    ),
+    pendiente: (
+        <QIcono
+        nombre={"circulo_relleno"}
+        tamaño="sm"
+        color="var(--color-exito-oscuro)"
+        />
+    ),
+    }}
+    estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
+/> */}

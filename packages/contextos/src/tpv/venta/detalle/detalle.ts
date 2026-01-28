@@ -1,11 +1,12 @@
 import { ejecutarListaProcesos, FormModelo, getFormProps, MetaModelo, publicar } from "@olula/lib/dominio.ts";
 
 import { cambioClienteVentaVacio, metaCambioClienteVenta, metaVenta } from "#/ventas/venta/dominio.ts";
+import { Intentar } from "@olula/lib/contexto.js";
 import { EmitirEvento, ProcesarContexto } from "@olula/lib/diseño.js";
 import { accionesListaEntidades, ListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CambioClienteFactura, LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
-import { getLineas, getPagos, getVenta, patchVenta, postEmitirVale, postLineaPorBarcode } from "../infraestructura.ts";
+import { getLineas, getPagos, getVenta, patchFechaVenta, patchVenta, postEmitirVale, postLineaPorBarcode } from "../infraestructura.ts";
 
 
 export const cambioClienteFacturaVacio: CambioClienteFactura = cambioClienteVentaVacio;
@@ -165,7 +166,12 @@ const activarPagoPorIndice: (_: number) => ProcesarVentaTpv = (indice) => async 
     }
 }
 
-export const getFormVenta = (contexto: ContextoVentaTpv, setCtx: (ctx: ContextoVentaTpv) => void, emitir: EmitirEvento): FormModelo => {
+export const getFormVenta = (
+    contexto: ContextoVentaTpv,
+    setCtx: (ctx: ContextoVentaTpv) => void,
+    emitir: EmitirEvento,
+    intentar: Intentar
+): FormModelo => {
 
     const { venta, ventaInicial } = contexto
     const meta = metaVentaTpv;
@@ -174,14 +180,24 @@ export const getFormVenta = (contexto: ContextoVentaTpv, setCtx: (ctx: ContextoV
         setCtx({ ...contexto, venta });
     }
 
-    async function autoGuardado(venta2: VentaTpv) {
-        await emitir("edicion_de_venta_lista", venta2);
+    async function autoGuardado(venta: VentaTpv) {
+        await intentar(async () => {
+            await guardarVenta(contexto, venta);
+            await emitir("venta_guardada");
+        });
     }
 
     return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
 }
 
-
+const guardarVenta = async (contexto: ContextoVentaTpv, venta: VentaTpv): Promise<void> => {
+    if (venta.idAgente !== contexto.ventaInicial.idAgente) {
+        await patchVenta(contexto.venta.id, venta);
+    }
+    if (venta.fecha !== contexto.ventaInicial.fecha) {
+        await patchFechaVenta(contexto.venta.id, venta.fecha);
+    }
+}
 
 
 export const cambiarVenta: ProcesarVentaTpv = async (contexto, payload) => {

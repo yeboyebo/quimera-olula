@@ -4,14 +4,14 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchLinea, PatchVenta, PatchVentaClienteNoRegistrado, PatchVentaClienteRegistrado, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PatchVentaClienteNoRegistrado, PatchVentaClienteRegistrado, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrlFactura = new Ventas_Urls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
 
 
 type LineaFacturaAPI = LineaFactura;
-type PagoVentaTpvAPI = PagoVentaTpv
+type PagoVentaTpvAPI = PagoVentaTpv;
 type VentaTpvAPI = VentaTpv & {
     fecha: string
     punto_venta_id: string,
@@ -46,7 +46,9 @@ export const ventaADevolverDesdeAPI = (venta: VentaTpvADevolverAPI): VentaTpvADe
 )
 
 export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
-export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => p;
+export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
+    ...p,
+});
 
 export const getVenta: GetVentaTpv = async (id) => {
     return RestAPI.get<{ datos: VentaTpvAPI }>(
@@ -224,6 +226,7 @@ export const patchVenta: PatchVenta = async (id, venta) => {
     const payload = {
         agente_id: venta.idAgente,
         // fecha: venta.fecha,
+        // fecha: venta.fecha,
         // cliente_id: venta.cliente_id,
         // nombre_cliente: venta.nombre_cliente,
         // id_fiscal: venta.id_fiscal,
@@ -236,6 +239,19 @@ export const patchVenta: PatchVenta = async (id, venta) => {
     // console.log('patchVenta', payload);
 
     await RestAPI.patch(`${baseUrl}/${id}`, payload,
+        'Error al guardar la venta'
+    );
+};
+
+export const patchFechaVenta: PatchFechaVenta = async (id, fecha) => {
+
+    const payload = {
+        cambios: {
+            fecha,
+        }
+    };
+
+    await RestAPI.patch(`${baseUrlFactura}/${id}`, payload,
         'Error al guardar la venta'
     );
 };

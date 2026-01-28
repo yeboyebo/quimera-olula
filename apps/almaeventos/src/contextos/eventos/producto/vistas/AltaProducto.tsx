@@ -7,7 +7,7 @@ import { metaNuevoProducto, nuevoProductoVacio } from "../dominio.ts";
 import { getProducto, postProducto } from "../infraestructura.ts";
 
 export const AltaProducto = ({
-  emitir = () => {},
+  emitir = async () => {},
 }: {
   emitir?: EmitirEvento;
 }) => {

@@ -50,6 +50,8 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             venta_cambiada: [refrescarCabecera],
 
+            venta_guardada: [refrescarCabecera],
+
             edicion_de_venta_lista: [cambiarVenta],
 
             edicion_de_venta_cancelada: [cancelarcambioVenta],

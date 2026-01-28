@@ -9,8 +9,8 @@ import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { CambiarLineaTpv } from "../../cambiar_linea/CambiarLineaTpv.tsx";
 import { EstadoVentaTpv } from "../detalle.ts";
+import "./Lineas.css";
 import { LineasLista } from "./LineasLista.tsx";
-
 export const Lineas = ({
         venta,
         lineas,
@@ -38,34 +38,37 @@ export const Lineas = ({
     return (
         <>
             {estadoVenta !== "EMITIDA" && (
-                
-                <div className="botones maestro-botones ">
-                    {venta.total >= 0 && (
-                        <QBoton onClick={() => publicar("devolucion_solicitada")}>
-                            Devolución
-                        </QBoton>
-                    )}
+                <div className="lineas-venta-tpv">
                     <QInput label='Barcode' nombre='barcode'
                         onEnterKeyUp={altaRapida}
                         ref={focus}
                     />
-                    
-                    <QBoton
-                        onClick={() => publicar("alta_linea_solicitada")}
-                    > Nueva
-                    </QBoton>
-                    
-                    <QBoton
-                        deshabilitado={!lineas.activo}
-                        onClick={() => publicar("cambio_linea_solicitado")}
-                    > Editar
-                    </QBoton>
-                    
-                    <QBoton
-                        deshabilitado={!lineas.activo}
-                        onClick={() => publicar("baja_linea_solicitada")}
-                    > Borrar
-                    </QBoton>
+                    <div className="botones maestro-botones">
+                        
+                        {venta.total >= 0 && (
+                            <QBoton onClick={() => publicar("devolucion_solicitada")}>
+                                Devolución
+                            </QBoton>
+                        )}
+                        
+                        
+                        <QBoton
+                            onClick={() => publicar("alta_linea_solicitada")}
+                        > Nueva
+                        </QBoton>
+                        
+                        <QBoton
+                            deshabilitado={!lineas.activo}
+                            onClick={() => publicar("cambio_linea_solicitado")}
+                        > Editar
+                        </QBoton>
+                        
+                        <QBoton
+                            deshabilitado={!lineas.activo}
+                            onClick={() => publicar("baja_linea_solicitada")}
+                        > Borrar
+                        </QBoton>
+                    </div>
                 </div>
             )}
             <LineasLista

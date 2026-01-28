@@ -32,6 +32,7 @@ export interface PagoVentaTpv extends Entidad {
     importe: number;
     forma_pago: string;
     fecha: string;
+    vale: string | null;
 }
 
 
@@ -96,6 +97,8 @@ export type PostLineaPorBarcode = (id: string, lineaPorBarcode: LineaPorBarcode)
 export type PostEmitirVale = (venta: VentaTpv) => Promise<void>;
 
 export type PatchVenta = (id: string, venta: VentaTpv) => Promise<void>;
+
+export type PatchFechaVenta = (id: string, fecha: Date) => Promise<void>;
 
 export type PatchVentaClienteRegistrado = (id: string, cliente: ClienteFacturaRegistrado) => Promise<void>;
 

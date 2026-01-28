@@ -1,8 +1,7 @@
 import { AgenteTpv as CompAgenteTpv } from "#/tpv/comun/componentes/AgenteTpv.tsx";
-import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 
+import { QDate } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { direccionCompleta, FormModelo } from "@olula/lib/dominio.js";
 import { CambiarCliente } from "../../cambiar_cliente/CambiarClienteVentaTpv.tsx";
@@ -34,25 +33,21 @@ export const TabCliente = ({
                     {...uiProps("idAgente", "agente")}
                     nombre="tpv_venta_agente_id"
                 />
-                <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
-                <QInput {...uiProps("id_fiscal")} label="ID Fiscal" />
-                <div id="cambiar_cliente" className="botones maestro-botones">
-                    <QBoton
-                    deshabilitado={!editable}
-                    onClick={() => publicar("cambio_cliente_solicitado")}
-                    >
-                    C
-                    </QBoton>
+                <QDate label="Fecha" {...uiProps("fecha")} />
+ 
+                <div id='nombre'>
+                    {`${venta.nombre_cliente} ${venta.id_fiscal}`}
+                    <QBoton texto='Cambiar cliente'
+                        onClick={() => publicar("cambio_cliente_solicitado")}
+                        deshabilitado={!editable}
+                        tamaño="pequeño"
+                    />
                 </div>
-
+ 
                 <div id='direccion'>
                     {direccionCompleta(venta.direccion)}
                 </div>
 
-                {/* <DirCliente
-                    clienteId={venta.cliente_id}
-                    {...uiProps("direccion_id")}
-                /> */}
             </quimera-formulario>
 
             { estado === "CAMBIANDO_CLIENTE" &&

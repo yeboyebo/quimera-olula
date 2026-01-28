@@ -1,6 +1,6 @@
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { LineaFactura as Linea } from "../../diseño.ts";
+import { LineaFactura as Linea, LineaFactura } from "../../diseño.ts";
 
 export const LineasLista = ({
   lineas,
@@ -71,53 +71,24 @@ export const LineaVenta = ({
   );
 };
 
-const getMetaTablaLineas = (
-  // cambiarCantidad: (linea: Linea, cantidad: number) => void
-) => {
-  return [
-    {
-      id: "linea",
-      cabecera: "Lineas",
-      render: (linea: Linea) => (
-        <LineaVenta
-          linea={linea}
-        />
-      ),
-    },
-    // { id: "pvp_unitario", cabecera: "Precio" },
-    // { id: "grupo_iva_producto_id", cabecera: "IVA" },
-    // {
-    //   id: "dto_porcentual",
-    //   cabecera: "% Dto.",
-    //   render: (linea: Linea) =>
-    //     linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
-    // },
-    // { id: "pvp_total", cabecera: "Total" },
-  ];
-  // return [
-  //   {
-  //     id: "linea",
-  //     cabecera: "Línea",
-  //     render: (linea: Linea) => `${linea.referencia}: ${linea.descripcion}`,
-  //   },
-  //   {
-  //     id: "cantidad",
-  //     cabecera: "Cantidad",
-  //     render: (linea: Linea) => (
-  //       <EditarCantidadLinea
-  //         linea={linea}
-  //         onCantidadEditada={cambiarCantidad}
-  //       />
-  //     ),
-  //   },
-  //   { id: "pvp_unitario", cabecera: "Precio" },
-  //   { id: "grupo_iva_producto_id", cabecera: "IVA" },
-  //   {
-  //     id: "dto_porcentual",
-  //     cabecera: "% Dto.",
-  //     render: (linea: Linea) =>
-  //       linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
-  //   },
-  //   { id: "pvp_total", cabecera: "Total" },
-  // ];
+const getMetaTablaLineas = () => {
+    const meta:MetaTabla<LineaFactura> = [
+        {
+            id: "linea",
+            cabecera: "Lineas",
+            render: (linea: Linea) => `${linea.referencia}: ${linea.descripcion}`
+        },
+        { id: "pvp_unitario", cabecera: "Precio", tipo: "moneda" },
+        { id: "cantidad", cabecera: "Cantidad", tipo: "numero" },
+        {
+            id: "dto_porcentual",
+            cabecera: "% Dto.",
+            tipo: "numero",
+            render: (linea: Linea) =>
+                linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
+        },
+        { id: "pvp_total", cabecera: "Total", tipo: "moneda" },
+    ];
+
+    return meta;
 };

@@ -1,9 +1,10 @@
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
@@ -19,7 +20,6 @@ import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { Pagos } from "./pagos/Pagos.tsx";
 import { TabCliente } from "./tabs/TabCliente.tsx";
-import { TabDatos } from "./tabs/TabDatos.tsx";
 
 
 
@@ -31,6 +31,8 @@ export const DetalleVentaTpv = ({
     publicar?: EmitirEvento;
 }) => {
     const params = useParams();
+
+    const {intentar} = useContext(ContextoError);
 
     const contextoInicial:ContextoVentaTpv = {
         estado: 'INICIAL',
@@ -48,23 +50,14 @@ export const DetalleVentaTpv = ({
         contextoInicial,
         publicar
     )
-
-    const guardar = async () => {
-        emitir("edicion_de_venta_lista", venta);
-    };
-    
-    const cancelar = () => {
-        emitir("edicion_de_venta_cancelada");
-    };
-    
-    
+  
     useEffect(() => {
         if (ventaId && ventaId !== ctx?.venta.id) {
             emitir("venta_id_cambiada", ventaId, true);
         }
     }, [ventaId, emitir, ctx]);
     
-    const formVenta = getFormVenta(ctx, setCtx, emitir);
+    const formVenta = getFormVenta(ctx, setCtx, emitir, intentar);
           
     const { estado, pagos, lineas, venta } = ctx;
   
@@ -80,9 +73,9 @@ export const DetalleVentaTpv = ({
             <div className="DetalleFactura">
                 { estado !== "EMITIDA" && (
                     <div className="botones maestro-botones ">
-                    <QBoton onClick={() => emitir("borrar_solicitado")}>
-                        Borrar
-                    </QBoton> 
+                        <QBoton texto='Borrar venta'
+                            onClick={() => emitir("borrar_solicitado")}
+                        />
                     </div>
                 )}
                 <Tabs
@@ -100,11 +93,6 @@ export const DetalleVentaTpv = ({
                         }
                     />,
                     <Tab
-                        key="tab-2"
-                        label="Datos"
-                        children={<TabDatos venta={venta} form={formVenta} />}
-                    />,
-                    <Tab
                         key="tab-3"
                         label="Pagos"
                         children={
@@ -117,16 +105,6 @@ export const DetalleVentaTpv = ({
                     />,
                     ]}
                 ></Tabs>
-                {formVenta.modificado && (
-                    <div className="botones maestro-botones ">
-                    <QBoton onClick={guardar} deshabilitado={!formVenta.valido}>
-                        Guardar
-                    </QBoton>
-                    <QBoton tipo="reset" variante="texto" onClick={cancelar}>
-                        Cancelar
-                    </QBoton>
-                    </div>
-                )}
 
                 <TotalesVenta
                     neto={Number(venta.neto ?? 0)}
