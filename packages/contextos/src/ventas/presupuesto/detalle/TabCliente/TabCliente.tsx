@@ -18,7 +18,7 @@ interface TabClienteProps {
 export const TabCliente = ({
   presupuesto,
   estado,
-  publicar = () => {},
+  publicar = async () => {},
 }: TabClienteProps) => {
   const { modelo, uiProps } = presupuesto;
 

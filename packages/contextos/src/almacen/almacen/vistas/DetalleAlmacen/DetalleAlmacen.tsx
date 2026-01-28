@@ -3,8 +3,8 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
-import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
+import { Entidad } from "@olula/lib/diseño.ts";
+import { ConfigMaquina4, ProcesarEvento, useMaquina4 } from "@olula/lib/useMaquina.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
@@ -38,10 +38,10 @@ const titulo = (almacen: Entidad) => almacen.descripcion as string;
 
 export const DetalleAlmacen = ({
   almacenInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   almacenInicial?: Almacen | null;
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
 }) => {
   const params = useParams();
   const { intentar } = useContext(ContextoError);

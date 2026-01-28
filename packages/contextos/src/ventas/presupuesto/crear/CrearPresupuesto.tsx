@@ -8,20 +8,20 @@ import { useContext, useState } from "react";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import {
-  NuevoPresupuesto,
-  NuevoPresupuestoClienteNoRegistrado,
+    NuevoPresupuesto,
+    NuevoPresupuestoClienteNoRegistrado,
 } from "../diseño.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
 import "./CrearPresupuesto.css";
 import {
-  metaNuevoPresupuesto,
-  metaNuevoPresupuestoClienteNoRegistrado,
-  nuevoPresupuestoClienteNoRegistradoVacio,
-  nuevoPresupuestoVacio,
+    metaNuevoPresupuesto,
+    metaNuevoPresupuestoClienteNoRegistrado,
+    nuevoPresupuestoClienteNoRegistradoVacio,
+    nuevoPresupuestoVacio,
 } from "./dominio.ts";
 
 export const CrearPresupuesto = ({
-  publicar = () => {},
+  publicar = async () => {},
   activo = false,
   onCancelar = () => {},
 }: {
@@ -68,7 +68,7 @@ export const CrearPresupuesto = ({
 };
 
 const FormAltaPresupuesto = ({
-  publicar = () => {},
+  publicar = async () => {},
   presupuestoRegistrado,
   presupuestoNoRegistrado,
   modoNoRegistrado,

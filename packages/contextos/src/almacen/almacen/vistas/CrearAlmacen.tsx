@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { NuevoAlmacen } from "../diseño.ts";
@@ -11,10 +11,10 @@ import { getAlmacen, postAlmacen } from "../infraestructura.ts";
 import "./CrearAlmacen.css";
 
 export const CrearAlmacen = ({
-  publicar = () => {},
+  publicar = async () => {},
   activo = false,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   activo: boolean;
 }) => {
   const almacen = useModelo(metaNuevoAlmacen, {
@@ -34,10 +34,10 @@ export const CrearAlmacen = ({
 };
 
 const FormAltaAlmacen = ({
-  publicar = () => {},
+  publicar = async () => {},
   almacen,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   almacen: HookModelo<NuevoAlmacen>;
 }) => {
   const { intentar } = useContext(ContextoError);

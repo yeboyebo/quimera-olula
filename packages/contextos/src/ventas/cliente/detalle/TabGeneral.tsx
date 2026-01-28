@@ -4,7 +4,8 @@ import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
+import { EventoMaquina } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { BajaCliente } from "../dar_de_baja/BajaCliente.tsx";
 import { Cliente } from "../diseño.ts";
@@ -18,7 +19,7 @@ type ClienteConEstado = HookModelo<Cliente> & {
 
 interface TabGeneralProps {
   cliente: ClienteConEstado;
-  emitirCliente: EmitirEvento;
+  emitirCliente: ProcesarEvento;
   recargarCliente: () => void;
 }
 

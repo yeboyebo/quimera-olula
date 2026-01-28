@@ -18,7 +18,7 @@ import { TabObservaciones } from "./TabObservaciones.tsx";
 
 export const DetallePresupuesto = ({
   presupuestoInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   presupuestoInicial?: Presupuesto | null;
   publicar?: EmitirEvento;

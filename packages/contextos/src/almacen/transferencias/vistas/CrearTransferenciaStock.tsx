@@ -3,7 +3,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { NuevaTransferenciaStock } from "../diseño.ts";
@@ -17,10 +17,10 @@ import {
 } from "../infraestructura.ts";
 
 export const CrearTransferenciaStock = ({
-  publicar = () => {},
+  publicar = async () => {},
   activo = false,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   activo: boolean;
 }) => {
   const transferencia = useModelo(metaNuevaTransferenciaStock, {
@@ -43,10 +43,10 @@ export const CrearTransferenciaStock = ({
 };
 
 const FormAltaTransferenciaStock = ({
-  publicar = () => {},
+  publicar = async () => {},
   transferencia,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   transferencia: HookModelo<NuevaTransferenciaStock>;
 }) => {
   const { intentar } = useContext(ContextoError);

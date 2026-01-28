@@ -2,6 +2,7 @@ import { Factura } from "#/ventas/factura/diseño.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
+import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { ContextoMaestroVentasTpv, EstadoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
 import { getVenta, getVentas, postVenta } from "../infraestructura.ts";
 
@@ -29,41 +30,9 @@ export const metaTablaFactura: MetaTabla<Factura> = [
 
 type ProcesarVentasTpv = ProcesarContexto<EstadoMaestroVentasTpv, ContextoMaestroVentasTpv>;
 
-export const cambiarVentaEnLista: ProcesarVentasTpv = async (contexto, payload) => {
+const conVentas = (fn: ProcesarListaEntidades<VentaTpv>) => (ctx: ContextoMaestroVentasTpv) => ({ ...ctx, ventas: fn(ctx.ventas) });
 
-    const venta = payload as VentaTpv;
-    return {
-        ...contexto,
-        ventas: contexto.ventas.map(v => v.id === venta.id ? venta : v)
-    }
-}
-
-export const activarVenta: ProcesarVentasTpv = async (contexto, payload) => {
-
-    const ventaActiva = payload as VentaTpv;
-    return {
-        ...contexto,
-        ventaActiva
-    }
-}
-
-export const desactivarVentaActiva: ProcesarVentasTpv = async (contexto) => {
-
-    return {
-        ...contexto,
-        ventaActiva: null
-    }
-}
-
-export const quitarVentaDeLista: ProcesarVentasTpv = async (contexto, payload) => {
-
-    const ventaBorrada = payload as VentaTpv;
-    return {
-        ...contexto,
-        ventas: contexto.ventas.filter(v => v.id !== ventaBorrada.id),
-        ventaActiva: null
-    }
-}
+export const Ventas = accionesListaEntidades(conVentas);
 
 export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
 
@@ -73,20 +42,13 @@ export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
 
     return {
         ...contexto,
-        ventas: ventasCargadas,
-        totalVentas: resultado.total == -1 ? contexto.totalVentas : resultado.total,
-        ventaActiva: contexto.ventaActiva
-            ? ventasCargadas.find(v => v.id === contexto.ventaActiva?.id) ?? null
-            : null
-    }
-}
-
-export const incluirVentaEnLista: ProcesarVentasTpv = async (contexto, payload) => {
-
-    const venta = payload as VentaTpv;
-    return {
-        ...contexto,
-        ventas: [venta, ...contexto.ventas]
+        ventas: {
+            lista: ventasCargadas,
+            total: resultado.total == -1 ? contexto.ventas.total : resultado.total,
+            activo: contexto.ventas.activo
+                ? ventasCargadas.find(v => v.id === contexto.ventas.activo?.id) ?? null
+                : null
+        }
     }
 }
 
@@ -96,8 +58,11 @@ export const crearVenta: ProcesarVentasTpv = async (contexto) => {
     const venta = await getVenta(idVenta);
     return {
         ...contexto,
-        ventas: [venta, ...contexto.ventas],
-        ventaActiva: venta
+        ventas: {
+            lista: [venta, ...contexto.ventas.lista],
+            activo: venta,
+            total: contexto.ventas.total + 1,
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-export type Modelo = {
+export interface Modelo {
     [clave: string]: unknown;
 };
 
@@ -56,7 +56,7 @@ export type Direccion = {
 };
 
 
-export type EmitirEvento = (evento: string, payload?: unknown) => void
+export type EmitirEvento = (evento: string, payload?: unknown, init?: boolean) => Promise<void>
 
 export type TipoInput =
     | "texto"

@@ -4,7 +4,7 @@ import { QSelect } from "@olula/componentes/index.js";
 import { Criteria } from "@olula/lib/diseño.js";
 import { useEffect, useState } from "react";
 
-interface ArticuloProps {
+interface AgenteProps {
     valor: string;
     nombre?: string;
     label?: string;
@@ -24,7 +24,7 @@ export const AgenteTpv = ({
     label = "Agente",
     onChange,
     ...props
-}: ArticuloProps) => {
+}: AgenteProps) => {
 
     const [agentes, setAgentes] = useState<OpcionAgente[]>([]);
 
