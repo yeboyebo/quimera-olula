@@ -45,7 +45,7 @@ export const QAutocompletar = ({
     </option>
   ));
 
-  const listaId = nombre + "-datalist";
+  const listaId = nombre + "-datalist-" + crypto.randomUUID();
 
   const regenerarOpciones = async (valor: string) => {
     clearTimeout(temporizador.current);
