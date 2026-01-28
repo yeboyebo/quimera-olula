@@ -1,6 +1,6 @@
 import { idFiscalValido, tipoIdFiscalValido } from "#/valores/idfiscal.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { Cliente } from "../diseño.ts";
 import { getCliente, patchCliente } from "../infraestructura.ts";
@@ -87,15 +87,6 @@ export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
     return pipeCliente(contexto, [
         refrescarCliente,
         "INICIAL",
-    ]);
-}
-
-export const onClienteBorrado: ProcesarCliente = async (contexto) => {
-    const cliente = contexto.cliente;
-
-    return pipeCliente(contexto, [
-        getContextoVacio,
-        publicar('cliente_borrado', cliente.id)
     ]);
 }
 

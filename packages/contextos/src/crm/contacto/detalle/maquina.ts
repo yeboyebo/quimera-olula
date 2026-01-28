@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { cambiarContacto, cargarContexto, getContextoVacio, onContactoBorrado } from "./detalle.ts";
+import { cambiarContacto, cargarContexto, getContextoVacio } from "./detalle.ts";
 import { ContextoDetalleContacto, EstadoDetalleContacto } from "./diseño.ts";
 
 export const getMaquina: () => Maquina<EstadoDetalleContacto, ContextoDetalleContacto> = () => {
@@ -17,7 +17,7 @@ export const getMaquina: () => Maquina<EstadoDetalleContacto, ContextoDetalleCon
         BORRANDO: {
             borrado_contacto_cancelado: "INICIAL",
 
-            contacto_borrado: onContactoBorrado,
+            contacto_borrado: [getContextoVacio, publicar('contacto_borrado', (_, contactoId) => contactoId)],
         },
     }
 }

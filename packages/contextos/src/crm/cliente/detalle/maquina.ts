@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { cambiarCliente, cargarContexto, getContextoVacio, onClienteBorrado } from "./detalle.ts";
+import { cambiarCliente, cargarContexto, getContextoVacio } from "./detalle.ts";
 import { ContextoDetalleCliente, EstadoDetalleCliente } from "./diseño.ts";
 
 export const getMaquina: () => Maquina<EstadoDetalleCliente, ContextoDetalleCliente> = () => {
@@ -17,7 +17,7 @@ export const getMaquina: () => Maquina<EstadoDetalleCliente, ContextoDetalleClie
         BORRANDO: {
             borrado_cliente_cancelado: "INICIAL",
 
-            cliente_borrado: onClienteBorrado,
+            cliente_borrado: [getContextoVacio, publicar('cliente_borrado', (_, clienteId) => clienteId)],
         },
     }
 }

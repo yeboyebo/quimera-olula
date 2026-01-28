@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { Incidencia } from "../diseño.ts";
 import { getIncidencia, patchIncidencia } from "../infraestructura.ts";
@@ -71,15 +71,6 @@ export const cambiarIncidencia: ProcesarIncidencia = async (contexto, payload) =
     return pipeIncidencia(contexto, [
         refrescarIncidencia,
         "INICIAL",
-    ]);
-}
-
-export const onIncidenciaBorrada: ProcesarIncidencia = async (contexto) => {
-    const incidencia = contexto.incidencia;
-
-    return pipeIncidencia(contexto, [
-        getContextoVacio,
-        publicar('incidencia_borrada', incidencia.id)
     ]);
 }
 

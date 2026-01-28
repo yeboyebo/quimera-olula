@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { Contacto } from "../diseño.ts";
 import { getContacto, patchContacto } from "../infraestructura.ts";
@@ -66,15 +66,6 @@ export const cambiarContacto: ProcesarContacto = async (contexto, payload) => {
     return pipeContacto(contexto, [
         refrescarContacto,
         "INICIAL",
-    ]);
-}
-
-export const onContactoBorrado: ProcesarContacto = async (contexto) => {
-    const contacto = contexto.contacto;
-
-    return pipeContacto(contexto, [
-        getContextoVacio,
-        publicar('contacto_borrado', contacto.id)
     ]);
 }
 
