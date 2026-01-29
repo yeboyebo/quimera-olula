@@ -66,11 +66,6 @@ export const refrescarAccion: ProcesarAccion = async (contexto) => {
     ]
 }
 
-export const cancelarCambioAccion: ProcesarAccion = async (contexto) => {
-
-    return conAccion(contexto.inicial)(contexto);
-}
-
 export const cambiarAccion: ProcesarAccion = async (contexto, payload) => {
     const accion = payload as Accion;
     await patchAccion(contexto.accion.id, accion)

@@ -5,11 +5,11 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useParams } from "react-router";
 import { BorrarLead } from "../borrar/BorrarLead.tsx";
 import { Lead } from "../diseño.ts";
-import { TabAcciones } from "../vistas/DetalleLead/TabAcciones.tsx";
-import { TabOportunidades } from "../vistas/DetalleLead/TabOportunidades.tsx";
+import { Acciones } from "./acciones/Acciones.tsx";
 import { leadVacio, metaLead } from "./detalle.ts";
 import "./DetalleLead.css";
 import { getMaquina } from "./maquina.ts";
+import { Oportunidades } from "./oportunidades/Oportunidades.tsx";
 import { TabDatos } from "./tabs/TabDatos.tsx";
 import { TabObservaciones } from "./tabs/TabObservaciones.tsx";
 
@@ -33,7 +33,6 @@ export const DetalleLead = ({
     {
       estado: "INICIAL",
       lead: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );
@@ -41,14 +40,6 @@ export const DetalleLead = ({
   if (ctx.lead !== modeloInicial) {
     init(ctx.lead);
   }
-
-  const guardar = async () => {
-    emitir("lead_cambiado", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_lead_cancelada");
-  };
 
   if (leadId && leadId !== modelo.id) {
     emitir("lead_id_cambiado", leadId);
@@ -80,24 +71,32 @@ export const DetalleLead = ({
             </Tab>
 
             <Tab label="Oportunidades de Venta">
-              <TabOportunidades lead={lead} />
+              <Oportunidades lead={lead} />
             </Tab>
 
             <Tab label="Acciones">
-              <TabAcciones lead={lead} />
+              <Acciones lead={lead} />
             </Tab>
           </Tabs>
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("lead_cambiado", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_lead_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>
           )}
+
           {ctx.estado === "BORRANDO" && (
             <BorrarLead publicar={emitir} lead={modelo} />
           )}

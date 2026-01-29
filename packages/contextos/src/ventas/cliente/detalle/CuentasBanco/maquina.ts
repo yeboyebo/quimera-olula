@@ -1,16 +1,10 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
 import {
-    activarCuenta,
-    actualizarCuenta,
-    borrarCuenta,
-    cancelarAlta,
-    cancelarConfirmacion,
-    cancelarEdicion,
-    cargarCuentasBanco,
-    crearCuenta,
+    Cuentas,
     desmarcarDomiciliacionProceso,
     domiciliarCuentaProceso,
+    recargarCuentas,
 } from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco> = () => {
@@ -18,37 +12,37 @@ export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco>
     return {
 
         lista: {
-            cargar_cuentas: cargarCuentasBanco,
+            cargar_cuentas: recargarCuentas,
 
             alta_solicitada: "alta",
 
             edicion_solicitada: "edicion",
 
-            cuenta_seleccionada: activarCuenta,
+            cuenta_seleccionada: Cuentas.activar,
 
             borrado_solicitado: "confirmar_borrado",
 
-            domiciliar_solicitada: domiciliarCuentaProceso,
+            domiciliar_solicitada: [domiciliarCuentaProceso, recargarCuentas],
 
-            desmarcar_domiciliacion: desmarcarDomiciliacionProceso,
+            desmarcar_domiciliacion: [desmarcarDomiciliacionProceso, recargarCuentas],
         },
 
         alta: {
-            crear_cuenta: [crearCuenta, "lista"],
+            cuenta_creada: [Cuentas.incluir, recargarCuentas, "lista"],
 
-            alta_cancelada: cancelarAlta,
+            alta_cancelada: "lista",
         },
 
         edicion: {
-            actualizar_cuenta: [actualizarCuenta],
+            cuenta_actualizada: [Cuentas.cambiar, recargarCuentas, "lista"],
 
-            edicion_cancelada: cancelarEdicion,
+            edicion_cancelada: "lista",
         },
 
         confirmar_borrado: {
-            borrado_confirmado: borrarCuenta,
+            cuenta_borrada: [Cuentas.quitar, "lista"],
 
-            borrado_cancelado: cancelarConfirmacion,
+            borrado_cancelado: "lista",
         },
     }
 }

@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, publicar, stringNoVacio } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { EstadoOportunidad } from "../diseño.ts";
 import { getEstadoOportunidad, patchEstadoOportunidad } from "../infraestructura.ts";
@@ -53,11 +53,6 @@ export const refrescarEstadoOportunidad: ProcesarEstadoOportunidad = async (cont
     ]
 }
 
-export const cancelarCambioEstadoOportunidad: ProcesarEstadoOportunidad = async (contexto) => {
-
-    return conEstadoOportunidad(contexto.inicial)(contexto);
-}
-
 export const cambiarEstadoOportunidad: ProcesarEstadoOportunidad = async (contexto, payload) => {
     const estado_oportunidad = payload as EstadoOportunidad;
     await patchEstadoOportunidad(contexto.estado_oportunidad.id, estado_oportunidad)
@@ -65,15 +60,6 @@ export const cambiarEstadoOportunidad: ProcesarEstadoOportunidad = async (contex
     return pipeEstadoOportunidad(contexto, [
         refrescarEstadoOportunidad,
         "INICIAL",
-    ]);
-}
-
-export const onEstadoOportunidadBorrado: ProcesarEstadoOportunidad = async (contexto) => {
-    const estado_oportunidad = contexto.estado_oportunidad;
-
-    return pipeEstadoOportunidad(contexto, [
-        getContextoVacio,
-        publicar('estado_oportunidad_borrado', estado_oportunidad.id)
     ]);
 }
 

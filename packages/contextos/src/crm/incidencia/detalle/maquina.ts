@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { cambiarIncidencia, cargarContexto, getContextoVacio, onIncidenciaBorrada } from "./detalle.ts";
+import { cambiarIncidencia, cargarContexto, getContextoVacio } from "./detalle.ts";
 import { ContextoDetalleIncidencia, EstadoDetalleIncidencia } from "./diseño.ts";
 
 export const getMaquina: () => Maquina<EstadoDetalleIncidencia, ContextoDetalleIncidencia> = () => {
@@ -17,7 +17,7 @@ export const getMaquina: () => Maquina<EstadoDetalleIncidencia, ContextoDetalleI
         BORRANDO: {
             borrado_incidencia_cancelado: "INICIAL",
 
-            incidencia_borrada: onIncidenciaBorrada,
+            incidencia_borrada: [getContextoVacio, publicar('incidencia_borrada', (_, incidenciaId) => incidenciaId)],
         },
     }
 }

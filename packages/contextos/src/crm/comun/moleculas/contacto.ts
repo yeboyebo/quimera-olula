@@ -1,5 +1,5 @@
+import { contactoVacio } from "#/crm/contacto/detalle/detalle.ts";
 import { Contacto } from "#/crm/contacto/diseño.ts";
-import { contactoVacio } from "#/crm/contacto/dominio.ts";
 import { Maquina, ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos } from "@olula/lib/dominio.ts";
 import { getContacto } from "../../contacto/infraestructura.ts";

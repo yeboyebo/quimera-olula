@@ -1,6 +1,6 @@
 import { Field } from "@quimera/comps";
 import { API } from "quimera/lib";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 function QTela({ idModelo = null, codFamilia = null, noOptionsText = "Buscar tela por nombre", noObsoleto = true, ...props }) {
   const [options, setOptions] = useState([]);

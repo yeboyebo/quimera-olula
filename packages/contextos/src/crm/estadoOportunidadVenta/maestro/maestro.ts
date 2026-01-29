@@ -1,6 +1,6 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { pipe } from "@olula/lib/funcional.js";
+import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { EstadoOportunidad } from "../diseño.ts";
 import { getEstadosOportunidad } from "../infraestructura.ts";
 import { ContextoMaestroEstadosOportunidad, EstadoMaestroEstadosOportunidad } from "./diseño.ts";
@@ -14,65 +14,13 @@ export const metaTablaEstadoOportunidad: MetaTabla<EstadoOportunidad> = [
 
 type ProcesarEstadosOportunidad = ProcesarContexto<EstadoMaestroEstadosOportunidad, ContextoMaestroEstadosOportunidad>;
 
-// const conEstado = (estado: EstadoMaestroEstadosOportunidad) => (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, estado });
-const conEstadosOportunidad = (estados_oportunidad: EstadoOportunidad[]) => (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, estados_oportunidad });
-const conTotal = (totalEstadosOportunidad: number) => (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, totalEstadosOportunidad });
-const conActivo = (activo: EstadoOportunidad | null) => (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, activo });
+const conEstadosOportunidad = (fn: ProcesarListaEntidades<EstadoOportunidad>) => (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, estados_oportunidad: fn(ctx.estados_oportunidad) });
+
+export const EstadosOportunidad = accionesListaEntidades(conEstadosOportunidad);
 
 export const recargarEstadosOportunidad: ProcesarEstadosOportunidad = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const { datos: estados_oportunidad, total } = await getEstadosOportunidad(criteria.filtro, criteria.orden, criteria.paginacion);
+    const resultado = await getEstadosOportunidad(criteria.filtro, criteria.orden, criteria.paginacion);
 
-    return pipe(
-        contexto,
-        conEstadosOportunidad(estados_oportunidad),
-        conTotal(total === -1 ? contexto.totalEstadosOportunidad : total),
-        conActivo(contexto.activo
-            ? estados_oportunidad.find(estado_oportunidad => estado_oportunidad.id === contexto.activo?.id) ?? null
-            : null)
-    )
-}
-
-export const incluirEstadoOportunidadEnLista: ProcesarEstadosOportunidad = async (contexto, payload) => {
-    const estado_oportunidad = payload as EstadoOportunidad;
-
-    return pipe(
-        contexto,
-        conEstadosOportunidad([estado_oportunidad, ...contexto.estados_oportunidad])
-    )
-}
-
-export const activarEstadoOportunidad: ProcesarEstadosOportunidad = async (contexto, payload) => {
-    const activo = payload as EstadoOportunidad;
-
-    return pipe(
-        contexto,
-        conActivo(activo)
-    )
-}
-
-export const desactivarEstadoOportunidadActivo: ProcesarEstadosOportunidad = async (contexto) => {
-    return pipe(
-        contexto,
-        conActivo(null)
-    )
-}
-
-export const cambiarEstadoOportunidadEnLista: ProcesarEstadosOportunidad = async (contexto, payload) => {
-    const estado_oportunidad = payload as EstadoOportunidad;
-
-    return pipe(
-        contexto,
-        conEstadosOportunidad(contexto.estados_oportunidad.map(item => item.id === estado_oportunidad.id ? estado_oportunidad : item))
-    )
-}
-
-export const quitarEstadoOportunidadDeLista: ProcesarEstadosOportunidad = async (contexto, payload) => {
-    const idBorrado = payload as string;
-
-    return pipe(
-        contexto,
-        conEstadosOportunidad(contexto.estados_oportunidad.filter(estado_oportunidad => estado_oportunidad.id !== idBorrado)),
-        conActivo(null)
-    )
+    return EstadosOportunidad.recargar(contexto, resultado);
 }

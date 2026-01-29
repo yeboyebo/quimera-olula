@@ -21,16 +21,6 @@ export const MaestroIncidencias = () => {
     incidencias: listaEntidadesInicial<Incidencia>(),
   });
 
-  const crear = useCallback(
-    () => emitir("creacion_de_incidencia_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionado = useCallback(
-    (payload: Incidencia) => emitir("incidencia_seleccionada", payload),
-    [emitir]
-  );
-
   const recargar = useCallback(
     async (criteria: Criteria) => {
       setCargando(true);
@@ -50,9 +40,15 @@ export const MaestroIncidencias = () => {
         Maestro={
           <>
             <h2>Incidencias</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nueva</QBoton>
+              <QBoton
+                onClick={() => emitir("creacion_de_incidencia_solicitada")}
+              >
+                Nueva
+              </QBoton>
             </div>
+
             <ListadoControlado<Incidencia>
               metaTabla={metaTablaIncidencia}
               metaFiltro={true}
@@ -66,7 +62,9 @@ export const MaestroIncidencias = () => {
               entidades={ctx.incidencias.lista}
               totalEntidades={ctx.incidencias.total}
               seleccionada={ctx.incidencias.activo}
-              onSeleccion={setSeleccionado}
+              onSeleccion={(payload) =>
+                emitir("incidencia_seleccionada", payload)
+              }
               onCriteriaChanged={recargar}
             />
           </>
@@ -80,6 +78,7 @@ export const MaestroIncidencias = () => {
         seleccionada={ctx.incidencias.activo}
         modoDisposicion="maestro-50"
       />
+
       {ctx.estado === "CREANDO" && <CrearIncidencia publicar={emitir} />}
     </div>
   );

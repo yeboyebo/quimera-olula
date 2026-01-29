@@ -2,7 +2,6 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo, ValorControl } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
-import { contactoVacio, metaContacto } from "../../contacto/dominio.ts";
 import "./contacto.css";
 import { ContextoContactoCrm, getMaquina } from "./contacto.ts";
 
@@ -17,7 +16,7 @@ export const MoleculaContacto = ({
 }) => {
   const { intentar } = useContext(ContextoError);
 
-  const contacto = useModelo(metaContacto, contactoVacio);
+  const contacto = useModelo({}, {});
   // const { uiProps, init, valido, modificado } = contacto;
 
   const [ctx, setCtx] = useState<ContextoContactoCrm>({

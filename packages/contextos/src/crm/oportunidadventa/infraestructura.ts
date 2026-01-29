@@ -11,8 +11,15 @@ import { EstadoOportunidad, OportunidadVenta } from "./diseño.ts";
 const UrlsCrm = new UrlsCrmClass();
 const UrlsVentas = new UrlsVentasClass();
 
+type OportunidadVentaAPI = OportunidadVenta & { fecha_cierre: string };
+
+const oportunidadDesdeAPI = (oportunidadAPI: OportunidadVentaAPI): OportunidadVenta => ({
+    ...oportunidadAPI,
+    fecha_cierre: new Date(Date.parse(oportunidadAPI.fecha_cierre))
+})
+
 export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta> =>
-    await RestAPI.get<{ datos: OportunidadVenta }>(`${UrlsCrm.OPORTUNIDAD_VENTA}/${id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: OportunidadVentaAPI }>(`${UrlsCrm.OPORTUNIDAD_VENTA}/${id}`).then((respuesta) => oportunidadDesdeAPI(respuesta.datos));
 
 export const getOportunidadesVenta = async (
     filtro: Filtro,
@@ -21,16 +28,24 @@ export const getOportunidadesVenta = async (
 ): RespuestaLista<OportunidadVenta> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: OportunidadVenta[]; total: number }>(UrlsCrm.OPORTUNIDAD_VENTA + q);
-    return { datos: respuesta.datos, total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: OportunidadVentaAPI[]; total: number }>(UrlsCrm.OPORTUNIDAD_VENTA + q);
+    return { datos: respuesta.datos.map(oportunidadDesdeAPI), total: respuesta.total };
 };
 
 export const postOportunidadVenta = async (oportunidad: NuevaOportunidadVenta): Promise<string> => {
-    return await RestAPI.post(UrlsCrm.OPORTUNIDAD_VENTA, oportunidad, "Error al guardar oportunidad de venta").then((respuesta) => respuesta.id);
+    const oportunidadAPI = {
+        ...oportunidad,
+        fecha_cierre: oportunidad.fecha_cierre?.toISOString().slice(0, 10),
+    }
+    return await RestAPI.post(UrlsCrm.OPORTUNIDAD_VENTA, oportunidadAPI, "Error al guardar oportunidad de venta").then((respuesta) => respuesta.id);
 };
 
 export const patchOportunidadVenta = async (id: string, oportunidad: Partial<OportunidadVenta>): Promise<void> => {
-    await RestAPI.patch(`${UrlsCrm.OPORTUNIDAD_VENTA}/${id}`, oportunidad, "Error al guardar oportunidad de venta");
+    const oportunidadAPI = {
+        ...oportunidad,
+        fecha_cierre: oportunidad.fecha_cierre?.toISOString().slice(0, 10),
+    }
+    await RestAPI.patch(`${UrlsCrm.OPORTUNIDAD_VENTA}/${id}`, oportunidadAPI, "Error al guardar oportunidad de venta");
 };
 
 export const deleteOportunidadVenta = async (id: string): Promise<void> =>
@@ -41,20 +56,20 @@ export const getEstadosOportunidadVenta = async (filtro: Filtro, orden: Orden): 
     return RestAPI.get<{ datos: EstadoOportunidad[] }>(UrlsCrm.ESTADO_OPORTUNIDAD + q).then((respuesta) => respuesta.datos);
 }
 
-export const getAccionesOportunidad = async (oportunidadId: string): Promise<Accion[]> => {
+export const getAccionesOportunidad = async (oportunidadId: string): RespuestaLista<Accion> => {
     const filtro = ['oportunidad_id', oportunidadId] as unknown as Filtro;
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: Accion[] }>(UrlsCrm.ACCION + q).then((respuesta) => respuesta.datos);
+    return RestAPI.get<{ datos: Accion[], total: number }>(UrlsCrm.ACCION + q).then((respuesta) => respuesta);
 };
 
-export const getPresupuestosOportunidad = async (oportunidadId: string): Promise<Presupuesto[]> => {
+export const getPresupuestosOportunidad = async (oportunidadId: string): RespuestaLista<Presupuesto> => {
     const filtro = ['oportunidad_id', oportunidadId] as unknown as Filtro;
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: Presupuesto[] }>(UrlsVentas.PRESUPUESTO + q).then((respuesta) => respuesta.datos);
+    return RestAPI.get<{ datos: Presupuesto[], total: number }>(UrlsVentas.PRESUPUESTO + q).then((respuesta) => respuesta);
 };
 
 export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente_id: string): Promise<string> => {

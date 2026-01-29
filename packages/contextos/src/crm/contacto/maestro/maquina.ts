@@ -1,17 +1,17 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroContactos, EstadoMaestroContactos } from "./diseño.ts";
-import { activarContacto, cambiarContactoEnLista, desactivarContactoActivo, incluirContactoEnLista, quitarContactoDeLista, recargarContactos } from "./maestro.ts";
+import { Contactos, recargarContactos } from "./maestro.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroContactos, ContextoMaestroContactos> = () => {
     return {
         INICIAL: {
-            contacto_cambiado: cambiarContactoEnLista,
+            contacto_cambiado: [Contactos.cambiar],
 
-            contacto_seleccionado: activarContacto,
+            contacto_seleccionado: [Contactos.activar],
 
-            contacto_deseleccionado: desactivarContactoActivo,
+            contacto_deseleccionado: [Contactos.desactivar],
 
-            contacto_borrado: quitarContactoDeLista,
+            contacto_borrado: [Contactos.quitar],
 
             recarga_de_contactos_solicitada: recargarContactos,
 
@@ -20,7 +20,7 @@ export const getMaquina: () => Maquina<EstadoMaestroContactos, ContextoMaestroCo
         CREANDO: {
             creacion_contacto_cancelada: "INICIAL",
 
-            contacto_creado: [incluirContactoEnLista, activarContacto, "INICIAL"],
+            contacto_creado: [Contactos.incluir, Contactos.activar, "INICIAL"],
         }
     }
 }

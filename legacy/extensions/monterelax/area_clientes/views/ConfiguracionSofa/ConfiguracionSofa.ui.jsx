@@ -47,7 +47,7 @@ function ConfiguracionSofa({ idModeloProp, callbackVolver, useStyles }) {
       <Quimera.Template id="ConfiguracionSofa">
         <Dialog open={idModelo} classes={{ paper: classes.paper8080 }}>
           <DialogTitle id="form-dialog-title">
-            <Typography variant="h3" align="center">
+            <Typography align="center">
               Modelo {idModelo}
             </Typography>
           </DialogTitle>

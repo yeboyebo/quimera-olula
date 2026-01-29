@@ -1,15 +1,15 @@
 import { QBoton, QInput } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { metaNuevoTrabajador, nuevoTrabajadorVacio } from "../dominio.ts";
 import { getTrabajador, postTrabajador } from "../infraestructura.ts";
 
 export const AltaTrabajador = ({
-  emitir = () => {},
+  emitir = async () => {},
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
 }) => {
   const nuevoTrabajador = useModelo(metaNuevoTrabajador, nuevoTrabajadorVacio);
   const { intentar } = useContext(ContextoError);

@@ -31,7 +31,6 @@ export const DetalleIncidencia = ({
     {
       estado: "INICIAL",
       incidencia: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );
@@ -39,14 +38,6 @@ export const DetalleIncidencia = ({
   if (ctx.incidencia !== modeloInicial) {
     init(ctx.incidencia);
   }
-
-  const guardar = async () => {
-    emitir("incidencia_cambiada", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_incidencia_cancelada");
-  };
 
   if (incidenciaId && incidenciaId !== modelo.id) {
     emitir("incidencia_id_cambiado", incidenciaId);
@@ -80,10 +71,17 @@ export const DetalleIncidencia = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("incidencia_cambiada", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_incidencia_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>
