@@ -78,7 +78,13 @@ function Configuraciones() {
             <CircularProgress />
           </Box>
         ) : (
-          <Droppable droppableId="configuraciones" isDropDisabled key="configuraciones">
+          <Droppable
+            droppableId="configuraciones"
+            isDropDisabled={true}
+            isCombineEnabled={false}
+            ignoreContainerClipping={false}
+            key="configuraciones"
+          >
             {(provided, snapshot) => {
               return (
                 <Box
@@ -92,6 +98,7 @@ function Configuraciones() {
                         key={`KEY${configuraciones.dict[conf].idpreciobase}`}
                         draggableId={`ID${configuraciones.dict[conf].idpreciobase}`}
                         index={indice}
+                        isDragDisabled={false}
                       >
                         {(provided, snapshot) => {
                           return (
