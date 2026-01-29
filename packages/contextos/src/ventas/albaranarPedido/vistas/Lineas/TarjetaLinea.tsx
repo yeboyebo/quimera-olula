@@ -1,6 +1,6 @@
 import { EditarCantidadLinea } from "#/ventas/pedido/detalle/Lineas/EditarCantidadLinea.tsx";
 import { QIcono, QTabla } from "@olula/componentes/index.js";
-import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useState } from "react";
 import { LineaAlbaranarPedido, Tramo } from "../../diseño.ts";
 import { obtenerClaseEstadoAlbaranado } from "../../dominio.ts";
@@ -11,7 +11,7 @@ export const TarjetaLinea = ({
   publicar,
 }: {
   linea: LineaAlbaranarPedido;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
   const { tramos } = linea;
   const servida = linea.servida || 0;

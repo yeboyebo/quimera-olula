@@ -1,14 +1,14 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { grupoVacio, metaNuevoGrupo } from "../dominio.ts";
 import { postGrupo } from "../infraestructura.ts";
 import "./AltaGrupo.css";
 
-export const AltaGrupo = ({ emitir = () => {} }: { emitir?: EmitirEvento }) => {
+export const AltaGrupo = ({ emitir = () => {} }: { emitir?: ProcesarEvento }) => {
   const nuevoGrupo = useModelo(metaNuevoGrupo, grupoVacio);
   const { intentar } = useContext(ContextoError);
 

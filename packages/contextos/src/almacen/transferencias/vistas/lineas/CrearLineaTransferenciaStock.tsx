@@ -3,7 +3,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { NuevaLineaTransferenciaStock } from "../../diseño.ts";
@@ -14,11 +14,11 @@ import {
 import { crearLineaTransferenciaStock } from "../../infraestructura.ts";
 
 export const CrearLineaTransferenciaStock = ({
-  publicar = () => {},
+  publicar = async () => {},
   activo = false,
   transferenciaID,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   activo?: boolean;
   transferenciaID: string;
 }) => {
@@ -43,11 +43,11 @@ export const CrearLineaTransferenciaStock = ({
 };
 
 const FormAltaLineaTransferenciaStock = ({
-  publicar = () => {},
+  publicar = async () => {},
   linea,
   transferenciaID,
 }: {
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   linea: HookModelo<NuevaLineaTransferenciaStock>;
   transferenciaID: string;
 }) => {

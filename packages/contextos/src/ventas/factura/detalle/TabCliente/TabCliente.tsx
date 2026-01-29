@@ -16,7 +16,7 @@ interface TabClienteProps {
 
 export const TabCliente = ({
   factura,
-  publicar = () => {},
+  publicar = async () => {},
 }: TabClienteProps) => {
   const { modelo, uiProps } = factura;
   const [cambiandoCliente, setCambiandoCliente] = useState(false);

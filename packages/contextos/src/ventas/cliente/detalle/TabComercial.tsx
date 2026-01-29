@@ -3,14 +3,14 @@ import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
 import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Cliente } from "../diseño.ts";
 import "./TabComercial.css";
 
 interface TabComercialProps {
   cliente: HookModelo<Cliente>;
-  emitirCliente: EmitirEvento;
+  emitirCliente: ProcesarEvento;
 }
 
 export const TabComercial = ({ cliente }: TabComercialProps) => {

@@ -39,7 +39,6 @@ const cargarArqueo: (_: string) => ProcesarArqueoTpv = (idArqueo) =>
 export const refrescarArqueo: ProcesarArqueoTpv = async (contexto) => {
 
     const arqueo = await getArqueo(contexto.arqueo.id);
-    console.log("Recyuento vales", arqueo.recuentoVales);
     return [
         {
             ...contexto,

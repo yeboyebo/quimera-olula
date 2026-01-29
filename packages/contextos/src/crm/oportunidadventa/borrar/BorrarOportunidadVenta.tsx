@@ -1,6 +1,6 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useCallback } from "react";
 import { OportunidadVenta } from "../diseño.ts";
 import { deleteOportunidadVenta } from "../infraestructura.ts";
@@ -10,7 +10,7 @@ export const BorrarOportunidadVenta = ({
   oportunidad,
 }: {
   oportunidad: OportunidadVenta;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
   const borrar_ = useCallback(async () => {
     await deleteOportunidadVenta(oportunidad.id);

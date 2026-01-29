@@ -1,7 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { ContextoVentaTpv, EstadoVentaTpv } from "../diseño.ts";
-import { abiertaOEmitidaContexto, activarLinea, activarPago, cambiarVenta, cancelarcambioVenta, cargarContexto, crearLineaPorBarcode, emitirVale, getContextoVacio, onLineaBorrada, onLineaCambiada, onLineaCreada, onPagoBorrado, onVentaBorrada, refrescarLineas, refrescarPagos, refrescarVenta } from "./detalle.ts";
+import { abiertaOEmitidaContexto, cambiarVenta, cancelarcambioVenta, cargarContexto, ContextoVentaTpv, crearLineaPorBarcode, emitirVale, EstadoVentaTpv, getContextoVacio, Lineas, onLineaBorrada, onLineaCambiada, onLineaCreada, onVentaBorrada, Pagos, refrescarCabecera, refrescarLineas, refrescarPagos } from "./detalle.ts";
 
 
 export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () => {
@@ -21,13 +20,15 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
         ABIERTA: {
 
             linea_creada: [
-                refrescarVenta,
+                refrescarCabecera,
                 refrescarLineas
             ],
 
             alta_linea_solicitada: "CREANDO_LINEA",
 
             baja_linea_solicitada: "BORRANDO_LINEA",
+
+            cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
 
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
 
@@ -47,31 +48,37 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             venta_cargada: [abiertaOEmitidaContexto],
 
-            venta_cambiada: [refrescarVenta],
+            venta_cambiada: [refrescarCabecera],
 
             edicion_de_venta_lista: [cambiarVenta],
 
             edicion_de_venta_cancelada: [cancelarcambioVenta],
 
-            pago_seleccionado: [activarPago],
+            pago_seleccionado: [Pagos.activar],
 
-            linea_seleccionada: [activarLinea],
+            linea_seleccionada: [Lineas.activar],
 
             alta_de_linea_por_barcode_lista: crearLineaPorBarcode,
+        },
+
+        CAMBIANDO_CLIENTE: {
+
+            cliente_cambiado: [refrescarCabecera, refrescarLineas, "ABIERTA"],
+
+            cambio_cliente_cancelado: "ABIERTA",
         },
 
         EMITIDA: {
 
             venta_cargada: [abiertaOEmitidaContexto],
 
-            pago_seleccionado: [activarPago],
+            pago_seleccionado: [Pagos.activar],
 
-            linea_seleccionada: [activarLinea],
+            linea_seleccionada: [Lineas.activar],
         },
 
         BORRANDO_VENTA: {
 
-            // borrado_de_venta_listo: borrarVenta,
             venta_borrada: onVentaBorrada,
 
             borrar_cancelado: "ABIERTA",
@@ -81,7 +88,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             // pago_en_efectivo_listo: pagarEnEfectivo,
             pago_en_efectivo_hecho: [
-                refrescarVenta,
+                refrescarCabecera,
                 refrescarPagos,
                 abiertaOEmitidaContexto,
             ],
@@ -93,7 +100,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             // pago_con_vale_listo: pagarConVale,
             pago_con_vale_hecho: [
-                refrescarVenta,
+                refrescarCabecera,
                 refrescarPagos,
                 abiertaOEmitidaContexto,
             ],
@@ -105,7 +112,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             // pago_con_tarjeta_listo: pagarConTarjeta,
             pago_con_tarjeta_hecho: [
-                refrescarVenta,
+                refrescarCabecera,
                 refrescarPagos,
                 abiertaOEmitidaContexto,
             ],
@@ -115,8 +122,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
         BORRANDO_PAGO: {
 
-            // borrado_de_pago_listo: borrarPago,
-            pago_borrado: [onPagoBorrado, "ABIERTA"],
+            pago_borrado: [Pagos.quitar, refrescarCabecera, "ABIERTA"],
 
             borrado_de_pago_cancelado: "ABIERTA",
         },
@@ -124,7 +130,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
         DEVOLVIENDO_VENTA: {
 
             // devolucion_lista: devolverVenta,
-            devolucion_hecha: [refrescarVenta, refrescarLineas, "ABIERTA"],
+            devolucion_hecha: [refrescarCabecera, refrescarLineas, "ABIERTA"],
 
             devolucion_cancelada: "ABIERTA",
         },

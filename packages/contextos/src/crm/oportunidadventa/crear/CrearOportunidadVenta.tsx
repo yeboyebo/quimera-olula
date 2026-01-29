@@ -5,7 +5,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import {
@@ -23,7 +23,7 @@ export const CrearOportunidadVenta = ({
   publicar,
   modeloVacio = nuevaOportunidadVentaVacia,
 }: {
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
   modeloVacio?: NuevaOportunidadVenta;
 }) => {
   const { intentar } = useContext(ContextoError);

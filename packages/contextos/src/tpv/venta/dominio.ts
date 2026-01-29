@@ -11,7 +11,11 @@ export const ventaTpvVacia: VentaTpv = {
     pagado: 0,
     pendiente: 0,
     lineas: [],
-    pagos: []
+    pagos: [],
+    puntoVentaId: "",
+    puntoVenta: "",
+    agenteId: "",
+    agente: "",
 };
 
 export const metaLineaFactura: MetaModelo<LineaFactura> = metaLineaVenta;

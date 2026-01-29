@@ -1,6 +1,6 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useContext } from "react";
 import { DirCliente } from "../diseño.ts";
 import { deleteDireccion } from "../infraestructura.ts";
@@ -8,14 +8,14 @@ import { deleteDireccion } from "../infraestructura.ts";
 interface BorrarDireccionProps {
   direccion: DirCliente;
   clienteId: string;
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   onCancelar?: () => void;
 }
 
 export const BorrarDireccion = ({
   direccion,
   clienteId,
-  publicar = () => {},
+  publicar = async () => {},
   onCancelar = () => {},
 }: BorrarDireccionProps) => {
   const { intentar } = useContext(ContextoError);

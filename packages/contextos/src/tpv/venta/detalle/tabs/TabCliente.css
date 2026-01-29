@@ -1,4 +1,9 @@
 .Factura .TabCliente {
+
+    quimera-autocompletar[nombre="tpv_venta_agente_id"] {
+        grid-column: span 12;
+    }
+
     quimera-autocompletar[nombre="cliente_id"] {
         grid-column: span 9;
     }

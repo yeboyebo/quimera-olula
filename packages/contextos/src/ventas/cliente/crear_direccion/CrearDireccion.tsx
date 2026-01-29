@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import { postDireccion } from "../infraestructura.ts";
@@ -12,7 +12,7 @@ export const CrearDireccion = ({
   publicar,
 }: {
   clienteId: string;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
   const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido } = useModelo(

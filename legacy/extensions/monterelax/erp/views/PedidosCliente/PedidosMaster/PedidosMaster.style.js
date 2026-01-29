@@ -5,16 +5,16 @@ export default parent => {
     return {
       ..._p,
       pte: {
-        backgroundColor: `${theme.palette.error.main}`,
+        backgroundColor: `${theme.palette.error.main} !important`,
       },
       terminado: {
-        backgroundColor: `${theme.palette.success.main}`,
+        backgroundColor: `${theme.palette.success.main} !important`,
       },
       produccion: {
-        backgroundColor: `${theme.palette.warning.main}`,
+        backgroundColor: `${theme.palette.warning.main} !important`,
       },
       cargado: {
-        backgroundColor: `${theme.palette.info.main}`,
+        backgroundColor: `${theme.palette.info.main} !important`,
       },
     };
   };
