@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Cliente } from "../diseño.ts";
@@ -11,13 +11,13 @@ import { metaDarDeBaja } from "./dominio.ts";
 
 interface BajaClienteProps {
   cliente: Cliente;
-  publicar?: EmitirEvento;
+  publicar?: ProcesarEvento;
   onCancelar?: () => void;
 }
 
 export const BajaCliente = ({
   cliente,
-  publicar = () => {},
+  publicar = async () => {},
   onCancelar = () => {},
 }: BajaClienteProps) => {
   const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: null });

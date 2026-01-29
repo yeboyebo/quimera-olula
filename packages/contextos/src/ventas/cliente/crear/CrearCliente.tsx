@@ -17,7 +17,7 @@ interface CrearClienteProps {
 }
 
 export const CrearCliente = ({
-  publicar = () => {},
+  publicar = async () => {},
   onCancelar = () => {},
   activo = false,
 }: CrearClienteProps) => {

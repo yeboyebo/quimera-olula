@@ -1,21 +1,20 @@
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
-import { procesarEvento } from "@olula/lib/dominio.js";
-import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
-import { ContextoVentaTpv, EstadoVentaTpv, LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
+import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
 import { PendienteVenta } from "./comps/PendienteVenta.tsx";
-import { metaVentaTpv } from "./detalle.ts";
+import { ContextoVentaTpv, getFormVenta } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { Pagos } from "./pagos/Pagos.tsx";
@@ -23,73 +22,58 @@ import { TabCliente } from "./tabs/TabCliente.tsx";
 import { TabDatos } from "./tabs/TabDatos.tsx";
 
 
-const maquina = getMaquina();  
 
 export const DetalleVentaTpv = ({
     ventaInicial = null,
-    publicar = () => {},
+    publicar = async () => {},
 }: {
     ventaInicial?: VentaTpv | null;
     publicar?: EmitirEvento;
 }) => {
     const params = useParams();
-    const { intentar } = useContext(ContextoError);
 
-    const [estado, setEstado] = useState<EstadoVentaTpv>("ABIERTA");
-    const [lineaActiva, setLineaActiva] = useState<LineaFactura | null>(null);
-    const [pagoActivo, setPagoActivo] = useState<PagoVentaTpv | null>(null);
+    const contextoInicial:ContextoVentaTpv = {
+        estado: 'INICIAL',
+        venta: ventaInicial ?? ventaTpvVacia,
+        ventaInicial: ventaInicial ?? ventaTpvVacia,
+        pagos: listaEntidadesInicial<PagoVentaTpv>(),
+        lineas: listaEntidadesInicial<LineaFactura>(),
+    }
 
     const ventaId = ventaInicial?.id ?? params.id;
     const titulo = (venta: Entidad) => venta.codigo as string;
 
-    const venta = useModelo(metaVentaTpv, ventaTpvVacia);
-    const { modelo, init } = venta;
-
-    const emitir = useCallback(
-        async (evento: string, payload?: unknown, inicial: boolean = false) => {
-
-            const contexto: ContextoVentaTpv = {
-                estado: inicial ? 'INICIAL' : estado,
-                venta: venta.modelo,
-                ventaInicial: venta.modeloInicial,
-                pagoActivo,
-                lineaActiva,
-            }
-            const [nuevoContexto, eventos] = await intentar(
-                () => procesarEvento(maquina, contexto, evento, payload)
-            );
-            setEstado(nuevoContexto.estado);
-            setPagoActivo(nuevoContexto.pagoActivo); 
-            setLineaActiva(nuevoContexto.lineaActiva);
-            if (nuevoContexto.venta !== venta.modelo) {
-                init(nuevoContexto.venta);
-            }
-            eventos.map((evento) => publicar(evento[0], evento[1]));
-        },
-        [venta, pagoActivo, setPagoActivo, lineaActiva, setLineaActiva, estado, setEstado, init, intentar, publicar]
-    );
+    const { ctx, setCtx, emitir } = useMaquina(
+        getMaquina,
+        contextoInicial,
+        publicar
+    )
 
     const guardar = async () => {
-        emitir("edicion_de_venta_lista", modelo);
+        emitir("edicion_de_venta_lista", venta);
     };
-
+    
     const cancelar = () => {
         emitir("edicion_de_venta_cancelada");
     };
-
+    
+    
     useEffect(() => {
-        if (ventaId && ventaId !== venta.modelo.id) {
+        if (ventaId && ventaId !== ctx?.venta.id) {
             emitir("venta_id_cambiada", ventaId, true);
         }
-    }, [ventaId, emitir, venta.modelo.id]);
-
+    }, [ventaId, emitir, ctx]);
+    
+    const formVenta = getFormVenta(ctx, setCtx, emitir);
+          
+    const { estado, pagos, lineas, venta } = ctx;
   
     return (
         <Detalle
             id={ventaId}
             obtenerTitulo={titulo}
             setEntidad={() => {}}
-            entidad={modelo}
+            entidad={venta}
             cerrarDetalle={()=> emitir("venta_deseleccionada", null, true)}
         >
         {!!ventaId && (
@@ -107,20 +91,25 @@ export const DetalleVentaTpv = ({
                         key="tab-1"
                         label="Cliente"
                         children={
-                        <TabCliente venta={venta} publicar={emitir} />
+                            <TabCliente
+                                venta={venta}
+                                estado={estado}
+                                form={formVenta}
+                                publicar={emitir}
+                            />
                         }
                     />,
                     <Tab
                         key="tab-2"
                         label="Datos"
-                        children={<TabDatos venta={venta} />}
+                        children={<TabDatos venta={venta} form={formVenta} />}
                     />,
                     <Tab
                         key="tab-3"
                         label="Pagos"
                         children={
-                            <Pagos pagoActivo={pagoActivo}
-                                pagos={venta.modelo.pagos}
+                            <Pagos pagoActivo={pagos.activo}
+                                pagos={pagos.lista}
                                 estado={estado}
                                 publicar={emitir}
                             />
@@ -128,9 +117,9 @@ export const DetalleVentaTpv = ({
                     />,
                     ]}
                 ></Tabs>
-                {venta.modificado && (
+                {formVenta.modificado && (
                     <div className="botones maestro-botones ">
-                    <QBoton onClick={guardar} deshabilitado={!venta.valido}>
+                    <QBoton onClick={guardar} deshabilitado={!formVenta.valido}>
                         Guardar
                     </QBoton>
                     <QBoton tipo="reset" variante="texto" onClick={cancelar}>
@@ -140,10 +129,10 @@ export const DetalleVentaTpv = ({
                 )}
 
                 <TotalesVenta
-                    neto={Number(modelo.neto ?? 0)}
-                    totalIva={Number(modelo.total_iva ?? 0)}
-                    total={Number(modelo.total ?? 0)}
-                    divisa={String(modelo.coddivisa ?? "EUR")}
+                    neto={Number(venta.neto ?? 0)}
+                    totalIva={Number(venta.total_iva ?? 0)}
+                    total={Number(venta.total ?? 0)}
+                    divisa={String(venta.coddivisa ?? "EUR")}
                 />
 
                 { estado !== "EMITIDA" && (
@@ -154,8 +143,8 @@ export const DetalleVentaTpv = ({
                 )}
                 
                 <Lineas
-                    venta={venta.modelo}
-                    lineaActiva={lineaActiva}
+                    lineas={lineas}
+                    venta={venta}
                     publicar={emitir}
                     estadoVenta={estado}
                 />
@@ -163,43 +152,43 @@ export const DetalleVentaTpv = ({
                     estado === "BORRANDO_VENTA" &&
                     <BorrarVentaTpv
                         publicar={emitir}
-                        venta = {modelo}
+                        venta={venta}
                     />
                 }
                 {
                     estado === "PAGANDO_EN_EFECTIVO" &&
                     <PagarEfectivoVentaTpv
                         publicar={emitir}
-                        venta={modelo}
+                        venta={venta}
                     />
                 }
                 {
                     estado === "PAGANDO_CON_TARJETA" &&
                     <PagarTarjetaVentaTpv
                         publicar={emitir}
-                        venta={modelo}
+                        venta={venta}
                     />
                 }
                 {
                     estado === "PAGANDO_CON_VALE" &&
                     <PagoValeVentaTpv
                         publicar={emitir}
-                        venta={modelo}
+                        venta={venta}
                     />
                 }
                 {
-                    estado === "BORRANDO_PAGO" && pagoActivo &&
+                    estado === "BORRANDO_PAGO" && pagos.activo &&
                     <BorrarPagoVentaTpv
-                        venta={modelo}
                         publicar={emitir}
-                        idPago={pagoActivo.id}
+                        venta={venta}
+                        idPago={pagos.activo.id}
                     />
                 }
                 {
                     estado === "DEVOLVIENDO_VENTA" &&
                     <DevolverVentaTpv 
+                        venta={venta}
                         publicar={emitir}
-                        venta={modelo}
                     />
                 }
             </div>

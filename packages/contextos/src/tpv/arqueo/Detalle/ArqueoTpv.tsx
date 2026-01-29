@@ -22,15 +22,13 @@ const maquina = getMaquina();
 
 export const DetalleArqueoTpv = ({
     arqueoInicial = null,
-    publicar = () => {},
+    publicar = async () => {},
 }: {
     arqueoInicial?: ArqueoTpv | null;
     publicar?: EmitirEvento;
 }) => {
     const params = useParams();
     const { intentar } = useContext(ContextoError);
-
-    const [arqueoIdAnterior, setArqueoIdAnterior] = useState<string | null>(null);
 
     const [estado, setEstado] = useState<EstadoArqueoTpv>("INICIAL");
 
@@ -69,11 +67,10 @@ export const DetalleArqueoTpv = ({
     };
 
     useEffect(() => {
-        if (arqueoId && arqueoId !== arqueoIdAnterior) {
-            setArqueoIdAnterior(arqueoId);
+        if (arqueoId && arqueoId !== arqueo.modelo.id) {
             emitir("id_arqueo_cambiado", arqueoId, true);
         }
-    }, [arqueoId, arqueoIdAnterior, emitir]);
+    }, [arqueoId, arqueo.modelo.id, emitir]);
 
   
     return (

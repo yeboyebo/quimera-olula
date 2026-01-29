@@ -1,6 +1,6 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useCallback, useContext } from "react";
 import { deleteLinea } from "../infraestructura.ts";
 
@@ -10,7 +10,7 @@ export const BorrarLinea = ({
   idLinea,
 }: {
   pedidoId: string;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
   idLinea: string;
 }) => {
   const { intentar } = useContext(ContextoError);

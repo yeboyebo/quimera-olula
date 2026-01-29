@@ -1,13 +1,11 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
+import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CuentaBanco, NuevaCuentaBanco } from "../../diseño.ts";
 import {
-    deleteCuentaBanco,
     desmarcarCuentaDomiciliacion,
     domiciliarCuenta,
     getCuentasBanco,
-    patchCuentaBanco,
-    postCuentaBanco,
 } from "../../infraestructura.ts";
 import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
 
@@ -40,60 +38,27 @@ type ProcesarCuentasBanco = ProcesarContexto<EstadoCuentasBanco, ContextoCuentas
 
 const pipeCuentasBanco = ejecutarListaProcesos<EstadoCuentasBanco, ContextoCuentasBanco>;
 
-export const cargarCuentasBanco: ProcesarCuentasBanco = async (contexto) => {
-    const cuentas = await getCuentasBanco(contexto.clienteId);
+const conCuentas = (fn: ProcesarListaEntidades<CuentaBanco>) =>
+    (ctx: ContextoCuentasBanco) => ({ ...ctx, cuentas: fn(ctx.cuentas) });
+
+export const Cuentas = accionesListaEntidades(conCuentas);
+
+export const recargarCuentas: ProcesarCuentasBanco = async (contexto) => {
+    const resultado = await getCuentasBanco(contexto.clienteId);
+    const contextoActualizado = await Cuentas.recargar(contexto, { datos: resultado, total: resultado.length });
     return {
-        ...contexto,
-        cuentas,
+        ...contextoActualizado,
         cargando: false,
     }
 }
 
-export const activarCuenta: ProcesarCuentasBanco = async (contexto, payload) => {
-    const cuentaActiva = payload as CuentaBanco;
-    return {
-        ...contexto,
-        cuentaActiva
-    }
-}
-
-export const crearCuenta: ProcesarCuentasBanco = async (contexto, payload) => {
-    const nuevaCuenta = payload as CuentaBanco;
-    await postCuentaBanco(contexto.clienteId, nuevaCuenta);
-
-    return pipeCuentasBanco(contexto, [
-        cargarCuentasBanco,
-    ]);
-}
-
-export const actualizarCuenta: ProcesarCuentasBanco = async (contexto, payload) => {
-    const cuentaActualizada = payload as CuentaBanco;
-    await patchCuentaBanco(contexto.clienteId, cuentaActualizada);
-
-    return pipeCuentasBanco(contexto, [
-        cargarCuentasBanco,
-    ]);
-}
-
-export const borrarCuenta: ProcesarCuentasBanco = async (contexto) => {
-    const idCuenta = contexto.cuentaActiva?.id;
-    if (!idCuenta) return contexto;
-
-    await deleteCuentaBanco(contexto.clienteId, idCuenta);
-
-    return pipeCuentasBanco(contexto, [
-        cargarCuentasBanco,
-        'lista'
-    ]);
-}
-
 export const domiciliarCuentaProceso: ProcesarCuentasBanco = async (contexto) => {
-    if (!contexto.cuentaActiva?.id) return contexto;
+    if (!contexto.cuentas.activo?.id) return contexto;
 
-    await domiciliarCuenta(contexto.clienteId, contexto.cuentaActiva.id);
+    await domiciliarCuenta(contexto.clienteId, contexto.cuentas.activo.id);
 
     return pipeCuentasBanco(contexto, [
-        cargarCuentasBanco,
+        recargarCuentas,
     ]);
 }
 
@@ -101,26 +66,6 @@ export const desmarcarDomiciliacionProceso: ProcesarCuentasBanco = async (contex
     await desmarcarCuentaDomiciliacion(contexto.clienteId);
 
     return pipeCuentasBanco(contexto, [
-        cargarCuentasBanco,
+        recargarCuentas,
     ]);
-}
-
-export const cancelarAlta: ProcesarCuentasBanco = async (contexto) => {
-    return {
-        ...contexto,
-        cuentaActiva: null,
-        estado: "lista"
-    }
-}
-
-export const cancelarEdicion: ProcesarCuentasBanco = async (contexto) => {
-    return {
-        ...contexto,
-        cuentaActiva: null,
-        estado: "lista"
-    }
-}
-
-export const cancelarConfirmacion: ProcesarCuentasBanco = async (contexto) => {
-    return contexto;
 }

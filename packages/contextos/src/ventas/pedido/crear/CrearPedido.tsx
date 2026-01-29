@@ -11,7 +11,7 @@ import "./CrearPedido.css";
 import { metaNuevoPedido, nuevoPedidoVacio } from "./dominio.ts";
 
 export const CrearPedido = ({
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   publicar?: EmitirEvento;
 }) => {

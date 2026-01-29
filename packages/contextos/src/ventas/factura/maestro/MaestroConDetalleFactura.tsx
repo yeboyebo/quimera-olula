@@ -2,7 +2,6 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
@@ -15,6 +14,7 @@ import "./MaestroConDetalleFactura.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleFactura = () => {
+  
   const { ctx, emitir } = useMaestroVenta(getMaquina, {
     estado: "INICIAL",
     facturas: [],
@@ -23,7 +23,9 @@ export const MaestroConDetalleFactura = () => {
   });
 
   const setSeleccionada = useCallback(
-    (payload: Factura) => void emitir("factura_seleccionada", payload),
+    (payload: Factura) => {
+      emitir("factura_seleccionada", payload)
+    },
     [emitir]
   );
 
@@ -73,13 +75,16 @@ export const MaestroConDetalleFactura = () => {
         modoDisposicion="maestro-50"
       />
 
-      <QModal
+      { ctx.estado === "CREANDO_FACTURA" &&
+        <CrearFactura publicar={emitir} />
+      }
+      {/* <QModal
         nombre="modal"
         abierto={ctx.estado === "CREANDO_FACTURA"}
         onCerrar={() => emitir("creacion_factura_cancelada")}
       >
         <CrearFactura publicar={emitir} />
-      </QModal>
+      </QModal> */}
     </div>
   );
 };

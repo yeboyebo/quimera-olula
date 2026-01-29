@@ -16,7 +16,7 @@ import { TabGeneral } from "./TabGeneral.tsx";
 
 export const DetalleCliente = ({
   clienteInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   clienteInicial?: Cliente | null;
   publicar?: EmitirEvento;

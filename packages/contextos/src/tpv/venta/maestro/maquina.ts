@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroVentasTpv, EstadoMaestroVentasTpv } from "../diseño.ts";
-import { activarVenta, cambiarVentaEnLista, crearVenta, desactivarVentaActiva, incluirVentaEnLista, quitarVentaDeLista, recargarVentas } from "./maestro.ts";
+import { Ventas, crearVenta, recargarVentas } from "./maestro.ts";
 
 
 export const getMaquina: () => Maquina<EstadoMaestroVentasTpv, ContextoMaestroVentasTpv> = () => {
@@ -9,15 +9,15 @@ export const getMaquina: () => Maquina<EstadoMaestroVentasTpv, ContextoMaestroVe
 
         INICIAL: {
 
-            venta_cambiada: cambiarVentaEnLista,
+            venta_cambiada: [Ventas.cambiar],
 
-            venta_seleccionada: [activarVenta],
+            venta_seleccionada: [Ventas.activar],
 
-            venta_deselaccionada: desactivarVentaActiva,
+            venta_deselaccionada: [Ventas.desactivar],
 
-            venta_borrada: quitarVentaDeLista,
+            venta_borrada: [Ventas.quitar],
 
-            venta_creada: incluirVentaEnLista,
+            // venta_creada: incluirVentaEnLista,
 
             recarga_de_ventas_solicitada: recargarVentas,
 

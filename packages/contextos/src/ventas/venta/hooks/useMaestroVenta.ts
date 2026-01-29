@@ -1,11 +1,11 @@
 import { ContextoError } from '@olula/lib/contexto.ts';
-import { Contexto, EventoMaquina, Maquina } from '@olula/lib/diseño.ts';
+import { Contexto, EmitirEvento, Maquina } from '@olula/lib/diseño.ts';
 import { procesarEvento } from '@olula/lib/dominio.js';
 import { useCallback, useContext, useState } from 'react';
 
 export interface UseMaestroVentaReturn<Estado extends string, C extends Contexto<Estado>> {
     ctx: C;
-    emitir: (evento: string, payload?: unknown) => Promise<EventoMaquina[]>;
+    emitir: EmitirEvento;
 }
 
 export function useMaestroVenta<Estado extends string, C extends Contexto<Estado>>(
@@ -18,18 +18,18 @@ export function useMaestroVenta<Estado extends string, C extends Contexto<Estado
 
     const [ctx, setCtx] = useState<C>(contextoInicial);
 
-    const emitir = useCallback(async (evento: string, payload?: unknown): Promise<EventoMaquina[]> => {
+    const emitir = useCallback(async (evento: string, payload?: unknown): Promise<void> => {
         const contexto: C = {
             ...ctx,
         };
 
-        const [nuevoContexto, eventos] = await intentar(() =>
+        const [nuevoContexto, _] = await intentar(() =>
             procesarEvento(maquina, contexto, evento, payload)
         );
 
         setCtx(nuevoContexto);
 
-        return eventos;
+        // return eventos;
     }, [ctx, maquina, intentar]);
 
     return {

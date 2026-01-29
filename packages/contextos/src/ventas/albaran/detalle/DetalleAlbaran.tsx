@@ -17,7 +17,7 @@ import { useAlbaran } from "./hooks/useAlbaran.ts";
 
 export const DetalleAlbaran = ({
   albaranInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   albaranInicial?: Albaran | null;
   publicar?: EmitirEvento;

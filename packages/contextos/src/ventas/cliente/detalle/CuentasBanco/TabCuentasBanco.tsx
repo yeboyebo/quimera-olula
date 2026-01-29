@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { BorrarCuentaBanco } from "./BorrarCuentaBanco.tsx";
 import { CrearCuentaBanco } from "./CrearCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
 import { TabCuentasBancoLista } from "./TabCuentasBancoLista.tsx";
@@ -13,19 +13,19 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
   const acciones = [
     {
       texto: "Editar",
-      onClick: () => ctx.cuentaActiva && emitir("edicion_solicitada"),
-      deshabilitado: !ctx.cuentaActiva,
+      onClick: () => ctx.cuentas.activo && emitir("edicion_solicitada"),
+      deshabilitado: !ctx.cuentas.activo,
     },
     {
       icono: "eliminar",
       texto: "Borrar",
       onClick: () => emitir("borrado_solicitado"),
-      deshabilitado: !ctx.cuentaActiva,
+      deshabilitado: !ctx.cuentas.activo,
     },
     {
       texto: "Cuenta de domiciliación",
       onClick: () => emitir("domiciliar_solicitada"),
-      deshabilitado: !ctx.cuentaActiva,
+      deshabilitado: !ctx.cuentas.activo,
     },
     {
       texto: "Desmarcar domiciliación",
@@ -42,8 +42,8 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
         </div>
         <TabCuentasBancoLista
           clienteId={clienteId}
-          cuentas={ctx.cuentas}
-          seleccionada={ctx.cuentaActiva}
+          cuentas={ctx.cuentas.lista}
+          seleccionada={ctx.cuentas.activo}
           emitir={emitir}
           cargando={ctx.cargando}
         />
@@ -53,7 +53,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "alta"}
         onCerrar={() => emitir("alta_cancelada")}
       >
-        <CrearCuentaBanco emitir={emitir} />
+        <CrearCuentaBanco clienteId={clienteId} emitir={emitir} />
       </QModal>
 
       <QModal
@@ -61,23 +61,23 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
         abierto={estado === "edicion"}
         onCerrar={() => emitir("edicion_cancelada")}
       >
-        {ctx.cuentaActiva && (
+        {ctx.cuentas.activo && (
           <EdicionCuentaBanco
             clienteId={clienteId}
-            cuenta={ctx.cuentaActiva}
+            cuenta={ctx.cuentas.activo}
             emitir={emitir}
           />
         )}
       </QModal>
 
-      <QModalConfirmacion
-        nombre="confirmarBorradoCuenta"
-        abierto={estado === "confirmar_borrado"}
-        titulo="Confirmar borrar"
-        mensaje="¿Está seguro de que desea borrar esta cuenta bancaria?"
-        onCerrar={() => emitir("borrado_cancelado")}
-        onAceptar={() => emitir("borrado_confirmado")}
-      />
+      {ctx.cuentas.activo && (
+        <BorrarCuentaBanco
+          clienteId={clienteId}
+          cuenta={ctx.cuentas.activo}
+          abierto={estado === "confirmar_borrado"}
+          emitir={emitir}
+        />
+      )}
     </div>
   );
 };
