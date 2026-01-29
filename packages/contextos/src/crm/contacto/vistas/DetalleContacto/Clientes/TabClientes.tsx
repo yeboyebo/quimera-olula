@@ -25,7 +25,7 @@ export const TabClientes = ({
   const cargarClientes = useCallback(async () => {
     setCargando(true);
     const nuevosClientes = await getClientesPorContacto(contactoId);
-    setListaClientes(nuevosClientes);
+    setListaClientes(nuevosClientes.datos);
     setCargando(false);
   }, [contactoId, setListaClientes]);
 
