@@ -1,7 +1,7 @@
 import { crearRouterLegacy, Dependency } from "@olula/lib/router_legacy.ts";
 import Quimera from "quimera";
-import project from "../../../legacy/apps/monterelax/src/project.ts";
 import "../../../legacy/apps/monterelax/styles/_variables.scss";
+import project from "../../../legacy/apps/tienda-nativa-mon/src/project.ts";
 
 const environment = {
   production: import.meta.env.MODE !== "development",

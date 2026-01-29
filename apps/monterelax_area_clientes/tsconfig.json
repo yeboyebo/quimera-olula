@@ -12,7 +12,7 @@
         ".",
         "../../eslint.config.js",
         "../../vite.config.ts",
-        "../../legacy/apps/monterelax/src/project.ts",
-        "../../legacy/apps/monterelax/src/theme.js"
+        "../../legacy/apps/tienda-nativa-mon/src/project.ts",
+        "../../legacy/apps/tienda-nativa-mon/src/theme.js"
     ]
 }
