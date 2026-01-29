@@ -1,7 +1,7 @@
 import { QBoton, QInput } from "@olula/componentes/index.js";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Modulo } from "../diseño";
@@ -9,10 +9,10 @@ import { metaNuevoModulo, nuevoModuloVacio } from "../dominio.ts";
 import { getModulo, postModulo } from "../infraestructura";
 
 export const CrearModulo = ({
-  emitir = () => {},
+  emitir = async () => {},
   activo = false,
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
   activo: boolean;
 }) => {
   const modulo = useModelo(metaNuevoModulo, { ...nuevoModuloVacio });
@@ -30,10 +30,10 @@ export const CrearModulo = ({
 };
 
 const FormAltaModulo = ({
-  emitir = () => {},
+  emitir = async () => {},
   modulo,
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
   modulo: HookModelo<Partial<Modulo>>;
 }) => {
   const { intentar } = useContext(ContextoError);

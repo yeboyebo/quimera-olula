@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { Lead } from "../diseño.ts";
 import { getLead, patchLead } from "../infraestructura.ts";
@@ -86,11 +86,6 @@ export const refrescarLead: ProcesarLead = async (contexto) => {
     ]
 }
 
-export const cancelarCambioLead: ProcesarLead = async (contexto) => {
-
-    return conLead(contexto.inicial)(contexto);
-}
-
 export const cambiarLead: ProcesarLead = async (contexto, payload) => {
     const lead = payload as Lead;
     await patchLead(contexto.lead.id, lead)
@@ -98,15 +93,6 @@ export const cambiarLead: ProcesarLead = async (contexto, payload) => {
     return pipeLead(contexto, [
         refrescarLead,
         "INICIAL",
-    ]);
-}
-
-export const onLeadBorrado: ProcesarLead = async (contexto) => {
-    const lead = contexto.lead;
-
-    return pipeLead(contexto, [
-        getContextoVacio,
-        publicar('lead_borrado', lead.id)
     ]);
 }
 

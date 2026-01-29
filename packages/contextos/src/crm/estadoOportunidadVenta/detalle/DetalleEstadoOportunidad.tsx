@@ -39,7 +39,6 @@ export const DetalleEstadoOportunidad = ({
     {
       estado: "INICIAL",
       estado_oportunidad: modelo,
-      inicial: modeloInicial,
     },
     publicar
   );
@@ -47,14 +46,6 @@ export const DetalleEstadoOportunidad = ({
   if (ctx.estado_oportunidad !== modeloInicial) {
     init(ctx.estado_oportunidad);
   }
-
-  const guardar = async () => {
-    emitir("estado_oportunidad_cambiado", modelo);
-  };
-
-  const cancelar = () => {
-    emitir("edicion_estado_oportunidad_cancelada");
-  };
 
   if (estadoOportunidadId && estadoOportunidadId !== modelo.id) {
     emitir("estado_oportunidad_id_cambiado", estadoOportunidadId);
@@ -89,10 +80,17 @@ export const DetalleEstadoOportunidad = ({
 
           {modificado && (
             <div className="botones maestro-botones">
-              <QBoton onClick={guardar} deshabilitado={!valido}>
+              <QBoton
+                onClick={() => emitir("estado_oportunidad_cambiado", modelo)}
+                deshabilitado={!valido}
+              >
                 Guardar
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={cancelar}>
+              <QBoton
+                tipo="reset"
+                variante="texto"
+                onClick={() => emitir("edicion_estado_oportunidad_cancelada")}
+              >
                 Cancelar
               </QBoton>
             </div>

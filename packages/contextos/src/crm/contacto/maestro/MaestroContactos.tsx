@@ -4,10 +4,11 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearContacto } from "../crear/CrearContacto.tsx";
+import { DetalleContacto } from "../detalle/DetalleContacto.tsx";
 import { Contacto } from "../diseño.ts";
-import { DetalleContacto } from "../vistas/DetalleContacto/DetalleContacto.tsx";
 import { metaTablaContacto } from "./maestro.ts";
 import "./MaestroContactos.css";
 import { getMaquina } from "./maquina.ts";
@@ -17,20 +18,8 @@ export const MaestroContactos = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    contactos: [],
-    totalContactos: 0,
-    activo: null,
+    contactos: listaEntidadesInicial<Contacto>(),
   });
-
-  const crear = useCallback(
-    () => emitir("creacion_de_contacto_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionado = useCallback(
-    (payload: Contacto) => emitir("contacto_seleccionado", payload),
-    [emitir]
-  );
 
   const recargar = useCallback(
     async (criteria: Criteria) => {
@@ -51,9 +40,13 @@ export const MaestroContactos = () => {
         Maestro={
           <>
             <h2>Contactos</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_contacto_solicitada")}>
+                Nuevo
+              </QBoton>
             </div>
+
             <ListadoControlado<Contacto>
               metaTabla={metaTablaContacto}
               metaFiltro={true}
@@ -62,18 +55,20 @@ export const MaestroContactos = () => {
               modo={"tabla"}
               // setModo={handleSetModoVisualizacion}
               // tarjeta={tarjeta}
-              entidades={ctx.contactos}
-              totalEntidades={ctx.totalContactos}
-              seleccionada={ctx.activo}
-              onSeleccion={setSeleccionado}
+              entidades={ctx.contactos.lista}
+              totalEntidades={ctx.contactos.total}
+              seleccionada={ctx.contactos.activo}
+              onSeleccion={(payload) =>
+                emitir("contacto_seleccionado", payload)
+              }
               onCriteriaChanged={recargar}
             />
           </>
         }
         Detalle={
-          <DetalleContacto contactoInicial={ctx.activo} publicar={emitir} />
+          <DetalleContacto inicial={ctx.contactos.activo} publicar={emitir} />
         }
-        seleccionada={ctx.activo}
+        seleccionada={ctx.contactos.activo}
         modoDisposicion="maestro-50"
       />
 

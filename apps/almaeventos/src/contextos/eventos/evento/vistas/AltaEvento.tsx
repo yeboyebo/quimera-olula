@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Producto } from "../../componentes/producto.tsx";
@@ -9,10 +9,10 @@ import { metaNuevoEvento, nuevoEventoVacio } from "../dominio.ts";
 import { getEvento, postEvento } from "../infraestructura.ts";
 
 export const AltaEvento = ({
-  emitir = () => {},
+  emitir = async () => {},
   fechaInicial = null,
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
   fechaInicial?: Date | null;
 }) => {
   const fechaAString = (fecha: Date): string => {

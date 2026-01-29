@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { cambiarEstadoOportunidad, cargarContexto, getContextoVacio, onEstadoOportunidadBorrado } from "./detalle.ts";
+import { cambiarEstadoOportunidad, cargarContexto, getContextoVacio } from "./detalle.ts";
 import { ContextoDetalleEstadoOportunidad, EstadoDetalleEstadoOportunidad } from "./diseño.ts";
 
 export const getMaquina: () => Maquina<EstadoDetalleEstadoOportunidad, ContextoDetalleEstadoOportunidad> = () => {
@@ -17,7 +17,7 @@ export const getMaquina: () => Maquina<EstadoDetalleEstadoOportunidad, ContextoD
         BORRANDO: {
             borrado_estado_oportunidad_cancelado: "INICIAL",
 
-            estado_oportunidad_borrado: onEstadoOportunidadBorrado,
+            estado_oportunidad_borrado: [getContextoVacio, publicar('estado_oportunidad_borrado', (_, estadoOportunidadId) => estadoOportunidadId)],
         },
     }
 }

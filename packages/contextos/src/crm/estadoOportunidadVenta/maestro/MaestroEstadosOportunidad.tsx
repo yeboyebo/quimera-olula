@@ -7,6 +7,7 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearEstadoOportunidad } from "../crear/CrearEstadoOportunidad.tsx";
 // import { DetalleEstadoOportunidad } from "../Detalle/DetalleEstadoOportunidad.tsx";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { DetalleEstadoOportunidad } from "../detalle/DetalleEstadoOportunidad.tsx";
 import { EstadoOportunidad } from "../diseño.ts";
 import { metaTablaEstadoOportunidad } from "./maestro.ts";
@@ -18,21 +19,8 @@ export const MaestroEstadosOportunidad = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    estados_oportunidad: [],
-    totalEstadosOportunidad: 0,
-    activo: null,
+    estados_oportunidad: listaEntidadesInicial<EstadoOportunidad>(),
   });
-
-  const crear = useCallback(
-    () => emitir("creacion_de_estado_oportunidad_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionado = useCallback(
-    (payload: EstadoOportunidad) =>
-      emitir("estado_oportunidad_seleccionado", payload),
-    [emitir]
-  );
 
   const recargar = useCallback(
     async (criteria: Criteria) => {
@@ -53,9 +41,17 @@ export const MaestroEstadosOportunidad = () => {
         Maestro={
           <>
             <h2>Estados de Oportunidad de Venta</h2>
+
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo</QBoton>
+              <QBoton
+                onClick={() =>
+                  emitir("creacion_de_estado_oportunidad_solicitada")
+                }
+              >
+                Nuevo
+              </QBoton>
             </div>
+
             <ListadoControlado<EstadoOportunidad>
               metaTabla={metaTablaEstadoOportunidad}
               metaFiltro={true}
@@ -64,20 +60,26 @@ export const MaestroEstadosOportunidad = () => {
               modo={"tabla"}
               // setModo={handleSetModoVisualizacion}
               // tarjeta={tarjeta}
-              entidades={ctx.estados_oportunidad}
-              totalEntidades={ctx.totalEstadosOportunidad}
-              seleccionada={ctx.activo}
-              onSeleccion={setSeleccionado}
+              entidades={ctx.estados_oportunidad.lista}
+              totalEntidades={ctx.estados_oportunidad.total}
+              seleccionada={ctx.estados_oportunidad.activo}
+              onSeleccion={(payload) =>
+                emitir("estado_oportunidad_seleccionado", payload)
+              }
               onCriteriaChanged={recargar}
             />
           </>
         }
         Detalle={
-          <DetalleEstadoOportunidad inicial={ctx.activo} publicar={emitir} />
+          <DetalleEstadoOportunidad
+            inicial={ctx.estados_oportunidad.activo}
+            publicar={emitir}
+          />
         }
-        seleccionada={ctx.activo}
+        seleccionada={ctx.estados_oportunidad.activo}
         modoDisposicion="maestro-50"
       />
+
       {ctx.estado === "CREANDO" && <CrearEstadoOportunidad publicar={emitir} />}
     </div>
   );

@@ -1,5 +1,0 @@
-.OportunidadVenta .TabObservaciones {
-    quimera-textarea[nombre="observaciones"] {
-        grid-column: span 12;
-    }
-}
