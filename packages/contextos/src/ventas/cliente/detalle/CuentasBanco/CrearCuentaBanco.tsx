@@ -1,21 +1,27 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useModelo } from "@olula/lib/useModelo.ts";
+import { postCuentaBanco } from "../../infraestructura.ts";
 import { metaNuevaCuentaBanco, nuevaCuentaBancoVacia } from "./dominio.ts";
 import "./TabCuentasBanco.css";
 
 interface CrearCuentaBancoProps {
+  clienteId: string;
   emitir: (evento: string, payload?: unknown) => void;
 }
 
-export const CrearCuentaBanco = ({ emitir }: CrearCuentaBancoProps) => {
+export const CrearCuentaBanco = ({
+  clienteId,
+  emitir,
+}: CrearCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(
     metaNuevaCuentaBanco,
     nuevaCuentaBancoVacia
   );
 
   const guardar = async () => {
-    emitir("crear_cuenta", modelo);
+    const cuentaCreada = await postCuentaBanco(clienteId, modelo);
+    emitir("cuenta_creada", cuentaCreada);
   };
 
   return (
