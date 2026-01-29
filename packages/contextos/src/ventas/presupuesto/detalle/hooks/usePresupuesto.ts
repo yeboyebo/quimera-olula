@@ -1,5 +1,5 @@
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -29,7 +29,7 @@ export const usePresupuesto = (options: UsePresupuestoOptions = {}) => {
     const presupuestoIdCargadoRef = useRef<string | null>(null);
 
     const emitir = useCallback(
-        async (evento: string, payload?: unknown, inicial: boolean = false): Promise<EventoMaquina[]> => {
+        async (evento: string, payload?: unknown, inicial: boolean = false): Promise<void> => {
             const contexto: ContextoPresupuesto = {
                 estado: inicial ? 'INICIAL' : estado,
                 presupuesto: modelo.modelo,
@@ -52,7 +52,7 @@ export const usePresupuesto = (options: UsePresupuestoOptions = {}) => {
                 eventos.forEach(([nombre, datos]) => publicar(nombre, datos));
             }
 
-            return eventos;
+            // return eventos;
         },
         [estado, lineaActiva, modelo, intentar, publicar, maquina]
     );

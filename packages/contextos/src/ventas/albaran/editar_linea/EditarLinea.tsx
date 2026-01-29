@@ -4,7 +4,7 @@ import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext } from "react";
 import { LineaAlbaran } from "../diseño.ts";
@@ -19,7 +19,7 @@ export const EditarLinea = ({
 }: {
   linea: LineaAlbaran;
   albaranId: string;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
   const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido } = useModelo(metaLineaAlbaran, linea);

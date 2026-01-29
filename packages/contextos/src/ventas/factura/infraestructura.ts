@@ -40,7 +40,7 @@ export const postFactura: PostFactura = async (factura) => {
   const payload = {
     cliente: {
       cliente_id: factura.cliente_id,
-      direccion_id: factura.direccion_id
+      // direccion_id: factura.direccion_id
     },
     empresa_id: factura.empresa_id
   };

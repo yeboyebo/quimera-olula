@@ -3,7 +3,7 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
-import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
 import { LineaFactura as Linea } from "../diseño.ts";
@@ -15,7 +15,7 @@ export const EditarLinea = ({
   linea,
 }: {
   linea: Linea;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
   const { modelo, uiProps, valido } = useModelo(metaLinea, linea);
 

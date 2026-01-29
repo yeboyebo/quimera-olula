@@ -31,7 +31,13 @@ export const QBoton = ({
 
   return (
     <quimera-boton {...attrs}>
-      <button type={tipo} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...props} >
+      <button
+        type={tipo}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        {...props}
+      >
         {texto || children}
       </button>
     </quimera-boton>

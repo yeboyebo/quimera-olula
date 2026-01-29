@@ -13,6 +13,7 @@ type QSelectProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
     opcion: Opcion | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
+  evaluarCambio?: () => void;
 };
 
 export const QSelect = ({
@@ -31,6 +32,7 @@ export const QSelect = ({
   ref,
   onChange,
   onBlur,
+  evaluarCambio,
 }: QSelectProps) => {
   const attrs = {
     nombre,
@@ -54,8 +56,8 @@ export const QSelect = ({
       onChange?.(null, e);
       return;
     }
-
     onChange?.(opcion, e);
+    evaluarCambio?.();
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
@@ -64,8 +66,8 @@ export const QSelect = ({
       onBlur?.(null, e);
       return;
     }
-
     onBlur?.(opcion, e);
+    evaluarCambio?.();
   };
 
   return (

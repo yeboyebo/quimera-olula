@@ -40,7 +40,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 
 export const DetalleContacto = ({
   contactoInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   contactoInicial?: Contacto | null;
   publicar?: EmitirEvento;

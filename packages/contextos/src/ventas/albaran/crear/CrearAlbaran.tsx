@@ -11,7 +11,7 @@ import { getAlbaran, postAlbaran } from "../infraestructura.ts";
 import "./CrearAlbaran.css";
 
 export const CrearAlbaran = ({
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   publicar?: EmitirEvento;
 }) => {

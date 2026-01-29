@@ -1,5 +1,5 @@
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
     editable?: boolean;
@@ -9,7 +9,11 @@ export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
 }
 
-export type NuevaFactura = NuevaVenta;
+export type NuevaFactura = {
+    cliente_id: string;
+    // direccion_id: string;
+    empresa_id: string;
+};;
 
 export type CambioClienteFactura = CambioClienteVenta;
 
@@ -64,3 +68,7 @@ export type ContextoMaestroFactura = {
     totalFacturas: number;
     facturaActiva: Factura | null;
 };
+
+export type ClienteFacturaRegistrado = {
+    id: string,
+}

@@ -17,7 +17,7 @@ import { TabObservaciones } from "./TabObservaciones.tsx";
 
 export const DetalleFactura = ({
   facturaInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   facturaInicial?: Factura | null;
   publicar?: EmitirEvento;

@@ -1,4 +1,4 @@
-import { Box, Fab, Grid, Icon } from "@quimera/comps";
+import { Box, Fab, Grid, Icon, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { InfiniteScroll, useTranslation } from "@quimera/thirdparty";
 import Quimera, { useStateValue, useWidth, util } from "quimera";
@@ -82,24 +82,32 @@ function CatalogoMaster() {
                   loading="lazy"
                 />
               </Box>
-              <InfiniteScroll
-                dataLength={catalogo.idList.length}
-                next={() => dispatch({ type: "onNextCatalogo" })}
-                hasMore={catalogo.page.next !== null}
-                loader={<h4>Loading...</h4>}
-                // endMessage={<p style={{ textAlign: 'center' }}><b>FIN</b></p>}
-                scrollableTarget="scrollable"
-              >
-                <Grid container>
-                  {catalogo.idList.map(itemId => (
-                    <Grid item key={itemId}>
-                      <Box m={1}>
-                        <Quimera.SubView id="ItemCatalogo" model={catalogo.dict[itemId]} />
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-              </InfiniteScroll>
+              {catalogo.idList.length > 0 ? (
+                <InfiniteScroll
+                  dataLength={catalogo.idList.length}
+                  next={() => dispatch({ type: "onNextCatalogo" })}
+                  hasMore={catalogo.page.next !== null}
+                  loader={<h4>Loading...</h4>}
+                  // endMessage={<p style={{ textAlign: 'center' }}><b>FIN</b></p>}
+                  scrollableTarget="scrollable"
+                >
+                  <Grid container>
+                    {catalogo.idList.map(itemId => (
+                      <Grid item key={itemId}>
+                        <Box m={1}>
+                          <Quimera.SubView id="ItemCatalogo" model={catalogo.dict[itemId]} />
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </InfiniteScroll>
+              ) : (
+                <Box m={2}>
+                  <Typography variant="h4">
+                    No hay productos a mostrar para tu cuenta de cliente.
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>

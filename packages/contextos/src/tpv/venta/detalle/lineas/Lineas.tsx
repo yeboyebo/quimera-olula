@@ -1,22 +1,24 @@
 import { BorrarLineaVentaTpv } from "#/tpv/venta/borrar_linea/BorrarLineaVentaTpv.tsx";
 import { CrearLineaVentaTpv } from "#/tpv/venta/crear_linea/CrearLineaVentaTpv.tsx";
-import { EstadoVentaTpv, VentaTpv } from "#/tpv/venta/diseño.ts";
+import { VentaTpv } from "#/tpv/venta/diseño.ts";
 import { LineaFactura } from "#/ventas/factura/diseño.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QBoton } from "@olula/componentes/index.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { CambiarLineaTpv } from "../../cambiar_linea/CambiarLineaTpv.tsx";
+import { EstadoVentaTpv } from "../detalle.ts";
 import { LineasLista } from "./LineasLista.tsx";
 
 export const Lineas = ({
         venta,
-        lineaActiva,
+        lineas,
         estadoVenta,
         publicar
     }: {
         venta: VentaTpv;
-        lineaActiva: LineaFactura | null;
+        lineas: ListaEntidades<LineaFactura>;
         estadoVenta: EstadoVentaTpv;
         publicar: EmitirEvento
     }
@@ -54,21 +56,21 @@ export const Lineas = ({
                     </QBoton>
                     
                     <QBoton
-                        deshabilitado={!lineaActiva}
+                        deshabilitado={!lineas.activo}
                         onClick={() => publicar("cambio_linea_solicitado")}
                     > Editar
                     </QBoton>
                     
                     <QBoton
-                        deshabilitado={!lineaActiva}
+                        deshabilitado={!lineas.activo}
                         onClick={() => publicar("baja_linea_solicitada")}
                     > Borrar
                     </QBoton>
                 </div>
             )}
             <LineasLista
-                lineas={venta.lineas}
-                seleccionada={lineaActiva?.id}
+                lineas={lineas.lista}
+                seleccionada={lineas.activo?.id}
                 publicar={publicar}
             />
             {estadoVenta === "CREANDO_LINEA" &&
@@ -77,18 +79,18 @@ export const Lineas = ({
                     publicar={publicar}
                 />
             }
-            {lineaActiva && estadoVenta === "CAMBIANDO_LINEA" && (
+            {lineas.activo && estadoVenta === "CAMBIANDO_LINEA" && (
                 <CambiarLineaTpv
                     venta={venta}
                     publicar={publicar}
-                    linea={lineaActiva}
+                    linea={lineas.activo}
                 />
             )}
-            {lineaActiva && estadoVenta === "BORRANDO_LINEA" && (
+            {lineas.activo && estadoVenta === "BORRANDO_LINEA" && (
                 <BorrarLineaVentaTpv
                     venta={venta}
                     publicar={publicar}
-                    idLinea={lineaActiva.id}
+                    idLinea={lineas.activo.id}
                 />
             )}
         </>

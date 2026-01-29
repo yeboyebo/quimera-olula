@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import { DirCliente } from "../diseño.ts";
@@ -16,7 +16,7 @@ export const EdicionDireccion = ({
 }: {
   direccion: DirCliente;
   clienteId: string;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
   const { intentar } = useContext(ContextoError);
   const direccionEditada = useModelo(metaDireccion, direccion);

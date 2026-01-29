@@ -1,19 +1,20 @@
 import { AgenteTpvActual } from "#/tpv/agente/agente_actual/AgenteTpvActual.tsx";
 import { PuntoVentaTpvActual } from "#/tpv/punto_de_venta/punto_actual/PuntoVentaTpvActual.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
+import { useCallback, useEffect, useState } from "react";
 import { DetalleVentaTpv } from "../detalle/DetalleVentaTpv.tsx";
-import { ContextoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
+import { VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "./maestro.ts";
 import "./MaestroConDetalleVentaTpv.css";
 import { getMaquina } from "./maquina.ts";
 
-const maquina = getMaquina();
+// const maquina = getMaquina();
 
 const criteriaBaseVentas = {
     ...criteriaDefecto,
@@ -28,28 +29,30 @@ type Layout = "TABLA" | "TARJETA";
 
 export const MaestroConDetalleVentaTpv = () => {
 
-    const { intentar } = useContext(ContextoError);
+    // const { intentar } = useContext(ContextoError);
 
     const [cargando, setCargando] = useState(false);
     const [layout, setLayout] = useState<Layout>("TARJETA");
 
-    const [ctx, setCtx] = useState<ContextoMaestroVentasTpv>({
+    // const [ctx, setCtx] = useState<ContextoMaestroVentasTpv>({
+    const { ctx, emitir } = useMaquina(getMaquina, {
         estado: "INICIAL",
-        ventas: [],
-        totalVentas: 0,
-        ventaActiva: null,
+        ventas: listaEntidadesInicial<VentaTpv>()
+        // ventas: [],
+        // totalVentas: 0,
+        // ventaActiva: null,
     })
 
-    const emitir = useCallback(
-        async (evento: string, payload?: unknown) => {
+    // const emitir = useCallback(
+    //     async (evento: string, payload?: unknown) => {
 
-            const [nuevoContexto, _] = await intentar(
-                () => procesarEvento(maquina, ctx, evento, payload, )
-            );
-            setCtx(nuevoContexto);
-        },
-        [ctx, setCtx, setCargando,intentar]
-    );
+    //         const [nuevoContexto, _] = await intentar(
+    //             () => procesarEvento(maquina, ctx, evento, payload, )
+    //         );
+    //         setCtx(nuevoContexto);
+    //     },
+    //     [ctx, setCtx, setCargando,intentar]
+    // );
 
     const cambiarLayout = useCallback(
         () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
@@ -104,19 +107,19 @@ export const MaestroConDetalleVentaTpv = () => {
                             modo={layout === "TARJETA" ? 'tarjetas' : 'tabla'}
                             // setModo={handleSetModoVisualizacion}
                             tarjeta={TarjetaVentaTpv}
-                            entidades={ctx.ventas}
-                            totalEntidades={ctx.totalVentas}
-                            seleccionada={ctx.ventaActiva}
+                            entidades={ctx.ventas.lista}
+                            totalEntidades={ctx.ventas.total}
+                            seleccionada={ctx.ventas.activo}
                             onSeleccion={setSeleccionada}
                             onCriteriaChanged={recargar}
                         />
                     </>
                 }
                 Detalle={
-                    <DetalleVentaTpv ventaInicial={ctx.ventaActiva} publicar={emitir} />
+                    <DetalleVentaTpv ventaInicial={ctx.ventas.activo} publicar={emitir} />
                 }
                 layout={layout}
-                seleccionada={ctx.ventaActiva}
+                seleccionada={ctx.ventas.activo}
                 modoDisposicion="maestro-50"
             />
         </div>
