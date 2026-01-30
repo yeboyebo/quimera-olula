@@ -1,4 +1,6 @@
+import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { QIcono } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { PagoVentaTpv } from "../../diseño.ts";
 
@@ -30,22 +32,48 @@ export const PagosLista = ({
     );
 };
 
-// const ItemPagoVentaTpv = ({ pago }: { pago: PagoVentaTpv }) => {
-//   return <>{`${pago.forma_pago}: ${pago.importe}€`}</>;
-// };
-
 const getMetaTablaPagos = () => {
     const meta:MetaTabla<PagoVentaTpv> = [
+        {
+            id: "bloqueado",
+            cabecera: '',
+            render: (pago: PagoVentaTpv) => <ColumnaEstadoTabla
+                estados={{
+                    abierto,
+                    cerrado,
+                }}
+                estadoActual={pago.arqueoAbierto ? "abierto" : "cerrado"}
+            />
+        },
         {
             id: "fecha",
             cabecera: "Fecha",
             tipo: "fecha",
         },
-        { id: "forma_pago", cabecera: "Forma de pago"},
-        { id: "vale", cabecera: "Vale"},
+        { id: "formaPago", cabecera: "Forma de pago",
+            render: (pago: PagoVentaTpv) => pago.vale
+                ? `${pago.formaPago} ${pago.vale}`
+                : `${pago.formaPago}`,
+        },
         { id: "importe", cabecera: "Importe", tipo: "moneda" },
-
+        { id: "idArqueo", cabecera: "Arqueo" },
     ];
 
     return meta;
 };
+
+const abierto = (
+    <QIcono
+        nombre={"circulo_relleno"}
+        tamaño="sm"
+        color="var(--color-exito-oscuro)"
+    />
+)
+
+const cerrado = (
+    <QIcono
+        nombre={"circulo_relleno"}
+        tamaño="sm"
+        color="var(--color-deshabilitado-oscuro)"
+    />
+)

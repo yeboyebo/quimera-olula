@@ -11,13 +11,22 @@ const baseUrl = new ApiUrls().VENTA;
 
 
 type LineaFacturaAPI = LineaFactura;
-type PagoVentaTpvAPI = PagoVentaTpv;
 type VentaTpvAPI = VentaTpv & {
     fecha: string
     punto_venta_id: string,
     punto_venta: string,
     agente_id: string,
-    agente: string
+    agente: string,
+}
+
+type PagoVentaTpvApi = {
+    id: string;
+    importe: number;
+    forma_pago: string;
+    fecha: string;
+    vale: string | null;
+    arqueo_id: string;
+    arqueo_abierto: boolean;
 }
 
 interface VentaTpvADevolverAPI extends VentaTpvAPI {
@@ -46,9 +55,17 @@ export const ventaADevolverDesdeAPI = (venta: VentaTpvADevolverAPI): VentaTpvADe
 )
 
 export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
-export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
-    ...p,
-});
+export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvApi): PagoVentaTpv => (
+    {
+        id: p.id,
+        importe: p.importe,
+        formaPago: p.forma_pago,
+        fecha: new Date(Date.parse(p.fecha)),
+        vale: p.vale,
+        idArqueo: p.arqueo_id,
+        arqueoAbierto: p.arqueo_abierto
+    }
+);
 
 export const getVenta: GetVentaTpv = async (id) => {
     return RestAPI.get<{ datos: VentaTpvAPI }>(
@@ -130,7 +147,7 @@ export const getLineas: GetLineasFactura = async (id) =>
         });
 
 export const getPagos: GetPagosVentaTpv = async (id) =>
-    await RestAPI.get<{ datos: PagoVentaTpvAPI[] }>(
+    await RestAPI.get<{ datos: PagoVentaTpvApi[] }>(
         `${baseUrl}/${id}/pagos`).then((respuesta) => {
             const lineas = respuesta.datos.map((d) => pagoVentaTpvDesdeAPI(d));
             return lineas;

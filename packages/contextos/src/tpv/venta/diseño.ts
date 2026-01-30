@@ -31,9 +31,11 @@ export interface VentaTpvADevolver extends VentaTpv {
 export interface PagoVentaTpv extends Entidad {
     id: string;
     importe: number;
-    forma_pago: string;
-    fecha: string;
+    formaPago: string;
+    fecha: Date;
     vale: string | null;
+    idArqueo: string;
+    arqueoAbierto: boolean;
 }
 
 
