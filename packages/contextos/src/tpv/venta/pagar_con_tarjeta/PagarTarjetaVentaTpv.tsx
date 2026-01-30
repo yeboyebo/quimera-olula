@@ -3,13 +3,14 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { redondeaMoneda } from "@olula/lib/dominio.js";
+import { formatearMoneda, redondeaMoneda } from "@olula/lib/dominio.js";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback } from "react";
 import { postPago } from "../infraestructura.ts";
 import "./PagarTarjetaVentaTpv.css";
-import { metaNuevoPagoTarjeta, nuevoPagoTarjetaVacio } from "./pagar_con_tarjeta.ts";
+import { metaNuevoPagoTarjeta, nuevoPagoTarjetaInicial } from "./pagar_con_tarjeta.ts";
 
 export const PagarTarjetaVentaTpv = ({
   publicar,
@@ -23,8 +24,9 @@ export const PagarTarjetaVentaTpv = ({
     
     const { modelo, uiProps, valido, set } = useModelo(
         metaNuevoPagoTarjeta, {
-            ...nuevoPagoTarjetaVacio,
-            importe: pendiente
+            ...nuevoPagoTarjetaInicial,
+            importe: pendiente,
+            pendiente
         }
     );
 
@@ -60,29 +62,31 @@ export const PagarTarjetaVentaTpv = ({
         setImporte(0);  
     }
 
+    const focus = useFocus(true);
+
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
 
-            <div className="AltaPago">
+            <div className="PagarTarjetaVentaTpv">
 
                 <h2>Pago con tarjeta</h2>
 
                 <quimera-formulario>
-                    <QInput label="Importe" {...uiProps("importe")} />
+                    <div id='pendiente'>
+                        {`A pagar: ${formatearMoneda(pendiente, venta.divisa_id)}`}
+                    </div>
+
+                    <QInput label="Importe" {...uiProps("importe")} ref={focus}/>
+
                 </quimera-formulario>
 
                 <div className="botones maestro-botones ">
 
-                    {`A Pagar: ${pendiente}€`}
-
                     <QBoton onClick={limpiar}>Limpiar</QBoton>
 
-                </div>
-
-                <div className="botones maestro-botones ">
-                    <QBoton onClick={pagar} deshabilitado={!valido}>
-                        Pagar
-                    </QBoton>
+                    <QBoton texto="Pagar"
+                        onClick={pagar} deshabilitado={!valido}
+                    />
                 </div>
 
             </div>

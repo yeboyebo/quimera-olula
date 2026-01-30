@@ -1,22 +1,25 @@
 import { MetaModelo } from "@olula/lib/dominio.js";
 import { NuevoPagoVale } from "./diseño.ts";
 
-export const nuevoPagoValeVacio: NuevoPagoVale = {
+export const nuevoPagoValeInicial: NuevoPagoVale = {
     importe: 0,
     saldoVale: 0,
-    aPagar: 0,
+    pendiente: 0,
     vale_id: ""
 }
 
 const validacionNuevoPagoVale = (pago: NuevoPagoVale) => {
+    if (pago.importe == 0) {
+        return false;
+    }
     if (pago.importe < 0) {
         return "El importe no puede ser negativo";
     }
     if (pago.importe > pago.saldoVale) {
         return "El importe no puede ser mayor que el saldo del vale";
     }
-    if (pago.importe > pago.aPagar) {
-        return "El importe no puede ser mayor que el importe a pagar";
+    if (pago.importe > pago.pendiente) {
+        return "El importe no puede ser mayor que el importe a pagar " + pago.importe + " " + pago.pendiente;
     }
     return true;
 }

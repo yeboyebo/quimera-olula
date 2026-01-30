@@ -39,7 +39,7 @@ export const CantidadADevolver = (
     };
 
     return (
-        <quimera-formulario>
+        // <quimera-formulario>
         <QInput
             label="A devolver"
             nombre="a_devolver"
@@ -52,6 +52,6 @@ export const CantidadADevolver = (
             autoSeleccion
             // onBlur={submit}
         />
-        </quimera-formulario>
+        // </quimera-formulario>
     );
 };

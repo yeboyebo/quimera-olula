@@ -1,6 +1,6 @@
 export type NuevoPagoVale = {
     importe: number;
     saldoVale: number;
-    aPagar: number;
+    pendiente: number;
     vale_id: string;
 } 

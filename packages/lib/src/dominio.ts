@@ -75,6 +75,8 @@ export type MetaCampo<T extends Modelo> = {
     positivo?: boolean
     divisa?: string
     decimales?: number
+    maximo?: number
+    minimo?: number
 }
 // export type TipoValorCampo = string | boolean | number | null;
 
@@ -501,10 +503,28 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
         return "Campo requerido";
     }
 
-    if (tipoCampo === "numero" && campos[campo]?.positivo) {
+    if (tipoCampo === "numero") {
         const numero = Number(valor);
-        if (!isNaN(numero) && numero < 0) {
-            return "El número debe ser positivo";
+
+        if (campos[campo]?.positivo) {
+            if (numero < 0) {
+                return "El número debe ser positivo";
+            }
+        }
+
+
+        if (campos[campo]?.maximo) {
+            const maximo = Number(campos[campo]?.maximo);
+            if (numero > maximo) {
+                return `El número debe ser menor o igual a ${maximo}`;
+            }
+        }
+
+        if (campos[campo]?.minimo) {
+            const minimo = Number(campos[campo]?.minimo);
+            if (numero < minimo) {
+                return `El número debe ser mayor o igual a ${minimo}`;
+            }
         }
     }
 

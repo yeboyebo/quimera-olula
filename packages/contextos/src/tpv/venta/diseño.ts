@@ -13,6 +13,7 @@ export interface VentaTpv extends Venta {
     puntoVenta: string;
     agenteId: string;
     agente: string;
+    abierta: boolean;
 }
 
 export interface LineaFactura extends LineaVenta {

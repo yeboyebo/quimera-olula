@@ -55,6 +55,9 @@ export const metaVentaTpv: MetaModelo<VentaTpv> = {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: true },
     },
+    editable: (venta: VentaTpv) => {
+        return venta.abierta;
+    },
     onChange: onChangeVentaTpv
 };
 
@@ -190,11 +193,11 @@ export const getFormVenta = (
     return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
 }
 
-const guardarVenta = async (contexto: ContextoVentaTpv, venta: VentaTpv): Promise<void> => {
-    if (venta.idAgente !== contexto.ventaInicial.idAgente) {
+export const guardarVenta = async (contexto: ContextoVentaTpv, venta: VentaTpv): Promise<void> => {
+    if (venta.idAgente !== contexto.venta.idAgente) {
         await patchVenta(contexto.venta.id, venta);
     }
-    if (venta.fecha !== contexto.ventaInicial.fecha) {
+    if (venta.fecha !== contexto.venta.fecha) {
         await patchFechaVenta(contexto.venta.id, venta.fecha);
     }
 }

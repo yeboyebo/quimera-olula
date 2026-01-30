@@ -1,53 +1,65 @@
-import { useCallback, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { Accion, getFormProps, makeReductor, MetaModelo } from "./dominio.ts";
+import { getFormProps, MetaModelo } from "./dominio.ts";
 
 // type AutoGuardado<T extends Modelo> = (x: T) => Promise<T>;
 
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T,
-    // autoGuardado?: AutoGuardado<T>
+    onModeloListo?: (t: T) => Promise<void>
 ): HookModelo<T> {
 
-    const [modelo, dispatch] = useReducer(
-        makeReductor(),
-        modeloInicialProp
-    );
+    // const [modelo, dispatch] = useReducer(
+    //     makeReductor(),
+    //     modeloInicialProp
+    // );
+    // console.log('modeloInternoProp', modeloInicialProp);
+
+    const [modelo, setModelo] = useState(modeloInicialProp);
+    // console.log('modeloInterno', modelo);
 
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
-    const modeloInicialPropRef = useRef(modeloInicialProp);
-    modeloInicialPropRef.current = modeloInicialProp;
+    // const modeloInicialPropRef = useRef(modeloInicialProp);
+    // modeloInicialPropRef.current = modeloInicialProp;
 
     const init = useCallback((nuevoModelo?: T) => {
-        const modeloAUsar = nuevoModelo || modeloInicialPropRef.current;
-        dispatch({
-            type: "set",
-            payload: {
-                entidad: modeloAUsar
-            }
-        });
+        const modeloAUsar = nuevoModelo || modeloInicialProp;
+        setModelo(modeloAUsar);
+        // dispatch({
+        //     type: "set",
+        //     payload: {
+        //         entidad: modeloAUsar
+        //     }
+        // });
         setModeloInicial(modeloAUsar);
     }, []); // Vacío porque usamos ref
 
-    const set = useCallback(async (modelo: T) => {
+    // const set = useCallback(async (modelo: T) => {
+    //     setModelo(modelo);
 
-        dispatch({
-            type: "set",
-            payload: {
-                entidad: modelo
-            }
-        })
-    }, [dispatch]);
+    //     // dispatch({
+    //     //     type: "set",
+    //     //     payload: {
+    //     //         entidad: modelo
+    //     //     }
+    //     // })
+    //     // }, [dispatch]);
+    // }, [setModelo]);
+
+    useEffect(() => {
+        setModelo(modeloInicialProp);
+        setModeloInicial(modeloInicialProp);
+    }, [modeloInicialProp]);
 
     return {
         modelo,
         modeloInicial: modeloInicial || modeloInicialProp,
         init,
-        set,
-        dispatch,
-        ...getFormProps(modelo, modeloInicial, meta, set),
+        set: setModelo,
+        // dispatch,
+        ...getFormProps(modelo, modeloInicial, meta, setModelo, onModeloListo),
     } as const;
 }
 
@@ -57,7 +69,7 @@ export type HookModelo<T extends Modelo> = {
     uiProps: (campo: string, secundario?: string) => UiProps,
     init: (entidad?: T) => void,
     set: (entidad: T) => void,
-    dispatch: (action: Accion<T>) => void
+    // dispatch: (action: Accion<T>) => void
     modificado: boolean,
     valido: boolean,
     editable: boolean,

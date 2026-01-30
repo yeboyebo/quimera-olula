@@ -4,7 +4,8 @@ import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useContext, useEffect } from "react";
+import { useModelo } from "@olula/lib/useModelo.js";
+import { useCallback, useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
@@ -15,13 +16,11 @@ import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
 import { PendienteVenta } from "./comps/PendienteVenta.tsx";
-import { ContextoVentaTpv, getFormVenta } from "./detalle.ts";
+import { ContextoVentaTpv, guardarVenta, metaVentaTpv } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { Pagos } from "./pagos/Pagos.tsx";
 import { TabCliente } from "./tabs/TabCliente.tsx";
-
-
 
 export const DetalleVentaTpv = ({
     ventaInicial = null,
@@ -45,19 +44,56 @@ export const DetalleVentaTpv = ({
     const ventaId = ventaInicial?.id ?? params.id;
     const titulo = (venta: Entidad) => venta.codigo as string;
 
-    const { ctx, setCtx, emitir } = useMaquina(
+    const { ctx, emitir } = useMaquina(
         getMaquina,
         contextoInicial,
         publicar
-    )
+    ) 
+
+    const autoGuardar = useCallback(async (venta: VentaTpv) => {
+        await intentar(async () => {
+            await guardarVenta(ctx, venta);
+            await emitir("venta_guardada");
+        });
+    }, [intentar, ctx, emitir]);
+
+    const modeloVenta = useModelo(metaVentaTpv, ctx.venta, autoGuardar);
   
     useEffect(() => {
         if (ventaId && ventaId !== ctx?.venta.id) {
             emitir("venta_id_cambiada", ventaId, true);
         }
     }, [ventaId, emitir, ctx]);
+
+    // export const getFormVenta = (
+    //     contexto: ContextoVentaTpv,
+    //     setCtx: (ctx: ContextoVentaTpv) => void,
+    //     emitir: EmitirEvento,
+    //     intentar: Intentar
+    // ): FormModelo => {
     
-    const formVenta = getFormVenta(ctx, setCtx, emitir, intentar);
+    //     const { venta, ventaInicial } = contexto
+    //     const meta = metaVentaTpv;
+    
+    //     function onModeloCambiado(venta: VentaTpv) {
+    //         setCtx({ ...contexto, venta });
+    //     }
+    
+    //     async function autoGuardado(venta: VentaTpv) {
+    //         await intentar(async () => {
+    //             await guardarVenta(contexto, venta);
+    //             await emitir("venta_guardada");
+    //         });
+    //     }
+    
+    //     return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
+    // }
+
+    
+    // console.log('modeloVenta', modeloVenta.modeloInicial);
+    // console.log('ctx.venta', ctx.venta);
+    
+    // const formVenta = getFormVenta(ctx, setCtx, emitir, intentar);
           
     const { estado, pagos, lineas, venta } = ctx;
   
@@ -87,7 +123,7 @@ export const DetalleVentaTpv = ({
                             <TabCliente
                                 venta={venta}
                                 estado={estado}
-                                form={formVenta}
+                                form={modeloVenta}
                                 publicar={emitir}
                             />
                         }

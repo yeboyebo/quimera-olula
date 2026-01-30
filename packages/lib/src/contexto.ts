@@ -5,7 +5,7 @@ export type QError = {
   descripcion?: string;
 };
 
-export type Intentar = <Out>(f: () => Out) => Promise<Out>;
+export type Intentar = <Out>(f: () => Out, onError?: (error: unknown) => void) => Promise<Out>;
 export type TipoContextoError = {
   error: QError | null;
   setError: (_: QError) => void;
