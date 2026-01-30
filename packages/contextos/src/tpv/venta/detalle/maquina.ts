@@ -83,7 +83,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             venta_borrada: onVentaBorrada,
 
-            borrar_cancelado: "ABIERTA",
+            borrado_de_venta_cancelado: "ABIERTA",
         },
 
         PAGANDO_EN_EFECTIVO: {

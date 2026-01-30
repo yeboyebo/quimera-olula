@@ -4,7 +4,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { DeleteLinea, DeletePago, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PatchVentaClienteNoRegistrado, PatchVentaClienteRegistrado, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PatchVentaClienteNoRegistrado, PatchVentaClienteRegistrado, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrlFactura = new Ventas_Urls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
@@ -93,6 +93,10 @@ export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
             }
         }
     }, "Error al cambiar cliente de la factura");
+};
+
+export const deleteVentaTpv: DeleteVentaTpv = async (id) => {
+    return await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar la venta");
 };
 
 export const patchDevolverVenta: PatchDevolverVenta = async (id, ventaADevolver) => {
@@ -301,6 +305,4 @@ export const patchVentaClienteNoRegistrado: PatchVentaClienteNoRegistrado = asyn
     );
 };
 
-export const borrarFactura = async (id: string) => {
-    await RestAPI.delete(`${baseUrlFactura}/${id}`, "Error al borrar factura");
-}
+

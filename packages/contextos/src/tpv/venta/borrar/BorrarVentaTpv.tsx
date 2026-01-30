@@ -3,7 +3,7 @@ import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useCallback } from "react";
 import { VentaTpv } from "../diseño.ts";
-import { borrarFactura } from "../infraestructura.ts";
+import { deleteVentaTpv } from "../infraestructura.ts";
 
 export const BorrarVentaTpv = ({
     publicar,
@@ -15,7 +15,7 @@ export const BorrarVentaTpv = ({
 
     const borrar_ = useCallback(
         async () => {
-            await borrarFactura(venta.id);
+            await deleteVentaTpv(venta.id);
             publicar("venta_borrada", venta);
         },
         [publicar, venta]

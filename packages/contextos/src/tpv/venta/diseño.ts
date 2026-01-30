@@ -115,6 +115,8 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
 
+export type DeleteVentaTpv = (id: string) => Promise<void>;
+
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type DeletePago = (id: string, idPago: string) => Promise<void>;
