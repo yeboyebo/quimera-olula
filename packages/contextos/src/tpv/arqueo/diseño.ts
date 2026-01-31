@@ -44,3 +44,5 @@ export type PatchCerrarArqueo = (id: string, cierre: CierreArqueoTpv) => Promise
 export type PatchReabrirArqueo = (id: string) => Promise<void>;
 
 export type PostArqueoTpv = () => Promise<string>;
+
+export type DeleteArqueoTpv = (id: string) => Promise<void>;

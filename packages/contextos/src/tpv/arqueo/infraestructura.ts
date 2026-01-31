@@ -3,8 +3,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { PostVentaTpv } from "../venta/diseño.ts";
-import { ArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PostArqueoTpv } from "./diseño.ts";
+import { ArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PostArqueoTpv } from "./diseño.ts";
 
 type ArqueoTpvAPI = {
     id: string;
@@ -128,18 +127,22 @@ export const postArqueo: PostArqueoTpv = async () => {
     const respuesta = await RestAPI.post(
         baseUrl,
         {
-            agente_id: agenteActivo.obtener(),
-            punto_venta_id: puntoVentaLocal.obtener(),
+            agente_id: agenteActivo.obtener()?.id,
+            punto_venta_id: puntoVentaLocal.obtener()?.id,
         },
         "Error al crear arqueo"
     );
     return respuesta.id;
 }
 
-export const postVenta: PostVentaTpv = async () => {
-    const payload = {
-        agente_id: agenteActivo.obtener(),
-        punto_venta_id: puntoVentaLocal.obtener(),
-    };
-    return await RestAPI.post(baseUrl, payload, "Error al crear la venta").then((respuesta) => respuesta.id);
+// export const postVenta: PostVentaTpv = async () => {
+//     const payload = {
+//         agente_id: agenteActivo.obtener(),
+//         punto_venta_id: puntoVentaLocal.obtener(),
+//     };
+//     return await RestAPI.post(baseUrl, payload, "Error al crear la venta").then((respuesta) => respuesta.id);
+// };
+
+export const deleteArqueoTpv: DeleteArqueoTpv = async (id) => {
+    return await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar el arqueo");
 };

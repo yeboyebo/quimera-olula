@@ -2,10 +2,9 @@ import { ArqueoTpv } from "#/tpv/arqueo/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { moneda } from "../dominio.ts";
 import "./RecuentoArqueoTpv.css";
 import { metaRecuentoArqueoTpv } from "./diseño.ts";
@@ -20,29 +19,29 @@ export const RecuentoArqueoTpv = ({
     arqueo: ArqueoTpv,
     publicar: EmitirEvento;
 }) => {
-    const { intentar } = useContext(ContextoError);
+
+    const recuentoInicial = useMemo(
+        () => getRecuentoInicial(arqueo),
+        [arqueo]
+    );
     
     const { modelo, uiProps, valido, init } = useModelo(
         metaRecuentoArqueoTpv, 
-        getRecuentoInicial(arqueo)
+        recuentoInicial,
     );
 
-    const [recontando, setRecontando] = useState(false);
-  
     const aceptar = useCallback(
-        async () => {
-            setRecontando(true);
-            await intentar(() => guardarRecuento(arqueo, modelo));
+        async() => {
+            await guardarRecuento(arqueo, modelo);
             publicar("recuento_hecho");
         },
-        [arqueo, intentar, modelo, publicar, setRecontando]
+        [arqueo, modelo, publicar]
     );
 
     const cancelar = useCallback(
-        () => {
-            if (!recontando) publicar("recuento_cancelado");
-        },
-        [recontando, publicar]
+        () => publicar("recuento_cancelado")
+        ,
+        [publicar]
     );
 
     const limpiar = () => {

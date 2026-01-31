@@ -3,6 +3,7 @@ import { patchArqueo } from "#/tpv/arqueo/infraestructura.ts";
 import { RecuentoArqueoTpv } from "./diseño.ts";
 
 export const getRecuentoInicial = (arqueo: ArqueoTpv): RecuentoArqueoTpv => {
+
     return {
         id: arqueo.id,
         b500: arqueo.recuentoCaja.b500,

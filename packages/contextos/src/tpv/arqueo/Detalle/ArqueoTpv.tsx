@@ -6,6 +6,7 @@ import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { BorrarArqueoTpv } from "../borrar/BorrarArqueoTpv.tsx";
 import { CerrarArqueoTpv } from "../Cerrar/CerrarArqueoTpv.tsx";
 import { ArqueoTpv } from "../diseño.ts";
 import { moneda } from "../dominio.ts";
@@ -148,6 +149,13 @@ export const DetalleArqueoTpv = ({
                 {
                     estado === "RECONTANDO" &&
                     <RecuentoArqueoTpv
+                        publicar={emitir}
+                        arqueo={modelo}
+                    />
+                }
+                {
+                    estado === "BORRANDO_ARQUEO" &&
+                    <BorrarArqueoTpv
                         publicar={emitir}
                         arqueo={modelo}
                     />

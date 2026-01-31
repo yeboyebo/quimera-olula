@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroArqueosTpv, EstadoMaestroArqueosTpv } from "./diseño.ts";
-import { activarArqueo, cambiarArqueoEnLista, crearArqueo, desactivarArqueoActivo, recargarArqueos } from "./dominio.ts";
+import { Arqueos, crearArqueo, recargarArqueos } from "./dominio.ts";
 
 
 export const getMaquina: () => Maquina<EstadoMaestroArqueosTpv, ContextoMaestroArqueosTpv> = () => {
@@ -9,15 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroArqueosTpv, ContextoMaestroA
 
         INICIAL: {
 
-            arqueo_cambiado: cambiarArqueoEnLista,
+            arqueo_cambiado: [Arqueos.cambiar],
 
-            arqueo_seleccionado: activarArqueo,
+            arqueo_seleccionado: [Arqueos.activar],
 
-            arqueo_deseleccionado: desactivarArqueoActivo,
+            arqueo_deseleccionado: [Arqueos.desactivar],
 
-            // venta_borrada: quitarArqueoDeLista,
-
-            // venta_creada: incluirArqueoEnLista,
+            arqueo_borrada: [Arqueos.quitar],
 
             recarga_de_arqueos_solicitada: recargarArqueos,
 
