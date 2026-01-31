@@ -67,6 +67,7 @@ type PagoArqueoTpvAPI = {
     importe: number;
     codigo_venta: string;
     forma_pago: string;
+    vale: string | null
 }
 
 const pagoDesdeAPI = (p: PagoArqueoTpvAPI): PagoArqueoTpv => ({
@@ -75,6 +76,7 @@ const pagoDesdeAPI = (p: PagoArqueoTpvAPI): PagoArqueoTpv => ({
     formaPago: p.forma_pago,
     fecha: new Date(p.fecha),
     codigoVenta: p.codigo_venta,
+    vale: p.vale
 });
 
 export const getPagosArqueo: GetPagosArqueoTpv = async (id, criteria) => {

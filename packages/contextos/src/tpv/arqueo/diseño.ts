@@ -24,6 +24,7 @@ export interface PagoArqueoTpv extends Entidad {
     formaPago: string;
     fecha: Date;
     codigoVenta: string;
+    vale: string | null;
 }
 
 export type CierreArqueoTpv = {
