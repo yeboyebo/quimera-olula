@@ -1,5 +1,5 @@
 import { ArqueoTpv } from "#/tpv/arqueo/diseño.ts";
-import { patchArqueo } from "#/tpv/arqueo/infraestructura.ts";
+import { patchRecuentoArqueo } from "#/tpv/arqueo/infraestructura.ts";
 import { RecuentoArqueoTpv } from "./diseño.ts";
 
 export const getRecuentoInicial = (arqueo: ArqueoTpv): RecuentoArqueoTpv => {
@@ -73,6 +73,6 @@ export const guardarRecuento = async (
         recuentoTarjeta: recuento.recuentoTarjeta,
         recuentoVales: recuento.recuentoVales
     }
-    await patchArqueo(arqueoRecontado);
+    await patchRecuentoArqueo(arqueoRecontado);
 }
 

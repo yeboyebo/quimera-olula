@@ -24,11 +24,14 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
         ABIERTO: {
 
+            arqueo_guardado: [refrescarArqueo],
+
             borrar_solicitado: "BORRANDO_ARQUEO",
 
             recuento_solicitado: "RECONTANDO",
 
             cierre_solicitado: "CERRANDO",
+
         },
 
         CERRADO: {

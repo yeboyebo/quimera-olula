@@ -1,11 +1,10 @@
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
@@ -29,21 +28,17 @@ export const DetalleVentaTpv = ({
     ventaInicial?: VentaTpv | null;
     publicar?: EmitirEvento;
 }) => {
-    const params = useParams();
 
-    const {intentar} = useContext(ContextoError);
+    const params = useParams();
+    const ventaId = ventaInicial?.id ?? params.id;
 
     const contextoInicial:ContextoVentaTpv = {
         estado: 'INICIAL',
         venta: ventaInicial ?? ventaTpvVacia,
-        ventaInicial: ventaInicial ?? ventaTpvVacia,
         pagos: listaEntidadesInicial<PagoVentaTpv>(),
         lineas: listaEntidadesInicial<LineaFactura>(),
     }
-
-    const ventaId = ventaInicial?.id ?? params.id;
-    const titulo = (venta: Entidad) => venta.codigo as string;
-
+    
     const { ctx, emitir } = useMaquina(
         getMaquina,
         contextoInicial,
@@ -51,52 +46,21 @@ export const DetalleVentaTpv = ({
     ) 
 
     const autoGuardar = useCallback(async (venta: VentaTpv) => {
-        await intentar(async () => {
-            await guardarVenta(ctx, venta);
-            await emitir("venta_guardada");
-        });
-    }, [intentar, ctx, emitir]);
+        await guardarVenta(ctx, venta);
+        await emitir("venta_guardada");
+    }, [ctx, emitir]);
 
     const modeloVenta = useModelo(metaVentaTpv, ctx.venta, autoGuardar);
-  
-    useEffect(() => {
-        if (ventaId && ventaId !== ctx?.venta.id) {
-            emitir("venta_id_cambiada", ventaId, true);
-        }
-    }, [ventaId, emitir, ctx]);
-
-    // export const getFormVenta = (
-    //     contexto: ContextoVentaTpv,
-    //     setCtx: (ctx: ContextoVentaTpv) => void,
-    //     emitir: EmitirEvento,
-    //     intentar: Intentar
-    // ): FormModelo => {
+      
+    if (ventaId && ventaId !== ctx?.venta.id) {
+        emitir("venta_id_cambiada", ventaId, true);
+    }
     
-    //     const { venta, ventaInicial } = contexto
-    //     const meta = metaVentaTpv;
-    
-    //     function onModeloCambiado(venta: VentaTpv) {
-    //         setCtx({ ...contexto, venta });
-    //     }
-    
-    //     async function autoGuardado(venta: VentaTpv) {
-    //         await intentar(async () => {
-    //             await guardarVenta(contexto, venta);
-    //             await emitir("venta_guardada");
-    //         });
-    //     }
-    
-    //     return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
-    // }
-
-    
-    // console.log('modeloVenta', modeloVenta.modeloInicial);
-    // console.log('ctx.venta', ctx.venta);
-    
-    // const formVenta = getFormVenta(ctx, setCtx, emitir, intentar);
-          
+         
     const { estado, pagos, lineas, venta } = ctx;
-  
+
+    const titulo = (venta: Entidad) => venta.codigo as string;
+
     return (
         <Detalle
             id={ventaId}

@@ -1,11 +1,12 @@
-.Factura .DetalleArqueo {
-    quimera-input[nombre="nombre_cliente"] {
-        grid-column: 1 / span 3;
-    }
-
-    quimera-autocompletar[nombre="cliente_id"] {
+.DetalleArqueo {
+    quimera-input[nombre="efectivoInicial"] {
         grid-column: span 3;
     }
+
+    quimera-select[nombre="idAgenteApertura"] {
+        grid-column: span 4;
+    }
+
 
 
 

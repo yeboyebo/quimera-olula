@@ -422,14 +422,9 @@ const evaluarCambio = <M extends Modelo>(
     onModeloListo?: (modelo: M) => Promise<void>
 ) =>
     async () => {
-        console.log('onModeloListo init');
         if (!onModeloListo) {
-            console.log('No hay onModeloListo');
             return;
         }
-        console.log('idagente', modelo.idAgente, modeloInicial.idAgente);
-        console.log('modificado', modeloModificado(modeloInicial, modelo));
-        console.log('valido', modeloEsValido(meta)(modelo));
         if (modeloModificado(modeloInicial, modelo) && modeloEsValido(meta)(modelo)) {
             await onModeloListo(modelo);
         }
@@ -557,7 +552,7 @@ export const getFormProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onFormListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M) => Promise<void>
 ): FormModelo => {
     return {
         uiProps: getUiProps(
@@ -565,7 +560,7 @@ export const getFormProps = <M extends Modelo>(
             modeloInicial,
             meta,
             onModeloCambiado,
-            onFormListo
+            onModeloListo
         ),
         modificado: modeloModificado(modeloInicial, modelo),
         valido: modeloEsValido(meta)(modelo),

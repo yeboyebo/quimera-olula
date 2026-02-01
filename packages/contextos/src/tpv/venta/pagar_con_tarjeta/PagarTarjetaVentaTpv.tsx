@@ -7,7 +7,7 @@ import { formatearMoneda, redondeaMoneda } from "@olula/lib/dominio.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { postPago } from "../infraestructura.ts";
 import "./PagarTarjetaVentaTpv.css";
 import { metaNuevoPagoTarjeta, nuevoPagoTarjetaInicial } from "./pagar_con_tarjeta.ts";
@@ -21,13 +21,18 @@ export const PagarTarjetaVentaTpv = ({
 }) => {
 
     const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
-    
-    const { modelo, uiProps, valido, set } = useModelo(
-        metaNuevoPagoTarjeta, {
+
+    const pagoInicial = useMemo(
+        () => ({
             ...nuevoPagoTarjetaInicial,
             importe: pendiente,
             pendiente
-        }
+        }),
+        [pendiente]
+    )
+    
+    const { modelo, uiProps, valido, set } = useModelo(
+        metaNuevoPagoTarjeta, pagoInicial
     );
 
     const pagar_ = useCallback(

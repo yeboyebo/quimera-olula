@@ -1,8 +1,7 @@
-import { ejecutarListaProcesos, FormModelo, getFormProps, MetaModelo, publicar } from "@olula/lib/dominio.ts";
+import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.ts";
 
 import { cambioClienteVentaVacio, metaCambioClienteVenta, metaVenta } from "#/ventas/venta/dominio.ts";
-import { Intentar } from "@olula/lib/contexto.js";
-import { EmitirEvento, ProcesarContexto } from "@olula/lib/diseño.js";
+import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { accionesListaEntidades, ListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CambioClienteFactura, LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
@@ -27,7 +26,7 @@ export type EstadoVentaTpv = (
 export type ContextoVentaTpv = {
     estado: EstadoVentaTpv,
     venta: VentaTpv;
-    ventaInicial: VentaTpv;
+    // ventaInicial: VentaTpv;
     pagos: ListaEntidades<PagoVentaTpv>
     lineas: ListaEntidades<LineaFactura>;
 };
@@ -104,13 +103,13 @@ export const refrescarCabecera: ProcesarVentaTpv = async (contexto) => {
 // }
 
 
-export const cancelarcambioVenta: ProcesarVentaTpv = async (contexto) => {
+// export const cancelarcambioVenta: ProcesarVentaTpv = async (contexto) => {
 
-    return {
-        ...contexto,
-        venta: contexto.ventaInicial
-    }
-}
+//     return {
+//         ...contexto,
+//         venta: contexto.ventaInicial
+//     }
+// }
 
 export const abiertaOEmitidaContexto: ProcesarVentaTpv = async (contexto) => {
     return {
@@ -169,29 +168,29 @@ const activarPagoPorIndice: (_: number) => ProcesarVentaTpv = (indice) => async 
     }
 }
 
-export const getFormVenta = (
-    contexto: ContextoVentaTpv,
-    setCtx: (ctx: ContextoVentaTpv) => void,
-    emitir: EmitirEvento,
-    intentar: Intentar
-): FormModelo => {
+// export const getFormVenta = (
+//     contexto: ContextoVentaTpv,
+//     setCtx: (ctx: ContextoVentaTpv) => void,
+//     emitir: EmitirEvento,
+//     intentar: Intentar
+// ): FormModelo => {
 
-    const { venta, ventaInicial } = contexto
-    const meta = metaVentaTpv;
+//     const { venta, ventaInicial } = contexto
+//     const meta = metaVentaTpv;
 
-    function onModeloCambiado(venta: VentaTpv) {
-        setCtx({ ...contexto, venta });
-    }
+//     function onModeloCambiado(venta: VentaTpv) {
+//         setCtx({ ...contexto, venta });
+//     }
 
-    async function autoGuardado(venta: VentaTpv) {
-        await intentar(async () => {
-            await guardarVenta(contexto, venta);
-            await emitir("venta_guardada");
-        });
-    }
+//     async function autoGuardado(venta: VentaTpv) {
+//         await intentar(async () => {
+//             await guardarVenta(contexto, venta);
+//             await emitir("venta_guardada");
+//         });
+//     }
 
-    return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
-}
+//     return getFormProps(venta, ventaInicial, meta, onModeloCambiado, autoGuardado);
+// }
 
 export const guardarVenta = async (contexto: ContextoVentaTpv, venta: VentaTpv): Promise<void> => {
     if (venta.idAgente !== contexto.venta.idAgente) {
