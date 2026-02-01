@@ -23,9 +23,7 @@ export const CrearTransferenciaStock = ({
   publicar?: ProcesarEvento;
   activo: boolean;
 }) => {
-  const transferencia = useModelo(metaNuevaTransferenciaStock, {
-    ...nuevaTransferenciaStockVacia,
-  });
+  const transferencia = useModelo(metaNuevaTransferenciaStock, nuevaTransferenciaStockVacia);
 
   const cancelar = () => {
     transferencia.init();
