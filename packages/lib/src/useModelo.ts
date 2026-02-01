@@ -21,16 +21,17 @@ export function useModelo<T extends Modelo>(
         setModeloInicial(modeloAUsar);
     }, [setModelo, setModeloInicial]);
 
-    const onModeloListoConError = onModeloListo
-        ? useCallback(
-            async (modelo: T) => {
-                return await intentar(
+    const onModeloListoConError = useCallback(
+        async (modelo: T) => {
+            return onModeloListo
+                ? await intentar(
                     async () => await onModeloListo(modelo)
-                );
-            },
-            [intentar, onModeloListo]
-        )
-        : undefined;
+                ) :
+                Promise.resolve();
+        },
+        [intentar, onModeloListo]
+    );
+
 
     useEffect(() => {
         setModelo(modeloInicialProp);
