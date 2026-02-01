@@ -1,5 +1,5 @@
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento, EventoMaquina } from "@olula/lib/diseño.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { procesarEvento } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ContextoCrmContactos } from "./diseño.ts";
@@ -31,7 +31,7 @@ export const useCrmContactos = (options: UseCrmContactosOptions) => {
     }, [ctx]);
 
     const emitir = useCallback(
-        async (evento: string, payload?: unknown, inicial: boolean = false): Promise<EventoMaquina[]> => {
+        async (evento: string, payload?: unknown, inicial: boolean = false): Promise<void> => {
             const contexto: ContextoCrmContactos = {
                 ...ctxRef.current,
                 estado: inicial ? "lista" : ctxRef.current.estado,
@@ -48,7 +48,7 @@ export const useCrmContactos = (options: UseCrmContactosOptions) => {
                 eventos.forEach(([nombre, datos]) => publicar(nombre, datos));
             }
 
-            return eventos;
+            // return eventos;
         },
         [maquina, intentar, publicar, clienteId]
     );

@@ -3,13 +3,12 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { redondeaMoneda } from "@olula/lib/dominio.js";
+import { formatearMoneda, redondeaMoneda } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import { VentaTpv } from "../diseño.ts";
 import { postPago } from "../infraestructura.ts";
-import { metaNuevoPagoEfectivo } from "./diseño.ts";
-import { nuevoPagoEfectivoVacio } from "./pagar_en_efectivo.ts";
+import { metaNuevoPagoEfectivo, nuevoPagoEfectivoInicial } from "./pagar_en_efectivo.ts";
 import "./PagarEfectivoVentaTpv.css";
 
 export const PagarEfectivoVentaTpv = ({
@@ -20,13 +19,14 @@ export const PagarEfectivoVentaTpv = ({
   venta: VentaTpv;
 }) => {
 
+    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
+
     const { modelo, uiProps, valido, set } = useModelo(
-        metaNuevoPagoEfectivo, nuevoPagoEfectivoVacio
+        metaNuevoPagoEfectivo, nuevoPagoEfectivoInicial
     );
 
     const [pagando, setPagando] = useState(false);
 
-    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
 
     const { intentar } = useContext(ContextoError);
     
@@ -36,7 +36,7 @@ export const PagarEfectivoVentaTpv = ({
                 () => postPago(
                     venta.id,
                     {
-                        importe: modelo.importe,
+                        importe: Math.min(pendiente, modelo.importe),
                         formaPago: "EFECTIVO",
                     }
                 )
@@ -73,26 +73,28 @@ export const PagarEfectivoVentaTpv = ({
         setImporte(0);  
     }
 
-    const cambio = modelo.importe - pendiente > 0
+    const cambio = redondeaMoneda(modelo.importe - pendiente > 0
         ? modelo.importe - pendiente
-        : 0;
+        : 0, venta.divisa_id);
 
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
 
-        <div className="AltaPago">
+        <div className="PagarEfectivoVentaTpv">
 
             <h2>Pagar en efectivo</h2>
 
             <quimera-formulario>
 
+                <div id='pendiente'>
+                    {`A pagar: ${formatearMoneda(pendiente, venta.divisa_id)}. Cambio: ${formatearMoneda(cambio, venta.divisa_id)}`}
+                </div>
+                
                 <QInput label="Importe" {...uiProps("importe")} />
             
             </quimera-formulario>
 
             <div className="botones maestro-botones ">
-
-                {`Pendiente: ${pendiente}€. Cambio: ${cambio}€`}
 
                 <QBoton onClick={limpiar}>Limpiar</QBoton>
 

@@ -1,7 +1,8 @@
+import { MetaTabla } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { Criteria, RespuestaLista2 } from "@olula/lib/diseño.js";
-import { criteriaDefecto, formatearFechaDate } from "@olula/lib/dominio.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { PagoArqueoTpv } from "../../diseño.ts";
 import { getPagosArqueo } from "../../infraestructura.ts";
@@ -58,29 +59,23 @@ export const ListaPagos = ({
     );
 };
 
-const ItemPagoArqueoTpv = ({
-    pago,
-}: {
-    pago: PagoArqueoTpv;
-}) => {
-
-    return (
-        <>
-            {`${pago.codigoVenta} -${pago.formaPago} - ${formatearFechaDate(pago.fecha)} - ${pago.importe}€`}
-        </>
-    );
-};
-
 const getMetaTablaPagos = () => {
-    return [
+    const meta:MetaTabla<PagoArqueoTpv> =[
         {
-            id: "pago",
-            cabecera: "Pagos",
-            render: (pago: PagoArqueoTpv) => (
-                <ItemPagoArqueoTpv
-                    pago={pago}
-                />
-            ),
+            id: "fecha",
+            cabecera: "Fecha",
+            tipo: "fecha",
         },
+        {
+            id: "codigoVenta",
+            cabecera: "Venta",
+        },
+        { id: "formaPago", cabecera: "Forma de pago", 
+            render: (pago: PagoArqueoTpv) => pago.vale
+                ? `${pago.formaPago} ${pago.vale}`
+                : `${pago.formaPago}`,
+        },
+        { id: "importe", cabecera: "Importe", tipo: "moneda" },
     ];
+    return meta;
 };

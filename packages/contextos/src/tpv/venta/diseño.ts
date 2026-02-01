@@ -13,6 +13,7 @@ export interface VentaTpv extends Venta {
     puntoVenta: string;
     agenteId: string;
     agente: string;
+    abierta: boolean;
 }
 
 export interface LineaFactura extends LineaVenta {
@@ -30,8 +31,11 @@ export interface VentaTpvADevolver extends VentaTpv {
 export interface PagoVentaTpv extends Entidad {
     id: string;
     importe: number;
-    forma_pago: string;
-    fecha: string;
+    formaPago: string;
+    fecha: Date;
+    vale: string | null;
+    idArqueo: string;
+    arqueoAbierto: boolean;
 }
 
 
@@ -97,6 +101,8 @@ export type PostEmitirVale = (venta: VentaTpv) => Promise<void>;
 
 export type PatchVenta = (id: string, venta: VentaTpv) => Promise<void>;
 
+export type PatchFechaVenta = (id: string, fecha: Date) => Promise<void>;
+
 export type PatchVentaClienteRegistrado = (id: string, cliente: ClienteFacturaRegistrado) => Promise<void>;
 
 export type PatchVentaClienteNoRegistrado = (id: string, cliente: ClienteVentaNoRegistrado) => Promise<void>;
@@ -110,6 +116,8 @@ export type PatchLinea = (id: string, linea: LineaFactura) => Promise<void>;
 export type PatchArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;
 
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
+
+export type DeleteVentaTpv = (id: string) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 

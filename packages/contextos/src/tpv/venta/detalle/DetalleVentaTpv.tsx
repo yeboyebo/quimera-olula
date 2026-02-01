@@ -3,7 +3,8 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useEffect } from "react";
+import { useModelo } from "@olula/lib/useModelo.js";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
@@ -14,14 +15,11 @@ import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
 import { PendienteVenta } from "./comps/PendienteVenta.tsx";
-import { ContextoVentaTpv, getFormVenta } from "./detalle.ts";
+import { ContextoVentaTpv, guardarVenta, metaVentaTpv } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { Pagos } from "./pagos/Pagos.tsx";
 import { TabCliente } from "./tabs/TabCliente.tsx";
-import { TabDatos } from "./tabs/TabDatos.tsx";
-
-
 
 export const DetalleVentaTpv = ({
     ventaInicial = null,
@@ -30,44 +28,39 @@ export const DetalleVentaTpv = ({
     ventaInicial?: VentaTpv | null;
     publicar?: EmitirEvento;
 }) => {
+
     const params = useParams();
+    const ventaId = ventaInicial?.id ?? params.id;
 
     const contextoInicial:ContextoVentaTpv = {
         estado: 'INICIAL',
         venta: ventaInicial ?? ventaTpvVacia,
-        ventaInicial: ventaInicial ?? ventaTpvVacia,
         pagos: listaEntidadesInicial<PagoVentaTpv>(),
         lineas: listaEntidadesInicial<LineaFactura>(),
     }
-
-    const ventaId = ventaInicial?.id ?? params.id;
-    const titulo = (venta: Entidad) => venta.codigo as string;
-
-    const { ctx, setCtx, emitir } = useMaquina(
+    
+    const { ctx, emitir } = useMaquina(
         getMaquina,
         contextoInicial,
         publicar
-    )
+    ) 
 
-    const guardar = async () => {
-        emitir("edicion_de_venta_lista", venta);
-    };
+    const autoGuardar = useCallback(async (venta: VentaTpv) => {
+        await guardarVenta(ctx, venta);
+        await emitir("venta_guardada");
+    }, [ctx, emitir]);
+
+    const modeloVenta = useModelo(metaVentaTpv, ctx.venta, autoGuardar);
+      
+    if (ventaId && ventaId !== ctx?.venta.id) {
+        emitir("venta_id_cambiada", ventaId, true);
+    }
     
-    const cancelar = () => {
-        emitir("edicion_de_venta_cancelada");
-    };
-    
-    
-    useEffect(() => {
-        if (ventaId && ventaId !== ctx?.venta.id) {
-            emitir("venta_id_cambiada", ventaId, true);
-        }
-    }, [ventaId, emitir, ctx]);
-    
-    const formVenta = getFormVenta(ctx, setCtx, emitir);
-          
+         
     const { estado, pagos, lineas, venta } = ctx;
-  
+
+    const titulo = (venta: Entidad) => venta.codigo as string;
+
     return (
         <Detalle
             id={ventaId}
@@ -80,9 +73,9 @@ export const DetalleVentaTpv = ({
             <div className="DetalleFactura">
                 { estado !== "EMITIDA" && (
                     <div className="botones maestro-botones ">
-                    <QBoton onClick={() => emitir("borrar_solicitado")}>
-                        Borrar
-                    </QBoton> 
+                        <QBoton texto='Borrar venta'
+                            onClick={() => emitir("borrar_solicitado")}
+                        />
                     </div>
                 )}
                 <Tabs
@@ -94,15 +87,10 @@ export const DetalleVentaTpv = ({
                             <TabCliente
                                 venta={venta}
                                 estado={estado}
-                                form={formVenta}
+                                form={modeloVenta}
                                 publicar={emitir}
                             />
                         }
-                    />,
-                    <Tab
-                        key="tab-2"
-                        label="Datos"
-                        children={<TabDatos venta={venta} form={formVenta} />}
                     />,
                     <Tab
                         key="tab-3"
@@ -117,16 +105,6 @@ export const DetalleVentaTpv = ({
                     />,
                     ]}
                 ></Tabs>
-                {formVenta.modificado && (
-                    <div className="botones maestro-botones ">
-                    <QBoton onClick={guardar} deshabilitado={!formVenta.valido}>
-                        Guardar
-                    </QBoton>
-                    <QBoton tipo="reset" variante="texto" onClick={cancelar}>
-                        Cancelar
-                    </QBoton>
-                    </div>
-                )}
 
                 <TotalesVenta
                     neto={Number(venta.neto ?? 0)}

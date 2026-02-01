@@ -15,11 +15,14 @@ export function useForm(
 
     const [aceptando, setAceptando] = useState(false);
 
+    console.log('aceptando', aceptando);
+
     const aceptar = useCallback(
         async () => {
             setAceptando(true);
             await intentar(
-                () => aceptar_()
+                () => aceptar_(),
+                () => setAceptando(false)
             );
         },
         [aceptar_, intentar, setAceptando]
@@ -27,6 +30,7 @@ export function useForm(
 
     const cancelar = useCallback(
         () => {
+            console.log('cancelando', aceptando)
             if (!aceptando) {
                 cancelar_();
             }

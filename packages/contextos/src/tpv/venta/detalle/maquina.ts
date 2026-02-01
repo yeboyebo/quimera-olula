@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { abiertaOEmitidaContexto, cambiarVenta, cancelarcambioVenta, cargarContexto, ContextoVentaTpv, crearLineaPorBarcode, emitirVale, EstadoVentaTpv, getContextoVacio, Lineas, onLineaBorrada, onLineaCambiada, onLineaCreada, onVentaBorrada, Pagos, refrescarCabecera, refrescarLineas, refrescarPagos } from "./detalle.ts";
+import { abiertaOEmitidaContexto, cambiarVenta, cargarContexto, ContextoVentaTpv, crearLineaPorBarcode, emitirVale, EstadoVentaTpv, getContextoVacio, Lineas, onLineaBorrada, onLineaCambiada, onLineaCreada, onVentaBorrada, Pagos, refrescarCabecera, refrescarLineas, refrescarPagos } from "./detalle.ts";
 
 
 export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () => {
@@ -50,9 +50,11 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             venta_cambiada: [refrescarCabecera],
 
+            venta_guardada: [refrescarCabecera],
+
             edicion_de_venta_lista: [cambiarVenta],
 
-            edicion_de_venta_cancelada: [cancelarcambioVenta],
+            // edicion_de_venta_cancelada: [cancelarcambioVenta],
 
             pago_seleccionado: [Pagos.activar],
 
@@ -81,7 +83,7 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             venta_borrada: onVentaBorrada,
 
-            borrar_cancelado: "ABIERTA",
+            borrado_de_venta_cancelado: "ABIERTA",
         },
 
         PAGANDO_EN_EFECTIVO: {

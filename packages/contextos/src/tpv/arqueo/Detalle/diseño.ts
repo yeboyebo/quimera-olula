@@ -2,7 +2,10 @@ import { MetaModelo } from "@olula/lib/dominio.js";
 import { ArqueoTpv } from "../diseño.ts";
 
 export const metaArqueoTpv: MetaModelo<ArqueoTpv> = {
-    campos: {},
+    campos: {
+        efectivoInicial: { tipo: 'moneda', requerido: true },
+        idAgenteInicial: { requerido: true },
+    },
 };
 
 export const arqueoTpvVacio: ArqueoTpv = {
@@ -35,7 +38,8 @@ export const arqueoTpvVacio: ArqueoTpv = {
     recuentoEfectivo: 0,
     recuentoTarjeta: 0,
     recuentoVales: 0,
-    movimientoCierre: 0
+    movimientoCierre: 0,
+    efectivoInicial: 0
 };
 
 export type EstadoArqueoTpv = (
@@ -48,7 +52,7 @@ export type EstadoArqueoTpv = (
 export type ContextoArqueoTpv = {
     estado: EstadoArqueoTpv,
     arqueo: ArqueoTpv;
-    arqueoInicial: ArqueoTpv;
+    // arqueoInicial: ArqueoTpv;
     // pagoActivo: PagoVentaTpv | null;
 };
 

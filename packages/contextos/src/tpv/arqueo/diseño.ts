@@ -15,7 +15,7 @@ export interface ArqueoTpv extends Entidad {
     recuentoVales: number;
     recuentoCaja: Record<string, number>;
     movimientoCierre: number;
-
+    efectivoInicial: number;
 }
 
 export interface PagoArqueoTpv extends Entidad {
@@ -24,6 +24,7 @@ export interface PagoArqueoTpv extends Entidad {
     formaPago: string;
     fecha: Date;
     codigoVenta: string;
+    vale: string | null;
 }
 
 export type CierreArqueoTpv = {
@@ -37,10 +38,14 @@ export type GetArqueosTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacio
 
 export type GetPagosArqueoTpv = (id: string, criteria: Criteria) => RespuestaLista<PagoArqueoTpv>;
 
-export type PatchArqueo = (arqueo: ArqueoTpv) => Promise<void>;
+export type PatchArqueo = (anterior: ArqueoTpv, arqueo: ArqueoTpv) => Promise<void>;
+
+export type PatchRecuentoArqueo = (arqueo: ArqueoTpv) => Promise<void>;
 
 export type PatchCerrarArqueo = (id: string, cierre: CierreArqueoTpv) => Promise<void>;
 
 export type PatchReabrirArqueo = (id: string) => Promise<void>;
 
 export type PostArqueoTpv = () => Promise<string>;
+
+export type DeleteArqueoTpv = (id: string) => Promise<void>;

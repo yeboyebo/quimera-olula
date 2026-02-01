@@ -75,6 +75,8 @@ export type MetaCampo<T extends Modelo> = {
     positivo?: boolean
     divisa?: string
     decimales?: number
+    maximo?: number
+    minimo?: number
 }
 // export type TipoValorCampo = string | boolean | number | null;
 
@@ -420,14 +422,9 @@ const evaluarCambio = <M extends Modelo>(
     onModeloListo?: (modelo: M) => Promise<void>
 ) =>
     async () => {
-        console.log('onModeloListo init');
         if (!onModeloListo) {
-            console.log('No hay onModeloListo');
             return;
         }
-        console.log('idagente', modelo.idAgente, modeloInicial.idAgente);
-        console.log('modificado', modeloModificado(modeloInicial, modelo));
-        console.log('valido', modeloEsValido(meta)(modelo));
         if (modeloModificado(modeloInicial, modelo) && modeloEsValido(meta)(modelo)) {
             await onModeloListo(modelo);
         }
@@ -501,10 +498,28 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
         return "Campo requerido";
     }
 
-    if (tipoCampo === "numero" && campos[campo]?.positivo) {
+    if (tipoCampo === "numero") {
         const numero = Number(valor);
-        if (!isNaN(numero) && numero < 0) {
-            return "El número debe ser positivo";
+
+        if (campos[campo]?.positivo) {
+            if (numero < 0) {
+                return "El número debe ser positivo";
+            }
+        }
+
+
+        if (campos[campo]?.maximo) {
+            const maximo = Number(campos[campo]?.maximo);
+            if (numero > maximo) {
+                return `El número debe ser menor o igual a ${maximo}`;
+            }
+        }
+
+        if (campos[campo]?.minimo) {
+            const minimo = Number(campos[campo]?.minimo);
+            if (numero < minimo) {
+                return `El número debe ser mayor o igual a ${minimo}`;
+            }
         }
     }
 
@@ -537,7 +552,7 @@ export const getFormProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onFormListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M) => Promise<void>
 ): FormModelo => {
     return {
         uiProps: getUiProps(
@@ -545,7 +560,7 @@ export const getFormProps = <M extends Modelo>(
             modeloInicial,
             meta,
             onModeloCambiado,
-            onFormListo
+            onModeloListo
         ),
         modificado: modeloModificado(modeloInicial, modelo),
         valido: modeloEsValido(meta)(modelo),

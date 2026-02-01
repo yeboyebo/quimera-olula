@@ -1,6 +1,5 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { useForm } from "@olula/lib/useForm.js";
 import { useCallback } from "react";
 import { VentaTpv } from "../diseño.ts";
 import { deletePago } from "../infraestructura.ts";
@@ -15,20 +14,21 @@ export const BorrarPagoVentaTpv = ({
     publicar: EmitirEvento;
 }) => {
 
-    const borrar_ = useCallback(
+    const borrar = useCallback(
         async () => {
-            await deletePago(venta.id, idPago);
+            await deletePago(venta.id, idPago)
             publicar("pago_borrado", idPago);
         },
         [idPago, publicar, venta.id]
     );
 
-    const cancelar_ = useCallback(
-        () => publicar("borrado_de_pago_cancelado"),
+    const cancelar = useCallback(
+        () => {
+            console.log('cancelando')
+            publicar("borrado_de_pago_cancelado")
+        },
         [publicar]
     );
-
-    const [borrar, cancelar] = useForm(borrar_, cancelar_);
 
     return (
         <QModalConfirmacion

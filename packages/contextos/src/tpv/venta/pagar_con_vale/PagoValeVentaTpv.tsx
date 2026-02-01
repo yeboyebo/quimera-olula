@@ -6,13 +6,14 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { redondeaMoneda } from "@olula/lib/dominio.js";
+import { formatearMoneda, redondeaMoneda } from "@olula/lib/dominio.js";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import { postPago } from "../infraestructura.ts";
 import "./PagoValeVentaTpv.css";
-import { metaNuevoPagoVale, nuevoPagoValeVacio } from "./pagar_con_vale.ts";
+import { metaNuevoPagoVale, nuevoPagoValeInicial } from "./pagar_con_vale.ts";
 
 export const PagoValeVentaTpv = ({
     publicar,
@@ -22,12 +23,15 @@ export const PagoValeVentaTpv = ({
     venta: VentaTpv;
 }) => {
     
-    const aPagar = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
+    const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id)
+    console.log('pendiente', pendiente)
 
-    const { modelo, uiProps, valido, set, init } = useModelo(metaNuevoPagoVale, {
-        ...nuevoPagoValeVacio,
-        aPagar,
-    });
+    const { modelo, uiProps, valido, set, init } = useModelo(
+        metaNuevoPagoVale, {
+            ...nuevoPagoValeInicial,
+            pendiente,
+        }
+    );
 
     const { intentar } = useContext(ContextoError);
 
@@ -54,7 +58,6 @@ export const PagoValeVentaTpv = ({
 
     const [vale, setVale] = useState<ValeTpv | null>(null);
 
-
     const buscarVale = async (barcode: string) => {
 
         if (!barcode) {
@@ -65,7 +68,7 @@ export const PagoValeVentaTpv = ({
         setVale(vale);
 
         const saldoPendiente = vale.saldo_pendiente;
-        const importe = Math.min(saldoPendiente, aPagar);
+        const importe = Math.min(saldoPendiente, pendiente);
         
         set({
             ...modelo,
@@ -75,33 +78,56 @@ export const PagoValeVentaTpv = ({
         })
     };
 
-
+    const focus = useFocus();
 
     const limpiar = () => {
-        init(nuevoPagoValeVacio);
+        init({
+            ...nuevoPagoValeInicial,
+            pendiente,
+        });
         setVale(null);
     }
-    
+
+
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-        <div className="AltaPago">
-            <h2>Nuevo pago</h2>
+
+        <div className="PagoValeVentaTpv">
+
+            <h2>Pago con vale</h2>
+
+            { vale && (
+                <h3>
+                    {`Vale: ${vale.id}. Saldo inicial ${formatearMoneda(vale.saldo_inicial, venta.divisa_id)}. Saldo disponible ${formatearMoneda(vale.saldo_pendiente, venta.divisa_id)}`}
+                </h3>
+            )}
+
             <quimera-formulario>
-            <QInput label="Importe" {...uiProps("importe")} />
-            
-            <QInput label='Vale' nombre='vale_id' 
-                onEnterKeyUp={(barcode)=>buscarVale(barcode)}
-            />
+
+                <div id='pendiente'>
+                    {`A pagar: ${formatearMoneda(pendiente, venta.divisa_id)}`}
+                </div>
+
+                {vale && (
+                    <QInput label="Importe" {...uiProps("importe")} />
+                )}
+
+                {!vale && (
+                    <QInput label='Vale' nombre='vale_id'
+                        ref ={focus}
+                        autoFocus
+                        onEnterKeyUp={(barcode)=>buscarVale(barcode)}
+                    />
+                )}
+                
             </quimera-formulario>
+
             <div className="botones maestro-botones ">
-            {`A Pagar: ${aPagar}€`}
-                <br/>
-            {
-                vale
-                    ? `Vale: ${vale.id}. Saldo inicial ${vale.saldo_inicial}€. Saldo disponible ${vale.saldo_pendiente}€`
-                    : 'No hay vale seleccionado'
-            }
+            
+            
+            { vale && (
             <QBoton onClick={limpiar}>Limpiar</QBoton>
+            )}
             </div>
             <div className="botones maestro-botones ">
             <QBoton onClick={pagar}

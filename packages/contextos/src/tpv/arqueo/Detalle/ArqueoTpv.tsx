@@ -1,24 +1,25 @@
+import { AgenteTpv as CompAgenteTpv } from "#/tpv/comun/componentes/AgenteTpv.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QInput } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
-import { procesarEvento } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router";
+import { BorrarArqueoTpv } from "../borrar/BorrarArqueoTpv.tsx";
 import { CerrarArqueoTpv } from "../Cerrar/CerrarArqueoTpv.tsx";
 import { ArqueoTpv } from "../diseño.ts";
 import { moneda } from "../dominio.ts";
+import { patchArqueo } from "../infraestructura.ts";
 import { ReabrirArqueoTpv } from "../Reabrir/ReabrirArqueoTpv.tsx";
 import { RecuentoArqueoTpv } from "../Recuento/RecuentoArqueoTpv.tsx";
 import "./ArqueoTpv.css";
 import { ListaPagos } from "./comps/ListaPagos.tsx";
 import { ResumenRecuento } from "./comps/ResumenRecuento.tsx";
 import { TotalesArqueo } from "./comps/TotalesArqueo.tsx";
-import { arqueoTpvVacio, ContextoArqueoTpv, EstadoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
+import { arqueoTpvVacio, ContextoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
-
-const maquina = getMaquina();  
 
 export const DetalleArqueoTpv = ({
     arqueoInicial = null,
@@ -28,61 +29,57 @@ export const DetalleArqueoTpv = ({
     publicar?: EmitirEvento;
 }) => {
     const params = useParams();
-    const { intentar } = useContext(ContextoError);
-
-    const [estado, setEstado] = useState<EstadoArqueoTpv>("INICIAL");
 
     const arqueoId = arqueoInicial?.id ?? params.id;
-    const titulo = (arqueo: Entidad) => `Arqueo ${arqueo.id} estado: ${estado}`; 
-
-    const arqueo = useModelo(metaArqueoTpv, arqueoTpvVacio);
-    const { modelo, init } = arqueo;
-
-    const emitir = useCallback(
-        async (evento: string, payload?: unknown, inicial: boolean = false) => {
-
-            const contexto: ContextoArqueoTpv = {
-                estado: inicial ? 'INICIAL' : estado,
-                arqueo: arqueo.modelo,
-                arqueoInicial: arqueo.modeloInicial,
-            }
-            const [nuevoContexto, eventos] = await intentar(
-                () => procesarEvento(maquina, contexto, evento, payload)
-            );
-            setEstado(nuevoContexto.estado);
-            if (nuevoContexto.arqueo !== arqueo.modelo) {
-                init(nuevoContexto.arqueo);
-            }
-            eventos.map((evento) => publicar(evento[0], evento[1]));
+    const contextoInicial:ContextoArqueoTpv = {
+        estado: 'INICIAL',
+        arqueo: arqueoInicial ?? arqueoTpvVacio,
+    }
+    
+    const { ctx, emitir } = useMaquina(
+        getMaquina,
+        contextoInicial,
+        publicar
+    )
+    
+    const autoGuardar = useCallback(
+        async (arqueo: ArqueoTpv) => {
+            await patchArqueo(ctx.arqueo, arqueo);
+            await emitir("arqueo_guardado", arqueo);
         },
-        [arqueo, estado, setEstado, init, intentar, publicar]
+        [ctx, emitir]
     );
+    
+    const { uiProps } = useModelo(metaArqueoTpv, ctx.arqueo, autoGuardar);
+    
+    if (arqueoId && arqueoId !== ctx.arqueo.id) {
+        emitir("id_arqueo_cambiado", arqueoId, true);
+    }
+    
+    const { estado, arqueo } = ctx;
 
-    const guardar = async () => {
-        emitir("edicion_de_arqueo_lista", modelo);
-    };
-
-    const cancelar = () => {
-        emitir("edicion_de_arqueo_cancelada");
-    };
-
-    useEffect(() => {
-        if (arqueoId && arqueoId !== arqueo.modelo.id) {
-            emitir("id_arqueo_cambiado", arqueoId, true);
-        }
-    }, [arqueoId, arqueo.modelo.id, emitir]);
-
+    const titulo = (arqueo: Entidad) => `Arqueo ${arqueo.id} estado: ${estado}`; 
   
     return (
         <Detalle
             id={arqueoId}
             obtenerTitulo={titulo}
             setEntidad={() => {}}
-            entidad={modelo}
+            entidad={arqueo}
             cerrarDetalle={()=> emitir("arqueo_deseleccionado", null, true)}
         >
         {!!arqueoId && (
             <div className="DetalleArqueo">
+
+                <quimera-formulario>
+                    <CompAgenteTpv label='Agente de apertura'
+                        {...uiProps("idAgenteApertura", "agente")}
+                    />
+                    <QInput label='Efectivo inicial' 
+                        {...uiProps("efectivoInicial")}
+                    />
+                </quimera-formulario>
+
                 { estado === "ABIERTO" && (
                     <div className="botones maestro-botones ">
                         <QBoton onClick={() => emitir("recuento_solicitado")}>
@@ -95,7 +92,6 @@ export const DetalleArqueoTpv = ({
                             Borrar
                         </QBoton> 
                     </div>
-                    
                 )}
 
                 { estado === "CERRADO" && (
@@ -104,52 +100,47 @@ export const DetalleArqueoTpv = ({
                             Reabrir
                         </QBoton> 
                     </div>
-                    
-                )}
-
-                {arqueo.modificado && (
-                    <div className="botones maestro-botones ">
-                    <QBoton onClick={guardar} deshabilitado={!arqueo.valido}>
-                        Guardar
-                    </QBoton>
-                    <QBoton tipo="reset" variante="texto" onClick={cancelar}>
-                        Cancelar
-                    </QBoton>
-                    </div>
                 )}
 
                 <ResumenRecuento
-                    arqueo={modelo}
+                    arqueo={arqueo}
                 />
-                {`Diferencias Efectivo: ${moneda(modelo.recuentoEfectivo - modelo.pagosEfectivo)}  -  `}
-                {`Diferencias Tarjeta: ${moneda(modelo.recuentoTarjeta - modelo.pagosTarjeta)}  -  `}
-                {`Diferencias Vale: ${moneda(modelo.recuentoVales - modelo.pagosVale)}`}
+                {`Diferencias Efectivo: ${moneda(arqueo.recuentoEfectivo - arqueo.pagosEfectivo)}  -  `}
+                {`Diferencias Tarjeta: ${moneda(arqueo.recuentoTarjeta - arqueo.pagosTarjeta)}  -  `}
+                {`Diferencias Vale: ${moneda(arqueo.recuentoVales - arqueo.pagosVale)}`}
                 <TotalesArqueo
-                    arqueo={modelo}
+                    arqueo={arqueo}
                 />
                 <ListaPagos
-                    arqueoId={modelo.id}
+                    arqueoId={arqueo.id}
                 /> 
 
                 {
                     estado === "CERRANDO" &&
                     <CerrarArqueoTpv
-                        arqueo={modelo}
+                        arqueo={arqueo}
                         publicar={emitir}
                     />
                 }
                 {
                     estado === "REABRIENDO" &&
                     <ReabrirArqueoTpv
-                        arqueo={modelo}
+                        arqueo={arqueo}
                         publicar={emitir}
                     />
                 }
                 {
                     estado === "RECONTANDO" &&
                     <RecuentoArqueoTpv
+                        arqueo={arqueo}
                         publicar={emitir}
-                        arqueo={modelo}
+                    />
+                }
+                {
+                    estado === "BORRANDO_ARQUEO" &&
+                    <BorrarArqueoTpv
+                        arqueo={arqueo}
+                        publicar={emitir}
                     />
                 }
 

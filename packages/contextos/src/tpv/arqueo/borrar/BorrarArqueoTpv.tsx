@@ -2,27 +2,27 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useCallback } from "react";
-import { VentaTpv } from "../diseño.ts";
-import { deleteVentaTpv } from "../infraestructura.ts";
+import { ArqueoTpv } from "../diseño.ts";
+import { deleteArqueoTpv } from "../infraestructura.ts";
 
-export const BorrarVentaTpv = ({
+export const BorrarArqueoTpv = ({
     publicar,
-    venta,
+    arqueo,
 }: {
-    venta: VentaTpv;
+    arqueo: ArqueoTpv;
     publicar: EmitirEvento;
 }) => {
 
     const borrar_ = useCallback(
         async () => {
-            await deleteVentaTpv(venta.id);
-            publicar("venta_borrada", venta);
+            await deleteArqueoTpv(arqueo.id);
+            publicar("arqueo_borrado", arqueo);
         },
-        [publicar, venta]
+        [publicar, arqueo]
     );
 
     const cancelar_ = useCallback(
-        () => publicar("borrado_de_venta_cancelado"),
+        () => publicar("borrado_de_arqueo_cancelado"),
         [publicar]
     );
 
@@ -30,10 +30,10 @@ export const BorrarVentaTpv = ({
     
     return (
         <QModalConfirmacion
-            nombre="borrarVenta"
+            nombre="borrarArqueo"
             abierto={true}
-            titulo="Borrar venta"
-            mensaje={`¿Está seguro de que desea borrar la venta ${venta.codigo}?`}
+            titulo="Borrar arqueo"
+            mensaje={`¿Está seguro de que desea borrar el arqueo ${arqueo.id}?`}
             onCerrar={cancelar}
             onAceptar={borrar}
         />

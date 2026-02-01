@@ -63,11 +63,7 @@ export const CambiarLineaTpv = ({
 
                 <QInput label="Cantidad" {...uiProps("cantidad")} />
 
-                <div id='espacio'/>
-
                 <QInput label="Precio" {...uiProps("pvp_unitario")} />
-
-                <div id='espacio'/>
 
                 <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
 

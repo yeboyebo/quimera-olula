@@ -1,5 +1,5 @@
 import { Direccion } from "@olula/lib/diseño.js";
-import { MetaModelo } from "@olula/lib/dominio.ts";
+import { MetaCampo, MetaModelo } from "@olula/lib/dominio.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
@@ -68,11 +68,13 @@ export const metaVenta: MetaModelo<Venta> = {
     },
 };
 
+const metaDtoPorcentual: MetaCampo<LineaVenta> = { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 };
+
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
-        pvp_unitario: { tipo: "moneda", requerido: true },
-        dto_porcentual: { tipo: "numero", requerido: false },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
+        pvp_unitario: { tipo: "decimal", requerido: true },
+        dto_porcentual: metaDtoPorcentual,
         referencia: { requerido: true },
     }
 };

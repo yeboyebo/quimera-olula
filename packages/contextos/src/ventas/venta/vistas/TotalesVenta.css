@@ -13,6 +13,7 @@
 
 .totales-venta-item {
     display: flex;
+    align-items: baseline;
     justify-content: flex-end;
 }
 

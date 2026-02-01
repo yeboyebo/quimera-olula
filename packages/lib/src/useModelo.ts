@@ -1,53 +1,49 @@
-import { useCallback, useReducer, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
+import { ContextoError } from "./contexto.ts";
 import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { Accion, getFormProps, makeReductor, MetaModelo } from "./dominio.ts";
-
-// type AutoGuardado<T extends Modelo> = (x: T) => Promise<T>;
+import { getFormProps, MetaModelo } from "./dominio.ts";
 
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T,
-    // autoGuardado?: AutoGuardado<T>
+    onModeloListo?: (t: T) => Promise<void>
 ): HookModelo<T> {
 
-    const [modelo, dispatch] = useReducer(
-        makeReductor(),
-        modeloInicialProp
-    );
-
+    const [modelo, setModelo] = useState(modeloInicialProp);
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
-    const modeloInicialPropRef = useRef(modeloInicialProp);
-    modeloInicialPropRef.current = modeloInicialProp;
+
+    const { intentar } = useContext(ContextoError);
 
     const init = useCallback((nuevoModelo?: T) => {
-        const modeloAUsar = nuevoModelo || modeloInicialPropRef.current;
-        dispatch({
-            type: "set",
-            payload: {
-                entidad: modeloAUsar
-            }
-        });
+        const modeloAUsar = nuevoModelo || modeloInicialProp;
+        setModelo(modeloAUsar);
         setModeloInicial(modeloAUsar);
-    }, []); // Vacío porque usamos ref
+    }, [setModelo, setModeloInicial]);
 
-    const set = useCallback(async (modelo: T) => {
+    const onModeloListoConError = useCallback(
+        async (modelo: T) => {
+            return onModeloListo
+                ? await intentar(
+                    async () => await onModeloListo(modelo)
+                ) :
+                Promise.resolve();
+        },
+        [intentar, onModeloListo]
+    );
 
-        dispatch({
-            type: "set",
-            payload: {
-                entidad: modelo
-            }
-        })
-    }, [dispatch]);
+
+    useEffect(() => {
+        setModelo(modeloInicialProp);
+        setModeloInicial(modeloInicialProp);
+    }, [modeloInicialProp]);
 
     return {
         modelo,
         modeloInicial: modeloInicial || modeloInicialProp,
         init,
-        set,
-        dispatch,
-        ...getFormProps(modelo, modeloInicial, meta, set),
+        set: setModelo,
+        ...getFormProps(modelo, modeloInicial, meta, setModelo, onModeloListoConError),
     } as const;
 }
 
@@ -57,7 +53,6 @@ export type HookModelo<T extends Modelo> = {
     uiProps: (campo: string, secundario?: string) => UiProps,
     init: (entidad?: T) => void,
     set: (entidad: T) => void,
-    dispatch: (action: Accion<T>) => void
     modificado: boolean,
     valido: boolean,
     editable: boolean,

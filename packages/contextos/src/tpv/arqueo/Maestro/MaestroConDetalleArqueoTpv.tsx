@@ -2,6 +2,7 @@ import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto, procesarEvento } from "@olula/lib/dominio.js";
@@ -34,9 +35,9 @@ export const MaestroConDetalleArqueoTpv = () => {
 
     const [ctx, setCtx] = useState<ContextoMaestroArqueosTpv>({
         estado: "INICIAL",
-        arqueos: [],
-        totalArqueos: 0,
-        arqueoActivo: null,
+        arqueos: listaEntidadesInicial<ArqueoTpv>(),
+        // totalArqueos: 0,
+        // arqueoActivo: null,
     })
 
     const emitir = useCallback(
@@ -50,7 +51,7 @@ export const MaestroConDetalleArqueoTpv = () => {
         [ctx, setCtx, intentar]
     );
     
-    const crear = useCallback(
+    const abrir = useCallback(
         () => emitir("creacion_de_arqueo_solicitada"),
         [emitir]
     );
@@ -82,7 +83,7 @@ export const MaestroConDetalleArqueoTpv = () => {
                         <h2>Punto de arqueo {puntoVentaActivo?.nombre} </h2>
                         <h2>Agente {miAgenteActivo?.nombre} </h2>
                         <div className="maestro-botones">
-                            <QBoton onClick={crear}>Abrir arqueo</QBoton>
+                            <QBoton onClick={abrir}>Abrir arqueo</QBoton>
                         </div>
                         <ListadoControlado
                             metaTabla={metaTablaArqueo}
@@ -92,18 +93,18 @@ export const MaestroConDetalleArqueoTpv = () => {
                             modo={'tabla'}
                             // setModo={handleSetModoVisualizacion}
                             // tarjeta={tarjeta}
-                            entidades={ctx.arqueos}
-                            totalEntidades={ctx.totalArqueos}
-                            seleccionada={ctx.arqueoActivo}
+                            entidades={ctx.arqueos.lista}
+                            totalEntidades={ctx.arqueos.total}
+                            seleccionada={ctx.arqueos.activo}
                             onSeleccion={setSeleccionada}
                             onCriteriaChanged={recargar}
                         />
                     </>
                 }
                 Detalle={
-                    <DetalleArqueoTpv arqueoInicial={ctx.arqueoActivo} publicar={emitir} />
+                    <DetalleArqueoTpv arqueoInicial={ctx.arqueos.activo} publicar={emitir} />
                 }
-                seleccionada={ctx.arqueoActivo}
+                seleccionada={ctx.arqueos.activo}
                 modoDisposicion="maestro-50"
             />
         </div>

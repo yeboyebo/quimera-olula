@@ -20,19 +20,10 @@ export const Pagos = ({
     <>
       {estado !== "EMITIDA" && (
         <div className="botones maestro-botones ">
-          <QBoton onClick={() => publicar("pago_efectivo_solicitado")}>Nuevo</QBoton>
-          <QBoton
-            deshabilitado={!pagoActivo}
-            onClick={() => publicar("editar_pago_solicitado")}
-          >
-            Editar
-          </QBoton>
-          <QBoton
+          <QBoton texto='Borrar'
             deshabilitado={!pagoActivo}
             onClick={() => publicar("borrar_pago_solicitado")}
-          >
-            Borrar
-          </QBoton>
+          />
         </div>
       )}
       <PagosLista

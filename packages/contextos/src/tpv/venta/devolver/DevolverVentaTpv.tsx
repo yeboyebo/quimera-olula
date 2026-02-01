@@ -2,9 +2,10 @@ import { LineaADevolver, VentaTpv, VentaTpvADevolver } from "#/tpv/venta/diseño
 import { getVentaADevolver, patchDevolverVenta } from "#/tpv/venta/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { QModal, QTabla } from "@olula/componentes/index.js";
+import { MetaTabla, QModal, QTabla } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useCallback, useContext, useState } from "react";
 import { CantidadADevolver } from "./CantidadADevolver.tsx";
 import "./DevolverVentaTpv.css";
@@ -60,61 +61,75 @@ export const DevolverVentaTpv = (
                 )
             });
         }
-
     };
 
-    const puedoDevolver = () => {
-        return ventaADevolver && ventaADevolver.lineas.some((l) => l.aDevolver > 0);
+    const limpiar = () => {
+        setVentaADevolver(null);
     };
 
+    const focus = useFocus();
+
+    const puedoDevolver = ventaADevolver && ventaADevolver.lineas.some((l) => l.aDevolver > 0);
+    
     return (
         <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-        <div className="DevolverVentaTpv">
-            <h2>{`Devolver venta ${venta?.codigo || ""}`} </h2>
-            <quimera-formulario>
-                <QInput label='Venta' nombre='venta' onEnterKeyUp={
-                    (barcode)=>buscarVenta(barcode)
-                    }>
-                </QInput>
-            </quimera-formulario>
 
-            { ventaADevolver &&
-                <QTabla
-                    metaTabla={getMetaTablaLineas(cambiarCantidadADevolver)}
-                    datos={ventaADevolver.lineas}
-                    cargando={false}
-                    seleccionadaId={undefined}
-                    onSeleccion={() => null}
-                    orden={["id", "ASC"]}
-                    onOrdenar={(_: string) => null}
-                />
-            }
+            <div className="DevolverVentaTpv">
+                <h2>{`Devolver venta ${ventaADevolver?.codigo || ""}`} </h2>
 
-            <div className="botones maestro-botones ">
-                <QBoton onClick={devolver} deshabilitado={!puedoDevolver}>
-                    Devolver
-                </QBoton>
+                { !ventaADevolver && (
+                    <quimera-formulario>
+                        <QInput label='Venta' nombre='venta'
+                            onEnterKeyUp={buscarVenta}
+                            ref={focus} autoFocus
+                        />
+                    </quimera-formulario>
+                )}
+
+                { ventaADevolver &&
+                    <QTabla
+                        metaTabla={getMetaTablaLineas(cambiarCantidadADevolver)}
+                        datos={ventaADevolver.lineas}
+                        cargando={false}
+                        seleccionadaId={undefined}
+                        onSeleccion={() => null}
+                        orden={["id", "ASC"]}
+                        onOrdenar={(_: string) => null}
+                    />
+                }
+
+                <div className="botones maestro-botones ">
+                    <QBoton texto='Limpiar'
+                        onClick={limpiar}
+                        deshabilitado={!ventaADevolver}
+                    />
+                    <QBoton texto='Devolver'
+                        deshabilitado={!puedoDevolver}
+                        onClick={devolver}
+                    />
+                </div>
             </div>
-        </div>
         </QModal>
   );
 };
 
 const getMetaTablaLineas = (
   cambiarCantidadADevolver: (linea: LineaADevolver, cantidad: number) => void
-) => {
+): MetaTabla<LineaADevolver> => {
     return [
         {
-        id: "linea",
-        cabecera: "Línea",
-        render: (linea: LineaADevolver) => `${linea.referencia}: ${linea.descripcion}`,
+            id: "linea",
+            cabecera: "Línea",
+            render: (linea: LineaADevolver) => `${linea.referencia}: ${linea.descripcion}`,
         },
         {
-        id: "cantidad",
-        cabecera: "Cantidad",
+            id: "cantidad",
+            cabecera: "Cantidad",
+            tipo: "numero",
         },   
         {
             id: "aDevolver",
+            tipo: "numero",
             cabecera: "A Devolver",
             render: (linea: LineaADevolver) => (
                 <CantidadADevolver
@@ -123,14 +138,14 @@ const getMetaTablaLineas = (
                 />
             ),
         },
-        { id: "pvp_unitario", cabecera: "Precio" },
-        { id: "grupo_iva_producto_id", cabecera: "IVA" },
+        { id: "pvp_unitario", cabecera: "Precio", tipo: "moneda" },
         {
-        id: "dto_porcentual",
-        cabecera: "% Dto.",
-        render: (linea: LineaADevolver) =>
-            linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
+            id: "dto_porcentual",
+            cabecera: "% Dto.",
+            tipo: "numero",
+            render: (linea: LineaADevolver) =>
+                linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
         },
-        { id: "pvp_total", cabecera: "Total" },
+        { id: "pvp_total", cabecera: "Total", tipo: "moneda" },
     ];
 };

@@ -24,19 +24,20 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
         ABIERTO: {
 
+            arqueo_guardado: [refrescarArqueo],
+
             borrar_solicitado: "BORRANDO_ARQUEO",
 
             recuento_solicitado: "RECONTANDO",
 
             cierre_solicitado: "CERRANDO",
+
         },
 
         CERRADO: {
 
             reapertura_solicitada: "REABRIENDO",
         },
-
-        BORRANDO_ARQUEO: {},
 
         RECONTANDO: {
 
@@ -59,6 +60,16 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
             reapertura_hecha: [refrescarArqueo, "ABIERTO"],
 
+        },
+
+        BORRANDO_ARQUEO: {
+
+            borrado_de_arqueo_cancelado: "ABIERTO",
+
+            arqueo_borrado: [
+                getContextoVacio,
+                publicar('arqueo_borrado', null)
+            ]
         },
     }
 }
