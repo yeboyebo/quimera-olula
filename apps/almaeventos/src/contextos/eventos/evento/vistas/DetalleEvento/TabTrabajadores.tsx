@@ -76,7 +76,7 @@ export const TabTrabajadores = ({ evento }: TabTrabajadoresProps) => {
     nuevoTrabajadorEventoVacio.coste = trabajador.coste;
     nuevoTrabajadorEventoVacio.evento_id = evento.modelo.evento_id;
     nuevoTrabajadorEventoVacio.descripcion = evento.modelo.descripcion || "";
-    nuevoTrabajadorEventoVacio.fecha = evento.modelo.fecha_inicio || "";
+    nuevoTrabajadorEventoVacio.fecha = evento.modelo.fechaInicio || null;
 
     const id = await intentar(() =>
       postTrabajadorEvento(nuevoTrabajadorEventoVacio)

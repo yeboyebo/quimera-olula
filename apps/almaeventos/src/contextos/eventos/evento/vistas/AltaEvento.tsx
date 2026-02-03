@@ -15,15 +15,13 @@ export const AltaEvento = ({
   emitir?: ProcesarEvento;
   fechaInicial?: Date | null;
 }) => {
-  const fechaAString = (fecha: Date): string => {
-    const año = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
-    const dia = String(fecha.getDate()).padStart(2, "0");
-    return `${año}-${mes}-${dia}`;
-  };
-  nuevoEventoVacio.fecha_inicio = fechaInicial
-    ? fechaAString(fechaInicial)
-    : "";
+  // const fechaAString = (fecha: Date): string => {
+  //   const año = fecha.getFullYear();
+  //   const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  //   const dia = String(fecha.getDate()).padStart(2, "0");
+  //   return `${año}-${mes}-${dia}`;
+  // };
+  nuevoEventoVacio.fechaInicio = fechaInicial;
   const nuevoEvento = useModelo(metaNuevoEvento, nuevoEventoVacio);
   const { intentar } = useContext(ContextoError);
 
@@ -44,7 +42,7 @@ export const AltaEvento = ({
           {...nuevoEvento.uiProps("referencia", "descripcion_producto")}
         />
         <QInput label="Nombre" {...nuevoEvento.uiProps("descripcion")} />
-        <QInput label="Fecha" {...nuevoEvento.uiProps("fecha_inicio")} />
+        <QInput label="Fecha" {...nuevoEvento.uiProps("fechaInicio")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={nuevoEvento.valido === false}>

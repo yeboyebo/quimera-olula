@@ -6,13 +6,26 @@ import { reemplazarNulls } from "./dominio.ts";
 
 const baseUrlEvento = `/eventos/evento`;
 
+type EventoAPI = Evento & {
+    fecha_inicio: string
+}
+
+
+export const eventoDesdeAPI = (v: EventoAPI): Evento => (
+    {
+        ...v,
+        fechaInicio: new Date(Date.parse(v.fecha_inicio)),
+    }
+);
+
 export const eventoToAPI = (e: Evento) => ({
     ...e,
     valordefecto: e.valor_defecto,
 });
 
+
 export const getEvento = async (evento_id: string): Promise<Evento> =>
-    await RestAPI.get<{ datos: Evento }>(`${baseUrlEvento}/${evento_id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: EventoAPI }>(`${baseUrlEvento}/${evento_id}`).then((respuesta) => eventoDesdeAPI(respuesta.datos));
 
 export const getEventos = async (
     filtro: Filtro,
@@ -21,7 +34,8 @@ export const getEventos = async (
 ): RespuestaLista<Evento> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    return await RestAPI.get<{ datos: Evento[]; total: number }>(baseUrlEvento + q);
+    const respuesta = await RestAPI.get<{ datos: EventoAPI[]; total: number }>(baseUrlEvento + q);
+    return { datos: respuesta.datos.map(eventoDesdeAPI), total: respuesta.total };
 };
 
 export const postEvento = async (_evento: NuevoEvento): Promise<string> => {

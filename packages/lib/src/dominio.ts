@@ -341,6 +341,7 @@ const valorDecimalEsValido = (valor: string, decimales: number): boolean => {
 // }
 
 export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): ValorCampoUI => {
+    console.log('convertirCampoHaciaUI', campo, valor, typeof valor);
 
     if (valor === null || valor === undefined) {
         return '';
