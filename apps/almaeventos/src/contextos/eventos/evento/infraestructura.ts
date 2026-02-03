@@ -11,10 +11,10 @@ type EventoAPI = Evento & {
 }
 
 
-export const eventoDesdeAPI = (v: EventoAPI): Evento => (
+export const eventoDesdeAPI = (e: EventoAPI): Evento => (
     {
-        ...v,
-        fechaInicio: new Date(Date.parse(v.fecha_inicio)),
+        ...e,
+        fechaInicio: new Date(Date.parse(e.fecha_inicio)),
     }
 );
 
