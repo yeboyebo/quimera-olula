@@ -5,13 +5,23 @@ import { NuevoTrabajadorEvento, TrabajadorEvento } from "./diseño.ts";
 
 const baseUrlTrabajadorEvento = `/eventos/trabajador_evento`;
 
+type TrabajadorEventoAPI = Omit<TrabajadorEvento, 'fecha'> & {
+    fecha: string | null;
+};
+
+export const trabajadorEventoDesdeAPI = (v: TrabajadorEventoAPI): TrabajadorEvento => ({
+    ...v,
+    fecha: v.fecha ? new Date(Date.parse(v.fecha)) : null,
+});
+
 export const trabajadorEventoToAPI = (e: TrabajadorEvento) => ({
     ...e,
     valordefecto: e.valor_defecto,
+    fecha: e.fecha instanceof Date ? e.fecha.toISOString().split('T')[0] : e.fecha,
 });
 
 export const getTrabajadorEvento = async (id: string): Promise<TrabajadorEvento> =>
-    await RestAPI.get<{ datos: TrabajadorEvento }>(`${baseUrlTrabajadorEvento}/${id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: TrabajadorEventoAPI }>(`${baseUrlTrabajadorEvento}/${id}`).then((respuesta) => trabajadorEventoDesdeAPI(respuesta.datos));
 
 export const getTrabajadoresEvento = async (
     filtro: Filtro,
@@ -20,7 +30,8 @@ export const getTrabajadoresEvento = async (
 ): RespuestaLista<TrabajadorEvento> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    return await RestAPI.get<{ datos: TrabajadorEvento[]; total: number }>(baseUrlTrabajadorEvento + q);
+    const respuesta = await RestAPI.get<{ datos: TrabajadorEventoAPI[]; total: number }>(baseUrlTrabajadorEvento + q);
+    return { datos: respuesta.datos.map(trabajadorEventoDesdeAPI), total: respuesta.total };
 };
 
 export const postTrabajadorEvento = async (_trabajadorEvento: NuevoTrabajadorEvento): Promise<string> => {

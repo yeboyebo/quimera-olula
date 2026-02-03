@@ -42,7 +42,17 @@ export const getMetaTablaEvento = (
       </span>
     ),
   },
-  { id: "fechaInicio", cabecera: "Fecha", tipo: "texto" as const },
+  {
+    id: "fechaInicio",
+    cabecera: "Fecha",
+    tipo: "fecha" as const,
+    render: (e: Evento) => {
+      if (!e.fechaInicio) return "";
+      const fecha =
+        e.fechaInicio instanceof Date ? e.fechaInicio : new Date(e.fechaInicio);
+      return fecha.toISOString().split("T")[0];
+    },
+  },
   {
     id: "lugar",
     cabecera: "Lugar",
