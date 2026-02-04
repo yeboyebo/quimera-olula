@@ -23,7 +23,7 @@ export const CalendarioEventos = () => {
   );
   const [filtro, setFiltro] = useState<Filtro>([]);
   const [estado, setEstado] = useState<Estado>("calendario");
-  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date>(new Date());
   const esMovil = useEsMovil(640);
   const camposFiltro = ["descripcionref", "referencia"];
 
@@ -85,7 +85,7 @@ export const CalendarioEventos = () => {
     if (seleccion.esValida && seleccion.fechas.length > 0) {
       setFechaSeleccionada(seleccion.fechas[0]);
     } else {
-      setFechaSeleccionada(null);
+      setFechaSeleccionada(new Date());
     }
   };
 
