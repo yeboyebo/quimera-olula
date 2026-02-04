@@ -73,3 +73,4 @@ jobs:
       with:
         config: ${{ secrets.KUBE_CONFIG_DATA }}
         command: -n default rollout status deployment/aeproducciones-deployment    
+ 
