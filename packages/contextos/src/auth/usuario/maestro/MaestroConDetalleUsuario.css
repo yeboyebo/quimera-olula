@@ -1,0 +1,20 @@
+.Usuario {
+    td.id {
+        text-align: center;
+        width: 15%;
+    }
+
+    td.nombre {
+        text-transform: capitalize;
+        width: 35%;
+    }
+
+    td.email {
+        width: 35%;
+    }
+
+    td.grupo_id {
+        text-align: center;
+        width: 15%;
+    }
+}

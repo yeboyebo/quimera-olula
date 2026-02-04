@@ -1,0 +1,21 @@
+.CrearUsuario {
+    padding: 1rem;
+
+    h2 {
+        margin-top: 0;
+    }
+
+    quimera-formulario {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .botones {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+}
