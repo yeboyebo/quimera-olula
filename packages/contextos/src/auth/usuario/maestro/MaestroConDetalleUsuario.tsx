@@ -6,6 +6,7 @@ import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect } from "react";
+import { CrearUsuario } from "../crear/CrearUsuario.tsx";
 import { DetalleUsuario } from "../detalle/DetalleUsuario.tsx";
 import { Usuario } from "../diseño.ts";
 import { metaTablaUsuario } from "../dominio.ts";
@@ -73,6 +74,11 @@ export const MaestroConDetalleUsuario = () => {
           />
         }
         seleccionada={ctx.usuarios.activo}
+      />
+
+      <CrearUsuario
+        publicar={emitir}
+        activo={ctx.estado === "CREANDO_USUARIO"}
       />
     </div>
   );

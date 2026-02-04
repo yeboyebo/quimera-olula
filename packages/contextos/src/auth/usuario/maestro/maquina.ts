@@ -4,7 +4,6 @@ import {
     cambiarUsuarioSeleccionado,
     cancelarSeleccion,
     cargarUsuarios,
-    crearUsuario,
     recargarUsuarios,
     usuarioBorrado,
     usuarioCambiado,
@@ -17,7 +16,7 @@ export const getMaquina: () => Maquina<EstadoMaestroUsuario, ContextoMaestroUsua
             cargar: [cargarUsuarios],
             usuario_seleccionado: cambiarUsuarioSeleccionado,
             recarga_de_usuarios_solicitada: recargarUsuarios,
-            creacion_de_usuario_solicitada: crearUsuario,
+            creacion_de_usuario_solicitada: 'CREANDO_USUARIO',
         },
 
         LISTO: {
@@ -27,7 +26,12 @@ export const getMaquina: () => Maquina<EstadoMaestroUsuario, ContextoMaestroUsua
             usuario_cambiado: usuarioCambiado,
             seleccion_cancelada: cancelarSeleccion,
             recarga_de_usuarios_solicitada: recargarUsuarios,
-            creacion_de_usuario_solicitada: crearUsuario,
+            creacion_de_usuario_solicitada: 'CREANDO_USUARIO',
+        },
+
+        CREANDO_USUARIO: {
+            usuario_creado: [usuarioCreado, 'LISTO'],
+            creacion_de_usuario_cancelada: 'LISTO',
         },
 
         CARGANDO: {},

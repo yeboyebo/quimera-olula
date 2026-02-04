@@ -1,7 +1,7 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { Usuario } from "../diseño.ts";
-import { getUsuario, getUsuarios, postUsuario } from "../infraestructura.ts";
+import { getUsuarios } from "../infraestructura.ts";
 import { ContextoMaestroUsuario, EstadoMaestroUsuario } from "./diseño.ts";
 
 type ProcesarMaestroUsuario = ProcesarContexto<EstadoMaestroUsuario, ContextoMaestroUsuario>;
@@ -44,21 +44,6 @@ export const recargarUsuarios: ProcesarMaestroUsuario = async (contexto, payload
     };
 };
 
-export const crearUsuario: ProcesarMaestroUsuario = async (contexto) => {
-    const idUsuario = await postUsuario({} as Usuario);
-    const usuario = await getUsuario(idUsuario);
-
-    return {
-        ...contexto,
-        usuarios: {
-            lista: [usuario, ...contexto.usuarios.lista],
-            total: contexto.usuarios.total + 1,
-            activo: usuario,
-        },
-        estado: "LISTO",
-    };
-};
-
 export const cambiarUsuarioSeleccionado: ProcesarMaestroUsuario = async (contexto, payload) => {
     const usuario = payload as Usuario;
     return Usuarios.activar(contexto, usuario);
@@ -66,7 +51,7 @@ export const cambiarUsuarioSeleccionado: ProcesarMaestroUsuario = async (context
 
 export const usuarioCreado: ProcesarMaestroUsuario = async (contexto, payload) => {
     const usuario = payload as Usuario;
-    return Usuarios.cambiar(contexto, usuario);
+    return Usuarios.incluir(contexto, usuario);
 };
 
 export const usuarioCambiado: ProcesarMaestroUsuario = async (contexto, payload) => {

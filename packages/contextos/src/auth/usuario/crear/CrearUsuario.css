@@ -1,9 +1,4 @@
 .CrearUsuario {
-    padding: 1rem;
-
-    h2 {
-        margin-top: 0;
-    }
 
     quimera-formulario {
         display: flex;

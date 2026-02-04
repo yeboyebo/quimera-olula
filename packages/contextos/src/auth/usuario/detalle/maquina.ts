@@ -26,7 +26,7 @@ export const getMaquina: () => Maquina<EstadoDetalleUsuario, ContextoDetalleUsua
         },
 
         BORRANDO: {
-            borrado_confirmado: [borrarUsuario],
+            borrado_de_usuario_listo: [borrarUsuario, publicar("usuario_borrado", (ctx) => ctx.usuario)],
             borrado_cancelado: "LISTO",
         },
 

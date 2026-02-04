@@ -4,6 +4,7 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
+import { Grupo } from "../../comun/componentes/grupo.tsx";
 import { Usuario } from "../diseño.ts";
 import { metaNuevoUsuario, nuevoUsuarioVacio } from "../dominio.ts";
 import { getUsuario, postUsuario } from "../infraestructura.ts";
@@ -11,10 +12,10 @@ import "./CrearUsuario.css";
 
 export const CrearUsuario = ({
   activo = false,
-  emitir = async () => {},
+  publicar = async () => {},
 }: {
   activo: boolean;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const { intentar } = useContext(ContextoError);
   const usuario = useModelo(metaNuevoUsuario, nuevoUsuarioVacio);
@@ -24,13 +25,13 @@ export const CrearUsuario = ({
       postUsuario(usuario.modelo as Partial<Usuario>)
     );
     const usuarioCreado = await getUsuario(id);
-    emitir("usuario_creado", usuarioCreado);
+    publicar("usuario_creado", usuarioCreado);
     usuario.init();
   };
 
   const cancelar = () => {
     usuario.init();
-    emitir("creacion_cancelada");
+    publicar("creacion_de_usuario_cancelada");
   };
 
   return (
@@ -41,7 +42,7 @@ export const CrearUsuario = ({
           <QInput label="Identificador" {...usuario.uiProps("id")} />
           <QInput label="Nombre" {...usuario.uiProps("nombre")} />
           <QInput label="Email" {...usuario.uiProps("email")} />
-          <QInput label="Grupo" {...usuario.uiProps("grupo_id")} />
+          <Grupo {...usuario.uiProps("grupo_id")} />
         </quimera-formulario>
         <div className="botones">
           <QBoton onClick={crear} deshabilitado={!usuario.valido}>

@@ -8,11 +8,11 @@ import { deleteUsuario } from "../infraestructura.ts";
 export const BorrarUsuario = ({
   usuario,
   abierto = false,
-  emitir = async () => {},
+  publicar = async () => {},
 }: {
   usuario: Usuario | null;
   abierto: boolean;
-  emitir?: EmitirEvento;
+  publicar?: EmitirEvento;
 }) => {
   const { intentar } = useContext(ContextoError);
 
@@ -20,11 +20,11 @@ export const BorrarUsuario = ({
     if (!usuario) return;
 
     await intentar(() => deleteUsuario(usuario.id));
-    emitir("usuario_borrado", usuario);
+    publicar("borrado_de_usuario_listo");
   };
 
   const cancelar = () => {
-    emitir("borrado_cancelado");
+    publicar("borrado_cancelado");
   };
 
   return (

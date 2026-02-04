@@ -137,7 +137,7 @@ export const DetalleUsuario = ({
             </div>
           )}
           <BorrarUsuario
-            emitir={emitir}
+            publicar={emitir}
             abierto={estado === "BORRANDO"}
             usuario={ctx.usuario ?? usuarioVacio}
           />
