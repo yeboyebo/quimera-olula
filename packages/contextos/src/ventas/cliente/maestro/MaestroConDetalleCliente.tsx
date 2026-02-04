@@ -4,6 +4,7 @@ import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useCallback, useEffect, useState } from "react";
 import { CrearCliente } from "../crear/CrearCliente.tsx";
 import { DetalleCliente } from "../detalle/DetalleCliente.tsx";
@@ -17,9 +18,7 @@ export const MaestroConDetalleCliente = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    clientes: [],
-    totalClientes: 0,
-    clienteActivo: null,
+    clientes: listaEntidadesInicial<Cliente>(),
   });
 
   const crear = useCallback(() => emitir("creacion_solicitada"), [emitir]);
@@ -56,9 +55,9 @@ export const MaestroConDetalleCliente = () => {
               criteriaInicial={criteriaDefecto}
               modo={"tabla"}
               cargando={cargando}
-              entidades={ctx.clientes}
-              totalEntidades={ctx.totalClientes}
-              seleccionada={ctx.clienteActivo}
+              entidades={ctx.clientes.lista}
+              totalEntidades={ctx.clientes.total}
+              seleccionada={ctx.clientes.activo}
               onSeleccion={setSeleccionada}
               onCriteriaChanged={recargar}
             />
@@ -66,11 +65,11 @@ export const MaestroConDetalleCliente = () => {
         }
         Detalle={
           <DetalleCliente
-            clienteInicial={ctx.clienteActivo}
+            clienteInicial={ctx.clientes.activo}
             publicar={emitir}
           />
         }
-        seleccionada={ctx.clienteActivo}
+        seleccionada={ctx.clientes.activo}
         modoDisposicion="maestro-50"
       />
 

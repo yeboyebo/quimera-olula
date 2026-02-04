@@ -4,7 +4,6 @@ import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, publicar } from "@
 import { CambioCliente, LineaPresupuesto, Presupuesto } from "../diseño.ts";
 import {
     aprobarPresupuesto as aprobarPresupuestoFuncion,
-    borrarPresupuesto as borrarPresupuestoFuncion,
     getLineas,
     getPresupuesto,
     patchCambiarCliente,
@@ -249,11 +248,9 @@ export const cambiarPresupuesto: ProcesarPresupuesto = async (contexto, payload)
 }
 
 export const borrarPresupuesto: ProcesarPresupuesto = async (contexto) => {
-    await borrarPresupuestoFuncion(contexto.presupuesto.id);
-
     return pipePresupuesto(contexto, [
-        getContextoVacio,
-        publicar('presupuesto_borrado', contexto.presupuesto)
+        publicar('presupuesto_borrado', (ctx) => ctx.presupuesto.id),
+        getContextoVacio
     ]);
 }
 

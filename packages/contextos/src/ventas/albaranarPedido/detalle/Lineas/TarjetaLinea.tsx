@@ -15,7 +15,15 @@ export const TarjetaLinea = ({
 }) => {
   const { tramos } = linea;
   const servida = linea.servida || 0;
-  const aEnviar = linea.a_enviar || 0;
+  const aEnviar =
+    (tramos && tramos.length > 0
+      ? tramos.reduce(
+          (total, tramo) => total + (Number(tramo.cantidad) || 0),
+          0
+        )
+      : linea.a_enviar) || 0;
+  const disponible = linea.cantidad - servida - aEnviar;
+
   const [mostrarTramos, setMostrarTramos] = useState(false);
 
   const validarCantidadTramo =
@@ -50,8 +58,10 @@ export const TarjetaLinea = ({
     publicar("tramos_actualizados", { id: linea.id, tramos: nuevos });
   };
 
-  const addTramo = () => {
-    if (aEnviar + servida == linea.cantidad) {
+  const addTramo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (disponible <= 0) {
       alert("No hay cantidad disponible para añadir más tramos.");
       return;
     }
@@ -61,7 +71,7 @@ export const TarjetaLinea = ({
         crypto && typeof crypto.randomUUID === "function"
           ? crypto.randomUUID()
           : Date.now().toString(),
-      cantidad: linea.cantidad - servida - aEnviar,
+      cantidad: disponible,
     };
     const actuales = linea.tramos ?? [];
     publicar("tramos_actualizados", {
@@ -118,17 +128,20 @@ export const TarjetaLinea = ({
         <div className="tarjeta-cabecera-acciones">
           <button
             onClick={addTramo}
-            disabled={linea.cerrada || aEnviar + servida == linea.cantidad}
+            disabled={linea.cerrada || disponible <= 0}
             title={
-              aEnviar == 0
+              disponible <= 0
                 ? "No hay cantidad disponible"
-                : `Añadir tramo con ${aEnviar} unidades`
+                : `Añadir tramo con ${disponible} unidades`
             }
           >
             <QIcono nombre="añadir" tamaño="sm" />
           </button>
           <button
-            onClick={() => setMostrarTramos(!mostrarTramos)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMostrarTramos(!mostrarTramos);
+            }}
             disabled={aEnviar == 0}
           >
             <QIcono

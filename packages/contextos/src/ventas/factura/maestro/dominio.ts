@@ -77,17 +77,3 @@ export const incluirFacturaEnLista: ProcesarFacturas = async (
         estado: "INICIAL",
     };
 };
-
-export const abrirModalCreacion: ProcesarFacturas = async (contexto) => {
-    return {
-        ...contexto,
-        estado: "CREANDO_FACTURA",
-    };
-};
-
-export const cerrarModalCreacion: ProcesarFacturas = async (contexto) => {
-    return {
-        ...contexto,
-        estado: "INICIAL",
-    };
-};

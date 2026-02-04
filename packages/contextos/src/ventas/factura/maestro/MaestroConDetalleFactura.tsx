@@ -1,11 +1,11 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
-import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
 import { CrearFactura } from "../crear/CrearFactura.tsx";
 import { DetalleFactura } from "../detalle/DetalleFactura.tsx";
 import { Factura } from "../diseño.ts";
@@ -14,8 +14,7 @@ import "./MaestroConDetalleFactura.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleFactura = () => {
-  
-  const { ctx, emitir } = useMaestroVenta(getMaquina, {
+  const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     facturas: [],
     totalFacturas: 0,
@@ -24,7 +23,7 @@ export const MaestroConDetalleFactura = () => {
 
   const setSeleccionada = useCallback(
     (payload: Factura) => {
-      emitir("factura_seleccionada", payload)
+      emitir("factura_seleccionada", payload);
     },
     [emitir]
   );
@@ -38,6 +37,7 @@ export const MaestroConDetalleFactura = () => {
 
   useEffect(() => {
     emitir("recarga_de_facturas_solicitada", criteriaDefecto);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const metaTablaFactura = metaTablaBase as MetaTabla<Factura>;
@@ -75,16 +75,7 @@ export const MaestroConDetalleFactura = () => {
         modoDisposicion="maestro-50"
       />
 
-      { ctx.estado === "CREANDO_FACTURA" &&
-        <CrearFactura publicar={emitir} />
-      }
-      {/* <QModal
-        nombre="modal"
-        abierto={ctx.estado === "CREANDO_FACTURA"}
-        onCerrar={() => emitir("creacion_factura_cancelada")}
-      >
-        <CrearFactura publicar={emitir} />
-      </QModal> */}
+      {ctx.estado === "CREANDO_FACTURA" && <CrearFactura publicar={emitir} />}
     </div>
   );
 };
