@@ -37,6 +37,7 @@ export const MaestroConDetallePresupuesto = () => {
 
   useEffect(() => {
     emitir("recarga_de_presupuestos_solicitada", criteriaDefecto);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const metaTablaPresupuesto = [

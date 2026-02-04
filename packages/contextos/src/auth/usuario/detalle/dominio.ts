@@ -1,5 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { getUsuario, patchUsuario } from "../infraestructura.ts";
+import { Usuario } from "../diseño.ts";
+import { deleteUsuario, getUsuario, patchUsuario } from "../infraestructura.ts";
 import { ContextoDetalleUsuario, EstadoDetalleUsuario } from "./diseño.ts";
 
 type ProcesarDetalleUsuario = ProcesarContexto<EstadoDetalleUsuario, ContextoDetalleUsuario>;
@@ -22,14 +23,17 @@ export const cargarUsuario: ProcesarDetalleUsuario = async (contexto, usuarioId)
     };
 };
 
-export const guardarUsuario: ProcesarDetalleUsuario = async (contexto) => {
-    if (!contexto.usuario) return contexto;
+export const guardarUsuario: ProcesarDetalleUsuario = async (contexto, payload) => {
+    const usuarioEditado = payload as Usuario;
+    if (!usuarioEditado) return contexto;
 
-    await patchUsuario(contexto.usuario.id, contexto.usuario);
+    await patchUsuario(usuarioEditado.id, usuarioEditado);
+    const usuarioActualizado = await getUsuario(usuarioEditado.id);
 
     return {
         ...contexto,
-        usuarioInicial: contexto.usuario,
+        usuario: usuarioActualizado,
+        usuarioInicial: usuarioActualizado,
         estado: "LISTO",
     };
 };
@@ -39,4 +43,13 @@ export const cancelarEdicion: ProcesarDetalleUsuario = async (contexto) => {
         ...contexto,
         usuario: contexto.usuarioInicial,
     };
+};
+
+export const borrarUsuario: ProcesarDetalleUsuario = async (contexto) => {
+    if (!contexto.usuario) return contexto;
+    await deleteUsuario(contexto.usuario.id);
+    return [
+        contextoVacio,
+        [["usuario_borrado", contexto.usuario]]
+    ];
 };

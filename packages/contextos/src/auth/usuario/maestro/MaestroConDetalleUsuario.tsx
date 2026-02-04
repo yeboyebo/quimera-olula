@@ -42,6 +42,7 @@ export const MaestroConDetalleUsuario = () => {
 
   useEffect(() => {
     emitir("recarga_de_usuarios_solicitada", criteriaBaseUsuarios);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -7,6 +7,7 @@ import {
     crearUsuario,
     recargarUsuarios,
     usuarioBorrado,
+    usuarioCambiado,
     usuarioCreado,
 } from "./dominio.ts";
 
@@ -23,6 +24,7 @@ export const getMaquina: () => Maquina<EstadoMaestroUsuario, ContextoMaestroUsua
             usuario_seleccionado: cambiarUsuarioSeleccionado,
             usuario_creado: usuarioCreado,
             usuario_borrado: usuarioBorrado,
+            usuario_cambiado: usuarioCambiado,
             seleccion_cancelada: cancelarSeleccion,
             recarga_de_usuarios_solicitada: recargarUsuarios,
             creacion_de_usuario_solicitada: crearUsuario,

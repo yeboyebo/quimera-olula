@@ -69,6 +69,11 @@ export const usuarioCreado: ProcesarMaestroUsuario = async (contexto, payload) =
     return Usuarios.cambiar(contexto, usuario);
 };
 
+export const usuarioCambiado: ProcesarMaestroUsuario = async (contexto, payload) => {
+    const usuario = payload as Usuario;
+    return Usuarios.cambiar(contexto, usuario);
+};
+
 export const usuarioBorrado: ProcesarMaestroUsuario = async (contexto) => {
     const { usuarios } = contexto;
     if (!usuarios.activo) return contexto;
