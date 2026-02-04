@@ -9,7 +9,7 @@ export const trabajadorEventoVacio: TrabajadorEvento = {
     liquidado: false,
     trabajador_id: '',
     descripcion: '',
-    fecha: '',
+    fecha: null,
 };
 
 export const nuevoTrabajadorEventoVacio: NuevoTrabajadorEvento = {
@@ -20,7 +20,7 @@ export const nuevoTrabajadorEventoVacio: NuevoTrabajadorEvento = {
     liquidado: false,
     trabajador_id: '',
     descripcion: '',
-    fecha: '',
+    fecha: null,
 };
 
 export const metaTrabajadorEvento: MetaModelo<TrabajadorEvento> = {

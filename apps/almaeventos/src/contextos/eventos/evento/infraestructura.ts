@@ -6,13 +6,30 @@ import { reemplazarNulls } from "./dominio.ts";
 
 const baseUrlEvento = `/eventos/evento`;
 
-export const eventoToAPI = (e: Evento) => ({
-    ...e,
-    valordefecto: e.valor_defecto,
-});
+type EventoAPI = Evento & {
+    fecha_inicio: string
+}
+
+
+export const eventoDesdeAPI = (e: EventoAPI): Evento => (
+    {
+        ...e,
+        fechaInicio: new Date(Date.parse(e.fecha_inicio)),
+    }
+);
+
+export const eventoToAPI = (e: NuevoEvento) => {
+    const { fechaInicio, ...resto } = e;
+    return {
+        ...resto,
+        fecha_inicio: !fechaInicio ? null : (fechaInicio instanceof Date ? fechaInicio.toISOString().split('T')[0] : fechaInicio),
+        // valordefecto: e.valor_defecto,
+    };
+};
+
 
 export const getEvento = async (evento_id: string): Promise<Evento> =>
-    await RestAPI.get<{ datos: Evento }>(`${baseUrlEvento}/${evento_id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: EventoAPI }>(`${baseUrlEvento}/${evento_id}`).then((respuesta) => eventoDesdeAPI(respuesta.datos));
 
 export const getEventos = async (
     filtro: Filtro,
@@ -21,11 +38,12 @@ export const getEventos = async (
 ): RespuestaLista<Evento> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    return await RestAPI.get<{ datos: Evento[]; total: number }>(baseUrlEvento + q);
+    const respuesta = await RestAPI.get<{ datos: EventoAPI[]; total: number }>(baseUrlEvento + q);
+    return { datos: respuesta.datos.map(eventoDesdeAPI), total: respuesta.total };
 };
 
 export const postEvento = async (_evento: NuevoEvento): Promise<string> => {
-    return await RestAPI.post(baseUrlEvento, _evento).then((respuesta) => respuesta.id);
+    return await RestAPI.post(baseUrlEvento, eventoToAPI(_evento)).then((respuesta) => respuesta.id);
 };
 
 export const patchEvento = async (evento_id: string, evento: Partial<Evento>): Promise<void> => {
