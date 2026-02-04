@@ -1,16 +1,19 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
+import { facturaVacia } from "../dominio.ts";
 import "./DetalleFactura.css";
-import { editable } from "./diseño.ts";
-import { useFactura } from "./hooks/useFactura.ts";
+import { editable, metaFactura } from "./diseño.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
+import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
@@ -23,14 +26,26 @@ export const DetalleFactura = ({
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
+  const facturaId = facturaInicial?.id ?? params.id;
 
-  const factura = useFactura({
-    facturaId: facturaInicial?.id ?? params.id,
-    facturaInicial,
-    publicar,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      factura: facturaInicial || facturaVacia(),
+      facturaInicial: facturaInicial || facturaVacia(),
+      lineaActiva: null,
+    },
+    publicar
+  );
 
-  const { modelo, estado, lineaActiva, emitir } = factura;
+  const factura = useModelo(metaFactura, ctx.factura);
+
+  if (facturaId && facturaId !== ctx.factura.id) {
+    emitir("factura_id_cambiado", facturaId, true);
+  }
+
+  const { estado, lineaActiva } = ctx;
 
   const titulo = (factura: Factura) => factura.codigo || "Nueva Factura";
 
@@ -39,8 +54,8 @@ export const DetalleFactura = ({
   }, [emitir]);
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_factura_lista", modelo);
-  }, [emitir, modelo]);
+    emitir("edicion_de_factura_lista", ctx.factura);
+  }, [emitir, ctx.factura]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_factura_cancelada");
@@ -48,13 +63,13 @@ export const DetalleFactura = ({
 
   return (
     <Detalle
-      id={facturaInicial?.id ?? params.id}
+      id={facturaId}
       obtenerTitulo={titulo}
       setEntidad={() => {}}
-      entidad={modelo}
+      entidad={ctx.factura}
       cerrarDetalle={() => emitir("factura_deseleccionada", null)}
     >
-      {!!(facturaInicial?.id ?? params.id) && (
+      {!!facturaId && (
         <>
           <div className="acciones-rapidas">
             <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
@@ -76,7 +91,7 @@ export const DetalleFactura = ({
             </Tab>
           </Tabs>
 
-          {editable(modelo) && (
+          {editable(ctx.factura) && (
             <div className="botones maestro-botones">
               <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
               <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
@@ -86,21 +101,21 @@ export const DetalleFactura = ({
           )}
 
           <TotalesVenta
-            neto={Number(modelo.neto ?? 0)}
-            totalIva={Number(modelo.total_iva ?? 0)}
-            total={Number(modelo.total ?? 0)}
-            divisa={String(modelo.divisa_id || "EUR")}
+            neto={Number(ctx.factura.neto ?? 0)}
+            totalIva={Number(ctx.factura.total_iva ?? 0)}
+            total={Number(ctx.factura.total ?? 0)}
+            divisa={String(ctx.factura.divisa_id || "EUR")}
           />
 
           <Lineas
-            factura={modelo}
+            factura={ctx.factura}
             lineaActiva={lineaActiva}
             estadoFactura={estado}
             publicar={emitir}
           />
 
           {estado === "BORRANDO_FACTURA" && (
-            <BorrarFactura factura={modelo} publicar={emitir} />
+            <BorrarFactura factura={ctx.factura} publicar={emitir} />
           )}
         </>
       )}

@@ -4,7 +4,6 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput, QModal } from "@olula/componentes/index.js";
 import { Modelo } from "@olula/lib/diseño.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useEffect } from "react";
 import "./CambioClienteVenta.css";
 import { cambioClienteVacio, metaCambioCliente } from "./dominio.ts";
 
@@ -37,24 +36,8 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
 }: CambioClienteProps<T>) => {
   const { modelo, uiProps, valido, init } = useModelo(
     metaCambioCliente,
-    cambioClienteVacio()
+    cambioClienteVacio
   );
-
-  const inicializarFormulario = useCallback(() => {
-    if (!activo) return;
-
-    init({
-      cliente_id: venta.modelo.cliente_id,
-      nombre_cliente: venta.modelo.nombre_cliente,
-      direccion_id: venta.modelo.direccion_id,
-    });
-  }, [activo, venta.modelo, init]);
-
-  useEffect(() => {
-    if (activo) {
-      inicializarFormulario();
-    }
-  }, [activo, inicializarFormulario]);
 
   const esClienteRegistrado = venta.modelo.cliente_id !== "None";
   // const esClienteNoRegistrado =
@@ -80,14 +63,14 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
   const guardar = async () => {
     const cambios = prepararCambios();
     onGuardar(cambios);
-    init(cambioClienteVacio());
+    init(cambioClienteVacio);
   };
 
   const cancelar = () => {
     if (onCancelar) {
       onCancelar();
     }
-    init(cambioClienteVacio());
+    init(cambioClienteVacio);
   };
 
   const renderFormularioClienteRegistrado = () => (
@@ -96,10 +79,7 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
         {...uiProps("cliente_id", "nombre_cliente")}
         nombre="cliente_id_cambio"
       />
-      <DirCliente
-        clienteId={modelo.cliente_id || venta.modelo.cliente_id}
-        {...uiProps("direccion_id")}
-      />
+      <DirCliente clienteId={modelo.cliente_id} {...uiProps("direccion_id")} />
     </>
   );
 

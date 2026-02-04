@@ -43,10 +43,12 @@ type ProcesarCrmContactos = ProcesarContexto<EstadoCrmContactos, ContextoCrmCont
 
 const pipeCrmContactos = ejecutarListaProcesos<EstadoCrmContactos, ContextoCrmContactos>;
 
-export const cargarCrmContactos: ProcesarCrmContactos = async (contexto) => {
-    const contactos = await getCrmContactosCliente(contexto.clienteId);
+export const cargarCrmContactos: ProcesarCrmContactos = async (contexto, payload) => {
+    const clienteId = (payload as string) || contexto.clienteId;
+    const contactos = await getCrmContactosCliente(clienteId);
     return {
         ...contexto,
+        clienteId,
         contactos,
         cargando: false,
     }

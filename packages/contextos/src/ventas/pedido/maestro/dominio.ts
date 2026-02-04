@@ -1,13 +1,6 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import {
-    NuevoPedido,
-    Pedido
-} from "../diseño.ts";
-import {
-    getPedido,
-    getPedidos,
-    postPedido
-} from "../infraestructura.ts";
+import { Pedido } from "../diseño.ts";
+import { getPedidos } from "../infraestructura.ts";
 import { ContextoMaestroPedido, EstadoMaestroPedido } from "./diseño.ts";
 
 type ProcesarPedidos = ProcesarContexto<EstadoMaestroPedido, ContextoMaestroPedido>;
@@ -67,24 +60,8 @@ export const incluirPedidoEnLista: ProcesarPedidos = async (contexto, payload) =
     }
 }
 
-export const abrirModalCreacion: ProcesarPedidos = async (contexto) => {
-    return {
-        ...contexto,
-        estado: 'CREANDO_PEDIDO'
-    }
-}
-
-export const cerrarModalCreacion: ProcesarPedidos = async (contexto) => {
-    return {
-        ...contexto,
-        estado: 'INICIAL'
-    }
-}
-
 export const crearPedido: ProcesarPedidos = async (contexto, payload) => {
-    const pedidoNuevo = payload as NuevoPedido;
-    const idPedido = await postPedido(pedidoNuevo);
-    const pedido = await getPedido(idPedido);
+    const pedido = payload as Pedido;
     return {
         ...contexto,
         pedidos: [pedido, ...contexto.pedidos],

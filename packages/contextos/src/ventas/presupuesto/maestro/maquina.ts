@@ -1,8 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroPresupuesto, EstadoMaestroPresupuesto } from "./diseño.ts";
 import {
-    abrirModalCreacion,
-    cerrarModalCreacion,
     Presupuestos,
     recargarPresupuestos
 } from "./dominio.ts";
@@ -26,14 +24,14 @@ export const getMaquina: () => Maquina<EstadoMaestroPresupuesto, ContextoMaestro
 
             recarga_de_presupuestos_solicitada: recargarPresupuestos,
 
-            crear_presupuesto_solicitado: abrirModalCreacion,
+            crear_presupuesto_solicitado: 'CREANDO_PRESUPUESTO',
         },
 
         CREANDO_PRESUPUESTO: {
 
             presupuesto_creado: [Presupuestos.incluir, 'INICIAL'],
 
-            creacion_presupuesto_cancelada: cerrarModalCreacion,
+            creacion_presupuesto_cancelada: 'INICIAL',
         },
     }
 }
