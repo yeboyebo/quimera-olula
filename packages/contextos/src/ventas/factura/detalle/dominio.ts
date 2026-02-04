@@ -3,7 +3,6 @@ import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import { Factura, LineaFactura } from "../diseño.ts";
 import { facturaVacia } from "../dominio.ts";
 import {
-    borrarFactura as borrarFacturaFuncion,
     deleteLinea,
     getFactura,
     getLineas,
@@ -124,7 +123,7 @@ export const cambiarFactura: ProcesarFactura = async (contexto, payload) => {
 };
 
 export const borrarFactura: ProcesarFactura = async (contexto) => {
-    await borrarFacturaFuncion(contexto.factura.id);
+    // await borrarFacturaFuncion(contexto.factura.id);
 
     return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", null)]);
 };

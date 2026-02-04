@@ -10,10 +10,10 @@ import { getEvento, postEvento } from "../infraestructura.ts";
 
 export const AltaEvento = ({
   emitir = async () => {},
-  fechaInicial = null,
+  fechaInicial = new Date(),
 }: {
   emitir?: ProcesarEvento;
-  fechaInicial?: Date | null;
+  fechaInicial?: Date;
 }) => {
   // const fechaAString = (fecha: Date): string => {
   //   const año = fecha.getFullYear();

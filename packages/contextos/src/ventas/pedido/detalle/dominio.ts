@@ -9,7 +9,6 @@ import {
     Pedido
 } from "../diseño.ts";
 import {
-    borrarPedido as borrarPedidoFuncion,
     getLineas,
     getPedido,
     patchCambiarCliente,
@@ -53,7 +52,7 @@ export const metaLineaPedido: MetaModelo<LineaPedido> = metaLineaVenta;
 
 export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = metaNuevaLineaVenta;
 
-const pedidoVacioObjeto: Pedido = pedidoVacio();
+export const pedidoVacioObjeto: Pedido = pedidoVacio();
 
 export const pedidoVacioContexto = (): Pedido => ({ ...pedidoVacioObjeto });
 
@@ -173,11 +172,9 @@ export const cambiarPedido: ProcesarPedido = async (contexto, payload) => {
 }
 
 export const borrarPedido: ProcesarPedido = async (contexto) => {
-    await borrarPedidoFuncion(contexto.pedido.id);
-
     return pipePedido(contexto, [
-        getContextoVacio,
-        publicar('pedido_borrado', null)
+        publicar('pedido_borrado', (ctx) => ctx.pedido),
+        getContextoVacio
     ]);
 }
 

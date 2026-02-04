@@ -55,7 +55,10 @@ export const MaestroConDetalleTrabajadorEvento = () => {
   const cambiarEstadoLiquidado = async (trabajadorEvento: TrabajadorEvento) => {
     const nuevoValor = !trabajadorEvento.liquidado;
     await intentar(() =>
-      patchTrabajadorEvento(trabajadorEvento.id, { liquidado: nuevoValor })
+      patchTrabajadorEvento(trabajadorEvento.id, {
+        ...trabajadorEvento,
+        liquidado: nuevoValor,
+      })
     );
     // Actualizar la UI
     emitir("TRABAJADOR_EVENTO_CAMBIADO", {

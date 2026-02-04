@@ -3,24 +3,24 @@ import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
-import { Cliente } from "../diseño.ts";
+import { useContext, useMemo } from "react";
 import { darDeBajaCliente } from "../infraestructura.ts";
 import "./BajaCliente.css";
 import { metaDarDeBaja } from "./dominio.ts";
 
 interface BajaClienteProps {
-  cliente: Cliente;
+  clienteId: string;
   publicar?: ProcesarEvento;
   onCancelar?: () => void;
 }
 
 export const BajaCliente = ({
-  cliente,
+  clienteId,
   publicar = async () => {},
   onCancelar = () => {},
 }: BajaClienteProps) => {
-  const bajaCliente = useModelo(metaDarDeBaja, { fecha_baja: null });
+  const modeloInicial = useMemo(() => ({ fecha_baja: null }), []);
+  const bajaCliente = useModelo(metaDarDeBaja, modeloInicial);
   const { intentar } = useContext(ContextoError);
 
   const { modelo, valido, uiProps } = bajaCliente;
@@ -28,10 +28,10 @@ export const BajaCliente = ({
   const guardar = async () => {
     if (modelo.fecha_baja === null) return;
     await intentar(() =>
-      darDeBajaCliente(cliente.id, modelo.fecha_baja as Date)
+      darDeBajaCliente(clienteId, modelo.fecha_baja as Date)
     );
     publicar("cliente_dado_de_baja", {
-      clienteId: cliente.id,
+      clienteId: clienteId,
       fecha_baja: modelo.fecha_baja,
     });
     onCancelar();

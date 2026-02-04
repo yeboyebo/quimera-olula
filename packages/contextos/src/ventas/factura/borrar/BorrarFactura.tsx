@@ -17,8 +17,7 @@ export const BorrarFactura = ({
     if (factura.id) {
       await intentar(() => borrarFactura(factura.id));
     }
-    publicar("factura_borrada");
-    publicar("borrar_cancelado");
+    publicar("borrado_de_factura_listo");
   };
 
   return (

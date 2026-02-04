@@ -9,12 +9,13 @@ import { Cliente } from "../diseño.ts";
 import "./TabComercial.css";
 
 interface TabComercialProps {
-  cliente: HookModelo<Cliente>;
+  form: HookModelo<Cliente>;
+  cliente: Cliente;
   emitirCliente: ProcesarEvento;
 }
 
-export const TabComercial = ({ cliente }: TabComercialProps) => {
-  const { uiProps } = cliente;
+export const TabComercial = ({ form }: TabComercialProps) => {
+  const { uiProps } = form;
 
   return (
     <div className="TabComercial">
