@@ -1,6 +1,6 @@
 .Usuario {
     td.id {
-        text-align: center;
+        text-align: left;
         width: 15%;
     }
 
@@ -14,7 +14,7 @@
     }
 
     td.grupo_id {
-        text-align: center;
+        text-align: left;
         width: 15%;
     }
 }

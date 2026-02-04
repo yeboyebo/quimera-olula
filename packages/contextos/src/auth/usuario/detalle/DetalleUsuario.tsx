@@ -2,7 +2,7 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QBoton, QInput } from "@olula/componentes/index.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { Usuario } from "../diseño.ts";
 import { metaUsuario, usuarioVacio } from "../dominio.ts";
@@ -19,6 +19,7 @@ export const DetalleUsuario = ({
 }) => {
   const params = useParams();
   const usuarioId = usuarioInicial?.id ?? params.id;
+  const usuarioIdCargadoRef = useRef<string | null>(null);
 
   const contextoInicial: ContextoDetalleUsuario = {
     estado: "INICIAL",
@@ -38,9 +39,13 @@ export const DetalleUsuario = ({
     emitir("edicion_de_usuario_cancelada");
   }, [emitir]);
 
-  if (usuarioId && usuarioId !== ctx?.usuario?.id) {
-    emitir("usuario_id_cambiada", usuarioId, true);
-  }
+  useEffect(() => {
+    if (usuarioId && usuarioId !== usuarioIdCargadoRef.current) {
+      usuarioIdCargadoRef.current = usuarioId;
+      emitir("usuario_id_cambiada", usuarioId, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usuarioId]);
 
   if (!usuarioInicial) {
     return <div className="DetalleUsuario">Selecciona un usuario</div>;
@@ -49,12 +54,12 @@ export const DetalleUsuario = ({
   return (
     <div className="DetalleUsuario">
       <h2>Detalle de Usuario</h2>
-      <form>
+      <quimera-formulario>
         <QInput {...usuarioForm.uiProps("id")} label="ID" />
         <QInput {...usuarioForm.uiProps("nombre")} label="Nombre" />
         <QInput {...usuarioForm.uiProps("email")} label="Email" />
         <QInput {...usuarioForm.uiProps("grupo_id")} label="Grupo" />
-      </form>
+      </quimera-formulario>
       <div className="botones">
         <QBoton onClick={handleGuardar} deshabilitado={!usuarioForm.valido}>
           Guardar

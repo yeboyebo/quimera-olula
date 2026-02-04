@@ -68,7 +68,7 @@ export const MaestroConDetalleUsuario = () => {
         Detalle={
           <DetalleUsuario
             usuarioInicial={ctx.usuarios.activo}
-            emitir={emitir}
+            publicar={emitir}
           />
         }
         seleccionada={ctx.usuarios.activo}
