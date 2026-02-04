@@ -18,13 +18,7 @@ jobs:
         with:
           node-version: 18.12
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v2.0
-        with:
-          envkey_DEBUG: false
-          envkey_VITE_API_URL:  "https://api.aeproducciones.es"
-          file_name: .env
-          fail_on_empty: false
-          sort_keys: false
+        run: echo "VITE_API_URL=https://api.aeproducciones.es" > .env && echo "VITE_API_URL=https://api.aeproducciones.es" > ./apps/almaeventos/.env
 
       - name: Install pnpm
         run: npm install -g pnpm
