@@ -132,9 +132,9 @@ quimera-tabla {
     /* Centrado para fechas, horas y booleanos */
     td.fecha,
     td.hora,
-    td.booleano,
     th.fecha,
     th.hora,
+    td.booleano,
     th.booleano {
         text-align: center;
     }

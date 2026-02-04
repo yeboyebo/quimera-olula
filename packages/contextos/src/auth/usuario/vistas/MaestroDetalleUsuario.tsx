@@ -1,5 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { Listado, MaestroDetalleResponsive } from "@olula/componentes/index.ts";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
 import { ListaSeleccionable } from "@olula/lib/diseño.ts";
 import {
   cambiarItem,
@@ -62,6 +62,14 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
       usuarios_cargados: ({ maquina, payload }) =>
         pipe(maquina, setUsuarios(cargar(payload as Usuario[]))),
       borrar: "borrando",
+      seleccion_cancelada: ({ maquina }) =>
+        pipe(
+          maquina,
+          setUsuarios((usuarios) => ({
+            ...usuarios,
+            idActivo: null,
+          }))
+        ),
     },
     creando: {
       usuario_creado: ({ maquina, payload, setEstado }) =>
@@ -96,24 +104,23 @@ export const MaestroConDetalleUsuario = () => {
 
   return (
     <div className="Usuario">
-      <MaestroDetalleResponsive<Usuario>
+      <MaestroDetalle<Usuario>
         seleccionada={seleccionada}
-        Maestro={
+        preMaestro={
           <>
             <h2>Módulos</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nuevo</QBoton>
             </div>
-            <Listado
-              metaTabla={metaTablaUsuario}
-              entidades={usuarios.lista}
-              setEntidades={setEntidades}
-              seleccionada={seleccionada}
-              setSeleccionada={setSeleccionada}
-              cargar={getUsuarios}
-            />
           </>
         }
+        modoVisualizacion="tabla"
+        modoDisposicion="maestro-50"
+        metaTabla={metaTablaUsuario}
+        entidades={usuarios.lista}
+        setEntidades={setEntidades}
+        setSeleccionada={setSeleccionada}
+        cargar={getUsuarios}
         Detalle={
           <DetalleUsuario usuarioInicial={seleccionada} emitir={emitir} />
         }

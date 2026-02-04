@@ -43,6 +43,8 @@ export type MaestroProps<T extends Entidad> = {
   setEntidades: (entidades: T[]) => void;
   seleccionada: T | null;
   setSeleccionada: (seleccionada: T) => void;
+  modo?: Modo;
+  setModo?: (modo: Modo) => void;
   cargar: (
     filtro: Filtro,
     orden: Orden,
@@ -53,7 +55,7 @@ export type MaestroProps<T extends Entidad> = {
 export const Listado = <T extends Entidad>({
   metaTabla,
   criteria = {
-    filtros: [],
+    filtro: [],
     orden: ["id", "DESC"],
     paginacion: { limite: 10, pagina: 1 },
   },
@@ -63,22 +65,14 @@ export const Listado = <T extends Entidad>({
   seleccionada,
   setSeleccionada,
   cargar,
+  modo = "tabla",
+  setModo,
 }: MaestroProps<T>) => {
-  const modoInicial: Modo =
-    metaTabla && tarjeta
-      ? "tabla"
-      : metaTabla
-      ? "tabla"
-      : tarjeta
-      ? "tarjetas"
-      : "tabla";
-
   const [cargando, setCargando] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>(criteria.filtros);
+  const [filtro, setFiltro] = useState<Filtro>(criteria.filtro);
   const [orden, setOrden] = useState<Orden>(criteria.orden);
   const [paginacion, setPaginacion] = useState<Paginacion>(criteria.paginacion);
   const [totalRegistros, setTotalRegistros] = useState(0);
-  const [modo, setModo] = useState<Modo>(modoInicial);
   const { setError } = useContext(ContextoError);
 
   useEffect(() => {
@@ -186,7 +180,7 @@ export const Listado = <T extends Entidad>({
           <span
             className="cambio-modo-icono"
             onClick={() =>
-              setModo((modo) => (modo === "tabla" ? "tarjetas" : "tabla"))
+              setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
             }
           >
             <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
@@ -207,7 +201,7 @@ export const Listado = <T extends Entidad>({
           setFiltro(filtro.filter(([k]) => k !== clave));
         }}
         resetearFiltro={() => {
-          setFiltro(criteria.filtros);
+          setFiltro(criteria.filtro);
           setPaginacion({ ...paginacion, pagina: 1 });
           setEntidades([]);
         }}

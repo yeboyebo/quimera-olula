@@ -1,5 +1,7 @@
+// import { UiProps, ValorControl } from "useModelo.ts";
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
-import { ClausulaFiltro, Criteria, Direccion, Entidad, Filtro, Modelo, Orden, TipoInput } from "./diseño.ts";
+import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
+import { UiProps, ValorControl } from "./useModelo.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -64,76 +66,49 @@ export type EstadoModelo<T extends Modelo> = {
 
 
 // export type Validador<T extends Modelo> = (estado: EstadoModelo<T>, campo: string) => Validacion;
-type Campo<T extends Modelo> = {
+export type MetaCampo<T extends Modelo> = {
     nombre?: string;
     tipo?: TipoInput;
     requerido?: boolean;
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
+    positivo?: boolean
+    divisa?: string
+    decimales?: number
+    maximo?: number
+    minimo?: number
 }
-type TipoCampo = string | boolean | number | null;
+// export type TipoValorCampo = string | boolean | number | null;
 
 export type MetaModelo<T extends Modelo> = {
-    campos?: Record<string, Campo<T>>;
+    campos?: Record<string, MetaCampo<T>>;
     editable?: (modelo: T, campo?: string) => boolean;
     validacion?: (modelo: T) => string | boolean;
+    onChange?: (modelo: T, campo: string, valorAnterior: unknown, otros?: Record<string, unknown>) => T;
 }
 
 
-export const makeReductor = <T extends Modelo>(meta: MetaModelo<T>) => {
-
-    return (estado: EstadoModelo<T>, accion: Accion<T>): EstadoModelo<T> => {
-
-        switch (accion.type) {
-
-            case "init": {
-                return initEstadoModelo<T>(
-                    accion.payload.entidad,
-                    // meta
-                );
-            }
-
-            case "set_campo": {
-                const valor = convertirValorCampo<T>(
-                    accion.payload.valor,
-                    accion.payload.campo,
-                    meta.campos
-                );
-                return cambiarEstadoModelo<T>(
-                    estado,
-                    accion.payload.campo,
-                    valor,
-                );
-            }
-
-            default: {
-                return { ...estado };
-            }
-        }
-    }
-}
-
-export const makeReductor2 = <T extends Modelo>(meta: MetaModelo<T>) => {
+export const makeReductor = <T extends Modelo>() => {
 
     return (estado: T, accion: Accion<T>): T => {
 
         switch (accion.type) {
 
-            case "init": {
+            case "set": {
                 return accion.payload.entidad;
             }
 
-            case "set_campo": {
-                const valor = convertirValorCampo<T>(
-                    accion.payload.valor,
-                    accion.payload.campo,
-                    meta.campos
-                );
-                return {
-                    ...estado,
-                    [accion.payload.campo]: valor
-                }
-            }
+            // case "set_campo": {
+            //     const valor = convertirValorCampo<T>(
+            //         accion.payload.valor,
+            //         accion.payload.campo,
+            //         meta.campos
+            //     );
+            //     return {
+            //         ...estado,
+            //         [accion.payload.campo]: valor
+            //     }
+            // }
 
             default: {
                 return { ...estado };
@@ -142,25 +117,25 @@ export const makeReductor2 = <T extends Modelo>(meta: MetaModelo<T>) => {
     }
 }
 
-const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, Campo<T>>) => {
-    if (!campos) return valor;
-    if (!(campo in campos)) return valor;
+// const convertirValorCampo = <T extends Modelo>(valor: string, campo: string, campos?: Record<string, MetaCampo<T>>) => {
+//     if (!campos) return valor;
+//     if (!(campo in campos)) return valor;
 
-    if (valor === null) {
-        return null;
-    }
+//     if (valor === null) {
+//         return null;
+//     }
 
-    switch (campos[campo].tipo) {
-        case 'checkbox':
-            return valor === 'true'
-        case 'numero': {
-            const numero = parseFloat(valor);
-            return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
-        }
-        default:
-            return valor;
-    }
-}
+//     switch (campos[campo].tipo) {
+//         case 'checkbox':
+//             return valor === 'true'
+//         case 'numero': {
+//             const numero = parseFloat(valor);
+//             return isNaN(numero) ? '' : numero; // Quizá hay que convertir a null y pasar luego en el uiProps a ''
+//         }
+//         default:
+//             return valor;
+//     }
+// }
 
 export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
     const estado = {
@@ -170,23 +145,23 @@ export const initEstadoModelo = <T extends Modelo>(modelo: T) => {
     return estado;
 }
 
-export const cambiarEstadoModelo = <T extends Modelo>(
-    estado: EstadoModelo<T>,
-    campo: string,
-    valor: TipoCampo,
-): EstadoModelo<T> => {
+// export const cambiarEstadoModelo = <T extends Modelo>(
+//     estado: EstadoModelo<T>,
+//     campo: string,
+//     valor: TipoValorCampo,
+// ): EstadoModelo<T> => {
 
-    return {
-        ...estado,
-        valor: {
-            ...estado.valor,
-            [campo]: valor
-        }
-    }
-}
+//     return {
+//         ...estado,
+//         valor: {
+//             ...estado.valor,
+//             [campo]: valor
+//         }
+//     }
+// }
 
 export type Accion<T extends Modelo> = {
-    type: 'init';
+    type: 'set';
     payload: {
         entidad: T
     }
@@ -232,17 +207,14 @@ export const campoModeloAInput = <T extends Modelo>(
     }
 }
 
-export const validacionDefecto = (validacion: ValidacionCampo, valor: string): ValidacionCampo => {
-    const valido = !validacion.requerido || stringNoVacio(valor);
-    return {
-        ...validacion,
-        valido,
-        textoValidacion: valido ? "" : "Campo requerido",
-    }
-}
-
-// export type ValidadorCampo<T extends Modelo> = (estado: EstadoModelo<T>) => ValidacionCampo;
-// export type ValidadorCampos<T extends Modelo> = Record<string, ValidadorCampo<T>>;
+// export const validacionDefecto = (validacion: ValidacionCampo, valor: string): ValidacionCampo => {
+//     const valido = !validacion.requerido || stringNoVacio(valor);
+//     return {
+//         ...validacion,
+//         valido,
+//         textoValidacion: valido ? "" : "Campo requerido",
+//     }
+// }
 
 
 export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo?: string) => {
@@ -259,6 +231,248 @@ export const modeloEsEditable = <T extends Modelo>(meta: MetaModelo<T>) => (mode
             : true;
 }
 
+export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: string | null): unknown => {
+
+    if (!meta.campos) {
+        if (valor === '') {
+            return null;
+        }
+        return valor;
+    }
+
+    if (!meta.campos[campo]) {
+        if (valor === '') {
+            return null;
+        }
+        return valor;
+    }
+
+    if (!meta.campos[campo].tipo) {
+        if (valor === '') {
+            return null;
+        }
+        return valor;
+    }
+
+    const tipo = meta.campos[campo].tipo;
+
+    switch (tipo) {
+        case 'checkbox': {
+            return valor; // Ver un caso y cambiar a boolean
+        }
+        case 'moneda':
+        case 'decimal':
+        case 'numero': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+            const numero = parseFloat(valor);
+
+            if (isNaN(numero)) {
+                throw new Error('No es un número');
+            }
+
+            return numero;
+
+        }
+        case 'entero': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+            const numero = parseInt(valor);
+
+            if (isNaN(numero)) {
+                throw new Error('No es un número entero');
+            }
+
+            return numero;
+        }
+        case 'fecha': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+            return new Date(Date.parse(valor));
+        }
+        default:
+            return valor;
+    }
+}
+
+
+export const formatoValorCampoValido = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): boolean => {
+
+    const metaCampo = meta.campos?.[campo];
+    const tipoCampo = metaCampo?.tipo;
+
+    if (valor === null) {
+        return true;
+    }
+
+    if (tipoCampo === 'moneda') {
+
+        const divisa = metaCampo?.divisa || 'EUR';
+        const decimales = decimalesPorMoneda(divisa);
+        return valorDecimalEsValido(String(valor), decimales);
+
+    } else if (tipoCampo === 'decimal') {
+
+        const decimales = metaCampo?.decimales;
+        if (!decimales) {
+            return true;
+        }
+        return valorDecimalEsValido(String(valor), decimales);
+
+        // } else if (tipoCampo === 'entero') {
+        //     return valorEnteroEsValido(String(valor));
+    }
+    return true;
+}
+
+// const valorEnteroEsValido = (valor: string): boolean => {
+//     return new RegExp(`^\\d+$`).test(String(valor));
+// }
+
+const valorDecimalEsValido = (valor: string, decimales: number): boolean => {
+    return new RegExp(`^(\\d?)+(\\.\\d{0,${decimales}})?$`).test(String(valor));
+}
+// No permite .23 y es incómodo de editar
+// const valorDecimalEsValido2 = (valor: string, decimales: number): boolean => {
+//     return new RegExp(`^\\d+(\\.\\d{0,${decimales}})?$`).test(String(valor));
+// }
+
+export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): ValorCampoUI => {
+    console.log('convertirCampoHaciaUI', campo, valor, typeof valor);
+
+    if (valor === null || valor === undefined) {
+        return '';
+    }
+    const tipoCampo = meta.campos?.[campo]?.tipo;
+    switch (tipoCampo) {
+
+        case 'texto':
+            return String(valor) || '';
+
+        case 'numero':
+        case 'moneda':
+        case 'decimal':
+        case 'entero':
+            return Number(valor).toString();
+
+        case 'checkbox':
+            return (valor as boolean).toString();
+
+        case 'fecha':
+            return (valor as Date).toISOString().split('T')[0];
+
+        default:
+            return valor as string;
+    }
+}
+
+const getUiProps = <M extends Modelo>(
+    modelo: M,
+    modeloInicial: M,
+    meta: MetaModelo<M>,
+    onModeloCambiado: (modelo: M) => void,
+    onModeloListo?: (modelo: M) => Promise<void>
+) =>
+    (campo: string, secundario?: string): UiProps => {
+
+        const validacion = validacionCampoModelo(meta)(modelo, campo);
+        const valido = validacion === true;
+        const valor = modelo[campo];
+        const textoValidacion = valor === modeloInicial[campo]
+            ? ''
+            : typeof validacion === "string"
+                ? validacion
+                : '';
+        const editable = modeloEsEditable(meta)(modelo, campo);
+        const cambiado = valor !== modeloInicial[campo];
+        const campos = meta.campos || {};
+        const tipoCampo = campo in campos && campos[campo]?.tipo
+            ? campos[campo].tipo
+            : "texto";
+
+        const conversionTipo = {
+            "boolean": "checkbox",
+            "dolar": "moneda",
+        };
+
+        const tipo = (conversionTipo[tipoCampo as keyof typeof conversionTipo] || tipoCampo) as TipoInput;
+        const valorUI = convertirCampoHaciaUI(meta)(campo, valor);
+
+        return {
+            nombre: campo,
+            valor: valorUI,
+            tipo: tipo,
+            deshabilitado: !editable,
+            valido: cambiado && valido,
+            erroneo: !valido,
+            advertido: false,
+            textoValidacion: textoValidacion,
+            onChange: setCampo(modelo, meta, onModeloCambiado, campo, secundario),
+            evaluarCambio: evaluarCambio(modelo, modeloInicial, meta, onModeloListo),
+            descripcion: secundario ? modelo[secundario] as string : undefined,
+        }
+    }
+
+const evaluarCambio = <M extends Modelo>(
+    modelo: M,
+    modeloInicial: M,
+    meta: MetaModelo<M>,
+    onModeloListo?: (modelo: M) => Promise<void>
+) =>
+    async () => {
+        if (!onModeloListo) {
+            return;
+        }
+        if (modeloModificado(modeloInicial, modelo) && modeloEsValido(meta)(modelo)) {
+            await onModeloListo(modelo);
+        }
+    }
+
+const setCampo = <M extends Modelo>(
+    modelo: M,
+    meta: MetaModelo<M>,
+    onModeloCambiado: (modelo: M) => void,
+    campo: string,
+    segundo?: string
+) => async (_valor: ValorControl): Promise<void> => {
+
+    let valor = _valor || null;
+    let descripcion: string | undefined = undefined;
+
+
+    const valorAnterior = modelo[campo];
+
+    if (typeof _valor === "object" && _valor && 'valor' in _valor) {
+        valor = _valor.valor;
+        if (segundo) {
+            descripcion = _valor.descripcion;
+        }
+    }
+    if (!formatoValorCampoValido(meta)(campo, valor)) {
+        return;
+    }
+
+    const valorModelo = convertirCampoDesdeUI(meta)(campo, valor as string);
+
+    let nuevoModelo = {
+        ...modelo,
+        [campo]: valorModelo,
+    } as M
+    if (segundo && descripcion) {
+        nuevoModelo = {
+            ...nuevoModelo,
+            [segundo]: descripcion,
+        } as M
+    }
+    if (meta.onChange) {
+        const otros = typeof _valor === "object" ? _valor as Record<string, unknown> : {};
+        nuevoModelo = meta.onChange(nuevoModelo as M, campo, valorAnterior, otros);
+    }
+    onModeloCambiado(nuevoModelo);
+};
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
     const campos = meta.campos || {};
@@ -280,8 +494,34 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
             return "Formato Email incorrecto";
         }
     }
-    if (tipoCampo && ["fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
+
+    if (tipoCampo && ["texto", "fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
         return "Campo requerido";
+    }
+
+    if (tipoCampo === "numero") {
+        const numero = Number(valor);
+
+        if (campos[campo]?.positivo) {
+            if (numero < 0) {
+                return "El número debe ser positivo";
+            }
+        }
+
+
+        if (campos[campo]?.maximo) {
+            const maximo = Number(campos[campo]?.maximo);
+            if (numero > maximo) {
+                return `El número debe ser menor o igual a ${maximo}`;
+            }
+        }
+
+        if (campos[campo]?.minimo) {
+            const minimo = Number(campos[campo]?.minimo);
+            if (numero < minimo) {
+                return `El número debe ser mayor o igual a ${minimo}`;
+            }
+        }
     }
 
     const validacion = campos[campo]?.validacion
@@ -305,17 +545,43 @@ export const modeloEsValido = <T extends Modelo>(meta: MetaModelo<T>) => (modelo
 }
 
 export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) => (estado: EstadoModelo<T>) => {
-    return modeloModificado(estado) && modeloEsValido(meta)(estado.valor);
+    return modeloModificado(estado.valor_inicial, estado.valor) && modeloEsValido(meta)(estado.valor);
 }
 
-export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
-    const valor_inicial = estado.valor_inicial;
-    const valor = estado.valor;
-    // for (const key in valor) {
-    //     if (valor[key] !== valor_inicial[key]) {
-    //         console.log(`Campo modificado: ${key}, valor: ${valor[key]}, valor inicial: ${valor_inicial[key]}`);
-    //     }
-    // }
+export const getFormProps = <M extends Modelo>(
+    modelo: M,
+    modeloInicial: M,
+    meta: MetaModelo<M>,
+    onModeloCambiado: (modelo: M) => void,
+    onModeloListo?: (modelo: M) => Promise<void>
+): FormModelo => {
+    return {
+        uiProps: getUiProps(
+            modelo,
+            modeloInicial,
+            meta,
+            onModeloCambiado,
+            onModeloListo
+        ),
+        modificado: modeloModificado(modeloInicial, modelo),
+        valido: modeloEsValido(meta)(modelo),
+        editable: modeloEsEditable(meta)(modelo),
+    } as const;
+}
+
+
+export type FormModelo = {
+    uiProps: (campo: string, secundario?: string) => UiProps,
+    modificado: boolean,
+    valido: boolean,
+    editable: boolean,
+}
+
+export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T) => {
+
+    Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
+
+    // console.log('modeloModificado2', Object.keys(valor).filter((k) => valor[k] !== valor_inicial[k]));
 
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
@@ -323,22 +589,59 @@ export const modeloModificado = <T extends Modelo>(estado: EstadoModelo<T>) => {
 }
 
 export const formatearMoneda = (cantidad: number, divisa: string): string => {
-    const locale = divisa === "EUR" ? "es-ES" : "en-US";
+    const divisaValida = divisa && divisa.trim() ? divisa.trim().toUpperCase() : "EUR";
+    const locale = divisaValida === "EUR" ? "es-ES" : "en-US";
     return new Intl.NumberFormat(locale, {
         style: "currency",
-        currency: divisa,
+        currency: divisaValida,
     }).format(cantidad);
 };
 
-export const formatearFecha = (fecha: string): string => {
-    if (!fecha) return fecha;
-    const date = new Date(fecha);
-    return date.toLocaleDateString("es-ES");
+function decimalesPorMoneda(divisa: string): number {
+    const numberFormatUSD = new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: divisa
+    });
+    return numberFormatUSD.formatToParts(1)
+        .find(part => part.type === "fraction")
+        ?.value.length ?? 0;
+}
+
+export const redondeaMoneda = (cantidad: number, divisa: string): number => {
+    const decimales = decimalesPorMoneda(divisa);
+    return parseFloat(cantidad.toFixed(decimales));
 };
 
-export const formatearHora = (hora: string): string => {
+export const formatearFechaString = (fecha: string): string => {
+    if (!fecha) return fecha;
+    const date = new Date(fecha);
+    return formatearFechaDate(date);
+};
+
+export const formatearFechaDate = (date: Date): string => {
+    return date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+};
+
+export const formatearFechaHoraString = (fechahora: string): string => {
+    if (!fechahora) return fechahora;
+    const date = new Date(fechahora);
+    return formatearFechaHora(date);
+};
+
+export const formatearFechaHora = (date: Date): string => {
+    return `${formatearFechaDate(date)} ${formatearHoraDate(date)}`;
+};
+
+export const formatearHoraString = (hora: string): string => {
     if (!hora) return hora;
     return hora.substring(0, 5); // "14:30:00" -> "14:30"
+};
+
+export const formatearHoraDate = (date: Date): string => {
+    return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 };
 
 export const calcularPaginacionSimplificada = (
@@ -409,13 +712,114 @@ export const puede = (regla: string): boolean => {
 
 type RelacionDeCampos = Record<string, string>;
 export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Criteria) => Criteria => {
-    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro => clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+
+    const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro =>
+        clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
+
     const transformarFiltro = (filtro: Filtro): Filtro => filtro.map(transformarClausula);
+
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({
-        filtros: transformarFiltro(criteria.filtros),
+        filtro: transformarFiltro(criteria.filtro),
         orden: transformarOrden(criteria.orden),
         paginacion: criteria.paginacion
     })
 };
+
+type ProcesarContextoSinc<E extends string, C extends Contexto<E>> = (contexto: C) => C;
+export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEstado: string) => ProcesarContextoSinc<E, C> = (nuevoEstado) => {
+
+    return (contexto) => {
+        return {
+            ...contexto,
+            estado: nuevoEstado
+        }
+    }
+}
+
+export const criteriaDefecto: Criteria = {
+    filtro: [],
+    orden: ["id", "DESC"],
+    paginacion: { limite: 10, pagina: 1 },
+}
+
+export const ejecutarListaProcesos = async <E extends string, C extends Contexto<E>>(
+    contexto: C,
+    procesos: (ProcesarContexto<E, C> | E)[],
+    payload?: unknown
+): Promise<[C, EventoMaquina[]]> => {
+
+    const eventos: EventoMaquina[] = [];
+
+    let x: [C, EventoMaquina[]] = [contexto, eventos];
+    for (const proceso of procesos) {
+        if (typeof proceso === 'string') {
+            x = [
+                {
+                    ...x[0],
+                    estado: proceso
+                },
+                x[1]
+            ]
+        } else {
+            const resultado = await proceso(x[0], payload);
+            if (Array.isArray(resultado)) {
+                x = [resultado[0], [...x[1], ...resultado[1]]];
+            } else {
+                x = [resultado, x[1]];
+            }
+        }
+    }
+    return x;
+}
+
+export const procesarEvento = async <E extends string, C extends Contexto<E>>(
+    maquina: Maquina<E, C>,
+    contexto: C,
+    evento: string,
+    payload: unknown,
+): Promise<[C, EventoMaquina[]]> => {
+
+    const estado = contexto.estado;
+
+    console.log("Procesar evento:", evento, payload, 'estado actual', estado);
+
+    const usarMaquina = () => {
+
+        return maquina[contexto.estado][evento];
+    }
+
+    const respuesta = usarMaquina();
+
+    if (typeof respuesta === 'string') {
+
+        return [{ ...contexto, estado: respuesta }, []];
+
+    } else if (typeof respuesta === 'function') {
+
+        return ejecutarListaProcesos(contexto, [respuesta], payload);
+
+    } else if (Array.isArray(respuesta)) {
+
+        return ejecutarListaProcesos(contexto, respuesta, payload);
+
+    } else {
+        throw new Error(
+            `No se pudo procesar el evento ${evento} en el estado ${estado}.`
+        );
+    }
+};
+
+export const publicar = <E extends string, C extends Contexto<E>>(evento: string, payload?: ((c: C, np: unknown) => unknown) | null | string | Entidad) => {
+
+    const f: ProcesarContexto<E, C> = async (contexto, new_payload) => {
+        const valorPayload = payload && typeof payload === 'function'
+            ? payload(contexto, new_payload)
+            : payload;
+
+        return [contexto, [[evento, valorPayload]]]
+    }
+
+    return f
+}

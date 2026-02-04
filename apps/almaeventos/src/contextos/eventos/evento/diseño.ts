@@ -21,7 +21,7 @@ export interface Evento extends Entidad {
     nombre_empresa: string | null;
     estado_id: string | null;
     factura_enviada: boolean;
-    fecha_inicio: string | null;
+    fechaInicio: Date;
     gastos_facturacion: number | null;
     gastos_personal: number | null;
     hora_inicio: string | null;
@@ -69,7 +69,7 @@ export type NuevoEvento = {
     empresa_id: number;
     estado_id: string;
     factura_enviada: boolean;
-    fecha_inicio: string;
+    fechaInicio: Date;
     gastos_facturacion: number;
     gastos_personal: number;
     hora_inicio: string;

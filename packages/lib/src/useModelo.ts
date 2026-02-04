@@ -1,104 +1,49 @@
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
-import { Modelo, TipoInput } from "./diseño.ts";
-import { Accion, makeReductor2, MetaModelo, modeloEsEditable, modeloEsValido, modeloModificado, validacionCampoModelo } from "./dominio.ts";
-
+import { ContextoError } from "./contexto.ts";
+import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
+import { getFormProps, MetaModelo } from "./dominio.ts";
 
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
-    modeloInicialProp: T
+    modeloInicialProp: T,
+    onModeloListo?: (t: T) => Promise<void>
 ): HookModelo<T> {
 
-    const [modelo, dispatch] = useReducer(
-        makeReductor2(meta),
-        modeloInicialProp
-    );
+    const [modelo, setModelo] = useState(modeloInicialProp);
     const [modeloInicial, setModeloInicial] = useState<T>(modeloInicialProp);
-    const entidad = {
-        valor: modelo,
-        valor_inicial: modeloInicial,
-    };
 
-    const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
-        let valor = _valor || null;
-        let descripcion: string | undefined = undefined;
+    const { intentar } = useContext(ContextoError);
 
-        if (typeof _valor === "object" && _valor && 'valor' in _valor) {
-            valor = _valor.valor;
-            if (segundo) {
-                descripcion = _valor.descripcion;
-            }
-        }
+    const init = useCallback((nuevoModelo?: T) => {
+        const modeloAUsar = nuevoModelo || modeloInicialProp;
+        setModelo(modeloAUsar);
+        setModeloInicial(modeloAUsar);
+    }, [setModelo, setModeloInicial]);
+
+    const onModeloListoConError = useCallback(
+        async (modelo: T) => {
+            return onModeloListo
+                ? await intentar(
+                    async () => await onModeloListo(modelo)
+                ) :
+                Promise.resolve();
+        },
+        [intentar, onModeloListo]
+    );
 
 
-        dispatch({
-            type: "set_campo",
-            payload: { campo, valor: valor as string },
-        });
-
-        if (segundo && descripcion) {
-            dispatch({
-                type: "set_campo",
-                payload: { campo: segundo, valor: descripcion },
-            });
-        }
-    };
-    const uiProps = (campo: string, secundario?: string) => {
-        const validacion = validacionCampoModelo(meta)(modelo, campo);
-        const valido = validacion === true;
-        const valor = modelo[campo] as string;
-        const textoValidacion = valor === modeloInicial[campo]
-            ? ''
-            : typeof validacion === "string"
-                ? validacion
-                : '';
-        const editable = modeloEsEditable<T>(meta)(modelo, campo);
-        const cambiado = valor !== modeloInicial[campo];
-        const campos = meta.campos || {};
-        const tipoMeta = campo in campos && campos[campo]?.tipo
-            ? campos[campo].tipo
-            : "texto";
-
-        const conversionTipo = {
-            "boolean": "checkbox",
-            "dolar": "moneda",
-        };
-
-        // const tipo = conversionTipo[tipoMeta] || tipoMeta;
-        const tipo = (conversionTipo[tipoMeta as keyof typeof conversionTipo] || tipoMeta) as TipoInput;
-
-        return {
-            nombre: campo,
-            valor: valor,
-            tipo: tipo,
-            deshabilitado: !editable,
-            valido: cambiado && valido,
-            erroneo: !valido,
-            advertido: false,
-            textoValidacion: textoValidacion,
-            onChange: setCampo(campo, secundario),
-            descripcion: secundario ? modelo[secundario] as string : undefined,
-        }
-    }
-    const init = useCallback((modelo?: T) => {
-        dispatch({
-            type: "init",
-            payload: {
-                entidad: modelo || modeloInicialProp
-            }
-        })
-        setModeloInicial(modelo || modeloInicialProp);
+    useEffect(() => {
+        setModelo(modeloInicialProp);
+        setModeloInicial(modeloInicialProp);
     }, [modeloInicialProp]);
 
     return {
         modelo,
-        modeloInicial: modeloInicialProp,
-        uiProps,
+        modeloInicial: modeloInicial || modeloInicialProp,
         init,
-        dispatch,
-        modificado: modeloModificado(entidad),
-        valido: modeloEsValido(meta)(entidad.valor),
-        editable: modeloEsEditable<T>(meta)(modelo),
+        set: setModelo,
+        ...getFormProps(modelo, modeloInicial, meta, setModelo, onModeloListoConError),
     } as const;
 }
 
@@ -107,7 +52,7 @@ export type HookModelo<T extends Modelo> = {
     modeloInicial: T,
     uiProps: (campo: string, secundario?: string) => UiProps,
     init: (entidad?: T) => void,
-    dispatch: (action: Accion<T>) => void
+    set: (entidad: T) => void,
     modificado: boolean,
     valido: boolean,
     editable: boolean,
@@ -122,7 +67,7 @@ export type ValorControl = null | string | ParamOpcion;
 
 export type UiProps = {
     nombre: string;
-    valor: string;
+    valor: ValorCampoUI;
     tipo: TipoInput;
     textoValidacion: string;
     deshabilitado: boolean;
@@ -130,45 +75,7 @@ export type UiProps = {
     advertido: boolean;
     valido: boolean;
     onChange: (valor: ValorControl) => void;
+    evaluarCambio: () => void;
     descripcion?: string;
 }
 
-// export const initModelo = <T extends Entidad>(setPresupuesto: ((modelo: T) => void), valorInicial: T) => (valor?: T) =>
-//     setPresupuesto(valor || valorInicial);
-
-// export const getUiProps = <T extends Modelo>(meta: MetaModelo<T>, modelo: T, modeloInicial: T, setModelo: ((modelo: T) => void)) => (campo: string, secundario?: string) => {
-
-//     const setCampo = (campo: string, segundo?: string) => (_valor: ValorControl) => {
-
-//         let valor = _valor || '';
-//         let descripcion: string | undefined = undefined;
-//         if (typeof _valor === "object" && _valor && 'valor' in _valor) {
-//             valor = _valor.valor;
-//             if (segundo) {
-//                 descripcion = _valor.descripcion;
-//             }
-//         }
-//         const nuevoModelo = (segundo && descripcion)
-//             ? { ...modelo, [campo]: valor, [segundo]: descripcion }
-//             : { ...modelo, [campo]: valor };
-//         setModelo(nuevoModelo);
-//     };
-//     const validacion = campoModeloEsValido(meta)(modelo, campo);
-//     const valido = validacion === true;
-//     const textoValidacion = typeof validacion === "string" ? validacion : "";
-//     const valor = modelo[campo] as string;
-//     const editable = modeloEsEditable<T>(meta)(modelo, campo);
-
-//     const cambiado = valor !== modeloInicial[campo];
-//     return {
-//         nombre: campo,
-//         valor: valor,
-//         deshabilitado: !editable,
-//         valido: cambiado && valido,
-//         erroneo: !valido,
-//         advertido: false,
-//         textoValidacion: textoValidacion,
-//         onChange: setCampo(campo, secundario),
-//         descripcion: secundario ? modelo[secundario] as string : undefined,
-//     }
-// }

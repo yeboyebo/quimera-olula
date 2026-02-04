@@ -9,7 +9,7 @@ interface DetalleProps<T extends Entidad> {
   obtenerTitulo?: (entidad: T) => string;
   entidad: T | null;
   setEntidad: (entidad: T) => void;
-  cargar: (id: string) => Promise<T>;
+  cargar?: (id: string) => Promise<T>;
   className?: string;
   cerrarDetalle?: () => void;
 }
@@ -27,7 +27,8 @@ export function Detalle<T extends Entidad>({
   const { detalle } = estilos;
 
   useEffect(() => {
-    if (id && (!entidad || id !== entidad.id)) {
+
+    if (cargar && id && (!entidad || id !== entidad.id)) {
       const load = async () => {
         const cliente = await cargar(id);
         if (cliente) {

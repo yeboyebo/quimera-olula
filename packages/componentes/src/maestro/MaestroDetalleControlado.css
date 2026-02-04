@@ -1,0 +1,65 @@
+.MaestroTarjetaSeleccionada {
+    width: 30%
+}
+
+.MaestroTarjeta {
+    width: 30%
+}
+
+.MaestroTablaSeleccionada {
+    display: none;
+}
+
+.MaestroTabla {
+    width: 100%
+}
+
+.DetalleTarjetaSeleccionada {
+    width: 70%
+}
+
+.DetalleTarjeta {
+    display: none;
+}
+
+.DetalleTablaSeleccionada {
+    width: 100%;
+}
+
+.DetalleTabla {
+    display: none;
+}
+
+.MaestroTarjetaMovilSeleccionada {
+    display: none;
+}
+
+.MaestroTarjetaMovil {
+    width: 100%
+}
+
+.MaestroTablaMovilSeleccionada {
+    display: none;
+}
+
+.MaestroTablaMovil {
+    width: 100%
+}
+
+.DetalleTarjetaMovilSeleccionada {
+    width: 100%
+}
+
+;
+
+.DetalleTarjetaMovil {
+    display: none;
+}
+
+.DetalleTablaMovilSeleccionada {
+    width: 100%;
+}
+
+.DetalleTablaMovil {
+    display: none;
+}

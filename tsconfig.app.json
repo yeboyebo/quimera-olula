@@ -12,9 +12,14 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": [
+      "@testing-library/jest-dom",
+      "vitest/globals",
+    ],
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "allowJs": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -28,6 +33,11 @@
   },
   "include": [
     "packages/**/*",
-    "apps/**/*"
+    "apps/**/*",
+  ],
+  "exclude": [
+    "**/dev-dist/**",
+    "**/dist/**",
+    "**/node_modules/**"
   ]
 }

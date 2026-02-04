@@ -33,7 +33,6 @@ export const Cliente = ({
     );
 
     if (!Array.isArray(datos)) {
-      console.error("Los clientes no son un array:", datos);
       return [];
     }
 

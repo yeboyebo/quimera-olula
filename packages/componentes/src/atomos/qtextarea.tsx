@@ -29,6 +29,7 @@ export const QTextArea = ({
   valido,
   opcional,
   condensado,
+  ref,
   onChange,
   onBlur,
   onInput,
@@ -84,6 +85,7 @@ export const QTextArea = ({
           onBlur={manejarBlur}
           onFocus={manejarFocus}
           onInput={manejarInput}
+          ref={ref as React.RefObject<HTMLTextAreaElement>}
         />
         <Validacion textoValidacion={textoValidacion} />
       </label>

@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Producto } from "../../componentes/producto.tsx";
@@ -9,10 +9,19 @@ import { metaNuevoEvento, nuevoEventoVacio } from "../dominio.ts";
 import { getEvento, postEvento } from "../infraestructura.ts";
 
 export const AltaEvento = ({
-  emitir = () => {},
+  emitir = async () => {},
+  fechaInicial = new Date(),
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
+  fechaInicial?: Date;
 }) => {
+  // const fechaAString = (fecha: Date): string => {
+  //   const año = fecha.getFullYear();
+  //   const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  //   const dia = String(fecha.getDate()).padStart(2, "0");
+  //   return `${año}-${mes}-${dia}`;
+  // };
+  nuevoEventoVacio.fechaInicio = fechaInicial;
   const nuevoEvento = useModelo(metaNuevoEvento, nuevoEventoVacio);
   const { intentar } = useContext(ContextoError);
 
@@ -33,7 +42,7 @@ export const AltaEvento = ({
           {...nuevoEvento.uiProps("referencia", "descripcion_producto")}
         />
         <QInput label="Nombre" {...nuevoEvento.uiProps("descripcion")} />
-        <QInput label="Fecha" {...nuevoEvento.uiProps("fecha_inicio")} />
+        <QInput label="Fecha" {...nuevoEvento.uiProps("fechaInicio")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={nuevoEvento.valido === false}>

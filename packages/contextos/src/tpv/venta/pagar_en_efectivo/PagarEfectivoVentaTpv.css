@@ -1,0 +1,17 @@
+.PagarEfectivoVentaTpv {
+    /* quimera-formulario {
+        max-width: 200px;
+    } */
+
+    /* quimera-autocompletar[nombre="referencia_nueva_linea_pedido"] {
+        grid-column: span 9;
+    } */
+
+    quimera-input[nombre="importe"] {
+        grid-column: span 6;
+    }
+
+    div[id="pendiente"] {
+        grid-column: span 6;
+    }
+}

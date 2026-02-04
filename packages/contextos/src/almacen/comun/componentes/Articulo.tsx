@@ -20,13 +20,13 @@ export const Articulo = ({
 }: ArticuloProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria: Criteria = {
-      filtros: [["descripcion", "~", texto]],
+      filtro: [["descripcion", "~", texto]],
       orden: ["id"],
       paginacion: { limite: 10, pagina: 1 },
     };
 
     const articulos = await obtenerArticulosAlmacen(
-      criteria.filtros,
+      criteria.filtro,
       criteria.orden
     );
 

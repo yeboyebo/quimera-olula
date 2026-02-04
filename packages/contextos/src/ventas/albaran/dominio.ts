@@ -1,4 +1,6 @@
-import { MetaModelo } from "@olula/lib/dominio.ts";
+import { MetaTabla } from "@olula/componentes/index.js";
+import { Direccion } from "@olula/lib/diseño.js";
+import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import {
     cambioClienteVentaVacio,
     metaCambioClienteVenta,
@@ -8,7 +10,7 @@ import {
     metaVenta,
     nuevaLineaVentaVacia,
     nuevaVentaVacia,
-    ventaVacia,
+    ventaVacia
 } from "../venta/dominio.ts";
 import {
     Albaran,
@@ -18,10 +20,27 @@ import {
     NuevoAlbaran,
 } from "./diseño.ts";
 
-export const albaranVacio: Albaran = {
+export const metaTablaAlbaran: MetaTabla<Albaran> = [
+    {
+        id: "codigo",
+        cabecera: "Código",
+    },
+    {
+        id: "nombre_cliente",
+        cabecera: "Cliente",
+    },
+    {
+        id: "total",
+        cabecera: "Total",
+        tipo: "moneda",
+    },
+];
+
+export const albaranVacio = (): Albaran => ({
     ...ventaVacia,
-    servido: "No",
-};
+    idfactura: null,
+    lineas: [],
+})
 
 export const nuevoAlbaranVacio: NuevoAlbaran = nuevaVentaVacia;
 
@@ -38,8 +57,48 @@ export const metaAlbaran: MetaModelo<Albaran> = {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
     },
+    editable: (albaran: Albaran, _?: string) => {
+        return !albaran.idfactura;
+    },
 };
+
+export const editable = modeloEsEditable<Albaran>(metaAlbaran);
+export const albaranValido = modeloEsValido<Albaran>(metaAlbaran);
 
 export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
 
 export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = metaNuevaLineaVenta;
+
+const albaranVacioObjeto: Albaran = albaranVacio();
+
+export const albaranVacioContexto = (): Albaran => ({ ...albaranVacioObjeto });
+
+export const direccionVacia = (): Direccion => ({
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia_id: 0,
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
+});
+
+export const nuevoClienteRegistradoVacio: NuevoAlbaran = {
+    cliente_id: "",
+    direccion_id: "",
+    empresa_id: "1",
+} as NuevoAlbaran;
+
+export const cambioClienteVacio = (): CambioClienteAlbaran => ({
+    cliente_id: "",
+    direccion_id: "",
+});
+
+export const cambioCliente = (albaran: Albaran): CambioClienteAlbaran => ({
+    cliente_id: albaran.cliente_id,
+    direccion_id: albaran.direccion_id,
+});

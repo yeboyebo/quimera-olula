@@ -1,11 +1,25 @@
-import { MetaModelo } from "@olula/lib/dominio.ts";
-import { direccionVacia } from "../presupuesto/dominio.ts";
+import { Direccion } from "@olula/lib/diseño.js";
+import { MetaCampo, MetaModelo } from "@olula/lib/dominio.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+
+export const direccionVacia = (): Direccion => ({
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia_id: 0,
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
+});
 
 export const ventaVacia: Venta = {
     id: '',
     codigo: '',
-    fecha: '',
+    fecha: new Date(),
     cliente_id: '',
     nombre_cliente: '',
     id_fiscal: '',
@@ -45,7 +59,7 @@ export const nuevaLineaVentaVacia: NuevaLineaVenta = {
 
 export const metaVenta: MetaModelo<Venta> = {
     campos: {
-        tasa_conversion: { tipo: "numero", requerido: true },
+        tasa_conversion: { tipo: "numero", requerido: false },
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
         id_fiscal: { bloqueado: true, requerido: true },
@@ -54,9 +68,13 @@ export const metaVenta: MetaModelo<Venta> = {
     },
 };
 
+const metaDtoPorcentual: MetaCampo<LineaVenta> = { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 };
+
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
+        pvp_unitario: { tipo: "decimal", requerido: true },
+        dto_porcentual: metaDtoPorcentual,
         referencia: { requerido: true },
     }
 };
@@ -78,7 +96,8 @@ export const metaCambioClienteVenta: MetaModelo<CambioClienteVenta> = {
 
 export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
-        referencia: { requerido: true },
+        cantidad: { requerido: true, tipo: "entero", decimales: 2 },
+        referencia: { requerido: true, tipo: "texto" },
     }
 };
+

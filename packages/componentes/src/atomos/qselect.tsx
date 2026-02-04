@@ -13,6 +13,7 @@ type QSelectProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
     opcion: Opcion | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
+  evaluarCambio?: () => void;
 };
 
 export const QSelect = ({
@@ -28,8 +29,10 @@ export const QSelect = ({
   valido,
   opcional,
   condensado,
+  ref,
   onChange,
   onBlur,
+  evaluarCambio,
 }: QSelectProps) => {
   const attrs = {
     nombre,
@@ -47,14 +50,14 @@ export const QSelect = ({
     </option>
   ));
 
-  const manejarChage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const manejarChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const opcion = opciones.find((opcion) => opcion.valor === e.target.value);
     if (!opcion) {
       onChange?.(null, e);
       return;
     }
-
     onChange?.(opcion, e);
+    evaluarCambio?.();
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
@@ -63,8 +66,8 @@ export const QSelect = ({
       onBlur?.(null, e);
       return;
     }
-
     onBlur?.(opcion, e);
+    evaluarCambio?.();
   };
 
   return (
@@ -77,8 +80,9 @@ export const QSelect = ({
           value={onChange ? valor : undefined}
           required={!opcional}
           disabled={deshabilitado}
-          onChange={manejarChage}
+          onChange={manejarChange}
           onBlur={manejarBlur}
+          ref={ref as React.RefObject<HTMLSelectElement>}
         >
           <option hidden value="">
             -{placeholder}-

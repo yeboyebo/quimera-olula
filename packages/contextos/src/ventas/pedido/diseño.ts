@@ -3,6 +3,7 @@ import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } fr
 
 export interface Pedido extends Venta {
   servido: string;
+  lineas: LineaPedido[];
 }
 export interface LineaPedido extends LineaVenta {
   otro_campo?: string;

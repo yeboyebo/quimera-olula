@@ -11,16 +11,21 @@ export type FormFieldProps = {
   opcional?: boolean;
   condensado?: boolean;
   autoSeleccion?: boolean;
+  autoFocus?: boolean;
+  ref?: React.RefObject<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null>;
   onChange?: (
     valor: string,
     evento: React.ChangeEvent<HTMLInputElement>
   ) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
+  onEnterKeyUp?: (valor: string, evento: React.KeyboardEvent<HTMLElement>) => void;
 };
 
 const tiposFormInput = {
   texto: "text",
   numero: "number",
+  entero: "number",
+  decimal: "number",
   fecha: "date",
   hora: "time",
   fecha_hora: "datetime-local",
@@ -43,10 +48,12 @@ export type FormInputProps = FormFieldProps & {
   autocompletar?: "off" | "on";
   onInput?: (valor: string, evento: React.FormEvent<HTMLInputElement>) => void;
   tipo?: keyof typeof tiposFormInput;
+  evaluarCambio?: () => void;
 };
 
 type InputProps = Omit<FormInputProps, "label"> & {
   checked?: boolean;
+  autoFocus?: boolean;
 };
 
 export const FormInput = ({
@@ -60,9 +67,13 @@ export const FormInput = ({
   lista,
   autocompletar,
   autoSeleccion,
+  autoFocus,
+  ref,
   onChange,
   onBlur,
   onInput,
+  onEnterKeyUp,
+  evaluarCambio,
 }: InputProps) => {
   const obtenerValorPorDefecto = () => {
     if (valor !== undefined && valor !== "" && valor != null) return valor;
@@ -86,17 +97,30 @@ export const FormInput = ({
   };
 
   const manejarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (tipo == "fecha") {
+      console.log('Evento fecha', e);
+    }
     onChange?.(e.target.value, e);
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     onBlur?.(e.target.value, e);
+    evaluarCambio?.();
   };
 
   const manejarInput = (e: React.FormEvent<HTMLInputElement>) => {
     onInput?.((e.target as HTMLInputElement).value, e);
   };
 
+  const manejarKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const evento = e.target as unknown as {
+        value: string;
+      };
+      onEnterKeyUp?.(evento.value, e);
+    }
+  };
+  
   return (
     <input
       type={tiposFormInput[tipo] ?? "text"}
@@ -114,6 +138,9 @@ export const FormInput = ({
       onBlur={manejarBlur}
       onFocus={manejarFocus}
       onInput={manejarInput}
+      onKeyUp={manejarKeyUp}
+      autoFocus={autoFocus}
+      ref={ref as React.RefObject<HTMLInputElement>}
     />
   );
 };

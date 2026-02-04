@@ -1,14 +1,19 @@
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
-    otro_campo?: string;
+    editable?: boolean;
+    lineas?: LineaFactura[];
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
 }
 
-export type NuevaFactura = NuevaVenta;
+export type NuevaFactura = {
+    cliente_id: string;
+    // direccion_id: string;
+    empresa_id: string;
+};;
 
 export type CambioClienteFactura = CambioClienteVenta;
 
@@ -35,3 +40,35 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type EstadoFactura = (
+    'INICIAL'
+    | 'ABIERTO'
+    | 'BORRANDO_FACTURA'
+    | 'CAMBIANDO_CLIENTE'
+    | 'CREANDO_LINEA'
+    | 'CAMBIANDO_LINEA'
+    | 'BORRANDO_LINEA'
+);
+
+export type EstadoMaestroFactura = (
+    'INICIAL' | 'CREANDO_FACTURA'
+);
+
+export type ContextoFactura = {
+    estado: EstadoFactura;
+    factura: Factura;
+    facturaInicial: Factura;
+    lineaActiva: LineaFactura | null;
+};
+
+export type ContextoMaestroFactura = {
+    estado: EstadoMaestroFactura;
+    facturas: Factura[];
+    totalFacturas: number;
+    facturaActiva: Factura | null;
+};
+
+export type ClienteFacturaRegistrado = {
+    id: string,
+}

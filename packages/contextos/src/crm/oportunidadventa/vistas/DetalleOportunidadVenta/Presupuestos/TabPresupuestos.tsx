@@ -30,7 +30,7 @@ export const TabPresupuestos = ({
   const cargarPresupuestos = useCallback(async () => {
     setCargando(true);
     const nuevosPresupuestos = await getPresupuestosOportunidad(oportunidadId);
-    setListaPresupuestos(nuevosPresupuestos);
+    setListaPresupuestos(nuevosPresupuestos.datos);
     setCargando(false);
   }, [oportunidadId, setListaPresupuestos]);
 

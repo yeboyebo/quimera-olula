@@ -8,7 +8,13 @@ type QIconoProps = {
   props?: React.HTMLAttributes<HTMLDivElement>;
 };
 
-const iconos: Record<string, string> = {
+type Icono = {
+  nombre: string;
+  tipo?: "solid" | "regular" | "logo";
+};
+
+const iconos: Record<string, string | Icono> = {
+  añadir: "plus-circle",
   buscar: "search-alt-2",
   cerrar: "x",
   inicio: "home",
@@ -38,6 +44,12 @@ const iconos: Record<string, string> = {
   ver: "show",
   crear: "plus",
   tabla: "table",
+  arriba: "chevron-up",
+  abajo: "chevron-down",
+  izquierda: "chevron-left",
+  derecha: "chevron-right",
+  circulo: { nombre: "circle", tipo: "regular" },
+  circulo_relleno: { nombre: "circle", tipo: "solid" },
 };
 
 export const QIcono = ({
@@ -45,15 +57,26 @@ export const QIcono = ({
   tamaño = "md",
   color,
   style,
-  props,
+  ...props
 }: QIconoProps) => {
+  let nombreIcono, tipo;
+
+  if (typeof iconos[nombre] === "object") {
+    nombreIcono = iconos[nombre].nombre;
+    tipo = iconos[nombre].tipo;
+  } else {
+    nombreIcono = iconos[nombre];
+    tipo = undefined;
+  }
+
   return (
     <quimera-icono>
       <box-icon
-        name={iconos[nombre]}
+        name={nombreIcono}
         size={tamaño}
         color={color}
         style={style}
+        type={tipo}
         {...props}
       ></box-icon>
     </quimera-icono>

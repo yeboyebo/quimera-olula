@@ -1,0 +1,68 @@
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { QModal } from "@olula/componentes/index.js";
+import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
+import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
+import { useModelo } from "@olula/lib/useModelo.ts";
+import { useCallback, useContext, useState } from "react";
+import { LineaPedido } from "../diseño.ts";
+import { patchLinea } from "../infraestructura.ts";
+import { metaLinea } from "./dominio.ts";
+import "./EditarLinea.css";
+
+export const EditarLinea = ({
+  pedidoId,
+  publicar,
+  linea,
+}: {
+  pedidoId: string;
+  linea: LineaPedido;
+  publicar: ProcesarEvento;
+}) => {
+  const { intentar } = useContext(ContextoError);
+  const { modelo, uiProps, valido } = useModelo(metaLinea, linea);
+  const [cambiando, setCambiando] = useState(false);
+
+  const cambiar = useCallback(async () => {
+    await intentar(() => patchLinea(pedidoId, modelo));
+    setCambiando(true);
+    publicar("cambio_linea_listo");
+  }, [modelo, publicar, pedidoId, intentar]);
+
+  const cancelar = useCallback(() => {
+    if (!cambiando) publicar("editar_linea_cancelado");
+  }, [cambiando, publicar]);
+
+  return (
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+      <div className="EditarLinea">
+        <h2>Editar línea</h2>
+
+        <quimera-formulario>
+          <div id="titulo">
+            <h3>{`${linea.descripcion}`}</h3>
+            {`Ref: ${linea.referencia}`}
+          </div>
+
+          <Articulo {...uiProps("referencia", "descripcion")} />
+
+          <QInput label="Cantidad" {...uiProps("cantidad")} />
+
+          <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} />
+
+          <QInput label="Precio" {...uiProps("pvp_unitario")} />
+
+          <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
+        </quimera-formulario>
+
+        <div className="botones maestro-botones ">
+          <QBoton onClick={cambiar} deshabilitado={!valido}>
+            Guardar
+          </QBoton>
+        </div>
+      </div>
+    </QModal>
+  );
+};

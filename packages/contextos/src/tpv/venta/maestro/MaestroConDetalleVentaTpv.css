@@ -1,0 +1,25 @@
+.tarjeta-venta {
+    display: flex;
+    justify-content: space-between
+}
+
+.tarjeta-venta-izquierda {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 0.5rem;
+}
+
+.tarjeta-venta-izquierda-textos {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: left;
+    gap: 0.5rem; */
+}
+
+.tarjeta-venta-derecha {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}

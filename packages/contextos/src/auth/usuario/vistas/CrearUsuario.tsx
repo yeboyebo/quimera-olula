@@ -1,6 +1,6 @@
 import { Mostrar, QBoton, QInput } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Usuario } from "../diseño";
@@ -12,7 +12,7 @@ export const CrearUsuario = ({
   emitir = () => {},
   activo = false,
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
   activo: boolean;
 }) => {
   const usuario = useModelo(metaNuevoUsuario, { ...nuevoUsuarioVacio });
@@ -33,7 +33,7 @@ const FormAltaUsuario = ({
   emitir = () => {},
   usuario,
 }: {
-  emitir?: EmitirEvento;
+  emitir?: ProcesarEvento;
   usuario: HookModelo<Partial<Usuario>>;
 }) => {
   const { intentar } = useContext(ContextoError);

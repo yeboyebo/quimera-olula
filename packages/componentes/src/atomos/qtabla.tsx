@@ -1,8 +1,9 @@
 import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
   calcularPaginacionSimplificada,
-  formatearFecha,
-  formatearHora,
+  formatearFechaDate,
+  formatearFechaString,
+  formatearHoraString,
   formatearMoneda,
 } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
@@ -18,10 +19,11 @@ type MetaColumna<T extends Entidad> = {
     | "moneda"
     | "fecha"
     | "hora"
+    | "fechahora"
     | "booleano"
     | undefined;
   divisa?: string;
-  ancho?: string; // Ancho específico para esta columna
+  ancho?: string;
   render?: (entidad: T) => string | ReactNode;
 };
 
@@ -39,7 +41,7 @@ const cabecera = <T extends Entidad>(
       key={id}
       data-modo="columna"
       data-orden={id === colOrdenada ? sentido : ""}
-      className={`${tipo ?? ""} ${id}`}
+      className={`${id} ${tipo ?? ""}`}
       style={ancho ? { width: ancho } : undefined}
       onClick={() => onOrdenar && onOrdenar(id)}
     >
@@ -58,26 +60,30 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     divisa,
     ancho,
   }: MetaColumna<T>) => {
-    let datos = render?.(entidad as T) ?? (entidad[id] as string);
+    let datos = render?.(entidad as T) ?? (entidad[id] as unknown);
 
     // Formateo automático según tipo
     if (tipo === "moneda" && typeof datos === "number") {
       datos = formatearMoneda(datos, divisa ?? "EUR");
     } else if (tipo === "fecha" && typeof datos === "string") {
-      datos = formatearFecha(datos);
+      datos = formatearFechaString(datos);
+    } else if (tipo === "fecha" && typeof datos === "object") {
+      datos = formatearFechaDate(datos as Date);
     } else if (tipo === "hora" && typeof datos === "string") {
-      datos = formatearHora(datos);
+      datos = formatearHoraString(datos);
     } else if (tipo === "numero" && typeof datos === "number") {
       datos = datos.toLocaleString();
+    } else if (tipo === "booleano" && typeof datos === "boolean") {
+      datos = datos ? "Sí" : "No";
     }
 
     return (
       <td
         key={[entidad.id, id].join("-")}
-        className={`${tipo ?? ""} ${id}`}
+        className={`${id} ${tipo ?? ""}`}
         style={ancho ? { width: ancho } : undefined}
       >
-        {datos}
+        {datos as string}
       </td>
     );
   };

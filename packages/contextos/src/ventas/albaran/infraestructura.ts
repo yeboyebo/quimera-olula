@@ -3,6 +3,7 @@ import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { GetLineasPedido } from "../pedido/diseño.ts";
+import { CambioCliente } from "../presupuesto/diseño.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -19,14 +20,18 @@ import {
 const baseUrl = new ApiUrls().ALBARAN;
 
 type LineaAlbaranAPI = LineaAlbaran;
-type AlbaranAPI = Albaran
+type AlbaranAPI = Albaran & { fecha: string };
 
-export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => p;
+export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
+  ...p,
+  fecha: new Date(Date.parse(p.fecha)),
+  lineas: [],
+});
 
 export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => l;
 
 export const getAlbaran: GetAlbaran = async (id) => {
-  return RestAPI.get<{ datos: Albaran }>(`${baseUrl}/${id}`).then((respuesta) => {
+  return RestAPI.get<{ datos: AlbaranAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
     return albaranDesdeAPI(respuesta.datos);
   });
 };
@@ -38,7 +43,7 @@ export const getAlbaranes: GetAlbaranes = async (
 ) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
-  const respuesta = await RestAPI.get<{ datos: Albaran[]; total: number }>(baseUrl + q);
+  const respuesta = await RestAPI.get<{ datos: AlbaranAPI[]; total: number }>(baseUrl + q);
   return { datos: respuesta.datos.map(albaranDesdeAPI), total: respuesta.total };
 };
 
@@ -142,7 +147,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
   );
 };
 
-export const patchCambiarCliente = async (id: string, cambio: Albaran) => {
+export const patchCambiarCliente = async (id: string, cambio: CambioCliente) => {
   const payload = {
     cambios: {
       cliente_id: cambio.cliente_id,
