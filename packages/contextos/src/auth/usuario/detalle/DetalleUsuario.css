@@ -10,7 +10,22 @@
     quimera-select[nombre="grupo_id"] {
         grid-column: span 6;
     }
+}
 
+.DetalleUsuario {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    h2 {
+        margin: 0;
+    }
+
+    .botones {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
 }
 
 quimera-modal[nombre="generarToken"] {
@@ -22,7 +37,6 @@ quimera-modal[nombre="generarToken"] {
         font-size: 0.9em;
         height: 100px;
     }
-
 }
 
 .token-generado {

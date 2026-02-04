@@ -23,7 +23,9 @@ export const usuarioVacio: Usuario = {
 
 export const metaUsuario: MetaModelo<Usuario> = {
     campos: {
-        nombre: { requerido: true, validacion: (m: Usuario) => stringNoVacio(m.nombre) },
+        id: { requerido: true },
+        nombre: { requerido: true, validacion: (m: Usuario) => stringNoVacio(m.nombre || "") },
+        email: { requerido: true, validacion: (m: Usuario) => stringNoVacio(m.email || "") },
         grupo_id: { requerido: false },
     },
 };
