@@ -5,13 +5,29 @@ import { NuevoTrabajadorEvento, TrabajadorEvento } from "./diseño.ts";
 
 const baseUrlTrabajadorEvento = `/eventos/trabajador_evento`;
 
-export const trabajadorEventoToAPI = (e: TrabajadorEvento) => ({
-    ...e,
-    valordefecto: e.valor_defecto,
-});
+type TrabajadorEventoAPI = Omit<TrabajadorEvento, 'fecha'> & {
+    fecha: string | null;
+};
+
+export const trabajadorEventoDesdeAPI = (t: TrabajadorEventoAPI): TrabajadorEvento => {
+    const { fecha, ...resto } = t;
+    return {
+        ...resto,
+        fecha: fecha ? new Date(Date.parse(fecha)) : null,
+    } as TrabajadorEvento;
+};
+
+
+export const trabajadorEventoToAPI = (e: TrabajadorEvento) => {
+    const { fecha, ...resto } = e;
+    return {
+        ...resto,
+        fecha: !fecha ? null : (fecha instanceof Date ? fecha.toISOString().split('T')[0] : fecha),
+    };
+};
 
 export const getTrabajadorEvento = async (id: string): Promise<TrabajadorEvento> =>
-    await RestAPI.get<{ datos: TrabajadorEvento }>(`${baseUrlTrabajadorEvento}/${id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: TrabajadorEventoAPI }>(`${baseUrlTrabajadorEvento}/${id}`).then((respuesta) => trabajadorEventoDesdeAPI(respuesta.datos));
 
 export const getTrabajadoresEvento = async (
     filtro: Filtro,
@@ -20,7 +36,8 @@ export const getTrabajadoresEvento = async (
 ): RespuestaLista<TrabajadorEvento> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    return await RestAPI.get<{ datos: TrabajadorEvento[]; total: number }>(baseUrlTrabajadorEvento + q);
+    const respuesta = await RestAPI.get<{ datos: TrabajadorEventoAPI[]; total: number }>(baseUrlTrabajadorEvento + q);
+    return { datos: respuesta.datos.map(trabajadorEventoDesdeAPI), total: respuesta.total };
 };
 
 export const postTrabajadorEvento = async (_trabajadorEvento: NuevoTrabajadorEvento): Promise<string> => {
