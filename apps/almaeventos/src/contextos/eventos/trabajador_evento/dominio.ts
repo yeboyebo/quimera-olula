@@ -9,7 +9,7 @@ export const trabajadorEventoVacio: TrabajadorEvento = {
     liquidado: false,
     trabajador_id: '',
     descripcion: '',
-    fecha: null,
+    fecha: new Date(),
 };
 
 export const nuevoTrabajadorEventoVacio: NuevoTrabajadorEvento = {
@@ -20,7 +20,7 @@ export const nuevoTrabajadorEventoVacio: NuevoTrabajadorEvento = {
     liquidado: false,
     trabajador_id: '',
     descripcion: '',
-    fecha: null,
+    fecha: new Date(),
 };
 
 export const metaTrabajadorEvento: MetaModelo<TrabajadorEvento> = {
@@ -29,6 +29,7 @@ export const metaTrabajadorEvento: MetaModelo<TrabajadorEvento> = {
         nombre: { requerido: true, tipo: "texto" },
         evento_id: { requerido: true },
         trabajador_id: { requerido: true },
+        fecha: { requerido: false, tipo: "fecha" },
         // Agrega aquí más campos según validaciones necesarias
     },
 };
@@ -39,7 +40,8 @@ export const metaNuevoTrabajadorEvento: MetaModelo<NuevoTrabajadorEvento> = {
         coste: { requerido: true, tipo: "numero" },
         nombre: { requerido: true, tipo: "texto" },
         evento_id: { requerido: true },
-        trabajador_id: { requerido: true }
+        trabajador_id: { requerido: true },
+        fecha: { requerido: false, tipo: "fecha" },
         // referencia: { requerido: true, validacion: (trabajadorEvento: NuevoTrabajadorEvento) => stringNoVacio(trabajadorEvento.referencia) },
     },
 };

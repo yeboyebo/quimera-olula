@@ -1,5 +1,5 @@
 import { MaestroConDetalleAlbaran } from "./albaran/maestro/MaestroConDetalleAlbaran.tsx";
-import { DetalleAlbaranarPedido } from "./albaranarPedido/vistas/DetalleAlbaranarPedido.tsx";
+import { DetalleAlbaranarPedido } from "./albaranarPedido/detalle/DetalleAlbaranarPedido.tsx";
 import { MaestroConDetalleCliente } from "./cliente/maestro/MaestroConDetalleCliente.tsx";
 import { MaestroConDetalleFactura } from "./factura/maestro/MaestroConDetalleFactura.tsx";
 import { MaestroConDetallePedido } from "./pedido/maestro/MaestroConDetallePedido.tsx";

@@ -18,8 +18,9 @@ export const trabajadorEventoDesdeAPI = (t: TrabajadorEventoAPI): TrabajadorEven
 };
 
 
-export const trabajadorEventoToAPI = (e: TrabajadorEvento) => {
-    const { fecha, ...resto } = e;
+export const trabajadorEventoToAPI = (t: TrabajadorEvento) => {
+    const { fecha, ...resto } = t;
+
     return {
         ...resto,
         fecha: !fecha ? null : (fecha instanceof Date ? fecha.toISOString().split('T')[0] : fecha),
@@ -46,7 +47,6 @@ export const postTrabajadorEvento = async (_trabajadorEvento: NuevoTrabajadorEve
 
 export const patchTrabajadorEvento = async (id: string, estado: Partial<TrabajadorEvento>): Promise<void> => {
     const payload = trabajadorEventoToAPI(estado as TrabajadorEvento);
-
     // Asegurarse de que id sea siempre un string
     if (payload.id !== undefined) {
         payload.id = String(payload.id);

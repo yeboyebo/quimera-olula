@@ -2,10 +2,12 @@ import {
   Detalle,
   QBoton,
   QCheckbox,
+  QDate,
   QInput,
 } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Entidad } from "@olula/lib/diseño.ts";
+import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useEffect } from "react";
@@ -28,7 +30,7 @@ export const DetalleTrabajadorEvento = ({
   const trabajadorEventoId = trabajadorEventoInicial?.id ?? params.id;
   const titulo = (trabajadorEvento: Entidad) => {
     const te = trabajadorEvento as TrabajadorEvento;
-    return `${te.fecha || ""} ${te.descripcion || ""}`;
+    return `${formatearFechaDate(te.fecha) || ""} ${te.descripcion || ""}`;
   };
   const { intentar } = useContext(ContextoError);
 
@@ -92,8 +94,9 @@ export const DetalleTrabajadorEvento = ({
               {...trabajadorEvento.uiProps("nombre")}
               deshabilitado={true}
             />
-            <QInput
+            <QDate
               label="Fecha Inicio"
+              condensado
               {...trabajadorEvento.uiProps("fecha")}
               deshabilitado={true}
             />

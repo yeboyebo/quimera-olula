@@ -1,11 +1,8 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroPedido, EstadoMaestroPedido } from "./diseño.ts";
 import {
-    abrirModalCreacion,
     activarPedido,
     cambiarPedidoEnLista,
-    cerrarModalCreacion,
-    crearPedido,
     desactivarPedidoActivo,
     incluirPedidoEnLista,
     quitarPedidoDeLista,
@@ -31,16 +28,14 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
 
             recarga_de_pedidos_solicitada: recargarPedidos,
 
-            creacion_de_pedido_solicitada: crearPedido,
-
-            crear_pedido_solicitado: abrirModalCreacion,
+            crear_pedido_solicitado: "CREANDO_PEDIDO",
         },
 
         CREANDO_PEDIDO: {
 
             pedido_creado: [incluirPedidoEnLista, 'INICIAL'],
 
-            creacion_pedido_cancelada: cerrarModalCreacion,
+            creacion_pedido_cancelada: "INICIAL",
         },
     }
 }

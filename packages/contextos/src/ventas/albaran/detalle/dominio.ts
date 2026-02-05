@@ -7,7 +7,6 @@ import {
 } from "../diseño.ts";
 import { albaranVacioContexto } from "../dominio.ts";
 import {
-    borrarAlbaran as borrarAlbaranFuncion,
     getAlbaran,
     getLineas,
     patchAlbaran,
@@ -130,7 +129,7 @@ export const cambiarAlbaran: ProcesarAlbaran = async (contexto, payload) => {
 }
 
 export const borrarAlbaran: ProcesarAlbaran = async (contexto) => {
-    await borrarAlbaranFuncion(contexto.albaran.id);
+    // await borrarAlbaranFuncion(contexto.albaran.id);
 
     return pipeAlbaran(contexto, [
         getContextoVacio,
