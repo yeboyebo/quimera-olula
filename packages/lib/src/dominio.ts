@@ -361,8 +361,16 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
         case 'checkbox':
             return (valor as boolean).toString();
 
-        case 'fecha':
-            return (valor as Date).toISOString().split('T')[0];
+        // case 'fecha':
+        //     return (valor as Date).toISOString().split('T')[0];
+        case 'fecha': {
+            // Convertir fecha a formato ISO local (YYYY-MM-DD) respetando zona horaria
+            const fecha = valor as Date;
+            const año = fecha.getFullYear();
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            return `${año}-${mes}-${dia}`;
+        }
 
         default:
             return valor as string;
