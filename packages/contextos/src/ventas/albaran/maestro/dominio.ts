@@ -1,13 +1,6 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import {
-    Albaran,
-    NuevoAlbaran
-} from "../diseño.ts";
-import {
-    getAlbaran,
-    getAlbaranes,
-    postAlbaran
-} from "../infraestructura.ts";
+import { Albaran } from "../diseño.ts";
+import { getAlbaranes } from "../infraestructura.ts";
 import { ContextoMaestroAlbaran, EstadoMaestroAlbaran } from "./diseño.ts";
 
 type ProcesarAlbaranes = ProcesarContexto<EstadoMaestroAlbaran, ContextoMaestroAlbaran>;
@@ -67,24 +60,8 @@ export const incluirAlbaranEnLista: ProcesarAlbaranes = async (contexto, payload
     }
 }
 
-export const abrirModalCreacion: ProcesarAlbaranes = async (contexto) => {
-    return {
-        ...contexto,
-        estado: 'CREANDO_ALBARAN'
-    }
-}
-
-export const cerrarModalCreacion: ProcesarAlbaranes = async (contexto) => {
-    return {
-        ...contexto,
-        estado: 'INICIAL'
-    }
-}
-
 export const crearAlbaran: ProcesarAlbaranes = async (contexto, payload) => {
-    const albaranNuevo = payload as NuevoAlbaran;
-    const idAlbaran = await postAlbaran(albaranNuevo);
-    const albaran = await getAlbaran(idAlbaran);
+    const albaran = payload as Albaran;
     return {
         ...contexto,
         albaranes: [albaran, ...contexto.albaranes],

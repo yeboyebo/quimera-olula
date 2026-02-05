@@ -43,11 +43,13 @@ const conCuentas = (fn: ProcesarListaEntidades<CuentaBanco>) =>
 
 export const Cuentas = accionesListaEntidades(conCuentas);
 
-export const recargarCuentas: ProcesarCuentasBanco = async (contexto) => {
-    const resultado = await getCuentasBanco(contexto.clienteId);
+export const recargarCuentas: ProcesarCuentasBanco = async (contexto, payload) => {
+    const clienteId = (payload as string) || contexto.clienteId;
+    const resultado = await getCuentasBanco(clienteId);
     const contextoActualizado = await Cuentas.recargar(contexto, { datos: resultado, total: resultado.length });
     return {
         ...contextoActualizado,
+        clienteId,
         cargando: false,
     }
 }

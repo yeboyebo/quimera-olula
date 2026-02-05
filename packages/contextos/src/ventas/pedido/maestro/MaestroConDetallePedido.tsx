@@ -1,5 +1,6 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
@@ -7,7 +8,6 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
-import { useMaestroVenta } from "../../venta/hooks/useMaestroVenta.ts";
 import { CrearPedido } from "../crear/CrearPedido.tsx";
 import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
@@ -16,7 +16,7 @@ import { getMaquina } from "./maquina.ts";
 import { metaTablaPedido as metaTablaBase } from "./metatabla_pedido.ts";
 
 export const MaestroConDetallePedido = () => {
-  const { ctx, emitir } = useMaestroVenta(getMaquina, {
+  const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     pedidos: [],
     totalPedidos: 0,
@@ -37,6 +37,7 @@ export const MaestroConDetallePedido = () => {
 
   useEffect(() => {
     emitir("recarga_de_pedidos_solicitada", criteriaDefecto);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const metaTablaPedido = [

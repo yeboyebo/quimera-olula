@@ -17,8 +17,7 @@ export const BorrarPedido = ({
     if (pedido.id) {
       await intentar(() => borrarPedido(pedido.id));
     }
-    publicar("pedido_borrado");
-    publicar("borrar_cancelado");
+    publicar("borrado_de_pedido_listo");
   };
 
   return (

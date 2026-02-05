@@ -1,14 +1,30 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
+import { useEffect } from "react";
+import { CuentaBanco } from "../../diseño.ts";
 import { BorrarCuentaBanco } from "./BorrarCuentaBanco.tsx";
 import { CrearCuentaBanco } from "./CrearCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
 import { TabCuentasBancoLista } from "./TabCuentasBancoLista.tsx";
-import { useCuentasBanco } from "./useCuentasBanco.ts";
+import { getMaquina } from "./maquina.ts";
 
 export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
-  const { ctx, estado, emitir } = useCuentasBanco({ clienteId });
+  const { ctx, emitir } = useMaquina(getMaquina, {
+    estado: "lista",
+    cuentas: listaEntidadesInicial<CuentaBanco>(),
+    cargando: true,
+    clienteId,
+  });
+
+  useEffect(() => {
+    if (clienteId) emitir("cargar_cuentas", clienteId, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clienteId]);
+
+  const estado = ctx.estado;
 
   const acciones = [
     {
