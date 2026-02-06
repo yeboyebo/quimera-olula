@@ -30,10 +30,13 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install Dependecies
-        run: pnpm install --filter @olula/almaeventos
+        run: pnpm install
 
       - name: Build
         run: pnpm run --filter @olula/almaeventos build
+
+      - name: Mover dist
+        run: mv ./apps/almaeventos/dist ./dist
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

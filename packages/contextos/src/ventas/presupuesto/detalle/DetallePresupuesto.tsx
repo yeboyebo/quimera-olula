@@ -1,17 +1,20 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useCallback } from "react";
+import { useModelo } from "@olula/lib/useModelo.js";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { AprobarPresupuesto } from "../aprobar/AprobarPresupuesto.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
 import "./DetallePresupuesto.css";
-import { usePresupuesto } from "./hooks/usePresupuesto.ts";
+import { metaPresupuesto, presupuestoVacio } from "./dominio.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
+import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatosBase.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
@@ -24,20 +27,37 @@ export const DetallePresupuesto = ({
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
+  const presupuestoId = presupuestoInicial?.id ?? params.id;
+  const presupuestoIdCargadoRef = useRef<string | null>(null);
 
-  const presupuesto = usePresupuesto({
-    presupuestoId: presupuestoInicial?.id ?? params.id,
-    presupuestoInicial,
-    publicar,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      presupuesto: presupuestoInicial || presupuestoVacio(),
+      presupuestoInicial: presupuestoInicial || presupuestoVacio(),
+      lineaActiva: null,
+    },
+    publicar
+  );
 
-  const { modelo, estado, lineaActiva, emitir } = presupuesto;
+  const presupuesto = useModelo(metaPresupuesto, ctx.presupuesto);
+
+  useEffect(() => {
+    if (presupuestoId && presupuestoId !== presupuestoIdCargadoRef.current) {
+      presupuestoIdCargadoRef.current = presupuestoId;
+      emitir("presupuesto_id_cambiado", presupuestoId, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presupuestoId]);
+
+  const { estado, lineaActiva } = ctx;
 
   const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_presupuesto_lista", modelo);
-  }, [emitir, modelo]);
+    emitir("edicion_de_presupuesto_lista", ctx.presupuesto);
+  }, [emitir, ctx.presupuesto]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_presupuesto_cancelada");
@@ -46,28 +66,30 @@ export const DetallePresupuesto = ({
   const acciones = [
     {
       texto: "Aprobar",
-      onClick: () => emitir("aprobacion_solicitada", modelo),
-      deshabilitado: modelo.aprobado,
+      onClick: () => emitir("aprobacion_solicitada", ctx.presupuesto),
+      deshabilitado: ctx.presupuesto.aprobado,
     },
     {
       icono: "eliminar",
       texto: "Borrar",
       onClick: () => emitir("borrar_solicitado"),
-      deshabilitado: modelo.aprobado,
+      deshabilitado: ctx.presupuesto.aprobado,
     },
   ];
 
   return (
     <Detalle
-      id={presupuestoInicial?.id ?? params.id}
+      id={presupuestoId}
       obtenerTitulo={titulo}
       setEntidad={() => {}}
-      entidad={modelo}
+      entidad={ctx.presupuesto}
       cerrarDetalle={() => emitir("presupuesto_deseleccionada", null)}
     >
-      {!!(presupuestoInicial?.id ?? params.id) && (
+      {!!presupuestoId && (
         <>
-          {!modelo.aprobado && <QuimeraAcciones acciones={acciones} vertical />}
+          {!ctx.presupuesto.aprobado && (
+            <QuimeraAcciones acciones={acciones} vertical />
+          )}
 
           <Tabs>
             <Tab label="Cliente">
@@ -87,7 +109,7 @@ export const DetallePresupuesto = ({
             </Tab>
           </Tabs>
 
-          {estado === "ABIERTO" && !modelo.aprobado && (
+          {estado === "ABIERTO" && !ctx.presupuesto.aprobado && (
             <div className="botones maestro-botones">
               <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
               <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
@@ -97,25 +119,31 @@ export const DetallePresupuesto = ({
           )}
 
           <TotalesVenta
-            neto={Number(modelo.neto ?? 0)}
-            totalIva={Number(modelo.total_iva ?? 0)}
-            total={Number(modelo.total ?? 0)}
-            divisa={modelo.divisa_id || "EUR"}
+            neto={Number(ctx.presupuesto.neto ?? 0)}
+            totalIva={Number(ctx.presupuesto.total_iva ?? 0)}
+            total={Number(ctx.presupuesto.total ?? 0)}
+            divisa={ctx.presupuesto.divisa_id || "EUR"}
           />
 
           <Lineas
-            presupuesto={modelo}
+            presupuesto={ctx.presupuesto}
             lineaActiva={lineaActiva}
             publicar={emitir}
             estadoPresupuesto={estado}
           />
 
           {estado === "BORRANDO_PRESUPUESTO" && (
-            <BorrarPresupuesto presupuesto={modelo} publicar={emitir} />
+            <BorrarPresupuesto
+              presupuesto={ctx.presupuesto}
+              publicar={emitir}
+            />
           )}
 
           {estado === "APROBANDO_PRESUPUESTO" && (
-            <AprobarPresupuesto presupuesto={modelo} publicar={emitir} />
+            <AprobarPresupuesto
+              presupuesto={ctx.presupuesto}
+              publicar={emitir}
+            />
           )}
         </>
       )}

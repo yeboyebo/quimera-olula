@@ -17,8 +17,7 @@ export const BorrarAlbaran = ({
     if (albaran.id) {
       await intentar(() => borrarAlbaran(albaran.id));
     }
-    publicar("albaran_borrado");
-    publicar("borrar_cancelado");
+    publicar("borrado_de_albaran_listo");
   };
 
   return (

@@ -1,8 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useCallback } from "react";
+import { useModelo } from "@olula/lib/useModelo.js";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { BorrarCliente } from "../borrar/BorrarCliente.tsx";
 import { Cliente } from "../diseño.ts";
@@ -10,7 +12,8 @@ import { TabCrmContactos } from "./CRMContactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./CuentasBanco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
 import { TabDirecciones } from "./Direcciones/TabDirecciones.tsx";
-import { useCliente } from "./hooks/useCliente.ts";
+import { clienteVacio, metaCliente } from "./dominio.ts";
+import { getMaquina } from "./maquina.ts";
 import { TabComercial } from "./TabComercial.tsx";
 import { TabGeneral } from "./TabGeneral.tsx";
 
@@ -22,20 +25,39 @@ export const DetalleCliente = ({
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
+  const clienteId = clienteInicial?.id ?? params.id;
+  const clienteIdCargadoRef = useRef<string | null>(null);
 
-  const cliente = useCliente({
-    clienteId: clienteInicial?.id ?? params.id,
-    clienteInicial,
-    publicar,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      cliente: clienteInicial || clienteVacio(),
+      clienteInicial: clienteInicial || clienteVacio(),
+    },
+    publicar
+  );
 
-  const { modelo, modificado, valido, emitir, estado } = cliente;
+  const cliente = useModelo(metaCliente, ctx.cliente);
+
+  const clienteIdActual = clienteId ?? ctx.cliente.id;
+
+  useEffect(() => {
+    if (clienteId && clienteId !== clienteIdCargadoRef.current) {
+      clienteIdCargadoRef.current = clienteId;
+      emitir("cliente_id_cambiado", clienteId, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clienteId]);
+
+  const { estado } = ctx;
+  const { modificado, valido } = cliente;
 
   const titulo = (cliente: Cliente) => cliente.nombre as string;
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_cliente_lista", modelo);
-  }, [emitir, modelo]);
+    emitir("edicion_de_cliente_lista", ctx.cliente);
+  }, [emitir, ctx.cliente]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_cliente_cancelada");
@@ -46,13 +68,13 @@ export const DetalleCliente = ({
   return (
     <div className="DetalleCliente">
       <Detalle
-        id={clienteInicial?.id ?? params.id}
+        id={clienteIdActual}
         obtenerTitulo={titulo}
         setEntidad={() => {}}
-        entidad={modelo}
+        entidad={ctx.cliente}
         cerrarDetalle={() => emitir("cliente_deseleccionado", null)}
       >
-        {!!(clienteInicial?.id ?? params.id) && (
+        {!!clienteIdActual && (
           <div className="DetalleCliente">
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("borrado_solicitado")}>
@@ -66,11 +88,13 @@ export const DetalleCliente = ({
                   label="General"
                   children={
                     <TabGeneral
-                      cliente={cliente}
+                      form={cliente}
+                      cliente={ctx.cliente}
                       emitirCliente={emitir}
                       recargarCliente={() =>
-                        emitir("cliente_id_cambiado", modelo.id)
+                        emitir("cliente_id_cambiado", clienteIdActual)
                       }
+                      estado={estado}
                     />
                   }
                 />,
@@ -78,25 +102,29 @@ export const DetalleCliente = ({
                   key="tab-2"
                   label="Comercial"
                   children={
-                    <TabComercial cliente={cliente} emitirCliente={emitir} />
+                    <TabComercial
+                      form={cliente}
+                      cliente={ctx.cliente}
+                      emitirCliente={emitir}
+                    />
                   }
                 />,
                 <Tab
                   key="tab-3"
                   label="Direcciones"
-                  children={<TabDirecciones clienteId={cliente.modelo.id} />}
+                  children={<TabDirecciones clienteId={clienteIdActual} />}
                 />,
                 <Tab
                   key="tab-4"
                   label="Cuentas Bancarias"
-                  children={<TabCuentasBanco clienteId={cliente.modelo.id} />}
+                  children={<TabCuentasBanco clienteId={clienteIdActual} />}
                 />,
                 <Tab
                   key="tab-5"
                   label="Agenda"
                   children={
                     <div className="detalle-cliente-tab-contenido">
-                      <TabCrmContactos clienteId={cliente.modelo.id} />
+                      <TabCrmContactos clienteId={clienteIdActual} />
                     </div>
                   }
                 />,
@@ -120,7 +148,8 @@ export const DetalleCliente = ({
 
             {estado === "BORRANDO_CLIENTE" && (
               <BorrarCliente
-                cliente={modelo}
+                clienteId={ctx.cliente.id}
+                clienteNombre={ctx.cliente.nombre as string}
                 publicar={emitir}
                 onCancelar={() => emitir("borrado_cancelado")}
               />

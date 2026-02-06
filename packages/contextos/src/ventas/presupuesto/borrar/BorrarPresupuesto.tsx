@@ -17,8 +17,7 @@ export const BorrarPresupuesto = ({
     if (presupuesto.id) {
       await intentar(() => borrarPresupuesto(presupuesto.id));
     }
-    publicar("presupuesto_borrado");
-    publicar("borrar_presupuesto_cancelado");
+    publicar("borrado_de_presupuesto_listo");
   };
 
   return (

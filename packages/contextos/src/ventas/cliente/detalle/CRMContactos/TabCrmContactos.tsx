@@ -1,16 +1,30 @@
 import { ContactoSelector } from "#/ventas/comun/componentes/contacto.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CrearCrmContactos } from "./CrearCrmContactos.tsx";
 import { EdicionCrmContactos } from "./EdicionCrmContactos.tsx";
 import { TabCrmContactosLista } from "./TabCrmContactosLista.tsx";
-import { useCrmContactos } from "./useCrmContactos.ts";
+import { getMaquina } from "./maquina.ts";
 
 export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
-  const { ctx, estado, emitir } = useCrmContactos({ clienteId });
+  const { ctx, emitir } = useMaquina(getMaquina, {
+    estado: "lista",
+    contactos: [],
+    contactoActivo: null,
+    cargando: true,
+    clienteId,
+  });
+
+  useEffect(() => {
+    if (clienteId) emitir("cargar_contactos", clienteId, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clienteId]);
+
+  const estado = ctx.estado;
   const [contactoSeleccionado, setContactoSeleccionado] = useState<{
     valor: string;
     descripcion: string;

@@ -2,16 +2,18 @@ import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
 import "./DetallePedido.css";
-import { editable } from "./dominio.ts";
-import { usePedido } from "./hooks/usePedido.ts";
+import { editable, metaPedido, pedidoVacio } from "./dominio.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
+import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
@@ -25,29 +27,41 @@ export const DetallePedido = ({
 }) => {
   const params = useParams();
   const navigate = useNavigate();
+  const pedidoId = pedidoInicial?.id ?? params.id;
 
-  const pedido = usePedido({
-    pedidoId: pedidoInicial?.id ?? params.id,
-    pedidoInicial,
-    publicar,
-  });
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "INICIAL",
+      pedido: pedidoInicial || pedidoVacio(),
+      pedidoInicial: pedidoInicial || pedidoVacio(),
+      lineaActiva: null,
+    },
+    publicar
+  );
 
-  const { modelo, estado, lineaActiva, emitir } = pedido;
+  const pedido = useModelo(metaPedido, ctx.pedido);
+
+  if (pedidoId && pedidoId !== ctx.pedido.id) {
+    emitir("pedido_id_cambiado", pedidoId, true);
+  }
+
+  const { estado, lineaActiva } = ctx;
 
   const titulo = (pedido: Pedido) => pedido.codigo || "Nuevo Pedido";
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_pedido_lista", modelo);
-  }, [emitir, modelo]);
+    emitir("edicion_de_pedido_lista", ctx.pedido);
+  }, [emitir, ctx.pedido]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_pedido_cancelada");
   }, [emitir]);
 
   const handleAlbaranar = useCallback(() => {
-    const id = modelo.id ?? params.id;
+    const id = ctx.pedido.id ?? params.id;
     if (id) navigate(`/ventas/albaranar-pedido/${id}`);
-  }, [navigate, modelo, params.id]);
+  }, [navigate, ctx.pedido, params.id]);
 
   const acciones = [
     {
@@ -65,20 +79,22 @@ export const DetallePedido = ({
 
   return (
     <Detalle
-      id={pedidoInicial?.id ?? params.id}
+      id={pedidoId}
       obtenerTitulo={titulo}
       setEntidad={() => {}}
-      entidad={modelo}
+      entidad={ctx.pedido}
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
-      {!!(pedidoInicial?.id ?? params.id) && (
+      {!!pedidoId && (
         <>
           {/* <div className="acciones-rapidas">
             <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
               Borrar
             </QBoton>
           </div> */}
-          {editable(modelo) && <QuimeraAcciones acciones={acciones} vertical />}
+          {editable(ctx.pedido) && (
+            <QuimeraAcciones acciones={acciones} vertical />
+          )}
 
           <Tabs>
             <Tab label="Cliente">
@@ -94,7 +110,7 @@ export const DetallePedido = ({
             </Tab>
           </Tabs>
 
-          {editable(modelo) && (
+          {editable(ctx.pedido) && (
             <div className="botones maestro-botones">
               <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
               <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
@@ -104,21 +120,21 @@ export const DetallePedido = ({
           )}
 
           <TotalesVenta
-            neto={Number(modelo.neto ?? 0)}
-            totalIva={Number(modelo.total_iva ?? 0)}
-            total={Number(modelo.total ?? 0)}
-            divisa={String(modelo.coddivisa ?? "EUR")}
+            neto={Number(ctx.pedido.neto ?? 0)}
+            totalIva={Number(ctx.pedido.total_iva ?? 0)}
+            total={Number(ctx.pedido.total ?? 0)}
+            divisa={String(ctx.pedido.coddivisa ?? "EUR")}
           />
 
           <Lineas
-            pedido={modelo}
+            pedido={ctx.pedido}
             lineaActiva={lineaActiva}
             publicar={emitir}
             estadoPedido={estado}
           />
 
           {estado === "BORRANDO_PEDIDO" && (
-            <BorrarPedido pedido={modelo} publicar={emitir} />
+            <BorrarPedido pedido={ctx.pedido} publicar={emitir} />
           )}
         </>
       )}

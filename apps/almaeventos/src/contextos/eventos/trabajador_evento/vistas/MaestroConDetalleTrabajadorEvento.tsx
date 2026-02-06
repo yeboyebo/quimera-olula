@@ -55,7 +55,10 @@ export const MaestroConDetalleTrabajadorEvento = () => {
   const cambiarEstadoLiquidado = async (trabajadorEvento: TrabajadorEvento) => {
     const nuevoValor = !trabajadorEvento.liquidado;
     await intentar(() =>
-      patchTrabajadorEvento(trabajadorEvento.id, { liquidado: nuevoValor })
+      patchTrabajadorEvento(trabajadorEvento.id, {
+        ...trabajadorEvento,
+        liquidado: nuevoValor,
+      })
     );
     // Actualizar la UI
     emitir("TRABAJADOR_EVENTO_CAMBIADO", {
@@ -80,7 +83,17 @@ export const MaestroConDetalleTrabajadorEvento = () => {
       ancho: "250px",
       render: (t) => <TextoConTooltip texto={t.descripcion} />,
     },
-    { id: "fecha", cabecera: "Fecha", tipo: "fecha", ancho: "80px" },
+    {
+      id: "fecha",
+      cabecera: "Fecha",
+      tipo: "fecha",
+      ancho: "80px",
+      render: (t) => {
+        if (!t.fecha) return "";
+        const fecha = t.fecha instanceof Date ? t.fecha : new Date(t.fecha);
+        return fecha.toISOString().split("T")[0];
+      },
+    },
     { id: "coste", cabecera: "Coste/Hora", tipo: "moneda", ancho: "100px" },
     {
       id: "liquidado",

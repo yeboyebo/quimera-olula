@@ -1,11 +1,8 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroAlbaran, EstadoMaestroAlbaran } from "./diseño.ts";
 import {
-    abrirModalCreacion,
     activarAlbaran,
     cambiarAlbaranEnLista,
-    cerrarModalCreacion,
-    crearAlbaran,
     desactivarAlbaranActivo,
     incluirAlbaranEnLista,
     quitarAlbaranDeLista,
@@ -31,16 +28,14 @@ export const getMaquina: () => Maquina<EstadoMaestroAlbaran, ContextoMaestroAlba
 
             recarga_de_albaranes_solicitada: recargarAlbaranes,
 
-            creacion_de_albaran_solicitada: crearAlbaran,
-
-            crear_albaran_solicitado: abrirModalCreacion,
+            crear_albaran_solicitado: "CREANDO_ALBARAN",
         },
 
         CREANDO_ALBARAN: {
 
             albaran_creado: [incluirAlbaranEnLista, 'INICIAL'],
 
-            creacion_cancelada: cerrarModalCreacion,
+            creacion_cancelada: "INICIAL",
         },
     }
 }

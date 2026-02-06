@@ -1,10 +1,8 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroFactura, EstadoMaestroFactura } from "./diseño.ts";
 import {
-    abrirModalCreacion,
     activarFactura,
     cambiarFacturaEnLista,
-    cerrarModalCreacion,
     desactivarFacturaActiva,
     incluirFacturaEnLista,
     quitarFacturaDeLista,
@@ -30,14 +28,14 @@ export const getMaquina: () => Maquina<EstadoMaestroFactura, ContextoMaestroFact
 
             recarga_de_facturas_solicitada: recargarFacturas,
 
-            crear_factura_solicitado: abrirModalCreacion,
+            crear_factura_solicitado: "CREANDO_FACTURA",
         },
 
         CREANDO_FACTURA: {
 
             factura_creada: [incluirFacturaEnLista, 'INICIAL'],
 
-            creacion_factura_cancelada: cerrarModalCreacion,
+            creacion_factura_cancelada: "INICIAL",
         },
 
     }
