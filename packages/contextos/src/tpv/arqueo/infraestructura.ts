@@ -3,9 +3,9 @@ import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { ArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PatchRecuentoArqueo, PostArqueoTpv } from "./diseño.ts";
+import { ArqueoTpv, CabeceraArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, MovimientoArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PatchRecuentoArqueo, PostArqueoTpv } from "./diseño.ts";
 
-type ArqueoTpvAPI = {
+interface CabeceraArqueoTpvApi {
     id: string;
     fechahora_apertura: string;
     agente_apertura_id: string;
@@ -21,12 +21,22 @@ type ArqueoTpvAPI = {
     recuento_caja: Record<string, number>;
     movimiento_cierre: number;
     efectivo_inicial: number
+}
+interface MovimientoArqueoTpvApi {
+    id: string;
+    importe: number;
+    fecha: string;
+    agente_id: string;
+    agente: string;
+}
 
+interface ArqueoTpvApi extends CabeceraArqueoTpvApi {
+    movimientos: MovimientoArqueoTpvApi[]
 }
 
 const baseUrl = new ApiUrls().ARQUEO;
 
-export const arqueoDesdeApi = (a: ArqueoTpvAPI): ArqueoTpv => ({
+export const cabeceraArqueoDesdeApi = (a: CabeceraArqueoTpvApi): CabeceraArqueoTpv => ({
     id: a.id,
     fechahoraApertura: new Date(a.fechahora_apertura),
     idAgenteApertura: a.agente_apertura_id,
@@ -44,6 +54,19 @@ export const arqueoDesdeApi = (a: ArqueoTpvAPI): ArqueoTpv => ({
     efectivoInicial: a.efectivo_inicial,
 });
 
+export const movimientoArqueoDesdeApi = (m: MovimientoArqueoTpvApi): MovimientoArqueoTpv => ({
+    id: m.id,
+    importe: m.importe,
+    fecha: new Date(m.fecha),
+    idAgente: m.agente_id,
+    agente: m.agente
+})
+
+export const arqueoDesdeApi = (a: ArqueoTpvApi): ArqueoTpv => ({
+    ...cabeceraArqueoDesdeApi(a),
+    movimientos: a.movimientos.map(movimientoArqueoDesdeApi)
+});
+
 export const getArqueos: GetArqueosTpv = async (
     filtro: Filtro,
     orden: Orden,
@@ -51,12 +74,12 @@ export const getArqueos: GetArqueosTpv = async (
 ) => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: ArqueoTpvAPI[]; total: number }>(baseUrl + q);
-    return { datos: respuesta.datos.map(arqueoDesdeApi), total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: CabeceraArqueoTpvApi[]; total: number }>(baseUrl + q);
+    return { datos: respuesta.datos.map(cabeceraArqueoDesdeApi), total: respuesta.total };
 };
 
 export const getArqueo: GetArqueoTpv = async (id) => {
-    return RestAPI.get<{ datos: ArqueoTpvAPI }>
+    return RestAPI.get<{ datos: ArqueoTpvApi }>
         (`${baseUrl}/${id}`)
         .then(
             (respuesta) => arqueoDesdeApi(respuesta.datos)
