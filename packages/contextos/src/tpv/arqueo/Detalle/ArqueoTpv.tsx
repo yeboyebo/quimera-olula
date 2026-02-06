@@ -8,7 +8,7 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { BorrarArqueoTpv } from "../borrar/BorrarArqueoTpv.tsx";
-import { CerrarArqueoTpv } from "../Cerrar/CerrarArqueoTpv.tsx";
+import { CerrarArqueoTpv } from "../cerrar/CerrarArqueoTpv.tsx";
 import { CrearMovimientoEfectivo } from "../crear_movimiento_efectivo/CrearMovimientoEfectivo.tsx";
 import { ArqueoTpv } from "../diseño.ts";
 import { moneda } from "../dominio.ts";
@@ -76,9 +76,11 @@ export const DetalleArqueoTpv = ({
                 <quimera-formulario>
                     <CompAgenteTpv label='Agente de apertura'
                         {...uiProps("idAgenteApertura", "agente")}
+                        deshabilitado={estado !== "ABIERTO"}
                     />
                     <QInput label='Efectivo inicial' 
                         {...uiProps("efectivoInicial")}
+                        deshabilitado={estado !== "ABIERTO"}
                     />
                 </quimera-formulario>
 
