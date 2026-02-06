@@ -1,5 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
+import { ArqueoTpv } from "../diseño.ts";
 import { ContextoArqueoTpv, EstadoArqueoTpv } from "./diseño.ts";
 import {
     cargarContexto,
@@ -88,7 +89,7 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
             arqueo_borrado: [
                 getContextoVacio,
-                publicar('arqueo_borrado', null)
+                publicar('arqueo_borrado', (_, arqueo) => (arqueo as ArqueoTpv).id)
             ]
         },
     }

@@ -48,6 +48,7 @@ const useItemActivo = <E extends Entidad, I extends Entidad>({
         (entidadAnterior: E |  null) => {
             let item: I | undefined;
             if (!entidadAnterior || entidadAnterior.id !== entidad.id) {
+                console.log('cambio de entidad !!!', items)
                 item = items.length > 0 ? items[0] : undefined;
             } else if (estadoSeleccion) {
                 if (estadoSeleccion.tipo === 'crear') {
@@ -55,13 +56,15 @@ const useItemActivo = <E extends Entidad, I extends Entidad>({
                 } else if (estadoSeleccion.tipo === 'borrar') {
                     item = items.length > estadoSeleccion.indice 
                         ? items[estadoSeleccion.indice]
-                        : undefined;
+                        : items.length
+                            ? items[items.length - 1] 
+                            : undefined;
                 } else if (estadoSeleccion.tipo === 'cambiar') {
                     item = items.find(m => m.id === estadoSeleccion.id);
                 }
-                if (item) {
-                    setItemActivo(item);
-                }
+            }
+            if (item) {
+                setItemActivo(item);
             }
         },
         [estadoSeleccion, entidad, items, setItemActivo]
