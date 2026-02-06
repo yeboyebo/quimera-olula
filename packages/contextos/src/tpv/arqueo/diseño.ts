@@ -26,6 +26,12 @@ export interface MovimientoArqueoTpv extends Entidad {
     agente: string;
 }
 
+type MovimientoArqueoTpvACrear = {
+    importe: number;
+    fecha: Date;
+    idAgente: string;
+}
+
 export interface ArqueoTpv extends CabeceraArqueoTpv {
     movimientos: MovimientoArqueoTpv[];
 }
@@ -57,6 +63,10 @@ export type PatchRecuentoArqueo = (arqueo: ArqueoTpv) => Promise<void>;
 export type PatchCerrarArqueo = (id: string, cierre: CierreArqueoTpv) => Promise<void>;
 
 export type PatchReabrirArqueo = (id: string) => Promise<void>;
+
+export type PatchCrearMovimiento = (id: string, movimiento: MovimientoArqueoTpvACrear) => Promise<void>;
+
+export type PatchBorrarMovimiento = (id: string, idMovimiento: string) => Promise<void>;
 
 export type PostArqueoTpv = () => Promise<string>;
 

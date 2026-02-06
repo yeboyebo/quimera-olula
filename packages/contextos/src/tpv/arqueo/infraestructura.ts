@@ -3,7 +3,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { ArqueoTpv, CabeceraArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, MovimientoArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchCerrarArqueo, PatchReabrirArqueo, PatchRecuentoArqueo, PostArqueoTpv } from "./diseño.ts";
+import { ArqueoTpv, CabeceraArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, MovimientoArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchBorrarMovimiento, PatchCerrarArqueo, PatchCrearMovimiento, PatchReabrirArqueo, PatchRecuentoArqueo, PostArqueoTpv } from "./diseño.ts";
 
 interface CabeceraArqueoTpvApi {
     id: string;
@@ -74,7 +74,7 @@ export const getArqueos: GetArqueosTpv = async (
 ) => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: CabeceraArqueoTpvApi[]; total: number }>(baseUrl + q);
+    const respuesta = await RestAPI.get<{ datos: CabeceraArqueoTpvApi[]; total: number }>(`${baseUrl}_items` + q);
     return { datos: respuesta.datos.map(cabeceraArqueoDesdeApi), total: respuesta.total };
 };
 
@@ -169,6 +169,29 @@ export const patchReabrirArqueo: PatchReabrirArqueo = async (id) => {
     );
 }
 
+export const patchCrearMovimiento: PatchCrearMovimiento = async (id, movimiento) => {
+
+    await RestAPI.patch(
+        `${baseUrl}/${id}/crear_movimiento`,
+        {
+            importe: movimiento.importe,
+            fecha: movimiento.fecha.toISOString().split("T")[0],
+            agente_id: movimiento.idAgente
+        },
+        "Error al crear movimiento"
+    );
+}
+
+
+export const patchBorrarMovimiento: PatchBorrarMovimiento = async (id, idMovimiento) => {
+
+    await RestAPI.patch(
+        `${baseUrl}/${id}/borrar_movimiento/${idMovimiento}`,
+        {},
+        "Error al borrar movimiento"
+    );
+}
+
 export const postArqueo: PostArqueoTpv = async () => {
     const respuesta = await RestAPI.post(
         baseUrl,
@@ -180,14 +203,6 @@ export const postArqueo: PostArqueoTpv = async () => {
     );
     return respuesta.id;
 }
-
-// export const postVenta: PostVentaTpv = async () => {
-//     const payload = {
-//         agente_id: agenteActivo.obtener(),
-//         punto_venta_id: puntoVentaLocal.obtener(),
-//     };
-//     return await RestAPI.post(baseUrl, payload, "Error al crear la venta").then((respuesta) => respuesta.id);
-// };
 
 export const deleteArqueoTpv: DeleteArqueoTpv = async (id) => {
     return await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar el arqueo");

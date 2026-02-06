@@ -9,6 +9,7 @@ import { useCallback } from "react";
 import { useParams } from "react-router";
 import { BorrarArqueoTpv } from "../borrar/BorrarArqueoTpv.tsx";
 import { CerrarArqueoTpv } from "../Cerrar/CerrarArqueoTpv.tsx";
+import { CrearMovimientoEfectivo } from "../crear_movimiento_efectivo/CrearMovimientoEfectivo.tsx";
 import { ArqueoTpv } from "../diseño.ts";
 import { moneda } from "../dominio.ts";
 import { patchArqueo } from "../infraestructura.ts";
@@ -16,24 +17,25 @@ import { ReabrirArqueoTpv } from "../Reabrir/ReabrirArqueoTpv.tsx";
 import { RecuentoArqueoTpv } from "../Recuento/RecuentoArqueoTpv.tsx";
 import "./ArqueoTpv.css";
 import { ListaPagos } from "./comps/ListaPagos.tsx";
+import { MovimientosEfectivo } from "./comps/MovimientosEfectivo.tsx";
 import { ResumenRecuento } from "./comps/ResumenRecuento.tsx";
 import { TotalesArqueo } from "./comps/TotalesArqueo.tsx";
 import { arqueoTpvVacio, ContextoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
 export const DetalleArqueoTpv = ({
-    arqueoInicial = null,
+    arqueoIdProp,
     publicar = async () => {},
 }: {
-    arqueoInicial?: ArqueoTpv | null;
+    arqueoIdProp?: string;
     publicar?: EmitirEvento;
 }) => {
     const params = useParams();
 
-    const arqueoId = arqueoInicial?.id ?? params.id;
+    const arqueoId = arqueoIdProp ?? params.id;
     const contextoInicial:ContextoArqueoTpv = {
         estado: 'INICIAL',
-        arqueo: arqueoInicial ?? arqueoTpvVacio,
+        arqueo: arqueoTpvVacio,
     }
     
     const { ctx, emitir } = useMaquina(
@@ -113,8 +115,12 @@ export const DetalleArqueoTpv = ({
                 />
                 <ListaPagos
                     arqueoId={arqueo.id}
+                />
+                <MovimientosEfectivo
+                    arqueo={arqueo}
+                    estado={estado}
+                    publicar={emitir}
                 /> 
-
                 {
                     estado === "CERRANDO" &&
                     <CerrarArqueoTpv
@@ -122,6 +128,20 @@ export const DetalleArqueoTpv = ({
                         publicar={emitir}
                     />
                 }
+                {
+                    estado === "CREANDO_MOVIMIENTO" &&
+                    <CrearMovimientoEfectivo
+                        arqueo={arqueo}
+                        publicar={emitir}
+                    />
+                }
+                {/* {
+                    estado === "BORRANDO_MOVIMIENTO" &&
+                    <BorrarMovimientoEfectivo
+                        arqueo={arqueo}
+                        publicar={emitir}
+                    />
+                } */}
                 {
                     estado === "REABRIENDO" &&
                     <ReabrirArqueoTpv

@@ -28,15 +28,35 @@ export const getMaquina: () => Maquina<EstadoArqueoTpv, ContextoArqueoTpv> = () 
 
             borrar_solicitado: "BORRANDO_ARQUEO",
 
+            borrado_de_movimiento_solicitado: "BORRANDO_MOVIMIENTO",
+
             recuento_solicitado: "RECONTANDO",
 
             cierre_solicitado: "CERRANDO",
+
+            creacion_de_movimiento_solicitada: "CREANDO_MOVIMIENTO",
+
+        },
+
+        BORRANDO_MOVIMIENTO: {
+
+            movimiento_borrado: [refrescarArqueo, "ABIERTO"],
+
+            borrado_de_movimiento_cancelado: "ABIERTO",
 
         },
 
         CERRADO: {
 
             reapertura_solicitada: "REABRIENDO",
+        },
+
+        CREANDO_MOVIMIENTO: {
+
+            movimiento_creado: [refrescarArqueo, "ABIERTO"],
+
+            creacion_de_movimiento_cancelada: "ABIERTO",
+
         },
 
         RECONTANDO: {
