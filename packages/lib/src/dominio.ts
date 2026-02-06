@@ -333,7 +333,7 @@ export const formatoValorCampoValido = <T extends Modelo>(meta: MetaModelo<T>) =
 // }
 
 const valorDecimalEsValido = (valor: string, decimales: number): boolean => {
-    return new RegExp(`^(\\d?)+(\\.\\d{0,${decimales}})?$`).test(String(valor));
+    return new RegExp(`^-?(\\d?)+(\\.\\d{0,${decimales}})?$`).test(String(valor));
 }
 // No permite .23 y es incómodo de editar
 // const valorDecimalEsValido2 = (valor: string, decimales: number): boolean => {
@@ -341,7 +341,6 @@ const valorDecimalEsValido = (valor: string, decimales: number): boolean => {
 // }
 
 export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): ValorCampoUI => {
-    console.log('convertirCampoHaciaUI', campo, valor, typeof valor);
 
     if (valor === null || valor === undefined) {
         return '';
