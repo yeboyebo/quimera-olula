@@ -7,6 +7,7 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
+import { TagArticulo } from "../../articulo/diseño.ts";
 import { LineaPresupuesto } from "../diseño.ts";
 import { patchLinea } from "../infraestructura.ts";
 import { metaLinea } from "./dominio.ts";
@@ -22,7 +23,7 @@ export const EditarLinea = ({
   publicar: EmitirEvento;
 }) => {
   const { intentar } = useContext(ContextoError);
-  const { modelo, uiProps, valido } = useModelo(metaLinea, linea);
+  const { modelo, uiProps, valido, set } = useModelo(metaLinea, linea);
   const [cambiando, setCambiando] = useState(false);
 
   const cambiar = useCallback(async () => {
@@ -35,6 +36,26 @@ export const EditarLinea = ({
     if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
+  const handleArticuloChange = useCallback(
+    (
+      opcion: { valor: string; descripcion: string; datos?: TagArticulo } | null
+    ) => {
+      if (!opcion) return;
+
+      const articulo = opcion.datos;
+      if (!articulo) return;
+
+      set({
+        ...modelo,
+        referencia: opcion.valor,
+        descripcion: opcion.descripcion,
+        pvp_unitario: articulo.precio,
+        grupo_iva_producto_id: articulo.grupo_iva_producto_id,
+      });
+    },
+    [modelo, set]
+  );
+
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
       <div className="EditarLinea">
@@ -46,7 +67,10 @@ export const EditarLinea = ({
             {`Ref: ${linea.referencia}`}
           </div>
 
-          <Articulo {...uiProps("referencia", "descripcion")} />
+          <Articulo
+            {...uiProps("referencia", "descripcion")}
+            onChange={handleArticuloChange}
+          />
 
           <QInput label="Cantidad" {...uiProps("cantidad")} />
 

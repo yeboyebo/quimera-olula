@@ -126,23 +126,6 @@ export const patchPedido = async (id: string, pedido: Pedido) => {
   const api_payloadPatchPedido = FactoryObj.app.Ventas.api_payloadPatchPedido as (p: Pedido) => unknown;
 
   const payload = api_payloadPatchPedido(pedido) as Record<string, unknown>;
-  // const payload = {
-  //   cambios: {
-  //     agente_id: pedido.agente_id,
-  //     divisa: {
-  //       divisa_id: pedido.divisa_id,
-  //       tasa_conversion: pedido.tasa_conversion,
-  //     },
-  //     fecha: pedido.fecha,
-  //     cliente_id: pedido.cliente_id,
-  //     nombre_cliente: pedido.nombre_cliente,
-  //     id_fiscal: pedido.id_fiscal,
-  //     direccion_id: pedido.direccion_id,
-  //     forma_pago_id: pedido.forma_pago_id,
-  //     grupo_iva_negocio_id: pedido.grupo_iva_negocio_id,
-  //     observaciones: pedido.observaciones,
-  //   },
-  // };
 
   await RestAPI.patch(`${baseUrl}/${id}`, payload,
     'Error al guardar el pedido'

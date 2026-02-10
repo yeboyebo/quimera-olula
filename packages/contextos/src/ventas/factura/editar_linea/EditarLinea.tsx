@@ -6,6 +6,7 @@ import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
+import { TagArticulo } from "../../articulo/diseño.ts";
 import { LineaFactura as Linea } from "../diseño.ts";
 import { metaLineaFactura as metaLinea } from "./dominio.ts";
 import "./EditarLinea.css";
@@ -17,18 +18,38 @@ export const EditarLinea = ({
   linea: Linea;
   publicar: ProcesarEvento;
 }) => {
-  const { modelo, uiProps, valido } = useModelo(metaLinea, linea);
+  const { modelo, uiProps, valido, set } = useModelo(metaLinea, linea);
 
   const [cambiando, setCambiando] = useState(false);
 
   const cambiar = () => {
     setCambiando(true);
-    publicar("cambio_de_linea_listo", modelo);
+    publicar("linea_actualizada", modelo);
   };
 
   const cancelar = useCallback(() => {
     if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
+
+  const handleArticuloChange = useCallback(
+    (
+      opcion: { valor: string; descripcion: string; datos?: TagArticulo } | null
+    ) => {
+      if (!opcion) return;
+
+      const articulo = opcion.datos;
+      if (!articulo) return;
+
+      set({
+        ...modelo,
+        referencia: opcion.valor,
+        descripcion: opcion.descripcion,
+        pvp_unitario: articulo.precio,
+        grupo_iva_producto_id: articulo.grupo_iva_producto_id,
+      });
+    },
+    [modelo, set]
+  );
 
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
@@ -41,7 +62,10 @@ export const EditarLinea = ({
             {`Ref: ${linea.referencia}`}
           </div>
 
-          <Articulo {...uiProps("referencia", "descripcion")} />
+          <Articulo
+            {...uiProps("referencia", "descripcion")}
+            onChange={handleArticuloChange}
+          />
 
           <QInput label="Cantidad" {...uiProps("cantidad")} />
 

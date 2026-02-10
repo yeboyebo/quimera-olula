@@ -4,6 +4,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { getPedido, postPedido } from "../infraestructura.ts";
@@ -17,6 +18,7 @@ export const CrearPedido = ({
 }) => {
   const nuevoPedido = useModelo(metaNuevoPedido, nuevoPedidoVacio);
   const { intentar } = useContext(ContextoError);
+  const focus = useFocus();
 
   const guardar = async () => {
     const id = await intentar(() => postPedido(nuevoPedido.modelo));
@@ -36,6 +38,7 @@ export const CrearPedido = ({
         <Cliente
           {...nuevoPedido.uiProps("cliente_id", "nombre")}
           nombre="ClientePedido"
+          ref={focus}
         />
         <DirCliente
           clienteId={nuevoPedido.modelo.cliente_id}

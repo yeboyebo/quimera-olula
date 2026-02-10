@@ -62,7 +62,7 @@ export const getMaquina: () => Maquina<EstadoFactura, ContextoFactura> = () => {
 
         BORRANDO_FACTURA: {
 
-            borrado_de_factura_listo: borrarFactura,
+            borrado_de_factura_listo: [borrarFactura, "INICIAL"],
 
             borrar_cancelado: "ABIERTO",
         },

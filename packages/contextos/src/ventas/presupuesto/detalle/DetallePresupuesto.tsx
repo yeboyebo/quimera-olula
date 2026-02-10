@@ -56,8 +56,8 @@ export const DetallePresupuesto = ({
   const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_presupuesto_lista", ctx.presupuesto);
-  }, [emitir, ctx.presupuesto]);
+    emitir("edicion_de_presupuesto_lista", presupuesto.modelo);
+  }, [emitir, presupuesto]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_presupuesto_cancelada");

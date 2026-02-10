@@ -2,9 +2,10 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
@@ -26,6 +27,7 @@ export const DetalleAlbaran = ({
 }) => {
   const params = useParams();
   const albaranId = albaranInicial?.id ?? params.id;
+  const albaranIdCargadoRef = useRef<string | null>(null);
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
@@ -40,25 +42,33 @@ export const DetalleAlbaran = ({
 
   const albaran = useModelo(metaAlbaran, ctx.albaran);
 
-  if (albaranId && albaranId !== ctx.albaran.id) {
-    emitir("albaran_id_cambiado", albaranId, true);
-  }
+  useEffect(() => {
+    if (albaranId && albaranId !== albaranIdCargadoRef.current) {
+      albaranIdCargadoRef.current = albaranId;
+      emitir("albaran_id_cambiado", albaranId, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [albaranId]);
 
   const { estado, lineaActiva } = ctx;
 
   const titulo = (albaran: Albaran) => albaran.codigo || "Nuevo Albarán";
 
-  const handleBorrar = useCallback(() => {
-    emitir("borrar_solicitado");
-  }, [emitir]);
-
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_albaran_lista", ctx.albaran);
-  }, [emitir, ctx.albaran]);
+    emitir("edicion_de_albaran_lista", albaran.modelo);
+  }, [emitir, albaran]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_albaran_cancelada");
   }, [emitir]);
+
+  const acciones = [
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      onClick: () => emitir("borrar_solicitado"),
+    },
+  ];
 
   return (
     <Detalle
@@ -70,11 +80,7 @@ export const DetalleAlbaran = ({
     >
       {!!albaranId && (
         <>
-          <div className="acciones-rapidas">
-            <QBoton tipo="reset" variante="texto" onClick={handleBorrar}>
-              Borrar
-            </QBoton>
-          </div>
+          <QuimeraAcciones acciones={acciones} vertical />
 
           <Tabs>
             <Tab label="Cliente">

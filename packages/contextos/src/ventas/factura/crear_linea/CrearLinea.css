@@ -1,9 +1,9 @@
-.Factura .AltaLinea {
+.Factura .CrearLinea {
     quimera-formulario {
         max-width: 500px;
     }
 
-    quimera-autocompletar[nombre="referencia_nueva_linea_pedido"] {
+    quimera-autocompletar[nombre="referencia_nueva_linea_factura"] {
         grid-column: span 9;
     }
 
