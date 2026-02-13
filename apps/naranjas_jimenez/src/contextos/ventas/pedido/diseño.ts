@@ -5,7 +5,7 @@ export interface LineaPedidoNrj extends LineaPedido {
 }
 
 type NuevaLineaPedidoNrj = {
-    cantidad: number;
+    cantidadEnvases: number;
     idVariedad: string;
 };
 

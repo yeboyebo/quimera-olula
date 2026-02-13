@@ -6,6 +6,7 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
+import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
 import { postLineaNrj } from "../infraestructura.ts";
 import "./CrearLinea.css";
@@ -42,7 +43,9 @@ export const CrearLineaNrj = ({
 
                 <quimera-formulario>
                     <Variedad label="Variedad" {...uiProps("idVariedad", "variedad")}  />
-                    <QInput label="Cantidad" {...uiProps("cantidad") } nombre='cantidad'/>
+                    <TipoPalet label="Tipo Palet" {...uiProps("idTipoPalet", "tipopalet")}  />
+                    <QInput label="Cantidad Palets" {...uiProps("cantidadPalets") } nombre='cantidadPalets'/>
+                    <QInput label="Cantidad Envases" {...uiProps("cantidadEnvases") } nombre='cantidadEnvases'/>
                 </quimera-formulario>
 
                 <div className="botones maestro-botones ">

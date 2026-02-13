@@ -22,7 +22,7 @@ export const postLineaNrj: PostLineaNrj = async (id, linea) => {
         {
             lineas: [{
                 variedad_id: linea.idVariedad,
-                cantidad: linea.cantidad
+                cantidad: linea.cantidadEnvases
             }]
         },
         "Error al crear linea de pedido"

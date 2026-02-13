@@ -7,8 +7,12 @@
         grid-column: span 12;
     }
 
-    quimera-input[nombre="cantidad"] {
+    quimera-autocompletar[nombre="idTipoPalet"] {
         grid-column: span 12;
+    }
+
+    quimera-input[nombre="cantidadEnvases"] {
+        grid-column: span 4;
     }
 
 }
