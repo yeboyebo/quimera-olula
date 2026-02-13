@@ -6,5 +6,5 @@ export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = metaNuevaLin
 
 export const nuevaLineaAlbaranVacia: NuevaLineaAlbaran = {
     referencia: "",
-    cantidad: 0,
+    cantidad: 1,
 } as NuevaLineaAlbaran;
