@@ -1,36 +1,27 @@
-import ApiUrls from "#/ventas/comun/urls.ts";
 import { LineaPedidoAPI, postLinea } from "#/ventas/pedido/infraestructura.ts";
-import { RestAPI } from "@olula/lib/api/rest_api.js";
-import { LineaPedidoNrj, PostLineaNrj } from "./diseño.ts";
+import { LineaPedidoNrj } from "./diseño.ts";
 
+interface PaletLineaPedidoApiNrj {
+    id: string
+    cantidad_envases: number
+}
 export interface LineaPedidoApiNrj extends LineaPedidoAPI {
     variedad_id: string
+    cantidad_envases_asignados: number
+    palets: PaletLineaPedidoApiNrj[]
 }
-const baseUrl = new ApiUrls().PEDIDO;
 
 const lineaPedidoDesdeApi = (l: LineaPedidoApiNrj): LineaPedidoNrj => {
     return {
         ...l,
-        idVariedad: l.variedad_id
+        idVariedad: l.variedad_id,
+        cantidadEnvasesAsignados: l.cantidad_envases_asignados,
+        palets: l.palets.map(p => ({
+            id: p.id,
+            cantidadEnvases: p.cantidad_envases
+        }))
     }
 };
-
-export const postLineaNrj: PostLineaNrj = async (id, linea) => {
-
-    return await RestAPI.post(
-        `${baseUrl}/${id}/linea`,
-        {
-            lineas: [{
-                variedad_id: linea.idVariedad,
-                cantidad: linea.cantidadEnvases
-            }]
-        },
-        "Error al crear linea de pedido"
-    ).then((respuesta) => {
-        const miRespuesta = respuesta as unknown as { ids: string[] };
-        return miRespuesta.ids[0];
-    });
-}
 
 export const ventasPedidoInfra = {
     linea_desde_api: lineaPedidoDesdeApi,

@@ -1,14 +1,8 @@
-import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { QAutocompletar, QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
 import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 
-interface VariedadProps {
-  descripcion?: string;
-  valor: string;
-  nombre?: string;
-  label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
-}
+type TipoPaletProps = Omit<QAutocompletarProps, "obtenerOpciones">
 
 export const TipoPalet = ({
   descripcion = "",
@@ -17,7 +11,7 @@ export const TipoPalet = ({
   label = "Tipo Palet",
   onChange,
   ...props
-}: VariedadProps) => {
+}: TipoPaletProps) => {
 
     const obtenerOpciones = async (texto: string) => {
         const criteria: Criteria = {

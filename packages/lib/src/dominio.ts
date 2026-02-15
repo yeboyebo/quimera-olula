@@ -482,6 +482,7 @@ const setCampo = <M extends Modelo>(
 };
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
+    console.log('validacionCampoModelo', campo);
     const campos = meta.campos || {};
     const valor = modelo[campo];
     const tipoCampo = campos[campo]?.tipo;
@@ -505,8 +506,9 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     if (tipoCampo && ["texto", "fecha", "numero", "selector", "autocompletar"].includes(tipoCampo) && requerido && valor === '') {
         return "Campo requerido";
     }
+    const tipoCampoEsNumero = ['numero', 'decimal', 'entero'].includes(tipoCampo as string);
 
-    if (tipoCampo === "numero") {
+    if (tipoCampoEsNumero) {
         const numero = Number(valor);
 
         if (campos[campo]?.positivo) {
@@ -514,7 +516,6 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
                 return "El número debe ser positivo";
             }
         }
-
 
         if (campos[campo]?.maximo) {
             const maximo = Number(campos[campo]?.maximo);

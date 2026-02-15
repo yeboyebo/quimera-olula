@@ -1,14 +1,9 @@
-import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { QAutocompletar, QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
 import { getItemsListaVariedad } from "../../variedad/infraestructura.ts";
 
-interface VariedadProps {
-  descripcion?: string;
-  valor: string;
-  nombre?: string;
-  label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
-}
+type VariedadProps = Omit<QAutocompletarProps, "obtenerOpciones">
+
 
 export const Variedad = ({
   descripcion = "",
@@ -43,8 +38,8 @@ export const Variedad = ({
             nombre={nombre}
             onChange={onChange}
             valor={valor}
-            obtenerOpciones={obtenerOpciones}
             descripcion={descripcion}
+            obtenerOpciones={obtenerOpciones}
             {...props}
         />
     );

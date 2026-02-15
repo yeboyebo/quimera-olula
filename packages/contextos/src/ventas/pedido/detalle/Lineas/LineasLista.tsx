@@ -5,10 +5,10 @@ import { LineaPedido as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 
 
-export type LineasListaProps = {
-  lineas: Linea[];
+export type LineasListaProps<L extends Linea = Linea> = {
+  lineas: L[];
   seleccionada?: string;
-  onCambioCantidad?: (linea: Linea, cantidad: number) => void;
+  onCambioCantidad?: (linea: L, cantidad: number) => void;
   pedidoEditable?: boolean;
   publicar: (evento: string, payload?: unknown) => void;
 };

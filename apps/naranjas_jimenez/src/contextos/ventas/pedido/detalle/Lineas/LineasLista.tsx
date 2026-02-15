@@ -1,14 +1,15 @@
 import { LineasListaProps } from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
 import { LineaPedido } from "#/ventas/pedido/diseño.ts";
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { QBoton, QModal } from "@olula/componentes/index.js";
+import { useState } from "react";
+import { LineaPedidoNrj } from "../../diseño.ts";
 
 export const LineasListaNrj = ({
     lineas,
     seleccionada,
-    onCambioCantidad,
-    pedidoEditable,
     publicar,
-}: LineasListaProps) => {
+}: LineasListaProps<LineaPedidoNrj>) => {
 
     const setSeleccionada = (linea: LineaPedido) => {
         publicar("linea_seleccionada", linea);
@@ -32,9 +33,8 @@ export const LineasListaNrj = ({
 const getMetaTablaLineas = () => {
     return [
         {
-            id: "linea",
+            id: "id",
             cabecera: "Línea",
-            render: (linea: LineaPedido) => `${linea.referencia}: ${linea.descripcion}`,
         },
         {
             id: "idVariedad",
@@ -46,15 +46,54 @@ const getMetaTablaLineas = () => {
             tipo: "numero" as const,
         },
         {
-            id: "dto_porcentual",
-            cabecera: "% Dto.",
-            render: (linea: LineaPedido) =>
-                linea.dto_porcentual ? `${linea.dto_porcentual}%` : "",
+            id: "cantidad_envases_asignados",
+            cabecera: "Asignada", 
+            render: (linea: LineaPedidoNrj) => AsignacionesLinea({linea}),
         },
+    ];
+};
+
+
+const AsignacionesLinea = ({
+    linea,
+}: {
+    linea: LineaPedidoNrj;
+}) => {
+
+    const [mostrando, setMostrando] = useState(false);
+
+    return linea.cantidad_envases_asignados ? 
+        
+        <div>
+            <QBoton texto={`${linea.cantidad_envases_asignados}`}
+                tamaño="pequeño"
+                onClick={() => setMostrando(true)}
+            />
+            <QModal abierto={mostrando} nombre="mostrar" onCerrar={() => setMostrando(false)}>
+                <div className="CrearLinea">
+                    
+                    <h2>Asignaciones</h2>
+    
+                    <QTabla
+                        metaTabla={getMetaTablaPalets()}
+                        datos={linea.palets} 
+                        cargando={false}
+                        orden={["id", "ASC"]}
+                        onOrdenar={(_: string) => null}
+                    />
+                </div>
+            </QModal>
+        </div>
+        
+    : 0;
+};
+
+const getMetaTablaPalets = () => {
+    return [
         {
-            id: "pvp_total",
-            cabecera: "Total",
-            tipo: "moneda" as const,
+            id: "cantidadEnvases",
+            cabecera: "Envases",
+            tipo: "numero" as const
         },
     ];
 };
