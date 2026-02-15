@@ -5,7 +5,17 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
-export interface LineaPedidoAPI extends LineaPedido { }
+export interface LineaPedidoAPI {
+  id: string;
+  referencia: string | null;
+  descripcion: string;
+  cantidad: number;
+  pvp_unitario: number;
+  dto_porcentual: number;
+  pvp_total: number;
+  grupo_iva_producto_id: string;
+};
+
 type PedidoAPI = Pedido & { fecha: string };
 
 const baseUrl = new ApiUrls().PEDIDO;
@@ -22,7 +32,7 @@ const lineaPedidoDesdeApi: LineaPedidoDesdeApi = (l) => {
   return getInfra().linea_desde_api(l)
 };
 
-const lineaPedidoDesdeApiBase: LineaPedidoDesdeApi = (l) => l;
+const lineaPedidoDesdeApiBase: LineaPedidoDesdeApi = (l) => l as LineaPedido;
 
 export const ventasPedidoInfra: VentasPedidoInfra = {
   linea_desde_api: lineaPedidoDesdeApiBase
