@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { CrmContacto } from "../../diseño.ts";
 import { metaCrmContacto } from "./dominio.ts";
@@ -14,6 +15,7 @@ export const EdicionCrmContactos = ({
   emitir,
 }: EdicionCrmContactosProps) => {
   const { modelo, uiProps, valido } = useModelo(metaCrmContacto, contacto);
+  const focus = useFocus();
 
   const guardar = async () => {
     emitir("actualizar_contacto", modelo);
@@ -23,7 +25,7 @@ export const EdicionCrmContactos = ({
     <div className="edicion-crm-contactos">
       <h2>Editar Contacto CRM</h2>
       <quimera-formulario>
-        <QInput label="Nombre" {...uiProps("nombre")} />
+        <QInput label="Nombre" {...uiProps("nombre")} ref={focus} />
         <QInput label="Email" {...uiProps("email")} />
       </quimera-formulario>
       <div className="botones">

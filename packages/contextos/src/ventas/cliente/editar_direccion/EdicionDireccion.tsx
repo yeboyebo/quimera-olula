@@ -2,6 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
@@ -21,6 +22,7 @@ export const EdicionDireccion = ({
   const { intentar } = useContext(ContextoError);
   const direccionEditada = useModelo(metaDireccion, direccion);
   const [editando, setEditando] = useState(false);
+  const focus = useFocus();
 
   const guardar = useCallback(async () => {
     await intentar(() =>
@@ -52,6 +54,7 @@ export const EdicionDireccion = ({
             label="Tipo de Vía"
             opciones={opciones}
             {...direccionEditada.uiProps("tipo_via")}
+            ref={focus}
           />
         </div>
         <div style={{ gridColumn: "span 10" }}>

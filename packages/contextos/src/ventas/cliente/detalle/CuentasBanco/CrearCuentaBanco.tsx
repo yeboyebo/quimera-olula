@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { postCuentaBanco } from "../../infraestructura.ts";
 import { metaNuevaCuentaBanco, nuevaCuentaBancoVacia } from "./dominio.ts";
@@ -18,6 +19,7 @@ export const CrearCuentaBanco = ({
     metaNuevaCuentaBanco,
     nuevaCuentaBancoVacia
   );
+  const focus = useFocus();
 
   const guardar = async () => {
     const cuentaCreada = await postCuentaBanco(clienteId, modelo);
@@ -28,7 +30,7 @@ export const CrearCuentaBanco = ({
     <div className="alta-cuenta-banco">
       <h2>Nueva Cuenta Bancaria</h2>
       <quimera-formulario>
-        <QInput label="Descripción" {...uiProps("descripcion")} />
+        <QInput label="Descripción" {...uiProps("descripcion")} ref={focus} />
         <QInput label="IBAN" {...uiProps("iban")} />
         <QInput label="BIC" {...uiProps("bic")} />
       </quimera-formulario>

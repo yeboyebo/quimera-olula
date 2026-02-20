@@ -96,7 +96,7 @@ export const metaCambioClienteVenta: MetaModelo<CambioClienteVenta> = {
 
 export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     campos: {
-        cantidad: { requerido: true, tipo: "entero", decimales: 2 },
+        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
         referencia: { requerido: true, tipo: "texto" },
     }
 };

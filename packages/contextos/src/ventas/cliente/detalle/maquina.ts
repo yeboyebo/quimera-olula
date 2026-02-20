@@ -3,12 +3,14 @@ import { publicar } from "@olula/lib/dominio.js";
 import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 import {
     abiertoContexto,
+    actualizarCuentaDomiciliada,
     borrarCliente,
     cambiarCliente,
     cancelarCambioCliente,
     cargarContexto,
     darDeAltaClienteProceso,
     getContextoVacio,
+    limpiarCuentaDomiciliada,
     refrescarCliente,
 } from "./dominio.ts";
 
@@ -37,6 +39,10 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
             borrado_solicitado: "BORRANDO_CLIENTE",
 
             dar_de_alta_solicitado: [darDeAltaClienteProceso],
+
+            cuenta_domiciliada: actualizarCuentaDomiciliada,
+
+            cuenta_domiciliacion_desmarcada: limpiarCuentaDomiciliada,
         },
 
         BAJANDO_CLIENTE: {

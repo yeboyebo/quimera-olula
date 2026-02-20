@@ -22,13 +22,13 @@ export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco>
 
             borrado_solicitado: "confirmar_borrado",
 
-            domiciliar_solicitada: [domiciliarCuentaProceso, recargarCuentas],
+            domiciliar_solicitada: domiciliarCuentaProceso,
 
-            desmarcar_domiciliacion: [desmarcarDomiciliacionProceso, recargarCuentas],
+            desmarcar_domiciliacion: desmarcarDomiciliacionProceso,
         },
 
         alta: {
-            cuenta_creada: [Cuentas.incluir, recargarCuentas, "lista"],
+            cuenta_creada: [recargarCuentas, "lista"],
 
             alta_cancelada: "lista",
         },

@@ -3,7 +3,7 @@
         max-width: 500px;
     }
 
-    quimera-autocompletar[nombre="referencia_nueva_linea_pedido"] {
+    quimera-autocompletar[nombre="referencia_nueva_linea_albaran"] {
         grid-column: span 9;
     }
 
