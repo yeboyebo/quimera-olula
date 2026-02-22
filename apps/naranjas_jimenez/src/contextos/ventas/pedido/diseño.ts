@@ -8,7 +8,20 @@ export interface PaletLineaPedidoNrj extends Entidad {
 
 export interface LineaPedidoNrj extends LineaPedido {
     idVariedad: string;
+    idEnvase: string;
+    idTipoPalet: string;
+    idMarca: string;
+    idCalibre: string;
+    categoria: string;
+    descVariedad: string;
+    descMarca: string;
+    descCalibre: string;
+    descPalet: string;
+    descEnvase: string;
     cantidadEnvasesAsignados: number;
+    cantidadEnvases: number;
+    cantidadPalet: number;
+    envasesPorPalet: number;
     palets: PaletLineaPedidoNrj[];
 }
 

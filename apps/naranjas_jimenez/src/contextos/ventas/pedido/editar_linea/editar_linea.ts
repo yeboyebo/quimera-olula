@@ -4,11 +4,12 @@ import { MetaModelo } from "@olula/lib/dominio.js";
 
 // DISEÑO
 
-type FormCrearLinea = {
+type FormEditarLinea = {
     idVariedad: string;
     idMarca: string;
     idCalibre: string;
     categoria: string;
+    idEnvase: string;
     variedad: string;
     marca: string;
     calibre: string;
@@ -21,15 +22,16 @@ type FormCrearLinea = {
     envasesPorPalet: number;
 }
 
-export type PostLineaNrj = (id: string, linea: FormCrearLinea) => Promise<string>;
+export type PatchLineaNrj = (idPedido: string, idLinea: string, linea: FormEditarLinea) => Promise<void>;
 
 
 // CONTROL
 
-export const FormCrearLineaDefecto: FormCrearLinea = {
+export const FormEditarLineaDefecto: FormEditarLinea = {
     idVariedad: "",
     idMarca: "",
     idCalibre: "",
+    idEnvase: "",
     categoria: "",
     variedad: "",
     marca: "",
@@ -43,7 +45,7 @@ export const FormCrearLineaDefecto: FormCrearLinea = {
     envasesPorPalet: 0
 };
 
-const onChange = (modelo: FormCrearLinea, campo: string, _: unknown, palet?: Record<string, unknown>) => {
+const onChange = (modelo: FormEditarLinea, campo: string, _: unknown, palet?: Record<string, unknown>) => {
 
     if (campo === "idTipoPalet" && palet) {
         const envasesPorPalet = palet.cantidadEnvase as number;
@@ -62,12 +64,13 @@ const onChange = (modelo: FormCrearLinea, campo: string, _: unknown, palet?: Rec
     return modelo;
 }
 
-export const metaCrearLinea: MetaModelo<FormCrearLinea> = {
+export const metaEditarLinea: MetaModelo<FormEditarLinea> = {
     campos: {
         idVariedad: { tipo: "texto", requerido: true },
         idTipoPalet: { tipo: "texto", requerido: true },
         idMarca: { tipo: "texto", requerido: true },
         idCalibre: { tipo: "texto", requerido: true },
+        idEnvase: { tipo: "texto", requerido: true },
         categoria: { tipo: "texto", requerido: true },
         observaciones: { tipo: "texto", requerido: false },
         cantidadPalets: { tipo: "entero", requerido: false },
@@ -80,25 +83,23 @@ export const metaCrearLinea: MetaModelo<FormCrearLinea> = {
 
 const baseUrl = new ApiUrls().PEDIDO;
 
-export const postLineaNrj: PostLineaNrj = async (id, linea) => {
+export const patchLineaNrj: PatchLineaNrj = async (idPedido, idLinea, linea) => {
 
-    return await RestAPI.post(
-        `${baseUrl}/${id}/linea`,
+    return await RestAPI.patch(
+        `${baseUrl}/${idPedido}/linea/${idLinea}`,
         {
             lineas: [{
                 variedad_id: linea.idVariedad,
                 marca_id: linea.idMarca,
                 calibre_id: linea.idCalibre,
+                envase_id: linea.idEnvase,
                 categoria: linea.categoria,
                 cantidad: linea.cantidadEnvases,
                 tipo_palet_id: linea.idTipoPalet,
-                cantidad_palets: linea.cantidadPalets,
-                observaciones: linea.observaciones,
+                cantidad_palets: linea.cantidadPalets
+
             }]
         },
-        "Error al crear la linea de pedido"
-    ).then((respuesta) => {
-        const miRespuesta = respuesta as unknown as { ids: string[] };
-        return miRespuesta.ids[0];
-    });
+        "Error al editar la linea de pedido"
+    );
 }

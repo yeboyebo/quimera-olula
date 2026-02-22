@@ -3,18 +3,18 @@ import {
   QAutocompletarProps,
 } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
-import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
+import { getItemsListaMarca } from "../../marca/infraestructura.ts";
 
-type TipoPaletProps = Omit<QAutocompletarProps, "obtenerOpciones">;
+type MarcaProps = Omit<QAutocompletarProps, "obtenerOpciones">;
 
-export const TipoPalet = ({
+export const Marca = ({
   descripcion = "",
   valor,
-  nombre = "tipo_palet",
-  label = "Tipo Palet",
+  nombre = "marca",
+  label = "Marca",
   onChange,
   ...props
-}: TipoPaletProps) => {
+}: MarcaProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria: Criteria = {
       filtro: [["descripcion", "~", texto]],
@@ -22,15 +22,11 @@ export const TipoPalet = ({
       paginacion: { limite: 10, pagina: 1 },
     };
 
-    const tiposPalet = await getItemsListaTipoPalet(
-      criteria.filtro,
-      criteria.orden
-    );
+    const marcaes = await getItemsListaMarca(criteria.filtro, criteria.orden);
 
-    return tiposPalet.map((tipoPalet) => ({
-      ...tipoPalet,
-      valor: tipoPalet.id,
-      descripcion: tipoPalet.descripcion,
+    return marcaes.map((marca) => ({
+      valor: marca.id,
+      descripcion: marca.descripcion,
     }));
   };
 
@@ -40,8 +36,8 @@ export const TipoPalet = ({
       nombre={nombre}
       onChange={onChange}
       valor={valor}
-      obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      obtenerOpciones={obtenerOpciones}
       {...props}
     />
   );

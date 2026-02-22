@@ -1,44 +1,82 @@
-import { CrearLineaProps } from "#/ventas/pedido/crear_linea/CrearLinea.tsx";
+import { TagArticulo } from "#/ventas/articulo/diseño.ts";
+import { LineaPedido } from "#/ventas/pedido/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal, QSelect, QTextArea } from "@olula/componentes/index.js";
+import { ContextoError } from "@olula/lib/contexto.js";
 import { useFocus } from "@olula/lib/useFocus.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
-import "./CrearLinea.css";
+import "./EditarLinea.css";
 import {
-  FormCrearLineaDefecto,
-  metaCrearLinea,
-  postLineaNrj,
-} from "./crear_linea.ts";
+  FormEditarLineaDefecto,
+  metaEditarLinea,
+  patchLineaNrj,
+} from "./editar_linea.ts";
 
-export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
-  const { modelo, uiProps, valido } = useModelo(
-    metaCrearLinea,
-    FormCrearLineaDefecto
+export const EditarLineaNrj = ({
+  pedidoId,
+  publicar,
+  linea,
+}: {
+  pedidoId: string;
+  linea: LineaPedido;
+  publicar: ProcesarEvento;
+}) => {
+  const { intentar } = useContext(ContextoError);
+  const formEditarLineaInicial = useMemo(
+    () => ({
+      ...FormEditarLineaDefecto,
+      ...linea,
+    }),
+    [linea]
   );
 
-  const crear = useCallback(async () => {
-    await postLineaNrj(pedidoId, modelo);
-    publicar("alta_linea_lista");
-  }, [modelo, publicar, pedidoId]);
+  const { modelo, uiProps, valido, set } = useModelo(
+    metaEditarLinea,
+    formEditarLineaInicial
+  );
+
+  const [cambiando, setCambiando] = useState(false);
+
+  const cambiar = useCallback(async () => {
+    await intentar(() => patchLineaNrj(pedidoId, linea.id, modelo));
+    setCambiando(true);
+    publicar("linea_actualizada");
+  }, [modelo, publicar, pedidoId, intentar]);
 
   const cancelar = useCallback(() => {
-    publicar("crear_linea_cancelado");
-  }, [publicar]);
+    if (!cambiando) publicar("editar_linea_cancelado");
+  }, [cambiando, publicar]);
+
+  const handleArticuloChange = useCallback(
+    (
+      opcion: { valor: string; descripcion: string; datos?: TagArticulo } | null
+    ) => {
+      if (!opcion) return;
+
+      const articulo = opcion.datos;
+      if (!articulo) return;
+
+      set({
+        ...modelo,
+      });
+    },
+    [modelo, set]
+  );
 
   const focus = useFocus();
-
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
-  console.log("Modelo", modelo);
+
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-      <div className="CrearLinea">
-        <h2>Crear línea NRJ</h2>
+      <div className="EditarLinea">
+        <h2>Editar línea NRJ</h2>
 
         <quimera-formulario>
           <TipoPalet
@@ -90,7 +128,7 @@ export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
         </quimera-formulario>
 
         <div className="botones maestro-botones ">
-          <QBoton texto="Crear" onClick={crear} deshabilitado={!valido} />
+          <QBoton texto="Guardar" onClick={cambiar} deshabilitado={!valido} />
         </div>
       </div>
     </QModal>
