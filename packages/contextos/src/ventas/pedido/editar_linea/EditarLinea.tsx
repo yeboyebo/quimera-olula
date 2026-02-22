@@ -4,6 +4,7 @@ import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
@@ -13,15 +14,24 @@ import { patchLinea } from "../infraestructura.ts";
 import { metaLinea } from "./dominio.ts";
 import "./EditarLinea.css";
 
-export const EditarLinea = ({
-  pedidoId,
-  publicar,
-  linea,
-}: {
+export type EditarLineaProps = {
   pedidoId: string;
   linea: LineaPedido;
   publicar: ProcesarEvento;
-}) => {
+};
+
+export const EditarLinea = (props: EditarLineaProps) => {
+  const { app } = useContext(FactoryCtx);
+  const EditarLinea_ = app.Ventas.pedido_EditarLinea as typeof EditarLineaBase;
+
+  return EditarLinea_(props);
+};
+
+export const EditarLineaBase = ({
+  pedidoId,
+  publicar,
+  linea,
+}: EditarLineaProps) => {
   const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido, set } = useModelo(metaLinea, linea);
   const [cambiando, setCambiando] = useState(false);
