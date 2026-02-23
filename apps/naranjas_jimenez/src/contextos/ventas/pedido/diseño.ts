@@ -13,6 +13,7 @@ export interface LineaPedidoNrj extends LineaPedido {
     idMarca: string;
     idCalibre: string;
     categoria: string;
+    categoriaFormateada: string;
     descVariedad: string;
     descMarca: string;
     descCalibre: string;

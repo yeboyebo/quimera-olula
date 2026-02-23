@@ -41,6 +41,7 @@ const lineaPedidoDesdeApi = (l: LineaPedidoApiNrj): LineaPedidoNrj => {
         idEnvase: l.envase_id,
         descEnvase: l.envase,
         categoria: l.categoria,
+        categoriaFormateada: l.categoria + "ª",
 
         cantidadEnvasesAsignados: l.cantidad_envases_asignados,
         palets: l.palets.map(p => ({

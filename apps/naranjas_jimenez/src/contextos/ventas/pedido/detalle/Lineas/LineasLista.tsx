@@ -60,7 +60,7 @@ const getMetaTablaLineas = () => {
       cabecera: "Descripción calibre",
     },
     {
-      id: "categoria",
+      id: "categoriaFormateada",
       cabecera: "Categoría",
     },
     {
