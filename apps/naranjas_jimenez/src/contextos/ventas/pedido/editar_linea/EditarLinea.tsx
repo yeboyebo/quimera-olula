@@ -81,7 +81,7 @@ export const EditarLineaNrj = ({
         <quimera-formulario>
           <TipoPalet
             label="Tipo Palet"
-            {...uiProps("idTipoPalet", "tipopalet")}
+            {...uiProps("idTipoPalet", "tipo_palet_id")}
             ref={focus}
           />
           <Variedad label="Variedad" {...uiProps("idVariedad", "variedad")} />

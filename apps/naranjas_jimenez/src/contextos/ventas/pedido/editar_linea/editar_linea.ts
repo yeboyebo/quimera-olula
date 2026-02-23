@@ -88,17 +88,17 @@ export const patchLineaNrj: PatchLineaNrj = async (idPedido, idLinea, linea) => 
     return await RestAPI.patch(
         `${baseUrl}/${idPedido}/linea/${idLinea}`,
         {
-            lineas: [{
+            cambios: {
                 variedad_id: linea.idVariedad,
                 marca_id: linea.idMarca,
                 calibre_id: linea.idCalibre,
-                envase_id: linea.idEnvase,
                 categoria: linea.categoria,
                 cantidad: linea.cantidadEnvases,
                 tipo_palet_id: linea.idTipoPalet,
-                cantidad_palets: linea.cantidadPalets
+                cantidad_palets: linea.cantidadPalets,
+                observaciones: linea.observaciones
+            }
 
-            }]
         },
         "Error al editar la linea de pedido"
     );
