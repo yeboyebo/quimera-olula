@@ -81,7 +81,7 @@ const getMetaTablaLineas = () => {
     },
     {
       id: "cantidad",
-      cabecera: "Cantidad",
+      cabecera: "Cnt. Envases",
       tipo: "numero" as const,
     },
     {
