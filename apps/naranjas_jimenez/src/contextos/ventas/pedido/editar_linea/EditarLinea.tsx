@@ -12,6 +12,7 @@ import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
+import { formateaCategoria } from "../dominio.ts";
 import "./EditarLinea.css";
 import {
   FormEditarLineaDefecto,
@@ -94,15 +95,15 @@ export const EditarLineaNrj = ({
             opciones={[
               {
                 valor: "1",
-                descripcion: "1ª",
+                descripcion: formateaCategoria("1"),
               },
               {
                 valor: "2",
-                descripcion: "2ª",
+                descripcion: formateaCategoria("2"),
               },
               {
                 valor: "3",
-                descripcion: "3ª",
+                descripcion: formateaCategoria("3"),
               },
             ]}
           />

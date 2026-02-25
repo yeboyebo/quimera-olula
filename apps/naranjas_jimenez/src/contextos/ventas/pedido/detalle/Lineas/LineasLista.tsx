@@ -4,6 +4,7 @@ import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QBoton, QModal } from "@olula/componentes/index.js";
 import { useState } from "react";
 import { LineaPedidoNrj } from "../../diseño.ts";
+import { formateaCategoria } from "../../dominio.ts";
 
 export const LineasListaNrj = ({
   lineas,
@@ -60,8 +61,9 @@ const getMetaTablaLineas = () => {
       cabecera: "Descripción calibre",
     },
     {
-      id: "categoriaFormateada",
+      id: "categoria",
       cabecera: "Categoría",
+      render: (linea: LineaPedidoNrj) => formateaCategoria(linea.categoria),
     },
     {
       id: "idTipoPalet",
