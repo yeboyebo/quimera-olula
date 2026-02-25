@@ -1,7 +1,5 @@
-import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
 import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -13,7 +11,7 @@ import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
 import "./MaestroConDetallePedido.css";
 import { getMaquina } from "./maquina.ts";
-import { metaTablaPedido as metaTablaBase } from "./metatabla_pedido.ts";
+import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
 
 export const MaestroConDetallePedido = () => {
   const { ctx, emitir } = useMaquina(getMaquina, {
@@ -40,34 +38,36 @@ export const MaestroConDetallePedido = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const metaTablaPedido = [
-    {
-      id: "estado",
-      cabecera: "",
-      render: (pedido: Pedido) => (
-        <ColumnaEstadoTabla
-          estados={{
-            aprobado: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-deshabilitado-oscuro)"
-              />
-            ),
-            pendiente: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-exito-oscuro)"
-              />
-            ),
-          }}
-          estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
-        />
-      ),
-    },
-    ...metaTablaBase,
-  ] as MetaTabla<Pedido>;
+  const metaTablaPedido = getMetaTablaPedido();
+
+  // const metaTablaPedido = [
+  //   {
+  //     id: "estado",
+  //     cabecera: "",
+  //     render: (pedido: Pedido) => (
+  //       <ColumnaEstadoTabla
+  //         estados={{
+  //           aprobado: (
+  //             <QIcono
+  //               nombre={"circulo_relleno"}
+  //               tamaño="sm"
+  //               color="var(--color-deshabilitado-oscuro)"
+  //             />
+  //           ),
+  //           pendiente: (
+  //             <QIcono
+  //               nombre={"circulo_relleno"}
+  //               tamaño="sm"
+  //               color="var(--color-exito-oscuro)"
+  //             />
+  //           ),
+  //         }}
+  //         estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
+  //       />
+  //     ),
+  //   },
+  //   ...metaTablaBase,
+  // ] as MetaTabla<Pedido>;
 
   return (
     <div className="Pedido">

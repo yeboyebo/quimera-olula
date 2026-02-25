@@ -66,6 +66,7 @@ const a_string = (
 ): string => {
   let formateado = "";
 
+  console.log("valor", valor, "tipo", typeof valor);
 
   if (tipo === "moneda" && typeof valor === "number") {
     formateado = formatearMoneda(valor, divisa ?? "EUR");
@@ -88,7 +89,7 @@ const a_string = (
   } else if (typeof valor === "undefined" || valor === null) {
     formateado = "";
   } else {
-    throw new Error(`Tipo de dato desconocido: ${tipo}`);
+    throw new Error(`Tipo de dato desconocido: ${tipo} para valor ${valor}`);
   }
 
   return formateado;
@@ -109,8 +110,8 @@ const fila = <T extends Entidad>(
     const valorCelda =
       cargando && typeof entidad[id] == "string"
         ? (entidad[id] as string)
-        : render?.(entidad as T) ??
-          a_string(entidad[id] as string, tipo, divisa);
+        : (render?.(entidad as T) ??
+          a_string(entidad[id] as string, tipo, divisa));
 
     return (
       <td
