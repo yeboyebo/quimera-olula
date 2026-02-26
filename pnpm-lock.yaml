@@ -91,7 +91,43 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
 
+  apps/barnaplant:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+      quimera:
+        specifier: workspace:@quimera/core@*
+        version: link:../../legacy/libs/core
+
   apps/cabrera:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+      quimera:
+        specifier: workspace:@quimera/core@*
+        version: link:../../legacy/libs/core
+
+  apps/cash:
     dependencies:
       '@olula/componentes':
         specifier: workspace:*
