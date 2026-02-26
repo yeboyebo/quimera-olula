@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearLead } from "../crear/CrearLead.tsx";
 import { DetalleLead } from "../detalle/DetalleLead.tsx";
 import { Lead } from "../diseño.ts";
@@ -14,29 +13,22 @@ import "./MaestroLeads.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroLeads = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    leads: listaEntidadesInicial<Lead>(),
+    leads: listaActivaEntidadesInicial<Lead>(id, criteria),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_leads_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.leads.activo, ctx.leads.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_leads_solicitada", ctx.leads.criteria);
   }, []);
 
   return (
-    <div className="Lead">
-      <MaestroDetalleControlado<Lead>
+    <div className="MaestroLeads">
+      <MaestroDetalleActivoControlado<Lead>
         Maestro={
           <>
             <h2>Leads</h2>
@@ -47,23 +39,22 @@ export const MaestroLeads = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<Lead>
+            <ListadoActivoControlado<Lead>
               metaTabla={metaTablaLead}
               metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.leads.criteria}
               modo={"tabla"}
-              // setModo={handleSetModoVisualizacion}
-              // tarjeta={tarjeta}
               entidades={ctx.leads.lista}
               totalEntidades={ctx.leads.total}
               seleccionada={ctx.leads.activo}
               onSeleccion={(payload) => emitir("lead_seleccionado", payload)}
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={<DetalleLead inicial={ctx.leads.activo} publicar={emitir} />}
+        Detalle={<DetalleLead id={ctx.leads.activo} publicar={emitir} />}
         seleccionada={ctx.leads.activo}
         modoDisposicion="maestro-50"
       />
