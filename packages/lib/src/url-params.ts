@@ -1,5 +1,5 @@
-import { Criteria, Filtro, Paginacion } from "diseño.ts";
 import { useEffect } from "react";
+import { Criteria, Filtro, Paginacion } from "./diseño.ts";
 
 const formarUrl = (params: URLSearchParams) => {
     const str = params.toString();
