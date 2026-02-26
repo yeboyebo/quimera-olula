@@ -11,22 +11,29 @@ const metaTablaPedido: MetaTabla<Pedido> = [
     render: (pedido: Pedido) => (
       <ColumnaEstadoTabla
         estados={{
-          aprobado: (
-            <QIcono
-              nombre={"circulo_relleno"}
-              tamaño="sm"
-              color="var(--color-deshabilitado-oscuro)"
-            />
-          ),
-          pendiente: (
+          completo: (
             <QIcono
               nombre={"circulo_relleno"}
               tamaño="sm"
               color="var(--color-exito-oscuro)"
             />
           ),
+          pendiente: (
+            <QIcono
+              nombre={"circulo_relleno"}
+              tamaño="sm"
+              color="var(--color-error-oscuro)"
+            />
+          ),
+          parcial: (
+            <QIcono
+              nombre={"circulo_relleno"}
+              tamaño="sm"
+              color="var(--color-advertencia-claro)"
+            />
+          ),
         }}
-        estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
+        estadoActual={pedido.estado_envio_palets}
       />
     ),
   },
