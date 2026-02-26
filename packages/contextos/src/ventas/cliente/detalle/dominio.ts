@@ -142,12 +142,13 @@ export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
     ]);
 }
 
-export const borrarCliente: ProcesarCliente = async (contexto) => {
+export const borrarCliente: ProcesarCliente = async (contexto, payload) => {
     // await deleteCliente(contexto.cliente.id);
+    const { clienteId } = payload as { clienteId: string } ?? { clienteId: contexto.cliente.id };
 
     return pipeCliente(contexto, [
         getContextoVacio,
-        publicar('cliente_borrado', contexto.cliente)
+        publicar('cliente_borrado', clienteId)
     ]);
 }
 
@@ -168,6 +169,39 @@ export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload
         cargarCliente(contexto.cliente.id),
         abiertoContexto,
     ]);
+}
+
+export const actualizarCuentaDomiciliada: ProcesarCliente = async (contexto, payload) => {
+    const { cuenta_id, descripcion } = payload as { cuenta_id: string; descripcion: string };
+    return {
+        ...contexto,
+        cliente: {
+            ...contexto.cliente,
+            cuenta_domiciliada: cuenta_id,
+            descripcion_cuenta: descripcion,
+        },
+        clienteInicial: {
+            ...contexto.clienteInicial,
+            cuenta_domiciliada: cuenta_id,
+            descripcion_cuenta: descripcion,
+        },
+    };
+}
+
+export const limpiarCuentaDomiciliada: ProcesarCliente = async (contexto) => {
+    return {
+        ...contexto,
+        cliente: {
+            ...contexto.cliente,
+            cuenta_domiciliada: "",
+            descripcion_cuenta: "",
+        },
+        clienteInicial: {
+            ...contexto.clienteInicial,
+            cuenta_domiciliada: "",
+            descripcion_cuenta: "",
+        },
+    };
 }
 
 

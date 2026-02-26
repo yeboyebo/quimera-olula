@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
+import { MetaModelo } from "@olula/lib/dominio.js";
 import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CuentaBanco, NuevaCuentaBanco } from "../../diseño.ts";
 import {
@@ -36,8 +36,6 @@ export const metaTablaCuentasBanco = [
 
 type ProcesarCuentasBanco = ProcesarContexto<EstadoCuentasBanco, ContextoCuentasBanco>;
 
-const pipeCuentasBanco = ejecutarListaProcesos<EstadoCuentasBanco, ContextoCuentasBanco>;
-
 const conCuentas = (fn: ProcesarListaEntidades<CuentaBanco>) =>
     (ctx: ContextoCuentasBanco) => ({ ...ctx, cuentas: fn(ctx.cuentas) });
 
@@ -59,15 +57,20 @@ export const domiciliarCuentaProceso: ProcesarCuentasBanco = async (contexto) =>
 
     await domiciliarCuenta(contexto.clienteId, contexto.cuentas.activo.id);
 
-    return pipeCuentasBanco(contexto, [
-        recargarCuentas,
-    ]);
+    return [
+        contexto,
+        [["cuenta_domiciliada", {
+            cuenta_id: contexto.cuentas.activo.id,
+            descripcion: contexto.cuentas.activo.descripcion,
+        }]]
+    ];
 }
 
 export const desmarcarDomiciliacionProceso: ProcesarCuentasBanco = async (contexto) => {
     await desmarcarCuentaDomiciliacion(contexto.clienteId);
 
-    return pipeCuentasBanco(contexto, [
-        recargarCuentas,
-    ]);
+    return [
+        contexto,
+        [["cuenta_domiciliacion_desmarcada"]]
+    ];
 }

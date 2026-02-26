@@ -17,7 +17,7 @@ export const BorrarLinea = ({
 
   const borrar = async () => {
     await intentar(() => deleteLinea(albaranId, idLinea));
-    publicar("borrado_linea_listo", idLinea);
+    publicar("linea_borrada", idLinea);
   };
 
   const cancelar = () => {

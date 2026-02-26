@@ -1,6 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
@@ -20,6 +21,7 @@ export const CrearDireccion = ({
     nuevaDireccionVacia
   );
   const [creando, setCreando] = useState(false);
+  const focus = useFocus();
 
   const guardar = useCallback(async () => {
     await intentar(() => postDireccion(clienteId, modelo));
@@ -34,7 +36,7 @@ export const CrearDireccion = ({
   return (
     <div className="CrearDireccion">
       <quimera-formulario>
-        <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
+        <QInput label="Tipo de Vía" {...uiProps("tipo_via")} ref={focus} />
         <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
         <QInput label="Ciudad" {...uiProps("ciudad")} />
       </quimera-formulario>

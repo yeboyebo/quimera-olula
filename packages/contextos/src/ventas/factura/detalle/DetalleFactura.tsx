@@ -4,7 +4,7 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
@@ -27,6 +27,7 @@ export const DetalleFactura = ({
 }) => {
   const params = useParams();
   const facturaId = facturaInicial?.id ?? params.id;
+  const facturaIdCargadaRef = useRef<string | null>(null);
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
@@ -41,9 +42,13 @@ export const DetalleFactura = ({
 
   const factura = useModelo(metaFactura, ctx.factura);
 
-  if (facturaId && facturaId !== ctx.factura.id) {
-    emitir("factura_id_cambiado", facturaId, true);
-  }
+  useEffect(() => {
+    if (facturaId && facturaId !== facturaIdCargadaRef.current) {
+      facturaIdCargadaRef.current = facturaId;
+      emitir("factura_id_cambiado", facturaId, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [facturaId]);
 
   const { estado, lineaActiva } = ctx;
 
@@ -54,8 +59,8 @@ export const DetalleFactura = ({
   }, [emitir]);
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_factura_lista", ctx.factura);
-  }, [emitir, ctx.factura]);
+    emitir("edicion_de_factura_lista", factura.modelo);
+  }, [emitir, factura]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_factura_cancelada");

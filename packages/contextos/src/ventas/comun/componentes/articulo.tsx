@@ -1,11 +1,13 @@
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { getTagsArticulo } from "../../articulo/infraestructura.ts";
+
 interface ArticuloProps {
   descripcion?: string;
   valor: string;
   nombre?: string;
   label?: string;
+  autoFocus?: boolean;
   ref?: React.RefObject<HTMLInputElement | null>;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
@@ -32,6 +34,7 @@ export const Articulo = ({
     return articulos.map((articulo) => ({
       valor: articulo.id,
       descripcion: articulo.descripcion,
+      datos: articulo,
     }));
   };
 

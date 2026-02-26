@@ -3,21 +3,22 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useState } from "react";
 import { Cliente } from "../../comun/componentes/cliente.tsx";
 import { DirCliente } from "../../comun/componentes/dirCliente.tsx";
 import {
-    NuevoPresupuesto,
-    NuevoPresupuestoClienteNoRegistrado,
+  NuevoPresupuesto,
+  NuevoPresupuestoClienteNoRegistrado,
 } from "../diseño.ts";
 import { getPresupuesto, postPresupuesto } from "../infraestructura.ts";
 import "./CrearPresupuesto.css";
 import {
-    metaNuevoPresupuesto,
-    metaNuevoPresupuestoClienteNoRegistrado,
-    nuevoPresupuestoClienteNoRegistradoVacio,
-    nuevoPresupuestoVacio,
+  metaNuevoPresupuesto,
+  metaNuevoPresupuestoClienteNoRegistrado,
+  nuevoPresupuestoClienteNoRegistradoVacio,
+  nuevoPresupuestoVacio,
 } from "./dominio.ts";
 
 export const CrearPresupuesto = ({
@@ -81,6 +82,7 @@ const FormAltaPresupuesto = ({
   onToggleModoCliente: () => void;
 }) => {
   const { intentar } = useContext(ContextoError);
+  const focus = useFocus();
 
   const crear = async () => {
     let modelo;
@@ -119,6 +121,7 @@ const FormAltaPresupuesto = ({
             <QInput
               label="Nombre del Cliente"
               {...presupuestoNoRegistrado.uiProps("nombre_cliente")}
+              ref={focus}
             />
             <QInput
               label="ID Fiscal"
@@ -147,6 +150,7 @@ const FormAltaPresupuesto = ({
             <Cliente
               {...presupuestoRegistrado.uiProps("cliente_id", "nombre")}
               nombre="clientePresupuesto"
+              ref={focus}
             />
             <DirCliente
               clienteId={presupuestoRegistrado.modelo.cliente_id}

@@ -17,7 +17,7 @@ export const BorrarLinea = ({
 
   const borrar = useCallback(async () => {
     await intentar(() => deleteLinea(pedidoId, idLinea));
-    publicar("borrado_linea_listo");
+    publicar("linea_borrada");
   }, [pedidoId, idLinea, publicar, intentar]);
   return (
     <QModalConfirmacion

@@ -3,6 +3,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
@@ -23,6 +24,7 @@ export const CrearLinea = ({
     nuevaLineaAlbaranVacia
   );
   const [creando, setCreando] = useState(false);
+  const focus = useFocus();
 
   const crear = useCallback(async () => {
     await intentar(() => postLinea(albaranId, modelo));
@@ -42,6 +44,7 @@ export const CrearLinea = ({
           <Articulo
             {...uiProps("referencia", "descripcion")}
             nombre="referencia_nueva_linea_albaran"
+            ref={focus}
           />
           <QInput label="Cantidad" {...uiProps("cantidad")} />
         </quimera-formulario>

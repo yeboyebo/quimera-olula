@@ -9,6 +9,6 @@ export const nuevaLineaVacia: NuevaLineaPedido = {
 export const metaNuevaLinea: MetaModelo<NuevaLineaPedido> = {
     campos: {
         referencia: { requerido: true },
-        cantidad: { requerido: true },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
     }
 };

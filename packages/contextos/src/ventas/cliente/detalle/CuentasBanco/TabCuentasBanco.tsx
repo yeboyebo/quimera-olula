@@ -2,22 +2,35 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useEffect } from "react";
-import { CuentaBanco } from "../../diseño.ts";
+import { Cliente, CuentaBanco } from "../../diseño.ts";
 import { BorrarCuentaBanco } from "./BorrarCuentaBanco.tsx";
 import { CrearCuentaBanco } from "./CrearCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
-import { TabCuentasBancoLista } from "./TabCuentasBancoLista.tsx";
 import { getMaquina } from "./maquina.ts";
+import { TabCuentasBancoLista } from "./TabCuentasBancoLista.tsx";
 
-export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
-  const { ctx, emitir } = useMaquina(getMaquina, {
-    estado: "lista",
-    cuentas: listaEntidadesInicial<CuentaBanco>(),
-    cargando: true,
-    clienteId,
-  });
+export const TabCuentasBanco = ({
+  cliente,
+  publicar,
+}: {
+  cliente: Cliente;
+  publicar: EmitirEvento;
+}) => {
+  const clienteId = cliente.id;
+
+  const { ctx, emitir } = useMaquina(
+    getMaquina,
+    {
+      estado: "lista",
+      cuentas: listaEntidadesInicial<CuentaBanco>(),
+      cargando: true,
+      clienteId,
+    },
+    publicar
+  );
 
   useEffect(() => {
     if (clienteId) emitir("cargar_cuentas", clienteId, true);
@@ -62,6 +75,7 @@ export const TabCuentasBanco = ({ clienteId }: { clienteId: string }) => {
           seleccionada={ctx.cuentas.activo}
           emitir={emitir}
           cargando={ctx.cargando}
+          cuentaDomiciliadaId={cliente.cuenta_domiciliada ?? ""}
         />
       </>
       <QModal

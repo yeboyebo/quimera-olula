@@ -51,8 +51,8 @@ export const DetallePedido = ({
   const titulo = (pedido: Pedido) => pedido.codigo || "Nuevo Pedido";
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_pedido_lista", ctx.pedido);
-  }, [emitir, ctx.pedido]);
+    emitir("edicion_de_pedido_lista", pedido.modelo);
+  }, [emitir, pedido]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_pedido_cancelada");

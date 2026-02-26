@@ -37,11 +37,27 @@ export const getFacturas: GetFacturas = async (
 
 
 export const postFactura: PostFactura = async (factura) => {
+  const cliente = factura.cliente_id
+    ? { cliente_id: factura.cliente_id }
+    : {
+      nombre_cliente: factura.nombre_cliente || "",
+      id_fiscal: factura.id_fiscal || "",
+      direccion: {
+        tipo_via: factura.tipo_via || "",
+        nombre_via: factura.nombre_via || "",
+        numero: factura.numero || "",
+        otros: factura.otros || "",
+        cod_postal: factura.cod_postal || "",
+        ciudad: factura.ciudad || "",
+        provincia_id: factura.provincia_id || "",
+        pais_id: factura.pais_id || "",
+        apartado: factura.apartado || "",
+        telefono: factura.telefono || ""
+      }
+    };
+
   const payload = {
-    cliente: {
-      cliente_id: factura.cliente_id,
-      // direccion_id: factura.direccion_id
-    },
+    cliente,
     empresa_id: factura.empresa_id
   };
   return await RestAPI.post(baseUrl, payload, "Error al crear factura").then((respuesta) => respuesta.id);

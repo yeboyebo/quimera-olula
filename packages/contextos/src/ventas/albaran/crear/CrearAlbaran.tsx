@@ -4,6 +4,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { metaNuevoAlbaran, nuevoAlbaranVacio } from "../dominio.ts";
@@ -17,6 +18,7 @@ export const CrearAlbaran = ({
 }) => {
   const nuevoAlbaran = useModelo(metaNuevoAlbaran, nuevoAlbaranVacio);
   const { intentar } = useContext(ContextoError);
+  const focus = useFocus();
 
   const guardar = async () => {
     const id = await intentar(() => postAlbaran(nuevoAlbaran.modelo));
@@ -36,6 +38,7 @@ export const CrearAlbaran = ({
         <Cliente
           {...nuevoAlbaran.uiProps("cliente_id", "nombre")}
           nombre="albaran_cliente_id"
+          ref={focus}
         />
         <DirCliente
           clienteId={nuevoAlbaran.modelo.cliente_id}

@@ -75,7 +75,13 @@ export const MaestroConDetalleFactura = () => {
         modoDisposicion="maestro-50"
       />
 
-      {ctx.estado === "CREANDO_FACTURA" && <CrearFactura publicar={emitir} />}
+      {ctx.estado === "CREANDO_FACTURA" && (
+        <CrearFactura
+          publicar={emitir}
+          activo={true}
+          onCancelar={() => emitir("creacion_factura_cancelada")}
+        />
+      )}
     </div>
   );
 };

@@ -15,7 +15,7 @@ export const BorrarLinea = ({
       titulo="Borrar línea"
       mensaje="¿Está seguro de que desea borrar esta línea?"
       onCerrar={() => publicar("borrar_linea_cancelado")}
-      onAceptar={() => publicar("borrado_de_linea_listo", idLinea)}
+      onAceptar={() => publicar("linea_borrada", idLinea)}
     />
   );
 };

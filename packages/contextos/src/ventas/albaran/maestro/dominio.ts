@@ -30,6 +30,7 @@ export const desactivarAlbaranActivo: ProcesarAlbaranes = async (contexto) => {
 
 export const quitarAlbaranDeLista: ProcesarAlbaranes = async (contexto, payload) => {
     const albaranBorrado = payload as Albaran;
+
     return {
         ...contexto,
         albaranes: contexto.albaranes.filter(a => a.id !== albaranBorrado.id),

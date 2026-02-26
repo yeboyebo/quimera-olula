@@ -56,8 +56,8 @@ export const DetalleCliente = ({
   const titulo = (cliente: Cliente) => cliente.nombre as string;
 
   const handleGuardar = useCallback(() => {
-    emitir("edicion_de_cliente_lista", ctx.cliente);
-  }, [emitir, ctx.cliente]);
+    emitir("edicion_de_cliente_lista", cliente.modelo);
+  }, [emitir, cliente]);
 
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_cliente_cancelada");
@@ -117,7 +117,9 @@ export const DetalleCliente = ({
                 <Tab
                   key="tab-4"
                   label="Cuentas Bancarias"
-                  children={<TabCuentasBanco clienteId={clienteIdActual} />}
+                  children={
+                    <TabCuentasBanco cliente={ctx.cliente} publicar={emitir} />
+                  }
                 />,
                 <Tab
                   key="tab-5"

@@ -41,12 +41,6 @@ export type NuevaVenta = {
     empresa_id: string;
 };
 
-// export type CambioClienteVenta = {
-//     cliente_id: string;
-//     nombre_cliente: string;
-//     direccion_id: string;
-// };
-
 export type CambioClienteVenta = {
     cliente_id?: string;
     nombre_cliente?: string;

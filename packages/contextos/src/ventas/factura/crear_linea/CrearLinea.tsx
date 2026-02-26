@@ -2,6 +2,7 @@ import { Articulo } from "#/ventas/comun/componentes/articulo.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
 import "./CrearLinea.css";
@@ -17,10 +18,11 @@ export const CrearLinea = ({
     nuevaLineaFacturaVacia
   );
   const [creando, setCreando] = useState(false);
+  const focus = useFocus();
 
   const crear = async () => {
     setCreando(true);
-    publicar("alta_de_linea_lista", modelo);
+    publicar("linea_creada", modelo);
   };
 
   const cancelar = useCallback(() => {
@@ -29,12 +31,13 @@ export const CrearLinea = ({
 
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-      <div className="AltaLinea">
+      <div className="CrearLinea">
         <h2>Crear línea</h2>
         <quimera-formulario>
           <Articulo
             {...uiProps("referencia", "descripcion")}
             nombre="referencia_nueva_linea_factura"
+            ref={focus}
           />
           <QInput label="Cantidad" {...uiProps("cantidad")} />
         </quimera-formulario>

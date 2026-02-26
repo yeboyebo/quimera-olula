@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { CuentaBanco } from "../../diseño.ts";
 import { patchCuentaBanco } from "../../infraestructura.ts";
@@ -18,6 +19,7 @@ export const EdicionCuentaBanco = ({
   emitir,
 }: EdicionCuentaBancoProps) => {
   const { modelo, uiProps, valido } = useModelo(metaCuentaBanco, cuenta);
+  const focus = useFocus();
 
   const guardar = async () => {
     const cuentaActualizada = await patchCuentaBanco(clienteId, modelo);
@@ -27,7 +29,7 @@ export const EdicionCuentaBanco = ({
   return (
     <div className="EdicionCuentaBanco">
       <quimera-formulario>
-        <QInput label="IBAN" {...uiProps("iban")} />
+        <QInput label="IBAN" {...uiProps("iban")} ref={focus} />
         <QInput label="BIC" {...uiProps("bic")} />
       </quimera-formulario>
       <div className="botones">

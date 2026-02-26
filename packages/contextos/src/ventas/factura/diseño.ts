@@ -10,8 +10,19 @@ export interface LineaFactura extends LineaVenta {
 }
 
 export type NuevaFactura = {
-    cliente_id: string;
-    // direccion_id: string;
+    cliente_id?: string;
+    nombre_cliente?: string;
+    id_fiscal?: string;
+    tipo_via?: string;
+    nombre_via?: string;
+    numero?: string;
+    otros?: string;
+    cod_postal?: string;
+    ciudad?: string;
+    provincia_id?: string;
+    pais_id?: string;
+    apartado?: string;
+    telefono?: string;
     empresa_id: string;
 };;
 
