@@ -4,13 +4,15 @@ import {
   metaPedido,
   pedidoVacio,
 } from "#/ventas/pedido/detalle/dominio.ts";
+
+import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Lineas } from "#/ventas/pedido/detalle/Lineas/Lineas.tsx";
 import { getMaquina } from "#/ventas/pedido/detalle/maquina.ts";
 import { TabCliente } from "#/ventas/pedido/detalle/TabCliente/TabCliente.tsx";
-import { TabDatosBase as TabDatos } from "#/ventas/pedido/detalle/TabDatos.tsx";
 import { TabObservaciones } from "#/ventas/pedido/detalle/TabObservaciones.tsx";
 import { Pedido } from "#/ventas/pedido/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -20,6 +22,8 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import "./DetallePedido.css";
+
+import { HookModelo } from "@olula/lib/useModelo.ts";
 
 export const DetallePedidoNrj = ({
   pedidoInicial = null,
@@ -86,7 +90,7 @@ export const DetallePedidoNrj = ({
       obtenerTitulo={titulo}
       setEntidad={() => {}}
       entidad={ctx.pedido}
-      cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
+      cerrarDetalle={() => publicar("pedido_deseleccionado", null)}
     >
       {!!pedidoId && (
         <>
@@ -105,7 +109,7 @@ export const DetallePedidoNrj = ({
             </Tab>
 
             <Tab label="Datos">
-              <TabDatos pedido={pedido} />
+              <TabDatosNrj pedido={pedido} />
             </Tab>
 
             <Tab label="Observaciones">
@@ -142,5 +146,29 @@ export const DetallePedidoNrj = ({
         </>
       )}
     </Detalle>
+  );
+};
+
+export interface TabDatosProps {
+  pedido: HookModelo<Pedido>;
+}
+
+export const TabDatosNrj = ({ pedido }: TabDatosProps) => {
+  const { uiProps } = pedido;
+
+  return (
+    <div className="TabDatos">
+      <quimera-formulario>
+        <QDate label="Fecha" {...uiProps("fecha")} />
+        <div id="espacio_fecha" />
+        {/*         <Divisa {...uiProps("divisa_id")} />
+        <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
+        <QInput {...uiProps("total_divisa_empresa")} label="Total €" /> */}
+        <Agente {...uiProps("agente_id", "nombre_agente")} />
+        <div id="espacio_agente" />
+        {/*         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
+        <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} /> */}
+      </quimera-formulario>
+    </div>
   );
 };

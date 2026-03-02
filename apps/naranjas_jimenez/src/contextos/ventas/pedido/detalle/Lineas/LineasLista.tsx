@@ -41,50 +41,50 @@ const getMetaTablaLineas = () => {
       cabecera: "Estado",
       render: (linea: LineaPedidoNrj) => formateaEstado(linea.estado_palets),
     },
-    {
+    /*     {
       id: "idVariedad",
       cabecera: "Variedad",
-    },
+    }, */
     {
       id: "descVariedad",
-      cabecera: "Descripción variedad",
+      cabecera: "Variedad",
     },
-    {
+    /*     {
       id: "idMarca",
       cabecera: "Marca",
-    },
+    }, */
     {
       id: "descMarca",
-      cabecera: "Descripción marca",
+      cabecera: "Marca",
     },
-    {
+    /*     {
       id: "idCalibre",
       cabecera: "Calibre",
-    },
+    }, */
     {
       id: "descCalibre",
-      cabecera: "Descripción calibre",
+      cabecera: "Calibre",
     },
     {
       id: "categoria",
       cabecera: "Categoría",
       render: (linea: LineaPedidoNrj) => formateaCategoria(linea.categoria),
     },
-    {
+    /*     {
       id: "idTipoPalet",
       cabecera: "Palet",
-    },
+    }, */
     {
       id: "descPalet",
-      cabecera: "Descripción palet",
+      cabecera: "Palet",
     },
-    {
+    /*     {
       id: "idEnvase",
       cabecera: "Envase",
-    },
+    }, */
     {
       id: "descEnvase",
-      cabecera: "Descripción envase",
+      cabecera: "Envase",
     },
     {
       id: "cantidad",
@@ -94,6 +94,7 @@ const getMetaTablaLineas = () => {
     {
       id: "cantidad_envases_asignados",
       cabecera: "Asignada",
+      tipo: "numero" as const,
       render: (linea: LineaPedidoNrj) => AsignacionesLinea({ linea }),
     },
   ];
