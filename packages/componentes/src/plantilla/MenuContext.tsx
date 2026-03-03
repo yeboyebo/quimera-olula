@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 
 export type MenuType = "lateral" | "usuario";
 
-interface MenuContextType {
+export interface MenuContextType {
   menuAbierto: Record<MenuType, boolean>;
   abrirMenu: (menu: MenuType) => void;
   cerrarMenu: (menu: MenuType) => void;
