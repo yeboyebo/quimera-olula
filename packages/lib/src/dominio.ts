@@ -1,6 +1,6 @@
-// import { UiProps, ValorControl } from "useModelo.ts";
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
 import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
+import { filtroDefecto, ordenDefecto, paginacionDefecto } from "./url-params.ts";
 import { UiProps, ValorControl } from "./useModelo.ts";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
@@ -341,7 +341,6 @@ const valorDecimalEsValido = (valor: string, decimales: number): boolean => {
 // }
 
 export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => (campo: string, valor: unknown): ValorCampoUI => {
-
     if (valor === null || valor === undefined) {
         return '';
     }
@@ -482,7 +481,6 @@ const setCampo = <M extends Modelo>(
 };
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
-    // console.log('validacionCampoModelo', campo);
     const campos = meta.campos || {};
     const valor = modelo[campo];
     const tipoCampo = campos[campo]?.tipo;
@@ -747,10 +745,10 @@ export const setEstadoMaquina: <E extends string, C extends Contexto<E>>(nuevoEs
 }
 
 export const criteriaDefecto: Criteria = {
-    filtro: [],
-    orden: ["id", "DESC"],
-    paginacion: { limite: 10, pagina: 1 },
-}
+    filtro: [...filtroDefecto],
+    orden: [...ordenDefecto],
+    paginacion: { ...paginacionDefecto },
+};
 
 export const ejecutarListaProcesos = async <E extends string, C extends Contexto<E>>(
     contexto: C,
