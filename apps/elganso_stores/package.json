@@ -21,7 +21,8 @@
         "@olula/ctx": "workspace:*",
         "@olula/lib": "workspace:*",
         "@olula/olula": "workspace:*",
-        "quimera": "workspace:@quimera/core@*"
+        "quimera": "workspace:@quimera/core@*",
+        "use-db-state": "2.0.2"
     },
     "devDependencies": {
         "baseline-browser-mapping": "^2.9.19"
