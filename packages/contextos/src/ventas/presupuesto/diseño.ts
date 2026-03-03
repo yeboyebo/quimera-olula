@@ -1,5 +1,5 @@
 import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
@@ -126,5 +126,5 @@ export type EstadoMaestroPresupuesto = (
 
 export type ContextoMaestroPresupuesto = {
   estado: EstadoMaestroPresupuesto;
-  presupuestos: ListaEntidades<Presupuesto>;
+  presupuestos: ListaActivaEntidades<Presupuesto>;
 };

@@ -4,13 +4,13 @@ import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback } from "react";
-import { useParams } from "react-router";
+import { useCallback, useEffect } from "react";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
 import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
+import { getReportVenta } from "../infraestructura.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
@@ -22,28 +22,25 @@ import { Pagos } from "./pagos/Pagos.tsx";
 import { TabCliente } from "./tabs/TabCliente.tsx";
 
 export const DetalleVentaTpv = ({
-    ventaInicial = null,
+    id,
     publicar = async () => {},
 }: {
-    ventaInicial?: VentaTpv | null;
+    id?: string;
     publicar?: EmitirEvento;
 }) => {
 
-    const params = useParams();
-    const ventaId = ventaInicial?.id ?? params.id;
-
-    const contextoInicial:ContextoVentaTpv = {
+    const contextoInicial: ContextoVentaTpv = {
         estado: 'INICIAL',
-        venta: ventaInicial ?? ventaTpvVacia,
+        venta: ventaTpvVacia,
         pagos: listaEntidadesInicial<PagoVentaTpv>(),
         lineas: listaEntidadesInicial<LineaFactura>(),
     }
-    
+
     const { ctx, emitir } = useMaquina(
         getMaquina,
         contextoInicial,
         publicar
-    ) 
+    )
 
     const autoGuardar = useCallback(async (venta: VentaTpv) => {
         await guardarVenta(ctx, venta);
@@ -51,30 +48,39 @@ export const DetalleVentaTpv = ({
     }, [ctx, emitir]);
 
     const modeloVenta = useModelo(metaVentaTpv, ctx.venta, autoGuardar);
-      
-    if (ventaId && ventaId !== ctx?.venta.id) {
-        emitir("venta_id_cambiada", ventaId, true);
+
+    useEffect(() => {
+        emitir("venta_id_cambiada", id, true);
+    }, [id]);
+
+    if (!ctx.venta.id) return;
+
+    const imprimir = async () => {
+        const blob = await getReportVenta(ctx.venta.id);
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
     }
-    
-         
+
     const { estado, pagos, lineas, venta } = ctx;
 
     const titulo = (venta: Entidad) => venta.codigo as string;
 
     return (
         <Detalle
-            id={ventaId}
+            id={id}
             obtenerTitulo={titulo}
             setEntidad={() => {}}
             entidad={venta}
-            cerrarDetalle={()=> emitir("venta_deseleccionada", null, true)}
+            cerrarDetalle={() => emitir("venta_deseleccionada", null, true)}
         >
-        {!!ventaId && (
             <div className="DetalleFactura">
                 { estado !== "EMITIDA" && (
                     <div className="botones maestro-botones ">
                         <QBoton texto='Borrar venta'
                             onClick={() => emitir("borrar_solicitado")}
+                        />
+                        <QBoton texto='Imprimir'
+                            onClick={imprimir}
                         />
                     </div>
                 )}
@@ -114,12 +120,12 @@ export const DetalleVentaTpv = ({
                 />
 
                 { estado !== "EMITIDA" && (
-                    <PendienteVenta 
+                    <PendienteVenta
                         publicar={emitir}
                         venta={venta}
                     />
                 )}
-                
+
                 <Lineas
                     lineas={lineas}
                     venta={venta}
@@ -164,13 +170,12 @@ export const DetalleVentaTpv = ({
                 }
                 {
                     estado === "DEVOLVIENDO_VENTA" &&
-                    <DevolverVentaTpv 
+                    <DevolverVentaTpv
                         venta={venta}
                         publicar={emitir}
                     />
                 }
             </div>
-        )}
         </Detalle>
     );
 };

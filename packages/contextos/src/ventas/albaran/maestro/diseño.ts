@@ -1,3 +1,4 @@
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Albaran } from "../diseño.ts";
 
 export type EstadoMaestroAlbaran = (
@@ -5,8 +6,6 @@ export type EstadoMaestroAlbaran = (
 );
 
 export type ContextoMaestroAlbaran = {
-    estado: EstadoMaestroAlbaran,
-    albaranes: Albaran[];
-    albaranActivo: Albaran | null;
-    totalAlbaranes: number;
+    estado: EstadoMaestroAlbaran;
+    albaranes: ListaActivaEntidades<Albaran>;
 };

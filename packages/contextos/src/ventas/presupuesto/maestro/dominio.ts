@@ -1,13 +1,13 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { getPresupuestos } from "../infraestructura.ts";
 import { ContextoMaestroPresupuesto, EstadoMaestroPresupuesto, Presupuesto } from "./diseño.ts";
 
 type ProcesarPresupuestos = ProcesarContexto<EstadoMaestroPresupuesto, ContextoMaestroPresupuesto>;
 
-const conPresupuestos = (fn: ProcesarListaEntidades<Presupuesto>) => (ctx: ContextoMaestroPresupuesto) => ({ ...ctx, presupuestos: fn(ctx.presupuestos) });
+const conPresupuestos = (fn: ProcesarListaActivaEntidades<Presupuesto>) => (ctx: ContextoMaestroPresupuesto) => ({ ...ctx, presupuestos: fn(ctx.presupuestos) });
 
-export const Presupuestos = accionesListaEntidades(conPresupuestos);
+export const Presupuestos = accionesListaActivaEntidades(conPresupuestos);
 
 export const recargarPresupuestos: ProcesarPresupuestos = async (contexto, payload) => {
     const criteria = payload as Criteria;

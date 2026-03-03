@@ -1,21 +1,14 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CabeceraArqueoTpv } from "../diseño.ts";
 
 export type EstadoMaestroArqueosTpv = (
     'INICIAL'
 );
 
-// export type ContextoMaestroArqueosTpv = {
-//     estado: EstadoMaestroArqueosTpv;
-//     arqueos: ArqueoTpv[];
-//     totalArqueos: number;
-//     arqueoActivo: ArqueoTpv | null;
-// };
-
 export type ContextoMaestroArqueosTpv = {
     estado: EstadoMaestroArqueosTpv;
-    arqueos: ListaEntidades<CabeceraArqueoTpv>
+    arqueos: ListaActivaEntidades<CabeceraArqueoTpv>
 };
 
 export const metaTablaArqueo: MetaTabla<CabeceraArqueoTpv> = [

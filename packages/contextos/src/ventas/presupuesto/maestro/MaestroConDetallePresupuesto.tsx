@@ -2,12 +2,11 @@ import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearPresupuesto } from "../crear/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "../detalle/DetallePresupuesto.tsx";
 import {
@@ -18,25 +17,17 @@ import "./MaestroConDetallePresupuesto.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetallePresupuesto = () => {
+  const { id, criteria } = getUrlParams();
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    presupuestos: listaEntidadesInicial<Presupuesto>(),
+    presupuestos: listaActivaEntidadesInicial<Presupuesto>(id, criteria),
   });
 
-  const setSeleccionada = useCallback(
-    (payload: Presupuesto) => void emitir("presupuesto_seleccionado", payload),
-    [emitir]
-  );
-
-  const recargar = useCallback(
-    (criteria: Criteria) => {
-      void emitir("recarga_de_presupuestos_solicitada", criteria);
-    },
-    [emitir]
-  );
+  useUrlParams(ctx.presupuestos.activo, ctx.presupuestos.criteria);
 
   useEffect(() => {
-    emitir("recarga_de_presupuestos_solicitada", criteriaDefecto);
+    emitir("recarga_de_presupuestos_solicitada", ctx.presupuestos.criteria);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,7 +62,7 @@ export const MaestroConDetallePresupuesto = () => {
 
   return (
     <div className="Presupuesto">
-      <MaestroDetalleControlado<Presupuesto>
+      <MaestroDetalleActivoControlado<Presupuesto>
         Maestro={
           <>
             <h2>Presupuestos</h2>
@@ -80,21 +71,21 @@ export const MaestroConDetallePresupuesto = () => {
                 Nuevo Presupuesto
               </QBoton>
             </div>
-            <ListadoControlado<Presupuesto>
+            <ListadoActivoControlado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.presupuestos.criteria}
               modo={"tabla"}
               entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}
               seleccionada={ctx.presupuestos.activo}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+              onSeleccion={(payload) => emitir("presupuesto_seleccionado", payload)}
+              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
             />
           </>
         }
         Detalle={
           <DetallePresupuesto
-            presupuestoInicial={ctx.presupuestos.activo}
+            id={ctx.presupuestos.activo}
             publicar={emitir}
           />
         }
