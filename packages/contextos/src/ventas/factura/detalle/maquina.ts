@@ -58,6 +58,11 @@ export const getMaquina: () => Maquina<EstadoFactura, ContextoFactura> = () => {
             linea_seleccionada: [activarLinea],
 
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
+
+            factura_deseleccionada: [
+                getContextoVacio,
+                publicar('factura_deseleccionada', null)
+            ]
         },
 
         BORRANDO_FACTURA: {

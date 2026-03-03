@@ -26,10 +26,11 @@ export interface VentasPedidoInfra {
   linea_desde_api: LineaPedidoDesdeApi
 }
 
-const getInfra = (): VentasPedidoInfra => FactoryObj.app.Ventas.pedido_infraestructura as VentasPedidoInfra
+const getInfra = (): VentasPedidoInfra => FactoryObj.app.Ventas?.pedido_infraestructura as VentasPedidoInfra
 
 const lineaPedidoDesdeApi: LineaPedidoDesdeApi = (l) => {
-  return getInfra().linea_desde_api(l)
+  const infra = getInfra();
+  return (infra?.linea_desde_api ?? lineaPedidoDesdeApiBase)(l)
 };
 
 const lineaPedidoDesdeApiBase: LineaPedidoDesdeApi = (l) => l as LineaPedido;

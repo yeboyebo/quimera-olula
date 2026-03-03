@@ -1,5 +1,4 @@
-import { EditarCantidadLinea } from "#/ventas/pedido/detalle/Lineas/EditarCantidadLinea.tsx";
-import { QIcono, QTabla } from "@olula/componentes/index.js";
+import { QIcono, QTarjetas } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useContext, useState } from "react";
@@ -7,6 +6,7 @@ import { LineaAlbaranarPedido, Tramo } from "../../diseño.ts";
 import { obtenerClaseEstadoAlbaranado } from "../../dominio.ts";
 import { patchCerrarLineaPedido } from "../../infraestructura.ts";
 import "./TarjetaLinea.css";
+import { TarjetaTramo } from "./tramo/TarjetaTramo.tsx";
 
 export const TarjetaLinea = ({
   linea,
@@ -17,50 +17,34 @@ export const TarjetaLinea = ({
   pedidoId: string;
   publicar: ProcesarEvento;
 }) => {
+  const usaLotes = false;
+  const usaUbicaciones = false;
+
   const { intentar } = useContext(ContextoError);
-  const { tramos } = linea;
+  const tramos = linea.tramos ?? [];
+
   const servida = linea.servida || 0;
   const aEnviar =
-    (tramos && tramos.length > 0
+    tramos.length > 0
       ? tramos.reduce(
           (total, tramo) => total + (Number(tramo.cantidad) || 0),
           0
         )
-      : linea.a_enviar) || 0;
+      : linea.a_enviar || 0;
   const disponible = linea.cantidad - servida - aEnviar;
 
   const [mostrarTramos, setMostrarTramos] = useState(false);
+  const [tramoSeleccionadoId, setTramoSeleccionadoId] = useState<string>();
 
-  const validarCantidadTramo =
-    (tramoEditado: Tramo) => (cantidadRaw: string) => {
-      const nuevaCantidad = parseInt(cantidadRaw);
-
-      if (isNaN(nuevaCantidad) || nuevaCantidad <= 0) {
-        return "Debe tener una cantidad mayor que cero.";
+  const getMaximoPermitido = (tramoEditado: Tramo) => {
+    const sumaSinTramoActual = tramos.reduce((total, tramo) => {
+      if (tramo.id === tramoEditado.id) {
+        return total;
       }
-      const sumaSinTramoActual =
-        tramos?.reduce((total, tramo) => {
-          if (tramo.id === tramoEditado.id) {
-            return total;
-          }
-          return total + (tramo.cantidad || 0);
-        }, 0) || 0;
+      return total + (tramo.cantidad || 0);
+    }, 0);
 
-      const nuevaSumaTotal = sumaSinTramoActual + nuevaCantidad;
-
-      if (nuevaSumaTotal > linea.cantidad) {
-        return `La suma de todos los tramos no puede superar: ${linea.cantidad}`;
-      }
-
-      return "";
-    };
-
-  const cambiarCantidad = async (tramo: Tramo, cantidad: number) => {
-    const actuales = linea.tramos ?? [];
-    const nuevos = actuales.map((t) =>
-      t.id === tramo.id ? { ...t, cantidad } : t
-    );
-    publicar("tramos_actualizados", { id: linea.id, tramos: nuevos });
+    return Math.max(0, linea.cantidad - sumaSinTramoActual);
   };
 
   const cambiarEstadoLinea = async (e: React.MouseEvent) => {
@@ -92,49 +76,19 @@ export const TarjetaLinea = ({
           : Date.now().toString(),
       cantidad: disponible,
     };
-    const actuales = linea.tramos ?? [];
+    const actuales = tramos;
+    const nuevos = [...actuales, nuevo];
     publicar("tramos_actualizados", {
       id: linea.id,
-      tramos: [...actuales, nuevo],
+      tramos: nuevos,
     });
+    setMostrarTramos(true);
   };
 
-  const getMetaTablaTramos = (
-    cambiarCantidad: (tramo: Tramo, cantidad: number) => void
-  ) => {
-    return [
-      {
-        id: "lote_id",
-        cabecera: "Lote ID",
-      },
-      {
-        id: "ubicacion_id",
-        cabecera: "Ubicación ID",
-      },
-      {
-        id: "cantidad",
-        cabecera: "Cantidad",
-        render: (tramo: Tramo) => {
-          const validacionParaTramo = validarCantidadTramo(tramo);
-          return (
-            <EditarCantidadLinea
-              linea={tramo as LineaAlbaranarPedido}
-              onCantidadEditada={cambiarCantidad}
-              validacion={validacionParaTramo}
-              deshabilitado={linea.cerrada || false}
-            />
-          );
-        },
-      },
-      {
-        id: "cantidad_ko",
-        cabecera: "Cantidad KO",
-      },
-    ];
-  };
-  const claseTarjeta = `tarjeta-cabecera-info ${obtenerClaseEstadoAlbaranado(
-    linea
-  )}`.trim();
+  const claseTarjeta = `tarjeta-cabecera-info ${obtenerClaseEstadoAlbaranado({
+    ...linea,
+    a_enviar: aEnviar,
+  })}`.trim();
 
   return (
     <div className="TarjetaLinea">
@@ -186,11 +140,25 @@ export const TarjetaLinea = ({
 
       <div className="tarjeta-tramos">
         <div className="tramos-lista">
-          {mostrarTramos && tramos && tramos.length > 0 && (
-            <QTabla
-              metaTabla={getMetaTablaTramos(cambiarCantidad)}
+          {mostrarTramos && tramos.length > 0 && (
+            <QTarjetas
+              tarjeta={(tramo: Tramo) => (
+                <TarjetaTramo
+                  tramo={tramo}
+                  maximoPermitido={getMaximoPermitido(tramo)}
+                  deshabilitado={linea.cerrada || false}
+                  usaLotes={usaLotes}
+                  usaUbicaciones={usaUbicaciones}
+                  lineaId={linea.id}
+                  publicar={publicar}
+                />
+              )}
               datos={tramos}
               cargando={false}
+              seleccionadaId={tramoSeleccionadoId}
+              onSeleccion={(tramo: Tramo) =>
+                setTramoSeleccionadoId(String(tramo.id))
+              }
               orden={["id", "ASC"]}
               onOrdenar={(_: string) => null}
             />
