@@ -1,0 +1,177 @@
+shortcuts:
+  - type: Model
+state: { tiendas: {}, planificador: {}, agentes: {}, tiendaSeleccionada: null, inicioSemana: null }
+bunch:
+  init:
+    - _type: get
+      schema: agentes
+      action: getTiendasBySupervisor
+      success: onGetTiendasBySupervisorSuccess
+
+  onGetTiendasBySupervisorSuccess:
+    - _type: set
+      path: tiendas
+      value:
+        payloadPath: response.tiendas
+
+  #OBTENER PLANIFICADOR
+  onGetTramosBySemanaTienda:
+    - _type: post
+      schema: dias_planificados
+      action: getTramosBySemanaTienda
+      data:
+        - key: semana
+          value:
+            payloadPath: semana
+        - key: codtienda
+          value:
+            payloadPath: codtienda
+      success: onGetTramosBySemanaTiendaSuccess
+
+  onGetTramosBySemanaTiendaSuccess:
+    - _type: set
+      path: planificador
+      value:
+        payloadPath: response.planificador
+    - _type: set
+      path: tiendaSeleccionada
+      value:
+        payloadPath: response.codTienda
+    - _type: set
+      path: inicioSemana
+      value:
+        payloadPath: response.semana
+  #FIN OBTENER PLANIFICADOR
+
+  #OBTENER AGENTES TIENDA
+  onGetAgentesTienda:
+    - _type: post
+      schema: dias_planificados
+      action: getAgentesByTienda
+      data:
+        - key: codtienda
+          value:
+            payloadPath: codtienda
+      success: onGetAgentesTiendaSuccess
+
+  onGetAgentesTiendaSuccess:
+    - _type: set
+      path: agentes
+      value:
+        payloadPath: response.agentes
+  #FIN OBTENER AGENTES TIENDA
+
+  # BORRAR TRAMO HORARIO
+  onBorrarTramoHorarioClick:
+    - _type: post
+      schema: tramos_planificados
+      data:
+        - key: id_tramo_planificado
+          value:
+            payloadPath: idTramo
+      action: deleteEvent
+      success: onBorrarTramoSuccess
+      error: onBorrarTramoError
+
+  onBorrarTramoSuccess:
+    - _type: alert
+      text: "Se ha elminado correctamente"
+      severity: success
+    - _type: post
+      schema: dias_planificados
+      action: getTramosBySemanaTienda
+      data:
+        - key: codtienda
+          value:
+            statePath: tiendaSeleccionada
+        - key: semana
+          value:
+            statePath: inicioSemana
+      success: onGetTramosBySemanaTiendaSuccess
+
+  onBorrarTramoError:
+    - _type: alert
+      text: "Se ha producido un error al borrar el registro"
+      severity: error
+  #FIN BORRAR TRAMO HORARIO
+
+  #UPDATE TRAMO HORARIO
+  onTramoHorarioChange:
+    - _type: patch
+      schema: tramos_planificados
+      data:
+        - key: id_tramo_planificado
+          value:
+            payloadPath: idTramo
+        - key: tramo_desde
+          value:
+            payloadPath: tramoDesde
+        - key: tramo_hasta
+          value:
+            payloadPath: tramoHasta
+      success: onTramoHorarioChangeSuccess
+      error: onTramoHorarioChangeError
+  onTramoHorarioChangeSuccess:
+    - _type: alert
+      text: "Tramo modificado correctamente"
+      severity: success
+    - _type: post
+      schema: dias_planificados
+      action: getTramosBySemanaTienda
+      data:
+        - key: codtienda
+          value:
+            statePath: tiendaSeleccionada
+        - key: semana
+          value:
+            statePath: inicioSemana
+      success: onGetTramosBySemanaTiendaSuccess
+  onTramoHorarioChangeError:
+    - _type: alert
+      text: "No se ha podido modificar el tramo"
+      severity: error
+  #FIN UPDATE TRAMO HORARIO
+
+  #ADD TRAMO
+  onAddTramoClicked:
+    - _type: post
+      schema: tramos_planificados
+      data:
+        - key: codTienda
+          value:
+            statePath: tiendaSeleccionada
+        - key: semana
+          value:
+            statePath: inicioSemana
+        - key: dia
+          value:
+            payloadPath: dia
+        - key: agente
+          value:
+            payloadPath: idAgente
+      action: addTramoHorario
+      success: onAddTramoSuccess
+      error: onAddTramoError
+
+  onAddTramoSuccess:
+    - _type: alert
+      text: "Tramo añadido correctamente"
+      severity: success
+    - _type: post
+      schema: dias_planificados
+      action: getTramosBySemanaTienda
+      data:
+        - key: codtienda
+          value:
+            statePath: tiendaSeleccionada
+        - key: semana
+          value:
+            statePath: inicioSemana
+      success: onGetTramosBySemanaTiendaSuccess
+
+  onAddTramoError:
+    - _type: alert
+      text: "No se ha podido añadir el tramo"
+      severity: error
+
+  #FIN ADD TRAMO

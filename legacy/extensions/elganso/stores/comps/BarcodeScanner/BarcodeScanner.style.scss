@@ -1,0 +1,15 @@
+#barcodeScanner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  video {
+    max-height: 300px;
+  }
+
+  .button-flash-barcode {
+    &.activeFlash {
+      color: $sincro-yellow-color;
+    }
+  }
+}

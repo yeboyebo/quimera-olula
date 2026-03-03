@@ -1,0 +1,149 @@
+---
+shortcuts:
+bunch:
+  init:
+    - _type: grape
+      name: setIdSincroFiltro
+  # GET
+  getLineasInventario:
+    - _type: if
+      if:
+        operator: A is defined
+        A:
+          code: "return state.inventario.idsincro"
+      then:
+        _type: grape
+        name: getLineas
+  getLineas:
+    - _type: get
+      schema: lineas_inventarios
+      filter:
+        - const: egidsincroinv
+        - eq
+        - code: "return state.inventario.idsincro"
+      success: setLineasInventarios
+
+  # SET
+  setActualReadBarcode:
+    - _type: set
+      path: barcode
+      value:
+        payloadPath: value
+  setIdSincroFiltro:
+    - _type: set
+      path: idSincroActual
+      value:
+        payloadPath: idsincroFiltro
+  setInvDbIndexState:
+    - _type: set
+      path: inventariosDbIndexState
+      value:
+        payloadPath: setInvDbIndexState
+  onEditarLineaClicked:
+    - _type: set
+      path: modalEditVisible
+      value:
+        const: true
+    - _type: set
+      path: lineaSeleccionada
+      value:
+        payloadPath: linea
+    - _type: set
+      path: barcode
+      value:
+        payloadPath: linea.barcode
+    - _type: set
+      path: qtyModificada
+      value:
+        payloadPath: linea.cantidadfin
+  onCerrarModalEditLinea:
+    - _type: set
+      path: modalEditVisible
+      value:
+        const: false
+    - _type: set
+      path: lineaSeleccionada
+      value:
+        const: null
+
+  # POST
+  createNewLinea:
+    - _type: post
+      schema: creaLineaInventario
+      action: creaLineaInventario
+      data:
+        - key: idsincro
+          value:
+            statePath: inventario.idsincro
+        - key: codalmacen
+          value:
+            statePath: inventario.codalmacen
+        - key: fecha
+          value:
+            statePath: fecha
+        - key: hora
+          value:
+            statePath: hora
+        - key: barcode
+          value:
+            statePath: barcode
+        - key: cantidad
+          value:
+            statePath: qtyAgregar
+      success: onSuccessCreateNewLinea
+
+  # PATCH
+  updateLineaInventario:
+    - _type: patch
+      schema: lineas_inventarios
+      action: sumar
+      id:
+        statePath: lineaSeleccionada.id
+      data:
+        - key: cantidadfin
+          value:
+            statePath: qtyAgregar
+      success: onLineaModificada
+      error: onLineaModificadaError
+  deleteLineaInventario:
+    - _type: patch
+      schema: lineas_inventarios
+      action: delete
+      id:
+        payloadPath: idLinea
+      success: onBorrarLineaSuccess
+      error: deleteLineaError
+
+  # ALERTS
+  onBorrarLineaSuccess:
+    - _type: alert
+      text: Se ha eliminado la linea correctamente
+      severity: success
+    - _type: grape
+      name: deleteLinea
+  onBorrarLineaError:
+    - _type: alert
+      text: Error al eliminar la linea
+      severity: error
+  onLineaModificadaSuccess:
+    - _type: alert
+      text: Se ha modificado la linea correctamente
+      severity: success
+  onLineaModificadaError:
+    - _type: alert
+      text: Error al modificar la linea
+      severity: error
+  showLineaModificada:
+    - _type: alert
+      text: Línea modificada correctamente
+      severity: success
+  onSuccessCreateNewLinea:
+    - _type: alert
+      text: Línea añadida correctamente
+      severity: success
+    - _type: set
+      path: barcode
+      value:
+        const: null
+    - _type: grape
+      name: getLineasInventario
