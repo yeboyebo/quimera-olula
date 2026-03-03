@@ -53,7 +53,7 @@ export const Lineas = ({
         datos={lineas.lista}
         cargando={estado === "ALBARANANDO"}
         seleccionadaId={seleccionada?.id}
-        onSeleccion={(l: Linea) => publicar("linea_seleccionada", l)}
+        onSeleccion={(l: Linea) => publicar("linea_seleccionada", l.id)}
         orden={["id", "ASC"] as Orden}
         onOrdenar={(_: string) => null}
       />

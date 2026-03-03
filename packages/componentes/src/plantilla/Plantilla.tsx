@@ -3,6 +3,7 @@ import { MenuLateral } from "../menu/menu-lateral.tsx";
 import { MenuUsuario } from "../menu/menu-usuario.tsx";
 import { Slot } from "../slot/Slot.tsx";
 import { Cabecera } from "./Cabecera.tsx";
+import { MenuProvider } from "./MenuContext.tsx";
 import { Pie } from "./Pie.tsx";
 import "./Plantilla.css";
 
@@ -11,15 +12,17 @@ export const Plantilla = ({ children }: PropsWithChildren<object>) => {
 
   return (
     <>
-      <Slot nombre="cabecera" {...slots}>
-        <Cabecera />
-      </Slot>
+      <MenuProvider>
+        <Slot nombre="cabecera" {...slots}>
+          <Cabecera />
+        </Slot>
 
-      <section role="main">
-        <MenuLateral />
-        <Slot {...slots} />
-        <MenuUsuario />
-      </section>
+        <section role="main">
+          <MenuLateral />
+          <Slot {...slots} />
+          <MenuUsuario />
+        </section>
+      </MenuProvider>
 
       <Slot nombre="pie" {...slots}>
         <Pie />

@@ -482,7 +482,7 @@ const setCampo = <M extends Modelo>(
 };
 
 export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => (modelo: T, campo: string) => {
-    console.log('validacionCampoModelo', campo);
+    // console.log('validacionCampoModelo', campo);
     const campos = meta.campos || {};
     const valor = modelo[campo];
     const tipoCampo = campos[campo]?.tipo;

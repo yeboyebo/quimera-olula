@@ -63,11 +63,21 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             cliente_cambiado: [cambiarCliente],
 
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
+
+            albaran_deseleccionado: [
+                getContextoVacio,
+                publicar('albaran_deseleccionado', null)
+            ]
         },
 
         FACTURADO: {
 
             albaran_cargado: [abiertoOFacturado],
+
+            albaran_deseleccionado: [
+                getContextoVacio,
+                publicar('albaran_deseleccionado', null)
+            ]
         },
 
         BORRANDO_ALBARAN: {
