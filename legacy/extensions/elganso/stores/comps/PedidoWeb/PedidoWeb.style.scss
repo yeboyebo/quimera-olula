@@ -1,0 +1,203 @@
+.pedidoWebWrapper {
+  display: block;
+  padding: 5px 0;
+  width: 100%;
+
+  .cabeceraAccordion-None {
+    background-color: lightgrey;
+  }
+  .cabeceraAccordion-Recogida {
+    background-color: #80ac80;
+  }
+  .cabeceraAccordion-Escaneado {
+    background-color: #a5c3f7;
+  }
+  .cabeceraAccordion-PteEnvio {
+    background-color: #c94aff;
+  }
+  .cabeceraAccordion {
+    .labelRecogida-Wrapper {
+      width: 100%;
+      align-content: center;
+      text-align: center;
+
+      .labelRecogida {
+        display: contents;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+.cabeceraPedidoWebWrapper {
+  display: flex;
+  width: 100%;
+  .cabeceraPedidoWeb {
+    display: block;
+    width: 100%;
+
+    .cabeceraCodComanda {
+      font-weight: bold;
+    }
+  }
+  .printLabelPedidoWeb {
+    float: inline-end;
+    border: 1px solid;
+    border-radius: 5px;
+
+    &-Active {
+      float: inline-end;
+      border: 1px solid green;
+      border-radius: 5px;
+      color: green;
+    }
+  }
+}
+.bodyPedidoWeb {
+  display: block;
+
+  .pedidosWebAcciones {
+    .transportistaLabelPedidoWeb,
+    .printLabelPedidoWeb,
+    .marcarEnviadoPedidoWeb {
+      // float: inline-end;
+      border: 1px solid;
+      border-radius: 5px;
+      margin: 5px;
+
+      &-Active {
+        margin: 5px;
+        border: 1px solid green;
+        border-radius: 5px;
+        color: green;
+      }
+    }
+
+    .marcarFaltantePedidoWeb {
+      float: inline-end;
+      border: 1px solid;
+      border-radius: 5px;
+      margin: 5px;
+
+      &-Active {
+        margin: 5px;
+        float: inline-end;
+        border: 1px solid green;
+        border-radius: 5px;
+        color: green;
+      }
+    }
+  }
+
+  .datosPedidoWeb-Wrapper {
+    padding-block-start: 10px;
+    padding-block-end: 10px;
+
+    .datosPedidoWeb {
+      font-weight: bold;
+      padding-inline-start: 10px;
+    }
+  }
+  .barcode-Wrapper {
+    padding-inline-start: 15px;
+
+    .msgBarcode {
+      padding-block-start: 5px;
+      height: auto;
+      padding-block-end: 5px;
+    }
+    .msgBarcode-Success {
+      color: green;
+    }
+    .msgBarcode-Error {
+      color: red;
+    }
+    .inputBarcodeScanner {
+      margin-block-start: 10px;
+      padding-inline: 10px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 22px;
+      vertical-align: baseline;
+      font-weight: 400;
+      line-height: 1.29;
+      border-radius: 0;
+      outline: 2px solid transparent;
+      outline-offset: -2px;
+      width: 90%;
+      height: 36px;
+      border: none;
+      border-bottom: 1px solid #8d8d8d;
+      background-color: #f4f4f4;
+      color: #161616;
+    }
+  }
+  .lineaArticulo {
+    padding: 10px 0;
+
+    .descripcion {
+      font-weight: bold;
+    }
+
+    .buttonFaltante {
+      margin-block-start: 15px;
+      background-color: whitesmoke;
+    }
+  }
+  .lineaArticulo {
+    width: 93%;
+    // width: 100%;
+    padding-inline-start: 10px;
+  }
+  .rowFaltante {
+    .lineaArticulo {
+      background-color: rgb(254, 155, 201);
+    }
+  }
+  .rowEnviado {
+    .lineaArticulo {
+      background-color: #ffe6af;
+    }
+  }
+  .rowEtiquetaImpresa {
+    .lineaArticulo {
+      background-color: #c94aff;
+    }
+  }
+  .rowPedidoPreparado {
+    .lineaArticulo {
+      background-color: #a5c3f7;
+    }
+  }
+  .rowRecogidaEnTienda {
+    .lineaArticulo {
+      background-color: #80ac80;
+    }
+  }
+  .rowBarcodeEscaneado {
+    .lineaArticulo {
+      background-color: #ecfb9b;
+    }
+  }
+  .filterNoResult {
+    color: red;
+    padding: 10px;
+    .filterNoResult-Text {
+      margin-block-end: 5px;
+    }
+  }
+}
+.packagingWrapper {
+  margin-block-end: 20px;
+  .packagingArticle {
+    padding-block-start: 10px;
+    padding-block-end: 10px;
+    .packagingTitle {
+      padding-inline-start: 25px;
+    }
+  }
+}
+.pedidosWebDialogAction{
+  margin-block-start: 20px;
+}

@@ -1,4 +1,4 @@
-.Lead .TabMasDatos {
+.DetalleLead .TabMasDatos {
 
     quimera-select[nombre="estado_id"] {
         grid-column: 1 / span 4;

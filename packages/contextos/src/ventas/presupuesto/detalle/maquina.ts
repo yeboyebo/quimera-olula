@@ -69,11 +69,21 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
             cliente_cambiado: [cambiarCliente],
 
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
+
+            presupuesto_deseleccionado: [
+                getContextoVacio,
+                publicar('presupuesto_deseleccionado', null)
+            ],
         },
 
         APROBADO: {
 
             presupuesto_cargado: [abiertoOAprobadoContexto],
+
+            presupuesto_deseleccionado: [
+                getContextoVacio,
+                publicar('presupuesto_deseleccionado', null)
+            ],
         },
 
         BORRANDO_PRESUPUESTO: {

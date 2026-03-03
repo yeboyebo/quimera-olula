@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { cambiarItem, cargar, listaSeleccionableVacia, seleccionarItem } from "@olula/lib/entidad.ts";
+import { cambiarItem, cargar, listaSeleccionableVacia } from "@olula/lib/entidad.ts";
 import { pedidoVacioObjeto } from "../../pedido/detalle/dominio.ts";
 import { getLineas, getPedido } from "../../pedido/infraestructura.ts";
 import { LineaAlbaranarPedido, Tramo } from "../diseño.ts";
@@ -28,10 +28,13 @@ export const cargarDatos: ProcesarAlbaranarPedido = async (contexto, pedidoId) =
 };
 
 export const seleccionarLinea: ProcesarAlbaranarPedido = async (contexto, payload) => {
-    const linea = payload as LineaAlbaranarPedido;
+    const lineaId = payload as string;
     return {
         ...contexto,
-        lineas: seleccionarItem(linea)(contexto.lineas),
+        lineas: {
+            ...contexto.lineas,
+            idActivo: lineaId,
+        },
     };
 };
 
@@ -53,6 +56,41 @@ export const actualizarTramos: ProcesarAlbaranarPedido = async (contexto, payloa
         );
         return {
             ...l,
+            tramos,
+            a_enviar,
+        } as LineaAlbaranarPedido;
+    });
+
+    return {
+        ...contexto,
+        lineas: {
+            ...contexto.lineas,
+            lista: lineasActualizadas,
+        },
+    };
+};
+
+export const actualizarTramo: ProcesarAlbaranarPedido = async (contexto, payload) => {
+    const { id, tramo } = payload as { id: string; tramo: Tramo };
+
+    const lineasActualizadas = contexto.lineas.lista.map((linea) => {
+        if (String(linea.id) !== String(id)) return linea;
+
+        const tramosActuales = linea.tramos ?? [];
+        const existe = tramosActuales.some((item) => String(item.id) === String(tramo.id));
+        const tramos = existe
+            ? tramosActuales.map((item) =>
+                String(item.id) === String(tramo.id) ? tramo : item
+            )
+            : [...tramosActuales, tramo];
+
+        const a_enviar = tramos.reduce(
+            (acc, item) => acc + (Number(item.cantidad) || 0),
+            0
+        );
+
+        return {
+            ...linea,
             tramos,
             a_enviar,
         } as LineaAlbaranarPedido;

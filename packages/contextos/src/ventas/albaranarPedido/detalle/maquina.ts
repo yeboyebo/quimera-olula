@@ -2,6 +2,7 @@ import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoAlbaranarPedido, EstadoAlbaranarPedido } from "./diseño.ts";
 import {
     actualizarEstadoCerradoLinea,
+    actualizarTramo,
     actualizarTramos,
     albaranarPedido,
     cambiarLinea,
@@ -26,6 +27,8 @@ export const getMaquina: () => Maquina<EstadoAlbaranarPedido, ContextoAlbaranarP
             linea_cambiada: cambiarLinea,
 
             tramos_actualizados: actualizarTramos,
+
+            tramo_actualizado: actualizarTramo,
 
             linea_cerrada_actualizada: actualizarEstadoCerradoLinea,
 

@@ -1,0 +1,55 @@
+.agenteVacaciones {
+  color: $red-color;
+}
+
+.cabeceraAgente {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  div {
+    width: 50%;
+  }
+
+  .infoTramo {
+    justify-content: flex-end;
+  }
+}
+
+.containerTramos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.containerInfoSlider {
+  width: 100%;
+  flex-direction: row;
+  align-items: baseline;
+  display: contents;
+}
+.containerSlider {
+  width: 100%;
+  flex-direction: row;
+  align-items: baseline;
+  display: flex;
+}
+
+.infoTramo {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.button-delete-tramo {
+  padding: 0 20px 0 5px !important;
+}
+
+.button-delete-tramo-p {
+  padding: 0 44px 0 5px !important;
+}
+
+.buttonNuevoTramo-wrapper {
+  margin-block-start: 15px;
+}

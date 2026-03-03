@@ -1,0 +1,25 @@
+.MuiAccordionDetails-root {
+  padding: 0 !important;
+}
+
+.containerAgente {
+  border-bottom: 1px solid $border-cabecera-color;
+  padding: 15px;
+}
+
+.cabeceraDia {
+  width: 100%;
+  font-size: 18px;
+  padding-left: 0;
+}
+
+.diaPlanificado {
+  padding: 10px 0 0;
+
+  .diaFestivo {
+    color: $red-color;
+    padding: 15px;
+    padding-top: 10px;
+    text-align: center;
+  }
+}

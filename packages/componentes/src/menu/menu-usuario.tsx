@@ -3,6 +3,8 @@ import "./menu-usuario.css";
 import { puede } from "@olula/lib/dominio.ts";
 import { Link } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
+import { estaAutentificado } from "../plantilla/autenticacion";
+import { useMenuControl } from "../plantilla/useMenuControl";
 import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 
 const elementosDelMenu = [
@@ -29,6 +31,13 @@ const elementosDelMenu = [
 ];
 
 export const MenuUsuario = () => {
+  const { menuAbierto, cerrarMenu } = useMenuControl();
+
+  // No mostrar menú si no está autenticado
+  if (!estaAutentificado()) {
+    return null;
+  }
+
   const renderizaElemento = (elemento: ElementoMenu) => {
     const icono = elemento.icono ? (
       <QIcono nombre={elemento.icono} tamaño="sm" />
@@ -41,7 +50,7 @@ export const MenuUsuario = () => {
     if ("url" in elemento && elemento.url) {
       return (
         <li key={elemento.nombre}>
-          <Link to={elemento.url}>
+          <Link to={elemento.url} onClick={() => cerrarMenu("usuario")}>
             {icono} {elemento.nombre}
           </Link>
         </li>
@@ -69,7 +78,7 @@ export const MenuUsuario = () => {
   );
 
   return (
-    <menu-usuario>
+    <menu-usuario className={menuAbierto.usuario ? "activo" : ""}>
       <aside id="menu-usuario">
         <nav>
           <ul>{elementos}</ul>
