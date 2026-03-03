@@ -1,13 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroFactura, EstadoMaestroFactura } from "./diseño.ts";
-import {
-    activarFactura,
-    cambiarFacturaEnLista,
-    desactivarFacturaActiva,
-    incluirFacturaEnLista,
-    quitarFacturaDeLista,
-    recargarFacturas
-} from "./dominio.ts";
+import { Facturas, recargarFacturas } from "./dominio.ts";
 
 
 export const getMaquina: () => Maquina<EstadoMaestroFactura, ContextoMaestroFactura> = () => {
@@ -16,24 +9,26 @@ export const getMaquina: () => Maquina<EstadoMaestroFactura, ContextoMaestroFact
 
         INICIAL: {
 
-            factura_cambiada: cambiarFacturaEnLista,
+            factura_cambiada: Facturas.cambiar,
 
-            factura_seleccionada: [activarFactura],
+            factura_seleccionada: [Facturas.activar],
 
-            factura_deseleccionada: desactivarFacturaActiva,
+            factura_deseleccionada: Facturas.desactivar,
 
-            factura_borrada: quitarFacturaDeLista,
+            factura_borrada: Facturas.quitar,
 
-            factura_creada: incluirFacturaEnLista,
+            factura_creada: Facturas.incluir,
 
             recarga_de_facturas_solicitada: recargarFacturas,
+
+            criteria_cambiado: [Facturas.filtrar, recargarFacturas],
 
             crear_factura_solicitado: "CREANDO_FACTURA",
         },
 
         CREANDO_FACTURA: {
 
-            factura_creada: [incluirFacturaEnLista, 'INICIAL'],
+            factura_creada: [Facturas.incluir, 'INICIAL'],
 
             creacion_factura_cancelada: "INICIAL",
         },

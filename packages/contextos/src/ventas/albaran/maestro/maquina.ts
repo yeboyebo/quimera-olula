@@ -1,13 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroAlbaran, EstadoMaestroAlbaran } from "./diseño.ts";
-import {
-    activarAlbaran,
-    cambiarAlbaranEnLista,
-    desactivarAlbaranActivo,
-    incluirAlbaranEnLista,
-    quitarAlbaranDeLista,
-    recargarAlbaranes
-} from "./dominio.ts";
+import { Albaranes, recargarAlbaranes } from "./dominio.ts";
 
 
 export const getMaquina: () => Maquina<EstadoMaestroAlbaran, ContextoMaestroAlbaran> = () => {
@@ -16,24 +9,26 @@ export const getMaquina: () => Maquina<EstadoMaestroAlbaran, ContextoMaestroAlba
 
         INICIAL: {
 
-            albaran_cambiado: cambiarAlbaranEnLista,
+            albaran_cambiado: Albaranes.cambiar,
 
-            albaran_seleccionado: [activarAlbaran],
+            albaran_seleccionado: [Albaranes.activar],
 
-            albaran_deseleccionado: desactivarAlbaranActivo,
+            albaran_deseleccionado: Albaranes.desactivar,
 
-            albaran_borrado: quitarAlbaranDeLista,
+            albaran_borrado: Albaranes.quitar,
 
-            albaran_creado: incluirAlbaranEnLista,
+            albaran_creado: Albaranes.incluir,
 
             recarga_de_albaranes_solicitada: recargarAlbaranes,
+
+            criteria_cambiado: [Albaranes.filtrar, recargarAlbaranes],
 
             crear_albaran_solicitado: "CREANDO_ALBARAN",
         },
 
         CREANDO_ALBARAN: {
 
-            albaran_creado: [incluirAlbaranEnLista, 'INICIAL'],
+            albaran_creado: [Albaranes.incluir, 'INICIAL'],
 
             creacion_cancelada: "INICIAL",
         },

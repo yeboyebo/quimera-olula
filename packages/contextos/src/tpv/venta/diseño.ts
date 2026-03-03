@@ -1,6 +1,6 @@
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 
 export interface VentaTpv extends Venta {
     pendiente: number;
@@ -127,5 +127,5 @@ export type EstadoMaestroVentasTpv = (
 
 export type ContextoMaestroVentasTpv = {
     estado: EstadoMaestroVentasTpv;
-    ventas: ListaEntidades<VentaTpv>
+    ventas: ListaActivaEntidades<VentaTpv>
 };

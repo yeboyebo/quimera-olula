@@ -46,11 +46,17 @@ const getFiltro = (params: URLSearchParams) => {
 const setFiltro = (criteria: Criteria, params: URLSearchParams) => {
     const { filtro } = criteria;
 
+    console.log('criteria', criteria);
     filtro.forEach(f => {
         const [campoFiltro, operador, valor] = f;
 
-        if (operador === "~") params.set(campoFiltro, valor ?? "");
-        else params.set(campoFiltro, operador + "__" + valor);
+        if (valor === undefined) {
+            params.set(campoFiltro, operador)
+        } else if (operador === "~") {
+            params.set(campoFiltro, valor ?? "");
+        } else {
+            params.set(campoFiltro, operador + "__" + valor);
+        }
     });
 }
 
@@ -60,15 +66,21 @@ const getOrden = (params: URLSearchParams) => {
     const orden = params.get("orden");
     if (!orden) return ordenDefecto;
 
-    if (orden.startsWith("-")) return [orden.slice(1), "DESC"];
-    return [orden, "ASC"];
+    return orden.split(",").flatMap(campo =>
+        campo.startsWith("-") ? [campo.slice(1), "DESC"] : [campo, "ASC"]
+    );
 };
 
 const setOrden = (criteria: Criteria, params: URLSearchParams) => {
     const { orden } = criteria;
 
-    const [campoOrden, direccion] = orden;
-    if (orden.toString() !== ordenDefecto.toString()) params.set("orden", direccion === "ASC" ? campoOrden : "-" + campoOrden);
+    if (orden.toString() === ordenDefecto.toString()) return;
+
+    const partes: string[] = [];
+    for (let i = 0; i < orden.length; i += 2) {
+        partes.push(orden[i + 1] === "ASC" ? orden[i] : "-" + orden[i]);
+    }
+    params.set("orden", partes.join(","));
 }
 
 export const paginacionDefecto = { pagina: 1, limite: 10 };
