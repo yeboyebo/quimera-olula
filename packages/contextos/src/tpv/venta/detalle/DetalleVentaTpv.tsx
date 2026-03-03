@@ -11,6 +11,7 @@ import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
 import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
+import { getReportVenta } from "../infraestructura.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
@@ -55,6 +56,12 @@ export const DetalleVentaTpv = ({
     if (ventaId && ventaId !== ctx?.venta.id) {
         emitir("venta_id_cambiada", ventaId, true);
     }
+
+    const imprimir = async () => {
+        const blob = await getReportVenta(ventaId!);
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    }
     
          
     const { estado, pagos, lineas, venta } = ctx;
@@ -75,6 +82,9 @@ export const DetalleVentaTpv = ({
                     <div className="botones maestro-botones ">
                         <QBoton texto='Borrar venta'
                             onClick={() => emitir("borrar_solicitado")}
+                        />
+                        <QBoton texto='Imprimir'
+                            onClick={imprimir}
                         />
                     </div>
                 )}

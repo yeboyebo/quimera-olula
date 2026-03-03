@@ -77,7 +77,7 @@ export const MaestroConDetalleVentaTpv = () => {
     async (criteria: Criteria) => {
       await emitir("recarga_de_ventas_solicitada", criteria);
     },
-    [emitir]
+    []
   );
 
   useEffect(() => {
