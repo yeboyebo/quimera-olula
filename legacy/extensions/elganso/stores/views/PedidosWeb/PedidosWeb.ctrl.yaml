@@ -1,0 +1,265 @@
+shortcuts:
+  - type: Model
+state:
+  {
+    pedidosWeb: [],
+    abrirDialogoFaltante: false,
+    dialogFaltanteTitle: "¿Desea marcar las lineas seleccionadas como faltantes?",
+    faltantesSeleccionados: [],
+    faltantesRegularizar: [],
+  }
+bunch:
+  init:
+    - _type: get
+      schema: lineasPedidosWeb
+      action: getLineasPedidosWeb
+      success: onGetPedidosWeb
+      id:
+        payloadPath: codTienda
+
+  onGetPedidosWeb:
+    - _type: set
+      path: pedidosWeb
+      value:
+        payloadPath: response.pedidosWeb
+
+  setMensajes:
+    - _type: set
+      path: msgSuccess
+      value:
+        payloadPath: msgSuccess
+    - _type: set
+      path: msgError
+      value:
+        payloadPath: msgError
+
+  # onBarcodeScan:
+  #   - _type: patch
+  #     schema: lineasPedidosWeb
+  #     data:
+  #       - key: id
+  #         value:
+  #           payloadPath: id
+  #       - key: barcodeescaneado
+  #         value:
+  #           payloadPath: barcodeescaneado
+  #     success: onBarcodeScanSuccess
+  #     error: onBarcodeScanError
+
+  # onBarcodeScan:
+  #   - _type: post
+  #     schema: lineasPedidosWeb
+  #     action: marcarBarcodeEscaneado
+  #     data:
+  #       - key: id
+  #         value:
+  #           payloadPath: id
+  #       - key: barcodeescaneado
+  #         value:
+  #           payloadPath: barcodeescaneado
+  #     success: onBarcodeScanSuccess
+  #     error: onBarcodeScanError
+
+  # onBarcodeScan2:
+  #   - _type: patch
+  #     schema: lineasPedidosWeb
+  #     data:
+  #       - key: id
+  #         value:
+  #           payloadPath: id
+  #       - key: barcodeescaneado
+  #         value:
+  #           payloadPath: barcodeescaneado
+  #     success: onBarcodeScanSuccess
+  #     error: onBarcodeScanError
+
+  onBarcodeScan:
+    - _type: post
+      schema: lineasPedidosWeb
+      action: marcarBarcodeEscaneado
+      data:
+        - key: id
+          value:
+            payloadPath: id
+        - key: barcodeescaneado
+          value:
+            payloadPath: barcodeescaneado
+      success: onBarcodeScanSuccess
+      error: onBarcodeScanError
+
+  onBarcodeScanSuccess:
+    - _type: get
+      schema: lineasPedidosWeb
+      action: getLineasPedidosWeb
+      success: onGetPedidosWeb
+    - _type: set
+      path: msgSuccess
+      value:
+        const: "msgSuccess"
+    - _type: alert
+      text: "barcode success"
+      severity: success
+
+  onBarcodeScanError:
+    - _type: alert
+      text: "barcode error"
+      severity: error
+
+  onMarcarComoFaltante:
+    - _type: post
+      schema: lineasPedidosWeb
+      action: marcarComoFaltante
+      data:
+        - key: id
+          value:
+            payloadPath: id
+      success: onMarcarComoFaltanteSuccess
+      error: onMarcarComoFaltanteError
+
+  onMarcarComoFaltanteSuccess:
+    - _type: get
+      schema: lineasPedidosWeb
+      action: getLineasPedidosWeb
+      success: onGetPedidosWeb
+    - _type: alert
+      text: "faltante marcado"
+      severity: success
+
+  onMarcarComoFaltanteError:
+    - _type: alert
+      text: "barcode error"
+      severity: error
+
+  dialogoFaltante:
+    - _type: set
+      path: abrirDialogoFaltante
+      value:
+        toggleStatePath: abrirDialogoFaltante
+    - _type: set
+      path: faltantesSeleccionados
+      value:
+        payloadPath: idFaltantes
+
+  # dialogoFaltanteClose:
+  #   - _type: set
+  #     path: abrirDialogoFaltante
+  #     value:
+  #       toggleStatePath: abrirDialogoFaltante
+
+  # dialogoFaltanteOk:
+  #   - _type: set
+  #     path: abrirDialogoFaltante
+  #     value:
+  #       toggleStatePath: abrirDialogoFaltante
+  #   - _type: set
+  #     path: faltantesSeleccionados
+  #     value:
+  #       const: []
+  dialogoFaltanteClose:
+    - _type: set
+      path: abrirDialogoFaltante
+      value:
+        const: false
+    - _type: set
+      path: faltantesSeleccionados
+      value:
+        const: []
+    - _type: set
+      path: faltantesRegularizar
+      value:
+        const: []
+
+  dameEtiquetaEnvio:
+    - _type: post
+      schema: pedidoEnviadoNumBultos
+      action: dameEtiqueta
+      data:
+        - key: codalmacen
+          value:
+            payloadPath: codalmacen
+        - key: codcomanda
+          value:
+            payloadPath: codcomanda
+        - key: numBultos
+          value:
+            payloadPath: numBultos
+        - key: packaging
+          value:
+            payloadPath: packaging
+      success: onEtiquetaEnvioSuccess
+      error: onEtiquetaEnvioError
+
+  onEtiquetaEnvioSuccess:
+    - _type: get
+      schema: lineasPedidosWeb
+      action: getLineasPedidosWeb
+      success: onGetPedidosWeb
+    - _type: alert
+      text: "Se ha generado la etiqueta correctamente"
+      severity: success
+
+  onEtiquetaEnvioError:
+    - _type: alert
+      text: "Error al generar la etiqueta"
+      severity: error
+
+  onMarcarComoEnviado:
+    - _type: post
+      schema: lineasPedidosWeb
+      action: marcarComoEnviado
+      data:
+        - key: codcomanda
+          value:
+            payloadPath: codcomanda
+      success: onMarcarComoEnviadoSuccess
+      error: onMarcarComoEnviadoError
+
+  onMarcarComoEnviadoSuccess:
+    - _type: get
+      schema: lineasPedidosWeb
+      action: getLineasPedidosWeb
+      success: onGetPedidosWeb
+    - _type: alert
+      text: "Pedido enviado"
+      severity: success
+
+  onMarcarComoEnviadoError:
+    - _type: alert
+      text: "barcode error al enviar el pedido"
+      severity: error
+
+  onMarcarImpreso:
+    - _type: post
+      schema: lineasPedidosWeb
+      action: marcarImpreso
+      data:
+        - key: codcomanda
+          value:
+            payloadPath: codcomanda
+      success: onMarcarImpresoSuccess
+      error: onMarcarImpresoError
+
+  onMarcarImpresoSuccess:
+    - _type: get
+      schema: lineasPedidosWeb
+      action: getLineasPedidosWeb
+      success: onGetPedidosWeb
+    - _type: alert
+      text: "Impreso success"
+      severity: success
+
+  onMarcarImpresoError:
+    - _type: alert
+      text: "Impreso error"
+      severity: error
+
+  marcarFaltantesRegularizados:
+    - _type: post
+      schema: faltantesPorRegularizar
+      action: regularizarFaltantes
+      data:
+        - key: faltantesRegularizar
+          value:
+            payloadPath: faltantesRegularizar
+      success: marcarFaltantesRegularizadosSuccess
+      error: marcarFaltantesRegularizadosError

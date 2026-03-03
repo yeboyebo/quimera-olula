@@ -1,0 +1,31 @@
+#Home {
+  .rowButtons {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 30% 30% 30%;
+    align-items: start;
+    justify-content: space-around;
+    padding: 20px 0px;
+
+    .buttonHome {
+      border: 1px solid $primary-color;
+      border-radius: 5px;
+
+      .MuiIconButton-label {
+        display: grid;
+      }
+
+      .iconButton {
+        font-size: 35px;
+        margin: 0 auto;
+        color: $primary-color;
+      }
+
+      .iconTitle {
+        font-size: 16px;
+        line-height: 32px;
+        color: $primary-color;
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+#SelectorFecha {
+  background: $white-color;
+  padding: 60px;
+  h2 {
+    margin: 8px;
+  }
+  .content {
+    width: max-content;
+    margin: 0 auto;
+    .MuiButton-containedPrimary {
+      margin-top: 15px;
+    }
+  }
+}
