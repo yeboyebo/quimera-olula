@@ -5,8 +5,7 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QInput } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
-import { useParams } from "react-router";
+import { useCallback, useEffect } from "react";
 import { BorrarArqueoTpv } from "../borrar/BorrarArqueoTpv.tsx";
 import { CerrarArqueoTpv } from "../cerrar/CerrarArqueoTpv.tsx";
 import { CrearMovimientoEfectivo } from "../crear_movimiento_efectivo/CrearMovimientoEfectivo.tsx";
@@ -24,26 +23,23 @@ import { arqueoTpvVacio, ContextoArqueoTpv, metaArqueoTpv } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
 export const DetalleArqueoTpv = ({
-    arqueoIdProp,
+    id,
     publicar = async () => {},
 }: {
-    arqueoIdProp?: string;
+    id?: string;
     publicar?: EmitirEvento;
 }) => {
-    const params = useParams();
-
-    const arqueoId = arqueoIdProp ?? params.id;
-    const contextoInicial:ContextoArqueoTpv = {
+    const contextoInicial: ContextoArqueoTpv = {
         estado: 'INICIAL',
         arqueo: arqueoTpvVacio,
     }
-    
+
     const { ctx, emitir } = useMaquina(
         getMaquina,
         contextoInicial,
         publicar
     )
-    
+
     const autoGuardar = useCallback(
         async (arqueo: ArqueoTpv) => {
             await patchArqueo(ctx.arqueo, arqueo);
@@ -51,26 +47,27 @@ export const DetalleArqueoTpv = ({
         },
         [ctx, emitir]
     );
-    
+
     const { uiProps } = useModelo(metaArqueoTpv, ctx.arqueo, autoGuardar);
-    
-    if (arqueoId && arqueoId !== ctx.arqueo.id) {
-        emitir("id_arqueo_cambiado", arqueoId, true);
-    }
-    
+
+    useEffect(() => {
+        emitir("id_arqueo_cambiado", id, true);
+    }, [id]);
+
+    if (!ctx.arqueo.id) return;
+
     const { estado, arqueo } = ctx;
 
-    const titulo = (arqueo: Entidad) => `Arqueo ${arqueo.id} estado: ${estado}`; 
-  
+    const titulo = (arqueo: Entidad) => `Arqueo ${arqueo.id} estado: ${estado}`;
+
     return (
         <Detalle
-            id={arqueoId}
+            id={id}
             obtenerTitulo={titulo}
             setEntidad={() => {}}
             entidad={arqueo}
-            cerrarDetalle={()=> emitir("arqueo_deseleccionado", null, true)}
+            cerrarDetalle={() => emitir("arqueo_deseleccionado", null, true)}
         >
-        {!!arqueoId && (
             <div className="DetalleArqueo">
 
                 <quimera-formulario>
@@ -78,7 +75,7 @@ export const DetalleArqueoTpv = ({
                         {...uiProps("idAgenteApertura", "agente")}
                         deshabilitado={estado !== "ABIERTO"}
                     />
-                    <QInput label='Efectivo inicial' 
+                    <QInput label='Efectivo inicial'
                         {...uiProps("efectivoInicial")}
                         deshabilitado={estado !== "ABIERTO"}
                     />
@@ -88,13 +85,13 @@ export const DetalleArqueoTpv = ({
                     <div className="botones maestro-botones ">
                         <QBoton onClick={() => emitir("recuento_solicitado")}>
                             Recuento de caja
-                        </QBoton> 
+                        </QBoton>
                         <QBoton onClick={() => emitir("cierre_solicitado")}>
                             Cerrar
-                        </QBoton> 
+                        </QBoton>
                         <QBoton onClick={() => emitir("borrar_solicitado")}>
                             Borrar
-                        </QBoton> 
+                        </QBoton>
                     </div>
                 )}
 
@@ -102,7 +99,7 @@ export const DetalleArqueoTpv = ({
                     <div className="botones maestro-botones ">
                         <QBoton onClick={() => emitir("reapertura_solicitada")}>
                             Reabrir
-                        </QBoton> 
+                        </QBoton>
                     </div>
                 )}
 
@@ -122,7 +119,7 @@ export const DetalleArqueoTpv = ({
                     arqueo={arqueo}
                     estado={estado}
                     publicar={emitir}
-                /> 
+                />
                 {
                     estado === "CERRANDO" &&
                     <CerrarArqueoTpv
@@ -167,7 +164,6 @@ export const DetalleArqueoTpv = ({
                 }
 
             </div>
-        )}
         </Detalle>
     );
 };

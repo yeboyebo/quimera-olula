@@ -25,7 +25,7 @@
         }
 
         &.cerrada {
-            color: var(--color-advertencia-oscuro);
+            color: var(--color-advertencia-claro);
         }
     }
 

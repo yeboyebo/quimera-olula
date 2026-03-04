@@ -1,0 +1,552 @@
+# # ---
+# shortcuts:
+#   - type: Model
+# state:
+#   {
+#     config:
+#       {
+#         tiendas:
+#           {
+#             AVAL: { agentes: ["A4", "A5", "A6", "100054"], calendario: "C1", numAgentes: 3 },
+#             AJJN: { agentes: ["A1", "A2", "100070"], calendario: "C1", numAgentes: 3 },
+#           },
+#         agentes:
+#           {
+#             A1:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones: [{ desde: "2024-06-01", hasta: "2024-06-30" }],
+#               },
+#             A2:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones:
+#                   [
+#                     { desde: "2024-01-01", hasta: "2024-01-08" },
+#                     { desde: "2024-08-01", hasta: "2024-08-25" },
+#                   ],
+#               },
+#             100070:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones: [{ desde: "2024-07-15", hasta: "2024-08-13" }],
+#               },
+#             A4:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones: [{ desde: "2024-05-01", hasta: "2024-05-30" }],
+#               },
+#             A5:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones: [{ desde: "2024-08-01", hasta: "2024-08-15" }],
+#               },
+#             A6:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones: [{ desde: "2024-07-01", hasta: "2024-07-31" }],
+#               },
+#             100054:
+#               {
+#                 puesto: "Dependiente",
+#                 contrato: { tipo: "Indefinido", desde: "aaaa-mm-dd", hasta: "aaaa-mm-dd" },
+#                 maxHorasSemana: 40,
+#                 vacaciones:
+#                   [
+#                     { desde: "2024-01-01", hasta: "2024-01-15" },
+#                     { desde: "2024-08-01", hasta: "2024-08-15" },
+#                   ],
+#               },
+#           },
+#         calendarios:
+#           {
+#             C1:
+#               [
+#                 { dia: "2024-01-01", estado: "F" },
+#                 { dia: "2024-01-06", estado: "F" },
+#                 { dia: "2024-03-28", estado: "F" },
+#                 { dia: "2024-03-29", estado: "F" },
+#                 { dia: "2024-05-01", estado: "F" },
+#                 { dia: "2024-05-02", estado: "F" },
+#                 { dia: "2024-07-25", estado: "F" },
+#                 { dia: "2024-08-15", estado: "F" },
+#                 { dia: "2024-10-12", estado: "F" },
+#                 { dia: "2024-11-01", estado: "F" },
+#                 { dia: "2024-12-06", estado: "F" },
+#                 { dia: "2024-12-25", estado: "F" },
+#               ],
+#           },
+#       },
+#     planificador:
+#       [
+#         {
+#           semana: "2024-08-12",
+#           tienda: "AJJN",
+#           jornadas:
+#             [
+#               {
+#                 dia: "2024-08-12",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-13",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-14",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-15",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-16",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#             ],
+#         },
+#         {
+#           semana: "2024-08-19",
+#           tienda: "AJJN",
+#           jornadas:
+#             [
+#               {
+#                 dia: "2024-08-19",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-20",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-21",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-22",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-23",
+#                 agentes:
+#                   [
+#                     { id: "A1", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A2", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "100070",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#             ],
+#         },
+#         {
+#           semana: "2024-08-12",
+#           tienda: "AVAL",
+#           jornadas:
+#             [
+#               {
+#                 dia: "2024-08-12",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-13",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-14",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-15",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-16",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#             ],
+#         },
+#         {
+#           semana: "2024-08-19",
+#           tienda: "AVAL",
+#           jornadas:
+#             [
+#               {
+#                 dia: "2024-08-19",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-20",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-21",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-22",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#               {
+#                 dia: "2024-08-23",
+#                 agentes:
+#                   [
+#                     { id: "A4", tramos: [{ desde: "09:00:00", hasta: "17:30:00", horas: 8.5 }] },
+#                     { id: "A5", tramos: [{ desde: "13:00:00", hasta: "21:00:00", horas: 8 }] },
+#                     {
+#                       id: "A6",
+#                       tramos:
+#                         [
+#                           { desde: "10:00:00", hasta: "14:00:00", horas: 4 },
+#                           { desde: "17:00:00", hasta: "21:00:00", horas: 4 },
+#                         ],
+#                     },
+#                     {
+#                       id: "100054",
+#                       tramos:
+#                         [
+#                           { desde: "09:00:00", hasta: "13:00:00", horas: 4 },
+#                           { desde: "16:00:00", hasta: "20:00:00", horas: 4 },
+#                         ],
+#                     },
+#                   ],
+#               },
+#             ],
+#         },
+#       ],
+#   }
+# bunch: {}
+
+shortcuts:
+  - type: Model
+state: { tiendas: {}, planificador: {}, tiendaSeleccionada: null, inicioSemana: null }
+bunch:
+  #OBTENER PLANIFICADOR
+  onGetResumenByAgente:
+    - _type: post
+      schema: dias_planificados
+      action: getResumenByAgente
+      data:
+        - key: showType
+          value:
+            payloadPath: showType
+        - key: inicioSemana
+          value:
+            payloadPath: inicioSemana
+        - key: inicioMes
+          value:
+            payloadPath: inicioMes
+      success: onGetResumenByAgenteSuccess
+
+  onGetResumenByAgenteSuccess:
+    - _type: set
+      path: planificador
+      value:
+        payloadPath: response.planificador
+  #FIN OBTENER PLANIFICADOR

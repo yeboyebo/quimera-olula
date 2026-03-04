@@ -1,11 +1,11 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useCallback, useEffect } from "react";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearPedido } from "../crear/CrearPedido.tsx";
 import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
@@ -14,27 +14,17 @@ import { getMaquina } from "./maquina.ts";
 import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
 
 export const MaestroConDetallePedido = () => {
+  const { id, criteria } = getUrlParams();
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    pedidos: [],
-    totalPedidos: 0,
-    pedidoActivo: null,
+    pedidos: listaActivaEntidadesInicial<Pedido>(id, criteria),
   });
 
-  const setSeleccionada = useCallback(
-    (payload: Pedido) => void emitir("pedido_seleccionado", payload),
-    [emitir]
-  );
-
-  const recargar = useCallback(
-    (criteria: Criteria) => {
-      void emitir("recarga_de_pedidos_solicitada", criteria);
-    },
-    [emitir]
-  );
+  useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
 
   useEffect(() => {
-    emitir("recarga_de_pedidos_solicitada", criteriaDefecto);
+    emitir("recarga_de_pedidos_solicitada", ctx.pedidos.criteria);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,7 +61,7 @@ export const MaestroConDetallePedido = () => {
 
   return (
     <div className="Pedido">
-      <MaestroDetalleControlado<Pedido>
+      <MaestroDetalleActivoControlado<Pedido>
         Maestro={
           <>
             <h2>Pedidos</h2>
@@ -80,22 +70,22 @@ export const MaestroConDetallePedido = () => {
                 Nuevo Pedido
               </QBoton>
             </div>
-            <ListadoControlado<Pedido>
+            <ListadoActivoControlado<Pedido>
               metaTabla={metaTablaPedido}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.pedidos.criteria}
               modo={"tabla"}
-              entidades={ctx.pedidos}
-              totalEntidades={ctx.totalPedidos}
-              seleccionada={ctx.pedidoActivo}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+              entidades={ctx.pedidos.lista}
+              totalEntidades={ctx.pedidos.total}
+              seleccionada={ctx.pedidos.activo}
+              onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetallePedido pedidoInicial={ctx.pedidoActivo} publicar={emitir} />
-        }
-        seleccionada={ctx.pedidoActivo}
+        Detalle={<DetallePedido id={ctx.pedidos.activo} publicar={emitir} />}
+        seleccionada={ctx.pedidos.activo}
       />
 
       <QModal

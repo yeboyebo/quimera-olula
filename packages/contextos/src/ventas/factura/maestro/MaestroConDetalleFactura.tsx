@@ -1,11 +1,11 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useCallback, useEffect } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearFactura } from "../crear/CrearFactura.tsx";
 import { DetalleFactura } from "../detalle/DetalleFactura.tsx";
 import { Factura } from "../diseño.ts";
@@ -14,29 +14,17 @@ import "./MaestroConDetalleFactura.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleFactura = () => {
+  const { id, criteria } = getUrlParams();
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    facturas: [],
-    totalFacturas: 0,
-    facturaActiva: null,
+    facturas: listaActivaEntidadesInicial<Factura>(id, criteria),
   });
 
-  const setSeleccionada = useCallback(
-    (payload: Factura) => {
-      emitir("factura_seleccionada", payload);
-    },
-    [emitir]
-  );
-
-  const recargar = useCallback(
-    (criteria: Criteria) => {
-      void emitir("recarga_de_facturas_solicitada", criteria);
-    },
-    [emitir]
-  );
+  useUrlParams(ctx.facturas.activo, ctx.facturas.criteria);
 
   useEffect(() => {
-    emitir("recarga_de_facturas_solicitada", criteriaDefecto);
+    emitir("recarga_de_facturas_solicitada", ctx.facturas.criteria);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -44,7 +32,7 @@ export const MaestroConDetalleFactura = () => {
 
   return (
     <div className="Factura">
-      <MaestroDetalleControlado<Factura>
+      <MaestroDetalleActivoControlado<Factura>
         Maestro={
           <>
             <h2>Facturas</h2>
@@ -53,25 +41,25 @@ export const MaestroConDetalleFactura = () => {
                 Nueva Factura
               </QBoton>
             </div>
-            <ListadoControlado<Factura>
+            <ListadoActivoControlado<Factura>
               metaTabla={metaTablaFactura}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.facturas.criteria}
               modo={"tabla"}
-              entidades={ctx.facturas}
-              totalEntidades={ctx.totalFacturas}
-              seleccionada={ctx.facturaActiva}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+              entidades={ctx.facturas.lista}
+              totalEntidades={ctx.facturas.total}
+              seleccionada={ctx.facturas.activo}
+              onSeleccion={(payload) => emitir("factura_seleccionada", payload)}
+              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
             />
           </>
         }
         Detalle={
           <DetalleFactura
-            facturaInicial={ctx.facturaActiva}
+            id={ctx.facturas.activo}
             publicar={emitir}
           />
         }
-        seleccionada={ctx.facturaActiva}
+        seleccionada={ctx.facturas.activo}
         modoDisposicion="maestro-50"
       />
 

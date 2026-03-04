@@ -57,11 +57,21 @@ export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
             cliente_cambiado: [cambiarCliente],
 
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
+
+            pedido_deseleccionado: [
+                getContextoVacio,
+                publicar('pedido_deseleccionado', null)
+            ]
         },
 
         SERVIDO: {
 
             pedido_cargado: [abiertoOServido],
+
+            pedido_deseleccionado: [
+                getContextoVacio,
+                publicar('pedido_deseleccionado', null)
+            ]
         },
 
         BORRANDO_PEDIDO: {

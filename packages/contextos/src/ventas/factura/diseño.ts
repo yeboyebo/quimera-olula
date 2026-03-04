@@ -1,4 +1,5 @@
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
@@ -75,9 +76,7 @@ export type ContextoFactura = {
 
 export type ContextoMaestroFactura = {
     estado: EstadoMaestroFactura;
-    facturas: Factura[];
-    totalFacturas: number;
-    facturaActiva: Factura | null;
+    facturas: ListaActivaEntidades<Factura>;
 };
 
 export type ClienteFacturaRegistrado = {

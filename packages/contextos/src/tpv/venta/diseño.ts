@@ -1,8 +1,6 @@
-import { ClienteFacturaRegistrado } from "#/ventas/factura/diseño.ts";
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
-import { ClienteVentaNoRegistrado } from "../../ventas/comun/diseño.ts";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 
 export interface VentaTpv extends Venta {
     pendiente: number;
@@ -103,10 +101,6 @@ export type PatchVenta = (id: string, venta: VentaTpv) => Promise<void>;
 
 export type PatchFechaVenta = (id: string, fecha: Date) => Promise<void>;
 
-export type PatchVentaClienteRegistrado = (id: string, cliente: ClienteFacturaRegistrado) => Promise<void>;
-
-export type PatchVentaClienteNoRegistrado = (id: string, cliente: ClienteVentaNoRegistrado) => Promise<void>;
-
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
 
 export type PatchDevolverVenta = (id: string, venta: VentaTpvADevolver) => Promise<void>;
@@ -123,6 +117,8 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type DeletePago = (id: string, idPago: string) => Promise<void>;
 
+export type GetReportVenta = (id: string) => Promise<Blob>;
+
 
 export type EstadoMaestroVentasTpv = (
     'INICIAL'
@@ -131,5 +127,5 @@ export type EstadoMaestroVentasTpv = (
 
 export type ContextoMaestroVentasTpv = {
     estado: EstadoMaestroVentasTpv;
-    ventas: ListaEntidades<VentaTpv>
+    ventas: ListaActivaEntidades<VentaTpv>
 };

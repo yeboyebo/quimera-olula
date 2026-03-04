@@ -2,7 +2,7 @@ import { Factura } from "#/ventas/factura/diseño.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ProcesarListaActivaEntidades, accionesListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { ContextoMaestroVentasTpv, EstadoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
 import { getVenta, getVentas, postVenta } from "../infraestructura.ts";
 
@@ -30,26 +30,16 @@ export const metaTablaFactura: MetaTabla<Factura> = [
 
 type ProcesarVentasTpv = ProcesarContexto<EstadoMaestroVentasTpv, ContextoMaestroVentasTpv>;
 
-const conVentas = (fn: ProcesarListaEntidades<VentaTpv>) => (ctx: ContextoMaestroVentasTpv) => ({ ...ctx, ventas: fn(ctx.ventas) });
+const conVentas = (fn: ProcesarListaActivaEntidades<VentaTpv>) => (ctx: ContextoMaestroVentasTpv) => ({ ...ctx, ventas: fn(ctx.ventas) });
 
-export const Ventas = accionesListaEntidades(conVentas);
+export const Ventas = accionesListaActivaEntidades(conVentas);
 
 export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
 
     const criteria = payload as Criteria;
     const resultado = await getVentas(criteria.filtro, criteria.orden, criteria.paginacion);
-    const ventasCargadas = resultado.datos
 
-    return {
-        ...contexto,
-        ventas: {
-            lista: ventasCargadas,
-            total: resultado.total == -1 ? contexto.ventas.total : resultado.total,
-            activo: contexto.ventas.activo
-                ? ventasCargadas.find(v => v.id === contexto.ventas.activo?.id) ?? null
-                : null
-        }
-    }
+    return Ventas.recargar(contexto, resultado);
 }
 
 export const crearVenta: ProcesarVentasTpv = async (contexto) => {
@@ -60,8 +50,9 @@ export const crearVenta: ProcesarVentasTpv = async (contexto) => {
         ...contexto,
         ventas: {
             lista: [venta, ...contexto.ventas.lista],
-            activo: venta,
+            activo: venta.id,
             total: contexto.ventas.total + 1,
+            criteria: contexto.ventas.criteria,
         }
     }
 }

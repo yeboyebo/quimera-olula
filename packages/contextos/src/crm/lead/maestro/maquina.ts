@@ -16,6 +16,8 @@ export const getMaquina: () => Maquina<EstadoMaestroLeads, ContextoMaestroLeads>
             recarga_de_leads_solicitada: recargarLeads,
 
             creacion_de_lead_solicitada: "CREANDO",
+
+            criteria_cambiado: [Leads.filtrar, recargarLeads],
         },
         CREANDO: {
             creacion_lead_cancelada: "INICIAL",

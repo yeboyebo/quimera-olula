@@ -20,6 +20,8 @@ export const getMaquina: () => Maquina<EstadoMaestroArqueosTpv, ContextoMaestroA
             recarga_de_arqueos_solicitada: recargarArqueos,
 
             creacion_de_arqueo_solicitada: crearArqueo,
+
+            criteria_cambiado: [Arqueos.filtrar, recargarArqueos],
         },
     }
 }

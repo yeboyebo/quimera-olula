@@ -34,17 +34,28 @@ export const metaTablaTramoLineaPedido: MetaTabla<Tramo> = [
 ];
 
 export const transformarLineasAlbaran = (lineas: LineaAlbaranarPedido[]): LineasAlabaranPatch[] => {
-    return lineas.map(linea => ({
-        id: linea.id,
-        cantidad: linea.a_enviar || 0,
-        lotes: []
-    }));
+    const cantidadDesdeTramos = (tramos?: Tramo[]) =>
+        (tramos || []).reduce((acc, tramo) => acc + (Number(tramo.cantidad) || 0), 0);
+
+    return lineas
+        .map<LineasAlabaranPatch>(linea => {
+            const cantidad = linea.tramos && linea.tramos.length > 0
+                ? cantidadDesdeTramos(linea.tramos)
+                : (linea.a_enviar || 0);
+            return {
+                id: linea.id,
+                cantidad,
+                lotes: [] as []
+            };
+        })
+        .filter(linea => linea.cantidad > 0);
 }
 
 export const obtenerClaseEstadoAlbaranado = (linea: LineaAlbaranarPedido) => {
     const aEnviar = linea.a_enviar || 0;
     const servida = linea.servida || 0;
     if (linea.cerrada) return "cerrada";
+    if (aEnviar > 0 && aEnviar < linea.cantidad) return "modificada";
     if (aEnviar + servida === linea.cantidad) return "completa";
     if (aEnviar + servida > 0 && aEnviar + servida < linea.cantidad)
         return "modificada";

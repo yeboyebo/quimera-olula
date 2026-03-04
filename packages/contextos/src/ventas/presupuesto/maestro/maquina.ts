@@ -24,6 +24,8 @@ export const getMaquina: () => Maquina<EstadoMaestroPresupuesto, ContextoMaestro
 
             recarga_de_presupuestos_solicitada: recargarPresupuestos,
 
+            criteria_cambiado: [Presupuestos.filtrar, recargarPresupuestos],
+
             crear_presupuesto_solicitado: 'CREANDO_PRESUPUESTO',
         },
 

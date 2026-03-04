@@ -2,12 +2,12 @@ import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useCallback, useEffect } from "react";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearAlbaran } from "../crear/CrearAlbaran.tsx";
 import { DetalleAlbaran } from "../detalle/DetalleAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
@@ -16,27 +16,17 @@ import "./MaestroConDetalleAlbaran.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleAlbaran = () => {
+  const { id, criteria } = getUrlParams();
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    albaranes: [],
-    totalAlbaranes: 0,
-    albaranActivo: null,
+    albaranes: listaActivaEntidadesInicial<Albaran>(id, criteria),
   });
 
-  const setSeleccionada = useCallback(
-    (payload: Albaran) => void emitir("albaran_seleccionado", payload),
-    [emitir]
-  );
-
-  const recargar = useCallback(
-    (criteria: Criteria) => {
-      void emitir("recarga_de_albaranes_solicitada", criteria);
-    },
-    [emitir]
-  );
+  useUrlParams(ctx.albaranes.activo, ctx.albaranes.criteria);
 
   useEffect(() => {
-    emitir("recarga_de_albaranes_solicitada", criteriaDefecto);
+    emitir("recarga_de_albaranes_solicitada", ctx.albaranes.criteria);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,7 +61,7 @@ export const MaestroConDetalleAlbaran = () => {
 
   return (
     <div className="Albaran">
-      <MaestroDetalleControlado<Albaran>
+      <MaestroDetalleActivoControlado<Albaran>
         Maestro={
           <>
             <h2>Albaranes</h2>
@@ -80,25 +70,25 @@ export const MaestroConDetalleAlbaran = () => {
                 Nuevo Albarán
               </QBoton>
             </div>
-            <ListadoControlado<Albaran>
+            <ListadoActivoControlado<Albaran>
               metaTabla={metaTablaAlbaran}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.albaranes.criteria}
               modo={"tabla"}
-              entidades={ctx.albaranes}
-              totalEntidades={ctx.totalAlbaranes}
-              seleccionada={ctx.albaranActivo}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+              entidades={ctx.albaranes.lista}
+              totalEntidades={ctx.albaranes.total}
+              seleccionada={ctx.albaranes.activo}
+              onSeleccion={(payload) => emitir("albaran_seleccionado", payload)}
+              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
             />
           </>
         }
         Detalle={
           <DetalleAlbaran
-            albaranInicial={ctx.albaranActivo}
+            id={ctx.albaranes.activo}
             publicar={emitir}
           />
         }
-        seleccionada={ctx.albaranActivo}
+        seleccionada={ctx.albaranes.activo}
         modoDisposicion="maestro-50"
       />
 

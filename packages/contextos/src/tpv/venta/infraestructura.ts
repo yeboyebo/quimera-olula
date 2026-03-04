@@ -4,7 +4,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PatchVentaClienteNoRegistrado, PatchVentaClienteRegistrado, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrlFactura = new Ventas_Urls().FACTURA;
 const baseUrl = new ApiUrls().VENTA;
@@ -117,7 +117,7 @@ export const deleteVentaTpv: DeleteVentaTpv = async (id) => {
 };
 
 export const patchDevolverVenta: PatchDevolverVenta = async (id, ventaADevolver) => {
-    await RestAPI.patch(`${baseUrlFactura}/${id}/rectificar`, {
+    await RestAPI.patch(`${baseUrl}/${id}/rectificar`, {
         rectificada_id: ventaADevolver.id,
         lineas_rectificadas: ventaADevolver.lineas.filter(
             (l) => l.aDevolver > 0
@@ -133,7 +133,7 @@ export const postEmitirVale: PostEmitirVale = async (venta) => {
     await RestAPI.post(
         `${baseUrl}/${venta.id}/emitir_vale`,
         {
-            punto_venta_id: puntoVentaLocal.obtener(),
+            punto_venta_id: puntoVentaLocal.obtener().id,
         },
         "Error al emitir el vale"
     );
@@ -238,6 +238,9 @@ export const deleteLinea: DeleteLinea = async (id, lineaId): Promise<void> => {
     }, "Error al borrar línea de venta");
 };
 
+export const getReportVenta: GetReportVenta = async (id) =>
+    RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report de la venta");
+
 export const deletePago: DeletePago = async (id, idPago): Promise<void> => {
     await RestAPI.delete(`${baseUrl}/${id}/pago/${idPago}`, "Error al borrar pago de factura");
 };
@@ -277,49 +280,49 @@ export const patchFechaVenta: PatchFechaVenta = async (id, fecha) => {
     );
 };
 
-export const patchVentaClienteRegistrado: PatchVentaClienteRegistrado = async (id, cliente) => {
+// export const patchVentaClienteRegistrado: PatchVentaClienteRegistrado = async (id, cliente) => {
 
-    const payload = {
-        cambios: {
-            cliente: {
-                cliente_id: cliente.id,
-                // direccion_id: cliente.idDireccion
-            }
-        }
-    };
+//     const payload = {
+//         cambios: {
+//             cliente: {
+//                 cliente_id: cliente.id,
+//                 // direccion_id: cliente.idDireccion
+//             }
+//         }
+//     };
 
-    await RestAPI.patch(`${baseUrlFactura}/${id}`, payload,
-        'Error al guardar la venta'
-    );
-};
+//     await RestAPI.patch(`${baseUrlFactura}/${id}`, payload,
+//         'Error al guardar la venta'
+//     );
+// };
 
-export const patchVentaClienteNoRegistrado: PatchVentaClienteNoRegistrado = async (id, cliente) => {
+// export const patchVentaClienteNoRegistrado: PatchVentaClienteNoRegistrado = async (id, cliente) => {
 
-    const payload = {
-        cambios: {
-            cliente: {
-                nombre: cliente.nombre,
-                id_fiscal: cliente.idFiscal,
-                direccion: {
-                    tipo_via: '',
-                    nombre_via: cliente.direccion.nombreVia,
-                    numero: '',
-                    otros: '',
-                    ciudad: '',
-                    provincia_id: '',
-                    provincia: '',
-                    cod_postal: cliente.direccion.codPostal,
-                    pais_id: '',
-                    apartado: '',
-                    telefono: ''
-                }
-            }
-        }
-    };
+//     const payload = {
+//         cambios: {
+//             cliente: {
+//                 nombre: cliente.nombre,
+//                 id_fiscal: cliente.idFiscal,
+//                 direccion: {
+//                     tipo_via: '',
+//                     nombre_via: cliente.direccion.nombreVia,
+//                     numero: '',
+//                     otros: '',
+//                     ciudad: '',
+//                     provincia_id: '',
+//                     provincia: '',
+//                     cod_postal: cliente.direccion.codPostal,
+//                     pais_id: '',
+//                     apartado: '',
+//                     telefono: ''
+//                 }
+//             }
+//         }
+//     };
 
-    await RestAPI.patch(`${baseUrlFactura}/${id}`, payload,
-        'Error al guardar la venta'
-    );
-};
+//     await RestAPI.patch(`${baseUrlFactura}/${id}`, payload,
+//         'Error al guardar la venta'
+//     );
+// };
 
 

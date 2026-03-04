@@ -1,13 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroPedido, EstadoMaestroPedido } from "./diseño.ts";
-import {
-    activarPedido,
-    cambiarPedidoEnLista,
-    desactivarPedidoActivo,
-    incluirPedidoEnLista,
-    quitarPedidoDeLista,
-    recargarPedidos
-} from "./dominio.ts";
+import { Pedidos, recargarPedidos } from "./dominio.ts";
 
 
 export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedido> = () => {
@@ -16,24 +9,26 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
 
         INICIAL: {
 
-            pedido_cambiado: cambiarPedidoEnLista,
+            pedido_cambiado: Pedidos.cambiar,
 
-            pedido_seleccionado: [activarPedido],
+            pedido_seleccionado: [Pedidos.activar],
 
-            pedido_deseleccionado: desactivarPedidoActivo,
+            pedido_deseleccionado: Pedidos.desactivar,
 
-            pedido_borrado: quitarPedidoDeLista,
+            pedido_borrado: Pedidos.quitar,
 
-            pedido_creado: incluirPedidoEnLista,
+            pedido_creado: Pedidos.incluir,
 
             recarga_de_pedidos_solicitada: recargarPedidos,
+
+            criteria_cambiado: [Pedidos.filtrar, recargarPedidos],
 
             crear_pedido_solicitado: "CREANDO_PEDIDO",
         },
 
         CREANDO_PEDIDO: {
 
-            pedido_creado: [incluirPedidoEnLista, 'INICIAL'],
+            pedido_creado: [Pedidos.incluir, 'INICIAL'],
 
             creacion_pedido_cancelada: "INICIAL",
         },

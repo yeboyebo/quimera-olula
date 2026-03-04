@@ -1,6 +1,8 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoAlbaranarPedido, EstadoAlbaranarPedido } from "./diseño.ts";
 import {
+    actualizarEstadoCerradoLinea,
+    actualizarTramo,
     actualizarTramos,
     albaranarPedido,
     cambiarLinea,
@@ -26,6 +28,10 @@ export const getMaquina: () => Maquina<EstadoAlbaranarPedido, ContextoAlbaranarP
 
             tramos_actualizados: actualizarTramos,
 
+            tramo_actualizado: actualizarTramo,
+
+            linea_cerrada_actualizada: actualizarEstadoCerradoLinea,
+
             seleccion_cancelada: cancelarSeleccion,
 
             albaranado_solicitado: "CONFIRMANDO_ALBARANADO",
@@ -36,8 +42,12 @@ export const getMaquina: () => Maquina<EstadoAlbaranarPedido, ContextoAlbaranarP
 
             albaranado_confirmado: [
                 albaranarPedido,
-                "LISTO"
+                "ALBARANADO_COMPLETADO"
             ],
+        },
+
+        ALBARANADO_COMPLETADO: {
+            albaranado_completado_cerrado: "LISTO",
         },
 
         ALBARANANDO: {},

@@ -1,0 +1,38 @@
+#ResumenPda {
+  width: max-content;
+  min-width: 300px;
+  margin: 0 auto;
+  margin-block-start: 20px;
+
+  .row {
+    display: grid;
+    grid-template-columns: 15% 85%;
+
+    .buttonResumenPda {
+      grid-column-start: 2;
+      grid-column-end: 2;
+      color: $action-button-inactive;
+      padding: 12px;
+      font-size: 1.5rem;
+      display: inline-flex;
+      align-items: center;
+
+      .MuiIconButton-label {
+        justify-content: unset;
+      }
+      .iconButton {
+        font-size: 36px;
+      }
+      .iconPendiente {
+        color: $sincro-yellow-color;
+      }
+      .iconCompletado {
+        color: $sincro-green-color;
+      }
+      .iconTitle {
+        padding-inline-start: 10px;
+        font-size: 20px;
+      }
+    }
+  }
+}
