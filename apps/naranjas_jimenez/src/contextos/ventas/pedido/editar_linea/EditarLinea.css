@@ -1,4 +1,4 @@
-.CrearLinea {
+.EditarLinea {
     quimera-formulario {
         min-width: 500px;
     }
@@ -31,7 +31,10 @@
         grid-column: span 12;
     }
 
-    /* TODO: categoria */
+    quimera-select[nombre="categoria"] {
+        grid-column: span 12;
+    }
+
 
     div[id="espacio4"] {
         grid-column: span 4;

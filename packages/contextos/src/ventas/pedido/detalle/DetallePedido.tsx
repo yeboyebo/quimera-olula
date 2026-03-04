@@ -5,8 +5,13 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useModelo } from "@olula/lib/useModelo.js";
+<<<<<<< HEAD
+import { useCallback, useContext, useEffect } from "react";
+=======
 import { useCallback, useEffect } from "react";
+>>>>>>> 43321f5b9316761987b14512367ab287753a0a69
 import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
@@ -18,8 +23,24 @@ import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-export const DetallePedido = ({
-  id,
+export type DetallePedidoProps = {
+  pedidoInicial: Pedido;
+  publicar: EmitirEvento;
+};
+
+export const DetallePedido = (props: DetallePedidoProps) => {
+  const { app } = useContext(FactoryCtx);
+  if (!app.Ventas) {
+    return null;
+  }
+  const DetallePedido_ = app.Ventas
+    .pedido_DetallePedido as typeof DetallePedidoBase;
+
+  return DetallePedido_(props);
+};
+
+export const DetallePedidoBase = ({
+  pedidoInicial = null,
   publicar = async () => {},
 }: {
   id?: string;
