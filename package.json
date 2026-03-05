@@ -12,7 +12,8 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-router": "^7.10.1",
-    "tslib": "^2.8.1"
+    "tslib": "^2.8.1",
+    "react-infinite-scroll-component": "^5.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
