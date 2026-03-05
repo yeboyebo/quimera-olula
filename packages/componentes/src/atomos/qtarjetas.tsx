@@ -1,6 +1,7 @@
-import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { Criteria, Entidad, Paginacion } from "@olula/lib/diseño.ts";
 import { calcularPaginacionSimplificada } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 import "./qtarjetas.css";
@@ -81,11 +82,13 @@ export type QTarjetasProps<T extends Entidad> = {
   cargando: boolean;
   seleccionadaId?: string;
   onSeleccion?: (entidad: T) => void;
-  orden: Orden;
+  // orden: Orden;
   onOrdenar?: (clave: string) => void;
-  paginacion?: Paginacion;
+  // paginacion?: Paginacion;
   onPaginacion?: (pagina: number, limite: number) => void;
   totalEntidades?: number;
+  criteria: Criteria;
+  onSiguientePagina?: (criteria: Criteria) => void;
 };
 
 export const QTarjetas = <T extends Entidad>({
@@ -94,10 +97,53 @@ export const QTarjetas = <T extends Entidad>({
   cargando,
   seleccionadaId,
   onSeleccion,
-  paginacion,
+  // paginacion,
   onPaginacion,
   totalEntidades = 0,
+  criteria,
+  onSiguientePagina,
 }: QTarjetasProps<T>) => {
+  const tarjetaItems = datos.map((entidad) => (
+    <quimera-tarjeta
+      key={entidad.id}
+      className={entidad.id === seleccionadaId ? "seleccionada" : ""}
+      onClick={() => onSeleccion && onSeleccion(entidad)}
+    >
+      {tarjeta(entidad)}
+    </quimera-tarjeta>
+  ));
+
+  const renderLista = () => {
+    if (onSiguientePagina) {
+      return (
+        <div className="lista-contenedor-scroll">{tarjetaItems}
+          <InfiniteScroll
+            dataLength={datos.length}
+            next={() =>
+              onSiguientePagina({
+                ...criteria,
+                paginacion: {
+                  ...criteria.paginacion,
+                  pagina: criteria.paginacion.pagina + 1,
+                },
+              })
+            }
+            hasMore={datos.length < totalEntidades}
+            loader={<div className="cargando">Cargando...</div>}
+            height="64vh"
+          >
+            {tarjetaItems}
+          </InfiniteScroll>
+        </div>
+        
+      );
+    }
+
+    return (
+      <div className="lista-contenedor-scroll">{tarjetaItems}</div>
+    );
+  };
+
   return (
     <quimera-tarjetas>
       {cargando ? (
@@ -105,19 +151,10 @@ export const QTarjetas = <T extends Entidad>({
       ) : datos.length === 0 ? (
         <div className="no-datos">No hay datos</div>
       ) : (
-        <div className="lista-contenedor-scroll">
-          {datos.map((entidad) => (
-            <quimera-tarjeta
-              key={entidad.id}
-              className={entidad.id === seleccionadaId ? "seleccionada" : ""}
-              onClick={() => onSeleccion && onSeleccion(entidad)}
-            >
-              {tarjeta(entidad)}
-            </quimera-tarjeta>
-          ))}
-        </div>
+        renderLista()
       )}
-      {paginacionControlador(totalEntidades, paginacion!, onPaginacion)}
+      {!onSiguientePagina &&
+        paginacionControlador(totalEntidades, criteria.paginacion!, onPaginacion)}
     </quimera-tarjetas>
   );
 };

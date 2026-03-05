@@ -92,12 +92,11 @@ export const ListadoControlado = <T extends Entidad>({
                     cargando={cargando}
                     seleccionadaId={seleccionada?.id}
                     onSeleccion={onSeleccion}
-                    paginacion={criteria.paginacion}
                     onPaginacion={(pagina, limite) => {
                         cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
                     }}
                     totalEntidades={entidades.length}
-                    orden={criteria.orden}
+                    criteria={criteria}
                 />
             );
         }

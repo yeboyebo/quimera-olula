@@ -89,6 +89,7 @@ export const MaestroConDetalleVentaTpv = () => {
               seleccionada={ctx.ventas.activo}
               onSeleccion={(payload) => emitir("venta_seleccionada", payload)}
               onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
             />
           </>
         }
