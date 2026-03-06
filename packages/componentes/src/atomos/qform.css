@@ -2,7 +2,7 @@ quimera-formulario {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     /* grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); */
-    gap: 1rem;
+    gap: var(--gap-formulario);
     place-items: center stretch;
     padding: 1rem 0px;
     align-items: stretch;
@@ -18,5 +18,21 @@ quimera-formulario {
 
     quimera-date {
         grid-column: 1 / span 3;
+    }
+}
+
+@media (max-width: 768px) {
+    quimera-formulario {
+        grid-template-columns: 1fr;
+        gap: var(--gap-formulario);
+
+        quimera-input,
+        quimera-select,
+        quimera-date,
+        quimera-textarea,
+        quimera-boton,
+        quimera-checkbox {
+            grid-column: 1 / -1 !important;
+        }
     }
 }

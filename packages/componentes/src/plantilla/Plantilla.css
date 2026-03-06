@@ -20,13 +20,13 @@
         flex-grow: 1;
 
         &>*:not(menu-lateral):not(menu-usuario) {
-            padding: 1rem;
+            padding: var(--padding-vertical) var(--padding-horizontal);
             flex-grow: 1;
         }
 
         @media screen and (max-width: 768px) {
             &>*:not(menu-lateral):not(menu-usuario) {
-                padding: 0;
+                padding: var(--padding-vertical) var(--padding-horizontal);
             }
         }
     }
