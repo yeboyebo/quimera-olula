@@ -1,5 +1,7 @@
 import { QIcono, QTarjetas } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { Criteria } from "@olula/lib/diseño.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useContext, useState } from "react";
 import { LineaAlbaranarPedido, Tramo } from "../../diseño.ts";
@@ -159,8 +161,8 @@ export const TarjetaLinea = ({
               onSeleccion={(tramo: Tramo) =>
                 setTramoSeleccionadoId(String(tramo.id))
               }
-              orden={["id", "ASC"]}
               onOrdenar={(_: string) => null}
+              criteria={criteria_tarjetas}
             />
           )}
         </div>
@@ -170,3 +172,8 @@ export const TarjetaLinea = ({
 };
 
 export default TarjetaLinea;
+
+const criteria_tarjetas: Criteria = {
+  ...criteriaDefecto,
+  orden: ["id", "DESC"],
+}

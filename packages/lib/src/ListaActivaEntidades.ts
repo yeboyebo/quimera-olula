@@ -34,6 +34,19 @@ export const recargarListaEntidades = <T extends Entidad>(prev: ListaActivaEntid
     )
 }
 
+export const ampliarListaEntidades = <T extends Entidad>(prev: ListaActivaEntidades<T>, payload?: unknown): ListaActivaEntidades<T> => {
+    const { datos, total } = payload as { datos: T[]; total: number } ?? { datos: [], total: 0 };
+
+    console.log('datos', datos);
+
+    return pipe(
+        prev,
+        conLista([...prev.lista, ...datos]),
+        conTotal(total === -1 ? prev.total : total),
+        conActivo(prev.activo)
+    )
+}
+
 export const incluirEnListaEntidades = <T extends Entidad>(prev: ListaActivaEntidades<T>, payload?: unknown): ListaActivaEntidades<T> => {
     const nuevo = payload as T;
 
@@ -121,6 +134,7 @@ export const accionesListaActivaEntidades = <T extends Entidad, E extends string
         activar: procesar(activarElementoListaEntidades),
         desactivar: procesar(desactivarElementoListaEntidades),
         recargar: procesar(recargarListaEntidades),
+        ampliar: procesar(ampliarListaEntidades),
         filtrar: procesar(filtrarEntidades),
     }
 }

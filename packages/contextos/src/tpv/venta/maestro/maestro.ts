@@ -42,6 +42,15 @@ export const recargarVentas: ProcesarVentasTpv = async (contexto, payload) => {
     return Ventas.recargar(contexto, resultado);
 }
 
+
+export const ampliarVentas: ProcesarVentasTpv = async (contexto, payload) => {
+
+    const criteria = payload as Criteria;
+    const resultado = await getVentas(criteria.filtro, criteria.orden, criteria.paginacion);
+
+    return Ventas.ampliar(contexto, resultado);
+}
+
 export const crearVenta: ProcesarVentasTpv = async (contexto) => {
 
     const idVenta = await postVenta();
