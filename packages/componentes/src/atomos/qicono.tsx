@@ -61,13 +61,17 @@ export const QIcono = ({
   ...props
 }: QIconoProps) => {
   let nombreIcono, tipo;
-
-  if (typeof iconos[nombre] === "object") {
-    nombreIcono = iconos[nombre].nombre;
-    tipo = iconos[nombre].tipo;
-  } else {
-    nombreIcono = iconos[nombre];
+  if (typeof iconos[nombre] === "undefined") {
+    nombreIcono = nombre;
     tipo = undefined;
+  } else {
+    if (typeof iconos[nombre] === "object") {
+      nombreIcono = iconos[nombre].nombre;
+      tipo = iconos[nombre].tipo;
+    } else {
+      nombreIcono = iconos[nombre];
+      tipo = undefined;
+    }
   }
 
   return (

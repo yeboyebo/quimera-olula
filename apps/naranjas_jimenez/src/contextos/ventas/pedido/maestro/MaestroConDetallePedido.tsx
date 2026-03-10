@@ -1,34 +1,44 @@
+import { CrearPedido } from "#/ventas/pedido/crear/CrearPedido.tsx";
+import { DetallePedido } from "#/ventas/pedido/detalle/DetallePedido.tsx";
+import { Pedido } from "#/ventas/pedido/diseño.ts";
+import { getMaquina } from "#/ventas/pedido/maestro/maquina.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
+import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
-import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect } from "react";
-import { CrearPedido } from "../crear/CrearPedido.tsx";
-import { DetallePedido } from "../detalle/DetallePedido.tsx";
-import { Pedido } from "../diseño.ts";
+import { Criteria } from "@olula/lib/diseño.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { useCallback, useEffect } from "react";
 import "./MaestroConDetallePedido.css";
-import { getMaquina } from "./maquina.ts";
-import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
+import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
 
-export const MaestroConDetallePedido = () => {
-  const { id, criteria } = getUrlParams();
-
+export const MaestroConDetallePedidoNrj = () => {
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    pedidos: listaActivaEntidadesInicial<Pedido>(id, criteria),
+    pedidos: [],
+    totalPedidos: 0,
+    pedidoActivo: null,
   });
 
-  useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
+  const setSeleccionada = useCallback(
+    (payload: Pedido) => void emitir("pedido_seleccionado", payload),
+    [emitir]
+  );
+
+  const recargar = useCallback(
+    (criteria: Criteria) => {
+      void emitir("recarga_de_pedidos_solicitada", criteria);
+    },
+    [emitir]
+  );
 
   useEffect(() => {
-    emitir("recarga_de_pedidos_solicitada", ctx.pedidos.criteria);
+    emitir("recarga_de_pedidos_solicitada", criteriaDefecto);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const metaTablaPedido = getMetaTablaPedido();
+  const metaTablaPedido = getMetaTablaPedidoNrj();
 
   // const metaTablaPedido = [
   //   {
@@ -61,7 +71,7 @@ export const MaestroConDetallePedido = () => {
 
   return (
     <div className="Pedido">
-      <MaestroDetalleActivoControlado<Pedido>
+      <MaestroDetalleControlado<Pedido>
         Maestro={
           <>
             <h2>Pedidos</h2>
@@ -70,22 +80,22 @@ export const MaestroConDetallePedido = () => {
                 Nuevo Pedido
               </QBoton>
             </div>
-            <ListadoActivoControlado<Pedido>
+            <ListadoControlado<Pedido>
               metaTabla={metaTablaPedido}
-              criteria={ctx.pedidos.criteria}
+              criteriaInicial={criteriaDefecto}
               modo={"tabla"}
-              entidades={ctx.pedidos.lista}
-              totalEntidades={ctx.pedidos.total}
-              seleccionada={ctx.pedidos.activo}
-              onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
-              onCriteriaChanged={(payload) =>
-                emitir("criteria_cambiado", payload)
-              }
+              entidades={ctx.pedidos}
+              totalEntidades={ctx.totalPedidos}
+              seleccionada={ctx.pedidoActivo}
+              onSeleccion={setSeleccionada}
+              onCriteriaChanged={recargar}
             />
           </>
         }
-        Detalle={<DetallePedido id={ctx.pedidos.activo} publicar={emitir} />}
-        seleccionada={ctx.pedidos.activo}
+        Detalle={
+          <DetallePedido pedidoInicial={ctx.pedidoActivo} publicar={emitir} />
+        }
+        seleccionada={ctx.pedidoActivo}
       />
 
       <QModal

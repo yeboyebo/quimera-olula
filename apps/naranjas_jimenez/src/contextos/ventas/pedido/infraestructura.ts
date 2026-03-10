@@ -7,7 +7,20 @@ interface PaletLineaPedidoApiNrj {
 }
 export interface LineaPedidoApiNrj extends LineaPedidoAPI {
     variedad_id: string
+    marca_id: string
+    calibre_id: string
+    tipo_palet_id: string
+    envase_id: string
+    categoria: string
+    variedad: string
+    marca: string
+    calibre: string
+    palet: string
+    envase: string
     cantidad_envases_asignados: number
+    cantidad_envases_nominal: number
+    num_palets: number
+    cantidad_envases: number
     palets: PaletLineaPedidoApiNrj[]
 }
 
@@ -15,6 +28,20 @@ const lineaPedidoDesdeApi = (l: LineaPedidoApiNrj): LineaPedidoNrj => {
     return {
         ...l,
         idVariedad: l.variedad_id,
+        descVariedad: l.variedad,
+        idCalibre: l.calibre_id,
+        descCalibre: l.calibre,
+        idMarca: l.marca_id,
+        descMarca: l.marca,
+        idTipoPalet: l.tipo_palet_id,
+        cantidadPalets: l.num_palets,
+        cantidadEnvases: l.cantidad_envases,
+        envasesPorPalet: l.cantidad_envases_nominal ? l.cantidad_envases_nominal / l.num_palets : 0,
+        descPalet: l.palet,
+        idEnvase: l.envase_id,
+        descEnvase: l.envase,
+        categoria: l.categoria,
+
         cantidadEnvasesAsignados: l.cantidad_envases_asignados,
         palets: l.palets.map(p => ({
             id: p.id,
