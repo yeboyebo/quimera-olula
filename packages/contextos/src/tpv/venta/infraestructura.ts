@@ -1,7 +1,7 @@
 import ApiUrls from "#/tpv/comun/urls.ts";
 import Ventas_Urls from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
 import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
@@ -86,7 +86,17 @@ export const getVentas: GetVentasTpv = async (
     orden: Orden,
     paginacion: Paginacion
 ) => {
-    const q = criteriaQuery(filtro, orden, paginacion);
+    const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
+    const filtroPuntoVenta: ClausulaFiltro = [
+        "punto_venta_id",
+        miPuntoVentaLocal?.id ?? "",
+    ];
+
+    const q = criteriaQuery(
+        [...filtro, filtroPuntoVenta],
+        orden,
+        paginacion
+    );
 
     const respuesta = await RestAPI.get<{ datos: VentaTpvAPI[]; total: number }>(baseUrl + q);
     return { datos: respuesta.datos.map(ventaDesdeAPI), total: respuesta.total };

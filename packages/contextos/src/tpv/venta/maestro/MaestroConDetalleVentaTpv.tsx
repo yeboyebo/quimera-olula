@@ -7,7 +7,6 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
 import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
-import { ClausulaFiltro } from "@olula/lib/diseño.js";
 import {
   criteriaDefecto,
   formatearFechaDate,
@@ -24,16 +23,18 @@ import { getMaquina } from "./maquina.ts";
 
 type Layout = "TABLA" | "TARJETA";
 
+const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
+
 export const MaestroConDetalleVentaTpv = () => {
-  const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
+
   const criteriaBaseVentas = useMemo(() => {
-    const filtroPuntoVenta: ClausulaFiltro = [
-      "punto_venta_id",
-      miPuntoVentaLocal?.id ?? "",
-    ];
+    // const filtroPuntoVenta: ClausulaFiltro = [
+    //   "punto_venta_id",
+    //   miPuntoVentaLocal?.id ?? "",
+    // ];
     return {
       ...criteriaDefecto,
-      filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
+      // filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
       orden: ["fecha", "DESC", 'codigo', 'DESC']
     };
   }, [miPuntoVentaLocal?.id]);
@@ -55,6 +56,13 @@ export const MaestroConDetalleVentaTpv = () => {
     [layout, setLayout]
   );
 
+  const handle_punto_venta_cambiado = useCallback(
+    () => {
+      emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
+    },
+    [emitir]
+  );
+
   useEffect(() => {
     emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
   }, []);
@@ -73,7 +81,7 @@ export const MaestroConDetalleVentaTpv = () => {
                 onClick={cambiarLayout}
               />
             </div>
-            <PuntoVentaTpvActual />
+            <PuntoVentaTpvActual onChange={handle_punto_venta_cambiado} />
             <AgenteTpvActual />
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>Nueva Venta</QBoton>
@@ -106,7 +114,7 @@ export const MaestroConDetalleVentaTpv = () => {
 
 const TarjetaVentaTpv = (venta: VentaTpv) => {
   return (
-    <div className="tarjeta-venta">
+    <div className="tarjeta-venta" key={venta.id}>
       <div className="tarjeta-venta-izquierda">
         <ColumnaEstadoTabla
           estados={{

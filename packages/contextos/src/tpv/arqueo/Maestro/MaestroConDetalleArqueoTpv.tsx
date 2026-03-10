@@ -14,7 +14,7 @@ import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleArqueoTpv = () => {
   const puntoVentaActivo = puntoVentaLocal.obtenerSeguro();
-  const miAgenteActivo = agenteActivo.obtenerSegudo();
+  const miAgenteActivo = agenteActivo.obtenerSeguro();
 
   const { id, criteria } = getUrlParams();
 
