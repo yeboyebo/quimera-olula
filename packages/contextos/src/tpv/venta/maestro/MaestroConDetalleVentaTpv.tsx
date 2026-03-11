@@ -23,18 +23,13 @@ import { getMaquina } from "./maquina.ts";
 
 type Layout = "TABLA" | "TARJETA";
 
-const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
 
 export const MaestroConDetalleVentaTpv = () => {
-
+  
+  const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
   const criteriaBaseVentas = useMemo(() => {
-    // const filtroPuntoVenta: ClausulaFiltro = [
-    //   "punto_venta_id",
-    //   miPuntoVentaLocal?.id ?? "",
-    // ];
     return {
       ...criteriaDefecto,
-      // filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
       orden: ["fecha", "DESC", 'codigo', 'DESC']
     };
   }, [miPuntoVentaLocal?.id]);
@@ -125,8 +120,8 @@ const TarjetaVentaTpv = (venta: VentaTpv) => {
         />
         <div className="tarjeta-venta-izquierda-textos">
           <div>{`${venta.codigo} - ${formatearFechaDate(venta.fecha)}`}</div>
-          {venta.nombre_cliente !== "VENTA AL CONTADO" && (
-            <div>{venta.nombre_cliente}</div>
+          {venta.cliente?.nombre !== "VENTA AL CONTADO" && (
+            <div>{venta.cliente?.nombre}</div>
           )}
         </div>
       </div>
