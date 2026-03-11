@@ -43,7 +43,7 @@ function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyl
         </Box>
       )}
       <Collapse in={linea.buffer._status !== "deleting"}>
-        <Grid container spacing={0}>
+        <Grid container spacing={0} direction="column">
           <Grid item xs={12}>
             <Box display="flex" justifyContent="right" mt={1}>
               {!disabled && (
@@ -67,7 +67,7 @@ function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyl
               actionPrefix="linea/articulo"
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={12}>
                     <QArticuloVbarba
                       id="linea.buffer/referencia"
@@ -101,14 +101,12 @@ function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyl
             </QSection>
           </Grid>
 
-          {console.log('mimensaje_buffer', buffer)}
-
           <Grid item xs={12}>
             <QSection
               actionPrefix="linea/cantidad"
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer/cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
@@ -145,7 +143,7 @@ function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyl
               mr={1}
               alwaysInactive={disabled}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer/dtoLineal" schema={schema} fullWidth />
                   </Grid>
@@ -174,7 +172,7 @@ function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyl
               actionPrefix="linea/Impuestos"
               alwaysInactive={true}
               dynamicComp={() => (
-                <Grid container spacing={1}>
+                <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
                     <Field.Schema id="linea.buffer/codImpuesto" schema={schema} fullWidth />
                   </Grid>
