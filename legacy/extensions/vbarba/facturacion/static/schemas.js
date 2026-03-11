@@ -11,6 +11,9 @@ export default parent => {
     presupuestosCli: parent.presupuestosCli.fields({
       fechaSalida: Field.Date("fechasalida", "Fecha Salida"),
     }),
+    facturasCli: parent.facturascli.fields({
+      impreso: Field.Bool("impreso", "Impreso"),
+    }),
     lineasPresupuestosCli: parent.lineasPresupuestosCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
       nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),

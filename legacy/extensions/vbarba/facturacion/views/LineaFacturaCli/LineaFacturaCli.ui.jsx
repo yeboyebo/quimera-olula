@@ -1,3 +1,4 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
 import {
   Box,
   Button,
@@ -9,10 +10,9 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { QArticuloVbarba } from "../../comps";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
+import { QArticuloVbarba } from "../../comps";
 
 import { ProveedorArticulo } from "../../comps";
 
@@ -98,6 +98,7 @@ function LineaFacturaCli({ callbackGuardada, disabled, lineaInicial, useStyles }
               saveDisabled={() => !schema.isValid(buffer)}
             >
               <Typography variant="h6">{buffer.descripcion}</Typography>
+              {buffer.nombreProveedor && <Typography variant="h6">Proveedor: {buffer.nombreProveedor}</Typography>}
             </QSection>
           </Grid>
 
