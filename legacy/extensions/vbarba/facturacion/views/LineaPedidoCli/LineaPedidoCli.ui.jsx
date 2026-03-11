@@ -1,3 +1,4 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
 import {
   Box,
   Button,
@@ -9,8 +10,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { ProveedorArticulo, QArticuloVbarba } from "../../comps";
@@ -78,14 +78,14 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <Field.Schema id="linea.buffer.descripcion" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/descripcion" schema={schema} fullWidth />
                   </Grid>
                   <Grid item xs={12}>
                     <Quimera.Block id="afterDescripcion" />
                   </Grid>
                   <Grid item xs={12}>
                     <ProveedorArticulo
-                      id="linea.buffer.codProveedor"
+                      id="linea.buffer/codProveedor"
                       label={`Proveedor`}
                       referencia={linea.buffer.referencia}
                       fullWidth
@@ -97,6 +97,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               saveDisabled={() => !schema.isValid(buffer)}
             >
               <Typography variant="h6">{buffer.descripcion}</Typography>
+              {buffer.nombreProveedor && <Typography variant="h6">Proveedor: {buffer.nombreProveedor}</Typography>}
             </QSection>
           </Grid>
 
