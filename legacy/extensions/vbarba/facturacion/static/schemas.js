@@ -12,6 +12,8 @@ export default parent => {
       fechaSalida: Field.Date("fechasalida", "Fecha Salida"),
     }),
     lineasPresupuestosCli: parent.lineasPresupuestosCli.fields({
+      codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
     }),
     albaranescli: parent.albaranescli.fields({
@@ -20,16 +22,19 @@ export default parent => {
     }),
     lineasPedidosCli: parent.lineasPedidosCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       precioNeto: Field.Text("precioneto", "Precio Neto"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
     }),
     lineasFacturasCli: parent.lineasFacturasCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       precioNeto: Field.Currency("precioneto", "Precio Neto"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
     }),
     lineasAlbaranesCli: parent.lineasAlbaranesCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
       canFactura: Field.Int("canfactura", "Cantidad factura"),
     }),
