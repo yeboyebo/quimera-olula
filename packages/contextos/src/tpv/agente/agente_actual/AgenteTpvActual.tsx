@@ -3,13 +3,13 @@ import { agenteActivo } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/index.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AgenteTpv } from "../diseño.ts";
 import { metaCambioAgenteActual } from "./agente_actual.ts";
 import "./AgenteTpvActual.css";
 
+const miAgenteActivo = agenteActivo.obtenerSeguro();
 export const AgenteTpvActual = () => {
-  const miAgenteActivo = agenteActivo.obtenerSegudo();
 
   const [cambiando, setCambiando] = useState(false);
   const [agente, setAgente] = useState<AgenteTpv | null>(miAgenteActivo);
@@ -52,11 +52,17 @@ const CambiarAgenteTpv = ({
   cambiar: (agente: AgenteTpv) => void;
   cancelar: () => void;
 }) => {
-  const { modelo, uiProps, valido } = useModelo(metaCambioAgenteActual, {
-    idAgente: agenteActual?.id ?? null,
-    nombre: agenteActual?.nombre ?? null,
-    agente: agenteActual,
-  });
+
+  const puntoInicial = useMemo(
+    () => ({
+      idAgente: agenteActual?.id ?? null,
+      nombre: agenteActual?.nombre ?? null,
+      agente: agenteActual,
+    }),
+    [agenteActual]
+  )
+
+  const { modelo, uiProps, valido } = useModelo(metaCambioAgenteActual, puntoInicial);
 
   const focus = useFocus();
 
