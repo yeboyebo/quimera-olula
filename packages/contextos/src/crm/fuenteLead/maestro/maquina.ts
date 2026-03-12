@@ -9,11 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroFuentesLead, ContextoMaestro
 
             fuente_lead_seleccionada: [FuentesLead.activar],
 
-            fuente_lead_deseleccionada: [FuentesLead.desactivar],
+            fuente_lead_deseleccionada: FuentesLead.desactivar,
 
-            fuente_lead_borrada: [FuentesLead.quitar],
+            fuente_lead_borrada: FuentesLead.quitar,
 
             recarga_de_fuentes_lead_solicitada: recargarFuentesLead,
+
+            criteria_cambiado: [FuentesLead.filtrar, recargarFuentesLead],
 
             creacion_de_fuente_lead_solicitada: "CREANDO",
         },

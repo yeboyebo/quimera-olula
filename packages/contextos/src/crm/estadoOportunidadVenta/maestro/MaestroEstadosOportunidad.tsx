@@ -1,13 +1,11 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useCallback, useEffect, useState } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearEstadoOportunidad } from "../crear/CrearEstadoOportunidad.tsx";
-// import { DetalleEstadoOportunidad } from "../Detalle/DetalleEstadoOportunidad.tsx";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { DetalleEstadoOportunidad } from "../detalle/DetalleEstadoOportunidad.tsx";
 import { EstadoOportunidad } from "../diseño.ts";
 import { metaTablaEstadoOportunidad } from "./maestro.ts";
@@ -15,29 +13,32 @@ import "./MaestroEstadosOportunidad.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroEstadosOportunidad = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    estados_oportunidad: listaEntidadesInicial<EstadoOportunidad>(),
+    estados_oportunidad: listaActivaEntidadesInicial<EstadoOportunidad>(
+      id,
+      criteria
+    ),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_estados_oportunidad_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
+  useUrlParams(
+    ctx.estados_oportunidad.activo,
+    ctx.estados_oportunidad.criteria
   );
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir(
+      "recarga_de_estados_oportunidad_solicitada",
+      ctx.estados_oportunidad.criteria
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="EstadoOportunidad">
-      <MaestroDetalleControlado<EstadoOportunidad>
+      <MaestroDetalle<EstadoOportunidad>
         Maestro={
           <>
             <h2>Estados de Oportunidad de Venta</h2>
@@ -52,27 +53,25 @@ export const MaestroEstadosOportunidad = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<EstadoOportunidad>
+            <ListadoActivoControlado<EstadoOportunidad>
               metaTabla={metaTablaEstadoOportunidad}
-              metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.estados_oportunidad.criteria}
               modo={"tabla"}
-              // setModo={handleSetModoVisualizacion}
-              // tarjeta={tarjeta}
               entidades={ctx.estados_oportunidad.lista}
               totalEntidades={ctx.estados_oportunidad.total}
               seleccionada={ctx.estados_oportunidad.activo}
               onSeleccion={(payload) =>
                 emitir("estado_oportunidad_seleccionado", payload)
               }
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
         Detalle={
           <DetalleEstadoOportunidad
-            inicial={ctx.estados_oportunidad.activo}
+            id={ctx.estados_oportunidad.activo}
             publicar={emitir}
           />
         }

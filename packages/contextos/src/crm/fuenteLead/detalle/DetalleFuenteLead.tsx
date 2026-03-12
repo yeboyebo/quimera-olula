@@ -7,45 +7,43 @@ import {
 } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarFuenteLead } from "../borrar/BorrarFuenteLead.tsx";
-import { FuenteLead } from "../diseño.ts";
 import { fuenteLeadVacia, metaFuenteLead } from "./detalle.ts";
 import "./DetalleFuenteLead.css";
 import { getMaquina } from "./maquina.ts";
 
 export const DetalleFuenteLead = ({
-  inicial = null,
+  id,
   publicar,
 }: {
-  inicial: FuenteLead | null;
+  id?: string;
   publicar: EmitirEvento;
 }) => {
   const params = useParams();
 
-  const fuenteLeadId = inicial?.id ?? params.id;
+  const fuenteLeadId = id ?? params.id;
   const titulo = (fuente_lead: Entidad) => fuente_lead.descripcion as string;
-
-  const fuente_lead = useModelo(metaFuenteLead, fuenteLeadVacia);
-  const { modelo, modeloInicial, modificado, uiProps, valido, init } =
-    fuente_lead;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
     {
       estado: "INICIAL",
-      fuente_lead: modelo,
+      fuente_lead: fuenteLeadVacia,
     },
     publicar
   );
 
-  if (ctx.fuente_lead !== modeloInicial) {
-    init(ctx.fuente_lead);
-  }
+  const fuente_lead = useModelo(metaFuenteLead, ctx.fuente_lead);
+  const { modelo, modificado, uiProps, valido } = fuente_lead;
 
-  if (fuenteLeadId && fuenteLeadId !== modelo.id) {
-    emitir("fuente_lead_id_cambiado", fuenteLeadId);
-  }
+  useEffect(() => {
+    if (fuenteLeadId) {
+      emitir("fuente_lead_id_cambiado", fuenteLeadId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fuenteLeadId]);
 
   return (
     <Detalle

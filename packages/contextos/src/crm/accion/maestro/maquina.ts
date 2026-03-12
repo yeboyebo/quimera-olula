@@ -9,11 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroAcciones, ContextoMaestroAcc
 
             accion_seleccionada: [Acciones.activar],
 
-            accion_deseleccionada: [Acciones.desactivar],
+            accion_deseleccionada: Acciones.desactivar,
 
-            accion_borrada: [Acciones.quitar],
+            accion_borrada: Acciones.quitar,
 
             recarga_de_acciones_solicitada: recargarAcciones,
+
+            criteria_cambiado: [Acciones.filtrar, recargarAcciones],
 
             creacion_de_accion_solicitada: "CREANDO",
         },

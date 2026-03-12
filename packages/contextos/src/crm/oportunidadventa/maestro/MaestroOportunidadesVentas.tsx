@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { OportunidadVenta } from "../diseño.ts";
@@ -15,29 +14,23 @@ import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroOportunidades = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    oportunidades: listaEntidadesInicial<OportunidadVenta>(),
+    oportunidades: listaActivaEntidadesInicial<OportunidadVenta>(id, criteria),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_oportunidades_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.oportunidades.activo, ctx.oportunidades.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_oportunidades_solicitada", ctx.oportunidades.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="OportunidadesVenta">
-      <MaestroDetalleControlado<OportunidadVenta>
+      <MaestroDetalle<OportunidadVenta>
         Maestro={
           <>
             <h2>Oportunidades de Venta</h2>
@@ -50,11 +43,9 @@ export const MaestroOportunidades = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<OportunidadVenta>
+            <ListadoActivoControlado<OportunidadVenta>
               metaTabla={metaTablaOportunidadVenta}
-              metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.oportunidades.criteria}
               modo={"tabla"}
               tarjeta={(oportunidad) => (
                 <TarjetaOportunidadVenta oportunidad={oportunidad} />
@@ -65,13 +56,15 @@ export const MaestroOportunidades = () => {
               onSeleccion={(payload) =>
                 emitir("oportunidad_seleccionada", payload)
               }
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
         Detalle={
           <DetalleOportunidadVenta
-            inicial={ctx.oportunidades.activo}
+            id={ctx.oportunidades.activo}
             publicar={emitir}
           />
         }

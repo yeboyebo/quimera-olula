@@ -1,6 +1,9 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
+import {
+    accionesListaActivaEntidades,
+    ProcesarListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { Incidencia } from "../diseño.ts";
 import { getIncidencias } from "../infraestructura.ts";
 import { ContextoMaestroIncidencias, EstadoMaestroIncidencias } from "./diseño.ts";
@@ -15,9 +18,11 @@ export const metaTablaIncidencia: MetaTabla<Incidencia> = [
 
 type ProcesarIncidencias = ProcesarContexto<EstadoMaestroIncidencias, ContextoMaestroIncidencias>;
 
-const conIncidencias = (fn: ProcesarListaEntidades<Incidencia>) => (ctx: ContextoMaestroIncidencias) => ({ ...ctx, incidencias: fn(ctx.incidencias) });
+const conIncidencias =
+    (fn: ProcesarListaActivaEntidades<Incidencia>) =>
+        (ctx: ContextoMaestroIncidencias) => ({ ...ctx, incidencias: fn(ctx.incidencias) });
 
-export const Incidencias = accionesListaEntidades(conIncidencias);
+export const Incidencias = accionesListaActivaEntidades(conIncidencias);
 
 export const recargarIncidencias: ProcesarIncidencias = async (contexto, payload) => {
     const criteria = payload as Criteria;

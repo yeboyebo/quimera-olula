@@ -6,7 +6,6 @@ import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActiv
 import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams } from "@olula/lib/url-params.js";
 import { useCallback, useEffect } from "react";
@@ -36,7 +35,7 @@ export const MaestroConDetallePedidoNrj = () => {
   );
 
   useEffect(() => {
-    emitir("recarga_de_pedidos_solicitada", criteriaDefecto);
+    emitir("recarga_de_pedidos_solicitada", ctx.pedidos.criteria);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -55,7 +54,7 @@ export const MaestroConDetallePedidoNrj = () => {
             </div>
             <ListadoActivoControlado<PedidoNrj>
               metaTabla={metaTablaPedido}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.pedidos.criteria}
               modo={"tabla"}
               entidades={ctx.pedidos.lista}
               totalEntidades={ctx.pedidos.total}

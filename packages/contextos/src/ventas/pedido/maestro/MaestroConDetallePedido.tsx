@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -30,38 +30,9 @@ export const MaestroConDetallePedido = () => {
 
   const metaTablaPedido = getMetaTablaPedido();
 
-  // const metaTablaPedido = [
-  //   {
-  //     id: "estado",
-  //     cabecera: "",
-  //     render: (pedido: Pedido) => (
-  //       <ColumnaEstadoTabla
-  //         estados={{
-  //           aprobado: (
-  //             <QIcono
-  //               nombre={"circulo_relleno"}
-  //               tamaño="sm"
-  //               color="var(--color-deshabilitado-oscuro)"
-  //             />
-  //           ),
-  //           pendiente: (
-  //             <QIcono
-  //               nombre={"circulo_relleno"}
-  //               tamaño="sm"
-  //               color="var(--color-exito-oscuro)"
-  //             />
-  //           ),
-  //         }}
-  //         estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
-  //       />
-  //     ),
-  //   },
-  //   ...metaTablaBase,
-  // ] as MetaTabla<Pedido>;
-
   return (
     <div className="Pedido">
-      <MaestroDetalleActivoControlado<Pedido>
+      <MaestroDetalle<Pedido>
         Maestro={
           <>
             <h2>Pedidos</h2>

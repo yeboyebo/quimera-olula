@@ -9,11 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroOportunidades, ContextoMaest
 
             oportunidad_seleccionada: [Oportunidades.activar],
 
-            oportunidad_deseleccionada: [Oportunidades.desactivar],
+            oportunidad_deseleccionada: Oportunidades.desactivar,
 
-            oportunidad_borrada: [Oportunidades.quitar],
+            oportunidad_borrada: Oportunidades.quitar,
 
             recarga_de_oportunidades_solicitada: recargarOportunidades,
+
+            criteria_cambiado: [Oportunidades.filtrar, recargarOportunidades],
 
             creacion_de_oportunidad_solicitada: "CREANDO",
         },

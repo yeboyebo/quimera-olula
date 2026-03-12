@@ -49,7 +49,7 @@ export const agenteActivo = {
         throw new Error("No hay agente activo");
     },
 
-    obtenerSegudo: (): AgenteTpv | null => {
+    obtenerSeguro: (): AgenteTpv | null => {
         const agenteStorage = localStorage.getItem(CLAVE_AGENTE_TPV);
         if (agenteStorage) {
             const agente = JSON.parse(agenteStorage);

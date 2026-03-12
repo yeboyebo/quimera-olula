@@ -74,16 +74,16 @@ export const DetalleVentaTpv = ({
             cerrarDetalle={() => emitir("venta_deseleccionada", null, true)}
         >
             <div className="DetalleFactura">
-                { estado !== "EMITIDA" && (
-                    <div className="botones maestro-botones ">
+                <div className="botones maestro-botones ">
+                    { estado !== "EMITIDA" && (
                         <QBoton texto='Borrar venta'
                             onClick={() => emitir("borrar_solicitado")}
                         />
-                        <QBoton texto='Imprimir'
-                            onClick={imprimir}
-                        />
-                    </div>
-                )}
+                    )}
+                    <QBoton texto='Imprimir'
+                        onClick={imprimir}
+                    />
+                </div>
                 <Tabs
                     children={[
                     <Tab

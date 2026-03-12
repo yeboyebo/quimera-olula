@@ -1,12 +1,12 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Cliente } from "../diseño.ts";
 
 export type EstadoMaestroCliente = "INICIAL" | "CREANDO_CLIENTE";
 
 export type ContextoMaestroCliente = {
     estado: EstadoMaestroCliente;
-    clientes: ListaEntidades<Cliente>;
+    clientes: ListaActivaEntidades<Cliente>;
 };
 
 export const metaTablaCliente: MetaTabla<Cliente> = [

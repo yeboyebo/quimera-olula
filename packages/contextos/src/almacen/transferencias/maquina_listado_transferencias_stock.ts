@@ -1,97 +1,62 @@
-import { ListaSeleccionable } from "@olula/lib/diseño.ts";
+import { Criteria, Maquina, ProcesarContexto } from "@olula/lib/diseño.ts";
 import {
-    cambiarItem,
-    cargar,
-    incluirItem,
-    listaSeleccionableVacia,
-    quitarItem,
-    quitarSeleccion,
-    seleccionarItem
-} from "@olula/lib/entidad.ts";
-import { pipe } from "@olula/lib/funcional.ts";
-import {
-    ConfigMaquina4,
-    Maquina3,
-    useMaquina4
-} from "@olula/lib/useMaquina.ts";
+    accionesListaActivaEntidades,
+    ListaActivaEntidades,
+    ProcesarListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { TransferenciaStock } from "./diseño.ts";
+import { obtenerTransferenciasStock } from "./infraestructura.ts";
 
-export type Estado = "Inactivo" | "Creando";
+export type Estado = "INICIAL" | "CREANDO";
 
 export type Contexto = {
-    transferencias: ListaSeleccionable<TransferenciaStock>;
+    estado: Estado;
+    transferencias: ListaActivaEntidades<TransferenciaStock>;
 };
 
-const setTransferencias =
-    (
-        aplicable: (
-            transferencias: ListaSeleccionable<TransferenciaStock>
-        ) => ListaSeleccionable<TransferenciaStock>
-    ) =>
-        (maquina: Maquina3<Estado, Contexto>) => {
-            return {
-                ...maquina,
-                contexto: {
-                    ...maquina.contexto,
-                    transferencias: aplicable(maquina.contexto.transferencias),
-                },
-            };
-        };
+const conTransferencias =
+    (fn: ProcesarListaActivaEntidades<TransferenciaStock>) => (ctx: Contexto) => ({
+        ...ctx,
+        transferencias: fn(ctx.transferencias),
+    });
 
-export const configMaquina: ConfigMaquina4<Estado, Contexto> = {
-    inicial: {
-        estado: "Inactivo",
-        contexto: {
-            transferencias: listaSeleccionableVacia<TransferenciaStock>(),
-        },
-    },
-    estados: {
-        Inactivo: {
-            crear: "Creando",
-            transferencia_cambiada: ({ maquina, payload }) =>
-                pipe(
-                    maquina,
-                    setTransferencias(cambiarItem(payload as TransferenciaStock))
-                ),
-            transferencia_seleccionada: ({ maquina, payload }) =>
-                pipe(
-                    maquina,
-                    setTransferencias(seleccionarItem(payload as TransferenciaStock))
-                ),
-            cancelar_seleccion: ({ maquina }) =>
-                pipe(
-                    maquina,
-                    setTransferencias(quitarSeleccion())
-                ),
-            transferencia_borrada: ({ maquina }) => {
-                const { transferencias } = maquina.contexto;
-                if (!transferencias.idActivo) {
-                    return maquina;
-                }
-                return pipe(
-                    maquina,
-                    setTransferencias(quitarItem(transferencias.idActivo))
-                );
-            },
-            transferencias_cargadas: ({ maquina, payload, setEstado }) =>
-                pipe(
-                    maquina,
-                    setEstado("Inactivo" as Estado),
-                    setTransferencias(cargar(payload as TransferenciaStock[]))
-                ),
-        },
-        Creando: {
-            transferencia_creada: ({ maquina, payload, setEstado }) =>
-                pipe(
-                    maquina,
-                    setEstado("Inactivo" as Estado),
-                    setTransferencias(incluirItem(payload as TransferenciaStock, {}))
-                ),
-            creacion_cancelada: "Inactivo",
-        },
-    },
+type ProcesarTransferencias = ProcesarContexto<Estado, Contexto>;
+
+export const Transferencias = accionesListaActivaEntidades(conTransferencias);
+
+export const recargarTransferencias: ProcesarTransferencias = async (
+    contexto,
+    payload
+) => {
+    const criteria = payload as Criteria;
+    const resultado = await obtenerTransferenciasStock(
+        criteria.filtro,
+        criteria.orden,
+        criteria.paginacion
+    );
+
+    return Transferencias.recargar(contexto, resultado);
 };
 
-export const useMaquinaTransferenciasStock = () => useMaquina4<Estado, Contexto>({
-    config: configMaquina,
+export const getMaquina: () => Maquina<Estado, Contexto> = () => ({
+    INICIAL: {
+        transferencia_cambiada: Transferencias.cambiar,
+        transferencia_seleccionada: [Transferencias.activar],
+        cancelar_seleccion: Transferencias.desactivar,
+        transferencia_borrada: async (contexto) => {
+            if (!contexto.transferencias.activo) {
+                return contexto;
+            }
+
+            return Transferencias.quitar(contexto, contexto.transferencias.activo);
+        },
+        transferencia_creada: Transferencias.incluir,
+        recarga_de_transferencias_solicitada: recargarTransferencias,
+        criteria_cambiado: [Transferencias.filtrar, recargarTransferencias],
+        crear: "CREANDO",
+    },
+    CREANDO: {
+        transferencia_creada: [Transferencias.incluir, "INICIAL"],
+        creacion_cancelada: "INICIAL",
+    },
 });
