@@ -3,7 +3,7 @@ import { getMaquina } from "#/ventas/pedido/maestro/maquina.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -43,7 +43,7 @@ export const MaestroConDetallePedidoNrj = () => {
 
   return (
     <div className="Pedido">
-      <MaestroDetalleActivoControlado<PedidoNrj>
+      <MaestroDetalle<PedidoNrj>
         Maestro={
           <>
             <h2>Pedidos</h2>
