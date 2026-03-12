@@ -36,8 +36,8 @@ export const DetallePedido = (props: DetallePedidoProps) => {
 };
 
 export const DetallePedidoBase = ({
-  pedidoInicial = null,
   publicar = async () => {},
+  id,
 }: {
   id?: string;
   publicar?: EmitirEvento;
