@@ -1,7 +1,7 @@
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import {
   ListadoActivoControlado,
-  MaestroDetalleActivoControlado,
+  MaestroDetalle,
   QBoton,
 } from "@olula/componentes/index.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -30,7 +30,7 @@ export const MaestroFamilia = () => {
 
   return (
     <div className="Familia">
-      <MaestroDetalleActivoControlado<Familia>
+      <MaestroDetalle<Familia>
         seleccionada={ctx.familias.activo}
         layout="TABLA"
         Maestro={

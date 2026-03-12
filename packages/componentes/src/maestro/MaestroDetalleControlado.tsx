@@ -1,9 +1,9 @@
 import { Entidad } from "@olula/lib/diseño.ts";
-import { MaestroDetalleControladoProps } from "./diseño.tsx";
+import { MaestroDetalleProps } from "./diseño.tsx";
 import "./MaestroDetalle.css";
 
 export function MaestroDetalleControlado<T extends Entidad>(
-  props: MaestroDetalleControladoProps<T>
+  props: MaestroDetalleProps<T>
 ) {
   const {
     seleccionada,

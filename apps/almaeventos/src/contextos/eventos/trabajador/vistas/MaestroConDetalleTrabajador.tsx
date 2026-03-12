@@ -1,6 +1,6 @@
 import { MetaTabla, QBoton, QModal } from "@olula/componentes/index.ts";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useLista } from "@olula/lib/useLista.ts";
@@ -75,7 +75,7 @@ export const MaestroConDetalleTrabajador = () => {
 
   return (
     <div className="Trabajador">
-      <MaestroDetalleActivoControlado<Trabajador>
+      <MaestroDetalle<Trabajador>
         seleccionada={trabajadores.seleccionada?.id}
         Maestro={
           <>

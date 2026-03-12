@@ -1,6 +1,6 @@
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -27,7 +27,7 @@ export const MaestroClientes = () => {
 
   return (
     <div className="Cliente">
-      <MaestroDetalleActivoControlado<Cliente>
+      <MaestroDetalle<Cliente>
         Maestro={
           <>
             <h2>Clientes</h2>

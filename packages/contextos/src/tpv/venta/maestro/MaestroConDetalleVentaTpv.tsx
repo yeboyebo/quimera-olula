@@ -6,7 +6,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
   criteriaDefecto,
   formatearFechaDate,
@@ -26,7 +26,6 @@ type Layout = "TABLA" | "TARJETA";
 const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
 
 export const MaestroConDetalleVentaTpv = () => {
-
   const criteriaBaseVentas = useMemo(() => {
     // const filtroPuntoVenta: ClausulaFiltro = [
     //   "punto_venta_id",
@@ -35,14 +34,15 @@ export const MaestroConDetalleVentaTpv = () => {
     return {
       ...criteriaDefecto,
       // filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
-      orden: ["fecha", "DESC", 'codigo', 'DESC']
+      orden: ["fecha", "DESC", "codigo", "DESC"],
     };
   }, [miPuntoVentaLocal?.id]);
 
   const [layout, setLayout] = useState<Layout>("TARJETA");
 
   const { id, criteria } = getUrlParams();
-  const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBaseVentas;
+  const criteriaInicial =
+    criteria.filtro.length > 0 ? criteria : criteriaBaseVentas;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -56,12 +56,9 @@ export const MaestroConDetalleVentaTpv = () => {
     [layout, setLayout]
   );
 
-  const handle_punto_venta_cambiado = useCallback(
-    () => {
-      emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
-    },
-    [emitir]
-  );
+  const handle_punto_venta_cambiado = useCallback(() => {
+    emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
+  }, [emitir]);
 
   useEffect(() => {
     emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
@@ -69,7 +66,7 @@ export const MaestroConDetalleVentaTpv = () => {
 
   return (
     <div className="Factura">
-      <MaestroDetalleActivoControlado<VentaTpv>
+      <MaestroDetalle<VentaTpv>
         Maestro={
           <>
             <h2>Ventas TPV</h2>
@@ -84,7 +81,9 @@ export const MaestroConDetalleVentaTpv = () => {
             <PuntoVentaTpvActual onChange={handle_punto_venta_cambiado} />
             <AgenteTpvActual />
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>Nueva Venta</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>
+                Nueva Venta
+              </QBoton>
             </div>
             <ListadoActivoControlado<VentaTpv>
               metaTabla={metaTablaFactura}
@@ -96,14 +95,16 @@ export const MaestroConDetalleVentaTpv = () => {
               totalEntidades={ctx.ventas.total}
               seleccionada={ctx.ventas.activo}
               onSeleccion={(payload) => emitir("venta_seleccionada", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
-              onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleVentaTpv id={ctx.ventas.activo} publicar={emitir} />
-        }
+        Detalle={<DetalleVentaTpv id={ctx.ventas.activo} publicar={emitir} />}
         layout={layout}
         seleccionada={ctx.ventas.activo}
         modoDisposicion="maestro-50"

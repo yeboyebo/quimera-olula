@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -38,7 +38,7 @@ export const MaestroEstadosOportunidad = () => {
 
   return (
     <div className="EstadoOportunidad">
-      <MaestroDetalleActivoControlado<EstadoOportunidad>
+      <MaestroDetalle<EstadoOportunidad>
         Maestro={
           <>
             <h2>Estados de Oportunidad de Venta</h2>
