@@ -114,9 +114,10 @@ export const QTarjetas = <T extends Entidad>({
   ));
 
   const renderLista = () => {
-    if (onSiguientePagina) {
+    if (onSiguientePagina && criteria) {
       return (
-        <div className="lista-contenedor-scroll">{tarjetaItems}
+        <div className="lista-contenedor-scroll">
+          {tarjetaItems}
           <InfiniteScroll
             dataLength={datos.length}
             next={() =>
@@ -135,13 +136,10 @@ export const QTarjetas = <T extends Entidad>({
             {tarjetaItems}
           </InfiniteScroll>
         </div>
-        
       );
     }
 
-    return (
-      <div className="lista-contenedor-scroll">{tarjetaItems}</div>
-    );
+    return <div className="lista-contenedor-scroll">{tarjetaItems}</div>;
   };
 
   return (
@@ -154,7 +152,11 @@ export const QTarjetas = <T extends Entidad>({
         renderLista()
       )}
       {!onSiguientePagina &&
-        paginacionControlador(totalEntidades, criteria.paginacion!, onPaginacion)}
+        paginacionControlador(
+          totalEntidades,
+          criteria.paginacion!,
+          onPaginacion
+        )}
     </quimera-tarjetas>
   );
 };
