@@ -43,14 +43,22 @@ export const FormCrearLineaDefecto: FormCrearLinea = {
     envasesPorPalet: 0
 };
 
-const onChange = (modelo: FormCrearLinea, campo: string, _: unknown, palet?: Record<string, unknown>) => {
+const onChange = (modelo: FormCrearLinea, campo: string, _: unknown, otro?: Record<string, unknown>) => {
 
-    if (campo === "idTipoPalet" && palet) {
-        const envasesPorPalet = palet.cantidadEnvase as number;
+    if (campo === "idTipoPalet" && otro) {
+        const envasesPorPalet = otro.cantidadEnvase as number;
         return {
             ...modelo,
             envasesPorPalet,
             cantidadEnvases: modelo.cantidadPalets * envasesPorPalet
+        }
+    }
+    if (campo === "idMarca" && otro) {
+        const idCategoria = otro.idCategoria as number;
+        return {
+            ...modelo,
+            idCategoria,
+            // cantidadEnvases: modelo.cantidadPalets * envasesPorPalet
         }
     }
     if (campo === "cantidadPalets") {

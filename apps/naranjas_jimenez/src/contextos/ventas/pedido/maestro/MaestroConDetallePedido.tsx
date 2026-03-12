@@ -1,30 +1,32 @@
-import { CrearPedido } from "#/ventas/pedido/crear/CrearPedido.tsx";
 import { DetallePedido } from "#/ventas/pedido/detalle/DetallePedido.tsx";
-import { Pedido } from "#/ventas/pedido/diseño.ts";
 import { getMaquina } from "#/ventas/pedido/maestro/maquina.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.js";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams } from "@olula/lib/url-params.js";
 import { useCallback, useEffect } from "react";
+import { CrearPedidoNrj } from "../crear/CrearPedido.tsx";
+import { PedidoNrj } from "../diseño.ts";
 import "./MaestroConDetallePedido.css";
 import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
 
 export const MaestroConDetallePedidoNrj = () => {
+  const { id, criteria } = getUrlParams();
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    pedidos: [],
-    totalPedidos: 0,
-    pedidoActivo: null,
+    pedidos: listaActivaEntidadesInicial<PedidoNrj>(id, criteria),
   });
 
-  const setSeleccionada = useCallback(
-    (payload: Pedido) => void emitir("pedido_seleccionado", payload),
-    [emitir]
-  );
+  // const setSeleccionada = useCallback(
+  //   (payload: Pedido) => void emitir("pedido_seleccionado", payload),
+  //   [emitir]
+  // );
 
   const recargar = useCallback(
     (criteria: Criteria) => {
@@ -40,38 +42,9 @@ export const MaestroConDetallePedidoNrj = () => {
 
   const metaTablaPedido = getMetaTablaPedidoNrj();
 
-  // const metaTablaPedido = [
-  //   {
-  //     id: "estado",
-  //     cabecera: "",
-  //     render: (pedido: Pedido) => (
-  //       <ColumnaEstadoTabla
-  //         estados={{
-  //           aprobado: (
-  //             <QIcono
-  //               nombre={"circulo_relleno"}
-  //               tamaño="sm"
-  //               color="var(--color-deshabilitado-oscuro)"
-  //             />
-  //           ),
-  //           pendiente: (
-  //             <QIcono
-  //               nombre={"circulo_relleno"}
-  //               tamaño="sm"
-  //               color="var(--color-exito-oscuro)"
-  //             />
-  //           ),
-  //         }}
-  //         estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
-  //       />
-  //     ),
-  //   },
-  //   ...metaTablaBase,
-  // ] as MetaTabla<Pedido>;
-
   return (
     <div className="Pedido">
-      <MaestroDetalleControlado<Pedido>
+      <MaestroDetalleActivoControlado<PedidoNrj>
         Maestro={
           <>
             <h2>Pedidos</h2>
@@ -80,22 +53,20 @@ export const MaestroConDetallePedidoNrj = () => {
                 Nuevo Pedido
               </QBoton>
             </div>
-            <ListadoControlado<Pedido>
+            <ListadoActivoControlado<PedidoNrj>
               metaTabla={metaTablaPedido}
               criteriaInicial={criteriaDefecto}
               modo={"tabla"}
-              entidades={ctx.pedidos}
-              totalEntidades={ctx.totalPedidos}
-              seleccionada={ctx.pedidoActivo}
-              onSeleccion={setSeleccionada}
+              entidades={ctx.pedidos.lista}
+              totalEntidades={ctx.pedidos.total}
+              seleccionada={ctx.pedidos.activo}
+              onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
               onCriteriaChanged={recargar}
             />
           </>
         }
-        Detalle={
-          <DetallePedido pedidoInicial={ctx.pedidoActivo} publicar={emitir} />
-        }
-        seleccionada={ctx.pedidoActivo}
+        Detalle={<DetallePedido id={ctx.pedidos.activo} publicar={emitir} />}
+        seleccionada={ctx.pedidos.activo}
       />
 
       <QModal
@@ -103,7 +74,7 @@ export const MaestroConDetallePedidoNrj = () => {
         abierto={ctx.estado === "CREANDO_PEDIDO"}
         onCerrar={() => emitir("creacion_pedido_cancelada")}
       >
-        <CrearPedido publicar={emitir} />
+        <CrearPedidoNrj publicar={emitir} />
       </QModal>
     </div>
   );

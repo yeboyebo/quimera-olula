@@ -8,3 +8,4 @@ export type ItemListaCalibre = {
 
 
 export type GetItemsListaCalibre = (filtro: Filtro, orden: Orden) => Promise<ItemListaCalibre[]>;
+export type GetItemsListaSeleccionCalibre = (idVariedad: string, idMarca: string) => Promise<ItemListaCalibre[]>;

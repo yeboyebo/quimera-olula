@@ -1,4 +1,4 @@
-import { LineaPedido } from "#/ventas/pedido/diseño.ts";
+import { LineaPedido, Pedido } from "#/ventas/pedido/diseño.ts";
 import { Entidad } from "@olula/lib/diseño.js";
 
 export interface PaletLineaPedidoNrj extends Entidad {
@@ -24,6 +24,12 @@ export interface LineaPedidoNrj extends LineaPedido {
     cantidadPalet: number;
     envasesPorPalet: number;
     palets: PaletLineaPedidoNrj[];
+}
+
+export interface PedidoNrj extends Pedido {
+    portes_cliente: boolean;
+    transportista_id: string;
+    estado_envio_palets: string;
 }
 
 // type NuevaLineaPedidoNrj = {

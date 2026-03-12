@@ -86,8 +86,17 @@ export const EditarLineaNrj = ({
             ref={focus}
           />
           <Variedad label="Variedad" {...uiProps("idVariedad", "variedad")} />
-          <Calibre label="Calibre" {...uiProps("idCalibre", "calibre")} />
-          <Marca label="Marca" {...uiProps("idMarca", "marca")} />
+          <Marca
+            label="Marca"
+            {...uiProps("idMarca", "marca")}
+            idVariedad={modelo.idVariedad}
+          />
+          <Calibre
+            label="Calibre"
+            {...uiProps("idCalibre", "calibre")}
+            idVariedad={modelo.idVariedad}
+            idMarca={modelo.idMarca}
+          />
           {/* <Categoria label="Categoria" {...uiProps("categoria")} /> */}
           <QSelect
             {...uiProps("categoria")}

@@ -1,14 +1,14 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
-import { Pedido } from "#/ventas/pedido/diseño.ts";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
+import { PedidoNrj } from "../diseño.ts";
 
 export const getMetaTablaPedidoNrj = () => metaTablaPedido;
 
-const metaTablaPedido: MetaTabla<Pedido> = [
+const metaTablaPedido: MetaTabla<PedidoNrj> = [
   {
     id: "estado",
     cabecera: "",
-    render: (pedido: Pedido) => (
+    render: (pedido: PedidoNrj) => (
       <ColumnaEstadoTabla
         estados={{
           completo: (

@@ -1,47 +1,39 @@
-import {
-  QAutocompletar,
-  QAutocompletarProps,
-} from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Criteria } from "@olula/lib/diseño.ts";
+import { QSelect } from "@olula/componentes/index.js";
+import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { useEffect, useState } from "react";
 import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 
 type TipoPaletProps = Omit<QAutocompletarProps, "obtenerOpciones">;
 
+type OpcionTipoPalet = {
+  valor: string;
+  descripcion: string;
+};
+
 export const TipoPalet = ({
-  descripcion = "",
   valor,
   nombre = "tipo_palet",
   label = "Tipo Palet",
   onChange,
   ...props
 }: TipoPaletProps) => {
-  const obtenerOpciones = async (texto: string) => {
-    const criteria: Criteria = {
-      filtro: [["descripcion", "~", texto]],
-      orden: ["id"],
-      paginacion: { limite: 10, pagina: 1 },
+  const [opcionesTipoPalet, setOpcionesTipoPalet] = useState<OpcionTipoPalet[]>([]);
+
+  useEffect(() => {
+    const cargarOpcionesTipoPalet = async () => {
+      const items = await getItemsListaTipoPalet([], []);
+      setOpcionesTipoPalet(items.map((item) => ({ valor: item.id, descripcion: item.descripcion })));
     };
-
-    const tiposPalet = await getItemsListaTipoPalet(
-      criteria.filtro,
-      criteria.orden
-    );
-
-    return tiposPalet.map((tipoPalet) => ({
-      ...tipoPalet,
-      valor: tipoPalet.id,
-      descripcion: tipoPalet.descripcion,
-    }));
-  };
+    cargarOpcionesTipoPalet();
+  }, []);
 
   return (
-    <QAutocompletar
+    <QSelect
       label={label}
       nombre={nombre}
-      onChange={onChange}
       valor={valor}
-      obtenerOpciones={obtenerOpciones}
-      descripcion={descripcion}
+      onChange={onChange}
+      opciones={opcionesTipoPalet}
       {...props}
     />
   );
