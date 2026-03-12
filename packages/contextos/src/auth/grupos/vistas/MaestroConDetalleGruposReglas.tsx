@@ -1,11 +1,19 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.tsx";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { useLista } from "@olula/lib/useLista.ts";
-import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { useEffect, useState } from "react";
-import { Grupo, Regla } from "../diseño.ts";
-import { getGrupos, getReglas } from "../infraestructura.ts";
+import { Criteria, Maquina, ProcesarContexto } from "@olula/lib/diseño.ts";
+import {
+  accionesListaActivaEntidades,
+  ListaActivaEntidades,
+  listaActivaEntidadesInicial,
+  ProcesarListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
+import { Grupo } from "../diseño.ts";
+import { getGrupos } from "../infraestructura.ts";
 import { AltaGrupo } from "./AltaGrupo.tsx";
 import { ReglasGrupo } from "./ReglasGrupo/ReglasGrupo.tsx";
 
@@ -14,39 +22,74 @@ const metaTablaGrupos = [
   { id: "descripcion", cabecera: "Descripción" },
 ];
 
-type Estado = "lista" | "alta";
-export const MaestroConDetalleGruposReglas = () => {
-  const grupos = useLista<Grupo>([]);
-  const reglas = useLista<Regla>([]);
-  const [estado, setEstado] = useState<Estado>("lista");
+type Estado = "LISTA" | "ALTA";
 
-  const setListaReglas = reglas.setLista;
+type Contexto = {
+  estado: Estado;
+  grupos: ListaActivaEntidades<Grupo>;
+};
+
+type ProcesarGrupos = ProcesarContexto<Estado, Contexto>;
+
+const conGrupos =
+  (fn: ProcesarListaActivaEntidades<Grupo>) => (ctx: Contexto) => ({
+    ...ctx,
+    grupos: fn(ctx.grupos),
+  });
+
+const Grupos = accionesListaActivaEntidades(conGrupos);
+
+const recargarGrupos: ProcesarGrupos = async (contexto, payload) => {
+  const criteria = payload as Criteria;
+  const resultado = await getGrupos(
+    criteria.filtro,
+    criteria.orden,
+    criteria.paginacion
+  );
+
+  return Grupos.recargar(contexto, resultado);
+};
+
+const getMaquina: () => Maquina<Estado, Contexto> = () => ({
+  LISTA: {
+    grupo_seleccionado: [Grupos.activar],
+    grupo_deseleccionado: Grupos.desactivar,
+    recarga_de_grupos_solicitada: recargarGrupos,
+    criteria_cambiado: [Grupos.filtrar, recargarGrupos],
+    ALTA_INICIADA: "ALTA",
+    GRUPO_CREADO: Grupos.incluir,
+  },
+  ALTA: {
+    GRUPO_CREADO: [Grupos.incluir, "LISTA"],
+    ALTA_CANCELADA: "LISTA",
+  },
+});
+
+export const MaestroConDetalleGruposReglas = () => {
+  const { id, criteria } = getUrlParams();
+
+  const { ctx, emitir } = useMaquina(getMaquina, {
+    estado: "LISTA",
+    grupos: listaActivaEntidadesInicial<Grupo>(id, criteria),
+  });
+
+  useUrlParams(ctx.grupos.activo, ctx.grupos.criteria);
 
   useEffect(() => {
-    getReglas().then(({ datos }) => setListaReglas(datos));
-  }, [setListaReglas]);
+    emitir("recarga_de_grupos_solicitada", ctx.grupos.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const maquina: Maquina<Estado> = {
-    alta: {
-      GRUPO_CREADO: (payload: unknown) => {
-        const grupo = payload as Grupo;
-        grupos.añadir(grupo);
-        return "lista";
-      },
-      ALTA_CANCELADA: "lista",
-    },
-    lista: {
-      ALTA_INICIADA: "alta",
-    },
-  };
-
-  const emitir = useMaquina(maquina, estado, setEstado);
+  const grupoSeleccionado =
+    ctx.grupos.lista.find(
+      (grupo) => String(grupo.id) === String(ctx.grupos.activo)
+    ) ?? null;
 
   return (
     <div className="GruposReglas">
-      <MaestroDetalle
-        seleccionada={grupos.seleccionada}
-        preMaestro={
+      <MaestroDetalleActivoControlado
+        seleccionada={ctx.grupos.activo}
+        Maestro={
           <>
             <h2>Grupos</h2>
             <div className="maestro-botones">
@@ -54,26 +97,27 @@ export const MaestroConDetalleGruposReglas = () => {
                 Nuevo Grupo
               </QBoton>
             </div>
+            <ListadoActivoControlado<Grupo>
+              metaTabla={metaTablaGrupos}
+              criteria={ctx.grupos.criteria}
+              modo="tabla"
+              entidades={ctx.grupos.lista}
+              totalEntidades={ctx.grupos.total}
+              seleccionada={ctx.grupos.activo}
+              onSeleccion={(payload) => emitir("grupo_seleccionado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
+            />
           </>
         }
-        modoVisualizacion="tabla"
         modoDisposicion="maestro-50"
-        metaTabla={metaTablaGrupos}
-        entidades={grupos.lista}
-        setEntidades={grupos.setLista}
-        setSeleccionada={grupos.seleccionar}
-        cargar={getGrupos}
-        Detalle={
-          <ReglasGrupo
-            reglas={reglas}
-            grupoSeleccionado={grupos.seleccionada}
-          />
-        }
+        Detalle={<ReglasGrupo grupoSeleccionado={grupoSeleccionado} />}
       />
 
       <QModal
         nombre="modal"
-        abierto={estado === "alta"}
+        abierto={ctx.estado === "ALTA"}
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
         <AltaGrupo emitir={emitir} />

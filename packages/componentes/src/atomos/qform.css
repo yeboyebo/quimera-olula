@@ -10,8 +10,10 @@ quimera-formulario {
     quimera-input,
     quimera-select {
         grid-column: 1 / span 12;
+        width: 100%;
 
-        input {
+        input,
+        select {
             width: 100%;
         }
     }
@@ -23,7 +25,7 @@ quimera-formulario {
 
 @media (max-width: 768px) {
     quimera-formulario {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: var(--gap-formulario);
 
         quimera-input,

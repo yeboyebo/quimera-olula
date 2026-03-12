@@ -7,49 +7,47 @@ import {
 } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarEstadoOportunidad } from "../borrar/BorrarEstadoOportunidad.tsx";
-import { EstadoOportunidad } from "../diseño.ts";
 import { estadoOportunidadVacio, metaEstadoOportunidad } from "./detalle.ts";
 import "./DetalleEstadoOportunidad.css";
 import { getMaquina } from "./maquina.ts";
 
 export const DetalleEstadoOportunidad = ({
-  inicial = null,
+  id,
   publicar,
 }: {
-  inicial: EstadoOportunidad | null;
+  id?: string;
   publicar: EmitirEvento;
 }) => {
   const params = useParams();
 
-  const estadoOportunidadId = inicial?.id ?? params.id;
+  const estadoOportunidadId = id ?? params.id;
   const titulo = (estado_oportunidad: Entidad) =>
     estado_oportunidad.descripcion as string;
-
-  const estado_oportunidad = useModelo(
-    metaEstadoOportunidad,
-    estadoOportunidadVacio
-  );
-  const { modelo, modeloInicial, modificado, uiProps, valido, init } =
-    estado_oportunidad;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
     {
       estado: "INICIAL",
-      estado_oportunidad: modelo,
+      estado_oportunidad: estadoOportunidadVacio,
     },
     publicar
   );
 
-  if (ctx.estado_oportunidad !== modeloInicial) {
-    init(ctx.estado_oportunidad);
-  }
+  const estado_oportunidad = useModelo(
+    metaEstadoOportunidad,
+    ctx.estado_oportunidad
+  );
+  const { modelo, modificado, uiProps, valido } = estado_oportunidad;
 
-  if (estadoOportunidadId && estadoOportunidadId !== modelo.id) {
-    emitir("estado_oportunidad_id_cambiado", estadoOportunidadId);
-  }
+  useEffect(() => {
+    if (estadoOportunidadId) {
+      emitir("estado_oportunidad_id_cambiado", estadoOportunidadId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estadoOportunidadId]);
 
   return (
     <Detalle

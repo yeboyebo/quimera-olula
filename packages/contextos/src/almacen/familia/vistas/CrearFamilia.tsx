@@ -17,9 +17,7 @@ export const CrearFamilia = ({
   publicar?: ProcesarEvento;
   activo: boolean;
 }) => {
-  const familia = useModelo(metaNuevaFamilia, {
-    ...nuevaFamiliaVacia,
-  });
+  const familia = useModelo(metaNuevaFamilia, nuevaFamiliaVacia);
 
   const cancelar = () => {
     familia.init();

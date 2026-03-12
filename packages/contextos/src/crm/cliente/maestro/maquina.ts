@@ -9,11 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroClientes, ContextoMaestroCli
 
             cliente_seleccionado: [Clientes.activar],
 
-            cliente_deseleccionado: [Clientes.desactivar],
+            cliente_deseleccionado: Clientes.desactivar,
 
-            cliente_borrado: [Clientes.quitar],
+            cliente_borrado: Clientes.quitar,
 
             recarga_de_clientes_solicitada: recargarClientes,
+
+            criteria_cambiado: [Clientes.filtrar, recargarClientes],
         }
     }
 }

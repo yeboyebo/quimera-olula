@@ -47,21 +47,20 @@ export const DetallePresupuesto = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [presupuestoId]);
 
-  
   const { estado, lineaActiva } = ctx;
-  
+
   const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
-  
+
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_presupuesto_lista", presupuesto.modelo);
   }, [emitir, presupuesto]);
-  
+
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_presupuesto_cancelada");
   }, [emitir]);
-  
+
   if (!ctx.presupuesto.id) return;
-  
+
   const acciones = [
     {
       texto: "Aprobar",
@@ -82,7 +81,7 @@ export const DetallePresupuesto = ({
       obtenerTitulo={titulo}
       setEntidad={() => {}}
       entidad={ctx.presupuesto}
-      cerrarDetalle={() => emitir("presupuesto_deseleccionada", null)}
+      cerrarDetalle={() => emitir("presupuesto_deseleccionado", null)}
     >
       {!ctx.presupuesto.aprobado && (
         <QuimeraAcciones acciones={acciones} vertical />
@@ -130,17 +129,11 @@ export const DetallePresupuesto = ({
       />
 
       {estado === "BORRANDO_PRESUPUESTO" && (
-        <BorrarPresupuesto
-          presupuesto={ctx.presupuesto}
-          publicar={emitir}
-        />
+        <BorrarPresupuesto presupuesto={ctx.presupuesto} publicar={emitir} />
       )}
 
       {estado === "APROBANDO_PRESUPUESTO" && (
-        <AprobarPresupuesto
-          presupuesto={ctx.presupuesto}
-          publicar={emitir}
-        />
+        <AprobarPresupuesto presupuesto={ctx.presupuesto} publicar={emitir} />
       )}
     </Detalle>
   );

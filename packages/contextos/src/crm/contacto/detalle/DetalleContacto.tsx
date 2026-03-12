@@ -2,9 +2,9 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarContacto } from "../borrar/BorrarContacto.tsx";
-import { Contacto } from "../diseño.ts";
 import { TabClientes } from "../vistas/DetalleContacto/Clientes/TabClientes.tsx";
 import { Acciones } from "./acciones/Acciones.tsx";
 import { contactoVacio, metaContacto } from "./detalle.ts";
@@ -14,36 +14,35 @@ import { Oportunidades } from "./oportunidades/Oportunidades.tsx";
 import { TabGeneral } from "./tabs/TabGeneral.tsx";
 
 export const DetalleContacto = ({
-  inicial = null,
+  id,
   publicar,
 }: {
-  inicial: Contacto | null;
+  id?: string;
   publicar: EmitirEvento;
 }) => {
   const params = useParams();
 
-  const contactoId = inicial?.id ?? params.id;
+  const contactoId = id ?? params.id;
   const titulo = (contacto: Entidad) => contacto.nombre as string;
-
-  const contacto = useModelo(metaContacto, contactoVacio);
-  const { modelo, modeloInicial, modificado, valido, init } = contacto;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
     {
       estado: "INICIAL",
-      contacto: modelo,
+      contacto: contactoVacio,
     },
     publicar
   );
 
-  if (ctx.contacto !== modeloInicial) {
-    init(ctx.contacto);
-  }
+  const contacto = useModelo(metaContacto, ctx.contacto);
+  const { modelo, modificado, valido } = contacto;
 
-  if (contactoId && contactoId !== modelo.id) {
-    emitir("contacto_id_cambiado", contactoId);
-  }
+  useEffect(() => {
+    if (contactoId) {
+      emitir("contacto_id_cambiado", contactoId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactoId]);
 
   return (
     <Detalle

@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearCliente } from "../crear/CrearCliente.tsx";
 import { DetalleCliente } from "../detalle/DetalleCliente.tsx";
 import { Cliente } from "../diseño.ts";
@@ -14,61 +13,46 @@ import "./MaestroConDetalleCliente.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleCliente = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    clientes: listaEntidadesInicial<Cliente>(),
+    clientes: listaActivaEntidadesInicial<Cliente>(id, criteria),
   });
 
-  const crear = useCallback(() => emitir("creacion_solicitada"), [emitir]);
-
-  const setSeleccionada = useCallback(
-    (payload: Cliente) => emitir("cliente_seleccionado", payload),
-    [emitir]
-  );
-
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_clientes_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.clientes.activo, ctx.clientes.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_clientes_solicitada", ctx.clientes.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="Cliente">
-      <MaestroDetalleControlado<Cliente>
+      <MaestroDetalleActivoControlado<Cliente>
         Maestro={
           <>
             <h2>Clientes</h2>
             <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo Cliente</QBoton>
+              <QBoton onClick={() => emitir("creacion_solicitada")}>
+                Nuevo Cliente
+              </QBoton>
             </div>
-            <ListadoControlado<Cliente>
+            <ListadoActivoControlado<Cliente>
               metaTabla={metaTablaCliente}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.clientes.criteria}
               modo={"tabla"}
-              cargando={cargando}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}
               seleccionada={ctx.clientes.activo}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+              onSeleccion={(payload) => emitir("cliente_seleccionado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleCliente
-            clienteInicial={ctx.clientes.activo}
-            publicar={emitir}
-          />
-        }
+        Detalle={<DetalleCliente id={ctx.clientes.activo} publicar={emitir} />}
         seleccionada={ctx.clientes.activo}
         modoDisposicion="maestro-50"
       />

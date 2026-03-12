@@ -1,13 +1,11 @@
-import {
-  Listado,
-  MaestroDetalleResponsive,
-  MetaTabla,
-  QBoton,
-  QModal,
-} from "@olula/componentes/index.ts";
+import { MetaTabla, QBoton, QModal } from "@olula/componentes/index.ts";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { Criteria } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Trabajador } from "../diseño.ts";
 import { getTrabajadores } from "../infraestructura.ts";
 import { AltaTrabajador } from "./AltaTrabajador.tsx";
@@ -23,6 +21,9 @@ type Estado = "lista" | "alta";
 
 export const MaestroConDetalleTrabajador = () => {
   const [estado, setEstado] = useState<Estado>("lista");
+  const [criteria, setCriteria] = useState<Criteria>(criteriaDefecto);
+  const [cargando, setCargando] = useState(false);
+  const [totalTrabajadores, setTotalTrabajadores] = useState(0);
   const trabajadores = useLista<Trabajador>([]);
 
   const maquina: Maquina<Estado> = {
@@ -52,23 +53,53 @@ export const MaestroConDetalleTrabajador = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
+  const recargar = useCallback(
+    async (nuevaCriteria: Criteria) => {
+      setCriteria(nuevaCriteria);
+      setCargando(true);
+      const { datos, total } = await getTrabajadores(
+        nuevaCriteria.filtro,
+        nuevaCriteria.orden,
+        nuevaCriteria.paginacion
+      );
+      trabajadores.setLista(datos);
+      setTotalTrabajadores(total);
+      setCargando(false);
+    },
+    [trabajadores]
+  );
+
+  useEffect(() => {
+    void recargar(criteriaDefecto);
+  }, []);
+
   return (
     <div className="Trabajador">
-      <MaestroDetalleResponsive<Trabajador>
-        seleccionada={trabajadores.seleccionada}
+      <MaestroDetalleActivoControlado<Trabajador>
+        seleccionada={trabajadores.seleccionada?.id}
         Maestro={
           <>
             <h2>Trabajadores</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
             </div>
-            <Listado
+            <ListadoActivoControlado<Trabajador>
               metaTabla={metaTablaTrabajador}
+              criteria={criteria}
+              criteriaInicial={criteriaDefecto}
+              cargando={cargando}
               entidades={trabajadores.lista}
-              setEntidades={trabajadores.setLista}
-              seleccionada={trabajadores.seleccionada}
-              setSeleccionada={trabajadores.seleccionar}
-              cargar={getTrabajadores}
+              totalEntidades={totalTrabajadores}
+              seleccionada={trabajadores.seleccionada?.id}
+              onSeleccion={(id) => {
+                const trabajador = trabajadores.lista.find(
+                  (item) => item.id === id
+                );
+                if (trabajador) trabajadores.seleccionar(trabajador);
+              }}
+              onCriteriaChanged={(nuevaCriteria) =>
+                void recargar(nuevaCriteria)
+              }
             />
           </>
         }

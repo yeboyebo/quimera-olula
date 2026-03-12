@@ -30,35 +30,6 @@ export const MaestroConDetallePedido = () => {
 
   const metaTablaPedido = getMetaTablaPedido();
 
-  // const metaTablaPedido = [
-  //   {
-  //     id: "estado",
-  //     cabecera: "",
-  //     render: (pedido: Pedido) => (
-  //       <ColumnaEstadoTabla
-  //         estados={{
-  //           aprobado: (
-  //             <QIcono
-  //               nombre={"circulo_relleno"}
-  //               tamaño="sm"
-  //               color="var(--color-deshabilitado-oscuro)"
-  //             />
-  //           ),
-  //           pendiente: (
-  //             <QIcono
-  //               nombre={"circulo_relleno"}
-  //               tamaño="sm"
-  //               color="var(--color-exito-oscuro)"
-  //             />
-  //           ),
-  //         }}
-  //         estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
-  //       />
-  //     ),
-  //   },
-  //   ...metaTablaBase,
-  // ] as MetaTabla<Pedido>;
-
   return (
     <div className="Pedido">
       <MaestroDetalleActivoControlado<Pedido>
