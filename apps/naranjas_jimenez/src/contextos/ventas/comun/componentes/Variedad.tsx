@@ -1,46 +1,40 @@
-import { QAutocompletar, QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Criteria } from "@olula/lib/diseño.ts";
-import { getItemsListaVariedad } from "../../variedad/infraestructura.ts";
+import { QSelect } from "@olula/componentes/index.js";
+import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { useEffect, useState } from "react";
+import { getItemsListaSeleccionVariedad } from "../../variedad/infraestructura.ts";
 
-type VariedadProps = Omit<QAutocompletarProps, "obtenerOpciones">
+type VariedadProps = Omit<QAutocompletarProps, "obtenerOpciones">;
 
+type OpcionVariedad = {
+  valor: string;
+  descripcion: string;
+};
 
 export const Variedad = ({
-  descripcion = "",
   valor,
   nombre = "variedad",
   label = "Variedad",
   onChange,
   ...props
 }: VariedadProps) => {
+  const [opcionesVariedad, setOpcionesVariedad] = useState<OpcionVariedad[]>([]);
 
-    const obtenerOpciones = async (texto: string) => {
-        const criteria: Criteria = {
-            filtro: [["descripcion", "~", texto]],
-            orden: ["id"],
-            paginacion: { limite: 10, pagina: 1 },
-        };
-
-        const variedades = await getItemsListaVariedad(
-            criteria.filtro,
-            criteria.orden
-        );
-
-        return variedades.map((variedad) => ({
-            valor: variedad.id,
-            descripcion: variedad.descripcion,
-        }));
+  useEffect(() => {
+    const cargarOpcionesVariedad = async () => {
+      const items = await getItemsListaSeleccionVariedad();
+      setOpcionesVariedad(items.map((item) => ({ valor: item.id, descripcion: item.descripcion })));
     };
+    cargarOpcionesVariedad();
+  }, []);
 
-    return (
-        <QAutocompletar
-            label={label}
-            nombre={nombre}
-            onChange={onChange}
-            valor={valor}
-            descripcion={descripcion}
-            obtenerOpciones={obtenerOpciones}
-            {...props}
-        />
-    );
+  return (
+    <QSelect
+      label={label}
+      nombre={nombre}
+      valor={valor}
+      onChange={onChange}
+      opciones={opcionesVariedad}
+      {...props}
+    />
+  );
 };

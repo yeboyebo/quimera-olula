@@ -43,16 +43,34 @@ export const FormCrearLineaDefecto: FormCrearLinea = {
     envasesPorPalet: 0
 };
 
-const onChange = (modelo: FormCrearLinea, campo: string, _: unknown, palet?: Record<string, unknown>) => {
+const onChange = (modelo: FormCrearLinea, campo: string, _: unknown, otro?: Record<string, unknown>) => {
 
-    if (campo === "idTipoPalet" && palet) {
-        const envasesPorPalet = palet.cantidadEnvase as number;
+    if (campo === "idVariedad") {
+        return {
+            ...modelo,
+            idMarca: "",
+            marca: "",
+            idCalibre: "",
+            calibre: "",
+        }
+    }
+    if (campo === "idMarca") {
+        return {
+            ...modelo,
+            idCalibre: "",
+            calibre: "",
+            categoria: otro ? ((otro.idCategoria as string) ?? "") : "",
+        }
+    }
+    if (campo === "idTipoPalet" && otro) {
+        const envasesPorPalet = otro.cantidadEnvase as number;
         return {
             ...modelo,
             envasesPorPalet,
             cantidadEnvases: modelo.cantidadPalets * envasesPorPalet
         }
     }
+
     if (campo === "cantidadPalets") {
         return {
             ...modelo,
@@ -68,7 +86,7 @@ export const metaCrearLinea: MetaModelo<FormCrearLinea> = {
         idTipoPalet: { tipo: "texto", requerido: true },
         idMarca: { tipo: "texto", requerido: true },
         idCalibre: { tipo: "texto", requerido: true },
-        categoria: { tipo: "texto", requerido: true },
+        categoria: { tipo: "texto", requerido: false },
         observaciones: { tipo: "texto", requerido: false },
         cantidadPalets: { tipo: "entero", requerido: false },
         cantidadEnvases: { tipo: "entero", requerido: true, positivo: true },
@@ -89,7 +107,7 @@ export const postLineaNrj: PostLineaNrj = async (id, linea) => {
                 variedad_id: linea.idVariedad,
                 marca_id: linea.idMarca,
                 calibre_id: linea.idCalibre,
-                categoria: linea.categoria,
+                categoria: linea.categoria ? linea.categoria[0] : undefined,
                 cantidad: linea.cantidadEnvases,
                 tipo_palet_id: linea.idTipoPalet,
                 cantidad_palets: linea.cantidadPalets,

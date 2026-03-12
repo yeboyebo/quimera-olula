@@ -1,14 +1,9 @@
 import { BorrarPedido } from "#/ventas/pedido/borrar/BorrarPedido.tsx";
-import {
-  editable,
-  metaPedido,
-  pedidoVacio,
-} from "#/ventas/pedido/detalle/dominio.ts";
+import { editable, getMetaPedido } from "#/ventas/pedido/detalle/dominio.ts";
 
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Lineas } from "#/ventas/pedido/detalle/Lineas/Lineas.tsx";
 import { getMaquina } from "#/ventas/pedido/detalle/maquina.ts";
-import { TabCliente } from "#/ventas/pedido/detalle/TabCliente/TabCliente.tsx";
 import { TabObservaciones } from "#/ventas/pedido/detalle/TabObservaciones.tsx";
 import { Pedido } from "#/ventas/pedido/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
@@ -19,39 +14,51 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useCallback, useEffect } from "react";
+import { useParams } from "react-router";
 import "./DetallePedido.css";
 
 import { HookModelo } from "@olula/lib/useModelo.ts";
+import { PedidoNrj } from "../diseño.ts";
+import { pedidoVacioNrj } from "../dominio.ts";
+import { TabClienteNrj } from "./TabCliente/TabCliente.tsx";
+
+const metaPedidoNrj = {
+  ...getMetaPedido<PedidoNrj>(),
+  campos: {
+    ...getMetaPedido<PedidoNrj>().campos,
+    portes_cliente: { tipo: "checkbox" as const, requerido: false },
+  },
+};
 
 export const DetallePedidoNrj = ({
-  pedidoInicial = null,
   publicar = async () => {},
+  id,
 }: {
-  pedidoInicial?: Pedido | null;
+  id?: string;
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
-  const navigate = useNavigate();
-  const pedidoId = pedidoInicial?.id ?? params.id;
+  //const navigate = useNavigate();
+  const pedidoId = id ?? params.id;
 
   const { ctx, emitir } = useMaquina(
-    getMaquina,
+    getMaquina<PedidoNrj>,
     {
       estado: "INICIAL",
-      pedido: pedidoInicial || pedidoVacio(),
-      pedidoInicial: pedidoInicial || pedidoVacio(),
+      pedido: pedidoVacioNrj(),
+      pedidoInicial: pedidoVacioNrj(),
       lineaActiva: null,
     },
     publicar
   );
 
-  const pedido = useModelo(metaPedido, ctx.pedido);
+  const pedido = useModelo(metaPedidoNrj, ctx.pedido);
 
-  if (pedidoId && pedidoId !== ctx.pedido.id) {
+  useEffect(() => {
     emitir("pedido_id_cambiado", pedidoId, true);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pedidoId]);
 
   const { estado, lineaActiva } = ctx;
 
@@ -64,11 +71,6 @@ export const DetallePedidoNrj = ({
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_pedido_cancelada");
   }, [emitir]);
-
-  const handleAlbaranar = useCallback(() => {
-    const id = ctx.pedido.id ?? params.id;
-    if (id) navigate(`/ventas/albaranar-pedido/${id}`);
-  }, [navigate, ctx.pedido, params.id]);
 
   const acciones = [
     /*     {
@@ -105,7 +107,11 @@ export const DetallePedidoNrj = ({
 
           <Tabs>
             <Tab label="Cliente">
-              <TabCliente pedido={pedido} estado={estado} publicar={emitir} />
+              <TabClienteNrj
+                pedido={pedido}
+                estado={estado}
+                publicar={emitir}
+              />
             </Tab>
 
             <Tab label="Datos">
@@ -150,7 +156,7 @@ export const DetallePedidoNrj = ({
 };
 
 export interface TabDatosProps {
-  pedido: HookModelo<Pedido>;
+  pedido: HookModelo<PedidoNrj>;
 }
 
 export const TabDatosNrj = ({ pedido }: TabDatosProps) => {
