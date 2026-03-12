@@ -48,6 +48,18 @@
     --font-system-ui: 'Inter', sans-serif;
 
     --width-menu: 275px;
+
+    --padding-horizontal: 1rem;
+    --padding-vertical: 1rem;
+    --gap-formulario: 1rem;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --padding-horizontal: 0.75rem;
+        --padding-vertical: 0.75rem;
+        --gap-formulario: 0.75rem;
+    }
 }
 
 * {

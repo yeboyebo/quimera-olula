@@ -26,6 +26,11 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
         },
 
         ABIERTO: {
+            cliente_deseleccionado: [
+                getContextoVacio,
+                publicar("cliente_deseleccionado", null),
+            ],
+
             cliente_cargado: [abiertoContexto],
 
             cliente_cambiado: [refrescarCliente],

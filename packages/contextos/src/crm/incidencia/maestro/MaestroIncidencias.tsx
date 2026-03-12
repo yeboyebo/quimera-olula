@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearIncidencia } from "../crear/CrearIncidencia.tsx";
 import { DetalleIncidencia } from "../detalle/DetalleIncidencia.tsx";
 import { Incidencia } from "../diseño.ts";
@@ -14,29 +13,23 @@ import "./MaestroIncidencias.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroIncidencias = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    incidencias: listaEntidadesInicial<Incidencia>(),
+    incidencias: listaActivaEntidadesInicial<Incidencia>(id, criteria),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_incidencias_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.incidencias.activo, ctx.incidencias.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_incidencias_solicitada", ctx.incidencias.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="MaestroIncidencias">
-      <MaestroDetalleControlado<Incidencia>
+      <MaestroDetalle<Incidencia>
         Maestro={
           <>
             <h2>Incidencias</h2>
@@ -49,31 +42,24 @@ export const MaestroIncidencias = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<Incidencia>
+            <ListadoActivoControlado<Incidencia>
               metaTabla={metaTablaIncidencia}
-              metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.incidencias.criteria}
               modo={"tabla"}
-              // setModo={handleSetModoVisualizacion}
-              // tarjeta={(incidencia) => (
-              //   <TarjetaIncidencia incidencia={incidencia} />
-              // )}
               entidades={ctx.incidencias.lista}
               totalEntidades={ctx.incidencias.total}
               seleccionada={ctx.incidencias.activo}
               onSeleccion={(payload) =>
                 emitir("incidencia_seleccionada", payload)
               }
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
         Detalle={
-          <DetalleIncidencia
-            inicial={ctx.incidencias.activo}
-            publicar={emitir}
-          />
+          <DetalleIncidencia id={ctx.incidencias.activo} publicar={emitir} />
         }
         seleccionada={ctx.incidencias.activo}
         modoDisposicion="maestro-50"

@@ -22,7 +22,7 @@ export default defineConfig({
         theme_color: '#ffffff',
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module',
       },
       workbox: {

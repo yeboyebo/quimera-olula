@@ -25,7 +25,7 @@ const datosCargando = <T extends Entidad>() =>
         ...Object.fromEntries(
           new Array(10).fill(null).map((_, j) => [j, "U00A0"])
         ),
-      } as T)
+      }) as T
   );
 
 const obtenerCampos = (entidad: Entidad | null): string[] => {
@@ -116,18 +116,17 @@ export const Listado = <T extends Entidad>({
 
     if (modo == "tarjetas" && tarjeta) {
       return (
-        <QTarjetas
+        <QTarjetas<T>
           tarjeta={tarjeta}
           datos={datos}
           cargando={cargando}
           seleccionadaId={seleccionada?.id}
           onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-          paginacion={paginacion}
+          criteria={{ filtro, orden, paginacion }}
           onPaginacion={(pagina, limite) => {
             setPaginacion({ pagina, limite });
           }}
           totalEntidades={totalRegistros}
-          orden={orden}
           onOrdenar={(clave) => {
             const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
             const sentido =
@@ -144,7 +143,7 @@ export const Listado = <T extends Entidad>({
 
     if (modo == "tabla" && metaTabla) {
       return (
-        <QTabla
+        <QTabla<T>
           metaTabla={metaTabla}
           datos={datos}
           cargando={cargando}

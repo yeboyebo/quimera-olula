@@ -1,6 +1,9 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
+import {
+    ProcesarListaActivaEntidades,
+    accionesListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { Contacto } from "../diseño.ts";
 import { getContactos } from "../infraestructura.ts";
 import { ContextoMaestroContactos, EstadoMaestroContactos } from "./diseño.ts";
@@ -14,9 +17,11 @@ export const metaTablaContacto: MetaTabla<Contacto> = [
 
 type ProcesarContactos = ProcesarContexto<EstadoMaestroContactos, ContextoMaestroContactos>;
 
-const conContactos = (fn: ProcesarListaEntidades<Contacto>) => (ctx: ContextoMaestroContactos) => ({ ...ctx, contactos: fn(ctx.contactos) });
+const conContactos =
+    (fn: ProcesarListaActivaEntidades<Contacto>) =>
+        (ctx: ContextoMaestroContactos) => ({ ...ctx, contactos: fn(ctx.contactos) });
 
-export const Contactos = accionesListaEntidades(conContactos);
+export const Contactos = accionesListaActivaEntidades(conContactos);
 
 export const recargarContactos: ProcesarContactos = async (contexto, payload) => {
     const criteria = payload as Criteria;

@@ -9,11 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroEstadosLead, ContextoMaestro
 
             estado_lead_seleccionado: [EstadosLead.activar],
 
-            estado_lead_deseleccionado: [EstadosLead.desactivar],
+            estado_lead_deseleccionado: EstadosLead.desactivar,
 
-            estado_lead_borrado: [EstadosLead.quitar],
+            estado_lead_borrado: EstadosLead.quitar,
 
             recarga_de_estados_lead_solicitada: recargarEstadosLead,
+
+            criteria_cambiado: [EstadosLead.filtrar, recargarEstadosLead],
 
             creacion_de_estado_lead_solicitada: "CREANDO",
         },
