@@ -37,7 +37,7 @@ export const TabCliente = ({
                 <QDate label="Fecha" {...uiProps("fecha")} />
  
                 <div id='nombre'>
-                    {`${venta.cliente?.nombre ?? ''} ${venta.cliente?.idFiscal ?? ''}`}
+                    {`${venta.cliente?.nombre ?? ''} ${venta.cliente?.idFiscal ?? 'Factura Simplificada'}`}
                     <QBoton texto='Cambiar cliente'
                         onClick={() => publicar("cambio_cliente_solicitado")}
                         deshabilitado={!editable}
@@ -46,7 +46,7 @@ export const TabCliente = ({
                 </div>
 
                 <div id='direccion'>
-                    {direccionCompleta(venta.cliente?.direccion)}
+                    {venta.cliente && direccionCompleta(venta.cliente?.direccion)}
                 </div>
 
             </quimera-formulario>
