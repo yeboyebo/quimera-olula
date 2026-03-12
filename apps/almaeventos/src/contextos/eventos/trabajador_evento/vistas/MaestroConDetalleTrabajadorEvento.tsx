@@ -1,13 +1,12 @@
-import {
-  Listado,
-  MaestroDetalleResponsive,
-  MetaTabla,
-  QIcono,
-} from "@olula/componentes/index.ts";
+import { MetaTabla, QIcono } from "@olula/componentes/index.ts";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
+import { Criteria } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { TextoConTooltip } from "../../../comun/componentes/TextoConTooltip";
 import { TrabajadorEvento } from "../diseño.ts";
 import {
@@ -21,6 +20,9 @@ type Estado = "lista" | "alta";
 
 export const MaestroConDetalleTrabajadorEvento = () => {
   const [estado, setEstado] = useState<Estado>("lista");
+  const [criteria, setCriteria] = useState<Criteria>(criteriaDefecto);
+  const [cargando, setCargando] = useState(false);
+  const [totalTrabajadoresEvento, setTotalTrabajadoresEvento] = useState(0);
   const trabajadoresEvento = useLista<TrabajadorEvento>([]);
   const { intentar } = useContext(ContextoError);
 
@@ -50,6 +52,26 @@ export const MaestroConDetalleTrabajadorEvento = () => {
   };
 
   const emitir = useMaquina(maquina, estado, setEstado);
+
+  const recargar = useCallback(
+    async (nuevaCriteria: Criteria) => {
+      setCriteria(nuevaCriteria);
+      setCargando(true);
+      const { datos, total } = await getTrabajadoresEvento(
+        nuevaCriteria.filtro,
+        nuevaCriteria.orden,
+        nuevaCriteria.paginacion
+      );
+      trabajadoresEvento.setLista(datos);
+      setTotalTrabajadoresEvento(total);
+      setCargando(false);
+    },
+    [trabajadoresEvento]
+  );
+
+  useEffect(() => {
+    void recargar(criteriaDefecto);
+  }, []);
 
   // Función para cambiar el estado de liquidado
   const cambiarEstadoLiquidado = async (trabajadorEvento: TrabajadorEvento) => {
@@ -119,8 +141,8 @@ export const MaestroConDetalleTrabajadorEvento = () => {
 
   return (
     <div className="TrabajadorEvento">
-      <MaestroDetalleResponsive<TrabajadorEvento>
-        seleccionada={trabajadoresEvento.seleccionada}
+      <MaestroDetalle<TrabajadorEvento>
+        seleccionada={trabajadoresEvento.seleccionada?.id}
         Maestro={
           <>
             <h2>Trabajadores por evento</h2>
@@ -128,13 +150,24 @@ export const MaestroConDetalleTrabajadorEvento = () => {
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton> 
               <QBoton onClick={() => emitir("DESCARGA_EXCEL_INICIADA")}>Descargar</QBoton>
             </div> */}
-            <Listado
+            <ListadoActivoControlado<TrabajadorEvento>
               metaTabla={metaTablaTrabajadorEvento}
+              criteria={criteria}
+              criteriaInicial={criteriaDefecto}
+              cargando={cargando}
               entidades={trabajadoresEvento.lista}
-              setEntidades={trabajadoresEvento.setLista}
-              seleccionada={trabajadoresEvento.seleccionada}
-              setSeleccionada={trabajadoresEvento.seleccionar}
-              cargar={getTrabajadoresEvento}
+              totalEntidades={totalTrabajadoresEvento}
+              seleccionada={trabajadoresEvento.seleccionada?.id}
+              onSeleccion={(id) => {
+                const trabajadorEvento = trabajadoresEvento.lista.find(
+                  (item) => item.id === id
+                );
+                if (trabajadorEvento)
+                  trabajadoresEvento.seleccionar(trabajadorEvento);
+              }}
+              onCriteriaChanged={(nuevaCriteria) =>
+                void recargar(nuevaCriteria)
+              }
             />
           </>
         }

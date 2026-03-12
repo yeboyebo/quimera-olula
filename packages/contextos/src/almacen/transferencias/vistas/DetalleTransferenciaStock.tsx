@@ -22,10 +22,10 @@ const titulo = (transferencia: TransferenciaStock) =>
   transferencia.origen + " -> " + transferencia.destino;
 
 export const DetalleTransferenciaStock = ({
-  inicial: inicial = null,
+  id,
   publicar = async () => {},
 }: {
-  inicial?: TransferenciaStock | null;
+  id?: string;
   publicar?: ProcesarEvento;
 }) => {
   const params = useParams();
@@ -57,7 +57,7 @@ export const DetalleTransferenciaStock = ({
     publicar("transferencia_cambiada", nuevaTransferenciaStock);
   };
 
-  const transferenciaID = inicial?.id ?? params.id;
+  const transferenciaID = id ?? params.id;
 
   return (
     <Detalle

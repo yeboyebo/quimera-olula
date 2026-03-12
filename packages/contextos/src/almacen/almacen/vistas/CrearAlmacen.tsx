@@ -17,9 +17,7 @@ export const CrearAlmacen = ({
   publicar?: ProcesarEvento;
   activo: boolean;
 }) => {
-  const almacen = useModelo(metaNuevoAlmacen, {
-    ...nuevoAlmacenVacio,
-  });
+  const almacen = useModelo(metaNuevoAlmacen, nuevoAlmacenVacio);
 
   const cancelar = () => {
     almacen.init();

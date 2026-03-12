@@ -1,6 +1,9 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
+import {
+    ProcesarListaActivaEntidades,
+    accionesListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { FuenteLead } from "../diseño.ts";
 import { getFuentesLead } from "../infraestructura.ts";
 import { ContextoMaestroFuentesLead, EstadoMaestroFuentesLead } from "./diseño.ts";
@@ -13,9 +16,11 @@ export const metaTablaFuenteLead: MetaTabla<FuenteLead> = [
 
 type ProcesarFuentesLead = ProcesarContexto<EstadoMaestroFuentesLead, ContextoMaestroFuentesLead>;
 
-const conFuentesLead = (fn: ProcesarListaEntidades<FuenteLead>) => (ctx: ContextoMaestroFuentesLead) => ({ ...ctx, fuentes_lead: fn(ctx.fuentes_lead) });
+const conFuentesLead =
+    (fn: ProcesarListaActivaEntidades<FuenteLead>) =>
+        (ctx: ContextoMaestroFuentesLead) => ({ ...ctx, fuentes_lead: fn(ctx.fuentes_lead) });
 
-export const FuentesLead = accionesListaEntidades(conFuentesLead);
+export const FuentesLead = accionesListaActivaEntidades(conFuentesLead);
 
 export const recargarFuentesLead: ProcesarFuentesLead = async (contexto, payload) => {
     const criteria = payload as Criteria;

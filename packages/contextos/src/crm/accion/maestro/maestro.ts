@@ -1,6 +1,9 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
+import {
+    ProcesarListaActivaEntidades,
+    accionesListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { Accion } from "../diseño.ts";
 import { getAcciones } from "../infraestructura.ts";
 import { ContextoMaestroAcciones, EstadoMaestroAcciones } from "./diseño.ts";
@@ -15,9 +18,11 @@ export const metaTablaAccion: MetaTabla<Accion> = [
 
 type ProcesarAcciones = ProcesarContexto<EstadoMaestroAcciones, ContextoMaestroAcciones>;
 
-const conAcciones = (fn: ProcesarListaEntidades<Accion>) => (ctx: ContextoMaestroAcciones) => ({ ...ctx, acciones: fn(ctx.acciones) });
+const conAcciones =
+    (fn: ProcesarListaActivaEntidades<Accion>) =>
+        (ctx: ContextoMaestroAcciones) => ({ ...ctx, acciones: fn(ctx.acciones) });
 
-export const Acciones = accionesListaEntidades(conAcciones);
+export const Acciones = accionesListaActivaEntidades(conAcciones);
 
 export const recargarAcciones: ProcesarAcciones = async (contexto, payload) => {
     const criteria = payload as Criteria;

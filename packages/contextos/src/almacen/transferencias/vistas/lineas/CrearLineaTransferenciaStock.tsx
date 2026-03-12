@@ -22,9 +22,10 @@ export const CrearLineaTransferenciaStock = ({
   activo?: boolean;
   transferenciaID: string;
 }) => {
-  const linea = useModelo(metaNuevaLineaTransferenciaStock, {
-    ...nuevaLineaTransferenciaStockVacia,
-  });
+  const linea = useModelo(
+    metaNuevaLineaTransferenciaStock,
+    nuevaLineaTransferenciaStockVacia
+  );
 
   const cancelar = () => {
     linea.init();

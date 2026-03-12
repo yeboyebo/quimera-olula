@@ -10,9 +10,9 @@ import {
 } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarAccion } from "../borrar/BorrarAccion.tsx";
-import { Accion } from "../diseño.ts";
 import { FinalizarAccion } from "../finalizar/FinalizarAccion.tsx";
 import { accionVacia, metaAccion } from "./detalle.ts";
 import "./DetalleAccion.css";
@@ -21,36 +21,35 @@ import { TabDatos } from "./tabs/TabDatos.tsx";
 import { TabObservaciones } from "./tabs/TabObservaciones.tsx";
 
 export const DetalleAccion = ({
-  inicial = null,
+  id,
   publicar,
 }: {
-  inicial: Accion | null;
+  id?: string;
   publicar: EmitirEvento;
 }) => {
   const params = useParams();
 
-  const accionId = inicial?.id ?? params.id;
+  const accionId = id ?? params.id;
   const titulo = (accion: Entidad) => accion.descripcion as string;
-
-  const accion = useModelo(metaAccion, inicial ?? accionVacia);
-  const { modelo, modeloInicial, modificado, uiProps, valido, init } = accion;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
     {
       estado: "INICIAL",
-      accion: modelo,
+      accion: accionVacia,
     },
     publicar
   );
 
-  if (ctx.accion !== modeloInicial) {
-    init(ctx.accion);
-  }
+  const accion = useModelo(metaAccion, ctx.accion);
+  const { modelo, modificado, uiProps, valido } = accion;
 
-  if (accionId && accionId !== modelo.id) {
-    emitir("accion_id_cambiada", accionId);
-  }
+  useEffect(() => {
+    if (accionId) {
+      emitir("accion_id_cambiada", accionId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accionId]);
 
   return (
     <Detalle

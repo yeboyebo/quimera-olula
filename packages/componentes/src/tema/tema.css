@@ -74,6 +74,18 @@
     --color-accion-oscuro: light-dark(var(--naranja-9), var(--naranja-7));
 
     --width-menu: 275px;
+
+    --padding-horizontal: 1rem;
+    --padding-vertical: 1rem;
+    --gap-formulario: 1rem;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --padding-horizontal: 0.75rem;
+        --padding-vertical: 0.75rem;
+        --gap-formulario: 0.75rem;
+    }
 }
 
 * {

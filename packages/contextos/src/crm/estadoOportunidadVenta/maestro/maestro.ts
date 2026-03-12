@@ -1,6 +1,9 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
+import {
+    ProcesarListaActivaEntidades,
+    accionesListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { EstadoOportunidad } from "../diseño.ts";
 import { getEstadosOportunidad } from "../infraestructura.ts";
 import { ContextoMaestroEstadosOportunidad, EstadoMaestroEstadosOportunidad } from "./diseño.ts";
@@ -14,9 +17,11 @@ export const metaTablaEstadoOportunidad: MetaTabla<EstadoOportunidad> = [
 
 type ProcesarEstadosOportunidad = ProcesarContexto<EstadoMaestroEstadosOportunidad, ContextoMaestroEstadosOportunidad>;
 
-const conEstadosOportunidad = (fn: ProcesarListaEntidades<EstadoOportunidad>) => (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, estados_oportunidad: fn(ctx.estados_oportunidad) });
+const conEstadosOportunidad =
+    (fn: ProcesarListaActivaEntidades<EstadoOportunidad>) =>
+        (ctx: ContextoMaestroEstadosOportunidad) => ({ ...ctx, estados_oportunidad: fn(ctx.estados_oportunidad) });
 
-export const EstadosOportunidad = accionesListaEntidades(conEstadosOportunidad);
+export const EstadosOportunidad = accionesListaActivaEntidades(conEstadosOportunidad);
 
 export const recargarEstadosOportunidad: ProcesarEstadosOportunidad = async (contexto, payload) => {
     const criteria = payload as Criteria;

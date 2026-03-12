@@ -1,4 +1,4 @@
-maestro-detalle[tipo="tabla"] {
+/* maestro-detalle[tipo="tabla"] {
     display: flex;
     gap: 1rem;
     overflow: auto;
@@ -55,4 +55,4 @@ maestro-detalle[tipo="tabla"] {
         padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
     }
-}
+} */

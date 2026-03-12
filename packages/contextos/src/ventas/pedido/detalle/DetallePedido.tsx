@@ -20,7 +20,7 @@ import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 export type DetallePedidoProps = {
-  pedidoInicial: Pedido;
+  id?: string;
   publicar: EmitirEvento;
 };
 
@@ -36,12 +36,9 @@ export const DetallePedido = (props: DetallePedidoProps) => {
 };
 
 export const DetallePedidoBase = ({
-  pedidoInicial = null,
+  id,
   publicar = async () => {},
-}: {
-  id?: string;
-  publicar?: EmitirEvento;
-}) => {
+}: DetallePedidoProps) => {
   const params = useParams();
   const navigate = useNavigate();
   const pedidoId = id ?? params.id;

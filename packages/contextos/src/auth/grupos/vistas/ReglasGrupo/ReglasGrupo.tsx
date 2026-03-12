@@ -1,20 +1,21 @@
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
 import { useContext, useEffect, useState } from "react";
 import { CategoriaReglas, Grupo, Regla, ReglaAnidada } from "../../diseño.ts";
 import { getReglasPorGrupoPermiso } from "../../dominio.ts";
-import { getPermisosGrupo, putPermiso } from "../../infraestructura.ts";
+import {
+  getPermisosGrupo,
+  getReglas,
+  putPermiso,
+} from "../../infraestructura.ts";
 import { ReglasOrganizadas } from "./Reglas/ReglasOrganizadas.tsx";
 import "./ReglasGrupo.css";
 
 type Estado = "lista" | "actualizando";
 
 export const ReglasGrupo = ({
-  reglas,
   grupoSeleccionado,
 }: {
-  reglas: ReturnType<typeof useLista<Regla>>;
   grupoSeleccionado: Grupo | null;
 }) => {
   const { intentar } = useContext(ContextoError);
@@ -65,26 +66,25 @@ export const ReglasGrupo = ({
 
   useEffect(() => {
     if (grupoSeleccionado?.id) {
-      getPermisosGrupo(grupoSeleccionado.id).then(({ datos: permisos }) => {
-        const organizadas = getReglasPorGrupoPermiso(
-          grupoSeleccionado.id,
-          reglas.lista,
-          permisos
-        );
-        setReglasOrganizadas(organizadas);
-      });
+      Promise.all([getReglas(), getPermisosGrupo(grupoSeleccionado.id)]).then(
+        ([{ datos: reglas }, { datos: permisos }]) => {
+          const organizadas = getReglasPorGrupoPermiso(
+            grupoSeleccionado.id,
+            reglas,
+            permisos
+          );
+          setReglasOrganizadas(organizadas);
+        }
+      );
+    } else {
+      setReglasOrganizadas([]);
     }
-  }, [grupoSeleccionado?.id, reglas.lista]);
+  }, [grupoSeleccionado?.id]);
 
   const maquina: Maquina<Estado> = {
     lista: {
-      ALTERNAR_SELECCION: (payload: unknown) => {
-        const regla = payload as Regla;
-        if (reglas.seleccionada?.id === regla.id) {
-          reglas.limpiarSeleccion();
-          return "lista";
-        }
-        reglas.seleccionar(regla);
+      ALTERNAR_SELECCION: () => {
+        return "lista";
       },
       PERMITIR_REGLA: (payload: unknown) => {
         const regla = payload as Regla;

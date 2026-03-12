@@ -1,8 +1,8 @@
-quimera-tarjetas {
-    :root {
-        --transicion-basica: 0.12 ease-in-out;
-    }
+:root {
+    --transicion-basica: 0.12 ease-in-out;
+}
 
+quimera-tarjetas {
     width: 100%;
     display: block;
 
