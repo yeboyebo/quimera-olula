@@ -4,7 +4,8 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal, QTextArea } from "@olula/componentes/index.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
@@ -17,10 +18,20 @@ import {
 } from "./crear_linea.ts";
 
 export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
-  const { modelo, uiProps, valido } = useModelo(
+  const { modelo, uiProps, valido, set } = useModelo(
     metaCrearLinea,
     FormCrearLineaDefecto
   );
+
+  useEffect(() => {
+    if (!modelo.idTipoPalet) return;
+    getItemsListaTipoPalet([], []).then(items => {
+      const item = items.find(i => i.id === modelo.idTipoPalet);
+      if (item) {
+        set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
+      }
+    });
+  }, [modelo.idTipoPalet]);
 
   const crear = useCallback(async () => {
     await postLineaNrj(pedidoId, modelo);
