@@ -20,7 +20,7 @@
         flex-grow: 1;
 
         &>*:not(menu-lateral):not(menu-usuario) {
-            padding: 1rem;
+            padding: var(--espaciado-xl) var(--espaciado-2xl);
             flex-grow: 1;
         }
 
@@ -37,7 +37,7 @@
         height: var(--alto-footer);
         width: 100%;
         text-align: center;
-        padding: 0.5rem;
+        padding: var(--espaciado-s);
         align-self: flex-end;
     }
 

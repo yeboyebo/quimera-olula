@@ -56,12 +56,12 @@
 }
 
 .tabHeaderSlider::-webkit-scrollbar-thumb {
-    background: #888;
+    background: var(--gris-5);
     border-radius: 3px;
 }
 
 .tabHeaderSlider::-webkit-scrollbar-track {
-    background: #eee;
+    background: var(--color-superficie-sunken);
     border-radius: 3px;
 }
 

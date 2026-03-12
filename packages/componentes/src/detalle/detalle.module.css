@@ -1,10 +1,12 @@
 .detalle {
     & h2 {
         margin-top: 0;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #ccc;
+        margin-bottom: var(--espaciado-l);
+        padding-bottom: var(--espaciado-m);
+        border-bottom: var(--tamaño-borde-m) solid var(--color-primario-claro);
         display: flex;
         justify-content: space-between;
+        font-weight: var(--grosor-letra-6);
     }
 
     &>form {

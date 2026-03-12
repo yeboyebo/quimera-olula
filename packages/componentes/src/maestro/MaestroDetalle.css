@@ -1,3 +1,14 @@
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 maestro-detalle {
     display: flex;
     gap: 1rem;
@@ -21,7 +32,7 @@ maestro-detalle[tipo="maestro-50"] {
         flex: 1 1 50%;
         max-width: 50%;
         min-width: 0;
-        border-left: 1px solid var(--gris-2);
+        border-left: 1px solid var(--color-borde-sutil);
         padding-left: 1rem;
     }
 }
@@ -55,8 +66,9 @@ maestro-detalle[tipo="maestro-dinamico"] {
         flex: 1 1 70%;
         max-width: 70%;
         opacity: 1;
-        border-left: 1px solid var(--gris-2);
+        border-left: 1px solid var(--color-borde-sutil);
         padding-left: 1rem;
+        animation: slideIn var(--transicion-lenta) ease-out;
     }
 }
 
@@ -114,7 +126,7 @@ maestro-detalle[tipo="pantalla-completa"] {
 .selector-modos button {
     padding: 0.5rem 1rem;
     border: 1px solid var(--gris-2);
-    background: white;
+    background: var(--color-superficie);
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.8rem;
