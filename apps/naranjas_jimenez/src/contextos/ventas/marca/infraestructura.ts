@@ -8,14 +8,14 @@ const baseUrl = new ApiUrls().MARCA;
 type ItemListaMarcaApi = {
     id: string;
     descripcion: string;
-    categoria_id: string;
+    categoria: string;
 };
 
 
 const itemListaMarcaDesdeApi = (item: ItemListaMarcaApi): ItemListaMarca => ({
     id: item.id,
     descripcion: item.descripcion,
-    idCategoria: item.categoria_id,
+    idCategoria: item.categoria,
 })
 
 export const getItemsListaMarca: GetItemsListaMarca = async (filtro, orden) => {

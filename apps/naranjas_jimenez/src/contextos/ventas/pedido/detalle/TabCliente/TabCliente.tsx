@@ -1,6 +1,6 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
-import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
+import { CambioClienteNrj } from "./CambioClienteNrj.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -69,14 +69,13 @@ export const TabClienteNrj = ({
         />
         <QCheckbox
           label="Portes gestionados por cliente"
-          nombre="portes_cliente"
+          {...uiProps("portes_cliente")}
           valor={toBool(modelo.portes_cliente)}
         />
       </quimera-formulario>
 
       {estado === "CAMBIANDO_CLIENTE" && (
-        <CambioClienteVenta
-          venta={pedido}
+        <CambioClienteNrj
           onGuardar={onGuardarCambioCliente}
           onCancelar={() => publicar("cambio_cliente_cancelado")}
         />

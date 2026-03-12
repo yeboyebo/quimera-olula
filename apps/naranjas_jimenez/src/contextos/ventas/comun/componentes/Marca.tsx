@@ -1,15 +1,11 @@
 import { QSelect } from "@olula/componentes/index.js";
 import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { useEffect, useState } from "react";
+import { ItemListaMarca } from "../../marca/diseño.ts";
 import { getItemsListaSeleccionMarca } from "../../marca/infraestructura.ts";
 
 type MarcaProps = Omit<QAutocompletarProps, "obtenerOpciones"> & {
   idVariedad?: string;
-};
-
-type OpcionMarca = {
-  valor: string;
-  descripcion: string;
 };
 
 export const Marca = ({
@@ -20,37 +16,35 @@ export const Marca = ({
   onChange,
   ...props
 }: MarcaProps) => {
-  const [opcionesMarca, setOpcionesMarca] = useState<OpcionMarca[]>([]);
+  const [opcionesMarca, setOpcionesMarca] = useState<ItemListaMarca[]>([]);
+
   useEffect(() => {
     if (!idVariedad) {
       setOpcionesMarca([]);
       return;
     }
-    // const criteria: Criteria = {
-    //   filtro: ["variedad_id", idVariedad], // Cargo marcas disponibles para esta variedad
-    //   orden: ["descripcion"],
-    //   paginacion: { limite: 1000, pagina: 1 },
-    // };
-    const cargarOpcionesMarca = async () => {
-      const opciones = await getItemsListaSeleccionMarca(idVariedad);
-      const opcionesMapeadas = opciones.map((opcion) => ({
-        valor: opcion.id,
-        descripcion: opcion.descripcion,
-        // tasa_conversion: i * 3.02
-      }));
-      setOpcionesMarca(opcionesMapeadas);
-    };
+    getItemsListaSeleccionMarca(idVariedad).then(setOpcionesMarca);
+  }, [idVariedad]);
 
-    cargarOpcionesMarca();
-  }, []);
+  const opciones = opcionesMarca.map((item) => ({ valor: item.id, descripcion: item.descripcion }));
+
+  const handleChange = (opcion: { valor: string; descripcion: string } | null, e: React.ChangeEvent<HTMLElement>) => {
+    if (!opcion) {
+      onChange?.(null, e);
+      return;
+    }
+    const item = opcionesMarca.find((i) => i.id === opcion.valor);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange?.({ ...opcion, idCategoria: item?.idCategoria } as any, e);
+  };
 
   return (
     <QSelect
       label={label}
       nombre={nombre}
       valor={valor}
-      onChange={onChange}
-      opciones={opcionesMarca}
+      onChange={handleChange}
+      opciones={opciones}
       {...props}
     />
   );

@@ -47,6 +47,23 @@ export const FormEditarLineaDefecto: FormEditarLinea = {
 
 const onChange = (modelo: FormEditarLinea, campo: string, _: unknown, palet?: Record<string, unknown>) => {
 
+    if (campo === "idVariedad") {
+        return {
+            ...modelo,
+            idMarca: "",
+            marca: "",
+            idCalibre: "",
+            calibre: "",
+        }
+    }
+    if (campo === "idMarca") {
+        return {
+            ...modelo,
+            idCalibre: "",
+            calibre: "",
+            categoria: palet ? ((palet.idCategoria as string) ?? "") : "",
+        }
+    }
     if (campo === "idTipoPalet" && palet) {
         const envasesPorPalet = palet.cantidadEnvase as number;
         return {
@@ -71,7 +88,7 @@ export const metaEditarLinea: MetaModelo<FormEditarLinea> = {
         idMarca: { tipo: "texto", requerido: true },
         idCalibre: { tipo: "texto", requerido: true },
         idEnvase: { tipo: "texto", requerido: true },
-        categoria: { tipo: "texto", requerido: true },
+        categoria: { tipo: "texto", requerido: false },
         observaciones: { tipo: "texto", requerido: false },
         cantidadPalets: { tipo: "entero", requerido: false },
         cantidadEnvases: { tipo: "entero", requerido: true, positivo: true },
@@ -92,7 +109,7 @@ export const patchLineaNrj: PatchLineaNrj = async (idPedido, idLinea, linea) => 
                 variedad_id: linea.idVariedad,
                 marca_id: linea.idMarca,
                 calibre_id: linea.idCalibre,
-                categoria: linea.categoria,
+                categoria: linea.categoria ? linea.categoria[0] : undefined,
                 cantidad: linea.cantidadEnvases,
                 tipo_palet_id: linea.idTipoPalet,
                 cantidad_palets: linea.cantidadPalets,

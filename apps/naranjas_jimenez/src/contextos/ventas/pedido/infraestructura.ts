@@ -21,6 +21,7 @@ export interface LineaPedidoApiNrj extends LineaPedidoAPI {
     cantidad_envases_nominal: number
     num_palets: number
     cantidad_envases: number
+    observaciones: string
     palets: PaletLineaPedidoApiNrj[]
 }
 
@@ -42,6 +43,7 @@ const lineaPedidoDesdeApi = (l: LineaPedidoApiNrj): LineaPedidoNrj => {
         descEnvase: l.envase,
         categoria: l.categoria,
 
+        observaciones: l.observaciones,
         cantidadEnvasesAsignados: l.cantidad_envases_asignados,
         palets: l.palets.map(p => ({
             id: p.id,

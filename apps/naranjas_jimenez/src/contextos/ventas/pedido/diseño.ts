@@ -19,6 +19,7 @@ export interface LineaPedidoNrj extends LineaPedido {
     descCalibre: string;
     descPalet: string;
     descEnvase: string;
+    observaciones: string;
     cantidadEnvasesAsignados: number;
     cantidadEnvases: number;
     cantidadPalet: number;

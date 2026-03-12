@@ -1,6 +1,5 @@
-import { getPedido, postPedido } from "#/ventas/pedido/infraestructura.ts";
+import { getPedido } from "#/ventas/pedido/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Cliente } from "../../comun/componentes/Cliente.tsx";
 
 import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
@@ -12,7 +11,7 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { Transportista } from "../../comun/componentes/Transportista.tsx";
 import "./CrearPedido.css";
-import { metaNuevoPedidoNrj, nuevoPedidoNrjVacio } from "./crear_pedido_nrj.ts";
+import { metaNuevoPedidoNrj, nuevoPedidoNrjVacio, postPedidoNrj } from "./crear_pedido_nrj.ts";
 
 export const CrearPedidoNrj = ({
   publicar = async () => {},
@@ -29,7 +28,7 @@ export const CrearPedidoNrj = ({
   };
 
   const guardar = async () => {
-    const id = await intentar(() => postPedido(nuevoPedido.modelo));
+    const id = await intentar(() => postPedidoNrj(nuevoPedido.modelo));
     const pedidoCreado = await getPedido(id);
     publicar("pedido_creado", pedidoCreado);
   };
@@ -60,10 +59,10 @@ export const CrearPedidoNrj = ({
         />
         <QCheckbox
           label="Portes gestionados por cliente"
-          nombre="portes_cliente"
+          {...nuevoPedido.uiProps("portes_cliente")}
           valor={toBool(nuevoPedido.modelo.portes_cliente)}
         />
-        <QInput label="Empresa" {...nuevoPedido.uiProps("empresa_id")} />
+        {/* <QInput label="Empresa" {...nuevoPedido.uiProps("empresa_id")} /> */}
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!nuevoPedido.valido}>

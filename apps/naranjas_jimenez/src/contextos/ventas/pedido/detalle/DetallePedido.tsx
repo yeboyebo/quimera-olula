@@ -23,7 +23,13 @@ import { PedidoNrj } from "../diseño.ts";
 import { pedidoVacioNrj } from "../dominio.ts";
 import { TabClienteNrj } from "./TabCliente/TabCliente.tsx";
 
-const metaPedidoNrj = getMetaPedido<PedidoNrj>();
+const metaPedidoNrj = {
+  ...getMetaPedido<PedidoNrj>(),
+  campos: {
+    ...getMetaPedido<PedidoNrj>().campos,
+    portes_cliente: { tipo: "checkbox" as const, requerido: false },
+  },
+};
 
 export const DetallePedidoNrj = ({
   publicar = async () => {},
