@@ -34,6 +34,7 @@ export const Acciones = ({
 
   useEffect(() => {
     recargar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo.id]);
 
   return (

@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -53,7 +53,7 @@ export const MaestroEstadosOportunidad = () => {
               </QBoton>
             </div>
 
-            <ListadoActivoControlado<EstadoOportunidad>
+            <Listado<EstadoOportunidad>
               metaTabla={metaTablaEstadoOportunidad}
               criteria={ctx.estados_oportunidad.criteria}
               modo={"tabla"}

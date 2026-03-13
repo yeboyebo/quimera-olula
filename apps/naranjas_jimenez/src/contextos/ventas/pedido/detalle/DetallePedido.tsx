@@ -43,7 +43,7 @@ export const DetallePedidoNrj = ({
   const pedidoId = id ?? params.id;
 
   const { ctx, emitir } = useMaquina(
-    getMaquina<PedidoNrj>,
+    getMaquina,
     {
       estado: "INICIAL",
       pedido: pedidoVacioNrj(),
@@ -53,7 +53,7 @@ export const DetallePedidoNrj = ({
     publicar
   );
 
-  const pedido = useModelo(metaPedidoNrj, ctx.pedido);
+  const pedido = useModelo(metaPedidoNrj, ctx.pedido as PedidoNrj);
 
   useEffect(() => {
     emitir("pedido_id_cambiado", pedidoId, true);

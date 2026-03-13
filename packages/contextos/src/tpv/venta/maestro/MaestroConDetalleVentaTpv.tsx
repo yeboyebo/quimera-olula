@@ -1,11 +1,10 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { AgenteTpvActual } from "#/tpv/agente/agente_actual/AgenteTpvActual.tsx";
-import { puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { PuntoVentaTpvActual } from "#/tpv/punto_de_venta/punto_actual/PuntoVentaTpvActual.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
   criteriaDefecto,
@@ -23,8 +22,6 @@ import { getMaquina } from "./maquina.ts";
 
 type Layout = "TABLA" | "TARJETA";
 
-const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
-
 export const MaestroConDetalleVentaTpv = () => {
   const criteriaBaseVentas = useMemo(() => {
     // const filtroPuntoVenta: ClausulaFiltro = [
@@ -36,7 +33,7 @@ export const MaestroConDetalleVentaTpv = () => {
       // filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
       orden: ["fecha", "DESC", "codigo", "DESC"],
     };
-  }, [miPuntoVentaLocal?.id]);
+  }, []);
 
   const [layout, setLayout] = useState<Layout>("TARJETA");
 
@@ -58,10 +55,13 @@ export const MaestroConDetalleVentaTpv = () => {
 
   const handle_punto_venta_cambiado = useCallback(() => {
     emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [emitir]);
 
   useEffect(() => {
     emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -85,7 +85,7 @@ export const MaestroConDetalleVentaTpv = () => {
                 Nueva Venta
               </QBoton>
             </div>
-            <ListadoActivoControlado<VentaTpv>
+            <Listado<VentaTpv>
               metaTabla={metaTablaFactura}
               metaFiltro={true}
               criteria={ctx.ventas.criteria}

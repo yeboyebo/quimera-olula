@@ -10,63 +10,62 @@ import { useCallback, useContext, useState } from "react";
 import { VentaTpv } from "../diseño.ts";
 import { postLinea } from "../infraestructura.ts";
 import "./CrearLineaVentaTpv.css";
-import { metaNuevaLineaFactura, nuevaLineaFacturaVacia } from "./crear_linea.ts";
+import {
+  metaNuevaLineaFactura,
+  nuevaLineaFacturaVacia,
+} from "./crear_linea.ts";
 
 export const CrearLineaVentaTpv = ({
-    venta,
-    publicar,
+  venta,
+  publicar,
 }: {
-    venta: VentaTpv;
-    publicar: EmitirEvento;
+  venta: VentaTpv;
+  publicar: EmitirEvento;
 }) => {
-    const { intentar } = useContext(ContextoError);
-    
-    const { modelo, uiProps, valido } = useModelo(metaNuevaLineaFactura, nuevaLineaFacturaVacia);
-    const [creando, setCreando] = useState(false);
+  const { intentar } = useContext(ContextoError);
 
-    const crear = useCallback(
-        async () => {
-            const idLinea = await intentar(() =>postLinea(venta.id, modelo));
-            setCreando(true);
-            publicar("linea_creada", idLinea);
-        },
-        [modelo, publicar, venta.id]
-    );
+  const { modelo, uiProps, valido } = useModelo(
+    metaNuevaLineaFactura,
+    nuevaLineaFacturaVacia
+  );
+  const [creando, setCreando] = useState(false);
 
-    const cancelar = useCallback(
-        () => {
-            if (!creando) publicar("alta_de_linea_cancelada");
-        },
-        [creando, publicar]
-    );
+  const crear = useCallback(
+    async () => {
+      const idLinea = await intentar(() => postLinea(venta.id, modelo));
+      setCreando(true);
+      publicar("linea_creada", idLinea);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [modelo, publicar, venta.id]
+  );
 
-    const focus = useFocus();   
+  const cancelar = useCallback(() => {
+    if (!creando) publicar("alta_de_linea_cancelada");
+  }, [creando, publicar]);
 
-    return (
-        <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+  const focus = useFocus();
 
-        <div className="CrearLineaVentaTpv">
+  return (
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+      <div className="CrearLineaVentaTpv">
+        <h2>Crear línea</h2>
 
-            <h2>Crear línea</h2>
+        <quimera-formulario>
+          <Articulo
+            {...uiProps("referencia", "descripcion")}
+            nombre="referencia_nueva_linea_pedido"
+            ref={focus}
+          />
+          <QInput label="Cantidad" {...uiProps("cantidad")} />
+        </quimera-formulario>
 
-            <quimera-formulario>
-                <Articulo 
-                    {...uiProps("referencia", "descripcion")}
-                    nombre="referencia_nueva_linea_pedido"
-                    ref={focus}
-                />
-                <QInput label="Cantidad" {...uiProps("cantidad")} />
-            </quimera-formulario>
-
-            <div className="botones maestro-botones ">
-                <QBoton onClick={crear} deshabilitado={!valido}>
-                    Crear
-                </QBoton>
-            </div>
-
+        <div className="botones maestro-botones ">
+          <QBoton onClick={crear} deshabilitado={!valido}>
+            Crear
+          </QBoton>
         </div>
-
-        </QModal>
-    );
+      </div>
+    </QModal>
+  );
 };
-

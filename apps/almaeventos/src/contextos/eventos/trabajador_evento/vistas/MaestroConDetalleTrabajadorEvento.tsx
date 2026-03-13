@@ -1,5 +1,5 @@
 import { MetaTabla, QIcono } from "@olula/componentes/index.ts";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria } from "@olula/lib/diseño.ts";
@@ -150,7 +150,7 @@ export const MaestroConDetalleTrabajadorEvento = () => {
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton> 
               <QBoton onClick={() => emitir("DESCARGA_EXCEL_INICIADA")}>Descargar</QBoton>
             </div> */}
-            <ListadoActivoControlado<TrabajadorEvento>
+            <Listado<TrabajadorEvento>
               metaTabla={metaTablaTrabajadorEvento}
               criteria={criteria}
               criteriaInicial={criteriaDefecto}
