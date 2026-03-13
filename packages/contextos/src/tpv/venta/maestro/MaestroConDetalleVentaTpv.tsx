@@ -34,14 +34,15 @@ export const MaestroConDetalleVentaTpv = () => {
     return {
       ...criteriaDefecto,
       filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
-      orden: ["fecha", "DESC", 'codigo', 'DESC']
+      orden: ["fecha", "DESC", "codigo", "DESC"],
     };
   }, [miPuntoVentaLocal?.id]);
 
   const [layout, setLayout] = useState<Layout>("TARJETA");
 
   const { id, criteria } = getUrlParams();
-  const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBaseVentas;
+  const criteriaInicial =
+    criteria.filtro.length > 0 ? criteria : criteriaBaseVentas;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -76,11 +77,12 @@ export const MaestroConDetalleVentaTpv = () => {
             <PuntoVentaTpvActual />
             <AgenteTpvActual />
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>Nueva Venta</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>
+                Nueva Venta
+              </QBoton>
             </div>
             <ListadoActivoControlado<VentaTpv>
               metaTabla={metaTablaFactura}
-              metaFiltro={true}
               criteria={ctx.ventas.criteria}
               modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
               tarjeta={TarjetaVentaTpv}
@@ -88,13 +90,13 @@ export const MaestroConDetalleVentaTpv = () => {
               totalEntidades={ctx.ventas.total}
               seleccionada={ctx.ventas.activo}
               onSeleccion={(payload) => emitir("venta_seleccionada", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleVentaTpv id={ctx.ventas.activo} publicar={emitir} />
-        }
+        Detalle={<DetalleVentaTpv id={ctx.ventas.activo} publicar={emitir} />}
         layout={layout}
         seleccionada={ctx.ventas.activo}
         modoDisposicion="maestro-50"

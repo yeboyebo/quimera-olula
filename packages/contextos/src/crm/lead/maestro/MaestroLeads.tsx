@@ -41,7 +41,6 @@ export const MaestroLeads = () => {
 
             <ListadoActivoControlado<Lead>
               metaTabla={metaTablaLead}
-              metaFiltro={true}
               criteria={ctx.leads.criteria}
               modo={"tabla"}
               entidades={ctx.leads.lista}
