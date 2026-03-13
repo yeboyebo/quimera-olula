@@ -1,11 +1,13 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { Listado } from "@olula/componentes/maestro/Listado.tsx";
+import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { ContextoError } from "@olula/lib/contexto.ts";
+import { Criteria, RespuestaLista2 } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { getSeleccionada } from "@olula/lib/entidad.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { LineaTransferenciaStock, TransferenciaStock } from "../../diseño.ts";
 import { obtenerLineasTransferenciaStock } from "../../infraestructura.ts";
 import { useMaquinaLineasTransferenciasStock } from "../../maquina_lineas_transferencia_stock.ts";
@@ -24,6 +26,8 @@ export const LineasTransferenciaStock = ({
 }: {
   transferencia: HookModelo<TransferenciaStock>;
 }) => {
+  const { intentar } = useContext(ContextoError);
+
   const [
     emitir,
     {
@@ -31,6 +35,13 @@ export const LineasTransferenciaStock = ({
       contexto: { lineas },
     },
   ] = useMaquinaLineasTransferenciasStock();
+
+  const [transferenciaIdAnterior, setTransferenciaIdAnterior] = useState<
+    string | null
+  >(null);
+  const [lineasRespuesta, setLineasRespuesta] = useState<
+    RespuestaLista2<LineaTransferenciaStock>
+  >({ datos: [], total: 0 });
 
   const setEntidades = useCallback(
     (payload: LineaTransferenciaStock[]) => emitir("lineas_cargadas", payload),
@@ -43,11 +54,38 @@ export const LineasTransferenciaStock = ({
 
   const seleccionada = getSeleccionada(lineas);
 
-  const obtenerLineas = useCallback(
-    (...args: [Filtro, Orden, Paginacion]) =>
-      obtenerLineasTransferenciaStock(transferencia.modelo.id, ...args),
-    [transferencia]
+  const cargarLineas = useCallback(
+    async (criteria: Criteria = criteriaDefecto) => {
+      if (transferencia.modelo.id) {
+        const respuesta = await intentar(() =>
+          obtenerLineasTransferenciaStock(
+            transferencia.modelo.id,
+            criteria.filtro,
+            criteria.orden,
+            criteria.paginacion
+          )
+        );
+
+        setEntidades(respuesta.datos);
+        setLineasRespuesta((anterior) => ({
+          datos: respuesta.datos,
+          total: respuesta.total < 0 ? anterior.total : respuesta.total,
+        }));
+      } else {
+        setEntidades([]);
+        setLineasRespuesta({ datos: [], total: 0 });
+      }
+    },
+    [transferencia, intentar, setEntidades]
   );
+
+  useEffect(() => {
+    const transferenciaId = transferencia.modelo.id || null;
+    if (transferenciaId !== transferenciaIdAnterior) {
+      setTransferenciaIdAnterior(transferenciaId);
+      cargarLineas();
+    }
+  }, [transferencia.modelo.id, cargarLineas, transferenciaIdAnterior]);
 
   return (
     <>
@@ -69,13 +107,18 @@ export const LineasTransferenciaStock = ({
         </div>
       )}
       {!!transferencia.modelo.id && (
-        <Listado
+        <ListadoControlado
           metaTabla={metaTablaLineasTransferenciaStock}
-          entidades={lineas.lista}
-          setEntidades={setEntidades}
+          metaFiltro={true}
+          cargando={false}
+          criteriaInicial={criteriaDefecto}
+          idReiniciarCriteria={transferencia.modelo.id}
+          modo="tabla"
+          entidades={lineasRespuesta.datos}
+          totalEntidades={lineasRespuesta.total}
           seleccionada={seleccionada}
-          setSeleccionada={setSeleccionada}
-          cargar={obtenerLineas}
+          onSeleccion={setSeleccionada}
+          onCriteriaChanged={cargarLineas}
         />
       )}
       {seleccionada && (
