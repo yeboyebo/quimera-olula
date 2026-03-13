@@ -1,3 +1,7 @@
+:root {
+    --transicion-basica: 0.12s ease-in-out;
+}
+
 @keyframes loading {
     to {
         background-position-x: -30%;
@@ -5,11 +9,6 @@
 }
 
 quimera-tabla {
-    :root {
-        --transicion-basica: 0.12 ease-in-out;
-    }
-
-
     table {
         -webkit-overflow-scrolling: touch;
         width: 100%;

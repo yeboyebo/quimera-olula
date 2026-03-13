@@ -1,47 +1,44 @@
-import { QAutocompletar, QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Criteria } from "@olula/lib/diseño.ts";
+import { QSelect } from "@olula/componentes/index.js";
+import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { useEffect, useState } from "react";
+import { ItemListaTipoPalet } from "../../tipo_palet/diseño.ts";
 import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 
-type TipoPaletProps = Omit<QAutocompletarProps, "obtenerOpciones">
+type TipoPaletProps = Omit<QAutocompletarProps, "obtenerOpciones">;
 
 export const TipoPalet = ({
-  descripcion = "",
   valor,
   nombre = "tipo_palet",
   label = "Tipo Palet",
   onChange,
   ...props
 }: TipoPaletProps) => {
+  const [items, setItems] = useState<ItemListaTipoPalet[]>([]);
 
-    const obtenerOpciones = async (texto: string) => {
-        const criteria: Criteria = {
-            filtro: [["descripcion", "~", texto]],
-            orden: ["id"],
-            paginacion: { limite: 10, pagina: 1 },
-        };
+  useEffect(() => {
+    getItemsListaTipoPalet([], []).then(setItems);
+  }, []);
 
-        const tiposPalet = await getItemsListaTipoPalet(
-            criteria.filtro,
-            criteria.orden
-        );
+  const opciones = items.map((item) => ({ valor: item.id, descripcion: item.descripcion }));
 
-        return tiposPalet.map((tipoPalet) => ({
-            ...tipoPalet,
-            valor: tipoPalet.id,
-            descripcion: tipoPalet.descripcion,
+  const handleChange = (opcion: { valor: string; descripcion: string } | null, e: React.ChangeEvent<HTMLElement>) => {
+    if (!opcion) {
+      onChange?.(null, e);
+      return;
+    }
+    const item = items.find((i) => i.id === opcion.valor);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange?.({ ...opcion, cantidadEnvase: item?.cantidadEnvase } as any, e);
+  };
 
-        }));
-    };
-
-    return (
-        <QAutocompletar
-            label={label}
-            nombre={nombre}
-            onChange={onChange}
-            valor={valor}
-            obtenerOpciones={obtenerOpciones}
-            descripcion={descripcion}
-            {...props}
-        />
-    );
+  return (
+    <QSelect
+      label={label}
+      nombre={nombre}
+      valor={valor}
+      onChange={handleChange}
+      opciones={opciones}
+      {...props}
+    />
+  );
 };

@@ -3,7 +3,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -62,7 +62,7 @@ export const MaestroConDetallePresupuesto = () => {
 
   return (
     <div className="Presupuesto">
-      <MaestroDetalleActivoControlado<Presupuesto>
+      <MaestroDetalle<Presupuesto>
         Maestro={
           <>
             <h2>Presupuestos</h2>
@@ -78,16 +78,17 @@ export const MaestroConDetallePresupuesto = () => {
               entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}
               seleccionada={ctx.presupuestos.activo}
-              onSeleccion={(payload) => emitir("presupuesto_seleccionado", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onSeleccion={(payload) =>
+                emitir("presupuesto_seleccionado", payload)
+              }
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
         Detalle={
-          <DetallePresupuesto
-            id={ctx.presupuestos.activo}
-            publicar={emitir}
-          />
+          <DetallePresupuesto id={ctx.presupuestos.activo} publicar={emitir} />
         }
         seleccionada={ctx.presupuestos.activo}
       />

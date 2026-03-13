@@ -3,22 +3,30 @@ import { puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/index.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PuntoVentaTpv } from "../diseño.ts";
 import "./PuntoVentaTpvActual.css";
 import { metaCambioPuntoVentaActual } from "./punto_actual.ts";
 
-export const PuntoVentaTpvActual = () => {
-  const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
+const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
+export const PuntoVentaTpvActual = ({
+  onChange,
+}:{
+  onChange?: () => void
+}) => {
 
   const [cambiando, setCambiando] = useState(false);
-  const [punto, setAgente] = useState<PuntoVentaTpv | null>(miPuntoVentaLocal);
+  const [punto, setPunto] = useState<PuntoVentaTpv | null>(miPuntoVentaLocal);
 
   const cambiarPuntoVenta = async (punto: PuntoVentaTpv) => {
     console.log("Cambiando punto", punto);
+    const puntoAnterior = puntoVentaLocal.obtenerSeguro();
     puntoVentaLocal.actualizar(punto);
-    setAgente(punto);
+    setPunto(punto);
     setCambiando(false);
+    if (onChange && (!puntoAnterior || punto.id !== puntoAnterior.id)) {
+      onChange();
+    }
   };
 
   return (
@@ -52,11 +60,16 @@ const CambiarPuntoVentaTpv = ({
   cambiar: (punto: PuntoVentaTpv) => void;
   cancelar: () => void;
 }) => {
-  const { modelo, uiProps, valido } = useModelo(metaCambioPuntoVentaActual, {
-    idPunto: puntoActual?.id ?? null,
-    nombre: puntoActual?.nombre ?? null,
-    punto: puntoActual,
-  });
+
+  const puntoInicial = useMemo(
+    () => ({
+      idPunto: puntoActual?.id ?? null,
+      nombre: puntoActual?.nombre ?? null,
+      punto: puntoActual,
+    }),
+    [puntoActual]
+  )
+  const { modelo, uiProps, valido } = useModelo(metaCambioPuntoVentaActual, puntoInicial);
 
   const focus = useFocus();
 

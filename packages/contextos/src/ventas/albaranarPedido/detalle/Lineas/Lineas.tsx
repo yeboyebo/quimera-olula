@@ -4,7 +4,8 @@ import {
   QModalConfirmacion,
   QTarjetas,
 } from "@olula/componentes/index.ts";
-import { ListaSeleccionable, Orden } from "@olula/lib/diseño.js";
+import { Criteria, ListaSeleccionable } from "@olula/lib/diseño.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { getSeleccionada } from "@olula/lib/entidad.ts";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { EstadoAlbaranarPedido } from "../../detalle/diseño.ts";
@@ -54,8 +55,8 @@ export const Lineas = ({
         cargando={estado === "ALBARANANDO"}
         seleccionadaId={seleccionada?.id}
         onSeleccion={(l: Linea) => publicar("linea_seleccionada", l.id)}
-        orden={["id", "ASC"] as Orden}
         onOrdenar={(_: string) => null}
+        criteria={criteria_tarjetas}
       />
       <QModalConfirmacion
         nombre="albaranarPedido"
@@ -84,3 +85,8 @@ export const Lineas = ({
     </div>
   );
 };
+
+const criteria_tarjetas: Criteria = {
+  ...criteriaDefecto,
+  orden: ["id", "DESC"],
+}

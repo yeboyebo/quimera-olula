@@ -1,9 +1,9 @@
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Accion } from "../diseño.ts";
 
 export type EstadoMaestroAcciones = "INICIAL" | "CREANDO";
 
 export type ContextoMaestroAcciones = {
     estado: EstadoMaestroAcciones;
-    acciones: ListaEntidades<Accion>;
+    acciones: ListaActivaEntidades<Accion>;
 };

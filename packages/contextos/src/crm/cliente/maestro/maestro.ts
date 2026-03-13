@@ -1,5 +1,8 @@
 import { Criteria, Entidad, ProcesarContexto } from "@olula/lib/diseño.js";
-import { ProcesarListaEntidades, accionesListaEntidades } from "@olula/lib/ListaEntidades.js";
+import {
+    ProcesarListaActivaEntidades,
+    accionesListaActivaEntidades,
+} from "@olula/lib/ListaActivaEntidades.js";
 import { Cliente } from "../diseño.ts";
 import { getClientes } from "../infraestructura.ts";
 import { ContextoMaestroClientes, EstadoMaestroClientes } from "./diseño.ts";
@@ -19,9 +22,11 @@ export const metaTablaCliente = [
 
 type ProcesarClientes = ProcesarContexto<EstadoMaestroClientes, ContextoMaestroClientes>;
 
-const conClientes = (fn: ProcesarListaEntidades<Cliente>) => (ctx: ContextoMaestroClientes) => ({ ...ctx, clientes: fn(ctx.clientes) });
+const conClientes =
+    (fn: ProcesarListaActivaEntidades<Cliente>) =>
+        (ctx: ContextoMaestroClientes) => ({ ...ctx, clientes: fn(ctx.clientes) });
 
-export const Clientes = accionesListaEntidades(conClientes);
+export const Clientes = accionesListaActivaEntidades(conClientes);
 
 export const recargarClientes: ProcesarClientes = async (contexto, payload) => {
     const criteria = payload as Criteria;

@@ -1,9 +1,7 @@
-import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -13,7 +11,7 @@ import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
 import "./MaestroConDetallePedido.css";
 import { getMaquina } from "./maquina.ts";
-import { metaTablaPedido as metaTablaBase } from "./metatabla_pedido.ts";
+import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
 
 export const MaestroConDetallePedido = () => {
   const { id, criteria } = getUrlParams();
@@ -30,38 +28,11 @@ export const MaestroConDetallePedido = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const metaTablaPedido = [
-    {
-      id: "estado",
-      cabecera: "",
-      render: (pedido: Pedido) => (
-        <ColumnaEstadoTabla
-          estados={{
-            aprobado: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-deshabilitado-oscuro)"
-              />
-            ),
-            pendiente: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-exito-oscuro)"
-              />
-            ),
-          }}
-          estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
-        />
-      ),
-    },
-    ...metaTablaBase,
-  ] as MetaTabla<Pedido>;
+  const metaTablaPedido = getMetaTablaPedido();
 
   return (
     <div className="Pedido">
-      <MaestroDetalleActivoControlado<Pedido>
+      <MaestroDetalle<Pedido>
         Maestro={
           <>
             <h2>Pedidos</h2>
@@ -78,13 +49,13 @@ export const MaestroConDetallePedido = () => {
               totalEntidades={ctx.pedidos.total}
               seleccionada={ctx.pedidos.activo}
               onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetallePedido id={ctx.pedidos.activo} publicar={emitir} />
-        }
+        Detalle={<DetallePedido id={ctx.pedidos.activo} publicar={emitir} />}
         seleccionada={ctx.pedidos.activo}
       />
 

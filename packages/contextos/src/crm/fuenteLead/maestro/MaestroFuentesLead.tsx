@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearFuenteLead } from "../crear/CrearFuenteLead.tsx";
 import { DetalleFuenteLead } from "../detalle/DetalleFuenteLead.tsx";
 import { FuenteLead } from "../diseño.ts";
@@ -14,29 +13,23 @@ import "./MaestroFuentesLead.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroFuentesLead = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    fuentes_lead: listaEntidadesInicial<FuenteLead>(),
+    fuentes_lead: listaActivaEntidadesInicial<FuenteLead>(id, criteria),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_fuentes_lead_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.fuentes_lead.activo, ctx.fuentes_lead.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_fuentes_lead_solicitada", ctx.fuentes_lead.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="FuenteLead">
-      <MaestroDetalleControlado<FuenteLead>
+      <MaestroDetalle<FuenteLead>
         Maestro={
           <>
             <h2>Fuentes de Lead</h2>
@@ -49,29 +42,24 @@ export const MaestroFuentesLead = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<FuenteLead>
+            <ListadoActivoControlado<FuenteLead>
               metaTabla={metaTablaFuenteLead}
-              metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.fuentes_lead.criteria}
               modo={"tabla"}
-              // setModo={handleSetModoVisualizacion}
-              // tarjeta={tarjeta}
               entidades={ctx.fuentes_lead.lista}
               totalEntidades={ctx.fuentes_lead.total}
               seleccionada={ctx.fuentes_lead.activo}
               onSeleccion={(payload) =>
                 emitir("fuente_lead_seleccionada", payload)
               }
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
         Detalle={
-          <DetalleFuenteLead
-            inicial={ctx.fuentes_lead.activo}
-            publicar={emitir}
-          />
+          <DetalleFuenteLead id={ctx.fuentes_lead.activo} publicar={emitir} />
         }
         seleccionada={ctx.fuentes_lead.activo}
         modoDisposicion="maestro-50"

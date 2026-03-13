@@ -37,6 +37,7 @@ type MaestroProps<T extends Entidad> = {
   onSeleccion: (seleccionada: string) => void;
   modo?: Modo;
   onCriteriaChanged: (criteria: Criteria) => void;
+  onSiguientePagina?: (criteria: Criteria) => void;
 };
 
 export const ListadoActivoControlado = <T extends Entidad>({
@@ -52,6 +53,7 @@ export const ListadoActivoControlado = <T extends Entidad>({
   onSeleccion,
   modo = "tabla",
   onCriteriaChanged,
+  onSiguientePagina,
 }: MaestroProps<T>) => {
   const renderEntidades = () => {
     if (!entidades.length && !cargando) return <SinDatos />;
@@ -66,12 +68,12 @@ export const ListadoActivoControlado = <T extends Entidad>({
           cargando={cargando}
           seleccionadaId={seleccionada}
           onSeleccion={(e: T) => onSeleccion(e.id)}
-          paginacion={criteria.paginacion}
           onPaginacion={(pagina, limite) => {
             onCriteriaChanged({ ...criteria, paginacion: { pagina, limite } });
           }}
-          totalEntidades={entidades.length}
-          orden={criteria.orden}
+          totalEntidades={totalEntidades}
+          criteria={criteria}
+          onSiguientePagina={onSiguientePagina}
         />
       );
     }

@@ -3,7 +3,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -61,7 +61,7 @@ export const MaestroConDetalleAlbaran = () => {
 
   return (
     <div className="Albaran">
-      <MaestroDetalleActivoControlado<Albaran>
+      <MaestroDetalle<Albaran>
         Maestro={
           <>
             <h2>Albaranes</h2>
@@ -78,16 +78,13 @@ export const MaestroConDetalleAlbaran = () => {
               totalEntidades={ctx.albaranes.total}
               seleccionada={ctx.albaranes.activo}
               onSeleccion={(payload) => emitir("albaran_seleccionado", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleAlbaran
-            id={ctx.albaranes.activo}
-            publicar={emitir}
-          />
-        }
+        Detalle={<DetalleAlbaran id={ctx.albaranes.activo} publicar={emitir} />}
         seleccionada={ctx.albaranes.activo}
         modoDisposicion="maestro-50"
       />

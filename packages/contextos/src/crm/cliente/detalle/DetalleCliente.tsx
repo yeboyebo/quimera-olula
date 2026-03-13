@@ -4,9 +4,9 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarCliente } from "../borrar/BorrarCliente.tsx";
-import { Cliente } from "../diseño.ts";
 import { Acciones } from "./acciones/Acciones.tsx";
 import { clienteVacio, metaCliente } from "./detalle.ts";
 import "./DetalleCliente.css";
@@ -15,36 +15,35 @@ import { Oportunidades } from "./oportunidades/Oportunidades.tsx";
 import { TabGeneral } from "./tabs/TabGeneral.tsx";
 
 export const DetalleCliente = ({
-  inicial = null,
+  id,
   publicar,
 }: {
-  inicial: Cliente | null;
+  id?: string;
   publicar: EmitirEvento;
 }) => {
   const params = useParams();
 
-  const clienteId = inicial?.id ?? params.id;
+  const clienteId = id ?? params.id;
   const titulo = (cliente: Entidad) => cliente.nombre as string;
-
-  const cliente = useModelo(metaCliente, clienteVacio);
-  const { modelo, modeloInicial, modificado, valido, init } = cliente;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
     {
       estado: "INICIAL",
-      cliente: modelo,
+      cliente: clienteVacio,
     },
     publicar
   );
 
-  if (ctx.cliente !== modeloInicial) {
-    init(ctx.cliente);
-  }
+  const cliente = useModelo(metaCliente, ctx.cliente);
+  const { modelo, modificado, valido } = cliente;
 
-  if (clienteId && clienteId !== modelo.id) {
-    emitir("cliente_id_cambiado", clienteId);
-  }
+  useEffect(() => {
+    if (clienteId) {
+      emitir("cliente_id_cambiado", clienteId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clienteId]);
 
   return (
     <Detalle

@@ -9,11 +9,13 @@ export const getMaquina: () => Maquina<EstadoMaestroIncidencias, ContextoMaestro
 
             incidencia_seleccionada: [Incidencias.activar],
 
-            incidencia_deseleccionada: [Incidencias.desactivar],
+            incidencia_deseleccionada: Incidencias.desactivar,
 
-            incidencia_borrada: [Incidencias.quitar],
+            incidencia_borrada: Incidencias.quitar,
 
             recarga_de_incidencias_solicitada: recargarIncidencias,
+
+            criteria_cambiado: [Incidencias.filtrar, recargarIncidencias],
 
             creacion_de_incidencia_solicitada: "CREANDO",
         },

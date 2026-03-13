@@ -21,24 +21,21 @@ export const DetalleLead = ({
 }) => {
   const titulo = (lead: Entidad) => lead.nombre as string;
 
-  const lead = useModelo(metaLead, leadVacio);
-  const { modelo, modeloInicial, modificado, valido, init } = lead;
-
   const { ctx, emitir } = useMaquina(
     getMaquina,
     {
       estado: "INICIAL",
-      lead: modelo,
+      lead: leadVacio,
     },
     publicar
   );
 
-  if (ctx.lead !== modeloInicial) {
-    init(ctx.lead);
-  }
+  const lead = useModelo(metaLead, ctx.lead);
+  const { modelo, modificado, valido } = lead;
 
   useEffect(() => {
     emitir("lead_id_cambiado", id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!ctx.lead.id) return;

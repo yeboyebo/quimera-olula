@@ -1,13 +1,11 @@
-import {
-  Listado,
-  MaestroDetalleResponsive,
-  MetaTabla,
-  QBoton,
-  QModal,
-} from "@olula/componentes/index.ts";
+import { MetaTabla, QBoton, QModal } from "@olula/componentes/index.ts";
+import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { Criteria } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Producto } from "../diseño.ts";
 import { getProductos } from "../infraestructura.ts";
 import { AltaProducto } from "./AltaProducto.tsx";
@@ -22,6 +20,9 @@ type Estado = "lista" | "alta" | "confimarBorrado";
 
 export const MaestroConDetalleProducto = () => {
   const [estado, setEstado] = useState<Estado>("lista");
+  const [criteria, setCriteria] = useState<Criteria>(criteriaDefecto);
+  const [cargando, setCargando] = useState(false);
+  const [totalProductos, setTotalProductos] = useState(0);
   const productos = useLista<Producto>([]);
 
   const maquina: Maquina<Estado> = {
@@ -53,23 +54,51 @@ export const MaestroConDetalleProducto = () => {
 
   const emitir = useMaquina(maquina, estado, setEstado);
 
+  const recargar = useCallback(
+    async (nuevaCriteria: Criteria) => {
+      setCriteria(nuevaCriteria);
+      setCargando(true);
+      const { datos, total } = await getProductos(
+        nuevaCriteria.filtro,
+        nuevaCriteria.orden,
+        nuevaCriteria.paginacion
+      );
+      productos.setLista(datos);
+      setTotalProductos(total);
+      setCargando(false);
+    },
+    [productos]
+  );
+
+  useEffect(() => {
+    void recargar(criteriaDefecto);
+  }, []);
+
   return (
     <div className="Producto">
-      <MaestroDetalleResponsive<Producto>
-        seleccionada={productos.seleccionada}
+      <MaestroDetalle<Producto>
+        seleccionada={productos.seleccionada?.id}
         Maestro={
           <>
             <h2>Productos</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nuevo</QBoton>
             </div>
-            <Listado
+            <ListadoActivoControlado<Producto>
               metaTabla={metaTablaProducto}
+              criteria={criteria}
+              criteriaInicial={criteriaDefecto}
+              cargando={cargando}
               entidades={productos.lista}
-              setEntidades={productos.setLista}
-              seleccionada={productos.seleccionada}
-              setSeleccionada={productos.seleccionar}
-              cargar={getProductos}
+              totalEntidades={totalProductos}
+              seleccionada={productos.seleccionada?.id}
+              onSeleccion={(id) => {
+                const producto = productos.lista.find((item) => item.id === id);
+                if (producto) productos.seleccionar(producto);
+              }}
+              onCriteriaChanged={(nuevaCriteria) =>
+                void recargar(nuevaCriteria)
+              }
             />
           </>
         }

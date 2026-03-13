@@ -5,8 +5,9 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
@@ -18,13 +19,26 @@ import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
-export const DetallePedido = ({
+export type DetallePedidoProps = {
+  id?: string;
+  publicar: EmitirEvento;
+};
+
+export const DetallePedido = (props: DetallePedidoProps) => {
+  const { app } = useContext(FactoryCtx);
+  if (!app.Ventas) {
+    return null;
+  }
+  const DetallePedido_ = app.Ventas
+    .pedido_DetallePedido as typeof DetallePedidoBase;
+
+  return DetallePedido_(props);
+};
+
+export const DetallePedidoBase = ({
   id,
   publicar = async () => {},
-}: {
-  id?: string;
-  publicar?: EmitirEvento;
-}) => {
+}: DetallePedidoProps) => {
   const params = useParams();
   const navigate = useNavigate();
   const pedidoId = id ?? params.id;
@@ -47,26 +61,25 @@ export const DetallePedido = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pedidoId]);
 
-  
   const { estado, lineaActiva } = ctx;
-  
+
   const titulo = (pedido: Pedido) => pedido.codigo || "Nuevo Pedido";
-  
+
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_pedido_lista", pedido.modelo);
   }, [emitir, pedido]);
-  
+
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_pedido_cancelada");
   }, [emitir]);
-  
+
   const handleAlbaranar = useCallback(() => {
     const id = ctx.pedido.id ?? params.id;
     if (id) navigate(`/ventas/albaranar-pedido/${id}`);
   }, [navigate, ctx.pedido, params.id]);
-  
+
   if (!ctx.pedido.id) return;
-  
+
   const acciones = [
     {
       texto: "Albaranar",
@@ -89,9 +102,7 @@ export const DetallePedido = ({
       entidad={ctx.pedido}
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
-      {editable(ctx.pedido) && (
-        <QuimeraAcciones acciones={acciones} vertical />
-      )}
+      {editable(ctx.pedido) && <QuimeraAcciones acciones={acciones} vertical />}
 
       <Tabs>
         <Tab label="Cliente">

@@ -7,6 +7,14 @@
         grid-column: span 12;
     }
 
+    quimera-autocompletar[nombre="idCalibre"] {
+        grid-column: span 12;
+    }
+
+    quimera-autocompletar[nombre="idMarca"] {
+        grid-column: span 12;
+    }
+
     quimera-autocompletar[nombre="idTipoPalet"] {
         grid-column: span 12;
     }
@@ -18,6 +26,12 @@
     quimera-input[nombre="cantidadEnvases"] {
         grid-column: span 4;
     }
+
+    quimera-input[nombre="observaciones"] {
+        grid-column: span 12;
+    }
+
+    /* TODO: categoria */
 
     div[id="espacio4"] {
         grid-column: span 4;
