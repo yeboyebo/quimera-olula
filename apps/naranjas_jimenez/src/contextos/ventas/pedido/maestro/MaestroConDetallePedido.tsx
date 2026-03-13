@@ -1,6 +1,5 @@
 import { CrearPedido } from "#/ventas/pedido/crear/CrearPedido.tsx";
 import { DetallePedido } from "#/ventas/pedido/detalle/DetallePedido.tsx";
-import { Pedido } from "#/ventas/pedido/diseño.ts";
 import { getMaquina } from "#/ventas/pedido/maestro/maquina.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -10,6 +9,7 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
+import { PedidoNrj } from "../diseño.ts";
 import "./MaestroConDetallePedido.css";
 import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
 
@@ -18,7 +18,7 @@ export const MaestroConDetallePedidoNrj = () => {
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    pedidos: listaActivaEntidadesInicial<Pedido>(id, criteria),
+    pedidos: listaActivaEntidadesInicial<PedidoNrj>(id, criteria),
   });
 
   useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
@@ -61,7 +61,7 @@ export const MaestroConDetallePedidoNrj = () => {
 
   return (
     <div className="Pedido">
-      <MaestroDetalle<Pedido>
+      <MaestroDetalle<PedidoNrj>
         Maestro={
           <>
             <h2>Pedidos</h2>
@@ -70,11 +70,11 @@ export const MaestroConDetallePedidoNrj = () => {
                 Nuevo Pedido
               </QBoton>
             </div>
-            <Listado<Pedido>
+            <Listado<PedidoNrj>
               metaTabla={metaTablaPedido}
               criteria={ctx.pedidos.criteria}
               modo={"tabla"}
-              entidades={ctx.pedidos.lista}
+              entidades={ctx.pedidos.lista as PedidoNrj[]}
               totalEntidades={ctx.pedidos.total}
               seleccionada={ctx.pedidos.activo}
               onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
