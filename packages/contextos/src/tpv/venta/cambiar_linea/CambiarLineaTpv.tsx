@@ -19,66 +19,50 @@ export const CambiarLineaTpv = ({
   venta: VentaTpv;
   publicar: EmitirEvento;
 }) => {
+  const { intentar } = useContext(ContextoError);
 
-    const { intentar } = useContext(ContextoError);
+  const { modelo, uiProps, valido } = useModelo(metaLineaFactura, linea);
 
-    const { modelo, uiProps, valido } = useModelo(
-        metaLineaFactura,
-        linea
-    );
+  const [cambiando, setCambiando] = useState(false);
 
-    const [cambiando, setCambiando] = useState(false);
+  const cambiar = useCallback(
+    async () => {
+      await intentar(() => patchLinea(venta.id, modelo));
+      setCambiando(true);
+      publicar("linea_cambiada", linea);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [modelo, publicar, venta.id]
+  );
 
-    const cambiar = useCallback(
-        async () => {
-            await intentar(
-                () => patchLinea(venta.id, modelo)
-            );
-            setCambiando(true);
-            publicar("linea_cambiada", linea);
-        },
-        [modelo, publicar, venta.id]
-    );
+  const cancelar = useCallback(() => {
+    if (!cambiando) publicar("cambio_de_linea_cancelado");
+  }, [cambiando, publicar]);
 
-    const cancelar = useCallback(
-        () => {
-            if (!cambiando) publicar("cambio_de_linea_cancelado");
-        },
-        [cambiando, publicar]
-    );
+  return (
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+      <div className="CambiarLineaTpv">
+        <h2>Cambiar línea</h2>
 
-    return (
-        <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+        <quimera-formulario>
+          <div id="titulo">
+            <h3>{`${linea.descripcion}`}</h3>
+            {`Ref: ${linea.referencia}`}
+          </div>
 
-        <div className="CambiarLineaTpv">
+          <QInput label="Cantidad" {...uiProps("cantidad")} />
 
-            <h2>Cambiar línea</h2>
+          <QInput label="Precio" {...uiProps("pvp_unitario")} />
 
-            <quimera-formulario>
+          <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
+        </quimera-formulario>
 
-                <div id='titulo'>
-                    <h3>{`${linea.descripcion}`}</h3>
-                    {`Ref: ${linea.referencia}`}
-                </div>
-
-                <QInput label="Cantidad" {...uiProps("cantidad")} />
-
-                <QInput label="Precio" {...uiProps("pvp_unitario")} />
-
-                <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
-
-            </quimera-formulario>
-
-            <div className="botones maestro-botones ">
-
-                <QBoton onClick={cambiar} deshabilitado={!valido}>
-                    Cambiar
-                </QBoton>
-                
-            </div>
-
+        <div className="botones maestro-botones ">
+          <QBoton onClick={cambiar} deshabilitado={!valido}>
+            Cambiar
+          </QBoton>
         </div>
-
-        </QModal>
-    );
+      </div>
+    </QModal>
+  );
 };

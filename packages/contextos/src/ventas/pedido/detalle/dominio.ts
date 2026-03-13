@@ -45,6 +45,17 @@ export const metaPedido: MetaModelo<Pedido> = {
     },
 };
 
+export const getMetaPedido = <T extends Pedido>() => <MetaModelo<T>>({
+    campos: {
+        ...metaVenta.campos,
+        fecha: { tipo: "fecha", requerido: false },
+    },
+    editable: (pedido: T, _?: string) => {
+        const servido = pedido.servido?.toUpperCase();
+        return servido !== 'TOTAL' && servido !== 'SERVIDO';
+    },
+});
+
 export const editable = modeloEsEditable<Pedido>(metaPedido);
 export const pedidoValido = modeloEsValido<Pedido>(metaPedido);
 

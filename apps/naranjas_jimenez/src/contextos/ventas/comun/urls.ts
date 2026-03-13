@@ -5,6 +5,7 @@ class Ventas_Urls {
     readonly MARCA = `/ventas/marca`;
     readonly CALIBRE = `/ventas/calibre`;
     readonly CATEGORIA = `/ventas/categoria`;
+    readonly TRANSPORTISTA = `/ventas/transportista`;
 }
 
 export default Ventas_Urls;

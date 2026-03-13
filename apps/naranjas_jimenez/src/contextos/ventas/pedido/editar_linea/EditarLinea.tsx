@@ -1,18 +1,18 @@
-import { TagArticulo } from "#/ventas/articulo/diseño.ts";
 import { LineaPedido } from "#/ventas/pedido/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { QModal, QSelect, QTextArea } from "@olula/componentes/index.js";
+import { QModal, QTextArea } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+
+import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
-import { formateaCategoria } from "../dominio.ts";
 import "./EditarLinea.css";
 import {
   FormEditarLineaDefecto,
@@ -55,24 +55,18 @@ export const EditarLineaNrj = ({
     if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
-  const handleArticuloChange = useCallback(
-    (
-      opcion: { valor: string; descripcion: string; datos?: TagArticulo } | null
-    ) => {
-      if (!opcion) return;
-
-      const articulo = opcion.datos;
-      if (!articulo) return;
-
-      set({
-        ...modelo,
-      });
-    },
-    [modelo, set]
-  );
+  useEffect(() => {
+    getItemsListaTipoPalet([], []).then(items => {
+      const item = items.find(i => i.id === formEditarLineaInicial.idTipoPalet);
+      if (item) {
+        set({ ...formEditarLineaInicial, envasesPorPalet: item.cantidadEnvase });
+      }
+    });
+  }, [formEditarLineaInicial]);
 
   const focus = useFocus();
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
+  console.log("EL", cantidadEnvasesNominal, modelo);
 
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
@@ -86,27 +80,18 @@ export const EditarLineaNrj = ({
             ref={focus}
           />
           <Variedad label="Variedad" {...uiProps("idVariedad", "variedad")} />
-          <Calibre label="Calibre" {...uiProps("idCalibre", "calibre")} />
-          <Marca label="Marca" {...uiProps("idMarca", "marca")} />
-          {/* <Categoria label="Categoria" {...uiProps("categoria")} /> */}
-          <QSelect
-            {...uiProps("categoria")}
-            label="Categoria"
-            opciones={[
-              {
-                valor: "1",
-                descripcion: formateaCategoria("1"),
-              },
-              {
-                valor: "2",
-                descripcion: formateaCategoria("2"),
-              },
-              {
-                valor: "3",
-                descripcion: formateaCategoria("3"),
-              },
-            ]}
+          <Marca
+            label="Marca"
+            {...uiProps("idMarca", "marca")}
+            idVariedad={modelo.idVariedad}
           />
+          <Calibre
+            label="Calibre"
+            {...uiProps("idCalibre", "calibre")}
+            idVariedad={modelo.idVariedad}
+            idMarca={modelo.idMarca}
+          />
+          <QInput label="Categoria" {...uiProps("categoria")} deshabilitado={true} />
           <QInput
             label="Cantidad Palets"
             {...uiProps("cantidadPalets")}

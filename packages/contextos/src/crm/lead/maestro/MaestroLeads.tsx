@@ -24,6 +24,7 @@ export const MaestroLeads = () => {
 
   useEffect(() => {
     emitir("recarga_de_leads_solicitada", ctx.leads.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -1,5 +1,4 @@
 import { LineasListaProps } from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
-import { LineaPedido } from "#/ventas/pedido/diseño.ts";
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QBoton, QModal } from "@olula/componentes/index.js";
 import { useState } from "react";
@@ -11,7 +10,7 @@ export const LineasListaNrj = ({
   seleccionada,
   publicar,
 }: LineasListaProps<LineaPedidoNrj>) => {
-  const setSeleccionada = (linea: LineaPedido) => {
+  const setSeleccionada = (linea: LineaPedidoNrj) => {
     publicar("linea_seleccionada", linea);
   };
 
@@ -39,7 +38,8 @@ const getMetaTablaLineas = () => {
     {
       id: "estado_palets",
       cabecera: "Estado",
-      render: (linea: LineaPedidoNrj) => formateaEstado(linea.estado_palets),
+      render: (linea: LineaPedidoNrj) =>
+        formateaEstado(String(linea.estado_palets ?? "")),
     },
     /*     {
       id: "idVariedad",

@@ -18,7 +18,7 @@ import {
 } from "./dominio.ts";
 
 
-export const getMaquina: () => Maquina<EstadoPedido, ContextoPedido> = () => {
+export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
 
     return {
 

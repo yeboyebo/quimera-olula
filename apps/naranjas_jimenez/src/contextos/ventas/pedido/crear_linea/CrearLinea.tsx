@@ -1,10 +1,11 @@
 import { CrearLineaProps } from "#/ventas/pedido/crear_linea/CrearLinea.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { QModal, QSelect, QTextArea } from "@olula/componentes/index.js";
+import { QModal, QTextArea } from "@olula/componentes/index.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
@@ -17,10 +18,20 @@ import {
 } from "./crear_linea.ts";
 
 export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
-  const { modelo, uiProps, valido } = useModelo(
+  const { modelo, uiProps, valido, set } = useModelo(
     metaCrearLinea,
     FormCrearLineaDefecto
   );
+
+  useEffect(() => {
+    if (!modelo.idTipoPalet) return;
+    getItemsListaTipoPalet([], []).then(items => {
+      const item = items.find(i => i.id === modelo.idTipoPalet);
+      if (item) {
+        set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
+      }
+    });
+  }, [modelo.idTipoPalet]);
 
   const crear = useCallback(async () => {
     await postLineaNrj(pedidoId, modelo);
@@ -34,7 +45,7 @@ export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
   const focus = useFocus();
 
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
-  console.log("Modelo", modelo);
+
   return (
     <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
       <div className="CrearLinea">
@@ -43,31 +54,22 @@ export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
         <quimera-formulario>
           <TipoPalet
             label="Tipo Palet"
-            {...uiProps("idTipoPalet", "tipo_palet_id")}
+            {...uiProps("idTipoPalet", "palet")}
             ref={focus}
           />
           <Variedad label="Variedad" {...uiProps("idVariedad", "variedad")} />
-          <Calibre label="Calibre" {...uiProps("idCalibre", "calibre")} />
-          <Marca label="Marca" {...uiProps("idMarca", "marca")} />
-          {/* <Categoria label="Categoria" {...uiProps("categoria")} /> */}
-          <QSelect
-            {...uiProps("categoria")}
-            label="Categoria"
-            opciones={[
-              {
-                valor: "1",
-                descripcion: "1ª",
-              },
-              {
-                valor: "2",
-                descripcion: "2ª",
-              },
-              {
-                valor: "3",
-                descripcion: "3ª",
-              },
-            ]}
+          <Marca
+            label="Marca"
+            {...uiProps("idMarca", "marca")}
+            idVariedad={modelo.idVariedad}
           />
+          <Calibre
+            label="Calibre"
+            {...uiProps("idCalibre", "calibre")}
+            idVariedad={modelo.idVariedad}
+            idMarca={modelo.idMarca}
+          />
+          <QInput label="Categoria" {...uiProps("categoria")} deshabilitado={true} />
           <QInput
             label="Cantidad Palets"
             {...uiProps("cantidadPalets")}
