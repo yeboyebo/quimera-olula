@@ -56,7 +56,7 @@ export const MaestroConDetallePedidoNrj = () => {
               metaTabla={metaTablaPedido}
               criteria={ctx.pedidos.criteria}
               modo={"tabla"}
-              entidades={ctx.pedidos.lista}
+              entidades={ctx.pedidos.lista as PedidoNrj[]}
               totalEntidades={ctx.pedidos.total}
               seleccionada={ctx.pedidos.activo}
               onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}

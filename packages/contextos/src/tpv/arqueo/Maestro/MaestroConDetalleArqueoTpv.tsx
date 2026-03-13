@@ -27,6 +27,7 @@ export const MaestroConDetalleArqueoTpv = () => {
 
   useEffect(() => {
     emitir("recarga_de_arqueos_solicitada", ctx.arqueos.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
