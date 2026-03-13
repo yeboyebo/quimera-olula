@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.tsx";
+import { Listado } from "@olula/componentes/maestro/Listado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -61,7 +61,7 @@ export const MaestroDetalleTransferenciasStock = () => {
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <ListadoActivoControlado<TransferenciaStock>
+            <Listado<TransferenciaStock>
               metaTabla={metaTablaTransferenciaStock}
               criteria={ctx.transferencias.criteria}
               modo="tabla"

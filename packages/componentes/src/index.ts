@@ -24,7 +24,7 @@ export * from "./detalle/helpers.tsx";
 export * from "./detalle/tabs/Tabs.tsx";
 
 export * from "./maestro/Listado.tsx";
-export * from "./maestro/ListadoActivoControlado.tsx";
+export * from "./maestro/ListadoSemiControlado.tsx";
 export * from "./maestro/maestroAcciones/MaestroAcciones.tsx";
 export * from "./maestro/MaestroDetalle.tsx";
 export * from "./maestro/maestroFiltros/MaestroFiltros.tsx";

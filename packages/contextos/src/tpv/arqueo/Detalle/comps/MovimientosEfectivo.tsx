@@ -1,5 +1,5 @@
 import { MetaTabla, QBoton } from "@olula/componentes/index.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useState } from "react";
@@ -150,7 +150,7 @@ export const MovimientosEfectivo = ({
                     />
                 </div>
             }
-            <ListadoControlado
+            <ListadoSemiControlado
                 metaTabla={getMetaTablaMovimientosEfectivo()}
                 cargando={false}
                 criteriaInicial={criteriaDefecto}

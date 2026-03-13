@@ -11,9 +11,9 @@ export type EstadoPedido = (
     | "CAMBIANDO_CLIENTE"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
 );
-export type ContextoPedido = {
+export type ContextoPedido<TPedido extends Pedido = Pedido> = {
     estado: EstadoPedido,
-    pedido: Pedido;
-    pedidoInicial: Pedido;
+    pedido: TPedido;
+    pedidoInicial: TPedido;
     lineaActiva: LineaPedido | null;
 };

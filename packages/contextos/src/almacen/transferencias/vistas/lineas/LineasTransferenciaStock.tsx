@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.tsx";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria, RespuestaLista2 } from "@olula/lib/diseño.ts";
@@ -107,7 +107,7 @@ export const LineasTransferenciaStock = ({
         </div>
       )}
       {!!transferencia.modelo.id && (
-        <ListadoControlado
+        <ListadoSemiControlado
           metaTabla={metaTablaLineasTransferenciaStock}
           metaFiltro={true}
           cargando={false}
