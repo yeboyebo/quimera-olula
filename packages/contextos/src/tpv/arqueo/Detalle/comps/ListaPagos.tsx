@@ -1,5 +1,5 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { Criteria, RespuestaLista2 } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -42,7 +42,7 @@ export const ListaPagos = ({
     return (
         <>
             <h3>Pagos</h3>
-            <ListadoControlado
+            <ListadoSemiControlado
                 metaTabla={getMetaTablaPagos()}
                 metaFiltro={true}
                 cargando={false}

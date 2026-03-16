@@ -13,6 +13,7 @@ interface QModalConfirmacionProps {
   labelAceptar?: string;
   labelCancelar?: string;
   mostrarCancelar?: boolean;
+  pantallaCompletaMovil?: boolean;
 }
 
 export const QModalConfirmacion = ({
@@ -25,6 +26,7 @@ export const QModalConfirmacion = ({
   labelAceptar = "Aceptar",
   labelCancelar = "Cancelar",
   mostrarCancelar = true,
+  pantallaCompletaMovil = false,
 }: QModalConfirmacionProps) => {
   const { intentar } = useContext(ContextoError);
 
@@ -37,7 +39,12 @@ export const QModalConfirmacion = ({
   };
 
   return (
-    <QModal nombre={nombre} abierto={abierto} onCerrar={cancelar}>
+    <QModal
+      nombre={nombre}
+      abierto={abierto}
+      onCerrar={cancelar}
+      pantallaCompletaMovil={pantallaCompletaMovil}
+    >
       <h2>{titulo}</h2>
       <div className="mensaje">{mensaje}</div>
       <div className="botones">

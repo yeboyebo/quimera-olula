@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { ContextoPedido, EstadoPedido, Pedido } from "./diseño.ts";
+import { ContextoPedido, EstadoPedido } from "./diseño.ts";
 import {
     abiertoOServido,
     activarLinea,
@@ -18,7 +18,7 @@ import {
 } from "./dominio.ts";
 
 
-export const getMaquina: <T extends Pedido>() => Maquina<EstadoPedido, ContextoPedido<T>> = () => {
+export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
 
     return {
 

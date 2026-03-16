@@ -3,14 +3,17 @@ quimera-formulario {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     /* grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); */
     gap: var(--gap-formulario);
-    place-items: center stretch;
+    place-items: stretch;
     padding: 1rem 0px;
     align-items: stretch;
 
     quimera-input,
+    quimera-autocompletar,
     quimera-select {
         grid-column: 1 / span 12;
         width: 100%;
+        min-width: 0;
+        justify-self: stretch;
 
         input,
         select {
@@ -21,6 +24,13 @@ quimera-formulario {
     quimera-date {
         grid-column: 1 / span 3;
     }
+
+    >div {
+        grid-column: 1 / span 12;
+        width: 100%;
+        min-width: 0;
+        justify-self: stretch;
+    }
 }
 
 @media (max-width: 768px) {
@@ -29,11 +39,13 @@ quimera-formulario {
         gap: var(--gap-formulario);
 
         quimera-input,
+        quimera-autocompletar,
         quimera-select,
         quimera-date,
         quimera-textarea,
         quimera-boton,
-        quimera-checkbox {
+        quimera-checkbox,
+        div {
             grid-column: 1 / -1 !important;
         }
     }

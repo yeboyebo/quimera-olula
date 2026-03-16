@@ -3,12 +3,8 @@
         grid-column: span 3;
     }
 
-    div[id="espacio_fecha"] {
-        grid-column: span 9;
-    }
-
     quimera-select[nombre="divisa_id"] {
-        grid-column: span 2;
+        grid-column: 1 / span 2;
     }
 
     quimera-input[nombre="tasa_conversion"] {
@@ -21,15 +17,11 @@
 
 
     quimera-autocompletar[nombre="agente_id"] {
-        grid-column: span 9;
-    }
-
-    div[id="espacio_agente"] {
-        grid-column: span 3;
+        grid-column: 1 / span 9;
     }
 
     quimera-select[nombre="forma_pago_id"] {
-        grid-column: span 2;
+        grid-column: 1 / span 2;
     }
 
     quimera-select[nombre="grupo_iva_negocio_id"] {
