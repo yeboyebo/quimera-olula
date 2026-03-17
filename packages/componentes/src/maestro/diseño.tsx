@@ -1,13 +1,5 @@
-import {
-  Criteria,
-  Entidad,
-  Filtro,
-  Orden,
-  Paginacion,
-  RespuestaLista
-} from "@olula/lib/diseño.ts";
+import { Entidad } from "@olula/lib/diseño.ts";
 import { ReactNode } from "react";
-import { MetaTabla } from "../atomos/qtabla.tsx";
 
 export type ModoVisualizacion = "tabla" | "tarjetas";
 export type ModoDisposicion =
@@ -17,29 +9,6 @@ export type ModoDisposicion =
   | "modal";
 
 export type MaestroDetalleProps<T extends Entidad> = {
-  seleccionada: T | null;
-  preMaestro?: ReactNode;
-  Detalle: ReactNode;
-  metaTabla?: MetaTabla<T>;
-  tarjeta?: (entidad: T) => React.ReactNode;
-  criteria?: Criteria;
-  entidades: T[];
-  setEntidades: (entidades: T[]) => void;
-  setSeleccionada: (seleccionada: T) => void;
-  modoVisualizacion?: ModoVisualizacion;
-  setModoVisualizacion?: (modo: ModoVisualizacion) => void;
-  modoDisposicion?: ModoDisposicion;
-  setModoDisposicion?: (modo: ModoDisposicion) => void;
-  cargar: (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-  ) => RespuestaLista<T>;
-  nombreModal?: string;
-  onCerrarDetalle?: () => void;
-};
-
-export type MaestroDetalleControladoProps<T extends Entidad> = {
   seleccionada: T | null;
   Maestro: ReactNode;
   Detalle: ReactNode;

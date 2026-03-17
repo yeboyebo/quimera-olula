@@ -1,8 +1,8 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -32,7 +32,7 @@ export const MaestroConDetalleFactura = () => {
 
   return (
     <div className="Factura">
-      <MaestroDetalleActivoControlado<Factura>
+      <MaestroDetalle<Factura>
         Maestro={
           <>
             <h2>Facturas</h2>
@@ -41,7 +41,7 @@ export const MaestroConDetalleFactura = () => {
                 Nueva Factura
               </QBoton>
             </div>
-            <ListadoActivoControlado<Factura>
+            <Listado<Factura>
               metaTabla={metaTablaFactura}
               criteria={ctx.facturas.criteria}
               modo={"tabla"}
@@ -49,16 +49,13 @@ export const MaestroConDetalleFactura = () => {
               totalEntidades={ctx.facturas.total}
               seleccionada={ctx.facturas.activo}
               onSeleccion={(payload) => emitir("factura_seleccionada", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleFactura
-            id={ctx.facturas.activo}
-            publicar={emitir}
-          />
-        }
+        Detalle={<DetalleFactura id={ctx.facturas.activo} publicar={emitir} />}
         seleccionada={ctx.facturas.activo}
         modoDisposicion="maestro-50"
       />

@@ -1,5 +1,15 @@
-/* Variables (actualizadas) */
-:root {
+/* Estructura Principal */
+.calendario-container {
+  font-family: system-ui, sans-serif;
+  max-width: 100%;
+
+  /* Variables locales del calendario (scope limitado, no afectan al resto de la app) */
+  --altura-dia: 120px;
+  --altura-dia-mobile: 90px;
+  --altura-cabecera: 60px;
+  --altura-dias-semana: 40px;
+
+  /* Si el calendario necesita valores específicos diferentes al tema, se definen aquí:
   --color-fondo: #ffffff;
   --color-primario: #3a86ff;
   --color-primario-claro: #ebf2ff;
@@ -9,16 +19,7 @@
   --espaciado-s: 0.5rem;
   --espaciado-m: 1rem;
   --espaciado-l: 1.5rem;
-  --altura-dia: 120px;
-  --altura-dia-mobile: 90px;
-  --altura-cabecera: 60px;
-  --altura-dias-semana: 40px
-}
-
-/* Estructura Principal */
-.calendario-container {
-  font-family: system-ui, sans-serif;
-  max-width: 100%;
+  */
 }
 
 /* Cabecera */

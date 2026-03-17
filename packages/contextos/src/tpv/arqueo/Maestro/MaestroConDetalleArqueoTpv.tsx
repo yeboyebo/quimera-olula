@@ -1,8 +1,8 @@
 import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -27,20 +27,23 @@ export const MaestroConDetalleArqueoTpv = () => {
 
   useEffect(() => {
     emitir("recarga_de_arqueos_solicitada", ctx.arqueos.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="Arqueo">
-      <MaestroDetalleActivoControlado<CabeceraArqueoTpv>
+      <MaestroDetalle<CabeceraArqueoTpv>
         Maestro={
           <>
             <h2>Arqueos TPV</h2>
             <h2>Punto de arqueo {puntoVentaActivo?.nombre} </h2>
             <h2>Agente {miAgenteActivo?.nombre} </h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("creacion_de_arqueo_solicitada")}>Abrir arqueo</QBoton>
+              <QBoton onClick={() => emitir("creacion_de_arqueo_solicitada")}>
+                Abrir arqueo
+              </QBoton>
             </div>
-            <ListadoActivoControlado<CabeceraArqueoTpv>
+            <Listado<CabeceraArqueoTpv>
               metaTabla={metaTablaArqueo}
               metaFiltro={true}
               criteria={ctx.arqueos.criteria}
@@ -49,16 +52,13 @@ export const MaestroConDetalleArqueoTpv = () => {
               totalEntidades={ctx.arqueos.total}
               seleccionada={ctx.arqueos.activo}
               onSeleccion={(payload) => emitir("arqueo_seleccionado", payload)}
-              onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleArqueoTpv
-            id={ctx.arqueos.activo}
-            publicar={emitir}
-          />
-        }
+        Detalle={<DetalleArqueoTpv id={ctx.arqueos.activo} publicar={emitir} />}
         seleccionada={ctx.arqueos.activo}
         modoDisposicion="maestro-50"
       />

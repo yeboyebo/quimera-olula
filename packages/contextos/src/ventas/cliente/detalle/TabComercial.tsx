@@ -24,7 +24,6 @@ export const TabComercial = ({ form }: TabComercialProps) => {
           {...uiProps("agente_id", "nombre_agente")}
           nombre="cliente/agente_id"
         />
-        <div id="span3" />
         <Divisa {...uiProps("divisa_id")} nombre="cliente/divisa_id" />
         <QInput
           label="Serie"

@@ -11,6 +11,7 @@ export const getMaquina: () => Maquina<EstadoMaestroCliente, ContextoMaestroClie
             cliente_borrado: Clientes.quitar,
             cliente_creado: Clientes.incluir,
             recarga_de_clientes_solicitada: recargarClientes,
+            criteria_cambiado: [Clientes.filtrar, recargarClientes],
             creacion_solicitada: "CREANDO_CLIENTE",
         },
 

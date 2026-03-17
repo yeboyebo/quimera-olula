@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
-import { MaestroDetalleActivoControlado } from "@olula/componentes/maestro/MaestroDetalleActivoControlado.tsx";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -24,11 +24,12 @@ export const MaestroLeads = () => {
 
   useEffect(() => {
     emitir("recarga_de_leads_solicitada", ctx.leads.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="MaestroLeads">
-      <MaestroDetalleActivoControlado<Lead>
+      <MaestroDetalle<Lead>
         Maestro={
           <>
             <h2>Leads</h2>
@@ -39,7 +40,7 @@ export const MaestroLeads = () => {
               </QBoton>
             </div>
 
-            <ListadoActivoControlado<Lead>
+            <Listado<Lead>
               metaTabla={metaTablaLead}
               metaFiltro={true}
               criteria={ctx.leads.criteria}

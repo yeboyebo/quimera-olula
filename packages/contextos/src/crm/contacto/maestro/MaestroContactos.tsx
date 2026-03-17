@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearContacto } from "../crear/CrearContacto.tsx";
 import { DetalleContacto } from "../detalle/DetalleContacto.tsx";
 import { Contacto } from "../diseño.ts";
@@ -14,29 +13,23 @@ import "./MaestroContactos.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroContactos = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    contactos: listaEntidadesInicial<Contacto>(),
+    contactos: listaActivaEntidadesInicial<Contacto>(id, criteria),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_contactos_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.contactos.activo, ctx.contactos.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_contactos_solicitada", ctx.contactos.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="Contacto">
-      <MaestroDetalleControlado<Contacto>
+      <MaestroDetalle<Contacto>
         Maestro={
           <>
             <h2>Contactos</h2>
@@ -47,26 +40,24 @@ export const MaestroContactos = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<Contacto>
+            <Listado<Contacto>
               metaTabla={metaTablaContacto}
-              metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.contactos.criteria}
               modo={"tabla"}
-              // setModo={handleSetModoVisualizacion}
-              // tarjeta={tarjeta}
               entidades={ctx.contactos.lista}
               totalEntidades={ctx.contactos.total}
               seleccionada={ctx.contactos.activo}
               onSeleccion={(payload) =>
                 emitir("contacto_seleccionado", payload)
               }
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
         Detalle={
-          <DetalleContacto inicial={ctx.contactos.activo} publicar={emitir} />
+          <DetalleContacto id={ctx.contactos.activo} publicar={emitir} />
         }
         seleccionada={ctx.contactos.activo}
         modoDisposicion="maestro-50"

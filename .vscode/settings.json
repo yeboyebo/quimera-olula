@@ -35,6 +35,36 @@
   "explorer.fileNesting.patterns": {
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, tsconfig.json, .gitignore, .npmignore, eslint.config.js, .eslintrc, .eslintrc.json, .eslintrc.js, .eslintrc.cjs, .prettierrc, .prettierrc.json, .prettierrc.js, jest.config.js, .prettierignore, .editorconfig, pnpm-workspace.yaml, README.md, vite.config.ts, Dockerfile, docker-compose*.yml, .nvmrc, .eslintrc.js, .dockerignore, Makefile, cucumber.js, biome.json, lint-staged.config.js, bunfig.toml, nginx.conf"
   },
+  // files & folders exclusions
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/dist-ssr": true,
+    "**/dev-dist": true,
+    "**/.turbo": true,
+    "**/.pnpm-store": true,
+    "**/.cache": true,
+    "**/coverage": true,
+    "**/.parcel-cache": true,
+    "**/.eslintcache": true,
+    "**/.stylelintcache": true,
+    "**/*.local": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/dist-ssr": true,
+    "**/dev-dist": true,
+    "**/.turbo": true,
+    "**/.pnpm-store": true,
+    "**/.cache": true,
+    "**/coverage": true,
+    "**/.parcel-cache": true,
+    "**/.eslintcache": true,
+    "**/.stylelintcache": true
+  },
   // git
   "git.confirmSync": false,
   "git.autofetch": true,

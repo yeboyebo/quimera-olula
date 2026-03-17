@@ -1,21 +1,11 @@
-import { ContextoError, QError } from "@olula/lib/contexto.ts";
-import {
-  Criteria,
-  Entidad,
-  Filtro,
-  Orden,
-  Paginacion,
-  RespuestaLista,
-} from "@olula/lib/diseño.ts";
-import { useContext, useEffect, useState } from "react";
-import { QIcono } from "../atomos/qicono.tsx";
-import { MetaTabla, QTabla } from "../atomos/qtabla.tsx";
+import { Criteria, Entidad } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { MetaTabla } from "../atomos/qtabla.tsx";
+import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
-import { expandirEntidad } from "../detalle/helpers.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
-import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
-import { MaestroFiltros } from "./maestroFiltros/MaestroFiltros.tsx";
+import { MaestroFiltrosControlado } from "./maestroFiltros/MaestroFiltrosControlado.tsx";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -25,94 +15,46 @@ const datosCargando = <T extends Entidad>() =>
         ...Object.fromEntries(
           new Array(10).fill(null).map((_, j) => [j, "U00A0"])
         ),
-      } as T)
+      }) as T
   );
-
-const obtenerCampos = (entidad: Entidad | null): string[] => {
-  if (!entidad) return [];
-  return expandirEntidad(entidad).map(([clave]) => clave);
-};
 
 type Modo = "tabla" | "tarjetas";
 
-export type MaestroProps<T extends Entidad> = {
+type MaestroProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
+  metaFiltro?: boolean;
+  cargando?: boolean;
   tarjeta?: (entidad: T) => React.ReactNode;
+  criteriaInicial?: Criteria;
   criteria?: Criteria;
   entidades: T[];
-  setEntidades: (entidades: T[]) => void;
-  seleccionada: T | null;
-  setSeleccionada: (seleccionada: T) => void;
+  totalEntidades: number;
+  seleccionada?: string;
+  onSeleccion: (seleccionada: string) => void;
   modo?: Modo;
-  setModo?: (modo: Modo) => void;
-  cargar: (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-  ) => RespuestaLista<T>;
+  onCriteriaChanged: (criteria: Criteria) => void;
+  onSiguientePagina?: (criteria: Criteria) => void;
 };
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  criteria = {
-    filtro: [],
-    orden: ["id", "DESC"],
-    paginacion: { limite: 10, pagina: 1 },
-  },
+  metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
+  cargando = false,
+  criteriaInicial = criteriaDefecto,
+  criteria = criteriaDefecto,
   tarjeta,
   entidades,
-  setEntidades,
+  totalEntidades,
   seleccionada,
-  setSeleccionada,
-  cargar,
+  onSeleccion,
   modo = "tabla",
-  setModo,
+  onCriteriaChanged,
+  onSiguientePagina,
 }: MaestroProps<T>) => {
-  const [cargando, setCargando] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>(criteria.filtro);
-  const [orden, setOrden] = useState<Orden>(criteria.orden);
-  const [paginacion, setPaginacion] = useState<Paginacion>(criteria.paginacion);
-  const [totalRegistros, setTotalRegistros] = useState(0);
-  const { setError } = useContext(ContextoError);
-
-  useEffect(() => {
-    let hecho = false;
-    setCargando(true);
-    cargar(filtro, orden, paginacion)
-      .then(({ datos, total }) => {
-        if (hecho) return;
-        if (datos.length > 0) {
-          setEntidades(datos as T[]);
-          if (total && total > 0) {
-            setTotalRegistros(total);
-          }
-        }
-        setCargando(false);
-      })
-      .catch((error) => {
-        if (hecho) return;
-        const apiError = error as QError;
-        setError({
-          nombre: apiError.nombre,
-          descripcion: apiError.descripcion,
-        });
-      });
-
-    return () => {
-      hecho = true;
-    };
-  }, [filtro, orden, paginacion, cargar, setEntidades, setError]);
-
-  const entidadesFiltradas = entidades.filter((entidad) =>
-    filtrarEntidad(entidad, filtro)
-  );
-
   const renderEntidades = () => {
-    if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
+    if (!entidades.length && !cargando) return <SinDatos />;
 
-    const datos = entidadesFiltradas.length
-      ? entidadesFiltradas
-      : datosCargando<T>();
+    const datos = entidades.length ? entidades : datosCargando<T>();
 
     if (modo == "tarjetas" && tarjeta) {
       return (
@@ -120,52 +62,42 @@ export const Listado = <T extends Entidad>({
           tarjeta={tarjeta}
           datos={datos}
           cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-          paginacion={paginacion}
+          seleccionadaId={seleccionada}
+          onSeleccion={(e: T) => onSeleccion(e.id)}
           onPaginacion={(pagina, limite) => {
-            setPaginacion({ pagina, limite });
+            onCriteriaChanged({ ...criteria, paginacion: { pagina, limite } });
           }}
-          totalEntidades={totalRegistros}
-          orden={orden}
-          onOrdenar={(clave) => {
-            const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
-            const sentido =
-              antigua_clave === clave && antiguo_sentido === "ASC"
-                ? "DESC"
-                : "ASC";
-
-            setOrden([clave, sentido]);
-            setPaginacion({ ...paginacion, pagina: 1 });
-          }}
+          totalEntidades={totalEntidades}
+          criteria={criteria}
+          onSiguientePagina={onSiguientePagina}
         />
       );
     }
 
     if (modo == "tabla" && metaTabla) {
       return (
-        <QTabla
+        <QTablaControlada
           metaTabla={metaTabla}
           datos={datos}
           cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={(entidad) => setSeleccionada(entidad as T)}
-          orden={orden}
-          onOrdenar={(clave) => {
-            const [antigua_clave, antiguo_sentido] = orden ?? [null, null];
-            const sentido =
-              antigua_clave === clave && antiguo_sentido === "ASC"
-                ? "DESC"
-                : "ASC";
-
-            setOrden([clave, sentido]);
-            setPaginacion({ ...paginacion, pagina: 1 });
+          seleccionadaId={seleccionada}
+          onSeleccion={(e: T) => onSeleccion(e.id)}
+          orden={criteria.orden}
+          onOrdenChanged={(orden) => {
+            onCriteriaChanged({
+              ...criteria,
+              orden,
+              paginacion: { ...criteria.paginacion, pagina: 1 },
+            });
           }}
-          paginacion={paginacion}
-          onPaginacion={(pagina, limite) => {
-            setPaginacion({ pagina, limite });
+          paginacion={criteria.paginacion}
+          onPaginacionChanged={(paginacion) => {
+            onCriteriaChanged({
+              ...criteria,
+              paginacion,
+            });
           }}
-          totalEntidades={totalRegistros}
+          totalEntidades={totalEntidades}
         />
       );
     }
@@ -175,37 +107,31 @@ export const Listado = <T extends Entidad>({
 
   return (
     <div className="Listado">
-      {tarjeta && metaTabla && (
-        <div className="cambio-modo">
-          <span
-            className="cambio-modo-icono"
-            onClick={() =>
-              setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
-            }
-          >
-            <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
-          </span>
-        </div>
+      {/* {tarjeta && metaTabla && (
+            <div className="cambio-modo">
+            <span
+                className="cambio-modo-icono"
+                onClick={() =>
+                    setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
+                }
+            >
+                <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
+            </span>
+            </div>
+        )} */}
+      {metaFiltro && (
+        <MaestroFiltrosControlado
+          campos={metaTabla?.map((c) => c.id) ?? []}
+          filtro={criteria.filtro}
+          filtroInicial={criteriaInicial.filtro}
+          onFiltroChanged={(filtro) => {
+            onCriteriaChanged({
+              ...criteria,
+              filtro,
+            });
+          }}
+        />
       )}
-      <MaestroFiltros
-        campos={obtenerCampos(entidades[0])}
-        filtro={filtro}
-        cambiarFiltro={(clave, valor, operador = "~") => {
-          const nuevoFiltro: Filtro = [
-            ...filtro.filter(([k]) => k !== clave),
-            [clave, operador, valor],
-          ];
-          setFiltro(nuevoFiltro);
-        }}
-        borrarFiltro={(clave) => {
-          setFiltro(filtro.filter(([k]) => k !== clave));
-        }}
-        resetearFiltro={() => {
-          setFiltro(criteria.filtro);
-          setPaginacion({ ...paginacion, pagina: 1 });
-          setEntidades([]);
-        }}
-      />
       {renderEntidades()}
     </div>
   );

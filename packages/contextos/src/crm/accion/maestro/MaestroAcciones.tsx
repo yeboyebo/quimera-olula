@@ -1,11 +1,10 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { CrearAccion } from "../crear/CrearAccion.tsx";
 import { DetalleAccion } from "../detalle/DetalleAccion.tsx";
 import { Accion } from "../diseño.ts";
@@ -14,29 +13,23 @@ import "./MaestroAcciones.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroAcciones = () => {
-  const [cargando, setCargando] = useState(false);
+  const { id, criteria } = getUrlParams();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    acciones: listaEntidadesInicial<Accion>(),
+    acciones: listaActivaEntidadesInicial<Accion>(id, criteria),
   });
 
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_acciones_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir, setCargando]
-  );
+  useUrlParams(ctx.acciones.activo, ctx.acciones.criteria);
 
   useEffect(() => {
-    recargar(criteriaDefecto);
+    emitir("recarga_de_acciones_solicitada", ctx.acciones.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="MaestroAcciones">
-      <MaestroDetalleControlado<Accion>
+      <MaestroDetalle<Accion>
         Maestro={
           <>
             <h2>Acciones</h2>
@@ -47,25 +40,21 @@ export const MaestroAcciones = () => {
               </QBoton>
             </div>
 
-            <ListadoControlado<Accion>
+            <Listado<Accion>
               metaTabla={metaTablaAccion}
-              metaFiltro={true}
-              cargando={cargando}
-              criteriaInicial={criteriaDefecto}
+              criteria={ctx.acciones.criteria}
               modo={"tabla"}
-              // setModo={handleSetModoVisualizacion}
-              // tarjeta={tarjeta}
               entidades={ctx.acciones.lista}
               totalEntidades={ctx.acciones.total}
               seleccionada={ctx.acciones.activo}
               onSeleccion={(payload) => emitir("accion_seleccionada", payload)}
-              onCriteriaChanged={recargar}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
             />
           </>
         }
-        Detalle={
-          <DetalleAccion inicial={ctx.acciones.activo} publicar={emitir} />
-        }
+        Detalle={<DetalleAccion id={ctx.acciones.activo} publicar={emitir} />}
         seleccionada={ctx.acciones.activo}
         modoDisposicion="maestro-50"
       />

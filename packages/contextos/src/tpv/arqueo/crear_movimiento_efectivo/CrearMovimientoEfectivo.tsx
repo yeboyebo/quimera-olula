@@ -35,6 +35,8 @@ export const CrearMovimientoEfectivo = ({
       idAgente: miAgenteActivo?.id ?? "",
     });
     publicar("movimiento_creado");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo, publicar]);
 
   const cancelar = useCallback(

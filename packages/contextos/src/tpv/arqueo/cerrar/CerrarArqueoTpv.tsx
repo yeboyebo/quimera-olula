@@ -13,89 +13,86 @@ import "./CerrarArqueoTpv.css";
 import { cierreArqueoTpvVacio, metaCierreArqueoTpv } from "./cerrar_arqueo.ts";
 
 export const CerrarArqueoTpv = ({
-    arqueo,
-    publicar,
+  arqueo,
+  publicar,
 }: {
-    arqueo: ArqueoTpv,
-    publicar: EmitirEvento;
+  arqueo: ArqueoTpv;
+  publicar: EmitirEvento;
 }) => {
-    const { intentar } = useContext(ContextoError);
+  const { intentar } = useContext(ContextoError);
 
-    const cierreInicial = useMemo(
-        () => ({
-            ...cierreArqueoTpvVacio,
-            movimientoCierre: arqueo.recuentoEfectivo,
-            idAgenteCierre: agenteActivo.obtener()?.id ?? '',
-            totalEfectivo: arqueo.recuentoEfectivo
-        }),
-        [arqueo]
-    );
+  const cierreInicial = useMemo(
+    () => ({
+      ...cierreArqueoTpvVacio,
+      movimientoCierre: arqueo.recuentoEfectivo,
+      idAgenteCierre: agenteActivo.obtener()?.id ?? "",
+      totalEfectivo: arqueo.recuentoEfectivo,
+    }),
+    [arqueo]
+  );
 
-    const { modelo, uiProps, valido, init } = useModelo(metaCierreArqueoTpv, cierreInicial);
+  const { modelo, uiProps, valido, init } = useModelo(
+    metaCierreArqueoTpv,
+    cierreInicial
+  );
 
-    const [cerrando, setCerrando] = useState(false);
+  const [cerrando, setCerrando] = useState(false);
 
-    const movimientoCierre = arqueo.recuentoEfectivo - modelo.cambioDejadoEnCaja;
-  
-    const cerrar = useCallback(
-        async () => {
-            setCerrando(true);
-            await intentar(
-                () => patchCerrarArqueo(arqueo.id, {
-                    movimientoCierre,
-                    idAgenteCierre: modelo.idAgenteCierre
-                })
-            );
-            publicar("cierre_hecho");
-        },
-        [arqueo, intentar, modelo, publicar, setCerrando]
-    );
+  const movimientoCierre = arqueo.recuentoEfectivo - modelo.cambioDejadoEnCaja;
 
-    const cancelar = useCallback(
-        () => {
-            if (!cerrando) publicar("cierre_cancelado");
-        },
-        [cerrando, publicar]
-    );
+  const cerrar = useCallback(
+    async () => {
+      setCerrando(true);
+      await intentar(() =>
+        patchCerrarArqueo(arqueo.id, {
+          movimientoCierre,
+          idAgenteCierre: modelo.idAgenteCierre,
+        })
+      );
+      publicar("cierre_hecho");
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [arqueo, intentar, modelo, publicar, setCerrando]
+  );
 
-    const limpiar = () => {
-        init({
-            ...cierreArqueoTpvVacio,
-            idAgenteCierre: agenteActivo.obtener()?.id ?? '',
-        });
-    }
-    
-    return (
-        <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
-    
-            <div className="CierreArqueo">
-            
-                <h2>Cierre de arqueo</h2>
+  const cancelar = useCallback(() => {
+    if (!cerrando) publicar("cierre_cancelado");
+  }, [cerrando, publicar]);
 
-                <quimera-formulario>
-                    <div id='cierre'>
-                        {`Total efectivo: ${moneda(arqueo.recuentoEfectivo)}`}
-                    </div>
-                    <div id='cierre'>
-                        {`Sale de caja: ${moneda(movimientoCierre)}`}
-                    </div>
+  const limpiar = () => {
+    init({
+      ...cierreArqueoTpvVacio,
+      idAgenteCierre: agenteActivo.obtener()?.id ?? "",
+    });
+  };
 
-                    <QInput label="Cambio dejado en caja" {...uiProps("cambioDejadoEnCaja")} />
-                </quimera-formulario>
-            
-                <div className="botones maestro-botones ">
-                    <QBoton onClick={limpiar}>Limpiar</QBoton>
-                </div>
+  return (
+    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+      <div className="CierreArqueo">
+        <h2>Cierre de arqueo</h2>
 
-                <div className="botones maestro-botones ">
-                    <QBoton onClick={cerrar}
-                        deshabilitado={!valido}>
-                        Cerrar    
-                    </QBoton>
-                </div>
+        <quimera-formulario>
+          <div id="cierre">
+            {`Total efectivo: ${moneda(arqueo.recuentoEfectivo)}`}
+          </div>
+          <div id="cierre">{`Sale de caja: ${moneda(movimientoCierre)}`}</div>
 
-            </div>
+          <QInput
+            label="Cambio dejado en caja"
+            {...uiProps("cambioDejadoEnCaja")}
+          />
+        </quimera-formulario>
 
-        </QModal>
-    );
+        <div className="botones maestro-botones ">
+          <QBoton onClick={limpiar}>Limpiar</QBoton>
+        </div>
+
+        <div className="botones maestro-botones ">
+          <QBoton onClick={cerrar} deshabilitado={!valido}>
+            Cerrar
+          </QBoton>
+        </div>
+      </div>
+    </QModal>
+  );
 };

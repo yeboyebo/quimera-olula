@@ -45,6 +45,17 @@ export const metaPedido: MetaModelo<Pedido> = {
     },
 };
 
+export const getMetaPedido = <T extends Pedido>() => <MetaModelo<T>>({
+    campos: {
+        ...metaVenta.campos,
+        fecha: { tipo: "fecha", requerido: false },
+    },
+    editable: (pedido: T, _?: string) => {
+        const servido = pedido.servido?.toUpperCase();
+        return servido !== 'TOTAL' && servido !== 'SERVIDO';
+    },
+});
+
 export const editable = modeloEsEditable<Pedido>(metaPedido);
 export const pedidoValido = modeloEsValido<Pedido>(metaPedido);
 
@@ -57,9 +68,9 @@ export const pedidoVacioObjeto: Pedido = pedidoVacio();
 export const pedidoVacioContexto = (): Pedido => ({ ...pedidoVacioObjeto });
 
 
-type ProcesarPedido = ProcesarContexto<EstadoPedido, ContextoPedido>;
+type ProcesarPedido = ProcesarContexto<EstadoPedido, ContextoPedido<Pedido>>;
 
-const pipePedido = ejecutarListaProcesos<EstadoPedido, ContextoPedido>;
+const pipePedido = ejecutarListaProcesos<EstadoPedido, ContextoPedido<Pedido>>;
 
 const cargarPedido: (_: string) => ProcesarPedido = (idPedido) =>
     async (contexto) => {
@@ -119,7 +130,7 @@ export const activarLinea: ProcesarPedido = async (contexto, payload) => {
     }
 }
 
-const activarLineaPorIndice = (indice: number) => async (contexto: ContextoPedido) => {
+const activarLineaPorIndice = (indice: number) => async (contexto: ContextoPedido<Pedido>) => {
     const lineas = contexto.pedido.lineas as LineaPedido[];
     const lineaActiva = lineas.length > 0
         ? indice >= 0 && indice < lineas.length

@@ -14,30 +14,28 @@ export const BorrarMovimientoEfectivo = ({
   idMovimiento: string;
   arqueo: ArqueoTpv;
 }) => {
+  const borrar = useCallback(
+    async () => {
+      await patchBorrarMovimiento(arqueo.id, idMovimiento);
+      publicar("movimiento_borrado");
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [publicar]
+  );
 
-    const borrar = useCallback(
-        async () => {
-            await patchBorrarMovimiento(
-                arqueo.id, idMovimiento
-            );
-            publicar("movimiento_borrado");
-        },
-        [publicar]
-    );
+  const cancelar = useCallback(
+    () => publicar("borrado_de_movimiento_cancelado"),
+    [publicar]
+  );
 
-    const cancelar = useCallback(
-        () => publicar("borrado_de_movimiento_cancelado"),
-        [publicar]
-    );
-
-    return (
-        <QModalConfirmacion
-            nombre="borrarMovimientoEfectivo"
-            abierto={true}
-            titulo="Borrar movimiento de efectivo"
-            mensaje={`¿Está seguro de que desea borrar el movimiento?`}
-            onCerrar={cancelar}
-            onAceptar={borrar}
-        />
-    );
+  return (
+    <QModalConfirmacion
+      nombre="borrarMovimientoEfectivo"
+      abierto={true}
+      titulo="Borrar movimiento de efectivo"
+      mensaje={`¿Está seguro de que desea borrar el movimiento?`}
+      onCerrar={cancelar}
+      onAceptar={borrar}
+    />
+  );
 };

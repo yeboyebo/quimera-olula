@@ -1,10 +1,15 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
+import {
+  getUrlParams,
+  setCriteriaUrlParams,
+  useUrlParams,
+} from "@olula/lib/url-params.js";
 import { useCallback, useEffect } from "react";
 import { CrearUsuario } from "../crear/CrearUsuario.tsx";
 import { DetalleUsuario } from "../detalle/DetalleUsuario.tsx";
@@ -19,18 +24,17 @@ const criteriaBaseUsuarios = {
 };
 
 export const MaestroConDetalleUsuario = () => {
+  const { id, criteria } = getUrlParams();
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     usuarios: listaEntidadesInicial<Usuario>(),
   });
 
+  useUrlParams(ctx.usuarios.activo?.id, criteria);
+
   const crear = useCallback(
     () => emitir("creacion_de_usuario_solicitada"),
-    [emitir]
-  );
-
-  const setSeleccionada = useCallback(
-    (payload: Usuario) => emitir("usuario_seleccionado", payload),
     [emitir]
   );
 
@@ -42,28 +46,45 @@ export const MaestroConDetalleUsuario = () => {
   );
 
   useEffect(() => {
-    emitir("recarga_de_usuarios_solicitada", criteriaBaseUsuarios);
+    if (id) {
+      const usuario = ctx.usuarios.lista.find((item) => item.id === id);
+      if (usuario) emitir("usuario_seleccionado", usuario);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, ctx.usuarios.lista]);
+
+  useEffect(() => {
+    emitir("recarga_de_usuarios_solicitada", criteria ?? criteriaBaseUsuarios);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="Usuario">
-      <MaestroDetalleControlado<Usuario>
+      <MaestroDetalle<Usuario>
         Maestro={
           <>
             <h2>Usuarios</h2>
             <div className="maestro-botones">
               <QBoton onClick={crear}>Nuevo Usuario</QBoton>
             </div>
-            <ListadoControlado
+            <Listado
               metaTabla={metaTablaUsuario}
               criteriaInicial={criteriaBaseUsuarios}
+              criteria={criteria}
               modo="tabla"
               entidades={ctx.usuarios.lista}
               totalEntidades={ctx.usuarios.total}
-              seleccionada={ctx.usuarios.activo}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+              seleccionada={ctx.usuarios.activo?.id}
+              onSeleccion={(id) => {
+                const usuario = ctx.usuarios.lista.find(
+                  (item) => item.id === id
+                );
+                if (usuario) emitir("usuario_seleccionado", usuario);
+              }}
+              onCriteriaChanged={(nuevaCriteria) => {
+                setCriteriaUrlParams(nuevaCriteria);
+                recargar(nuevaCriteria);
+              }}
             />
           </>
         }
@@ -73,7 +94,7 @@ export const MaestroConDetalleUsuario = () => {
             publicar={emitir}
           />
         }
-        seleccionada={ctx.usuarios.activo}
+        seleccionada={ctx.usuarios.activo?.id}
       />
 
       <CrearUsuario
