@@ -4,7 +4,7 @@ import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { useEffect, useState } from "react";
 import { getAgentes } from "#/ventas/agente/infraestructura.ts";
 
-type AgenteProps = Omit<QAutocompletarProps, "obtenerOpciones">;
+type AgenteProps = Omit<QAutocompletarProps, "obtenerOpciones" | "label"> & { label?: string };
 
 type OpcionAgente = {
   valor: string;

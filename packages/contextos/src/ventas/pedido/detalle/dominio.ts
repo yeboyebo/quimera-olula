@@ -130,6 +130,14 @@ export const activarLinea: ProcesarPedido = async (contexto, payload) => {
     }
 }
 
+const actualizarLineaActiva: ProcesarPedido = async (contexto) => {
+    if (!contexto.lineaActiva) return contexto;
+    const lineaActiva = (contexto.pedido.lineas as LineaPedido[]).find(
+        l => l.id === contexto.lineaActiva?.id
+    ) ?? contexto.lineaActiva;
+    return { ...contexto, lineaActiva };
+}
+
 const activarLineaPorIndice = (indice: number) => async (contexto: ContextoPedido<Pedido>) => {
     const lineas = contexto.pedido.lineas as LineaPedido[];
     const lineaActiva = lineas.length > 0
@@ -212,6 +220,7 @@ export const cambiarLinea: ProcesarPedido = async (contexto) => {
     return pipePedido(contexto, [
         refrescarPedido,
         refrescarLineas,
+        actualizarLineaActiva,
         'ABIERTO',
     ]);
 }
