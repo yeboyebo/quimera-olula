@@ -2,7 +2,7 @@ import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -71,7 +71,7 @@ export const MaestroConDetallePresupuesto = () => {
                 Nuevo Presupuesto
               </QBoton>
             </div>
-            <ListadoActivoControlado<Presupuesto>
+            <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
               criteria={ctx.presupuestos.criteria}
               modo={"tabla"}

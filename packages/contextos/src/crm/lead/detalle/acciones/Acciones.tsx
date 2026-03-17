@@ -30,6 +30,7 @@ export const Acciones = ({ lead }: { lead: HookModelo<Lead> }) => {
 
   useEffect(() => {
     recargar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo.id]);
 
   return (

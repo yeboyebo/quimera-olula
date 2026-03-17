@@ -2,7 +2,7 @@ import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -70,7 +70,7 @@ export const MaestroConDetalleAlbaran = () => {
                 Nuevo Albarán
               </QBoton>
             </div>
-            <ListadoActivoControlado<Albaran>
+            <Listado<Albaran>
               metaTabla={metaTablaAlbaran}
               criteria={ctx.albaranes.criteria}
               modo={"tabla"}

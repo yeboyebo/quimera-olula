@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { Criteria } from "@olula/lib/diseño.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -67,7 +67,7 @@ export const MaestroConDetalleUsuario = () => {
             <div className="maestro-botones">
               <QBoton onClick={crear}>Nuevo Usuario</QBoton>
             </div>
-            <ListadoActivoControlado
+            <Listado
               metaTabla={metaTablaUsuario}
               criteriaInicial={criteriaBaseUsuarios}
               criteria={criteria}

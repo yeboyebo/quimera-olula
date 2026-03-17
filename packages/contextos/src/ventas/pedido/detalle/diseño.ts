@@ -11,7 +11,7 @@ export type EstadoPedido = (
     | "CAMBIANDO_CLIENTE"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
 );
-export type ContextoPedido<T extends Pedido> = {
+export type ContextoPedido<T extends Pedido = Pedido> = {
     estado: EstadoPedido,
     pedido: T;
     pedidoInicial: T;

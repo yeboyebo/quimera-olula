@@ -46,7 +46,7 @@ type MaestroProps<T extends Entidad> = {
     onCriteriaChanged: (criteria: Criteria) => void;
 };
 
-export const ListadoControlado = <T extends Entidad>({
+export const ListadoSemiControlado = <T extends Entidad>({
     metaTabla,
     metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
     cargando = false,

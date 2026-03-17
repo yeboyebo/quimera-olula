@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.tsx";
+import { Listado } from "@olula/componentes/maestro/Listado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { Criteria, Maquina, ProcesarContexto } from "@olula/lib/diseño.ts";
@@ -97,7 +97,7 @@ export const MaestroConDetalleGruposReglas = () => {
                 Nuevo Grupo
               </QBoton>
             </div>
-            <ListadoActivoControlado<Grupo>
+            <Listado<Grupo>
               metaTabla={metaTablaGrupos}
               criteria={ctx.grupos.criteria}
               modo="tabla"
