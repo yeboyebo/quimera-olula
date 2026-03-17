@@ -44,9 +44,7 @@ export const QInput = ({
     <quimera-input {...attrs}>
       <label>
         <Etiqueta label={label} />
-        <div className="input_">
-          <FormInput {...inputAttrs} />
-        </div>
+        <FormInput {...inputAttrs} />
         <Validacion textoValidacion={textoValidacion} />
       </label>
     </quimera-input>

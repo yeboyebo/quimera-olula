@@ -12,13 +12,18 @@ export type FormFieldProps = {
   condensado?: boolean;
   autoSeleccion?: boolean;
   autoFocus?: boolean;
-  ref?: React.RefObject<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null>;
+  ref?: React.RefObject<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
+  >;
   onChange?: (
     valor: string,
     evento: React.ChangeEvent<HTMLInputElement>
   ) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
-  onEnterKeyUp?: (valor: string, evento: React.KeyboardEvent<HTMLElement>) => void;
+  onEnterKeyUp?: (
+    valor: string,
+    evento: React.KeyboardEvent<HTMLElement>
+  ) => void;
 };
 
 const tiposFormInput = {
@@ -41,6 +46,7 @@ const tiposFormInput = {
   moneda: "number",
   autocompletar: "text",
   selector: "text",
+  intervalo_fechas: "date",
 } as const;
 
 export type FormInputProps = FormFieldProps & {
@@ -97,9 +103,6 @@ export const FormInput = ({
   };
 
   const manejarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (tipo == "fecha") {
-      console.log('Evento fecha', e);
-    }
     onChange?.(e.target.value, e);
   };
 
@@ -120,7 +123,7 @@ export const FormInput = ({
       onEnterKeyUp?.(evento.value, e);
     }
   };
-  
+
   return (
     <input
       type={tiposFormInput[tipo] ?? "text"}
