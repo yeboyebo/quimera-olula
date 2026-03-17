@@ -10,6 +10,7 @@ import { QBoton } from "../../atomos/qboton.tsx";
 import { QCheckbox } from "../../atomos/qcheckbox.tsx";
 import { QDateInterval } from "../../atomos/qdateinterval.tsx";
 import { QInput } from "../../atomos/qinput.tsx";
+import { Opcion, QMultiCheckbox } from "../../atomos/qmulticheckbox.tsx";
 import { QNumberInterval } from "../../atomos/qnumberinterval.tsx";
 import { MetaTabla } from "../../atomos/qtabla.tsx";
 import "./MaestroFiltrosActivoControlado.css";
@@ -18,6 +19,7 @@ type MetaCampoFiltro = {
   id: string;
   label: string;
   tipo?: TipoInput;
+  opciones?: Opcion[];
   filtro: (v: unknown) => ClausulaFiltro;
 };
 
@@ -71,10 +73,6 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
             const [desde, hasta] = valor as [number, number];
             return [columna.id, "<>", desde + "_" + hasta] as ClausulaFiltro;
           },
-          // id: columna.id,
-          // label: columna.cabecera,
-          // tipo: columna.tipo,
-          // filtro: (v) => [columna.id, "<>", v as string],
         };
         break;
       default:
@@ -115,6 +113,11 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
           f ? parseFloat(f) : undefined
         );
         break;
+      case "multiseleccion":
+        valores[campo] = Array.isArray(valores[campo])
+          ? valores[campo]
+          : [valores[campo]];
+        break;
       case "fecha":
         valores[campo] = new Date(Date.parse(valor_final as string));
         break;
@@ -123,16 +126,6 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
   return valores;
 };
-
-// Criteria: "fechaActual;fechaHasta"
-// Filtro: "mi_campo_fecha", "between", [date | null, date | null]
-// DateInterval = Filtro
-// Cada Date del DateInteval hay que pasar el valor como string
-
-// Modelo -> intervalo = [date | null, date | null]
-// Querystring > Filtro toDate
-// Filtro > Componente toString
-// Componte
 
 type MaestroFiltrosActivoControladoProps = {
   metaFiltro: MetaFiltro;
@@ -180,6 +173,16 @@ export const MaestroFiltrosActivoControlado = ({
               opcional={true}
             />
           );
+        case "multiseleccion":
+          return (
+            <QMultiCheckbox
+              key={campo.id}
+              {...uiProps(campo.id)}
+              opciones={campo.opciones as Opcion[]}
+              label={campo.label}
+              opcional={true}
+            />
+          );
         case "checkbox":
           return (
             <QCheckbox
@@ -204,7 +207,7 @@ export const MaestroFiltrosActivoControlado = ({
 
   const onBuscar = (): void => {
     const filtros = Object.entries(modelo).map(([id, valor]) => {
-      if (valor === undefined) return valor;
+      if (valor === undefined || valor === null) return valor;
 
       return metaFiltro.campos[id].filtro(valor);
     });

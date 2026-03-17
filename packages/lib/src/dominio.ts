@@ -287,8 +287,14 @@ export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => 
 
             return numero;
         }
+        case 'multiseleccion': {
+            if (valor === null || !valor.length || valor === "") return null;
+            if (valor.length === 1 && valor[0] === "") return null;
+
+            return valor;
+        }
         case 'intervalo_numeros': {
-            if (valor === null || !valor.length) {
+            if (valor === null || !valor.length || valor === "") {
                 return null;
             }
 
@@ -296,7 +302,7 @@ export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => 
             return [desde ? parseFloat(desde) : undefined, hasta ? parseFloat(hasta) : undefined]
         }
         case 'intervalo_fechas': {
-            if (valor === null || !valor.length) {
+            if (valor === null || !valor.length || valor === "") {
                 return null;
             }
 
