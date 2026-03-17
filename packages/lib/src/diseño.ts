@@ -78,7 +78,8 @@ export type TipoInput =
     | "moneda"
     | "autocompletar"
     | "selector"
-    | "intervalo_fechas";
+    | "intervalo_fechas"
+    | "intervalo_numeros";
 
 export type ValorCampoUI = string;
 

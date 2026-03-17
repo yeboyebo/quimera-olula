@@ -10,6 +10,7 @@ import { QBoton } from "../../atomos/qboton.tsx";
 import { QCheckbox } from "../../atomos/qcheckbox.tsx";
 import { QDateInterval } from "../../atomos/qdateinterval.tsx";
 import { QInput } from "../../atomos/qinput.tsx";
+import { QNumberInterval } from "../../atomos/qnumberinterval.tsx";
 import { MetaTabla } from "../../atomos/qtabla.tsx";
 import "./MaestroFiltrosActivoControlado.css";
 
@@ -65,8 +66,15 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
         campos[columna.id] = {
           id: columna.id,
           label: columna.cabecera,
-          tipo: columna.tipo,
-          filtro: (v) => [columna.id, "<>", v as string],
+          tipo: "intervalo_numeros",
+          filtro: (valor: unknown) => {
+            const [desde, hasta] = valor as [number, number];
+            return [columna.id, "<>", desde + "_" + hasta] as ClausulaFiltro;
+          },
+          // id: columna.id,
+          // label: columna.cabecera,
+          // tipo: columna.tipo,
+          // filtro: (v) => [columna.id, "<>", v as string],
         };
         break;
       default:
@@ -100,6 +108,11 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
       case "intervalo_fechas":
         valores[campo] = (valor_final as [string, string])?.map((f: string) =>
           f ? new Date(Date.parse(f)) : undefined
+        );
+        break;
+      case "intervalo_numeros":
+        valores[campo] = (valor_final as [string, string])?.map((f: string) =>
+          f ? parseFloat(f) : undefined
         );
         break;
       case "fecha":
@@ -153,6 +166,16 @@ export const MaestroFiltrosActivoControlado = ({
               key={campo.id}
               {...uiProps(campo.id)}
               tipo={"fecha"}
+              label={campo.label}
+              opcional={true}
+            />
+          );
+        case "intervalo_numeros":
+          return (
+            <QNumberInterval
+              key={campo.id}
+              {...uiProps(campo.id)}
+              tipo={"numero"}
               label={campo.label}
               opcional={true}
             />

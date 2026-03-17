@@ -47,6 +47,7 @@ const tiposFormInput = {
   autocompletar: "text",
   selector: "text",
   intervalo_fechas: "date",
+  intervalo_numeros: "number",
 } as const;
 
 export type FormInputProps = FormFieldProps & {
