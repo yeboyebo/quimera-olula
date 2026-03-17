@@ -43,9 +43,8 @@ export const QCheckbox = ({
   };
 
   // Convertir valor a boolean si viene como string
-  const valorBoolean = typeof valor === 'string' 
-    ? valor === 'true' || valor === '1' 
-    : valor;
+  const valorBoolean =
+    typeof valor === "string" ? valor === "true" || valor === "1" : valor;
 
   const inputAttrs = {
     nombre,
@@ -53,7 +52,7 @@ export const QCheckbox = ({
     opcional,
     checked: valorBoolean,
     tipo: "checkbox" as const,
-    onChange: manejarChange,
+    onChange: onChange ? manejarChange : undefined,
     ...props,
   };
 

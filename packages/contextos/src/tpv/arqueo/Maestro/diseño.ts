@@ -24,5 +24,6 @@ export const metaTablaArqueo: MetaTabla<CabeceraArqueoTpv> = [
     {
         id: "abierto",
         cabecera: "Abierto",
+        tipo: "booleano"
     },
 ];

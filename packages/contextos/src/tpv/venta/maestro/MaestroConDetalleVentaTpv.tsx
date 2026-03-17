@@ -24,13 +24,8 @@ type Layout = "TABLA" | "TARJETA";
 
 export const MaestroConDetalleVentaTpv = () => {
   const criteriaBaseVentas = useMemo(() => {
-    // const filtroPuntoVenta: ClausulaFiltro = [
-    //   "punto_venta_id",
-    //   miPuntoVentaLocal?.id ?? "",
-    // ];
     return {
       ...criteriaDefecto,
-      // filtro: [...criteriaDefecto.filtro, filtroPuntoVenta],
       orden: ["fecha", "DESC", "codigo", "DESC"],
     };
   }, []);
@@ -87,7 +82,6 @@ export const MaestroConDetalleVentaTpv = () => {
             </div>
             <Listado<VentaTpv>
               metaTabla={metaTablaFactura}
-              metaFiltro={true}
               criteria={ctx.ventas.criteria}
               modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
               tarjeta={TarjetaVentaTpv}
