@@ -1,16 +1,23 @@
+import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { CrearPedido } from "#/ventas/pedido/crear/CrearPedido.tsx";
 import { DetallePedido } from "#/ventas/pedido/detalle/DetallePedido.tsx";
 import { getMaquina } from "#/ventas/pedido/maestro/maquina.ts";
-import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
-import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  MetaFiltro,
+  getMetaFiltroDefecto,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { criteriaDefecto, formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import {
+  criteriaDefecto,
+  formatearFechaDate,
+  formatearMoneda,
+} from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useCallback, useEffect, useState } from "react";
@@ -20,18 +27,24 @@ import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
 
 type Layout = "TABLA" | "TARJETA";
 
-const FILTRO_TERMINADOS: ClausulaFiltro = ["estado_envio_palets", "<>", "completo"];
+const FILTRO_TERMINADOS: ClausulaFiltro = [
+  "estado_envio_palets",
+  "!",
+  "completo",
+];
+
+const metaTablaPedidoNrj = getMetaTablaPedidoNrj();
 
 const metaFiltroNrj: MetaFiltro = {
   campos: {
+    ...getMetaFiltroDefecto(metaTablaPedidoNrj).campos,
     estado_envio_palets: {
       id: "estado_envio_palets",
       label: "Mostrar terminados",
       tipo: "checkbox",
       filtro: (v) =>
-        v === "true"
-          ? (null as unknown as ClausulaFiltro)
-          : FILTRO_TERMINADOS,
+        v === "true" ? (null as unknown as ClausulaFiltro) : FILTRO_TERMINADOS,
+      fromClausula: (clausula) => (clausula ? "false" : "true"),
     },
   },
 };
@@ -43,7 +56,8 @@ const criteriaInicialNrj = {
 
 export const MaestroConDetallePedidoNrj = () => {
   const { id, criteria } = getUrlParams();
-  const criteriaBase = criteria.filtro.length > 0 ? criteria : criteriaInicialNrj;
+  const criteriaBase =
+    criteria.filtro.length > 0 ? criteria : criteriaInicialNrj;
 
   const [layout, setLayout] = useState<Layout>("TARJETA");
 
@@ -64,8 +78,6 @@ export const MaestroConDetallePedidoNrj = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const metaTablaPedido = getMetaTablaPedidoNrj();
-
   return (
     <div className="Pedido">
       <MaestroDetalle<PedidoNrj>
@@ -84,7 +96,7 @@ export const MaestroConDetallePedidoNrj = () => {
               </QBoton>
             </div>
             <Listado<PedidoNrj>
-              metaTabla={metaTablaPedido}
+              metaTabla={metaTablaPedidoNrj}
               metaFiltro={metaFiltroNrj}
               criteriaInicial={criteriaInicialNrj}
               criteria={ctx.pedidos.criteria}
