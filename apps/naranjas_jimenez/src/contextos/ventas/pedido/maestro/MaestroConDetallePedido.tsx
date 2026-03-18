@@ -1,28 +1,24 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { CrearPedido } from "#/ventas/pedido/crear/CrearPedido.tsx";
 import { DetallePedido } from "#/ventas/pedido/detalle/DetallePedido.tsx";
-import { getMaquina } from "#/ventas/pedido/maestro/maquina.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import {
-  MetaFiltro,
-  getMetaFiltroDefecto,
-} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import {
   criteriaDefecto,
   formatearFechaDate,
-  formatearMoneda,
 } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useCallback, useEffect, useState } from "react";
 import { PedidoNrj } from "../diseño.ts";
+import { FiltrosPedidoNrj } from "./FiltrosPedidoNrj.tsx";
 import "./MaestroConDetallePedido.css";
+import { getMaquina } from "./maquina.ts";
 import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
 
 type Layout = "TABLA" | "TARJETA";
@@ -34,20 +30,6 @@ const FILTRO_TERMINADOS: ClausulaFiltro = [
 ];
 
 const metaTablaPedidoNrj = getMetaTablaPedidoNrj();
-
-const metaFiltroNrj: MetaFiltro = {
-  campos: {
-    ...getMetaFiltroDefecto(metaTablaPedidoNrj).campos,
-    estado_envio_palets: {
-      id: "estado_envio_palets",
-      label: "Mostrar terminados",
-      tipo: "checkbox",
-      filtro: (v) =>
-        v === "true" ? (null as unknown as ClausulaFiltro) : FILTRO_TERMINADOS,
-      fromClausula: (clausula) => (clausula ? "false" : "true"),
-    },
-  },
-};
 
 const criteriaInicialNrj = {
   ...criteriaDefecto,
@@ -67,6 +49,31 @@ export const MaestroConDetallePedidoNrj = () => {
   });
 
   useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
+
+  // Oculta FILTRO_TERMINADOS del criteria visual (para el contador del panel de filtros)
+  // El marcador ["estado_envio_palets","!","true"] sí se muestra (indica checkbox activo)
+  const criteriaParaListado = {
+    ...ctx.pedidos.criteria,
+    filtro: ctx.pedidos.criteria.filtro.filter(
+      (f) => !(f[0] === "estado_envio_palets" && f[2] === "completo")
+    ),
+  };
+
+  // Re-inyecta FILTRO_TERMINADOS o el marcador "show all" en el criteria real
+  const conFiltroTerminados = (payload: typeof ctx.pedidos.criteria) => {
+    const hasMostrar = payload.filtro.some(
+      (f) => f[0] === "estado_envio_palets" && f[2] === "fake"
+    );
+    const sinEstado = payload.filtro.filter(
+      (f) => f[0] !== "estado_envio_palets"
+    );
+    return {
+      ...payload,
+      filtro: hasMostrar
+        ? [...sinEstado, ["estado_envio_palets", "!", "fake"] as ClausulaFiltro]
+        : [...sinEstado, FILTRO_TERMINADOS],
+    };
+  };
 
   const cambiarLayout = useCallback(
     () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
@@ -95,11 +102,27 @@ export const MaestroConDetallePedidoNrj = () => {
                 Nuevo Pedido
               </QBoton>
             </div>
+            <FiltrosPedidoNrj
+              filtro={criteriaParaListado.filtro}
+              onFiltroChanged={(filtro) =>
+                emitir(
+                  "criteria_cambiado",
+                  conFiltroTerminados({
+                    ...ctx.pedidos.criteria,
+                    filtro,
+                    paginacion: {
+                      ...ctx.pedidos.criteria.paginacion,
+                      pagina: 1,
+                    },
+                  })
+                )
+              }
+            />
             <Listado<PedidoNrj>
               metaTabla={metaTablaPedidoNrj}
-              metaFiltro={metaFiltroNrj}
-              criteriaInicial={criteriaInicialNrj}
-              criteria={ctx.pedidos.criteria}
+              metaFiltro={{ campos: {} }}
+              criteriaInicial={criteriaDefecto}
+              criteria={criteriaParaListado}
               modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
               tarjeta={TarjetaPedidoNrj}
               entidades={ctx.pedidos.lista as PedidoNrj[]}
@@ -107,10 +130,10 @@ export const MaestroConDetallePedidoNrj = () => {
               seleccionada={ctx.pedidos.activo}
               onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
               onCriteriaChanged={(payload) =>
-                emitir("criteria_cambiado", payload)
+                emitir("criteria_cambiado", conFiltroTerminados(payload))
               }
               onSiguientePagina={(payload) =>
-                emitir("siguiente_pagina", payload)
+                emitir("siguiente_pagina", conFiltroTerminados(payload))
               }
             />
           </>
@@ -157,22 +180,23 @@ const estadoParcial = (
 const TarjetaPedidoNrj = (pedido: PedidoNrj) => {
   return (
     <div className="tarjeta-pedido" key={pedido.id}>
-      <div className="tarjeta-pedido-izquierda">
-        <ColumnaEstadoTabla
-          estados={{
-            completo: estadoCompleto,
-            pendiente: estadoPendiente,
-            parcial: estadoParcial,
-          }}
-          estadoActual={pedido.estado_envio_palets}
-        />
-        <div className="tarjeta-pedido-izquierda-textos">
-          <div>{`${pedido.codigo} - ${formatearFechaDate(pedido.fecha)}`}</div>
-          <div>{pedido.nombre_cliente}</div>
+      <div className="tarjeta-pedido-contenido">
+        <div className="tarjeta-pedido-fila">
+          <span>{pedido.codigo}</span>
+          <div className="tarjeta-pedido-derecha">
+            <span>{formatearFechaDate(pedido.fecha)}</span>
+            <ColumnaEstadoTabla
+              estados={{
+                completo: estadoCompleto,
+                pendiente: estadoPendiente,
+                parcial: estadoParcial,
+              }}
+              estadoActual={pedido.estado_envio_palets}
+            />
+          </div>
         </div>
-      </div>
-      <div className="tarjeta-pedido-derecha">
-        {`${formatearMoneda(pedido.total, pedido.divisa_id)}`}
+        <div>{`${pedido.cliente_id} - ${pedido.nombre_cliente}`}</div>
+        <div>{pedido.agente_id ? `${pedido.agente_id} - ${pedido.nombre_agente}` : "Sin agente"}</div>
       </div>
     </div>
   );

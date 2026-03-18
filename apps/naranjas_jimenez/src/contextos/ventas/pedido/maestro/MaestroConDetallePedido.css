@@ -1,22 +1,25 @@
 .tarjeta-pedido {
     display: flex;
-    justify-content: space-between;
-}
-
-.tarjeta-pedido-izquierda {
-    display: flex;
-    align-items: center;
-    justify-content: left;
+    align-items: flex-start;
     gap: 0.5rem;
 }
 
-.tarjeta-pedido-izquierda-textos {
+.tarjeta-pedido-contenido {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    gap: 0.2rem;
+}
+
+.tarjeta-pedido-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 .tarjeta-pedido-derecha {
     display: flex;
-    align-items: center;
-    justify-content: right;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
 }
