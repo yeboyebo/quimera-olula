@@ -6,9 +6,11 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
+import { criteriaDefecto, formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
+import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useCallback, useEffect, useState } from "react";
@@ -18,14 +20,36 @@ import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
 
 type Layout = "TABLA" | "TARJETA";
 
+const FILTRO_TERMINADOS: ClausulaFiltro = ["estado_envio_palets", "<>", "completo"];
+
+const metaFiltroNrj: MetaFiltro = {
+  campos: {
+    estado_envio_palets: {
+      id: "estado_envio_palets",
+      label: "Mostrar terminados",
+      tipo: "checkbox",
+      filtro: (v) =>
+        v === "true"
+          ? (null as unknown as ClausulaFiltro)
+          : FILTRO_TERMINADOS,
+    },
+  },
+};
+
+const criteriaInicialNrj = {
+  ...criteriaDefecto,
+  filtro: [FILTRO_TERMINADOS],
+};
+
 export const MaestroConDetallePedidoNrj = () => {
   const { id, criteria } = getUrlParams();
+  const criteriaBase = criteria.filtro.length > 0 ? criteria : criteriaInicialNrj;
 
   const [layout, setLayout] = useState<Layout>("TARJETA");
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    pedidos: listaActivaEntidadesInicial<PedidoNrj>(id, criteria),
+    pedidos: listaActivaEntidadesInicial<PedidoNrj>(id, criteriaBase),
   });
 
   useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
@@ -36,7 +60,7 @@ export const MaestroConDetallePedidoNrj = () => {
   );
 
   useEffect(() => {
-    emitir("recarga_de_pedidos_solicitada", ctx.pedidos.criteria);
+    emitir("recarga_de_pedidos_solicitada", criteriaInicialNrj);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -61,6 +85,8 @@ export const MaestroConDetallePedidoNrj = () => {
             </div>
             <Listado<PedidoNrj>
               metaTabla={metaTablaPedido}
+              metaFiltro={metaFiltroNrj}
+              criteriaInicial={criteriaInicialNrj}
               criteria={ctx.pedidos.criteria}
               modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
               tarjeta={TarjetaPedidoNrj}
