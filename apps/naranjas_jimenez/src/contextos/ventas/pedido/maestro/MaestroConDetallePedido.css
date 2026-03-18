@@ -1,0 +1,22 @@
+.tarjeta-pedido {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tarjeta-pedido-izquierda {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 0.5rem;
+}
+
+.tarjeta-pedido-izquierda-textos {
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta-pedido-derecha {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
