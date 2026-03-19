@@ -6,6 +6,7 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QIcono } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import {
@@ -14,14 +15,12 @@ import {
 } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PedidoNrj } from "../diseño.ts";
 import { FiltrosPedidoNrj } from "./FiltrosPedidoNrj.tsx";
 import "./MaestroConDetallePedido.css";
 import { getMaquina } from "./maquina.ts";
 import { getMetaTablaPedidoNrj } from "./metatabla_pedido.tsx";
-
-type Layout = "TABLA" | "TARJETA";
 
 const FILTRO_TERMINADOS: ClausulaFiltro = [
   "estado_envio_palets",
@@ -41,7 +40,7 @@ export const MaestroConDetallePedidoNrj = () => {
   const criteriaBase =
     criteria.filtro.length > 0 ? criteria : criteriaInicialNrj;
 
-  const [layout, setLayout] = useState<Layout>("TARJETA");
+  const esMovil = useEsMovil();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -75,11 +74,6 @@ export const MaestroConDetallePedidoNrj = () => {
     };
   };
 
-  const cambiarLayout = useCallback(
-    () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
-    [layout, setLayout]
-  );
-
   useEffect(() => {
     emitir("recarga_de_pedidos_solicitada", criteriaInicialNrj);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,12 +86,6 @@ export const MaestroConDetallePedidoNrj = () => {
           <>
             <h2>Pedidos</h2>
             <div className="maestro-botones">
-              <QBoton
-                texto={
-                  layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"
-                }
-                onClick={cambiarLayout}
-              />
               <QBoton onClick={() => emitir("crear_pedido_solicitado")}>
                 Nuevo Pedido
               </QBoton>
@@ -123,7 +111,7 @@ export const MaestroConDetallePedidoNrj = () => {
               metaFiltro={{ campos: {} }}
               criteriaInicial={criteriaDefecto}
               criteria={criteriaParaListado}
-              modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+              modo={esMovil ? "tarjetas" : "tabla"}
               tarjeta={TarjetaPedidoNrj}
               entidades={ctx.pedidos.lista as PedidoNrj[]}
               totalEntidades={ctx.pedidos.total}
@@ -139,6 +127,7 @@ export const MaestroConDetallePedidoNrj = () => {
           </>
         }
         Detalle={<DetallePedido id={ctx.pedidos.activo} publicar={emitir} />}
+        layout={esMovil ? "TARJETA" : "TABLA"}
         seleccionada={ctx.pedidos.activo}
       />
 
