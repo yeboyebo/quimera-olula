@@ -14,6 +14,7 @@ export const FiltrosPedidoNrj = ({ filtro, onFiltroChanged }: FiltrosPedidoNrjPr
   const [mostrar, setMostrar] = useState(false);
   const [fecha, setFecha] = useState<[string, string]>(["", ""]);
   const [clienteId, setClienteId] = useState<string>("");
+  const [clienteNombre, setClienteNombre] = useState<string>("");
   const [mostrarTerminados, setMostrarTerminados] = useState(false);
 
   useEffect(() => {
@@ -80,7 +81,11 @@ export const FiltrosPedidoNrj = ({ filtro, onFiltroChanged }: FiltrosPedidoNrjPr
             label="Cliente"
             nombre="cliente_id"
             valor={clienteId}
-            onChange={(opcion) => setClienteId(opcion?.valor ?? "")}
+            descripcion={clienteNombre}
+            onChange={(opcion) => {
+              setClienteId(opcion?.valor ?? "");
+              setClienteNombre(opcion?.descripcion ?? "");
+            }}
           />
           <QCheckbox
             nombre="mostrar_terminados"

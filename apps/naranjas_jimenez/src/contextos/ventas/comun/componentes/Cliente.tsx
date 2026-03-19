@@ -1,45 +1,44 @@
-import { QSelect } from "@olula/componentes/index.js";
-import { useEffect, useState } from "react";
+import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { Filtro } from "@olula/lib/diseño.ts";
 import { getClientes } from "#/ventas/cliente/infraestructura.ts";
 
 interface ClienteProps {
+  descripcion?: string;
   valor: string;
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
-  ref?: React.RefObject<HTMLInputElement | null>;
   onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
-type OpcionCliente = {
-  valor: string;
-  descripcion: string;
-};
-
 export const Cliente = ({
+  descripcion = "",
   valor,
   nombre = "cliente_id",
   label = "Cliente",
+  deshabilitado = false,
   onChange,
   ...props
 }: ClienteProps) => {
-  const [opcionesCliente, setOpcionesCliente] = useState<OpcionCliente[]>([]);
-
-  useEffect(() => {
-    const cargarOpcionesCliente = async () => {
-      const { datos } = await getClientes([], [], { pagina: 1, limite: 1000 });
-      setOpcionesCliente(datos.map((cliente) => ({ valor: cliente.id, descripcion: cliente.nombre })));
-    };
-    cargarOpcionesCliente();
-  }, []);
+  const obtenerOpciones = async (texto: string) => {
+    const { datos } = await getClientes(
+      ["nombre", "~", texto] as unknown as Filtro,
+      ["id"],
+      { pagina: 1, limite: 10 }
+    );
+    if (!Array.isArray(datos)) return [];
+    return datos.map((cliente) => ({ valor: cliente.id, descripcion: cliente.nombre }));
+  };
 
   return (
-    <QSelect
+    <QAutocompletar
       label={label}
       nombre={nombre}
-      valor={valor}
       onChange={onChange}
-      opciones={opcionesCliente}
+      valor={valor}
+      obtenerOpciones={obtenerOpciones}
+      descripcion={descripcion}
+      deshabilitado={deshabilitado}
       {...props}
     />
   );
