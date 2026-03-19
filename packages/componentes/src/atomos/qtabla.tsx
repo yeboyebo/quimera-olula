@@ -13,6 +13,8 @@ import "./qtabla.css";
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
+  prioridad?: "alta" | "media" | "baja";
+  esTitulo?: boolean;
   tipo?:
     | "texto"
     | "numero"

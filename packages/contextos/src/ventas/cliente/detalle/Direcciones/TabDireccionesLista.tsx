@@ -1,6 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { boolAString, direccionCompleta } from "@olula/lib/dominio.ts";
 import { DirCliente } from "../../diseño.ts";
 import { puedoMarcarDireccionFacturacion } from "./dominio.ts";
@@ -63,14 +64,15 @@ export const TabDireccionesLista = ({
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 
-      <QTabla
+      <ListadoSemiControlado
         metaTabla={metaTablaDirecciones}
-        datos={direcciones}
+        entidades={direcciones}
+        totalEntidades={direcciones.length}
         cargando={cargando}
-        seleccionadaId={seleccionada?.id}
+        seleccionada={seleccionada}
         onSeleccion={(direccion) => emitir("direccion_seleccionada", direccion)}
-        orden={["id", "ASC"]}
-        onOrdenar={() => null}
+        criteriaInicial={criteriaDefecto}
+        onCriteriaChanged={() => null}
       />
     </>
   );

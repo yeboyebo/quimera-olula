@@ -7,6 +7,7 @@ export * from "./atomos/qicono.tsx";
 export * from "./atomos/qinput.tsx";
 export * from "./atomos/qselect.tsx";
 export * from "./atomos/qtabla.tsx";
+export * from "./atomos/qtarjeta_generica.tsx";
 export * from "./atomos/qtarjetas.tsx";
 export * from "./atomos/qtextarea.tsx";
 
