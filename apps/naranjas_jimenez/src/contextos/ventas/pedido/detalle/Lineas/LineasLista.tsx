@@ -1,31 +1,115 @@
 import { LineasListaProps } from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QBoton, QModal } from "@olula/componentes/index.js";
+import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { useState } from "react";
 import { LineaPedidoNrj } from "../../diseño.ts";
 import { formateaCategoria, formateaEstado } from "../../dominio.ts";
+import "./LineasLista.css";
 
 export const LineasListaNrj = ({
   lineas,
   seleccionada,
   publicar,
 }: LineasListaProps<LineaPedidoNrj>) => {
+  const esMovil = useEsMovil();
+
   const setSeleccionada = (linea: LineaPedidoNrj) => {
     publicar("linea_seleccionada", linea);
   };
 
   return (
     <>
-      <QTabla
-        metaTabla={getMetaTablaLineas()}
-        datos={lineas}
-        cargando={false}
-        seleccionadaId={seleccionada}
-        onSeleccion={setSeleccionada}
-        orden={["id", "ASC"]}
-        onOrdenar={(_: string) => null}
-      />
+      {!esMovil ? (
+        <QTabla
+          metaTabla={getMetaTablaLineas()}
+          datos={lineas as LineaPedidoNrj[]}
+          cargando={false}
+          seleccionadaId={seleccionada}
+          onSeleccion={setSeleccionada}
+          orden={["id", "ASC"]}
+          onOrdenar={(_: string) => null}
+        />
+      ) : (
+        <div className="lineas-tarjetas">
+          {(lineas as LineaPedidoNrj[]).map((linea) => (
+            <TarjetaLineaNrj
+              key={linea.id}
+              linea={linea}
+              seleccionada={seleccionada === linea.id}
+              onClick={() => setSeleccionada(linea)}
+            />
+          ))}
+        </div>
+      )}
     </>
+  );
+};
+
+const TarjetaLineaNrj = ({
+  linea,
+  seleccionada,
+  onClick,
+}: {
+  linea: LineaPedidoNrj;
+  seleccionada: boolean;
+  onClick: () => void;
+}) => (
+  <div
+    className={`tarjeta-linea${seleccionada ? " tarjeta-linea--seleccionada" : ""}`}
+    onClick={onClick}
+  >
+    <div className="tarjeta-linea-estado">
+      {formateaEstado(String(linea.estado_palets ?? ""))}
+    </div>
+    <div className="tarjeta-linea-cuerpo">
+      <div className="tarjeta-linea-principal">
+        <span className="tarjeta-linea-variedad">{linea.descVariedad}</span>
+        <span className="tarjeta-linea-marca">{linea.descMarca}</span>
+        <span className="tarjeta-linea-calibre">{linea.descCalibre}</span>
+        <span className="tarjeta-linea-categoria">{formateaCategoria(linea.categoria)}</span>
+      </div>
+      <div className="tarjeta-linea-secundario">
+        <span>{linea.descPalet}</span>
+        <span>{linea.descEnvase}</span>
+      </div>
+    </div>
+    <div className="tarjeta-linea-cantidades">
+      <AsignacionesLinea linea={linea} />
+      <span className="tarjeta-linea-total">{linea.cantidadEnvases}</span>
+    </div>
+  </div>
+);
+
+const AsignacionesLinea = ({ linea }: { linea: LineaPedidoNrj }) => {
+  const [mostrando, setMostrando] = useState(false);
+
+  return linea.cantidadEnvasesAsignados ? (
+    <div>
+      <QBoton
+        texto={`${linea.cantidadEnvasesAsignados}`}
+        tamaño="pequeño"
+        onClick={() => setMostrando(true)}
+      />
+      <QModal
+        abierto={mostrando}
+        nombre="mostrar"
+        onCerrar={() => setMostrando(false)}
+      >
+        <div className="CrearLinea">
+          <h2>Asignaciones</h2>
+          <QTabla
+            metaTabla={getMetaTablaPalets()}
+            datos={linea.palets}
+            cargando={false}
+            orden={["id", "ASC"]}
+            onOrdenar={(_: string) => null}
+          />
+        </div>
+      </QModal>
+    </div>
+  ) : (
+    <span>0</span>
   );
 };
 
@@ -41,26 +125,14 @@ const getMetaTablaLineas = () => {
       render: (linea: LineaPedidoNrj) =>
         formateaEstado(String(linea.estado_palets ?? "")),
     },
-    /*     {
-      id: "idVariedad",
-      cabecera: "Variedad",
-    }, */
     {
       id: "descVariedad",
       cabecera: "Variedad",
     },
-    /*     {
-      id: "idMarca",
-      cabecera: "Marca",
-    }, */
     {
       id: "descMarca",
       cabecera: "Marca",
     },
-    /*     {
-      id: "idCalibre",
-      cabecera: "Calibre",
-    }, */
     {
       id: "descCalibre",
       cabecera: "Calibre",
@@ -70,18 +142,10 @@ const getMetaTablaLineas = () => {
       cabecera: "Categoría",
       render: (linea: LineaPedidoNrj) => formateaCategoria(linea.categoria),
     },
-    /*     {
-      id: "idTipoPalet",
-      cabecera: "Palet",
-    }, */
     {
       id: "descPalet",
       cabecera: "Palet",
     },
-    /*     {
-      id: "idEnvase",
-      cabecera: "Envase",
-    }, */
     {
       id: "descEnvase",
       cabecera: "Envase",
@@ -98,39 +162,6 @@ const getMetaTablaLineas = () => {
       render: (linea: LineaPedidoNrj) => AsignacionesLinea({ linea }),
     },
   ];
-};
-
-const AsignacionesLinea = ({ linea }: { linea: LineaPedidoNrj }) => {
-  const [mostrando, setMostrando] = useState(false);
-
-  return linea.cantidad_envases_asignados ? (
-    <div>
-      <QBoton
-        texto={`${linea.cantidad_envases_asignados}`}
-        tamaño="pequeño"
-        onClick={() => setMostrando(true)}
-      />
-      <QModal
-        abierto={mostrando}
-        nombre="mostrar"
-        onCerrar={() => setMostrando(false)}
-      >
-        <div className="CrearLinea">
-          <h2>Asignaciones</h2>
-
-          <QTabla
-            metaTabla={getMetaTablaPalets()}
-            datos={linea.palets}
-            cargando={false}
-            orden={["id", "ASC"]}
-            onOrdenar={(_: string) => null}
-          />
-        </div>
-      </QModal>
-    </div>
-  ) : (
-    0
-  );
 };
 
 const getMetaTablaPalets = () => {
