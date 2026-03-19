@@ -9,10 +9,7 @@ import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
-import {
-  criteriaDefecto,
-  formatearFechaDate,
-} from "@olula/lib/dominio.js";
+import { criteriaDefecto, formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -108,7 +105,7 @@ export const MaestroConDetallePedidoNrj = () => {
             />
             <Listado<PedidoNrj>
               metaTabla={metaTablaPedidoNrj}
-              metaFiltro={{ campos: {} }}
+              metaFiltro={{}}
               criteriaInicial={criteriaDefecto}
               criteria={criteriaParaListado}
               modo={esMovil ? "tarjetas" : "tabla"}
@@ -185,7 +182,11 @@ const TarjetaPedidoNrj = (pedido: PedidoNrj) => {
           </div>
         </div>
         <div>{`${pedido.cliente_id} - ${pedido.nombre_cliente}`}</div>
-        <div>{pedido.agente_id ? `${pedido.agente_id} - ${pedido.nombre_agente}` : "Sin agente"}</div>
+        <div>
+          {pedido.agente_id
+            ? `${pedido.agente_id} - ${pedido.nombre_agente}`
+            : "Sin agente"}
+        </div>
       </div>
     </div>
   );
