@@ -1,0 +1,70 @@
+.lineas-cabecera {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.25rem 0;
+}
+
+.lineas-tarjetas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tarjeta-linea {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-borde, #ddd);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tarjeta-linea:hover {
+    background-color: var(--color-hover, #f5f5f5);
+}
+
+.tarjeta-linea--seleccionada {
+    background-color: var(--color-seleccionado, #e8f0fe);
+    border-color: var(--color-primario, #4a90e2);
+}
+
+.tarjeta-linea-estado {
+    flex-shrink: 0;
+}
+
+.tarjeta-linea-cuerpo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.tarjeta-linea-principal {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tarjeta-linea-variedad {
+    font-weight: 600;
+}
+
+.tarjeta-linea-secundario {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-texto-secundario, #666);
+}
+
+.tarjeta-linea-cantidades {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+    flex-shrink: 0;
+}
+
+.tarjeta-linea-total {
+    font-weight: 600;
+}

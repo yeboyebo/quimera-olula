@@ -16,3 +16,10 @@ export const recargarPedidos: ProcesarPedidos = async (contexto, payload) => {
 
     return Pedidos.recargar(contexto, resultado);
 }
+
+export const ampliarPedidos: ProcesarPedidos = async (contexto, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getPedidos(criteria.filtro, criteria.orden, criteria.paginacion);
+
+    return Pedidos.ampliar(contexto, resultado);
+}

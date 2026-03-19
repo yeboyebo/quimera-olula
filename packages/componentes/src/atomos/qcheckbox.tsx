@@ -7,7 +7,7 @@ import {
 } from "./_forminput.tsx";
 import "./qcheckbox.css";
 
-type QCheckBoxProps = Omit<FormInputProps, "valor"> & {
+export type QCheckboxProps = Omit<FormInputProps, "valor"> & {
   valor: boolean | string;
 };
 
@@ -24,7 +24,7 @@ export const QCheckbox = ({
   condensado,
   onChange,
   ...props
-}: QCheckBoxProps) => {
+}: QCheckboxProps) => {
   const attrs = {
     nombre,
     erroneo,
