@@ -23,9 +23,7 @@ type MetaCampoFiltro = {
   filtro: (v: unknown) => ClausulaFiltro;
 };
 
-export type MetaFiltro = {
-  campos: Record<string, MetaCampoFiltro>;
-};
+export type MetaFiltro = Record<string, MetaCampoFiltro>;
 
 export const getMetaFiltroDefecto = <T extends Entidad>(
   metaTabla: MetaTabla<T>
@@ -86,7 +84,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
     }
   }
 
-  return { campos };
+  return campos;
 };
 
 export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
@@ -100,9 +98,9 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
     const valor_final = valores[campo];
 
-    if (!meta.campos[campo]) continue;
+    if (!meta[campo]) continue;
 
-    switch (meta.campos[campo].tipo) {
+    switch (meta[campo].tipo) {
       case "intervalo_fechas":
         valores[campo] = (valor_final as [string, string])?.map((f: string) =>
           f ? new Date(Date.parse(f)) : undefined
@@ -151,7 +149,7 @@ export const MaestroFiltrosActivoControlado = ({
   const [mostrar, setMostar] = useState(false);
 
   const renderFiltros = () => {
-    return Object.entries(metaFiltro.campos).map(([_, campo]) => {
+    return Object.entries(metaFiltro).map(([_, campo]) => {
       switch (campo.tipo) {
         case "intervalo_fechas":
           return (
@@ -209,7 +207,7 @@ export const MaestroFiltrosActivoControlado = ({
     const filtros = Object.entries(modelo).map(([id, valor]) => {
       if (valor === undefined || valor === null) return valor;
 
-      return metaFiltro.campos[id].filtro(valor);
+      return metaFiltro[id].filtro(valor);
     });
 
     onFiltroChanged(filtros.filter((v) => !!v));
@@ -220,7 +218,7 @@ export const MaestroFiltrosActivoControlado = ({
     onFiltroChanged(filtroInicial);
   };
 
-  if (!Object.keys(metaFiltro.campos).length) return;
+  if (!Object.keys(metaFiltro).length) return;
 
   if (!mostrar)
     return (
