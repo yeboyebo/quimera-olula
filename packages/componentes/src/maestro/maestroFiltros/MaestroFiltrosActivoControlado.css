@@ -1,15 +1,24 @@
 .MaestroFiltrosControlado {
-    padding: 0.5rem 0;
-    max-width: 275px;
+    margin: var(--espaciado-xs);
+    max-width: 350px;
 
-    quimera-input,
-    quimera-date,
-    quimera-checkbox {
-        grid-column: 1 / span 12;
+    .campo-filtro {
+        display: flex;
+        gap: 0.5rem;
 
         label {
             text-align: left;
         }
+    }
+
+    quimera-boton {
+        align-self: flex-end;
+    }
+
+    .interval {
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
     }
 
     footer {
