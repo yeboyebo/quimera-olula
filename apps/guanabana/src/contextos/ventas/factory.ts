@@ -10,5 +10,5 @@ export class FactoryVentasGUA extends FactoryVentasOlula {
     static PedidoTabDatos = TabDatosGua
     static api_payloadPatchPedido = payloadPatchPedidoGUA
     static metaPedido = metaPedidoGUA
-    static metaTablaPedido = metaTablaPedidoGUA
+    static metaTablaPedido = () => metaTablaPedidoGUA
 }

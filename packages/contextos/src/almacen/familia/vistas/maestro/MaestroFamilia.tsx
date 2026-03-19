@@ -1,6 +1,6 @@
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import {
-  ListadoActivoControlado,
+  Listado,
   MaestroDetalle,
   QBoton,
 } from "@olula/componentes/index.ts";
@@ -39,7 +39,7 @@ export const MaestroFamilia = () => {
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
-            <ListadoActivoControlado<Familia>
+            <Listado<Familia>
               metaTabla={metaTablaFamilia}
               criteria={ctx.familias.criteria}
               modo="tabla"

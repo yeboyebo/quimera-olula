@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroPedido, EstadoMaestroPedido } from "./diseño.ts";
-import { Pedidos, recargarPedidos } from "./dominio.ts";
+import { Pedidos, ampliarPedidos, recargarPedidos } from "./dominio.ts";
 
 
 export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedido> = () => {
@@ -22,6 +22,8 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
             recarga_de_pedidos_solicitada: recargarPedidos,
 
             criteria_cambiado: [Pedidos.filtrar, recargarPedidos],
+
+            siguiente_pagina: [Pedidos.filtrar, ampliarPedidos],
 
             crear_pedido_solicitado: "CREANDO_PEDIDO",
         },

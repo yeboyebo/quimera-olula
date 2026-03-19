@@ -1,7 +1,7 @@
 import { agenteActivo, puntoVentaLocal } from "#/tpv/comun/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { ListadoActivoControlado } from "@olula/componentes/maestro/ListadoActivoControlado.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -29,6 +29,7 @@ export const MaestroConDetalleArqueoTpv = () => {
 
   useEffect(() => {
     emitir("recarga_de_arqueos_solicitada", ctx.arqueos.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -44,9 +45,8 @@ export const MaestroConDetalleArqueoTpv = () => {
                 Abrir arqueo
               </QBoton>
             </div>
-            <ListadoActivoControlado<CabeceraArqueoTpv>
+            <Listado<CabeceraArqueoTpv>
               metaTabla={metaTablaArqueo}
-              metaFiltro={true}
               criteria={ctx.arqueos.criteria}
               modo={"tabla"}
               entidades={ctx.arqueos.lista}

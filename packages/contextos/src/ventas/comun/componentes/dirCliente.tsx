@@ -6,6 +6,7 @@ interface DireccionesProps {
   clienteId: string | undefined;
   valor?: string;
   nombre?: string;
+  label?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -13,6 +14,7 @@ export const DirCliente = ({
   clienteId,
   valor,
   nombre = "direccion_id",
+  label = "Dirección",
   onChange,
   ...props
 }: DireccionesProps) => {
@@ -41,7 +43,7 @@ export const DirCliente = ({
   return (
     <QSelect
       {...props}
-      label="Dirección"
+      label={label}
       nombre={nombre}
       valor={valor}
       opciones={opcionesDireccion}

@@ -6,17 +6,21 @@ type QModalProps = {
   nombre: string;
   abierto?: boolean;
   onCerrar?: () => void;
+  pantallaCompletaMovil?: boolean;
 };
 
 export const QModal = ({
   nombre,
   abierto = false,
   onCerrar = () => {},
+  pantallaCompletaMovil = true,
   children,
 }: PropsWithChildren<QModalProps>) => {
   const refModal = useRef<HTMLDialogElement>(null);
   const cerradoPorEstadoRef = useRef(false);
-  const attrs = { nombre };
+  const attrs = pantallaCompletaMovil
+    ? { nombre, "data-pantalla-completa-movil": "" }
+    : { nombre };
 
   useEffect(() => {
     const modal = refModal.current;

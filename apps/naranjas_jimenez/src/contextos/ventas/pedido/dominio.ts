@@ -1,6 +1,8 @@
 export const formateaCategoria = (categoria: string) => categoria + "ª"
 
+import { pedidoVacio } from "#/ventas/pedido/detalle/dominio.ts";
 import { QIcono } from "@olula/componentes/index.js";
+import { PedidoNrj } from "./diseño.ts";
 
 
 
@@ -48,3 +50,11 @@ export const formateaEstado = (estado: string) => {
 
     }
 }
+
+export const pedidoVacioNrj = (): PedidoNrj => ({
+    ...pedidoVacio(),
+    portes_cliente: false,
+    transportista_id: "",
+    estado_envio_palets: "1",
+})
+

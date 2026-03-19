@@ -7,3 +7,4 @@ export type ItemListaVariedad = {
 
 
 export type GetItemsListaVariedad = (filtro: Filtro, orden: Orden) => Promise<ItemListaVariedad[]>;
+export type GetItemsListaSeleccionVariedad = () => Promise<ItemListaVariedad[]>;

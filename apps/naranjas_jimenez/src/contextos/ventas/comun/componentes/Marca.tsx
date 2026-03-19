@@ -1,43 +1,50 @@
-import {
-  QAutocompletar,
-  QAutocompletarProps,
-} from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Criteria } from "@olula/lib/diseño.ts";
-import { getItemsListaMarca } from "../../marca/infraestructura.ts";
+import { QSelect } from "@olula/componentes/index.js";
+import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { useEffect, useState } from "react";
+import { ItemListaMarca } from "../../marca/diseño.ts";
+import { getItemsListaSeleccionMarca } from "../../marca/infraestructura.ts";
 
-type MarcaProps = Omit<QAutocompletarProps, "obtenerOpciones">;
+type MarcaProps = Omit<QAutocompletarProps, "obtenerOpciones"> & {
+  idVariedad?: string;
+};
 
 export const Marca = ({
-  descripcion = "",
   valor,
+  idVariedad,
   nombre = "marca",
   label = "Marca",
   onChange,
   ...props
 }: MarcaProps) => {
-  const obtenerOpciones = async (texto: string) => {
-    const criteria: Criteria = {
-      filtro: [["descripcion", "~", texto]],
-      orden: ["id"],
-      paginacion: { limite: 10, pagina: 1 },
-    };
+  const [opcionesMarca, setOpcionesMarca] = useState<ItemListaMarca[]>([]);
 
-    const marcaes = await getItemsListaMarca(criteria.filtro, criteria.orden);
+  useEffect(() => {
+    if (!idVariedad) {
+      setOpcionesMarca([]);
+      return;
+    }
+    getItemsListaSeleccionMarca(idVariedad).then(setOpcionesMarca);
+  }, [idVariedad]);
 
-    return marcaes.map((marca) => ({
-      valor: marca.id,
-      descripcion: marca.descripcion,
-    }));
+  const opciones = opcionesMarca.map((item) => ({ valor: item.id, descripcion: item.descripcion }));
+
+  const handleChange = (opcion: { valor: string; descripcion: string } | null, e: React.ChangeEvent<HTMLElement>) => {
+    if (!opcion) {
+      onChange?.(null, e);
+      return;
+    }
+    const item = opcionesMarca.find((i) => i.id === opcion.valor);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange?.({ ...opcion, idCategoria: item?.idCategoria } as any, e);
   };
 
   return (
-    <QAutocompletar
+    <QSelect
       label={label}
       nombre={nombre}
-      onChange={onChange}
       valor={valor}
-      descripcion={descripcion}
-      obtenerOpciones={obtenerOpciones}
+      onChange={handleChange}
+      opciones={opciones}
       {...props}
     />
   );

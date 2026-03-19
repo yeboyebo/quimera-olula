@@ -7,7 +7,7 @@ import {
 } from "./_forminput.tsx";
 import "./qcheckbox.css";
 
-type QCheckBoxProps = Omit<FormInputProps, "valor"> & {
+export type QCheckboxProps = Omit<FormInputProps, "valor"> & {
   valor: boolean | string;
 };
 
@@ -24,7 +24,7 @@ export const QCheckbox = ({
   condensado,
   onChange,
   ...props
-}: QCheckBoxProps) => {
+}: QCheckboxProps) => {
   const attrs = {
     nombre,
     erroneo,
@@ -43,9 +43,8 @@ export const QCheckbox = ({
   };
 
   // Convertir valor a boolean si viene como string
-  const valorBoolean = typeof valor === 'string' 
-    ? valor === 'true' || valor === '1' 
-    : valor;
+  const valorBoolean =
+    typeof valor === "string" ? valor === "true" || valor === "1" : valor;
 
   const inputAttrs = {
     nombre,
@@ -53,7 +52,7 @@ export const QCheckbox = ({
     opcional,
     checked: valorBoolean,
     tipo: "checkbox" as const,
-    onChange: manejarChange,
+    onChange: onChange ? manejarChange : undefined,
     ...props,
   };
 

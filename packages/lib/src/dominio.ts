@@ -287,10 +287,33 @@ export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => 
 
             return numero;
         }
+        case 'multiseleccion': {
+            if (valor === null || !valor.length || valor === "") return null;
+            if (valor.length === 1 && valor[0] === "") return null;
+
+            return valor;
+        }
+        case 'intervalo_numeros': {
+            if (valor === null || !valor.length || valor === "") {
+                return null;
+            }
+
+            const [desde, hasta] = valor;
+            return [desde ? parseFloat(desde) : undefined, hasta ? parseFloat(hasta) : undefined]
+        }
+        case 'intervalo_fechas': {
+            if (valor === null || !valor.length || valor === "") {
+                return null;
+            }
+
+            const [desde, hasta] = valor;
+            return [desde ? new Date(Date.parse(desde)) : undefined, hasta ? new Date(Date.parse(hasta)) : undefined]
+        }
         case 'fecha': {
             if (valor === null || valor === '') {
                 return null;
             }
+
             return new Date(Date.parse(valor));
         }
         default:
@@ -361,13 +384,18 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
 
         // case 'fecha':
         //     return (valor as Date).toISOString().split('T')[0];
+        case 'intervalo_numeros': {
+            const [desde, hasta] = (valor as [number | undefined, number | undefined]);
+
+            return [Number(desde).toString(), Number(hasta).toString()] as unknown as string;
+        }
+        case 'intervalo_fechas': {
+            const [desde, hasta] = (valor as [Date | undefined, Date | undefined]);
+
+            return [desde?.toISOString().slice(0, 10) as string, hasta?.toISOString().slice(0, 10) as string] as unknown as string;
+        }
         case 'fecha': {
-            // Convertir fecha a formato ISO local (YYYY-MM-DD) respetando zona horaria
-            const fecha = valor as Date;
-            const año = fecha.getFullYear();
-            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-            const dia = String(fecha.getDate()).padStart(2, '0');
-            return `${año}-${mes}-${dia}`;
+            return (valor as Date).toISOString().slice(0, 10);
         }
 
         default:
@@ -584,11 +612,6 @@ export type FormModelo = {
 }
 
 export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T) => {
-
-    Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
-
-    // console.log('modeloModificado2', Object.keys(valor).filter((k) => valor[k] !== valor_inicial[k]));
-
     return (
         Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
     )

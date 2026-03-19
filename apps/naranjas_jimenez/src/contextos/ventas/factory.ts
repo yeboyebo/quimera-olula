@@ -1,3 +1,5 @@
+import { payloadPatchPedido } from "#/ventas/pedido/infraestructura.ts";
+import { Pedido } from "#/ventas/pedido/diseño.ts";
 import { menuVentas } from "./menu.ts";
 import { CrearLineaNrj } from "./pedido/crear_linea/CrearLinea.tsx";
 import { DetallePedidoNrj } from "./pedido/detalle/DetallePedido.tsx";
@@ -5,6 +7,20 @@ import { LineasListaNrj } from "./pedido/detalle/Lineas/LineasLista.tsx";
 import { EditarLineaNrj } from "./pedido/editar_linea/EditarLinea.tsx";
 import { ventasPedidoInfra } from "./pedido/infraestructura.ts";
 import { getMetaTablaPedidoNrj } from "./pedido/maestro/metatabla_pedido.tsx";
+import { PedidoNrj } from "./pedido/diseño.ts";
+
+const payloadPatchPedidoNrj = (pedido: Pedido) => {
+    const base = payloadPatchPedido(pedido);
+    const nrj = pedido as PedidoNrj;
+    return {
+        ...base,
+        cambios: {
+            ...base.cambios,
+            portes_cliente: nrj.portes_cliente,
+            transportista_id: nrj.transportista_id,
+        },
+    };
+};
 
 export class FactoryVentasNrj {
 
@@ -16,4 +32,5 @@ export class FactoryVentasNrj {
     static pedido_EditarLinea = EditarLineaNrj
     static pedido_infraestructura = ventasPedidoInfra
     static metaTablaPedido = getMetaTablaPedidoNrj
+    static api_payloadPatchPedido = payloadPatchPedidoNrj
 }

@@ -1,0 +1,18 @@
+.Pedido .TabCliente {
+    quimera-autocompletar[nombre="cliente_id"] {
+        grid-column: 1 / span 9;
+    }
+
+    quimera-input[nombre="id_fiscal"] {
+        grid-column: span 2;
+    }
+
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: span 12;
+    }
+
+
+    #cambiar_cliente {
+        grid-column: span 1;
+    }
+}

@@ -1,46 +1,48 @@
-import {
-  QAutocompletar,
-  QAutocompletarProps,
-} from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Criteria } from "@olula/lib/diseño.ts";
-import { getItemsListaCalibre } from "../../calibre/infraestructura.ts";
+import { QSelect } from "@olula/componentes/index.js";
+import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { useEffect, useState } from "react";
+import { getItemsListaSeleccionCalibre } from "../../calibre/infraestructura.ts";
 
-type CalibreProps = Omit<QAutocompletarProps, "obtenerOpciones">;
+type CalibreProps = Omit<QAutocompletarProps, "obtenerOpciones"> & {
+  idVariedad?: string;
+  idMarca?: string;
+};
+
+type OpcionCalibre = {
+  valor: string;
+  descripcion: string;
+};
 
 export const Calibre = ({
-  descripcion = "",
   valor,
+  idVariedad = "",
+  idMarca = "",
   nombre = "calibre",
   label = "Calibre",
   onChange,
   ...props
 }: CalibreProps) => {
-  const obtenerOpciones = async (texto: string) => {
-    const criteria: Criteria = {
-      filtro: [["descripcion", "~", texto]],
-      orden: ["id"],
-      paginacion: { limite: 10, pagina: 1 },
+  const [opcionesCalibre, setOpcionesCalibre] = useState<OpcionCalibre[]>([]);
+
+  useEffect(() => {
+    if (!idVariedad || !idMarca) {
+      setOpcionesCalibre([]);
+      return;
+    }
+    const cargarOpcionesCalibre = async () => {
+      const items = await getItemsListaSeleccionCalibre(idVariedad, idMarca);
+      setOpcionesCalibre(items.map((item) => ({ valor: item.id, descripcion: item.descripcion })));
     };
-
-    const calibres = await getItemsListaCalibre(
-      criteria.filtro,
-      criteria.orden
-    );
-
-    return calibres.map((calibre) => ({
-      valor: calibre.id,
-      descripcion: calibre.descripcion,
-    }));
-  };
+    cargarOpcionesCalibre();
+  }, [idVariedad, idMarca]);
 
   return (
-    <QAutocompletar
+    <QSelect
       label={label}
       nombre={nombre}
-      onChange={onChange}
       valor={valor}
-      descripcion={descripcion}
-      obtenerOpciones={obtenerOpciones}
+      onChange={onChange}
+      opciones={opcionesCalibre}
       {...props}
     />
   );

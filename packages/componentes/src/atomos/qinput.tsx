@@ -6,7 +6,7 @@ import {
   Validacion,
 } from "./_forminput.tsx";
 
-type QInputProps = FormInputProps;
+export type QInputProps = FormInputProps;
 
 export const QInput = ({
   label,
@@ -44,9 +44,7 @@ export const QInput = ({
     <quimera-input {...attrs}>
       <label>
         <Etiqueta label={label} />
-        <div className="input_">
-          <FormInput {...inputAttrs} />
-        </div>
+        <FormInput {...inputAttrs} />
         <Validacion textoValidacion={textoValidacion} />
       </label>
     </quimera-input>

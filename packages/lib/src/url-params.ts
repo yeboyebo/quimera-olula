@@ -29,14 +29,16 @@ const clavesReservadas = ["id", "orden", "p", "l"];
 export const filtroDefecto: Filtro = [];
 
 const getFiltro = (params: URLSearchParams) => {
-    const filtro = filtroDefecto;
+    const filtro = [...filtroDefecto];
 
     for (const [k, v] of params.entries()) {
         if (clavesReservadas.includes(k)) continue;
 
         const valor = v.split("__");
 
-        if (valor.length === 2) filtro.push([k, valor[0], valor[1]]);
+        if (valor.length === 2) {
+            filtro.push([k, valor[0], valor[1]])
+        }
         else filtro.push([k, "~", v])
     }
 
@@ -46,7 +48,6 @@ const getFiltro = (params: URLSearchParams) => {
 const setFiltro = (criteria: Criteria, params: URLSearchParams) => {
     const { filtro } = criteria;
 
-    console.log('criteria', criteria);
     filtro.forEach(f => {
         const [campoFiltro, operador, valor] = f;
 
