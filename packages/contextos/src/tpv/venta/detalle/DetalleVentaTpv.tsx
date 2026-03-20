@@ -2,6 +2,7 @@ import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
@@ -56,8 +57,7 @@ export const DetalleVentaTpv = ({
 
   const imprimir = async () => {
     const blob = await getReportVenta(ctx.venta.id);
-    const url = URL.createObjectURL(blob);
-    window.open(url, "_blank");
+    imprimir_blob(blob) 
   };
 
   const { estado, pagos, lineas, venta } = ctx;
