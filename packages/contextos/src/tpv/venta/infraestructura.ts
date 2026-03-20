@@ -70,6 +70,7 @@ interface VentaTpvADevolverAPI extends VentaTpvAPI {
 
 export const ventaDesdeAPI = (v: VentaTpvAPI): VentaTpv => ({
     ...v,
+    idAgente: v.agente_id,
     fecha: new Date(Date.parse(v.fecha as unknown as string)),
     cliente: v.cliente ? {
         id: v.cliente.id,
