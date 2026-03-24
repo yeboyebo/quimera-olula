@@ -23,9 +23,7 @@ type MetaCampoFiltro = {
   filtro: (v: unknown) => ClausulaFiltro;
 };
 
-export type MetaFiltro = {
-  campos: Record<string, MetaCampoFiltro>;
-};
+export type MetaFiltro = Record<string, MetaCampoFiltro>;
 
 export const getMetaFiltroDefecto = <T extends Entidad>(
   metaTabla: MetaTabla<T>
@@ -86,7 +84,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
     }
   }
 
-  return { campos };
+  return campos;
 };
 
 export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
@@ -100,9 +98,9 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
     const valor_final = valores[campo];
 
-    if (!meta.campos[campo]) continue;
+    if (!meta[campo]) continue;
 
-    switch (meta.campos[campo].tipo) {
+    switch (meta[campo].tipo) {
       case "intervalo_fechas":
         valores[campo] = (valor_final as [string, string])?.map((f: string) =>
           f ? new Date(Date.parse(f)) : undefined
@@ -145,71 +143,78 @@ export const MaestroFiltrosActivoControlado = ({
     [filtro, metaFiltro]
   );
 
-  const valores = useModelo(metaFiltro, valoresIniciales);
+  const valores = useModelo({ campos: metaFiltro }, valoresIniciales);
   const { modelo, modeloInicial, uiProps, init } = valores;
 
   const [mostrar, setMostar] = useState(false);
 
   const renderFiltros = () => {
-    return Object.entries(metaFiltro.campos).map(([_, campo]) => {
-      switch (campo.tipo) {
-        case "intervalo_fechas":
-          return (
-            <QDateInterval
-              key={campo.id}
-              {...uiProps(campo.id)}
-              tipo={"fecha"}
-              label={campo.label}
-              opcional={true}
-            />
-          );
-        case "intervalo_numeros":
-          return (
-            <QNumberInterval
-              key={campo.id}
-              {...uiProps(campo.id)}
-              tipo={"numero"}
-              label={campo.label}
-              opcional={true}
-            />
-          );
-        case "multiseleccion":
-          return (
-            <QMultiCheckbox
-              key={campo.id}
-              {...uiProps(campo.id)}
-              opciones={campo.opciones as Opcion[]}
-              label={campo.label}
-              opcional={true}
-            />
-          );
-        case "checkbox":
-          return (
-            <QCheckbox
-              key={campo.id}
-              {...uiProps(campo.id)}
-              label={campo.label}
-              opcional={true}
-            />
-          );
-        default:
-          return (
-            <QInput
-              key={campo.id}
-              {...uiProps(campo.id)}
-              label={campo.label}
-              opcional={true}
-            />
-          );
-      }
-    });
+    return Object.entries(metaFiltro)
+      .map(([_, campo]) => {
+        switch (campo.tipo) {
+          case "intervalo_fechas":
+            return (
+              <QDateInterval
+                key={campo.id}
+                {...uiProps(campo.id)}
+                tipo={"fecha"}
+                label={campo.label}
+              />
+            );
+          case "intervalo_numeros":
+            return (
+              <QNumberInterval
+                key={campo.id}
+                {...uiProps(campo.id)}
+                tipo={"numero"}
+                label={campo.label}
+              />
+            );
+          case "multiseleccion":
+            return (
+              <QMultiCheckbox
+                key={campo.id}
+                {...uiProps(campo.id)}
+                opciones={campo.opciones as Opcion[]}
+                label={campo.label}
+              />
+            );
+          case "checkbox":
+            return (
+              <QCheckbox
+                key={campo.id}
+                {...uiProps(campo.id)}
+                label={campo.label}
+              />
+            );
+          default:
+            return (
+              <QInput
+                key={campo.id}
+                {...uiProps(campo.id)}
+                label={campo.label}
+              />
+            );
+        }
+      })
+      .map((input) => (
+        <div className="campo-filtro">
+          {input}
+          <QBoton
+            tamaño="pequeño"
+            onClick={() => limpiarUno(input.props.nombre)}
+          >
+            &times;
+          </QBoton>
+        </div>
+      ));
   };
 
   const onBuscar = (): void => {
     const filtros = Object.entries(modelo).map(([id, valor]) => {
       if (valor === undefined || valor === null) return valor;
 
-      return metaFiltro.campos[id].filtro(valor);
+      return metaFiltro[id].filtro(valor);
     });
 
     onFiltroChanged(filtros.filter((v) => !!v));
@@ -220,31 +225,37 @@ export const MaestroFiltrosActivoControlado = ({
     onFiltroChanged(filtroInicial);
   };
 
-  if (!Object.keys(metaFiltro.campos).length) return;
+  const limpiarUno = (id: string) => {
+    const filtros = filtro.filter(([campo]) => campo !== id);
+
+    onFiltroChanged(filtros);
+  };
+
+  if (!Object.keys(metaFiltro).length) return;
 
   if (!mostrar)
     return (
-      <QBoton tamaño="pequeño" onClick={() => setMostar(true)}>
-        Filtros ({filtro.length - filtroInicial.length})
-      </QBoton>
+      <div className="MaestroFiltrosControlado">
+        <QBoton tamaño="pequeño" onClick={() => setMostar(true)}>
+          Filtros ({filtro.length - filtroInicial.length})
+        </QBoton>
+      </div>
     );
 
   return (
-    <>
+    <div className="MaestroFiltrosControlado">
       <QBoton tamaño="pequeño" onClick={() => setMostar(false)}>
         Cerrar filtros
       </QBoton>
-      <div className="MaestroFiltrosControlado">
-        <quimera-formulario>{renderFiltros()}</quimera-formulario>
-        <footer>
-          <QBoton tamaño="pequeño" onClick={onBuscar}>
-            Buscar
-          </QBoton>
-          <QBoton variante="texto" tamaño="pequeño" onClick={onLimpiar}>
-            Limpiar
-          </QBoton>
-        </footer>
-      </div>
-    </>
+      <quimera-formulario>{renderFiltros()}</quimera-formulario>
+      <footer>
+        <QBoton tamaño="pequeño" onClick={onBuscar}>
+          Buscar
+        </QBoton>
+        <QBoton variante="texto" tamaño="pequeño" onClick={onLimpiar}>
+          Limpiar
+        </QBoton>
+      </footer>
+    </div>
   );
 };

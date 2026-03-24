@@ -121,6 +121,7 @@ export const Listado = <T extends Entidad>({
           onCriteriaChanged({
             ...criteria,
             filtro,
+            paginacion: { ...criteria.paginacion, pagina: 1 },
           });
         }}
       />
