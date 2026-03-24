@@ -7,28 +7,27 @@ import { Cliente } from "../../comun/componentes/Cliente.tsx";
 
 type FiltrosPedidoNrjProps = {
   filtro: Filtro;
-  onFiltroChanged: (filtro: Filtro) => void;
+  mostrarTerminados: boolean;
+  onFiltroChanged: (filtro: Filtro, mostrarTerminados: boolean) => void;
 };
 
-export const FiltrosPedidoNrj = ({ filtro, onFiltroChanged }: FiltrosPedidoNrjProps) => {
+export const FiltrosPedidoNrj = ({ filtro, mostrarTerminados: mostrarTerminadosProp, onFiltroChanged }: FiltrosPedidoNrjProps) => {
   const [mostrar, setMostrar] = useState(false);
   const [fecha, setFecha] = useState<[string, string]>(["", ""]);
   const [clienteId, setClienteId] = useState<string>("");
-  const [mostrarTerminados, setMostrarTerminados] = useState(false);
+  const [clienteNombre, setClienteNombre] = useState<string>("");
+  const [mostrarTerminados, setMostrarTerminados] = useState(mostrarTerminadosProp);
 
   useEffect(() => {
     const clausulaFecha = filtro.find((f) => f[0] === "fecha");
     const clausulaCliente = filtro.find((f) => f[0] === "cliente_id");
-    const clausulaMostrar = filtro.find(
-      (f) => f[0] === "estado_envio_palets" && f[2] === "fake"
-    );
 
     setFecha(
       clausulaFecha ? (clausulaFecha[2] as string).split("_") as [string, string] : ["", ""]
     );
     setClienteId(clausulaCliente ? (clausulaCliente[2] as string) : "");
-    setMostrarTerminados(!!clausulaMostrar);
-  }, [filtro]);
+    setMostrarTerminados(mostrarTerminadosProp);
+  }, [filtro, mostrarTerminadosProp]);
 
   const onBuscar = () => {
     const clausulas: ClausulaFiltro[] = [];
@@ -42,15 +41,11 @@ export const FiltrosPedidoNrj = ({ filtro, onFiltroChanged }: FiltrosPedidoNrjPr
       clausulas.push(["cliente_id", "=", clienteId]);
     }
 
-    if (mostrarTerminados) {
-      clausulas.push(["estado_envio_palets", "!", "fake"]);
-    }
-
-    onFiltroChanged(clausulas);
+    onFiltroChanged(clausulas, mostrarTerminados);
   };
 
   const onLimpiar = () => {
-    onFiltroChanged([]);
+    onFiltroChanged([], false);
   };
 
   if (!mostrar) {
@@ -80,7 +75,11 @@ export const FiltrosPedidoNrj = ({ filtro, onFiltroChanged }: FiltrosPedidoNrjPr
             label="Cliente"
             nombre="cliente_id"
             valor={clienteId}
-            onChange={(opcion) => setClienteId(opcion?.valor ?? "")}
+            descripcion={clienteNombre}
+            onChange={(opcion) => {
+              setClienteId(opcion?.valor ?? "");
+              setClienteNombre(opcion?.descripcion ?? "");
+            }}
           />
           <QCheckbox
             nombre="mostrar_terminados"

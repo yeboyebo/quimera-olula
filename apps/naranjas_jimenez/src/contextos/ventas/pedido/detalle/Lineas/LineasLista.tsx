@@ -1,24 +1,18 @@
 import { LineasListaProps } from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
 import { QBoton, QModal } from "@olula/componentes/index.js";
 import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { useCallback, useState } from "react";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
+import { useState } from "react";
 import { LineaPedidoNrj } from "../../diseño.ts";
 import { formateaCategoria, formateaEstado } from "../../dominio.ts";
 import "./LineasLista.css";
-
-type Layout = "TABLA" | "TARJETA";
 
 export const LineasListaNrj = ({
   lineas,
   seleccionada,
   publicar,
 }: LineasListaProps<LineaPedidoNrj>) => {
-  const [layout, setLayout] = useState<Layout>("TARJETA");
-
-  const cambiarLayout = useCallback(
-    () => setLayout((l) => (l === "TARJETA" ? "TABLA" : "TARJETA")),
-    []
-  );
+  const esMovil = useEsMovil();
 
   const setSeleccionada = (linea: LineaPedidoNrj) => {
     publicar("linea_seleccionada", linea);
@@ -26,14 +20,7 @@ export const LineasListaNrj = ({
 
   return (
     <>
-      <div className="lineas-cabecera">
-        <QBoton
-          texto={layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
-          onClick={cambiarLayout}
-        />
-      </div>
-
-      {layout === "TABLA" ? (
+      {!esMovil ? (
         <QTabla
           metaTabla={getMetaTablaLineas()}
           datos={lineas as LineaPedidoNrj[]}
