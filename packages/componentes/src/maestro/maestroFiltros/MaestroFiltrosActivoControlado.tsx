@@ -5,7 +5,7 @@ import {
   TipoInput,
 } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { QBoton } from "../../atomos/qboton.tsx";
 import { QCheckbox } from "../../atomos/qcheckbox.tsx";
 import { QDateInterval } from "../../atomos/qdateinterval.tsx";
@@ -20,7 +20,10 @@ type MetaCampoFiltro = {
   label: string;
   tipo?: TipoInput;
   opciones?: Opcion[];
-  filtro: (v: unknown) => ClausulaFiltro;
+  valorDefecto?: unknown;
+  filtro: (v: unknown) => ClausulaFiltro | null;
+  fromFiltro?: (filtro: Filtro) => unknown;
+  render?: (valor: unknown, onChange: (v: unknown) => void) => ReactNode;
 };
 
 export type MetaFiltro = Record<string, MetaCampoFiltro>;
@@ -90,8 +93,12 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
 export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
   const valores: Record<string, unknown> = {};
 
+  for (const [id, campo] of Object.entries(meta)) {
+    if (campo.valorDefecto !== undefined) valores[id] = campo.valorDefecto;
+  }
+
   for (const clausula of filtro) {
-    const [campo, _, valor] = clausula;
+    const [campo, operador, valor] = clausula;
 
     if (valor?.includes("_")) valores[campo] = valor.split("_");
     else valores[campo] = valor;
@@ -101,11 +108,18 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
     if (!meta[campo]) continue;
 
     switch (meta[campo].tipo) {
-      case "intervalo_fechas":
-        valores[campo] = (valor_final as [string, string])?.map((f: string) =>
-          f ? new Date(Date.parse(f)) : undefined
-        );
+      case "intervalo_fechas": {
+        const toDate = (s: unknown) =>
+          s ? new Date(Date.parse(s as string)) : undefined;
+        if (Array.isArray(valor_final)) {
+          valores[campo] = (valor_final as string[]).map(toDate);
+        } else if (operador === "<=") {
+          valores[campo] = [undefined, toDate(valor_final)];
+        } else {
+          valores[campo] = [toDate(valor_final), undefined];
+        }
         break;
+      }
       case "intervalo_numeros":
         valores[campo] = (valor_final as [string, string])?.map((f: string) =>
           f ? parseFloat(f) : undefined
@@ -120,6 +134,10 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
         valores[campo] = new Date(Date.parse(valor_final as string));
         break;
     }
+  }
+
+  for (const [id, campo] of Object.entries(meta)) {
+    if (campo.fromFiltro) valores[id] = campo.fromFiltro(filtro);
   }
 
   return valores;
@@ -149,13 +167,17 @@ export const MaestroFiltrosActivoControlado = ({
   const [mostrar, setMostar] = useState(false);
 
   const renderFiltros = () => {
-    return Object.entries(metaFiltro)
-      .map(([_, campo]) => {
+    return Object.entries(metaFiltro).map(([_, campo]) => {
+      const renderInput = () => {
+        if (campo.render) {
+          const { valor, onChange: onChangeProp } = uiProps(campo.id);
+          const onChange = onChangeProp as (v: unknown) => void;
+          return campo.render(valor, onChange);
+        }
         switch (campo.tipo) {
           case "intervalo_fechas":
             return (
               <QDateInterval
-                key={campo.id}
                 {...uiProps(campo.id)}
                 tipo={"fecha"}
                 label={campo.label}
@@ -164,7 +186,6 @@ export const MaestroFiltrosActivoControlado = ({
           case "intervalo_numeros":
             return (
               <QNumberInterval
-                key={campo.id}
                 {...uiProps(campo.id)}
                 tipo={"numero"}
                 label={campo.label}
@@ -173,51 +194,40 @@ export const MaestroFiltrosActivoControlado = ({
           case "multiseleccion":
             return (
               <QMultiCheckbox
-                key={campo.id}
                 {...uiProps(campo.id)}
                 opciones={campo.opciones as Opcion[]}
                 label={campo.label}
               />
             );
           case "checkbox":
-            return (
-              <QCheckbox
-                key={campo.id}
-                {...uiProps(campo.id)}
-                label={campo.label}
-              />
-            );
+            return <QCheckbox {...uiProps(campo.id)} label={campo.label} />;
           default:
-            return (
-              <QInput
-                key={campo.id}
-                {...uiProps(campo.id)}
-                label={campo.label}
-              />
-            );
+            return <QInput {...uiProps(campo.id)} label={campo.label} />;
         }
-      })
-      .map((input) => (
-        <div className="campo-filtro">
-          {input}
-          <QBoton
-            tamaño="pequeño"
-            onClick={() => limpiarUno(input.props.nombre)}
-          >
+      };
+
+      return (
+        <div key={campo.id} className="campo-filtro">
+          {renderInput()}
+          <QBoton tamaño="pequeño" onClick={() => limpiarUno(campo.id)}>
             &times;
           </QBoton>
         </div>
-      ));
+      );
+    });
+  };
+
+  const buildFiltros = (modeloOverride: Record<string, unknown>) => {
+    return Object.entries(modeloOverride).flatMap(([id, valor]) => {
+      if (!metaFiltro[id]) return [];
+      if (valor === undefined || valor === null) return [];
+      const clausula = metaFiltro[id].filtro(valor);
+      return clausula ? [clausula] : [];
+    });
   };
 
   const onBuscar = (): void => {
-    const filtros = Object.entries(modelo).map(([id, valor]) => {
-      if (valor === undefined || valor === null) return valor;
-
-      return metaFiltro[id].filtro(valor);
-    });
-
-    onFiltroChanged(filtros.filter((v) => !!v));
+    onFiltroChanged(buildFiltros(modelo));
   };
 
   const onLimpiar = () => {
@@ -226,9 +236,8 @@ export const MaestroFiltrosActivoControlado = ({
   };
 
   const limpiarUno = (id: string) => {
-    const filtros = filtro.filter(([campo]) => campo !== id);
-
-    onFiltroChanged(filtros);
+    const valorDefecto = metaFiltro[id]?.valorDefecto ?? undefined;
+    init({ ...modelo, [id]: valorDefecto });
   };
 
   if (!Object.keys(metaFiltro).length) return;
