@@ -89,6 +89,7 @@ export const DetallePedidoBase = ({
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: false,
     },

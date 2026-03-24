@@ -8,7 +8,8 @@ header {
     max-height: var(--alto-header);
     width: 100%;
     color: #E0E0E0;
-    padding: 0 1.5rem !important;
+    padding: 0 var(--padding-horizontal);
+    /* padding: 0 1.5rem !important; */
     display: flex;
 
 

@@ -21,13 +21,15 @@ quimera-modal {
 
         header form quimera-boton {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: var(--espaciado-xxs);
+            right: var(--espaciado-xxs);
 
             button {
                 --color-primario: var(--color-texto-primario);
                 --color-primario-oscuro: var(--color-texto-primario);
                 --color-primario-claro: transparent;
+                padding: var(--espaciado-xs);
+                line-height: 1;
 
                 transition: all 0.3s ease-in-out;
 

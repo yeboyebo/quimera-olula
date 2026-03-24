@@ -46,6 +46,7 @@ export const TabDireccionesLista = ({
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrado_solicitado"),
       deshabilitado: !seleccionada,
     },

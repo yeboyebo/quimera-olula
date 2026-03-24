@@ -7,13 +7,14 @@ maestro-detalle {
     transition: all 0.3s ease;
 }
 
-maestro-detalle>div>:not(quimera-tabla):not(:has(quimera-tabla)),
-maestro-detalle>div>:not(quimera-tabla):has(quimera-tabla)>:not(quimera-tabla):not(:has(quimera-tabla)) {
+maestro-detalle>div>:not(quimera-tabla):not(quimera-tarjetas):not(:has(quimera-tabla)):not(:has(quimera-tarjetas)),
+maestro-detalle>div>:not(quimera-tabla):not(quimera-tarjetas):has(quimera-tabla)>:not(quimera-tabla):not(quimera-tarjetas):not(:has(quimera-tabla)):not(:has(quimera-tarjetas)),
+maestro-detalle>div>:not(quimera-tabla):not(quimera-tarjetas):has(quimera-tarjetas)>:not(quimera-tabla):not(quimera-tarjetas):not(:has(quimera-tabla)):not(:has(quimera-tarjetas)) {
     padding-inline: var(--padding-horizontal);
 }
 
-maestro-detalle>div h2,
-maestro-detalle>div .maestro-botones,
+/* maestro-detalle>div h2,
+maestro-detalle>div .maestro-botones, */
 maestro-detalle>div .botones {
     padding-inline: var(--padding-horizontal);
 }
@@ -102,9 +103,9 @@ maestro-detalle[tipo="pantalla-completa"] {
 .maestro-botones,
 .botones {
     display: flex;
-    margin-top: var(--espaciado-s);
+    margin-top: var(--espaciado-xs);
     gap: 0.5rem;
-    margin-bottom: var(--espaciado-s);
+    margin-bottom: var(--espaciado-xs);
     justify-content: flex-end;
 }
 

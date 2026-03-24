@@ -20,10 +20,16 @@ quimera-tarjeta {
     border: var(--tamaño-borde-s) solid var(--gris-4);
     border-radius: var(--radio-borde-m);
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
-    margin: var(--espaciado-xs);
+    margin: 0;
     padding: var(--espaciado-m);
     transition: box-shadow 0.15s, border-color 0.15s;
     cursor: pointer;
+}
+
+quimera-tarjetas .lista-contenedor-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 quimera-tarjeta.seleccionada {

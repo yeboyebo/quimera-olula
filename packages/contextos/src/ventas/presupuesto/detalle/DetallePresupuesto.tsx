@@ -70,6 +70,7 @@ export const DetallePresupuesto = ({
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: ctx.presupuesto.aprobado,
     },

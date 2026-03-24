@@ -145,7 +145,7 @@ const Paginador = (
   }
   const { pagina, limite } = paginacion;
 
-  if (limite > totalEntidades) {
+  if (limite >= totalEntidades) {
     return null;
   }
   const { paginasMostradas, totalPaginas } = calcularPaginacionSimplificada(

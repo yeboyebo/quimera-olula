@@ -39,6 +39,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrado_solicitado"),
       deshabilitado: !ctx.contactoActivo,
     },

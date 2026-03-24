@@ -79,7 +79,7 @@ export const Listado = <T extends Entidad>({
       );
     }
 
-    if (metaTabla) {
+    if (modo == "tarjetas" && metaTabla) {
       return (
         <QTarjetas
           tarjeta={(entidad: T) => (
@@ -132,6 +132,18 @@ export const Listado = <T extends Entidad>({
 
   return (
     <div className="Listado">
+      {/* {tarjeta && metaTabla && (
+            <div className="cambio-modo">
+            <span
+                className="cambio-modo-icono"
+                onClick={() =>
+                    setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
+                }
+            >
+                <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
+            </span>
+            </div>
+        )} */}
       <MaestroFiltrosActivoControlado
         metaFiltro={
           metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)

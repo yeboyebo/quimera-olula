@@ -7,6 +7,12 @@ quimera-boton {
         --color-primario-oscuro: var(--color-error-oscuro);
     }
 
+    &[advertencia] {
+        --color-primario: var(--color-advertencia);
+        --color-primario-claro: var(--color-advertencia-claro);
+        --color-primario-oscuro: var(--color-advertencia-oscuro);
+    }
+
     &[deshabilitado] {
         --color-primario: var(--color-deshabilitado);
 

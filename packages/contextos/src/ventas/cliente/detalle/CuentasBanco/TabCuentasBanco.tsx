@@ -48,6 +48,7 @@ export const TabCuentasBanco = ({
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrado_solicitado"),
       deshabilitado: !ctx.cuentas.activo,
     },

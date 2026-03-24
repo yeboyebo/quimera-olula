@@ -10,6 +10,7 @@ export type Accion =
       onClick: () => void;
       deshabilitado?: boolean;
       variante?: "solido" | "borde" | "texto";
+      advertencia?: boolean;
     }
   | false;
 
@@ -39,6 +40,7 @@ export const QuimeraAcciones = ({
           key={accion.texto || accion.icono}
           onClick={accion.onClick}
           deshabilitado={accion.deshabilitado}
+          advertencia={accion.advertencia}
           variante={accion.deshabilitado ? accion.variante : "solido"}
         >
           {accion.texto}

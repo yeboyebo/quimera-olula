@@ -27,12 +27,6 @@ quimera-acciones {
         align-items: flex-end;
         gap: 0.5rem;
 
-        .header {
-            quimera-boton button {
-                max-width: 100px;
-            }
-        }
-
         .acciones {
             quimera-boton {
                 margin: 0px;
@@ -40,16 +34,24 @@ quimera-acciones {
         }
     }
 
+    .actions {
+        position: relative;
+    }
+
     .acciones {
         display: flex;
         flex-direction: column;
-        border: 1px solid var(--color-primario);
-        width: 100%;
+        border: 0;
+        width: max-content;
+        min-width: 11rem;
         position: absolute;
-        max-width: 100px;
+        right: 0;
+        max-width: none;
         overflow: hidden;
         background: var(--color-fondo);
         border-radius: 5px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        padding: var(--espaciado-xs);
 
         quimera-boton {
             button {
