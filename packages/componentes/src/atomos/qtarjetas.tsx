@@ -117,7 +117,6 @@ export const QTarjetas = <T extends Entidad>({
     if (onSiguientePagina && criteria) {
       return (
         <div className="lista-contenedor-scroll">
-          {tarjetaItems}
           <InfiniteScroll
             dataLength={datos.length}
             next={() =>

@@ -45,7 +45,6 @@ export const MaestroConDetalleArqueoTpv = () => {
             </div>
             <Listado<CabeceraArqueoTpv>
               metaTabla={metaTablaArqueo}
-              metaFiltro={true}
               criteria={ctx.arqueos.criteria}
               modo={"tabla"}
               entidades={ctx.arqueos.lista}

@@ -5,7 +5,11 @@ import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
-import { MaestroFiltrosControlado } from "./maestroFiltros/MaestroFiltrosControlado.tsx";
+import {
+  getMetaFiltroDefecto,
+  MaestroFiltrosActivoControlado,
+  MetaFiltro,
+} from "./maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -20,9 +24,9 @@ const datosCargando = <T extends Entidad>() =>
 
 type Modo = "tabla" | "tarjetas";
 
-type MaestroProps<T extends Entidad> = {
+type ListadoProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
-  metaFiltro?: boolean;
+  metaFiltro?: MetaFiltro;
   cargando?: boolean;
   tarjeta?: (entidad: T) => React.ReactNode;
   criteriaInicial?: Criteria;
@@ -38,7 +42,7 @@ type MaestroProps<T extends Entidad> = {
 
 export const Listado = <T extends Entidad>({
   metaTabla,
-  metaFiltro = false, // TODO: Pasar una estructura que defina el filtro y no mostrar filtro si es undefined
+  metaFiltro,
   cargando = false,
   criteriaInicial = criteriaDefecto,
   criteria = criteriaDefecto,
@@ -50,7 +54,7 @@ export const Listado = <T extends Entidad>({
   modo = "tabla",
   onCriteriaChanged,
   onSiguientePagina,
-}: MaestroProps<T>) => {
+}: ListadoProps<T>) => {
   const renderEntidades = () => {
     if (!entidades.length && !cargando) return <SinDatos />;
 
@@ -107,31 +111,20 @@ export const Listado = <T extends Entidad>({
 
   return (
     <div className="Listado">
-      {/* {tarjeta && metaTabla && (
-            <div className="cambio-modo">
-            <span
-                className="cambio-modo-icono"
-                onClick={() =>
-                    setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
-                }
-            >
-                <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
-            </span>
-            </div>
-        )} */}
-      {metaFiltro && (
-        <MaestroFiltrosControlado
-          campos={metaTabla?.map((c) => c.id) ?? []}
-          filtro={criteria.filtro}
-          filtroInicial={criteriaInicial.filtro}
-          onFiltroChanged={(filtro) => {
-            onCriteriaChanged({
-              ...criteria,
-              filtro,
-            });
-          }}
-        />
-      )}
+      <MaestroFiltrosActivoControlado
+        metaFiltro={
+          metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
+        }
+        filtro={criteria.filtro}
+        filtroInicial={criteriaInicial.filtro}
+        onFiltroChanged={(filtro) => {
+          onCriteriaChanged({
+            ...criteria,
+            filtro,
+            paginacion: { ...criteria.paginacion, pagina: 1 },
+          });
+        }}
+      />
       {renderEntidades()}
     </div>
   );
