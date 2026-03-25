@@ -36,6 +36,7 @@ export default parent => {
       nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       precioNeto: Field.Currency("precioneto", "Precio Neto"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     lineasAlbaranesCli: parent.lineasAlbaranesCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
