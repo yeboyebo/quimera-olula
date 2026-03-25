@@ -42,6 +42,7 @@ export default parent => {
       nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
       canFactura: Field.Int("canfactura", "Cantidad factura"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     emailDocsCliente: Schema("clientes", "codcliente").fields({
       codCliente: Field.Int("codcliente", "codcliente").auto(),

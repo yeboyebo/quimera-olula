@@ -111,7 +111,9 @@ function LineaAlbaranCli({ callbackGuardada, disabled, lineaInicial, useStyles }
                     <Field.Schema id="linea.buffer/cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth />
+                    {linea.data.aplicarPvpParticular
+                      ? <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth />
+                      : <Field.Schema id="linea.buffer/pvpReferencia" schema={schema} fullWidth />}
                   </Grid>
                 </Grid>
               )}
@@ -120,7 +122,7 @@ function LineaAlbaranCli({ callbackGuardada, disabled, lineaInicial, useStyles }
               <Typography variant="h6" align="right">{`${util.formatter(
                 buffer.cantidad,
                 2,
-              )} x ${util.euros(buffer.pvpUnitario)}`}</Typography>
+              )} x ${util.euros(linea.data.aplicarPvpParticular ? buffer.pvpUnitario : buffer.pvpReferencia)}`}</Typography>
             </QSection>
           </Grid>
 
