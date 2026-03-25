@@ -68,6 +68,8 @@ function PresupuestoCli({ callbackChanged, idPresupuesto, initPresupuesto, useSt
     return null;
   }
 
+  // console.log('mimensaje_presup', presupuesto);
+
   return (
     <Quimera.Template id="PresupuestoDetalle">
       {presupuesto && (

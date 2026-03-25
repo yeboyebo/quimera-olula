@@ -18,6 +18,7 @@ export default parent => {
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
       nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     albaranescli: parent.albaranescli.fields({
       idPartees: Field.Int("idpartees", "Id. partes"),
