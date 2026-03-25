@@ -142,7 +142,6 @@ function LineaPresupuestoCliNueva({ callbackGuardada, idPresupuesto, useStyles }
                 />
               </Grid>
               <Grid item xs={6}>
-
                 {linea.buffer.aplicarPvpParticular
                   ? <Field.Schema
                     id="linea.buffer/pvpUnitario"
