@@ -1,6 +1,6 @@
 import { Box, Collapse, Field, Grid, Icon, IconButton, QSection, Typography } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import { useEffect } from "react";
 
 // import { QArticulo } from "@quimera-extension/base-almacen";
 import {
@@ -142,13 +142,24 @@ function LineaPresupuestoCliNueva({ callbackGuardada, idPresupuesto, useStyles }
                 />
               </Grid>
               <Grid item xs={6}>
-                <Field.Schema
-                  id="linea.buffer/pvpUnitario"
-                  label="PVP*"
-                  schema={schema}
-                  fullWidth
-                  style={{ backgroundColor: "#f5d6a0" }}
-                />
+
+                {linea.buffer.aplicarPvpParticular
+                  ? <Field.Schema
+                    id="linea.buffer/pvpUnitario"
+                    label="PVP*"
+                    schema={schema}
+                    fullWidth
+                    style={{ backgroundColor: "#f5d6a0" }}
+                  />
+                  :
+                  <Field.Schema
+                    id="linea.buffer/pvpReferencia"
+                    label="PVP*"
+                    schema={schema}
+                    fullWidth
+                    style={{ backgroundColor: "#f5d6a0" }}
+                  />
+                }
               </Grid>
               <Grid item xs={6}>
                 <Field.Schema
