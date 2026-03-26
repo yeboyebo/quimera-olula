@@ -11,7 +11,7 @@ function TratosPresupuesto({ idTrato, codCliente, ...props }) {
         : {
           or: [
             ["idtrato", "like", text ?? ""],
-            ["titulo", "like", text ?? ""],
+            ["titulo", "like_ua", text ?? ""],
           ],
         };
 

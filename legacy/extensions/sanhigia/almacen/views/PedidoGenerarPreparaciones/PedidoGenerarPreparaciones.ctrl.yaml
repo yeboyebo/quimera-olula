@@ -13,6 +13,7 @@ shortcuts:
 state:
   modalEnviarAPda: false
   callbackChanged: null
+  callbackPedidoEnviadoPda: null
   status:
     vistaDetalle: principal
     vistaEnviarPda: bultos
@@ -58,11 +59,15 @@ bunch:
       name: getLineas
     - _type: grape
       name: dameUbicaciones
-  onGuardarCallback:
+  onGuardarCallbacks:
     - _type: set
       path: callbackChanged
       value:
         payloadPath: callbackChanged
+    - _type: set
+      path: callbackPedidoEnviadoPda
+      value:
+        payloadPath: callbackPedidoEnviadoPda
   dameUbicaciones:
     - _type: get
       schema: ubicacion
@@ -168,6 +173,10 @@ bunch:
         const: true
     - _type: patch
       schema: generarpreparaciones
+      condition:
+        operator: A is true
+        A:
+          statePath: status.enviandoPda
       id:
         statePath: pedido.buffer.idPedido
       action: preparar_lineas_pda
@@ -206,22 +215,32 @@ bunch:
           statePath: status.enviandoPda
       name: pdaEnviado
   pdaEnviado:
+    - _type: alert
+      text: Pedido enviado
+      severity: success
     - _type: grape
       name: "cerrarModalEnviarAPda"
     - _type: set
       path: status.enviandoPda
       value:
         const: false
-    - condition:
+    - _type: if
+      if: #required
         operator: A is defined
         A:
           statePath: urlEnviadoPda
-      _type: navigate
-      url:
-        statePath: urlEnviadoPda
-    - _type: alert
-      text: Pedido enviado
-      severity: success
+      then: #required
+        _type: navigate
+        url:
+          statePath: urlEnviadoPda
+      else:
+        _type: call
+        function:
+          statePath: callbackPedidoEnviadoPda
+        params:
+          - key: idPedido
+            value:
+              statePath: pedido.buffer.idPedido
   # onSavePedidoFailed:
   #   - _type: set
   #     path: status.enviandoPda

@@ -1,6 +1,6 @@
 import { Box, Collapse, Field, Grid, Icon, IconButton, QSection, Typography } from "@quimera/comps";
 import { QArticulo } from "@quimera-extension/base-almacen";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import React, { useEffect } from "react";
 
 function LineaPresupuestoCliNueva({ callbackGuardada, idPresupuesto, useStyles }) {
@@ -96,10 +96,20 @@ function LineaPresupuestoCliNueva({ callbackGuardada, idPresupuesto, useStyles }
                 <Field.Schema id="linea.buffer/irpf" schema={schema} fullWidth />
               </Grid>
               <Grid item xs={6}>
-                <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth disabled={true} />
+                <Field.Schema
+                  id="linea.buffer/pvpUnitario"
+                  schema={schema}
+                  fullWidth
+                  disabled={true}
+                />
               </Grid>
               <Grid item xs={6}>
-                <Field.Schema id="linea.buffer/pvpSinDto" schema={schema} fullWidth disabled={true} />
+                <Field.Schema
+                  id="linea.buffer/pvpSinDto"
+                  schema={schema}
+                  fullWidth
+                  disabled={true}
+                />
               </Grid>
               <Grid item xs={6}>
                 <Field.Schema id="linea.buffer/dtoLineal" schema={schema} fullWidth />

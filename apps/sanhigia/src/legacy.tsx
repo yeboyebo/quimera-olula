@@ -1,5 +1,6 @@
 import { crearRouterLegacy, Dependency } from "@olula/lib/router_legacy.ts";
 import Quimera from "quimera";
+import "../../../legacy/apps/sanhigia//styles/_mixin.scss";
 import "../../../legacy/apps/sanhigia//styles/_variables.scss";
 import project from "../../../legacy/apps/sanhigia/src/project.ts";
 

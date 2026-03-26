@@ -1,8 +1,10 @@
 import { Box, Icon, QListItem, QTitleBox, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Divider, InfiniteScroll } from "@quimera/thirdparty";
-import { navigate, useStateValue, util } from "quimera";
+import { Divider } from "@quimera/thirdparty";
+import { navigate } from "hookrouter";
+import { useStateValue, util } from "quimera";
 import { ACL } from "quimera/lib";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles(theme => ({
   box: {
@@ -12,48 +14,41 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ListContactoCurso({ lineas }) {
+export default function ListResponsableCurso({ lineas }) {
   const [, dispatch] = useStateValue();
   const classes = useStyles();
+  // const actionEnabled =
+  //   util.getUser().group === "MKT" || util.getUser().group === "Responsable de marketing"
+  //     ? true
+  //     : false;
   const actionEnabled = true;
-  // util.getUser().group === "MKT" || util.getUser().group === "Responsable de marketing"
-  //   ? true
-  //   : false;
 
   return (
     <Box className={classes.box}>
-      <QTitleBox titulo="Contactos Curso">
+      <QTitleBox titulo="Responsables Curso">
         {/* {!!lineas?.idList == 0 && ( */}
         {/* <List> */}
         <Divider />
         {lineas.idList.length > 0 ? (
-          <Box id="scrollableBoxContactos" style={{ maxHeight: "300px", overflowY: "auto" }}>
+          <Box id="scrollableBoxResponsables" style={{ maxHeight: "300px", overflowY: "auto" }}>
             <InfiniteScroll
               dataLength={lineas.idList ? lineas?.idList?.length : 0}
-              next={() => dispatch({ type: `onNextContactosevento` })}
+              next={() => dispatch({ type: `onNextResponsablesEvento` })}
               hasMore={lineas?.page?.next !== null}
               loader={<h4>Loading...</h4>}
-              scrollableTarget="scrollableBoxContactos"
+              scrollableTarget="scrollableBoxResponsables"
             >
               {/* <List> */}
               {Object.values(lineas?.dict ?? {})
-                ?.sort((a, b) => a.codContacto > b.codContacto)
-                ?.map(contacto => {
+                ?.sort((a, b) => a.codAgente > b.codAgente)
+                ?.map(responsable => {
                   return (
                     <QListItem
-                      key={contacto?.codContacto}
+                      key={responsable?.codAgente}
                       avatar={{
                         icon: "account_circle",
                         color: "",
                       }}
-                      chip={
-                        ACL.can("contactos:revisar_contacto") &&
-                        !contacto.datosRevisados && {
-                          icon: "new_releases",
-                          soloIcono: true,
-                          color: "",
-                        }
-                      }
                       acciones={
                         actionEnabled
                           ? [
@@ -61,8 +56,8 @@ export default function ListContactoCurso({ lineas }) {
                               className=""
                               onClick={() =>
                                 dispatch({
-                                  type: `onRemoveContactoEvento`,
-                                  payload: { codContacto: contacto?.codContacto },
+                                  type: `${lineas?.idList?.length > 1 ? "onRemoveResponsableEvento" : "onAvisoUltimoResponsableEvento"}`,
+                                  payload: { codAgente: responsable?.codAgente },
                                 })
                               }
                             >
@@ -71,12 +66,11 @@ export default function ListContactoCurso({ lineas }) {
                           ]
                           : []
                       }
-                      onClick={() => navigate(`/ss/contacto/${contacto?.codContacto}`)}
                       alignActions="flex-end"
-                      tr={contacto?.nombreContacto ?? ""}
-                      br={contacto?.emailContacto}
-                      // tr={util.formatDate(curso?.fechaIni)}
-                      tl={contacto?.telefonoContacto}
+                      tl={responsable?.nombreResponsable ?? ""}
+                      bl={responsable?.emailResponsable}
+                    // tr={util.formatDate(curso?.fechaIni)}
+                    // tl={responsable?.telefonoResponsable}
                     />
                   );
                 })}
@@ -85,7 +79,7 @@ export default function ListContactoCurso({ lineas }) {
           </Box>
         ) : (
           <Typography variant="spam" style={{ textAlign: "center", padding: "20px" }}>
-            No hay contactos
+            No hay responsables
           </Typography>
         )}
         <Divider />

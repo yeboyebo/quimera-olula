@@ -7,6 +7,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  Field,
   Grid,
   Icon,
   QBox,
@@ -14,7 +15,8 @@ import {
   Table,
   Typography,
 } from "@quimera/comps";
-import Quimera, { getSchemas, navigate, useStateValue, useWidth, util } from "quimera";
+import { navigate } from "hookrouter";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import { useEffect } from "react";
 
 import {
@@ -22,9 +24,12 @@ import {
   Contacto,
   ListContactoCurso,
   ListLineasCurso,
+  ListResponsableCurso,
   MainBox,
   TipoTrato,
 } from "../../comps";
+
+import { Agente, Cliente } from "@quimera-extension/base-ventas";
 
 function dameRespuestaError(meta) {
   if (meta == "femail") {
@@ -47,11 +52,15 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
       idTipoTratoNuevaCampania,
       lineaseventos,
       contactosevento,
+      responsablesvento,
       modalCrearCampaniaVisible,
       modalCrearContactoVisible,
       erroresCarga,
       modalAnadirContactoVisible,
+      modalAnadirResponsableVisible,
       modalErroresCargaContactosExcel,
+      gastosActive,
+      cursoBufferActive,
     },
     dispatch,
   ] = useStateValue();
@@ -82,6 +91,9 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
       ? false
       : true;
 
+  console.log('mimensaje_mimensaje_gastosActive', cursoBufferActive);
+
+
   return (
     <Quimera.Template id="Curso">
       <QBox
@@ -90,40 +102,167 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
         botonesCabecera={[{ icon: "arrow_back", id: "atras", text: "Atrás" }]}
         sideButtons={<></>}
       >
-        <Grid container spacing={0} direction="column">
-          {/* <Grid item xs={12} sm={12}>
-            <QSection
-              title={`Nombre Curso`}
-              actionPrefix="curso.buffer/nombre"
-              alwaysInactive
-            >
-              <Box display="flex">
-                <Typography variant="body1">
-                  {curso.buffer.nombre || ""}
-                </Typography>
-              </Box>
-            </QSection>
-          </Grid> */}
-
-          <Grid item xs={12} sm={6}>
+        <Grid container spacing={0}>
+          {/* <Grid item xs={12} sm={4}>
             <QSection title="Estado" actionPrefix="curso.estado" alwaysInactive>
               <Box display="flex">
                 <Typography variant="body2">{curso.buffer.estado}</Typography>
               </Box>
             </QSection>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <QSection title="Fecha" actionPrefix="curso.fechaIni" alwaysInactive>
+          </Grid> */}
+          <Grid item xs={12} >
+            <QSection
+              title="Nombre"
+              actionPrefix="curso.buffer"
+              alwaysInactive={actionEnabled}
+              activation={{
+                active: cursoBufferActive === 'nombre',
+                setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'nombre' : null } })
+              }}
+              dynamicComp={() => (
+                <Field.Schema
+                  id="curso.buffer/nombre"
+                  schema={schema}
+                  fullWidth
+                  label=""
+                />
+              )}
+            >
               <Box display="flex">
-                <Typography variant="body2">{curso.buffer.fechaIni}</Typography>
+                <Typography variant="body2">{curso.buffer.nombre || "Sin datos"}</Typography>
               </Box>
             </QSection>
+          </Grid>
+
+          <Grid item xs={12} sm={12}>
+            <QSection
+              title="Cliente"
+              actionPrefix="curso.buffer"
+              alwaysInactive={actionEnabled}
+              activation={{
+                active: cursoBufferActive === 'cliente',
+                setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'cliente' : null } })
+              }}
+              dynamicComp={() => <Cliente id="curso.buffer/codCliente" label="" fullWidth async />}
+            >
+              <Box display="flex">
+                <Typography variant="body2">{curso.buffer.nombreCliente || "Sin datos"}</Typography>
+              </Box>
+            </QSection>
+          </Grid>
+
+          <Grid container item xs={12} sm={12} spacing={2}>
+            <Grid item xs={12} sm={3}>
+              <QSection
+                title="Fecha Inicio"
+                actionPrefix="curso.buffer"
+                alwaysInactive={actionEnabled}
+                activation={{
+                  active: cursoBufferActive === 'fechaIni',
+                  setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'fechaIni' : null } })
+                }}
+                dynamicComp={() => (
+                  <Field.Date
+                    id="curso.buffer/fechaIni"
+                    label=""
+                    fullWidth
+                  />
+                )}
+              >
+                <Box display="flex">
+                  <Typography variant="body2">{util.formatDate(curso.buffer.fechaIni) || "Sin datos"}</Typography>
+                </Box>
+              </QSection>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <QSection
+                title="Hora Inicio"
+                actionPrefix="curso.buffer"
+                alwaysInactive={actionEnabled}
+                activation={{
+                  active: cursoBufferActive === 'horaIni',
+                  setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'horaIni' : null } })
+                }}
+                dynamicComp={() => (
+                  <Field.Time id="curso.buffer/horaIni" label="" />
+                )}
+              >
+                <Box display="flex">
+                  <Typography variant="body2">{curso.buffer.horaIni ? curso.buffer.horaIni.slice(0, 5) : "Sin datos"}</Typography>
+                </Box>
+              </QSection>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <QSection
+                title="Fecha Fin"
+                actionPrefix="curso.buffer"
+                alwaysInactive={actionEnabled}
+                activation={{
+                  active: cursoBufferActive === 'fechaFin',
+                  setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'fechaFin' : null } })
+                }}
+                dynamicComp={() => (
+                  <Field.Date
+                    id="curso.buffer/fechaFin"
+                    label=""
+                    fullWidth
+                  />
+                )}
+              >
+                <Box display="flex">
+                  <Typography variant="body2">{util.formatDate(curso.buffer.fechaFin) || "Sin datos"}</Typography>
+                </Box>
+              </QSection>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <QSection
+                title="Hora Fin"
+                actionPrefix="curso.buffer"
+                alwaysInactive={actionEnabled}
+                activation={{
+                  active: cursoBufferActive === 'horaFin',
+                  setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'horaFin' : null } })
+                }}
+                dynamicComp={() => (
+                  <Field.Time id="curso.buffer/horaFin" label="" />
+                )}
+              >
+                <Box display="flex">
+                  <Typography variant="body2">{curso.buffer.horaFin ? curso.buffer.horaFin.slice(0, 5) : "Sin datos"}</Typography>
+                </Box>
+              </QSection>
+            </Grid>
+          </Grid>
+          <Grid container item xs={12} sm={12} spacing={2} justifyContent="flex-end">
+            <Grid item xs={12} sm={3}>
+              <QSection
+                title="Gastos"
+                actionPrefix="curso.buffer"
+                alwaysInactive={actionEnabled}
+                activation={{
+                  active: cursoBufferActive === 'gastos',
+                  setActive: (isActive) => dispatch({ type: "setCursoBufferActive", payload: { value: isActive ? 'gastos' : null } })
+                }}
+                dynamicComp={() => (
+                  <Field.Currency
+                    id={`curso.buffer/gastos`}
+                    schema={schema}
+                    onClick={event => event.target.select()}
+                    value={curso?.buffer?.gastos}
+                  />
+                )}
+              >
+                <Box display="flex">
+                  <Typography variant="body2">{util.euros(curso.data.gastos ?? 0)}</Typography>
+                </Box>
+              </QSection>
+            </Grid>
           </Grid>
         </Grid>
         <Box
           display="flex"
-          justifyContent="space-evenly"
-          style={{ margin: "0px", marginBottom: "50px", marginTop: "20px" }}
+          justifyContent="space-between"
+          style={{ margin: "0px", marginBottom: "50px", marginTop: "20px", flexWrap: "wrap", gap: "10px" }}
         >
           {curso.buffer?.idCampania == null ? (
             <Button
@@ -173,6 +312,17 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
               Añadir contacto
             </Box>
           </Button>
+          <Button
+            id="anadirResponsable"
+            color="primary"
+            disabled={actionEnabled}
+            onClick={() => dispatch({ type: "onAnadirResponsableClicked" })}
+          >
+            <Box display="flex" style={{ gap: "0.5rem" }} alignItems="center">
+              <Icon>add</Icon>
+              Añadir responsable
+            </Box>
+          </Button>
           {/* <Button
             id="quitarContacto"
             color="primary"
@@ -184,6 +334,9 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
               Quitar contacto
             </Box>
           </Button> */}
+        </Box>
+        <Box style={{ margin: "0px", marginBottom: "50px" }}>
+          <ListResponsableCurso lineas={responsablesvento} />
         </Box>
         <Box style={{ margin: "0px", marginBottom: "50px" }}>
           <ListContactoCurso lineas={contactosevento} />
@@ -223,6 +376,24 @@ function Curso({ callbackChanged, initCurso, useStyles }) {
             />
           </Container>
         </Dialog>
+
+        <Dialog open={modalAnadirResponsableVisible} fullWidth maxWidth="xs">
+          <Container maxWidth="xs">
+            <MainBox
+              title="Añadir responsable"
+              before={true}
+              callbackCerrado={payload => dispatch({ type: "onCerrarAnadirResponsable", payload })}
+            >
+              <Agente id="responsableAnadir" label="Responsable" fullWidth async />
+            </MainBox>
+            <ConfirmButton
+              id="saveResponsable"
+              className="confirmarAnadirResponsable"
+              onClick={() => dispatch({ type: "onSaveResponsableClicked" })}
+            />
+          </Container>
+        </Dialog>
+
         <Box>
           <input
             id="hiddenAttachInput"

@@ -1,11 +1,12 @@
 ---
-shortcuts: 
+shortcuts:
   - type: Model
     name: historico
     id: referencia
     schema: historicoPresupuestosCliente
     action: get_historico_pedidos
-state: {}
+state:
+  anadiendoDesdeHistorico: false
 bunch:
   # En sanhigia cargamos siempre todas las líneas por la revisión
   # en la totalización que cambia precios y crea líneas regalo
@@ -46,11 +47,15 @@ bunch:
       _type: grape
       name: getHistorico
   onAnadirLineaDesdeHistoricoClicked:
+    - _type: set
+      path: anadiendoDesdeHistorico
+      value:
+        const: true
     - _type: setItem
       condition:
-          operator: A is true
-          A:
-            code: 'return !payload.referencia.includes(".")'    
+        operator: A is true
+        A:
+          code: 'return !payload.referencia.includes(".")'
       path: historico.dict
       key:
         payloadPath: referencia
@@ -60,14 +65,15 @@ bunch:
         const: creating_line
     - _type: grape
       condition:
-          operator: A is true
-          A:
-            code: 'return payload.referencia.includes(".")'    
-      name: seteaStatusCreatingLine        
+        operator: A is true
+        A:
+          code: 'return payload.referencia.includes(".")'
+      name: seteaStatusCreatingLine
     - _type: patch
       action: build_linea
       schema: presupuestosCli
       success: onLineaHistoricoAnadida
+      error: onLineaHistoricoAnadidaError
       id:
         statePath: presupuesto.buffer.idPresupuesto
       data:
@@ -77,7 +83,16 @@ bunch:
         - key: cantidad
           value:
             payloadPath: cantidad
+  onLineaHistoricoAnadidaError:
+    - _type: set
+      path: anadiendoDesdeHistorico
+      value:
+        const: false
   onLineaHistoricoAnadida:
+    - _type: set
+      path: anadiendoDesdeHistorico
+      value:
+        const: false
     - _type: grape
       name: addLineasItem
       payload:
@@ -92,4 +107,57 @@ bunch:
       payload:
         referencia:
           payloadPath: referencia
-
+  onCalculaRecepcionesClicked:
+    - _type: patch
+      schema: checkStockLinea
+      action: dame_recepciones_pendientes
+      id:
+        const: "-static-"
+      data:
+        - key: referencia
+          value:
+            payloadPath: referencia
+      success: onRecepcionesRecibidas
+  onRecepcionesRecibidas:
+    - _type: setItem
+      path: historico.dict
+      key:
+        payloadPath: referencia
+      prop:
+        const: recepciones
+      value:
+        payloadPath: response
+  onPerderPresupuestoClicked:
+    - _type: patch
+      schema: presupuestosCli
+      id:
+        statePath: presupuesto.buffer.idPresupuesto
+      data:
+        - key: estadoPresupuesto
+          value:
+            const: "Perdido"
+      success: onPresupuestoPerdido
+      error: onPresupuestoPerdidoError
+  onReactivarPresupuestoClicked:
+    - _type: patch
+      schema: presupuestosCli
+      id:
+        statePath: presupuesto.buffer.idPresupuesto
+      data:
+        - key: estadoPresupuesto
+          value:
+            const: "Pendiente"
+      success: onPresupuestoReactivado
+      error: onPresupuestoReactivadoError
+  onPresupuestoPerdido:
+    - _type: alert
+      text: Presupuesto perdido
+      severity: info
+    - _type: grape
+      name: reloadPresupuesto
+  onPresupuestoReactivado:
+    - _type: alert
+      text: Presupuesto reactivado
+      severity: info
+    - _type: grape
+      name: reloadPresupuesto

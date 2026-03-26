@@ -1,6 +1,7 @@
-import { Avatar, Box, Button, Field } from "@quimera/comps";
+import { Avatar, Box, Button, Field, Grid } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import {
+  CircularProgress,
   Collapse,
   Icon,
   IconButton,
@@ -10,6 +11,7 @@ import {
   ListItemText,
   Typography,
 } from "@quimera/thirdparty";
+import { useStateValue } from "quimera";
 import React, { useState } from "react";
 
 const useStyles = makeStyles(theme => ({
@@ -35,12 +37,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft, funPrimaryRight, hideSecondary = false, ...props }) {
-function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft, funPrimaryRight, hideSecondary = false, disabled = false, dispatch, ...props }) {
+function ListItemLineaHistoricoPedido({
+  linea,
+  selected = false,
+  funPrimaryLeft,
+  funPrimaryRight,
+  hideSecondary = false,
+  ...props
+}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [cantidad, setCantidad] = useState(0);
   const [validation, setValidation] = useState({ error: false, helperText: "" });
-  // const [_, dispatch] = useStateValue()
+  const disabled = props.disabled ?? false;
+  const [{ anadiendoDesdeHistorico }, dispatch] = useStateValue();
+
+  const setValorCantidad = c => {
+    c > 0 ? setCantidad(c) : setCantidad(0);
+  };
 
   const handleToggleOpenClicked = () => {
     setOpen(!open);
@@ -54,10 +68,7 @@ function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft,
     setValorCantidad(cantidad + c * multiplo);
   };
 
-  const setValorCantidad = c => {
-    c > 0 ? setCantidad(c) : setCantidad(0);
-  };
-  console.log("cantidad HISTORICO", cantidad, linea.multiplo, validation);
+  // console.log("cantidad HISTORICO", cantidad, linea.multiplo, validation);
 
   linea.multiplo && cantidad % linea.multiplo !== 0
     ? !validation.error &&
@@ -149,26 +160,73 @@ function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft,
                   id="save"
                   variant="text"
                   color="primary"
-                  startIcon={<Icon>save_alt</Icon>}
+                  startIcon={
+                    !anadiendoDesdeHistorico ? (
+                      <Icon>save_alt</Icon>
+                    ) : (
+                      <CircularProgress size={20} />
+                    )
+                  }
                   onClick={() =>
                     dispatch({
                       type: "onAnadirLineaDesdeHistoricoClicked",
                       payload: { referencia: linea.referencia, cantidad },
                     })
                   }
-                  disabled={!cantidad || validation.error}
+                  disabled={!cantidad || validation.error || anadiendoDesdeHistorico}
                 >
                   Añadir producto
                 </Button>
               </Box>
             </Box>
             {linea.disponible < cantidad && (
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography
-                  variant="body1"
-                  color="secondary"
-                >{`Este artículo no tiene stock suficiente (${linea.disponible} < ${cantidad})`}</Typography>
-              </Box>
+              <Grid display="flex" justifyContent="space-between" alignItems="center">
+                <Box display="flex" justifyContent="space-between" alignItems="center" width={1}>
+                  <Typography
+                    variant="body1"
+                    color="secondary"
+                  >{`Este artículo no tiene stock suficiente (${linea.disponible} < ${cantidad})`}</Typography>
+                  <Button
+                    id="calculaRecepciones"
+                    variant="text"
+                    color="secondary"
+                    startIcon={<Icon>start</Icon>}
+                    onClick={() =>
+                      dispatch({
+                        type: "onCalculaRecepcionesClicked",
+                        payload: { referencia: linea.referencia, cantidad },
+                      })
+                    }
+                  >
+                    Mostrar próximas recepciones
+                  </Button>
+                </Box>
+                {linea.recepciones && (
+                  <Box display="flex" justifyContent="space-between" alignItems="center" width={1}>
+                    {linea.recepciones?.length > 0 ? (
+                      <Box display="flex" flexDirection="column" gap={1}>
+                        <Typography variant="body1" color="secondary">
+                          Recepciones pendientes:
+                        </Typography>
+                        {linea.recepciones.map((recepcion, index) => (
+                          <Typography key={index} variant="body1" color="secondary">
+                            {`${recepcion.por_recibir} undidad${recepcion.por_recibir > 1 ? "es pedidas" : " pedida"
+                              } el ${new Date(recepcion.fecha_pedido).toLocaleDateString(
+                                "es-ES",
+                              )}, fecha de recepción el ${new Date(
+                                recepcion.fecha_recepcion,
+                              ).toLocaleDateString("es-ES")}`}
+                          </Typography>
+                        ))}
+                      </Box>
+                    ) : (
+                      <Typography variant="body1" color="secondary">
+                        No hay recepciones pendientes de este producto
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </Grid>
             )}
           </Collapse>
         </Collapse>
@@ -178,7 +236,9 @@ function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft,
 }
 
 const equalProps = (prev, next) => {
-  const equal = prev?.linea.referencia === next?.linea.referencia;
+  const equal =
+    prev?.linea.referencia === next?.linea.referencia &&
+    prev?.linea.recepciones === next?.linea.recepciones;
   console.log("cantidad HISTORICOEQUAL", equal);
 
   return equal;
