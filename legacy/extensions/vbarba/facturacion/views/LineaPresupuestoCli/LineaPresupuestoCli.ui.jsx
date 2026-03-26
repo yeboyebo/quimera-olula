@@ -128,6 +128,7 @@ function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyl
             </QSection>
           </Grid>
 
+
           <Grid item xs={12}>
             <QSection actionPrefix="totales" alwaysInactive>
               <Totales
