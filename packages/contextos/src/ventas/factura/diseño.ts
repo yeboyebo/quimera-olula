@@ -37,6 +37,8 @@ export type GetFactura = (id: string) => Promise<Factura>;
 
 export type GetLineasFactura = (id: string) => Promise<LineaFactura[]>;
 
+export type GetReportFactura = (id: string) => Promise<Blob>;
+
 export type PostFactura = (factura: NuevaFactura) => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
@@ -52,6 +54,7 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
 
 export type EstadoFactura = (
     'INICIAL'

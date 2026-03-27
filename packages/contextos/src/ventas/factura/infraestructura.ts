@@ -2,7 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
+import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -35,6 +35,8 @@ export const getFacturas: GetFacturas = async (
   return { datos: respuesta.datos.map(facturaDesdeAPI), total: respuesta.total };
 };
 
+export const getReportFactura: GetReportFactura = async (id) =>
+  RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report de la factura");
 
 export const postFactura: PostFactura = async (factura) => {
   const cliente = factura.cliente_id
