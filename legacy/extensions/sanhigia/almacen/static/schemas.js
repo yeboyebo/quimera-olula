@@ -161,7 +161,7 @@ export default parent => {
         sh_estado: Field.Text("sh_estado", "Estado"),
         sh_codlote: Field.Text("sh_codlote", "sh_codlote"),
         cantidadIni: Field.Int("cantidadini", "Cantidad Inicial").required(),
-        referenciaProv: Field.Bool("referenciaprov", "Referencia proveedor"),
+        referenciaProv: Field.Text("referenciaprov", "Referencia proveedor"),
       })
       .filter(({ inventario }) => ["codinventario", "eq", inventario.data.codInventario])
       .limit(500)

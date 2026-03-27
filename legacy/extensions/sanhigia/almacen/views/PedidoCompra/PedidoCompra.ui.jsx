@@ -337,7 +337,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                   />
                   <Column.Text
                     id="descripcion"
-                    header="descripcion"
+                    header="Descripcion"
                     order="descripcion"
                     pl={2}
                     value={linea => linea.descripcion}

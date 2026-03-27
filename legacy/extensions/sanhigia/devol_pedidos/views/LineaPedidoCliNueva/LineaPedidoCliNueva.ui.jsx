@@ -1,15 +1,16 @@
 import { Box, Collapse, Field, Grid, Icon, IconButton, QSection, Typography } from "@quimera/comps";
 import { QArticulo } from "@quimera-extension/base-almacen";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
+import React, { useEffect, useState } from "react";
 
 function LineaPedidoCliNueva({ callbackGuardada, idPedido, useStyles }) {
-  const [{ inline, linea }, dispatch] = useStateValue();
+  const [{ cantidad, inline, linea }, dispatch] = useStateValue();
   const classes = useStyles();
   const schema = getSchemas().lineasPedidosCli;
+  const [timer, setTimer] = useState();
 
   useEffect(() => {
-    console.log("INIT NUEVA", idPedido, dispatch, callbackGuardada);
+    // console.log("INIT NUEVA", idPedido, dispatch, callbackGuardada);
     dispatch({
       type: "onInit",
       payload: {
@@ -21,6 +22,14 @@ function LineaPedidoCliNueva({ callbackGuardada, idPedido, useStyles }) {
   useEffect(() => {
     util.publishEvent(linea.event, callbackGuardada);
   }, [linea.event.serial]);
+
+  const updateTime = 1000;
+  const handleDelay = event => {
+    clearTimeout(timer);
+    const value = event.value;
+    dispatch({ type: "onCantidssagdChanged", payload: { value } });
+    // setTimer(setTimeout(() => dispatch({ type: "checkBusqueda", payload: { value } }), updateTime));
+  };
 
   return (
     <Quimera.Template id="LineaPedidoCliNueva">
@@ -88,10 +97,20 @@ function LineaPedidoCliNueva({ callbackGuardada, idPedido, useStyles }) {
                 <Field.Schema id="linea.buffer/irpf" schema={schema} fullWidth />
               </Grid> */}
               <Grid item xs={6}>
-                <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth disabled={true} />
+                <Field.Schema
+                  id="linea.buffer/pvpUnitario"
+                  schema={schema}
+                  fullWidth
+                  disabled={true}
+                />
               </Grid>
               <Grid item xs={6}>
-                <Field.Schema id="linea.buffer/pvpSinDto" schema={schema} fullWidth disabled={true} />
+                <Field.Schema
+                  id="linea.buffer/pvpSinDto"
+                  schema={schema}
+                  fullWidth
+                  disabled={true}
+                />
               </Grid>
               <Grid item xs={6}>
                 <Field.Schema id="linea.buffer/dtoLineal" schema={schema} fullWidth />

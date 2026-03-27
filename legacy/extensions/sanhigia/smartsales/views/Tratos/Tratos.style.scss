@@ -1,24 +1,27 @@
+.MasterTratosSmartsales {
+  .YBQListItemTL {
+    @media screen and (max-width: 810px) {
+      white-space: normal;
 
-  .MasterTratosSmartsales {
-    .YBQListItemTL {
-      @include mobile {
-        white-space: normal;
-        .MuiBox-root {
-          align-items: center;
-        }
+      .MuiBox-root {
+        align-items: center;
       }
     }
-    .YBQListItemMR {
-      font-size: 1.0rem;
-    }
   }
-  .SmartSalesMainBoxTratos {
-    .SmartSalesMainBoxText {
-        @include mobile {
-          font-size: 24px;
-        }
-        white-space: normal;
-        text-align: center;
 
-    }
+  .YBQListItemMR {
+    font-size: 1.0rem;
   }
+}
+
+.SmartSalesMainBoxTratos {
+  .SmartSalesMainBoxText {
+    @media screen and (max-width: 810px) {
+      font-size: 24px;
+    }
+
+    white-space: normal;
+    text-align: center;
+
+  }
+}

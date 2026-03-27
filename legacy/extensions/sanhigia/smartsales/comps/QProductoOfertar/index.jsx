@@ -23,8 +23,8 @@ function QProductoOfertar({ seVende = false, codFamilia = null, noOptionsText = 
         ? ["referencia", "eq", key]
         : {
           or: [
-            ["descripcion", "like", text],
-            ["referencia", "like", text],
+            ["descripcion", "like_ua", text],
+            ["referencia", "like_ua", text],
             ["codbarras", "like", text],
           ],
         };
@@ -46,8 +46,8 @@ function QProductoOfertar({ seVende = false, codFamilia = null, noOptionsText = 
                 return {
                   key: articulo.referencia,
                   value: `${articulo.descripcion} (${articulo.codbarras && articulo.referencia !== articulo.codbarras
-                      ? `${articulo.referencia} / ${articulo.codbarras}`
-                      : `${articulo.referencia}`
+                    ? `${articulo.referencia} / ${articulo.codbarras}`
+                    : `${articulo.referencia}`
                     })`,
                   option: { ...articulo, cantidad: 1 },
                 };

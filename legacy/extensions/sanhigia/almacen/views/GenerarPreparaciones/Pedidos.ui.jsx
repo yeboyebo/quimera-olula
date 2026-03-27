@@ -22,6 +22,11 @@ function GenerarPreparaciones({ idPedido, useStyles }) {
     [],
   );
 
+  const callbackPedidoEnviadoPda = useCallback(
+    payload => dispatch({ type: "deletePedidosGenerarPreparacionesItem", payload: { item: payload } }),
+    [],
+  );
+
   const mobile = true;
   const desktop = !mobile;
   const masterVisible = desktop || (mobile && !pedidosGenerarPreparaciones.current);
@@ -38,6 +43,7 @@ function GenerarPreparaciones({ idPedido, useStyles }) {
           initPedido={pedidosGenerarPreparaciones.dict[pedidosGenerarPreparaciones.current]}
           idPedido={pedidosGenerarPreparaciones.current}
           callbackChanged={callbackPedidoCambiado}
+          callbackPedidoEnviadoPda={callbackPedidoEnviadoPda}
         />
       )}
       {/* <QMasterDetail
