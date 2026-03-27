@@ -1,7 +1,6 @@
-import { QSection } from "@quimera/comps";
 import { ListItemLineaPedido } from "@quimera-extension/base-area_clientes";
+import { QSection } from "@quimera/comps";
 import Quimera from "quimera";
-import React from "react";
 
 function LineaPresupuestoCli({ callbackChanged, disabled, key, linea, model, modelName, selected, variant = "form", ...props }) {
   const form = (

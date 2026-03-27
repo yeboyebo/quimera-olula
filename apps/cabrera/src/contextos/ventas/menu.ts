@@ -5,8 +5,8 @@ export const menuVentas = {
     "Albaranes/Cambiar Puesto de Firma": { url: "/puestoFirma", regla: "ventas.albaran.firmapuesto" },
     "Albaranes/Firmar Puesto": { url: "/albaranesPuesto", regla: "ventas.albaran.firmapuesto" },
     "Ventas": { icono: "fichero" },
-    "Ventas/Pedidos": { url: "/ventas/pedidos", regla: "ventas.pedido.leer" },
     "Ventas/Presupuestos": { url: "/ventas/presupuestos", regla: "ventas.presupuesto.leer" },
+    "Ventas/Pedidos": { url: "/ventas/pedidos", regla: "ventas.pedido.leer" },
     "Ventas/Albaranes": { url: "/ventas/albaranes", regla: "ventas.albaran.leer" },
     "Ventas/Facturas": { url: "/ventas/facturas", regla: "ventas.factura.leer" },
 };

@@ -15,10 +15,10 @@ import { useEffect } from "react";
 
 import { ProveedorArticulo, QArticuloVbarba } from "../../comps";
 
-function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles }) {
+function LineaPresupuestoCli({ callbackGuardada, disabled, lineaInicial, useStyles }) {
   const [{ linea, sections }, dispatch] = useStateValue();
   const classes = useStyles();
-  const schema = getSchemas().lineasPedidosCli;
+  const schema = getSchemas().lineasPresupuestosCli;
   const { buffer } = linea;
 
   useEffect(() => {
@@ -34,8 +34,10 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
     });
   }, [lineaInicial]);
 
+  // console.log('mimensaje_linea', linea.buffer);
+
   return (
-    <Quimera.Template id="LineaPedidoCli">
+    <Quimera.Template id="LineaPresupuestoCli">
       {linea.buffer._status === "deleting" && (
         <Box width={1}>
           <Typography variant="body2">Borrando línea...</Typography>
@@ -70,7 +72,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
                 <Grid container spacing={1} direction="column" >
                   <Grid item xs={12}>
                     <QArticuloVbarba
-                      id="linea.buffer.referencia"
+                      id="linea.buffer/referencia"
                       label="Artículo"
                       boxStyle={classes.referencia}
                       seVende
@@ -108,7 +110,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               dynamicComp={() => (
                 <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.cantidad" schema={schema} fullWidth autoFocus />
+                    <Field.Schema id="linea.buffer/cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
                   <Grid item xs={6}>
                     {linea.data.aplicarPvpParticular
@@ -125,6 +127,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               )} x ${util.euros(linea.data.aplicarPvpParticular ? buffer.pvpUnitario : buffer.pvpReferencia)}`}</Typography>
             </QSection>
           </Grid>
+
 
           <Grid item xs={12}>
             <QSection actionPrefix="totales" alwaysInactive>
@@ -147,10 +150,10 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               dynamicComp={() => (
                 <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.dtoLineal" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/dtoLineal" schema={schema} fullWidth />
                   </Grid>
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.dtoPor" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/dtoPor" schema={schema} fullWidth />
                   </Grid>
                 </Grid>
               )}
@@ -176,16 +179,16 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               dynamicComp={() => (
                 <Grid container spacing={1} direction="column" >
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.codImpuesto" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/codImpuesto" schema={schema} fullWidth />
                   </Grid>
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.iva" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/iva" schema={schema} fullWidth />
                   </Grid>
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.recargo" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/recargo" schema={schema} fullWidth />
                   </Grid>
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.irpf" schema={schema} fullWidth />
+                    <Field.Schema id="linea.buffer/irpf" schema={schema} fullWidth />
                   </Grid>
                 </Grid>
               )}
@@ -210,4 +213,4 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
   );
 }
 
-export default LineaPedidoCli;
+export default LineaPresupuestoCli;
