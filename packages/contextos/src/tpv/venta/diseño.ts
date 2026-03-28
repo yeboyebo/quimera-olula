@@ -1,42 +1,19 @@
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta } from "#/ventas/venta/diseño.ts";
+import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 
-interface ClienteVentaTpv {
+export interface ClienteVentaTpv {
     id: string | null;
     nombre: string;
     idFiscal: string;
-    idDireccion: string;
+    idDireccion: string | null;
     direccion: Direccion;
 }
 
-export interface VentaTpv extends Entidad {
-    id: string;
-    codigo: string;
-    fecha: Date;
+export interface VentaTpv extends Venta {
     cliente: ClienteVentaTpv | null;
-    // cliente_id: string;
-    // nombre_cliente: string;
-    // id_fiscal: string;
-    // direccion_id: string;
-    // direccion: Direccion;
-    agente_id: string;
-    nombre_agente: string;
-    divisa_id: string;
-    tasa_conversion: number;
-    total: number;
-    neto: number;
-    total_iva: number;
-    total_irpf: number;
-    total_divisa_empresa: number;
-    forma_pago_id: string;
-    nombre_forma_pago: string;
-    grupo_iva_negocio_id: string;
-    observaciones: string;
     pendiente: number;
     pagado: number;
-    // lineas: LineaFactura[];
-    // pagos: PagoVentaTpv[];
     puntoVentaId: string;
     puntoVenta: string;
     agenteId: string;

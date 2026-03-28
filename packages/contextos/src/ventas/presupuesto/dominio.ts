@@ -11,6 +11,7 @@ export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
     {
         id: "nombre_cliente",
         cabecera: "Cliente",
+        render: (p) => p.cliente.nombre_cliente,
     },
     {
         id: "total",

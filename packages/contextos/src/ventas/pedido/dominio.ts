@@ -10,6 +10,7 @@ export const metaTablaPedido: MetaTabla<Pedido> = [
     {
         id: "nombre_cliente",
         cabecera: "Cliente",
+        render: (p) => p.cliente.nombre_cliente,
     },
     {
         id: "total",
@@ -44,8 +45,8 @@ export const cambioClienteVacio = (): CambioClientePedido => ({
 });
 
 export const cambioCliente = (pedido: Pedido): CambioClientePedido => ({
-    cliente_id: pedido.cliente_id,
-    direccion_id: pedido.direccion_id,
+    cliente_id: pedido.cliente.cliente_id ?? "",
+    direccion_id: pedido.cliente.direccion_id ?? "",
 });
 
 

@@ -1,7 +1,8 @@
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Albaran extends Venta {
+    cliente: ClienteVenta;
     idfactura: string | null;
     lineas: LineaAlbaran[];
 }

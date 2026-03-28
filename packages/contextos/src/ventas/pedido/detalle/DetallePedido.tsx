@@ -1,3 +1,4 @@
+import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -127,12 +128,11 @@ export const DetallePedidoBase = ({
         </div>
       )}
 
-      <TotalesVenta
-        neto={Number(ctx.pedido.neto ?? 0)}
-        totalIva={Number(ctx.pedido.total_iva ?? 0)}
-        total={Number(ctx.pedido.total ?? 0)}
-        divisa={String(ctx.pedido.coddivisa ?? "EUR")}
-      />
+      <TotalesVenta modeloVenta={pedido} publicar={emitir} />
+
+      {estado === "CAMBIANDO_DESCUENTO" && (
+        <CambiarDescuento publicar={emitir} />
+      )}
 
       <Lineas
         pedido={ctx.pedido}

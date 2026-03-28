@@ -7,6 +7,7 @@ export type EstadoPresupuesto = (
     | "APROBANDO_PRESUPUESTO"
     | "CAMBIANDO_DIVISA"
     | "CAMBIANDO_CLIENTE"
+    | "CAMBIANDO_DESCUENTO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
 );
 

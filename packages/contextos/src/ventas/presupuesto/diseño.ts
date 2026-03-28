@@ -1,8 +1,9 @@
 import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { ClienteVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
+  cliente: ClienteVenta;
   fecha_salida: Date;
   aprobado: boolean;
   lineas: LineaPresupuesto[];

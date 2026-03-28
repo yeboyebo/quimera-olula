@@ -6,6 +6,7 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
@@ -102,12 +103,11 @@ export const DetalleFactura = ({
         </div>
       )}
 
-      <TotalesVenta
-        neto={Number(ctx.factura.neto ?? 0)}
-        totalIva={Number(ctx.factura.total_iva ?? 0)}
-        total={Number(ctx.factura.total ?? 0)}
-        divisa={String(ctx.factura.divisa_id || "EUR")}
-      />
+      <TotalesVenta modeloVenta={factura} publicar={emitir} />
+
+      {estado === "CAMBIANDO_DESCUENTO" && (
+        <CambiarDescuento publicar={emitir} />
+      )}
 
       <Lineas
         factura={ctx.factura}

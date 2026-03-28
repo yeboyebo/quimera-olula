@@ -1,8 +1,9 @@
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
+    cliente: ClienteVenta;
     editable?: boolean;
     lineas?: LineaFactura[];
 }
@@ -61,6 +62,7 @@ export type EstadoFactura = (
     | 'ABIERTO'
     | 'BORRANDO_FACTURA'
     | 'CAMBIANDO_CLIENTE'
+    | 'CAMBIANDO_DESCUENTO'
     | 'CREANDO_LINEA'
     | 'CAMBIANDO_LINEA'
     | 'BORRANDO_LINEA'

@@ -1,9 +1,10 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { GetLineasPedido } from "../pedido/diseño.ts";
 import { CambioCliente } from "../presupuesto/diseño.ts";
+import { direccionVacia } from "../venta/dominio.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -20,11 +21,41 @@ import {
 const baseUrl = new ApiUrls().ALBARAN;
 
 type LineaAlbaranAPI = LineaAlbaran;
-type AlbaranAPI = Albaran & { fecha: string };
+interface AlbaranAPI {
+  id: string;
+  codigo: string;
+  fecha: string;
+  cliente_id: string;
+  nombre_cliente: string;
+  id_fiscal: string;
+  direccion_id: string;
+  direccion: Direccion;
+  agente_id: string;
+  nombre_agente: string;
+  divisa_id: string;
+  tasa_conversion: number;
+  total: number;
+  neto: number;
+  total_iva: number;
+  total_irpf: number;
+  total_divisa_empresa: number;
+  forma_pago_id: string;
+  nombre_forma_pago: string;
+  grupo_iva_negocio_id: string;
+  observaciones: string;
+  idfactura: string | null;
+}
 
 export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
+  cliente: {
+    cliente_id: p.cliente_id ?? null,
+    nombre_cliente: p.nombre_cliente ?? "",
+    id_fiscal: p.id_fiscal ?? "",
+    direccion_id: p.direccion_id ?? null,
+    direccion: p.direccion ?? direccionVacia(),
+  },
   lineas: [],
 });
 
@@ -132,10 +163,10 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
         tasa_conversion: albaran.tasa_conversion,
       },
       fecha: albaran.fecha,
-      cliente_id: albaran.cliente_id,
-      nombre_cliente: albaran.nombre_cliente,
-      id_fiscal: albaran.id_fiscal,
-      direccion_id: albaran.direccion_id,
+      cliente_id: albaran.cliente.cliente_id,
+      nombre_cliente: albaran.cliente.nombre_cliente,
+      id_fiscal: albaran.cliente.id_fiscal,
+      direccion_id: albaran.cliente.direccion_id,
       forma_pago_id: albaran.forma_pago_id,
       grupo_iva_negocio_id: albaran.grupo_iva_negocio_id,
       observaciones: albaran.observaciones,
@@ -160,3 +191,11 @@ export const patchCambiarCliente = async (id: string, cambio: CambioCliente) => 
 export const borrarAlbaran = async (id: string) => {
   await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar albarán");
 }
+
+export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      por_descuento: dto_porcentual,
+    }
+  }, "Error al cambiar descuento del albarán");
+};

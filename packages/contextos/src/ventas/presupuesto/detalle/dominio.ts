@@ -1,4 +1,5 @@
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "#/ventas/venta/diseño.ts";
+import { clienteVentaVacio } from "#/ventas/venta/dominio.ts";
 import { Direccion, ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
 import { CambioCliente, LineaPresupuesto, Presupuesto } from "../diseño.ts";
@@ -7,6 +8,7 @@ import {
     getLineas,
     getPresupuesto,
     patchCambiarCliente,
+    patchCambiarDescuento,
     patchCambiarDivisa,
     patchCantidadLinea,
     patchPresupuesto
@@ -31,16 +33,10 @@ export const ventaVacia: Venta = {
     id: '',
     codigo: '',
     fecha: new Date(),
-    cliente_id: '',
-    nombre_cliente: '',
-    id_fiscal: '',
-    direccion_id: '',
-    direccion: direccionVacia(),
     agente_id: '',
     nombre_agente: '',
     divisa_id: '',
     tasa_conversion: 1,
-    aprobado: false,
     total: 0,
     total_divisa_empresa: 0,
     neto: 0,
@@ -73,8 +69,6 @@ export const metaVenta: MetaModelo<Venta> = {
         tasa_conversion: { tipo: "numero", requerido: false },
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
-        id_fiscal: { bloqueado: true, requerido: true },
-        cliente_id: { bloqueado: true, requerido: true },
         divisa_id: { requerido: true },
     },
 };
@@ -103,8 +97,6 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
         tasa_conversion: { tipo: "numero", requerido: true },
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
-        id_fiscal: { bloqueado: true, requerido: true },
-        cliente_id: { bloqueado: true, requerido: true },
         divisa_id: { requerido: true },
     },
 };
@@ -114,6 +106,7 @@ export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
 
 export const presupuestoVacio = (): Presupuesto => ({
     ...ventaVacia,
+    cliente: clienteVentaVacio,
     aprobado: false,
     fecha_salida: new Date(),
     lineas: [],
@@ -278,6 +271,17 @@ export const cambiarDivisa: ProcesarPresupuesto = async (contexto, payload) => {
 export const cambiarCliente: ProcesarPresupuesto = async (contexto, payload) => {
     const cambio = payload as CambioCliente;
     await patchCambiarCliente(contexto.presupuesto.id, cambio);
+
+    return pipePresupuesto(contexto, [
+        refrescarPresupuesto,
+        refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarDescuento: ProcesarPresupuesto = async (contexto, payload) => {
+    const { dto_porcentual } = payload as { dto_porcentual: number };
+    await patchCambiarDescuento(contexto.presupuesto.id, dto_porcentual);
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,

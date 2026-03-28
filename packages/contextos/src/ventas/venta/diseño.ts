@@ -4,11 +4,6 @@ export interface Venta extends Entidad {
     id: string;
     codigo: string;
     fecha: Date;
-    cliente_id: string;
-    nombre_cliente: string;
-    id_fiscal: string;
-    direccion_id: string;
-    direccion: Direccion;
     agente_id: string;
     nombre_agente: string;
     divisa_id: string;
@@ -66,7 +61,10 @@ export type NuevaLineaVenta = {
 
 
 export type ClienteVenta = {
-    cliente_id: string;
-    direccion_id: string;
+    cliente_id: string | null;
+    nombre_cliente: string;
+    id_fiscal: string;
+    direccion_id: string | null;
+    direccion: Direccion;
 }
 

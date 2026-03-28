@@ -2,6 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
+import { direccionVacia } from "../venta/dominio.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, CambioCliente, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto, PresupuestoAPI } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
@@ -13,42 +14,26 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
   fecha_salida: new Date(Date.parse(p.fecha_salida)),
-  nombre_via: p.direccion?.nombre_via ?? "",
-  cod_postal: p.direccion?.cod_postal ?? null,
-  ciudad: p.direccion?.ciudad ?? "",
-  provincia_id: p.direccion?.provincia_id ?? "",
-  provincia: p.direccion?.provincia ?? "",
-  pais_id: p.direccion?.pais_id ?? "",
-  telefono: p.direccion?.telefono ?? "",
-  tipo_via: p.direccion?.tipo_via ?? "",
-  numero: p.direccion?.numero ?? "",
-  otros: p.direccion?.otros ?? "",
-  apartado: p.direccion?.apartado ?? "",
+  cliente: {
+    cliente_id: p.cliente_id ?? null,
+    nombre_cliente: p.nombre_cliente ?? "",
+    id_fiscal: p.id_fiscal ?? "",
+    direccion_id: p.direccion_id ?? null,
+    direccion: p.direccion ?? direccionVacia(),
+  },
   lineas: [],
 });
 
 export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
-  const {
-    direccion,
-    ...rest
-  } = l;
   return {
-    ...rest,
-    fecha: rest.fecha.toISOString(),
-    fecha_salida: rest.fecha_salida.toISOString(),
-    direccion: {
-      nombre_via: direccion?.nombre_via ?? "",
-      cod_postal: direccion?.cod_postal ?? "",
-      ciudad: direccion?.ciudad ?? "",
-      provincia_id: direccion?.provincia_id ?? null,
-      provincia: direccion?.provincia ?? "",
-      pais_id: direccion?.pais_id ?? "",
-      telefono: direccion?.telefono ?? "",
-      tipo_via: direccion?.tipo_via ?? "",
-      numero: direccion?.numero ?? "",
-      otros: direccion?.otros ?? "",
-      apartado: direccion?.apartado ?? "",
-    },
+    ...l,
+    fecha: l.fecha.toISOString(),
+    fecha_salida: l.fecha_salida.toISOString(),
+    cliente_id: l.cliente.cliente_id ?? "",
+    nombre_cliente: l.cliente.nombre_cliente,
+    id_fiscal: l.cliente.id_fiscal,
+    direccion_id: l.cliente.direccion_id ?? "",
+    direccion: l.cliente.direccion,
   };
 };
 export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => l;
@@ -229,10 +214,10 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
         tasa_conversion: presupuesto.tasa_conversion,
       },
       fecha: presupuesto.fecha,
-      cliente_id: presupuesto.cliente_id,
-      nombre_cliente: presupuesto.nombre_cliente,
-      id_fiscal: presupuesto.id_fiscal,
-      direccion_id: presupuesto.direccion_id,
+      cliente_id: presupuesto.cliente.cliente_id,
+      nombre_cliente: presupuesto.cliente.nombre_cliente,
+      id_fiscal: presupuesto.cliente.id_fiscal,
+      direccion_id: presupuesto.cliente.direccion_id,
       forma_pago_id: presupuesto.forma_pago_id,
       grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
       observaciones: presupuesto.observaciones,
@@ -245,4 +230,12 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
 
 export const aprobarPresupuesto = async (id: string) => {
   await RestAPI.patch(`${baseUrl}/${id}/aprobar`, {}, "Error al aprobar presupuesto");
+};
+
+export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      por_descuento: dto_porcentual,
+    }
+  }, "Error al cambiar descuento del presupuesto");
 };

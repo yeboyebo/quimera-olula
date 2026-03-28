@@ -3,6 +3,7 @@ import { Direccion } from "@olula/lib/diseño.js";
 import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import {
     cambioClienteVentaVacio,
+    clienteVentaVacio,
     metaCambioClienteVenta,
     metaLineaVenta,
     metaNuevaLineaVenta,
@@ -28,6 +29,7 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
     {
         id: "nombre_cliente",
         cabecera: "Cliente",
+        render: (a) => a.cliente.nombre_cliente,
     },
     {
         id: "total",
@@ -38,6 +40,7 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
 
 export const albaranVacio = (): Albaran => ({
     ...ventaVacia,
+    cliente: clienteVentaVacio,
     idfactura: null,
     lineas: [],
 })
@@ -99,6 +102,6 @@ export const cambioClienteVacio = (): CambioClienteAlbaran => ({
 });
 
 export const cambioCliente = (albaran: Albaran): CambioClienteAlbaran => ({
-    cliente_id: albaran.cliente_id,
-    direccion_id: albaran.direccion_id,
+    cliente_id: albaran.cliente.cliente_id ?? "",
+    direccion_id: albaran.cliente.direccion_id ?? "",
 });

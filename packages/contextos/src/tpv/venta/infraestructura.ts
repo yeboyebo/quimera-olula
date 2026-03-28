@@ -325,6 +325,14 @@ export const patchFechaVenta: PatchFechaVenta = async (id, fecha) => {
     );
 };
 
+export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {
+    await RestAPI.patch(`${baseUrlFactura}/${id}`, {
+        cambios: {
+            por_descuento: dto_porcentual,
+        }
+    }, "Error al cambiar descuento de la venta");
+};
+
 // export const patchVentaClienteRegistrado: PatchVentaClienteRegistrado = async (id, cliente) => {
 
 //     const payload = {
