@@ -28,12 +28,23 @@ export const bunch = parent => {
         }),
       },
       {
+        type: "setStateKey",
+        plug: ({ initCurso }) => ({
+          path: "responsablesvento.filter.and",
+          value: [["codevento", "eq", `${initCurso?.codCurso}`]],
+        }),
+      },
+      {
         type: "grape",
         name: "getLineaseventos",
       },
       {
         type: "grape",
         name: "getContactosevento",
+      },
+      {
+        type: "grape",
+        name: "getResponsablesvento",
       },
     ],
     // onCrearCampaniaClicked: [
@@ -59,6 +70,19 @@ export const bunch = parent => {
           textoNo: "CANCELAR",
         }),
         onConfirm: "onRemoveContactoEventoConfirmed",
+      },
+    ],
+    onRemoveResponsableEvento: [
+      {
+        type: "userConfirm",
+        question: () => ({
+          titulo: "¿Remover responsable?",
+          cuerpo:
+            "Se va a eliminar este responsable de curso.",
+          textoSi: "REMOVER",
+          textoNo: "CANCELAR",
+        }),
+        onConfirm: "onRemoveResponsableEventoConfirmed",
       },
     ],
     onAnadirContactoClicked: [
@@ -100,6 +124,18 @@ export const bunch = parent => {
       {
         type: "setStateKey",
         plug: () => ({ path: "modalAnadirContactoVisible", value: false }),
+      },
+    ],
+    onAnadirResponsableClicked: [
+      {
+        type: "setStateKey",
+        plug: () => ({ path: "modalAnadirResponsableVisible", value: true }),
+      },
+    ],
+    onCerrarAnadirResponsable: [
+      {
+        type: "setStateKey",
+        plug: () => ({ path: "modalAnadirResponsableVisible", value: false }),
       },
     ],
   };

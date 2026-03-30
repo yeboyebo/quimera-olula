@@ -1,3 +1,4 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
 import {
   Box,
   Button,
@@ -9,8 +10,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { ProveedorArticulo, QArticuloVbarba } from "../../comps";
@@ -97,6 +97,7 @@ function LineaAlbaranCli({ callbackGuardada, disabled, lineaInicial, useStyles }
               saveDisabled={() => !schema.isValid(buffer)}
             >
               <Typography variant="h6">{buffer.descripcion}</Typography>
+              {buffer.nombreProveedor && <Typography variant="h6">Proveedor: {buffer.nombreProveedor}</Typography>}
             </QSection>
           </Grid>
 
@@ -110,7 +111,9 @@ function LineaAlbaranCli({ callbackGuardada, disabled, lineaInicial, useStyles }
                     <Field.Schema id="linea.buffer/cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
                   <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth />
+                    {linea.data.aplicarPvpParticular
+                      ? <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth />
+                      : <Field.Schema id="linea.buffer/pvpReferencia" schema={schema} fullWidth />}
                   </Grid>
                 </Grid>
               )}
@@ -119,7 +122,7 @@ function LineaAlbaranCli({ callbackGuardada, disabled, lineaInicial, useStyles }
               <Typography variant="h6" align="right">{`${util.formatter(
                 buffer.cantidad,
                 2,
-              )} x ${util.euros(buffer.pvpUnitario)}`}</Typography>
+              )} x ${util.euros(linea.data.aplicarPvpParticular ? buffer.pvpUnitario : buffer.pvpReferencia)}`}</Typography>
             </QSection>
           </Grid>
 

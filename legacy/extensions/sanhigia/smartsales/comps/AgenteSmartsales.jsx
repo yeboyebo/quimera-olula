@@ -55,7 +55,7 @@ function AgenteSmartsales({ id, estatico, StaticComp, filterField = false, ...pr
     API("agentes")
       .get()
       .select("codagente,nombreap")
-      .filter(key ? ["codagente", "eq", key] : ["nombreap", "like", text ?? ""])
+      .filter(key ? ["codagente", "eq", key] : ["nombreap", "like_ua", text ?? ""])
       .page({
         limit: 10000,
       })
@@ -73,6 +73,11 @@ function AgenteSmartsales({ id, estatico, StaticComp, filterField = false, ...pr
       .error(error => console.log("Error", error))
       .go();
   }, []);
+
+  useEffect(() => {
+    // para la primera vez
+    getOptions("");
+  }, [id]);
 
   return (
     <Field.Select

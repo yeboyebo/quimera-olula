@@ -1,9 +1,9 @@
-import { Direccion } from "@quimera-extension/base-area_clientes";
 import { Box, Field, Grid, Icon, IconButton } from "@quimera/comps";
+import { Direccion } from "@quimera-extension/base-area_clientes";
 // import { DirCliente as QDirCliente } from "../../../comps";
 import { DirCliente as QDirCliente } from "@quimera-extension/base-ventas";
-import Quimera, { useStateValue, util } from "quimera";
-import { useEffect, useState } from "react";
+import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import React, { useEffect, useState } from "react";
 
 import schemas from "../../../static/schemas";
 

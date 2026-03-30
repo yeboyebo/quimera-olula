@@ -54,9 +54,6 @@ function PedidosMaster({ idPedido }) {
             <Quimera.View id="PedidosCliNuevo" callbackGuardado={callbackNewPedidoChanged} />
           )} */}
           <Quimera.SubView id="GenerarPreparaciones/PedidosFiltro" />
-          {console.log('mimensaje_pedidosGenerarPreparaciones', pedidosGenerarPreparaciones.loading)
-          }
-
           {pedidosGenerarPreparaciones.loading ? (
             <Grid container direction="column" justify="center" alignItems="center">
               <CircularProgress size={50} style={{ marginTop: 16 }} />

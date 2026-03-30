@@ -22,6 +22,13 @@ bunch:
           const: dtoPor
       _type: grape
       name: onLineaDtoPorChanged
+  # onLineaBufferCantidadChanged:
+  #   patch: override
+  #   grapes:
+  #     - _type: set
+  #       path: linea.buffer.cantidad
+  #       value:
+  #         payloadPath: value
   onLineaReferenciaChanged:
     - _type: get
       schema: articulos
@@ -47,6 +54,10 @@ bunch:
       path: stock.disponible
       value:
         payloadPathOrZero: response.data.0.disponible
+    - _type: set
+      path: stock.recepciones
+      value:
+        payloadPathOrZero: response.data.0.recepciones
   onArticuloRecibido:
     - _type: if
       if:
