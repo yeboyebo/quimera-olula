@@ -21,6 +21,7 @@ export * from "./menu/menu-usuario.tsx";
 export * from "./detalle/Detalle.tsx";
 export * from "./detalle/FormularioGenerico.tsx";
 export * from "./detalle/helpers.tsx";
+export * from "./helpers.ts";
 export * from "./detalle/tabs/Tabs.tsx";
 
 export * from "./maestro/Listado.tsx";
