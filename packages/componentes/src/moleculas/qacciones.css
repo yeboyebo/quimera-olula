@@ -62,4 +62,28 @@ quimera-acciones {
             }
         }
     }
+
+    .acciones.acciones-inline {
+        display: flex;
+        flex-direction: row;
+        position: static;
+        width: auto;
+        min-width: 0;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+        overflow: visible;
+
+        quimera-boton {
+            margin: 0 5px;
+
+            button {
+                width: auto;
+                margin: 0;
+                font-size: 0.8rem;
+                padding: var(--espaciado-s);
+            }
+        }
+    }
 }

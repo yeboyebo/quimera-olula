@@ -30,6 +30,7 @@ export const LineasListaBase = ({
   publicar,
 }: LineasListaProps) => {
   const setSeleccionada = (linea: Linea) => {
+    if (!pedidoEditable) return;
     publicar("linea_seleccionada", linea);
   };
 

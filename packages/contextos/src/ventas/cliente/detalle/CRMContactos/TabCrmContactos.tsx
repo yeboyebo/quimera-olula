@@ -32,6 +32,14 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
 
   const acciones = [
     {
+      texto: "Nuevo",
+      onClick: () => emitir("alta_solicitada"),
+    },
+    {
+      texto: "Asociar Contacto",
+      onClick: () => emitir("asociar_solicitado"),
+    },
+    {
       texto: "Editar",
       onClick: () => ctx.contactoActivo && emitir("edicion_solicitada"),
       deshabilitado: !ctx.contactoActivo,
@@ -54,11 +62,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     <div className="CrmContactos">
       <>
         <div className="detalle-cliente-tab-contenido maestro-botones">
-          <QBoton onClick={() => emitir("alta_solicitada")}>Nuevo</QBoton>
-          <QBoton onClick={() => emitir("asociar_solicitado")}>
-            Asociar Contacto
-          </QBoton>
-          <QuimeraAcciones acciones={acciones} vertical />
+          <QuimeraAcciones acciones={acciones} />
         </div>
         <TabCrmContactosLista
           contactos={ctx.contactos}

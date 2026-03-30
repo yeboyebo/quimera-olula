@@ -41,7 +41,7 @@
     --color-deshabilitado-oscuro: light-dark(var(--gris-5), var(--gris-9));
 
     --alto-footer: 2rem;
-    --alto-header: 80px;
+    --alto-header: 35px;
 
     --color-head-tabla: light-dark(var(--gris-2), var(--gris-7));
 

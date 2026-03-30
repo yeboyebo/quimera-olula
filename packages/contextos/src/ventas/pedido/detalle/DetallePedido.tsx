@@ -1,5 +1,4 @@
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -95,6 +94,18 @@ export const DetallePedidoBase = ({
     },
   ];
 
+  const accionesEdicion = [
+    {
+      texto: "Guardar Cambios",
+      onClick: handleGuardar,
+    },
+    {
+      texto: "Cancelar",
+      variante: "texto" as const,
+      onClick: handleCancelar,
+    },
+  ];
+
   return (
     <Detalle
       id={ctx.pedido.id}
@@ -121,10 +132,11 @@ export const DetallePedidoBase = ({
 
       {editable(ctx.pedido) && (
         <div className="botones maestro-botones">
-          <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
+          {/* <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
           <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
             Cancelar
-          </QBoton>
+          </QBoton> */}
+          <QuimeraAcciones acciones={accionesEdicion} />
         </div>
       )}
 

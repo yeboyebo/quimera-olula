@@ -51,9 +51,12 @@ export const QuimeraAcciones = ({
     }
   };
 
-  const renderItemsAcciones = (acciones: (Accion | false)[]) => {
+  const renderItemsAcciones = (
+    acciones: (Accion | false)[],
+    inline = false
+  ) => {
     return (
-      <div className="acciones">
+      <div className={inline ? "acciones acciones-inline" : "acciones"}>
         {acciones.map((accion: Accion) => renderItemAccion(accion))}
       </div>
     );
@@ -82,7 +85,7 @@ export const QuimeraAcciones = ({
           renderAcciones(accionesGenerales)}
         {accionesGenerales.length > 0 &&
           vertical !== true &&
-          renderItemsAcciones(accionesGenerales)}
+          renderItemsAcciones(accionesGenerales, true)}
       </quimera-acciones>
     );
   };

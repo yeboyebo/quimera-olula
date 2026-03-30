@@ -17,6 +17,7 @@ export const LineasLista = ({
   publicar: (evento: string, payload?: unknown) => void;
 }) => {
   const setSeleccionada = (linea: Linea) => {
+    if (!albaranEditable) return;
     publicar("linea_seleccionada", linea);
   };
 

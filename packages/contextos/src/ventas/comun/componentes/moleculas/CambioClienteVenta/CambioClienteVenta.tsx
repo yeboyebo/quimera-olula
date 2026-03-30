@@ -4,6 +4,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput, QModal } from "@olula/componentes/index.js";
 import { Modelo } from "@olula/lib/diseño.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
+import { useEffect } from "react";
 import "./CambioClienteVenta.css";
 import { cambioClienteVacio, metaCambioCliente } from "./dominio.ts";
 
@@ -38,6 +39,22 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
     metaCambioCliente,
     cambioClienteVacio
   );
+
+  useEffect(() => {
+    if (!activo) return;
+
+    init({
+      cliente_id: venta.modelo.cliente_id,
+      nombre_cliente: venta.modelo.nombre_cliente,
+      direccion_id: venta.modelo.direccion_id,
+    });
+  }, [
+    activo,
+    init,
+    venta.modelo.cliente_id,
+    venta.modelo.nombre_cliente,
+    venta.modelo.direccion_id,
+  ]);
 
   const esClienteRegistrado = venta.modelo.cliente_id !== "None";
   // const esClienteNoRegistrado =

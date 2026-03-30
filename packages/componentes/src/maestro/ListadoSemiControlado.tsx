@@ -10,6 +10,7 @@ import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
 import { MaestroFiltrosControlado } from "./maestroFiltros/MaestroFiltrosControlado.tsx";
+import { useEsMovil } from "./useEsMovil.ts";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -55,10 +56,11 @@ export const ListadoSemiControlado = <T extends Entidad>({
   totalEntidades,
   seleccionada,
   onSeleccion,
-  modo = "tabla",
+  modo,
   onCriteriaChanged,
 }: MaestroProps<T>) => {
   const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
+  const esMovil = useEsMovil();
 
   const cambiarCriteria = useCallback(
     (c: Criteria) => {
@@ -72,6 +74,17 @@ export const ListadoSemiControlado = <T extends Entidad>({
     filtrarEntidad(entidad, criteria.filtro)
   );
 
+  const modoEfectivo: Modo =
+    modo ?? (esMovil && metaTabla ? "tarjetas" : "tabla");
+
+  const tarjetaRender =
+    tarjeta ??
+    (metaTabla
+      ? (entidad: T) => (
+          <QTarjetaGenerica entidad={entidad} metaTabla={metaTabla} />
+        )
+      : undefined);
+
   const renderEntidades = () => {
     if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
 
@@ -79,10 +92,10 @@ export const ListadoSemiControlado = <T extends Entidad>({
       ? entidadesFiltradas
       : datosCargando<T>();
 
-    if (modo == "tarjetas" && tarjeta) {
+    if (modoEfectivo === "tarjetas" && tarjetaRender) {
       return (
         <QTarjetas
-          tarjeta={tarjeta}
+          tarjeta={tarjetaRender}
           datos={datos}
           cargando={cargando}
           seleccionadaId={seleccionada?.id}
@@ -96,26 +109,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
       );
     }
 
-    if (metaTabla) {
-      return (
-        <QTarjetas
-          tarjeta={(entidad: T) => (
-            <QTarjetaGenerica entidad={entidad} metaTabla={metaTabla} />
-          )}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={onSeleccion}
-          onPaginacion={(pagina, limite) => {
-            cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
-          }}
-          totalEntidades={entidades.length}
-          criteria={criteria}
-        />
-      );
-    }
-
-    if (modo == "tabla" && metaTabla) {
+    if (modoEfectivo === "tabla" && metaTabla) {
       return (
         <QTablaControlada
           metaTabla={metaTabla}
@@ -139,6 +133,23 @@ export const ListadoSemiControlado = <T extends Entidad>({
             });
           }}
           totalEntidades={totalEntidades}
+        />
+      );
+    }
+
+    if (tarjetaRender) {
+      return (
+        <QTarjetas
+          tarjeta={tarjetaRender}
+          datos={datos}
+          cargando={cargando}
+          seleccionadaId={seleccionada?.id}
+          onSeleccion={onSeleccion}
+          onPaginacion={(pagina, limite) => {
+            cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
+          }}
+          totalEntidades={entidades.length}
+          criteria={criteria}
         />
       );
     }

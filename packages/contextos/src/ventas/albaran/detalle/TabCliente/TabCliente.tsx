@@ -33,7 +33,7 @@ export const TabCliente = ({
         <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
         <QInput {...uiProps("id_fiscal")} label="ID Fiscal" />
 
-        <div className="botones maestro-botones">
+        <div className="TabCliente-accion">
           <QBoton
             deshabilitado={!editable(modelo)}
             onClick={() => publicar("cambio_cliente_solicitado")}
@@ -46,6 +46,7 @@ export const TabCliente = ({
           <DirCliente
             clienteId={modelo.cliente_id}
             {...uiProps("direccion_id")}
+            deshabilitado={true}
           />
         ) : (
           <QInput
