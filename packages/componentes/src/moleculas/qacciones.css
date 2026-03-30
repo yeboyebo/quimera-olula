@@ -4,7 +4,6 @@ quimera-acciones {
     justify-content: flex-end;
 
     quimera-boton {
-        font-size: var(--tamaño-letra-m);
         cursor: pointer;
     }
 
@@ -15,7 +14,6 @@ quimera-acciones {
             margin: 0 5px;
 
             button {
-                font-size: 0.8rem;
                 cursor: pointer;
                 padding: var(--espaciado-s);
             }
@@ -43,7 +41,7 @@ quimera-acciones {
         flex-direction: column;
         border: 0;
         width: max-content;
-        min-width: 11rem;
+        min-width: 0;
         position: absolute;
         right: 0;
         max-width: none;
@@ -57,8 +55,11 @@ quimera-acciones {
             button {
                 width: 100%;
                 margin: 1px 0px;
-                font-size: var(--tamaño-letra-m);
-                padding: 10px;
+                padding: var(--espaciado-s);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
             }
         }
     }
@@ -81,8 +82,11 @@ quimera-acciones {
             button {
                 width: auto;
                 margin: 0;
-                font-size: var(--tamaño-letra-m);
                 padding: var(--espaciado-s);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
             }
         }
     }

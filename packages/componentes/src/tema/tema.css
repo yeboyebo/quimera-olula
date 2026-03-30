@@ -85,3 +85,7 @@ html {
         width: calc(100% - var(--width-menu));
     }
 }
+
+h2 {
+    font-size: var(--tamaño-letra-xl);
+}

@@ -1,6 +1,6 @@
 .totales-venta {
     margin-top: 1rem;
-    /* margin-inline: var(--padding-horizontal); */
+    margin-inline: var(--padding-horizontal);
     padding: 1rem;
     box-sizing: border-box;
     border: 1px solid #ccc;

@@ -112,7 +112,7 @@ maestro-detalle[tipo="pantalla-completa"] {
 }
 
 .maestro-botones button {
-    font-size: 0.8rem;
+    /* font-size: 0.8rem; */
     cursor: pointer;
     padding: var(--espaciado-s);
 }

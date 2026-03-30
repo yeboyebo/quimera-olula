@@ -44,6 +44,10 @@ export const TabCuentasBanco = ({
       onClick: () => emitir("alta_solicitada"),
     },
     {
+      texto: "Desmarcar domiciliación",
+      onClick: () => emitir("desmarcar_domiciliacion"),
+    },
+    {
       texto: "Editar",
       onClick: () => ctx.cuentas.activo && emitir("edicion_solicitada"),
       deshabilitado: !ctx.cuentas.activo,
@@ -52,10 +56,6 @@ export const TabCuentasBanco = ({
       texto: "Cuenta de domiciliación",
       onClick: () => emitir("domiciliar_solicitada"),
       deshabilitado: !ctx.cuentas.activo,
-    },
-    {
-      texto: "Desmarcar domiciliación",
-      onClick: () => emitir("desmarcar_domiciliacion"),
     },
     {
       icono: "eliminar",
