@@ -43,6 +43,11 @@ quimera-boton {
         font-size: var(--tamaño-letra-l);
     }
 
+    &[tamaño="xl"] button {
+        padding: var(--espaciado-l);
+        font-size: var(--tamaño-letra-xl);
+    }
+
     button {
         display: inline-block;
         cursor: pointer;

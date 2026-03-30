@@ -76,14 +76,20 @@ export const QuimeraAcciones = ({
   };
 
   const render = () => {
-    const accionesGenerales = acciones.filter(Boolean);
+    const accionesGenerales = acciones.filter((accion): accion is Accion =>
+      Boolean(accion)
+    );
 
     return (
       <quimera-acciones className={vertical === true ? "vertical" : ""}>
+        {accionesGenerales.length === 1 &&
+          renderItemAccion(accionesGenerales[0])}
         {accionesGenerales.length > 0 &&
+          accionesGenerales.length > 1 &&
           vertical === true &&
           renderAcciones(accionesGenerales)}
         {accionesGenerales.length > 0 &&
+          accionesGenerales.length > 1 &&
           vertical !== true &&
           renderItemsAcciones(accionesGenerales, true)}
       </quimera-acciones>

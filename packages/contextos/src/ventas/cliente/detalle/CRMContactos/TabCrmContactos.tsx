@@ -45,15 +45,15 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
       deshabilitado: !ctx.contactoActivo,
     },
     {
+      texto: "Eliminar asociación",
+      onClick: () => emitir("eliminar_asociacion"),
+      deshabilitado: !ctx.contactoActivo,
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrado_solicitado"),
-      deshabilitado: !ctx.contactoActivo,
-    },
-    {
-      texto: "Eliminar asociación",
-      onClick: () => emitir("eliminar_asociacion"),
       deshabilitado: !ctx.contactoActivo,
     },
   ];
@@ -62,7 +62,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
     <div className="CrmContactos">
       <>
         <div className="detalle-cliente-tab-contenido maestro-botones">
-          <QuimeraAcciones acciones={acciones} />
+          <QuimeraAcciones acciones={acciones} vertical />
         </div>
         <TabCrmContactosLista
           contactos={ctx.contactos}

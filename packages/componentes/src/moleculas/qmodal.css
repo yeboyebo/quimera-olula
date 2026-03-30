@@ -30,18 +30,42 @@ quimera-modal {
                 --color-primario-claro: transparent;
                 padding: var(--espaciado-xs);
                 line-height: 1;
+                transform-origin: center;
 
-                transition: all 0.3s ease-in-out;
+                transition: transform 0.2s ease, filter 0.2s ease;
 
                 &:hover {
-                    font-size: 2.5rem;
-                    filter: drop-shadow(2px 2px 2.5px var(--color-texto-secundario));
+                    transform: scale(1.28);
+                    filter: drop-shadow(1px 1px 1.5px var(--color-texto-secundario));
                 }
 
                 &:focus-visible {
                     outline: none;
                     filter: drop-shadow(1px 1px 1px var(--color-texto-secundario));
                 }
+            }
+        }
+    }
+
+    &[data-con-titulo] {
+        dialog header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--espaciado-s);
+            padding: var(--espaciado-s) var(--espaciado-l) 0;
+
+            h2 {
+                margin: 0;
+                font-size: var(--tamaño-letra-xl);
+            }
+
+            form {
+                margin: 0;
+            }
+
+            form quimera-boton {
+                position: static;
             }
         }
     }
@@ -60,7 +84,7 @@ quimera-modal {
 
     .botones button {
         padding: 0.5rem 1rem;
-        font-size: 1rem;
+        font-size: var(--tamaño-letra-m);
         cursor: pointer;
     }
 }

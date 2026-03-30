@@ -49,13 +49,6 @@ export const TabCuentasBanco = ({
       deshabilitado: !ctx.cuentas.activo,
     },
     {
-      icono: "eliminar",
-      texto: "Borrar",
-      advertencia: true,
-      onClick: () => emitir("borrado_solicitado"),
-      deshabilitado: !ctx.cuentas.activo,
-    },
-    {
       texto: "Cuenta de domiciliación",
       onClick: () => emitir("domiciliar_solicitada"),
       deshabilitado: !ctx.cuentas.activo,
@@ -64,13 +57,20 @@ export const TabCuentasBanco = ({
       texto: "Desmarcar domiciliación",
       onClick: () => emitir("desmarcar_domiciliacion"),
     },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      advertencia: true,
+      onClick: () => emitir("borrado_solicitado"),
+      deshabilitado: !ctx.cuentas.activo,
+    },
   ];
 
   return (
     <div className="CuentasBanco">
       <>
         <div className="detalle-cliente-tab-contenido maestro-botones">
-          <QuimeraAcciones acciones={acciones} />
+          <QuimeraAcciones acciones={acciones} vertical />
         </div>
         <TabCuentasBancoLista
           clienteId={clienteId}

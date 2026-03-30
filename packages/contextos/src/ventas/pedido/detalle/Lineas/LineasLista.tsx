@@ -43,6 +43,7 @@ export const LineasListaBase = ({
       onSeleccion={setSeleccionada}
       criteriaInicial={criteriaLineasDefecto}
       onCriteriaChanged={(_: Criteria) => null}
+      modo="tabla"
     />
   );
 };

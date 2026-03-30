@@ -4,7 +4,7 @@ import "./qboton.css";
 type QBotonProps = {
   tipo?: "button" | "submit" | "reset";
   variante?: "solido" | "borde" | "texto";
-  tamaño?: "pequeño" | "mediano" | "grande";
+  tamaño?: "pequeño" | "mediano" | "grande" | "xl";
   destructivo?: boolean;
   advertencia?: boolean;
   deshabilitado?: boolean;

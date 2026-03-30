@@ -111,10 +111,13 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
   );
 
   return (
-    <QModal abierto={activo} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={activo}
+      nombre="mostrar"
+      titulo={titulo}
+      onCerrar={cancelar}
+    >
       <div className="CambioCliente">
-        <h2>{titulo}</h2>
-
         <quimera-formulario>
           {esClienteRegistrado
             ? renderFormularioClienteRegistrado()

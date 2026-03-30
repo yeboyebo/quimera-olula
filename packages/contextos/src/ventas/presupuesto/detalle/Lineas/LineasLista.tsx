@@ -31,6 +31,7 @@ export const LineasLista = ({
       onSeleccion={setSeleccionada}
       criteriaInicial={criteriaDefecto}
       onCriteriaChanged={() => null}
+      modo="tabla"
     />
   );
 };

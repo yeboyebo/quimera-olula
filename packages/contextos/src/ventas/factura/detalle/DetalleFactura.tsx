@@ -40,29 +40,29 @@ export const DetalleFactura = ({
   );
 
   const factura = useModelo(metaFactura, ctx.factura);
+  const { modificado, valido } = factura;
 
   useEffect(() => {
     emitir("factura_id_cambiado", facturaId, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facturaId]);
 
-  
   const { estado, lineaActiva } = ctx;
-  
+
   const titulo = (factura: Factura) => factura.codigo || "Nueva Factura";
-  
+
   const handleBorrar = useCallback(() => {
     emitir("borrar_solicitado");
   }, [emitir]);
-  
+
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_factura_lista", factura.modelo);
   }, [emitir, factura]);
-  
+
   const handleCancelar = useCallback(() => {
     emitir("edicion_de_factura_cancelada");
   }, [emitir]);
-  
+
   if (!ctx.factura.id) return;
 
   return (
@@ -93,9 +93,11 @@ export const DetalleFactura = ({
         </Tab>
       </Tabs>
 
-      {editable(ctx.factura) && (
+      {editable(ctx.factura) && modificado && (
         <div className="botones maestro-botones">
-          <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
+          <QBoton onClick={handleGuardar} deshabilitado={!valido}>
+            Guardar Cambios
+          </QBoton>
           <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
             Cancelar
           </QBoton>

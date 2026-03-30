@@ -74,16 +74,62 @@ export const ListadoSemiControlado = <T extends Entidad>({
     filtrarEntidad(entidad, criteria.filtro)
   );
 
-  const modoEfectivo: Modo =
-    modo ?? (esMovil && metaTabla ? "tarjetas" : "tabla");
-
-  const tarjetaRender =
-    tarjeta ??
-    (metaTabla
+  const tarjetaGenerica =
+    metaTabla !== undefined
       ? (entidad: T) => (
           <QTarjetaGenerica entidad={entidad} metaTabla={metaTabla} />
         )
-      : undefined);
+      : undefined;
+
+  const renderTabla = (datos: T[]) => {
+    if (!metaTabla) return null;
+
+    return (
+      <QTablaControlada
+        metaTabla={metaTabla}
+        datos={datos}
+        cargando={cargando}
+        seleccionadaId={seleccionada?.id}
+        onSeleccion={onSeleccion}
+        orden={criteria.orden}
+        onOrdenChanged={(orden) => {
+          cambiarCriteria({
+            ...criteria,
+            orden,
+            paginacion: { ...criteria.paginacion, pagina: 1 },
+          });
+        }}
+        paginacion={criteria.paginacion}
+        onPaginacionChanged={(paginacion) => {
+          cambiarCriteria({
+            ...criteria,
+            paginacion,
+          });
+        }}
+        totalEntidades={totalEntidades}
+      />
+    );
+  };
+
+  const renderTarjetas = (
+    datos: T[],
+    tarjetaRender: (entidad: T) => React.ReactNode
+  ) => {
+    return (
+      <QTarjetas
+        tarjeta={tarjetaRender}
+        datos={datos}
+        cargando={cargando}
+        seleccionadaId={seleccionada?.id}
+        onSeleccion={onSeleccion}
+        onPaginacion={(pagina, limite) => {
+          cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
+        }}
+        totalEntidades={entidades.length}
+        criteria={criteria}
+      />
+    );
+  };
 
   const renderEntidades = () => {
     if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
@@ -92,66 +138,16 @@ export const ListadoSemiControlado = <T extends Entidad>({
       ? entidadesFiltradas
       : datosCargando<T>();
 
-    if (modoEfectivo === "tarjetas" && tarjetaRender) {
-      return (
-        <QTarjetas
-          tarjeta={tarjetaRender}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={onSeleccion}
-          onPaginacion={(pagina, limite) => {
-            cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
-          }}
-          totalEntidades={entidades.length}
-          criteria={criteria}
-        />
-      );
+    if (modo === "tabla" && metaTabla) {
+      return renderTabla(datos);
     }
 
-    if (modoEfectivo === "tabla" && metaTabla) {
-      return (
-        <QTablaControlada
-          metaTabla={metaTabla}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={onSeleccion}
-          orden={criteria.orden}
-          onOrdenChanged={(orden) => {
-            cambiarCriteria({
-              ...criteria,
-              orden,
-              paginacion: { ...criteria.paginacion, pagina: 1 },
-            });
-          }}
-          paginacion={criteria.paginacion}
-          onPaginacionChanged={(paginacion) => {
-            cambiarCriteria({
-              ...criteria,
-              paginacion,
-            });
-          }}
-          totalEntidades={totalEntidades}
-        />
-      );
+    if (modo === "tarjetas" && tarjeta) {
+      return renderTarjetas(datos, tarjeta);
     }
 
-    if (tarjetaRender) {
-      return (
-        <QTarjetas
-          tarjeta={tarjetaRender}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada?.id}
-          onSeleccion={onSeleccion}
-          onPaginacion={(pagina, limite) => {
-            cambiarCriteria({ ...criteria, paginacion: { pagina, limite } });
-          }}
-          totalEntidades={entidades.length}
-          criteria={criteria}
-        />
-      );
+    if (!modo && esMovil && tarjetaGenerica) {
+      return renderTarjetas(datos, tarjetaGenerica);
     }
 
     return null;
@@ -165,18 +161,6 @@ export const ListadoSemiControlado = <T extends Entidad>({
 
   return (
     <div className="Listado">
-      {/* {tarjeta && metaTabla && (
-            <div className="cambio-modo">
-            <span
-                className="cambio-modo-icono"
-                onClick={() =>
-                    setModo && setModo(modo === "tabla" ? "tarjetas" : "tabla")
-                }
-            >
-                <QIcono nombre={modo === "tabla" ? "lista" : "tabla"} tamaño="md" />
-            </span>
-            </div>
-        )} */}
       {metaFiltro && (
         <MaestroFiltrosControlado
           campos={obtenerCampos(entidades[0])}

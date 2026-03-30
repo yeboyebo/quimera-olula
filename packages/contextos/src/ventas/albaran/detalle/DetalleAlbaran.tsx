@@ -40,6 +40,7 @@ export const DetalleAlbaran = ({
   );
 
   const albaran = useModelo(metaAlbaran, ctx.albaran);
+  const { modificado, valido } = albaran;
 
   useEffect(() => {
     emitir("albaran_id_cambiado", albaranId, true);
@@ -94,9 +95,11 @@ export const DetalleAlbaran = ({
         </Tab>
       </Tabs>
 
-      {editable(ctx.albaran) && (
+      {editable(ctx.albaran) && modificado && (
         <div className="botones maestro-botones">
-          <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
+          <QBoton onClick={handleGuardar} deshabilitado={!valido}>
+            Guardar Cambios
+          </QBoton>
           <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
             Cancelar
           </QBoton>
