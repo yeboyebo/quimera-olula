@@ -19,6 +19,7 @@ import {
   metaEditarLinea,
   patchLineaNrj,
 } from "./editar_linea.ts";
+import { formateaCategoria } from "../dominio.ts";
 
 export const EditarLineaNrj = ({
   pedidoId,
@@ -56,13 +57,14 @@ export const EditarLineaNrj = ({
   }, [cambiando, publicar]);
 
   useEffect(() => {
+    if (!modelo.idTipoPalet) return;
     getItemsListaTipoPalet([], []).then(items => {
-      const item = items.find(i => i.id === formEditarLineaInicial.idTipoPalet);
-      if (item) {
-        set({ ...formEditarLineaInicial, envasesPorPalet: item.cantidadEnvase });
+      const item = items.find(i => i.id === modelo.idTipoPalet);
+      if (item && item.cantidadEnvase !== modelo.envasesPorPalet) {
+        set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
       }
     });
-  }, [formEditarLineaInicial]);
+  }, [modelo.idTipoPalet]);
 
   const focus = useFocus();
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
@@ -91,7 +93,7 @@ export const EditarLineaNrj = ({
             idVariedad={modelo.idVariedad}
             idMarca={modelo.idMarca}
           />
-          <QInput label="Categoria" {...uiProps("categoria")} deshabilitado={true} />
+          <QInput key={modelo.categoria} label="Categoria" valor={modelo.categoria ? formateaCategoria(modelo.categoria) : ""} deshabilitado={true} />
           <QInput
             label="Cantidad Palets"
             {...uiProps("cantidadPalets")}
