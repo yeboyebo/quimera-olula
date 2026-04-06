@@ -19,9 +19,9 @@ export default parent => {
         overflow: "hidden",
       },
       paper38auto: { minWidth: "38.5%", minHeight: "auto" },
-      iconoCabecera: { color: 'black'},
+      iconoCabecera: { color: 'black' },
       TablaLineasPedidoCli: {
-        width: '1280px'
+        width: '1362px'
       }
     };
   };

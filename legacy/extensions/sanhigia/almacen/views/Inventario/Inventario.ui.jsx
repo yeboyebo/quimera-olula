@@ -33,7 +33,7 @@ function dameColorLinea(linea) {
 }
 
 function Inventario({ callbackChanged, codInventario, initInventario, useStyles }) {
-  const [{ lineas, inventario, vistaDetalle, todasLasLineas }, dispatch] = useStateValue();
+  const [{ lineas, inventario, vistaDetalle, todasLasLineas, order }, dispatch] = useStateValue();
   const classes = useStyles();
   const width = useWidth();
 
@@ -118,14 +118,34 @@ function Inventario({ callbackChanged, codInventario, initInventario, useStyles 
   const handleLineasVisibles = lineas => {
     const cerradas = lineas.idList.filter(idLinea => lineas.dict[idLinea].sh_estado === "Cerrada");
     const abiertas = lineas.idList.filter(idLinea => lineas.dict[idLinea].sh_estado !== "Cerrada");
-
     const lineasAver = todasLasLineas ? [...cerradas, ...abiertas] : [...abiertas];
-
     return lineasAver;
   };
   const dataLineas = handleLineasVisibles(lineas)
     .filter(id => lineas.dict[id].sh_estado !== "Inventariada")
-    .map(id => lineas.dict[id]);
+    .map(id => lineas.dict[id])
+    .sort((a, b) => {
+      const fieldA = a[order.field];
+      const fieldB = b[order.field];
+
+      // Convertir null/undefined a string vacío para poder comparar
+      const valueA = (fieldA === null || fieldA === undefined) ? '' : fieldA;
+      const valueB = (fieldB === null || fieldB === undefined) ? '' : fieldB;
+
+      // Comparación para números
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
+        return order.direction === 'ASC' ? valueA - valueB : valueB - valueA;
+      }
+
+      // Comparación para strings (incluyendo vacíos)
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return order.direction === 'ASC'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+
+      return 0;
+    });
 
   // console.log(lineas?.page?.next);
 
@@ -263,7 +283,7 @@ function Inventario({ callbackChanged, codInventario, initInventario, useStyles 
                           next={() => dispatch({ type: "onNextLineas" })}
                           hasMore={lineas?.page?.next !== null}
                           scrollableTarget="scrollableTableInventarios"
-                          // orderColumn={ordenLineas}
+                          orderColumn={order}
                           bgcolorRowFunction={linea => dameColorLinea(linea)}
                         >
                           <Column.Action
@@ -342,7 +362,7 @@ function Inventario({ callbackChanged, codInventario, initInventario, useStyles 
                           <Column.Text
                             id="referenciaProv"
                             header="Referencia Prov."
-                            order="referenciaprov"
+                            order="referenciaProv"
                             pl={2}
                             value={linea => linea.referenciaProv}
                             width={150}

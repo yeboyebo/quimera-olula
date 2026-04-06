@@ -10,6 +10,7 @@ import {
   ListItemText,
   Typography,
 } from "@quimera/thirdparty";
+import { useStateValue } from "quimera";
 import React, { useState } from "react";
 
 const useStyles = makeStyles(theme => ({
@@ -27,12 +28,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft, funPrimaryRight, hideSecondary = false, ...props }) {
-function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft, funPrimaryRight, hideSecondary = false, ...props }) {
+function ListItemLineaHistoricoPedido({
+  linea,
+  selected = false,
+  funPrimaryLeft,
+  funPrimaryRight,
+  hideSecondary = false,
+  ...props
+}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [cantidad, setCantidad] = useState(0);
   const [validation, setValidation] = useState({ error: false, helperText: "" });
-  // const [_, dispatch] = useStateValue()
+  const disabled = props.disabled ?? false;
+  const [{ anadiendoDesdeHistorico }, dispatch] = useStateValue();
+
+  const setValorCantidad = c => {
+    c > 0 ? setCantidad(c) : setCantidad(0);
+  };
 
   const handleToggleOpenClicked = () => {
     setOpen(!open);
@@ -46,9 +59,6 @@ function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft,
     setValorCantidad(cantidad + c * multiplo);
   };
 
-  const setValorCantidad = c => {
-    c > 0 ? setCantidad(c) : setCantidad(0);
-  };
   // console.log("cantidad HISTORICO", cantidad, linea.multiplo, validation);
 
   linea.multiplo && cantidad % linea.multiplo !== 0
@@ -130,14 +140,20 @@ function ListItemLineaHistoricoPedido({ linea, selected = false, funPrimaryLeft,
                   id="save"
                   variant="text"
                   color="primary"
-                  startIcon={<Icon>save_alt</Icon>}
+                  startIcon={
+                    !anadiendoDesdeHistorico ? (
+                      <Icon>save_alt</Icon>
+                    ) : (
+                      <CircularProgress size={20} />
+                    )
+                  }
                   onClick={() =>
                     dispatch({
                       type: "onAnadirLineaDesdeHistoricoClicked",
                       payload: { referencia: linea.referencia, cantidad },
                     })
                   }
-                  disabled={!cantidad || validation.error}
+                  disabled={!cantidad || validation.error || anadiendoDesdeHistorico}
                 >
                   Añadir producto
                 </Button>

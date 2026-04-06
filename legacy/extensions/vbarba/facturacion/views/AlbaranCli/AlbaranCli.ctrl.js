@@ -1,5 +1,5 @@
-import { applyBunch, shortcutsBunch, shortcutsState } from "quimera/lib";
 import { util } from "quimera";
+import { applyBunch, shortcutsBunch, shortcutsState } from "quimera/lib";
 import data from "./AlbaranCli.ctrl.yaml";
 
 export const state = parent => ({
@@ -23,5 +23,11 @@ export const bunch = parent => {
   return {
     ...parentConShortCuts,
     ...applyBunch(data.bunch, parentConShortCuts),
+    onGenerarFacturaMensajeError: [
+      {
+        type: "showMessage",
+        plug: ({ response }) => ({ mensaje: response, tipoMensaje: "error" }),
+      },
+    ],
   };
 };

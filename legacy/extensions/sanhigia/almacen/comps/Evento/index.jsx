@@ -24,7 +24,7 @@ function Evento({ codEvento, meses = null, ...props }) {
         : {
           or: [
             ["codevento", "like", text ?? ""],
-            ["nombre", "like", text ?? ""],
+            ["nombre", "like_ua", text ?? ""],
           ],
         };
 

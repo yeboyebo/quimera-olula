@@ -117,7 +117,7 @@ function PedidoCli({ callbackChanged, idPedido, initPedido, useStyles }) {
               <QBoxButton
                 id="imprimirPedidoCli"
                 title="Imprimir pedido"
-                icon="receipt_long"
+                icon="print"
                 disabled={false}
               />
               <QBoxButton
@@ -132,8 +132,8 @@ function PedidoCli({ callbackChanged, idPedido, initPedido, useStyles }) {
                 }
                 disabled={!editableGenerarPediProv}
               />
-              <QBoxButton id="enviarEmail" title="Enviar por email" icon="email" />
               <QBoxButton id="albaranar" title="Albaranar" icon="shop" disabled={!editable} onClick={() => (window.location.href = `/ventas/albaranar-pedido/${pedido.data.idPedido}`)} />
+              <QBoxButton id="enviarEmail" title="Enviar por email" icon="email" />
             </>
           }
         >
