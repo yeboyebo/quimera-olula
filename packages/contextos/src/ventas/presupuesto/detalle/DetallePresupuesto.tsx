@@ -41,6 +41,7 @@ export const DetallePresupuesto = ({
   );
 
   const presupuesto = useModelo(metaPresupuesto, ctx.presupuesto);
+  const { modificado, valido } = presupuesto;
 
   useEffect(() => {
     emitir("presupuesto_id_cambiado", presupuestoId, true);
@@ -70,6 +71,7 @@ export const DetallePresupuesto = ({
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: ctx.presupuesto.aprobado,
     },
@@ -105,9 +107,11 @@ export const DetallePresupuesto = ({
         </Tab>
       </Tabs>
 
-      {estado === "ABIERTO" && !ctx.presupuesto.aprobado && (
+      {estado === "ABIERTO" && !ctx.presupuesto.aprobado && modificado && (
         <div className="botones maestro-botones">
-          <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
+          <QBoton onClick={handleGuardar} deshabilitado={!valido}>
+            Guardar Cambios
+          </QBoton>
           <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
             Cancelar
           </QBoton>
