@@ -60,7 +60,9 @@ export const filtroNumeros = (id: string, valor: unknown) => {
   return [
     id,
     operador,
-    [desde ?? undefined, hasta ?? undefined].join("_"),
+    [isNaN(desde) ? undefined : desde, isNaN(hasta) ? undefined : hasta].join(
+      "_"
+    ),
   ] as ClausulaFiltro;
 };
 
