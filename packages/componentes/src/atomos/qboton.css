@@ -67,14 +67,27 @@ quimera-boton {
 
         padding: var(--espaciado-s);
 
-        transition-property: background-color, color, border-color;
-        transition-duration: 0.3s;
-        transition-timing-function: ease;
+        transition: background-color var(--transicion-normal),
+                    color var(--transicion-normal),
+                    border-color var(--transicion-normal),
+                    transform var(--transicion-rapida),
+                    box-shadow var(--transicion-rapida);
 
         &:hover {
             border-color: transparent;
             background-color: var(--color-primario-claro);
             color: var(--color-primario-oscuro);
+            box-shadow: var(--sombra-s);
+        }
+
+        &:active {
+            transform: scale(0.97);
+            box-shadow: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-primario);
+            outline-offset: 2px;
         }
     }
 }

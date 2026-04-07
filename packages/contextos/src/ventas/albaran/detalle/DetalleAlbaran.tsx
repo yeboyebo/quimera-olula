@@ -7,6 +7,7 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
@@ -106,12 +107,11 @@ export const DetalleAlbaran = ({
         </div>
       )}
 
-      <TotalesVenta
-        neto={Number(ctx.albaran.neto ?? 0)}
-        totalIva={Number(ctx.albaran.total_iva ?? 0)}
-        total={Number(ctx.albaran.total ?? 0)}
-        divisa={String(ctx.albaran.divisa_id || "EUR")}
-      />
+      <TotalesVenta modeloVenta={albaran} publicar={emitir} />
+
+      {estado === "CAMBIANDO_DESCUENTO" && (
+        <CambiarDescuento publicar={emitir} venta={ctx.albaran} />
+      )}
 
       <Lineas
         albaran={ctx.albaran}
