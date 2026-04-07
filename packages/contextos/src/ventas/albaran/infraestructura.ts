@@ -2,17 +2,17 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { GetLineasPedido } from "../pedido/diseño.ts";
-import { CambioCliente } from "../presupuesto/diseño.ts";
 import { direccionVacia } from "../venta/dominio.ts";
 import {
   Albaran,
   DeleteLinea,
   GetAlbaran,
   GetAlbaranes,
+  GetLineasAlbaran,
   LineaAlbaran,
   PatchArticuloLinea,
   PatchCantidadLinea,
+  PatchClienteAlbaran,
   PatchLinea,
   PostAlbaran,
   PostLinea
@@ -39,6 +39,8 @@ interface AlbaranAPI {
   total_iva: number;
   total_irpf: number;
   total_divisa_empresa: number;
+  por_descuento: number;
+  neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
@@ -49,6 +51,8 @@ interface AlbaranAPI {
 export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
+  dtoPorcentual: p.por_descuento,
+  netoSinDto: p.neto_sin_dto,
   cliente: {
     cliente_id: p.cliente_id ?? null,
     nombre_cliente: p.nombre_cliente ?? "",
@@ -90,7 +94,7 @@ export const postAlbaran: PostAlbaran = async (albaran) => {
   return await RestAPI.post(baseUrl, payload, "Error al guardar albarán").then((respuesta) => respuesta.id);
 };
 
-export const getLineas: GetLineasPedido = async (id) =>
+export const getLineas: GetLineasAlbaran = async (id) =>
   await RestAPI.get<{ datos: LineaAlbaranAPI[] }>(
     `${baseUrl}/${id}/linea`).then((respuesta) => {
       const lineas = respuesta.datos.map((d) => lineaAlbaranFromAPI(d));
@@ -178,14 +182,15 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
   );
 };
 
-export const patchCambiarCliente = async (id: string, cambio: CambioCliente) => {
-  const payload = {
+export const patchCambiarCliente: PatchClienteAlbaran = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
     cambios: {
-      cliente_id: cambio.cliente_id,
-      direccion_id: cambio.direccion_id,
+      cliente: {
+        cliente_id: cambio.cliente_id,
+        direccion_id: cambio.direccion_id,
+      },
     },
-  };
-  await RestAPI.patch(`${baseUrl}/${id}/cliente`, payload, "Error al cambiar cliente del albarán");
+  }, "Error al cambiar cliente del albarán");
 };
 
 export const borrarAlbaran = async (id: string) => {

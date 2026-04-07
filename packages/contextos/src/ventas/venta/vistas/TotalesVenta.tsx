@@ -29,6 +29,18 @@ export const TotalesVenta = <T extends Venta>({
                 </div>
             )}
 
+            {venta.dtoPorcentual !== 0 && (
+                <>
+                    <div className="totales-venta-item">
+                        <label>Neto s/dto:</label>
+                        <span>{formatearMoneda(venta.netoSinDto, venta.divisa_id)}</span>
+                    </div>
+                    <div className="totales-venta-item">
+                        <label>Dto. ({venta.dtoPorcentual}%):</label>
+                        <span>{formatearMoneda(venta.netoSinDto - venta.neto, venta.divisa_id)}</span>
+                    </div>
+                </>
+            )}
             <div className="totales-venta-item">
                 <label>Neto:</label>
                 <span>{formatearMoneda(venta.neto, venta.divisa_id)}</span>

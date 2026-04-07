@@ -1,9 +1,37 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioCliente, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto, PresupuestoAPI } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+
+type PresupuestoAPI = {
+  id: string;
+  codigo: string;
+  fecha: string;
+  fecha_salida: string;
+  agente_id: string;
+  nombre_agente: string;
+  divisa_id: string;
+  tasa_conversion: number;
+  total: number;
+  total_divisa_empresa: number;
+  neto: number;
+  total_iva: number;
+  total_irpf: number;
+  por_descuento: number;
+  neto_sin_dto: number;
+  forma_pago_id: string;
+  nombre_forma_pago: string;
+  grupo_iva_negocio_id: string;
+  observaciones: string;
+  cliente_id: string | null;
+  nombre_cliente: string;
+  id_fiscal: string;
+  direccion_id: string | null;
+  direccion: Direccion;
+  aprobado: boolean;
+};
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
@@ -14,6 +42,8 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
   fecha_salida: new Date(Date.parse(p.fecha_salida)),
+  dtoPorcentual: p.por_descuento,
+  netoSinDto: p.neto_sin_dto,
   cliente: {
     cliente_id: p.cliente_id ?? null,
     nombre_cliente: p.nombre_cliente ?? "",
@@ -29,6 +59,8 @@ export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
     ...l,
     fecha: l.fecha.toISOString(),
     fecha_salida: l.fecha_salida.toISOString(),
+    por_descuento: l.dtoPorcentual,
+    neto_sin_dto: l.netoSinDto,
     cliente_id: l.cliente.cliente_id ?? "",
     nombre_cliente: l.cliente.nombre_cliente,
     id_fiscal: l.cliente.id_fiscal,
@@ -102,7 +134,7 @@ export const patchCambiarDivisa: PatchCambiarDivisa = async (id, divisaId) => {
   await RestAPI.patch(`${baseUrl}/${id}`, { cambios: { divisa_id: divisaId } }, "Error al cambiar divisa del presupuesto");
 }
 
-export const patchCambiarCliente = async (id: string, cambio: CambioCliente): Promise<void> => {
+export const patchCambiarCliente = async (id: string, cambio: CambioClientePresupuesto): Promise<void> => {
   if (cambio.cliente_id) {
     const clientePayload = {
       cambios: {

@@ -43,6 +43,8 @@ type VentaTpvAPI = {
     nombre_forma_pago: string;
     grupo_iva_negocio_id: string;
     observaciones: string;
+    por_descuento: number;
+    neto_sin_dto: number;
     pendiente: number;
     pagado: number;
     // lineas: LineaFactura[];
@@ -72,6 +74,8 @@ export const ventaDesdeAPI = (v: VentaTpvAPI): VentaTpv => ({
     ...v,
     idAgente: v.agente_id,
     fecha: new Date(Date.parse(v.fecha as unknown as string)),
+    dtoPorcentual: v.por_descuento,
+    netoSinDto: v.neto_sin_dto,
     cliente: v.cliente ? {
         id: v.cliente.id,
         nombre: v.cliente.nombre,

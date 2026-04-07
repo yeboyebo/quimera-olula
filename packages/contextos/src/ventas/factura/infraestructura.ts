@@ -27,6 +27,8 @@ interface FacturaAPI {
   total_iva: number;
   total_irpf: number;
   total_divisa_empresa: number;
+  por_descuento: number;
+  neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
@@ -36,6 +38,8 @@ interface FacturaAPI {
 export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
+  dtoPorcentual: p.por_descuento,
+  netoSinDto: p.neto_sin_dto,
   cliente: {
     cliente_id: p.cliente_id ?? null,
     nombre_cliente: p.nombre_cliente ?? "",

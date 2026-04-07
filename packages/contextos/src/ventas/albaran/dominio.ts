@@ -1,5 +1,4 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { Direccion } from "@olula/lib/diseño.js";
 import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import {
     cambioClienteVentaVacio,
@@ -75,20 +74,6 @@ export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = metaNuevaLin
 const albaranVacioObjeto: Albaran = albaranVacio();
 
 export const albaranVacioContexto = (): Albaran => ({ ...albaranVacioObjeto });
-
-export const direccionVacia = (): Direccion => ({
-    nombre_via: "",
-    tipo_via: "",
-    numero: "",
-    otros: "",
-    cod_postal: "",
-    ciudad: "",
-    provincia_id: 0,
-    provincia: "",
-    pais_id: "",
-    apartado: "",
-    telefono: "",
-});
 
 export const nuevoClienteRegistradoVacio: NuevoAlbaran = {
     cliente_id: "",

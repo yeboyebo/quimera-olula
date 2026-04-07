@@ -1,6 +1,4 @@
-import { cambioClienteVentaVacio, metaLineaVenta, metaVenta, nuevaLineaVentaVacia, ventaVacia } from "#/ventas/presupuesto/detalle/dominio.ts";
-import { clienteVentaVacio } from "#/ventas/venta/dominio.ts";
-import { metaCambioClienteVenta, metaNuevaLineaVenta } from "#/ventas/venta/dominio.ts";
+import { cambioClienteVentaVacio, clienteVentaVacio, metaCambioClienteVenta, metaLineaVenta, metaNuevaLineaVenta, metaVenta, nuevaLineaVentaVacia, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, modeloEsValido, publicar } from "@olula/lib/dominio.ts";
 import {
