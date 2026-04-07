@@ -32,7 +32,7 @@ export const DetallePedido = (props: DetallePedidoProps) => {
   const DetallePedido_ = app.Ventas
     .pedido_DetallePedido as typeof DetallePedidoBase;
 
-  return DetallePedido_(props);
+  return <DetallePedido_ {...props} />;
 };
 
 export const DetallePedidoBase = ({
