@@ -129,13 +129,8 @@ export const DetalleVentaTpv = ({
             <TotalesVenta publicar={emitir} modeloVenta={modeloVenta} />
 
             {estado === "CAMBIANDO_DESCUENTO" && (
-                <CambiarDescuento publicar={emitir} />
+                <CambiarDescuento publicar={emitir} venta={venta}/>
             )}
-                {/* neto={Number(venta.neto ?? 0)}
-                totalIva={Number(venta.total_iva ?? 0)}
-                total={Number(venta.total ?? 0)}
-                divisa={String(venta.coddivisa ?? "EUR")}
-            /> */}
 
             {estado !== "EMITIDA" && (
                 <PendienteVenta publicar={emitir} venta={venta} />

@@ -3,19 +3,31 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
+import { useMemo } from "react";
+import { Venta } from "#/ventas/venta/diseño.ts";
 import { CambiarDescuento as CambiarDescuentoType } from "./diseño.ts";
 import { cambiarDescuentoVacio, metaCambiarDescuento } from "./dominio.ts";
 
 interface CambiarDescuentoProps {
     publicar: EmitirEvento;
+    venta: Venta;
 }
 
 export const CambiarDescuento = ({
     publicar,
+    venta,
 }: CambiarDescuentoProps) => {
+    const descuentoInicial = useMemo(
+        () => ({
+            ...cambiarDescuentoVacio,
+            dto_porcentual: venta.dtoPorcentual,
+        }),
+        [venta]
+    );
+
     const { modelo, uiProps, valido, init } = useModelo(
         metaCambiarDescuento,
-        cambiarDescuentoVacio
+        descuentoInicial
     );
 
     const guardar = async () => {
@@ -23,12 +35,12 @@ export const CambiarDescuento = ({
             dto_porcentual: modelo.dto_porcentual,
         };
         await publicar("descuento_aplicado", cambio);
-        init(cambiarDescuentoVacio);
+        init(descuentoInicial);
     };
 
     const cancelar = () => {
         publicar("descuento_cancelado");
-        init(cambiarDescuentoVacio);
+        init(descuentoInicial);
     };
 
     return (

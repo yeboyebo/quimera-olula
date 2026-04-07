@@ -29,6 +29,7 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
   onCancelar,
   titulo = "Cambiar cliente",
 }: CambioClienteProps<T>) => {
+  
   const { modelo, uiProps, valido, init } = useModelo(
     metaCambioCliente,
     cambioClienteVacio
@@ -54,7 +55,7 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
     <QModal
       abierto={activo}
       nombre="mostrar"
-      // titulo={titulo}
+      titulo={titulo}
       onCerrar={cancelar}
     >
       <div className="CambioCliente">

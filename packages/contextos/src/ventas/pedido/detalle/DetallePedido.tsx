@@ -150,7 +150,7 @@ export const DetallePedidoBase = ({
       <TotalesVenta modeloVenta={pedido} publicar={emitir} />
 
       {estado === "CAMBIANDO_DESCUENTO" && (
-        <CambiarDescuento publicar={emitir} />
+        <CambiarDescuento publicar={emitir} venta={ctx.pedido} />
       )}
 
       <Lineas

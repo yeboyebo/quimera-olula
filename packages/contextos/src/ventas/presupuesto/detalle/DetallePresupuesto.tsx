@@ -122,7 +122,7 @@ export const DetallePresupuesto = ({
       <TotalesVenta modeloVenta={presupuesto} publicar={emitir} />
 
       {estado === "CAMBIANDO_DESCUENTO" && (
-        <CambiarDescuento publicar={emitir} />
+        <CambiarDescuento publicar={emitir} venta={ctx.presupuesto} />
       )}
 
       <Lineas

@@ -110,7 +110,7 @@ export const DetalleAlbaran = ({
       <TotalesVenta modeloVenta={albaran} publicar={emitir} />
 
       {estado === "CAMBIANDO_DESCUENTO" && (
-        <CambiarDescuento publicar={emitir} />
+        <CambiarDescuento publicar={emitir} venta={ctx.albaran} />
       )}
 
       <Lineas

@@ -108,7 +108,7 @@ export const DetalleFactura = ({
       <TotalesVenta modeloVenta={factura} publicar={emitir} />
 
       {estado === "CAMBIANDO_DESCUENTO" && (
-        <CambiarDescuento publicar={emitir} />
+        <CambiarDescuento publicar={emitir} venta={ctx.factura} />
       )}
 
       <Lineas
