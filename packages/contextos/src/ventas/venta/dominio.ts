@@ -41,6 +41,8 @@ export const ventaVacia: Venta = {
     nombre_forma_pago: '',
     grupo_iva_negocio_id: '',
     observaciones: '',
+    dtoPorcentual: 0,
+    netoSinDto: 0,
 }
 
 export const nuevaVentaVacia: NuevaVenta = {

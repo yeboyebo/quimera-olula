@@ -1,6 +1,6 @@
 export const imprimir_blob = (blob: Blob) => {
 
-    var blobURL = URL.createObjectURL(blob);
+    const blobURL = URL.createObjectURL(blob);
 
     const iframe = document.createElement('iframe');
     document.body.appendChild(iframe);

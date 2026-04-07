@@ -24,7 +24,7 @@ export const puntoVentaLocal = {
             try {
                 const puntoVenta = JSON.parse(puntoVentaStorage);
                 return puntoVenta
-            } catch (error) {
+            } catch {
                 return null;
             }
         }
@@ -59,7 +59,7 @@ export const agenteActivo = {
             try {
                 const agente = JSON.parse(agenteStorage);
                 return agente
-            } catch (error) {
+            } catch {
                 return null;
             }
         }
