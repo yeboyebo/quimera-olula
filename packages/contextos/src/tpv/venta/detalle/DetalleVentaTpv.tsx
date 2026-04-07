@@ -1,5 +1,5 @@
-import { getReportFactura } from "#/ventas/factura/infraestructura.ts";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
+import { getReportFactura } from "#/ventas/factura/infraestructura.ts";
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
@@ -74,6 +74,8 @@ export const DetalleVentaTpv = ({
 
 
     const { estado, pagos, lineas, venta } = ctx;
+
+    console.log("estado", estado);
 
     const titulo = (venta: Entidad) => venta.codigo as string;
 
