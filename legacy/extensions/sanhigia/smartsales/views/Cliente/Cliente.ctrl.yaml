@@ -10,6 +10,21 @@ shortcuts:
     action: "dame_contactos_cliente"
     id: codContacto
     schema: contactosCliente
+  - type: Model
+    name: tratosPendientes
+    action: "get_tratos_pendiente_por_cliente"
+    id: idTrato
+    schema: tratosCliente
+  - type: Model
+    name: tareasPendientes
+    action: "get_tareas_pendientes_por_cliente"
+    id: idTarea
+    schema: tareasCliente
+  - type: Model
+    name: presupuestosPendientes
+    action: "get_presupuestos_pendientes_por_cliente"
+    id: idPresupuesto
+    schema: presupuestosCli
 state:
   producto: null
   contactoAnadir: null
@@ -30,7 +45,7 @@ bunch:
       data:
         - key: codcontacto
           value:
-            statePath: contactoAnadir           
+            statePath: contactoAnadir
       success: onAddContactoEventoSuccess
       error: onAddContactoEventoError
   onAddContactoEventoSuccess:
@@ -51,4 +66,4 @@ bunch:
       severity: error
   onAtrasClicked:
     - _type: grape
-      name: cancelCliente      
+      name: cancelCliente

@@ -62,7 +62,7 @@
     --transicion-lenta: 350ms ease;
 
     --alto-footer: 2rem;
-    --alto-header: 80px;
+    --alto-header: 35px;
 
     --color-head-tabla: light-dark(var(--gris-2), var(--gris-7));
 
@@ -112,4 +112,8 @@ html {
     section[role="main"]>div {
         width: calc(100% - var(--width-menu));
     }
+}
+
+h2 {
+    font-size: var(--tamaño-letra-xl);
 }

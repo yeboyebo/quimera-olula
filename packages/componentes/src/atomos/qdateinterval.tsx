@@ -24,7 +24,7 @@ export const QDateInterval = ({
   };
 
   return (
-    <>
+    <div className="interval">
       <QDate
         {...props}
         label={label + " desde"}
@@ -39,6 +39,6 @@ export const QDateInterval = ({
         valor={hasta}
         onChange={manejarChange}
       />
-    </>
+    </div>
   );
 };

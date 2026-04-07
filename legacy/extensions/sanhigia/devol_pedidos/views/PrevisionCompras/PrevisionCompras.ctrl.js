@@ -14,5 +14,18 @@ export const state = parent => ({
 export const bunch = parent => ({
   ...parent,
   ...shortcutsBunch(data.shortcuts),
+  onBuscarError: [
+      {
+        type: "showMessage",
+        plug: ({ response }) => ({
+          mensaje: response,
+          tipoMensaje: "error",
+        }),
+      },
+      {
+        type: "grape",
+        name: "onBuscarErrorTransition",
+      }
+    ],
   ...applyBunch(data.bunch, parent),
 });

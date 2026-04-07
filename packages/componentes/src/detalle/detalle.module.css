@@ -1,12 +1,14 @@
 .detalle {
-    & h2 {
-        margin-top: 0;
-        margin-bottom: var(--espaciado-l);
-        padding-bottom: var(--espaciado-m);
-        border-bottom: var(--tamaño-borde-m) solid var(--color-primario-claro);
+    .detalle-cabecera {
         display: flex;
         justify-content: space-between;
-        font-weight: var(--grosor-letra-6);
+        /* align-items: center; */
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ccc;
+
+        h2 {
+            margin: 0;
+        }
     }
 
     &>form {

@@ -11,8 +11,14 @@ export default parent => {
     presupuestosCli: parent.presupuestosCli.fields({
       fechaSalida: Field.Date("fechasalida", "Fecha Salida"),
     }),
+    facturasCli: parent.facturascli.fields({
+      impreso: Field.Bool("impreso", "Impreso"),
+    }),
     lineasPresupuestosCli: parent.lineasPresupuestosCli.fields({
+      codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     albaranescli: parent.albaranescli.fields({
       idPartees: Field.Int("idpartees", "Id. partes"),
@@ -20,18 +26,24 @@ export default parent => {
     }),
     lineasPedidosCli: parent.lineasPedidosCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       precioNeto: Field.Text("precioneto", "Precio Neto"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     lineasFacturasCli: parent.lineasFacturasCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       precioNeto: Field.Currency("precioneto", "Precio Neto"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     lineasAlbaranesCli: parent.lineasAlbaranesCli.fields({
       codProveedor: Field.Text("codproveedor", "Cod proveedor"),
+      nombreProveedor: Field.Text("nombreproveedor", "Nombre proveedor"),
       pvpReferencia: Field.Currency("pvpreferencia", "Precio Referencia"),
       canFactura: Field.Int("canfactura", "Cantidad factura"),
+      aplicarPvpParticular: Field.Bool("aplicarpvpparticular", "Aplicar PVP Particular"),
     }),
     emailDocsCliente: Schema("clientes", "codcliente").fields({
       codCliente: Field.Int("codcliente", "codcliente").auto(),

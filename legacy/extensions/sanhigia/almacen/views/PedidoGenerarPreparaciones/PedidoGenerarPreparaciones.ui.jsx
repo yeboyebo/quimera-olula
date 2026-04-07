@@ -15,7 +15,7 @@ import {
 } from "@quimera/comps";
 import { List } from "@quimera/thirdparty";
 import { DocAgente, DocClienteYDir, DocDirCliente } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import React, { useEffect } from "react";
 
 import { ListItemPedidoVenta, ModaAsociarBarcode, ModaLotesLinea, Ubicacion } from "../../comps";
@@ -101,7 +101,7 @@ const Lineas = ({ lineas, dispatch, disabled, initPedido, classes }) => {
 
 const LineasMemo = React.memo(Lineas);
 
-function PedidoGenerarPreparaciones({ callbackChanged, idPedido, initPedido, useStyles }) {
+function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda, idPedido, initPedido, useStyles }) {
   const [
     {
       lineas,
@@ -122,9 +122,10 @@ function PedidoGenerarPreparaciones({ callbackChanged, idPedido, initPedido, use
 
   useEffect(() => {
     dispatch({
-      type: "onGuardarCallback",
+      type: "onGuardarCallbacks",
       payload: {
         callbackChanged,
+        callbackPedidoEnviadoPda,
       },
     });
   }, [dispatch]);
@@ -230,7 +231,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, idPedido, initPedido, use
                 id="enviarPDA"
                 title="Enviar"
                 icon="send"
-                disabled={pedido.buffer?.estadoPda !== "Preparado"}
+                disabled={pedido.buffer?.estadoPda !== "Preparado" || status.enviandoPda}
                 busy={status.enviandoPda}
               />
               <QBoxButton

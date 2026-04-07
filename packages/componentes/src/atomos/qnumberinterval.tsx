@@ -24,7 +24,7 @@ export const QNumberInterval = ({
   };
 
   return (
-    <>
+    <div className="interval">
       <QInput
         {...props}
         label={label + " desde"}
@@ -39,6 +39,6 @@ export const QNumberInterval = ({
         valor={hasta}
         onChange={manejarChange}
       />
-    </>
+    </div>
   );
 };

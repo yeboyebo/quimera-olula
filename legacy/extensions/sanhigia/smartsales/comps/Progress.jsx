@@ -1,8 +1,8 @@
-import { Box, Icon } from "@quimera/comps";
+import { Box, Button, Icon, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { useStateValue } from "quimera";
+import { useStateValue, util } from "quimera";
 
-import { CollapsibleBox, ProgressButtons } from "./";
+import { CollapsibleBox, IndicadorKpi, MainBox, ProgressButtons } from "./";
 
 const useStyles = makeStyles(theme => ({
   boxProgreso: {
@@ -63,50 +63,81 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "bold",
     justifyContent: "center",
     alignItems: "center",
-    display: "flex"
+    display: "flex",
   },
 }));
 
 export default function Progress({ ...props }) {
   const [{ previsiones, trimestres }] = useStateValue();
   const classes = useStyles();
-  const triArr = Object.keys(trimestres).filter((val, i) => (trimestres[val] == true ? val : false));
+  const triArr = Object.keys(trimestres).filter((val, i) =>
+    trimestres[val] == true ? val : false,
+  );
   // const tri = trimestres.filter(tri => tri);
   if (!previsiones?.totalVentas) {
     return;
   }
 
+  const ocultarKPIs = util.getUser()?.superuser && previsiones.codAgente === 'TODOS';
+
   // const totalVentasResumido = parseFloat(previsiones?.totalVentasResumido.substring(0, previsiones?.totalVentas.length - 2));
   // console.log(totalVentasResumido + "K €");
   const totalVentasResumido = previsiones?.totalVentasResumido;
+  // console.log("mimensaje_previsiones", previsiones);
+
   return (
     <CollapsibleBox
       title="Progreso"
       className={classes.box}
       collapsible={false}
       collapseContent={
-        <Box className={classes.boxProgreso}>
-          <Box style={{ maxWidth: "100px", marginTop: "5px" }}>
-            {triArr.map(trimestre => <span className={classes.collapseData}>{trimestre}</span>)}
-          </Box>
+        <Box display="flex" flexDirection="column" gap="0.5rem">
+          {util.getUser()?.superuser &&
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box>
+                <Typography variant="body1">{previsiones.nombreAgente}</Typography>
+              </Box>
+              <Button id="cambiarAgenteCustom" variant="outlined">
+                Cambiar agente
+              </Button>
+            </Box>
+          }
 
-          <span className={classes.collapseData}>{previsiones.percent}%</span>
-          <span className={`${classes.collapseData}`}>{totalVentasResumido}</span>
-          <span className={classes.collapseData}>
-            <Icon
-              className={`${classes.incrementIcon} ${parseFloat(previsiones.increment) > -0.00000001
-                ? classes.positive
-                : classes.negative
-                }`}
-            >
-              arrow_drop_up
-            </Icon>
-            {previsiones.increment}%
-          </span>
+          <Box className={classes.boxProgreso}>
+            <Box style={{ maxWidth: "100px", marginTop: "5px" }}>
+              {triArr.map(trimestre => (
+                <span className={classes.collapseData}>{trimestre}</span>
+              ))}
+            </Box>
+
+            <span className={classes.collapseData}>{previsiones.percent}%</span>
+            <span className={`${classes.collapseData}`}>{totalVentasResumido}</span>
+            <span className={classes.collapseData}>
+              <Icon
+                className={`${classes.incrementIcon} ${parseFloat(previsiones.increment) > -0.00000001
+                  ? classes.positive
+                  : classes.negative
+                  }`}
+              >
+                arrow_drop_up
+              </Icon>
+              {previsiones.increment}%
+            </span>
+          </Box>
         </Box>
       }
       {...props}
     >
+      {util.getUser()?.superuser &&
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="body1" >{previsiones.nombreAgente}</Typography>
+          </Box>
+          <Button id="cambiarAgenteCustom" variant="outlined">
+            Cambiar agente
+          </Button>
+        </Box>
+      }
       <ProgressButtons />
       <Box className={classes.boxProgreso}>
         <span className={classes.progresoPercent}>{previsiones.percent}%</span>
@@ -133,6 +164,19 @@ export default function Progress({ ...props }) {
           <span className={classes.progresoData}>112'5%</span> */}
         </Box>
       </Box>
+      {!ocultarKPIs && <Box id="kpis" style={{ marginTop: "16px" }}>
+        <IndicadorKpi
+          titulo="Nuevos clientes por familia"
+          resumen={previsiones.kpiNuevosClientesFamilia?.resumen}
+          detalle={previsiones.kpiNuevosClientesFamilia?.detalle}
+          periodo={previsiones.kpiNuevosClientesFamilia?.periodo}
+        />
+        <IndicadorKpi
+          titulo="Unidades por producto"
+          resumen={previsiones.kpiUnidadesProducto?.resumen}
+          detalle={previsiones.kpiUnidadesProducto?.detalle}
+        />
+      </Box>}
     </CollapsibleBox>
   );
 }

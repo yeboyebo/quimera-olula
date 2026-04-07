@@ -43,7 +43,7 @@ export const TabCliente = ({
           deshabilitado={true}
         />
 
-        <div className="botones maestro-botones">
+        <div className="TabCliente-accion">
           <QBoton
             deshabilitado={!editable(modelo)}
             onClick={() => setCambiandoCliente(true)}

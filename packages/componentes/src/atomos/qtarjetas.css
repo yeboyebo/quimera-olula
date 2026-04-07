@@ -16,15 +16,13 @@ quimera-tarjetas {
 quimera-tarjeta {
     display: flex;
     flex-direction: column;
-    background: var(--color-superficie);
-    border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
-    border-radius: var(--redondeo-borde-s);
-    box-shadow: var(--sombra-xs);
-    margin: var(--espaciado-xs);
-    padding: var(--espaciado-l);
-    transition: box-shadow var(--transicion-rapida),
-                border-color var(--transicion-rapida),
-                transform var(--transicion-rapida);
+    background: var(--color-fondo);
+    border: var(--tamaño-borde-s) solid transparent;
+    border-radius: var(--radio-borde-m);
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+    margin: 0;
+    padding: var(--espaciado-m);
+    transition: box-shadow 0.15s, border-color 0.15s;
     cursor: pointer;
 
     &:hover {
@@ -32,6 +30,12 @@ quimera-tarjeta {
         border-color: var(--color-primario-claro);
         transform: translateY(-1px);
     }
+}
+
+quimera-tarjetas .lista-contenedor-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-xs);
 }
 
 quimera-tarjeta.seleccionada {

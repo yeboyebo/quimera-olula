@@ -3,6 +3,7 @@
         opacity: 0;
         transform: translateY(-8px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -10,8 +11,13 @@
 }
 
 @keyframes backdropIn {
-    from { backdrop-filter: blur(0); }
-    to { backdrop-filter: blur(3px); }
+    from {
+        backdrop-filter: blur(0);
+    }
+
+    to {
+        backdrop-filter: blur(3px);
+    }
 }
 
 quimera-modal {
@@ -40,26 +46,51 @@ quimera-modal {
 
         header form quimera-boton {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: var(--espaciado-xxs);
+            right: var(--espaciado-xxs);
 
             button {
                 --color-primario: var(--color-texto-secundario);
                 --color-primario-oscuro: var(--color-texto-primario);
                 --color-primario-claro: transparent;
+                padding: var(--espaciado-xs);
+                line-height: 1;
+                transform-origin: center;
 
-                transition: color var(--transicion-rapida),
-                            transform var(--transicion-rapida);
+                transition: transform 0.2s ease, filter 0.2s ease;
 
                 &:hover {
-                    color: var(--color-texto-primario);
-                    transform: scale(1.1);
+                    transform: scale(1.28);
+                    filter: drop-shadow(1px 1px 1.5px var(--color-texto-secundario));
                 }
 
                 &:focus-visible {
                     outline: 2px solid var(--color-primario);
                     outline-offset: 2px;
                 }
+            }
+        }
+    }
+
+    &[data-con-titulo] {
+        dialog header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--espaciado-s);
+            padding: var(--espaciado-s) var(--espaciado-l) 0;
+
+            h2 {
+                margin: 0;
+                font-size: var(--tamaño-letra-xl);
+            }
+
+            form {
+                margin: 0;
+            }
+
+            form quimera-boton {
+                position: static;
             }
         }
     }
@@ -76,7 +107,7 @@ quimera-modal {
     }
 
     .botones button {
-        padding: var(--espaciado-s) var(--espaciado-l);
+        padding: 0.5rem 1rem;
         font-size: var(--tamaño-letra-m);
         cursor: pointer;
     }
