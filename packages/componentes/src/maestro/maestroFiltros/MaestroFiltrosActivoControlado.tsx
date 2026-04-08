@@ -24,6 +24,8 @@ export const filtroBooleanos = (id: string, valor: unknown) => {
 };
 
 export const filtroFechas = (id: string, valor: unknown) => {
+  if (!Array.isArray(valor)) return [id, "=", valor] as ClausulaFiltro;
+
   const [desde, hasta] = valor as [Date, Date];
 
   const operador =
@@ -148,6 +150,8 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
     switch (meta[campo].tipo) {
       case "intervalo_fechas": {
+        if (!Array.isArray(valor_final)) break;
+
         valores[campo] = (valor_final as [string, string])?.map((f: string) =>
           f ? new Date(Date.parse(f)) : undefined
         );
