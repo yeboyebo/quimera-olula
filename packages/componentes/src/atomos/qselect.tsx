@@ -47,7 +47,7 @@ export const QSelect = ({
   const renderOpciones = (opciones: Opcion[] | Opcion[][]) =>
     opciones.map((opcion) =>
       Array.isArray(opcion) ? (
-        <optgroup label={opcion[0].descripcion}>
+        <optgroup label={opcion[0].descripcion} key={opcion[0].descripcion}>
           {renderOpciones(opcion.slice(1))}
         </optgroup>
       ) : (
