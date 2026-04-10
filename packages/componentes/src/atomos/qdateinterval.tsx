@@ -1,6 +1,5 @@
-import { useState } from "react";
 import "./_forminput.css";
-import { QCheckbox } from "./qcheckbox.tsx";
+import { QBoton } from "./qboton.tsx";
 import { QDate, QDateProps } from "./qdate.tsx";
 import { Opcion } from "./qmulticheckbox.tsx";
 import { QSelect } from "./qselect.tsx";
@@ -41,7 +40,7 @@ export const QDateInterval = ({
   onChange,
   ...props
 }: QDateIntervalProps) => {
-  const [manual, setManual] = useState(false);
+  const manual = Array.isArray(valor);
 
   const manejarChangeIntervalo = (
     opcion: Opcion | null,
@@ -53,23 +52,16 @@ export const QDateInterval = ({
     );
   };
 
-  const manejarChangeManual = (
-    _: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setManual(!manual);
-    onChange?.("", e);
+  const manejarChangeManual = () => {
+    onChange?.(
+      [undefined, undefined] as unknown as string,
+      undefined as unknown as React.ChangeEvent<HTMLInputElement>
+    );
   };
 
   if (!manual) {
     return (
       <>
-        <QCheckbox
-          label="Manual"
-          nombre="manual"
-          valor={manual}
-          onChange={manejarChangeManual}
-        />
         <QSelect
           label={label}
           nombre={nombre}
@@ -77,6 +69,7 @@ export const QDateInterval = ({
           onChange={manejarChangeIntervalo}
           opciones={opcionesIntervaloFechas}
         />
+        <QBoton onClick={manejarChangeManual}>Manual</QBoton>
       </>
     );
   }
@@ -99,12 +92,6 @@ export const QDateInterval = ({
 
   return (
     <div className="interval">
-      <QCheckbox
-        label="Manual"
-        nombre="manual"
-        valor={manual}
-        onChange={manejarChangeManual}
-      />
       <QDate
         {...props}
         label={label + " desde"}
