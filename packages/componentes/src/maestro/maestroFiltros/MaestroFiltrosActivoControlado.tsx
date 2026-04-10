@@ -141,7 +141,7 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
   for (const clausula of filtro) {
     const [campo, _, valor] = clausula;
 
-    if (valor?.includes("_")) valores[campo] = valor.split("_").filter(Boolean);
+    if (valor?.includes("_")) valores[campo] = valor.split("_");
     else valores[campo] = valor;
 
     const valor_final = valores[campo];
