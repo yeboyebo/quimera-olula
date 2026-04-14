@@ -29,6 +29,7 @@ quimera-modal {
         max-width: 1280px;
         min-width: 400px;
         margin: auto;
+        overflow-x: hidden;
         box-shadow: var(--sombra-xl);
         animation: modalIn var(--transicion-normal) ease-out;
 
@@ -41,6 +42,7 @@ quimera-modal {
         main {
             padding: var(--espaciado-l);
             width: 100%;
+            box-sizing: border-box;
             min-height: 150px;
         }
 
@@ -62,6 +64,11 @@ quimera-modal {
                 &:hover {
                     transform: scale(1.28);
                     filter: drop-shadow(1px 1px 1.5px var(--color-texto-secundario));
+                    box-shadow: none;
+                }
+
+                &:active {
+                    box-shadow: none;
                 }
 
                 &:focus-visible {
