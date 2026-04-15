@@ -80,7 +80,7 @@ export const QModal = ({
         <header>
           {titulo && <h2 id={titleId}>{titulo}</h2>}
           <form method="dialog">
-            <QBoton tamaño="xl" variante="texto" tipo="submit">
+            <QBoton tamaño="mediano" variante="texto" tipo="submit">
               &times;
             </QBoton>
           </form>
