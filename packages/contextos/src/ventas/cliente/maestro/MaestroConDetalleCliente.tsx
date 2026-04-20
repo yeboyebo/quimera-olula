@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QTarjetaGenerica } from "@olula/componentes/atomos/qtarjeta_generica.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
@@ -33,18 +34,25 @@ export const MaestroConDetalleCliente = () => {
         Maestro={
           <>
             <h2>Clientes</h2>
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("creacion_solicitada")}>
-                Nuevo Cliente
-              </QBoton>
-            </div>
             <Listado<Cliente>
               metaTabla={metaTablaCliente}
+              tarjeta={(cliente) => (
+                <QTarjetaGenerica
+                  entidad={cliente}
+                  metaTabla={metaTablaCliente}
+                />
+              )}
               criteria={ctx.clientes.criteria}
-              modo={"tabla"}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}
               seleccionada={ctx.clientes.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton onClick={() => emitir("creacion_solicitada")}>
+                    Nuevo Cliente
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) => emitir("cliente_seleccionado", payload)}
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
