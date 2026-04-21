@@ -1,5 +1,4 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QTarjetaGenerica } from "@olula/componentes/atomos/qtarjeta_generica.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
@@ -36,12 +35,12 @@ export const MaestroConDetalleCliente = () => {
             <h2>Clientes</h2>
             <Listado<Cliente>
               metaTabla={metaTablaCliente}
-              tarjeta={(cliente) => (
-                <QTarjetaGenerica
-                  entidad={cliente}
-                  metaTabla={metaTablaCliente}
-                />
-              )}
+              // tarjeta={(cliente) => (
+              //   <QTarjetaGenerica
+              //     entidad={cliente}
+              //     metaTabla={metaTablaCliente}
+              //   />
+              // )}
               criteria={ctx.clientes.criteria}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}

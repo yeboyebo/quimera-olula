@@ -86,7 +86,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
         )
       : undefined;
   const puedeTabla = metaTabla !== undefined;
-  const puedeTarjetas = tarjeta !== undefined || tarjetaGenerica !== undefined;
+  const puedeTarjetas = tarjeta !== undefined;
 
   const modoEfectivo =
     modoInterno === "tabla" && puedeTabla
@@ -104,8 +104,8 @@ export const ListadoSemiControlado = <T extends Entidad>({
     onModoChanged?.(nuevoModo);
   };
 
-  // const mostrarCambioModo = puedeTabla && puedeTarjetas && modoEfectivo;
-  const mostrarCambioModo = false;
+  const mostrarCambioModo = puedeTabla && puedeTarjetas && modoEfectivo;
+  // const mostrarCambioModo = false;
   const acciones = renderAcciones?.();
   const mostrarCabecera = metaFiltro || mostrarCambioModo || Boolean(acciones);
 

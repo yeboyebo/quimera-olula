@@ -83,8 +83,8 @@ export const Listado = <T extends Entidad>({
     onModoChanged?.(nuevoModo);
   };
 
-  // const mostrarCambioModo = puedeTabla && puedeTarjetas && modoEfectivo;
-  const mostrarCambioModo = false;
+  const mostrarCambioModo = puedeTabla && puedeTarjetas && modoEfectivo;
+  // const mostrarCambioModo = false;
   const acciones = renderAcciones?.();
 
   const renderEntidades = () => {
