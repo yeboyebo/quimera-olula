@@ -6,6 +6,7 @@ import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useContext } from "react";
 import { LineaPedido as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
+import { TarjetaLinea } from "./TarjetaLinea.tsx";
 
 export type LineasListaProps<L extends Linea = Linea> = {
   lineas: L[];
@@ -40,13 +41,13 @@ export const LineasListaBase = ({
   return (
     <ListadoSemiControlado
       metaTabla={getMetaTablaLineas(onCambioCantidad, pedidoEditable)}
-      // tarjeta={(linea) => (
-      //   <TarjetaLinea
-      //     linea={linea}
-      //     pedidoEditable={pedidoEditable}
-      //     onCambioCantidad={onCambioCantidad}
-      //   />
-      // )}
+      tarjeta={(linea) => (
+        <TarjetaLinea
+          linea={linea}
+          pedidoEditable={pedidoEditable}
+          onCambioCantidad={onCambioCantidad}
+        />
+      )}
       entidades={lineas}
       totalEntidades={lineas.length}
       seleccionada={lineas.find((linea) => linea.id === seleccionada) ?? null}
@@ -68,6 +69,8 @@ const getMetaTablaLineas = (
   onCambioCantidad?: (linea: Linea, cantidad: number) => void,
   pedidoEditable?: boolean
 ) => {
+  const habilitarEdicionCantidad = false;
+
   return [
     {
       id: "linea",
@@ -81,7 +84,7 @@ const getMetaTablaLineas = (
       prioridad: "alta" as const,
       tipo: "numero" as const,
       render: (linea: Linea) =>
-        pedidoEditable && onCambioCantidad ? (
+        habilitarEdicionCantidad && pedidoEditable && onCambioCantidad ? (
           <EditarCantidadLinea
             linea={linea}
             onCantidadEditada={onCambioCantidad}

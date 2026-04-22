@@ -57,10 +57,13 @@ export const EditarLinea = ({
   );
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="editar_linea_presupuesto"
+      titulo="Editar línea"
+      onCerrar={cancelar}
+    >
       <div className="EditarLinea">
-        <h2>Editar línea</h2>
-
         <quimera-formulario>
           <div id="titulo">
             <h3>{`${linea.descripcion}`}</h3>

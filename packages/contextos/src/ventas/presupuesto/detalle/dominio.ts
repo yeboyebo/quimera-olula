@@ -19,9 +19,9 @@ export { metaNuevaVenta, metaVenta } from "#/ventas/venta/dominio.ts";
 
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         pvp_unitario: { tipo: "moneda", requerido: true },
-        dto_porcentual: { tipo: "numero", requerido: false },
+        dto_porcentual: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 },
         referencia: { requerido: true },
     }
 };

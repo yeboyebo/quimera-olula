@@ -50,6 +50,8 @@ const getMetaTablaLineas = (
   onCambioCantidad?: (linea: Linea, cantidad: number) => void,
   facturaEditable?: boolean
 ) => {
+  const habilitarEdicionCantidad = false;
+
   return [
     {
       id: "linea",
@@ -59,8 +61,9 @@ const getMetaTablaLineas = (
     {
       id: "cantidad",
       cabecera: "Cantidad",
+      tipo: "numero" as const,
       render: (linea: Linea) =>
-        facturaEditable && onCambioCantidad ? (
+        habilitarEdicionCantidad && facturaEditable && onCambioCantidad ? (
           <EditarCantidadLinea
             linea={linea}
             onCantidadEditada={onCambioCantidad}
@@ -72,6 +75,7 @@ const getMetaTablaLineas = (
     {
       id: "pvp_unitario",
       cabecera: "Precio",
+      tipo: "moneda" as const,
     },
     {
       id: "grupo_iva_producto_id",
