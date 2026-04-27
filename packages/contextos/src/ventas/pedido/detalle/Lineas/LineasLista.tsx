@@ -13,6 +13,7 @@ export type LineasListaProps<L extends Linea = Linea> = {
   seleccionada?: string;
   onCambioCantidad?: (linea: L, cantidad: number) => void;
   pedidoEditable?: boolean;
+  cantidadEditable?: boolean;
   acciones?: Parameters<typeof QuimeraAcciones>[0]["acciones"];
   publicar: (evento: string, payload?: unknown) => void;
 };
@@ -30,6 +31,7 @@ export const LineasListaBase = ({
   seleccionada,
   onCambioCantidad,
   pedidoEditable,
+  cantidadEditable = false,
   acciones,
   publicar,
 }: LineasListaProps) => {
@@ -40,11 +42,11 @@ export const LineasListaBase = ({
 
   return (
     <ListadoSemiControlado
-      metaTabla={getMetaTablaLineas(onCambioCantidad, pedidoEditable)}
+      metaTabla={getMetaTablaLineas(onCambioCantidad, cantidadEditable)}
       tarjeta={(linea) => (
         <TarjetaLinea
           linea={linea}
-          pedidoEditable={pedidoEditable}
+          cantidadEditable={cantidadEditable}
           onCambioCantidad={onCambioCantidad}
         />
       )}
@@ -67,10 +69,8 @@ export const LineasListaBase = ({
 
 const getMetaTablaLineas = (
   onCambioCantidad?: (linea: Linea, cantidad: number) => void,
-  pedidoEditable?: boolean
+  cantidadEditable = false
 ) => {
-  const habilitarEdicionCantidad = false;
-
   return [
     {
       id: "linea",
@@ -84,7 +84,7 @@ const getMetaTablaLineas = (
       prioridad: "alta" as const,
       tipo: "numero" as const,
       render: (linea: Linea) =>
-        habilitarEdicionCantidad && pedidoEditable && onCambioCantidad ? (
+        cantidadEditable && onCambioCantidad ? (
           <EditarCantidadLinea
             linea={linea}
             onCantidadEditada={onCambioCantidad}
@@ -104,7 +104,7 @@ const getMetaTablaLineas = (
       cabecera: "IVA",
       prioridad: "media" as const,
       render: (linea: Linea) =>
-        linea.grupo_iva_producto_id ? `${linea.grupo_iva_producto_id}%` : "",
+        linea.grupo_iva_producto_id ? `${linea.grupo_iva_producto_id}` : "",
     },
     {
       id: "dto_porcentual",

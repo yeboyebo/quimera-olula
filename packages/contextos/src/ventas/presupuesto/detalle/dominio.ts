@@ -35,6 +35,7 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
         codigo: { bloqueado: true },
         divisa_id: { requerido: true },
     },
+    editable: (presupuesto: Presupuesto) => !presupuesto.aprobado,
 };
 
 export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);

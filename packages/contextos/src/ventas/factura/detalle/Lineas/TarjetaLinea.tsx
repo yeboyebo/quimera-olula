@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { formatearMoneda } from "@olula/lib/dominio.ts";
 import { useEffect, useState } from "react";
-import { LineaPedido as Linea } from "../../diseño.ts";
+import { LineaFactura as Linea } from "../../diseño.ts";
 import "./TarjetaLinea.css";
 
 export const TarjetaLinea = ({
