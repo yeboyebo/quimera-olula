@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
+import { TiqueRegaloVentaTpv } from "../tique_regalo/TiqueRegaloVentaTpv.tsx";
 import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
 import { getReportVenta } from "../infraestructura.ts";
@@ -105,6 +106,11 @@ export const DetalleVentaTpv = ({
                 />
             )}
             <QBoton texto="Imprimir" onClick={imprimir} />
+            <QBoton
+              texto="Tique regalo"
+              onClick={() => emitir("tique_regalo_solicitado")}
+              deshabilitado={estado !== "EMITIDA"}
+            />
             </div>
             <Tabs
             children={[
@@ -171,6 +177,9 @@ export const DetalleVentaTpv = ({
             )}
             {estado === "DEVOLVIENDO_VENTA" && (
                 <DevolverVentaTpv venta={venta} publicar={emitir} />
+            )}
+            {estado === "GENERANDO_TIQUE_REGALO" && (
+                <TiqueRegaloVentaTpv venta={venta} lineas={lineas.lista} publicar={emitir} />
             )}
         </div>
         </Detalle>
