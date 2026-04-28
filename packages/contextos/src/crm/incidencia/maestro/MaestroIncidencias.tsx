@@ -1,8 +1,14 @@
+import { EstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
+import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  filtroTextos,
+  getMetaFiltroDefecto,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -38,6 +44,31 @@ export const MaestroIncidencias = () => {
 
             <Listado<Incidencia>
               metaTabla={metaTablaIncidencia}
+              metaFiltro={{
+                ...getMetaFiltroDefecto(metaTablaIncidencia),
+                estado: {
+                  id: "estado",
+                  label: "Estado",
+                  filtro: (v) => filtroTextos("estado", v),
+                  render: (valor, onChange) => (
+                    <EstadoIncidencia
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+                prioridad: {
+                  id: "prioridad",
+                  label: "Prioridad",
+                  filtro: (v) => filtroTextos("prioridad", v),
+                  render: (valor, onChange) => (
+                    <PrioridadIncidencia
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+              }}
               criteria={ctx.incidencias.criteria}
               tarjeta={TarjetaCrmIncidencia}
               entidades={ctx.incidencias.lista}
