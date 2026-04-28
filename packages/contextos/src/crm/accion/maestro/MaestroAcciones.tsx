@@ -1,8 +1,11 @@
+import { EstadoAccion } from "#/crm/comun/componentes/estado_accion.tsx";
+import { TipoAccion } from "#/crm/comun/componentes/tipo_accion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -38,6 +41,31 @@ export const MaestroAcciones = () => {
 
             <Listado<Accion>
               metaTabla={metaTablaAccion}
+              metaFiltro={{
+                ...getMetaFiltroDefecto(metaTablaAccion),
+                tipo: {
+                  id: "tipo",
+                  label: "Tipo",
+                  filtro: (v) => (v ? ["tipo", "=", v as string] : null),
+                  render: (valor, onChange) => (
+                    <TipoAccion
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+                estado: {
+                  id: "estado",
+                  label: "Estado",
+                  filtro: (v) => (v ? ["estado", "=", v as string] : null),
+                  render: (valor, onChange) => (
+                    <EstadoAccion
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+              }}
               criteria={ctx.acciones.criteria}
               tarjeta={TarjetaCrmAccion}
               entidades={ctx.acciones.lista}
