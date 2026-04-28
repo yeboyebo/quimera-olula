@@ -3,19 +3,16 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CrearAccion } from "../crear/CrearAccion.tsx";
 import { DetalleAccion } from "../detalle/DetalleAccion.tsx";
 import { Accion } from "../diseño.ts";
 import { metaTablaAccion } from "./maestro.ts";
 import "./MaestroAcciones.css";
 import { getMaquina } from "./maquina.ts";
-
-type Layout = "TABLA" | "TARJETA";
 
 export const MaestroAcciones = () => {
   const { id, criteria } = getUrlParams();
@@ -32,37 +29,16 @@ export const MaestroAcciones = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const esMovil = useEsMovil();
-  const [layout, setLayout] = useState<Layout>("TARJETA");
-
-  const cambiarLayout = useCallback(
-    () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
-    [layout, setLayout]
-  );
-
   return (
     <div className="MaestroAcciones">
       <MaestroDetalle<Accion>
         Maestro={
           <>
             <h2>Acciones</h2>
-            {!esMovil && (
-              <div className="maestro-botones">
-                <QBoton
-                  texto={
-                    layout === "TARJETA"
-                      ? "Cambiar a TABLA"
-                      : "Cambiar a TARJETA"
-                  }
-                  onClick={cambiarLayout}
-                />
-              </div>
-            )}
 
             <Listado<Accion>
               metaTabla={metaTablaAccion}
               criteria={ctx.acciones.criteria}
-              modo={esMovil || layout === "TARJETA" ? "tarjetas" : "tabla"}
               tarjeta={TarjetaCrmAccion}
               entidades={ctx.acciones.lista}
               totalEntidades={ctx.acciones.total}
@@ -84,7 +60,6 @@ export const MaestroAcciones = () => {
           </>
         }
         Detalle={<DetalleAccion id={ctx.acciones.activo} publicar={emitir} />}
-        layout={layout}
         seleccionada={ctx.acciones.activo}
         modoDisposicion="maestro-50"
       />

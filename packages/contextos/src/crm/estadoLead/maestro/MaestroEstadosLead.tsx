@@ -57,7 +57,6 @@ export const MaestroEstadosLead = () => {
         Detalle={
           <DetalleEstadoLead id={ctx.estados_lead.activo} publicar={emitir} />
         }
-        layout={"TARJETA"}
         seleccionada={ctx.estados_lead.activo}
         modoDisposicion="maestro-50"
       />
