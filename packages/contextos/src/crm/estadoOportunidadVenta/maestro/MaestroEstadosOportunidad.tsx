@@ -3,7 +3,6 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
-import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { CrearEstadoOportunidad } from "../crear/CrearEstadoOportunidad.tsx";
 import { DetalleEstadoOportunidad } from "../detalle/DetalleEstadoOportunidad.tsx";
@@ -13,20 +12,10 @@ import "./MaestroEstadosOportunidad.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroEstadosOportunidad = () => {
-  const { id, criteria } = getUrlParams();
-
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    estados_oportunidad: listaActivaEntidadesInicial<EstadoOportunidad>(
-      id,
-      criteria
-    ),
+    estados_oportunidad: listaActivaEntidadesInicial<EstadoOportunidad>(),
   });
-
-  useUrlParams(
-    ctx.estados_oportunidad.activo,
-    ctx.estados_oportunidad.criteria
-  );
 
   useEffect(() => {
     emitir(
