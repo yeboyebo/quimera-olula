@@ -23,6 +23,7 @@ declare namespace React {
             'box-icon': BoxIcon;
             'quimera-tarjetas': NodoComun;
             'quimera-tarjeta': NodoComun;
+            'quimera-tarjeta-resumen': NodoComun;
         }
     }
 }
