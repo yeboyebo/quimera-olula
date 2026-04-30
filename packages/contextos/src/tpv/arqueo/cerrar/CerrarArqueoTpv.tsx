@@ -24,7 +24,8 @@ export const CerrarArqueoTpv = ({
   const cierreInicial = useMemo(
     () => ({
       ...cierreArqueoTpvVacio,
-      movimientoCierre: arqueo.recuentoEfectivo,
+      movimientoCierre: arqueo.recuentoEfectivo - arqueo.efectivoInicial,
+      cambioDejadoEnCaja: arqueo.efectivoInicial,
       idAgenteCierre: agenteActivo.obtener()?.id ?? "",
       totalEfectivo: arqueo.recuentoEfectivo,
     }),
@@ -67,10 +68,13 @@ export const CerrarArqueoTpv = ({
   };
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="mostrar"
+      titulo="Cierre de arqueo"
+      onCerrar={cancelar}
+    >
       <div className="CierreArqueo">
-        <h2>Cierre de arqueo</h2>
-
         <quimera-formulario>
           <div id="cierre">
             {`Total efectivo: ${moneda(arqueo.recuentoEfectivo)}`}

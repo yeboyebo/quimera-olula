@@ -38,11 +38,6 @@ export const MaestroConDetalleArqueoTpv = () => {
             <h2>Arqueos TPV</h2>
             <h2>Punto de arqueo {puntoVentaActivo?.nombre} </h2>
             <h2>Agente {miAgenteActivo?.nombre} </h2>
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("creacion_de_arqueo_solicitada")}>
-                Abrir arqueo
-              </QBoton>
-            </div>
             <Listado<CabeceraArqueoTpv>
               metaTabla={metaTablaArqueo}
               criteria={ctx.arqueos.criteria}
@@ -50,6 +45,15 @@ export const MaestroConDetalleArqueoTpv = () => {
               entidades={ctx.arqueos.lista}
               totalEntidades={ctx.arqueos.total}
               seleccionada={ctx.arqueos.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton
+                    onClick={() => emitir("creacion_de_arqueo_solicitada")}
+                  >
+                    Abrir arqueo
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) => emitir("arqueo_seleccionado", payload)}
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)

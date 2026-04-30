@@ -20,11 +20,11 @@ function SearchRecomSubfamilia({ id, ...props }) {
         key
           ? ["codsubfamilia", "eq", key]
           : {
-              or: [
-                ["descripcion", "like", text ?? ""],
-                ["codsubfamilia", "like", text ?? ""],
-              ],
-            },
+            or: [
+              ["descripcion", "like_ua", text ?? ""],
+              ["codsubfamilia", "like", text ?? ""],
+            ],
+          },
       )
       .success(response => {
         setOptions(

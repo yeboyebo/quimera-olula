@@ -69,7 +69,6 @@ export const bunch = parent => {
     ],
     irAMovilotes: [
       {
-        log: (payload, state) => ['mimensaje_nombre', payload],
         type: "navigate",
         url: ({ idLinea, idPedido }) => `/pedidosdecompra/${idPedido}/movilotes/${idLinea}`,
       },

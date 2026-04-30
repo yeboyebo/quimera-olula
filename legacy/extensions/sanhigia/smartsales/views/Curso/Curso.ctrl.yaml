@@ -4,6 +4,7 @@ shortcuts:
     name: curso
     id: codCurso
     schemaName: eventosCurso
+    remoteBufferChanged: false
   - type: Model
     name: lineaseventos
     id: idlineaEvento
@@ -13,16 +14,23 @@ shortcuts:
     action: "dame_contactos_evento"
     id: idInteraccion
     schema: contactosCurso
+  - type: Model
+    name: responsablesvento
+    action: "dame_responsables_evento"
+    id: idResponsableCurso
+    schema: responsablesCurso
 state:
   producto: null
   contactoAnadir: null
   idTipoTratoNuevaCampania: null
   valorTratosNuevaCampania: 0
   modalAnadirContactoVisible: false
+  modalAnadirResponsableVisible: false
   modalCrearContactoVisible: false
   modalErroresCargaContactosExcel: false
   modalCrearCampaniaVisible: false
   erroresCarga: []
+  cursoBufferActive: null
 bunch:
   # onInit:
   #   - _type: grape
@@ -48,13 +56,13 @@ bunch:
       data:
         - key: codcontacto
           value:
-            payloadPath: codContacto           
+            payloadPath: codContacto
       success: onRemoveContactoEventoSuccess
       error: onRemoveContactoEventoError
   onRemoveContactoEventoSuccess:
     - _type: alert
       text: Contacto eliminado.
-      severity: success  
+      severity: success
     - _type: grape
       name: getContactosevento
   onRemoveContactoEventoError:
@@ -65,7 +73,7 @@ bunch:
       name: getContactosevento
   onCrearCampaniaCursoError:
     - _type: grape
-      name: resetCrearCampania  
+      name: resetCrearCampania
     - _type: alert
       text: Error al crear campaña
       severity: error
@@ -75,7 +83,7 @@ bunch:
       value:
         payloadPath: response.pk
     - _type: grape
-      name: resetCrearCampania        
+      name: resetCrearCampania
     - _type: alert
       text: Campaña creada con éxito
       severity: info
@@ -88,10 +96,10 @@ bunch:
       data:
         - key: codcontacto
           value:
-            statePath: contactoAnadir    
+            statePath: contactoAnadir
         - key: tipo
           value:
-            payloadPath: tipoCreacion                             
+            payloadPath: tipoCreacion
       success: onAddContactoEventoSuccess
       error: onAddContactoEventoError
   saveContactoCreado:
@@ -103,12 +111,12 @@ bunch:
       data:
         - key: codcontacto
           value:
-            payloadPath: contactoAnadir    
+            payloadPath: contactoAnadir
         - key: tipo
           value:
-            payloadPath: tipoCreacion                             
+            payloadPath: tipoCreacion
       success: onAddContactoEventoSuccess
-      error: onAddContactoEventoError      
+      error: onAddContactoEventoError
   onAddContactoEventoSuccess:
     - _type: set
       path: contactoAnadir
@@ -121,7 +129,7 @@ bunch:
     - _type: set
       path: modalCrearContactoVisible
       value:
-        const: false        
+        const: false
     - _type: alert
       text: Contacto añadido
       severity: success
@@ -139,12 +147,12 @@ bunch:
     - _type: set
       path: modalCrearContactoVisible
       value:
-        const: false          
+        const: false
     - _type: alert
       text: Error, contacto no añadido
       severity: error
     - _type: grape
-      name: getContactosevento      
+      name: getContactosevento
   onExcelAdjuntado:
     - _type: patch
       schema: eventosCurso
@@ -154,7 +162,7 @@ bunch:
       files:
         payloadPath: files
       success: onExcelCargado
-      # error: onExcelCargadoError  
+      # error: onExcelCargadoError
   onExcelCargado:
     - _type: grape
       name: getTratosCampania
@@ -167,7 +175,7 @@ bunch:
           const: true
       then:
         _type: grape
-        name: onMostrarMensajeExcelCargado  
+        name: onMostrarMensajeExcelCargado
       else:
         _type: grape
         name: mostrarModalErroresCarga
@@ -175,28 +183,28 @@ bunch:
     - _type: set
       path: modalErroresCargaContactosExcel
       value:
-        const: true  
+        const: true
     - _type: set
       path: erroresCarga
       value:
-        payloadPath: response  
+        payloadPath: response
   onCerrarModalErroresCarga:
     - _type: grape
       name: getContactosevento
     - _type: set
       path: modalErroresCargaContactosExcel
       value:
-        const: false         
-  onMostrarMensajeExcelCargado: 
+        const: false
+  onMostrarMensajeExcelCargado:
     - _type: alert
       text: Contactos añadidos.
-      severity: success   
+      severity: success
     - _type: grape
-      name: getContactosevento       
-  onExcelCargadoError:  
+      name: getContactosevento
+  onExcelCargadoError:
     - _type: alert
-      text: 'Error: El fichero no se pudo leer correctamente'
-      severity: error     
+      text: "Error: El fichero no se pudo leer correctamente"
+      severity: error
   onCrearCampaniaClicked:
     - _type: set
       path: modalCrearCampaniaVisible
@@ -213,8 +221,146 @@ bunch:
     - _type: set
       path: idTipoTratoNuevaCampania
       value:
-        const: null        
+        const: null
     - _type: set
       path: valorTratosNuevaCampania
       value:
-        const: 0            
+        const: 0
+  onAvisoUltimoResponsableEvento:
+    - _type: alert
+      text: "El curso debe tener al menos un responsable. No puede ser eliminado."
+      severity: warning
+  onRemoveResponsableEventoConfirmed:
+    - _type: patch
+      schema: eventosCurso
+      action: remove_responsable_evento
+      id:
+        statePath: curso.data.codCurso
+      data:
+        - key: codagente
+          value:
+            payloadPath: codAgente
+      success: onRemoveResponsableEventoSuccess
+      error: onRemoveResponsableEventoError
+  onRemoveResponsableEventoSuccess:
+    - _type: alert
+      text: Responsable eliminado.
+      severity: success
+    - _type: grape
+      name: getResponsablesvento
+  onRemoveResponsableEventoError:
+    - _type: alert
+      text: Error al eliminar responsable
+      severity: error
+    - _type: grape
+      name: getResponsablesvento
+  onSaveResponsableClicked:
+    - _type: patch
+      schema: eventosCurso
+      action: add_responsable_curso
+      id:
+        statePath: curso.data.codCurso
+      data:
+        - key: codagente
+          value:
+            statePath: responsableAnadir
+      success: onAddResponsableEventoSuccess
+      error: onAddResponsableEventoError
+  onAddResponsableEventoSuccess:
+    - _type: set
+      path: responsableAnadir
+      value:
+        const: null
+    - _type: set
+      path: modalAnadirResponsableVisible
+      value:
+        const: false
+    - _type: alert
+      text: Responsable añadido
+      severity: success
+    - _type: grape
+      name: getResponsablesvento
+  onAddResponsableEventoError:
+    - _type: set
+      path: responsableAnadir
+      value:
+        const: null
+    - _type: set
+      path: modalAnadirResponsableVisible
+      value:
+        const: false
+    - _type: alert
+      text: Error, responsable no añadido
+      severity: error
+    - _type: grape
+      name: getResponsablesvento
+  setCursoBufferActive:
+    - _type: set
+      path: cursoBufferActive
+      value:
+        payloadPath: value
+  onCursoBufferSectionCancelled:
+    - _type: set
+      path: cursoBufferActive
+      value:
+        const: null
+    - _type: grape
+      name: loadBufferCurso
+  onCursoBufferSeccionCancelada:
+    - _type: set
+      path: cursoBufferActive
+      value:
+        const: null
+    - _type: grape
+      name: loadBufferCurso
+  onCursoBufferSeccionConfirmada:
+    - _type: log
+      desc: mimensaje_campos_buffer_antes_patch
+      value:
+        statePath: curso.buffer
+    - _type: patch
+      schema: eventosCurso
+      id:
+        statePath: curso.data.codCurso
+      data:
+        - key: nombre
+          value:
+            statePath: curso.buffer.nombre
+        - key: codCliente
+          value:
+            statePath: curso.buffer.codCliente
+        - key: fechaIni
+          value:
+            statePath: curso.buffer.fechaIni
+        - key: horaIni
+          value:
+            statePath: curso.buffer.horaIni
+        - key: fechaFin
+          value:
+            statePath: curso.buffer.fechaFin
+        - key: horaFin
+          value:
+            statePath: curso.buffer.horaFin
+        - key: gastos
+          value:
+            statePath: curso.buffer.gastos
+      success: onCursoBufferActualizado
+      error: onCursoBufferActualizadoError
+  onCursoBufferActualizado:
+    - _type: alert
+      text: Curso actualizado.
+      severity: success
+    - _type: set
+      path: cursoBufferActive
+      value:
+        const: null
+    - _type: grape
+      name: dumpBufferCurso
+  onCursoBufferActualizadoError:
+    - _type: alert
+      text: Error al actualizar curso.
+      severity: error
+    - _type: set
+      path: cursoBufferActive
+      value:
+        const: null

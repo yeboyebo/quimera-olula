@@ -82,13 +82,13 @@ const getRuleValue = (rule, group) => {
 };
 
 const dynamicCan = action => {
-  const superuser = util.getUser()?.superuser;
+  const superuser = util.getGlobalSetting("user_data")?.user?.superuser;
   if (superuser) {
     return true;
   }
 
   const rules = getRules();
-  const group = util.getUser()?.group;
+  const group = util.getGlobalSetting("user_data")?.user?.group;
 
   const actionGroup = getRuleValue(rules?.[action], group);
   if (actionGroup) {

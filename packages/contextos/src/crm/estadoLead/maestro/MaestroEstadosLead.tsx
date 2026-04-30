@@ -34,21 +34,22 @@ export const MaestroEstadosLead = () => {
           <>
             <h2>Estados de Lead</h2>
 
-            <div className="maestro-botones">
-              <QBoton
-                onClick={() => emitir("creacion_de_estado_lead_solicitada")}
-              >
-                Nuevo
-              </QBoton>
-            </div>
-
             <Listado<EstadoLead>
               metaTabla={metaTablaEstadoLead}
               criteria={ctx.estados_lead.criteria}
-              modo={"tabla"}
+              modo={"tarjetas"}
               entidades={ctx.estados_lead.lista}
               totalEntidades={ctx.estados_lead.total}
               seleccionada={ctx.estados_lead.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton
+                    onClick={() => emitir("creacion_de_estado_lead_solicitada")}
+                  >
+                    Nuevo
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) =>
                 emitir("estado_lead_seleccionado", payload)
               }
@@ -61,6 +62,7 @@ export const MaestroEstadosLead = () => {
         Detalle={
           <DetalleEstadoLead id={ctx.estados_lead.activo} publicar={emitir} />
         }
+        layout={"TARJETA"}
         seleccionada={ctx.estados_lead.activo}
         modoDisposicion="maestro-50"
       />

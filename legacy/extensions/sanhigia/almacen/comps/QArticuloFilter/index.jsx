@@ -27,8 +27,8 @@ function QArticuloFilter({ id, idFilter = false, seVende = false, codFamilia = n
         ? ["referencia", "eq", key]
         : {
           or: [
-            ["descripcion", "like", text],
-            ["referencia", "like", text],
+            ["descripcion", "like_ua", text],
+            ["referencia", "like_ua", text],
             ["codbarras", "like", text],
           ],
         };

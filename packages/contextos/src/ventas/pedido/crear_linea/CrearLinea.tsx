@@ -15,20 +15,16 @@ import { metaNuevaLinea, nuevaLineaVacia } from "./dominio.ts";
 export type CrearLineaProps = {
   pedidoId: string;
   publicar: ProcesarEvento;
-}
+};
 
 export const CrearLinea = (props: CrearLineaProps) => {
-  
   const { app } = useContext(FactoryCtx);
   const CrearLinea_ = app.Ventas.pedido_CrearLinea as typeof CrearLineaBase;
 
   return CrearLinea_(props);
-}
+};
 
-export const CrearLineaBase = ({
-  pedidoId,
-  publicar,
-}: CrearLineaProps) => {
+export const CrearLineaBase = ({ pedidoId, publicar }: CrearLineaProps) => {
   const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido } = useModelo(
     metaNuevaLinea,
@@ -48,9 +44,13 @@ export const CrearLineaBase = ({
   }, [creando, publicar]);
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="crear_linea_pedido"
+      titulo="Crear línea"
+      onCerrar={cancelar}
+    >
       <div className="CrearLinea">
-        <h2>Crear línea</h2>
         <quimera-formulario>
           <Articulo
             {...uiProps("referencia", "descripcion")}
@@ -59,7 +59,7 @@ export const CrearLineaBase = ({
           />
           <QInput label="Cantidad" {...uiProps("cantidad")} />
         </quimera-formulario>
-        <div className="botones maestro-botones ">
+        <div className="botones">
           <QBoton onClick={crear} deshabilitado={!valido}>
             Crear
           </QBoton>

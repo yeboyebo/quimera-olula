@@ -10,6 +10,8 @@ export * from "./atomos/qtabla.tsx";
 export * from "./atomos/qtarjeta_resumen.tsx";
 export * from "./atomos/qtarjetas.tsx";
 export * from "./atomos/qtextarea.tsx";
+export * from "./moleculas/qtarjeta_generica.tsx";
+export * from "./moleculas/qtarjeta_metatabla.tsx";
 
 export * from "./moleculas/Mostrar.tsx";
 export * from "./moleculas/qacciones.tsx";
@@ -23,6 +25,7 @@ export * from "./detalle/Detalle.tsx";
 export * from "./detalle/FormularioGenerico.tsx";
 export * from "./detalle/helpers.tsx";
 export * from "./detalle/tabs/Tabs.tsx";
+export * from "./helpers.ts";
 
 export * from "./maestro/Listado.tsx";
 export * from "./maestro/ListadoSemiControlado.tsx";
@@ -31,6 +34,7 @@ export * from "./maestro/MaestroDetalle.tsx";
 export * from "./maestro/maestroFiltros/MaestroFiltros.tsx";
 
 export * from "./historias/historias.tsx";
+export * from "./plantilla/Cabecera.tsx";
 export * from "./plantilla/Plantilla.tsx";
 export * from "./SinDatos/SinDatos.tsx";
 export * from "./slot/Slot.tsx";

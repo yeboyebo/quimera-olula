@@ -65,14 +65,16 @@ export const MaestroConDetalleAlbaran = () => {
         Maestro={
           <>
             <h2>Albaranes</h2>
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear_albaran_solicitado")}>
-                Nuevo Albarán
-              </QBoton>
-            </div>
             <Listado<Albaran>
               metaTabla={metaTablaAlbaran}
               criteria={ctx.albaranes.criteria}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton onClick={() => emitir("crear_albaran_solicitado")}>
+                    Nuevo Albarán
+                  </QBoton>
+                </div>
+              )}
               modo={"tabla"}
               entidades={ctx.albaranes.lista}
               totalEntidades={ctx.albaranes.total}
@@ -81,18 +83,22 @@ export const MaestroConDetalleAlbaran = () => {
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
               }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
+              }
             />
           </>
         }
         Detalle={<DetalleAlbaran id={ctx.albaranes.activo} publicar={emitir} />}
         seleccionada={ctx.albaranes.activo}
-        modoDisposicion="maestro-50"
+        // modoDisposicion="maestro-50"
       />
 
       <QModal
         nombre="modal"
         abierto={ctx.estado === "CREANDO_ALBARAN"}
         onCerrar={() => emitir("creacion_cancelada")}
+        titulo="Nuevo Albarán"
       >
         <CrearAlbaran publicar={emitir} />
       </QModal>

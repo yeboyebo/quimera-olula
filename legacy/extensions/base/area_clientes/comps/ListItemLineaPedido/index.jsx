@@ -60,7 +60,7 @@ function ListItemLineaPedido({ selected = false, funPrimaryLeft, funPrimaryRight
               </Box>
               <Box display="inline">
                 <Typography component="span" variant="body2" color="textPrimary">{`${linea.cantidad
-                  } x ${util.euros(linea.pvpUnitario)}`}</Typography>
+                  } x ${util.euros(linea?.aplicarPvpParticular ? linea.pvpUnitario : linea.pvpReferencia)}`}</Typography>
               </Box>
             </Box>
           )

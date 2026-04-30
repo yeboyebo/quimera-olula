@@ -417,6 +417,18 @@ export default parent => ({
   }),
   // .filter(data => (data?.codContacto ? ["codcontacto", "eq", data?.codContacto] : null))
   // .order(() => ({ field: "fecha", direction: "DESC" })),
+  tratosCliente: Schema("ss_tratos", "idtrato")
+    .fields({
+      idTrato: Field.Int("idtrato", "ID").auto(),
+      titulo: Field.Text("titulo", "Título"),
+      idCampania: Field.Int("idcampania", "Id campaña"),
+      idTipotrato: Field.Int("idtipotrato", "Id tipotrato"),
+      fecha: Field.Date("fecha", "Fecha"),
+      tipotrato: Field.Text("tipotrato", "Tipo"),
+      cliente: Field.Text("codcliente", "Cliente"),
+    })
+    .filter(data => (data?.codCliente ? ["codcliente", "eq", data?.codCliente] : null))
+    .order(() => ({ field: "fecha", direction: "DESC" })),
   tarea: Schema("ss_tareas", "idtarea")
     .fields({
       idTarea: Field.Int("idtarea", "ID").auto(),
@@ -461,6 +473,27 @@ export default parent => ({
       emailContacto: Field.Text("emailcontacto", "Email Contacto").dump(false),
     })
     .filter(data => (data?.idTrato ? ["idtrato", "eq", data?.idTrato] : null))
+    .order(() => ({ field: "fecha", direction: "DESC" })),
+  tareasCliente: Schema("ss_tareas", "idtarea")
+    .fields({
+      idTarea: Field.Int("idtarea", "ID").auto(),
+      titulo: Field.Text("titulo", "Título"),
+      tituloTrato: Field.Text("titulotrato", "Título Trato"),
+      fecha: Field.Date("fecha", "Fecha"),
+      hora: Field.Time("hora", "Hora")
+        .load(t => t?.hora?.substring(0, 5)),
+      tipo: Field.Options("tipo", "Tipo")
+        .default("Llamada")
+        .options([
+          { key: "Llamada", value: "Llamada" },
+          { key: "Email", value: "Email" },
+          { key: "Whatsapp", value: "Whatsapp" },
+          { key: "Cita", value: "Cita" },
+        ]),
+      completada: Field.Bool("completada", "Completada").default(false),
+      nota: Field.Text("nota", "Nota").default(""),
+      idTrato: Field.Text("idtrato", "Trato"),
+    })
     .order(() => ({ field: "fecha", direction: "DESC" })),
   nuevaTarea: Schema("ss_tareas", "idtarea")
     .fields({
@@ -1017,22 +1050,32 @@ export default parent => ({
     .fields({
       codCurso: Field.Text("codevento", "Cod. Evento").auto(),
       nombre: Field.Text("nombre", "Nombre").required(),
-      tipoCurso: Field.Text("tipoevento", "Tipo"),
+      tipoCurso: Field.Text("tipoevento", "Tipo").default("Curso"),
       fechaIni: Field.Date("fechaini", "Fecha inicio").required(),
-      horaIni: Field.Text("horaini", "Hora inicio").required(),
+      horaIni: Field.Time("horaini", "Hora inicio").required(),
       fechaFin: Field.Date("fechafin", "Fecha fin").required(),
-      horaFin: Field.Text("horafin", "Hora fin").required(),
-      codDir: Field.Text("coddir", "Cod. Dirección"),
-      codCliente: Field.Text("codcliente", "codcliente"),
+      horaFin: Field.Time("horafin", "Hora fin").required(),
+      codDir: Field.Text("coddir", "Cod. Dirección").required(),
+      codCliente: Field.Text("codcliente", "codcliente").required(),
       nombreCliente: Field.Text("nombrecliente", "Nombre cliente"),
-      codAlmacen: Field.Text("codalmacen", "codalmacen"),
+      codAlmacen: Field.Text("codalmacen", "codalmacen").default('ALM'),
+      codAgente: Field.Text("codagente", "codagente").load(false).required(),
       nombreAlmacen: Field.Text("nombrealmacen", "Nombre almacen"),
-      estado: Field.Text("estado", "estado"),
+      estado: Field.Text("estado", "estado").default("Planificado"),
       idCampania: Field.Int("idcampania", "Id campaña"),
       datosRevisados: Field.Bool("datosrevisados", "Datos de contactos revisados"),
+      gastos: Field.Currency("sh_gastos", "Gastos"),
     })
     .filter(() => ["tipoevento", "eq", "Curso"])
     .order(() => ({ field: "fechaini", direction: "DESC" })),
+  responsablesCurso: Schema("eventos", "id")
+    .fields({
+      idResponsableCurso: Field.Int("id", "Id responsable").auto(),
+      codCurso: Field.Text("codevento", "Cod. Evento"),
+      codAgente: Field.Text("codagente", "codagente").required(),
+      nombreResponsable: Field.Text("nombreresponsable", "Nombre responsable"),
+      emailResponsable: Field.Text("emailresponsable", "Email responsable"),
+    }),
   contactosCurso: Schema("sh_timelinecontacto", "idtimelinecontacto").fields({
     idInteraccion: Field.Int("idtimelinecontacto", "ID"),
     tipo: Field.Text("tipo", "Tipo"),

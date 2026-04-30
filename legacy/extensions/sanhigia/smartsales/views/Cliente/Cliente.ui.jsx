@@ -1,11 +1,11 @@
 import { Box, Button, Dialog, Grid, Icon, QBox, QSection, Typography } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import { useEffect } from "react";
 
-import { ListContactoCliente } from "../../comps";
+import { ListContactoCliente, ListPresupuestosCliente, ListTareasCliente, ListTratosCliente } from "../../comps";
 
 function Cliente({ callbackChanged, codCliente, initCliente, useStyles }) {
-  const [{ cliente, contactos, modalCrearContactoVisible, modalAnadirContactoVisible }, dispatch] =
+  const [{ cliente, contactos, modalCrearContactoVisible, modalAnadirContactoVisible, presupuestosPendientes, tareasPendientes, tratosPendientes }, dispatch] =
     useStateValue();
   const schema = getSchemas().cliente;
   const classes = useStyles();
@@ -61,7 +61,7 @@ function Cliente({ callbackChanged, codCliente, initCliente, useStyles }) {
         sideButtons={<></>}
       >
         <Grid container spacing={0} display="flex">
-          <Grid item xs={12} sm={12}>
+          <Grid size={{ xs: 12, sm: 12 }}>
             {/* <QSection title={`Nombre Cliente`} actionPrefix="cliente.buffer/nombre" alwaysInactive>
               <Box display="flex">
                 <Typography variant="body1">{cliente.buffer.nombre || ""}</Typography>
@@ -74,14 +74,18 @@ function Cliente({ callbackChanged, codCliente, initCliente, useStyles }) {
             </QSection>
           </Grid>
           <Box display={"flex"} justifyContent={"space-between"} width={1}>
-            <Grid item xs={6} sm={6}>
-              <QSection title={`Forma de pago`} actionPrefix="cliente.buffer/formaPago" alwaysInactive>
+            <Grid size={{ xs: 6, sm: 6 }}>
+              <QSection
+                title={`Forma de pago`}
+                actionPrefix="cliente.buffer/formaPago"
+                alwaysInactive
+              >
                 <Box display="flex">
                   <Typography variant="body1">{cliente.buffer.formaPago || ""}</Typography>
                 </Box>
               </QSection>
             </Grid>
-            <Grid item xs={6} sm={6}>
+            <Grid size={{ xs: 6, sm: 6 }}>
               <QSection title={`Telefono`} actionPrefix="cliente.buffer/telefono" alwaysInactive>
                 <Box display="flex">
                   <Typography variant="body1">{cliente.buffer.telefono || ""}</Typography>
@@ -89,7 +93,7 @@ function Cliente({ callbackChanged, codCliente, initCliente, useStyles }) {
               </QSection>
             </Grid>
           </Box>
-          <Grid item xs={12} sm={12}>
+          <Grid size={{ xs: 12, sm: 12 }}>
             <QSection title={`Direccion`} actionPrefix="cliente.buffer/dirCliente" alwaysInactive>
               <Box display="flex">
                 <Typography variant="body1">{cliente.buffer.dirCliente || ""}</Typography>
@@ -105,7 +109,7 @@ function Cliente({ callbackChanged, codCliente, initCliente, useStyles }) {
           <Button
             id="anadirContacto"
             color="primary"
-            disabled={actionEnabled}
+            // disabled={actionEnabled}
             onClick={() => dispatch({ type: "onAnadirContactoClicked" })}
           >
             <Box display="flex" style={{ gap: "0.5rem" }} alignItems="center">
@@ -114,8 +118,17 @@ function Cliente({ callbackChanged, codCliente, initCliente, useStyles }) {
             </Box>
           </Button>
         </Box>
-        <Box style={{ margin: "0px", marginBottom: "50px" }}>
+        <Box style={{ marginRight: "5px", marginBottom: "50px" }}>
           <ListContactoCliente lineas={contactos} />
+        </Box>
+        <Box style={{ marginRight: "5px", marginBottom: "50px" }}>
+          <ListTratosCliente lineas={tratosPendientes} />
+        </Box>
+        <Box style={{ marginRight: "5px", marginBottom: "50px" }}>
+          <ListTareasCliente lineas={tareasPendientes} />
+        </Box>
+        <Box style={{ marginRight: "5px", marginBottom: "50px" }}>
+          <ListPresupuestosCliente lineas={presupuestosPendientes} />
         </Box>
         <Dialog open={modalCrearContactoVisible} fullWidth maxWidth="xs">
           <Quimera.View

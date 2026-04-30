@@ -25,10 +25,15 @@ import {
   SearchRecomSubfamilia,
 } from "../../comps";
 
+import { Agente } from "@quimera-extension/base-ventas";
+
 function Dashboard({ useStyles }) {
   const [
     {
+      codAgenteCustom,
+      modalCambiarAgente,
       modalTareasAtrasadas,
+      previsiones,
       totalInteraccionesCursos,
       totalInteraccionesActivos,
       totalTratosMkt,
@@ -62,6 +67,9 @@ function Dashboard({ useStyles }) {
     });
   }, [dispatch]);
 
+  console.log('mimensaje_agentes: previsiones.codAgente: ', previsiones.codAgente, ", agente: ", agente, "condicion: ", previsiones.codAgente === 'TODOS' || previsiones.codAgente === agente);
+  const verSoloProgress = previsiones.codAgente === 'TODOS' || (previsiones.codAgente === agente && !util.getUser()?.superuser)
+
   return (
     <Quimera.Template id="Dashboard">
       <Container maxWidth="xs" className={classes.container}>
@@ -71,197 +79,203 @@ function Dashboard({ useStyles }) {
             Ver gráfico
           </Button>
         </MainBox> */}
-        <MainBox display="flex" justifyContent="space-between">
-          <Button id="crearNuevoContacto" variant="outlined">
-            Nuevo Contacto
-          </Button>
-          <Button
-            id="crearNuevoTrato"
-            variant="outlined"
-            onClick={() => navigate("/ss/trato/nuevo")}
-          >
-            Nuevo Trato
-          </Button>
-        </MainBox>
-        <MainBox className={classes.agendaBox} title="Agenda" url="/ss/agenda">
-          <SearchContacto navigation={true} />
 
-          {totalInteraccionesCursos > 0 && (
-            <Box
-              className={classes.botonAlertaHeader}
-              onClick={() => navigate("/ss/contactos/cursos/")}
-            >
-              <Typography variant="h3" className={classes.mainBoxSubtitle}>
-                Contactos de cursos
-              </Typography>
-              <span className={classes.listItemTarea}>
-                <span className={classes.listItemTareaAux}>{totalInteraccionesCursos}</span>
-              </span>
-            </Box>
-          )}
+        {verSoloProgress &&
+          <>
+            <MainBox display="flex" justifyContent="space-between">
+              <Button id="crearNuevoContacto" variant="outlined">
+                Nuevo Contacto
+              </Button>
+              <Button
+                id="crearNuevoTrato"
+                variant="outlined"
+                onClick={() => navigate("/ss/trato/nuevo")}
+              >
+                Nuevo Trato
+              </Button>
+            </MainBox>
+            <MainBox className={classes.agendaBox} title="Agenda" url="/ss/agenda">
+              <SearchContacto navigation={true} />
 
-          {totalInteraccionesActivos > 0 && (
-            <Box
-              className={classes.botonAlertaHeader}
-              onClick={() => navigate("/ss/contactos/activos/")}
-            >
-              <Typography variant="h3" className={classes.mainBoxSubtitle}>
-                Contactos más activos en últimos meses
-              </Typography>
-              <span className={classes.listItemTarea}>
-                <span className={classes.listItemTareaAux}>{totalInteraccionesActivos}</span>
-              </span>
-            </Box>
-          )}
+              {totalInteraccionesCursos > 0 && (
+                <Box
+                  className={classes.botonAlertaHeader}
+                  onClick={() => navigate("/ss/contactos/cursos/")}
+                >
+                  <Typography variant="h3" className={classes.mainBoxSubtitle}>
+                    Contactos de cursos
+                  </Typography>
+                  <span className={classes.listItemTarea}>
+                    <span className={classes.listItemTareaAux}>{totalInteraccionesCursos}</span>
+                  </span>
+                </Box>
+              )}
 
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="h3" className={classes.mainBoxSubtitle} data-cy="title-tratos">
-              Tratos
-            </Typography>
-            <Button id="verTratos" variant="outlined" onClick={() => navigate("/ss/tratos")}>
-              Ver todos
-            </Button>
-          </Box>
+              {totalInteraccionesActivos > 0 && (
+                <Box
+                  className={classes.botonAlertaHeader}
+                  onClick={() => navigate("/ss/contactos/activos/")}
+                >
+                  <Typography variant="h3" className={classes.mainBoxSubtitle}>
+                    Contactos más activos en últimos meses
+                  </Typography>
+                  <span className={classes.listItemTarea}>
+                    <span className={classes.listItemTareaAux}>{totalInteraccionesActivos}</span>
+                  </span>
+                </Box>
+              )}
 
-          <ListTratos
-            tratos={{
-              ...tratos,
-              list: tratosList,
-            }}
-          />
-
-          {totalTratosObservadorFarma > 0 && (
-            <Box
-              className={classes.botonAlertaHeader}
-              onClick={() => navigate("/ss/tratos/modo/observadorfarma")}
-            >
-              <Typography variant="h3" className={classes.mainBoxSubtitle}>
-                Tratos de licencia farmacéutica
-              </Typography>
-              <span className={classes.listItemTarea}>
-                <span className={classes.listItemTareaAux}>{totalTratosObservadorFarma}</span>
-              </span>
-            </Box>
-          )}
-
-          {(totalTratosMkt > 0 ||
-            util.getUser()?.superuser ||
-            util.getUser().group === "MKT" ||
-            util.getUser().group === "Responsable de marketing") && (
-              <Box className={classes.botonAlertaHeader} onClick={() => navigate("/ss/tratosmkt")}>
-                <Typography variant="h3" className={classes.mainBoxSubtitle}>
-                  Tratos de venta de formación
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="h3" className={classes.mainBoxSubtitle} data-cy="title-tratos">
+                  Tratos
                 </Typography>
-                {util.getUser().group !== "MKT" ||
-                  (util.getUser().group !== "Responsable de marketing" && (
-                    <span className={classes.listItemTarea}>
-                      <span className={classes.listItemTareaAux}>{totalTratosMkt}</span>
-                    </span>
-                  ))}
-                {/* {util.getUser().group == "MKT" && (
+                <Button id="verTratos" variant="outlined" onClick={() => navigate("/ss/tratos")}>
+                  Ver todos
+                </Button>
+              </Box>
+
+              <ListTratos
+                tratos={{
+                  ...tratos,
+                  list: tratosList,
+                }}
+              />
+
+              {totalTratosObservadorFarma > 0 && (
+                <Box
+                  className={classes.botonAlertaHeader}
+                  onClick={() => navigate("/ss/tratos/modo/observadorfarma")}
+                >
+                  <Typography variant="h3" className={classes.mainBoxSubtitle}>
+                    Tratos de licencia farmacéutica
+                  </Typography>
+                  <span className={classes.listItemTarea}>
+                    <span className={classes.listItemTareaAux}>{totalTratosObservadorFarma}</span>
+                  </span>
+                </Box>
+              )}
+
+              {(totalTratosMkt > 0 ||
+                util.getUser()?.superuser ||
+                util.getUser().group === "MKT" ||
+                util.getUser().group === "Responsable de marketing") && (
+                  <Box className={classes.botonAlertaHeader} onClick={() => navigate("/ss/tratosmkt")}>
+                    <Typography variant="h3" className={classes.mainBoxSubtitle}>
+                      Tratos de venta de formación
+                    </Typography>
+                    {util.getUser().group !== "MKT" ||
+                      (util.getUser().group !== "Responsable de marketing" && (
+                        <span className={classes.listItemTarea}>
+                          <span className={classes.listItemTareaAux}>{totalTratosMkt}</span>
+                        </span>
+                      ))}
+                    {/* {util.getUser().group == "MKT" && (
                 <Button id="verTratos" variant="outlined" onClick={() => navigate("/ss/tratos")}>
                   Ver todos
                 </Button>
               )} */}
-              </Box>
-            )}
+                  </Box>
+                )}
 
-          <QSection
-            title=""
-            readOnly
-            focusStyle="none"
-            close={{ display: "none" }}
-            dynamicComp={desactivar => (
-              <>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography
-                    variant="h3"
-                    className={classes.mainBoxSubtitle}
-                    onClick={() => desactivar()}
-                    data-cy="title-tareas"
-                  >
+              <QSection
+                title=""
+                readOnly
+                focusStyle="none"
+                close={{ display: "none" }}
+                dynamicComp={desactivar => (
+                  <>
+                    <Box display="flex" justifyContent="space-between">
+                      <Typography
+                        variant="h3"
+                        className={classes.mainBoxSubtitle}
+                        onClick={() => desactivar()}
+                        data-cy="title-tareas"
+                      >
+                        Tareas
+                      </Typography>
+
+                      <Button id="verTareas" variant="outlined" onClick={() => navigate("/ss/tareas")}>
+                        Ver todas
+                      </Button>
+                    </Box>
+
+                    <ListTareas
+                      tareas={{
+                        ...tareas,
+                        idList: tareasList,
+                        dict: tareasList
+                          .map(key => tareas?.dict[key])
+                          .reduce(
+                            (accum, tarea) => ({
+                              ...accum,
+                              [tarea.idTarea]: tarea,
+                            }),
+                            {},
+                          ),
+                      }}
+                    />
+                  </>
+                )}
+              >
+                <Box className={classes.tareasHeader}>
+                  <Typography variant="h3" className={classes.mainBoxSubtitle}>
                     Tareas
                   </Typography>
-
-                  <Button id="verTareas" variant="outlined" onClick={() => navigate("/ss/tareas")}>
-                    Ver todas
-                  </Button>
+                  <span className={classes.listItemTarea}>
+                    <span className={classes.listItemTareaAux}>{tareasList?.length}</span>
+                  </span>
+                  {/* <BigNumUd data={[tareas.dict[tareas.idList?.[0]]?.hora, 'h.']} /> */}
                 </Box>
+              </QSection>
+            </MainBox>
 
-                <ListTareas
-                  tareas={{
-                    ...tareas,
-                    idList: tareasList,
-                    dict: tareasList
-                      .map(key => tareas?.dict[key])
-                      .reduce(
-                        (accum, tarea) => ({
-                          ...accum,
-                          [tarea.idTarea]: tarea,
-                        }),
-                        {},
-                      ),
-                  }}
-                />
-              </>
-            )}
-          >
-            <Box className={classes.tareasHeader}>
-              <Typography variant="h3" className={classes.mainBoxSubtitle}>
-                Tareas
-              </Typography>
-              <span className={classes.listItemTarea}>
-                <span className={classes.listItemTareaAux}>{tareasList?.length}</span>
-              </span>
-              {/* <BigNumUd data={[tareas.dict[tareas.idList?.[0]]?.hora, 'h.']} /> */}
+
+            <Box display="flex" flexDirection="column" alignItems="center" style={{ gap: "1rem" }}>
+              <Quimera.View id="HistoricoPrevision" />
+              <Button
+                color="secondary"
+                text=">> Ver histórico por familias"
+                onClick={() => navigate("/ss/historico/")}
+              />
             </Box>
-          </QSection>
-        </MainBox>
 
-        <Box display="flex" flexDirection="column" alignItems="center" style={{ gap: "1rem" }}>
-          <Quimera.View id="HistoricoPrevision" />
-          <Button
-            color="secondary"
-            text=">> Ver histórico por familias"
-            onClick={() => navigate("/ss/historico/")}
-          />
-        </Box>
-
-        <MainBox title="Recomendaciones">
-          <br />
-          <Typography variant="h3" className={classes.mainBoxSubtitle}>
-            Subfamilias para cliente
-          </Typography>
-          <SearchRecomCliente id="searchRecomCliente" />
-          <SearchRecomDireccion
-            id="searchRecomDireccion"
-            codCliente={searchRecomCliente}
-            disabled={!searchRecomCliente}
-          />
-          <Button
-            id="goRecomCliente"
-            variant="contained"
-            color="primary"
-            style={{ margin: "10px 0 25px 0" }}
-            disabled={!searchRecomDireccion}
-          >
-            Ver subfamilias =&gt;
-          </Button>
-          <br />
-          <Typography variant="h3" className={classes.mainBoxSubtitle}>
-            Clientes para subfamilia
-          </Typography>
-          <SearchRecomSubfamilia id="searchRecomSubfamilia" />
-          <Button
-            id="goRecomSubfamilia"
-            variant="contained"
-            color="primary"
-            style={{ margin: "10px 0 25px 0" }}
-            disabled={!searchRecomSubfamilia}
-          >
-            Ver clientes =&gt;
-          </Button>
-        </MainBox>
+            <MainBox title="Recomendaciones">
+              <br />
+              <Typography variant="h3" className={classes.mainBoxSubtitle}>
+                Subfamilias para cliente
+              </Typography>
+              <SearchRecomCliente id="searchRecomCliente" />
+              <SearchRecomDireccion
+                id="searchRecomDireccion"
+                codCliente={searchRecomCliente}
+                disabled={!searchRecomCliente}
+              />
+              <Button
+                id="goRecomCliente"
+                variant="contained"
+                color="primary"
+                style={{ margin: "10px 0 25px 0" }}
+                disabled={!searchRecomDireccion}
+              >
+                Ver subfamilias =&gt;
+              </Button>
+              <br />
+              <Typography variant="h3" className={classes.mainBoxSubtitle}>
+                Clientes para subfamilia
+              </Typography>
+              <SearchRecomSubfamilia id="searchRecomSubfamilia" />
+              <Button
+                id="goRecomSubfamilia"
+                variant="contained"
+                color="primary"
+                style={{ margin: "10px 0 25px 0" }}
+                disabled={!searchRecomSubfamilia}
+              >
+                Ver clientes =&gt;
+              </Button>
+            </MainBox>
+          </>
+        }
 
         <Dialog open={modalTareasAtrasadas} maxWidth="xs">
           <DialogTitle
@@ -302,6 +316,39 @@ function Dashboard({ useStyles }) {
             callbackCerrado={payload => dispatch({ type: "onCerrarCrearContacto", payload })}
           />
         </Dialog>
+
+        <Dialog open={modalCambiarAgente} maxWidth="xs">
+          <DialogTitle
+            id="form-dialog-title"
+            display="flex"
+            justifyContent="center"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            Cambiar agente a seguir
+          </DialogTitle>
+          <DialogContent>
+            <Agente id="codAgenteCustom" fullWidth async />
+          </DialogContent>
+          <DialogActions>
+            <Grid container justifyContent="space-between">
+              <Button
+                id="cerrar"
+                text="Cerrar"
+                variant="text"
+                color="secondary"
+                onClick={() => dispatch({ type: "cerrarModalCambiarAgente" })}
+              />
+              <Button
+                id="cambiarAgente"
+                text="Cambiar"
+                variant="text"
+                color="primary"
+                onClick={() => dispatch({ type: "cambiarAgenteConfirmado" })}
+              />
+            </Grid>
+          </DialogActions>
+        </Dialog>
+
       </Container>
     </Quimera.Template>
   );

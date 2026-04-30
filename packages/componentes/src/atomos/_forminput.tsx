@@ -1,4 +1,5 @@
 export type FormFieldProps = {
+  id?: string;
   label: string;
   nombre: string;
   deshabilitado?: boolean;
@@ -47,6 +48,8 @@ const tiposFormInput = {
   autocompletar: "text",
   selector: "text",
   intervalo_fechas: "date",
+  intervalo_numeros: "number",
+  multiseleccion: "checkbox",
 } as const;
 
 export type FormInputProps = FormFieldProps & {
@@ -63,6 +66,7 @@ type InputProps = Omit<FormInputProps, "label"> & {
 };
 
 export const FormInput = ({
+  id,
   nombre,
   deshabilitado,
   placeholder,
@@ -126,6 +130,7 @@ export const FormInput = ({
 
   return (
     <input
+      id={id}
       type={tiposFormInput[tipo] ?? "text"}
       name={nombre}
       placeholder={placeholder}

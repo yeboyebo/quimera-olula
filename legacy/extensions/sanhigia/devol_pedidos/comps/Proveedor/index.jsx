@@ -13,7 +13,7 @@ function Proveedor({ ...props }) {
     API("proveedores")
       .get()
       .select("codproveedor,nombre,cifnif")
-      .filter(key ? ["codproveedor", "eq", key] : ["nombre", "like", text])
+      .filter(key ? ["codproveedor", "eq", key] : ["nombre", "like_ua", text])
       .success(response => {
         setOptions(
           response.data

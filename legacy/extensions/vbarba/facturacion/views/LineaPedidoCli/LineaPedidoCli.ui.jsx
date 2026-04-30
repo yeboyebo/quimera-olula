@@ -1,3 +1,4 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
 import {
   Box,
   Button,
@@ -9,8 +10,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import { ProveedorArticulo, QArticuloVbarba } from "../../comps";
@@ -44,7 +44,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
       )}
       <Collapse in={linea.buffer._status !== "deleting"}>
         <Grid container spacing={0} direction="column">
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Box display="flex" justifyContent="right" mt={1}>
               {!disabled && (
                 <Button
@@ -61,14 +61,14 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <QSection
               title={buffer.referencia}
               actionPrefix="linea/articulo"
               alwaysInactive={disabled}
               dynamicComp={() => (
                 <Grid container spacing={1} direction="column" >
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <QArticuloVbarba
                       id="linea.buffer.referencia"
                       label="Artículo"
@@ -77,15 +77,15 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <Field.Schema id="linea.buffer.descripcion" schema={schema} fullWidth />
+                  <Grid size={12}>
+                    <Field.Schema id="linea.buffer/descripcion" schema={schema} fullWidth />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Quimera.Block id="afterDescripcion" />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <ProveedorArticulo
-                      id="linea.buffer.codProveedor"
+                      id="linea.buffer/codProveedor"
                       label={`Proveedor`}
                       referencia={linea.buffer.referencia}
                       fullWidth
@@ -97,20 +97,23 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               saveDisabled={() => !schema.isValid(buffer)}
             >
               <Typography variant="h6">{buffer.descripcion}</Typography>
+              {buffer.nombreProveedor && <Typography variant="h6">Proveedor: {buffer.nombreProveedor}</Typography>}
             </QSection>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <QSection
               actionPrefix="linea/cantidad"
               alwaysInactive={disabled}
               dynamicComp={() => (
                 <Grid container spacing={1} direction="column" >
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Field.Schema id="linea.buffer.cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.pvpUnitario" schema={schema} fullWidth />
+                  <Grid size={6}>
+                    {linea.data.aplicarPvpParticular
+                      ? <Field.Schema id="linea.buffer/pvpUnitario" schema={schema} fullWidth />
+                      : <Field.Schema id="linea.buffer/pvpReferencia" schema={schema} fullWidth />}
                   </Grid>
                 </Grid>
               )}
@@ -119,11 +122,11 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               <Typography variant="h6" align="right">{`${util.formatter(
                 buffer.cantidad,
                 2,
-              )} x ${util.euros(buffer.pvpUnitario)}`}</Typography>
+              )} x ${util.euros(linea.data.aplicarPvpParticular ? buffer.pvpUnitario : buffer.pvpReferencia)}`}</Typography>
             </QSection>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <QSection actionPrefix="totales" alwaysInactive>
               <Totales
                 totales={[
@@ -135,71 +138,72 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
             </QSection>
           </Grid>
 
-          <Grid item xs={6}>
-            <QSection
-              title="Descuentos"
-              actionPrefix="linea/descuentos"
-              mr={1}
-              alwaysInactive={disabled}
-              dynamicComp={() => (
-                <Grid container spacing={1} direction="column" >
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.dtoLineal" schema={schema} fullWidth />
+          <Grid container size={{ xs: 12 }} spacing={1}>
+            <Grid size={{ xs: 6 }}>
+              <QSection
+                title="Descuentos"
+                actionPrefix="linea/descuentos"
+                alwaysInactive={disabled}
+                dynamicComp={() => (
+                  <Grid container spacing={1} direction="column" >
+                    <Grid size={6}>
+                      <Field.Schema id="linea.buffer.dtoLineal" schema={schema} fullWidth />
+                    </Grid>
+                    <Grid size={6}>
+                      <Field.Schema id="linea.buffer.dtoPor" schema={schema} fullWidth />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.dtoPor" schema={schema} fullWidth />
-                  </Grid>
-                </Grid>
-              )}
-              saveDisabled={() => !schema.isValid(buffer)}
-            >
-              {!!buffer.dtoLineal && (
-                <Typography variant="subtitle1">Lineal {util.euros(buffer.dtoLineal)}</Typography>
-              )}
-              {!!buffer.dtoPor && (
-                <Typography variant="subtitle1">Porcentual {buffer.dtoPor}%</Typography>
-              )}
-              {!buffer.dtoLineal && !buffer.dtoPor && (
-                <Typography variant="subtitle1">Sin descuentos</Typography>
-              )}
-            </QSection>
-          </Grid>
+                )}
+                saveDisabled={() => !schema.isValid(buffer)}
+              >
+                {!!buffer.dtoLineal && (
+                  <Typography variant="subtitle1">Lineal {util.euros(buffer.dtoLineal)}</Typography>
+                )}
+                {!!buffer.dtoPor && (
+                  <Typography variant="subtitle1">Porcentual {buffer.dtoPor}%</Typography>
+                )}
+                {!buffer.dtoLineal && !buffer.dtoPor && (
+                  <Typography variant="subtitle1">Sin descuentos</Typography>
+                )}
+              </QSection>
+            </Grid>
 
-          <Grid item xs={6}>
-            <QSection
-              title="Impuestos"
-              actionPrefix="linea/Impuestos"
-              alwaysInactive={true}
-              dynamicComp={() => (
-                <Grid container spacing={1} direction="column" >
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.codImpuesto" schema={schema} fullWidth />
+            <Grid size={6}>
+              <QSection
+                title="Impuestos"
+                actionPrefix="linea/Impuestos"
+                alwaysInactive={true}
+                dynamicComp={() => (
+                  <Grid container spacing={1} direction="column" >
+                    <Grid size={6}>
+                      <Field.Schema id="linea.buffer.codImpuesto" schema={schema} fullWidth />
+                    </Grid>
+                    <Grid size={6}>
+                      <Field.Schema id="linea.buffer.iva" schema={schema} fullWidth />
+                    </Grid>
+                    <Grid size={6}>
+                      <Field.Schema id="linea.buffer.recargo" schema={schema} fullWidth />
+                    </Grid>
+                    <Grid size={6}>
+                      <Field.Schema id="linea.buffer.irpf" schema={schema} fullWidth />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.iva" schema={schema} fullWidth />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.recargo" schema={schema} fullWidth />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Field.Schema id="linea.buffer.irpf" schema={schema} fullWidth />
-                  </Grid>
-                </Grid>
-              )}
-              saveDisabled={() => !schema.isValid(buffer)}
-            >
-              {!!buffer.iva && (
-                <Typography variant="subtitle1">
-                  IVA {buffer.codImpuesto} {buffer.iva}%
-                </Typography>
-              )}
-              {!!buffer.recargo && (
-                <Typography variant="subtitle1">
-                  Recargo de Equivalencia {buffer.recargo}%
-                </Typography>
-              )}
-              {!!buffer.irpf && <Typography variant="subtitle1">IRPF {buffer.irpf}%</Typography>}
-            </QSection>
+                )}
+                saveDisabled={() => !schema.isValid(buffer)}
+              >
+                {!!buffer.iva && (
+                  <Typography variant="subtitle1">
+                    IVA {buffer.codImpuesto} {buffer.iva}%
+                  </Typography>
+                )}
+                {!!buffer.recargo && (
+                  <Typography variant="subtitle1">
+                    Recargo de Equivalencia {buffer.recargo}%
+                  </Typography>
+                )}
+                {!!buffer.irpf && <Typography variant="subtitle1">IRPF {buffer.irpf}%</Typography>}
+              </QSection>
+            </Grid>
           </Grid>
         </Grid>
       </Collapse>

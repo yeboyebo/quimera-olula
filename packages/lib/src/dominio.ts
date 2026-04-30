@@ -287,10 +287,25 @@ export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => 
 
             return numero;
         }
-        case 'intervalo_fechas': {
-            if (valor === null || !valor.length) {
+        case 'multiseleccion': {
+            if (valor === null || !valor.length || valor === "") return null;
+            if (valor.length === 1 && valor[0] === "") return null;
+
+            return valor;
+        }
+        case 'intervalo_numeros': {
+            if (valor === null || !valor.length || valor === "") {
                 return null;
             }
+
+            const [desde, hasta] = valor;
+            return [desde ? parseFloat(desde) : undefined, hasta ? parseFloat(hasta) : undefined]
+        }
+        case 'intervalo_fechas': {
+            if (valor === null || !valor.length || valor === "") {
+                return null;
+            }
+            if (!Array.isArray(valor)) return valor;
 
             const [desde, hasta] = valor;
             return [desde ? new Date(Date.parse(desde)) : undefined, hasta ? new Date(Date.parse(hasta)) : undefined]
@@ -370,7 +385,14 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
 
         // case 'fecha':
         //     return (valor as Date).toISOString().split('T')[0];
+        case 'intervalo_numeros': {
+            const [desde, hasta] = (valor as [number | undefined, number | undefined]);
+
+            return [Number(desde).toString(), Number(hasta).toString()] as unknown as string;
+        }
         case 'intervalo_fechas': {
+            if (!Array.isArray(valor)) return String(valor);
+
             const [desde, hasta] = (valor as [Date | undefined, Date | undefined]);
 
             return [desde?.toISOString().slice(0, 10) as string, hasta?.toISOString().slice(0, 10) as string] as unknown as string;
@@ -718,6 +740,21 @@ export const puede = (regla: string): boolean => {
     }
 
     return true;
+};
+
+export const plugin = (nombre: string): string => {
+    if (!nombre) return "";
+
+    const raw = localStorage.getItem("whoami");
+    if (!raw) return "";
+
+    try {
+        const whoAmI = JSON.parse(raw) as { plugins?: Record<string, string> };
+        const estado = whoAmI.plugins?.[nombre];
+        return typeof estado === "string" ? estado.toLowerCase() : "";
+    } catch {
+        return "";
+    }
 };
 
 type RelacionDeCampos = Record<string, string>;

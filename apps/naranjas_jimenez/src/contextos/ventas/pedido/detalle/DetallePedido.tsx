@@ -1,7 +1,6 @@
 import { BorrarPedido } from "#/ventas/pedido/borrar/BorrarPedido.tsx";
 import { editable, getMetaPedido } from "#/ventas/pedido/detalle/dominio.ts";
 
-import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Lineas } from "#/ventas/pedido/detalle/Lineas/Lineas.tsx";
 import { getMaquina } from "#/ventas/pedido/detalle/maquina.ts";
 import { TabObservaciones } from "#/ventas/pedido/detalle/TabObservaciones.tsx";
@@ -16,6 +15,7 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { Agente } from "../../comun/componentes/Agente.tsx";
 import "./DetallePedido.css";
 
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -81,6 +81,7 @@ export const DetallePedidoNrj = ({
     {
       icono: "eliminar",
       texto: "Borrar",
+      advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: false,
     },
@@ -123,7 +124,7 @@ export const DetallePedidoNrj = ({
             </Tab>
           </Tabs>
 
-          {editable(ctx.pedido) && (
+          {editable(ctx.pedido) && pedido.modificado && (
             <div className="botones maestro-botones">
               <QBoton onClick={handleGuardar}>Guardar Cambios</QBoton>
               <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>

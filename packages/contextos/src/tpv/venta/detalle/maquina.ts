@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { publicar } from "@olula/lib/dominio.js";
-import { abiertaOEmitidaContexto, cambiarVenta, cargarContexto, ContextoVentaTpv, crearLineaPorBarcode, emitirVale, EstadoVentaTpv, getContextoVacio, Lineas, onLineaBorrada, onLineaCambiada, onLineaCreada, onVentaBorrada, Pagos, refrescarCabecera, refrescarLineas, refrescarPagos } from "./detalle.ts";
+import { abiertaOEmitidaContexto, cambiarDescuento, cambiarVenta, cargarContexto, ContextoVentaTpv, crearLineaPorBarcode, emitirVale, EstadoVentaTpv, getContextoVacio, Lineas, onLineaBorrada, onLineaCambiada, onLineaCreada, onVentaBorrada, Pagos, refrescarCabecera, refrescarLineas, refrescarPagos } from "./detalle.ts";
 
 
 export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () => {
@@ -29,6 +29,8 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
             baja_linea_solicitada: "BORRANDO_LINEA",
 
             cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
+
+            descuento_solicitado: "CAMBIANDO_DESCUENTO",
 
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
 
@@ -70,6 +72,13 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
             cambio_cliente_cancelado: "ABIERTA",
         },
 
+        CAMBIANDO_DESCUENTO: {
+
+            descuento_aplicado: [cambiarDescuento],
+
+            descuento_cancelado: "ABIERTA",
+        },
+
         EMITIDA: {
 
             venta_cargada: [abiertaOEmitidaContexto],
@@ -77,6 +86,8 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
             pago_seleccionado: [Pagos.activar],
 
             linea_seleccionada: [Lineas.activar],
+
+            tique_regalo_solicitado: "GENERANDO_TIQUE_REGALO",
         },
 
         BORRANDO_VENTA: {
@@ -135,6 +146,13 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
             devolucion_hecha: [refrescarCabecera, refrescarLineas, "ABIERTA"],
 
             devolucion_cancelada: "ABIERTA",
+        },
+
+        GENERANDO_TIQUE_REGALO: {
+
+            tique_regalo_generado: "EMITIDA",
+
+            tique_regalo_cancelado: "EMITIDA",
         },
 
         CREANDO_LINEA: {
