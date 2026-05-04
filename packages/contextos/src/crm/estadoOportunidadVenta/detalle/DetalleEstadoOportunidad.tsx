@@ -1,3 +1,4 @@
+import { EstadoBaseOportunidad } from "#/crm/comun/componentes/estado_base_oportunidad.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, QInput } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
@@ -71,6 +72,7 @@ export const DetalleEstadoOportunidad = ({
           <quimera-formulario>
             <QInput label="Descripción" {...uiProps("descripcion")} />
             <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
+            <EstadoBaseOportunidad {...uiProps("estadobase")} />
           </quimera-formulario>
 
           {modificado && (

@@ -23,13 +23,13 @@ export const MenuUsuarioElementosSanhigia: MenuUsuarioElementos = [
             {
                 nombre: "Usuarios",
                 icono: "lista",
-                url: "/users",
+                url: "/auth/usuario",
                 // regla: "Users:visit",
             },
             {
                 nombre: "Grupos",
                 icono: "group",
-                url: "/groups",
+                url: "/auth/grupo",
                 // regla: "Groups:visit",
             },
         ],
