@@ -1,21 +1,24 @@
+import { EstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
+import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
+import {
+  filtroTextos,
+  getMetaFiltroDefecto,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CrearIncidencia } from "../crear/CrearIncidencia.tsx";
 import { DetalleIncidencia } from "../detalle/DetalleIncidencia.tsx";
 import { Incidencia } from "../diseño.ts";
 import { metaTablaIncidencia } from "./maestro.ts";
 import "./MaestroIncidencias.css";
 import { getMaquina } from "./maquina.ts";
-
-type Layout = "TABLA" | "TARJETA";
 
 export const MaestroIncidencias = () => {
   const { id, criteria } = getUrlParams();
@@ -32,37 +35,41 @@ export const MaestroIncidencias = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const esMovil = useEsMovil();
-  const [layout, setLayout] = useState<Layout>("TARJETA");
-
-  const cambiarLayout = useCallback(
-    () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
-    [layout, setLayout]
-  );
-
   return (
     <div className="MaestroIncidencias">
       <MaestroDetalle<Incidencia>
         Maestro={
           <>
             <h2>Incidencias</h2>
-            {!esMovil && (
-              <div className="maestro-botones">
-                <QBoton
-                  texto={
-                    layout === "TARJETA"
-                      ? "Cambiar a TABLA"
-                      : "Cambiar a TARJETA"
-                  }
-                  onClick={cambiarLayout}
-                />
-              </div>
-            )}
 
             <Listado<Incidencia>
               metaTabla={metaTablaIncidencia}
+              metaFiltro={{
+                ...getMetaFiltroDefecto(metaTablaIncidencia),
+                estado: {
+                  id: "estado",
+                  label: "Estado",
+                  filtro: (v) => filtroTextos("estado", v),
+                  render: (valor, onChange) => (
+                    <EstadoIncidencia
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+                prioridad: {
+                  id: "prioridad",
+                  label: "Prioridad",
+                  filtro: (v) => filtroTextos("prioridad", v),
+                  render: (valor, onChange) => (
+                    <PrioridadIncidencia
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+              }}
               criteria={ctx.incidencias.criteria}
-              modo={esMovil || layout === "TARJETA" ? "tarjetas" : "tabla"}
               tarjeta={TarjetaCrmIncidencia}
               entidades={ctx.incidencias.lista}
               totalEntidades={ctx.incidencias.total}
