@@ -2177,6 +2177,9 @@ importers:
 
   legacy/libs/thirdparty:
     dependencies:
+      '@emotion/cache':
+        specifier: ^11.11.0
+        version: 11.14.0
       '@emotion/react':
         specifier: ^11.11.0
         version: 11.14.0(@types/react@19.2.7)(react@19.2.3)
