@@ -1,0 +1,48 @@
+shortcuts:
+state: { recepciones: [] }
+bunch:
+  init:
+    - _type: grape
+      name: getRecepciones
+  onSetRecepciones:
+    - _type: grape
+      name: setRecepciones
+  onAsignarUsuarioRecepcion:
+    - _type: patch
+      schema: envios
+      data:
+        - key: idviajemultitrans
+          value:
+            payloadPath: idviajemultitrans
+        - key: usuariorecepcion
+          value:
+            payloadPath: usuariorecepcion
+      success: onAsignarUsuarioRecepcionSuccess
+      error: onAsignarUsuarioRecepcionError
+  onAsignarUsuarioRecepcionSuccess:
+    - _type: grape
+      name: asignarUsuarioRecepcion
+  onAsignarUsuarioRecepcionError:
+    - _type: alert
+      text: Se ha producido error al asignar usuario.
+      severity: error
+  onSincroRecepcionClicked:
+    - _type: post
+      schema: envios
+      action: postLineasRecepciones
+      data:
+        - key: idviajemultitrans
+          value:
+            payloadPath: idviajemultitrans
+        - key: lineasEnvio
+          value:
+            payloadPath: lineasEnvio
+      success: onSincroRecepcionClickedSuccess
+      error: onSincroRecepcionClickedError
+  onSincroRecepcionClickedSuccess:
+    - _type: grape
+      name: sincroRecepcionSuccess
+  onSincroRecepcionClickedError:
+    - _type: alert
+      text: Se ha producido error al sincronizar lineas.
+      severity: error

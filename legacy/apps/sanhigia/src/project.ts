@@ -7,8 +7,11 @@ import smartsales from "@quimera-extension/sanhigia-smartsales";
 
 import sanhigiaTheme from "./theme";
 
-export default {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const project: any = {
   path: "projects/sanhigia",
   dependencies: [core, login, almacen, ventas, sanhigiaDevolPed, smartsales],
   theme: sanhigiaTheme,
 };
+
+export default project;

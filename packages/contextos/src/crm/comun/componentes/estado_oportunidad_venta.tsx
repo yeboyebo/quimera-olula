@@ -36,6 +36,7 @@ export const EstadoOportunidad = ({
       const opcionesMapeadas = estados.map((estado) => ({
         valor: String(estado.id),
         descripcion: estado.descripcion ?? "",
+        probabilidad: estado.probabilidad,
       }));
 
       setOpcionesEstado(opcionesMapeadas);

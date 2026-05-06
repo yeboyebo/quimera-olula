@@ -1,0 +1,9 @@
+.AlbaranarPedido {
+    padding: 20px 20% !important;
+}
+
+@media (max-width: 768px) {
+    .AlbaranarPedido {
+        padding: 10px !important;
+    }
+}

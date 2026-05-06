@@ -1,10 +1,8 @@
 import { Box } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
-import { Typography } from "@quimera/thirdparty";
-import { navigate } from "quimera";
-import { useAppValue, useStateValue, useWidth, util } from "quimera";
-import React, { useState } from "react";
-import { useTranslation } from "@quimera/thirdparty";
+import { Typography, useTranslation } from "@quimera/thirdparty";
+import { navigate, useAppValue, useStateValue, useWidth, util } from "quimera";
+import { useState } from "react";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -17,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ItemCatalogo({ renderAvatar, model, modelName, selected = false, // avatar = 'C', ...props }) {
+function ItemCatalogo({ renderAvatar, model, modelName, selected = false, ...props }) {
   // const classes = useStyles()
   const [open, setOpen] = useState(true);
   const [cantidad, setCantidad] = useState(1);
@@ -26,6 +24,10 @@ function ItemCatalogo({ renderAvatar, model, modelName, selected = false, // ava
   const [{ carrito }] = useAppValue();
   const { t } = useTranslation();
   const [estado, setEstado] = useState("En catalogo");
+
+  const setValorCantidad = c => {
+    c > 0 ? setCantidad(c) : setCantidad(0);
+  };
 
   const handleToggleOpenClicked = () => {
     setOpen(!open);
@@ -37,10 +39,6 @@ function ItemCatalogo({ renderAvatar, model, modelName, selected = false, // ava
   const handleSumaClicked = c => {
     const multiplo = 1;
     setValorCantidad(cantidad + c * multiplo);
-  };
-
-  const setValorCantidad = c => {
-    c > 0 ? setCantidad(c) : setCantidad(0);
   };
 
   const width = useWidth();

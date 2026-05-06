@@ -1,11 +1,16 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.js";
-import { getSeleccionada } from "@olula/lib/entidad.ts";
-import { useCallback } from "react";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { Listado } from "@olula/componentes/maestro/Listado.tsx";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
 import { TransferenciaStock } from "../diseño.ts";
-import { obtenerTransferenciasStock } from "../infraestructura.ts";
-import { useMaquinaTransferenciasStock } from "../maquina_listado_transferencias_stock.ts";
+import {
+  Contexto,
+  getMaquina,
+} from "../maquina_listado_transferencias_stock.ts";
 import { CrearTransferenciaStock } from "./CrearTransferenciaStock.tsx";
 import { DetalleTransferenciaStock } from "./DetalleTransferenciaStock.tsx";
 
@@ -28,56 +33,60 @@ const metaTablaTransferenciaStock: MetaTabla<TransferenciaStock> = [
 ];
 
 export const MaestroDetalleTransferenciasStock = () => {
-  const [
-    emitir,
-    {
-      estado,
-      contexto: { transferencias },
-    },
-  ] = useMaquinaTransferenciasStock();
+  const { id, criteria } = getUrlParams();
 
-  const setEntidades = useCallback(
-    (payload: TransferenciaStock[]) =>
-      emitir("transferencias_cargadas", payload),
-    [emitir]
-  );
-  const setSeleccionada = useCallback(
-    (payload: TransferenciaStock) =>
-      emitir("transferencia_seleccionada", payload),
-    [emitir]
-  );
+  const { ctx, emitir } = useMaquina(getMaquina, {
+    estado: "INICIAL",
+    transferencias: listaActivaEntidadesInicial<TransferenciaStock>(
+      id,
+      criteria
+    ),
+  } as Contexto);
 
-  const seleccionada = getSeleccionada(transferencias);
+  useUrlParams(ctx.transferencias.activo, ctx.transferencias.criteria);
+
+  useEffect(() => {
+    emitir("recarga_de_transferencias_solicitada", ctx.transferencias.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="TransferenciaStock">
       <MaestroDetalle<TransferenciaStock>
-        seleccionada={seleccionada}
-        preMaestro={
+        seleccionada={ctx.transferencias.activo}
+        layout="TABLA"
+        Maestro={
           <>
             <h2>Transferencias</h2>
             <div className="maestro-botones">
               <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
             </div>
+            <Listado<TransferenciaStock>
+              metaTabla={metaTablaTransferenciaStock}
+              criteria={ctx.transferencias.criteria}
+              modo="tabla"
+              entidades={ctx.transferencias.lista}
+              totalEntidades={ctx.transferencias.total}
+              seleccionada={ctx.transferencias.activo}
+              onSeleccion={(payload) =>
+                emitir("transferencia_seleccionada", payload)
+              }
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
+            />
           </>
         }
-        modoVisualizacion="tabla"
-        metaTabla={metaTablaTransferenciaStock}
-        entidades={transferencias.lista}
-        setEntidades={setEntidades}
-        setSeleccionada={setSeleccionada}
-        cargar={obtenerTransferenciasStock}
         Detalle={
           <DetalleTransferenciaStock
-            key={seleccionada?.id}
-            inicial={seleccionada}
+            id={ctx.transferencias.activo}
             publicar={emitir}
           />
         }
       />
       <CrearTransferenciaStock
         publicar={emitir}
-        activo={estado === "Creando"}
+        activo={ctx.estado === "CREANDO"}
       />
     </div>
   );

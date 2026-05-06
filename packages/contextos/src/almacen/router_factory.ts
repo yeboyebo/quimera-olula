@@ -1,15 +1,15 @@
-import { MaestroConDetalleAlmacen } from "./almacen/vistas/MaestroConDetalleAlmacen.tsx"
+import { MaestroAlmacen } from "./almacen/vistas/maestro/MaestroAlmacen.tsx"
 import { MaestroConDetalleArticulo } from "./articulo/vistas/MaestroConDetalleArticulo.tsx"
 import { MaestroConDetalleCaja } from "./caja/vistas/MaestroConDetalleCaja.tsx"
-import { MaestroConDetalleFamilia } from "./familia/vistas/MaestroConDetalleFamilia.tsx"
+import { MaestroFamilia } from "./familia/vistas/maestro/MaestroFamilia.tsx"
 import { MaestroDetalleTransferenciasStock } from "./transferencias/vistas/MaestroDetalleTransferenciasStock.tsx"
 
 export class RouterFactoryAlmacenOlula {
-    static router = {
-        "almacen/transferencias": MaestroDetalleTransferenciasStock,
-        "almacen/articulo": MaestroConDetalleArticulo,
-        "almacen/almacenes": MaestroConDetalleAlmacen,
-        "almacen/cajas": MaestroConDetalleCaja,
-        "almacen/familias": MaestroConDetalleFamilia,
-    }
+        static router = {
+                "almacen/transferencias": MaestroDetalleTransferenciasStock,
+                "almacen/articulo": MaestroConDetalleArticulo,
+                "almacen/cajas": MaestroConDetalleCaja,
+                "almacen/almacenes": MaestroAlmacen,
+                "almacen/familias": MaestroFamilia,
+        }
 }

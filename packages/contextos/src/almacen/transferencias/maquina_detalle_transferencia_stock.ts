@@ -1,5 +1,4 @@
-import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { ConfigMaquina4, useMaquina4 } from "@olula/lib/useMaquina.ts";
+import { ConfigMaquina4, ProcesarEvento, useMaquina4 } from "@olula/lib/useMaquina.ts";
 
 
 type Estado = "Editando" | "Borrando";
@@ -25,7 +24,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     },
 };
 
-export const useMaquinaTransferenciaStock = (publicar?: EmitirEvento) => useMaquina4<Estado, Contexto>({
+export const useMaquinaTransferenciaStock = (publicar?: ProcesarEvento) => useMaquina4<Estado, Contexto>({
     config: configMaquina,
     publicar,
 });

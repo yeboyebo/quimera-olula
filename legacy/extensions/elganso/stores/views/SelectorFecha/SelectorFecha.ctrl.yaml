@@ -1,0 +1,17 @@
+---
+shortcuts:
+state: { years: [] }
+bunch:
+  init:
+    - _type: get
+      schema: annos
+      success: setYears
+  setYears:
+    - _type: set
+      path: years
+      value:
+        payloadPath: response.data
+  savedYears:
+    - _type: alert
+      text: Guardado correctamente.
+      severity: success

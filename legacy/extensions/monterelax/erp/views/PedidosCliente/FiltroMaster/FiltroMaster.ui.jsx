@@ -1,8 +1,7 @@
+import { Cliente } from "@quimera-extension/base-ventas";
 import { Box, Button, Field, Grid, Typography } from "@quimera/comps";
 import { AppBar, FormControlLabel, Switch } from "@quimera/thirdparty";
-import { Cliente } from "@quimera-extension/base-ventas";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { useStateValue } from "quimera";
 
 import Pedidos from "../../../comps/Pedidos";
 import initialData from "./../filtro-estados";
@@ -16,10 +15,10 @@ function FiltroMaster({ useStyles }) {
       <AppBar position="sticky" className={classes.appBar}>
         <Box px={1}>
           <Box>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} direction="column" >
               {!filtroReferencia ? (
                 <>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <FormControlLabel
                       style={{ width: "100%" }}
                       classes={{ label: classes.labelCheckBox }}
@@ -38,7 +37,7 @@ function FiltroMaster({ useStyles }) {
                       }
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <FormControlLabel
                       style={{ width: "100%" }}
                       classes={{ label: classes.labelCheckBox }}
@@ -59,7 +58,7 @@ function FiltroMaster({ useStyles }) {
                   </Grid>
                 </>
               ) : (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FormControlLabel
                     style={{ width: "100%" }}
                     classes={{ label: classes.labelCheckBox }}
@@ -81,7 +80,7 @@ function FiltroMaster({ useStyles }) {
               )}
               {!filtroReferencia ? (
                 <>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Field.Select
                       id="filtro.estado"
                       label="Estado"
@@ -90,7 +89,7 @@ function FiltroMaster({ useStyles }) {
                       disabled={!!filtro.pedido}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Cliente
                       id="filtro.cliente"
                       label="Cliente"
@@ -101,11 +100,11 @@ function FiltroMaster({ useStyles }) {
                   </Grid>
                 </>
               ) : (
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Pedidos id="filtro.pedido" label="Referencia" fullWidth async />
                 </Grid>
               )}
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box display="flex" alignItems="flex-end" justifyContent="flex-end" height={1}>
                   <Button
                     id="filtrar"

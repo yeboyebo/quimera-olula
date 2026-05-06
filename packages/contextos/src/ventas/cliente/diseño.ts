@@ -13,7 +13,7 @@ export interface Cliente extends Entidad {
   forma_pago_id: string;
   grupo_iva_negocio_id: string;
   de_baja: boolean;
-  fecha_baja: string | null;
+  fecha_baja: Date | null;
   grupo_id: string;
   telefono1: string;
   telefono2: string;
@@ -67,7 +67,7 @@ export type NuevaDireccion = {
 };
 
 export type FormBaja = {
-  fecha_baja: string;
+  fecha_baja: Date | null;
 }
 
 export interface CuentaBanco extends Entidad {

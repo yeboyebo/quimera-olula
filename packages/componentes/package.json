@@ -14,6 +14,7 @@
         "test": "vitest"
     },
     "dependencies": {
-        "@olula/lib": "workspace:*"
+        "@olula/lib": "workspace:*",
+        "react-infinite-scroll-component": "^6.1.1"
     }
 }

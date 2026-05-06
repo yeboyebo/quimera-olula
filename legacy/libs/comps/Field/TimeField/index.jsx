@@ -1,14 +1,15 @@
-import DateFnsUtils from "@date-io/date-fns";
-import { MuiPickersUtilsProvider } from "@quimera/thirdparty";
+import { AdapterDateFns, LocalizationProvider } from "@quimera/thirdparty";
+import { util } from "quimera";
 
 import BaseField from "../BaseField";
 import TimeField from "./TimeField";
 
 function TimeBase({ timePickerProps = {}, ...props }) {
+  const locale = util.getLocaleDateFNS();
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={locale}>
       <BaseField Component={<TimeField {...timePickerProps} />} {...props} />
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 }
 

@@ -1,5 +1,5 @@
 import { Box, Field, Grid, Typography } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import Quimera, { useStateValue, util } from "quimera";
 
 function ordenar(a, b) {
   if (parseFloat(a.replace("_", ".")) > parseFloat(b.replace("_", "."))) {
@@ -19,12 +19,12 @@ function ArqueosCaja({ useStyles }) {
 
   return (
     <Quimera.Template id="ArqueosCaja">
-      <Grid container spacing={0}>
-        <Grid item xs={12}>
-          <Grid container spacing={0}>
+      <Grid container spacing={0} direction="column">
+        <Grid size={12}>
+          <Grid container spacing={0} direction="column">
             {billetesBuffer &&
               Object.keys(billetesBuffer).map(item => (
-                <Grid item xs={3} key={item}>
+                <Grid size={3} key={item}>
                   <Box
                     display="flex"
                     flexDirection="column"
@@ -47,13 +47,13 @@ function ArqueosCaja({ useStyles }) {
           </Grid>
         </Grid>
 
-        <Grid item xs={12}>
-          <Grid container spacing={0}>
+        <Grid size={12}>
+          <Grid container spacing={0} direction="column">
             {monedasBuffer &&
               Object.keys(monedasBuffer)
                 .sort(ordenar)
                 .map(item => (
-                  <Grid item xs={3} key={item}>
+                  <Grid size={3} key={item}>
                     <Box
                       display="flex"
                       flexDirection="column"

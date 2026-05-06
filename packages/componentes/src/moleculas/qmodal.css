@@ -1,64 +1,136 @@
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes backdropIn {
+    from {
+        backdrop-filter: blur(0);
+    }
+
+    to {
+        backdrop-filter: blur(3px);
+    }
+}
+
 quimera-modal {
     position: fixed;
 
     dialog {
         border: none;
         border-radius: var(--redondeo-borde-s);
+        padding: 0;
         max-width: 1280px;
         min-width: 400px;
         margin: auto;
-        box-shadow: var(--gris-5) 3px 3px 10px 2px;
+        overflow-x: hidden;
+        box-shadow: var(--sombra-xl);
+        animation: modalIn var(--transicion-normal) ease-out;
 
         &::backdrop {
-            backdrop-filter: blur(1.5px);
+            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.15);
+            animation: backdropIn var(--transicion-normal) ease-out;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--espaciado-s);
+            padding: var(--espaciado-s) var(--espaciado-l);
+
+            form {
+                margin: 0;
+                display: flex;
+                align-items: center;
+            }
         }
 
         main {
             padding: var(--espaciado-l);
             width: 100%;
-            min-height: 150px;
+            box-sizing: border-box;
+
+            > :first-child {
+                margin-top: 0;
+            }
+
+            > :last-child {
+                margin-bottom: 0;
+            }
         }
 
         header form quimera-boton {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: var(--espaciado-xxs);
+            right: var(--espaciado-xxs);
 
             button {
-                --color-primario: var(--color-texto-primario);
+                --color-primario: var(--color-texto-secundario);
                 --color-primario-oscuro: var(--color-texto-primario);
                 --color-primario-claro: transparent;
+                width: 2rem;
+                height: 2rem;
+                padding: 0;
+                border-radius: 999px;
+                font-size: var(--tamaño-letra-l);
+                line-height: 1;
+                transform-origin: center;
 
-                transition: all 0.3s ease-in-out;
+                transition: transform 0.2s ease, filter 0.2s ease;
 
                 &:hover {
-                    font-size: 2.5rem;
-                    filter: drop-shadow(2px 2px 2.5px var(--color-texto-secundario));
+                    transform: scale(1.15);
+                    filter: drop-shadow(1px 1px 1.5px var(--color-texto-secundario));
+                    box-shadow: none;
+                }
+
+                &:active {
+                    box-shadow: none;
                 }
 
                 &:focus-visible {
-                    outline: none;
-                    filter: drop-shadow(1px 1px 1px var(--color-texto-secundario));
+                    outline: 2px solid var(--color-primario);
+                    outline-offset: 2px;
                 }
             }
         }
     }
 
+    &[data-con-titulo] {
+        dialog header {
+            justify-content: space-between;
+            border-bottom: var(--tamaño-borde-s) solid var(--color-borde);
+
+            h2 {
+                margin: 0;
+                font-size: var(--tamaño-letra-l);
+            }
+        }
+    }
+
     .mensaje {
-        margin: 2rem 0;
+        margin: var(--espaciado-2xl) 0;
     }
 
     .botones {
         display: flex;
         justify-content: end;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
+        gap: var(--espaciado-s);
+        margin-bottom: var(--espaciado-l);
     }
-
 
     .botones button {
         padding: 0.5rem 1rem;
-        font-size: 1rem;
+        font-size: var(--tamaño-letra-m);
         cursor: pointer;
     }
 }
@@ -75,10 +147,19 @@ quimera-modal {
 
 /* Responsive: Móvil */
 @media (max-width: 768px) {
-    quimera-modal dialog {
-        max-width: calc(100vw - 2rem);
-        min-width: calc(100vw - 2rem);
-        width: calc(100vw - 2rem);
-        margin: auto;
+    quimera-modal[data-pantalla-completa-movil] dialog {
+        max-width: 100vw;
+        min-width: 100vw;
+        width: 100vw;
+        max-height: 100dvh;
+        min-height: 100dvh;
+        height: 100dvh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    quimera-modal[data-pantalla-completa-movil] dialog main {
+        min-height: calc(100dvh - 3rem);
+        overflow-y: auto;
     }
 }

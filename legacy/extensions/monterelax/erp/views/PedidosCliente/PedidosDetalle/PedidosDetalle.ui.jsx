@@ -1,3 +1,4 @@
+import { ListItemLineaPedido } from "@quimera-extension/base-area_clientes";
 import { Box, Field, Grid, Icon, IconButton, QBox, Typography } from "@quimera/comps";
 import {
   Button,
@@ -10,9 +11,7 @@ import {
   Tab,
   Tabs,
 } from "@quimera/thirdparty";
-import { ListItemLineaPedido } from "@quimera-extension/base-area_clientes";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
 
 function PedidosDetalle({ useStyles }) {
   const [{ indiceTab, lineas, albaranes, pedidos }, dispatch] = useStateValue();
@@ -51,8 +50,8 @@ function PedidosDetalle({ useStyles }) {
                 </Tabs>
                 {indiceTab === 0 && (
                   <Box>
-                    <Grid container spacing={1}>
-                      <Grid item xs={12}>
+                    <Grid container spacing={1} direction="column" >
+                      <Grid size={12}>
                         <Field.Text
                           id={`pedidos.dict.${pedidos.current}.nombreCliente`}
                           fullWidth
@@ -60,7 +59,7 @@ function PedidosDetalle({ useStyles }) {
                           disabled
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <Field.Date
                           id={`pedidos.dict.${pedidos.current}.mx_fechaprevistainicial`}
                           fullWidth
@@ -68,7 +67,7 @@ function PedidosDetalle({ useStyles }) {
                           disabled
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <Field.Date
                           id={`pedidos.dict.${pedidos.current}.fechasalidareal`}
                           fullWidth
@@ -76,7 +75,7 @@ function PedidosDetalle({ useStyles }) {
                           disabled
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <Field.Currency
                           id={`pedidos.dict.${pedidos.current}.neto`}
                           fullWidth
@@ -85,7 +84,7 @@ function PedidosDetalle({ useStyles }) {
                           disabled
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <Field.Currency
                           id={`pedidos.dict.${pedidos.current}.totaliva`}
                           fullWidth
@@ -94,7 +93,7 @@ function PedidosDetalle({ useStyles }) {
                           disabled
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <Field.Float
                           id={`pedidos.dict.${pedidos.current}.total`}
                           fullWidth
@@ -103,7 +102,7 @@ function PedidosDetalle({ useStyles }) {
                           disabled
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <Box
                           display="flex"
                           alignItems="flex-end"
@@ -125,7 +124,7 @@ function PedidosDetalle({ useStyles }) {
                         <Field.CheckBox id={`pedidos.dict.${pedidos.current}.reclamado`} checked={pedidos.dict[pedidos.current].reclamado} value={pedidos.dict[pedidos.current].reclamado} label='Reclamado' disabled/>
                       </Box> */}
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid size={12}>
                         <Box
                           display="flex"
                           alignItems="flex-end"
@@ -137,7 +136,7 @@ function PedidosDetalle({ useStyles }) {
                               pedidos.dict[pedidos.current].estado === "CARGADO" ||
                               pedidos.dict[pedidos.current].reclamado ||
                               pedidos.dict[pedidos.current].mx_fechaprevistainicial >=
-                                pedidos.dict[pedidos.current].fechasalidareal
+                              pedidos.dict[pedidos.current].fechasalidareal
                             }
                             id="reclamar"
                             variant="contained"
@@ -156,7 +155,7 @@ function PedidosDetalle({ useStyles }) {
                           </Button>
                         </Box>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid size={12}>
                         <Box
                           display="flex"
                           alignItems="flex-end"
@@ -164,8 +163,8 @@ function PedidosDetalle({ useStyles }) {
                           height={1}
                           visibility={
                             pedidos.dict[pedidos.current].fechasalidareal === null &&
-                            pedidos.dict[pedidos.current].estado !== "CARGADO" &&
-                            pedidos.dict[pedidos.current].estado !== "TERMINADO"
+                              pedidos.dict[pedidos.current].estado !== "CARGADO" &&
+                              pedidos.dict[pedidos.current].estado !== "TERMINADO"
                               ? "visible"
                               : "hidden"
                           }

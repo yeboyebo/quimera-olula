@@ -2,6 +2,7 @@ interface BoxIcon extends NodoComun {
     name: string;
     size?: string;
     color?: string;
+    type?: "solid" | "regular" | "logo";
     style?: React.CSSProperties;
 }
 

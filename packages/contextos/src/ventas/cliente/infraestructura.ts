@@ -8,10 +8,10 @@ import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaB
 const UrlsVentas = new UrlsVentasClass();
 const UrlsCrm = new UrlsCrmClass();
 
-type ClienteApi = Cliente;
-
+type ClienteApi = Cliente & { fecha_baja: string | null };
 const clienteFromAPI = (c: ClienteApi): Cliente => ({
   ...c,
+  fecha_baja: c.fecha_baja ? new Date(Date.parse(c.fecha_baja)) : null,
 });
 
 export type DireccionAPI = {
@@ -69,7 +69,7 @@ const CuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
 });
 
 export const getCliente: GetCliente = async (id) =>
-  await RestAPI.get<{ datos: Cliente }>(`${UrlsVentas.CLIENTE}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
+  await RestAPI.get<{ datos: ClienteApi }>(`${UrlsVentas.CLIENTE}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
 export const getClientes = async (
   filtro: Filtro,
@@ -106,7 +106,7 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
     },
   }, "Error al guardar el cliente");
 
-export const darDeBajaCliente = async (id: string, fecha: string) =>
+export const darDeBajaCliente = async (id: string, fecha: Date) =>
   await RestAPI.patch(`${UrlsVentas.CLIENTE}/${id}`, {
     cambios: {
       de_baja: true,

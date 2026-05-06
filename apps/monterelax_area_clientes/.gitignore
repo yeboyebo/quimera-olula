@@ -1,0 +1,9 @@
+dist/
+dist-ssr/
+*.local
+node_modules
+.vscode
+.idea
+pnpm-lock.yaml
+tsconfig.tsbuildinfo
+dev-dist/

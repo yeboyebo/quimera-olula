@@ -1,6 +1,5 @@
 import { Box, Field, Filter, FilterBox, Grid } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { getSchemas, useStateValue } from "quimera";
 
 import { CampanasFieldSelect } from "../../../comps";
 
@@ -21,11 +20,11 @@ function ConsultaCompraUserFiltro() {
             },
           }}
         >
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
+          <Grid container spacing={1} direction="column" >
+            <Grid size={12}>
               <CampanasFieldSelect id="idCampana" label="Campaña" fullWidth async />
             </Grid>
-            <Grid item xs={12} md={8} lg={6} xl={4}>
+            <Grid size={{ xs: 12, md: 8, lg: 6, xl: 4 }}>
               <Field.Int
                 id="comerciosDesde"
                 label="Min. establecimientos"
@@ -34,7 +33,7 @@ function ConsultaCompraUserFiltro() {
                 onClick={event => event.target.select()}
               />
             </Grid>
-            <Grid item xs={12} md={8} lg={6} xl={4}>
+            <Grid size={{ xs: 12, md: 8, lg: 6, xl: 4 }}>
               <Field.Currency
                 id="importeDesde"
                 label="Importe desde"
@@ -43,8 +42,8 @@ function ConsultaCompraUserFiltro() {
                 onClick={event => event.target.select()}
               />
             </Grid>
-            <Grid item xs={12} container spacing={1}>
-              <Grid item xs={12} md={8} lg={6} xl={4}>
+            <Grid container size={12} spacing={1}>
+              <Grid size={{ xs: 12, md: 8, lg: 6, xl: 4 }}>
                 <Field.Int
                   id="numComprasDesde"
                   label="Nº compras desde"
@@ -53,7 +52,7 @@ function ConsultaCompraUserFiltro() {
                   onClick={event => event.target.select()}
                 />
               </Grid>
-              <Grid item xs={12} md={8} lg={6} xl={4}>
+              <Grid size={{ xs: 12, md: 8, lg: 6, xl: 4 }}>
                 <Field.Int
                   id="numComprasHasta"
                   label="Nº compras hasta"
@@ -63,8 +62,8 @@ function ConsultaCompraUserFiltro() {
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Grid item xs={12}>
+            <Grid size={12}>
+              <Grid size={12}>
                 <Filter.Schema
                   id="fechaCompra"
                   label="Periodo de compra"
@@ -77,7 +76,7 @@ function ConsultaCompraUserFiltro() {
                 <Filter.Schema id="fechaCompra" type="hasta" autoComplete="off" />
               </Box>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box display="flex" justifyContent="space-between">
                 <Filter.Schema
                   id="fechaNacimiento"
@@ -93,7 +92,7 @@ function ConsultaCompraUserFiltro() {
                 />
               </Box>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Field.CheckBox
                 id="soloAceptaComunicacion"
                 label="Solo usuarios que admiten marketing"

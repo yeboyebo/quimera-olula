@@ -1,6 +1,6 @@
-import { Box, DeleteButton, Field, Grid, Icon, QSection, Typography } from "@quimera/comps";
 import { Totales } from "@quimera-extension/base-area_clientes";
-import Quimera, { PropValidation, useStateValue, util } from "quimera";
+import { Box, DeleteButton, Field, Grid, Icon, QSection, Typography } from "@quimera/comps";
+import Quimera, { useStateValue, util } from "quimera";
 
 import { TpvArticulo } from "../../../comps";
 import schemas from "../../../static/schemas";
@@ -15,17 +15,17 @@ function VentasLineas({ useStyles }) {
   return (
     <Quimera.Template id="VentasLineas">
       <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <QSection
             title="Artículo"
             actionPrefix="lineaArticulo"
             alwaysInactive={venta.cerrada}
             dynamicComp={() => (
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
+              <Grid container spacing={1} direction="column" >
+                <Grid size={12}>
                   <TpvArticulo id="lineasBuffer.referencia" label="Artículo" fullWidth />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Field.Schema id="lineasBuffer.descripcion" schema={schemas.lineas} fullWidth />
                 </Grid>
               </Grid>
@@ -37,7 +37,7 @@ function VentasLineas({ useStyles }) {
           </QSection>
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Field.Schema
             id="lineasBuffer.cantidad"
             schema={schemas.lineas}
@@ -45,7 +45,7 @@ function VentasLineas({ useStyles }) {
             disabled={venta.cerrada}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Field.Schema
             id="lineasBuffer.pvpUnitario"
             schema={schemas.lineas}
@@ -54,7 +54,7 @@ function VentasLineas({ useStyles }) {
           />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Totales
             totales={[
               { name: "SubTotal", value: linea.pvpSinDto },
@@ -64,17 +64,17 @@ function VentasLineas({ useStyles }) {
           />
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid size={6}>
           <QSection
             title="Descuentos"
             actionPrefix="lineaDescuento"
             alwaysInactive={venta.cerrada}
             dynamicComp={() => (
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
+              <Grid container spacing={1} direction="column" >
+                <Grid size={6}>
                   <Field.Schema id="lineasBuffer.dtoLineal" schema={schemas.lineas} fullWidth />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Field.Schema id="lineasBuffer.dtoPor" schema={schemas.lineas} fullWidth />
                 </Grid>
               </Grid>
@@ -92,23 +92,23 @@ function VentasLineas({ useStyles }) {
           </QSection>
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid size={6}>
           <QSection
             title="Impuestos"
             actionPrefix="lineaImpuesto"
             alwaysInactive={venta.cerrada}
             dynamicComp={() => (
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
+              <Grid container spacing={1} direction="column" >
+                <Grid size={6}>
                   <Field.Schema id="lineasBuffer.codImpuesto" schema={schemas.lineas} fullWidth />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Field.Schema id="lineasBuffer.iva" schema={schemas.lineas} fullWidth />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Field.Schema id="lineasBuffer.recargo" schema={schemas.lineas} fullWidth />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Field.Schema id="lineasBuffer.irpf" schema={schemas.lineas} fullWidth />
                 </Grid>
               </Grid>
@@ -128,8 +128,8 @@ function VentasLineas({ useStyles }) {
         </Grid>
 
         {!venta.cerrada && (
-          <Grid item container xs={12} justify="center">
-            <Grid item xs={4}>
+          <Grid container size={12} justify="center">
+            <Grid size={4}>
               <QSection
                 actionPrefix="eliminarLinea"
                 title="Eliminar línea"

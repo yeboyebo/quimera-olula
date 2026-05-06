@@ -20,12 +20,12 @@ function SearchRecomCliente({ id, ...props }) {
         key
           ? ["codcliente", "eq", key]
           : {
-              or: [
-                ["nombre", "like", text ?? ""],
-                ["email", "like", text ?? ""],
-                ["telefono1", "like", text ?? ""],
-              ],
-            },
+            or: [
+              ["nombre", "like_ua", text ?? ""],
+              ["email", "like", text ?? ""],
+              ["telefono1", "like", text ?? ""],
+            ],
+          },
       )
       .success(response => {
         setOptions(

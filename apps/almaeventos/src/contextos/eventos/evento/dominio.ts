@@ -23,7 +23,7 @@ export const eventoVacio: Evento = {
     empresa_id: 0,
     estado_id: '',
     factura_enviada: false,
-    fecha_inicio: '',
+    fechaInicio: new Date(),
     gastos_facturacion: 0,
     gastos_personal: 0,
     hora_inicio: '',
@@ -70,7 +70,7 @@ export const nuevoEventoVacio: NuevoEvento = {
     empresa_id: 0,
     estado_id: '',
     factura_enviada: false,
-    fecha_inicio: '',
+    fechaInicio: new Date(),
     gastos_facturacion: 0,
     gastos_personal: 0,
     hora_inicio: '',
@@ -105,7 +105,7 @@ export const metaEvento: MetaModelo<Evento> = {
     campos: {
         referencia: { requerido: false },
         descripcion: { requerido: false },
-        fecha_inicio: { requerido: false, tipo: "fecha" },
+        fechaInicio: { requerido: false, tipo: "fecha" },
         cliente_id: { requerido: false },
         empresa_id: { requerido: false },
         estado_id: { requerido: false },
@@ -120,7 +120,7 @@ export const metaNuevoEvento: MetaModelo<NuevoEvento> = {
     campos: {
         referencia: { requerido: true, validacion: (evento: NuevoEvento) => stringNoVacio(evento.referencia) },
         descripcion: { requerido: true, validacion: (evento: NuevoEvento) => stringNoVacio(evento.descripcion) },
-        fecha_inicio: { requerido: true, tipo: "fecha", validacion: (evento: NuevoEvento) => stringNoVacio(evento.fecha_inicio) },
+        fechaInicio: { requerido: true, tipo: "fecha" },
     },
 };
 

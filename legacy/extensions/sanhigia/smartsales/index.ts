@@ -35,6 +35,7 @@ import * as MasterContactosMD from "./views/ContactosMD/MasterContactosMD";
 import * as Container from "./views/Container";
 import * as Curso from "./views/Curso";
 import * as Cursos from "./views/Cursos";
+import * as NuevoCurso from "./views/NuevoCurso";
 import * as FilterCursos from "./views/Cursos/FilterCursos";
 import * as MasterCursos from "./views/Cursos/MasterCursos";
 import * as Dashboard from "./views/Dashboard";
@@ -128,6 +129,7 @@ export default {
     InformeTareasAgente,
     NuevoContacto,
     NuevoContactoMD,
+    NuevoCurso,
     NuevoTrato,
     NuevaTarea,
     PedidosCliNuevo,
@@ -176,6 +178,7 @@ export default {
     "TiposTrato/DetalleTiposTrato": DetalleTiposTrato,
     "TiposTrato/NuevoTipoTrato": NuevoTipoTrato,
     "Users/DetalleUsers": UsersDetalle,
+    "NuevoCurso/NuevoCurso": NuevoCurso,
   },
   routes: {
     "/": { type: "view", view: "Home" },

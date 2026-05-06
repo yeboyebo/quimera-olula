@@ -52,7 +52,14 @@ function Montador() {
           Montador
         </Typography>
 
-        <Droppable droppableId="montador" key="montador" direction="horizontal">
+        <Droppable
+          droppableId="montador"
+          isDropDisabled={false}
+          isCombineEnabled={false}
+          ignoreContainerClipping={false}
+          key="montador"
+          direction="horizontal"
+        >
           {(provided, snapshot) => {
             return (
               <Box
@@ -70,9 +77,10 @@ function Montador() {
                 {misConfiguraciones?.map((conf, indice) => {
                   return (
                     <Draggable
-                      key={`${indice}${conf.idpreciobase}`}
-                      draggableId={conf.idpreciobase}
+                      key={`MONTADOR_${indice}_${conf.idpreciobase}`}
+                      draggableId={`MONTADOR_ID_${indice}_${conf.idpreciobase}`}
                       index={indice}
+                      isDragDisabled={false}
                     >
                       {(provided, snapshot) => {
                         return (

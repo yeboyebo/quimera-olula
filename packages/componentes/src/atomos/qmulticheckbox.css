@@ -1,0 +1,4 @@
+fieldset {
+    grid-column: 1 / span 12;
+    border: none;
+}

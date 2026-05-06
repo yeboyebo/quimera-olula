@@ -1,0 +1,101 @@
+export default parent => ({
+  ...parent,
+  tareas: {
+    title: "Stock",
+    items: {
+      inventarios: {
+        title: "Inventarios",
+        icons: ["assignment", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/inventarios",
+      },
+      recepciones: {
+        title: "Recepciones de mercancía",
+        icons: ["archive", "mode_edit"],
+        // icons: ["content_paste_search"],
+        color: "primary",
+        variant: "main",
+        url: "/recepciones",
+      },
+      envios: {
+        title: "Envíos de mercancía",
+        icons: ["unarchive", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/envios",
+      },
+      consulta_stock: {
+        title: "Consulta de Stock",
+        icons: ["content_paste_search"],
+        color: "primary",
+        variant: "main",
+        url: "/consulta_stock",
+      },
+      year: {
+        title: "Cambiar Año",
+        icons: ["today", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/year",
+      },
+    },
+  },
+  planificador: {
+    title: "Planificador Semanal",
+    //rule: "OnlyAdmin:visit",
+    items: {
+      planificador_semanal: {
+        title: "Planificador Semanal",
+        rule: "PlanificadorSemanal:visit",
+        icons: ["calendar_month", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/planificador_semanal",
+      },
+      planificador_semanal_resumen: {
+        title: "Planificador Semanal Resumen",
+        rule: "PlanificadorSemanalResumen:visit",
+        icons: ["calendar_month"],
+        color: "primary",
+        variant: "main",
+        url: "/planificador_semanal_resumen",
+      },
+      resumen: {
+        title: "Resumen Agente",
+        //rule: "OnlyAdmin:visit",
+        icons: ["date_range", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/resumen_semanal",
+      },
+      control_horario: {
+        title: "Control Horario",
+        //rule: "OnlyAdmin:visit",
+        icons: ["date_range", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/control_horario",
+      },
+    },
+  },
+  pedidos: {
+    title: "Pedidos",
+    items: {
+      pedido: {
+        title: "Nuevo Pedido",
+        icons: ["shopping_cart"],
+        color: "primary",
+        variant: "main",
+        url: "/new_pedido",
+      },
+      inventarios: {
+        title: "Preparación Pedidos Web",
+        icons: ["shop", "mode_edit"],
+        color: "primary",
+        variant: "main",
+        url: "/pedidos_web",
+      },
+    },
+  },
+});

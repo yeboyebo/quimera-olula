@@ -20,12 +20,12 @@ export const Almacen = ({
 }: AlmacenProps) => {
   const obtenerOpciones = async (texto: string) => {
     const criteria: Criteria = {
-      filtros: [["nombre", "~", texto]],
+      filtro: [["nombre", "~", texto]],
       orden: ["id"],
       paginacion: { limite: 10, pagina: 1 },
     };
 
-    const almacenes = await obtenerAlmacenes(criteria.filtros, criteria.orden);
+    const almacenes = await obtenerAlmacenes(criteria.filtro, criteria.orden);
 
     return almacenes.map((almacen) => ({
       valor: almacen.id,

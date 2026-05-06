@@ -6,10 +6,10 @@ export default parent => {
       ..._p,
       appBar: {
         // backgroundColor: theme.palette.background.paper,
-        backgroundColor: theme.palette.grey[200],
-        padding: theme.spacing(1, 1),
-        border: "0px",
-        boxShadow: "none",
+        backgroundColor: `${theme.palette.grey[200]} !important`,
+        padding: `${theme.spacing(1, 1)} !important`,
+        border: "0px !important",
+        boxShadow: "none !important",
       },
     };
   };

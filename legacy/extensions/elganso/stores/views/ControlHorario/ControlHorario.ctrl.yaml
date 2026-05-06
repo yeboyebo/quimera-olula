@@ -1,0 +1,134 @@
+---
+shortcuts:
+  - type: Model
+state: { jornada: {}, tramosJornada: {}, tramoActivo, isLoading: true }
+bunch:
+  init:
+    - _type: grape
+      name: getTramosJornadasByUser
+
+  getTramosJornadasByUser:
+    - _type: post
+      schema: tramos_jornada
+      action: getTramosJornadasByUser
+      data:
+        - key: fechadesde
+          value:
+            statePath: fecha
+      success: onGetTramosJornadasByUser
+
+  onGetTramosJornadasByUser:
+    - _type: set
+      path: tramosJornada
+      value:
+        payloadPath: response.tramos_jornada
+    - _type: set
+      path: jornada
+      value:
+        payloadPath: response.jornada
+    - _type: set
+      path: tramoActivo
+      value:
+        payloadPath: response.tramo_activo
+    - _type: set
+      path: isLoading
+      value:
+        const: false
+
+  playTramo:
+    - _type: set
+      path: isLoading
+      value:
+        const: true
+    - _type: post
+      schema: tramos_jornada
+      action: createTramo
+      data:
+        - key: fechadesde
+          value:
+            payloadPath: hoy
+        - key: tipo
+          value:
+            payloadPath: tipo
+        - key: idtramo
+          value:
+            payloadPath: idtramo
+      success: onPlayTramoSuccess
+
+  onPlayTramoSuccess:
+    - _type: set
+      path: isLoading
+      value:
+        const: false
+    - _type: set
+      path: tramosJornada
+      value:
+        payloadPath: response.tramos_jornada
+    - _type: set
+      path: jornada
+      value:
+        payloadPath: response.jornada
+    - _type: set
+      path: tramoActivo
+      value:
+        payloadPath: response.tramo_activo
+
+  stopTramo:
+    - _type: post
+      schema: tramos_jornada
+      action: stopTramo
+      data:
+        - key: idtramo
+          value:
+            payloadPath: idtramo
+        - key: idjornada
+          value:
+            payloadPath: idjornada
+        - key: fechadesde
+          value:
+            payloadPath: fechadesde
+      success: onStopTramoSuccess
+
+  onStopTramoSuccess:
+    - _type: set
+      path: tramosJornada
+      value:
+        payloadPath: response.tramos_jornada
+    - _type: set
+      path: jornada
+      value:
+        payloadPath: response.jornada
+    - _type: set
+      path: tramoActivo
+      value:
+        payloadPath: response.tramo_activo
+
+  pauseTramo:
+    - _type: post
+      schema: tramos_jornada
+      action: createPauseTramo
+      data:
+        - key: fechadesde
+          value:
+            payloadPath: hoy
+        - key: tipo
+          value:
+            payloadPath: tipo
+        - key: idtramo
+          value:
+            payloadPath: idtramo
+      success: onPauseTramoSuccess
+
+  onPauseTramoSuccess:
+    - _type: set
+      path: tramosJornada
+      value:
+        payloadPath: response.tramos_jornada
+    - _type: set
+      path: jornada
+      value:
+        payloadPath: response.jornada
+    - _type: set
+      path: tramoActivo
+      value:
+        payloadPath: response.tramo_activo

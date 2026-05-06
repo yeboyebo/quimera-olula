@@ -1,38 +1,95 @@
+import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
+import { useContext } from "react";
 import { Link } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import "./Cabecera.css";
+import { estaAutentificado } from "./autenticacion";
+import { useMenuControl } from "./useMenuControl";
 
-function toggleMenu(selector: string) {
-  const menu = document.querySelector(selector);
-  if (menu) {
-    menu.classList.toggle("activo");
-  }
-}
+export type CabeceraProps = {
+  logoSrc?: string;
+  logoAlt?: string;
+  logoClassName?: string;
+  Titulo?: () => React.ReactNode;
+  AccionesCabecera?: () => React.ReactNode;
+  MenuUsuario?: () => React.ReactNode;
+  ExtraLogo?: () => React.ReactNode;
+};
 
-export const Cabecera = () => {
+export const CabeceraBase = ({
+  logoSrc = "/olula_header_blanco.png",
+  logoAlt = "Olula | Inicio",
+  Titulo,
+  AccionesCabecera,
+  MenuUsuario,
+  ExtraLogo,
+}: CabeceraProps) => {
+  const { toggleMenu } = useMenuControl();
+  const autenticado = estaAutentificado();
+
   return (
     <>
-      <header>
+      <header className="cabecera-principal">
         <button
           id="boton-menu-lateral"
           aria-label="Abrir menú lateral"
-          onClick={() => toggleMenu("menu-lateral")}
+          onClick={() => toggleMenu("lateral")}
         ></button>
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          {/* <span>Olula</span> */}
-          <img src="/olula_header_blanco.png" alt="Olula | Inicio" />
+          <img src={logoSrc} alt={logoAlt} className="logo-app" />
         </Link>
-        <button
-          id="boton-menu-usuario"
-          aria-label="Abrir menú usuario"
-          onClick={() => toggleMenu("menu-usuario")}
-        ></button>
-        <label htmlFor="boton-menu-usuario" id="etiqueta-menu-usuario-abierto">
-          <QIcono nombre="perfil" tamaño="sm" />
-        </label>
+        {ExtraLogo ? <ExtraLogo /> : null}
+        <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
+        <div id="cabecera-acciones-extra">
+          {AccionesCabecera ? <AccionesCabecera /> : null}
+        </div>
+        {autenticado && (
+          <>
+            <button
+              id="boton-menu-usuario"
+              aria-label="Abrir menú usuario"
+              onClick={() => toggleMenu("usuario")}
+            ></button>
+            <label
+              htmlFor="boton-menu-usuario"
+              id="etiqueta-menu-usuario-abierto"
+            >
+              {MenuUsuario ? (
+                <MenuUsuario />
+              ) : (
+                <QIcono nombre="perfil" tamaño="sm" />
+              )}
+            </label>
+          </>
+        )}
       </header>
     </>
+  );
+};
+
+export const Cabecera = (props: CabeceraProps) => {
+  const { app } = useContext(FactoryCtx);
+  const CabeceraCustom = app.Componentes?.cabecera as typeof CabeceraBase;
+  const AccionesCabecera = app.Componentes
+    ?.cabecera_acciones as () => React.ReactNode;
+  const MenuUsuario = app.Componentes
+    ?.cabecera_menu_usuario as () => React.ReactNode;
+  const ExtraLogo = app.Componentes
+    ?.cabecera_extra_logo as () => React.ReactNode;
+
+  const cProps: CabeceraProps = {
+    ...props,
+    AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
+    MenuUsuario: MenuUsuario || props.MenuUsuario,
+    ExtraLogo: ExtraLogo || props.ExtraLogo,
+    Titulo: props.Titulo,
+  };
+
+  return CabeceraCustom ? (
+    <CabeceraCustom {...cProps} />
+  ) : (
+    <CabeceraBase {...cProps} />
   );
 };

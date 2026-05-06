@@ -1,0 +1,213 @@
+@use "../../../libs/styles/_mixin" as *;
+
+$primary-color: #072146;
+$white-color: white;
+$black-color: black;
+$red-color: red;
+$border-cabecera-color: #a9a7a7;
+$sincro-green-color: green;
+$sincro-yellow-color: #ffcc00;
+$action-button-active: $black-color;
+$action-button-inactive: rgba(0, 0, 0, 0.54);
+$cantidadLineas-green: #116940;
+$bgreen-color: rgba(70, 255, 90, 0.3);
+$bred-color: rgba(255, 70, 70, 0.3);
+$byellow-color: rgba(255, 210, 50, 0.4);
+$bblue-color: rgba(149, 236, 250, 0.4);
+
+.makeStyles-logo {
+  max-height: 30px;
+}
+.MuiAppBar-root a img {
+  max-height: 30px;
+}
+.MuiIcon-root {
+  cursor: pointer;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: $primary-color !important;
+}
+.MuiButton-containedPrimary {
+  background-color: $primary-color !important;
+}
+.MuiDataGrid-root .MuiDataGrid-cell {
+  @include mobile {
+    padding: 0 !important;
+  }
+}
+.MuiCheckbox-colorSecondary.Mui-checked {
+  color: $primary-color !important;
+}
+
+#HeaderContainer {
+  height: 60px;
+}
+
+.page-container {
+  padding: 0px 15px 15px;
+}
+
+.main {
+  color: $primary-color;
+}
+
+.toolbarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  line-height: 40px;
+  padding: 4px 15px !important;
+
+  &-subcontainer {
+    @include mobile {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .toolbarContainer-quickFilter {
+    align-items: flex-end;
+  }
+}
+
+.buttonDescargar {
+  display: flex;
+  padding: 0 !important;
+  color: $action-button-inactive;
+
+  &-green {
+    color: $sincro-green-color !important;
+
+    @include desktop {
+      margin-left: 10px !important;
+    }
+  }
+}
+
+.buttonSincro {
+  display: flex;
+  padding: 12px;
+  color: $action-button-inactive;
+
+  &-green {
+    color: $sincro-green-color !important;
+  }
+
+  &-black {
+    color: $action-button-active !important;
+  }
+}
+
+.buttonAcciones {
+  display: flex;
+  padding: 12px;
+  color: $action-button-inactive;
+
+  &-active {
+    color: $action-button-active !important;
+  }
+}
+
+.botonActualizar {
+  border: 1px solid;
+  width: fit-content;
+  margin: 10px auto;
+}
+
+.tableGrid {
+  display: grid;
+}
+
+.text-actualizar {
+  padding: 10px 10px 20px 10px;
+}
+
+.main-edit {
+  padding: 15px 15px 0;
+
+  .main-edit-container {
+    @include desktop {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: flex-end;
+    }
+  }
+}
+
+.backLink {
+  margin-block-start: 0;
+  color: $white-color;
+  background-color: $primary-color;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 5px 0;
+}
+
+.backLinkButton {
+  color: $white-color;
+}
+
+.buttonReaderBarcode {
+  color: $action-button-active !important;
+  margin-bottom: -12px !important;
+
+  .MuiIcon-root:hover {
+    color: $white-color;
+    background-color: $black-color;
+  }
+}
+
+.rowVerTodos {
+  display: flex;
+  line-height: 42px;
+}
+
+.cantidad {
+  font-weight: bold;
+  color: $cantidadLineas-green;
+}
+
+.msg-success {
+  font-style: italic;
+}
+
+.msg-error {
+  font-size: 14px;
+  color: $red-color;
+}
+
+.bgreen {
+  background-color: $bgreen-color;
+}
+
+.bred {
+  background-color: $bred-color;
+}
+
+.byellow {
+  background-color: $byellow-color;
+}
+
+.bblue {
+  background-color: $bblue-color;
+}
+
+.selectorSemanal {
+  display: inline-flex;
+  width: 100%;
+  justify-content: flex-end;
+  font-size: 18px;
+  align-items: center;
+  margin: 10px 0 20px;
+
+  @include mobile {
+    justify-content: center;
+  }
+
+  .icon-button {
+    padding: 0 5px;
+    color: $black-color;
+  }
+}

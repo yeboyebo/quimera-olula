@@ -79,8 +79,8 @@ function FirmaAlbaran({
             >{`Firma albarán  ${albaran.buffer.codigo}`}</Box>
           </Box>
           <Box m={2}>
-            <Grid container direction="row" spacing={1}>
-              <Grid item xs={12} sm={12}>
+            <Grid container direction="column" justify="space-around" spacing={1}>
+              <Grid size={12}>
                 <Contacto
                   id="firmaAlbaran.codContacto"
                   codcliente={albaran.buffer.codCliente}
@@ -89,19 +89,23 @@ function FirmaAlbaran({
                   pl={4}
                 />
               </Grid>
-              <Grid item xs={8} sm={8}>
-                <Field.Text id="firmaAlbaran.firmadopor" label="Firmado por" fullWidth />
+              <Grid container spacing={2}>
+                <Grid size={8}>
+                  <Field.Text id="firmaAlbaran.firmadopor" label="Firmado por" fullWidth />
+                </Grid>
+                <Grid size={{ xs: 4, sm: 4 }}>
+                  <Field.Text id="firmaAlbaran.cifnif" label="DNI" />
+                </Grid>
               </Grid>
-              <Grid item xs={4} sm={4}>
-                <Field.Text id="firmaAlbaran.cifnif" label="DNI" />
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 6, sm: 6 }}>
+                  <Field.Date id="firmaAlbaran.fecha" label="Fecha" />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 6 }}>
+                  <Field.Time id="firmaAlbaran.hora" label="Hora" />
+                </Grid>
               </Grid>
-              <Grid item xs={6} sm={6}>
-                <Field.Date id="firmaAlbaran.fecha" label="Fecha" />
-              </Grid>
-              <Grid item xs={6} sm={6}>
-                <Field.Time id="firmaAlbaran.hora" label="Hora" />
-              </Grid>
-              <Grid item xs={12} sm={12}>
+              <Grid size={{ xs: 12, sm: 12 }}>
                 <Field.TextArea
                   id="firmaAlbaran.observacionesfirma"
                   label="Observaciones"
@@ -110,7 +114,7 @@ function FirmaAlbaran({
               </Grid>
 
               {lineas.idList.length > 0 && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <QTitleBox titulo="Lineas de albarán">
                     {Object.values(lineas.dict).map(l => (
                       <ListItemText
@@ -125,7 +129,7 @@ function FirmaAlbaran({
                   </QTitleBox>
                 </Grid>
               )}
-              <Grid item xs={12} sm={12}>
+              <Grid size={{ xs: 12, sm: 12 }}>
                 <SignaturePad
                   id="sigpad"
                   onEnd={handleEnd}

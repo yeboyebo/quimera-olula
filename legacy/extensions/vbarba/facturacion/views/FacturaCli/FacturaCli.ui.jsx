@@ -1,3 +1,6 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
+import { LineaFacturaCliComp } from "@quimera-extension/base-facturas";
+import { DocAgente, DocClienteYDir, DocFecha } from "@quimera-extension/base-ventas";
 import {
   Box,
   Dialog,
@@ -10,11 +13,8 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import { LineaFacturaCliComp } from "@quimera-extension/base-facturas";
-import { DocAgente, DocClienteYDir, DocFecha } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useCallback, useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useCallback, useEffect } from "react";
 
 function FacturaCli({ callbackChanged, idFactura, initFactura, useStyles }) {
   const [{ lineas, logic, factura, modalVistaEnviarDocumento, vistaDetalle }, dispatch] =

@@ -1,0 +1,58 @@
+.Presupuesto .TabDatos {
+    quimera-date[nombre="fecha"] {
+        grid-column: span 2;
+    }
+
+    quimera-date[nombre="fecha_salida"] {
+        grid-column: span 2;
+    }
+
+    quimera-select[nombre="divisa_id"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="tasa_conversion"] {
+        grid-column: span 4;
+    }
+
+
+    quimera-autocompletar[nombre="agente_id"] {
+        grid-column: 1 / span 12;
+    }
+
+    quimera-select[nombre="forma_pago_id"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-select[nombre="grupo_iva_negocio_id"] {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 768px) {
+    .Presupuesto .TabDatos quimera-formulario {
+        quimera-date[nombre="fecha"] {
+            grid-column: 1 / span 1 !important;
+        }
+
+        quimera-date[nombre="fecha_salida"] {
+            grid-column: 2 / span 1 !important;
+        }
+
+        quimera-select[nombre="divisa_id"] {
+            grid-column: 1 / span 1 !important;
+        }
+
+        quimera-input[nombre="tasa_conversion"] {
+            grid-column: 2 / span 1 !important;
+        }
+
+        quimera-select[nombre="forma_pago_id"] {
+            grid-column: 1 / span 1 !important;
+        }
+
+        quimera-select[nombre="grupo_iva_negocio_id"] {
+            grid-column: 2 / span 1 !important;
+        }
+    }
+}

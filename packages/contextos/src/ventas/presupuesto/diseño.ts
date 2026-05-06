@@ -1,73 +1,19 @@
-import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
-import { NuevaLineaVenta } from "../venta/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { CambioClienteVenta, ClienteVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
-export interface Presupuesto extends Entidad {
-  id: string;
-  codigo: string;
-  fecha: string;
-  fecha_salida: string;
-  cliente_id: string;
-  nombre_cliente: string;
-  id_fiscal: string;
-  direccion_id: string;
-  agente_id: string;
-  nombre_agente: string;
-  divisa_id: string;
-  tasa_conversion: number;
-  total: number;
-  neto: number;
-  total_iva: number;
-  total_irpf: number;
-  total_divisa_empresa: number;
-  forma_pago_id: string;
-  nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
+export interface Presupuesto extends Venta {
+  cliente: ClienteVenta;
+  fecha_salida: Date;
   aprobado: boolean;
-  observaciones: string;
-  nombre_via: string;
-  tipo_via: string;
-  numero: string;
-  otros: string;
-  cod_postal: string;
-  ciudad: string;
-  provincia_id: number;
-  provincia: string;
-  pais_id: string;
-  apartado: string;
-  telefono: string;
-}
-
-export interface PresupuestoAPI {
-  id: string;
-  codigo: string;
-  fecha: string;
-  fecha_salida: string;
-  cliente_id: string;
-  nombre_cliente: string;
-  id_fiscal: string;
-  direccion_id: string;
-  direccion: Direccion;
-  agente_id: string;
-  nombre_agente: string;
-  divisa_id: string;
-  tasa_conversion: number;
-  total: number;
-  neto: number;
-  total_iva: number;
-  total_irpf: number;
-  total_divisa_empresa: number;
-  forma_pago_id: string;
-  nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
-  aprobado: boolean;
-  observaciones: string;
+  lineas: LineaPresupuesto[];
 }
 
 export type NuevoPresupuesto = {
   cliente_id: string;
   direccion_id: string;
   empresa_id: string;
-};
+}
 
 export type NuevoPresupuestoClienteNoRegistrado = {
   empresa_id: string;
@@ -88,23 +34,7 @@ export type NuevoPresupuestoClienteNoRegistrado = {
   telefono?: string;
 };
 
-export type CambioCliente = {
-  cliente_id?: string;
-  nombre_cliente?: string;
-  direccion_id?: string;
-  id_fiscal?: string;
-  nombre_via?: string;
-  tipo_via?: string;
-  numero?: string;
-  otros?: string;
-  cod_postal?: string;
-  ciudad?: string;
-  provincia_id?: number | null;
-  provincia?: string;
-  pais_id?: string;
-  apartado?: string;
-  telefono?: string;
-};
+export type CambioClientePresupuesto = CambioClienteVenta;
 
 export interface LineaPresupuesto extends Entidad {
   id: string;
@@ -118,11 +48,6 @@ export interface LineaPresupuesto extends Entidad {
 };
 
 export type NuevaLinea = NuevaLineaVenta
-
-// export interface NuevaLinea extends Modelo {
-//   referencia: string;
-//   cantidad: number;
-// };
 
 export type Cliente = {
   cliente_id: string;
@@ -153,3 +78,30 @@ export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>
 
 export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
 
+
+export type EstadoMaestroPresupuesto = (
+  'INICIAL' | 'CREANDO_PRESUPUESTO'
+);
+
+
+export type ContextoMaestroPresupuesto = {
+  estado: EstadoMaestroPresupuesto;
+  presupuestos: ListaActivaEntidades<Presupuesto>;
+};
+
+export type EstadoPresupuesto = (
+    'INICIAL' | 'ABIERTO' | 'APROBADO'
+    | 'BORRANDO_PRESUPUESTO'
+    | 'APROBANDO_PRESUPUESTO'
+    | 'CAMBIANDO_DIVISA'
+    | 'CAMBIANDO_CLIENTE'
+    | 'CAMBIANDO_DESCUENTO'
+    | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
+);
+
+export type ContextoPresupuesto = {
+    estado: EstadoPresupuesto;
+    presupuesto: Presupuesto;
+    presupuestoInicial: Presupuesto;
+    lineaActiva: LineaPresupuesto | null;
+};

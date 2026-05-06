@@ -1,7 +1,6 @@
 import { Box, Button, Grid, ListInfiniteScroll, Typography } from "@quimera/comps";
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
 
 function puedeFirmar(albaran, puestoLocal) {
   console.log("--------------", albaran);
@@ -44,21 +43,17 @@ function ListadoMobile({ useStyles }) {
               <ListItemText
                 disableTypography
                 primary={
-                  <Grid xs={12} sm container item>
-                    <Grid item xs={8}>
+                  <Grid container size={{ xs: 12, sm: "grow" }} spacing={1} justifyContent="space-between" alignItems="center">
+                    <Grid size={8}>
                       <Typography component="div" variant="body1">
                         <strong>{`${albaran.codigo}`}</strong>
                         {` ${util.formatDate(albaran.fecha)}`}
                       </Typography>
                     </Grid>
-                    <Grid
-                      item
-                      xs={4}
-                      style={{
+                    <Grid size={4} style={{
                         display: "flex",
                         justifyContent: "flex-end",
-                      }}
-                    >
+                      }}>
                       {!albaran.firmado ? (
                         <Button
                           id="firmarAlbaran"
@@ -88,21 +83,21 @@ function ListadoMobile({ useStyles }) {
                   </Grid>
                 }
                 secondary={
-                  <Grid item xs={12} sm container>
-                    <Grid item xs={8} sm container>
-                      <Grid item xs={12}>
+                  <Grid container size={{ xs: 12, sm: "grow" }} justifyContent="space-between" alignItems="center">
+                    <Grid container size={{ xs: 8, sm: "grow" }} direction="column">
+                      <Grid size={12}>
                         <Typography
                           component="span"
                           variant="body2"
                         >{`${albaran.nombreCliente}`}</Typography>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid size={12}>
                         <Typography
                           component="span"
                           variant="body2"
                         >{`${albaran.direccion}`}</Typography>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid size={12}>
                         <Typography component="span" variant="body2">
                           {albaran.codpostal ? `${albaran.codpostal}` : " "} {` ${albaran.ciudad}`}{" "}
                           {` ${albaran.provincia}`}

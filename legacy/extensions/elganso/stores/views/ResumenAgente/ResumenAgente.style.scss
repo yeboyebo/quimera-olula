@@ -1,0 +1,56 @@
+#resumenAgente {
+  .MuiAccordion-root {
+    margin-bottom: 10px !important;
+  }
+
+  .MuiAccordionSummary-root {
+    border-bottom: 1px solid $border-cabecera-color;
+    display: flex;
+    padding: 0 16px;
+  }
+
+  .MuiSlider-markLabel {
+    @include mobile {
+      color: black;
+    }
+  }
+
+  .main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    @include mobile {
+      flex-direction: column;
+    }
+
+    .changeTypeResumen {
+      @include mobile {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+      }
+
+      button {
+        color: $primary-color;
+        background-color: $white-color;
+        border: 1px solid $primary-color;
+        font-size: 13px;
+        margin-left: 10px;
+        border-radius: 20px;
+
+        &.active {
+          color: $white-color;
+          background-color: $primary-color;
+        }
+      }
+    }
+  }
+
+  .container-title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

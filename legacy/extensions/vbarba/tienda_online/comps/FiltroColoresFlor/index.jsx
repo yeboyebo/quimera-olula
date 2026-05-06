@@ -64,7 +64,7 @@ function FiltroColoresFlor({ id, label, operator, options, selected = false }) {
 
   const renderSeleccionados = () => {
     let selected = options.filter(option => seleccionadas.includes(option.value)).map(option => (
-      <Grid item key={option.value}>
+      <Grid key={option.value}>
         <Avatar
           className={
             seleccionadas.includes(option.value) ? classes.avatarSeleccionado : classes.avatar
@@ -82,7 +82,7 @@ function FiltroColoresFlor({ id, label, operator, options, selected = false }) {
     }
 
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={1} direction="column" >
         {selected}
       </Grid>
     );
@@ -93,9 +93,9 @@ function FiltroColoresFlor({ id, label, operator, options, selected = false }) {
       titulo={util.translate(label)}
       className={classes.cajaAvatares}
       repose={renderSeleccionados}>
-      <Grid container spacing={1}>
+      <Grid container spacing={1} direction="column" >
         {options.map(option => (
-          <Grid item key={option.value}>
+          <Grid key={option.value}>
             <Avatar
               className={
                 seleccionadas.includes(option.value) ? classes.avatarSeleccionado : classes.avatar

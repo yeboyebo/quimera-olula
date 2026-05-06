@@ -1,6 +1,5 @@
 import { Box, Filter, FilterBox, Grid } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { getSchemas, useStateValue } from "quimera";
 
 import { CampanasFieldSelect } from "../../../comps";
 
@@ -21,12 +20,12 @@ function ConsultaVentaComercioFiltro() {
             },
           }}
         >
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
+          <Grid container spacing={1} direction="column" >
+            <Grid size={12}>
               <CampanasFieldSelect id="idCampana" label="Campaña" fullWidth async />
             </Grid>
-            <Grid item xs={12}>
-              <Grid item xs={12}>
+            <Grid size={12}>
+              <Grid size={12}>
                 <Filter.Schema
                   id="fechaCompra"
                   label="Periodo de compra"

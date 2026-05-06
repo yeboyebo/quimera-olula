@@ -1,0 +1,17 @@
+.Albaran .CrearAlbaran {
+    quimera-formulario {
+        max-width: 600px;
+    }
+
+    quimera-autocompletar[nombre="albaran_cliente_id"] {
+        grid-column: span 12;
+    }
+
+    quimera-select[nombre="direccion_id"] {
+        grid-column: span 12;
+    }
+
+    quimera-input[nombre="empresa_id"] {
+        grid-column: span 12;
+    }
+}

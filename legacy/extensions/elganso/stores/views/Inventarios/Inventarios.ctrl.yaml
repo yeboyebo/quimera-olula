@@ -1,0 +1,48 @@
+---
+shortcuts:
+bunch:
+  # POST
+  sincroInventarioApi:
+    - _type: post
+      schema: sincroLineasInventario
+      action: postLineasInventarios
+      data:
+        - key: idInventario
+          value:
+            payloadPath: idInventario
+        - key: lineasInventario
+          value:
+            payloadPath: lineasInventario
+      success: onSincroInventarioClickedSuccess
+      error: onSincroInventarioClickedError
+  onBorrarInventarioClick:
+    - _type: post
+      schema: inventarios
+      data:
+        - key: idinventario
+          value:
+            payloadPath: idInventario
+      action: deleteInventario
+      success: onBorrarInventarioSuccess
+      error: onBorrarInventarioError
+
+  # ALERTS
+  onBorrarInventarioSuccess:
+    - _type: alert
+      text: Se ha eliminado el inventario correctamente
+      severity: success
+    - _type: grape
+      name: updateRemovedInventario
+    - _type: grape
+      name: getInventarios
+  onBorrarInventarioError:
+    - _type: alert
+      text: Error al eliminar el inventario, por favor vuelva a intentarlo
+      severity: error
+  onSincroInventarioClickedSuccess:
+    - _type: grape
+      name: sincroInventarioSuccess
+  onSincroInventarioClickedError:
+    - _type: alert
+      text: Se ha producido error al sincronizar lineas.
+      severity: error

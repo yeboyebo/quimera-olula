@@ -1,6 +1,5 @@
 import { Box, Button, Field, Grid, Icon, QBox } from "@quimera/comps";
-import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, useWidth } from "quimera";
 // import { Grid, Button, Column, Field, Table, Dialog, DialogContent, IconButton, Icon, Typography } from '@quimera/comps'
 
 function MontadoInternoDetalle({ useStyles }) {
@@ -26,8 +25,8 @@ function MontadoInternoDetalle({ useStyles }) {
             botonesCabecera={mobile ? [{ id: "atras", icon: "arrow_back", disabled: false }] : []}
           >
             <Box>
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
+              <Grid container spacing={1} direction="column" >
+                <Grid size={12}>
                   <Field.Text
                     id={`unidades.dict.${unidades.current}.modelo`}
                     fullWidth
@@ -35,7 +34,7 @@ function MontadoInternoDetalle({ useStyles }) {
                     disabled
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Field.Text
                     id={`unidades.dict.${unidades.current}.configuracion`}
                     fullWidth
@@ -43,7 +42,7 @@ function MontadoInternoDetalle({ useStyles }) {
                     disabled
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Field.Text
                     id={`unidades.dict.${unidades.current}.idtela`}
                     fullWidth
@@ -51,7 +50,7 @@ function MontadoInternoDetalle({ useStyles }) {
                     disabled
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Box
                     display="flex"
                     alignItems="flex-start"
@@ -81,7 +80,7 @@ function MontadoInternoDetalle({ useStyles }) {
                     )}
                   </Box>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Box display="flex" alignItems="flex-end" justifyContent="flex-end" height={1}>
                     {!pausada ? (
                       <Button

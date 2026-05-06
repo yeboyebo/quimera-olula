@@ -71,7 +71,16 @@ function Articulos({ useStyles, referenciaProp }) {
           <Container>
             <Box mx={1} my={1}>
               <Grid container driection="row" alignItems="center" justifyContent="space-between">
-                <Grid item xs={12} md={4}>
+                <Grid sx={{
+                  flex: '0 0 33.333%',
+                  maxWidth: '33.333%',
+                  width: '33.333%',
+                  '@media (max-width: 900px)': {
+                    flex: '0 0 100%',
+                    maxWidth: '100%',
+                    width: '100%'
+                  }
+                }}>
                   <QArticuloVbarba
                     id="referencia"
                     label={`Lectura${lectura ? ` (${lectura})` : ""}`}

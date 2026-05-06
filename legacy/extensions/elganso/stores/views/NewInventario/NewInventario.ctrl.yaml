@@ -1,0 +1,120 @@
+---
+shortcuts:
+bunch:
+  init:
+    # Primero actualizamos la fecha y hora, si no sale la fecha de creación del componente
+    - _type: grape
+      name: setFechayHoraActual
+    - _type: get
+      schema: familias
+      success: setFamilias
+    - _type: get
+      schema: gruposmoda
+      success: setGruposmoda
+    - _type: get
+      schema: temporadas
+      success: setTemporadas
+    - _type: get
+      schema: superfamilias
+      success: setSuperfamilias
+    - _type: get
+      schema: annos
+      success: setAnnos
+    - _type: grape
+      name: getArticulos
+  # GET
+  getArticulos:
+    - _type: get
+      schema: articulos
+      filter:
+        and:
+          - - const: codtipoprenda
+            - const: eq
+            - statePath: inventario.superfamilia
+          - - const: codfamilia
+            - const: eq
+            - statePath: inventario.familia
+          - - const: codtemporada
+            - const: eq
+            - statePath: inventario.temporada
+          - - const: codgrupomoda
+            - const: eq
+            - statePath: inventario.grupomoda
+          - - const: anno
+            - const: eq
+            - statePath: inventario.anno
+      success: setArticulos
+  # SET
+  setInventariosDbIndex:
+    - _type: set
+      path: inventariosDbIndexState
+      value:
+        payloadPath: inventariosIndexados
+  setFamilias:
+    - _type: set
+      path: familias
+      value:
+        payloadPath: response.data
+  setGruposmoda:
+    - _type: set
+      path: gruposmoda
+      value:
+        payloadPath: response.data
+  setTemporadas:
+    - _type: set
+      path: temporadas
+      value:
+        payloadPath: response.data
+  setSuperfamilias:
+    - _type: set
+      path: superfamilias
+      value:
+        payloadPath: response.data
+  setAnnos:
+    - _type: set
+      path: annos
+      value:
+        payloadPath: response.data
+  setArticulos:
+    - _type: set
+      path: articulos
+      value:
+        payloadPath: response.data
+  # POST
+  createInventario:
+    - _type: post
+      schema: creaInventario
+      action: cargaInventario
+      data:
+        - key: hora
+          value:
+            statePath: inventario.hora
+        - key: descripcion
+          value:
+            statePath: inventario.descripcion
+        - key: codalmacen
+          value:
+            statePath: codAlmacen
+        - key: fecha
+          value:
+            statePath: inventario.fecha
+        - key: inventarioTotal
+          value:
+            statePath: inventario.inventarioTotal
+        - key: motivo
+          value:
+            statePath: inventario.motivo
+        - key: tipoinventario
+          value:
+            statePath: inventario.tipoinventario
+      success: onSuccessCreate
+      error: onNewInventarioError
+
+  onNewInventarioSuccess:
+    - _type: alert
+      text: Se ha creado el inventario correctamente
+      severity: success
+  onNewInventarioError:
+    - _type: alert
+      text: Error al crear el inventario
+      severity: error

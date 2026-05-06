@@ -1,6 +1,6 @@
 import { /* DatePicker, */ KeyboardDatePicker } from "@quimera/thirdparty";
 import { util } from "quimera";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function DateField({ value, onChange, ...props }) {
   const [showedValue, setShowedValue] = useState(parseValue(value));

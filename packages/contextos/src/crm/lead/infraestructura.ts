@@ -81,20 +81,20 @@ export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> 
 export const deleteLead = async (id: string): Promise<void> =>
     await RestAPI.delete(`${new ApiUrls().LEAD}/${id}`, "Error al borrar lead");
 
-export const getOportunidadesVentaLead = async (leadId: string): Promise<OportunidadVenta[]> => {
+export const getOportunidadesVentaLead = async (leadId: string): RespuestaLista<OportunidadVenta> => {
     const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: OportunidadVenta[] }>(new ApiUrls().OPORTUNIDAD_VENTA + q).then((respuesta) => respuesta.datos);
+    return RestAPI.get<{ datos: OportunidadVenta[], total: number }>(new ApiUrls().OPORTUNIDAD_VENTA + q).then((respuesta) => respuesta);
 };
 
-export const getAccionesLead = async (leadId: string): Promise<Accion[]> => {
+export const getAccionesLead = async (leadId: string): RespuestaLista<Accion> => {
     const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: Accion[] }>(new ApiUrls().ACCION + q).then((respuesta) => respuesta.datos);
+    return RestAPI.get<{ datos: Accion[], total: number }>(new ApiUrls().ACCION + q).then((respuesta) => respuesta);
 };
 
 export const getFuentesLead = async (

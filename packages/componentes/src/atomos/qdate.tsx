@@ -6,7 +6,7 @@ import {
   Validacion,
 } from "./_forminput.tsx";
 
-type QDateProps = FormInputProps;
+export type QDateProps = FormInputProps;
 
 export const QDate = ({
   label,

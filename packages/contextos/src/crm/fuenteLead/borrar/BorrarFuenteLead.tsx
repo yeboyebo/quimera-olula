@@ -1,0 +1,38 @@
+import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useForm } from "@olula/lib/useForm.js";
+import { useCallback } from "react";
+import { FuenteLead } from "../diseño.ts";
+import { deleteFuenteLead } from "../infraestructura.ts";
+
+export const BorrarFuenteLead = ({
+  publicar,
+  fuente_lead,
+}: {
+  fuente_lead: FuenteLead;
+  publicar: EmitirEvento;
+}) => {
+  const borrar_ = useCallback(async () => {
+    await deleteFuenteLead(fuente_lead.id);
+
+    publicar("fuente_lead_borrada", fuente_lead.id);
+  }, [publicar, fuente_lead.id]);
+
+  const cancelar_ = useCallback(
+    () => publicar("borrado_fuente_lead_cancelado"),
+    [publicar]
+  );
+
+  const [borrar, cancelar] = useForm(borrar_, cancelar_);
+
+  return (
+    <QModalConfirmacion
+      nombre="confirmarBorrarFuenteLead"
+      abierto={true}
+      titulo="Confirmar borrado"
+      mensaje={`¿Está seguro de que desea borrar esta Fuente de Lead?`}
+      onCerrar={cancelar}
+      onAceptar={borrar}
+    />
+  );
+};

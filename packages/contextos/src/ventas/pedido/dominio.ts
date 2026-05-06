@@ -1,53 +1,6 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { MetaModelo } from "@olula/lib/dominio.ts";
-import {
-    cambioClienteVentaVacio,
-    metaCambioClienteVenta,
-    metaLineaVenta,
-    metaNuevaLineaVenta,
-    metaNuevaVenta,
-    metaVenta,
-    nuevaLineaVentaVacia,
-    nuevaVentaVacia,
-    ventaVacia
-} from "../venta/dominio.ts";
-import {
-    CambioClientePedido,
-    LineaPedido,
-    NuevaLineaPedido,
-    NuevoPedido,
-    Pedido
-} from "./diseño.ts";
-
-
-export const pedidoVacio: Pedido = {
-    ...ventaVacia,
-    servido: 'No',
-}
-
-export const nuevoPedidoVacio: NuevoPedido = nuevaVentaVacia;
-
-export const cambioClientePedidoVacio: CambioClientePedido = cambioClienteVentaVacio;
-
-export const nuevaLineaPedidoVacia: NuevaLineaPedido = nuevaLineaVentaVacia;
-
-export const metaNuevoPedido: MetaModelo<NuevoPedido> = metaNuevaVenta;
-
-export const metaCambioClientePedido: MetaModelo<CambioClientePedido> = metaCambioClienteVenta;
-
-export const metaPedido: MetaModelo<Pedido> = {
-    campos: {
-        ...metaVenta.campos,
-        fecha: { tipo: "fecha", requerido: false },
-    },
-
-};
-
-
-export const metaLineaPedido: MetaModelo<LineaPedido> = metaLineaVenta;
-
-export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = metaNuevaLineaVenta;
-
+import { cambioClienteVentaVacio, clienteVentaVacio, nuevaVentaVacia, ventaVacia } from "../venta/dominio.ts";
+import { CambioClientePedido, NuevoPedido, Pedido } from "./diseño.ts";
 
 export const metaTablaPedido: MetaTabla<Pedido> = [
     {
@@ -57,16 +10,29 @@ export const metaTablaPedido: MetaTabla<Pedido> = [
     {
         id: "nombre_cliente",
         cabecera: "Cliente",
+        render: (p) => p.cliente.nombre_cliente,
     },
-    // {
-    //     id: "servido",
-    //     cabecera: "Servido",
-    // },
     {
         id: "total",
         cabecera: "Total",
         tipo: "moneda",
     },
-
 ];
+
+export const pedidoVacio = (): Pedido => ({
+    ...ventaVacia,
+    cliente: clienteVentaVacio,
+    servido: 'No',
+    lineas: [],
+});
+
+export const nuevoPedidoVacio: NuevoPedido = nuevaVentaVacia;
+
+export const cambioClientePedidoVacio: CambioClientePedido = cambioClienteVentaVacio;
+
+export const cambioCliente = (pedido: Pedido): CambioClientePedido => ({
+    cliente_id: pedido.cliente.cliente_id ?? "",
+    direccion_id: pedido.cliente.direccion_id ?? "",
+});
+
 

@@ -1,4 +1,11 @@
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
 
-export { default } from "../../vite.config.ts";
+import { mergeConfig } from "vite";
+import config from "../../vite.config.ts";
+
+export default mergeConfig(config, {
+    test: {
+        setupFiles: ["../../setupTests.ts"]
+    }
+});

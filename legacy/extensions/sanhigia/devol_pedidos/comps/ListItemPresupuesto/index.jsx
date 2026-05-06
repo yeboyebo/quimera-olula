@@ -2,7 +2,6 @@ import { Box, QListItemModel } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { Icon, ListItemAvatar, ListItemText, Typography } from "@quimera/thirdparty";
 import { util } from "quimera";
-import React from "react";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -13,22 +12,28 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `2px solid ${theme.palette.secondary.main}`,
     borderTop: `2px solid ${theme.palette.secondary.main}`,
   },
-  avatarEditable: {
+  avatarGanado: {
     color: theme.palette.success.main,
   },
-  avatarNoEditable: {
+  avatarPerdido: {
+    color: theme.palette.grey[600],
+  },
+  avatarPendiente: {
     color: theme.palette.error.main,
   },
 }));
 
-const colorEditable = {
-  true: "avatarEditable",
-  false: "avatarNoEditable",
-};
-
-const iconoEditable = {
-  true: "radio_button_unchecked",
-  false: "radio_button_unchecked",
+const getAvatarColorClass = (editable, estadoPresupuesto) => {
+  if (!editable) {
+    return "avatarGanado";
+  }
+  if (estadoPresupuesto === "Perdido") {
+    return "avatarPerdido";
+  }
+  if (estadoPresupuesto === "Pendiente") {
+    return "avatarPendiente";
+  }
+  return "avatarPendiente";
 };
 
 function ListItemPresupuesto({ renderAvatar, model, modelName, selected = false, funSecondaryLeft, logic, avatar = "P", ...props }) {
@@ -36,12 +41,16 @@ function ListItemPresupuesto({ renderAvatar, model, modelName, selected = false,
   const presupuesto = model;
 
   const editable = logic.presupuestoEditable(presupuesto);
+  const avatarColorClass = getAvatarColorClass(editable, presupuesto.estadoPresupuesto);
+
+  // console.log('mimensaje_presupuesto', presupuesto);
+
 
   return (
     <QListItemModel modelName={modelName} model={model} selected={selected}>
       <ListItemAvatar>
-        <Icon color="primary" fontSize="large" className={classes[colorEditable[editable]]}>
-          {iconoEditable[editable]}
+        <Icon fontSize="large" className={classes[avatarColorClass]}>
+          radio_button_unchecked
         </Icon>
       </ListItemAvatar>
       <ListItemText

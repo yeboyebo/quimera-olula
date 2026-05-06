@@ -43,7 +43,7 @@ export const TabDatos = ({ evento }: TabDatosProps) => {
           </div>
           <div className="fila-2">
             <div className="fecha-lugar">
-              <QDate label="Fecha" {...uiProps("fecha_inicio")} />
+              <QDate label="Fecha" {...uiProps("fechaInicio")} />
               <QInput label="Lugar" {...uiProps("lugar")} />
             </div>
             <QInput label="Dirección" {...uiProps("direccion")} />

@@ -31,8 +31,8 @@ function PresupuestoCliNuevo({ callbackGuardado, useStyles, ...props }) {
         actionPrefix="nuevoPresupuesto"
         alwaysActive
         dynamicComp={() => (
-          <Grid container>
-            <Grid item xs={12}>
+          <Grid container direction="column" spacing={2}>
+            <Grid size={12}>
               <Cliente
                 id="presupuesto.buffer/codCliente"
                 label={`Cliente ${presupuesto.buffer.codCliente ?? ""}`}

@@ -8,7 +8,7 @@ function AgenciasTransporte({ codUbicacion = "", ...props }) {
     API("sh_agenciastrans")
       .get()
       .select("codagencia,descripcion")
-      .filter(key ? ["codagencia", "eq", key] : ["codagencia", "like", text])
+      .filter(key ? ["codagencia", "eq", key] : ["codagencia", "like_ua", text])
       // .filter(["codubicacion", "eq", key])
       .success(response => {
         setOptions(

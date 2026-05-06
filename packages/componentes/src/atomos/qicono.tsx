@@ -8,7 +8,14 @@ type QIconoProps = {
   props?: React.HTMLAttributes<HTMLDivElement>;
 };
 
-const iconos: Record<string, string> = {
+type Icono = {
+  nombre: string;
+  tipo?: "solid" | "regular" | "logo";
+};
+
+// https://v2.boxicons.com/
+const iconos: Record<string, string | Icono> = {
+  añadir: "plus-circle",
   buscar: "search-alt-2",
   cerrar: "x",
   inicio: "home",
@@ -31,13 +38,30 @@ const iconos: Record<string, string> = {
   menu: "menu",
   calendario_vacio: "calendar-alt",
   check: "check",
+  checkdoble: "check-double",
   x_circle: "x-circle",
   minus: "minus",
   lista: "list-ul",
+  carrito: "cart",
   tarjeta: "credit-card",
+  etiqueta_compra: "purchase-tag-alt",
+  llave_inglesa: "wrench",
   ver: "show",
   crear: "plus",
   tabla: "table",
+  arriba: "chevron-up",
+  abajo: "chevron-down",
+  izquierda: "chevron-left",
+  derecha: "chevron-right",
+  circulo: { nombre: "circle", tipo: "regular" },
+  circulo_relleno: { nombre: "circle", tipo: "solid" },
+  telefono: "phone",
+  correo: "envelope",
+  casa: "home",
+  tarea: "task",
+  llaveinglesa: "wrench",
+  estrella: "star",
+  relojarena: "hourglass",
 };
 
 export const QIcono = ({
@@ -45,15 +69,30 @@ export const QIcono = ({
   tamaño = "md",
   color,
   style,
-  props,
+  ...props
 }: QIconoProps) => {
+  let nombreIcono, tipo;
+  if (typeof iconos[nombre] === "undefined") {
+    nombreIcono = nombre;
+    tipo = undefined;
+  } else {
+    if (typeof iconos[nombre] === "object") {
+      nombreIcono = iconos[nombre].nombre;
+      tipo = iconos[nombre].tipo;
+    } else {
+      nombreIcono = iconos[nombre];
+      tipo = undefined;
+    }
+  }
+
   return (
     <quimera-icono>
       <box-icon
-        name={iconos[nombre]}
+        name={nombreIcono}
         size={tamaño}
         color={color}
         style={style}
+        type={tipo}
         {...props}
       ></box-icon>
     </quimera-icono>

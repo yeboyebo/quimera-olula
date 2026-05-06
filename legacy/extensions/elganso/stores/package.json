@@ -1,0 +1,35 @@
+{
+  "name": "@quimera-extension/elganso-stores",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "quimera": "workspace:@quimera/core@*",
+    "@quimera/comps": "workspace:*",
+    "@quimera/styles": "workspace:*",
+    "@quimera/thirdparty": "workspace:*",
+    "@quimera-extension/core": "workspace:*",
+    "@quimera-extension/login": "workspace:*",
+    "@mui/material": "^7.0.0",
+    "@mui/icons-material": "^7.0.0",
+    "@mui/base": "^5.0.0-beta.61",
+    "@mui/system": "^7.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@aldabil/react-scheduler": "2.7.24",
+    "date-fns": "^2.30.0",
+    "@mui/x-data-grid": "^8.0.0",
+    "@mui/x-date-pickers": "^7.0.0",
+    "hookrouter": "^1.2.3",
+    "prop-types": "^15.7.2",
+    "use-db-state": "2.0.2",
+    "react-qr-barcode-scanner": "1.0.6",
+    "react-select": "5.8.3",
+    "use-sound": "4.0.3"
+  }
+}

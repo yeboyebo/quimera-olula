@@ -1,0 +1,13 @@
+.DetalleArqueo {
+    quimera-input[nombre="efectivoInicial"] {
+        grid-column: span 3;
+    }
+
+    quimera-select[nombre="idAgenteApertura"] {
+        grid-column: span 4;
+    }
+
+
+
+
+}

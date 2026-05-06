@@ -1,3 +1,5 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
+import { DocAgente, DocClienteYDir, LineaPresupuestoCli } from "@quimera-extension/base-ventas";
 import {
   Box,
   Dialog,
@@ -12,10 +14,8 @@ import {
   Typography,
 } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import { DocAgente, DocClienteYDir, LineaPresupuestoCli } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useCallback, useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useCallback, useEffect } from "react";
 
 function PresupuestoCli({ callbackChanged, idPresupuesto, initPresupuesto, useStyles }) {
   const [
@@ -67,6 +67,8 @@ function PresupuestoCli({ callbackChanged, idPresupuesto, initPresupuesto, useSt
   if (idPresupuesto && !presupuesto.data.idPresupuesto) {
     return null;
   }
+
+  // console.log('mimensaje_presup', presupuesto);
 
   return (
     <Quimera.Template id="PresupuestoDetalle">

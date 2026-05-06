@@ -1,4 +1,8 @@
 quimera-checkbox {
+    --color-focus: var(--color-primario-claro);
+
+    padding: var(--espaciado-xs) var(--espaciado-xxs);
+
     label {
         flex-direction: row;
         flex-wrap: wrap;
@@ -8,6 +12,12 @@ quimera-checkbox {
             margin-left: calc(var(--espaciado-s) * 1.6);
             font-size: var(--tamaño-letra-xs);
         }
+    }
+
+    &:has(input:focus) {
+        background-color: var(--color-focus);
+        border-radius: var(--redondeo-borde-xs);
+        color: var(--color-texto-primario);
     }
 
     &[condensado] {

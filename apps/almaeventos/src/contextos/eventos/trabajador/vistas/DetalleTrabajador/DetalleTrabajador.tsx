@@ -6,6 +6,7 @@ import {
 } from "@olula/componentes/index.ts";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Entidad } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useState } from "react";
 import { useParams } from "react-router";
@@ -19,10 +20,10 @@ import { metaTrabajador, trabajadorVacio } from "../../dominio.ts";
 
 export const DetalleTrabajador = ({
   trabajadorInicial = null,
-  emitir = () => {},
+  emitir = async () => {},
 }: {
   trabajadorInicial?: Trabajador | null;
-  emitir?: (trabajador: string, payload?: unknown) => void;
+  emitir?: ProcesarEvento;
 }) => {
   const params = useParams();
   const trabajadorId = trabajadorInicial?.id ?? params.id;

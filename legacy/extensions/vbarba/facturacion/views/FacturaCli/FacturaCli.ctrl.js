@@ -8,6 +8,7 @@ export const state = parent => ({
   ...data.state,
   logic: {
     ...parent.logic,
+    facturaEditable: factura => factura.editable && !factura.impreso,
   },
 });
 

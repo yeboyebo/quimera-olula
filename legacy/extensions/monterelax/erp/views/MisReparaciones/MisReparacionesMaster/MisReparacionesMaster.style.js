@@ -5,7 +5,7 @@ export default parent => {
     return {
       ..._p,
       pte: {
-        backgroundColor: `${theme.palette.error.main}`,
+        backgroundColor: `${theme.palette.error.main} !important`,
       },
       terminado: {
         backgroundColor: `${theme.palette.success.main}`,

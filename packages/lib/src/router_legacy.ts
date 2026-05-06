@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { RouteObject } from "react-router";
 
-type Dependency = {
+export type Dependency = {
     dependencies: Dependency[];
     routes?: Routes;
 }

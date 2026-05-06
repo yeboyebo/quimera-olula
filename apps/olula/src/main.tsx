@@ -1,9 +1,9 @@
 import { authMiddleware } from "#/auth/middlewares.ts";
+import { useTimerRefresco } from "#/auth/useTimerRefresco.ts";
 import { Vista } from "@olula/componentes/index.ts";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
 import { crearMenu, MenuContextFactory } from "@olula/lib/menu.ts";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
 import { FactoryOlula } from "./factory.ts";
@@ -22,6 +22,8 @@ const rutas = createBrowserRouter([
 
 // eslint-disable-next-line react-refresh/only-export-components
 const App = () => {
+  useTimerRefresco();
+
   FactoryObj.setMenu(
     crearMenu(
       new FactoryOlula() as unknown as Record<string, MenuContextFactory>
@@ -35,9 +37,9 @@ const App = () => {
 };
 
 root.render(
-  <StrictMode>
-    <FactoryProvider>
-      <App />
-    </FactoryProvider>
-  </StrictMode>
+  // <StrictMode>
+  <FactoryProvider>
+    <App />
+  </FactoryProvider>
+  // </StrictMode>
 );

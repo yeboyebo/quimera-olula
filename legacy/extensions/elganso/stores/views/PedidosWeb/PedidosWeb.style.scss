@@ -1,0 +1,94 @@
+.modalButton.MuiButton-text {
+  border: 1px solid !important;
+  margin-inline-end: 10px;
+  background-color: #1976d2;
+  color: white;
+}
+.modalButtonCancelar.MuiButton-text {
+  border: 1px solid !important;
+  margin-inline-end: 10px;
+  background-color: #cf5036;
+  color: white;
+}
+.modalButton-NoActivo.MuiButton-text {
+  background-color: lightgrey;
+  color: grey;
+  border: 1px solid grey !important;
+}
+.rowRegularizarFaltantes {
+  display: flex;
+  flex-direction: row;
+
+  .regularizarFaltantesDescripcion {
+    width: 100%;
+    padding: 5px 5px 5px 10px;
+
+    .descripcion {
+      font-weight: bold;
+    }
+  }
+}
+.pedidosWebDialogAction {
+  margin-block-end: 10px;
+}
+.pedidosEnviadosError-Title {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 20px;
+  text-align: center;
+}
+.pedidosEnviadosError-Wrapper {
+  padding-inline-start: 30px;
+  .pedidosEnviadosError {
+    padding-inline-start: 10px;
+  }
+}
+.row-Filtros {
+  width: 100%;
+}
+.filtrosFooter {
+  clear: both;
+  position: fixed;
+  height: 40px;
+  width: -moz-available;
+  width: -webkit-fill-available;
+  width: fill-available;
+  bottom: 0;
+  background-color: Gainsboro;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #696969;
+
+  .modalButton-ClearFilter.MuiButton-text {
+    border: 1px solid !important;
+    margin-inline-end: 10px;
+    background-color: gray;
+    color: white;
+  }
+}
+.filtrosFooter-container {
+  height: 50px;
+}
+.filtro-footer-selected-1 {
+  background-color: lightgrey;
+  padding: 0 10px;
+}
+.filtro-footer-selected-2 {
+  background-color: #a5c3f7;
+  padding: 0 10px;
+}
+.filtro-footer-selected-3 {
+  background-color: #a5c3f7;
+  padding: 0 10px;
+}
+.filtro-footer-selected-4 {
+  background-color: #c94aff;
+  padding: 0 10px;
+}
+.filtro-footer-selected-5 {
+  background-color: #80ac80;
+  padding: 0 10px;
+}

@@ -14,8 +14,8 @@ function Articulo({ ...props }) {
           ? ["referencia", "eq", key]
           : {
             or: [
-              ["referencia", "like", text ?? ""],
-              ["descripcion", "like", text ?? ""],
+              ["referencia", "like_ua", text ?? ""],
+              ["descripcion", "like_ua", text ?? ""],
             ],
           },
       )

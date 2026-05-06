@@ -1,21 +1,11 @@
 import React from "react";
 
-// export type ContextoSet<T> = (_: (T) | ((_: T) => T)) => void;
-
-// export type Contexto<T> = {
-//   entidades: T[];
-//   setEntidades: ContextoSet<T[]>;
-//   seleccionada: T | null;
-//   setSeleccionada: ContextoSet<T | null>;
-// };
-
-
 export type QError = {
   nombre: string;
   descripcion?: string;
 };
 
-export type Intentar = <Out>(f: () => Out) => Promise<Out>;
+export type Intentar = <Out>(f: () => Out, onError?: (error: unknown) => void) => Promise<Out>;
 export type TipoContextoError = {
   error: QError | null;
   setError: (_: QError) => void;

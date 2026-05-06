@@ -15,6 +15,7 @@ type TextAreaProps = FormFieldProps & {
     evento: React.FocusEvent<HTMLTextAreaElement>
   ) => void;
   rows?: number;
+  evaluarCambio?: () => void;
 };
 
 export const QTextArea = ({
@@ -29,9 +30,11 @@ export const QTextArea = ({
   valido,
   opcional,
   condensado,
+  ref,
   onChange,
   onBlur,
   onInput,
+  evaluarCambio,
   ...props
 }: TextAreaProps) => {
   const attrs = {
@@ -62,6 +65,7 @@ export const QTextArea = ({
 
   const manejarBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     onBlur?.(e.target.value || "", e);
+    evaluarCambio?.();
   };
 
   const manejarInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -84,6 +88,7 @@ export const QTextArea = ({
           onBlur={manejarBlur}
           onFocus={manejarFocus}
           onInput={manejarInput}
+          ref={ref as React.RefObject<HTMLTextAreaElement>}
         />
         <Validacion textoValidacion={textoValidacion} />
       </label>

@@ -17,9 +17,10 @@ export const DetalleLineaTransferenciaStock = ({
   emitir: (evento: string, payload: unknown) => void;
   transferenciaID: string;
 }) => {
-  const { modelo, uiProps, valido } = useModelo(metaLineaTransferenciaStock, {
-    ...lineaInicial,
-  });
+  const { modelo, uiProps, valido } = useModelo(
+    metaLineaTransferenciaStock,
+    lineaInicial
+  );
 
   const { intentar } = useContext(ContextoError);
 

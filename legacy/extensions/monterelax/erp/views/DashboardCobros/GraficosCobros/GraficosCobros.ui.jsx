@@ -1,7 +1,6 @@
 import { Chart } from "@quimera/comps";
 import { Box, Grid } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { useStateValue } from "quimera";
 
 function GraficosCobros({ useStyles }) {
   const [{ lineChartRecibosDevueltos, lineChartRecibosPendientes, visibleGerencias }, dispatch] =
@@ -10,13 +9,13 @@ function GraficosCobros({ useStyles }) {
 
   return (
     <Quimera.Template id="GraficosCobros">
-      <Grid container spacing={1}>
-        <Grid item xs={12} sm={12} md={6}>
+      <Grid container spacing={1} direction="column" >
+        <Grid size={{ xs: 12, sm: 12, md: 6 }}>
           <Box w={1} border={0}>
             <Chart.Bar chartProps={lineChartRecibosPendientes} />
           </Box>
         </Grid>
-        <Grid item xs={12} sm={12} md={6}>
+        <Grid size={{ xs: 12, sm: 12, md: 6 }}>
           <Box w={1} border={0}>
             <Chart.Bar chartProps={lineChartRecibosDevueltos} />
           </Box>

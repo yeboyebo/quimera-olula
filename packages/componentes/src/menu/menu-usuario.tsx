@@ -1,14 +1,26 @@
 import "./menu-usuario.css";
 
 import { puede } from "@olula/lib/dominio.ts";
+import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
+import { useContext } from "react";
 import { Link } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
+import { estaAutentificado } from "../plantilla/autenticacion";
+import { useMenuControl } from "../plantilla/useMenuControl";
 import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 
-const elementosDelMenu = [
+// Tipo exportado para que las apps puedan usarlo en sus factories
+export type MenuUsuarioElementos = ElementoMenu[];
+
+// Función opcional para procesar elementos antes de renderizarlos
+export type ProcesoElementosFn = (
+  elementos: MenuUsuarioElementos
+) => MenuUsuarioElementos;
+
+// Elementos por defecto si la app no proporciona los suyos
+const elementosDelMenuDefault: MenuUsuarioElementos = [
   {
     nombre: "Usuarios",
-
     subelementos: [
       {
         nombre: "Grupos",
@@ -28,7 +40,24 @@ const elementosDelMenu = [
   },
 ];
 
-export const MenuUsuario = () => {
+export const MenuUsuarioBase = (props: {
+  elementos?: MenuUsuarioElementos;
+  procesarElementos?: ProcesoElementosFn;
+}) => {
+  const { menuAbierto, cerrarMenu } = useMenuControl();
+
+  // No mostrar menú si no está autenticado
+  if (!estaAutentificado()) {
+    return null;
+  }
+
+  let elementosDelMenu = props.elementos || elementosDelMenuDefault;
+
+  // Procesar elementos si se proporciona una función
+  if (props.procesarElementos) {
+    elementosDelMenu = props.procesarElementos(elementosDelMenu);
+  }
+
   const renderizaElemento = (elemento: ElementoMenu) => {
     const icono = elemento.icono ? (
       <QIcono nombre={elemento.icono} tamaño="sm" />
@@ -41,7 +70,7 @@ export const MenuUsuario = () => {
     if ("url" in elemento && elemento.url) {
       return (
         <li key={elemento.nombre}>
-          <Link to={elemento.url}>
+          <Link to={elemento.url} onClick={() => cerrarMenu("usuario")}>
             {icono} {elemento.nombre}
           </Link>
         </li>
@@ -69,12 +98,29 @@ export const MenuUsuario = () => {
   );
 
   return (
-    <menu-usuario>
+    <menu-usuario className={menuAbierto.usuario ? "activo" : ""}>
       <aside id="menu-usuario">
         <nav>
           <ul>{elementos}</ul>
         </nav>
       </aside>
     </menu-usuario>
+  );
+};
+
+export const MenuUsuario = () => {
+  const { app } = useContext(FactoryCtx);
+  const elementos = app.Componentes?.menu_usuario_elementos as
+    | MenuUsuarioElementos
+    | undefined;
+  const procesarElementos = app.Componentes?.menu_usuario_procesar_elementos as
+    | ProcesoElementosFn
+    | undefined;
+
+  return (
+    <MenuUsuarioBase
+      elementos={elementos}
+      procesarElementos={procesarElementos}
+    />
   );
 };

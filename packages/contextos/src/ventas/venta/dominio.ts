@@ -1,21 +1,37 @@
-import { MetaModelo } from "@olula/lib/dominio.ts";
-import { direccionVacia } from "../presupuesto/dominio.ts";
-import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+import { Direccion } from "@olula/lib/diseño.js";
+import { MetaCampo, MetaModelo } from "@olula/lib/dominio.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+
+export const direccionVacia = (): Direccion => ({
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia_id: 0,
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
+});
+
+export const clienteVentaVacio: ClienteVenta = {
+    cliente_id: null,
+    nombre_cliente: '',
+    id_fiscal: '',
+    direccion_id: null,
+    direccion: direccionVacia(),
+}
 
 export const ventaVacia: Venta = {
     id: '',
     codigo: '',
-    fecha: '',
-    cliente_id: '',
-    nombre_cliente: '',
-    id_fiscal: '',
-    direccion_id: '',
-    direccion: direccionVacia(),
+    fecha: new Date(),
     agente_id: '',
     nombre_agente: '',
     divisa_id: '',
     tasa_conversion: 1,
-    aprobado: false,
     total: 0,
     total_divisa_empresa: 0,
     neto: 0,
@@ -25,6 +41,8 @@ export const ventaVacia: Venta = {
     nombre_forma_pago: '',
     grupo_iva_negocio_id: '',
     observaciones: '',
+    dtoPorcentual: 0,
+    netoSinDto: 0,
 }
 
 export const nuevaVentaVacia: NuevaVenta = {
@@ -48,15 +66,23 @@ export const metaVenta: MetaModelo<Venta> = {
         tasa_conversion: { tipo: "numero", requerido: false },
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
-        id_fiscal: { bloqueado: true, requerido: true },
-        cliente_id: { bloqueado: true, requerido: true },
         divisa_id: { requerido: true },
     },
 };
 
+const metaDtoPorcentual: MetaCampo<LineaVenta> = {
+    tipo: "decimal",
+    requerido: false,
+    decimales: 2,
+    positivo: true,
+    maximo: 100
+};
+
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
+        pvp_unitario: { tipo: "moneda", requerido: true },
+        dto_porcentual: metaDtoPorcentual,
         referencia: { requerido: true },
     }
 };
@@ -78,7 +104,8 @@ export const metaCambioClienteVenta: MetaModelo<CambioClienteVenta> = {
 
 export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
-        referencia: { requerido: true },
+        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
+        referencia: { requerido: true, tipo: "texto" },
     }
 };
+

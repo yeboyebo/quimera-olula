@@ -8,7 +8,7 @@ export interface TrabajadorEvento extends Entidad {
     liquidado: boolean;
     trabajador_id: string;
     descripcion: string;
-    fecha: string;
+    fecha: Date;
 };
 
 export type NuevoTrabajadorEvento = {
@@ -19,5 +19,5 @@ export type NuevoTrabajadorEvento = {
     liquidado: boolean;
     trabajador_id: string;
     descripcion: string;
-    fecha: string;
+    fecha: Date;
 };

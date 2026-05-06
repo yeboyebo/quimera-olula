@@ -1,0 +1,172 @@
+---
+shortcuts:
+  - type: Model
+state:
+  {
+    inicioSemana: null,
+    planificador: null,
+    semana: null,
+    agentes: null,
+    modo: "",
+    schedulerDate: null,
+    schedulerModo: "default",
+    schedulerAgenda: true,
+    schedulerView: "month",
+    tramos: null,
+    tramosSch: null,
+    agentesSch: null,
+    agenteSelected: null,
+  }
+bunch:
+  init:
+    - _type: set
+      path: schedulerDate
+      value:
+        code: "return Date()"
+  #OBTENER PLANIFICADOR SEMANAL
+  onGetTramosBySemana:
+    - _type: post
+      schema: dias_planificados
+      action: getTramosBySemana
+      data:
+        - key: semana
+          value:
+            payloadPath: semana
+      success: onGetTramosBySemanaSuccess
+
+  onGetTramosBySemanaSuccess:
+    - _type: set
+      path: planificador
+      value:
+        payloadPath: response.planificador
+    - _type: set
+      path: inicioSemana
+      value:
+        payloadPath: response.semana
+    - _type: set
+      path: agentes
+      value:
+        payloadPath: response.agentes
+    - _type: set
+      path: semana
+      value:
+        payloadPath: response.semana
+  #FIN OBTENER PLANIFICADOR SEMANAL
+
+  #OBTENER PLANIFICADOR MENSUAL
+  onGetTramosByMes:
+    - _type: post
+      schema: dias_planificados
+      action: getTramosByMes
+      data:
+        - key: mes
+          value:
+            payloadPath: mes
+      success: onGetTramosByMesSuccess
+
+  onGetTramosByMesSuccess:
+    - _type: set
+      path: planificador
+      value:
+        payloadPath: response.planificador
+    - _type: set
+      path: inicioSemana
+      value:
+        payloadPath: response.semana
+    - _type: set
+      path: agentes
+      value:
+        payloadPath: response.agentes
+    - _type: set
+      path: semana
+      value:
+        payloadPath: response.semana
+  #FIN OBTENER PLANIFICADOR MENSUAL
+
+  #PLANIFICADOR MENSUAL 2
+  onGetTramosScheduler:
+    - _type: post
+      schema: schedule_tramos
+      action: getScheduleTramos
+      data:
+        - key: fechaInicio
+          value:
+            payloadPath: fechaInicio
+        - key: fechaFin
+          value:
+            payloadPath: fechaFin
+        - key: schedulerDate
+          value:
+            payloadPath: schDate
+        - key: schedulerModo
+          value:
+            payloadPath: schModo
+        - key: schedulerAgenda
+          value:
+            payloadPath: schAgenda
+        - key: schedulerView
+          value:
+            payloadPath: schView
+      success: onGetTramosSchedulerSuccess
+
+  onGetTramosSchedulerSuccess:
+    - _type: set
+      path: tramos
+      value:
+        payloadPath: response.tramos
+    - _type: set
+      path: agentes
+      value:
+        payloadPath: response.agentes
+    - _type: set
+      path: schedulerDate
+      value:
+        payloadPath: response.schDate
+    - _type: set
+      path: schedulerModo
+      value:
+        payloadPath: response.schModo
+    - _type: set
+      path: schedulerAgenda
+      value:
+        payloadPath: response.schAgenda
+    - _type: set
+      path: schedulerView
+      value:
+        payloadPath: response.schView
+  #FIN PLANIFICADOR MENSUAL 2
+
+  #PLANIFICADOR MENSUAL 3
+  onGetTramosSchedulerByAgenteFecha:
+    - _type: post
+      schema: tramos_schedule_agente_fecha
+      action: getTramosScheduleAgenteFecha
+      data:
+        - key: schedulerView
+          value:
+            payloadPath: schedulerView
+        - key: schedulerResource
+          value:
+            payloadPath: schedulerResource
+        - key: schedulerDate
+          value:
+            payloadPath: schedulerDate
+        - key: schedulerTienda
+          value:
+            payloadPath: schedulerTienda
+      success: onGetTramosSchedulerByAgenteFechaSuccess
+
+  onGetTramosSchedulerByAgenteFechaSuccess:
+    - _type: set
+      path: tramosSch
+      value:
+        payloadPath: response.tramos
+    - _type: set
+      path: agentesSch
+      value:
+        payloadPath: response.agentes
+    - _type: set
+      path: agenteSelected
+      value:
+        payloadPath: response.agenteSeleccionado
+  #FIN PLANIFICADOR MENSUAL 3

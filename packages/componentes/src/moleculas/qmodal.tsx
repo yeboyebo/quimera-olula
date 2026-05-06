@@ -1,31 +1,48 @@
-import { PropsWithChildren, useEffect, useRef } from "react";
+import { PropsWithChildren, useEffect, useId, useRef } from "react";
 import { QBoton } from "../atomos/qboton.tsx";
+import { QIcono } from "../atomos/qicono.tsx";
 import "./qmodal.css";
 
 type QModalProps = {
   nombre: string;
+  titulo?: string;
   abierto?: boolean;
   onCerrar?: () => void;
+  pantallaCompletaMovil?: boolean;
 };
 
 export const QModal = ({
   nombre,
+  titulo,
   abierto = false,
   onCerrar = () => {},
+  pantallaCompletaMovil = true,
   children,
 }: PropsWithChildren<QModalProps>) => {
   const refModal = useRef<HTMLDialogElement>(null);
-  const attrs = { nombre };
+  const titleId = useId();
+  const cerradoPorEstadoRef = useRef(false);
+  const attrs: Record<string, string> = { nombre };
+
+  if (pantallaCompletaMovil) {
+    attrs["data-pantalla-completa-movil"] = "";
+  }
+
+  if (titulo) {
+    attrs["data-con-titulo"] = "";
+  }
 
   useEffect(() => {
     const modal = refModal.current;
     if (!modal) return;
 
     if (!abierto) {
+      cerradoPorEstadoRef.current = true;
       modal.close();
       return;
     }
 
+    cerradoPorEstadoRef.current = false;
     modal.showModal();
   }, [abierto]);
 
@@ -34,6 +51,10 @@ export const QModal = ({
     if (!modal) return;
 
     const manejarClose = () => {
+      if (cerradoPorEstadoRef.current) {
+        cerradoPorEstadoRef.current = false;
+        return;
+      }
       onCerrar?.();
     };
 
@@ -56,11 +77,17 @@ export const QModal = ({
 
   return (
     <quimera-modal {...attrs}>
-      <dialog ref={refModal}>
+      <dialog ref={refModal} aria-labelledby={titulo ? titleId : undefined}>
         <header>
+          {titulo && <h2 id={titleId}>{titulo}</h2>}
           <form method="dialog">
-            <QBoton tamaño="grande" variante="texto" tipo="submit">
-              &times;
+            <QBoton
+              tamaño="mediano"
+              variante="texto"
+              tipo="submit"
+              props={{ "aria-label": "Cerrar modal", title: "Cerrar" }}
+            >
+              <QIcono nombre="cerrar" tamaño="sm" />
             </QBoton>
           </form>
         </header>

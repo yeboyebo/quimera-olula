@@ -6,7 +6,7 @@ import {
   Validacion,
 } from "./_forminput.tsx";
 
-type QInputProps = FormInputProps;
+export type QInputProps = FormInputProps;
 
 export const QInput = ({
   label,

@@ -39,7 +39,6 @@ export const getContactos = async (
   return { datos: respuesta.datos.map(contactoFromAPI), total: respuesta.total };
 };
 
-
 export const patchContacto = async (id: string, contacto: Contacto) =>
   await RestAPI.patch(`${baseUrlContactos}/${id}`, contacto, "Error al guardar contacto");
 
@@ -59,11 +58,11 @@ export const getOportunidadesVentaContacto = async (contactoId: string) => {
   const orden = [] as Orden;
 
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: OportunidadVenta[] }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta.datos);
+  return RestAPI.get<{ datos: OportunidadVenta[], total: number }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta);
 };
 
-export const getClientesPorContacto = async (contactoId: string): Promise<Cliente[]> =>
-  await RestAPI.get<{ datos: Cliente[] }>(`/crm/contacto/${contactoId}/clientes`).then((respuesta) => respuesta.datos);
+export const getClientesPorContacto = async (contactoId: string) =>
+  await RestAPI.get<{ datos: Cliente[], total: number }>(`/crm/contacto/${contactoId}/clientes`).then((respuesta) => respuesta);
 
 export const getAccionesContacto = async (contactoId: string) => {
   const filtro = ['contacto_id', contactoId] as unknown as Filtro;
@@ -71,5 +70,5 @@ export const getAccionesContacto = async (contactoId: string) => {
   const orden = [] as Orden;
 
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: Accion[] }>(baseUrlAccion + q).then((respuesta) => respuesta.datos);
+  return RestAPI.get<{ datos: Accion[], total: number }>(baseUrlAccion + q).then((respuesta) => respuesta);
 };

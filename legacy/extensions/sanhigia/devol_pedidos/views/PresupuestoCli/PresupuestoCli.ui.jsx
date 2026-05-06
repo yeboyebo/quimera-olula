@@ -58,6 +58,10 @@ function PresupuestoCli({ callbackChanged, idPresupuesto, initPresupuesto, useSt
   const anchoDetalle = mobile ? 1 : 0.5;
   const schema = getSchemas().presupuestosCli;
   const editable = logic.presupuestoEditable(presupuesto.data);
+  const estadoPresupuesto = presupuesto.buffer?.estadoPresupuesto;
+
+  const mostrarPerder = editable && estadoPresupuesto === "Pendiente";
+  const mostrarReactivar = editable && estadoPresupuesto === "Perdido";
 
   if ((!initPresupuesto && !idPresupuesto) || initPresupuesto?._status === "deleted") {
     return null;
@@ -66,8 +70,8 @@ function PresupuestoCli({ callbackChanged, idPresupuesto, initPresupuesto, useSt
   if (idPresupuesto && !presupuesto.data.idPresupuesto) {
     return null;
   }
-  console.log(presupuesto);
-  console.log("PRESUPUESTO EDITABLE", editable);
+  // console.log(presupuesto);
+  // console.log("PRESUPUESTO EDITABLE", editable);
 
   return (
     <Quimera.Template id="PresupuestoDetalle">
@@ -92,6 +96,20 @@ function PresupuestoCli({ callbackChanged, idPresupuesto, initPresupuesto, useSt
                 title="Imprimir presupuesto"
                 icon="picture_as_pdf"
               />
+              {mostrarPerder && (
+                <QBoxButton
+                  id="perderPresupuesto"
+                  title="Perder presupuesto"
+                  icon="thumb_down_off"
+                />
+              )}
+              {mostrarReactivar && (
+                <QBoxButton
+                  id="reactivarPresupuesto"
+                  title="Reactivar presupuesto"
+                  icon="thumb_up_off"
+                />
+              )}
             </>
           }
         >

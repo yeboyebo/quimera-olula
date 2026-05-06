@@ -37,8 +37,14 @@ export const state = parent => ({
     percent: null,
     increment: null,
     totalVentas: null,
+    kpiNuevosClientesFamilia: null,
+    kpiUnidadesProducto: null,
+    codAgente: null,
+    nombreAgente: null,
   },
   modalCrearContactoVisible: false,
+  modalCambiarAgente: false,
+  codAgenteCustom: null,
 });
 
 export const bunch = parent => ({
@@ -112,10 +118,10 @@ export const bunch = parent => ({
       type: "get",
       schema: getSchemas().progreso,
       id: () => "-static-",
-      action: "get_progreso",
-      params: (_, { trimestres, flagCustomDate, customDates }) => ({
+      action: "dame_kpi_progreso",
+      params: (_, { trimestres, flagCustomDate, customDates, codAgenteCustom }) => ({
         ...trimestres,
-        codAgente: util.getGlobalSetting("user_data").user.agente,
+        codAgente: codAgenteCustom ?? (util.getUser()?.superuser ? "TODOS" : util.getGlobalSetting("user_data").user.agente),
         customDates: flagCustomDate,
         dateFrom: customDates.from,
         dateTo: customDates.to,
@@ -155,12 +161,20 @@ export const bunch = parent => ({
           percent: (response?.percent ?? 0).toFixed(0),
           increment: util.formatter(response?.increment, 2),
           totalVentas: util.euros(response?.total ?? 0),
+          kpiNuevosClientesFamilia: response?.kpi_nuevos_clientes_familia,
+          kpiUnidadesProducto: response?.kpi_unidades_producto,
+          codAgente: response?.codagente,
+          nombreAgente: response?.nombre_agente,
           totalVentasResumido:
             response?.total < 1000
               ? `${util.formatter(response?.total ?? 0, 2)}€`
               : `${util.formatter(response?.total / 1000, 2)}K €`,
         },
       }),
+    },
+    {
+      type: "grape",
+      name: "cerrarModalCambiarAgente",
     },
   ],
   onTratoEstadoChanged: [
@@ -318,4 +332,32 @@ export const bunch = parent => ({
       plug: () => ({ path: "modalCrearContactoVisible", value: false }),
     },
   ],
+  onCambiarAgenteCustomClicked: [
+    {
+      type: "setStateKeys",
+      plug: (_, { codAgenteCustom }) => ({
+        keys: {
+          modalCambiarAgente: true,
+          codAgenteCustom: codAgenteCustom ? codAgenteCustom : util.getUser()?.superuser ? "TODOS" : util.getGlobalSetting("user_data").user.agente,
+        },
+      }),
+    },
+  ],
+  cerrarModalCambiarAgente: [
+    {
+      type: "setStateKeys",
+      plug: (_, { codAgenteCustom }) => ({
+        keys: {
+          modalCambiarAgente: false,
+          // codAgenteCustom: null,
+        },
+      }),
+    },
+  ],
+  cambiarAgenteConfirmado: [
+    {
+      type: "grape",
+      name: "getPrevisiones",
+    },
+  ]
 });

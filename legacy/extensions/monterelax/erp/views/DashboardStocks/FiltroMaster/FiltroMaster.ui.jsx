@@ -1,8 +1,7 @@
+import { QArticulo } from "@quimera-extension/base-almacen";
 import { Box, Button, Field, Grid, Typography } from "@quimera/comps";
 import { AppBar } from "@quimera/thirdparty";
-import { QArticulo } from "@quimera-extension/base-almacen";
-import Quimera, { PropValidation, useStateValue } from "quimera";
-import React from "react";
+import Quimera, { useStateValue } from "quimera";
 
 import Modelo from "../../../comps/Modelo";
 import initialData from "./../filtro-estados";
@@ -16,8 +15,8 @@ function FiltroMaster({ useStyles }) {
       <AppBar position="sticky" className={classes.appBar}>
         <Box px={1}>
           <Box>
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
+            <Grid container spacing={1} direction="column" >
+              <Grid size={6}>
                 <Field.Select
                   id="filtro.estado"
                   label="Estado"
@@ -26,16 +25,16 @@ function FiltroMaster({ useStyles }) {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Modelo id="filtro.modelo" label="Modelo" fullWidth async />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <QArticulo id="filtro.reftela" label="Tela" fullWidth async />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Field.Int id="filtro.cantidad" label="Cantidad" fullWidth async />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box display="flex" alignItems="flex-end" justifyContent="flex-end" height={1}>
                   <Box
                     className={classes.container}

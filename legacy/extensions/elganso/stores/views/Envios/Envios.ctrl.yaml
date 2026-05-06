@@ -1,0 +1,48 @@
+shortcuts:
+state: { envios: [] }
+bunch:
+  init:
+    - _type: grape
+      name: getEnvios
+  onSetEnvios:
+    - _type: grape
+      name: setEnvios
+  onAsignarUsuarioEnvio:
+    - _type: patch
+      schema: envios
+      data:
+        - key: idviajemultitrans
+          value:
+            payloadPath: idviajemultitrans
+        - key: usuarioenvio
+          value:
+            payloadPath: usuarioenvio
+      success: onAsignarUsuarioEnvioSuccess
+      error: onAsignarUsuarioEnvioError
+  onAsignarUsuarioEnvioSuccess:
+    - _type: grape
+      name: asignarUsuarioEnvio
+  onAsignarUsuarioEnvioError:
+    - _type: alert
+      text: Se ha producido error al asignar usuario.
+      severity: error
+  onSincroEnvioClicked:
+    - _type: post
+      schema: envios
+      action: postLineasEnvios
+      data:
+        - key: idviajemultitrans
+          value:
+            payloadPath: idviajemultitrans
+        - key: lineasEnvio
+          value:
+            payloadPath: lineasEnvio
+      success: onSincroEnvioClickedSuccess
+      error: onSincroEnvioClickedError
+  onSincroEnvioClickedSuccess:
+    - _type: grape
+      name: sincroEnvioSuccess
+  onSincroEnvioClickedError:
+    - _type: alert
+      text: Se ha producido error al sincronizar lineas.
+      severity: error

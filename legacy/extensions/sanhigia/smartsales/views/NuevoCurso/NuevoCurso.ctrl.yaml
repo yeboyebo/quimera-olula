@@ -1,0 +1,22 @@
+shortcuts:
+  - type: DetailBuffer
+    name: curso
+    id: codCurso
+    schemaName: eventosCurso
+    mode: insert
+    remoteBufferChanged: false
+state:
+  estadoEmail: null
+  codCurso: null
+bunch:
+  # onCursoBufferChanged:
+  #   - _type: log
+  #     desc: mimensaje_sssssssssssssssssssssssssssssssss
+  #     value:
+  #       statePath: data
+  onNuevoCursoSectionAccepted:
+    - _type: grape
+      name: saveCurso
+  onNuevoCursoSectionCancelled:
+    - _type: grape
+      name: cancelCurso

@@ -1,0 +1,9 @@
+.DetalleFuenteLead {
+    quimera-input[nombre="descripcion"] {
+        grid-column: 1 / span 9;
+    }
+
+    quimera-checkbox[nombre="valor_defecto"] {
+        grid-column: 1 / span 5;
+    }
+}

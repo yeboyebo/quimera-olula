@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { CircularProgress, LinearProgress } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { useStateValue, useWidth, util } from "quimera";
 import { useCallback, useEffect } from "react";
 
 import { QAlmacenesVbarba, QArticuloVbarba } from "../../comps";
@@ -89,8 +89,8 @@ function Stocks({ useStyles, idRefStockProp, referenciaArticulo }) {
           MasterComponent={
             <Container>
               <Box mx={1} my={1}>
-                <Grid container driection="row" alignItems="center" justifyContent="space-between">
-                  <Grid item xs={12} md={4}>
+                <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
+                  <Grid size={{ xs: 12, md: 4 }} >
                     <QArticuloVbarba
                       id="referencia"
                       label={`Lectura${lectura ? ` (${lectura})` : ""}`}
@@ -99,26 +99,21 @@ function Stocks({ useStyles, idRefStockProp, referenciaArticulo }) {
                       fullWidth
                     />
                   </Grid>
-                  <Grid
-                    item
-                    container
-                    xs={6}
-                    md={4}
-                    pb={1}
-                    justifyContent={mobile ? "flex-start" : "flex-end"}
-                    style={{ margin: mobile ? "30px 0px 10px 0px" : "inherit" }}
-                  >
-                    <Typography variant="subtittle1">{`Finca: ${miFinca?.descripcion}`}</Typography>
+
+                  <Grid size={{ xs: 6, md: 4 }} pb={1} style={{
+                    textAlign: mobile ? "left" : "center",
+                    margin: mobile ? "30px 0px 10px 0px" : "inherit"
+                  }}>
+                    <Typography variant="subtittle1">
+                      {`Finca: ${miFinca?.descripcion}`}
+                    </Typography>
                   </Grid>
-                  <Grid
-                    item
-                    container
-                    xs={6}
-                    md={4}
-                    pb={1}
-                    justifyContent="flex-end"
-                    style={{ margin: mobile ? "30px 0px 10px 0px" : "inherit" }}
-                  >
+
+
+                  <Grid size={{ xs: 6, md: 4 }} pb={1} style={{
+                    textAlign: "right",
+                    margin: mobile ? "30px 0px 10px 0px" : "inherit"
+                  }}>
                     <Button
                       id="crearStocks"
                       onClick={() =>
@@ -289,25 +284,28 @@ function Stocks({ useStyles, idRefStockProp, referenciaArticulo }) {
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Grid container justifyContent="space-around" px={2} mb={2}>
-                    <Button
-                      id="cancelarCrearStock"
-                      text="Cancelar"
-                      color="primary"
-                      variant="contained"
-                    />
-
-                    <Button
-                      id="aceptarCrearStock"
-                      text={!creandoStock ? "Aceptar" : "Creando"}
-                      color="secondary"
-                      variant="contained"
-                      disabled={creandoStock}
-                    >
-                      {creandoStock && (
-                        <CircularProgress size={24} color="white" style={{ marginLeft: 10 }} />
-                      )}
-                    </Button>
+                  <Grid container size={12} justifyContent="space-between" mb={2} spacing={2}>
+                    <Grid size={6} display="flex" justifyContent="flex-start">
+                      <Button
+                        id="cancelarCrearStock"
+                        text="Cancelar"
+                        color="primary"
+                        variant="contained"
+                      />
+                    </Grid>
+                    <Grid size={6} display="flex" justifyContent="flex-end">
+                      <Button
+                        id="aceptarCrearStock"
+                        text={!creandoStock ? "Aceptar" : "Creando"}
+                        color="secondary"
+                        variant="contained"
+                        disabled={creandoStock}
+                      >
+                        {creandoStock && (
+                          <CircularProgress size={24} color="white" style={{ marginLeft: 10 }} />
+                        )}
+                      </Button>
+                    </Grid>
                   </Grid>
                 </DialogActions>
               </Dialog>

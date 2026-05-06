@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
+import { useMenuControl } from "../plantilla/useMenuControl";
 import "./menu-lateral.css";
 import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 
@@ -11,6 +12,7 @@ export const MenuLateral = () => {
   const menuFactory = useContext(FactoryCtx);
   const rutaActual = useLocation().pathname;
   const [busqueda, setBusqueda] = useState("");
+  const { menuAbierto, cerrarMenu } = useMenuControl();
 
   const renderBuscador = () => (
     <div id="buscador">
@@ -45,7 +47,7 @@ export const MenuLateral = () => {
           key={elemento.nombre}
           className={rutaActual === elemento.url ? "activo" : ""}
         >
-          <Link to={elemento.url}>
+          <Link to={elemento.url} onClick={() => cerrarMenu("lateral")}>
             {icono} {elemento.nombre}
           </Link>
         </li>
@@ -74,7 +76,7 @@ export const MenuLateral = () => {
   );
 
   return (
-    <menu-lateral>
+    <menu-lateral className={menuAbierto.lateral ? "activo" : ""}>
       <aside id="menu-principal">
         {renderBuscador()}
         <nav>

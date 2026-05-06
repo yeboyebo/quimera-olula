@@ -1,6 +1,6 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useContext } from "react";
 import { LineaTransferenciaStock } from "../../diseño.ts";
 import { eliminarLineaTransferenciaStock } from "../../infraestructura.ts";
@@ -11,7 +11,7 @@ export const BorrarLineaTransferenciaStock = ({
   linea,
   transferenciaID,
 }: {
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
   linea: LineaTransferenciaStock;
   activo: boolean;
   transferenciaID: string;

@@ -1,7 +1,6 @@
 import { Box, Field, Grid, Icon, IconButton, QBox, Typography } from "@quimera/comps";
 import { List } from "@quimera/thirdparty";
-import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
-import React from "react";
+import Quimera, { useStateValue, useWidth } from "quimera";
 
 import { Direccion, ListItemLineaFactura, Totales } from "../../../comps";
 
@@ -30,8 +29,8 @@ function FacturaDetalle({ useStyles }) {
           <Box px={1} my={1}>
             <Box width={1} border={0} borderColor="gray" height={"calc(100%)"}>
               <Box>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
+                <Grid container spacing={1} direction="column" >
+                  <Grid size={12}>
                     <Field.Date
                       id={`facturas.dict.${facturas.current}.fecha`}
                       fullWidth
@@ -39,18 +38,18 @@ function FacturaDetalle({ useStyles }) {
                       disabled
                     />
                   </Grid>
-                  <Grid item xs={12} className={classes.cabecera}>
+                  <Grid size={12} className={classes.cabecera}>
                     <Typography variant="h5">Dirección de Facturación</Typography>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Direccion documento={facturas.dict[facturas.current]} />
                   </Grid>
 
-                  <Grid item xs={12} className={classes.cabecera}>
+                  <Grid size={12} className={classes.cabecera}>
                     <Typography variant="h5">Líneas</Typography>
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <List>
                       {lineas.idList?.map(idLinea => (
                         <ListItemLineaFactura key={idLinea} divider linea={lineas.dict[idLinea]} />
@@ -58,10 +57,10 @@ function FacturaDetalle({ useStyles }) {
                     </List>
                   </Grid>
 
-                  <Grid item xs={12} className={classes.cabecera}>
+                  <Grid size={12} className={classes.cabecera}>
                     <Typography variant="h5">Totales</Typography>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Totales
                       totales={[
                         { name: "Neto", value: facturas.dict[facturas.current].neto },

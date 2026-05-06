@@ -1,0 +1,63 @@
+---
+shortcuts:
+
+state:
+  {
+    tiendasStock: {},
+    msgSuccess: "",
+    msgError: "",
+    showLoading: false,
+    tallas: {},
+    tallaSeleccionada: null,
+  }
+bunch:
+  getTallasByReferenciaOrBarcode:
+    - _type: set
+      path: showLoading
+      value:
+        const: true
+    - _type: set
+      path: tiendasStock
+      value:
+        const: {}
+    - _type: set
+      path: msgSuccess
+      value:
+        const: ""
+    - _type: set
+      path: msgError
+      value:
+        const: ""
+    - _type: post
+      schema: consultaStock
+      action: get_tallas_stocks
+      data:
+        - key: barcodeInput
+          value:
+            payloadPath: barcodeInput
+      success: onGetStockTiendaSuccess
+  onGetStockTiendaSuccess:
+    - _type: set
+      path: showLoading
+      value:
+        const: false
+    - _type: set
+      path: tiendasStock
+      value:
+        payloadPath: response.tiendasStock
+    - _type: set
+      path: msgSuccess
+      value:
+        payloadPath: response.msgSuccess
+    - _type: set
+      path: tallas
+      value:
+        payloadPath: response.tallas
+    - _type: set
+      path: tallaSeleccionada
+      value:
+        payloadPath: response.tallaSeleccionada
+    - _type: set
+      path: msgError
+      value:
+        payloadPath: response.msgError

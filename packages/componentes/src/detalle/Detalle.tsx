@@ -2,14 +2,14 @@ import { Entidad } from "@olula/lib/diseño.ts";
 import { PropsWithChildren, useEffect } from "react";
 import { QBoton } from "../atomos/qboton.tsx";
 import { QIcono } from "../atomos/qicono.tsx";
-import estilos from "./detalle.module.css";
+import "./detalle.css";
 
 interface DetalleProps<T extends Entidad> {
   id: string | undefined;
   obtenerTitulo?: (entidad: T) => string;
   entidad: T | null;
   setEntidad: (entidad: T) => void;
-  cargar: (id: string) => Promise<T>;
+  cargar?: (id: string) => Promise<T>;
   className?: string;
   cerrarDetalle?: () => void;
 }
@@ -24,10 +24,8 @@ export function Detalle<T extends Entidad>({
   className,
   cerrarDetalle,
 }: PropsWithChildren<DetalleProps<T>>) {
-  const { detalle } = estilos;
-
   useEffect(() => {
-    if (id && (!entidad || id !== entidad.id)) {
+    if (cargar && id && (!entidad || id !== entidad.id)) {
       const load = async () => {
         const cliente = await cargar(id);
         if (cliente) {
@@ -47,11 +45,11 @@ export function Detalle<T extends Entidad>({
   }
 
   return (
-    <div className={`${detalle} ${className || ""}`.trim()}>
+    <div className={`detalle ${className || ""}`.trim()}>
       {" "}
       {obtenerTitulo && (
-        <h2>
-          <span>{obtenerTitulo(entidad)}</span>
+        <div className="detalle-cabecera">
+          <h2>{obtenerTitulo(entidad)}</h2>
           {cerrarDetalle && (
             <QBoton
               onClick={cerrarDetalle}
@@ -62,7 +60,7 @@ export function Detalle<T extends Entidad>({
               <QIcono nombre="cerrar" tamaño="sm" />
             </QBoton>
           )}
-        </h2>
+        </div>
       )}
       {children}
     </div>

@@ -1,0 +1,38 @@
+---
+shortcuts:
+
+state: { lineasRecepcion: [], mostrarTodos: false, msgSuccess: "", msgError: "", barcode: null }
+bunch:
+  init:
+    - _type: grape
+      name: getLineasRecepcion
+  #   - _type: get
+  #     schema: lineas_envios
+  #     filter:
+  #       - const: idviajemultitrans
+  #       - eq
+  #       - payloadPath: idviajemultitransFiltro
+  #     success: setLineasRecepcion
+  # setLineasRecepcion:
+  #   - _type: set
+  #     path: lineasRecepcion
+  #     value:
+  #       payloadPath: response.data
+  mostrarTodos:
+    - _type: set
+      path: mostrarTodos
+      value:
+        toggleStatePath: mostrarTodos
+  setMensajes:
+    - _type: set
+      path: msgSuccess
+      value:
+        payloadPath: msgSuccess
+    - _type: set
+      path: msgError
+      value:
+        payloadPath: msgError
+    - _type: set
+      path: barcode
+      value:
+        const: null

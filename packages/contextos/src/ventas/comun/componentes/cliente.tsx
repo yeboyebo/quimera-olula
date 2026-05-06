@@ -8,6 +8,7 @@ interface ClienteProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  ref?: React.RefObject<HTMLInputElement | null>;
   onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -33,7 +34,6 @@ export const Cliente = ({
     );
 
     if (!Array.isArray(datos)) {
-      console.error("Los clientes no son un array:", datos);
       return [];
     }
 

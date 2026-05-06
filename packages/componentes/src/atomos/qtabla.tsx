@@ -1,8 +1,9 @@
 import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
   calcularPaginacionSimplificada,
-  formatearFecha,
-  formatearHora,
+  formatearFechaDate,
+  formatearFechaString,
+  formatearHoraString,
   formatearMoneda,
 } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
@@ -12,16 +13,19 @@ import "./qtabla.css";
 type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
+  prioridad?: "alta" | "media" | "baja";
+  esTitulo?: boolean;
   tipo?:
     | "texto"
     | "numero"
     | "moneda"
     | "fecha"
     | "hora"
+    | "fechahora"
     | "booleano"
     | undefined;
   divisa?: string;
-  ancho?: string; // Ancho específico para esta columna
+  ancho?: string;
   render?: (entidad: T) => string | ReactNode;
 };
 
@@ -58,17 +62,21 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     divisa,
     ancho,
   }: MetaColumna<T>) => {
-    let datos = render?.(entidad as T) ?? (entidad[id] as string);
+    let datos = render?.(entidad as T) ?? (entidad[id] as unknown);
 
     // Formateo automático según tipo
     if (tipo === "moneda" && typeof datos === "number") {
       datos = formatearMoneda(datos, divisa ?? "EUR");
     } else if (tipo === "fecha" && typeof datos === "string") {
-      datos = formatearFecha(datos);
+      datos = formatearFechaString(datos);
+    } else if (tipo === "fecha" && typeof datos === "object") {
+      datos = formatearFechaDate(datos as Date);
     } else if (tipo === "hora" && typeof datos === "string") {
-      datos = formatearHora(datos);
+      datos = formatearHoraString(datos);
     } else if (tipo === "numero" && typeof datos === "number") {
       datos = datos.toLocaleString();
+    } else if (tipo === "booleano" && typeof datos === "boolean") {
+      datos = datos ? "Sí" : "No";
     }
 
     return (
@@ -77,7 +85,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
         className={`${id} ${tipo ?? ""}`}
         style={ancho ? { width: ancho } : undefined}
       >
-        {datos}
+        {datos as string}
       </td>
     );
   };
@@ -94,6 +102,9 @@ const paginacionControlador = (
     return null;
   }
   const { pagina, limite } = paginacion;
+  if (limite >= totalEntidades) {
+    return null;
+  }
   const { paginasMostradas, totalPaginas } = calcularPaginacionSimplificada(
     totalEntidades,
     pagina,

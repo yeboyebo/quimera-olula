@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 // import { Contexto, ContextoSet } from "@olula/lib/contexto.ts";
 import { ContextoError, Intentar, QError } from "@olula/lib/contexto.ts";
 import { Outlet } from "react-router";
@@ -10,30 +10,30 @@ import { Slot } from "../slot/Slot.tsx";
 
 export const Vista = ({ children }: PropsWithChildren<object>) => {
   const slots = { hijos: children };
+
   const [error, setError] = useState<QError | null>(null);
 
-  // async function intentar<Out>(f: () => Out, setError: (error: QError) => void): Promise<Out> {
-  //   try {
-  //     const result = await f();
-  //     return result;
-  //   } catch (error) {
-  //     setError(error as QError);
-  //     throw error;
-  //   }
-  // }
-  const intentar: Intentar = async (f) => {
-    try {
-      const result = await f();
-      return result;
-    } catch (error) {
-      const apiError = error as QError;
-      setError({
-        nombre: apiError.nombre,
-        descripcion: apiError.descripcion,
-      });
-      throw error;
-    }
-  };
+  const intentar: Intentar = useCallback(
+    async (f, onError) => {
+      try {
+        const result = await f();
+        return result;
+      } catch (error) {
+        const apiError = error as QError;
+        const errorJS = error as Error;
+        console.log("apiError", apiError);
+        setError({
+          nombre: apiError.nombre ?? "Error",
+          descripcion: apiError.descripcion ?? errorJS.message,
+        });
+        if (onError) {
+          onError(error);
+        }
+        throw error;
+      }
+    },
+    [setError]
+  );
 
   const contenido = children ?? <Outlet />;
 
@@ -42,15 +42,14 @@ export const Vista = ({ children }: PropsWithChildren<object>) => {
       <Slot nombre="contenido" {...slots}>
         <Plantilla>{contenido}</Plantilla>
       </Slot>
+
       <QModal
         nombre="error"
         abierto={error !== null}
         onCerrar={() => setError(null)}
+        titulo={error?.nombre}
       >
-        <div>
-          <h2>{error?.nombre}</h2>
-          <p>{error?.descripcion}</p>
-        </div>
+        <p>{error?.descripcion}</p>
       </QModal>
     </ContextoError.Provider>
   );

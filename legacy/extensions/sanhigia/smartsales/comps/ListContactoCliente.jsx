@@ -24,42 +24,44 @@ export default function ListContactoCliente({ lineas }) {
         {/* <List> */}
         <Divider />
         {lineas.idList.length > 0 ? (
-          <Box style={{ maxHeight: "300px", overflowY: "auto" }}>
+          <Box id="scrollableBoxContactos" style={{ maxHeight: "300px", overflowY: "auto" }}>
             <InfiniteScroll
               dataLength={lineas.idList ? lineas?.idList?.length : 0}
-              next={() => dispatch({ type: `onNextContactosevento` })}
+              next={() => dispatch({ type: `onNextContactos` })}
               hasMore={lineas?.page?.next !== null}
               loader={<h4>Loading...</h4>}
-              scrollableTarget="scrollableBox"
+              scrollableTarget="scrollableBoxContactos"
             >
               {/* <List> */}
               {Object.values(lineas?.dict ?? {})
                 ?.map(contacto => {
                   return (
-                    <QListItem
-                      key={contacto?.codContacto}
-                      avatar={{
-                        icon: "account_circle",
-                        color: "",
-                      }}
-                      // acciones={actionEnabled ? [
-                      //   <Box
-                      //     className=""
-                      //     onClick={() => dispatch({
-                      //       type: `onRemoveContactoEvento`,
-                      //       payload: { 'codContacto': contacto?.codContacto },
-                      //     })}
-                      //   >
-                      //     <Icon>delete</Icon>
-                      //   </Box>,
-                      // ] : []}
-                      onClick={() => navigate(`/ss/contacto/${contacto.codContacto}`)}
-                      alignActions="flex-end"
-                      tr={contacto?.nombre ?? ""}
-                      br={contacto?.email}
-                      // tr={util.formatDate(curso?.fechaIni)}
-                      tl={contacto?.telefono}
-                    />
+                    <Box style={{ marginRight: "5px" }}>
+                      <QListItem
+                        key={contacto?.codContacto}
+                        avatar={{
+                          icon: "account_circle",
+                          color: "",
+                        }}
+                        // acciones={actionEnabled ? [
+                        //   <Box
+                        //     className=""
+                        //     onClick={() => dispatch({
+                        //       type: `onRemoveContactoEvento`,
+                        //       payload: { 'codContacto': contacto?.codContacto },
+                        //     })}
+                        //   >
+                        //     <Icon>delete</Icon>
+                        //   </Box>,
+                        // ] : []}
+                        onClick={() => navigate(`/ss/contacto/${contacto.codContacto}`)}
+                        alignActions="flex-end"
+                        tr={contacto?.nombre ?? ""}
+                        br={contacto?.email}
+                        // tr={util.formatDate(curso?.fechaIni)}
+                        tl={contacto?.telefono}
+                      />
+                    </Box>
                   );
                 })}
               {/* </List> */}

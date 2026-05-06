@@ -2,6 +2,9 @@ import { Totales } from "@quimera-extension/base-area_clientes";
 import { DocAgente, DocClienteYDir, DocDirCliente, DocFecha } from "@quimera-extension/base-ventas";
 import {
   Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Field,
   Icon,
   QBox,
@@ -11,7 +14,7 @@ import {
   QSection,
   Typography,
 } from "@quimera/comps";
-import { InfiniteScroll, List } from "@quimera/thirdparty";
+import { IconButton, InfiniteScroll, List } from "@quimera/thirdparty";
 import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import React, { useCallback, useEffect } from "react";
 
@@ -61,12 +64,16 @@ const Historico = ({ historico, disabled, dispatch }) => {
           ))}
         </List>
       </InfiniteScroll>
+
+
     </Box>
   );
 };
 
 const historicosIguales = (prev, next) => {
-  const igual = prev.historico?.idList.length == next.historico?.idList.length;
+  const igual =
+    prev.historico?.idList.length === next.historico?.idList.length &&
+    prev.historico?.dict === next.historico?.dict;
   console.log(
     "RERENDERING HOSTORICOMEMO?",
     prev.historico?.idList.length,
@@ -86,7 +93,7 @@ const LineasMemo = React.memo(Lineas);
 const HistoricoMemo = React.memo(Historico, historicosIguales);
 
 function PedidoCli({ callbackChanged, idPedido, initPedido, useStyles }) {
-  const [{ historico, lineas, logic, pedido, status, vistaDetalle }, dispatch] = useStateValue();
+  const [{ historico, lineas, logic, modalTracking, pedido, status, urlsTrackingData, vistaDetalle }, dispatch] = useStateValue();
   const classes = useStyles();
   const width = useWidth();
 
@@ -260,6 +267,39 @@ function PedidoCli({ callbackChanged, idPedido, initPedido, useStyles }) {
           )}
         </QBox>
       )}
+
+      <Dialog
+        open={modalTracking}
+        onClose={() => dispatch({ type: "onCerrarModalTracking" })}
+      >
+        <DialogTitle id="form-dialog-title">
+          <Box className={"tituloModal"}>El pedido se ha servido en los siguientes albaranes:</Box>
+        </DialogTitle>
+        <DialogContent>
+          {!urlsTrackingData.totalAlbaranes === 0 ? (
+            <Typography variant="body1">No hay enlace para el seguimiento</Typography>
+          ) : (
+            urlsTrackingData?.resultados?.map((albaran, index) => (
+              <Box key={index} mb={2} display="flex" alignItems="center" justifyContent="space-between" gap={1} >
+                {albaran.status === "ok" ? (
+                  <>
+                    <Typography variant="body1">{`${albaran.codigo}`}</Typography>
+                    <Typography variant="body1">{`${util.formatDate(albaran.fecha)}`}</Typography>
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={() => dispatch({ type: "onNavegarATrackingClicked", payload: { url: albaran.urlsegui } })}
+                    >
+                      <Icon>open_in_new</Icon>
+                    </IconButton>
+                  </>)
+                  : (<Typography variant="body1" color="error">{`${albaran.codigo}`} - {albaran.mensaje}</Typography>)
+                }
+              </Box>
+            ))
+          )}
+        </DialogContent>
+      </Dialog>
     </Quimera.Template>
   );
 }

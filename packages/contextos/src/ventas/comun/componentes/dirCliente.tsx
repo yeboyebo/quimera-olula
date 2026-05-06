@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { getDirecciones } from "../../cliente/infraestructura.ts";
 
 interface DireccionesProps {
-  clienteId: string | null;
+  clienteId: string | undefined;
   valor?: string;
   nombre?: string;
+  label?: string;
+  deshabilitado?: boolean;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -13,6 +15,8 @@ export const DirCliente = ({
   clienteId,
   valor,
   nombre = "direccion_id",
+  label = "Dirección",
+  deshabilitado = false,
   onChange,
   ...props
 }: DireccionesProps) => {
@@ -41,9 +45,10 @@ export const DirCliente = ({
   return (
     <QSelect
       {...props}
-      label="Dirección"
+      label={label}
       nombre={nombre}
       valor={valor}
+      deshabilitado={deshabilitado}
       opciones={opcionesDireccion}
       onChange={onChange}
     />

@@ -1,21 +1,23 @@
+import { Totales } from "@quimera-extension/base-area_clientes";
+import { DocAgente, DocClienteYDir, DocFecha } from "@quimera-extension/base-ventas";
 import {
+  Badge,
   Box,
   Button,
   Dialog,
   DialogContent,
   Field,
+  Icon,
   QBox,
   QBoxButton,
   QListModel,
   QModelBox,
   QSection,
-  Typography,
+  Typography
 } from "@quimera/comps";
 import { CircularProgress } from "@quimera/thirdparty";
-import { Totales } from "@quimera-extension/base-area_clientes";
-import { DocAgente, DocClienteYDir, DocFecha } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useCallback, useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useCallback, useEffect } from "react";
 
 import { LineaAlbaranCliComp } from "../../comps";
 
@@ -104,9 +106,49 @@ function AlbaranCli({ callbackChanged, idAlbaran, initAlbaran, useStyles }) {
               />
               <QBoxButton
                 id="imprimirAlbaran"
-                title="Imprimir albarán"
+                title="Imprimir albarán valorado"
                 icon="print"
                 disabled={false}
+                onClick={() =>
+                  dispatch({
+                    type: "onImprimirAlbaranClicked",
+                    payload: { tipo: "valorado" },
+                  })
+                }
+              />
+              <QBoxButton
+                id="imprimirAlbaranNoValorado"
+                title="Imprimir albarán no valorado"
+                icon={
+                  <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: "1em", height: "1em" }}>
+                    <Icon sx={{ fontSize: "inherit" }}>local_printshop</Icon>
+                    <Badge
+                      badgeContent="NV"
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          right: 11,
+                          top: -8,
+                          color: "primary.main",
+                          border: "1px solid",
+                          borderColor: "primary.main",
+                          fontSize: "9px",
+                          padding: "0px 3px",
+                          minWidth: "16px",
+                          maxHeight: "16px",
+                          lineHeight: "1",
+                          backgroundColor: "white"
+                        }
+                      }}
+                    ></Badge>
+                  </Box>
+                }
+                disabled={false}
+                onClick={() =>
+                  dispatch({
+                    type: "onImprimirAlbaranClicked",
+                    payload: { tipo: "no_valorado" },
+                  })
+                }
               />
               <QBoxButton
                 id="generarFactura"

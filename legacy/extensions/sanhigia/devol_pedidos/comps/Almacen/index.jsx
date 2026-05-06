@@ -13,7 +13,7 @@ function Almacen({ ...props }) {
     API("almacenes")
       .get()
       .select("codalmacen,nombre")
-      .filter(key ? ["codalmacen", "eq", key] : ["nombre", "like", text])
+      .filter(key ? ["codalmacen", "eq", key] : ["nombre", "like_ua", text])
       .success(response => {
         setOptions(
           response.data

@@ -1,50 +1,15 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { MetaModelo } from "@olula/lib/dominio.ts";
 import {
     cambioClienteVentaVacio,
-    metaCambioClienteVenta,
-    metaLineaVenta,
-    metaNuevaLineaVenta,
-    metaNuevaVenta,
-    metaVenta,
-    nuevaLineaVentaVacia,
+    clienteVentaVacio,
     nuevaVentaVacia,
     ventaVacia
 } from "../venta/dominio.ts";
 import {
     CambioClienteFactura,
     Factura,
-    LineaFactura,
-    NuevaFactura,
-    NuevaLineaFactura
+    NuevaFactura
 } from "./diseño.ts";
-
-export const facturaVacia: Factura = {
-    ...ventaVacia,
-    servido: 'No',
-};
-
-export const nuevaFacturaVacia: NuevaFactura = nuevaVentaVacia;
-
-export const cambioClienteFacturaVacio: CambioClienteFactura = cambioClienteVentaVacio;
-
-export const nuevaLineaFacturaVacia: NuevaLineaFactura = nuevaLineaVentaVacia;
-
-export const metaNuevaFactura: MetaModelo<NuevaFactura> = metaNuevaVenta;
-
-export const metaCambioClienteFactura: MetaModelo<CambioClienteFactura> = metaCambioClienteVenta;
-
-export const metaFactura: MetaModelo<Factura> = {
-    campos: {
-        fecha: { tipo: "fecha", requerido: false },
-        ...metaVenta.campos,
-    },
-};
-
-export const metaLineaFactura: MetaModelo<LineaFactura> = metaLineaVenta;
-
-export const metaNuevaLineaFactura: MetaModelo<NuevaLineaFactura> = metaNuevaLineaVenta;
-
 
 export const metaTablaFactura: MetaTabla<Factura> = [
     {
@@ -54,6 +19,7 @@ export const metaTablaFactura: MetaTabla<Factura> = [
     {
         id: "nombre_cliente",
         cabecera: "Cliente",
+        render: (f) => f.cliente.nombre_cliente,
     },
     {
         id: "total",
@@ -61,4 +27,14 @@ export const metaTablaFactura: MetaTabla<Factura> = [
         tipo: "moneda",
     },
 ];
+
+export const facturaVacia = (): Factura => ({
+    ...ventaVacia,
+    cliente: clienteVentaVacio,
+    editable: false,
+});
+
+export const nuevaFacturaVacia: NuevaFactura = nuevaVentaVacia;
+
+export const cambioClienteFacturaVacio: CambioClienteFactura = cambioClienteVentaVacio;
 

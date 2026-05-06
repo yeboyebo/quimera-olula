@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
+import { getIdUnico } from "../helpers.ts";
 
 type Opcion = { valor: string; descripcion: string };
 
-type QAutocompletarProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
+export type QAutocompletarProps = Omit<
+  FormFieldProps,
+  "onChange" | "onBlur"
+> & {
   tiempoEspera?: number;
   longitudMinima?: number;
   descripcion?: string;
@@ -37,7 +41,9 @@ export const QAutocompletar = ({
   const [valorDescrito, setValorDescrito] = useState<string>("");
 
   const valorReal = useRef<HTMLInputElement>(null);
-  const temporizador = useRef<number | undefined>(undefined);
+  const temporizador = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
 
   const renderOpciones = opciones.map((opcion) => (
     <option key={opcion.valor} value={opcion.descripcion}>
@@ -45,7 +51,7 @@ export const QAutocompletar = ({
     </option>
   ));
 
-  const listaId = nombre + "-datalist";
+  const listaId = nombre + "-datalist-" + getIdUnico();
 
   const regenerarOpciones = async (valor: string) => {
     clearTimeout(temporizador.current);
@@ -61,6 +67,10 @@ export const QAutocompletar = ({
   useEffect(() => {
     setValorDescrito(descripcion || "");
   }, [descripcion]);
+
+  useEffect(() => {
+    if (!valor) setValorDescrito("");
+  }, [valor]);
 
   const manejarChange = (valor: string) => {
     if (valor === valorDescrito) return;

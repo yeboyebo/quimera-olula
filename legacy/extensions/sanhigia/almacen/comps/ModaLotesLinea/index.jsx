@@ -40,7 +40,21 @@ function ModaLotesLinea({
       fechaAnadir,
     },
   ] = useStateValue();
-  console.log("modalloteslinea", loteAnadir);
+  const lotesAlmacenOrdenados = lotesAlmacen ? [...lotesAlmacen].sort((a, b) => {
+    const valueA = a.codigo;
+    const valueB = b.codigo;
+
+    if (typeof valueA === 'number' && typeof valueB === 'number') {
+      return valueA - valueB;
+    }
+
+    if (typeof valueA === 'string' && typeof valueB === 'string') {
+      return valueA.localeCompare(valueB);
+    }
+
+    return 0;
+  }) : [];
+
 
   return (
     <>
@@ -92,7 +106,7 @@ function ModaLotesLinea({
         )}
         {modalLotesTipo === "info" && (
           <Box>
-            <Grid item xs={6} sm={2} md={2}>
+            <Grid size={{ xs: 6, sm: 2, md: 2 }}>
               <Field.Float
                 id="cantidadAnadir"
                 label="Cantidad"
@@ -105,7 +119,7 @@ function ModaLotesLinea({
         )}
         <ListItemLineaLote
           key="lotesAlmacen"
-          lineas={lotesAlmacen}
+          lineas={lotesAlmacenOrdenados}
           disabled={false}
           dispatch={dispatch}
         />

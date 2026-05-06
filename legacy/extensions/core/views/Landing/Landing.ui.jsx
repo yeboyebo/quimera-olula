@@ -1,9 +1,8 @@
 import { Container, Grid, Typography } from "@quimera/comps";
-import Quimera, { PropValidation } from "quimera";
-import React from "react";
+import Quimera from "quimera";
 
-function Landing({ useStyles }) {
-  const classes = useStyles();
+function Landing() {
+  const classes = {};
 
   return (
     <Quimera.Template id="Landing">
