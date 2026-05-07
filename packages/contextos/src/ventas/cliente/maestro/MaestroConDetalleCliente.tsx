@@ -35,12 +35,7 @@ export const MaestroConDetalleCliente = () => {
             <h2>Clientes</h2>
             <Listado<Cliente>
               metaTabla={metaTablaCliente}
-              // tarjeta={(cliente) => (
-              //   <QTarjetaGenerica
-              //     entidad={cliente}
-              //     metaTabla={metaTablaCliente}
-              //   />
-              // )}
+              modo="tabla"
               criteria={ctx.clientes.criteria}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}

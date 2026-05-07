@@ -1,8 +1,9 @@
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad } from "@olula/lib/diseño.ts";
 
 export interface Caja extends Entidad {
     id: string;
     codigo_almacen: string;
+    nombre_almacen?: string;
 }
 
 export interface CajaAPI extends Entidad {
@@ -17,20 +18,7 @@ export interface MovimientoCaja extends Entidad {
     cantidad: number;
 }
 
-export type GetCaja = (id: string) => Promise<Caja>;
-export type GetCajas = (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion?: Paginacion
-) => RespuestaLista<Caja>;
-
-export type PostCaja = (modulo: Partial<Caja>) => Promise<string>;
-export type PatchCaja = (id: string, modulo: Partial<Caja>) => Promise<void>;
-export type DeleteCaja = (id: string) => Promise<void>;
-
 export type NuevaCaja = {
     id: string;
     codigo_almacen: string;
 };
-
-export type GetMovimientosCaja = (id: string) => RespuestaLista<MovimientoCaja>;

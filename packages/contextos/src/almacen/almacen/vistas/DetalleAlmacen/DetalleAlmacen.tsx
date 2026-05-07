@@ -79,7 +79,7 @@ export const DetalleAlmacen = ({
   const actualizaAlmacenLocal = async () => {
     const actual = almacenLocal.obtener();
     console.log("Almacén local actual:", actual);
-    almacenLocal.actualizar(modelo.id);
+    almacenLocal.actualizar({ id: modelo.id, nombre_almacen: modelo.nombre });
   };
 
   return (

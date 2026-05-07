@@ -63,8 +63,14 @@ export const deleteAlmacen: DeleteAlmacen = async (id) => {
 };
 
 
+export type AlmacenLocal = { id: string; nombre_almacen: string };
+
 export const almacenLocal = {
-    actualizar: (codAlmacen: string) => localStorage.setItem("almacen-local", codAlmacen),
-    obtener: () => localStorage.getItem("almacen-local"),
+    actualizar: (almacen: AlmacenLocal) => localStorage.setItem("almacen-local", JSON.stringify(almacen)),
+    obtener: (): AlmacenLocal | null => {
+        const raw = localStorage.getItem("almacen-local");
+        if (!raw) return null;
+        try { return JSON.parse(raw) as AlmacenLocal; } catch { return null; }
+    },
     eliminar: () => localStorage.removeItem("almacen-local"),
 }

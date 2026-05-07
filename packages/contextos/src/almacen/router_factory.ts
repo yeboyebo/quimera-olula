@@ -1,6 +1,6 @@
 import { MaestroAlmacen } from "./almacen/vistas/maestro/MaestroAlmacen.tsx"
 import { MaestroConDetalleArticulo } from "./articulo/vistas/MaestroConDetalleArticulo.tsx"
-import { MaestroConDetalleCaja } from "./caja/vistas/MaestroConDetalleCaja.tsx"
+import { MaestroConDetalleCaja } from "./caja/maestro/MaestroConDetalleCaja.tsx"
 import { MaestroFamilia } from "./familia/vistas/maestro/MaestroFamilia.tsx"
 import { MaestroDetalleTransferenciasStock } from "./transferencias/vistas/MaestroDetalleTransferenciasStock.tsx"
 
