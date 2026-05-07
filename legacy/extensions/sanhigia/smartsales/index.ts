@@ -275,7 +275,7 @@ export default {
     "ss_campanias:visit": (check: (rule: string) => boolean) => check("ss_campanias.leer"),
     "ss_informes:visit": (check: (rule: string) => boolean) => check("crm.informes"),
     "Trato:boton-borrar": (check: (rule: string) => boolean) => check("crm.trato.borrar"),
-    "TratosFarma:visit": (check: (rule: string) => boolean) => check("farma/acceso_tratos"), // ❌ sin mapeo
+    "TratosFarma:visit": (check: (rule: string) => boolean) => check("crm.farma.acceso_tratos"),
     "ss_informes:marketing": (check: (rule: string) => boolean) => check("crm.informe.marketing"),
     "ss_informes:todoslosagentes": (check: (rule: string) => boolean) =>
       check("crm.informe.todos"),
