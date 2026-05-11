@@ -263,6 +263,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
             },
             cantidad: linea.cantidad,
             pvp_unitario: linea.pvp_unitario,
+            iva_incluido: linea.iva_incluido,
             dto_porcentual: linea.dto_porcentual,
             grupo_iva_producto_id: linea.grupo_iva_producto_id,
         },

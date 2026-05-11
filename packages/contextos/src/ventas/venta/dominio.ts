@@ -76,6 +76,7 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         pvp_unitario: { tipo: "decimal", requerido: true },
+        iva_incluido: { tipo: "checkbox", requerido: true },
         dto_porcentual: metaDtoPorcentual,
         referencia: { requerido: true },
     }

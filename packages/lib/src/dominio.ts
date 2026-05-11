@@ -473,7 +473,7 @@ const setCampo = <M extends Modelo>(
     segundo?: string
 ) => async (_valor: ValorControl): Promise<void> => {
 
-    let valor = _valor || null;
+    let valor = _valor === undefined ? null : _valor;
     let descripcion: string | undefined = undefined;
 
 

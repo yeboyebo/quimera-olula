@@ -63,7 +63,7 @@ type ParamOpcion = {
     descripcion?: string
 };
 
-export type ValorControl = null | string | ParamOpcion;
+export type ValorControl = null | boolean | string | ParamOpcion;
 
 export type UiProps = {
     nombre: string;
