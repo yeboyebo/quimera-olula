@@ -650,6 +650,8 @@ export const formatearFechaString = (fecha: string): string => {
 };
 
 export const formatearFechaDate = (date: Date): string => {
+    if (!date) return date;
+
     return date.toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "2-digit",
