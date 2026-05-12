@@ -1,6 +1,12 @@
+import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { MetaTabla, QBoton, QModal } from "@olula/componentes/index.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  filtroTextos,
+  getMetaFiltroDefecto,
+  MetaFiltro,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useLista } from "@olula/lib/useLista.ts";
@@ -13,9 +19,56 @@ import { DetalleLicenciaFarma } from "./DetalleLicenciaFarma/DetalleLicenciaFarm
 
 const metaTablaLicenciaFarma: MetaTabla<CabeceraLicenciaFarma> = [
   { id: "tipoLicencia", cabecera: "Tipo" },
-  { id: "fechaInicio", cabecera: "Fecha inicio" },
-  { id: "fechaCaducidad", cabecera: "Caducidad" },
+  { id: "fechaInicio", cabecera: "Fecha inicio", tipo: "fecha" },
+  { id: "fechaCaducidad", cabecera: "Caducidad", tipo: "fecha" },
 ];
+
+const metaFiltroLicenciaFarma: MetaFiltro = {
+  ...getMetaFiltroDefecto(metaTablaLicenciaFarma),
+  estado: {
+    id: "estado",
+    label: "Estado",
+    tipo: "multiseleccion",
+    opciones: [
+      { valor: "En revisión", descripcion: "En revisión" },
+      { valor: "Acuerdo por recibir", descripcion: "Acuerdo por recibir" },
+      { valor: "Por presentar", descripcion: "Por presentar" },
+      { valor: "Presentada", descripcion: "Presentada" },
+    ],
+    filtro: (valor) => {
+      const opciones = valor as string[];
+      if (!opciones?.length) return null;
+      if (opciones.length === 1) return ["estado", "=", opciones[0]];
+      return ["estado", "in", opciones.join("_")];
+    },
+  },
+  nombreCliente: {
+    id: "nombreCliente",
+    label: "Cliente",
+    tipo: "texto",
+    filtro: (valor) => filtroTextos("nombreCliente", valor),
+  },
+  agenteId: {
+    id: "agenteId",
+    label: "Agente",
+    tipo: "texto",
+    filtro: (valor) => {
+      const opcion = valor as { valor: string; descripcion: string } | null;
+      if (!opcion?.valor) return null;
+      return ["agente_id", "=", opcion.valor];
+    },
+    render: (valor, onChange) => {
+      const opcion = valor as { valor: string; descripcion: string } | null;
+      return (
+        <Agente
+          valor={opcion?.valor ?? ""}
+          descripcion={opcion?.descripcion ?? ""}
+          onChange={(o) => onChange(o)}
+        />
+      );
+    },
+  },
+};
 
 type Estado = "lista" | "alta";
 
@@ -84,6 +137,7 @@ export const MaestroConDetalleLicenciaFarma = () => {
             </div>
             <Listado<CabeceraLicenciaFarma>
               metaTabla={metaTablaLicenciaFarma}
+              metaFiltro={metaFiltroLicenciaFarma}
               criteria={criteria}
               criteriaInicial={criteriaDefecto}
               cargando={cargando}
