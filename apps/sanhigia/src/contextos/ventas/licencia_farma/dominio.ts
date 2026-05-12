@@ -24,6 +24,7 @@ export const licenciaFarmaVacia: LicenciaFarma = {
     nombreCliente: null,
     clienteId: null,
     agenteId: null,
+    nombreAgente: null,
     trato: null,
 };
 

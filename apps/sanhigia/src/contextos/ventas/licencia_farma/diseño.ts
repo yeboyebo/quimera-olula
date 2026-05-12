@@ -29,6 +29,7 @@ export interface LicenciaFarma extends CabeceraLicenciaFarma {
     tratoId: string | null;
     estado: string | null;
     clienteId: string | null;
+    nombreAgente: string | null;
     trato: Trato | null;
 }
 
@@ -49,6 +50,7 @@ export interface LicenciaFarmaAPI extends CabeceraLicenciaFarmaAPI {
     trato_id: string | null;
     estado: string | null;
     cliente_id: string | null;
+    nombre_agente: string | null;
     trato: TratoAPI | null;
 }
 

@@ -29,6 +29,7 @@ const licenciaFarmaFromAPI = (api: LicenciaFarmaAPI): LicenciaFarma => ({
     tratoId: api.trato_id,
     estado: api.estado,
     clienteId: api.cliente_id,
+    nombreAgente: api.nombre_agente,
     trato: api.trato ? tratoDesdeAPI(api.trato) : null,
 });
 
