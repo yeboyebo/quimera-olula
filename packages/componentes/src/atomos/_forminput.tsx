@@ -108,7 +108,8 @@ export const FormInput = ({
   };
 
   const manejarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.(e.target.value, e);
+    const target = e.target;
+    onChange?.(target.type === 'checkbox' ? target.checked.toString() : target.value, e);
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -129,30 +130,39 @@ export const FormInput = ({
     }
   };
 
+  const inputProps = {
+    id: id,
+    type: tiposFormInput[tipo] ?? "text",
+    name: nombre,
+    placeholder: placeholder,
+    disabled: deshabilitado,
+    required: !opcional,
+    list: lista,
+    autoComplete: autocompletar,
+    onChange: manejarChange,
+    onBlur: manejarBlur,
+    onFocus: manejarFocus,
+    onInput: manejarInput,
+    onKeyUp: manejarKeyUp,
+    autoFocus: autoFocus,
+    ref: ref as React.RefObject<HTMLInputElement>,
+  }
   return (
-    <input
-      id={id}
-      type={tiposFormInput[tipo] ?? "text"}
-      name={nombre}
-      placeholder={placeholder}
-      value={valorFinal}
-      defaultValue={onChange ? undefined : valor}
-      checked={onChange ? checked : undefined}
-      defaultChecked={onChange ? undefined : checked}
-      disabled={deshabilitado}
-      required={!opcional}
-      list={lista}
-      autoComplete={autocompletar}
-      onChange={manejarChange}
-      onBlur={manejarBlur}
-      onFocus={manejarFocus}
-      onInput={manejarInput}
-      onKeyUp={manejarKeyUp}
-      autoFocus={autoFocus}
-      ref={ref as React.RefObject<HTMLInputElement>}
-    />
+      tipo === "checkbox"
+      ? <input 
+        {...inputProps}
+        checked={onChange ? checked : undefined}
+        defaultChecked={onChange ? undefined : checked}
+      />
+      : <input 
+        {...inputProps}
+        value={valorFinal as string}
+        defaultValue={onChange ? undefined : valor as string}
+      />
+    
   );
 };
+
 
 export const Etiqueta = ({ label }: { label: string }) => {
   return (
