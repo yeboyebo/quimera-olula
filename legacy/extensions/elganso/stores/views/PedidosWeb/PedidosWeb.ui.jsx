@@ -457,6 +457,7 @@ function PedidosWeb({ useStyles }) {
           disableDensitySelector
           disableColumnMenu
           checkboxSelection
+          disableRowSelectionOnClick
           onRowSelectionModelChange={(newRowSelectionModel, details) => {
             if (newRowSelectionModel && typeof newRowSelectionModel === 'object' && 'ids' in newRowSelectionModel) {
               if (newRowSelectionModel.type == 'include') {
