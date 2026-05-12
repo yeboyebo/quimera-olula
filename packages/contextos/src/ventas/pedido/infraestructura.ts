@@ -15,6 +15,7 @@ export interface LineaPedidoAPI {
   dto_porcentual: number;
   pvp_total: number;
   grupo_iva_producto_id: string;
+  iva_incluido: boolean;
 };
 
 interface PedidoAPI {
