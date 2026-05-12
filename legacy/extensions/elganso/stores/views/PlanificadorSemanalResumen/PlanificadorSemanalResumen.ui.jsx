@@ -299,7 +299,6 @@ function PlanificadorSemanalResumen() {
           disableColumnMenu
           disableRowSelectionOnClick
           checkboxSelection
-          rowSelectionModel={selectionModel}
           onRowSelectionModelChange={selection => {
             if (selection.length > 1) {
               const selectionSet = new Set(selectionModel);
@@ -316,6 +315,10 @@ function PlanificadorSemanalResumen() {
             paginationRowsPerPage: "Líneas por página",
             paginationDisplayedRows: ({ from, to, count }) =>
               `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
+            footerRowSelected: (count) =>
+              count !== 1
+                ? `${count} filas seleccionadas`
+                : `${count} fila seleccionada`,
           }}
           getRowId={row => row.id}
           getRowHeight={() => "auto"}

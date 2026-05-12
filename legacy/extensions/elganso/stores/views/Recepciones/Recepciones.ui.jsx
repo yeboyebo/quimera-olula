@@ -433,6 +433,10 @@ function Recepciones() {
             paginationRowsPerPage: "Líneas por página",
             paginationDisplayedRows: ({ from, to, count }) =>
               `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
+            footerRowSelected: (count) =>
+              count !== 1
+                ? `${count} filas seleccionadas`
+                : `${count} fila seleccionada`,
           }}
           getRowId={row => row.idviajemultitrans}
           slotProps={{
