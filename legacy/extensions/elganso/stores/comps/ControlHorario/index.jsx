@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button, Icon } from "@quimera/comps";
 import PropTypes from "prop-types";
 import { useStateValue } from "quimera";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LoadingGif } from "../../comps";
 
@@ -107,11 +107,13 @@ function ControlHorario() {
             showQuickFilter: true,
             printOptions: { disableToolbarButton: true },
             csvOptions: { disableToolbarButton: true },
-          },
-          pagination: {
-            labelRowsPerPage: "Líneas por página",
-            labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-          },
+          }
+        }}
+        localeText={{
+          toolbarQuickFilterPlaceholder: "Buscar...",
+          paginationRowsPerPage: "Líneas por página",
+          paginationDisplayedRows: ({ from, to, count }) =>
+            `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
         }}
       />
     );

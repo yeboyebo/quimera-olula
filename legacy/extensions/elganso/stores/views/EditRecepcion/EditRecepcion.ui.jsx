@@ -6,7 +6,7 @@ import { Box, Field, Icon, IconButton } from "@quimera/comps";
 import { Checkbox } from "@quimera/thirdparty";
 import { navigate } from "hookrouter";
 import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDbState } from "use-db-state";
 
 import { BarcodeScanner } from "../../comps";
@@ -443,11 +443,13 @@ function EditRecepcion({ ...props }) {
                 showQuickFilter: true,
                 printOptions: { disableToolbarButton: true },
                 csvOptions: { disableToolbarButton: true },
-              },
-              pagination: {
-                labelRowsPerPage: "Líneas por página",
-                labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-              },
+              }
+            }}
+            localeText={{
+              toolbarQuickFilterPlaceholder: "Buscar...",
+              paginationRowsPerPage: "Líneas por página",
+              paginationDisplayedRows: ({ from, to, count }) =>
+                `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
             }}
           />
         </div>

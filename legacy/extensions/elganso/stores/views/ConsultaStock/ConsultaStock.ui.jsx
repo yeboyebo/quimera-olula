@@ -202,7 +202,6 @@ function ConsultaStock({ useStyles }) {
         disableColumnSelector
         disableDensitySelector
         disableColumnMenu
-
         columns={columns}
         getRowId={row => row.index}
         getRowClassName={() => "rowTienda"}
@@ -210,18 +209,12 @@ function ConsultaStock({ useStyles }) {
         sx={{
           ".MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
         }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            printOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: true },
-          },
-          pagination: {
-            labelRowsPerPage: "Líneas por página",
-            labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-          },
+        localeText={{
+          toolbarQuickFilterPlaceholder: "Buscar...",
+          paginationRowsPerPage: "Líneas por página",
+          paginationDisplayedRows: ({ from, to, count }) =>
+            `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
         }}
-        showToolbar
       />
     );
   };

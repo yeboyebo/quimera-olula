@@ -479,6 +479,8 @@ function PedidosWeb({ useStyles }) {
           localeText={{
             toolbarQuickFilterPlaceholder: "Buscar...",
             paginationRowsPerPage: "Líneas por página",
+            paginationDisplayedRows: ({ from, to, count }) =>
+              `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
           }}
           getRowId={row => row.idtpv_comanda}
           getRowClassName={params => {

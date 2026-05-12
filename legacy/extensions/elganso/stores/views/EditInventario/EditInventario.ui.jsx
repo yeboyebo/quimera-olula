@@ -14,7 +14,7 @@ import {
 } from "@quimera/comps";
 import { navigate } from "hookrouter";
 import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDbState } from "use-db-state";
 
 import { BarcodeScanner } from "../../comps";
@@ -432,10 +432,12 @@ function EditInventario({ ...props }) {
                 printOptions: { disableToolbarButton: true },
                 csvOptions: { disableToolbarButton: true },
               },
-              pagination: {
-                labelRowsPerPage: "Líneas por página",
-                labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-              },
+            }}
+            localeText={{
+              toolbarQuickFilterPlaceholder: "Buscar...",
+              paginationRowsPerPage: "Líneas por página",
+              paginationDisplayedRows: ({ from, to, count }) =>
+                `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
             }}
           />
           {lineaSeleccionada ? (

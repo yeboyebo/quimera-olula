@@ -383,6 +383,12 @@ function PedidoWeb({ _estilos, ...props }) {
                 csvOptions: { disableToolbarButton: true },
               }
             }}
+            localeText={{
+              toolbarQuickFilterPlaceholder: "Buscar...",
+              paginationRowsPerPage: "Líneas por página",
+              paginationDisplayedRows: ({ from, to, count }) =>
+                `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
+            }}
           />
         ) : (
           <div className="filterNoResult">

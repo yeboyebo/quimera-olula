@@ -6,7 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Icon, IconButton } from "@quimera/comps";
 import { es as esES } from "date-fns/locale";
 import Quimera, { PropValidation, useStateValue } from "quimera";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function stringToColor(string) {
   let hash = 0;
@@ -311,9 +311,11 @@ function PlanificadorSemanalResumen() {
             }
           }}
           columns={columns}
-          // slots={{ toolbar: CustomToolbar }}
           localeText={{
             toolbarQuickFilterPlaceholder: "Buscar...",
+            paginationRowsPerPage: "Líneas por página",
+            paginationDisplayedRows: ({ from, to, count }) =>
+              `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`,
           }}
           getRowId={row => row.id}
           getRowHeight={() => "auto"}
@@ -325,11 +327,7 @@ function PlanificadorSemanalResumen() {
               showQuickFilter: true,
               printOptions: { disableToolbarButton: true },
               csvOptions: { disableToolbarButton: true },
-            },
-            pagination: {
-              labelRowsPerPage: "Líneas por página",
-              labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-            },
+            }
           }}
         />
       </Box>
