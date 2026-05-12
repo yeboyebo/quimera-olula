@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { QCheckbox, QModal } from "@olula/componentes/index.js";
+import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
@@ -30,13 +30,15 @@ export const CrearFuenteLead = ({ publicar }: { publicar: EmitirEvento }) => {
   }, [creando, publicar]);
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="mostrar"
+      titulo="Nueva Fuente de Lead"
+      onCerrar={cancelar}
+    >
       <div className="CrearFuenteLead">
-        <h2>Nueva Fuente de Lead</h2>
-
         <quimera-formulario>
           <QInput label="Descripción" {...uiProps("descripcion")} />
-          <QCheckbox label="Valor por Defecto" {...uiProps("valor_defecto")} />
         </quimera-formulario>
 
         <div className="botones">

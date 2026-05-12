@@ -9,6 +9,7 @@ import { ReactNode, useMemo, useState } from "react";
 import { QBoton } from "../../atomos/qboton.tsx";
 import { QCheckbox } from "../../atomos/qcheckbox.tsx";
 import { QDateInterval } from "../../atomos/qdateinterval.tsx";
+import { QIcono } from "../../atomos/qicono.tsx";
 import { QInput } from "../../atomos/qinput.tsx";
 import { Opcion, QMultiCheckbox } from "../../atomos/qmulticheckbox.tsx";
 import { QNumberInterval } from "../../atomos/qnumberinterval.tsx";
@@ -24,6 +25,8 @@ export const filtroBooleanos = (id: string, valor: unknown) => {
 };
 
 export const filtroFechas = (id: string, valor: unknown) => {
+  if (!Array.isArray(valor)) return [id, "=", valor] as ClausulaFiltro;
+
   const [desde, hasta] = valor as [Date, Date];
 
   const operador =
@@ -139,7 +142,7 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
   for (const clausula of filtro) {
     const [campo, _, valor] = clausula;
 
-    if (valor?.includes("_")) valores[campo] = valor.split("_").filter(Boolean);
+    if (valor?.includes("_")) valores[campo] = valor.split("_");
     else valores[campo] = valor;
 
     const valor_final = valores[campo];
@@ -148,6 +151,8 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
     switch (meta[campo].tipo) {
       case "intervalo_fechas": {
+        if (!Array.isArray(valor_final)) break;
+
         valores[campo] = (valor_final as [string, string])?.map((f: string) =>
           f ? new Date(Date.parse(f)) : undefined
         );
@@ -243,7 +248,7 @@ export const MaestroFiltrosActivoControlado = ({
         <div key={campo.id} className="campo-filtro">
           {renderInput()}
           <QBoton tamaño="pequeño" onClick={() => limpiarUno(campo.id)}>
-            &times;
+            <QIcono nombre="cerrar" tamaño="xs" color="currentColor" />
           </QBoton>
         </div>
       );

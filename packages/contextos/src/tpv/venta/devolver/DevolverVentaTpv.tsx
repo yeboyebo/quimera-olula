@@ -77,10 +77,13 @@ export const DevolverVentaTpv = ({
     ventaADevolver && ventaADevolver.lineas.some((l) => l.aDevolver > 0);
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="mostrar"
+      titulo={`Devolver venta ${ventaADevolver?.codigo || ""}`}
+      onCerrar={cancelar}
+    >
       <div className="DevolverVentaTpv">
-        <h2>{`Devolver venta ${ventaADevolver?.codigo || ""}`} </h2>
-
         {!ventaADevolver && (
           <quimera-formulario>
             <QInput
@@ -103,6 +106,7 @@ export const DevolverVentaTpv = ({
             onSeleccion={() => null}
             criteriaInicial={criteriaDefecto}
             onCriteriaChanged={() => null}
+            modo="tabla"
           />
         )}
 

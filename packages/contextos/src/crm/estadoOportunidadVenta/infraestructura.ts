@@ -1,12 +1,13 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { NuevoEstadoOportunidad } from "./crear/diseño.ts";
 import { EstadoOportunidad } from "./diseño.ts";
 
 const baseUrlEstadoOportunidadVenta = `/crm/estado_oportunidad_venta`;
 
 // Convierte EstadoOportunidad a formato API (valor_defecto -> valordefecto)
-export const estadoOportunidadToAPI = (e: EstadoOportunidad) => ({
+export const estadoOportunidadToAPI = (e: NuevoEstadoOportunidad) => ({
     ...e,
     valordefecto: e.valor_defecto,
 });
@@ -26,7 +27,7 @@ export const getEstadosOportunidad = async (
     return { datos: respuesta.datos, total: respuesta.total };
 };
 
-export const postEstadoOportunidad = async (estado: EstadoOportunidad): Promise<string> => {
+export const postEstadoOportunidad = async (estado: NuevoEstadoOportunidad): Promise<string> => {
     const payload = estadoOportunidadToAPI(estado);
     return await RestAPI.post(baseUrlEstadoOportunidadVenta, payload, "Error al guardar el estado de oportunidad de venta").then((respuesta) => respuesta.id);
 };
@@ -38,3 +39,5 @@ export const patchEstadoOportunidad = async (id: string, estado: Partial<EstadoO
 
 export const deleteEstadoOportunidad = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlEstadoOportunidadVenta}/${id}`, "Error al borrar el estado de oportunidad de venta");
+
+export const marcarPorDefectoEstadoOportunidad = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}/pordefecto`, "Error al marcar por defecto el estado de oportunidad de venta");
