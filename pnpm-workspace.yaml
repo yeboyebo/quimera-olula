@@ -4,3 +4,9 @@ packages:
   - legacy/apps/*
   - legacy/libs/*
   - legacy/extensions/**
+
+onlyBuiltDependencies:
+  - esbuild
+  - '@parcel/watcher'
+  - core-js
+  - es5-ext
