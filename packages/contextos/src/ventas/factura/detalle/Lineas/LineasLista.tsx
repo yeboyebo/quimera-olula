@@ -1,19 +1,25 @@
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { LineaFactura as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
+import { TarjetaLinea } from "./TarjetaLinea.tsx";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
   onCambioCantidad,
   facturaEditable,
+  cantidadEditable = false,
+  acciones,
   publicar,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   onCambioCantidad?: (linea: Linea, cantidad: number) => void;
   facturaEditable?: boolean;
+  cantidadEditable?: boolean;
+  acciones?: Parameters<typeof QuimeraAcciones>[0]["acciones"];
   publicar: (evento: string, payload?: unknown) => void;
 }) => {
   const setSeleccionada = (linea: Linea) => {
@@ -23,7 +29,14 @@ export const LineasLista = ({
 
   return (
     <ListadoSemiControlado
-      metaTabla={getMetaTablaLineas(onCambioCantidad, facturaEditable)}
+      metaTabla={getMetaTablaLineas(onCambioCantidad, cantidadEditable)}
+      tarjeta={(linea) => (
+        <TarjetaLinea
+          linea={linea}
+          cantidadEditable={cantidadEditable}
+          onCambioCantidad={onCambioCantidad}
+        />
+      )}
       entidades={lineas}
       totalEntidades={lineas.length}
       cargando={false}
@@ -31,14 +44,20 @@ export const LineasLista = ({
       onSeleccion={setSeleccionada}
       criteriaInicial={criteriaDefecto}
       onCriteriaChanged={() => null}
-      modo="tabla"
+      renderAcciones={() =>
+        facturaEditable && acciones && acciones.length > 0 ? (
+          <div className="botones maestro-botones ">
+            <QuimeraAcciones acciones={acciones} />
+          </div>
+        ) : null
+      }
     />
   );
 };
 
 const getMetaTablaLineas = (
   onCambioCantidad?: (linea: Linea, cantidad: number) => void,
-  facturaEditable?: boolean
+  cantidadEditable = false
 ) => {
   return [
     {
@@ -49,8 +68,9 @@ const getMetaTablaLineas = (
     {
       id: "cantidad",
       cabecera: "Cantidad",
+      tipo: "numero" as const,
       render: (linea: Linea) =>
-        facturaEditable && onCambioCantidad ? (
+        cantidadEditable && onCambioCantidad ? (
           <EditarCantidadLinea
             linea={linea}
             onCantidadEditada={onCambioCantidad}
@@ -62,6 +82,7 @@ const getMetaTablaLineas = (
     {
       id: "pvp_unitario",
       cabecera: "Precio",
+      tipo: "moneda" as const,
     },
     {
       id: "grupo_iva_producto_id",

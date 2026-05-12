@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -34,19 +35,22 @@ export const MaestroContactos = () => {
           <>
             <h2>Contactos</h2>
 
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("creacion_de_contacto_solicitada")}>
-                Nuevo
-              </QBoton>
-            </div>
-
             <Listado<Contacto>
               metaTabla={metaTablaContacto}
               criteria={ctx.contactos.criteria}
-              modo={"tabla"}
+              tarjeta={TarjetaContacto}
               entidades={ctx.contactos.lista}
               totalEntidades={ctx.contactos.total}
               seleccionada={ctx.contactos.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton
+                    onClick={() => emitir("creacion_de_contacto_solicitada")}
+                  >
+                    Nuevo
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) =>
                 emitir("contacto_seleccionado", payload)
               }
@@ -65,5 +69,16 @@ export const MaestroContactos = () => {
 
       {ctx.estado === "CREANDO" && <CrearContacto publicar={emitir} />}
     </div>
+  );
+};
+
+const TarjetaContacto = (contacto: Contacto) => {
+  return (
+    <QTarjetaGenerica
+      avatar={<QAvatar nombre={contacto.nombre} />}
+      arribaIzquierda={contacto.nombre}
+      abajoIzquierda={contacto.email}
+      abajoDerecha={contacto.telefono1}
+    />
   );
 };

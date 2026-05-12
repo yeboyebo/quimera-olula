@@ -1,16 +1,20 @@
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useContext } from "react";
 import { LineaPedido as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
+import { TarjetaLinea } from "./TarjetaLinea.tsx";
 
 export type LineasListaProps<L extends Linea = Linea> = {
   lineas: L[];
   seleccionada?: string;
   onCambioCantidad?: (linea: L, cantidad: number) => void;
   pedidoEditable?: boolean;
+  cantidadEditable?: boolean;
+  acciones?: Parameters<typeof QuimeraAcciones>[0]["acciones"];
   publicar: (evento: string, payload?: unknown) => void;
 };
 
@@ -27,6 +31,8 @@ export const LineasListaBase = ({
   seleccionada,
   onCambioCantidad,
   pedidoEditable,
+  cantidadEditable = false,
+  acciones,
   publicar,
 }: LineasListaProps) => {
   const setSeleccionada = (linea: Linea) => {
@@ -36,21 +42,34 @@ export const LineasListaBase = ({
 
   return (
     <ListadoSemiControlado
-      metaTabla={getMetaTablaLineas(onCambioCantidad, pedidoEditable)}
+      metaTabla={getMetaTablaLineas(onCambioCantidad, cantidadEditable)}
+      tarjeta={(linea) => (
+        <TarjetaLinea
+          linea={linea}
+          cantidadEditable={cantidadEditable}
+          onCambioCantidad={onCambioCantidad}
+        />
+      )}
       entidades={lineas}
       totalEntidades={lineas.length}
       seleccionada={lineas.find((linea) => linea.id === seleccionada) ?? null}
       onSeleccion={setSeleccionada}
       criteriaInicial={criteriaLineasDefecto}
       onCriteriaChanged={(_: Criteria) => null}
-      modo="tabla"
+      renderAcciones={() =>
+        acciones && acciones.length > 0 ? (
+          <div className="botones maestro-botones ">
+            <QuimeraAcciones acciones={acciones} />
+          </div>
+        ) : null
+      }
     />
   );
 };
 
 const getMetaTablaLineas = (
   onCambioCantidad?: (linea: Linea, cantidad: number) => void,
-  pedidoEditable?: boolean
+  cantidadEditable = false
 ) => {
   return [
     {
@@ -65,7 +84,7 @@ const getMetaTablaLineas = (
       prioridad: "alta" as const,
       tipo: "numero" as const,
       render: (linea: Linea) =>
-        pedidoEditable && onCambioCantidad ? (
+        cantidadEditable && onCambioCantidad ? (
           <EditarCantidadLinea
             linea={linea}
             onCantidadEditada={onCambioCantidad}
@@ -85,7 +104,7 @@ const getMetaTablaLineas = (
       cabecera: "IVA",
       prioridad: "media" as const,
       render: (linea: Linea) =>
-        linea.grupo_iva_producto_id ? `${linea.grupo_iva_producto_id}%` : "",
+        linea.grupo_iva_producto_id ? `${linea.grupo_iva_producto_id}` : "",
     },
     {
       id: "dto_porcentual",

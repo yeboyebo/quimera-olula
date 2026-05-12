@@ -3,7 +3,6 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
-import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { CrearFuenteLead } from "../crear/CrearFuenteLead.tsx";
 import { DetalleFuenteLead } from "../detalle/DetalleFuenteLead.tsx";
@@ -13,14 +12,10 @@ import "./MaestroFuentesLead.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroFuentesLead = () => {
-  const { id, criteria } = getUrlParams();
-
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    fuentes_lead: listaActivaEntidadesInicial<FuenteLead>(id, criteria),
+    fuentes_lead: listaActivaEntidadesInicial<FuenteLead>(),
   });
-
-  useUrlParams(ctx.fuentes_lead.activo, ctx.fuentes_lead.criteria);
 
   useEffect(() => {
     emitir("recarga_de_fuentes_lead_solicitada", ctx.fuentes_lead.criteria);
@@ -34,21 +29,22 @@ export const MaestroFuentesLead = () => {
           <>
             <h2>Fuentes de Lead</h2>
 
-            <div className="maestro-botones">
-              <QBoton
-                onClick={() => emitir("creacion_de_fuente_lead_solicitada")}
-              >
-                Nuevo
-              </QBoton>
-            </div>
-
             <Listado<FuenteLead>
               metaTabla={metaTablaFuenteLead}
               criteria={ctx.fuentes_lead.criteria}
-              modo={"tabla"}
+              modo={"tarjetas"}
               entidades={ctx.fuentes_lead.lista}
               totalEntidades={ctx.fuentes_lead.total}
               seleccionada={ctx.fuentes_lead.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton
+                    onClick={() => emitir("creacion_de_fuente_lead_solicitada")}
+                  >
+                    Nuevo
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) =>
                 emitir("fuente_lead_seleccionada", payload)
               }
@@ -61,6 +57,7 @@ export const MaestroFuentesLead = () => {
         Detalle={
           <DetalleFuenteLead id={ctx.fuentes_lead.activo} publicar={emitir} />
         }
+        layout={"TARJETA"}
         seleccionada={ctx.fuentes_lead.activo}
         modoDisposicion="maestro-50"
       />

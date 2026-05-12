@@ -15,13 +15,13 @@ import {
 } from "../infraestructura.ts";
 import { ContextoPresupuesto, EstadoPresupuesto } from "./diseño.ts";
 
-export { metaVenta, metaNuevaVenta } from "#/ventas/venta/dominio.ts";
+export { metaNuevaVenta, metaVenta } from "#/ventas/venta/dominio.ts";
 
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
-        cantidad: { tipo: "numero", requerido: true },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         pvp_unitario: { tipo: "moneda", requerido: true },
-        dto_porcentual: { tipo: "numero", requerido: false },
+        dto_porcentual: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 },
         referencia: { requerido: true },
     }
 };
@@ -35,6 +35,7 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
         codigo: { bloqueado: true },
         divisa_id: { requerido: true },
     },
+    editable: (presupuesto: Presupuesto) => !presupuesto.aprobado,
 };
 
 export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
@@ -227,8 +228,6 @@ export const cambiarDescuento: ProcesarPresupuesto = async (contexto, payload) =
 }
 
 export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
-    // const nuevaLinea = payload as NuevaLinea;
-    // const idLinea = await postLinea(contexto.presupuesto.id, nuevaLinea);
     const idLinea = payload as string;
 
     return pipePresupuesto(contexto, [
@@ -240,8 +239,6 @@ export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
 }
 
 export const cambiarLinea: ProcesarPresupuesto = async (contexto) => {
-    // const linea = payload as LineaPresupuesto;
-    // await patchLinea(contexto.presupuesto.id, linea);
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
@@ -268,7 +265,6 @@ export const cambiarCantidadLinea: ProcesarPresupuesto = async (contexto, payloa
 
 export const borrarLinea: ProcesarPresupuesto = async (contexto, payload) => {
     const idLinea = payload as string;
-    // await deleteLinea(contexto.presupuesto.id, idLinea);
 
     const indiceLineaActiva = (contexto.presupuesto.lineas as LineaPresupuesto[]).findIndex((l: LineaPresupuesto) => l.id === idLinea);
 
