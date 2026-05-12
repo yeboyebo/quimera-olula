@@ -164,7 +164,7 @@ export default parent => ({
             message: "Campo requerido",
           }
           : trato.idTipotrato === util.getUser().tratolicenciafarma &&
-          !ACL.can("TratosFarma:visit") && {
+          !ACL.can("crm.farma.acceso_tratos") && {
             error: true,
             message: "No tienes permisos para usar este tipo de trato",
           },
@@ -253,7 +253,7 @@ export default parent => ({
             message: "Campo requerido",
           }
           : trato.idTipotrato === util.getUser().tratolicenciafarma &&
-          !ACL.can("TratosFarma:visit") && {
+          !ACL.can("crm.farma.acceso_tratos") && {
             error: true,
             message: "No tienes permisos para usar este tipo de trato",
           },
@@ -322,7 +322,7 @@ export default parent => ({
             message: "Campo requerido",
           }
           : trato.idTipotrato === util.getUser().tratolicenciafarma &&
-          !ACL.can("TratosFarma:visit") && {
+          !ACL.can("crm.farma.acceso_tratos") && {
             error: true,
             message: "No tienes permisos para usar este tipo de trato",
           },
@@ -392,7 +392,7 @@ export default parent => ({
           message: "Campo requerido",
         }
         : trato.idTipotrato === util.getUser().tratolicenciafarma &&
-        !ACL.can("TratosFarma:visit") && {
+        !ACL.can("crm.farma.acceso_tratos") && {
           error: true,
           message: "No tienes permisos para usar este tipo de trato",
         },
