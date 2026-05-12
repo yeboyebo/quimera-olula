@@ -25,7 +25,7 @@ export default parent => ({
       },
       previsionCompras: {
         title: "Previsión de compras",
-        rule: "OnlyAdmin:visit",
+        rule: "compras.prevision",
         icons: ["shopping_basket", "saved_search"],
         color: "warning",
         variant: "main",

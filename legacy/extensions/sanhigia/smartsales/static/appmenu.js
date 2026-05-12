@@ -19,7 +19,7 @@ export default parent => ({
       },
       bi: {
         title: "Business Intelligence",
-        rule: "OnlyAdmin:visit",
+        rule: "crm.informes.bi",
         icons: ["insights"],
         color: "info",
         url: "/ss/bi",
@@ -49,7 +49,7 @@ export default parent => ({
       },
       farma: {
         title: "Farma",
-        rule: "TratosFarma:visit",
+        rule: "crm.farma.acceso_tratos",
         icons: ["medication"],
         color: "info",
         url: "/ss/tratosfarma",

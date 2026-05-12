@@ -1,4 +1,5 @@
-import { CategoriaReglas, ReglaAnidada } from "../../../diseño.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { CategoriaReglas, ReglaAnidada } from "../../diseño.ts";
 import { AccionesRegla } from "./Acciones.tsx";
 import { SubReglaItem } from "./SubReglaItem.tsx";
 
@@ -11,22 +12,22 @@ export const ReglaItem = ({
 }: {
   regla: ReglaAnidada;
   grupoId: string;
-  emitir: (evento: string, payload?: unknown) => void;
+  emitir: EmitirEvento;
   abierta: boolean;
   reglaGeneral?: CategoriaReglas;
 }) => (
   <div className="categoria-item">
-    <div className="regla-item">
+    <div className="reglaItem">
       {regla.hijos && regla.hijos.length > 0 && (
         <span
-          className={"regla-toggle" + (abierta ? " abierto" : "")}
+          className={"reglaToggle" + (abierta ? " abierto" : "")}
           onClick={() => emitir("TOGGLE_REGLA", regla.id)}
           style={{ cursor: "pointer", marginRight: 8 }}
         >
           {abierta ? "▼" : "►"}
         </span>
       )}
-      <div className="regla-descripcion">
+      <div className="reglaDescripcion">
         {regla.descripcion.split(" - ")[1]?.trim().replace(/_/g, " ") ||
           regla.descripcion}
       </div>
