@@ -16,7 +16,7 @@ jobs:
           repository: "yeboyebo/quimera-olula"
       - uses: actions/setup-node@v3
         with:
-          node-version: 22.13
+          node-version: 23.7
       - name: Make envfile
         run: echo "VITE_API_URL=https://cremacafeolula.yeboyebo.es" > .env && echo "VITE_API_URL=https://cremacafeolula.yeboyebo.es" > ./apps/crema_cafe/.env
 
