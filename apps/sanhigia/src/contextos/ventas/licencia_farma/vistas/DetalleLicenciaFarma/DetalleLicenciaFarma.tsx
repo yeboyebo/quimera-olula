@@ -1,3 +1,4 @@
+import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import {
   Detalle,
   QBoton,
@@ -21,6 +22,7 @@ import {
   marcarDatosRevisados,
   patchLicenciaFarma,
 } from "../../infraestructura.ts";
+import "./DetalleLicenciaFarma.css";
 
 export const DetalleLicenciaFarma = ({
   licenciaInicial = null,
@@ -70,6 +72,8 @@ export const DetalleLicenciaFarma = ({
     }
   };
 
+  console.log("mimensaje_licencia", licencia);
+
   const puedeRevisarDatos =
     modelo.estado === "En revisión" &&
     !!modelo.clienteId &&
@@ -85,7 +89,7 @@ export const DetalleLicenciaFarma = ({
       cerrarDetalle={() => emitir("CANCELAR_SELECCION")}
     >
       {!!licenciaId && (
-        <div>
+        <div className="DetalleLicenciaFarma">
           <div className="maestro-botones">
             {puedeRevisarDatos && (
               <QBoton
@@ -150,24 +154,14 @@ export const DetalleLicenciaFarma = ({
               deshabilitado={!puede("farma")}
             />
             <QInput
-              label="Cliente"
+              label={`Cliente${licencia.modelo?.clienteId ? ` (${licencia.modelo?.clienteId})` : ""}`}
               {...licencia.uiProps("nombreCliente")}
               deshabilitado={!puede("farma")}
             />
-            <QInput
-              label="ID Cliente"
-              {...licencia.uiProps("clienteId")}
-              deshabilitado={!puede("farma")}
-            />
-            <QInput
-              label="ID Trato"
-              {...licencia.uiProps("tratoId")}
-              deshabilitado={!puede("farma")}
-            />
-            <QInput
-              label="ID Agente"
-              {...licencia.uiProps("agenteId")}
-              deshabilitado={!puede("farma")}
+
+            <Agente
+              label={`Agente${licencia.modelo?.agenteId ? ` (${licencia.modelo?.agenteId})` : ""}`}
+              {...licencia.uiProps("agenteId", "nombreAgente")}
             />
 
             {licencia.modelo.trato && (
@@ -176,7 +170,7 @@ export const DetalleLicenciaFarma = ({
               >
                 <div style={{ flex: 1 }}>
                   <QInput
-                    label={`Trato (${licencia.modelo.trato?.estado})`}
+                    label={`Trato ${licencia.modelo.trato?.estado}${licencia.modelo?.tratoId ? ` (${licencia.modelo?.tratoId})` : ""}`}
                     nombre="trato"
                     valor={licencia.modelo.trato?.titulo}
                     deshabilitado
