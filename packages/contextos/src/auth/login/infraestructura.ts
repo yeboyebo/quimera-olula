@@ -13,6 +13,7 @@ export interface RespuestaWhoAmI {
     permisos: Permiso[];
     plugins: Record<string, string>;
     usuario_id: string;
+    es_superusuario: boolean;
 }
 
 type PeticionLogin = { id: string; password: string; };
