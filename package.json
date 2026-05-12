@@ -46,6 +46,12 @@
       "core-js",
       "es5-ext",
       "esbuild"
+    ],
+    "allowBuilds": [
+      "@parcel/watcher",
+      "core-js",
+      "es5-ext",
+      "esbuild"
     ]
   }
 }

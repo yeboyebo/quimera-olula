@@ -24,7 +24,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install Dependecies
-        run: pnpm install --ignore-scripts=false
+        run: pnpm install
 
       - name: Build
         run: pnpm run --filter @olula/crema_cafe build
