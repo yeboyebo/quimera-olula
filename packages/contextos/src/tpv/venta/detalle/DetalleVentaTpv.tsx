@@ -13,10 +13,11 @@ import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
 import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
-import { getReportVenta } from "../infraestructura.ts";
+import { getReportVale, getReportVenta } from "../infraestructura.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
+import { TiqueRegaloVentaTpv } from "../tique_regalo/TiqueRegaloVentaTpv.tsx";
 import { PendienteVenta } from "./comps/PendienteVenta.tsx";
 import { ContextoVentaTpv, guardarVenta, metaVentaTpv } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -33,6 +34,11 @@ const imprimirTicketOFactura = async (venta: VentaTpv) => {
         const blob = await getReportVenta(venta.id);
         imprimir_blob(blob)
     }
+}
+
+const imprimirVale = async (venta: VentaTpv) => {
+    const blob = await getReportVale(venta.codigo);
+    imprimir_blob(blob)
 }
 
 export const DetalleVentaTpv = ({
@@ -81,6 +87,10 @@ export const DetalleVentaTpv = ({
         await imprimirTicketOFactura(ctx.venta);
     };
 
+    const imprimir_vale = async () => {
+        await imprimirVale(ctx.venta);
+    };
+
 
     const { estado, pagos, lineas, venta } = ctx;
 
@@ -105,6 +115,18 @@ export const DetalleVentaTpv = ({
                 />
             )}
             <QBoton texto="Imprimir" onClick={imprimir} />
+            {estado == "EMITIDA" && venta.total > 0 && (
+                <QBoton
+                texto="Tique regalo"
+                onClick={() => emitir("tique_regalo_solicitado")}
+                />
+            )}
+            {estado == "EMITIDA" && venta.total < 0 && (
+                <QBoton
+                texto="Imprimir vale"
+                onClick={imprimir_vale}
+                />
+            )}
             </div>
             <Tabs
             children={[
@@ -171,6 +193,9 @@ export const DetalleVentaTpv = ({
             )}
             {estado === "DEVOLVIENDO_VENTA" && (
                 <DevolverVentaTpv venta={venta} publicar={emitir} />
+            )}
+            {estado === "GENERANDO_TIQUE_REGALO" && (
+                <TiqueRegaloVentaTpv venta={venta} lineas={lineas.lista} publicar={emitir} />
             )}
         </div>
         </Detalle>

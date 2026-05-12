@@ -3,7 +3,6 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
-import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { CrearEstadoLead } from "../crear/CrearEstadoLead.tsx";
 import { DetalleEstadoLead } from "../detalle/DetalleEstadoLead.tsx";
@@ -13,14 +12,10 @@ import "./MaestroEstadosLead.css";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroEstadosLead = () => {
-  const { id, criteria } = getUrlParams();
-
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    estados_lead: listaActivaEntidadesInicial<EstadoLead>(id, criteria),
+    estados_lead: listaActivaEntidadesInicial<EstadoLead>(),
   });
-
-  useUrlParams(ctx.estados_lead.activo, ctx.estados_lead.criteria);
 
   useEffect(() => {
     emitir("recarga_de_estados_lead_solicitada", ctx.estados_lead.criteria);
@@ -34,21 +29,22 @@ export const MaestroEstadosLead = () => {
           <>
             <h2>Estados de Lead</h2>
 
-            <div className="maestro-botones">
-              <QBoton
-                onClick={() => emitir("creacion_de_estado_lead_solicitada")}
-              >
-                Nuevo
-              </QBoton>
-            </div>
-
             <Listado<EstadoLead>
               metaTabla={metaTablaEstadoLead}
               criteria={ctx.estados_lead.criteria}
-              modo={"tabla"}
+              modo={"tarjetas"}
               entidades={ctx.estados_lead.lista}
               totalEntidades={ctx.estados_lead.total}
               seleccionada={ctx.estados_lead.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton
+                    onClick={() => emitir("creacion_de_estado_lead_solicitada")}
+                  >
+                    Nuevo
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) =>
                 emitir("estado_lead_seleccionado", payload)
               }

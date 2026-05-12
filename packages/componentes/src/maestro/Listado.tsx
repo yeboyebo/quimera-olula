@@ -5,6 +5,7 @@ import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla } from "../atomos/qtabla.tsx";
 import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
+import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
 import {
@@ -61,11 +62,11 @@ export const Listado = <T extends Entidad>({
   onCriteriaChanged,
   onSiguientePagina,
 }: ListadoProps<T>) => {
-  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tabla");
+  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tarjetas");
   const modoInterno = modo ?? modoEstado;
 
   const puedeTabla = metaTabla !== undefined;
-  const puedeTarjetas = tarjeta !== undefined;
+  const puedeTarjetas = true;
 
   const modoEfectivo =
     modoInterno === "tabla" && puedeTabla
@@ -83,9 +84,60 @@ export const Listado = <T extends Entidad>({
     onModoChanged?.(nuevoModo);
   };
 
-  const mostrarCambioModo = puedeTabla && puedeTarjetas && modoEfectivo;
-  // const mostrarCambioModo = false;
+  const mostrarCambioModo =
+    puedeTabla && puedeTarjetas && modoEfectivo && !modo;
   const acciones = renderAcciones?.();
+
+  const renderTabla = (datos: T[]) => {
+    if (!metaTabla) return null;
+
+    return (
+      <QTablaControlada
+        metaTabla={metaTabla}
+        datos={datos}
+        cargando={cargando}
+        seleccionadaId={seleccionada}
+        onSeleccion={(e: T) => onSeleccion(e.id)}
+        orden={criteria.orden}
+        onOrdenChanged={(orden) => {
+          onCriteriaChanged({
+            ...criteria,
+            orden,
+            paginacion: { ...criteria.paginacion, pagina: 1 },
+          });
+        }}
+        paginacion={criteria.paginacion}
+        onPaginacionChanged={(paginacion) => {
+          onCriteriaChanged({
+            ...criteria,
+            paginacion,
+          });
+        }}
+        totalEntidades={totalEntidades}
+      />
+    );
+  };
+
+  const renderTarjetas = (
+    datos: T[],
+    tarjetaRender: (entidad: T) => React.ReactNode
+  ) => {
+    return (
+      <QTarjetas
+        tarjeta={tarjetaRender}
+        datos={datos}
+        cargando={cargando}
+        seleccionadaId={seleccionada}
+        onSeleccion={(e: T) => onSeleccion(e.id)}
+        onPaginacion={(pagina, limite) => {
+          onCriteriaChanged({ ...criteria, paginacion: { pagina, limite } });
+        }}
+        totalEntidades={totalEntidades}
+        criteria={criteria}
+        onSiguientePagina={onSiguientePagina}
+      />
+    );
+  };
 
   const renderEntidades = () => {
     if (!entidades.length && !cargando) return <SinDatos />;
@@ -93,51 +145,15 @@ export const Listado = <T extends Entidad>({
     const datos = entidades.length ? entidades : datosCargando<T>();
 
     if (modoEfectivo === "tarjetas") {
-      if (!tarjeta) return null;
-
-      return (
-        <QTarjetas
-          tarjeta={tarjeta}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada}
-          onSeleccion={(e: T) => onSeleccion(e.id)}
-          onPaginacion={(pagina, limite) => {
-            onCriteriaChanged({ ...criteria, paginacion: { pagina, limite } });
-          }}
-          totalEntidades={totalEntidades}
-          criteria={criteria}
-          onSiguientePagina={onSiguientePagina}
-        />
-      );
+      if (tarjeta) return renderTarjetas(datos, tarjeta);
+      if (metaTabla)
+        return renderTarjetas(datos, (entidad: T) => (
+          <QTarjetaMetatabla entidad={entidad} metaTabla={metaTabla} />
+        ));
     }
 
     if (modoEfectivo === "tabla" && metaTabla) {
-      return (
-        <QTablaControlada
-          metaTabla={metaTabla}
-          datos={datos}
-          cargando={cargando}
-          seleccionadaId={seleccionada}
-          onSeleccion={(e: T) => onSeleccion(e.id)}
-          orden={criteria.orden}
-          onOrdenChanged={(orden) => {
-            onCriteriaChanged({
-              ...criteria,
-              orden,
-              paginacion: { ...criteria.paginacion, pagina: 1 },
-            });
-          }}
-          paginacion={criteria.paginacion}
-          onPaginacionChanged={(paginacion) => {
-            onCriteriaChanged({
-              ...criteria,
-              paginacion,
-            });
-          }}
-          totalEntidades={totalEntidades}
-        />
-      );
+      return renderTabla(datos);
     }
 
     return null;

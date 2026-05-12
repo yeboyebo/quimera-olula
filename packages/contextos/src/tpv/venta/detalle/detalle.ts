@@ -21,6 +21,7 @@ export type EstadoVentaTpv = (
     | "BORRANDO_PAGO" | "CAMBIANDO_CLIENTE" | "CAMBIANDO_DESCUENTO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
     | "DEVOLVIENDO_VENTA"
+    | "GENERANDO_TIQUE_REGALO"
 );
 
 export type ContextoVentaTpv = {
@@ -289,6 +290,7 @@ export const onLineaBorrada: ProcesarVentaTpv = async (contexto, payload) => {
 
 export const cambiarDescuento: ProcesarVentaTpv = async (contexto, payload) => {
     const { dto_porcentual } = payload as { dto_porcentual: number };
+    console.log('dto_porcentual', dto_porcentual);
     await patchCambiarDescuento(contexto.venta.id, dto_porcentual);
 
     return pipeVentaTpv(contexto, [

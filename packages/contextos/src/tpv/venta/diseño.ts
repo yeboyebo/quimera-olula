@@ -33,6 +33,10 @@ export interface VentaTpvADevolver extends VentaTpv {
     lineas: LineaADevolver[];
 }
 
+export interface LineaParaTiqueRegalo extends LineaFactura {
+    aTiqueRegalo: number;
+}
+
 export interface PagoVentaTpv extends Entidad {
     id: string;
     importe: number;
@@ -125,6 +129,8 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 export type DeletePago = (id: string, idPago: string) => Promise<void>;
 
 export type GetReportVenta = (id: string) => Promise<Blob>;
+
+export type GetReportVale = (id: string) => Promise<Blob>;
 
 
 export type EstadoMaestroVentasTpv = (
