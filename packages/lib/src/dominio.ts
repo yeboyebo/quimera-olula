@@ -1,4 +1,4 @@
-import { esSuperusuario, Permiso, permisosGrupo } from "./api/permisos.ts";
+import { Permiso, permisosGrupo } from "./api/permisos.ts";
 import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
 import { filtroDefecto, ordenDefecto, paginacionDefecto } from "./url-params.ts";
 import { UiProps, ValorControl } from "./useModelo.ts";
@@ -710,7 +710,6 @@ export const calcularPaginacionSimplificada = (
 
 export const puede = (regla: string): boolean => {
     if (!regla) return true;
-    if (esSuperusuario()) return true;
     // Busca el permiso exacto
     const permisos = JSON.parse(permisosGrupo.obtener() || "[]") as Permiso[];
 

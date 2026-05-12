@@ -12,12 +12,8 @@ type WhoAmI = {
     permisos: Permiso[];
     plugins: Record<string, string>;
     usuario_id: string;
-    es_superusuario: boolean;
 };
 
-export const esSuperusuario = (): boolean => {
-    return parseWhoAmIStorage()?.es_superusuario ?? false;
-};
 
 const parseWhoAmIStorage = (): WhoAmI | null => {
     const raw = localStorage.getItem("whoami");
