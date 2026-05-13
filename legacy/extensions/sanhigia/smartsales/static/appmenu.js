@@ -49,7 +49,7 @@ export default parent => ({
       },
       farma: {
         title: "Farma",
-        rule: "crm.farma.acceso_tratos",
+        rule: "crm.trato.farma",
         icons: ["medication"],
         color: "info",
         url: "/ss/tratosfarma",

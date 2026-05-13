@@ -10,6 +10,7 @@ export default parent => ({
         color: "warning",
         variant: "main",
         url: "/ventas/presupuestos",
+        rule: "ventas.presupuesto",
       },
       pedidos: {
         title: "Pedidos",

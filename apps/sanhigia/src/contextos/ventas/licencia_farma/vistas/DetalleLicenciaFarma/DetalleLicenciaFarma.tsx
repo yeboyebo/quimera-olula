@@ -72,7 +72,7 @@ export const DetalleLicenciaFarma = ({
     }
   };
 
-  // console.log("mimensaje_licencia", licencia);
+  // console.log("mimensaje_licencia", puede("crm.trato.farma"));
 
   const puedeRevisarDatos =
     modelo.estado === "En revisión" &&
@@ -107,37 +107,37 @@ export const DetalleLicenciaFarma = ({
             <QInput
               label="Tipo de licencia"
               {...licencia.uiProps("tipoLicencia")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QDate
               label="Fecha de caducidad"
               {...licencia.uiProps("fechaCaducidad")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QDate
               label="Fecha de inicio"
               {...licencia.uiProps("fechaInicio")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QDate
               label="Fecha de fin"
               {...licencia.uiProps("fechaFin")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QDate
               label="Fecha de revisión de datos"
               {...licencia.uiProps("fechaRevisionDatos")}
-              // deshabilitado={!puede("farma")}
+              // deshabilitado={!puede("crm.trato.farma")}
             />
             <QDate
               label="Fecha de recepción de acuerdos"
               {...licencia.uiProps("fechaRecepcionAcuerdos")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QDate
               label="Fecha de envío de documentación"
               {...licencia.uiProps("fechaEnvioDocumentacion")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QSelect
               label="Estado"
@@ -151,12 +151,12 @@ export const DetalleLicenciaFarma = ({
                 { valor: "Presentada", descripcion: "Presentada" },
               ]}
               {...licencia.uiProps("estado")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
             <QInput
               label={`Cliente${licencia.modelo?.clienteId ? ` (${licencia.modelo?.clienteId})` : ""}`}
               {...licencia.uiProps("nombreCliente")}
-              deshabilitado={!puede("farma")}
+              deshabilitado={!puede("crm.trato.farma")}
             />
 
             <Agente
