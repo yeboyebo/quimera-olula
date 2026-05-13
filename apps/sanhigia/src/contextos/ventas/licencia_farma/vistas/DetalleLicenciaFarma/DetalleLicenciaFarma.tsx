@@ -72,7 +72,7 @@ export const DetalleLicenciaFarma = ({
     }
   };
 
-  console.log("mimensaje_licencia", licencia);
+  // console.log("mimensaje_licencia", licencia);
 
   const puedeRevisarDatos =
     modelo.estado === "En revisión" &&
@@ -160,7 +160,7 @@ export const DetalleLicenciaFarma = ({
             />
 
             <Agente
-              label={`Agente${licencia.modelo?.agenteId ? ` (${licencia.modelo?.agenteId})` : ""}`}
+              label={`Agente`}
               {...licencia.uiProps("agenteId", "nombreAgente")}
             />
 

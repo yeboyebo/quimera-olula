@@ -52,18 +52,20 @@ const metaFiltroLicenciaFarma: MetaFiltro = {
     id: "agenteId",
     label: "Agente",
     tipo: "texto",
+    fromFiltro: (filtro) => {
+      const clausula = filtro.find(([campo]) => campo === "agente_id");
+      return clausula ? clausula[2] : null;
+    },
     filtro: (valor) => {
-      const opcion = valor as { valor: string; descripcion: string } | null;
-      if (!opcion?.valor) return null;
-      return ["agente_id", "=", opcion.valor];
+      const id = valor as string | null;
+      if (!id) return null;
+      return ["agente_id", "=", id];
     },
     render: (valor, onChange) => {
-      const opcion = valor as { valor: string; descripcion: string } | null;
       return (
         <Agente
-          valor={opcion?.valor ?? ""}
-          descripcion={opcion?.descripcion ?? ""}
-          onChange={(o) => onChange(o)}
+          valor={(valor as string) ?? ""}
+          onChange={(o) => onChange(o ? o.valor : null)}
         />
       );
     },
