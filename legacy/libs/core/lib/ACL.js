@@ -1,3 +1,4 @@
+import { puede } from "@olula/lib/dominio.ts";
 import { getRules } from "../hooks/useManager";
 import util from "../util";
 
@@ -115,7 +116,8 @@ export default {
   //   const group = util.getUser()?.grupo
   //   return (rules?.access || ((rules?.[group]?.access && (rules?.[group]?.[action] ?? true)) || rules?.[group]?.[action])) ?? false
   // }
-  can: dynamicCan,
+  //can: dynamicCan,
+  can: puede,
 };
 
 // rules: {

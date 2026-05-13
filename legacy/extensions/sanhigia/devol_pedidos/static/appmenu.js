@@ -25,7 +25,7 @@ export default parent => ({
       },
       previsionCompras: {
         title: "Previsión de compras",
-        rule: "OnlyAdmin:visit",
+        rule: "compras.prevision",
         icons: ["shopping_basket", "saved_search"],
         color: "warning",
         variant: "main",
@@ -41,7 +41,7 @@ export default parent => ({
         icons: ["article", "restart_alt"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/InformeRepeticiones",
       },
       pedidos: {
@@ -49,7 +49,7 @@ export default parent => ({
         icons: ["article", "outlined_flag"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/InformePedidosXAgente",
       },
       informeClientesVentaArt: {
@@ -57,7 +57,7 @@ export default parent => ({
         icons: ["group", "toll"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-clientes-venta-art",
       },
       informeConsumoCliente: {
@@ -65,7 +65,7 @@ export default parent => ({
         icons: ["paid", "group"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-consumo-cliente",
       },
       informeVentasArticulo: {
@@ -73,7 +73,7 @@ export default parent => ({
         icons: ["paid", "toll"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-ventas-articulo",
       },
       informeVentasFamilia: {
@@ -81,7 +81,7 @@ export default parent => ({
         icons: ["paid", "interests"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-ventas-familia",
       },
       informeVentasPoblacion: {
@@ -89,7 +89,7 @@ export default parent => ({
         icons: ["paid", "place"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-ventas-poblacion",
       },
       informeTratos: {
@@ -97,7 +97,7 @@ export default parent => ({
         icons: ["group", "article"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-tratos-agente",
       },
       informeContactos: {
@@ -105,7 +105,7 @@ export default parent => ({
         icons: ["group", "email"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-contactos-agente",
       },
       informeMapa: {
@@ -113,7 +113,7 @@ export default parent => ({
         icons: ["map", "location_on"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-mapa",
       },
       informePedidosSan: {
@@ -121,7 +121,7 @@ export default parent => ({
         icons: ["paid", "outlined_flag"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-ventas-pedidos",
       },
       InformeClientesComparativa: {
@@ -129,7 +129,7 @@ export default parent => ({
         icons: ["group", "compare_arrows"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-clientes-comparativa",
       },
       InformeClientesInactivos: {
@@ -137,7 +137,7 @@ export default parent => ({
         icons: ["group", "stop"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-clientes-inactivos",
       },
       InformeClientesNuevos: {
@@ -145,7 +145,7 @@ export default parent => ({
         icons: ["group", "fiber_new"],
         color: "primary",
         variant: "main",
-        rule: "ss_informes:visit",
+        rule: "crm.informes",
         url: "/informe-clientes-nuevos",
       },
       // caducidad: {

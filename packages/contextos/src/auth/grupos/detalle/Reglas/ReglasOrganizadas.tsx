@@ -1,5 +1,5 @@
-import { ProcesarEvento } from "@olula/lib/useMaquina.js";
-import { CategoriaReglas, Grupo } from "../../../diseño.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { CategoriaReglas, Grupo } from "../../diseño.ts";
 import { Categoria } from "./Categoria.tsx";
 import "./ReglasOrganizadas.css";
 
@@ -8,7 +8,7 @@ interface ReglasOrganizadasProps {
   grupoSeleccionado: Grupo | null;
   categoriasAbiertas: Record<string, boolean>;
   reglasAbiertas: Record<string, boolean>;
-  emitir: ProcesarEvento;
+  emitir: EmitirEvento;
 }
 
 export const ReglasOrganizadas = ({

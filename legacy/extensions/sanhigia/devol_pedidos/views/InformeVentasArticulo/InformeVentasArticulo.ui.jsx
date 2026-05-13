@@ -1,9 +1,9 @@
-import { Box, Button, Field, Grid, Icon, QBox } from "@quimera/comps";
 import { Familia, Subfamilia } from "@quimera-extension/base-almacen";
 import { Agente, Serie } from "@quimera-extension/base-ventas";
-import Quimera, { PropValidation, useStateValue } from "quimera";
+import { Box, Button, Field, Grid, Icon, QBox } from "@quimera/comps";
+import Quimera, { useStateValue } from "quimera";
 import { ACL } from "quimera/lib";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import initialData from "./initial-data";
 

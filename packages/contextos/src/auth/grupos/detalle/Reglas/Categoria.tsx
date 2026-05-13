@@ -1,4 +1,5 @@
-import { CategoriaReglas } from "../../../diseño.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { CategoriaReglas } from "../../diseño.ts";
 import { AccionesCategoria } from "./Acciones.tsx";
 import { ReglaItem } from "./ReglaItem.tsx";
 
@@ -13,7 +14,7 @@ export const Categoria = ({
   categoria: CategoriaReglas;
   estaAbierta: boolean;
   grupoId: string;
-  emitir: (evento: string, payload?: unknown) => void;
+  emitir: EmitirEvento;
   reglasAbiertas: Record<string, boolean>;
   reglaGeneral?: CategoriaReglas;
 }) => (
