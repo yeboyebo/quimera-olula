@@ -8,7 +8,7 @@ on:
 
 jobs:
   Docker:
-    if: ${{ github.ref_name == '[nombre_rama]' }} && ${{vars.ORGANIZATION_VAR == 'yeboyebo'}}
+    if: ${{ github.ref_name == 'Deploy_Nadia' }} && ${{vars.ORGANIZATION_VAR == 'yeboyebo'}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -54,11 +54,11 @@ jobs:
           context: ./
           file: Dockerfile
           push: true
-          tags: yeboyebohub/olula_cli_[nombre_repo]:${{ github.sha }}
+          tags: yeboyebohub/olula_cli_nadia:${{ github.sha }}
 
   deploy-to-cluster:
     name: deploy to cluster
-    if: ${{ github.ref_name == '[nombre_rama]' }} && ${{vars.ORGANIZATION_VAR == 'yeboyebo'}}
+    if: ${{ github.ref_name == 'Deploy_Nadia' }} && ${{vars.ORGANIZATION_VAR == 'yeboyebo'}}
     runs-on: ubuntu-latest
     needs: Docker
     steps:
