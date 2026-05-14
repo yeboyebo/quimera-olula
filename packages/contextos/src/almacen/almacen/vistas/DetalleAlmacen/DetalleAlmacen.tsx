@@ -9,13 +9,13 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
 import { useParams } from "react-router";
 import { Almacen } from "../../diseño.ts";
-import { almacenVacio, metaAlmacen } from "../../dominio.ts";
 import {
   almacenLocal,
   getAlmacen,
   patchAlmacen,
 } from "../../infraestructura.ts";
-import { BorrarAlmacen } from "./BorrarAlmacen.tsx";
+import { BorrarAlmacen } from "../detalle/BorrarAlmacen.tsx";
+import { almacenVacio, metaAlmacen } from "../detalle/dominio.ts";
 import "./DetalleAlmacen.css";
 
 type Estado = "Editando" | "Borrando";
@@ -42,7 +42,7 @@ const titulo = (almacen: Entidad) => almacen.descripcion as string;
 
 export const DetalleAlmacen = ({
   almacenInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   almacenInicial?: Almacen | null;
   publicar?: EmitirEvento;
@@ -50,7 +50,7 @@ export const DetalleAlmacen = ({
   const params = useParams();
   const { intentar } = useContext(ContextoError);
 
-  const almacen = useModelo(metaAlmacen, almacenVacio);
+  const almacen = useModelo(metaAlmacen, almacenVacio());
   const { modelo, uiProps, init } = almacen;
 
   const guardar = async () => {

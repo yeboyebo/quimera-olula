@@ -40,7 +40,7 @@ const titulo = (articulo: Entidad) => articulo.descripcion as string;
 
 export const DetalleArticulo = ({
   articuloInicial = null,
-  publicar = () => {},
+  publicar = async () => {},
 }: {
   articuloInicial?: Articulo | null;
   publicar?: EmitirEvento;

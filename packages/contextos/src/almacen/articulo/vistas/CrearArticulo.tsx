@@ -9,7 +9,7 @@ import { metaNuevoArticulo, nuevoArticuloVacio } from "../dominio.ts";
 import { getArticulo, postArticulo } from "../infraestructura.ts";
 
 export const CrearArticulo = ({
-  emitir = () => {},
+  emitir = async () => {},
   activo = false,
 }: {
   emitir?: EmitirEvento;
@@ -30,7 +30,7 @@ export const CrearArticulo = ({
 };
 
 const FormAltaArticulo = ({
-  emitir = () => {},
+  emitir = async () => {},
   articulo,
 }: {
   emitir?: EmitirEvento;

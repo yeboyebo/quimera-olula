@@ -1,5 +1,7 @@
 import { MaestroDetalle, QBoton } from "@olula/componentes/index.ts";
-import { ListaSeleccionable } from "@olula/lib/diseño.ts";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { Criteria, ListaSeleccionable } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import {
   cambiarItem,
   cargar,
@@ -15,7 +17,7 @@ import {
   Maquina3,
   useMaquina4,
 } from "@olula/lib/useMaquina.ts";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Articulo } from "../diseño.ts";
 import { getArticulos } from "../infraestructura.ts";
 import { CrearArticulo } from "./CrearArticulo.tsx";
@@ -95,45 +97,69 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
 export const MaestroConDetalleArticulo = () => {
   const [emitir, { estado, contexto }] = useMaquina4({ config: configMaquina });
   const { articulos } = contexto;
+  const [criteria, setCriteria] = useState<Criteria>(criteriaDefecto);
+  const [cargando, setCargando] = useState(false);
+  const [totalArticulos, setTotalArticulos] = useState(0);
 
-  const setEntidades = useCallback(
-    (payload: Articulo[]) => emitir("articulos_cargados", payload),
-    [emitir]
-  );
+  useEffect(() => {
+    const cargarArticulos = async () => {
+      setCargando(true);
+      const respuesta = await getArticulos(
+        criteria.filtro,
+        criteria.orden,
+        criteria.paginacion
+      );
+      emitir("articulos_cargados", respuesta.datos);
+      setTotalArticulos(respuesta.total);
+      setCargando(false);
+    };
+    cargarArticulos();
+  }, [criteria, emitir]);
+
   const setSeleccionada = useCallback(
     (payload: Articulo) => emitir("articulo_seleccionado", payload),
     [emitir]
   );
 
   const seleccionada = getSeleccionada(articulos);
+  const publicar = async (evento: string, payload?: unknown) => {
+    emitir(evento, payload);
+  };
 
   return (
     <div className="Articulo">
       <MaestroDetalle<Articulo>
-        seleccionada={seleccionada}
-        preMaestro={
+        seleccionada={seleccionada?.id}
+        Maestro={
           <>
             <h2>Articulos</h2>
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
-            </div>
+            <ListadoSemiControlado<Articulo>
+              metaTabla={metaTablaArticulo}
+              entidades={articulos.lista}
+              totalEntidades={totalArticulos || articulos.lista.length}
+              cargando={cargando}
+              criteriaInicial={criteriaDefecto}
+              seleccionada={seleccionada}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
+                </div>
+              )}
+              onSeleccion={setSeleccionada}
+              onCriteriaChanged={setCriteria}
+            />
           </>
         }
-        metaTabla={metaTablaArticulo}
         modoDisposicion="maestro-50"
-        entidades={articulos.lista}
-        setEntidades={setEntidades}
-        setSeleccionada={setSeleccionada}
-        cargar={getArticulos}
         Detalle={
           <DetalleArticulo
             key={seleccionada?.id}
             articuloInicial={seleccionada}
-            publicar={emitir}
+            publicar={publicar}
           />
         }
       />
-      <CrearArticulo emitir={emitir} activo={estado === "creando"} />
+      <CrearArticulo emitir={publicar} activo={estado === "creando"} />
     </div>
   );
 };

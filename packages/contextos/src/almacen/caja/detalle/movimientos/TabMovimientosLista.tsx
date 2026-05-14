@@ -6,9 +6,9 @@ import { metaTablaMovimientosCaja } from "../dominio.ts";
 export const TabMovimientosLista = ({
   cajaId,
   movimientos,
-  seleccionada,
+  seleccionada: _seleccionada,
   cargando,
-  emitir,
+  emitir: _emitir,
 }: {
   cajaId: string;
   movimientos: MovimientoCaja[];
