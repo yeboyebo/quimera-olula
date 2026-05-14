@@ -20,6 +20,7 @@ export type FormFieldProps = {
     valor: string,
     evento: React.ChangeEvent<HTMLInputElement>
   ) => void;
+  onKeyDown?: (evento: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: (valor: string, evento: React.FocusEvent<HTMLElement>) => void;
   onEnterKeyUp?: (
     valor: string,
