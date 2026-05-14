@@ -19,7 +19,7 @@ jobs:
           node-version: 18.12
 
       - name: Make envfile
-        run: echo "VITE_API_URL=https://nadiaolula.yeboyebo.es"" > .env && echo "VITE_API_URL=https://cremacafeolula.yeboyebo.es" > ./apps/nadia/.env
+        run: echo "VITE_API_URL=https://nadiaolula.yeboyebo.es" > .env && echo "VITE_API_URL=https://cremacafeolula.yeboyebo.es" > ./apps/nadia/.env
 
       - name: Install pnpm
         run: npm install -g pnpm
