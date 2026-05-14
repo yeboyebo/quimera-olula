@@ -18,13 +18,17 @@ export const CabeceraGan = (_props?: CabeceraProps) => {
   return (
     <>
       <header>
-        <button
-          id="boton-menu-lateral"
-          aria-label="Abrir menú lateral"
-          onClick={() => toggleMenu("lateral")}
-        ></button>
-        <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
-        <Link to="/" className="logoGanso">
+        {autenticado && (
+          <>
+            <button
+              id="boton-menu-lateral"
+              aria-label="Abrir menú lateral"
+              onClick={() => toggleMenu("lateral")}
+            ></button>
+            <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
+          </>
+        )}
+        <Link to="/" className={"logoGanso" + (!autenticado ? " login" : "")}>
           <img src="/logo_ganso.png" alt="ElGanso | Inicio" />
         </Link>
         <div id="cabecera-acciones-extra">

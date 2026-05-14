@@ -7,6 +7,10 @@ header {
             height: 25px;
             margin-left: 20px;
 
+            &.login {
+                margin-left: 0;
+            }
+
             img {
                 filter: brightness(0) invert(1);
                 height: 20px;
