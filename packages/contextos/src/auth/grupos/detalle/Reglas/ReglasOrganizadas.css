@@ -4,7 +4,7 @@
         flex-direction: column;
 
 
-        .regla-item {
+        .reglaItem {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -12,7 +12,7 @@
             border-top: 1px solid var(--gris-5);
             padding-left: 1rem;
 
-            &.subregla {
+            &.subRegla {
                 padding-left: 2rem;
                 border: none;
             }
@@ -37,6 +37,7 @@
         align-items: center;
         cursor: pointer;
         padding: 0.5rem 0;
+        text-transform: capitalize;
 
         h3:before {
             content: "➡️";

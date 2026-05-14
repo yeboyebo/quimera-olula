@@ -1,4 +1,4 @@
-import { MaestroConDetalleGruposReglas } from '@olula/ctx/auth/grupos/vistas/MaestroConDetalleGruposReglas.tsx';
+import { MaestroConDetalleGruposReglas } from '@olula/ctx/auth/grupos/maestro/MaestroConDetalleGruposReglas.tsx';
 import { Login } from './login/vistas/Login.tsx';
 import { Logout } from './usuario/logout/Logout.tsx';
 import { MaestroConDetalleUsuario } from "./usuario/maestro/MaestroConDetalleUsuario.tsx";

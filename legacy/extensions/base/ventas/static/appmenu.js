@@ -17,7 +17,7 @@ export default parent => ({
         color: "warning",
         variant: "main",
         url: "/ventas/pedidos",
-        rule: "PedidosCli:visit",
+        rule: "ventas.pedido",
       },
     },
   },
