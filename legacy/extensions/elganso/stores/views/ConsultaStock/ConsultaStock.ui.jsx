@@ -294,31 +294,35 @@ function ConsultaStock({ useStyles }) {
       <div id="consultaStock">
         <div className="main-edit">
           <div className="main-edit-container">
-            {showReaderBarcode ? renderBarcode() : null}
-            <Box width={1}>
-              <div className="rowVerTodos">
-                <input
-                  type="text"
-                  id="inputBarcode"
-                  className="inputBarcodeScanner"
-                  value={scannerValue}
-                  onKeyUp={event => barCodeKeyUp(event)}
-                  name="inputBarcode"
-                  placeholder="Introduce referencia o escanea"
-                ></input>
-                <IconButton
-                  id="button-reader-barcode"
-                  className="buttonReaderBarcode"
-                  onClick={() => {
-                    setShowReaderBarcode(!showReaderBarcode);
-                    inputRef.current.focus();
-                  }}
-                >
-                  <Icon>qr_code_scanner_icon</Icon>
-                </IconButton>
+            <Box width={1} className="box-consulta-stock">
+              <div className={"header-consulta-stock" + (showReaderBarcode ? " opened" : "")}>
+                <div className="block-search">
+                  <div className="rowVerTodos">
+                    <input
+                      type="text"
+                      id="inputBarcode"
+                      className="inputBarcodeScanner"
+                      value={scannerValue}
+                      onKeyUp={event => barCodeKeyUp(event)}
+                      name="inputBarcode"
+                      placeholder="Introduce referencia o escanea"
+                    ></input>
+                    <IconButton
+                      id="button-reader-barcode"
+                      className="buttonReaderBarcode"
+                      onClick={() => {
+                        setShowReaderBarcode(!showReaderBarcode);
+                        inputRef.current.focus();
+                      }}
+                    >
+                      <Icon>qr_code_scanner_icon</Icon>
+                    </IconButton>
+                  </div>
+                  {msgSuccess !== "" ? renderMsgSuccess(msgSuccess, msgError, successBeep) : null}
+                  {msgError !== "" ? renderMsgError(msgError, errorBeep) : null}
+                </div>
+                {showReaderBarcode ? renderBarcode() : null}
               </div>
-              {msgSuccess !== "" ? renderMsgSuccess(msgSuccess, msgError, successBeep) : null}
-              {msgError !== "" ? renderMsgError(msgError, errorBeep) : null}
               {tiendasStock.length > 0 ? renderListaTiendas() : renderLoading()}
             </Box>
           </div>
