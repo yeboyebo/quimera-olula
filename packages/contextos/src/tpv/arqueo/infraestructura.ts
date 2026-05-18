@@ -1,9 +1,9 @@
 import ApiUrls from "#/tpv/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.js";
-import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
+import { ClausulaFiltro, Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaAQueryString, criteriaQuery } from "@olula/lib/infraestructura.js";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { ArqueoTpv, CabeceraArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, MovimientoArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchBorrarMovimiento, PatchCerrarArqueo, PatchCrearMovimiento, PatchReabrirArqueo, PatchRecuentoArqueo, PostArqueoTpv } from "./diseño.ts";
+import { ArqueoTpv, CabeceraArqueoTpv, DeleteArqueoTpv, GetArqueosTpv, GetArqueoTpv, GetPagosArqueoTpv, GetReportArqueo, MovimientoArqueoTpv, PagoArqueoTpv, PatchArqueo, PatchBorrarMovimiento, PatchCerrarArqueo, PatchCrearMovimiento, PatchReabrirArqueo, PatchRecuentoArqueo, PostArqueoTpv } from "./diseño.ts";
 
 interface CabeceraArqueoTpvApi {
     id: string;
@@ -72,7 +72,17 @@ export const getArqueos: GetArqueosTpv = async (
     orden: Orden,
     paginacion: Paginacion
 ) => {
-    const q = criteriaQuery(filtro, orden, paginacion);
+    const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
+    const filtroPuntoVenta: ClausulaFiltro = [
+        "punto_venta_id",
+        miPuntoVentaLocal?.id ?? "",
+    ];
+
+    const q = criteriaQuery(
+        [...filtro, filtroPuntoVenta],
+        orden,
+        paginacion
+    );
 
     const respuesta = await RestAPI.get<{ datos: CabeceraArqueoTpvApi[]; total: number }>(`${baseUrl}_items` + q);
     return { datos: respuesta.datos.map(cabeceraArqueoDesdeApi), total: respuesta.total };
@@ -207,3 +217,6 @@ export const postArqueo: PostArqueoTpv = async () => {
 export const deleteArqueoTpv: DeleteArqueoTpv = async (id) => {
     return await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar el arqueo");
 };
+
+export const getReportArqueo: GetReportArqueo = async (id) =>
+    RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del arqueo");

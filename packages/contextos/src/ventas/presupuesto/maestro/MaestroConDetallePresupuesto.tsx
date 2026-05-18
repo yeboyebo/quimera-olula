@@ -66,11 +66,6 @@ export const MaestroConDetallePresupuesto = () => {
         Maestro={
           <>
             <h2>Presupuestos</h2>
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("crear_presupuesto_solicitado")}>
-                Nuevo Presupuesto
-              </QBoton>
-            </div>
             <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
               criteria={ctx.presupuestos.criteria}
@@ -78,11 +73,23 @@ export const MaestroConDetallePresupuesto = () => {
               entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}
               seleccionada={ctx.presupuestos.activo}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton
+                    onClick={() => emitir("crear_presupuesto_solicitado")}
+                  >
+                    Nuevo Presupuesto
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) =>
                 emitir("presupuesto_seleccionado", payload)
               }
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
+              }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
               }
             />
           </>

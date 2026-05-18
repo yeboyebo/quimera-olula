@@ -1,4 +1,3 @@
-import { Usuario } from "#/comun/componentes/usuario.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
@@ -35,14 +34,16 @@ export const CrearAccion = ({
   }, [creando, publicar]);
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="mostrar"
+      titulo="Nueva Acción"
+      onCerrar={cancelar}
+    >
       <div className="CrearAccion">
-        <h2>Nueva Acción</h2>
-
         <quimera-formulario>
           <QInput label="Descripción" {...uiProps("descripcion")} />
           <QInput label="Fecha" {...uiProps("fecha")} />
-          <Usuario {...uiProps("responsable_id")} label="Responsable" />
         </quimera-formulario>
 
         <div className="botones">

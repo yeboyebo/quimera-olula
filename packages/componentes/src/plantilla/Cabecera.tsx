@@ -6,18 +6,30 @@ import "./Cabecera.css";
 import { estaAutentificado } from "./autenticacion";
 import { useMenuControl } from "./useMenuControl";
 
-export type CabeceraProps = Record<string, never>;
+export type CabeceraProps = {
+  logoSrc?: string;
+  logoAlt?: string;
+  logoClassName?: string;
+  Titulo?: () => React.ReactNode;
+  AccionesCabecera?: () => React.ReactNode;
+  MenuUsuario?: () => React.ReactNode;
+  ExtraLogo?: () => React.ReactNode;
+};
 
-export const CabeceraBase = (_props?: CabeceraProps) => {
-  const { app } = useContext(FactoryCtx);
+export const CabeceraBase = ({
+  logoSrc = "/olula_header_blanco.png",
+  logoAlt = "Olula | Inicio",
+  Titulo,
+  AccionesCabecera,
+  MenuUsuario,
+  ExtraLogo,
+}: CabeceraProps) => {
   const { toggleMenu } = useMenuControl();
-  const AccionesCabecera = app.Componentes
-    ?.cabecera_acciones as () => React.ReactNode;
   const autenticado = estaAutentificado();
 
   return (
     <>
-      <header>
+      <header className="cabecera-principal">
         <button
           id="boton-menu-lateral"
           aria-label="Abrir menú lateral"
@@ -26,8 +38,10 @@ export const CabeceraBase = (_props?: CabeceraProps) => {
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          <img src="/olula_header_blanco.png" alt="Olula | Inicio" />
+          <img src={logoSrc} alt={logoAlt} className="logo-app" />
         </Link>
+        {ExtraLogo ? <ExtraLogo /> : null}
+        <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
         <div id="cabecera-acciones-extra">
           {AccionesCabecera ? <AccionesCabecera /> : null}
         </div>
@@ -42,7 +56,11 @@ export const CabeceraBase = (_props?: CabeceraProps) => {
               htmlFor="boton-menu-usuario"
               id="etiqueta-menu-usuario-abierto"
             >
-              <QIcono nombre="perfil" tamaño="sm" />
+              {MenuUsuario ? (
+                <MenuUsuario />
+              ) : (
+                <QIcono nombre="perfil" tamaño="sm" />
+              )}
             </label>
           </>
         )}
@@ -51,12 +69,27 @@ export const CabeceraBase = (_props?: CabeceraProps) => {
   );
 };
 
-export const Cabecera = (props?: CabeceraProps) => {
+export const Cabecera = (props: CabeceraProps) => {
   const { app } = useContext(FactoryCtx);
-  if (!app.Componentes?.Cabecera) {
-    return null;
-  }
-  const Cabecera_ = app.Componentes.Cabecera as typeof CabeceraBase;
+  const CabeceraCustom = app.Componentes?.cabecera as typeof CabeceraBase;
+  const AccionesCabecera = app.Componentes
+    ?.cabecera_acciones as () => React.ReactNode;
+  const MenuUsuario = app.Componentes
+    ?.cabecera_menu_usuario as () => React.ReactNode;
+  const ExtraLogo = app.Componentes
+    ?.cabecera_extra_logo as () => React.ReactNode;
 
-  return Cabecera_(props);
+  const cProps: CabeceraProps = {
+    ...props,
+    AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
+    MenuUsuario: MenuUsuario || props.MenuUsuario,
+    ExtraLogo: ExtraLogo || props.ExtraLogo,
+    Titulo: props.Titulo,
+  };
+
+  return CabeceraCustom ? (
+    <CabeceraCustom {...cProps} />
+  ) : (
+    <CabeceraBase {...cProps} />
+  );
 };

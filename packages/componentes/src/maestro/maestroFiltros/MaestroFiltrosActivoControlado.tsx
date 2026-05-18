@@ -9,11 +9,65 @@ import { ReactNode, useMemo, useState } from "react";
 import { QBoton } from "../../atomos/qboton.tsx";
 import { QCheckbox } from "../../atomos/qcheckbox.tsx";
 import { QDateInterval } from "../../atomos/qdateinterval.tsx";
+import { QIcono } from "../../atomos/qicono.tsx";
 import { QInput } from "../../atomos/qinput.tsx";
 import { Opcion, QMultiCheckbox } from "../../atomos/qmulticheckbox.tsx";
 import { QNumberInterval } from "../../atomos/qnumberinterval.tsx";
 import { MetaTabla } from "../../atomos/qtabla.tsx";
 import "./MaestroFiltrosActivoControlado.css";
+
+export const filtroTextos = (id: string, valor: unknown) => {
+  return [id, "~", valor as string] as ClausulaFiltro;
+};
+
+export const filtroBooleanos = (id: string, valor: unknown) => {
+  return [id, "=", valor as string] as ClausulaFiltro;
+};
+
+export const filtroFechas = (id: string, valor: unknown) => {
+  if (!Array.isArray(valor)) return [id, "=", valor] as ClausulaFiltro;
+
+  const [desde, hasta] = valor as [Date, Date];
+
+  const operador =
+    !!desde && !hasta
+      ? ">="
+      : !!hasta && !desde
+        ? "<="
+        : !!desde && !!hasta
+          ? "<>"
+          : "";
+
+  return [
+    id,
+    operador,
+    [
+      desde ? desde.toISOString().slice(0, 10) : undefined,
+      hasta ? hasta.toISOString().slice(0, 10) : undefined,
+    ].join("_"),
+  ] as ClausulaFiltro;
+};
+
+export const filtroNumeros = (id: string, valor: unknown) => {
+  const [desde, hasta] = valor as [number, number];
+
+  const operador =
+    !!desde && !hasta
+      ? ">="
+      : !!hasta && !desde
+        ? "<="
+        : !!desde && !!hasta
+          ? "<>"
+          : "";
+
+  return [
+    id,
+    operador,
+    [isNaN(desde) ? undefined : desde, isNaN(hasta) ? undefined : hasta].join(
+      "_"
+    ),
+  ] as ClausulaFiltro;
+};
 
 type MetaCampoFiltro = {
   id: string;
@@ -42,7 +96,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
           id: columna.id,
           label: columna.cabecera,
           tipo: "checkbox",
-          filtro: (v) => [columna.id, "=", v as string],
+          filtro: (valor) => filtroBooleanos(columna.id, valor),
         };
         break;
       case "fecha":
@@ -52,16 +106,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
           id: columna.id,
           label: columna.cabecera,
           tipo: "intervalo_fechas",
-          filtro: (valor: unknown) => {
-            const [desde, hasta] = valor as [Date, Date];
-            return [
-              columna.id,
-              "<>",
-              desde?.toISOString().slice(0, 10) +
-                "_" +
-                hasta?.toISOString().slice(0, 10),
-            ] as ClausulaFiltro;
-          },
+          filtro: (valor) => filtroFechas(columna.id, valor),
         };
         break;
       case "numero":
@@ -70,10 +115,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
           id: columna.id,
           label: columna.cabecera,
           tipo: "intervalo_numeros",
-          filtro: (valor: unknown) => {
-            const [desde, hasta] = valor as [number, number];
-            return [columna.id, "<>", desde + "_" + hasta] as ClausulaFiltro;
-          },
+          filtro: (valor) => filtroNumeros(columna.id, valor),
         };
         break;
       default:
@@ -81,7 +123,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
           id: columna.id,
           label: columna.cabecera,
           tipo: "texto",
-          filtro: (v) => [columna.id, "~", v as string],
+          filtro: (valor) => filtroTextos(columna.id, valor),
         };
         break;
     }
@@ -98,7 +140,7 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
   }
 
   for (const clausula of filtro) {
-    const [campo, operador, valor] = clausula;
+    const [campo, _, valor] = clausula;
 
     if (valor?.includes("_")) valores[campo] = valor.split("_");
     else valores[campo] = valor;
@@ -109,15 +151,11 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
     switch (meta[campo].tipo) {
       case "intervalo_fechas": {
-        const toDate = (s: unknown) =>
-          s ? new Date(Date.parse(s as string)) : undefined;
-        if (Array.isArray(valor_final)) {
-          valores[campo] = (valor_final as string[]).map(toDate);
-        } else if (operador === "<=") {
-          valores[campo] = [undefined, toDate(valor_final)];
-        } else {
-          valores[campo] = [toDate(valor_final), undefined];
-        }
+        if (!Array.isArray(valor_final)) break;
+
+        valores[campo] = (valor_final as [string, string])?.map((f: string) =>
+          f ? new Date(Date.parse(f)) : undefined
+        );
         break;
       }
       case "intervalo_numeros":
@@ -210,7 +248,7 @@ export const MaestroFiltrosActivoControlado = ({
         <div key={campo.id} className="campo-filtro">
           {renderInput()}
           <QBoton tamaño="pequeño" onClick={() => limpiarUno(campo.id)}>
-            &times;
+            <QIcono nombre="cerrar" tamaño="xs" color="currentColor" />
           </QBoton>
         </div>
       );
@@ -237,7 +275,17 @@ export const MaestroFiltrosActivoControlado = ({
 
   const limpiarUno = (id: string) => {
     const valorDefecto = metaFiltro[id]?.valorDefecto ?? undefined;
-    init({ ...modelo, [id]: valorDefecto });
+
+    if (valorDefecto) {
+      const filtros = filtro.filter(([campo]) => campo !== id);
+      const [_, operador] = filtro.filter(([campo]) => campo === id)[0];
+
+      init({ ...modelo, [id]: valorDefecto });
+      onFiltroChanged([...filtros, [id, operador, valorDefecto as string]]);
+    } else {
+      const filtros = filtro.filter(([campo]) => campo !== id);
+      onFiltroChanged(filtros);
+    }
   };
 
   if (!Object.keys(metaFiltro).length) return;

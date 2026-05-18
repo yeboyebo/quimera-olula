@@ -1,4 +1,6 @@
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { CrmContacto } from "../../diseño.ts";
 import { metaTablaCrmContactos } from "./dominio.ts";
 
@@ -7,22 +9,30 @@ export const TabCrmContactosLista = ({
   seleccionado,
   emitir,
   cargando,
+  acciones,
 }: {
   contactos: CrmContacto[];
   seleccionado: CrmContacto | null;
   emitir: (evento: string, payload?: unknown) => void;
   cargando: boolean;
+  acciones: Parameters<typeof QuimeraAcciones>[0]["acciones"];
 }) => {
   return (
     <div className="CrmContactos">
-      <QTabla
+      <ListadoSemiControlado
         metaTabla={metaTablaCrmContactos}
-        datos={contactos}
+        entidades={contactos}
+        totalEntidades={contactos.length}
         cargando={cargando}
-        seleccionadaId={seleccionado?.id}
+        seleccionada={seleccionado}
         onSeleccion={(contacto) => emitir("contacto_seleccionado", contacto)}
-        orden={["id", "ASC"]}
-        onOrdenar={() => null}
+        criteriaInicial={criteriaDefecto}
+        onCriteriaChanged={() => null}
+        renderAcciones={() => (
+          <div className="detalle-cliente-tab-contenido maestro-botones">
+            <QuimeraAcciones acciones={acciones} vertical />
+          </div>
+        )}
       />
     </div>
   );

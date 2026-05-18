@@ -1,7 +1,7 @@
 import "./menu-usuario.css";
 
 import { puede } from "@olula/lib/dominio.ts";
-import { FactoryCtx } from "@olula/lib/factory_ctx.js";
+import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
 import { Link } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -9,10 +9,18 @@ import { estaAutentificado } from "../plantilla/autenticacion";
 import { useMenuControl } from "../plantilla/useMenuControl";
 import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 
-const elementosDelMenu = [
+// Tipo exportado para que las apps puedan usarlo en sus factories
+export type MenuUsuarioElementos = ElementoMenu[];
+
+// Función opcional para procesar elementos antes de renderizarlos
+export type ProcesoElementosFn = (
+  elementos: MenuUsuarioElementos
+) => MenuUsuarioElementos;
+
+// Elementos por defecto si la app no proporciona los suyos
+const elementosDelMenuDefault: MenuUsuarioElementos = [
   {
     nombre: "Usuarios",
-
     subelementos: [
       {
         nombre: "Grupos",
@@ -32,14 +40,22 @@ const elementosDelMenu = [
   },
 ];
 
-export type MenuUsuarioProps = Record<string, never>;
-
-export const MenuUsuarioBase = (_props?: MenuUsuarioProps) => {
+export const MenuUsuarioBase = (props: {
+  elementos?: MenuUsuarioElementos;
+  procesarElementos?: ProcesoElementosFn;
+}) => {
   const { menuAbierto, cerrarMenu } = useMenuControl();
 
   // No mostrar menú si no está autenticado
   if (!estaAutentificado()) {
     return null;
+  }
+
+  let elementosDelMenu = props.elementos || elementosDelMenuDefault;
+
+  // Procesar elementos si se proporciona una función
+  if (props.procesarElementos) {
+    elementosDelMenu = props.procesarElementos(elementosDelMenu);
   }
 
   const renderizaElemento = (elemento: ElementoMenu) => {
@@ -92,12 +108,19 @@ export const MenuUsuarioBase = (_props?: MenuUsuarioProps) => {
   );
 };
 
-export const MenuUsuario = (props?: MenuUsuarioProps) => {
+export const MenuUsuario = () => {
   const { app } = useContext(FactoryCtx);
-  if (!app.Componentes?.MenuUsuario) {
-    return null;
-  }
-  const MenuUsuario_ = app.Componentes.MenuUsuario as typeof MenuUsuarioBase;
+  const elementos = app.Componentes?.menu_usuario_elementos as
+    | MenuUsuarioElementos
+    | undefined;
+  const procesarElementos = app.Componentes?.menu_usuario_procesar_elementos as
+    | ProcesoElementosFn
+    | undefined;
 
-  return MenuUsuario_(props);
+  return (
+    <MenuUsuarioBase
+      elementos={elementos}
+      procesarElementos={procesarElementos}
+    />
+  );
 };

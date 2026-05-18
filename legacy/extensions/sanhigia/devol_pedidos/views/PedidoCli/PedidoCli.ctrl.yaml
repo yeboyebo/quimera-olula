@@ -6,7 +6,10 @@ shortcuts:
     schema: historicoPedidosCliente
     action: get_historico_pedidos
 state:
+  urlsTrackingData: {}
+  modalTracking: false
   status:
+    anadiendoDesdeHistorico: false
     enviandoPda: false
     viendoTracking: false
 bunch:
@@ -53,11 +56,15 @@ bunch:
       text: Pedido enviado
       severity: success
   onAnadirLineaDesdeHistoricoClicked:
+    - _type: set
+      path: anadiendoDesdeHistorico
+      value:
+        const: true
     - _type: setItem
       condition:
-          operator: A is true
-          A:
-            code: 'return !payload.referencia.includes(".")'
+        operator: A is true
+        A:
+          code: 'return !payload.referencia.includes(".")'
       path: historico.dict
       key:
         payloadPath: referencia
@@ -67,9 +74,9 @@ bunch:
         const: creating_line
     - _type: grape
       condition:
-          operator: A is true
-          A:
-            code: 'return payload.referencia.includes(".")'    
+        operator: A is true
+        A:
+          code: 'return payload.referencia.includes(".")'
       name: seteaStatusCreatingLine
     - _type: patch
       action: build_linea
@@ -77,6 +84,7 @@ bunch:
       id:
         statePath: pedido.buffer.idPedido
       success: onLineaHistoricoAnadida
+      error: onLineaHistoricoAnadidaError
       data:
         - key: referencia
           value:
@@ -84,7 +92,16 @@ bunch:
         - key: cantidad
           value:
             payloadPath: cantidad
+  onLineaHistoricoAnadidaError:
+    - _type: set
+      path: anadiendoDesdeHistorico
+      value:
+        const: false
   onLineaHistoricoAnadida:
+    - _type: set
+      path: anadiendoDesdeHistorico
+      value:
+        const: false
     - _type: grape
       name: addLineasItem
       payload:
@@ -122,9 +139,51 @@ bunch:
         statePath: pedido.data.idPedido
       success: onShTrackingRecibido
   onShTrackingRecibido:
+    - _type: if
+      if:
+        operator: A is true
+        A:
+          code: "return payload.response.totalAlbaranes === 1"
+      then:
+        _type: grape
+        name: comnprobarSiHayUrlTracking
+      else:
+        _type: grape
+        name: seteaOpcionesTracking
+  seteaOpcionesTracking:
+    - _type: set
+      path: urlsTrackingData
+      value:
+        payloadPath: response
+    - _type: set
+      path: modalTracking
+      value:
+        const: true
+  comnprobarSiHayUrlTracking:
+    - _type: if
+      if:
+        operator: A is defined
+        A:
+          code: "return payload.response.resultados[0].urlsegui"
+      then:
+        _type: grape
+        name: onNavegarATrackingClicked
+        payload:
+          url:
+            code: "return payload.response.resultados[0].urlsegui"
+      else:
+        _type: alert
+        text: No hay enlace para el seguimiento
+        severity: warning
+  onNavegarATrackingClicked:
     - _type: navigate
       url:
-        payloadPath: response.urlTracking
+        payloadPath: url
+  onCerrarModalTracking:
+    - _type: set
+      path: modalTracking
+      value:
+        const: false
   onShLineaPromoClicked:
     - _type: patch
       schema: pedidos
@@ -139,4 +198,23 @@ bunch:
   onLineaPromoAdded:
     - _type: grape
       name: onLineasItemChanged
-
+  onCalculaRecepcionesClicked:
+    - _type: patch
+      schema: checkStockLinea
+      action: dame_recepciones_pendientes
+      id:
+        const: "-static-"
+      data:
+        - key: referencia
+          value:
+            payloadPath: referencia
+      success: onRecepcionesRecibidas
+  onRecepcionesRecibidas:
+    - _type: setItem
+      path: historico.dict
+      key:
+        payloadPath: referencia
+      prop:
+        const: recepciones
+      value:
+        payloadPath: response

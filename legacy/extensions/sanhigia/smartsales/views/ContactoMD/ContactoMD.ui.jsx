@@ -1,3 +1,4 @@
+import { Cliente } from "@quimera-extension/base-ventas";
 import {
   Box,
   Field,
@@ -8,8 +9,7 @@ import {
   QTitleBox,
   Typography,
 } from "@quimera/comps";
-import { Cliente } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import { ACL } from "quimera/lib";
 import { useEffect } from "react";
 
@@ -106,7 +106,7 @@ function ContactoMD({ callbackChanged, codContacto, initContacto, useStyles }) {
         }
       >
         <Grid container spacing={0} display="flex">
-          <Grid item xs={12} sm={12}>
+          <Grid size={{ xs: 12, sm: 12 }}>
             <QSection
               title="Nombre"
               actionPrefix="contacto.buffer/nombre"
@@ -144,7 +144,7 @@ function ContactoMD({ callbackChanged, codContacto, initContacto, useStyles }) {
             </Box>
           </Box>
 
-          <Grid item xs={12} sm={12}>
+          <Grid size={{ xs: 12, sm: 12 }}>
             <QSection
               title="Dirección"
               actionPrefix="contacto.buffer/direccion"

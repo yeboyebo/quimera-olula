@@ -1,0 +1,29 @@
+.detalle {
+    .detalle-cabecera {
+        display: flex;
+        justify-content: space-between;
+        /* align-items: center; */
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ccc;
+
+        h2 {
+            margin: 0;
+        }
+    }
+
+    &>form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+        row-gap: 0;
+        column-gap: 2.5rem;
+
+        *[todo-ancho="true"] {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .MaestroEntidades {
+        display: block !important;
+    }
+}

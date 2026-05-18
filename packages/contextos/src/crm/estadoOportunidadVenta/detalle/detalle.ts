@@ -2,11 +2,12 @@ import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { pipe } from "@olula/lib/funcional.js";
 import { EstadoOportunidad } from "../diseño.ts";
-import { getEstadoOportunidad, patchEstadoOportunidad } from "../infraestructura.ts";
+import { getEstadoOportunidad, marcarPorDefectoEstadoOportunidad, patchEstadoOportunidad } from "../infraestructura.ts";
 import { ContextoDetalleEstadoOportunidad, EstadoDetalleEstadoOportunidad } from "./diseño.ts";
 
 export const estadoOportunidadVacio: EstadoOportunidad = {
     id: '',
+    estadobase: 'Pendiente',
     descripcion: '',
     probabilidad: 0,
     valor_defecto: false,
@@ -15,6 +16,7 @@ export const estadoOportunidadVacio: EstadoOportunidad = {
 export const metaEstadoOportunidad: MetaModelo<EstadoOportunidad> = {
     campos: {
         id: { requerido: true },
+        estadobase: { requerido: true, tipo: "selector" },
         descripcion: { requerido: true, validacion: (estado: EstadoOportunidad) => stringNoVacio(estado.descripcion), },
         probabilidad: { requerido: true, tipo: "numero" },
         valor_defecto: { requerido: true, tipo: "checkbox" },
@@ -61,6 +63,15 @@ export const cambiarEstadoOportunidad: ProcesarEstadoOportunidad = async (contex
         refrescarEstadoOportunidad,
         "INICIAL",
     ]);
+}
+
+export const marcarPorDefecto: ProcesarEstadoOportunidad = async (contexto, _) => {
+    await marcarPorDefectoEstadoOportunidad(contexto.estado_oportunidad.id);
+
+    return pipeEstadoOportunidad(contexto, [
+        refrescarEstadoOportunidad,
+        "INICIAL"
+    ])
 }
 
 export const getContextoVacio: ProcesarEstadoOportunidad = async (contexto) => {

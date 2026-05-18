@@ -1,45 +1,63 @@
-import { QTablaControlada } from "@olula/componentes/atomos/qtablacontrolada.tsx";
-import { Orden } from "@olula/lib/diseño.ts";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { LineaPresupuesto as Linea } from "../../diseño.ts";
 import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
+import { TarjetaLinea } from "./TarjetaLinea.tsx";
 
 export const LineasLista = ({
   lineas,
   seleccionada,
   onCambioCantidad,
   presupuestoEditable,
+  cantidadEditable = false,
+  acciones,
   publicar,
 }: {
   lineas: Linea[];
   seleccionada?: string;
   onCambioCantidad?: (linea: Linea, cantidad: number) => void;
   presupuestoEditable?: boolean;
+  cantidadEditable?: boolean;
+  acciones?: Parameters<typeof QuimeraAcciones>[0]["acciones"];
   publicar: (evento: string, payload?: unknown) => void;
 }) => {
   const setSeleccionada = (linea: Linea) => {
+    if (!presupuestoEditable) return;
     publicar("linea_seleccionada", linea);
   };
 
-  const ordenPorDefecto: Orden = ["id", "ASC"];
-
   return (
-    <>
-      <QTablaControlada
-        metaTabla={getMetaTablaLineas(onCambioCantidad, presupuestoEditable)}
-        datos={lineas}
-        cargando={false}
-        seleccionadaId={seleccionada}
-        onSeleccion={setSeleccionada}
-        orden={ordenPorDefecto}
-        onOrdenChanged={() => null}
-      />
-    </>
+    <ListadoSemiControlado
+      metaTabla={getMetaTablaLineas(onCambioCantidad, cantidadEditable)}
+      tarjeta={(linea) => (
+        <TarjetaLinea
+          linea={linea}
+          cantidadEditable={cantidadEditable}
+          onCambioCantidad={onCambioCantidad}
+        />
+      )}
+      entidades={lineas}
+      totalEntidades={lineas.length}
+      cargando={false}
+      seleccionada={lineas.find((linea) => linea.id === seleccionada) ?? null}
+      onSeleccion={setSeleccionada}
+      criteriaInicial={criteriaDefecto}
+      onCriteriaChanged={() => null}
+      renderAcciones={() =>
+        presupuestoEditable && acciones && acciones.length > 0 ? (
+          <div className="botones maestro-botones ">
+            <QuimeraAcciones acciones={acciones} />
+          </div>
+        ) : null
+      }
+    />
   );
 };
 
 const getMetaTablaLineas = (
   onCambioCantidad?: (linea: Linea, cantidad: number) => void,
-  presupuestoEditable?: boolean
+  cantidadEditable = false
 ) => {
   return [
     {
@@ -50,8 +68,9 @@ const getMetaTablaLineas = (
     {
       id: "cantidad",
       cabecera: "Cantidad",
+      tipo: "numero" as const,
       render: (linea: Linea) =>
-        presupuestoEditable && onCambioCantidad ? (
+        cantidadEditable && onCambioCantidad ? (
           <EditarCantidadLinea
             linea={linea}
             onCantidadEditada={onCambioCantidad}
@@ -63,6 +82,7 @@ const getMetaTablaLineas = (
     {
       id: "pvp_unitario",
       cabecera: "Precio",
+      tipo: "moneda" as const,
     },
     {
       id: "grupo_iva_producto_id",

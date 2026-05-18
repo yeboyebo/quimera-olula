@@ -71,9 +71,8 @@ bunch:
       path: generandoFactura
       value:
         const: false
-    - _type: alert
-      text: Error al generar factura
-      severity: error
+    - _type: grape
+      name: onGenerarFacturaMensajeError
   onEnviarEmailClicked:
     - _type: set
       path: modalVistaEnviarAlbaran

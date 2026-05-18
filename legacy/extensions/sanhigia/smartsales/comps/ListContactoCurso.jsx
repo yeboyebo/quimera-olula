@@ -1,7 +1,7 @@
 import { Box, Icon, QListItem, QTitleBox, Typography } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { Divider, InfiniteScroll } from "@quimera/thirdparty";
-import { navigate, useStateValue, util } from "quimera";
+import { navigate, useStateValue } from "quimera";
 import { ACL } from "quimera/lib";
 
 const useStyles = makeStyles(theme => ({
@@ -15,10 +15,10 @@ const useStyles = makeStyles(theme => ({
 export default function ListContactoCurso({ lineas }) {
   const [, dispatch] = useStateValue();
   const classes = useStyles();
-  const actionEnabled =
-    util.getUser().group === "MKT" || util.getUser().group === "Responsable de marketing"
-      ? true
-      : false;
+  const actionEnabled = true;
+  // util.getUser().group === "MKT" || util.getUser().group === "Responsable de marketing"
+  //   ? true
+  //   : false;
 
   return (
     <Box className={classes.box}>

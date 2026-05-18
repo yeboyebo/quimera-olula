@@ -1,3 +1,4 @@
+import { puede } from "@olula/lib/dominio.ts";
 import { getRules } from "../hooks/useManager";
 import util from "../util";
 
@@ -82,13 +83,13 @@ const getRuleValue = (rule, group) => {
 };
 
 const dynamicCan = action => {
-  const superuser = util.getUser()?.superuser;
+  const superuser = util.getGlobalSetting("user_data")?.user?.superuser;
   if (superuser) {
     return true;
   }
 
   const rules = getRules();
-  const group = util.getUser()?.group;
+  const group = util.getGlobalSetting("user_data")?.user?.group;
 
   const actionGroup = getRuleValue(rules?.[action], group);
   if (actionGroup) {
@@ -115,7 +116,8 @@ export default {
   //   const group = util.getUser()?.grupo
   //   return (rules?.access || ((rules?.[group]?.access && (rules?.[group]?.[action] ?? true)) || rules?.[group]?.[action])) ?? false
   // }
-  can: dynamicCan,
+  //can: dynamicCan,
+  can: puede,
 };
 
 // rules: {

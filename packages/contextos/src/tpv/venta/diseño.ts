@@ -1,12 +1,19 @@
 import { CambioClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "#/ventas/venta/diseño.ts";
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Direccion, Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 
+export interface ClienteVentaTpv {
+    id: string | null;
+    nombre: string;
+    idFiscal: string;
+    idDireccion: string | null;
+    direccion: Direccion;
+}
+
 export interface VentaTpv extends Venta {
+    cliente: ClienteVentaTpv | null;
     pendiente: number;
     pagado: number;
-    // lineas: LineaFactura[];
-    // pagos: PagoVentaTpv[];
     puntoVentaId: string;
     puntoVenta: string;
     agenteId: string;
@@ -24,6 +31,10 @@ export interface LineaADevolver extends LineaFactura {
 
 export interface VentaTpvADevolver extends VentaTpv {
     lineas: LineaADevolver[];
+}
+
+export interface LineaParaTiqueRegalo extends LineaFactura {
+    aTiqueRegalo: number;
 }
 
 export interface PagoVentaTpv extends Entidad {
@@ -118,6 +129,8 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 export type DeletePago = (id: string, idPago: string) => Promise<void>;
 
 export type GetReportVenta = (id: string) => Promise<Blob>;
+
+export type GetReportVale = (id: string) => Promise<Blob>;
 
 
 export type EstadoMaestroVentasTpv = (

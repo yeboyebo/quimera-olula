@@ -9,7 +9,7 @@ import * as AlbaranCli from "./views/AlbaranCli";
 import * as AlbaranesCli from "./views/AlbaranesCli";
 import * as AlbaranesMaster from "./views/AlbaranesCli/AlbaranesMaster";
 import * as AlbaranesCliNuevo from "./views/AlbaranesCliNuevo";
-import * as EnviarAlbaranFirmaExterna from "./views/EnviarAlbaranFirmaExterna"
+import * as EnviarAlbaranFirmaExterna from "./views/EnviarAlbaranFirmaExterna";
 import * as EnviarDocumentoEmail from "./views/EnviarDocumentoEmail";
 import * as CajaEnvio from "./views/EnviarDocumentoEmail/CajaEnvio";
 import * as EmailsDisponibles from "./views/EnviarDocumentoEmail/EmailsDisponibles";
@@ -24,14 +24,15 @@ import * as LineaFacturaCli from "./views/LineaFacturaCli";
 import * as LineaFacturaCliNueva from "./views/LineaFacturaCliNueva";
 import * as LineaPedidoCli from "./views/LineaPedidoCli";
 import * as LineaPedidoCliNueva from "./views/LineaPedidoCliNueva";
+import * as LineaPresupuestoCli from "./views/LineaPresupuestoCli";
 import * as LineaPresupuestoCliNueva from "./views/LineaPresupuestoCliNueva";
 import * as PedidoCli from "./views/PedidoCli";
 import * as PedidosCli from "./views/PedidosCli";
 import * as PedidosMaster from "./views/PedidosCli/PedidosMaster";
 import * as PedidosCliNuevo from "./views/PedidosCliNuevo";
 import * as PresupuestoCli from "./views/PresupuestoCli";
-import * as PresupuestosCliMaster from "./views/PresupuestosCli/Master";
 import * as PresupuestoCliNuevo from "./views/PresupuestoCliNuevo";
+import * as PresupuestosCliMaster from "./views/PresupuestosCli/Master";
 
 export default {
   path: "extensions/tienda_vbarba",
@@ -51,6 +52,7 @@ export default {
     LineaFacturaCliNueva,
     LineaPedidoCli,
     LineaPedidoCliNueva,
+    LineaPresupuestoCli,
     LineaPresupuestoCliNueva,
     PedidoCli,
     PedidosCli,

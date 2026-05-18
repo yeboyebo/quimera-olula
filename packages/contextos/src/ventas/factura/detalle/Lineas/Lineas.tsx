@@ -1,10 +1,9 @@
-import { QBoton } from "@olula/componentes/index.ts";
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { Factura, LineaFactura } from "../../diseño.ts";
 import { EditarLinea } from "../../editar_linea/EditarLinea.tsx";
+import { editable } from "../diseño.ts";
 import { LineasLista } from "./LineasLista.tsx";
-
 export const Lineas = ({
   factura,
   lineaActiva,
@@ -16,6 +15,25 @@ export const Lineas = ({
   estadoFactura: string;
   publicar: (evento: string, payload?: unknown) => void;
 }) => {
+  const acciones = [
+    {
+      texto: "Nueva",
+      onClick: () => publicar("alta_linea_solicitada"),
+    },
+    {
+      texto: "Editar",
+      onClick: () => publicar("cambio_linea_solicitado"),
+      deshabilitado: !lineaActiva,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      advertencia: true,
+      onClick: () => publicar("baja_linea_solicitada"),
+      deshabilitado: !lineaActiva,
+    },
+  ];
+
   const handleCambioCantidad = (linea: LineaFactura, cantidad: number) => {
     publicar("cambio_cantidad_linea_solicitado", {
       lineaId: linea.id,
@@ -23,38 +41,18 @@ export const Lineas = ({
     });
   };
 
+  const facturaEsEditable = editable(factura);
+
   return (
     <>
-      {estadoFactura === "ABIERTO" && (
-        <div className="botones maestro-botones ">
-          <QBoton onClick={() => publicar("alta_linea_solicitada")}>
-            Nueva
-          </QBoton>
-
-          <QBoton
-            deshabilitado={!lineaActiva}
-            onClick={() => publicar("cambio_linea_solicitado")}
-          >
-            Editar
-          </QBoton>
-
-          <QBoton
-            deshabilitado={!lineaActiva}
-            onClick={() => publicar("baja_linea_solicitada")}
-          >
-            Borrar
-          </QBoton>
-        </div>
-      )}
-
       <LineasLista
         lineas={factura.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
-        facturaEditable={estadoFactura === "ABIERTO"}
+        facturaEditable={facturaEsEditable}
+        acciones={facturaEsEditable ? acciones : undefined}
         publicar={publicar}
       />
-
       {estadoFactura === "CREANDO_LINEA" && <CrearLinea publicar={publicar} />}
 
       {lineaActiva && estadoFactura === "CAMBIANDO_LINEA" && (

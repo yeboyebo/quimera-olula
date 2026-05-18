@@ -1,6 +1,7 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
+import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -18,10 +19,11 @@ export const TabCliente = ({
   factura,
   publicar = async () => {},
 }: TabClienteProps) => {
-  const { modelo, uiProps } = factura;
+  const { modelo } = factura;
+  const clienteEditable = editable(modelo);
   const [cambiandoCliente, setCambiandoCliente] = useState(false);
 
-  const onGuardarCambioCliente = async (cambios: Partial<Factura>) => {
+  const onGuardarCambioCliente = async (cambios: CambioCliente) => {
     publicar("cambio_cliente_listo", cambios);
     setCambiandoCliente(false);
   };
@@ -29,36 +31,49 @@ export const TabCliente = ({
   return (
     <div className="TabCliente">
       <quimera-formulario>
-        <Cliente {...uiProps("cliente_id", "nombre_cliente")} />
-        <QInput {...uiProps("id_fiscal")} label="ID Fiscal" />
+        <Cliente
+          nombre="cliente_id"
+          valor={modelo.cliente.cliente_id ?? ""}
+          descripcion={modelo.cliente.nombre_cliente}
+          deshabilitado={true}
+        />
+        <QInput
+          nombre="id_fiscal"
+          label="ID Fiscal"
+          valor={modelo.cliente.id_fiscal}
+          deshabilitado={true}
+        />
 
-        <div className="botones maestro-botones">
-          <QBoton
-            deshabilitado={!editable(modelo)}
-            onClick={() => setCambiandoCliente(true)}
-          >
-            Cambiar Cliente
-          </QBoton>
-        </div>
+        {clienteEditable && (
+          <div className="TabCliente-accion">
+            <QBoton onClick={() => setCambiandoCliente(true)}>
+              Cambiar Cliente
+            </QBoton>
+          </div>
+        )}
 
-        {modelo.cliente_id !== "None" ? (
+        {modelo.cliente.cliente_id !== null ? (
           <DirCliente
-            clienteId={modelo.cliente_id}
-            {...uiProps("direccion_id")}
+            clienteId={modelo.cliente.cliente_id ?? undefined}
+            nombre="direccion_id"
+            valor={modelo.cliente.direccion_id ?? ""}
+            deshabilitado={!clienteEditable}
+            onChange={() => {}}
           />
         ) : (
           <QInput
             deshabilitado={true}
             label="Direccion"
             nombre="direccion_cliente"
-            valor={`${modelo.tipo_via} ${modelo.nombre_via}, ${modelo.ciudad}`}
+            valor={`${modelo.cliente.direccion.tipo_via} ${modelo.cliente.direccion.nombre_via}, ${modelo.cliente.direccion.ciudad}`}
           />
         )}
       </quimera-formulario>
 
-      {cambiandoCliente && (
+      {clienteEditable && cambiandoCliente && (
         <CambioClienteVenta
           venta={factura}
+          inicializarDesdeVenta={true}
           onGuardar={onGuardarCambioCliente}
           onCancelar={() => setCambiandoCliente(false)}
         />

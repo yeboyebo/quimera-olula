@@ -121,10 +121,10 @@ bunch:
     - _type: grape
       name: updatePagination
 
-  onBuscarError:
-    - _type: alert
-      text: Ocurrió un problema. No se ha podido realizar la búsqueda
-      severity: warning
+  onBuscarErrorTransition:
+    # - _type: alert
+    #   text: Ocurrió un problema. No se ha podido realizar la búsqueda
+    #   severity: warning
     - _type: smTransition
       current: searching
       target: idle-search

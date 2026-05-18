@@ -13,7 +13,7 @@ function Facturacli({ filtro = { and: [] }, ...props }) {
     if (grupo === "000002" || grupo === "000004" || grupo === "000006") {
       filtroGrupo = {
         or: [
-          ["nombrecliente", "like", busqueda],
+          ["nombrecliente", "like_ua", busqueda],
           ["codigo", "like", busqueda],
         ],
       };
@@ -23,7 +23,7 @@ function Facturacli({ filtro = { and: [] }, ...props }) {
           ["codagente", "eq", agente],
           {
             or: [
-              ["nombrecliente", "like", busqueda],
+              ["nombrecliente", "like_ua", busqueda],
               ["codigo", "like", busqueda],
             ],
           },
@@ -41,9 +41,8 @@ function Facturacli({ filtro = { and: [] }, ...props }) {
         setOptions(
           response.data.map(factura => ({
             key: factura.idfactura,
-            value: `${factura.nombrecliente} - ${factura.codigo} - ${
-              factura.fecha ? util.formatDate(factura.fecha) : ""
-            }`,
+            value: `${factura.nombrecliente} - ${factura.codigo} - ${factura.fecha ? util.formatDate(factura.fecha) : ""
+              }`,
             option: factura,
           })),
         );

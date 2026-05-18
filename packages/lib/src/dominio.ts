@@ -305,6 +305,7 @@ export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => 
             if (valor === null || !valor.length || valor === "") {
                 return null;
             }
+            if (!Array.isArray(valor)) return valor;
 
             const [desde, hasta] = valor;
             return [desde ? new Date(Date.parse(desde)) : undefined, hasta ? new Date(Date.parse(hasta)) : undefined]
@@ -390,6 +391,8 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
             return [Number(desde).toString(), Number(hasta).toString()] as unknown as string;
         }
         case 'intervalo_fechas': {
+            if (!Array.isArray(valor)) return String(valor);
+
             const [desde, hasta] = (valor as [Date | undefined, Date | undefined]);
 
             return [desde?.toISOString().slice(0, 10) as string, hasta?.toISOString().slice(0, 10) as string] as unknown as string;
@@ -473,7 +476,7 @@ const setCampo = <M extends Modelo>(
     segundo?: string
 ) => async (_valor: ValorControl): Promise<void> => {
 
-    let valor = _valor || null;
+    let valor = _valor === undefined ? null : _valor;
     let descripcion: string | undefined = undefined;
 
 
@@ -706,9 +709,12 @@ export const calcularPaginacionSimplificada = (
 };
 
 export const puede = (regla: string): boolean => {
-    if (!regla) return true;
+    if (regla === "Dashboard:visit" || regla === 'Home:visit') return true;
+
+    // if (!regla) return true;
     // Busca el permiso exacto
     const permisos = JSON.parse(permisosGrupo.obtener() || "[]") as Permiso[];
+    const permisoGeneral = permisos.find(p => p.id_regla === "general");
 
     const permisoExacto = permisos.find(p => p.id_regla === regla);
     if (permisoExacto) {
@@ -717,11 +723,12 @@ export const puede = (regla: string): boolean => {
         // Si es null, sigue buscando
     }
 
-    // Quita la última parte y busca
+    // Quita la última parte y busca permiso padre
     const partes = regla.split(".");
+    let permisoPadre: Permiso | undefined;
     if (partes.length > 1) {
         const padre = partes.slice(0, -1).join(".");
-        const permisoPadre = permisos.find(p => p.id_regla === padre);
+        permisoPadre = permisos.find(p => p.id_regla === padre);
         if (permisoPadre) {
             if (permisoPadre.valor === true) return true;
             if (permisoPadre.valor === false) return false;
@@ -729,14 +736,41 @@ export const puede = (regla: string): boolean => {
         }
     }
 
-    // Busca permiso general
-    const permisoGeneral = permisos.find(p => p.id_regla === "general");
-    if (permisoGeneral) {
-        if (permisoGeneral.valor === true) return true;
-        if (permisoGeneral.valor === false) return false;
+    // Solo consulta general si hubo alguna coincidencia parcial (null),
+    // es decir, si la regla o su padre existen en la tabla pero están indecidos.
+    // Si la regla es completamente desconocida, se permite por defecto.
+    const hayCoincidenciaIndecisa =
+        (permisoExacto !== undefined && permisoExacto.valor === null) ||
+        (permisoPadre !== undefined && permisoPadre.valor === null);
+
+    if (hayCoincidenciaIndecisa) {
+        if (permisoGeneral) {
+            if (permisoGeneral.valor === true) return true;
+            if (permisoGeneral.valor === false) return false;
+        }
+    }
+
+    // Si no hay ninguna coincidencia y general está denegado, deniega.
+    if (permisoExacto === undefined && permisoPadre === undefined && permisoGeneral?.valor === false) {
+        return false;
     }
 
     return true;
+};
+
+export const plugin = (nombre: string): string => {
+    if (!nombre) return "";
+
+    const raw = localStorage.getItem("whoami");
+    if (!raw) return "";
+
+    try {
+        const whoAmI = JSON.parse(raw) as { plugins?: Record<string, string> };
+        const estado = whoAmI.plugins?.[nombre];
+        return typeof estado === "string" ? estado.toLowerCase() : "";
+    } catch {
+        return "";
+    }
 };
 
 type RelacionDeCampos = Record<string, string>;

@@ -1,5 +1,7 @@
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { CuentaBanco } from "../../diseño.ts";
 import { metaTablaCuentasBanco as metaTablaBase } from "./dominio.ts";
 import "./TabCuentasBancoLista.css";
@@ -10,6 +12,7 @@ export const TabCuentasBancoLista = ({
   emitir,
   cargando,
   cuentaDomiciliadaId,
+  acciones,
 }: {
   clienteId: string;
   cuentas: CuentaBanco[];
@@ -17,6 +20,7 @@ export const TabCuentasBancoLista = ({
   emitir: (evento: string, payload?: unknown) => void;
   cargando: boolean;
   cuentaDomiciliadaId: string;
+  acciones: Parameters<typeof QuimeraAcciones>[0]["acciones"];
 }) => {
   const metaTablaCuentasBanco = [
     {
@@ -38,14 +42,20 @@ export const TabCuentasBancoLista = ({
 
   return (
     <div className="CuentasBanco">
-      <QTabla
+      <ListadoSemiControlado
         metaTabla={metaTablaCuentasBanco}
-        datos={cuentas}
+        entidades={cuentas}
+        totalEntidades={cuentas.length}
         cargando={cargando}
-        seleccionadaId={seleccionada?.id}
+        seleccionada={seleccionada}
         onSeleccion={(cuenta) => emitir("cuenta_seleccionada", cuenta)}
-        orden={["id", "ASC"]}
-        onOrdenar={() => null}
+        criteriaInicial={criteriaDefecto}
+        onCriteriaChanged={() => null}
+        renderAcciones={() => (
+          <div className="detalle-cliente-tab-contenido maestro-botones">
+            <QuimeraAcciones acciones={acciones} vertical />
+          </div>
+        )}
       />
     </div>
   );

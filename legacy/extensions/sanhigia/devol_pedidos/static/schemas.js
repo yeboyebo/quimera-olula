@@ -52,6 +52,7 @@ export default parent => {
       codEvento: Field.Text("sh_codevento", "Evento"),
       nombreEvento: Field.Text("sh_nombreevento", "Nombre evento").dump(false),
       observaciones: Field.TextArea("observaciones", "Observaciones"),
+      estadoPresupuesto: Field.Text("estadopres", "Estado presupuesto"),
     }),
     pedidos: parent.pedidos.fields({
       enBorrador: Field.Bool("sh_ctrlestadoborr", "En borrador").dump(false),
@@ -211,6 +212,7 @@ export default parent => {
       referencia: Field.Text("referencia", "Referencia"),
       codAlmacen: Field.Text("codalmacen", "Almacén"),
       disponible: Field.Float("disponible", "Disponible"),
+      recepciones: Field.Text("recepciones", "Recepciones"),
     }),
     previsionCompras: Schema("sh_previsioncompras", "id").fields({
       idArticuloProv: Field.Int("idarticuloprov", "ID Artículo Prov"),
