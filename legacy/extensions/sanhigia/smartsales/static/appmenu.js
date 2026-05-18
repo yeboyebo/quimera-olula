@@ -19,7 +19,7 @@ export default parent => ({
       },
       bi: {
         title: "Business Intelligence",
-        rule: "crm.informes.bi",
+        rule: "crm.informe.bi",
         icons: ["insights"],
         color: "info",
         url: "/ss/bi",
@@ -77,7 +77,7 @@ export default parent => ({
       },
       clientes: {
         title: "Clientes",
-        rule: "ventas.cliente.leer",
+        rule: "crm.cliente.acceso_clientes",
         icons: ["contacts"],
         color: "info",
         url: "/ss/clientes",

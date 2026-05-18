@@ -273,7 +273,7 @@ export default {
     "Dashboard:visit": (check: (rule: string) => boolean) => check("crm.trato"),
     "OnlyAdmin:visit": false,
     "ss_campanias:visit": (check: (rule: string) => boolean) => check("ss_campanias.leer"),
-    "ss_informes:visit": (check: (rule: string) => boolean) => check("crm.informes"),
+    "ss_informes:visit": (check: (rule: string) => boolean) => check("crm.informe"),
     "Trato:boton-borrar": (check: (rule: string) => boolean) => check("crm.trato.borrar"),
     "TratosFarma:visit": (check: (rule: string) => boolean) => check("crm.trato.farma"),
     "ss_informes:marketing": (check: (rule: string) => boolean) => check("crm.informe.marketing"),
