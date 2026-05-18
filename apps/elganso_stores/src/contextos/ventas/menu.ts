@@ -1,10 +1,35 @@
+// Libreria Iconos: https://v2.boxicons.com/cheatsheet
+// Fichero iconos: packages/componentes/src/atomos/qicono.tsx
+
 export const menuVentas = {
-    "Planificador Semanal": { icono: "fichero" },
-    "Planificador Semanal/Planificador Semanal": { url: "/planificador_semanal", regla: "PlanificadorSemanal:visit" },
-    "Planificador Semanal/Planificador Semanal Resumen": { url: "/planificador_semanal_resumen", regla: "PlanificadorSemanalResumen:visit" },
-    "Planificador Semanal/Resumen Agente": { url: "/resumen_semanal" },
-    "Planificador Semanal/Control Horario": { url: "/control_horario" },
-    "Pedidos": { icono: "fichero" },
-    "Pedidos/Nuevo Pedido": { url: "/new_pedido" },
-    "Pedidos/Preparación Pedidos Web": { url: "/pedidos_web" },
+    // ********** Sección PLanificador **********
+    "Planificador Semanal": { icono: "calendario_vacio_relleno" },
+    "Planificador Semanal/Planificador Semanal": {
+        url: "/planificador_semanal",
+        regla: "PlanificadorSemanal:visit",
+        icono: "calendario_relleno",
+    },
+    "Planificador Semanal/Resumen Planificador": {
+        url: "/planificador_semanal_resumen",
+        regla: "PlanificadorSemanalResumen:visit",
+        icono: "detalle_relleno",
+    },
+    "Planificador Semanal/Resumen Agente": {
+        url: "/resumen_semanal",
+        icono: "usuario_detalle_relleno",
+    },
+    "Planificador Semanal/Control Horario": {
+        url: "/control_horario",
+        icono: "tiempo_relleno",
+    },
+    // ********** Sección Pedidos **********
+    "Pedidos": { icono: "tienda_relleno" },
+    "Pedidos/Preparación Pedidos Web": {
+        url: "/pedidos_web",
+        icono: "bolsa_relleno",
+    },
+    "Pedidos/Nuevo Pedido": {
+        url: "/new_pedido",
+        icono: "carrito_relleno",
+    },
 };
