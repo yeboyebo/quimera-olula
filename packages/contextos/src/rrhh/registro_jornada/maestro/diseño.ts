@@ -1,0 +1,34 @@
+import { MetaTabla } from "@olula/componentes/index.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { RegistroJornada } from "../diseño.ts";
+
+export type EstadoMaestroJornadas = 'INICIAL' | 'CREANDO_JORNADA';
+
+export type ContextoMaestroJornadas = {
+    estado: EstadoMaestroJornadas;
+    jornadas: ListaActivaEntidades<RegistroJornada>;
+};
+
+export const metaTablaJornada: MetaTabla<RegistroJornada> = [
+    {
+        id: "empleadoId",
+        cabecera: "Empleado",
+    },
+    {
+        id: "fecha",
+        cabecera: "Fecha",
+        tipo: "fecha",
+    },
+    {
+        id: "horaEntrada",
+        cabecera: "Entrada",
+    },
+    {
+        id: "horaSalida",
+        cabecera: "Salida",
+    },
+    {
+        id: "estado",
+        cabecera: "Estado",
+    },
+];
