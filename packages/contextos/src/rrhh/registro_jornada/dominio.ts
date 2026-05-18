@@ -14,10 +14,31 @@ export const registroJornadaVacio: RegistroJornada = {
     pausas: [],
 };
 
+export const ERR_HORA_SALIDA_JORNADA = "La hora de salida no puede ser anterior a la última hora registrada";
+
+const horaSalidaValida = (jornada: RegistroJornada): boolean | string => {
+    if (!jornada.horaSalida) return true;
+
+    const horasRelevantes: string[] = [];
+    if (jornada.horaEntrada) horasRelevantes.push(jornada.horaEntrada);
+    for (const pausa of jornada.pausas) {
+        horasRelevantes.push(pausa.horaInicio);
+        if (pausa.horaFin) horasRelevantes.push(pausa.horaFin);
+    }
+
+    if (horasRelevantes.length === 0) return true;
+
+    const maximo = horasRelevantes.reduce((a, b) => (b > a ? b : a));
+    if (jornada.horaSalida < maximo) {
+        return ERR_HORA_SALIDA_JORNADA;
+    }
+    return true;
+};
+
 export const metaRegistroJornada: MetaModelo<RegistroJornada> = {
     campos: {
         horaEntrada: { tipo: "hora" },
-        horaSalida: { tipo: "hora" },
+        horaSalida: { tipo: "hora", validacion: horaSalidaValida },
         observaciones: { tipo: "texto" },
     },
     editable: (jornada: RegistroJornada) => jornada.estado === "BORRADOR",

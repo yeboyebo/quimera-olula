@@ -104,7 +104,12 @@ export const patchJornada: PatchJornada = async (id, cambios: CambiosJornada) =>
             hora_entrada: cambios.horaEntrada,
             hora_salida: cambios.horaSalida,
             observaciones: cambios.observaciones,
-            pausas: [],
+            pausas: cambios.pausas.map((p) => ({
+                id: p.id,
+                hora_inicio: p.horaInicio,
+                hora_fin: p.horaFin,
+                causa: p.causa,
+            })),
         },
         "Error al modificar la jornada"
     );

@@ -3,16 +3,20 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
-import { formatearFechaDate } from "@olula/lib/dominio.js";
+import { formatearFechaDate, formatearHoraDate } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { AnularJornada } from "../anular/AnularJornada.tsx";
 import { AprobarJornada } from "../aprobar/AprobarJornada.tsx";
-import { patchJornada } from "../infraestructura.ts";
+import { patchJornada, patchPausarJornada, patchReactivarJornada } from "../infraestructura.ts";
 import { PausarJornada } from "../pausar/PausarJornada.tsx";
+import { PausasJornada } from "../pausas/PausasJornada.tsx";
 import { ReactivarJornada } from "../reactivar/ReactivarJornada.tsx";
 import { ContextoDetalleJornada, jornadaVacia, metaJornada } from "./diseño.ts";
+import { BotoneraJornadaBorrador } from "./BotoneraJornadaBorrador.tsx";
 import { getMaquina } from "./maquina.ts";
+
+const ESTADOS_PAUSAS = ["BORRADOR", "CREANDO_PAUSA", "EDITANDO_PAUSA", "BORRANDO_PAUSA"];
 
 export const DetalleJornada = ({
     id,
@@ -24,6 +28,7 @@ export const DetalleJornada = ({
     const contextoInicial: ContextoDetalleJornada = {
         estado: "INICIAL",
         jornada: jornadaVacia,
+        pausaActiva: null,
     };
 
     const { ctx, emitir } = useMaquina(getMaquina, contextoInicial, publicar);
@@ -34,11 +39,34 @@ export const DetalleJornada = ({
                 horaEntrada: jornada.horaEntrada,
                 horaSalida: jornada.horaSalida,
                 observaciones: jornada.observaciones,
+                pausas: ctx.jornada.pausas,
             });
             await emitir("jornada_guardada");
         },
         [ctx, emitir]
     );
+
+    const horaActual = () => formatearHoraDate(new Date());
+
+    const onPausa = useCallback(async () => {
+        await patchPausarJornada(ctx.jornada.id, { horaInicio: horaActual(), causa: "" });
+        await emitir("jornada_guardada");
+    }, [ctx.jornada.id, emitir]);
+
+    const onStop = useCallback(async () => {
+        await patchJornada(ctx.jornada.id, {
+            horaEntrada: ctx.jornada.horaEntrada,
+            horaSalida: horaActual(),
+            observaciones: ctx.jornada.observaciones,
+            pausas: ctx.jornada.pausas,
+        });
+        await emitir("jornada_guardada");
+    }, [ctx, emitir]);
+
+    const onPlay = useCallback(async () => {
+        await patchReactivarJornada(ctx.jornada.id, { horaFin: horaActual() });
+        await emitir("jornada_guardada");
+    }, [ctx.jornada.id, emitir]);
 
     const { uiProps } = useModelo(metaJornada, ctx.jornada, autoGuardar);
 
@@ -63,6 +91,15 @@ export const DetalleJornada = ({
             cerrarDetalle={() => emitir("jornada_deseleccionada", null, true)}
         >
             <div className="DetalleJornada">
+                {estado === "BORRADOR" && (
+                    <BotoneraJornadaBorrador
+                        estadoBorrador={jornada.estadoBorrador}
+                        onPausa={onPausa}
+                        onStop={onStop}
+                        onPlay={onPlay}
+                    />
+                )}
+
                 <quimera-formulario>
                     <QInput
                         label="Hora de entrada"
@@ -90,9 +127,11 @@ export const DetalleJornada = ({
                                 Reactivar
                             </QBoton>
                         )}
-                        <QBoton onClick={() => emitir("aprobar_solicitado")}>
-                            Aprobar
-                        </QBoton>
+                        {jornada.estadoBorrador === "CERRADA" && (
+                            <QBoton onClick={() => emitir("aprobar_solicitado")}>
+                                Aprobar
+                            </QBoton>
+                        )}
                         <QBoton onClick={() => emitir("anular_solicitado")}>
                             Anular
                         </QBoton>
@@ -105,6 +144,16 @@ export const DetalleJornada = ({
                             Anular
                         </QBoton>
                     </div>
+                )}
+
+                {ESTADOS_PAUSAS.includes(estado) && (
+                    <PausasJornada
+                        jornada={jornada}
+                        estadoBorrador={jornada.estadoBorrador}
+                        estadoDetalle={estado}
+                        pausaActiva={ctx.pausaActiva}
+                        publicar={emitir}
+                    />
                 )}
 
                 {estado === "APROBANDO" && (

@@ -35,6 +35,13 @@ export type CambiosJornada = {
     horaEntrada: string | null;
     horaSalida: string | null;
     observaciones: string | null;
+    pausas: PausaJornada[];
+};
+
+export type CambiosPausa = {
+    horaInicio: string;
+    horaFin: string | null;
+    causa: string;
 };
 
 export type AnulacionJornada = {

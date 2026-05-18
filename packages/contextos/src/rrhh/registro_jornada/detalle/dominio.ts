@@ -48,6 +48,7 @@ export const getContextoVacio: ProcesarJornada = async (contexto) => {
         ...contexto,
         estado: 'INICIAL' as EstadoDetalleJornada,
         jornada: jornadaVacia,
+        pausaActiva: null,
     };
 };
 
