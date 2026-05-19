@@ -1,21 +1,21 @@
 import { QIcono } from "@olula/componentes/index.js";
-import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.ts";
+import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.js";
 import "@olula/componentes/plantilla/Cabecera.css";
 import { CabeceraProps } from "@olula/componentes/plantilla/Cabecera.tsx";
-import { useMenuControl } from "@olula/componentes/plantilla/useMenuControl.ts";
-import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
-import { useContext } from "react";
+import { useMenuControl } from "@olula/componentes/plantilla/useMenuControl.js";
 import { Link } from "react-router";
 import "./Cabecera.scss";
 
-export const CabeceraGan = (props?: CabeceraProps) => {
-  const { app } = useContext(FactoryCtx);
+export const CabeceraBase = ({
+  logoSrc = "/olula_header_blanco.png",
+  logoAlt = "Olula | Inicio",
+  Titulo,
+  AccionesCabecera,
+  MenuUsuario,
+  ExtraLogo,
+}: CabeceraProps) => {
   const { toggleMenu } = useMenuControl();
-  const AccionesCabecera = app.Componentes
-    ?.cabecera_acciones as () => React.ReactNode;
   const autenticado = estaAutentificado();
-
-  const { Titulo, MenuUsuario, ExtraLogo } = props;
 
   return (
     <>
@@ -31,7 +31,7 @@ export const CabeceraGan = (props?: CabeceraProps) => {
           </>
         )}
         <Link to="/" className={"logoGanso" + (!autenticado ? " login" : "")}>
-          <img src="/logo_ganso.png" alt="ElGanso | Inicio" />
+          <img src={logoSrc} alt={logoAlt} className="logo-app" />
         </Link>
         {ExtraLogo ? <ExtraLogo /> : null}
         <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
@@ -52,12 +52,22 @@ export const CabeceraGan = (props?: CabeceraProps) => {
               {MenuUsuario ? (
                 <MenuUsuario />
               ) : (
-                <QIcono nombre="usuario_circulo_relleno" tamaño="md" />
+                <QIcono nombre="perfil" tamaño="sm" />
               )}
             </label>
           </>
         )}
       </header>
     </>
+  );
+};
+
+export const CabeceraGanso = (props: CabeceraProps) => {
+  return (
+    <CabeceraBase
+      {...props}
+      logoSrc="/logo_ganso.png"
+      logoAlt="ElGanso | Inicio"
+    />
   );
 };
