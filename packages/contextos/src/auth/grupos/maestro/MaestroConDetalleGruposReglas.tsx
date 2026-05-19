@@ -26,10 +26,11 @@ const criteriaBaseGrupos: Criteria = {
 
 export const MaestroConDetalleGruposReglas = () => {
   const { id, criteria } = getUrlParams();
-  // Usar criterio base con orden ASC, mergeando criterios de URL si existen
-  const criteriaInicial: Criteria = criteria?.orden?.length
-    ? { ...criteriaBaseGrupos, ...criteria }
-    : criteriaBaseGrupos;
+  const criteriaInicial: Criteria = {
+    ...criteriaBaseGrupos,
+    ...criteria,
+    orden: criteria?.orden?.length ? criteria.orden : criteriaBaseGrupos.orden,
+  };
 
   const { ctx, emitir } = useMaquina<EstadoMaestroGrupo, ContextoMaestroGrupo>(
     getMaquina,
