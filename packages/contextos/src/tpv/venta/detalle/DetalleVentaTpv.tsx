@@ -4,20 +4,20 @@ import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
-import { imprimir_blob } from "@olula/lib/impresion.ts";
+import { abrirCajon, imprimir_blob } from "@olula/lib/impresion.ts";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect, useRef } from "react";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
-import { TiqueRegaloVentaTpv } from "../tique_regalo/TiqueRegaloVentaTpv.tsx";
 import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
-import { getReportVenta } from "../infraestructura.ts";
+import { getReportVale, getReportVenta } from "../infraestructura.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
+import { TiqueRegaloVentaTpv } from "../tique_regalo/TiqueRegaloVentaTpv.tsx";
 import { PendienteVenta } from "./comps/PendienteVenta.tsx";
 import { ContextoVentaTpv, guardarVenta, metaVentaTpv } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -34,6 +34,11 @@ const imprimirTicketOFactura = async (venta: VentaTpv) => {
         const blob = await getReportVenta(venta.id);
         imprimir_blob(blob)
     }
+}
+
+const imprimirVale = async (venta: VentaTpv) => {
+    const blob = await getReportVale(venta.codigo);
+    imprimir_blob(blob)
 }
 
 export const DetalleVentaTpv = ({
@@ -82,6 +87,10 @@ export const DetalleVentaTpv = ({
         await imprimirTicketOFactura(ctx.venta);
     };
 
+    const imprimir_vale = async () => {
+        await imprimirVale(ctx.venta);
+    };
+
 
     const { estado, pagos, lineas, venta } = ctx;
 
@@ -106,11 +115,19 @@ export const DetalleVentaTpv = ({
                 />
             )}
             <QBoton texto="Imprimir" onClick={imprimir} />
-            <QBoton
-              texto="Tique regalo"
-              onClick={() => emitir("tique_regalo_solicitado")}
-              deshabilitado={estado !== "EMITIDA"}
-            />
+            <QBoton texto="Cajón" onClick={abrirCajon} />
+            {estado == "EMITIDA" && venta.total > 0 && (
+                <QBoton
+                texto="Tique regalo"
+                onClick={() => emitir("tique_regalo_solicitado")}
+                />
+            )}
+            {estado == "EMITIDA" && venta.total < 0 && (
+                <QBoton
+                texto="Imprimir vale"
+                onClick={imprimir_vale}
+                />
+            )}
             </div>
             <Tabs
             children={[

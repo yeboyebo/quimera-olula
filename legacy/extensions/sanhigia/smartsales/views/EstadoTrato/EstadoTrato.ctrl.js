@@ -489,7 +489,7 @@ export const bunch = parent => ({
   compruebaAccionCambioEstadoTrato: [
     {
       condition: (_, { trato }) =>
-        trato.idTipotrato === util.getUser().tratolicenciafarma && ACL.can("TratosFarma:visit"),
+        trato.idTipotrato === util.getUser().tratolicenciafarma && ACL.can("crm.farma.acceso_tratos"),
       type: "grape",
       name: "onEstadoTratoTipoFarmaChanged",
     },

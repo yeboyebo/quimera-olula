@@ -1,12 +1,8 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
-import { ProcesarEvento } from "@olula/lib/useMaquina.js";
-import {
-  CategoriaReglas,
-  ReglaAnidada,
-  ReglaConValor,
-} from "../../../diseño.ts";
-import { calcularClasesExtra } from "../../../dominio.ts";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { CategoriaReglas, ReglaAnidada, ReglaConValor } from "../../diseño.ts";
+import { calcularClasesExtra } from "../../dominio.ts";
 import "./AccionesRegla.css";
 
 export const AccionesRegla = ({
@@ -19,7 +15,7 @@ export const AccionesRegla = ({
   regla: ReglaConValor | ReglaAnidada;
   reglaGeneral?: CategoriaReglas;
   grupoId: string;
-  emitir: ProcesarEvento;
+  emitir: EmitirEvento;
 }) => {
   const clasesExtra = calcularClasesExtra(regla, reglaPadre, reglaGeneral);
 
@@ -73,7 +69,7 @@ export const AccionesCategoria = ({
 }: {
   categoria: CategoriaReglas;
   grupoId: string;
-  emitir: ProcesarEvento;
+  emitir: EmitirEvento;
   reglaGeneral?: CategoriaReglas;
 }) => {
   const clasesExtra = "";

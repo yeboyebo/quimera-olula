@@ -476,7 +476,7 @@ const setCampo = <M extends Modelo>(
     segundo?: string
 ) => async (_valor: ValorControl): Promise<void> => {
 
-    let valor = _valor || null;
+    let valor = _valor === undefined ? null : _valor;
     let descripcion: string | undefined = undefined;
 
 
@@ -711,9 +711,12 @@ export const calcularPaginacionSimplificada = (
 };
 
 export const puede = (regla: string): boolean => {
-    if (!regla) return true;
+    if (regla === "Dashboard:visit" || regla === 'Home:visit') return true;
+
+    // if (!regla) return true;
     // Busca el permiso exacto
     const permisos = JSON.parse(permisosGrupo.obtener() || "[]") as Permiso[];
+    const permisoGeneral = permisos.find(p => p.id_regla === "general");
 
     const permisoExacto = permisos.find(p => p.id_regla === regla);
     if (permisoExacto) {
@@ -722,11 +725,12 @@ export const puede = (regla: string): boolean => {
         // Si es null, sigue buscando
     }
 
-    // Quita la última parte y busca
+    // Quita la última parte y busca permiso padre
     const partes = regla.split(".");
+    let permisoPadre: Permiso | undefined;
     if (partes.length > 1) {
         const padre = partes.slice(0, -1).join(".");
-        const permisoPadre = permisos.find(p => p.id_regla === padre);
+        permisoPadre = permisos.find(p => p.id_regla === padre);
         if (permisoPadre) {
             if (permisoPadre.valor === true) return true;
             if (permisoPadre.valor === false) return false;
@@ -734,11 +738,23 @@ export const puede = (regla: string): boolean => {
         }
     }
 
-    // Busca permiso general
-    const permisoGeneral = permisos.find(p => p.id_regla === "general");
-    if (permisoGeneral) {
-        if (permisoGeneral.valor === true) return true;
-        if (permisoGeneral.valor === false) return false;
+    // Solo consulta general si hubo alguna coincidencia parcial (null),
+    // es decir, si la regla o su padre existen en la tabla pero están indecidos.
+    // Si la regla es completamente desconocida, se permite por defecto.
+    const hayCoincidenciaIndecisa =
+        (permisoExacto !== undefined && permisoExacto.valor === null) ||
+        (permisoPadre !== undefined && permisoPadre.valor === null);
+
+    if (hayCoincidenciaIndecisa) {
+        if (permisoGeneral) {
+            if (permisoGeneral.valor === true) return true;
+            if (permisoGeneral.valor === false) return false;
+        }
+    }
+
+    // Si no hay ninguna coincidencia y general está denegado, deniega.
+    if (permisoExacto === undefined && permisoPadre === undefined && permisoGeneral?.valor === false) {
+        return false;
     }
 
     return true;
