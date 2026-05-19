@@ -2,8 +2,10 @@ import { MetaModelo } from "@olula/lib/dominio.js";
 import { NuevoPresupuesto, NuevoPresupuestoClienteNoRegistrado } from "../diseño.ts";
 
 export const nuevoPresupuestoVacio: NuevoPresupuesto = {
-    cliente_id: "",
-    direccion_id: "",
+    cliente: {
+        cliente_id: "",
+        direccion_id: "",
+    },
     empresa_id: "1",
 };
 

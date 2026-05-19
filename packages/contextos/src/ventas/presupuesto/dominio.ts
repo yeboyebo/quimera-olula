@@ -28,9 +28,12 @@ export const presupuestoVacio = (): Presupuesto => ({
 });
 
 export const nuevoPresupuestoVacio: NuevoPresupuesto = {
-    cliente_id: "",
-    direccion_id: "",
+    cliente: {
+        cliente_id: "",
+        direccion_id: "",
+    },
     empresa_id: "1",
+    oportunidad_id: null,
 };
 
 export const cambioClientePresupuestoVacio: CambioClientePresupuesto = cambioClienteVentaVacio;
