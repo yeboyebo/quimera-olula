@@ -116,7 +116,7 @@ export const MaestroConDetalleLicenciaFarma = () => {
         nuevaCriteria.paginacion
       );
       licencias.setLista(datos);
-      setTotal(total);
+      if (total >= 0) setTotal(total);
       setCargando(false);
     },
     [licencias]
