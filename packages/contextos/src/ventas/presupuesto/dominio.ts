@@ -1,3 +1,4 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { cambioClienteVentaVacio, clienteVentaVacio, ventaVacia } from "../venta/dominio.ts";
 import { CambioClientePresupuesto, NuevoPresupuesto, Presupuesto } from "./diseño.ts";
@@ -32,8 +33,7 @@ export const nuevoPresupuestoVacio: NuevoPresupuesto = {
         cliente_id: "",
         direccion_id: "",
     },
-    empresa_id: "1",
-    oportunidad_id: null,
+    empresa_id: empresaActual(),
 };
 
 export const cambioClientePresupuestoVacio: CambioClientePresupuesto = cambioClienteVentaVacio;
