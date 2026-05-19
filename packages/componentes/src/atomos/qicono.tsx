@@ -87,6 +87,8 @@ const iconos: Record<string, string | Icono> = {
   tiempo_relleno: { nombre: "time", tipo: "solid" },
   usuario: "user",
   usuario_relleno: { nombre: "user", tipo: "solid" },
+  usuario_circulo: "user-circle",
+  usuario_circulo_relleno: { nombre: "user-circle", tipo: "solid" },
   usuario_detalle: "user-detail",
   usuario_detalle_relleno: { nombre: "user-detail", tipo: "solid" },
   ver: "show",

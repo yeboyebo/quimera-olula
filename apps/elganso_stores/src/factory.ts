@@ -6,7 +6,7 @@ import { FactoryAuthLegacy } from "./contextos/auth/factory.ts";
 import { FactoryVentasLegacy } from "./contextos/ventas/factory.ts";
 
 class FactoryComponentesGan extends FactoryComponentesOlula {
-    static Cabecera = CabeceraGan;
+    static cabecera = CabeceraGan;
     static MenuUsuario = MenuUsuarioGan;
 }
 

@@ -1,4 +1,4 @@
-import { Icon } from "@mui/material";
+import { QIcono } from "@olula/componentes/index.js";
 import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.ts";
 import "@olula/componentes/plantilla/Cabecera.css";
 import { CabeceraProps } from "@olula/componentes/plantilla/Cabecera.tsx";
@@ -8,16 +8,18 @@ import { useContext } from "react";
 import { Link } from "react-router";
 import "./Cabecera.scss";
 
-export const CabeceraGan = (_props?: CabeceraProps) => {
+export const CabeceraGan = (props?: CabeceraProps) => {
   const { app } = useContext(FactoryCtx);
   const { toggleMenu } = useMenuControl();
   const AccionesCabecera = app.Componentes
     ?.cabecera_acciones as () => React.ReactNode;
   const autenticado = estaAutentificado();
 
+  const { Titulo, MenuUsuario, ExtraLogo } = props;
+
   return (
     <>
-      <header>
+      <header className="cabecera-principal">
         {autenticado && (
           <>
             <button
@@ -31,6 +33,8 @@ export const CabeceraGan = (_props?: CabeceraProps) => {
         <Link to="/" className={"logoGanso" + (!autenticado ? " login" : "")}>
           <img src="/logo_ganso.png" alt="ElGanso | Inicio" />
         </Link>
+        {ExtraLogo ? <ExtraLogo /> : null}
+        <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
         <div id="cabecera-acciones-extra">
           {AccionesCabecera ? <AccionesCabecera /> : null}
         </div>
@@ -45,7 +49,11 @@ export const CabeceraGan = (_props?: CabeceraProps) => {
               htmlFor="boton-menu-usuario"
               id="etiqueta-menu-usuario-abierto"
             >
-              <Icon fontSize="large">account_circle</Icon>
+              {MenuUsuario ? (
+                <MenuUsuario />
+              ) : (
+                <QIcono nombre="usuario_circulo_relleno" tamaño="md" />
+              )}
             </label>
           </>
         )}
