@@ -1,0 +1,105 @@
+import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  filtroFechas,
+  MetaFiltro,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useEffect } from "react";
+import { EstadoComunicacion } from "../../componentes/estado_comunicacion.tsx";
+import { DetalleComunicacion } from "../detalle/DetalleComunicacion.tsx";
+import { Comunicacion } from "../diseño.ts";
+import { metaTablaComunicacion } from "./diseño.ts";
+import "./MaestroConDetalleComunicacion.css";
+import { getMaquina } from "./maquina.ts";
+
+const criteriaBaseComunicaciones = {
+  ...criteriaDefecto,
+  orden: ["fechaEnvio", "DESC"],
+};
+
+const metaFiltroComunicacion: MetaFiltro = {
+  estado: {
+    id: "estado",
+    label: "Estado",
+    filtro: (valor) => (valor ? ["estado", "=", valor as string] : null),
+    render: (valor, onChange) => (
+      <EstadoComunicacion
+        valor={(valor as string) ?? ""}
+        onChange={(opcion: { valor: string; descripcion: string } | null) =>
+          onChange(opcion?.valor ?? "")
+        }
+      />
+    ),
+  },
+  fechaEnvio: {
+    id: "fechaEnvio",
+    label: "Fecha",
+    tipo: "intervalo_fechas",
+    filtro: (valor) => filtroFechas("fechaEnvio", valor),
+  },
+};
+
+export const MaestroConDetalleComunicacion = () => {
+  const { id, criteria } = getUrlParams();
+  const criteriaInicial =
+    criteria.orden.toString() === criteriaDefecto.orden.toString()
+      ? { ...criteria, orden: criteriaBaseComunicaciones.orden }
+      : criteria;
+
+  const { ctx, emitir } = useMaquina(getMaquina, {
+    estado: "INICIAL",
+    comunicaciones: listaActivaEntidadesInicial<Comunicacion>(
+      id,
+      criteriaInicial
+    ),
+  });
+
+  useUrlParams(ctx.comunicaciones.activo, ctx.comunicaciones.criteria);
+
+  useEffect(() => {
+    emitir("recarga_de_comunicaciones_solicitada", ctx.comunicaciones.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="MaestroComunicacion">
+      <MaestroDetalle<Comunicacion>
+        Maestro={
+          <>
+            <h2>Comunicaciones</h2>
+            <Listado<Comunicacion>
+              metaTabla={metaTablaComunicacion}
+              metaFiltro={metaFiltroComunicacion}
+              modo="tabla"
+              criteria={ctx.comunicaciones.criteria}
+              entidades={ctx.comunicaciones.lista}
+              totalEntidades={ctx.comunicaciones.total}
+              seleccionada={ctx.comunicaciones.activo}
+              onSeleccion={(payload) =>
+                emitir("comunicacion_seleccionada", payload)
+              }
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
+              }
+            />
+          </>
+        }
+        Detalle={
+          <DetalleComunicacion
+            id={ctx.comunicaciones.activo}
+            publicar={emitir}
+          />
+        }
+        seleccionada={ctx.comunicaciones.activo}
+        modoDisposicion="maestro-50"
+      />
+    </div>
+  );
+};

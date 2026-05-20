@@ -1,0 +1,19 @@
+.DetalleComunicacion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.detalle-comunicacion-campos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detalle-comunicacion-campos p {
+    margin: 0;
+}
+
+.detalle-comunicacion-cuerpo {
+    white-space: pre-wrap;
+}

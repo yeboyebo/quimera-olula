@@ -8,6 +8,7 @@ export const menuSmartsales = {
     "SmartSales/Tratos": { url: "/ss/tratos", regla: "crm.campana.leer" },
     "SmartSales/Farma": { url: "/ss/tratosfarma", regla: "crm.trato.farma.acceso_tratos" },
     "SmartSales/Contactos": { url: "/ss/contactosmd", regla: "crm.campana.leer" },
+    "SmartSales/Comunicaciones": { url: "/comun/comunicacion", regla: "crm.trato" },
     "SmartSales/Cursos": { url: "/ss/cursos", regla: "crm.trato" },
     "SmartSales/Clientes": { url: "/ss/clientes", regla: "ventas.cliente.leer" },
     "SmartSales/Incidencias": { url: "/ss/incidencias" },
