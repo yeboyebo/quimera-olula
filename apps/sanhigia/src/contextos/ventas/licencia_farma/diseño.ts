@@ -14,8 +14,8 @@ export type Trato = {
 
 export interface CabeceraLicenciaFarma extends Entidad {
     id: string;
-    tipoLicencia: string;
-    fechaCaducidad: string;
+    tipoLicencia: string | null;
+    fechaCaducidad: string | null;
     fechaInicio: string | null;
     nombreCliente: string | null;
     agenteId: string | null;
@@ -35,8 +35,8 @@ export interface LicenciaFarma extends CabeceraLicenciaFarma {
 
 export interface CabeceraLicenciaFarmaAPI {
     id: string;
-    tipo_licencia: string;
-    fecha_caducidad: string;
+    tipo_licencia: string | null;
+    fecha_caducidad: string | null;
     fecha_inicio: string | null;
     nombre_cliente: string | null;
     agente_id: string | null;

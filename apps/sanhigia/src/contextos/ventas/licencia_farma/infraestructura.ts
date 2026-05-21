@@ -48,8 +48,8 @@ const licenciaFarmaToAPI = (l: Partial<LicenciaFarma>) => ({
 });
 
 const nuevaLicenciaFarmaToAPI = (n: NuevaLicenciaFarma) => ({
-    tipo_licencia: n.tipoLicencia || 'Tratamiento de regeneración ósea',
-    fecha_caducidad: n.fechaCaducidad || '3000-12-31',
+    tipo_licencia: n.tipoLicencia,
+    fecha_caducidad: n.fechaCaducidad,
     trato_id: n.tratoId,
     cliente_id: n.clienteId,
     nombre_cliente: n.nombreCliente,
