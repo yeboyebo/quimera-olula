@@ -5,8 +5,8 @@ import {
   filtroFechas,
   MetaFiltro,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import { QTarjetaGenerica } from "@olula/componentes/moleculas/qtarjeta_generica.tsx";
-import { criteriaDefecto, formatearFechaHora } from "@olula/lib/dominio.js";
+import { Filtro } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -16,29 +16,12 @@ import { Comunicacion, ESTADOS_COMUNICACION } from "../diseño.ts";
 import { metaTablaComunicacion } from "./diseño.ts";
 import "./MaestroConDetalleComunicacion.css";
 import { getMaquina } from "./maquina.ts";
-
-const tarjetaComunicacion = (comunicacion: Comunicacion) => {
-  const noLeida = comunicacion.estado === ESTADOS_COMUNICACION.NO_LEIDA;
-  return (
-    <QTarjetaGenerica
-      arribaIzquierda={
-        <span className="comunicacion-tarjeta-asunto">
-          <span
-            className={`comunicacion-punto${noLeida ? " comunicacion-punto--no-leida" : " comunicacion-punto--leida"}`}
-          />
-          <span className={noLeida ? "comunicacion-tarjeta--no-leida" : ""}>
-            {comunicacion.asunto}
-          </span>
-        </span>
-      }
-      arribaDerecha={formatearFechaHora(comunicacion.fechaEnvio)}
-    />
-  );
-};
+import { TarjetaComunicacion } from "./TarjetaComunicacion.tsx";
 
 const criteriaBaseComunicaciones = {
   ...criteriaDefecto,
   orden: ["fechaEnvio", "DESC"],
+  filtro: [["estado", "=", ESTADOS_COMUNICACION.NO_LEIDA]] as Filtro,
 };
 
 const metaFiltroComunicacion: MetaFiltro = {
@@ -65,10 +48,17 @@ const metaFiltroComunicacion: MetaFiltro = {
 
 export const MaestroConDetalleComunicacion = () => {
   const { id, criteria } = getUrlParams();
-  const criteriaInicial =
-    criteria.orden.toString() === criteriaDefecto.orden.toString()
-      ? { ...criteria, orden: criteriaBaseComunicaciones.orden }
-      : criteria;
+  const criteriaInicial = {
+    ...criteria,
+    orden:
+      criteria.orden.toString() === criteriaDefecto.orden.toString()
+        ? criteriaBaseComunicaciones.orden
+        : criteria.orden,
+    filtro:
+      criteria.filtro.length === 0
+        ? criteriaBaseComunicaciones.filtro
+        : criteria.filtro,
+  };
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -96,7 +86,7 @@ export const MaestroConDetalleComunicacion = () => {
               metaFiltro={metaFiltroComunicacion}
               modo="tarjetas"
               criteria={ctx.comunicaciones.criteria}
-              tarjeta={tarjetaComunicacion}
+              tarjeta={TarjetaComunicacion}
               entidades={ctx.comunicaciones.lista}
               totalEntidades={ctx.comunicaciones.total}
               seleccionada={ctx.comunicaciones.activo}

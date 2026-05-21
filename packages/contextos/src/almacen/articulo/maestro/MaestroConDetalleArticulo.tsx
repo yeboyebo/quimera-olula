@@ -5,17 +5,11 @@ import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
+import { CrearArticulo } from "../crear/CrearArticulo.tsx";
+import { DetalleArticulo } from "../detalle/DetalleArticulo.tsx";
 import { Articulo } from "../diseño.ts";
-import { CrearArticulo } from "./CrearArticulo.tsx";
-import { DetalleArticulo } from "./DetalleArticulo/DetalleArticulo.tsx";
-import { ContextoMaestroArticulo, getMaquina } from "./maquina.ts";
-
-const metaTablaArticulo = [
-  { id: "id", cabecera: "ID" },
-  { id: "nombre", cabecera: "Nombre" },
-  { id: "descripcion", cabecera: "Descripción" },
-  { id: "estado", cabecera: "Estado" },
-];
+import { ContextoMaestroArticulo, metaTablaArticulo } from "./diseño.ts";
+import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleArticulo = () => {
   const { id, criteria } = getUrlParams();
@@ -32,16 +26,13 @@ export const MaestroConDetalleArticulo = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const articuloActivo =
-    ctx.articulos.lista.find((a) => a.id === ctx.articulos.activo) ?? null;
-
   return (
     <div className="Articulo">
       <MaestroDetalle<Articulo>
         seleccionada={ctx.articulos.activo}
         Maestro={
           <>
-            <h2>Articulos</h2>
+            <h2>Artículos</h2>
             <Listado<Articulo>
               metaTabla={metaTablaArticulo}
               modo="tabla"
@@ -52,7 +43,7 @@ export const MaestroConDetalleArticulo = () => {
               renderAcciones={() => (
                 <div className="maestro-botones">
                   <QBoton onClick={() => emitir("creacion_solicitada")}>
-                    Nueva
+                    Nuevo Artículo
                   </QBoton>
                 </div>
               )}
@@ -72,13 +63,14 @@ export const MaestroConDetalleArticulo = () => {
         Detalle={
           <DetalleArticulo
             key={ctx.articulos.activo}
-            articuloInicial={articuloActivo}
+            id={ctx.articulos.activo}
             publicar={emitir}
           />
         }
       />
       <CrearArticulo
-        emitir={emitir}
+        publicar={emitir}
+        onCancelar={() => emitir("creacion_cancelada")}
         activo={ctx.estado === "CREANDO_ARTICULO"}
       />
     </div>

@@ -12,8 +12,14 @@
     gap: 0.4rem;
 }
 
-.comunicacion-tarjeta--no-leida {
+.comunicacion-tarjeta-texto--no-leida,
+.comunicacion-tarjeta-fecha--no-leida {
     font-weight: 700;
+}
+
+.comunicacion-tarjeta-texto--leida,
+.comunicacion-tarjeta-fecha--leida {
+    font-weight: 400;
 }
 
 .comunicacion-punto {
@@ -25,9 +31,9 @@
 }
 
 .comunicacion-punto--no-leida {
-    background-color: #9e9e9e;
+    background-color: var(--color-error);
 }
 
 .comunicacion-punto--leida {
-    background-color: #4caf50;
+    background-color: var(--color-exito);
 }
