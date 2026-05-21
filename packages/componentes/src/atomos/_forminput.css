@@ -149,6 +149,35 @@ quimera-select {
 
 quimera-input {
 
+    label {
+        .hora-wrapper {
+            position: relative;
+
+            input {
+                width: 100%;
+                padding-right: var(--espaciado-l);
+            }
+
+            .hora-limpiar {
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: var(--color-texto-secundario);
+                cursor: pointer;
+                font-size: var(--tamaño-letra-m);
+                padding: 0 var(--espaciado-xxs);
+                line-height: 1;
+
+                &:hover {
+                    color: var(--color-texto-primario);
+                }
+            }
+        }
+    }
+
     &[tipo='numero'],
     &[tipo='entero'],
     &[tipo='decimal'],

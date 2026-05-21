@@ -8,12 +8,13 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { AnularJornada } from "../anular/AnularJornada.tsx";
 import { AprobarJornada } from "../aprobar/AprobarJornada.tsx";
+import { minutosAHorasMinutos } from "../dominio.ts";
 import { patchJornada, patchPausarJornada, patchReactivarJornada } from "../infraestructura.ts";
 import { PausarJornada } from "../pausar/PausarJornada.tsx";
 import { PausasJornada } from "../pausas/PausasJornada.tsx";
 import { ReactivarJornada } from "../reactivar/ReactivarJornada.tsx";
-import { ContextoDetalleJornada, jornadaVacia, metaJornada } from "./diseño.ts";
 import { BotoneraJornadaBorrador } from "./BotoneraJornadaBorrador.tsx";
+import { ContextoDetalleJornada, jornadaVacia, metaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
 const ESTADOS_PAUSAS = ["BORRADOR", "CREANDO_PAUSA", "EDITANDO_PAUSA", "BORRANDO_PAUSA"];
@@ -109,6 +110,9 @@ export const DetalleJornada = ({
                         label="Hora de salida"
                         {...uiProps("horaSalida")}
                     />
+                    <div id='minutosJornada' >
+                        {minutosAHorasMinutos(jornada.minutosJornada)}
+                    </div>
                     <QInput
                         label="Observaciones"
                         {...uiProps("observaciones")}

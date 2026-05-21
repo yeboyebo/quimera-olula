@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { validacionCampoModelo } from "@olula/lib/dominio.js";
-import { metaRegistroJornada, registroJornadaVacio, ERR_HORA_SALIDA_JORNADA } from "../dominio.ts";
+import { metaRegistroJornada, registroJornadaVacio, ERR_HORA_SALIDA_JORNADA, minutosAHorasMinutos } from "../dominio.ts";
 import { metaNuevaJornada, nuevaJornadaFormInicial, ERR_HORA_SALIDA_NUEVA_JORNADA } from "../crear/diseño.ts";
 
 const validarJornada = validacionCampoModelo(metaRegistroJornada);
@@ -112,5 +112,28 @@ describe("[jornada-cambiar-01] La hora fin de la jornada no puede ser anterior a
             ],
         };
         expect(validarJornada(j, "horaSalida")).toBe(ERR_HORA_SALIDA_JORNADA);
+    });
+});
+
+// Spec [maestro]
+describe("[maestro-01] El listado incluye el dato de minutos_jornada de la API en formato hh:mm", () => {
+    test("formatea 0 minutos como 00:00", () => {
+        expect(minutosAHorasMinutos(0)).toBe("00:00");
+    });
+
+    test("formatea 60 minutos como 01:00", () => {
+        expect(minutosAHorasMinutos(60)).toBe("01:00");
+    });
+
+    test("formatea 90 minutos como 01:30", () => {
+        expect(minutosAHorasMinutos(90)).toBe("01:30");
+    });
+
+    test("formatea 65 minutos como 01:05 (minutos con cero a la izquierda)", () => {
+        expect(minutosAHorasMinutos(65)).toBe("01:05");
+    });
+
+    test("formatea 480 minutos como 08:00 (jornada de 8 horas)", () => {
+        expect(minutosAHorasMinutos(480)).toBe("08:00");
     });
 });

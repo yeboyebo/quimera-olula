@@ -73,6 +73,7 @@ export type UiProps = {
     deshabilitado: boolean;
     erroneo: boolean;
     advertido: boolean;
+    opcional: boolean;
     valido: boolean;
     onChange: (valor: ValorControl) => void;
     evaluarCambio: () => void;

@@ -37,6 +37,7 @@ interface RegistroJornadaApi {
     estado: string;
     observaciones: string | null;
     tiempo_total_pausas: number;
+    minutos_jornada: number;
     estado_borrador: string | null;
     pausas?: PausaJornadaApi[];
 }
@@ -58,6 +59,7 @@ export const registroJornadaDesdeApi = (j: RegistroJornadaApi): RegistroJornada 
     estado: j.estado as RegistroJornada['estado'],
     observaciones: j.observaciones,
     tiempoTotalPausas: j.tiempo_total_pausas,
+    minutosJornada: j.minutos_jornada,
     estadoBorrador: j.estado_borrador as RegistroJornada['estadoBorrador'],
     pausas: (j.pausas ?? []).map(pausaDesdeApi),
 });

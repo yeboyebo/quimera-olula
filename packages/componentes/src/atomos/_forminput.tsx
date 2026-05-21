@@ -1,3 +1,6 @@
+import { useLayoutEffect, useRef } from "react";
+import { flushSync } from "react-dom";
+
 export type FormFieldProps = {
   id?: string;
   label: string;
@@ -85,6 +88,10 @@ export const FormInput = ({
   onEnterKeyUp,
   evaluarCambio,
 }: InputProps) => {
+  const evaluarCambioRef = useRef(evaluarCambio);
+  useLayoutEffect(() => {
+    evaluarCambioRef.current = evaluarCambio;
+  });
   const obtenerValorPorDefecto = () => {
     if (valor !== undefined && valor !== "" && valor != null) return valor;
 
@@ -129,6 +136,15 @@ export const FormInput = ({
     }
   };
 
+  const manejarLimpiar = () => {
+    if (onChange) {
+      flushSync(() => {
+        onChange("", { target: { value: "", type: "time" } } as React.ChangeEvent<HTMLInputElement>);
+      });
+    }
+    evaluarCambioRef.current?.();
+  };
+
   const inputProps = {
     id: id,
     type: tiposFormInput[tipo] ?? "text",
@@ -146,19 +162,46 @@ export const FormInput = ({
     autoFocus: autoFocus,
     ref: ref as React.RefObject<HTMLInputElement>,
   }
-  return (
-      tipo === "checkbox"
-      ? <input 
+  if (tipo === "checkbox") {
+    return (
+      <input
         {...inputProps}
         checked={onChange ? checked : undefined}
         defaultChecked={onChange ? undefined : checked}
       />
-      : <input 
-        {...inputProps}
-        value={valorFinal as string}
-        defaultValue={onChange ? undefined : valor as string}
-      />
-    
+    );
+  }
+
+  if (tipo === "hora") {
+    console.log('opcional hora', opcional);
+    return (
+      <div className="hora-wrapper">
+        <input
+          {...inputProps}
+          value={valorFinal as string}
+          defaultValue={onChange ? undefined : valor as string}
+        />
+        {opcional && valor && !deshabilitado && (
+          <button
+            type="button"
+            className="hora-limpiar"
+            onClick={manejarLimpiar}
+            aria-label="Limpiar hora"
+            tabIndex={-1}
+          >
+            ×
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <input
+      {...inputProps}
+      value={valorFinal as string}
+      defaultValue={onChange ? undefined : valor as string}
+    />
   );
 };
 

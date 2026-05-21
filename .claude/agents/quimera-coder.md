@@ -308,6 +308,67 @@ export const entidadDesdeApi = (e: EntidadApi): Entidad => ({
 
 ## COMPONENTES REACT
 
+### Columnas de tabla: `MetaTabla<T>`
+
+`MetaTabla<T>` es un array de `MetaColumna<T>` definido en `maestro/diseño.ts`:
+
+```typescript
+export const metaTablaXxx: MetaTabla<MiEntidad> = [
+    // Columna simple (muestra el valor tal cual)
+    { id: "codigo", cabecera: "Código" },
+
+    // Columna con tipo predefinido (formateo automático)
+    { id: "fecha",       cabecera: "Fecha",   tipo: "fecha" },
+    { id: "total",       cabecera: "Total",   tipo: "moneda" },
+    { id: "precio",      cabecera: "Precio",  tipo: "moneda", divisa: "EUR" },
+    { id: "cantidad",    cabecera: "Uds.",    tipo: "numero" },
+    { id: "horaEntrada", cabecera: "Entrada", tipo: "hora" },
+    { id: "activo",      cabecera: "Activo",  tipo: "booleano" },
+
+    // Columna con render personalizado (devuelve string o ReactNode)
+    { id: "minutosJornada", cabecera: "Jornada", render: (j) => minutosAHorasMinutos(j.minutosJornada) },
+
+    // Columna con acceso a campo anidado
+    { id: "cliente", cabecera: "Cliente", render: (p) => p.cliente.nombre },
+
+    // Columna con ReactNode (icono, botón, etc.)
+    {
+        id: "estado",
+        cabecera: "",
+        render: (e) => <ColumnaEstadoTabla estadoActual={e.aprobado ? "aprobado" : "pendiente"} />,
+    },
+];
+```
+
+**Tipos predefinidos** (`tipo`): `"texto"` | `"numero"` | `"moneda"` | `"fecha"` | `"hora"` | `"fechahora"` | `"booleano"`
+
+**Render tiene prioridad** sobre `tipo` cuando ambos están presentes.
+
+**Patrón para valores calculados / formateados:**
+- Exportar la función formateadora desde `dominio.ts` (función pura, testeable)
+- Importarla en `maestro/diseño.ts` y usarla en el `render`
+
+```typescript
+// dominio.ts
+export const minutosAHorasMinutos = (minutos: number): string => {
+    const horas = Math.floor(minutos / 60);
+    const mins = minutos % 60;
+    return `${String(horas).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+};
+
+// maestro/diseño.ts
+import { minutosAHorasMinutos } from "../dominio.ts";
+{ id: "minutosJornada", cabecera: "Jornada", render: (j) => minutosAHorasMinutos(j.minutosJornada) }
+```
+
+**Para añadir un campo de la API que no está en el dominio:**
+1. `diseño.ts` — añadir campo a la interfaz: `minutosJornada: number`
+2. `dominio.ts` — inicializar en `...Vacio`: `minutosJornada: 0`
+3. `infraestructura.ts` — añadir a `EntidadApi` y al mapper: `minutos_jornada: number` → `minutosJornada: j.minutos_jornada`
+4. `maestro/diseño.ts` — añadir columna con `render`
+
+---
+
 ### Layout Maestro-Detalle
 
 ```tsx

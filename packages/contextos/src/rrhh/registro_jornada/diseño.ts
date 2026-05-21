@@ -19,6 +19,7 @@ export interface RegistroJornada extends Entidad {
     estado: EstadoJornada;
     observaciones: string | null;
     tiempoTotalPausas: number;
+    minutosJornada: number;
     estadoBorrador: EstadoBorradorJornada;
     pausas: PausaJornada[];
 }

@@ -6,9 +6,9 @@
 packages/contextos/src/rrhh/registro_jornada
 
 ### Ficheros clave
-- `diseño.ts` — Tipos: `RegistroJornada`, `NuevaJornada`, `CambiosJornada`, `PausaJornada`, `EstadoJornada`
-- `dominio.ts` — `registroJornadaVacio`, `metaRegistroJornada` (con validaciones de campos para edición)
-- `infraestructura.ts` — Mappers API↔dominio (`registroJornadaDesdeApi`), llamadas REST para jornadas y pausas
+- `diseño.ts` — Tipos: `RegistroJornada` (incluye `minutosJornada: number`), `NuevaJornada`, `CambiosJornada`, `PausaJornada`, `EstadoJornada`
+- `dominio.ts` — `registroJornadaVacio`, `metaRegistroJornada` (con validaciones de campos para edición), `minutosAHorasMinutos(minutos): string` (formatea minutos a "hh:mm")
+- `infraestructura.ts` — Mappers API↔dominio (`registroJornadaDesdeApi`), llamadas REST para jornadas y pausas. Campo `minutos_jornada` mapeado a `minutosJornada`
 - `detalle/diseño.ts` — Estados y contexto del detalle: `EstadoDetalleJornada`, `ContextoDetalleJornada`
 - `detalle/dominio.ts` — Procesadores de contexto: `cargarContexto`, `refrescarJornada`, `jornadaAEstado`
 - `detalle/maquina.ts` — Máquina de estados del detalle de jornada
@@ -17,7 +17,7 @@ packages/contextos/src/rrhh/registro_jornada
 - `crear/CrearJornada.tsx` — Modal de creación de jornada
 - `pausas/diseño.ts` — `PausaForm`, `metaPausaForm(jornada, pausaId?)` (función de fábrica con validaciones de intervalo y solapamiento), `pausaFormInicial`, `pausaFormDesde`
 - `pausas/` — Submódulo de gestión de pausas (crear, editar, borrar)
-- `maestro/` — Vista maestro con listado de jornadas
+- `maestro/diseño.ts` — `metaTablaJornada` con columnas del listado (incluye "Jornada" con `render: minutosAHorasMinutos`)
 
 ## Contexto
 
@@ -53,16 +53,17 @@ Dos intervalos `[a, b]` y `[c, d]` se solapan si `a < d AND c < b`. Para interva
 
 Lee el apartado Contexto de este fichero y sigue este flujo TDD para cada spec `[nueva]`, `[cambiada]` o `[eliminada]` que encuentres en el apartado Specs:
 
-1. Usa el agente **quimera-tester** para escribir o actualizar los tests de la spec (fase roja). Los tests van en `test/` dentro del módulo afectado.
-2. Ejecuta los tests para confirmar el estado rojo: `pnpm run --filter @olula/ctx test -- src/rrhh/registro_jornada/test/ --run`
-3. Usa el agente **quimera-coder** para implementar o adaptar la spec (fase verde).
-4. Ejecuta los tests para confirmar que todo pasa: `pnpm run --filter @olula/ctx test -- src/rrhh/registro_jornada/test/ --run`
+1. Decide si la spec necesita tests. **Solo escribe tests si la spec contiene lógica de negocio verificable**: validaciones, reglas condicionales, cálculos o renderizado condicional. Si la spec es puramente estructural (añadir una columna, mapear un campo de la API, cambiar un literal) salta los pasos 1–2 y ve directamente al paso 3.
+2. Usa el agente **quimera-tester** para escribir o actualizar los tests de la spec (fase roja). Los tests van en `test/` dentro del módulo afectado.
+3. Ejecuta los tests para confirmar el estado rojo: `pnpm run --filter @olula/ctx test -- src/rrhh/registro_jornada/test/ --run`
+4. Usa el agente **quimera-coder** para implementar o adaptar la spec (fase verde).
+5. Si se escribieron tests, ejecuta los tests para confirmar que todo pasa: `pnpm run --filter @olula/ctx test -- src/rrhh/registro_jornada/test/ --run`
 
 Una vez realizado el cambio:
 
 + Actualiza los apartados Contexto y Ficheros afectados de este fichero para guardar información sobre este módulo que ayude en próximos cambios de funcionalidades (specs).
 
-+ Actualiza la información asociada a los agentes quimera-coder y quimera-tester para adaptarlos a nuevos patrones descubiertos que sean generalizables.
++ Propón (no lo hagas) actualizar la información asociada a los agentes quimera-coder y/o quimera-tester para adaptarlos a nuevos patrones descubiertos que sean generalizables, si los hay.
 
 ## Instrucciones de specs
 
@@ -116,6 +117,7 @@ Las specs se agrupan por sección funcional (Crear, Cambiar, Pausas…). Dentro 
 ### Cambiar
     + [hecha] [jornada-cambiar-01] La hora fin de la jornada no puede ser anterior al mayor valor de hora entre la hora de inicio de la jornada y las horas de inicio y/o fin de las pausas
 
+
 ### Pausas
     + [hecha] [pausa-01] Las horas de inicio y fin de las pausas deben estar comprendidas en el intervalo hora inicio - hora fin de la jornada
     + [hecha] [pausa-02] Las horas de inicio y fin de las pausas no pueden solaparse con los intervalos definidos por otras pausas de la misma jornada
@@ -124,3 +126,9 @@ Las specs se agrupan por sección funcional (Crear, Cambiar, Pausas…). Dentro 
     + [hecha] [botonera-01] En estado Activa se muestran los botones Pausa y Stop
     + [hecha] [botonera-02] En estado Pausada se muestra el botón Play
     + [hecha] [botonera-03] En estado Cerrada o sin estado no se muestra la botonera
+
+### Listado maestro de jornadas
+    + [hecha] [maestro-01] El listado incluye el dato de minutos_jornada de la API en formato hh:mm
+
+### Detalle de jornada
+    + [hecha] [detalle-01] El detalle incluye el dato de minutos_jornada de la API en formato hh:mm, posicionado junto a los datos de hora inicio y hora fin.

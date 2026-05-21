@@ -10,6 +10,7 @@ export const registroJornadaVacio: RegistroJornada = {
     estado: "BORRADOR",
     observaciones: null,
     tiempoTotalPausas: 0,
+    minutosJornada: 0,
     estadoBorrador: null,
     pausas: [],
 };
@@ -35,10 +36,16 @@ const horaSalidaValida = (jornada: RegistroJornada): boolean | string => {
     return true;
 };
 
+export const minutosAHorasMinutos = (minutos: number): string => {
+    const horas = Math.floor(minutos / 60);
+    const mins = minutos % 60;
+    return `${String(horas).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+};
+
 export const metaRegistroJornada: MetaModelo<RegistroJornada> = {
     campos: {
         horaEntrada: { tipo: "hora" },
-        horaSalida: { tipo: "hora", validacion: horaSalidaValida },
+        horaSalida: { tipo: "hora", validacion: horaSalidaValida, requerido: false },
         observaciones: { tipo: "texto" },
     },
     editable: (jornada: RegistroJornada) => jornada.estado === "BORRADOR",

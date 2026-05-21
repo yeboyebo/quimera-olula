@@ -1,5 +1,5 @@
-import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { EstadoBorradorJornada, PausaJornada, RegistroJornada } from "../diseño.ts";
 import { BorrarPausaJornada } from "./BorrarPausaJornada.tsx";
@@ -56,7 +56,7 @@ export const PausasJornada = ({
                                         Editar
                                     </QBoton>
                                 )}
-                                {esBorrador && !esPausaAbierta(pausa) && (
+                                {esBorrador && (
                                     <QBoton
                                         tamaño="pequeño"
                                         variante="borde"
