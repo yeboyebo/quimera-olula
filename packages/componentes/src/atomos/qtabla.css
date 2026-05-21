@@ -9,6 +9,12 @@
 }
 
 quimera-tabla {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+
     table {
         -webkit-overflow-scrolling: touch;
         width: 100%;
@@ -146,7 +152,10 @@ quimera-tabla {
 }
 
 .tabla-contenedor-scroll {
+    flex: 1;
+    min-height: 0;
     overflow-x: auto;
+    overflow-y: auto;
     /* Scroll horizontal solo aquí */
     width: 100%;
     border-bottom: var(--tamaño-borde-s) solid var(--gris-4);
@@ -158,6 +167,7 @@ quimera-tabla {
 }
 
 quimera-tabla-paginacion {
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;

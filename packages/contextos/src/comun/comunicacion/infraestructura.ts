@@ -100,7 +100,7 @@ export const borrarComunicacion = async (id: string): Promise<void> => {
 export const getTotalComunicacionesNoLeidas = async (): Promise<number> => {
     const respuesta = await getComunicaciones(
         [["estado", "=", ESTADOS_COMUNICACION.NO_LEIDA]],
-        ["fecha_envio", "DESC"],
+        [],
         { pagina: 1, limite: 1 }
     );
 

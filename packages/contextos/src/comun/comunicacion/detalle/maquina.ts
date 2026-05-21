@@ -5,6 +5,7 @@ import {
     borrarComunicacionProceso,
     cargarContexto,
     getContextoVacio,
+    marcarNoLeidaProceso,
 } from "./dominio.ts";
 
 export const getMaquina: () => Maquina<
@@ -24,5 +25,6 @@ export const getMaquina: () => Maquina<
             publicar("comunicacion_deseleccionada", null),
         ],
         borrado_solicitado: borrarComunicacionProceso,
+        marcado_no_leida_solicitado: marcarNoLeidaProceso,
     },
 });

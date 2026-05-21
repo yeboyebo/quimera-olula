@@ -1,6 +1,6 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { useEffect } from "react";
@@ -57,27 +57,30 @@ export const DetalleComunicacion = ({
       cerrarDetalle={() => emitir("comunicacion_deseleccionada", null)}
     >
       <div className="DetalleComunicacion">
-        <div className="acciones-rapidas maestro-botones">
-          <QBoton onClick={() => emitir("borrado_solicitado")}>Borrar</QBoton>
+        <div className="detalle-comunicacion-barra">
+          <p className="detalle-comunicacion-fecha">
+            {fechaConHora(ctx.comunicacion.fechaEnvio)}
+          </p>
+          <QuimeraAcciones
+            acciones={[
+              {
+                icono: "ver",
+                texto: "Marcar como no leída",
+                onClick: () => emitir("marcado_no_leida_solicitado"),
+              },
+              {
+                icono: "eliminar",
+                texto: "Borrar",
+                onClick: () => emitir("borrado_solicitado"),
+                advertencia: true,
+              },
+            ]}
+            vertical
+          />
         </div>
 
         <div className="detalle-comunicacion-campos">
-          <p>
-            <strong>Estado:</strong> {ctx.comunicacion.estado}
-          </p>
-          <p>
-            <strong>Fecha envío:</strong>{" "}
-            {fechaConHora(ctx.comunicacion.fechaEnvio)}
-          </p>
-          <p>
-            <strong>Fecha lectura:</strong>{" "}
-            {fechaConHora(ctx.comunicacion.fechaLectura)}
-          </p>
-          <p>
-            <strong>Asunto:</strong> {ctx.comunicacion.asunto}
-          </p>
           <div>
-            <strong>Cuerpo:</strong>
             <p className="detalle-comunicacion-cuerpo">
               {ctx.comunicacion.cuerpo}
             </p>

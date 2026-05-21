@@ -6,6 +6,7 @@ import {
     borrarComunicacion,
     getComunicacion,
     marcarComunicacionLeida,
+    marcarComunicacionNoLeida,
 } from "../infraestructura.ts";
 import {
     ContextoDetalleComunicacion,
@@ -79,4 +80,23 @@ export const borrarComunicacionProceso: ProcesarDetalleComunicacion = async (con
         getContextoVacio,
         publicar("comunicacion_borrada", contexto.comunicacion.id),
     ]);
+};
+
+export const marcarNoLeidaProceso: ProcesarDetalleComunicacion = async (contexto) => {
+    await marcarComunicacionNoLeida(contexto.comunicacion.id);
+
+    const comunicacion = {
+        ...contexto.comunicacion,
+        estado: ESTADOS_COMUNICACION.NO_LEIDA,
+        fechaLectura: null,
+    };
+
+    return pipeDetalleComunicacion(
+        { ...contexto, comunicacion, comunicacionInicial: comunicacion },
+        [
+            publicar("comunicacion_cambiada", comunicacion),
+            getContextoVacio,
+            publicar("comunicacion_deseleccionada", null),
+        ]
+    );
 };

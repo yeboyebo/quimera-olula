@@ -4,14 +4,17 @@
     gap: 1rem;
 }
 
-.detalle-comunicacion-campos {
+.detalle-comunicacion-barra {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
-.detalle-comunicacion-campos p {
+.detalle-comunicacion-fecha {
     margin: 0;
+    font-size: var(--tamaño-letra-s);
+    color: color-mix(in srgb, currentColor 55%, transparent);
 }
 
 .detalle-comunicacion-cuerpo {

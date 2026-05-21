@@ -1,6 +1,6 @@
 import { Criteria, Entidad, Paginacion } from "@olula/lib/diseño.ts";
 import { calcularPaginacionSimplificada } from "@olula/lib/dominio.ts";
-import { ReactNode } from "react";
+import { ReactNode, useId } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
@@ -106,6 +106,7 @@ export const QTarjetas = <T extends Entidad>({
   criteria,
   onSiguientePagina,
 }: QTarjetasProps<T>) => {
+  const scrollId = `qs-${useId().replace(/:/g, "")}`;
   const tarjetaItems = datos.map((entidad) => (
     <quimera-tarjeta
       key={entidad.id}
@@ -133,7 +134,7 @@ export const QTarjetas = <T extends Entidad>({
             }
             hasMore={datos.length < totalEntidades}
             loader={<div className="cargando">Cargando...</div>}
-            height="64vh"
+            scrollableTarget={scrollId}
           >
             {tarjetaItems}
           </InfiniteScroll>
@@ -145,7 +146,7 @@ export const QTarjetas = <T extends Entidad>({
   };
 
   return (
-    <quimera-tarjetas>
+    <quimera-tarjetas id={scrollId}>
       {cargando ? (
         <div className="cargando">Cargando...</div>
       ) : datos.length === 0 ? (

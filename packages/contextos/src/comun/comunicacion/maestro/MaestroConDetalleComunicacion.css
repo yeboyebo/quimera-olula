@@ -1,3 +1,33 @@
 .MaestroComunicacion {
     height: 100%;
+
+    quimera-tarjeta {
+        padding: var(--espaciado-l) var(--espaciado-m);
+    }
+}
+
+.comunicacion-tarjeta-asunto {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.comunicacion-tarjeta--no-leida {
+    font-weight: 700;
+}
+
+.comunicacion-punto {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.comunicacion-punto--no-leida {
+    background-color: #9e9e9e;
+}
+
+.comunicacion-punto--leida {
+    background-color: #4caf50;
 }

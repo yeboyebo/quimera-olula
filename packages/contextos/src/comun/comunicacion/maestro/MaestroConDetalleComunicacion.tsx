@@ -5,16 +5,36 @@ import {
   filtroFechas,
   MetaFiltro,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { QTarjetaGenerica } from "@olula/componentes/moleculas/qtarjeta_generica.tsx";
+import { criteriaDefecto, formatearFechaHora } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { EstadoComunicacion } from "../../componentes/estado_comunicacion.tsx";
 import { DetalleComunicacion } from "../detalle/DetalleComunicacion.tsx";
-import { Comunicacion } from "../diseño.ts";
+import { Comunicacion, ESTADOS_COMUNICACION } from "../diseño.ts";
 import { metaTablaComunicacion } from "./diseño.ts";
 import "./MaestroConDetalleComunicacion.css";
 import { getMaquina } from "./maquina.ts";
+
+const tarjetaComunicacion = (comunicacion: Comunicacion) => {
+  const noLeida = comunicacion.estado === ESTADOS_COMUNICACION.NO_LEIDA;
+  return (
+    <QTarjetaGenerica
+      arribaIzquierda={
+        <span className="comunicacion-tarjeta-asunto">
+          <span
+            className={`comunicacion-punto${noLeida ? " comunicacion-punto--no-leida" : " comunicacion-punto--leida"}`}
+          />
+          <span className={noLeida ? "comunicacion-tarjeta--no-leida" : ""}>
+            {comunicacion.asunto}
+          </span>
+        </span>
+      }
+      arribaDerecha={formatearFechaHora(comunicacion.fechaEnvio)}
+    />
+  );
+};
 
 const criteriaBaseComunicaciones = {
   ...criteriaDefecto,
@@ -74,8 +94,9 @@ export const MaestroConDetalleComunicacion = () => {
             <Listado<Comunicacion>
               metaTabla={metaTablaComunicacion}
               metaFiltro={metaFiltroComunicacion}
-              modo="tabla"
+              modo="tarjetas"
               criteria={ctx.comunicaciones.criteria}
+              tarjeta={tarjetaComunicacion}
               entidades={ctx.comunicaciones.lista}
               totalEntidades={ctx.comunicaciones.total}
               seleccionada={ctx.comunicaciones.activo}
