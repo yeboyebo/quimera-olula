@@ -4,7 +4,7 @@ import { PausaJornada, RegistroJornada } from "../diseño.ts";
 
 export type EstadoDetalleJornada = (
     'INICIAL' | 'BORRADOR' | 'APROBADA' | 'ANULADA'
-    | 'APROBANDO' | 'ANULANDO'
+    | 'ANULANDO' | 'PAUSANDO' | 'REACTIVANDO'
     | 'CREANDO_PAUSA' | 'EDITANDO_PAUSA' | 'BORRANDO_PAUSA'
 );
 

@@ -47,6 +47,9 @@ export const MaestroConDetalleJornada = () => {
                             seleccionada={ctx.jornadas.activo}
                             renderAcciones={() => (
                                 <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("inicio_de_jornada_solicitado")}>
+                                        Iniciar
+                                    </QBoton>
                                     <QBoton onClick={() => emitir("creacion_de_jornada_solicitada")}>
                                         Nueva jornada
                                     </QBoton>

@@ -1,18 +1,20 @@
 import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaQuery } from "@olula/lib/infraestructura.js";
-import Rrhh_Urls from "./comun/urls.ts";
+import RrhhAreaEmpleado_Urls from "./comun/urls.ts";
 import {
     AnulacionJornada,
     CambiosJornada,
     GetJornada,
     GetJornadas,
     NuevaJornada,
+    NuevaPausa,
     PatchAnularJornada,
-    PatchAprobarJornada,
     PatchJornada,
+    PatchPausarJornada,
+    PatchReactivarJornada,
     PausaJornada,
-    PostJornada,
+    ReactivacionJornada,
     RegistroJornada,
 } from "./diseño.ts";
 
@@ -60,7 +62,7 @@ export const registroJornadaDesdeApi = (j: RegistroJornadaApi): RegistroJornada 
     pausas: (j.pausas ?? []).map(pausaDesdeApi),
 });
 
-const baseUrl = new Rrhh_Urls().JORNADA;
+const baseUrl = new RrhhAreaEmpleado_Urls().JORNADA;
 
 export const getJornadas: GetJornadas = async (
     filtro: Filtro,
@@ -81,11 +83,11 @@ export const getJornada: GetJornada = async (id) => {
         .then((respuesta) => registroJornadaDesdeApi(respuesta.datos));
 };
 
-export const postJornada: PostJornada = async (jornada: NuevaJornada) => {
+export const postJornada = async (jornada: Omit<NuevaJornada, 'empleadoId'>): Promise<string> => {
     const respuesta = await RestAPI.post(
         baseUrl,
         {
-            empleado_id: jornada.empleadoId,
+            // empleado_id: jornada.empleadoId,
             fecha: jornada.fecha,
             hora_entrada: jornada.horaEntrada,
             hora_salida: jornada.horaSalida,
@@ -114,18 +116,29 @@ export const patchJornada: PatchJornada = async (id, cambios: CambiosJornada) =>
     );
 };
 
-export const patchAprobarJornada: PatchAprobarJornada = async (id) => {
-    await RestAPI.patch(
-        `${baseUrl}/${id}/aprobar`,
-        {},
-        "Error al aprobar la jornada"
-    );
-};
-
 export const patchAnularJornada: PatchAnularJornada = async (id, anulacion: AnulacionJornada) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/anular`,
         { motivo: anulacion.motivo },
         "Error al anular la jornada"
+    );
+};
+
+export const patchPausarJornada: PatchPausarJornada = async (id, pausa: NuevaPausa) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/pausar`,
+        {
+            hora_inicio: pausa.horaInicio,
+            causa: pausa.causa,
+        },
+        "Error al pausar la jornada"
+    );
+};
+
+export const patchReactivarJornada: PatchReactivarJornada = async (id, reactivacion: ReactivacionJornada) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/reactivar`,
+        { hora_fin: reactivacion.horaFin },
+        "Error al reactivar la jornada"
     );
 };

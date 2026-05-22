@@ -41,6 +41,11 @@ export type RespuestaLista2<T> = {
     total: TotalRegistros;
 }
 
+export type RespuestaListaConResumen<T, Resumen extends Record<string, unknown>> = Promise<{
+    datos: T[];
+    total: TotalRegistros;
+} & Resumen>;
+
 export type Direccion = {
     nombre_via: string;
     tipo_via: string;

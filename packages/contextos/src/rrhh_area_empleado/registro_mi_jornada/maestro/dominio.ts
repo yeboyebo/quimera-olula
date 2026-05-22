@@ -1,7 +1,8 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { ProcesarListaActivaEntidades, accionesListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { formatearHoraDate } from "@olula/lib/dominio.js";
 import { RegistroJornada } from "../diseño.ts";
-import { getJornada, getJornadas } from "../infraestructura.ts";
+import { getJornada, getJornadas, postJornada } from "../infraestructura.ts";
 import { ContextoMaestroJornadas, EstadoMaestroJornadas } from "./diseño.ts";
 
 type ProcesarJornadas = ProcesarContexto<EstadoMaestroJornadas, ContextoMaestroJornadas>;
@@ -23,6 +24,17 @@ export const ampliarJornadas: ProcesarJornadas = async (contexto, payload) => {
     const resultado = await getJornadas(criteria.filtro, criteria.orden, criteria.paginacion);
     const nuevoContexto = await Jornadas.ampliar(contexto, resultado) as ContextoMaestroJornadas;
     return { ...nuevoContexto, mediaMinutos: resultado.mediaMinutos };
+};
+
+export const iniciarJornada: ProcesarJornadas = async (contexto) => {
+    const ahora = new Date();
+    const idJornada = await postJornada({
+        fecha: ahora.toISOString().split("T")[0],
+        horaEntrada: formatearHoraDate(ahora),
+        horaSalida: null,
+        observaciones: null,
+    });
+    return jornadaCreada(contexto, idJornada);
 };
 
 export const jornadaCreada: ProcesarJornadas = async (contexto, payload) => {

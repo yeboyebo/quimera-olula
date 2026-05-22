@@ -51,6 +51,16 @@ export const anularJornada: ProcesarJornada = async (contexto) => {
     ]);
 };
 
+// export const onVentaBorrada: ProcesarVentaTpv = async (contexto) => {
+
+//     const venta = contexto.venta;
+
+//     return pipeVentaTpv(contexto, [
+//         getContextoVacio,
+//         publicar('venta_borrada', venta.id)
+//     ]);
+// }
+
 export const getContextoVacio: ProcesarJornada = async (contexto) => {
     return {
         ...contexto,

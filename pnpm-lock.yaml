@@ -300,6 +300,18 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
 
+  apps/olula_area_empleados:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+
   apps/sanhigia:
     dependencies:
       '@olula/componentes':

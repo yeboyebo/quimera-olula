@@ -41,9 +41,11 @@ export const getMaquina: () => Maquina<EstadoDetalleJornada, ContextoDetalleJorn
 
             jornada_cambiada: [refrescarJornada],
 
-            aprobar_solicitado: "APROBANDO",
-
             anular_solicitado: "ANULANDO",
+
+            pausar_solicitado: "PAUSANDO",
+
+            reactivar_solicitado: "REACTIVANDO",
 
             crear_pausa_solicitado: "CREANDO_PAUSA",
 
@@ -62,16 +64,22 @@ export const getMaquina: () => Maquina<EstadoDetalleJornada, ContextoDetalleJorn
             jornada_cambiada: [refrescarJornada],
         },
 
-        APROBANDO: {
-            jornada_aprobada: [refrescarJornada, determinarEstado],
-
-            aprobacion_cancelada: "BORRADOR",
-        },
-
         ANULANDO: {
             jornada_anulada: [anularJornada],
 
             anulacion_cancelada: [determinarEstado],
+        },
+
+        PAUSANDO: {
+            jornada_pausada: [refrescarJornada, determinarEstado],
+
+            pausa_cancelada: "BORRADOR",
+        },
+
+        REACTIVANDO: {
+            jornada_reactivada: [refrescarJornada, determinarEstado],
+
+            reactivacion_cancelada: "BORRADOR",
         },
 
         CREANDO_PAUSA: {

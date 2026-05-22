@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroJornadas, EstadoMaestroJornadas } from "./diseño.ts";
-import { Jornadas, ampliarJornadas, jornadaCreada, recargarJornadas } from "./dominio.ts";
+import { Jornadas, ampliarJornadas, iniciarJornada, jornadaCreada, recargarJornadas } from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroJornadas, ContextoMaestroJornadas> = () => {
     return {
@@ -16,6 +16,8 @@ export const getMaquina: () => Maquina<EstadoMaestroJornadas, ContextoMaestroJor
             recarga_de_jornadas_solicitada: recargarJornadas,
 
             creacion_de_jornada_solicitada: "CREANDO_JORNADA",
+
+            inicio_de_jornada_solicitado: iniciarJornada,
 
             criteria_cambiado: [Jornadas.filtrar, recargarJornadas],
 
