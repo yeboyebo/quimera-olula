@@ -14,7 +14,7 @@ export const AprobarJornada = ({
     jornada: RegistroJornada;
 }) => {
     const aprobar_ = useCallback(async () => {
-        await patchAprobarJornada(jornada.id);
+        await patchAprobarJornada([jornada.id]);
         publicar("jornada_aprobada");
     }, [publicar, jornada.id]);
 

@@ -3,12 +3,13 @@ import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { minutosAHorasMinutos } from "../dominio.ts";
 import { RegistroJornada } from "../diseño.ts";
 
-export type EstadoMaestroJornadas = 'INICIAL' | 'CREANDO_JORNADA';
+export type EstadoMaestroJornadas = 'INICIAL' | 'CREANDO_JORNADA' | 'APROBANDO_JORNADAS';
 
 export type ContextoMaestroJornadas = {
     estado: EstadoMaestroJornadas;
     jornadas: ListaActivaEntidades<RegistroJornada>;
     mediaMinutos: number;
+    seleccionadas: string[];
 };
 
 export const metaTablaJornada: MetaTabla<RegistroJornada> = [

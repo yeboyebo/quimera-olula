@@ -6,9 +6,9 @@
 packages/contextos/src/rrhh/registro_jornada
 
 ### Ficheros clave
-- `diseño.ts` — Tipos: `RegistroJornada` (incluye `minutosJornada: number`), `NuevaJornada`, `CambiosJornada`, `PausaJornada`, `EstadoJornada`
-- `dominio.ts` — `registroJornadaVacio`, `metaRegistroJornada` (con validaciones de campos para edición), `minutosAHorasMinutos(minutos): string` (formatea minutos a "hh:mm")
-- `infraestructura.ts` — Mappers API↔dominio (`registroJornadaDesdeApi`), llamadas REST para jornadas y pausas. Campo `minutos_jornada` mapeado a `minutosJornada`
+- `diseño.ts` — Tipos: `RegistroJornada` (incluye `minutosJornada: number`), `NuevaJornada`, `CambiosJornada`, `PausaJornada`, `EstadoJornada`. `PatchAprobarJornada = (ids: string[]) => Promise<void>` (bulk, array de IDs)
+- `dominio.ts` — Re-exporta `rrhh_comun/dominio.ts`: `registroJornadaVacio`, `metaRegistroJornada`, `minutosAHorasMinutos`, `puedeAprobarse`
+- `infraestructura.ts` — Mappers API↔dominio (`registroJornadaDesdeApi`), llamadas REST. `patchAprobarJornada` usa `PATCH /registro_jornada/aprobar` con body `{ ids }` (bulk, sin ID en URL)
 - `detalle/diseño.ts` — Estados y contexto del detalle: `EstadoDetalleJornada`, `ContextoDetalleJornada`
 - `detalle/dominio.ts` — Procesadores de contexto: `cargarContexto`, `refrescarJornada`, `jornadaAEstado`
 - `detalle/maquina.ts` — Máquina de estados del detalle de jornada
@@ -17,7 +17,11 @@ packages/contextos/src/rrhh/registro_jornada
 - `crear/CrearJornada.tsx` — Modal de creación de jornada
 - `pausas/diseño.ts` — `PausaForm`, `metaPausaForm(jornada, pausaId?)` (función de fábrica con validaciones de intervalo y solapamiento), `pausaFormInicial`, `pausaFormDesde`
 - `pausas/` — Submódulo de gestión de pausas (crear, editar, borrar)
-- `maestro/diseño.ts` — `metaTablaJornada` con columnas del listado (incluye "Jornada" con `render: minutosAHorasMinutos`)
+- `maestro/diseño.ts` — `metaTablaJornada`, `ContextoMaestroJornadas` (incluye `seleccionadas: string[]`), `EstadoMaestroJornadas` (incluye `'APROBANDO_JORNADAS'`)
+- `maestro/dominio.ts` — `todasPuedenAprobarse(ids, jornadas)`, `aprobarJornadas` (procesador que llama a bulk API y recarga lista)
+- `maestro/maquina.ts` — Estado `APROBANDO_JORNADAS` con transiciones `jornadas_aprobadas` y `aprobacion_multiple_cancelada`; evento `seleccionadas_cambiadas` en `INICIAL`
+- `maestro/AprobarJornadas.tsx` — Modal de confirmación para aprobación múltiple
+- `maestro/MaestroConDetalleJornada.tsx` — Listado con multiselección; botón "Aprobar (n)" condicionado a `todasPuedenAprobarse`
 
 ## Contexto
 
@@ -75,6 +79,23 @@ Cada spec es una línea con la forma:
 + [estado] [id] Descripción de la regla de negocio
 ```
 
+Para specs que describen **transiciones de estado de una máquina**, se añade el prefijo `[ESTADO_ORIGEN]` antes de la descripción:
+
+```
++ [estado] [id] [ESTADO_ORIGEN] evento → ESTADO_DESTINO (descripción del efecto visible)
+```
+
+Este prefijo permite derivar el test directamente:
+
+| Campo en la spec | En el test |
+|---|---|
+| `[ESTADO_ORIGEN]` | `contexto.estado = "ESTADO_ORIGEN"` |
+| `evento` | función procesadora a invocar (con infra mockeada) |
+| `ESTADO_DESTINO` | `expect(resultado.estado).toBe("ESTADO_DESTINO")` |
+| descripción | nombre del `describe` / `test` |
+
+Solo merecen spec de transición los eventos que ejecutan un **procesador async** (funciones en `dominio.ts`). Las transiciones string puras en la máquina son triviales y no se testean.
+
 **Estados posibles:**
 - `[nueva]` — spec pendiente de implementar (dispara el flujo TDD)
 - `[hecha]` — spec implementada y con tests en verde
@@ -117,18 +138,29 @@ Las specs se agrupan por sección funcional (Crear, Cambiar, Pausas…). Dentro 
 ### Cambiar
     + [hecha] [jornada-cambiar-01] La hora fin de la jornada no puede ser anterior al mayor valor de hora entre la hora de inicio de la jornada y las horas de inicio y/o fin de las pausas
 
-
-### Pausas
-    + [hecha] [pausa-01] Las horas de inicio y fin de las pausas deben estar comprendidas en el intervalo hora inicio - hora fin de la jornada
-    + [hecha] [pausa-02] Las horas de inicio y fin de las pausas no pueden solaparse con los intervalos definidos por otras pausas de la misma jornada
-
-### Botonera de jornada borrador
-    + [hecha] [botonera-01] En estado Activa se muestran los botones Pausa y Stop
-    + [hecha] [botonera-02] En estado Pausada se muestra el botón Play
-    + [hecha] [botonera-03] En estado Cerrada o sin estado no se muestra la botonera
+### Aprobar
+    + [hecha] [jornada-aprobar-01] Una jornada puede aprobarse si está en Borrador y Cerrada (con hora de fin)
 
 ### Listado maestro de jornadas
+
+#### Flujo de estados (maestro)
+
+```mermaid
+stateDiagram-v2
+    [*] --> INICIAL
+    INICIAL --> CREANDO_JORNADA : creacion_de_jornada_solicitada
+    CREANDO_JORNADA --> INICIAL : jornada_creada / jornadaCreada (recarga lista)
+    CREANDO_JORNADA --> INICIAL : creacion_de_jornada_cancelada
+    INICIAL --> APROBANDO_JORNADAS : aprobacion_multiple_solicitada
+    APROBANDO_JORNADAS --> INICIAL : jornadas_aprobadas / aprobarJornadas (aprueba + recarga)
+    APROBANDO_JORNADAS --> INICIAL : aprobacion_multiple_cancelada
+```
+
     + [hecha] [maestro-01] El listado incluye el dato de minutos_jornada de la API en formato hh:mm
+
+    + [hecha] [maestro-02] El listado permite aprobar varias jornadas si todas pueden ser aprobadas (estado Borrador y Cerrada (con hora fin))
+
+    + [hecha] [maestro-03] [APROBANDO_JORNADAS] jornadas_aprobadas → INICIAL (el diálogo de confirmación se cierra tras aprobar)
 
 ### Detalle de jornada
     + [hecha] [detalle-01] El detalle incluye el dato de minutos_jornada de la API en formato hh:mm, posicionado junto a los datos de hora inicio y hora fin.

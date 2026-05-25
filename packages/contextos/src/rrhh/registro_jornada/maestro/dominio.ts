@@ -1,7 +1,8 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { ProcesarListaActivaEntidades, accionesListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { RegistroJornada } from "../diseño.ts";
-import { getJornada, getJornadas } from "../infraestructura.ts";
+import { puedeAprobarse } from "../dominio.ts";
+import { getJornada, getJornadas, patchAprobarJornada } from "../infraestructura.ts";
 import { ContextoMaestroJornadas, EstadoMaestroJornadas } from "./diseño.ts";
 
 type ProcesarJornadas = ProcesarContexto<EstadoMaestroJornadas, ContextoMaestroJornadas>;
@@ -38,4 +39,23 @@ export const jornadaCreada: ProcesarJornadas = async (contexto, payload) => {
             criteria: contexto.jornadas.criteria,
         },
     };
+};
+
+export const todasPuedenAprobarse = (ids: string[], jornadas: RegistroJornada[]): boolean => {
+    if (ids.length === 0) return false;
+    return ids.every(id => {
+        const jornada = jornadas.find(j => j.id === id);
+        return jornada !== undefined && puedeAprobarse(jornada);
+    });
+};
+
+export const aprobarJornadas: ProcesarJornadas = async (contexto) => {
+    await patchAprobarJornada(contexto.seleccionadas);
+    const resultado = await getJornadas(
+        contexto.jornadas.criteria.filtro,
+        contexto.jornadas.criteria.orden,
+        contexto.jornadas.criteria.paginacion
+    );
+    const nuevoContexto = await Jornadas.recargar(contexto, resultado) as ContextoMaestroJornadas;
+    return { ...nuevoContexto, estado: "INICIAL" as EstadoMaestroJornadas, mediaMinutos: resultado.mediaMinutos, seleccionadas: [] };
 };

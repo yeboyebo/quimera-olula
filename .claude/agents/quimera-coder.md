@@ -68,6 +68,65 @@ export const refrescarCabecera: ProcesarContexto<...> = async (ctx) => {
 };
 ```
 
+### Multiselección en el maestro
+
+Cuando el maestro necesita rastrear un array de IDs seleccionados (para operaciones en bloque como aprobar varios registros), se añade el campo directamente a `ContextoMaestroXxx` — **no** a `ListaActivaEntidades`, que solo gestiona la selección activa simple:
+
+```typescript
+// diseño.ts
+export type EstadoMaestroXxx = 'INICIAL' | 'CONFIRMANDO_OPERACION_MULTIPLE';
+export type ContextoMaestroXxx = {
+    estado: EstadoMaestroXxx;
+    entidades: ListaActivaEntidades<MiEntidad>;
+    seleccionadas: string[];   // IDs para operación en bloque
+};
+```
+
+La selección se actualiza con un evento inline en la máquina (no necesita función en `dominio.ts`):
+
+```typescript
+// maquina.ts
+INICIAL: {
+    // ...
+    seleccionadas_cambiadas: async (ctx, payload) => ({ ...ctx, seleccionadas: payload as string[] }),
+    operacion_multiple_solicitada: "CONFIRMANDO_OPERACION_MULTIPLE",
+},
+CONFIRMANDO_OPERACION_MULTIPLE: {
+    operacion_confirmada: [ejecutarOperacionMultiple],   // llama API bulk + recarga
+    operacion_cancelada: "INICIAL",
+},
+```
+
+La función que decide si se puede operar (`todasPuedenXxx`) es una función pura en `maestro/dominio.ts`, testeable:
+
+```typescript
+export const todasPuedenXxx = (ids: string[], entidades: MiEntidad[]): boolean => {
+    if (ids.length === 0) return false;
+    return ids.every(id => {
+        const e = entidades.find(e => e.id === id);
+        return e !== undefined && puedeXxx(e);
+    });
+};
+```
+
+El componente maestro usa `onMultiSeleccion` del `Listado` para emitir el evento y condiciona el botón de acción:
+
+```tsx
+<Listado<MiEntidad>
+    ...
+    onMultiSeleccion={(ids) => emitir("seleccionadas_cambiadas", ids)}
+/>
+{todasPuedenXxx(ctx.seleccionadas, ctx.entidades.lista) && (
+    <QBoton onClick={() => emitir("operacion_multiple_solicitada")}>
+        Operar ({ctx.seleccionadas.length})
+    </QBoton>
+)}
+```
+
+Si el criterio de elegibilidad es una función pura (`puedeXxx`), va en `rrhh_comun/dominio.ts` u otro módulo compartido si varias vistas la necesitan, o en `dominio.ts` del módulo si es exclusiva.
+
+---
+
 ### Estructura típica de máquina maestro
 
 ```typescript

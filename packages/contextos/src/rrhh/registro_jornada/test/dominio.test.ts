@@ -2,6 +2,8 @@ import { describe, expect, test } from "vitest";
 import { validacionCampoModelo } from "@olula/lib/dominio.js";
 import { metaRegistroJornada, registroJornadaVacio, ERR_HORA_SALIDA_JORNADA, minutosAHorasMinutos } from "../dominio.ts";
 import { metaNuevaJornada, nuevaJornadaFormInicial, ERR_HORA_SALIDA_NUEVA_JORNADA } from "../crear/diseño.ts";
+import { puedeAprobarse } from "../dominio.ts";
+import { todasPuedenAprobarse } from "../maestro/dominio.ts";
 
 const validarJornada = validacionCampoModelo(metaRegistroJornada);
 const validarNuevaJornada = validacionCampoModelo(metaNuevaJornada);
@@ -135,5 +137,90 @@ describe("[maestro-01] El listado incluye el dato de minutos_jornada de la API e
 
     test("formatea 480 minutos como 08:00 (jornada de 8 horas)", () => {
         expect(minutosAHorasMinutos(480)).toBe("08:00");
+    });
+});
+
+// Spec [aprobar]
+describe("[jornada-aprobar-01] Una jornada puede aprobarse si está en Borrador y Cerrada (con hora de fin)", () => {
+    test("es true si estado BORRADOR, estadoBorrador CERRADA y con horaSalida", () => {
+        const j = { ...registroJornadaVacio, estado: "BORRADOR" as const, estadoBorrador: "CERRADA" as const, horaSalida: "18:00" };
+        expect(puedeAprobarse(j)).toBe(true);
+    });
+
+    test("es false si estado BORRADOR, estadoBorrador CERRADA pero sin horaSalida (null)", () => {
+        const j = { ...registroJornadaVacio, estado: "BORRADOR" as const, estadoBorrador: "CERRADA" as const, horaSalida: null };
+        expect(puedeAprobarse(j)).toBe(false);
+    });
+
+    test("es false si estado BORRADOR y estadoBorrador ACTIVA", () => {
+        const j = { ...registroJornadaVacio, estado: "BORRADOR" as const, estadoBorrador: "ACTIVA" as const, horaSalida: "18:00" };
+        expect(puedeAprobarse(j)).toBe(false);
+    });
+
+    test("es false si estado BORRADOR y estadoBorrador PAUSADA", () => {
+        const j = { ...registroJornadaVacio, estado: "BORRADOR" as const, estadoBorrador: "PAUSADA" as const, horaSalida: "18:00" };
+        expect(puedeAprobarse(j)).toBe(false);
+    });
+
+    test("es false si estado BORRADOR y estadoBorrador null", () => {
+        const j = { ...registroJornadaVacio, estado: "BORRADOR" as const, estadoBorrador: null, horaSalida: "18:00" };
+        expect(puedeAprobarse(j)).toBe(false);
+    });
+
+    test("es false si estado APROBADA", () => {
+        const j = { ...registroJornadaVacio, estado: "APROBADA" as const, estadoBorrador: "CERRADA" as const, horaSalida: "18:00" };
+        expect(puedeAprobarse(j)).toBe(false);
+    });
+
+    test("es false si estado ANULADA", () => {
+        const j = { ...registroJornadaVacio, estado: "ANULADA" as const, estadoBorrador: "CERRADA" as const, horaSalida: "18:00" };
+        expect(puedeAprobarse(j)).toBe(false);
+    });
+});
+
+// Spec [maestro-02]
+describe("[maestro-02] El listado permite aprobar varias jornadas si todas pueden ser aprobadas (estado Borrador y Cerrada (con hora fin))", () => {
+    const jornadaAprobable = {
+        ...registroJornadaVacio,
+        estado: "BORRADOR" as const,
+        estadoBorrador: "CERRADA" as const,
+        horaSalida: "18:00",
+    };
+    const jornadaNoAprobable = {
+        ...registroJornadaVacio,
+        estado: "BORRADOR" as const,
+        estadoBorrador: "ACTIVA" as const,
+        horaSalida: null,
+    };
+
+    test("es false si la lista de ids está vacía", () => {
+        const jornadas = [{ ...jornadaAprobable, id: "j1" }];
+        expect(todasPuedenAprobarse([], jornadas)).toBe(false);
+    });
+
+    test("es true si hay un id que apunta a una jornada aprobable", () => {
+        const jornadas = [{ ...jornadaAprobable, id: "j1" }];
+        expect(todasPuedenAprobarse(["j1"], jornadas)).toBe(true);
+    });
+
+    test("es true si hay dos ids y ambas jornadas son aprobables", () => {
+        const jornadas = [
+            { ...jornadaAprobable, id: "j1" },
+            { ...jornadaAprobable, id: "j2" },
+        ];
+        expect(todasPuedenAprobarse(["j1", "j2"], jornadas)).toBe(true);
+    });
+
+    test("es false si hay un id aprobable y otro no aprobable", () => {
+        const jornadas = [
+            { ...jornadaAprobable, id: "j1" },
+            { ...jornadaNoAprobable, id: "j2" },
+        ];
+        expect(todasPuedenAprobarse(["j1", "j2"], jornadas)).toBe(false);
+    });
+
+    test("es false si hay un único id que apunta a una jornada no aprobable", () => {
+        const jornadas = [{ ...jornadaNoAprobable, id: "j1" }];
+        expect(todasPuedenAprobarse(["j1"], jornadas)).toBe(false);
     });
 });

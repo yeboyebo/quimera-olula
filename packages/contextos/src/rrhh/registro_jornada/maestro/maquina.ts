@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroJornadas, EstadoMaestroJornadas } from "./diseño.ts";
-import { Jornadas, ampliarJornadas, jornadaCreada, recargarJornadas } from "./dominio.ts";
+import { Jornadas, ampliarJornadas, aprobarJornadas, jornadaCreada, recargarJornadas } from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroJornadas, ContextoMaestroJornadas> = () => {
     return {
@@ -20,12 +20,22 @@ export const getMaquina: () => Maquina<EstadoMaestroJornadas, ContextoMaestroJor
             criteria_cambiado: [Jornadas.filtrar, recargarJornadas],
 
             siguiente_pagina: [Jornadas.filtrar, ampliarJornadas],
+
+            aprobacion_multiple_solicitada: "APROBANDO_JORNADAS",
+
+            seleccionadas_cambiadas: async (ctx, payload) => ({ ...ctx, seleccionadas: payload as string[] }),
         },
 
         CREANDO_JORNADA: {
             jornada_creada: [jornadaCreada],
 
             creacion_de_jornada_cancelada: "INICIAL",
+        },
+
+        APROBANDO_JORNADAS: {
+            jornadas_aprobadas: [aprobarJornadas],
+
+            aprobacion_multiple_cancelada: "INICIAL",
         },
     };
 };

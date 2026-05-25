@@ -114,10 +114,10 @@ export const patchJornada: PatchJornada = async (id, cambios: CambiosJornada) =>
     );
 };
 
-export const patchAprobarJornada: PatchAprobarJornada = async (id) => {
+export const patchAprobarJornada: PatchAprobarJornada = async (ids) => {
     await RestAPI.patch(
-        `${baseUrl}/${id}/aprobar`,
-        {},
+        `${baseUrl}/aprobar`,
+        { ids },
         "Error al aprobar la jornada"
     );
 };

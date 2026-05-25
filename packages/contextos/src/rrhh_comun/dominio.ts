@@ -42,6 +42,11 @@ export const minutosAHorasMinutos = (minutos: number): string => {
     return `${String(horas).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
 };
 
+export const puedeAprobarse = (jornada: RegistroJornada): boolean =>
+    jornada.estado === 'BORRADOR' &&
+    jornada.estadoBorrador === 'CERRADA' &&
+    jornada.horaSalida !== null;
+
 export const metaRegistroJornada: MetaModelo<RegistroJornada> = {
     campos: {
         horaEntrada: { tipo: "hora" },

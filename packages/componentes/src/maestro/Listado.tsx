@@ -148,6 +148,14 @@ export const Listado = <T extends Entidad>({
         totalEntidades={totalEntidades}
         seleccionadasIds={multiseleccionInterna ? seleccionadasInternas : undefined}
         onMultiSeleccionToggle={multiseleccionInterna ? toggleSeleccion : undefined}
+        onSetSeleccionadas={
+          multiseleccionInterna
+            ? (nuevas) => {
+                if (seleccionadas === undefined) setSeleccionadasEstado(nuevas);
+                onMultiSeleccion?.(nuevas);
+              }
+            : undefined
+        }
       />
     );
   };

@@ -246,6 +246,7 @@ export type QTablaProps<T extends Entidad> = {
   totalEntidades?: number;
   seleccionadasIds?: string[];
   onMultiSeleccionToggle?: (id: string) => void;
+  onSetSeleccionadas?: (ids: string[]) => void;
 };
 
 export const QTablaControlada = <T extends Entidad>({
@@ -261,6 +262,7 @@ export const QTablaControlada = <T extends Entidad>({
   totalEntidades = 0,
   seleccionadasIds,
   onMultiSeleccionToggle,
+  onSetSeleccionadas,
 }: QTablaProps<T>) => {
   const modoMulti = seleccionadasIds !== undefined;
   // Detectar si hay anchos específicos
@@ -307,13 +309,15 @@ export const QTablaControlada = <T extends Entidad>({
     modoMulti && datos.some((e) => seleccionadasIds!.includes(e.id));
 
   const toggleTodos = () => {
-    if (!onMultiSeleccionToggle) return;
+    if (!onSetSeleccionadas) return;
     if (todosSeleccionados) {
-      datos.forEach((e) => onMultiSeleccionToggle(e.id));
+      const idsEnPagina = new Set(datos.map((e) => e.id));
+      onSetSeleccionadas(seleccionadasIds!.filter((id) => !idsEnPagina.has(id)));
     } else {
-      datos
+      const idsNuevas = datos
         .filter((e) => !seleccionadasIds!.includes(e.id))
-        .forEach((e) => onMultiSeleccionToggle(e.id));
+        .map((e) => e.id);
+      onSetSeleccionadas([...seleccionadasIds!, ...idsNuevas]);
     }
   };
 
@@ -345,16 +349,8 @@ export const QTablaControlada = <T extends Entidad>({
             {datos.map((entidad: T) => (
               <tr
                 key={entidad.id}
-                onClick={() =>
-                  modoMulti
-                    ? onMultiSeleccionToggle?.(entidad.id)
-                    : onSeleccion?.(entidad)
-                }
-                data-seleccionada={
-                  modoMulti
-                    ? seleccionadasIds!.includes(entidad.id)
-                    : entidad.id === seleccionadaId
-                }
+                onClick={() => onSeleccion?.(entidad)}
+                data-seleccionada={entidad.id === seleccionadaId}
               >
                 {modoMulti && (
                   <td

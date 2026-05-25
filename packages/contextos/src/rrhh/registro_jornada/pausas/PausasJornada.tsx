@@ -12,8 +12,6 @@ const metaTablaPausas: MetaTabla<PausaJornada> = [
     { id: "causa", cabecera: "Causa", tipo: "texto" },
 ];
 
-const esPausaAbierta = (pausa: PausaJornada): boolean => pausa.horaFin === null;
-
 export const PausasJornada = ({
     jornada,
     estadoBorrador,
