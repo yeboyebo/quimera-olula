@@ -4,7 +4,9 @@ import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { MetaFiltro, getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect } from "react";
 import { CrearJornada } from "../crear/CrearJornada.tsx";
 import { DetalleJornada } from "../detalle/DetalleJornada.tsx";
@@ -12,6 +14,7 @@ import { RegistroJornada } from "../diseño.ts";
 import { minutosAHorasMinutos } from "../dominio.ts";
 import { ContextoMaestroJornadas, metaTablaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
+import "./MaestroConDetalleJornada.css";
 
 export const MaestroConDetalleJornada = () => {
     const { id, criteria } = getUrlParams();
@@ -21,6 +24,8 @@ export const MaestroConDetalleJornada = () => {
         jornadas: listaActivaEntidadesInicial<RegistroJornada>(id, criteria),
         mediaMinutos: 0,
     };
+
+    const { layout, cambiarLayout, esMovil } = useLayout("TABLA");
 
     const { ctx, emitir } = useMaquina(getMaquina, contextoInicial);
 
@@ -39,11 +44,20 @@ export const MaestroConDetalleJornada = () => {
                 Maestro={
                     <>
                         <h2>Registro de jornadas — Media: {minutosAHorasMinutos(ctx.mediaMinutos)}</h2>
+                        {!esMovil && (
+                            <div className="maestro-botones">
+                                <QBoton
+                                    texto={layout === "TARJETA" ? "Ver tabla" : "Ver tarjetas"}
+                                    onClick={cambiarLayout}
+                                />
+                            </div>
+                        )}
                         <Listado<RegistroJornada>
                             metaTabla={metaTablaJornada}
-                            metaFiltro = {metaFiltro}
+                            metaFiltro={metaFiltro}
                             criteria={ctx.jornadas.criteria}
-                            modo="tabla"
+                            modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+                            tarjeta={TarjetaJornada}
                             entidades={ctx.jornadas.lista}
                             totalEntidades={ctx.jornadas.total}
                             seleccionada={ctx.jornadas.activo}
@@ -63,6 +77,7 @@ export const MaestroConDetalleJornada = () => {
                     </>
                 }
                 Detalle={<DetalleJornada id={ctx.jornadas.activo} publicar={emitir} />}
+                layout={layout}
                 seleccionada={ctx.jornadas.activo}
                 modoDisposicion="maestro-50"
             />
@@ -73,6 +88,19 @@ export const MaestroConDetalleJornada = () => {
         </div>
     );
 };
+
+const TarjetaJornada = (jornada: RegistroJornada) => (
+    <div className="tarjeta-jornada">
+        <div className="tarjeta-jornada-principal">
+            <span className="tarjeta-jornada-fecha">{formatearFechaDate(jornada.fecha)}</span>
+            <span className="tarjeta-jornada-estado">{jornada.estado}</span>
+        </div>
+        <div className="tarjeta-jornada-horas">
+            <span>{jornada.horaEntrada ?? "—"} → {jornada.horaSalida ?? "—"}</span>
+            <span className="tarjeta-jornada-duracion">{minutosAHorasMinutos(jornada.minutosJornada)}</span>
+        </div>
+    </div>
+);
 
 const metaFiltro: MetaFiltro = {
     ...getMetaFiltroDefecto(metaTablaJornada),

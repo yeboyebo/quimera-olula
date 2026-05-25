@@ -1,11 +1,3 @@
-interface BoxIcon extends NodoComun {
-    name: string;
-    size?: string;
-    color?: string;
-    type?: "solid" | "regular" | "logo";
-    style?: React.CSSProperties;
-}
-
 declare namespace React {
     namespace JSX {
         interface IntrinsicElements {
@@ -20,7 +12,6 @@ declare namespace React {
             'quimera-tabla-paginacion': NodoComun;
             'quimera-textarea': NodoComun;
             'quimera-icono': NodoComun;
-            'box-icon': BoxIcon;
             'quimera-tarjetas': NodoComun;
             'quimera-tarjeta': NodoComun;
         }

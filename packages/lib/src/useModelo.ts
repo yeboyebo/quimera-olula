@@ -75,6 +75,8 @@ export type UiProps = {
     advertido: boolean;
     opcional: boolean;
     valido: boolean;
+    modificado: boolean;
+    soloTexto: boolean;
     onChange: (valor: ValorControl) => void;
     evaluarCambio: () => void;
     descripcion?: string;

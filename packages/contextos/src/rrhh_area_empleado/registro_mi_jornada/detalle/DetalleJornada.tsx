@@ -13,6 +13,7 @@ import { PausarJornada } from "../pausar/PausarJornada.tsx";
 import { PausasJornada } from "../pausas/PausasJornada.tsx";
 import { ReactivarJornada } from "../reactivar/ReactivarJornada.tsx";
 import { BotoneraJornadaBorrador } from "./BotoneraJornadaBorrador.tsx";
+import "./DetalleJornada.css";
 import { ContextoDetalleJornada, jornadaVacia, metaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
