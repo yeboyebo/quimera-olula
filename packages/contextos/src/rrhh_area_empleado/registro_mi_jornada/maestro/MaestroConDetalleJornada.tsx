@@ -2,6 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { MetaFiltro, getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -40,6 +41,7 @@ export const MaestroConDetalleJornada = () => {
                         <h2>Registro de jornadas — Media: {minutosAHorasMinutos(ctx.mediaMinutos)}</h2>
                         <Listado<RegistroJornada>
                             metaTabla={metaTablaJornada}
+                            metaFiltro = {metaFiltro}
                             criteria={ctx.jornadas.criteria}
                             modo="tabla"
                             entidades={ctx.jornadas.lista}
@@ -71,3 +73,18 @@ export const MaestroConDetalleJornada = () => {
         </div>
     );
 };
+
+const metaFiltro: MetaFiltro = {
+    ...getMetaFiltroDefecto(metaTablaJornada),
+    empleadoId: {
+        id: "empleadoId",
+        label: "Empleado",
+        filtro: (v) => (v ? ["empleado_id", "=", v as string] : null),
+        // render: (valor, onChange) => (
+        // <TipoAccion
+        //     valor={(valor as string) ?? ""}
+        //     onChange={(opcion) => onChange(opcion?.valor ?? "")}
+        // />
+        // ),
+    },
+}

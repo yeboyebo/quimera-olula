@@ -173,7 +173,6 @@ export const FormInput = ({
   }
 
   if (tipo === "hora") {
-    console.log('opcional hora', opcional);
     return (
       <div className="hora-wrapper">
         <input

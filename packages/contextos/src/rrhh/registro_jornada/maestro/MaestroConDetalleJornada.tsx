@@ -2,9 +2,10 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { getMetaFiltroDefecto, MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CrearJornada } from "../crear/CrearJornada.tsx";
 import { DetalleJornada } from "../detalle/DetalleJornada.tsx";
 import { RegistroJornada } from "../diseño.ts";
@@ -13,7 +14,9 @@ import { ContextoMaestroJornadas, metaTablaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleJornada = () => {
+
     const { id, criteria } = getUrlParams();
+    const [seleccionadas, setSeleccionadas] = useState([] as string[]);
 
     const contextoInicial: ContextoMaestroJornadas = {
         estado: "INICIAL",
@@ -40,6 +43,9 @@ export const MaestroConDetalleJornada = () => {
                         <h2>Registro de jornadas — Media: {minutosAHorasMinutos(ctx.mediaMinutos)}</h2>
                         <Listado<RegistroJornada>
                             metaTabla={metaTablaJornada}
+                            metaFiltro = {metaFiltro}
+                            modoMultiseleccion={true}
+                            onMultiSeleccion={setSeleccionadas}
                             criteria={ctx.jornadas.criteria}
                             modo="tabla"
                             entidades={ctx.jornadas.lista}
@@ -49,6 +55,9 @@ export const MaestroConDetalleJornada = () => {
                                 <div className="maestro-botones">
                                     <QBoton onClick={() => emitir("creacion_de_jornada_solicitada")}>
                                         Nueva jornada
+                                    </QBoton>
+                                    <QBoton onClick={() => console.log('Aprobar', seleccionadas)}>
+                                        Aprobar
                                     </QBoton>
                                 </div>
                             )}
@@ -68,3 +77,18 @@ export const MaestroConDetalleJornada = () => {
         </div>
     );
 };
+
+const metaFiltro: MetaFiltro = {
+    ...getMetaFiltroDefecto(metaTablaJornada),
+    empleadoId: {
+        id: "empleadoId",
+        label: "Empleado",
+        filtro: (v) => (v ? ["empleado_id", "=", v as string] : null),
+        // render: (valor, onChange) => (
+        // <TipoAccion
+        //     valor={(valor as string) ?? ""}
+        //     onChange={(opcion) => onChange(opcion?.valor ?? "")}
+        // />
+        // ),
+    },
+}
