@@ -43,8 +43,9 @@ export const MaestroConDetalleGruposReglas = () => {
   useUrlParams(ctx.grupos.activo, ctx.grupos.criteria);
 
   useEffect(() => {
-    // Forzar orden ASC al cargar: emitir criteriaBaseGrupos para primer load
-    emitir("recarga_de_grupos_solicitada", criteriaBaseGrupos);
+    // Forzar orden ASC al cargar: criteria_cambiado actualiza ctx.grupos.criteria además de recargar
+    // emitir("recarga_de_grupos_solicitada", criteriaBaseGrupos);
+    emitir("criteria_cambiado", criteriaBaseGrupos);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
