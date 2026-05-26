@@ -4,7 +4,7 @@ import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
-import { imprimir_blob } from "@olula/lib/impresion.ts";
+import { abrirCajon, imprimir_blob } from "@olula/lib/impresion.ts";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect, useRef } from "react";
@@ -115,6 +115,7 @@ export const DetalleVentaTpv = ({
                 />
             )}
             <QBoton texto="Imprimir" onClick={imprimir} />
+            <QBoton texto="Cajón" onClick={abrirCajon} />
             {estado == "EMITIDA" && venta.total > 0 && (
                 <QBoton
                 texto="Tique regalo"
