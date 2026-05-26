@@ -43,6 +43,14 @@ export const Lineas = ({
       deshabilitado: !lineas.activo,
       advertencia: true,
     },
+    !!lineas.activo?.referencia && {
+      texto: "Stock",
+      onClick: () =>
+        window.open(
+          `/almacen/stock?articulo_id==__${lineas.activo!.referencia}`,
+          "_blank"
+        ),
+    },
   ];
 
   const altaRapida = (barcode: string) => {

@@ -6,6 +6,8 @@ const baseUrlStock = `/almacen/stock`;
 
 export const stockFromApi = (stockApi: StockAPI): Stock => ({
     id: stockApi.id,
+    articulo: stockApi.articulo,
+    almacen: stockApi.almacen,
     articuloId: stockApi.articulo_id,
     almacenId: stockApi.almacen_id,
     cantidadFisica: stockApi.cantidad_fisica,
@@ -19,6 +21,6 @@ export const getStock: GetStock = async (id) =>
 
 export const getStocks: GetStocks = async (filtro, orden, paginacion?) => {
     const q = criteriaQuery(filtro, orden, paginacion);
-    const respuesta = await RestAPI.get<{ datos: StockAPI[] }>(baseUrlStock + q);
-    return { datos: respuesta.datos.map(stockFromApi) };
+    const respuesta = await RestAPI.get<{ datos: StockAPI[]; total: number }>(baseUrlStock + q);
+    return { datos: respuesta.datos.map(stockFromApi), total: respuesta.total };
 };

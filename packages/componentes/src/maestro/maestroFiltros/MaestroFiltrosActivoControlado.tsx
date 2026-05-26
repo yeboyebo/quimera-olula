@@ -322,10 +322,11 @@ export const MaestroFiltrosActivoControlado = ({
 
   const limpiarUno = (id: string) => {
     const valorDefecto = metaFiltro[id]?.valorDefecto ?? undefined;
+    const campoApi = metaFiltro[id]?.campo ?? id;
 
     if (valorDefecto) {
-      const filtros = filtro.filter(([campo]) => campo !== id);
-      const clausulaExistente = filtro.find(([campo]) => campo === id);
+      const filtros = filtro.filter(([campo]) => campo !== campoApi);
+      const clausulaExistente = filtro.find(([campo]) => campo === campoApi);
       if (!clausulaExistente) {
         init({ ...modelo, [id]: valorDefecto });
         return;
@@ -333,9 +334,9 @@ export const MaestroFiltrosActivoControlado = ({
       const [_, operador] = clausulaExistente;
 
       init({ ...modelo, [id]: valorDefecto });
-      onFiltroChanged([...filtros, [id, operador, valorDefecto as string]]);
+      onFiltroChanged([...filtros, [campoApi, operador, valorDefecto as string]]);
     } else {
-      const filtros = filtro.filter(([campo]) => campo !== id);
+      const filtros = filtro.filter(([campo]) => campo !== campoApi);
       onFiltroChanged(filtros);
     }
   };

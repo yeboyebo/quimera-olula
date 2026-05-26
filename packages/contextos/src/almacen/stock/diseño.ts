@@ -1,7 +1,9 @@
-import { Entidad, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 
 export interface Stock extends Entidad {
     id: string;
+    articulo: string;
+    almacen: string;
     articuloId: string;
     almacenId: string;
     cantidadFisica: number;
@@ -10,6 +12,8 @@ export interface Stock extends Entidad {
 
 export interface StockAPI extends Entidad {
     id: string;
+    articulo: string;
+    almacen: string;
     articulo_id: string;
     almacen_id: string;
     cantidad_fisica: number;
@@ -21,4 +25,4 @@ export type GetStocks = (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-) => Promise<{ datos: Stock[] }>;
+) => RespuestaLista<Stock>;

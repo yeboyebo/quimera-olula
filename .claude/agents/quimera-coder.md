@@ -213,6 +213,38 @@ export const cargarContexto: ProcesarContexto<EstadoXxx, ContextoXxx> =
     };
 ```
 
+### Funciones de refresco en detalle
+
+```typescript
+// Refresca la cabecera y propaga el cambio al maestro para sincronizar la lista
+export const refrescarCabecera: ProcesarXxx = async (contexto) => {
+    const entidad = await getEntidad(contexto.entidad.id);
+    return [
+        { ...contexto, entidad },
+        [["entidad_cambiada", entidad]]   // evento secundario al maestro
+    ];
+};
+
+// Refresca un sub-recurso (lineas, pagos, etc.)
+export const refrescarLineas: ProcesarXxx = async (contexto) => {
+    const lineas = await getLineas(contexto.entidad.id);
+    return { ...contexto, lineas: { lista: lineas, total: lineas.length, activo: null } };
+};
+
+// Función de guardado (llamada desde autoGuardar en el componente)
+export const guardarXxx = async (contexto: ContextoXxx, entidad: MiEntidad): Promise<void> => {
+    if (entidad.campo !== contexto.entidad.campo) {
+        await patchEntidad(contexto.entidad.id, entidad);
+    }
+};
+
+// Determina el estado según datos de la entidad
+export const abiertoOCerrado: ProcesarXxx = async (contexto) => ({
+    ...contexto,
+    estado: contexto.entidad.activo ? "ABIERTO" : "CERRADO",
+});
+```
+
 ---
 
 ## HOOKS DE ESTADO
@@ -230,20 +262,23 @@ const { ctx, emitir } = useMaquina(getMaquina, contextoInicial, publicar);
 ```typescript
 // dominio.ts
 export const metaMiEntidad: MetaModelo<MiEntidad> = {
-    campo: { requerido: true, etiqueta: "Mi campo" },
+    campos: {
+        nombre: { requerido: true, minimo: 3 },
+        estado: { requerido: true },
+    },
+    // Opcional: deshabilita todos los campos cuando devuelve false
+    editable: (entidad: MiEntidad) => entidad.estado === 'activo',
+    // Opcional: side-effects entre campos al cambiar uno
+    onChange: (entidad, campo, valor, otros?) => entidad,
 };
-export const miEntidadVacia: MiEntidad = { id: "", campo: "" };
+export const miEntidadVacia: MiEntidad = { id: "", nombre: "", estado: "activo" };
 
-// componente
-const { modelo, uiProps, valido, set } = useModelo(
-    metaMiEntidad,
-    ctx.entidad,
-    autoGuardar   // opcional: callback async
-);
+// componente — tercer argumento es el auto-guardado (opcional)
+const modelo = useModelo(metaMiEntidad, ctx.entidad, autoGuardar);
 
 // uso en JSX
-<QInput label="Campo" {...uiProps("campo")} />
-<QBoton deshabilitado={!valido} onClick={guardar}>Guardar</QBoton>
+<QInput label="Nombre" {...modelo.uiProps("nombre")} />
+<QBoton deshabilitado={!modelo.valido} onClick={guardar}>Guardar</QBoton>
 ```
 
 ### `useForm` — confirmaciones simples
@@ -271,11 +306,15 @@ const focus = useFocus();
 
 ```typescript
 // Inicialización del contexto maestro
-import { listaActivaEntidadesInicial } from "@olula/lib/dominio.js";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+
+// Leer ID y criteria de la URL (deep link)
+const { id, criteria } = getUrlParams();
+const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
 
 const contextoInicial: ContextoMaestroXxx = {
     estado: "INICIAL",
-    entidades: listaActivaEntidadesInicial<MiEntidad>(undefined, criteriaInicial),
+    entidades: listaActivaEntidadesInicial<MiEntidad>(id, criteriaInicial),
 };
 
 // Acciones estándar (creadas con accionesListaActivaEntidades)
@@ -287,6 +326,12 @@ export const recargarEntidades: ProcesarContexto<...> = async (ctx, payload) => 
     const criteria = payload as Criteria;
     const resultado = await getEntidades(criteria.filtro, criteria.orden, criteria.paginacion);
     return Entidades.recargar(ctx, resultado);
+};
+
+export const ampliarEntidades: ProcesarContexto<...> = async (ctx, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getEntidades(criteria.filtro, criteria.orden, criteria.paginacion);
+    return Entidades.ampliar(ctx, resultado);
 };
 ```
 
@@ -308,7 +353,15 @@ const baseUrl = new ApiUrls().ENTIDAD;
 
 ### Llamadas estándar
 
+El tipo de retorno de `getEntidades` (GET lista) es `RespuestaLista<T>`, que es `Promise<{ datos: T[]; total: number }>`.
+El tipo de `GetEntidades` en `diseño.ts` debe declararse con ese tipo para que `Entidades.recargar` funcione.
+
 ```typescript
+// diseño.ts
+import { RespuestaLista } from "@olula/lib/diseño.ts";
+export type GetEntidades = (filtro: Filtro, orden: Orden, paginacion?: Paginacion) => RespuestaLista<MiEntidad>;
+
+// infraestructura.ts
 // GET lista con criteria
 export const getEntidades: GetEntidades = async (filtro, orden, paginacion) => {
     const q = criteriaQuery(filtro, orden, paginacion);
@@ -401,6 +454,8 @@ export const metaTablaXxx: MetaTabla<MiEntidad> = [
 
 **Tipos predefinidos** (`tipo`): `"texto"` | `"numero"` | `"moneda"` | `"fecha"` | `"hora"` | `"fechahora"` | `"booleano"`
 
+**Render con JSX**: si el `render` usa JSX, mover `metaTablaXxx` a un fichero `.tsx` (el fichero `.ts` no admite JSX).
+
 **Render tiene prioridad** sobre `tipo` cuando ambos están presentes.
 
 **Patrón para valores calculados / formateados:**
@@ -430,31 +485,96 @@ import { minutosAHorasMinutos } from "../dominio.ts";
 
 ### Layout Maestro-Detalle
 
+Patrones aplicados:
+- `useLayout` → alterna entre vista TARJETA y TABLA (en móvil siempre TARJETA)
+- `useUrlParams` → escribe activo y criteria en la URL al cambiar
+- `getUrlParams` → lee estado inicial desde la URL (deep link)
+- `Listado` recibe `modo`, `tarjeta`, `renderAcciones`, `onSiguientePagina`
+- `MaestroDetalle` recibe `layout` para adaptar disposición en móvil
+- Componente tarjeta definido **fuera** del componente principal (evita re-renders)
+
 ```tsx
 export const MaestroConDetalleXxx = () => {
-    const { ctx, emitir } = useMaquina(getMaquina, contextoInicial);
+    const criteriaBase = useMemo(() => criteriaDefecto, []);
+
+    // Alterna TARJETA / TABLA; en móvil siempre TARJETA
+    const { layout, cambiarLayout } = useLayout("TARJETA");
+
+    const { id, criteria } = getUrlParams();
+    const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
+
+    const { ctx, emitir } = useMaquina(getMaquina, {
+        estado: "INICIAL",
+        entidades: listaActivaEntidadesInicial<MiEntidad>(id, criteriaInicial),
+    });
+
+    // Sincroniza activo y criteria con la URL
+    useUrlParams(ctx.entidades.activo, ctx.entidades.criteria);
+
+    useEffect(() => {
+        emitir("recarga_solicitada", ctx.entidades.criteria);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
-        <MaestroDetalle<MiEntidad>
-            Maestro={
-                <Listado<MiEntidad>
-                    metaTabla={metaTablaXxx}
-                    criteria={ctx.entidades.criteria}
-                    entidades={ctx.entidades.lista}
-                    totalEntidades={ctx.entidades.total}
-                    seleccionada={ctx.entidades.activo}
-                    onSeleccion={(payload) => emitir("entidad_seleccionada", payload)}
-                    onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
-                />
-            }
-            Detalle={<DetalleXxx id={ctx.entidades.activo} publicar={emitir} />}
-            modoDisposicion="maestro-50"
-        />
+        <div className="Xxx">
+            <MaestroDetalle<MiEntidad>
+                Maestro={
+                    <>
+                        <h2>Título</h2>
+                        <div className="maestro-botones">
+                            <QBoton
+                                texto={layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
+                                onClick={cambiarLayout}
+                            />
+                        </div>
+                        <Listado<MiEntidad>
+                            metaTabla={metaTablaXxx}
+                            criteria={ctx.entidades.criteria}
+                            modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+                            tarjeta={TarjetaXxx}
+                            entidades={ctx.entidades.lista}
+                            totalEntidades={ctx.entidades.total}
+                            seleccionada={ctx.entidades.activo}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("creacion_solicitada")}>
+                                        Nueva Entidad
+                                    </QBoton>
+                                </div>
+                            )}
+                            onSeleccion={(payload) => emitir("entidad_seleccionada", payload)}
+                            onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+                            onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
+                        />
+                    </>
+                }
+                Detalle={<DetalleXxx id={ctx.entidades.activo} publicar={emitir} />}
+                layout={layout}
+                seleccionada={ctx.entidades.activo}
+                modoDisposicion="maestro-50"
+            />
+        </div>
     );
 };
+
+// Fuera del componente principal para evitar re-renders
+const TarjetaXxx = (entidad: MiEntidad) => (
+    <div className="tarjeta-xxx" key={entidad.id}>
+        <div>{entidad.nombre}</div>
+        <div>{entidad.estado}</div>
+    </div>
+);
 ```
 
 ### Componente Detalle con modales condicionales
+
+Patrones clave:
+- Recibe `id?: string` (no la entidad completa)
+- `useEffect([id])` dispara la carga cuando el maestro cambia la selección
+- **Auto-guardado**: `useModelo(meta, entidad, autoGuardar)` — el callback se invoca al cambiar el modelo
+- `metaMiEntidad.editable = (e) => e.estado === 'activo'` deshabilita todos los campos cuando es `false`
+- Modales renderizados condicionalmente con `{estado === "X" && <ModalX />}`
 
 ```tsx
 export const DetalleXxx = ({
@@ -466,13 +586,15 @@ export const DetalleXxx = ({
 }) => {
     const { ctx, emitir } = useMaquina(getMaquina, contextoInicial, publicar);
 
+    // Auto-guardado: se invoca cuando el modelo cambia y es válido
     const autoGuardar = useCallback(async (entidad: MiEntidad) => {
-        await patchEntidad(ctx.entidad.id, entidad);
+        await guardarXxx(ctx, entidad);   // función en dominio.ts
         await emitir("datos_guardados");
     }, [ctx, emitir]);
 
     const modelo = useModelo(metaMiEntidad, ctx.entidad, autoGuardar);
 
+    // Recargar cuando el ID cambia (o se deselecciona con undefined)
     useEffect(() => {
         emitir("id_cambiado", id, true);
     }, [id]);
@@ -491,12 +613,12 @@ export const DetalleXxx = ({
             <div className="DetalleXxx">
                 {/* Botones según estado */}
                 <div className="botones maestro-botones">
-                    {estado === "ABIERTO" && (
-                        <QBoton texto="Borrar" advertencia onClick={() => emitir("borrar_solicitado")} />
+                    {estado !== "CERRADO" && (
+                        <QBoton texto="Borrar" onClick={() => emitir("borrar_solicitado")} />
                     )}
                 </div>
 
-                {/* Formulario principal */}
+                {/* Formulario principal — deshabilitado si metaMiEntidad.editable devuelve false */}
                 <QInput label="Campo" {...modelo.uiProps("campo")} />
 
                 {/* MODALES: renderizado condicional basado en estado */}
@@ -507,6 +629,29 @@ export const DetalleXxx = ({
                     <CrearLineaXxx publicar={emitir} entidad={ctx.entidad} />
                 )}
             </div>
+        </Detalle>
+    );
+};
+```
+
+### Detalle de solo lectura (sin edición)
+
+Cuando el detalle es solo consulta, no se usa `useModelo` ni auto-guardado:
+
+```tsx
+export const DetalleXxx = ({ id, publicar = async () => {} }: { id?: string; publicar?: EmitirEvento }) => {
+    const { ctx, emitir } = useMaquina(getMaquina, contextoInicial, publicar);
+
+    useEffect(() => { emitir("id_cambiado", id, true); }, [id]);
+
+    if (!ctx.entidad.id) return null;
+
+    return (
+        <Detalle id={id} obtenerTitulo={titulo} entidad={ctx.entidad}
+            cerrarDetalle={() => emitir("entidad_deseleccionada", null, true)}>
+            <dl>
+                <dt>Campo</dt><dd>{ctx.entidad.campo}</dd>
+            </dl>
         </Detalle>
     );
 };
@@ -575,6 +720,129 @@ export const BorrarXxx = ({
         />
     );
 };
+```
+
+---
+
+## LAYOUT DE FORMULARIOS: CSS GRID
+
+Los formularios del detalle usan `<quimera-formulario>` — un elemento custom que implementa un **grid de 12 columnas**.
+
+### Reglas
+
+1. **Envuelve los campos en `<quimera-formulario>`** en tabs y formularios del detalle.
+2. **Crea un CSS por componente** — `NombreComponente.css`, importado al inicio del fichero TSX con `import "./NombreComponente.css"`.
+3. **Usa `{...uiProps("campo")}` en los componentes** — el spread incluye el atributo `nombre` que usa el CSS.
+4. **Posiciona con selectores de atributo**, sin añadir clases a los componentes de formulario.
+5. **Alcance con la clase contenedora** — `.NombreComponente { ... }` para evitar conflictos entre tabs.
+
+### Selectores CSS por componente UI
+
+| Componente | Elemento renderizado | Selector CSS |
+|-----------|---------------------|-------------|
+| `<QInput>` | `<quimera-input>` | `quimera-input[nombre="campo"]` |
+| `<QDate>` | `<quimera-date>` | `quimera-date[nombre="campo"]` |
+| `<QSelect>` | `<quimera-select>` | `quimera-select[nombre="campo"]` |
+| `<QAutocompletar>` | `<quimera-autocompletar>` | `quimera-autocompletar[nombre="campo"]` |
+| `<div id="...">` | `<div>` | `div[id="grupo"]` |
+
+### Columnas disponibles (grid de 12)
+
+| `grid-column` | % aprox | Uso típico |
+|--------------|---------|-----------|
+| `span 2` | 17% | Fechas cortas, códigos |
+| `span 3` | 25% | Importes, estados |
+| `span 4` | 33% | Campos medianos |
+| `span 6` | 50% | Campos estándar |
+| `span 9` | 75% | Descripciones largas |
+| `span 12` | 100% | Nombre completo, notas |
+
+### Patrón estándar: tab con posicionado de campos
+
+```tsx
+// TabXxx.tsx
+import "./TabXxx.css";
+
+export const TabXxx = ({ form }: { form: HookModelo<MiEntidad> }) => {
+    const { uiProps } = form;
+    return (
+        <div className="TabXxx">
+            <quimera-formulario>
+                <QInput label="Nombre" {...uiProps("nombre")} />
+                <QSelect
+                    label="Estado"
+                    {...uiProps("estado")}
+                    opciones={[
+                        { valor: "activo", descripcion: "Activo" },
+                        { valor: "inactivo", descripcion: "Inactivo" },
+                    ]}
+                />
+                <QDate label="Fecha" {...uiProps("fecha")} />
+            </quimera-formulario>
+        </div>
+    );
+};
+```
+
+```css
+/* TabXxx.css */
+.TabXxx {
+    /* Nombre: 3/4 del ancho */
+    quimera-input[nombre="nombre"] {
+        grid-column: span 9;
+    }
+
+    /* Estado: 1/4 del ancho, en la misma fila que nombre */
+    quimera-select[nombre="estado"] {
+        grid-column: span 3;
+    }
+
+    /* Fecha: 2 columnas */
+    quimera-date[nombre="fecha"] {
+        grid-column: span 2;
+    }
+
+    /* Sin regla → ocupa el ancho por defecto del grid */
+}
+```
+
+### Patrón: grupo inline (texto + botón)
+
+Para combinar texto y botón en la misma fila, agrupa en un `<div id="...">` y aplica flexbox en CSS:
+
+```tsx
+<div id="cliente">
+    {entidad.cliente?.nombre ?? 'Sin cliente'}
+    <QBoton tamaño="pequeño" onClick={() => publicar("cambiar_cliente")}>
+        Cambiar
+    </QBoton>
+</div>
+```
+
+```css
+.TabXxx {
+    div[id="cliente"] {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        grid-column: span 12;
+    }
+}
+```
+
+### CSS en el componente detalle principal
+
+Crea siempre `DetalleXxx.css` e impórtalo. Si hay campos fuera de tabs aplica el mismo patrón de atributos; si no, déjalo vacío con un comentario de referencia:
+
+```css
+/* DetalleXxx.css */
+.DetalleXxx {
+    /* Posiciona aquí campos del formulario principal (fuera de tabs).
+     * Ejemplo:
+     *   quimera-input[nombre="codigo"] { grid-column: span 3; }
+     *   quimera-input[nombre="nombre"] { grid-column: span 9; }
+     */
+}
 ```
 
 ---
