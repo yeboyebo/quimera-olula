@@ -21,7 +21,7 @@ const metaTablaGrupos = [
 
 const criteriaBaseGrupos: Criteria = {
   ...criteriaDefecto,
-  orden: ["id", "ASC"],
+  orden: ["nombre", "ASC"],
 };
 
 export const MaestroConDetalleGruposReglas = () => {
