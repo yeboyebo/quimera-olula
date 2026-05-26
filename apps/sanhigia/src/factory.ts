@@ -16,6 +16,7 @@ class FactoryComponentesSanhigia {
     static cabecera_extra_logo = ExtraLogoSanhigia;
     static menu_usuario_elementos = MenuUsuarioElementosSanhigia;
     static menu_usuario_procesar_elementos = procesarElementosSanhigia;
+    static pie = () => null; // elimina el footer
 }
 
 export class FactoryLegacy {
