@@ -29,6 +29,7 @@ export interface LineaVenta extends Entidad {
     pvp_unitario: number;
     dto_porcentual: number;
     pvp_total: number;
+    iva_incluido: boolean;
     grupo_iva_producto_id: string;
 };
 

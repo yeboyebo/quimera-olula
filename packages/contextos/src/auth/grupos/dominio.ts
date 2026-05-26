@@ -37,6 +37,11 @@ const excepcionesRegla: string[] = [
     "publica"
 ];
 
+const construirDescripcion = (idRegla: string): string => {
+    const partes = idRegla.split('.');
+    return partes.map(p => p.replace(/_/g, ' ')).join(' - ');
+};
+
 export const getReglasPorGrupoPermiso = (
     grupoId: string,
     reglas: Regla[],
@@ -56,10 +61,12 @@ export const getReglasPorGrupoPermiso = (
 
     const reglasConValor = reglasFiltradas.map(regla => ({
         ...regla,
+        descripcion: regla.descripcion || construirDescripcion(regla.id),
         valor: mapaPermisos[regla.id] !== undefined ? mapaPermisos[regla.id] : null
     }));
 
     const categorias: Record<string, CategoriaReglas> = {};
+    const reglasYaProcesadas = new Set<string>();
 
     reglasConValor.forEach(regla => {
         const partes = regla.id.split('.');
@@ -70,7 +77,7 @@ export const getReglasPorGrupoPermiso = (
         if (!categorias[categoria]) {
             categorias[categoria] = {
                 id: categoria,
-                descripcion: regla.descripcion.split(' - ')[0],
+                descripcion: construirDescripcion(categoria),
                 reglas: [],
                 valor: mapaPermisos[categoria] !== undefined ? mapaPermisos[categoria] : null
             };
@@ -78,27 +85,36 @@ export const getReglasPorGrupoPermiso = (
 
         // Si es una regla de primer nivel (ej: "ventas.factura")
         if (partes.length === 2 && !accion) {
-            categorias[categoria].reglas.push({
-                ...regla,
-                hijos: []
-            });
+            if (!reglasYaProcesadas.has(regla.id)) {
+                reglasYaProcesadas.add(regla.id);
+                categorias[categoria].reglas.push({
+                    ...regla,
+                    hijos: []
+                });
+            }
         }
         // Si es una regla de segundo nivel (ej: "ventas.factura.crear")
         else if (partes.length === 3) {
-            const padre = categorias[categoria].reglas.find(r => r.id === `${categoria}.${subnivel}`);
+            const padreId = `${categoria}.${subnivel}`;
+            const padre = categorias[categoria].reglas.find(r => r.id === padreId);
             if (padre) {
                 padre.hijos = padre.hijos || [];
-                padre.hijos.push(regla);
+                if (!padre.hijos.find(h => h.id === regla.id)) {
+                    padre.hijos.push(regla);
+                }
             } else {
                 // Si no existe el padre, lo creamos
-                categorias[categoria].reglas.push({
-                    id: `${categoria}.${subnivel}`,
-                    grupo: `${categoria}.${subnivel}`,
-                    descripcion: `${categoria} - ${subnivel}`,
-                    eventos: [],
-                    valor: null,
-                    hijos: [regla]
-                });
+                if (!reglasYaProcesadas.has(padreId)) {
+                    reglasYaProcesadas.add(padreId);
+                    categorias[categoria].reglas.push({
+                        id: padreId,
+                        grupo: padreId,
+                        descripcion: construirDescripcion(padreId),
+                        eventos: [],
+                        valor: null,
+                        hijos: [regla]
+                    });
+                }
             }
         }
     });

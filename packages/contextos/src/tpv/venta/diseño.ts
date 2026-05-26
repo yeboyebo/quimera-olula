@@ -130,6 +130,8 @@ export type DeletePago = (id: string, idPago: string) => Promise<void>;
 
 export type GetReportVenta = (id: string) => Promise<Blob>;
 
+export type GetReportVale = (id: string) => Promise<Blob>;
+
 
 export type EstadoMaestroVentasTpv = (
     'INICIAL'

@@ -19,6 +19,10 @@
         grid-column: span 6;
     }
 
+    quimera-checkbox[nombre="iva_incluido"] {
+        grid-column: span 6;
+    }
+
     quimera-select[nombre="grupo_iva_producto_id"] {
         grid-column: span 6;
     }
