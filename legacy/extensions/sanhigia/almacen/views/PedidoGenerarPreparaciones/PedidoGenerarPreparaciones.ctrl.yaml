@@ -196,6 +196,9 @@ bunch:
         - key: codtarifa
           value:
             statePath: pedido.buffer.codProductoAgt
+        - key: codalmacen
+          value:
+            statePath: pedido.buffer.codAlmacen            
       success: onPedidoEnviadoPDA
       error: onEnviarPDAError
   onPedidoEnviado:
@@ -257,6 +260,11 @@ bunch:
     - _type: alert
       text: Error al enviar el pedido
       severity: error
+    - _type: grape
+      name: mostrarMensajeError
+    # - _type: alert
+    #   text: Error al enviar el pedido
+    #   severity: error      
   onPedidoEnviadoPDA:
     # - _type: grape
     #   name: compruebaAniadirTrabajador
