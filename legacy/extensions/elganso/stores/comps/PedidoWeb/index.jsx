@@ -174,6 +174,9 @@ function PedidoWeb({ _estilos, ...props }) {
     }
 
     let activeMarcarFaltante = false;
+    if (rowFaltanteSelectionModel && rowFaltanteSelectionModel.length > 0) {
+      activeMarcarFaltante = true;
+    }
 
     const columns = [
       {
@@ -270,6 +273,8 @@ function PedidoWeb({ _estilos, ...props }) {
                 window.open(`${etiquetaUrl}`, "_blank");
               }
             }}
+            aria-label="Imprimir Etiqueta"
+            title="Imprimir Etiqueta"
           >
             <Icon>print</Icon>
           </IconButton>
@@ -289,6 +294,8 @@ function PedidoWeb({ _estilos, ...props }) {
                 });
               }
             }}
+            aria-label="Marcar como enviado"
+            title="Marcar como enviado"
           >
             <Icon>check</Icon>
           </IconButton>
@@ -303,7 +310,7 @@ function PedidoWeb({ _estilos, ...props }) {
                 let posibleFaltante = true;
 
                 rowFaltanteSelectionModel.forEach(idLinea => {
-                  const lineaFaltante = lineas.find(linea => linea.id === idLinea);
+                  const lineaFaltante = lineas.find(linea => linea.id === Number(idLinea));
                   if (lineaFaltante.pedidopreparado) {
                     posibleFaltante = false;
                   }
@@ -320,6 +327,8 @@ function PedidoWeb({ _estilos, ...props }) {
                 }
               }
             }}
+            aria-label="Marcar como faltante"
+            title="Marcar como faltante"
           >
             <Icon>send</Icon>
           </IconButton>
@@ -345,8 +354,24 @@ function PedidoWeb({ _estilos, ...props }) {
             disableDensitySelector
             disableColumnMenu
             disableRowSelectionOnClick
-            checkboxSelection={false}
+            checkboxSelection={true}
             hideFooter={true}
+            onRowSelectionModelChange={(newRowFaltanteSelectionModel, details) => {
+              if (newRowFaltanteSelectionModel && typeof newRowFaltanteSelectionModel === 'object' && 'ids' in newRowFaltanteSelectionModel) {
+                if (newRowFaltanteSelectionModel.type == 'include') {
+                  const selectedProjectIds = Array.from(newRowFaltanteSelectionModel.ids || []).map(id => String(id));
+                  setFaltanteSelectionModel(selectedProjectIds);
+                }
+
+                // Si hacemos click en 'Select All' y es de tipo exclude marcamos todos las lineas de la tabla
+                if (newRowFaltanteSelectionModel.type == 'exclude') {
+                  const idsLineas = Array.from(lineasMostrar || []).map(linea => String(linea.id));
+                  setFaltanteSelectionModel(idsLineas);
+                }
+              } else {
+                setFaltanteSelectionModel([]);
+              }
+            }}
             columns={columns}
             slots={{ toolbar: null }}
             getRowId={row => row.id}

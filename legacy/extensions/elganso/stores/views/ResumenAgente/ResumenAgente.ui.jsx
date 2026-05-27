@@ -2,7 +2,7 @@ import "./ResumenAgente.style.scss";
 
 import { Button, Icon, IconButton } from "@quimera/comps";
 import Quimera, { PropValidation, useStateValue, util } from "quimera";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ResumenSemana, SemanaPlanificador } from "../../comps";
 

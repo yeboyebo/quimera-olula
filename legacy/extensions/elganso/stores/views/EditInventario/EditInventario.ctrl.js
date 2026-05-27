@@ -270,9 +270,6 @@ export const bunch = parent => {
           // Actualizamos las lineas modificadas en el inventario
           let nuevasLineasModificadas = [];
 
-          console.log(inventario);
-          console.log(inventario.lineasModificadas);
-
           if (inventario.lineasModificadas) {
             // Comprobamos que sea un objeto o un array para tratarlo correctamente
             if (inventario.lineasModificadas.length === undefined) {
