@@ -254,6 +254,8 @@ function PedidoWeb({ _estilos, ...props }) {
                 }
               }
             }}
+            aria-label="Avisar Transportista"
+            title="Avisar Transportista"
           >
             <Icon>local_shipping</Icon>
           </IconButton>
