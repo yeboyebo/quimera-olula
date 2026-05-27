@@ -1,4 +1,4 @@
-import { Criteria, Entidad } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useState } from "react";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -211,8 +211,8 @@ export const Listado = <T extends Entidad>({
             metaFiltro={
               metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
             }
-            filtro={criteria.filtro}
-            filtroInicial={criteriaInicial.filtro}
+            filtro={criteria.filtro as ClausulaFiltro[]}
+            filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
             onFiltroChanged={(filtro) => {
               onCriteriaChanged({
                 ...criteria,
