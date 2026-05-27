@@ -185,8 +185,23 @@ function Recepciones() {
     const renderViajeName = params => {
       return (
         <div className="viajeName tableGrid">
-          <span>{params.row.nombredestino}</span>
-          <span>{params.row.idviajemultitrans}</span>
+          <span>{params.row.nombredestino} - {params.row.idviajemultitrans}</span>
+        </div>
+      );
+    };
+
+    const renderViajeFecha = params => {
+      if (!params.row.fechaalta || !params.row.horaalta) {
+        return (
+          <div className="viajeFecha tableGrid">
+            <span>{params.row.fecha}</span>
+          </div>
+        );
+      }
+
+      return (
+        <div className="viajeFecha tableGrid">
+          <span>{params.row.fecha} {params.row.horaalta}</span>
         </div>
       );
     };
@@ -322,8 +337,14 @@ function Recepciones() {
         renderCell: params => renderViajeName(params),
         flex: 2,
       },
-      { field: "cantidad", headerName: "UD", flex: 1 },
-      { field: "usuariorecepcion", headerName: "USER", flex: 1 },
+      {
+        field: "fecha",
+        headerName: "FECHA",
+        renderCell: params => renderViajeFecha(params),
+        flex: 1,
+      },
+      { field: "cantidad", headerName: "UD", flex: 0.5 },
+      { field: "usuariorecepcion", headerName: "USER", flex: 0.5 },
       {
         field: "acciones",
         headerName: "",

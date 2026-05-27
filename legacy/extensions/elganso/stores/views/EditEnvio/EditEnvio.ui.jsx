@@ -236,12 +236,10 @@ function EditEnvio({ ...props }) {
 
   const renderArticulo = params => {
     return (
-      <div className="articuloName tableGrid">
+      <div className="articuloName">
         <span>
-          {params.row.referencia}
-          {params.row.talla ? `-${params.row.talla}` : ""}
+          {`${params.row.referencia}${params.row.talla ? `-${params.row.talla}` : ""} ${params.row.descripcion}`}
         </span>
-        <span>{params.row.descripcion}</span>
       </div>
     );
   };

@@ -209,8 +209,7 @@ function Inventarios() {
     const renderInventarioFecha = params => {
       return (
         <div className="inventarioFecha tableGrid">
-          <span>{params.row.fecha}</span>
-          <span>{params.row.hora}</span>
+          <span>{params.row.fecha} {params.row.hora}</span>
         </div>
       );
     };
@@ -350,13 +349,13 @@ function Inventarios() {
         flex: mobile ? 0.1 : 0.25,
         sortable: false,
       },
+      { field: "descripcion", headerName: "Nombre", flex: mobile ? 0.8 : 1.5 },
       {
         field: "fecha",
         headerName: "Fecha",
         renderCell: params => renderInventarioFecha(params),
         flex: mobile ? 0.45 : 0.5,
       },
-      { field: "descripcion", headerName: "Nombre", flex: mobile ? 0.8 : 1.5 },
       {
         field: "acciones",
         headerName: "",

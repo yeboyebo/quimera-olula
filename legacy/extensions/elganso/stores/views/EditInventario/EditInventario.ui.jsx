@@ -263,10 +263,8 @@ function EditInventario({ ...props }) {
       return (
         <div className="articuloName tableGrid">
           <span>
-            {params.row.referencia}
-            {params.row.talla ? `-${params.row.talla}` : ""}
+            {`${params.row.referencia}${params.row.talla ? `-${params.row.talla}` : ""} ${params.row.desarticulo}`}
           </span>
-          <span>{params.row.desarticulo}</span>
         </div>
       );
     };
@@ -322,7 +320,7 @@ function EditInventario({ ...props }) {
       {
         field: "referencia",
         headerName: "Artículo",
-        flex: 2,
+        flex: 1,
         renderCell: params => renderArticulo(params),
       },
       {
