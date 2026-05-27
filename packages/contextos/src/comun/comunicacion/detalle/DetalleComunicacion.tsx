@@ -1,6 +1,7 @@
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { QTextoEnriquecido } from "@olula/componentes/moleculas/qtexto_enriquecido.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { useEffect } from "react";
@@ -82,7 +83,7 @@ export const DetalleComunicacion = ({
         <div className="detalle-comunicacion-campos">
           <div>
             <p className="detalle-comunicacion-cuerpo">
-              {ctx.comunicacion.cuerpo}
+              <QTextoEnriquecido texto={ctx.comunicacion.cuerpo} />
             </p>
           </div>
         </div>

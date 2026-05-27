@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { Link } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import "./Cabecera.css";
+import { NotificacionesCabecera } from "./NotificacionesCabecera.tsx";
 import { estaAutentificado } from "./autenticacion";
 import { useMenuControl } from "./useMenuControl";
 
@@ -11,6 +12,7 @@ export type CabeceraProps = {
   logoAlt?: string;
   logoClassName?: string;
   Titulo?: () => React.ReactNode;
+  NotificacionesCabecera?: () => React.ReactNode;
   AccionesCabecera?: () => React.ReactNode;
   MenuUsuario?: () => React.ReactNode;
   ExtraLogo?: () => React.ReactNode;
@@ -20,6 +22,7 @@ export const CabeceraBase = ({
   logoSrc = "/olula_header_blanco.png",
   logoAlt = "Olula | Inicio",
   Titulo,
+  NotificacionesCabecera: Notificaciones,
   AccionesCabecera,
   MenuUsuario,
   ExtraLogo,
@@ -42,8 +45,13 @@ export const CabeceraBase = ({
         </Link>
         {ExtraLogo ? <ExtraLogo /> : null}
         <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
-        <div id="cabecera-acciones-extra">
-          {AccionesCabecera ? <AccionesCabecera /> : null}
+        <div id="cabecera-acciones">
+          <div id="cabecera-acciones-globales">
+            {Notificaciones ? <Notificaciones /> : null}
+          </div>
+          <div id="cabecera-acciones-extra">
+            {AccionesCabecera ? <AccionesCabecera /> : null}
+          </div>
         </div>
         {autenticado && (
           <>
@@ -72,6 +80,8 @@ export const CabeceraBase = ({
 export const Cabecera = (props: CabeceraProps) => {
   const { app } = useContext(FactoryCtx);
   const CabeceraCustom = app.Componentes?.cabecera as typeof CabeceraBase;
+  const NotificacionesCabeceraCustom = app.Componentes
+    ?.cabecera_notificaciones as () => React.ReactNode;
   const AccionesCabecera = app.Componentes
     ?.cabecera_acciones as () => React.ReactNode;
   const MenuUsuario = app.Componentes
@@ -81,6 +91,10 @@ export const Cabecera = (props: CabeceraProps) => {
 
   const cProps: CabeceraProps = {
     ...props,
+    NotificacionesCabecera:
+      NotificacionesCabeceraCustom ||
+      props.NotificacionesCabecera ||
+      NotificacionesCabecera,
     AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
     MenuUsuario: MenuUsuario || props.MenuUsuario,
     ExtraLogo: ExtraLogo || props.ExtraLogo,

@@ -16,6 +16,7 @@ export * from "./moleculas/Mostrar.tsx";
 export * from "./moleculas/qacciones.tsx";
 export * from "./moleculas/qmodal.tsx";
 export * from "./moleculas/qmodalconfirmacion.tsx";
+export * from "./moleculas/qtexto_enriquecido/index.ts";
 
 export * from "./menu/menu-lateral.tsx";
 export * from "./menu/menu-usuario.tsx";

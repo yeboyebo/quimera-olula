@@ -1,3 +1,4 @@
+import { RouterFactoryAlmacenOlula } from "#/almacen/router_factory.ts";
 import { RouterFactoryAuthOlula } from "#/auth/router_factory.ts";
 import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
 import { RouterFactoryVentasOlula } from "#/ventas/router_factory.ts";
@@ -10,6 +11,7 @@ import { RouteObject } from "react-router";
 //     Crm = undefined;
 // }
 export class RouterFactoryLegacy {
+    Almacen = RouterFactoryAlmacenOlula;
     Ventas = RouterFactoryVentasOlula;
     Auth = RouterFactoryAuthOlula;
     Comun = RouterFactoryComunOlula;

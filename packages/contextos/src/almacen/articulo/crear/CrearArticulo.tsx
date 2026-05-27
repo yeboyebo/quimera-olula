@@ -20,14 +20,14 @@ export const CrearArticulo = ({
   onCancelar = () => {},
   activo = false,
 }: CrearArticuloProps) => {
-  const nuevoArticulo = useModelo(metaNuevoArticulo, { ...nuevoArticuloVacio });
+  const nuevoArticulo = useModelo(metaNuevoArticulo, nuevoArticuloVacio);
   const { intentar } = useContext(ContextoError);
 
   const guardar = async () => {
     const id = await intentar(() =>
       postArticulo(nuevoArticulo.modelo as Articulo)
     );
-    nuevoArticulo.init({ ...nuevoArticuloVacio });
+    nuevoArticulo.init(nuevoArticuloVacio);
     const articuloCreado = await getArticulo(id);
     publicar("articulo_creado", articuloCreado);
     onCancelar();
