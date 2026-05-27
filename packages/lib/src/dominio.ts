@@ -430,6 +430,8 @@ const getUiProps = <M extends Modelo>(
             ? campos[campo].tipo
             : "texto";
 
+        const opcional = campo in campos && campos[campo]?.requerido === false;
+
         const conversionTipo = {
             "boolean": "checkbox",
             "dolar": "moneda",
@@ -444,8 +446,11 @@ const getUiProps = <M extends Modelo>(
             tipo: tipo,
             deshabilitado: !editable,
             valido: cambiado && valido,
-            erroneo: !valido,
+            erroneo: cambiado && !valido,
             advertido: false,
+            opcional,
+            modificado: cambiado,
+            soloTexto: !modeloEsEditable(meta)(modelo),
             textoValidacion: textoValidacion,
             onChange: setCampo(modelo, meta, onModeloCambiado, campo, secundario),
             evaluarCambio: evaluarCambio(modelo, modeloInicial, meta, onModeloListo),

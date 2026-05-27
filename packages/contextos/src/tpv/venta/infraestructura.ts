@@ -325,7 +325,6 @@ export const patchVenta: PatchVenta = async (id, venta) => {
         // observaciones: venta.observaciones,
 
     };
-    // console.log('patchVenta', payload);
 
     await RestAPI.patch(`${baseUrl}/${id}`, payload,
         'Error al guardar la venta'
