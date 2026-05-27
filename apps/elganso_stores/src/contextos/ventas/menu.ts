@@ -3,7 +3,7 @@
 
 export const menuVentas = {
     // ********** Sección PLanificador **********
-    "Planificador Semanal": { icono: "calendario_vacio_relleno" },
+    "Planificador Semanal": { icono: "calendario_vacio_relleno", posicion: 2 },
     "Planificador Semanal/Planificador Semanal": {
         url: "/planificador_semanal",
         regla: "PlanificadorSemanal:visit",
@@ -23,7 +23,7 @@ export const menuVentas = {
         icono: "tiempo_relleno",
     },
     // ********** Sección Pedidos **********
-    "Pedidos": { icono: "tienda_relleno" },
+    "Pedidos": { icono: "tienda_relleno", posicion: 3 },
     "Pedidos/Preparación Pedidos Web": {
         url: "/pedidos_web",
         icono: "bolsa_relleno",

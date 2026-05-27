@@ -3,7 +3,7 @@
 
 export const menuAlmacen = {
     // ********** Sección Stocks **********
-    "Stock": { icono: "paquete_relleno" },
+    "Stock": { icono: "paquete_relleno", posicion: 1 },
     "Stock/Inventarios": { url: "/inventarios", icono: "fichero_relleno" },
     "Stock/Recepciones de mercancía": {
         url: "/recepciones",

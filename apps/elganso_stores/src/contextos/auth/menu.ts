@@ -3,7 +3,7 @@
 
 export const menuAuth = {
     // ********** Sección Administración **********
-    "Administración": { icono: "ajustes_relleno" },
+    "Administración": { icono: "ajustes_relleno", posicion: 4 },
     "Administración/Usuarios": {
         url: "/auth/usuario",
         regla: "auth.usuario.leer",
