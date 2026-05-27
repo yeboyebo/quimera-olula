@@ -26,10 +26,10 @@ export const getCajas = async (
     paginacion?: Paginacion
 ): RespuestaLista<Caja> => {
     const almacenId = almacenLocal.obtener()?.id ?? "";
-    const filtroCombinado = [
-        ...filtro,
-        ["codigo_almacen", almacenId] as ClausulaFiltro
-    ];
+    const clausulaAlmacen: ClausulaFiltro = ["codigo_almacen", almacenId];
+    const filtroCombinado: Filtro = Array.isArray(filtro)
+        ? [...filtro, clausulaAlmacen]
+        : { and: [filtro, [clausulaAlmacen]] };
     const q = criteriaQuery(filtroCombinado, orden, paginacion);
     const respuesta = await RestAPI.get<{ datos: CajaAPI[]; total: number }>(baseUrlCaja + q);
     return { datos: respuesta.datos.map(cajaFromApi), total: respuesta.total };

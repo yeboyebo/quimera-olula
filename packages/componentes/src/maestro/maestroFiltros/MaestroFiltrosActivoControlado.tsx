@@ -1,7 +1,6 @@
 import {
   ClausulaFiltro,
   Entidad,
-  Filtro,
   TipoInput,
 } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
@@ -107,7 +106,7 @@ type MetaCampoFiltro = {
   filtro: (v: unknown) => ClausulaFiltro | null;
   /** Solo necesario cuando la inversa es no trivial (ej: rango de fechas → mes/año).
    * Para renombrados simples (id ≠ campo API) basta con declarar `campo`. */
-  fromFiltro?: (filtro: Filtro) => unknown;
+  fromFiltro?: (filtro: ClausulaFiltro[]) => unknown;
   render?: (valor: unknown, onChange: (v: unknown) => void) => ReactNode;
 };
 
@@ -163,7 +162,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
   return campos;
 };
 
-export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
+export const filtroToValores = (filtro: ClausulaFiltro[], meta: MetaFiltro) => {
   const valores: Record<string, unknown> = {};
 
   for (const [id, campo] of Object.entries(meta)) {
@@ -221,9 +220,9 @@ export const filtroToValores = (filtro: Filtro, meta: MetaFiltro) => {
 
 type MaestroFiltrosActivoControladoProps = {
   metaFiltro: MetaFiltro;
-  filtroInicial: Filtro;
-  filtro: Filtro;
-  onFiltroChanged: (filtro: Filtro) => void;
+  filtroInicial: ClausulaFiltro[];
+  filtro: ClausulaFiltro[];
+  onFiltroChanged: (filtro: ClausulaFiltro[]) => void;
 };
 
 export const MaestroFiltrosActivoControlado = ({

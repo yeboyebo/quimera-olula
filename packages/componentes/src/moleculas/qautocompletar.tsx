@@ -3,7 +3,7 @@ import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
 
-type Opcion = { valor: string; descripcion: string };
+type Opcion = { valor: string; descripcion: string, descripcionOpcion?: string };
 
 export type QAutocompletarProps = Omit<
   FormFieldProps,
@@ -45,11 +45,14 @@ export const QAutocompletar = ({
     undefined
   );
 
-  const renderOpciones = opciones.map((opcion) => (
-    <option key={opcion.valor} value={opcion.descripcion}>
-      {opcion.descripcion}
-    </option>
-  ));
+  const renderOpciones = opciones.map((opcion) => {
+    const descripcion = opcion?.descripcionOpcion || opcion.descripcion;
+    return (
+      <option key={opcion.valor} value={descripcion}>
+        {descripcion}
+      </option>
+    );}
+  );
 
   const listaId = nombre + "-datalist-" + getIdUnico();
 
@@ -81,22 +84,23 @@ export const QAutocompletar = ({
   const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
     regenerarOpciones(valor);
 
-    const opcion = opciones.find((opcion) => opcion.descripcion === valor);
+    const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
     if (!opcion) {
       valorReal.current!.value = "";
       onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
       return;
     }
 
+    const descripcion = opcion?.descripcionOpcion || opcion.descripcion;
     const objetivo = e.target as HTMLInputElement;
-    objetivo.value = opcion.descripcion;
+    objetivo.value = descripcion;
 
     valorReal.current!.value = opcion.valor;
     onChange?.(opcion, e as unknown as React.ChangeEvent<HTMLElement>);
   };
 
   const manejarBlur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
-    const opcion = opciones.find((opcion) => opcion.descripcion === valor);
+    const opcion = opciones.find((opcion) => opcion.valor === valor);
 
     if (opcion) {
       onBlur?.(opcion, e);

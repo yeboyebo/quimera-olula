@@ -30,8 +30,7 @@ export const aplicarCriteriaUrl = (criteria: Criteria): string => {
 export const transformarCriteria = (filtro?: Filtro, orden?: Orden, paginacion?: Paginacion): Criteria => {
     const res: Partial<Criteria> = {};
     if (filtro) {
-        // res['filtro'] = transformarFiltro(filtro);
-        res['filtro'] = filtro.map(transformarFiltrosEspeciales);
+        res['filtro'] = transformarFiltro(filtro);
     }
     if (orden) {
         // res['orden'] = transformarOrden(orden);
@@ -171,6 +170,16 @@ const transformarFiltrosEspeciales = (clausula: ClausulaFiltro): ClausulaFiltro 
     if (!clausulaFn) return clausula;
 
     return clausulaFn(campo);
+}
+
+const transformarFiltro = (filtro: Filtro): Filtro => {
+    if (Array.isArray(filtro)) {
+        return filtro.map(transformarFiltrosEspeciales);
+    }
+    if ('or' in filtro) {
+        return { or: filtro.or.map(transformarFiltro) };
+    }
+    return { and: filtro.and.map(transformarFiltro) };
 }
 
 // const transformarFiltro = (filtro: Filtro): FiltroAPI => {
