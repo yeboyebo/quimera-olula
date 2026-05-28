@@ -1,6 +1,3 @@
-// Libreria Iconos: https://v2.boxicons.com/cheatsheet
-// Fichero iconos: packages/componentes/src/atomos/qicono.tsx
-
 export const menuAuth = {
     // ********** Sección Administración **********
     "Administración": { icono: "ajustes", posicion: 4 },

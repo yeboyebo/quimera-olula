@@ -1,6 +1,3 @@
-// Libreria Iconos: https://v2.boxicons.com/cheatsheet
-// Fichero iconos: packages/componentes/src/atomos/qicono.tsx
-
 export const menuVentas = {
     // ********** Sección PLanificador **********
     "Planificador Semanal": { icono: "calendario_vacio", posicion: 2 },
