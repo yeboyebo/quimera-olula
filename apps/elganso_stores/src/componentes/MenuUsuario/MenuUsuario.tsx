@@ -4,5 +4,5 @@ import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import "./MenuUsuario.scss";
 
 export const MenuUsuarioGan = () => {
-  return <QIcono nombre="usuario_circulo_relleno" tamaño="md" />;
+  return <QIcono nombre="usuario_circle" tamaño="md" />;
 };

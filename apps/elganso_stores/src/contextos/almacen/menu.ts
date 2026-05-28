@@ -1,18 +1,15 @@
-// Libreria Iconos: https://v2.boxicons.com/cheatsheet
-// Fichero iconos: packages/componentes/src/atomos/qicono.tsx
-
 export const menuAlmacen = {
     // ********** Sección Stocks **********
-    "Stock": { icono: "paquete_relleno", posicion: 1 },
-    "Stock/Inventarios": { url: "/inventarios", icono: "fichero_relleno" },
+    "Stock": { icono: "paquete", posicion: 1 },
+    "Stock/Inventarios": { url: "/inventarios", icono: "fichero" },
     "Stock/Recepciones de mercancía": {
         url: "/recepciones",
-        icono: "archivar_relleno",
+        icono: "paquete_import",
     },
-    "Stock/Envíos de mercancía": { url: "/envios", icono: "desarchivar_relleno" },
+    "Stock/Envíos de mercancía": { url: "/envios", icono: "paquete_export" },
     "Stock/Consulta de Stock": {
         url: "/consulta_stock",
-        icono: "buscar_relleno",
+        icono: "buscar",
     },
-    "Stock/Cambiar Año": { url: "/year", icono: "evento_relleno" },
+    "Stock/Cambiar Año": { url: "/year", icono: "calendario_evento" },
 };

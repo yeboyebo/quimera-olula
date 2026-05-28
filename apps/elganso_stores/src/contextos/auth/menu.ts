@@ -3,15 +3,15 @@
 
 export const menuAuth = {
     // ********** Sección Administración **********
-    "Administración": { icono: "ajustes_relleno", posicion: 4 },
+    "Administración": { icono: "ajustes", posicion: 4 },
     "Administración/Usuarios": {
         url: "/auth/usuario",
         regla: "auth.usuario.leer",
-        icono: "usuario_relleno",
+        icono: "usuarios",
     },
     "Administración/Grupos": {
         url: "/auth/grupo",
         regla: "auth.grupo.leer",
-        icono: "grupo_relleno",
+        icono: "grupo",
     },
 };
