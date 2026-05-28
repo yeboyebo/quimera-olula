@@ -55,7 +55,7 @@ function BuscarFactura({ useStyles, callbackCerrado }) {
                   <Typography variant="h5">Buscar Factura</Typography>
                 </Box>
               ) : (
-                <Grid container direction="column" justify="center">
+                <Grid container direction="column" justifyContent="center">
                   <Grid size={12}>
                     <Box my={1} align="center">
                       <Typography variant="h4">{`Devolución Factura  (${cabeceraFactura.codigo})`}</Typography>
