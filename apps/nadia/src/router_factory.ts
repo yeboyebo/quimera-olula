@@ -1,6 +1,6 @@
 import { RouterFactoryAuthOlula } from '#/auth/router_factory.ts';
 import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
-import { FondoInicio } from '@olula/lib/FondoInicio.tsx';
+import { FondoInicio } from '@olula/componentes/plantilla/FondoInicio.tsx';
 import { crearRouter } from '@olula/lib/router.ts';
 import { RouteObject } from 'react-router';
 import { RouterFactoryAlmacenNad } from './contextos/almacen/router_factory.ts';

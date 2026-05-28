@@ -15,12 +15,12 @@ export const InicioOlula = () => {
 
     const timerSalida = setTimeout(() => {
       setSaliendo(true);
-    }, 4200);
+    }, 3100);
 
     const timerOcultar = setTimeout(() => {
       sessionStorage.setItem(INTRO_KEY, "1");
       setVisible(false);
-    }, 4900);
+    }, 3900);
 
     return () => {
       clearTimeout(timerSalida);
