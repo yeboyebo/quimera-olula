@@ -68,7 +68,7 @@ function DevolucionDetalle({ idPedido, callbackCerrado, useStyles }) {
                   <Button
                     id="prepararDevolucion"
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     size="large"
                     text="Confirmar devolución"
                     disabled={
