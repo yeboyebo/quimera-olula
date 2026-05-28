@@ -23,7 +23,6 @@ export const PagoValeVentaTpv = ({
   venta: VentaTpv;
 }) => {
   const pendiente = redondeaMoneda(venta.total - venta.pagado, venta.divisa_id);
-  console.log("pendiente", pendiente);
 
   const { modelo, uiProps, valido, set, init } = useModelo(metaNuevoPagoVale, {
     ...nuevoPagoValeInicial,

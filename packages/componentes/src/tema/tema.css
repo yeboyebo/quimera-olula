@@ -116,4 +116,20 @@ html {
 
 h2 {
     font-size: var(--tamaño-letra-xl);
+    font-weight: var(--grosor-letra-4);
+}
+
+h3 {
+    /* font-size: var(--tamaño-letra-xl); */
+    font-weight: var(--grosor-letra-5);
+}
+
+body {
+    /* font-size: var(--tamaño-letra-xl); */
+    font-weight: var(--grosor-letra-4);
+}
+
+b,
+strong {
+    font-weight: var(--grosor-letra-4);
 }

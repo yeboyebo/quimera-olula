@@ -1,7 +1,7 @@
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
-import { MetaModelo } from "@olula/lib/dominio.js";
 import { Modulo } from "../diseño.ts";
-import { patchModulo } from "../infraestructura.ts";
+import { getModulo, patchModulo } from "../infraestructura.ts";
 import { ContextoDetalleModulo, EstadoDetalleModulo } from "./diseño.ts";
 
 /**
@@ -10,7 +10,27 @@ import { ContextoDetalleModulo, EstadoDetalleModulo } from "./diseño.ts";
 type ProcesarDetalle = ProcesarContexto<EstadoDetalleModulo, ContextoDetalleModulo>;
 
 /**
- * Metadatos del formulario: validaciones y configuración de campos
+ * Alias de pipe para este contexto.
+ * Permite encadenar procesadores de forma legible:
+ *
+ *   return pipeModulo(contexto, [
+ *       refrescarModulo,
+ *       'ABIERTO',
+ *   ]);
+ */
+const pipeModulo = ejecutarListaProcesos<EstadoDetalleModulo, ContextoDetalleModulo>;
+
+/**
+ * Metadatos del formulario: validaciones y configuración de campos.
+ *
+ * Opciones de campo:
+ *   - requerido: true|false
+ *   - minimo / maximo: longitud mínima/máxima
+ *   - tipo: "fecha" | "moneda" | ...
+ *
+ * Opciones de modelo:
+ *   - editable: (modulo) => boolean  → deshabilita todos los campos si devuelve false
+ *   - onChange: (modulo, campo, valor, otros?) => modulo  → side-effects entre campos
  */
 export const metaModulo: MetaModelo<Modulo> = {
     campos: {
@@ -18,6 +38,7 @@ export const metaModulo: MetaModelo<Modulo> = {
         descripcion: { requerido: false },
         estado: { requerido: true },
     },
+    editable: (modulo: Modulo) => modulo.estado === 'activo',
 };
 
 /**
@@ -32,31 +53,52 @@ export const moduloVacio = (): Modulo => ({
 });
 
 /**
- * Entrar en modo edición
+ * Refresca la cabecera desde la API.
+ *
+ * Patrón: después de una operación que modifica la entidad en el servidor,
+ * volver a cargarla para tener el estado actualizado.
+ * También emite el evento "modulo_cambiado" hacia el maestro para sincronizar la lista.
  */
-export const entrarEnEdicion: ProcesarDetalle = async (contexto) => {
-    return { ...contexto, estado: 'EDITANDO' };
+export const refrescarModulo: ProcesarDetalle = async (contexto) => {
+    const modulo = await getModulo(contexto.modulo.id);
+    return [
+        { ...contexto, modulo },
+        [["modulo_cambiado", modulo]],  // propaga al maestro
+    ];
 };
 
 /**
- * Cancelar edición: volver al estado anterior
+ * Guarda cambios en la API.
+ * Se llama desde el auto-guardado de useModelo (ver DetalleModulo.tsx).
  */
-export const cancelarEdicion: ProcesarDetalle = async (contexto) => {
-    return {
-        ...contexto,
-        modulo: contexto.moduloInicial,
-        estado: 'ABIERTO',
-    };
+export const guardarModulo = async (
+    contexto: ContextoDetalleModulo,
+    modulo: Modulo
+): Promise<void> => {
+    if (modulo.nombre !== contexto.modulo.nombre ||
+        modulo.descripcion !== contexto.modulo.descripcion ||
+        modulo.estado !== contexto.modulo.estado) {
+        await patchModulo(modulo.id, modulo);
+    }
 };
 
 /**
- * Guardar cambios en API y actualizar estado
+ * Carga el módulo desde la API y lo activa.
+ * Se invoca cuando cambia el ID recibido por prop.
  */
-export const guardarModulo: ProcesarDetalle = async (contexto) => {
-    await patchModulo(contexto.modulo.id, contexto.modulo);
-    return {
-        ...contexto,
-        moduloInicial: contexto.modulo, // Actualizar referencia inicial
-        estado: 'ABIERTO',
+export const cargarModulo: (_: string) => ProcesarDetalle =
+    (idModulo) => async (contexto) => {
+        const modulo = await getModulo(idModulo);
+        return pipeModulo(contexto, [
+            async (ctx) => ({ ...ctx, modulo }),
+            'ABIERTO',
+        ]);
     };
+
+export const cargarContexto: ProcesarDetalle = async (contexto, payload) => {
+    const idModulo = payload as string;
+    if (idModulo) {
+        return cargarModulo(idModulo)(contexto);
+    }
+    return { ...contexto, estado: 'INICIAL', modulo: moduloVacio() };
 };

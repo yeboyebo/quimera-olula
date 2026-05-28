@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Criteria, Filtro, Paginacion } from "./diseño.ts";
+import { ClausulaFiltro, Criteria, Paginacion } from "./diseño.ts";
 
 const formarUrl = (params: URLSearchParams) => {
     const str = params.toString();
@@ -26,7 +26,7 @@ export const setIdUrlParams = (id: string | undefined) => {
 
 const clavesReservadas = ["id", "orden", "p", "l"];
 
-export const filtroDefecto: Filtro = [];
+export const filtroDefecto: ClausulaFiltro[] = [];
 
 const getFiltro = (params: URLSearchParams) => {
     const filtro = [...filtroDefecto];
@@ -47,6 +47,8 @@ const getFiltro = (params: URLSearchParams) => {
 
 const setFiltro = (criteria: Criteria, params: URLSearchParams) => {
     const { filtro } = criteria;
+
+    if (!Array.isArray(filtro)) return;
 
     filtro.forEach(f => {
         const [campoFiltro, operador, valor] = f;
