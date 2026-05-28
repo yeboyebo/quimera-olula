@@ -15,7 +15,7 @@ export const menuVentas = {
         icono: "detalle_relleno",
     },
     "Planificador Semanal/Resumen Agente": {
-        url: "/resumen_semanal",
+        url: "/resumen_agente",
         icono: "usuario_detalle_relleno",
     },
     "Planificador Semanal/Control Horario": {

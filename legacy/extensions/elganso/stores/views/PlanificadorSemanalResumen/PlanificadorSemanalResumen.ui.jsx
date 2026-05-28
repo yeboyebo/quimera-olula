@@ -2,6 +2,8 @@ import "./PlanificadorSemanalResumen.style.scss";
 
 import { Scheduler } from "@aldabil/react-scheduler";
 import Box from "@mui/material/Box";
+import Fade from '@mui/material/Fade';
+import Tooltip from '@mui/material/Tooltip';
 import { DataGrid } from "@mui/x-data-grid";
 import { Icon, IconButton } from "@quimera/comps";
 import { es as esES } from "date-fns/locale";
@@ -131,32 +133,129 @@ function PlanificadorSemanalResumen() {
     setFinSemana(dateFin);
   };
 
+  const convertirAMinutos = (tiempoStr) => {
+    if (!tiempoStr || tiempoStr === "No Planif.") return 0;
+
+    // Busca los números antes de 'h' y antes de 'min'
+    const horasMatch = tiempoStr.match(/(\d+)h/);
+    const minutosMatch = tiempoStr.match(/(\d+)min/);
+
+    const horas = horasMatch ? parseInt(horasMatch[1], 10) : 0;
+    const minutos = minutosMatch ? parseInt(minutosMatch[1], 10) : 0;
+
+    return (horas * 60) + minutos;
+  };
+
   const renderRegistro = params => {
+    const totalEjecutado = params.row.totalSemanaEjecutada;
+    const totalPlanificado = params.row.totalSemanaPlanificada;
+    const minutosEjecutados = convertirAMinutos(totalEjecutado);
+    const minutosPlanificados = convertirAMinutos(totalPlanificado);
+
+    let fondo = "planificador-dia ";
+
+    if (minutosEjecutados === 0 && minutosPlanificados === 0) {
+      fondo = `${fondo}fondo-grey`;
+    } else if (minutosEjecutados < minutosPlanificados) {
+      fondo = `${fondo}fondo-amarillo`;
+    } else {
+      fondo = `${fondo}fondo-verde`;
+    }
+
+    const tooltipContent = (
+      <div style={{ padding: '6px', fontSize: '12px', lineHeight: '1.5' }}>
+        <div style={{ fontWeight: 'bold', borderBottom: '1px solid #555', marginBottom: '5px', pb: '2px' }}>
+          {semana[0]}
+        </div>
+        <div>
+          <strong>Ejecutado:</strong> {totalEjecutado}
+        </div>
+        <div>
+          <strong>Planificado:</strong> {totalPlanificado}
+        </div>
+      </div>
+    );
+
     return (
-      <div>
-        {params.row.totalSemanaEjecutada} / {params.row.totalSemanaPlanificada}
+      <div className="planificador-semana" style={{ display: 'flex', gap: '4px' }}>
+        <Tooltip
+          key={params.row.id}
+          title={tooltipContent}
+          arrow
+          placement="top"
+          TransitionComponent={Fade}
+          TransitionProps={{ timeout: 200 }}
+        >
+          <div className={fondo} style={{ cursor: 'pointer' }}>
+            {totalEjecutado} / {totalPlanificado}
+          </div>
+        </Tooltip>
       </div>
     );
   };
 
   const renderHorasExtra = params => {
+    const semana = params.row.semanaEjecutada;
+    const horasExtra = params.row.horasExtraSemana;
+    const horasCompensadas = params.row.horasExtraSemanaCompensadas;
+    const minutosExtra = convertirAMinutos(horasExtra);
+    const minutosCompensados = convertirAMinutos(horasCompensadas);
+
+    let fondo = "planificador-dia ";
+
+    if (minutosExtra === 0 && minutosCompensados === 0) {
+      fondo = `${fondo}fondo-grey`;
+    } else if (horasExtra > horasCompensadas) {
+      fondo = `${fondo}fondo-coral`;
+    } else {
+      fondo = `${fondo}fondo-verde`;
+    }
+
+    const tooltipContent = (
+      <div style={{ padding: '6px', fontSize: '12px', lineHeight: '1.5' }}>
+        <div style={{ fontWeight: 'bold', borderBottom: '1px solid #555', marginBottom: '5px', pb: '2px' }}>
+          {semana[0]}
+        </div>
+        <div>
+          <strong>Horas Extra:</strong> {horasExtra}
+        </div>
+        <div>
+          <strong>Compensadas:</strong> {horasCompensadas}
+        </div>
+      </div>
+    );
+
     return (
-      <div>
-        {params.row.horasExtraSemana} / {"0 h."}
+      <div className="planificador-semana" style={{ display: 'flex', gap: '4px' }}>
+        <Tooltip
+          key={params.row.id}
+          title={tooltipContent}
+          arrow
+          placement="top"
+          TransitionComponent={Fade}
+          TransitionProps={{ timeout: 200 }}
+        >
+          <div className={fondo} style={{ cursor: 'pointer' }}>
+            {horasExtra} / {horasCompensadas}
+          </div>
+        </Tooltip>
       </div>
     );
   };
 
   const renderSemana = params => {
     const semana = params.row.semanaEjecutada;
+    const semanaPlanificada = params.row.semanaPlanificada;
     const semanaFuturo = params.row.semanaFuturo;
     const semanaTiempoFaltante = params.row.semanaTiempoFaltante;
     const semanaTienePlan = params.row.semanaTienePlan;
     const semanaTieneJornada = params.row.semanaTieneJornada;
     const keySemana = Object.keys(semana);
+    const horasExtra = params.row.horasExtraSemana;
+    const horasCompensadas = params.row.horasExtraSemanaCompensadas;
 
     return (
-      <div className="planificador-semana">
+      <div className="planificador-semana" style={{ display: 'flex', gap: '4px' }}>
         {keySemana.map(item => {
           let fondo = "planificador-dia ";
 
@@ -172,11 +271,57 @@ function PlanificadorSemanalResumen() {
             fondo = `${fondo}fondo-verde`;
           }
 
+          // --- CONFIGURACIÓN DEL CONTENIDO DEL TOOLTIP ---
+          const tooltipContent = (
+            <div style={{ padding: '6px', fontSize: '12px', lineHeight: '1.5' }}>
+              <div style={{ fontWeight: 'bold', borderBottom: '1px solid #555', marginBottom: '5px', pb: '2px' }}>
+                {item.split('-').reverse().join('/')}
+              </div>
+              <div>
+                <strong>Planificado:</strong> {semanaPlanificada[item] || 'No Planif.'}
+              </div>
+
+              <div>
+                <strong>Ejecutado: </strong>
+                {semanaFuturo[item] ? (
+                  <span style={{ fontStyle: 'italic', color: '#aaa' }}>Pendiente</span>
+                ) :
+                  semana[item]
+                }
+              </div>
+            </div>
+          );
+
+          // CASO ESPECIAL: Futuro sin plan ni jornada
           if (semanaFuturo[item] && !semanaTienePlan[item] && !semanaTieneJornada[item]) {
-            return <div className="planificador-dia fondo-light-grey"></div>;
+            return (
+              <Tooltip
+                key={item}
+                title={tooltipContent}
+                arrow
+                placement="top"
+                TransitionComponent={Fade}
+              >
+                <div className="planificador-dia fondo-light-grey" style={{ cursor: 'pointer' }}></div>
+              </Tooltip>
+            );
           }
 
-          return <div className={fondo}> {semana[item]}</div>;
+          // CASO GENERAL: Renderizado normal del día
+          return (
+            <Tooltip
+              key={item}
+              title={tooltipContent}
+              arrow
+              placement="top"
+              TransitionComponent={Fade}
+              TransitionProps={{ timeout: 200 }}
+            >
+              <div className={fondo} style={{ cursor: 'pointer' }}>
+                {semana[item]}
+              </div>
+            </Tooltip>
+          );
         })}
       </div>
     );
@@ -216,7 +361,7 @@ function PlanificadorSemanalResumen() {
     const mes = `0${dateDay.getMonth() + 1}`.slice(-2);
     const anyo = dateDay.getFullYear();
 
-    return `${diaSemana} ${dia}-${mes}-${anyo}`;
+    return `${diaSemana} ${dia}`;
   };
 
   const renderHeadSemana = () => {
@@ -272,14 +417,14 @@ function PlanificadorSemanalResumen() {
         field: "totalSemanaPlanificada",
         headerName: "REGISTRO / ESPERADO",
         sortable: false,
-        width: 250,
+        width: 200,
         resizable: false,
         align: "right",
         renderCell: params => renderRegistro(params),
       },
       {
         field: "horasExtraSemana",
-        headerName: "HORAS EXTRA / COMPENSADAS",
+        headerName: "H. EXTRA / COMPENSADAS",
         sortable: false,
         width: 200,
         resizable: false,
