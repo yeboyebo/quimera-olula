@@ -545,6 +545,62 @@ function PlanificadorSemanalResumen() {
     return `${anyo}-${mes}-${dia}`;
   };
 
+  const schedulerWeek = {
+    weekDays: [0, 1, 2, 3, 4, 5, 6],
+    weekStartOn: 1,
+    startHour: 9,
+    endHour: 22,
+    step: 30,
+  };
+
+  const schedulerMonth = {
+    weekDays: [0, 1, 2, 3, 4, 5, 6],
+    weekStartOn: 1,
+    startHour: 9,
+    endHour: 22,
+    step: 30,
+  };
+
+  const schedulerDay = {
+    startHour: 9,
+    endHour: 22,
+    step: 30,
+  };
+
+  const schedulerTranslations = {
+    navigation: {
+      month: "Mes",
+      week: "Semana",
+      day: "Dia",
+      today: "Hoy",
+      agenda: "Agenda",
+    },
+    form: {
+      addTitle: "Añadir Evento",
+      editTitle: "Editar Evento",
+      confirm: "Confirmar",
+      delete: "Borrar",
+      cancel: "Cancelar",
+    },
+    event: {
+      title: "Título",
+      subtitle: "Subtítulo",
+      start: "Inicio",
+      end: "Fin",
+      allDay: "Todo el día",
+    },
+    validation: {
+      required: "Requerido",
+      invalidEmail: "Email No Válido",
+      onlyNumbers: "Sólo se permiten números",
+      min: "Mínimo {{min}} letras",
+      max: "Máximo {{max}} letras",
+    },
+    moreEvents: "Más...",
+    noDataToDisplay: "No hay datos que mostrar",
+    loading: "Cargando...",
+  };
+
   const renderPlanificadorMensual = () => {
     const { agentes, tramosSch } = state;
     const resourcesScheduler = agentesScheduler(agentes);
@@ -555,58 +611,10 @@ function PlanificadorSemanalResumen() {
         <Scheduler
           ref={calendarRef}
           view="month"
-          week={{
-            weekDays: [0, 1, 2, 3, 4, 5, 6],
-            weekStartOn: 1,
-            startHour: 9,
-            endHour: 22,
-            step: 30,
-          }}
-          month={{
-            weekDays: [0, 1, 2, 3, 4, 5, 6],
-            weekStartOn: 1,
-            startHour: 9,
-            endHour: 22,
-            step: 30,
-          }}
-          day={{
-            startHour: 9,
-            endHour: 22,
-            step: 30,
-          }}
-          translations={{
-            navigation: {
-              month: "Mes",
-              week: "Semana",
-              day: "Dia",
-              today: "Hoy",
-              agenda: "Agenda",
-            },
-            form: {
-              addTitle: "Añadir Evento",
-              editTitle: "Editar Evento",
-              confirm: "Confirmar",
-              delete: "Borrar",
-              cancel: "Cancelar",
-            },
-            event: {
-              title: "Título",
-              subtitle: "Subtítulo",
-              start: "Inicio",
-              end: "Fin",
-              allDay: "Todo el día",
-            },
-            validation: {
-              required: "Requerido",
-              invalidEmail: "Email No Válido",
-              onlyNumbers: "Sólo se permiten números",
-              min: "Mínimo {{min}} letras",
-              max: "Máximo {{max}} letras",
-            },
-            moreEvents: "Más...",
-            noDataToDisplay: "No hay datos que mostrar",
-            loading: "Cargando...",
-          }}
+          week={schedulerWeek}
+          month={schedulerMonth}
+          day={schedulerDay}
+          translations={schedulerTranslations}
           resourceViewMode="tabs"
           resourceFields={{
             idField: "admin_id",
