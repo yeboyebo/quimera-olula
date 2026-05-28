@@ -6,11 +6,12 @@ export { usePath, useRoutes } from "hookrouter";
 
 let _navigate = (to) => { window.location.href = to; }; // fallback
 
-// Llama al navigate de react-router (para el middleware de auth) y luego
-// sincroniza hookrouter con replace=true para no crear una entrada duplicada en el historial.
+// Llama al navigate de react-router (para el middleware de auth).
+// NO sincronizamos hookrouter aquí — lo hace RouterBridge vía useEffect([location.pathname]),
+// lo que garantiza que history.back() también funciona (popstate → react-router actualiza
+// location → RouterBridge sincroniza hookrouter).
 export const navigate = (to, opts) => {
     _navigate(to, opts);
-    hookNavigate(to, true);
 };
 
 // Conecta el navigate de react-router y sincroniza hookrouter cada vez que
