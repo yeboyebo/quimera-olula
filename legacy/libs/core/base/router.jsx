@@ -1,15 +1,47 @@
-import { Link, useNavigate } from "react-router";
+import { navigate as hookNavigate } from "hookrouter";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
+
 export { usePath, useRoutes } from "hookrouter";
 
-// Imperatively callable navigate compatible with React Router v6
 let _navigate = (to) => { window.location.href = to; }; // fallback
-export const navigate = (to, opts) => _navigate(to, opts);
 
-// Render this component once near the root to wire up React Router's navigate
+// Llama al navigate de react-router (para el middleware de auth) y luego
+// sincroniza hookrouter con replace=true para no crear una entrada duplicada en el historial.
+export const navigate = (to, opts) => {
+    _navigate(to, opts);
+    hookNavigate(to, true);
+};
+
+// Conecta el navigate de react-router y sincroniza hookrouter cada vez que
+// react-router cambia la ubicación (p.ej. mediante <Link> en Cabecera, menu-lateral, etc.).
+// Usa replace=true para que hookrouter no añada una entrada duplicada en el historial.
 export function RouterBridge() {
     const nav = useNavigate();
+    const location = useLocation();
     _navigate = nav;
+
+    useEffect(() => {
+        hookNavigate(location.pathname, true);
+    }, [location.pathname]);
+
     return null;
 }
 
-export const A = ({ href, children, ...props }) => <Link to={href} {...props}>{children}</Link>;
+export const A = ({ href, children, onClick, ...props }) => (
+    <a
+        href={href}
+        onClick={(e) => {
+            if (!e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                navigate(href);
+            }
+            onClick?.(e);
+        }}
+        {...props}
+    >
+        {children}
+    </a>
+);
+
+
