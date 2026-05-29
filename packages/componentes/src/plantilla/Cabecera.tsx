@@ -1,3 +1,4 @@
+import { OlulaWordmark } from "@olula/componentes/tema/Olula.jsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
 import { Link } from "react-router";
@@ -20,7 +21,7 @@ export type CabeceraProps = {
 export const CabeceraBase = ({
   logoSrc = "/olula-wordmark.svg",
   logoAlt = "Olula | Inicio",
-  Logo,
+  Logo = () => OlulaWordmark({ color: '#ffffff', bowlColor: '#ffffff', className: 'logo-app', style: {} }),
   Titulo,
   AccionesCabecera,
   MenuUsuario,
@@ -84,7 +85,7 @@ export const Cabecera = (props: CabeceraProps) => {
 
   const cProps: CabeceraProps = {
     ...props,
-    Logo: Logo || props.Logo,
+    // Logo: Logo || props.Logo,
     AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
     MenuUsuario: MenuUsuario || props.MenuUsuario,
     ExtraLogo: ExtraLogo || props.ExtraLogo,

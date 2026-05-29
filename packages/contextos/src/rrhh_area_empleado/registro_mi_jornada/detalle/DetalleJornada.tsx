@@ -1,7 +1,7 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { formatearFechaDate, formatearHoraDate } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
@@ -93,14 +93,24 @@ export const DetalleJornada = ({
             >
             <div className="DetalleJornada">
 
-                {estado === "BORRADOR" && (
-                    <div className="botones maestro-botones">
-                        <QBoton onClick={() => emitir("anular_solicitado")}>
-                            Anular
-                        </QBoton>
-                    </div>
+                {(estado === "BORRADOR" || estado === "APROBADA") && (
+                    <QuimeraAcciones
+                        vertical
+                        acciones={[
+                            {
+                                texto: "Añadir pausa",
+                                onClick: () => emitir("crear_pausa_solicitado"),
+                                deshabilitado: !(estado === "BORRADOR" && jornada.estadoBorrador === "ACTIVA"),
+                            },
+                            {
+                                texto: "Anular",
+                                advertencia: true,
+                                onClick: () => emitir("anular_solicitado"),
+                            },
+                        ]}
+                    />
                 )}
-                
+
                 <Cronometro jornada={jornada} />
 
                 {estado === "BORRADOR" && (
@@ -128,18 +138,9 @@ export const DetalleJornada = ({
                 </quimera-formulario>
 
 
-                {estado === "APROBADA" && (
-                    <div className="botones maestro-botones">
-                        <QBoton onClick={() => emitir("anular_solicitado")}>
-                            Anular
-                        </QBoton>
-                    </div>
-                )}
-
                 {ESTADOS_PAUSAS.includes(estado) && (
                     <PausasJornada
                         jornada={jornada}
-                        estadoBorrador={jornada.estadoBorrador}
                         estadoDetalle={estado}
                         pausaActiva={ctx.pausaActiva}
                         publicar={emitir}
