@@ -1,12 +1,12 @@
 import { puede } from "@olula/lib/dominio.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
+import { ElementoMenu, ElementoMenuPadre } from "@olula/lib/menu.ts";
 import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { useMenuControl } from "../plantilla/useMenuControl";
 import "./menu-lateral.css";
-import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
 
 export const MenuLateral = () => {
   const menuFactory = useContext(FactoryCtx);
