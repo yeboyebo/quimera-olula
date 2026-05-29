@@ -76,13 +76,19 @@ export const MenuLateral = () => {
   );
 
   return (
-    <menu-lateral className={menuAbierto.lateral ? "activo" : ""}>
-      <aside id="menu-principal">
-        {renderBuscador()}
-        <nav>
-          <ul>{elementos}</ul>
-        </nav>
-      </aside>
-    </menu-lateral>
+    <>
+      <menu-background
+        className={menuAbierto.lateral ? "activo" : ""}
+        onClick={() => cerrarMenu("lateral")}
+      />
+      <menu-lateral className={menuAbierto.lateral ? "activo" : ""}>
+        <aside id="menu-principal">
+          {renderBuscador()}
+          <nav>
+            <ul>{elementos}</ul>
+          </nav>
+        </aside>
+      </menu-lateral>
+    </>
   );
 };

@@ -12,7 +12,7 @@
     /* padding: 0 1.5rem !important; */
     display: flex;
     position: relative;
-
+    z-index: 2;
 
     & a:visited,
     a {

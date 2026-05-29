@@ -1,18 +1,18 @@
 menu-lateral {
-    height: 100%;
+    height: calc(100vh - (var(--alto-header) + var(--alto-footer)));
     width: 0px;
     overflow-x: hidden;
     white-space: nowrap;
     overflow-y: auto;
     transition: width 0.5s ease-in-out;
     flex-shrink: 0;
-    height: 100%;
+    z-index: 2;
 
     aside {
         background: var(--color-fondo-header);
         height: 100%;
         padding: 0 1rem;
-        overflow: hidden;
+        overflow-y: auto;
 
         #buscador {
             display: flex;
@@ -91,6 +91,24 @@ menu-lateral {
 
 menu-lateral.activo {
     width: var(--width-menu);
+}
+
+menu-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+menu-background.activo {
+    opacity: 1;
+    visibility: visible;
 }
 
 @media (max-width: 768px) {
