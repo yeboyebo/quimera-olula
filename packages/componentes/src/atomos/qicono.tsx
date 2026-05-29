@@ -31,6 +31,8 @@ import {
   IconMinus,
   IconPencil,
   IconPhone,
+  IconPlayerPause,
+  IconPlayerPauseFilled,
   IconPlus,
   IconQuestionMark,
   IconSearch,
@@ -38,9 +40,9 @@ import {
   IconStar,
   IconTable,
   IconTag,
+  IconTool,
   IconTrash,
   IconUser,
-  IconTool,
   IconX,
   type Icon,
 } from "@tabler/icons-react";
@@ -110,6 +112,8 @@ const iconos: Record<string, Icon> = {
   tarea: IconCheckbox,
   estrella: IconStar,
   relojarena: IconHourglass,
+  pausa: IconPlayerPause,
+  pausa_relleno: IconPlayerPauseFilled,
 };
 
 export const QIcono = ({

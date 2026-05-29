@@ -16,6 +16,7 @@ export interface PausaJornada extends Entidad {
 export interface RegistroJornada extends Entidad {
     id: string;
     empleadoId: string;
+    empleado: string;
     fecha: Date;
     horaEntrada: string | null;
     horaSalida: string | null;

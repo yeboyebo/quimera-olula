@@ -7,12 +7,12 @@ import { formatearFechaDate, formatearHoraDate } from "@olula/lib/dominio.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { AnularJornada } from "../anular/AnularJornada.tsx";
-import { minutosAHorasMinutos } from "../dominio.ts";
 import { patchJornada, patchPausarJornada, patchReactivarJornada } from "../infraestructura.ts";
 import { PausarJornada } from "../pausar/PausarJornada.tsx";
 import { PausasJornada } from "../pausas/PausasJornada.tsx";
 import { ReactivarJornada } from "../reactivar/ReactivarJornada.tsx";
 import { BotoneraJornadaBorrador } from "./BotoneraJornadaBorrador.tsx";
+import { Cronometro } from "./Cronometro.tsx";
 import "./DetalleJornada.css";
 import { ContextoDetalleJornada, jornadaVacia, metaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
@@ -68,7 +68,7 @@ export const DetalleJornada = ({
         await patchReactivarJornada(ctx.jornada.id, { horaFin: horaActual() });
         await emitir("jornada_guardada");
     }, [ctx.jornada.id, emitir]);
-
+    
     const { uiProps } = useModelo(metaJornada, ctx.jornada, autoGuardar);
 
     useEffect(() => {
@@ -90,8 +90,19 @@ export const DetalleJornada = ({
             setEntidad={() => {}}
             entidad={jornada}
             cerrarDetalle={() => emitir("jornada_deseleccionada", null, true)}
-        >
+            >
             <div className="DetalleJornada">
+
+                {estado === "BORRADOR" && (
+                    <div className="botones maestro-botones">
+                        <QBoton onClick={() => emitir("anular_solicitado")}>
+                            Anular
+                        </QBoton>
+                    </div>
+                )}
+                
+                <Cronometro jornada={jornada} />
+
                 {estado === "BORRADOR" && (
                     <BotoneraJornadaBorrador
                         estadoBorrador={jornada.estadoBorrador}
@@ -110,32 +121,12 @@ export const DetalleJornada = ({
                         label="Hora de salida"
                         {...uiProps("horaSalida")}
                     />
-                    <div id='minutosJornada' >
-                        {minutosAHorasMinutos(jornada.minutosJornada)}
-                    </div>
                     <QInput
                         label="Observaciones"
                         {...uiProps("observaciones")}
                     />
                 </quimera-formulario>
 
-                {estado === "BORRADOR" && (
-                    <div className="botones maestro-botones">
-                        {jornada.estadoBorrador !== "PAUSADA" && (
-                            <QBoton onClick={() => emitir("pausar_solicitado")}>
-                                Pausar
-                            </QBoton>
-                        )}
-                        {jornada.estadoBorrador === "PAUSADA" && (
-                            <QBoton onClick={() => emitir("reactivar_solicitado")}>
-                                Reactivar
-                            </QBoton>
-                        )}
-                        <QBoton onClick={() => emitir("anular_solicitado")}>
-                            Anular
-                        </QBoton>
-                    </div>
-                )}
 
                 {estado === "APROBADA" && (
                     <div className="botones maestro-botones">

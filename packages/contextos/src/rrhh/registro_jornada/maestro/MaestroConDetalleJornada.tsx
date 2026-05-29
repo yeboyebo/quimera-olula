@@ -1,8 +1,9 @@
+import { Empleado } from "#/rrhh/comun/componentes/Empleado.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { filtroMesAnyo, getMetaFiltroDefecto, MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { filtroMesAnyo, MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { TipoInput } from "@olula/lib/diseño.ts";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -91,7 +92,7 @@ export const MaestroConDetalleJornada = () => {
 };
 
 const metaFiltro: MetaFiltro = {
-    ...getMetaFiltroDefecto(metaTablaJornada),
+    // ...getMetaFiltroDefecto(metaTablaJornada),
     fecha: {
         id: "fecha",
         label: "Mes",
@@ -109,5 +110,11 @@ const metaFiltro: MetaFiltro = {
         campo: "empleado_id",
         label: "Empleado",
         filtro: (v) => (v ? ["empleado_id", "=", v as string] : null),
+        render: (valor, onChange) => (
+            <Empleado
+                valor={(valor as string) ?? ""}
+                onChange={(opcion) => onChange(opcion?.valor ?? "")}
+            />
+        ),
     },
 }

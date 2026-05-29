@@ -62,10 +62,10 @@ const metaFiltro: MetaFiltro = {
         label: "Artículo",
         filtro: (v) => (v ? ["articulo_id", "=", v as string] : null),
         render: (valor, onChange) => (
-        <Articulo
-            valor={(valor as string) ?? ""}
-            onChange={(opcion) => onChange(opcion?.valor ?? "")}
-        />
+            <Articulo
+                valor={(valor as string) ?? ""}
+                onChange={(opcion) => onChange(opcion?.valor ?? "")}
+            />
         ),
     },
     almacen: {
