@@ -2,6 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -14,6 +15,10 @@ import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleCliente = () => {
   const { id, criteria } = getUrlParams();
+
+  const enviarComunicacionPruebaSse = async () => {
+    await RestAPI.post("/comun/comunicacion/prueba_sse", {});
+  };
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -44,6 +49,9 @@ export const MaestroConDetalleCliente = () => {
                 <div className="maestro-botones">
                   <QBoton onClick={() => emitir("creacion_solicitada")}>
                     Nuevo Cliente
+                  </QBoton>
+                  <QBoton onClick={() => void enviarComunicacionPruebaSse()}>
+                    Probar SSE
                   </QBoton>
                 </div>
               )}
