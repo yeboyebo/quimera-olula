@@ -42,7 +42,7 @@ export default parent => ({
       },
       tratos: {
         title: "Tratos",
-        rule: "crm.campana.leer",
+        rule: "crm.trato.leer",
         icons: ["receipt"],
         color: "info",
         url: "/ss/tratos",

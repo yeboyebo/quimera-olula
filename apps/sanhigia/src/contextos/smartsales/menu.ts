@@ -5,7 +5,7 @@ export const menuSmartsales = {
     "SmartSales/Business Intelligence": { url: "/ss/bi", regla: "crm.informe.bi" },
     "SmartSales/Campañas": { url: "/ss/campanias", regla: "crm.campana.leer" },
     "SmartSales/Lead Pacientes": { url: "/ss/leadpacientes", regla: "lead_pacientes:visit" },
-    "SmartSales/Tratos": { url: "/ss/tratos", regla: "crm.campana.leer" },
+    "SmartSales/Tratos": { url: "/ss/tratos", regla: "crm.trato.leer" },
     "SmartSales/Farma": { url: "/ss/tratosfarma", regla: "crm.trato.farma" },
     // "SmartSales/Licencias": { url: "/ss/licencias" },
     "SmartSales/Contactos": { url: "/ss/contactosmd", regla: "crm.campana.leer" },
