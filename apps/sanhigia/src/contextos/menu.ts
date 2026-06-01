@@ -10,7 +10,7 @@ export const MenuUsuarioElementosSanhigia: MenuUsuarioElementos = [
         subelementos: [
             {
                 nombre: "Mi usuario",
-                icono: "user",
+                icono: "usuario",
                 url: "/user",
                 color: "success",
                 variant: "main",
@@ -28,7 +28,7 @@ export const MenuUsuarioElementosSanhigia: MenuUsuarioElementos = [
             },
             {
                 nombre: "Grupos",
-                icono: "group",
+                icono: "grupo",
                 url: "/auth/grupo",
                 regla: "auth.grupo.leer",
             },
@@ -39,7 +39,7 @@ export const MenuUsuarioElementosSanhigia: MenuUsuarioElementos = [
         subelementos: [
             {
                 nombre: "Desconectar",
-                icono: "exit",
+                icono: "cerrar_sesion",
                 url: "/logout",
             },
         ],
