@@ -37,7 +37,7 @@ export default parent => ({
         icons: ["campaign", "share"],
         color: "info",
         variant: "main",
-        rule: "crm.campana_lead_pacientes",
+        rule: "crm.campana.lead_pacientes",
         url: "/ss/leadpacientes",
       },
       tratos: {
