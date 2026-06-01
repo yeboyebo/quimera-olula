@@ -74,7 +74,7 @@ const a_string = (
     formateado = formatearMoneda(valor, divisa ?? "EUR");
   } else if (tipo === "fecha" && typeof valor === "string") {
     formateado = formatearFechaString(valor);
-  } else if (tipo === "fecha" && typeof valor === "object") {
+  } else if (tipo === "fecha" && valor !== null && typeof valor === "object") {
     formateado = formatearFechaDate(valor as Date);
   } else if (tipo === "hora" && typeof valor === "string") {
     formateado = formatearHoraString(valor);
@@ -82,7 +82,11 @@ const a_string = (
     formateado = valor.toLocaleString();
   } else if (typeof valor === "boolean") {
     formateado = valor ? "Sí" : "No";
-  } else if (tipo === "fechahora" && typeof valor === "object") {
+  } else if (
+    tipo === "fechahora" &&
+    valor !== null &&
+    typeof valor === "object"
+  ) {
     formateado = formatearFechaHora(valor as Date);
   } else if (typeof valor === "string") {
     formateado = valor;

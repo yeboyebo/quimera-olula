@@ -84,6 +84,15 @@ export const bunch = parent => {
         log: () => ["ON WHOAMI"],
       },
     ],
+    mostrarMensajeError: [
+      {
+        type: "showMessage",
+        plug: ({ response }) => ({
+          mensaje: response,
+          tipoMensaje: "error",
+        }),
+      },
+    ],
   };
 
   return {
