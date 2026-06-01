@@ -59,7 +59,6 @@ function TableColumn({ align = "left", clickMode, columnType, data = {}, dataDri
         component="div"
         height="2em"
         display="flex"
-        justifyContent={flexAlign}
         alignItems="center"
         justifyContent={align}
         width="100%"
