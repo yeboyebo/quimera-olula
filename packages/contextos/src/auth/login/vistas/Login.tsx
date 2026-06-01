@@ -4,6 +4,7 @@ import { QForm } from "@olula/componentes/atomos/qform.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { BotonLoginPasskey } from "../../passkey/vistas/BotonLoginPasskey.tsx";
 import { login } from "../dominio.ts";
 import { permisosGrupo, whoAmI, whoAmIStorage } from "../infraestructura.ts";
 import estilos from "./Login.module.css";
@@ -50,6 +51,10 @@ export const Login = () => {
             Iniciar sesión
           </QBoton>
         </QForm>
+        <div style={{ textAlign: "center", margin: "1rem 0", color: "var(--color-texto-secundario, #666)" }}>
+          o continúa con
+        </div>
+        <BotonLoginPasskey />
       </div>
     </section>
   );
