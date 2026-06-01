@@ -1,8 +1,8 @@
-import { FactoryAuthOlula } from "#/auth/factory.ts";
 import { CabeceraSanhigia } from "./componentes/CabeceraSanhigia";
 import { ExtraLogoSanhigia } from "./componentes/ExtraLogoSanhigia";
 import { MenuUsuarioSanhigia } from "./componentes/MenuUsuarioSanhigia";
 import { FactoryAlmacenLegacy } from "./contextos/almacen/factory.ts";
+import { FactoryAuthSanhigia } from "./contextos/auth/factory.ts";
 import { FactoryInformesLegacy } from "./contextos/informes/factory.ts";
 import { MenuUsuarioElementosSanhigia } from "./contextos/menu";
 import { procesarElementosSanhigia } from "./contextos/procesarMenuUsuario";
@@ -16,6 +16,7 @@ class FactoryComponentesSanhigia {
     static cabecera_extra_logo = ExtraLogoSanhigia;
     static menu_usuario_elementos = MenuUsuarioElementosSanhigia;
     static menu_usuario_procesar_elementos = procesarElementosSanhigia;
+    static pie = () => null; // elimina el footer
 }
 
 export class FactoryLegacy {
@@ -23,7 +24,7 @@ export class FactoryLegacy {
     Ventas = FactoryVentasLegacy;
     Informes = FactoryInformesLegacy;
     Smartsales = FactorySmartsalesLegacy;
-    Auth = FactoryAuthOlula;
+    Auth = FactoryAuthSanhigia;
     Componentes = FactoryComponentesSanhigia;
 }
 
