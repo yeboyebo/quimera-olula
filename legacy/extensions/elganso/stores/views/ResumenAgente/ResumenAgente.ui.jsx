@@ -33,12 +33,21 @@ function ResumenAgente() {
   //   }
   // };
 
-  const setWeek = (up = false) => {
+  const clickSemanaAbajo = () => {
     const date = new Date(inicioSemana);
-    date.setDate(up ? date.getDate() + 7 : date.getDate() - 7);
+    date.setDate(date.getDate() - 7);
     setInicioSemana(date);
     const dateFin = new Date(finSemana);
-    dateFin.setDate(up ? dateFin.getDate() - 7 : dateFin.getDate() - 7);
+    dateFin.setDate(dateFin.getDate() - 7);
+    setFinSemana(dateFin);
+  };
+
+  const clickSemanaArriba = () => {
+    const date = new Date(inicioSemana);
+    date.setDate(date.getDate() + 7);
+    setInicioSemana(date);
+    const dateFin = new Date(finSemana);
+    dateFin.setDate(dateFin.getDate() + 7);
     setFinSemana(dateFin);
   };
 
@@ -100,7 +109,7 @@ function ResumenAgente() {
 
   const clickAnterior = () => {
     if (showType === "week") {
-      setWeek(false);
+      clickSemanaAbajo();
     } else {
       setMonth(inicioMes, "down");
     }
@@ -108,7 +117,7 @@ function ResumenAgente() {
 
   const clickSiguiente = () => {
     if (showType === "week") {
-      setWeek(true);
+      clickSemanaArriba();
     } else {
       setMonth(inicioMes, "up");
     }
