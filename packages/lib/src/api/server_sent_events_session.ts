@@ -14,17 +14,37 @@ type SessionSseEvents = Record<string, unknown>;
 const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
 const SSE_URL = `${API_BASE_URL}/comun/eventos_sse`;
 
-let retainCount = 0;
-let listenersBootstrapped = false;
-let releaseSessionClient: (() => void) | null = null;
+type SessionSseState = {
+    retainCount: number;
+    listenersBootstrapped: boolean;
+    releaseSessionClient: (() => void) | null;
+    sessionClient: ServerSentEventsClient;
+};
 
-const sessionClient = new ServerSentEventsClient(SSE_URL, {
-    withCredentials: true,
-    getHeaders: () => {
-        const token = tokenAcceso.obtener();
-        return token ? { Authorization: `Bearer ${token}` } : undefined;
-    },
-});
+type GlobalSessionSseScope = typeof globalThis & {
+    __olulaSessionSseState__?: SessionSseState;
+};
+
+const getSessionSseState = (): SessionSseState => {
+    const scope = globalThis as GlobalSessionSseScope;
+
+    if (!scope.__olulaSessionSseState__) {
+        scope.__olulaSessionSseState__ = {
+            retainCount: 0,
+            listenersBootstrapped: false,
+            releaseSessionClient: null,
+            sessionClient: new ServerSentEventsClient(SSE_URL, {
+                withCredentials: true,
+                getHeaders: () => {
+                    const token = tokenAcceso.obtener();
+                    return token ? { Authorization: `Bearer ${token}` } : undefined;
+                },
+            }),
+        };
+    }
+
+    return scope.__olulaSessionSseState__;
+};
 
 const hasActiveSession = () => {
     return !!(
@@ -36,26 +56,31 @@ const hasActiveSession = () => {
 const isSsePluginEnabled = () => plugin("eventos_sse") === "activo";
 
 const shouldKeepConnected = () => {
-    return retainCount > 0 && hasActiveSession() && isSsePluginEnabled();
+    const state = getSessionSseState();
+    return state.retainCount > 0 && hasActiveSession() && isSsePluginEnabled();
 };
 
 const syncSessionConnectionState = () => {
+    const state = getSessionSseState();
+
     if (shouldKeepConnected()) {
-        if (!releaseSessionClient) {
-            releaseSessionClient = sessionClient.retain();
+        if (!state.releaseSessionClient) {
+            state.releaseSessionClient = state.sessionClient.retain();
         }
         return;
     }
 
-    if (releaseSessionClient) {
-        releaseSessionClient();
-        releaseSessionClient = null;
+    if (state.releaseSessionClient) {
+        state.releaseSessionClient();
+        state.releaseSessionClient = null;
     }
 };
 
 const bootstrapSessionListeners = () => {
-    if (listenersBootstrapped) return;
-    listenersBootstrapped = true;
+    const state = getSessionSseState();
+
+    if (state.listenersBootstrapped) return;
+    state.listenersBootstrapped = true;
 
     window.addEventListener("storage", (event) => {
         if (!event.key) {
@@ -74,12 +99,14 @@ const bootstrapSessionListeners = () => {
 };
 
 export const retainGlobalServerSentEventsConnection = () => {
-    retainCount += 1;
+    const state = getSessionSseState();
+
+    state.retainCount += 1;
     bootstrapSessionListeners();
     syncSessionConnectionState();
 
     return () => {
-        retainCount = Math.max(0, retainCount - 1);
+        state.retainCount = Math.max(0, state.retainCount - 1);
         syncSessionConnectionState();
     };
 };
@@ -88,15 +115,16 @@ export const onGlobalServerSentEvent = <K extends keyof SessionSseEvents & strin
     eventType: K,
     handler: SseHandler
 ) => {
-    return sessionClient.on(eventType, handler);
+    return getSessionSseState().sessionClient.on(eventType, handler);
 };
 
 export const reconnectGlobalServerSentEventsConnection = () => {
-    sessionClient.reconnect();
+    getSessionSseState().sessionClient.reconnect();
     syncSessionConnectionState();
 };
 
 export const closeGlobalServerSentEventsConnection = () => {
-    retainCount = 0;
+    const state = getSessionSseState();
+    state.retainCount = 0;
     syncSessionConnectionState();
 };

@@ -9,6 +9,10 @@ import "./NotificacionesCabecera.css";
 
 const COMUNICACIONES_URL = "/comun/comunicacion";
 
+type EventoComunicacionResumen = {
+  total_no_leidas?: number | string;
+};
+
 export const NotificacionesCabecera = () => {
   const autenticado = estaAutentificado();
   const tienePermisoComunicacion = puede("comun.comunicacion");
@@ -16,51 +20,38 @@ export const NotificacionesCabecera = () => {
   const [totalNoLeidas, setTotalNoLeidas] = useState(0);
 
   useEffect(() => {
-    if (!autenticado || !tienePermisoComunicacion) {
+    if (!autenticado || !tienePermisoComunicacion || !pluginSseActivo) {
       setTotalNoLeidas(0);
       return;
     }
 
-    const refrescarTotalNoLeidas = () => {
-      getTotalComunicacionesNoLeidas()
-        .then((total) => setTotalNoLeidas(total))
-        .catch(() => setTotalNoLeidas(0));
-    };
+    getTotalComunicacionesNoLeidas()
+      .then((total) => setTotalNoLeidas(total))
+      .catch(() => setTotalNoLeidas(0));
 
-    refrescarTotalNoLeidas();
-
-    if (!pluginSseActivo) {
-      return;
-    }
-
-    return onGlobalServerSentEvent("comun.comunicacion.creada", (event) => {
+    return onGlobalServerSentEvent("comun.comunicacion.resumen", (event) => {
       try {
-        const evento = JSON.parse(String(event.data ?? "")) as {
-          comunicacion_id?: string | number;
-          usuario_destino_id?: string | number;
-          timestamp?: string | number;
-        };
+        console.log(
+          "Evento SSE recibido: comun.comunicacion.resumen",
+          event.data
+        );
+        const evento = JSON.parse(
+          String(event.data ?? "{}")
+        ) as EventoComunicacionResumen;
 
-        const comunicacionId = evento.comunicacion_id;
-        const usuarioDestinoId = evento.usuario_destino_id;
-        const timestamp = evento.timestamp;
+        const total = Number(evento.total_no_leidas);
 
-        if (
-          comunicacionId == null ||
-          usuarioDestinoId == null ||
-          timestamp == null
-        ) {
-          return;
+        if (Number.isFinite(total) && total >= 0) {
+          setTotalNoLeidas(Math.trunc(total));
         }
-
-        refrescarTotalNoLeidas();
       } catch {
         // Ignora payloads inválidos sin romper la vista.
       }
     });
   }, [autenticado, tienePermisoComunicacion, pluginSseActivo]);
 
-  if (!autenticado || !tienePermisoComunicacion) return null;
+  if (!autenticado || !tienePermisoComunicacion || !pluginSseActivo)
+    return null;
 
   return (
     <Link

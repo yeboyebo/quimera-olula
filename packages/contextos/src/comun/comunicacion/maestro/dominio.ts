@@ -51,3 +51,20 @@ export const ampliarComunicaciones: ProcesarComunicaciones = async (
 
     return Comunicaciones.ampliar(contexto, resultado);
 };
+
+export const quitarSinAutoseleccion: ProcesarComunicaciones = async (
+    contexto,
+    payload
+) => {
+    const id = payload as string;
+
+    return {
+        ...contexto,
+        comunicaciones: {
+            ...contexto.comunicaciones,
+            lista: contexto.comunicaciones.lista.filter((c) => c.id !== id),
+            total: Math.max(0, contexto.comunicaciones.total - 1),
+            activo: undefined,
+        },
+    };
+};

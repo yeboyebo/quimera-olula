@@ -7,6 +7,11 @@ type SseOptions = {
     getHeaders?: () => Record<string, string> | undefined;
 };
 
+const normalizeEventType = (eventType?: string) => {
+    const normalized = (eventType || "message").trim();
+    return normalized || "message";
+};
+
 export class ServerSentEventsClient {
     private abortController: AbortController | null = null;
     private refs = 0;
@@ -34,21 +39,23 @@ export class ServerSentEventsClient {
     }
 
     on(eventType: string, handler: SseHandler): () => void {
-        const set = this.listeners.get(eventType) ?? new Set<SseHandler>();
+        const normalizedEventType = normalizeEventType(eventType);
+        const set = this.listeners.get(normalizedEventType) ?? new Set<SseHandler>();
         set.add(handler);
-        this.listeners.set(eventType, set);
+        this.listeners.set(normalizedEventType, set);
 
-        return () => this.off(eventType, handler);
+        return () => this.off(normalizedEventType, handler);
     }
 
     off(eventType: string, handler: SseHandler): void {
-        const set = this.listeners.get(eventType);
+        const normalizedEventType = normalizeEventType(eventType);
+        const set = this.listeners.get(normalizedEventType);
         if (!set) return;
 
         set.delete(handler);
         if (set.size > 0) return;
 
-        this.listeners.delete(eventType);
+        this.listeners.delete(normalizedEventType);
     }
 
     private sync(): void {
@@ -76,7 +83,7 @@ export class ServerSentEventsClient {
                 }
             },
             onmessage: (message) => {
-                const eventType = message.event || "message";
+                const eventType = normalizeEventType(message.event);
                 const handlers = this.listeners.get(eventType);
                 if (!handlers) return;
 

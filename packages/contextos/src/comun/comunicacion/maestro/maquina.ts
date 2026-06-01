@@ -6,6 +6,7 @@ import {
 import {
     ampliarComunicaciones,
     Comunicaciones,
+    quitarSinAutoseleccion,
     recargarComunicaciones,
 } from "./dominio.ts";
 
@@ -18,7 +19,7 @@ export const getMaquina: () => Maquina<
             comunicacion_seleccionada: [Comunicaciones.activar],
             comunicacion_cambiada: Comunicaciones.cambiar,
             comunicacion_deseleccionada: Comunicaciones.desactivar,
-            comunicacion_borrada: Comunicaciones.quitar,
+            comunicacion_borrada: quitarSinAutoseleccion,
             recarga_de_comunicaciones_solicitada: recargarComunicaciones,
             criteria_cambiado: [Comunicaciones.filtrar, recargarComunicaciones],
             siguiente_pagina: [Comunicaciones.filtrar, ampliarComunicaciones],
