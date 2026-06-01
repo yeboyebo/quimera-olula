@@ -19,6 +19,7 @@ class FactoryComponentesSanhigia {
     static pie = () => null; // elimina el footer
 }
 
+
 export class FactoryLegacy {
     Almacen = FactoryAlmacenLegacy;
     Ventas = FactoryVentasLegacy;
