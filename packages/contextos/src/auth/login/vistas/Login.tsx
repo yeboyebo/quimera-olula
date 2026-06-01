@@ -33,6 +33,7 @@ export const Login = () => {
   if (!app.Auth) {
     return null;
   }
+  // El formato de login se define en la factory de cada proyecto, y puede ser "email" o "texto". Esto permite adaptar el formulario de login a las necesidades de cada proyecto sin modificar el componente Login.
 
   const label_login = app.Auth.formato_login === "email" ? "Email" : "Usuario";
 
