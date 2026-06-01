@@ -1,12 +1,12 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
-import { ListadoControlado } from "@olula/componentes/maestro/ListadoControlado.js";
-import { MaestroDetalleControlado } from "@olula/componentes/maestro/MaestroDetalleControlado.tsx";
-import { Criteria } from "@olula/lib/diseño.js";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
-import { useCallback, useEffect, useState } from "react";
-import { CrearModulo } from "../crear/CrearModulo.tsx";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useLayout } from "@olula/lib/useLayout.js";
+import { useEffect, useMemo } from "react";
 import { DetalleModulo } from "../detalle/DetalleModulo.tsx";
 import { Modulo } from "../diseño.ts";
 import { metaTablaModulo } from "./diseño.ts";
@@ -14,76 +14,94 @@ import "./MaestroConDetalleModulo.css";
 import { getMaquina } from "./maquina.ts";
 
 /**
- * Componente principal que combina listado (maestro) + detalle
+ * Componente principal: listado (maestro) + detalle.
+ *
+ * Patrones aplicados:
+ *   - useLayout        → alterna entre vista TARJETA y TABLA
+ *   - useUrlParams     → escribe activo y criteria en la URL al cambiar
+ *   - getUrlParams     → lee el estado inicial desde la URL (deep link)
+ *   - listaActivaEntidadesInicial → inicializa con ID y criteria de la URL
+ *   - Listado          → gestiona criteria internamente; emite onCriteriaChanged y onSiguientePagina
+ *   - MaestroDetalle   → recibe layout para adaptar la disposición en móvil
  */
 export const MaestroConDetalleModulo = () => {
-  const [cargando, setCargando] = useState(false);
+    // Criteria base del módulo (orden por defecto, etc.)
+    const criteriaBase = useMemo(() => criteriaDefecto, []);
 
-  // Hook principal: gestiona estado y máquina
-  const { ctx, emitir } = useMaquina(getMaquina, {
-    estado: "INICIAL",
-    modulos: listaEntidadesInicial<Modulo>(),
-  });
+    // Alterna entre vista TARJETA y TABLA; en móvil siempre usa TARJETA
+    const { layout, cambiarLayout } = useLayout("TARJETA");
 
-  // Callback: crear nuevo
-  const crear = useCallback(() => emitir("crear_modulo_solicitado"), [emitir]);
+    // Lee el activo y criteria iniciales desde la URL
+    const { id, criteria } = getUrlParams();
+    const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
 
-  // Callback: seleccionar
-  const setSeleccionada = useCallback(
-    (modulo: Modulo) => emitir("modulo_seleccionado", modulo),
-    [emitir]
-  );
+    const { ctx, emitir } = useMaquina(getMaquina, {
+        estado: "INICIAL",
+        modulos: listaActivaEntidadesInicial<Modulo>(id, criteriaInicial),
+    });
 
-  // Callback: recargar con criterios
-  const recargar = useCallback(
-    async (criteria: Criteria) => {
-      setCargando(true);
-      await emitir("recarga_de_modulos_solicitada", criteria);
-      setCargando(false);
-    },
-    [emitir]
-  );
+    // Escribe activo y criteria en la URL al cambiar
+    useUrlParams(ctx.modulos.activo, ctx.modulos.criteria);
 
-  // Efecto: cargar datos al montar
-  useEffect(() => {
-    recargar(criteriaDefecto);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // Carga inicial
+    useEffect(() => {
+        emitir("recarga_de_modulos_solicitada", ctx.modulos.criteria);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  return (
-    <div className="Modulo">
-      <MaestroDetalleControlado<Modulo>
-        Maestro={
-          <>
-            <h2>Módulos</h2>
-            <div className="maestro-botones">
-              <QBoton onClick={crear}>Nuevo Módulo</QBoton>
-            </div>
-            <ListadoControlado<Modulo>
-              metaTabla={metaTablaModulo}
-              criteriaInicial={criteriaDefecto}
-              modo={"tabla"}
-              cargando={cargando}
-              entidades={ctx.modulos.lista}
-              totalEntidades={ctx.modulos.total}
-              seleccionada={ctx.modulos.activo}
-              onSeleccion={setSeleccionada}
-              onCriteriaChanged={recargar}
+    return (
+        <div className="Modulo">
+            <MaestroDetalle<Modulo>
+                Maestro={
+                    <>
+                        <h2>Módulos</h2>
+                        <div className="maestro-botones">
+                            <QBoton
+                                texto={layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
+                                onClick={cambiarLayout}
+                            />
+                        </div>
+                        <Listado<Modulo>
+                            metaTabla={metaTablaModulo}
+                            criteria={ctx.modulos.criteria}
+                            modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+                            tarjeta={TarjetaModulo}
+                            entidades={ctx.modulos.lista}
+                            totalEntidades={ctx.modulos.total}
+                            seleccionada={ctx.modulos.activo}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("crear_modulo_solicitado")}>
+                                        Nuevo Módulo
+                                    </QBoton>
+                                </div>
+                            )}
+                            onSeleccion={(payload) => emitir("modulo_seleccionado", payload)}
+                            onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+                            onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
+                        />
+                    </>
+                }
+                Detalle={<DetalleModulo id={ctx.modulos.activo} publicar={emitir} />}
+                layout={layout}
+                seleccionada={ctx.modulos.activo}
+                modoDisposicion="maestro-50"
             />
-          </>
-        }
-        Detalle={
-          <DetalleModulo modulo={ctx.modulos.activo} publicar={emitir} />
-        }
-        seleccionada={ctx.modulos.activo}
-        modoDisposicion="maestro-50"
-      />
+        </div>
+    );
+};
 
-      <CrearModulo
-        publicar={emitir}
-        onCancelar={() => emitir("creacion_cancelada")}
-        activo={ctx.estado === "CREANDO_MODULO"}
-      />
-    </div>
-  );
+/**
+ * Componente tarjeta para la vista de lista en modo tarjetas.
+ * Se define fuera del componente principal para evitar re-renders.
+ */
+const TarjetaModulo = (modulo: Modulo) => {
+    return (
+        <div className="tarjeta-modulo" key={modulo.id}>
+            <div className="tarjeta-modulo-nombre">{modulo.nombre}</div>
+            <div className={`tarjeta-modulo-estado estado-${modulo.estado}`}>
+                {modulo.estado}
+            </div>
+        </div>
+    );
 };

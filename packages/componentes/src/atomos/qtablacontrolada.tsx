@@ -248,6 +248,9 @@ export type QTablaProps<T extends Entidad> = {
   paginacion?: Paginacion;
   onPaginacionChanged?: (paginacion: Paginacion) => void;
   totalEntidades?: number;
+  seleccionadasIds?: string[];
+  onMultiSeleccionToggle?: (id: string) => void;
+  onSetSeleccionadas?: (ids: string[]) => void;
 };
 
 export const QTablaControlada = <T extends Entidad>({
@@ -261,7 +264,11 @@ export const QTablaControlada = <T extends Entidad>({
   paginacion,
   onPaginacionChanged,
   totalEntidades = 0,
+  seleccionadasIds,
+  onMultiSeleccionToggle,
+  onSetSeleccionadas,
 }: QTablaProps<T>) => {
+  const modoMulti = seleccionadasIds !== undefined;
   // Detectar si hay anchos específicos
   const tieneAnchosFijos = metaTabla.some((col) => col.ancho);
 
@@ -298,20 +305,69 @@ export const QTablaControlada = <T extends Entidad>({
       })
     : metaTabla;
 
+  const todosSeleccionados =
+    modoMulti &&
+    datos.length > 0 &&
+    datos.every((e) => seleccionadasIds!.includes(e.id));
+  const algunoSeleccionado =
+    modoMulti && datos.some((e) => seleccionadasIds!.includes(e.id));
+
+  const toggleTodos = () => {
+    if (!onSetSeleccionadas) return;
+    if (todosSeleccionados) {
+      const idsEnPagina = new Set(datos.map((e) => e.id));
+      onSetSeleccionadas(seleccionadasIds!.filter((id) => !idsEnPagina.has(id)));
+    } else {
+      const idsNuevas = datos
+        .filter((e) => !seleccionadasIds!.includes(e.id))
+        .map((e) => e.id);
+      onSetSeleccionadas([...seleccionadasIds!, ...idsNuevas]);
+    }
+  };
+
   return (
     <quimera-tabla>
       <div className="tabla-contenedor-scroll">
         <table data-anchos-fijos={tieneAnchosFijos}>
           <thead>
-            <tr>{cabecera(metaTablaCompleta, orden, onOrdenChanged)}</tr>
+            <tr>
+              {modoMulti && (
+                <th className="col-multiseleccion" style={{ width: "36px" }}>
+                  <input
+                    type="checkbox"
+                    checked={todosSeleccionados}
+                    ref={(el) => {
+                      if (el)
+                        el.indeterminate =
+                          !todosSeleccionados && algunoSeleccionado;
+                    }}
+                    onChange={toggleTodos}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </th>
+              )}
+              {cabecera(metaTablaCompleta, orden, onOrdenChanged)}
+            </tr>
           </thead>
           <tbody data-cargando={cargando}>
             {datos.map((entidad: T) => (
               <tr
                 key={entidad.id}
-                onClick={() => onSeleccion && onSeleccion(entidad)}
+                onClick={() => onSeleccion?.(entidad)}
                 data-seleccionada={entidad.id === seleccionadaId}
               >
+                {modoMulti && (
+                  <td
+                    className="col-multiseleccion"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={seleccionadasIds!.includes(entidad.id)}
+                      onChange={() => onMultiSeleccionToggle?.(entidad.id)}
+                    />
+                  </td>
+                )}
                 {fila(entidad, metaTablaCompleta, cargando)}
               </tr>
             ))}

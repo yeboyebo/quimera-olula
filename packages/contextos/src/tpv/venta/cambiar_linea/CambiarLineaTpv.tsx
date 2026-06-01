@@ -21,7 +21,6 @@ export const CambiarLineaTpv = ({
 }) => {
   const { intentar } = useContext(ContextoError);
 
-  console.log("linea a cambiar", linea);
   const { modelo, uiProps, valido } = useModelo(metaLineaFactura, linea);
 
   const [cambiando, setCambiando] = useState(false);
