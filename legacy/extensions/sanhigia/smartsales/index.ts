@@ -281,7 +281,7 @@ export default {
       check("crm.informe.todos"),
     "clientes:acceso": (check: (rule: string) => boolean) => check("ventas.cliente.leer"),
     "lead_pacientes:visit": (check: (rule: string) => boolean) =>
-      check("crm.campana_lead_pacientes"),
+      check("crm.campana.lead_pacientes"),
     "articulos:acceso_caducidad": (check: (rule: string) => boolean) =>
       check("almacen.articulo.leer_caducidad"),
     "contactos:revisar_contacto": (check: (rule: string) => boolean) =>
