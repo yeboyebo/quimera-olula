@@ -132,11 +132,10 @@ export const getVentas: GetVentasTpv = async (
         miPuntoVentaLocal?.id ?? "",
     ];
 
-    const q = criteriaQuery(
-        [...filtro, filtroPuntoVenta],
-        orden,
-        paginacion
-    );
+    const filtroCombinado: Filtro = Array.isArray(filtro)
+        ? [...filtro, filtroPuntoVenta]
+        : { and: [filtro, [filtroPuntoVenta]] };
+    const q = criteriaQuery(filtroCombinado, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: VentaTpvAPI[]; total: number }>(baseUrl + q);
     return { datos: respuesta.datos.map(ventaDesdeAPI), total: respuesta.total };
@@ -325,7 +324,6 @@ export const patchVenta: PatchVenta = async (id, venta) => {
         // observaciones: venta.observaciones,
 
     };
-    // console.log('patchVenta', payload);
 
     await RestAPI.patch(`${baseUrl}/${id}`, payload,
         'Error al guardar la venta'

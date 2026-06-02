@@ -18,7 +18,15 @@ export type Criteria = {
 }
 
 export type ClausulaFiltro = [string, string, string?];
-export type Filtro = ClausulaFiltro[];
+type FiltroOr = {
+    or: Filtro[];
+}
+type FiltroAnd = {
+    and: Filtro[];
+}
+
+export type Filtro = (ClausulaFiltro[] | FiltroOr | FiltroAnd);
+// export type Filtro = ClausulaFiltro[];
 
 export type Orden = string[];
 
@@ -40,6 +48,11 @@ export type RespuestaLista2<T> = {
     datos: T[];
     total: TotalRegistros;
 }
+
+export type RespuestaListaConResumen<T, Resumen extends Record<string, unknown>> = Promise<{
+    datos: T[];
+    total: TotalRegistros;
+} & Resumen>;
 
 export type Direccion = {
     nombre_via: string;

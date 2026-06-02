@@ -92,6 +92,8 @@ export type QTarjetasProps<T extends Entidad> = {
   totalEntidades?: number;
   criteria: Criteria;
   onSiguientePagina?: (criteria: Criteria) => void;
+  seleccionadasIds?: string[];
+  onMultiSeleccionToggle?: (id: string) => void;
 };
 
 export const QTarjetas = <T extends Entidad>({
@@ -105,16 +107,30 @@ export const QTarjetas = <T extends Entidad>({
   totalEntidades = 0,
   criteria,
   onSiguientePagina,
+  seleccionadasIds,
+  onMultiSeleccionToggle,
 }: QTarjetasProps<T>) => {
-  const tarjetaItems = datos.map((entidad) => (
-    <quimera-tarjeta
-      key={entidad.id}
-      className={entidad.id === seleccionadaId ? "seleccionada" : ""}
-      onClick={() => onSeleccion && onSeleccion(entidad)}
-    >
-      {tarjeta(entidad)}
-    </quimera-tarjeta>
-  ));
+  const modoMulti = seleccionadasIds !== undefined;
+
+  const tarjetaItems = datos.map((entidad) => {
+    const estaSeleccionada = modoMulti
+      ? seleccionadasIds.includes(entidad.id)
+      : entidad.id === seleccionadaId;
+
+    return (
+      <quimera-tarjeta
+        key={entidad.id}
+        className={estaSeleccionada ? "seleccionada" : ""}
+        onClick={() =>
+          modoMulti
+            ? onMultiSeleccionToggle?.(entidad.id)
+            : onSeleccion?.(entidad)
+        }
+      >
+        {tarjeta(entidad)}
+      </quimera-tarjeta>
+    );
+  });
 
   const renderLista = () => {
     if (onSiguientePagina && criteria) {

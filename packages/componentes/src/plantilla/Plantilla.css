@@ -18,6 +18,7 @@
     &>section[role=main] {
         display: flex;
         flex-grow: 1;
+        overflow: hidden;
 
         &>*:not(menu-lateral):not(menu-usuario) {
             /* padding: 1rem; */

@@ -13,14 +13,13 @@ import {
 } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLayout } from "@olula/lib/useLayout.js";
+import { useCallback, useEffect, useMemo } from "react";
 import { DetalleVentaTpv } from "../detalle/DetalleVentaTpv.tsx";
 import { VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "./maestro.ts";
 import "./MaestroConDetalleVentaTpv.css";
 import { getMaquina } from "./maquina.ts";
-
-type Layout = "TABLA" | "TARJETA";
 
 export const MaestroConDetalleVentaTpv = () => {
   const criteriaBaseVentas = useMemo(() => {
@@ -30,7 +29,7 @@ export const MaestroConDetalleVentaTpv = () => {
     };
   }, []);
 
-  const [layout, setLayout] = useState<Layout>("TARJETA");
+  const { layout, cambiarLayout } = useLayout("TARJETA");
 
   const { id, criteria } = getUrlParams();
   const criteriaInicial =
@@ -42,11 +41,6 @@ export const MaestroConDetalleVentaTpv = () => {
   });
 
   useUrlParams(ctx.ventas.activo, ctx.ventas.criteria);
-
-  const cambiarLayout = useCallback(
-    () => setLayout(layout === "TARJETA" ? "TABLA" : "TARJETA"),
-    [layout, setLayout]
-  );
 
   const handle_punto_venta_cambiado = useCallback(() => {
     emitir("recarga_de_ventas_solicitada", ctx.ventas.criteria);

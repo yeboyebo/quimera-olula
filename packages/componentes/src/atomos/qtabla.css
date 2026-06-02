@@ -43,7 +43,7 @@ quimera-tabla {
 
         &[data-seleccionada="true"] th,
         &[data-seleccionada="true"] td {
-            font-weight: var(--grosor-letra-6);
+            font-weight: var(--grosor-letra-5);
         }
 
         &[data-seleccionada="true"] {
