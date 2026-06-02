@@ -196,6 +196,10 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
     });
   };
 
+  const lineaBloqueada = (linea) => {
+    return (linea.dtoLineal !== 0 && linea.shCantAlbaran !== 0.0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
+  };
+
   const mobile = ["xs", "sm"].includes(width);
   const anchoDetalle = 1;
   const schema = getSchemas().pedidos;
@@ -292,6 +296,19 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                   )}
                 </Grid>
               </QModelBox>
+
+              <Box display="inline-flex" justifyContent="center" visibility={status.lineasConDto === true ? "visible" : "hidden"}>
+                <Box mt={1} display="flex" justifyContent="center" sx={{
+                  border: '2px solid red',
+                  borderRadius: 2,
+                  padding: 1
+                }}>
+                  <Typography variant="body1" textAlign="center">
+                    {"Hay lineas con descuento informado. Se deben servir completamente"}
+                  </Typography>
+                </Box>
+              </Box>
+
               <Box display="flex" justifyContent="flex-start">
                 <Box flexGrow={1}>
                   <Field.Text
@@ -336,6 +353,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                       </IconButton>
                     )}
                   /> */}
+                  {/* Hay que deshabilitar el boton si tiene un descuento y no tenemos el total informado */}
                   <Column.Action
                     id="actioncerrarLinea"
                     value={linea => (
@@ -347,8 +365,9 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                             payload: { idLineaCerrar: linea.idLinea },
                           })
                         }
+                        disabled={lineaBloqueada(linea)}
                       >
-                        <Icon className={classes.iconoCabecera}>
+                        <Icon className={lineaBloqueada(linea) ? classes.iconoBloqueado : classes.iconoCabecera}>
                           {linea.cerradaPDA ? "lock" : "lock_open"}
                         </Icon>
                       </IconButton>
@@ -462,10 +481,19 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                   <Column.Text
                     id="referencia"
                     header="Nombre"
-                    order="refrencia"
+                    order="referencia"
                     pl={2}
                     value={linea => linea.referencia}
                     width={160}
+                  />
+                  <Column.Text
+                    id="dtolineal"
+                    header="Serv. total"
+                    order="dtolineal"
+                    pl={2}
+                    value={linea => linea.dtoLineal !== 0 ? "Si" : "No"}
+                    width={80}
+                    align="center"
                   />
                 </Table>
               </Box>
