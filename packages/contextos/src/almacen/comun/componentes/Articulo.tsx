@@ -1,6 +1,7 @@
 import { getTagsArticulo } from "#/ventas/articulo/infraestructura.ts";
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Filtro, Orden } from "@olula/lib/diseño.ts";
+import { useEffect, useState } from "react";
 
 interface ArticuloProps {
   descripcion?: string;
@@ -21,46 +22,58 @@ interface ArticuloProps {
 }
 
 export const Articulo = ({
-  descripcion = "",
+  descripcion: descripcionProp = "",
   valor,
   nombre = "referencia",
   label = "Artículo",
   onChange,
   ...props
 }: ArticuloProps) => {
-  const obtenerOpciones = async (texto: string) => {
-    const criteria = {
-      filtro: {
-        or: [
-          ["descripcion", "~", texto],
-          ["id", "~", texto],
-        ],
-      },
-      orden: ["id"],
+    const [descripcion, setDescripcion] = useState(descripcionProp);
+
+    useEffect(() => {
+        if (valor && !descripcionProp) {
+            getTagsArticulo([["id", "=", valor]], ["id"]).then((articulos) => {
+                if (articulos[0]) setDescripcion(articulos[0].descripcion);
+            });
+        } else {
+            setDescripcion(descripcionProp);
+        }
+    }, [valor, descripcionProp]);
+
+    const obtenerOpciones = async (texto: string) => {
+        const criteria = {
+            filtro: {
+                or: [
+                    ["descripcion", "~", texto],
+                    ["id", "~", texto],
+                ],
+            },
+            orden: ["id"],
+        };
+
+        const articulos = await getTagsArticulo(
+            criteria.filtro as unknown as Filtro,
+            criteria.orden as Orden
+        );
+
+        return articulos.map((articulo) => ({
+            valor: articulo.id,
+            descripcion: articulo.descripcion,
+            descripcionOpcion: `${articulo.id} - ${articulo.descripcion}`,
+            datos: articulo,
+        }));
     };
-
-    const articulos = await getTagsArticulo(
-      criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
-    );
-
-    return articulos.map((articulo) => ({
-      valor: articulo.id,
-      descripcion: articulo.descripcion,
-      descripcionOpcion: `${articulo.id} - ${articulo.descripcion}`,
-      datos: articulo,
-    }));
-  };
 
   return (
     <QAutocompletar
-      label={`${label} ${valor}`}
-      nombre={nombre}
-      onChange={onChange}
-      valor={valor}
-      obtenerOpciones={obtenerOpciones}
-      descripcion={descripcion}
-      {...props}
+        label={`${label} ${valor}`}
+        nombre={nombre}
+        onChange={onChange}
+        valor={valor}
+        obtenerOpciones={obtenerOpciones}
+        descripcion={descripcion}
+        {...props}
     />
   );
 };

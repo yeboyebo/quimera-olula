@@ -1,7 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
-import { EstadoBorradorJornada, PausaJornada, RegistroJornada } from "../diseño.ts";
+import { PausaJornada, RegistroJornada } from "../diseño.ts";
 import { BorrarPausaJornada } from "./BorrarPausaJornada.tsx";
 import { CrearPausaJornada } from "./CrearPausaJornada.tsx";
 import { EditarPausaJornada } from "./EditarPausaJornada.tsx";
@@ -16,13 +16,11 @@ const metaTablaPausas: MetaTabla<PausaJornada> = [
 
 export const PausasJornada = ({
     jornada,
-    estadoBorrador,
     estadoDetalle,
     pausaActiva,
     publicar,
 }: {
     jornada: RegistroJornada;
-    estadoBorrador: EstadoBorradorJornada;
     estadoDetalle: string;
     pausaActiva: PausaJornada | null;
     publicar: EmitirEvento;
@@ -32,13 +30,6 @@ export const PausasJornada = ({
     return (
         <div className="PausasJornada">
             <h3>Pausas</h3>
-            <div className="botones maestro-botones">
-                {esBorrador && estadoBorrador === "ACTIVA" && (
-                    <QBoton onClick={() => publicar("crear_pausa_solicitado")}>
-                        Añadir pausa
-                    </QBoton>
-                )}
-            </div>
 
             <QTabla<PausaJornada>
                 metaTabla={[

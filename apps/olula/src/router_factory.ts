@@ -5,7 +5,7 @@ import { RouterFactoryRrhh } from '#/rrhh/router_factory.ts';
 import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
 import { RouterFactoryVentasOlula } from '#/ventas/router_factory.ts';
 import { Historias } from '@olula/componentes/index.ts';
-import { FondoInicio } from '@olula/lib/FondoInicio.tsx';
+import { FondoInicio } from '@olula/componentes/plantilla/FondoInicio.tsx';
 import { crearRouter } from '@olula/lib/router.ts';
 import { RouteObject } from 'react-router';
 
