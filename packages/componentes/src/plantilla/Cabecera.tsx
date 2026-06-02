@@ -81,8 +81,6 @@ export const Cabecera = (props: CabeceraProps) => {
     ?.cabecera_menu_usuario as () => React.ReactNode;
   const ExtraLogo = app.Componentes
     ?.cabecera_extra_logo as () => React.ReactNode;
-  const Logo = app.Componentes?.cabecera_logo as () => React.ReactNode;
-
   const cProps: CabeceraProps = {
     ...props,
     // Logo: Logo || props.Logo,
