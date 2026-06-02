@@ -1,4 +1,4 @@
-import { Criteria, Entidad } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useState } from "react";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -43,6 +43,10 @@ type ListadoProps<T extends Entidad> = {
   onModoChanged?: (modo: Modo) => void;
   onCriteriaChanged: (criteria: Criteria) => void;
   onSiguientePagina?: (criteria: Criteria) => void;
+  modoMultiseleccion?: boolean;
+  onModoMultiseleccionChanged?: (modo: boolean) => void;
+  seleccionadas?: string[];
+  onMultiSeleccion?: (seleccionadas: string[]) => void;
 };
 
 export const Listado = <T extends Entidad>({
@@ -61,9 +65,37 @@ export const Listado = <T extends Entidad>({
   onModoChanged,
   onCriteriaChanged,
   onSiguientePagina,
+  modoMultiseleccion,
+  onModoMultiseleccionChanged,
+  seleccionadas,
+  onMultiSeleccion,
 }: ListadoProps<T>) => {
   const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tarjetas");
   const modoInterno = modo ?? modoEstado;
+
+  const [multiseleccionEstado, setMultiseleccionEstado] = useState(false);
+  const multiseleccionInterna = modoMultiseleccion ?? multiseleccionEstado;
+
+  const [seleccionadasEstado, setSeleccionadasEstado] = useState<string[]>([]);
+  const seleccionadasInternas = seleccionadas ?? seleccionadasEstado;
+
+  const toggleSeleccion = (id: string) => {
+    const nuevas = seleccionadasInternas.includes(id)
+      ? seleccionadasInternas.filter((s) => s !== id)
+      : [...seleccionadasInternas, id];
+    if (seleccionadas === undefined) setSeleccionadasEstado(nuevas);
+    onMultiSeleccion?.(nuevas);
+  };
+
+  const toggleModoMultiseleccion = () => {
+    const nuevoModo = !multiseleccionInterna;
+    if (modoMultiseleccion === undefined) setMultiseleccionEstado(nuevoModo);
+    onModoMultiseleccionChanged?.(nuevoModo);
+    if (!nuevoModo) {
+      if (seleccionadas === undefined) setSeleccionadasEstado([]);
+      onMultiSeleccion?.([]);
+    }
+  };
 
   const puedeTabla = metaTabla !== undefined;
   const puedeTarjetas = true;
@@ -114,6 +146,16 @@ export const Listado = <T extends Entidad>({
           });
         }}
         totalEntidades={totalEntidades}
+        seleccionadasIds={multiseleccionInterna ? seleccionadasInternas : undefined}
+        onMultiSeleccionToggle={multiseleccionInterna ? toggleSeleccion : undefined}
+        onSetSeleccionadas={
+          multiseleccionInterna
+            ? (nuevas) => {
+                if (seleccionadas === undefined) setSeleccionadasEstado(nuevas);
+                onMultiSeleccion?.(nuevas);
+              }
+            : undefined
+        }
       />
     );
   };
@@ -135,6 +177,8 @@ export const Listado = <T extends Entidad>({
         totalEntidades={totalEntidades}
         criteria={criteria}
         onSiguientePagina={onSiguientePagina}
+        seleccionadasIds={multiseleccionInterna ? seleccionadasInternas : undefined}
+        onMultiSeleccionToggle={multiseleccionInterna ? toggleSeleccion : undefined}
       />
     );
   };
@@ -167,8 +211,8 @@ export const Listado = <T extends Entidad>({
             metaFiltro={
               metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
             }
-            filtro={criteria.filtro}
-            filtroInicial={criteriaInicial.filtro}
+            filtro={criteria.filtro as ClausulaFiltro[]}
+            filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
             onFiltroChanged={(filtro) => {
               onCriteriaChanged({
                 ...criteria,
@@ -181,6 +225,16 @@ export const Listado = <T extends Entidad>({
 
         <div className="listado-cabecera-derecha">
           {acciones}
+          {onMultiSeleccion && (
+            <div className="cambio-modo">
+              <span
+                className={`cambio-modo-icono${multiseleccionInterna ? " activo" : ""}`}
+                onClick={toggleModoMultiseleccion}
+              >
+                <QIcono nombre="check" tamaño="md" />
+              </span>
+            </div>
+          )}
           {mostrarCambioModo && (
             <div className="cambio-modo">
               <span

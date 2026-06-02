@@ -1,9 +1,10 @@
 import { RouterFactoryAlmacenOlula } from "#/almacen/router_factory.ts";
 import { RouterFactoryAuthOlula } from "#/auth/router_factory.ts";
 import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
-import { RouterFactoryVentasOlula } from "#/ventas/router_factory.ts";
+// import { RouterFactoryVentasOlula } from "#/ventas/router_factory.ts";
 import { crearRouter } from "@olula/lib/router.ts";
 import { RouteObject } from "react-router";
+import { RouterFactoryVentasSanhigia } from "./contextos/ventas/router_factory.ts";
 
 
 // export class RouterFactoryLegacy extends RouterFactoryOlula {
@@ -12,7 +13,7 @@ import { RouteObject } from "react-router";
 // }
 export class RouterFactoryLegacy {
     Almacen = RouterFactoryAlmacenOlula;
-    Ventas = RouterFactoryVentasOlula;
+    Ventas = RouterFactoryVentasSanhigia;
     Auth = RouterFactoryAuthOlula;
     Comun = RouterFactoryComunOlula;
 }

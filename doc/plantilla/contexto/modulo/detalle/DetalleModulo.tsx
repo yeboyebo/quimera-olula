@@ -4,103 +4,106 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback } from "react";
-import { useParams } from "react-router";
+import { useCallback, useEffect } from "react";
 import { Modulo } from "../diseño.ts";
+import { BorrarModulo } from "../borrar/BorrarModulo.tsx";
 import "./DetalleModulo.css";
-import { metaModulo, moduloVacio } from "./dominio.ts";
+import { guardarModulo, metaModulo, moduloVacio } from "./dominio.ts";
 import { getMaquina } from "./maquina.ts";
 import { TabGeneral } from "./TabGeneral.tsx";
 import { TabInformacion } from "./TabInformacion.tsx";
 
 /**
- * Componente que muestra el detalle de un módulo con tabs
+ * Componente detalle.
+ *
+ * Recibe el ID como prop (string | undefined), no la entidad completa.
+ * La máquina carga la entidad cuando cambia el ID.
+ *
+ * Patrón auto-guardado:
+ *   useModelo(meta, entidad, onGuardado) → el tercer argumento es un callback
+ *   que se invoca cuando el modelo tiene cambios válidos y el usuario deja de editar.
+ *   Llama a la API y emite el evento de resultado a la máquina.
+ *
+ * Patrón modales condicionales:
+ *   Los modales se renderizan condicionalmente según ctx.estado.
+ *   No existe estado EDITANDO separado; el formulario siempre está activo
+ *   y se deshabilita si metaModulo.editable devuelve false.
  */
 export const DetalleModulo = ({
-  moduloInicial = null,
-  publicar = async () => {},
+    id,
+    publicar = async () => {},
 }: {
-  moduloInicial?: Modulo | null;
-  publicar?: EmitirEvento;
+    id?: string;
+    publicar?: EmitirEvento;
 }) => {
-  const params = useParams();
-  const moduloId = moduloInicial?.id ?? params.id;
+    const { ctx, emitir } = useMaquina(
+        getMaquina,
+        {
+            estado: "INICIAL",
+            modulo: moduloVacio(),
+        },
+        publicar
+    );
 
-  const { ctx, emitir } = useMaquina(
-    getMaquina,
-    {
-      estado: "INICIAL",
-      modulo: moduloInicial || moduloVacio(),
-      moduloInicial: moduloInicial || moduloVacio(),
-    },
-    publicar
-  );
+    // Auto-guardado: se llama cuando el modelo cambia y es válido
+    const autoGuardar = useCallback(
+        async (modulo: Modulo) => {
+            await guardarModulo(ctx, modulo);
+            await emitir("modulo_guardado");
+        },
+        [ctx, emitir]
+    );
 
-  const modulo = useModelo(metaModulo, ctx.modulo);
+    const modelo = useModelo(metaModulo, ctx.modulo, autoGuardar);
 
-  // Detectar cambio de ID de forma sincrónica (patrón simple)
-  if (moduloId && moduloId !== ctx?.modulo.id) {
-    emitir("modulo_id_cambiado", moduloId, true);
-  }
+    // Recargar cuando el ID cambia (o se deselecciona con undefined)
+    useEffect(() => {
+        emitir("modulo_id_cambiado", id, true);
+    }, [id]);
 
-  const { estado } = ctx;
-  const { modificado, valido } = modulo;
+    if (!ctx.modulo.id) return null;
 
-  const titulo = (m: Modulo) => m.nombre as string;
+    const titulo = (m: Modulo) => m.nombre as string;
 
-  const handleGuardar = useCallback(() => {
-    emitir("edicion_de_modulo_lista", ctx.modulo);
-  }, [emitir, ctx.modulo]);
-
-  const handleCancelar = useCallback(() => {
-    emitir("edicion_de_modulo_cancelada");
-  }, [emitir]);
-
-  if (!moduloInicial) return null;
-
-  return (
-    <div className="DetalleModulo">
-      <Detalle
-        id={moduloId}
-        obtenerTitulo={titulo}
-        setEntidad={() => {}}
-        entidad={ctx.modulo}
-        cerrarDetalle={() => emitir("modulo_deseleccionado", null)}
-      >
-        {!!moduloId && (
-          <div className="DetalleModulo">
-            <div className="maestro-botones">
-              <QBoton onClick={() => emitir("borrado_solicitado")}>
-                Borrar
-              </QBoton>
+    return (
+        <Detalle
+            id={id}
+            obtenerTitulo={titulo}
+            setEntidad={() => {}}
+            entidad={ctx.modulo}
+            cerrarDetalle={() => emitir("modulo_deseleccionado", null, true)}
+        >
+            <div className="DetalleModulo">
+                <div className="maestro-botones">
+                    <QBoton onClick={() => emitir("borrado_solicitado")}>
+                        Borrar
+                    </QBoton>
+                </div>
+                <Tabs
+                    children={[
+                        <Tab
+                            key="tab-general"
+                            label="General"
+                            children={<TabGeneral form={modelo} />}
+                        />,
+                        <Tab
+                            key="tab-info"
+                            label="Información"
+                            children={<TabInformacion modulo={ctx.modulo} />}
+                        />,
+                    ]}
+                />
             </div>
-            <Tabs
-              children={[
-                <Tab
-                  key="tab-1"
-                  label="General"
-                  children={<TabGeneral form={modulo} />}
-                />,
-                <Tab
-                  key="tab-2"
-                  label="Información"
-                  children={<TabInformacion modulo={ctx.modulo} />}
-                />,
-              ]}
-            />
-            <div className="detalle-botones">
-              {modificado && (
-                <>
-                  <QBoton onClick={handleGuardar} deshabilitado={!valido}>
-                    Guardar
-                  </QBoton>
-                  <QBoton onClick={handleCancelar}>Cancelar</QBoton>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </Detalle>
-    </div>
-  );
+
+            {/* Modales condicionales: se activan según el estado de la máquina */}
+            {ctx.estado === "BORRANDO" && (
+                <BorrarModulo
+                    moduloId={ctx.modulo.id}
+                    moduloNombre={ctx.modulo.nombre}
+                    publicar={emitir}
+                    onCancelar={() => emitir("borrado_cancelado")}
+                />
+            )}
+        </Detalle>
+    );
 };

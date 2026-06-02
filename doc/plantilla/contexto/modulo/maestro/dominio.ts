@@ -1,5 +1,5 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.ts";
-import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Modulo, NuevoModulo } from "../diseño.ts";
 import { getModulo, getModulos, postModulo } from "../infraestructura.ts";
 import { ContextoMaestroModulo, EstadoMaestroModulo } from "./diseño.ts";
@@ -10,16 +10,17 @@ import { ContextoMaestroModulo, EstadoMaestroModulo } from "./diseño.ts";
 type ProcesarMaestro = ProcesarContexto<EstadoMaestroModulo, ContextoMaestroModulo>;
 
 /**
- * Patrón: usar accionesListaEntidades para reducir código
- * Automáticamente genera: cambiar, activar, desactivar, incluir, quitar, recargar
+ * Patrón: usar accionesListaActivaEntidades para reducir código.
+ * Genera automáticamente: cambiar, activar, desactivar, incluir, quitar,
+ * recargar, ampliar (paginación incremental), filtrar (cambio de criteria).
  */
-const conModulos = (fn: ProcesarListaEntidades<Modulo>) =>
+const conModulos = (fn: ProcesarListaActivaEntidades<Modulo>) =>
     (ctx: ContextoMaestroModulo) => ({ ...ctx, modulos: fn(ctx.modulos) });
 
-export const Modulos = accionesListaEntidades(conModulos);
+export const Modulos = accionesListaActivaEntidades(conModulos);
 
 /**
- * Recargar lista desde API
+ * Recargar lista desde API (reemplaza la lista entera)
  */
 export const recargarModulos: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
@@ -28,7 +29,17 @@ export const recargarModulos: ProcesarMaestro = async (contexto, payload) => {
 };
 
 /**
- * Crear nuevo módulo
+ * Ampliar lista (paginación incremental: añade elementos a los existentes)
+ * Se usa con el evento "siguiente_pagina"
+ */
+export const ampliarModulos: ProcesarMaestro = async (contexto, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getModulos(criteria.filtro, criteria.orden, criteria.paginacion);
+    return Modulos.ampliar(contexto, resultado);
+};
+
+/**
+ * Crear nuevo módulo y activarlo inmediatamente
  */
 export const crearModuloProceso: ProcesarMaestro = async (contexto, payload) => {
     const nuevoModulo = payload as NuevoModulo;
@@ -40,8 +51,7 @@ export const crearModuloProceso: ProcesarMaestro = async (contexto, payload) => 
         ...resultado,
         modulos: {
             ...resultado.modulos,
-            activo: modulo,
+            activo: modulo.id,  // activo es el ID (string), no la entidad
         },
-        estado: 'INICIAL' as EstadoMaestroModulo,
     };
 };

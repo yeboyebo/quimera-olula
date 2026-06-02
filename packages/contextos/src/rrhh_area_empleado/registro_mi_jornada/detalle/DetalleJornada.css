@@ -1,0 +1,21 @@
+.DetalleJornada quimera-formulario {
+    quimera-input[nombre="horaEntrada"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="horaSalida"] {
+        grid-column: span 4;
+    }
+
+    div#minutosJornada {
+        grid-column: span 4;
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: var(--espaciado-s);
+        font-weight: 500;
+    }
+
+    quimera-input[nombre="observaciones"] {
+        grid-column: 1 / span 12;
+    }
+}

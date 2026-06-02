@@ -92,13 +92,13 @@ function Container({ useStyles }) {
     <Quimera.Template id="Container">
       {authenticated ? (
         <>
-          <Box padding="1em">
+          <Box sx={{ padding: '1em', display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
             {/* <Box id="HeaderContainer" height={`${headerHeight}px`}>
               <Quimera.View id="Header" />
               <Quimera.View id="Dialog" />
             </Box> */}
             <Quimera.SubView id="HeaderContainer" />
-            <Box id="ViewContainer">{routeResult || <Quimera.View id="PageNotFound" />}</Box>
+            <Box id="ViewContainer" sx={{ flexGrow: 1, overflowY: 'auto' }}>{routeResult || <Quimera.View id="PageNotFound" />}</Box>
             <Box height="0%">
               <Quimera.View id="Footer" />
             </Box>

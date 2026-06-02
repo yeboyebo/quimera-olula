@@ -1,3 +1,50 @@
+import {
+  IconArrowBack,
+  IconArrowBarRight,
+  IconCalendar,
+  IconChartBar,
+  IconCheck,
+  IconCheckbox,
+  IconChecks,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronUp,
+  IconCircle,
+  IconCircleFilled,
+  IconCirclePlus,
+  IconCircleX,
+  IconCopy,
+  IconCreditCard,
+  IconDeviceFloppy,
+  IconEdit,
+  IconEye,
+  IconFile,
+  IconHome,
+  IconHourglass,
+  IconList,
+  IconLock,
+  IconLockOpen,
+  IconLogout,
+  IconMail,
+  IconMenu2,
+  IconMinus,
+  IconPencil,
+  IconPhone,
+  IconPlus,
+  IconQuestionMark,
+  IconSearch,
+  IconShoppingCart,
+  IconStar,
+  IconTable,
+  IconTag,
+  IconTool,
+  IconTrash,
+  IconUser,
+  IconUsersGroup,
+  IconX,
+  type Icon,
+} from "@tabler/icons-react";
 import "./qicono.css";
 
 type QIconoProps = {
@@ -5,63 +52,66 @@ type QIconoProps = {
   tamaño?: "xs" | "sm" | "md" | "lg" | "xl";
   color?: string;
   style?: React.CSSProperties;
-  props?: React.HTMLAttributes<HTMLDivElement>;
 };
 
-type Icono = {
-  nombre: string;
-  tipo?: "solid" | "regular" | "logo";
+const tamaños: Record<string, number> = {
+  xs: 12,
+  sm: 16,
+  md: 20,
+  lg: 28,
+  xl: 40,
 };
 
-// https://v2.boxicons.com/
-const iconos: Record<string, string | Icono> = {
-  añadir: "plus-circle",
-  buscar: "search-alt-2",
-  cerrar: "x",
-  inicio: "home",
-  fichero: "file",
-  grafico_barras: "bar-chart-alt-2",
-  candado: "lock-alt",
-  candado_abierto: "lock-open-alt",
-  editar: "edit",
-  editar_2: "edit-alt",
-  eliminar: "trash",
-  guardar: "save",
-  copiar: "copy",
-  usuario: "user",
-  perfil: "user",
-  cerrar_sesion: "arrow-out-up-square-half",
-  verdadero: "check",
-  falso: "x",
-  atras: "chevron-left",
-  adelante: "chevron-right",
-  menu: "menu",
-  calendario_vacio: "calendar-alt",
-  check: "check",
-  checkdoble: "check-double",
-  x_circle: "x-circle",
-  minus: "minus",
-  lista: "list-ul",
-  carrito: "cart",
-  tarjeta: "credit-card",
-  etiqueta_compra: "purchase-tag-alt",
-  llave_inglesa: "wrench",
-  ver: "show",
-  crear: "plus",
-  tabla: "table",
-  arriba: "chevron-up",
-  abajo: "chevron-down",
-  izquierda: "chevron-left",
-  derecha: "chevron-right",
-  circulo: { nombre: "circle", tipo: "regular" },
-  circulo_relleno: { nombre: "circle", tipo: "solid" },
-  telefono: "phone",
-  correo: "envelope",
-  casa: "home",
-  tarea: "task",
-  llaveinglesa: "wrench",
-  estrella: "star",
-  relojarena: "hourglass",
+// https://tabler.io/icons
+const iconos: Record<string, Icon> = {
+  añadir: IconCirclePlus,
+  buscar: IconSearch,
+  cerrar: IconX,
+  inicio: IconHome,
+  fichero: IconFile,
+  grafico_barras: IconChartBar,
+  candado: IconLock,
+  candado_abierto: IconLockOpen,
+  editar: IconEdit,
+  editar_2: IconPencil,
+  eliminar: IconTrash,
+  guardar: IconDeviceFloppy,
+  copiar: IconCopy,
+  usuario: IconUser,
+  perfil: IconUser,
+  grupo: IconUsersGroup,
+  cerrar_sesion: IconLogout,
+  verdadero: IconCheck,
+  falso: IconX,
+  atras: IconArrowBack,
+  adelante: IconArrowBarRight,
+  menu: IconMenu2,
+  calendario_vacio: IconCalendar,
+  check: IconCheck,
+  checkdoble: IconChecks,
+  x_circle: IconCircleX,
+  minus: IconMinus,
+  lista: IconList,
+  carrito: IconShoppingCart,
+  tarjeta: IconCreditCard,
+  etiqueta_compra: IconTag,
+  llave_inglesa: IconTool,
+  llaveinglesa: IconTool,
+  ver: IconEye,
+  crear: IconPlus,
+  tabla: IconTable,
+  arriba: IconChevronUp,
+  abajo: IconChevronDown,
+  izquierda: IconChevronLeft,
+  derecha: IconChevronRight,
+  circulo: IconCircle,
+  circulo_relleno: IconCircleFilled,
+  telefono: IconPhone,
+  correo: IconMail,
+  casa: IconHome,
+  tarea: IconCheckbox,
+  estrella: IconStar,
+  relojarena: IconHourglass,
 };
 
 export const QIcono = ({
@@ -69,32 +119,13 @@ export const QIcono = ({
   tamaño = "md",
   color,
   style,
-  ...props
 }: QIconoProps) => {
-  let nombreIcono, tipo;
-  if (typeof iconos[nombre] === "undefined") {
-    nombreIcono = nombre;
-    tipo = undefined;
-  } else {
-    if (typeof iconos[nombre] === "object") {
-      nombreIcono = iconos[nombre].nombre;
-      tipo = iconos[nombre].tipo;
-    } else {
-      nombreIcono = iconos[nombre];
-      tipo = undefined;
-    }
-  }
+  const Icono = iconos[nombre] ?? IconQuestionMark;
+  const size = tamaños[tamaño] ?? 20;
 
   return (
     <quimera-icono>
-      <box-icon
-        name={nombreIcono}
-        size={tamaño}
-        color={color}
-        style={style}
-        type={tipo}
-        {...props}
-      ></box-icon>
+      <Icono size={size} color={color} style={style} />
     </quimera-icono>
   );
 };

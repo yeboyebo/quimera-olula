@@ -3,11 +3,13 @@ import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
 import { FondoInicio } from '@olula/lib/FondoInicio.tsx';
 import { crearRouter } from '@olula/lib/router.ts';
 import { RouteObject } from 'react-router';
+import { RouterFactoryAlmacenNad } from './contextos/almacen/router_factory.ts';
 
 export class RouterFactoryNadia {
     Inicio = { router: { "": FondoInicio } };
     Auth = RouterFactoryAuthOlula;
     Tpv = RouterFactoryTpvOlula;
+    Almacen = RouterFactoryAlmacenNad;
 }
 
 export const router = crearRouter(new RouterFactoryNadia() as unknown as Record<string, { router: RouteObject }>);

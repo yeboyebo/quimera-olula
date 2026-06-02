@@ -12,7 +12,8 @@ menu-lateral {
         background: var(--color-fondo-header);
         height: 100%;
         padding: 0 1rem;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
 
         #buscador {
             display: flex;

@@ -2,6 +2,7 @@ import { RouterFactoryAlmacenOlula } from '#/almacen/router_factory.ts';
 import { RouterFactoryAuthOlula } from '#/auth/router_factory.ts';
 import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
 import { RouterFactoryCrmOlula } from '#/crm/router_factory.ts';
+import { RouterFactoryRrhh } from '#/rrhh/router_factory.ts';
 import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
 import { RouterFactoryVentasOlula } from '#/ventas/router_factory.ts';
 import { Historias } from '@olula/componentes/index.ts';
@@ -18,6 +19,7 @@ export class RouterFactoryOlula {
     Crm = RouterFactoryCrmOlula;
     Tpv = RouterFactoryTpvOlula;
     Comun = RouterFactoryComunOlula;
+    Rrhh = RouterFactoryRrhh;
     Otros = {
         router: {
             "docs/componentes": Historias,

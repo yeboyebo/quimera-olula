@@ -1,24 +1,34 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Modulo } from "../diseño.ts";
-import { render } from "sass";
 
 /**
  * Estados posibles del maestro
  */
-export type EstadoMaestroModulo = 'INICIAL' | 'CREANDO_MODULO';
+export type EstadoMaestroModulo = 'INICIAL';
 
 /**
  * Contexto del maestro (listado de módulos)
+ *
+ * Usa ListaActivaEntidades (no ListaEntidades) para soportar:
+ *   - paginación incremental (ampliar)
+ *   - cambio de criteria (filtrar)
+ *   - activo: string | undefined  → solo guarda el ID, no la entidad
+ *   - criteria: Criteria           → guarda filtros/orden/paginación actuales
  */
 export type ContextoMaestroModulo = {
     estado: EstadoMaestroModulo;
-    modulos: ListaEntidades<Modulo>; // ← ListaEntidades tiene: lista[], total, activo
+    modulos: ListaActivaEntidades<Modulo>;
 };
 
 /**
- * Metadatos para renderizar la tabla
- * Define qué columnas mostrar y cómo
+ * Metadatos para renderizar la tabla.
+ *
+ * Opciones de columna:
+ *   - Sin nada extra     → renderiza el valor tal cual
+ *   - tipo: "fecha"      → formatea como fecha
+ *   - tipo: "moneda"     → formatea como moneda con divisa
+ *   - render: (m) => ... → render personalizado; si usa JSX mover metaTabla a un .tsx
  */
 export const metaTablaModulo: MetaTabla<Modulo> = [
     { id: 'id', cabecera: 'ID' },
@@ -27,16 +37,11 @@ export const metaTablaModulo: MetaTabla<Modulo> = [
     {
         id: 'estado',
         cabecera: 'Estado',
-        render: (m: Modulo) => (
-            <span className= {`estado-${m.estado}`
-    } >
-    { m.estado }
-    </span>
-        ),
+        render: (m: Modulo) => m.estado.toUpperCase(),
     },
-{
-    id: 'fecha_creacion',
+    {
+        id: 'fecha_creacion',
         cabecera: 'Creado',
-            render: (m: Modulo) => m.fecha_creacion.toLocaleDateString(),
+        tipo: 'fecha',
     },
 ];
