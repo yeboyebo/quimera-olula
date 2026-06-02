@@ -1,5 +1,5 @@
+import { ElementoMenu } from "@olula/lib/menu.ts";
 import { createContext, PropsWithChildren, useState } from "react";
-import { ElementoMenu } from "./menu.ts";
 
 type APP = Record<string, Record<string, unknown>>;
 type Menu = ElementoMenu[];

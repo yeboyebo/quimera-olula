@@ -43,6 +43,7 @@ import {
   IconTool,
   IconTrash,
   IconUser,
+  IconUsersGroup,
   IconX,
   type Icon,
 } from "@tabler/icons-react";
@@ -80,6 +81,7 @@ const iconos: Record<string, Icon> = {
   copiar: IconCopy,
   usuario: IconUser,
   perfil: IconUser,
+  grupo: IconUsersGroup,
   cerrar_sesion: IconLogout,
   verdadero: IconCheck,
   falso: IconX,
