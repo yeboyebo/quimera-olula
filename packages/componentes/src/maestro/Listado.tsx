@@ -1,6 +1,9 @@
 import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
+import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { useState } from "react";
+import { QBoton } from "../atomos/qboton.tsx";
 import { QIcono } from "../atomos/qicono.tsx";
 import { MetaTabla } from "../atomos/qtabla.tsx";
 import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
@@ -27,6 +30,8 @@ const datosCargando = <T extends Entidad>() =>
 
 type Modo = "tabla" | "tarjetas";
 
+export type FormatoDescarga = { valor: string; etiqueta: string };
+
 type ListadoProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
   metaFiltro?: MetaFiltro;
@@ -47,6 +52,8 @@ type ListadoProps<T extends Entidad> = {
   onModoMultiseleccionChanged?: (modo: boolean) => void;
   seleccionadas?: string[];
   onMultiSeleccion?: (seleccionadas: string[]) => void;
+  urlDescarga?: string;
+  formatosDescarga?: FormatoDescarga[];
 };
 
 export const Listado = <T extends Entidad>({
@@ -69,6 +76,8 @@ export const Listado = <T extends Entidad>({
   onModoMultiseleccionChanged,
   seleccionadas,
   onMultiSeleccion,
+  urlDescarga,
+  formatosDescarga,
 }: ListadoProps<T>) => {
   const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tarjetas");
   const modoInterno = modo ?? modoEstado;
@@ -78,6 +87,31 @@ export const Listado = <T extends Entidad>({
 
   const [seleccionadasEstado, setSeleccionadasEstado] = useState<string[]>([]);
   const seleccionadasInternas = seleccionadas ?? seleccionadasEstado;
+
+  const [formatoSeleccionado, setFormatoSeleccionado] = useState(
+    formatosDescarga?.[0]?.valor ?? ""
+  );
+  const [descargando, setDescargando] = useState(false);
+
+  const handleDescarga = async () => {
+    if (!urlDescarga || !formatoSeleccionado) return;
+    setDescargando(true);
+    try {
+      const qs = criteriaQueryUrl(criteria.filtro, criteria.orden);
+      const url = qs
+        ? `${urlDescarga}${qs}&formato=${formatoSeleccionado}`
+        : `${urlDescarga}?formato=${formatoSeleccionado}`;
+      const blob = await RestAPI.blob(url);
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `exportacion.${formatoSeleccionado}`;
+      link.click();
+      URL.revokeObjectURL(downloadUrl);
+    } finally {
+      setDescargando(false);
+    }
+  };
 
   const toggleSeleccion = (id: string) => {
     const nuevas = seleccionadasInternas.includes(id)
@@ -221,6 +255,27 @@ export const Listado = <T extends Entidad>({
               });
             }}
           />
+          {urlDescarga && formatosDescarga && formatosDescarga.length > 0 && (
+            <div className="listado-descarga">
+              {formatosDescarga.length > 1 && (
+                <select
+                  value={formatoSeleccionado}
+                  onChange={(e) => setFormatoSeleccionado(e.target.value)}
+                >
+                  {formatosDescarga.map((f) => (
+                    <option key={f.valor} value={f.valor}>{f.etiqueta}</option>
+                  ))}
+                </select>
+              )}
+              <QBoton
+                tamaño="pequeño"
+                deshabilitado={descargando}
+                onClick={handleDescarga}
+              >
+                {descargando ? "Exportando…" : "Exportar"}
+              </QBoton>
+            </div>
+          )}
         </div>
 
         <div className="listado-cabecera-derecha">

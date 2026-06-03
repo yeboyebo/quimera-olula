@@ -1,3 +1,4 @@
+import { OlulaWordmark } from "@olula/componentes/tema/Olula.jsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
 import { Link } from "react-router";
@@ -11,6 +12,7 @@ export type CabeceraProps = {
   logoSrc?: string;
   logoAlt?: string;
   logoClassName?: string;
+  Logo?: () => React.ReactNode;
   Titulo?: () => React.ReactNode;
   NotificacionesCabecera?: () => React.ReactNode;
   AccionesCabecera?: () => React.ReactNode;
@@ -19,8 +21,15 @@ export type CabeceraProps = {
 };
 
 export const CabeceraBase = ({
-  logoSrc = "/olula_header_blanco.png",
+  logoSrc = "/olula-wordmark.svg",
   logoAlt = "Olula | Inicio",
+  Logo = () =>
+    OlulaWordmark({
+      color: "#ffffff",
+      bowlColor: "#ffffff",
+      className: "logo-app",
+      style: {},
+    }),
   Titulo,
   NotificacionesCabecera: Notificaciones,
   AccionesCabecera,
@@ -41,7 +50,11 @@ export const CabeceraBase = ({
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          <img src={logoSrc} alt={logoAlt} className="logo-app" />
+          {Logo ? (
+            <Logo />
+          ) : (
+            <img src={logoSrc} alt={logoAlt} className="logo-app" />
+          )}
         </Link>
         {ExtraLogo ? <ExtraLogo /> : null}
         <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
@@ -88,13 +101,13 @@ export const Cabecera = (props: CabeceraProps) => {
     ?.cabecera_menu_usuario as () => React.ReactNode;
   const ExtraLogo = app.Componentes
     ?.cabecera_extra_logo as () => React.ReactNode;
-
   const cProps: CabeceraProps = {
     ...props,
     NotificacionesCabecera:
       NotificacionesCabeceraCustom ||
       props.NotificacionesCabecera ||
       NotificacionesCabecera,
+    // Logo: Logo || props.Logo,
     AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
     MenuUsuario: MenuUsuario || props.MenuUsuario,
     ExtraLogo: ExtraLogo || props.ExtraLogo,

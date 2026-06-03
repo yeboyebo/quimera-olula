@@ -31,6 +31,8 @@ import {
   IconMinus,
   IconPencil,
   IconPhone,
+  IconPlayerPause,
+  IconPlayerPauseFilled,
   IconPlus,
   IconQuestionMark,
   IconSearch,
@@ -112,6 +114,8 @@ const iconos: Record<string, Icon> = {
   tarea: IconCheckbox,
   estrella: IconStar,
   relojarena: IconHourglass,
+  pausa: IconPlayerPause,
+  pausa_relleno: IconPlayerPauseFilled,
 };
 
 export const QIcono = ({

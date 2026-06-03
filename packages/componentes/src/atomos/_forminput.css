@@ -214,4 +214,10 @@ quimera-input {
             text-align: right;
         }
     }
+
+    &[tipo='hora'],
+    &[tipo='fecha'],
+    &[tipo='fecha_hora'] {
+        width: fit-content;
+    }
 }

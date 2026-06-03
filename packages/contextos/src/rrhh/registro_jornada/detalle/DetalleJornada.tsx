@@ -11,6 +11,7 @@ import { AprobarJornada } from "../aprobar/AprobarJornada.tsx";
 import { minutosAHorasMinutos } from "../dominio.ts";
 import { patchJornada } from "../infraestructura.ts";
 import { PausasJornada } from "../pausas/PausasJornada.tsx";
+import "./DetalleJornada.css";
 import { ContextoDetalleJornada, jornadaVacia, metaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
@@ -76,9 +77,12 @@ export const DetalleJornada = ({
                         label="Hora de salida"
                         {...uiProps("horaSalida")}
                     />
-                    <div id='minutosJornada' >
-                        {minutosAHorasMinutos(jornada.minutosJornada)}
-                    </div>
+                    <QInput
+                        label="Duración"
+                        nombre="minutosJornada"
+                        valor={minutosAHorasMinutos(jornada.minutosJornada)}
+                        soloTexto
+                    />
                     <QInput
                         label="Observaciones"
                         {...uiProps("observaciones")}

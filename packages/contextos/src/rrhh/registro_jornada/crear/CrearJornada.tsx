@@ -1,3 +1,4 @@
+import { Empleado } from "#/rrhh/comun/componentes/Empleado.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
@@ -39,7 +40,7 @@ export const CrearJornada = ({
             onCerrar={cancelar}
         >
             <quimera-formulario>
-                <QInput label="Empleado" {...uiProps("empleadoId")} />
+                <Empleado label="Empleado" {...uiProps("empleadoId", "nombre")} />
                 <QInput label="Fecha" {...uiProps("fecha")} />
                 <QInput label="Hora de entrada" {...uiProps("horaEntrada")} />
                 <QInput label="Hora de salida" {...uiProps("horaSalida")} />

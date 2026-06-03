@@ -7,6 +7,7 @@ import { crearMenu, MenuContextFactory } from "@olula/lib/menu.ts";
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
+import { InicioOlula } from "@olula/componentes/index.ts";
 import { FactoryOlula } from "./factory.ts";
 import { router } from "./router_factory.ts";
 
@@ -36,7 +37,12 @@ const App = () => {
     );
   }, []);
 
-  return <RouterProvider router={rutas} />;
+  return (
+    <>
+      <RouterProvider router={rutas} />
+      <InicioOlula />
+    </>
+  );
 };
 
 root.render(
