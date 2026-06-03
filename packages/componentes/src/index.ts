@@ -2,6 +2,7 @@ export * from "./atomos/qavatar.tsx";
 export * from "./atomos/qboton.tsx";
 export * from "./atomos/qcheckbox.tsx";
 export * from "./atomos/qdate.tsx";
+export * from "./atomos/qfechahora.tsx";
 export * from "./atomos/qform.tsx";
 export * from "./atomos/qicono.tsx";
 export * from "./atomos/qinput.tsx";
@@ -33,6 +34,7 @@ export * from "./maestro/MaestroDetalle.tsx";
 
 export * from "./historias/historias.tsx";
 export * from "./plantilla/Cabecera.tsx";
+export * from "./plantilla/InicioOlula.tsx";
 export * from "./plantilla/Plantilla.tsx";
 export * from "./SinDatos/SinDatos.tsx";
 export * from "./slot/Slot.tsx";

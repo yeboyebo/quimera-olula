@@ -273,19 +273,19 @@ export default {
     "Dashboard:visit": (check: (rule: string) => boolean) => check("crm.trato"),
     "OnlyAdmin:visit": false,
     "ss_campanias:visit": (check: (rule: string) => boolean) => check("ss_campanias.leer"),
-    "ss_informes:visit": (check: (rule: string) => boolean) => check("crm.informes"),
+    "ss_informes:visit": (check: (rule: string) => boolean) => check("crm.informe"),
     "Trato:boton-borrar": (check: (rule: string) => boolean) => check("crm.trato.borrar"),
-    "TratosFarma:visit": (check: (rule: string) => boolean) => check("crm.farma.acceso_tratos"),
+    "TratosFarma:visit": (check: (rule: string) => boolean) => check("crm.trato.farma"),
     "ss_informes:marketing": (check: (rule: string) => boolean) => check("crm.informe.marketing"),
     "ss_informes:todoslosagentes": (check: (rule: string) => boolean) =>
       check("crm.informe.todos"),
     "clientes:acceso": (check: (rule: string) => boolean) => check("ventas.cliente.leer"),
     "lead_pacientes:visit": (check: (rule: string) => boolean) =>
-      check("crm.campana_lead_pacientes"),
+      check("crm.campana.lead_pacientes"),
     "articulos:acceso_caducidad": (check: (rule: string) => boolean) =>
       check("almacen.articulo.leer_caducidad"),
     "contactos:revisar_contacto": (check: (rule: string) => boolean) =>
-      check("crm.contacto.cambiar"),
+      check("crm.contacto.revisar_contacto"),
   },
   schemas,
 };

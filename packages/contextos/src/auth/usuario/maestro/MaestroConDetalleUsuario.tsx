@@ -16,7 +16,7 @@ import { getMaquina } from "./maquina.ts";
 
 const criteriaBaseUsuarios = {
   ...criteriaDefecto,
-  orden: ["id", "ASC"],
+  orden: ["nombre", "ASC"],
 };
 
 export const MaestroConDetalleUsuario = () => {
@@ -62,7 +62,8 @@ export const MaestroConDetalleUsuario = () => {
   }, [id, ctx.usuarios.lista]);
 
   useEffect(() => {
-    emitir("recarga_de_usuarios_solicitada", criteriaActual);
+    setCriteriaActual(criteriaBaseUsuarios);
+    emitir("recarga_de_usuarios_solicitada", criteriaBaseUsuarios);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

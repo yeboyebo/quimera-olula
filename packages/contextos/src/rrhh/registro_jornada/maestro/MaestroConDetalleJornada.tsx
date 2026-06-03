@@ -1,8 +1,9 @@
+import { Empleado } from "#/rrhh/comun/componentes/Empleado.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { filtroMesAnyo, getMetaFiltroDefecto, MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { filtroMesAnyo, MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { TipoInput } from "@olula/lib/diseño.ts";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -12,6 +13,7 @@ import { DetalleJornada } from "../detalle/DetalleJornada.tsx";
 import { RegistroJornada } from "../diseño.ts";
 import { minutosAHorasMinutos } from "../dominio.ts";
 import { AprobarJornadas } from "./AprobarJornadas.tsx";
+import { RevisarFirmaJornadas } from "./RevisarFirmaJornadas.tsx";
 import { ContextoMaestroJornadas, metaTablaJornada } from "./diseño.ts";
 import { todasPuedenAprobarse } from "./dominio.ts";
 import { getMaquina } from "./maquina.ts";
@@ -67,10 +69,19 @@ export const MaestroConDetalleJornada = () => {
                                             Aprobar ({ctx.seleccionadas.length})
                                         </QBoton>
                                     )}
+                                    <QBoton onClick={() => emitir("revision_de_firma_solicitada")}>
+                                        Verificar firmas
+                                    </QBoton>
                                 </div>
                             )}
                             onSeleccion={(payload) => emitir("jornada_seleccionada", payload)}
                             onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+                            urlDescarga="/rrhh/jornada/exportar"
+                            formatosDescarga={[
+                                { valor: "xlsx", etiqueta: "Excel" },
+                                { valor: "csv", etiqueta: "CSV" },
+                                { valor: "html", etiqueta: "HTML" },
+                            ]}
                         />
                     </>
                 }
@@ -86,12 +97,16 @@ export const MaestroConDetalleJornada = () => {
             {estado === "APROBANDO_JORNADAS" && (
                 <AprobarJornadas publicar={emitir} cantidad={ctx.seleccionadas.length} />
             )}
+
+            {estado === "REVISANDO_JORNADAS" && (
+                <RevisarFirmaJornadas publicar={emitir} />
+            )}
         </div>
     );
 };
 
 const metaFiltro: MetaFiltro = {
-    ...getMetaFiltroDefecto(metaTablaJornada),
+    // ...getMetaFiltroDefecto(metaTablaJornada),
     fecha: {
         id: "fecha",
         label: "Mes",
@@ -109,5 +124,11 @@ const metaFiltro: MetaFiltro = {
         campo: "empleado_id",
         label: "Empleado",
         filtro: (v) => (v ? ["empleado_id", "=", v as string] : null),
+        render: (valor, onChange) => (
+            <Empleado
+                valor={(valor as string) ?? ""}
+                onChange={(opcion) => onChange(opcion?.valor ?? "")}
+            />
+        ),
     },
 }

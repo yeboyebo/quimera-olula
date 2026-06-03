@@ -29,6 +29,7 @@ interface PausaJornadaApi {
 interface RegistroJornadaApi {
     id: string;
     empleado_id: string;
+    empleado: string;
     fecha: string;
     hora_entrada: string | null;
     hora_salida: string | null;
@@ -51,6 +52,7 @@ const pausaDesdeApi = (p: PausaJornadaApi): PausaJornada => ({
 export const registroJornadaDesdeApi = (j: RegistroJornadaApi): RegistroJornada => ({
     id: j.id,
     empleadoId: j.empleado_id,
+    empleado: j.empleado,
     fecha: new Date(j.fecha),
     horaEntrada: j.hora_entrada,
     horaSalida: j.hora_salida,

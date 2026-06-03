@@ -21,15 +21,16 @@ const metaTablaGrupos = [
 
 const criteriaBaseGrupos: Criteria = {
   ...criteriaDefecto,
-  orden: ["id", "ASC"],
+  orden: ["nombre", "ASC"],
 };
 
 export const MaestroConDetalleGruposReglas = () => {
   const { id, criteria } = getUrlParams();
-  // Usar criterio base con orden ASC, mergeando criterios de URL si existen
-  const criteriaInicial: Criteria = criteria?.orden?.length
-    ? { ...criteriaBaseGrupos, ...criteria }
-    : criteriaBaseGrupos;
+  const criteriaInicial: Criteria = {
+    ...criteriaBaseGrupos,
+    ...criteria,
+    orden: criteria?.orden?.length ? criteria.orden : criteriaBaseGrupos.orden,
+  };
 
   const { ctx, emitir } = useMaquina<EstadoMaestroGrupo, ContextoMaestroGrupo>(
     getMaquina,
@@ -42,8 +43,9 @@ export const MaestroConDetalleGruposReglas = () => {
   useUrlParams(ctx.grupos.activo, ctx.grupos.criteria);
 
   useEffect(() => {
-    // Forzar orden ASC al cargar: emitir criteriaBaseGrupos para primer load
-    emitir("recarga_de_grupos_solicitada", criteriaBaseGrupos);
+    // Forzar orden ASC al cargar: criteria_cambiado actualiza ctx.grupos.criteria además de recargar
+    // emitir("recarga_de_grupos_solicitada", criteriaBaseGrupos);
+    emitir("criteria_cambiado", criteriaBaseGrupos);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

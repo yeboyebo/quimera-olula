@@ -40,6 +40,8 @@ import {
   IconPackageImport,
   IconPencil,
   IconPhone,
+  IconPlayerPause,
+  IconPlayerPauseFilled,
   IconPlus,
   IconQuestionMark,
   IconSearch,
@@ -93,6 +95,7 @@ const iconos: Record<string, Icon> = {
   copiar: IconCopy,
   usuario: IconUser,
   perfil: IconUser,
+  grupo: IconUsersGroup,
   cerrar_sesion: IconLogout,
   verdadero: IconCheck,
   falso: IconX,
@@ -133,13 +136,14 @@ const iconos: Record<string, Icon> = {
   paquete: IconPackage,
   paquete_import: IconPackageImport,
   paquete_export: IconPackageExport,
-  grupo: IconUsersGroup,
   usuario_circle: IconUserCircle,
   usuario_search: IconUserSearch,
   lista_detalle: IconListDetails,
   clock_3: IconClockHour3,
   tienda: IconBuildingStore,
   usuarios: IconUsers,
+  pausa: IconPlayerPause,
+  pausa_relleno: IconPlayerPauseFilled,
 };
 
 export const QIcono = ({
