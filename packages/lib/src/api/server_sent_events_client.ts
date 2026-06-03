@@ -7,6 +7,9 @@ type SseOptions = {
     getHeaders?: () => Record<string, string> | undefined;
 };
 
+const SSE_RETRY_BASE_MS = 30000;
+const SSE_RETRY_JITTER_MS = 5000;
+
 const normalizeEventType = (eventType?: string) => {
     const normalized = (eventType || "message").trim();
     return normalized || "message";
@@ -101,7 +104,9 @@ export class ServerSentEventsClient {
                 if (this.refs <= 0 || abortController.signal.aborted) {
                     throw new Error("SSE connection stopped");
                 }
-                // Otherwise let fetch-event-source retry with built-in backoff.
+
+                // Slow down retries when server/network is unavailable.
+                return SSE_RETRY_BASE_MS + Math.floor(Math.random() * SSE_RETRY_JITTER_MS);
             },
         }).catch(() => {
             // Errors are handled by onerror/onopen above.
