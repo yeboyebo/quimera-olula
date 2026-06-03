@@ -14,9 +14,9 @@ export const registrarPasskey = async (email: string): Promise<void> => {
 };
 
 export const autenticarConPasskey = async (): Promise<{ tokenAcceso: string; tokenRefresco: string }> => {
-    const opciones = await iniciarAutenticacionAPI();
-    const resultado = await startAuthentication({ optionsJSON: opciones as never });
-    const datosLogin = await finalizarAutenticacionAPI(JSON.stringify(resultado));
+    const { session_id, ...opcionesWebauthn } = await iniciarAutenticacionAPI();
+    const resultado = await startAuthentication({ optionsJSON: opcionesWebauthn as never });
+    const datosLogin = await finalizarAutenticacionAPI(JSON.stringify(resultado), session_id);
 
     tokenAcceso.actualizar(datosLogin.tokenAcceso);
     tokenRefresco.actualizar(datosLogin.tokenRefresco);

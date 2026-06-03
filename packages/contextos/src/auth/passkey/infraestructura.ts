@@ -1,6 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { UsuarioLogin } from "../login/diseño.ts";
-import { FinalizarAutenticacion, FinalizarRegistro, IniciarAutenticacion, IniciarRegistro } from "./diseño.ts";
+import { FinalizarAutenticacion, FinalizarRegistro, IniciarAutenticacion, IniciarRegistro, RespuestaIniciarAutenticacion } from "./diseño.ts";
 
 const baseUrl = "/auth/passkey";
 
@@ -15,14 +15,16 @@ export const finalizarRegistroAPI: FinalizarRegistro = (credential: string) =>
         .then(() => undefined);
 
 export const iniciarAutenticacionAPI: IniciarAutenticacion = () =>
-    RestAPI.post(`${baseUrl}/autenticacion/iniciar`, {}) as Promise<unknown>;
+    RestAPI.post(`${baseUrl}/autenticacion/iniciar`, {}) as Promise<RespuestaIniciarAutenticacion>;
 
-export const finalizarAutenticacionAPI: FinalizarAutenticacion = (credential: string) => {
+export const finalizarAutenticacionAPI: FinalizarAutenticacion = (credential: string, session_id: string) => {
     const callback = (respuesta: RespuestaLogin): UsuarioLogin => ({
         id: "_",
         tokenAcceso: respuesta.token_acceso,
         tokenRefresco: respuesta.token_refresco,
     });
-    return RestAPI.post<PeticionCredential>(`${baseUrl}/autenticacion/finalizar`, { credential })
-        .then(callback as unknown as (_: { id: string }) => UsuarioLogin);
+    return RestAPI.post<{ credential: string; session_id: string }>(
+        `${baseUrl}/autenticacion/finalizar`,
+        { credential, session_id }
+    ).then(callback as unknown as (_: { id: string }) => UsuarioLogin);
 };
