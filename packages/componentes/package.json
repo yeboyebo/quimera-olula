@@ -16,6 +16,12 @@
     "dependencies": {
         "@olula/lib": "workspace:*",
         "@tabler/icons-react": "^3.44.0",
+        "@tiptap/extension-link": "^3.25.0",
+        "@tiptap/extension-placeholder": "^3.25.0",
+        "@tiptap/extension-text-align": "^3.25.0",
+        "@tiptap/extension-underline": "^3.25.0",
+        "@tiptap/react": "^3.25.0",
+        "@tiptap/starter-kit": "^3.25.0",
         "react-infinite-scroll-component": "^6.1.1"
     }
 }

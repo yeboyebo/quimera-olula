@@ -4,6 +4,7 @@ declare namespace React {
             'quimera-autocompletar': NodoComun;
             'quimera-modal': NodoComun;
             'quimera-acciones': NodoComun;
+            'quimera-editor-enriquecido': NodoComun;
         }
     }
 }
