@@ -1,3 +1,4 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo } from "@olula/lib/dominio.ts";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
@@ -48,7 +49,7 @@ export const ventaVacia: Venta = {
 export const nuevaVentaVacia: NuevaVenta = {
     cliente_id: "",
     direccion_id: "",
-    empresa_id: "1",
+    empresa_id: empresaActual(),
 }
 
 export const cambioClienteVentaVacio: CambioClienteVenta = {
