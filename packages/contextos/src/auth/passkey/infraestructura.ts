@@ -15,7 +15,7 @@ export const finalizarRegistroAPI: FinalizarRegistro = (usuario_id: string, cred
         .then(() => undefined);
 
 export const iniciarAutenticacionAPI: IniciarAutenticacion = () =>
-    RestAPI.post(`${baseUrl}/autenticacion/iniciar`, {}) as Promise<RespuestaIniciarAutenticacion>;
+    RestAPI.post(`${baseUrl}/autenticacion/iniciar`, {}) as unknown as Promise<RespuestaIniciarAutenticacion>;
 
 export const finalizarAutenticacionAPI: FinalizarAutenticacion = (credential: string, session_id: string) => {
     const callback = (respuesta: RespuestaLogin): UsuarioLogin => ({
