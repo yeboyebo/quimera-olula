@@ -3,7 +3,6 @@ export * from "./atomos/qboton.tsx";
 export * from "./atomos/qcheckbox.tsx";
 export * from "./atomos/qdate.tsx";
 export * from "./atomos/qfechahora.tsx";
-export * from "./atomos/qform.tsx";
 export * from "./atomos/qicono.tsx";
 export * from "./atomos/qinput.tsx";
 export * from "./atomos/qselect.tsx";

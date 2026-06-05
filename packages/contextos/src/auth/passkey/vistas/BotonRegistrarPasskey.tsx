@@ -5,7 +5,7 @@ import { registrarPasskey } from "../dominio.ts";
 
 type Estado = "idle" | "cargando" | "exito" | "error";
 
-export const BotonRegistrarPasskey = () => {
+export const BotonRegistrarPasskey = ({ onExito }: { onExito?: () => void } = {}) => {
     const [estado, setEstado] = useState<Estado>("idle");
 
     const handleClick = async () => {
@@ -19,7 +19,7 @@ export const BotonRegistrarPasskey = () => {
 
         setEstado("cargando");
         registrarPasskey(email)
-            .then(() => setEstado("exito"))
+            .then(() => { setEstado("exito"); onExito?.(); })
             .catch(() => setEstado("error"));
     };
 

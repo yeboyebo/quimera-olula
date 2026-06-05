@@ -1,16 +1,30 @@
 import { startAuthentication, startRegistration } from "@simplewebauthn/browser";
-import { tokenAcceso, tokenRefresco } from "../login/infraestructura.ts";
+import { permisosGrupo, tokenAcceso, tokenRefresco, whoAmI, whoAmIStorage } from "../login/infraestructura.ts";
 import {
     finalizarAutenticacionAPI,
     finalizarRegistroAPI,
     iniciarAutenticacionAPI,
     iniciarRegistroAPI,
+    solicitarEnlaceMagicoAPI,
+    verificarEnlaceMagicoAPI,
 } from "./infraestructura.ts";
 
-export const registrarPasskey = async (email: string): Promise<void> => {
-    const opciones = await iniciarRegistroAPI(email);
+export const registrarPasskey = async (usuario_id: string): Promise<void> => {
+    const opciones = await iniciarRegistroAPI(usuario_id);
     const resultado = await startRegistration({ optionsJSON: opciones as never });
-    await finalizarRegistroAPI(JSON.stringify(resultado));
+    await finalizarRegistroAPI(usuario_id, JSON.stringify(resultado));
+};
+
+export const solicitarEnlaceMagico = (email: string): Promise<void> =>
+    solicitarEnlaceMagicoAPI(email);
+
+export const verificarEnlaceMagico = async (token: string): Promise<void> => {
+    const datosLogin = await verificarEnlaceMagicoAPI(token);
+    tokenAcceso.actualizar(datosLogin.tokenAcceso);
+    tokenRefresco.actualizar(datosLogin.tokenRefresco);
+    const datosWhoAmI = await whoAmI();
+    whoAmIStorage.actualizar(datosWhoAmI);
+    permisosGrupo.actualizar(datosWhoAmI.permisos);
 };
 
 export const autenticarConPasskey = async (): Promise<{ tokenAcceso: string; tokenRefresco: string }> => {

@@ -84,3 +84,11 @@ export const misPermisos = async (): RespuestaLista<Permiso> => {
 export const whoAmI = async (): Promise<RespuestaWhoAmI> => {
     return await RestAPI.get<RespuestaWhoAmI>(baseUrl + '/permiso/whoami');
 };
+
+export const solicitarResetPasswordAPI = async (email: string): Promise<void> => {
+    await RestAPI.post(`${baseUrl}/reset-password/solicitar`, { email });
+};
+
+export const resetPasswordAPI = async (token: string, nueva_password: string): Promise<void> => {
+    await RestAPI.post(`${baseUrl}/reset-password/verificar`, { token, nueva_password });
+};
