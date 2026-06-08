@@ -1,3 +1,4 @@
+import { Usuario } from "#/comun/componentes/usuario.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import type { JSONContent } from "@olula/componentes/moleculas/qeditor_enriquecido.tsx";
@@ -8,9 +9,15 @@ import {
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useState } from "react";
 import { getComunicacion, postComunicacion } from "../infraestructura.ts";
 import "./CrearComunicacion.css";
+import {
+  jsonComunicacionVacio,
+  metaNuevaComunicacion,
+  nuevaComunicacionVacia,
+} from "./dominio.ts";
 
 interface CrearComunicacionProps {
   publicar?: EmitirEvento;
@@ -18,28 +25,24 @@ interface CrearComunicacionProps {
   activo?: boolean;
 }
 
-const jsonVacio: JSONContent = {
-  type: "doc",
-  content: [{ type: "paragraph" }],
-};
-
 export const CrearComunicacion = ({
   publicar = async () => {},
   onCancelar = () => {},
   activo = false,
 }: CrearComunicacionProps) => {
-  const [usuarioDestinoId, setUsuarioDestinoId] = useState("");
-  const [asunto, setAsunto] = useState("");
-  const [jsonEditor, setJsonEditor] = useState<JSONContent>(jsonVacio);
-  const [htmlEditor, setHtmlEditor] = useState("<p></p>");
+  const { modelo, uiProps, valido, init } = useModelo(
+    metaNuevaComunicacion,
+    nuevaComunicacionVacia
+  );
+  const [jsonEditor, setJsonEditor] = useState<JSONContent>(
+    jsonComunicacionVacio
+  );
   const [guardando, setGuardando] = useState(false);
   const { intentar } = useContext(ContextoError);
 
   const limpiarFormulario = () => {
-    setUsuarioDestinoId("");
-    setAsunto("");
-    setJsonEditor(jsonVacio);
-    setHtmlEditor("<p></p>");
+    init(nuevaComunicacionVacia);
+    setJsonEditor(jsonComunicacionVacio);
   };
 
   const cancelar = () => {
@@ -52,17 +55,19 @@ export const CrearComunicacion = ({
   };
 
   const guardar = async () => {
-    if (!usuarioDestinoId.trim() || !asunto.trim()) {
+    if (!valido) {
       return;
     }
 
     setGuardando(true);
     try {
+      const cuerpo = JSON.stringify(jsonEditor);
+
       const id = await intentar(() =>
         postComunicacion({
-          usuario_destino_id: usuarioDestinoId.trim(),
-          asunto: asunto.trim(),
-          cuerpo: htmlEditor,
+          usuario_destino_id: modelo.usuario_destino_id.trim(),
+          asunto: modelo.asunto.trim(),
+          cuerpo,
         })
       );
 
@@ -85,25 +90,17 @@ export const CrearComunicacion = ({
       onCerrar={cancelar}
     >
       <div className="crear-comunicacion-modal">
-        <QInput
-          label="Usuario destino"
-          nombre="usuario_destino_id"
-          valor={usuarioDestinoId}
-          onChange={(valor) => setUsuarioDestinoId(valor)}
+        <Usuario
+          {...uiProps("usuario_destino_id", "nombre_usuario_destino")}
+          label="Responsable"
         />
 
-        <QInput
-          label="Asunto"
-          nombre="asunto"
-          valor={asunto}
-          onChange={(valor) => setAsunto(valor)}
-        />
+        <QInput label="Asunto" {...uiProps("asunto")} />
 
         <QEditorEnriquecido
           valor={jsonEditor}
-          onChange={(valor, html) => {
+          onChange={(valor) => {
             setJsonEditor(valor);
-            setHtmlEditor(html);
           }}
           marcadorPosicion="Escribe el contenido..."
         />
@@ -117,12 +114,7 @@ export const CrearComunicacion = ({
           <QBoton variante="borde" onClick={cancelar}>
             Cancelar
           </QBoton>
-          <QBoton
-            onClick={guardar}
-            deshabilitado={
-              guardando || !usuarioDestinoId.trim() || !asunto.trim()
-            }
-          >
+          <QBoton onClick={guardar} deshabilitado={guardando || !valido}>
             {guardando ? "Guardando..." : "Guardar"}
           </QBoton>
         </div>

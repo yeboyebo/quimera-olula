@@ -1,6 +1,10 @@
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import {
+  QTextEnriquecidoJSON,
+  type JSONContent,
+} from "@olula/componentes/moleculas/qeditor_enriquecido.tsx";
 import { QTextoEnriquecido } from "@olula/componentes/moleculas/qtexto_enriquecido.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
@@ -18,6 +22,19 @@ const fechaConHora = (fecha: Date | null) => {
     hour: "2-digit",
     minute: "2-digit",
   })}`;
+};
+
+const cuerpoComoJson = (cuerpo: string): JSONContent | null => {
+  if (!cuerpo) return null;
+
+  try {
+    const parsed = JSON.parse(cuerpo) as JSONContent;
+    return typeof parsed === "object" && parsed !== null && "type" in parsed
+      ? parsed
+      : null;
+  } catch {
+    return null;
+  }
 };
 
 export const DetalleComunicacion = ({
@@ -46,6 +63,8 @@ export const DetalleComunicacion = ({
   }, [comunicacionId]);
 
   if (!comunicacionId || !ctx.comunicacion.id) return null;
+
+  const cuerpoJson = cuerpoComoJson(ctx.comunicacion.cuerpo);
 
   return (
     <Detalle
@@ -83,7 +102,11 @@ export const DetalleComunicacion = ({
         <div className="detalle-comunicacion-campos">
           <div>
             <p className="detalle-comunicacion-cuerpo">
-              <QTextoEnriquecido texto={ctx.comunicacion.cuerpo} />
+              {cuerpoJson ? (
+                <QTextEnriquecidoJSON valor={cuerpoJson} />
+              ) : (
+                <QTextoEnriquecido texto={ctx.comunicacion.cuerpo} />
+              )}
             </p>
           </div>
         </div>
