@@ -1,5 +1,4 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import "@olula/componentes/atomos/qform.css";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useState } from "react";
 import { solicitarEnlaceMagico } from "../dominio.ts";

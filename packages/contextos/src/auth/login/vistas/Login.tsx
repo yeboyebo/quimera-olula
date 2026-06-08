@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
-import "@olula/componentes/atomos/qform.css";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useContext, useState } from "react";
