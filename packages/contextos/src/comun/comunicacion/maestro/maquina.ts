@@ -20,9 +20,16 @@ export const getMaquina: () => Maquina<
             comunicacion_cambiada: Comunicaciones.cambiar,
             comunicacion_deseleccionada: Comunicaciones.desactivar,
             comunicacion_borrada: quitarSinAutoseleccion,
+            comunicacion_creada: Comunicaciones.incluir,
             recarga_de_comunicaciones_solicitada: recargarComunicaciones,
             criteria_cambiado: [Comunicaciones.filtrar, recargarComunicaciones],
             siguiente_pagina: [Comunicaciones.filtrar, ampliarComunicaciones],
+            creacion_solicitada: "CREANDO_COMUNICACION",
+        },
+
+        CREANDO_COMUNICACION: {
+            comunicacion_creada: [Comunicaciones.incluir, "INICIAL"],
+            creacion_cancelada: "INICIAL",
         },
     };
 };

@@ -1,3 +1,4 @@
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
@@ -11,6 +12,7 @@ import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js"
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { EstadoComunicacion } from "../../componentes/estado_comunicacion.tsx";
+import { CrearComunicacion } from "../crear/CrearComunicacion.tsx";
 import { DetalleComunicacion } from "../detalle/DetalleComunicacion.tsx";
 import { Comunicacion, ESTADOS_COMUNICACION } from "../diseño.ts";
 import { metaTablaComunicacion } from "./diseño.ts";
@@ -86,6 +88,13 @@ export const MaestroConDetalleComunicacion = () => {
               metaFiltro={metaFiltroComunicacion}
               modo="tarjetas"
               criteria={ctx.comunicaciones.criteria}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton onClick={() => emitir("creacion_solicitada")}>
+                    Nueva comunicación
+                  </QBoton>
+                </div>
+              )}
               tarjeta={TarjetaComunicacion}
               entidades={ctx.comunicaciones.lista}
               totalEntidades={ctx.comunicaciones.total}
@@ -110,6 +119,12 @@ export const MaestroConDetalleComunicacion = () => {
         }
         seleccionada={ctx.comunicaciones.activo}
         modoDisposicion="maestro-50"
+      />
+
+      <CrearComunicacion
+        publicar={emitir}
+        onCancelar={() => emitir("creacion_cancelada")}
+        activo={ctx.estado === "CREANDO_COMUNICACION"}
       />
     </div>
   );
