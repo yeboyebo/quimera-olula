@@ -1,7 +1,7 @@
 import { MaestroConDetalleJornada } from "./registro_mi_jornada/maestro/MaestroConDetalleJornada.tsx"
 
-export class RouterFactoryRrhh {
+export class RouterFactoryRrhhEmpleado {
     static router = {
-        "rrhh/registro_jornada": MaestroConDetalleJornada,
+        "rrhh/mi_jornada": MaestroConDetalleJornada,
     }
 }

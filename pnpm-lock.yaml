@@ -337,6 +337,21 @@ importers:
         specifier: ^2.9.19
         version: 2.10.0
 
+  apps/yeboyebo:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+
   legacy/apps/almaeventos:
     dependencies:
       '@quimera-extension/almaeventos':
