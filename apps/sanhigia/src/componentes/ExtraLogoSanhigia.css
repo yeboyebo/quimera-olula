@@ -8,7 +8,7 @@
 }
 
 .extra-logo-sanhigia:hover {
-    transform: scale(0.85);
+    transform: scale(0.85) translateX(15px);
 }
 
 .extra-logo-sanhigia img {
