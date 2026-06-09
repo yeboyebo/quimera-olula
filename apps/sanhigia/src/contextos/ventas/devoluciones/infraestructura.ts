@@ -1,0 +1,392 @@
+import {
+    Filtro,
+    Orden,
+    Paginacion,
+    RespuestaLista,
+} from "@olula/lib/diseño.ts";
+import {
+    DevolucionPedido,
+    FacturaDevolucion,
+    LineaDevolucionPedido,
+    LineaFacturaDevolucion,
+} from "./diseño.ts";
+import { legacyGet, legacyPost } from "./legacy_api.ts";
+
+type DevolucionPedidoAPI = {
+    idpedido: number | string;
+    codigo: string;
+    codcliente: string;
+    nombrecliente: string;
+    servido: string;
+    sh_estadopago: string;
+    fecha: string | null;
+    total: number;
+};
+
+type LineaDevolucionPedidoAPI = {
+    id: number | string;
+    referencia?: string;
+    codigo?: string;
+    descripcion?: string;
+    cantidad?: number;
+    cantidad_factura?: number;
+    cantidadok?: number;
+    cantidadko?: number;
+    cantidad_devolver?: number;
+    codlote?: string;
+    fechacaducidad?: string | null;
+    precio?: number;
+    total?: number;
+};
+
+type FacturaDevolucionAPI = {
+    cabeceraFactura: {
+        id: number | string;
+        codigo: string;
+        nombrecliente: string;
+        codcliente?: string;
+        fecha: string | null;
+        total: number;
+    };
+    lineas: LineaFacturaDevolucionAPI[];
+};
+
+type LineaFacturaDevolucionAPI = {
+    id?: number | string;
+    idlinea?: number | string;
+    referencia?: string;
+    codigo?: string;
+    descripcion?: string;
+    cantidad?: number;
+    precio?: number;
+    total?: number;
+    importe?: number;
+    esKit?: boolean;
+    cantidadDevolver?: number;
+    cantidad_devolver?: number;
+};
+
+type RespuestaFacturaDevolucionAPI = {
+    cabecera?: {
+        id?: number | string;
+        idfactura?: number | string;
+        codigo?: string;
+        nombre?: string;
+        nombrecliente?: string;
+        codcliente?: string;
+        fecha?: string | null;
+        total?: number;
+    };
+    lineas?: LineaFacturaDevolucionAPI[];
+};
+
+type CrearDevolucionPedidoPayload = {
+    idFactura: string;
+    razonDevolucion: string;
+    lineasConDevoluciones: Array<{
+        idLineaFactura: string;
+        cantidadDevolver: number;
+    }>;
+};
+
+type PrepararDevolucionPedidoPayload = {
+    idPedido: string;
+    lineasDevolucion: LineaDevolucionPedido[];
+};
+
+const baseUrl = "pedidoscli";
+const facturasBaseUrl = "facturascli";
+const fieldsDetallePedido = [
+    "idpedido",
+    "codigo",
+    "fecha",
+    "nombrecliente",
+    "codcliente",
+    "total",
+    "totaliva",
+    "neto",
+    "dirtipovia",
+    "direccion",
+    "dirnum",
+    "dirotros",
+    "codpostal",
+    "ciudad",
+    "provincia",
+    "coddir",
+    "codagente",
+    "cifnif",
+    "editable",
+    "servido",
+    "observaciones",
+    "sh_ctrlestadoborr",
+    "sh_estadopedidopda",
+    "email",
+    "codevento",
+    "sh_nombreevento",
+];
+
+const devolucionPedidoDesdeApi = (
+    devolucion: DevolucionPedidoAPI
+): DevolucionPedido => ({
+    id: String(devolucion.idpedido),
+    codigo: devolucion.codigo,
+    codCliente: devolucion.codcliente,
+    nombrecliente: devolucion.nombrecliente,
+    servido: devolucion.servido,
+    estadopago: devolucion.sh_estadopago,
+    fecha: devolucion.fecha ? new Date(Date.parse(devolucion.fecha)) : null,
+    total: Number(devolucion.total ?? 0),
+});
+
+const normalizarDevolucionPedidoRespuesta = async (
+    respuesta: unknown
+): Promise<DevolucionPedido> => {
+    if (typeof respuesta === "string") {
+        return getDevolucionPedido(respuesta);
+    }
+
+    if (respuesta && typeof respuesta === "object") {
+        const posibleId = (respuesta as { id?: string | number; idpedido?: string | number }).id
+            ?? (respuesta as { id?: string | number; idpedido?: string | number }).idpedido;
+
+        if (posibleId !== undefined && posibleId !== null) {
+            const tieneFormaPedido = "codigo" in respuesta && "codcliente" in respuesta;
+            if (!tieneFormaPedido) {
+                return getDevolucionPedido(String(posibleId));
+            }
+        }
+
+        return devolucionPedidoDesdeApi(respuesta as DevolucionPedidoAPI);
+    }
+
+    throw new Error("La API de devoluciones no devolvió una respuesta válida");
+};
+
+const lineaDevolucionPedidoDesdeApi = (
+    linea: LineaDevolucionPedidoAPI
+): LineaDevolucionPedido => {
+    const cantidadFactura = Number(linea.cantidad_factura ?? linea.cantidad ?? 0);
+    const cantidadLegacy = Number(linea.cantidadok ?? 0) + Number(linea.cantidadko ?? 0);
+    const cantidadDevolver =
+        linea.cantidad_devolver !== undefined && linea.cantidad_devolver !== null
+            ? Number(linea.cantidad_devolver)
+            : cantidadLegacy || cantidadFactura;
+
+    return {
+        id: String(linea.id),
+        codigo: linea.referencia ?? linea.codigo ?? "",
+        descripcion: linea.descripcion ?? "",
+        cantidad: cantidadFactura,
+        cantidadDevolver,
+        precio: Number(linea.precio ?? 0),
+        total: Number(linea.total ?? 0),
+        codLote: linea.codlote ?? "",
+        fechaCaducidad: linea.fechacaducidad
+            ? new Date(Date.parse(linea.fechacaducidad))
+            : null,
+    };
+};
+
+const lineaFacturaDesdeApi = (
+    linea: LineaFacturaDevolucionAPI
+): LineaFacturaDevolucion => ({
+    id: String(linea.id ?? linea.idlinea ?? ""),
+    codigo: linea.referencia ?? linea.codigo ?? "",
+    descripcion: linea.descripcion ?? "",
+    cantidad: Number(linea.cantidad ?? 0),
+    precio: Number(linea.precio ?? linea.importe ?? 0),
+    total: Number(linea.total ?? linea.importe ?? 0),
+    importe: Number(linea.importe ?? linea.total ?? linea.precio ?? 0),
+    esKit: Boolean(linea.esKit ?? false),
+    cantidadDevolver: Number(
+        linea.cantidadDevolver ?? linea.cantidad_devolver ?? 0
+    ),
+});
+
+const parseFecha = (fecha?: string | null): Date | null => {
+    if (!fecha) return null;
+
+    const fechaDirecta = new Date(Date.parse(fecha));
+    if (!Number.isNaN(fechaDirecta.getTime())) return fechaDirecta;
+
+    const partes = fecha.split("-");
+    if (partes.length === 3) {
+        const [dia, mes, anio] = partes;
+        const fechaLocal = new Date(Number(anio), Number(mes) - 1, Number(dia));
+        return Number.isNaN(fechaLocal.getTime()) ? null : fechaLocal;
+    }
+
+    return null;
+};
+
+const facturaDevolucionDesdeApi = (
+    factura: FacturaDevolucionAPI
+): FacturaDevolucion => ({
+    cabeceraFactura: {
+        id: String(factura.cabeceraFactura.id),
+        codigo: factura.cabeceraFactura.codigo,
+        nombrecliente: factura.cabeceraFactura.nombrecliente,
+        codCliente: factura.cabeceraFactura.codcliente,
+        fecha: parseFecha(factura.cabeceraFactura.fecha),
+        total: Number(factura.cabeceraFactura.total ?? 0),
+    },
+    lineas: factura.lineas.map(lineaFacturaDesdeApi),
+});
+
+const filtroBase = [
+    ["idfacturarec", "gt", 0],
+    ["editable", "eq", true],
+    ["sh_estadopago", "neq", "''"],
+] as unknown as Filtro;
+
+const ordenLegacyDesdeOrden = (orden: Orden): string => {
+    if (!Array.isArray(orden) || orden.length === 0) {
+        return "fecha DESC";
+    }
+
+    const fieldUI = String(orden[0] ?? "");
+    const direction = String(orden[1] ?? "DESC").toUpperCase() === "ASC" ? "ASC" : "DESC";
+
+    const mapaCamposOrden: Record<string, string> = {
+        id: "idpedido",
+        codCliente: "codcliente",
+    };
+
+    const field = mapaCamposOrden[fieldUI] ?? fieldUI;
+
+    if (!field) return "fecha DESC";
+
+    return `${field} ${direction}`;
+};
+
+export const getDevolucionesPedidos = async (
+    filtro: Filtro,
+    orden: Orden,
+    _paginacion: Paginacion
+): RespuestaLista<DevolucionPedido> => {
+    const filtroFinal = {
+        and: [
+            ...(filtroBase as unknown as []),
+            ...(Array.isArray(filtro) ? filtro : []),
+        ],
+    };
+
+    const respuesta = await legacyGet<{ data: DevolucionPedidoAPI[]; page?: { count?: number } }>(
+        baseUrl,
+        {
+            params: {
+                fields: [
+                    "idpedido",
+                    "codigo",
+                    "codcliente",
+                    "servido",
+                    "sh_estadopago",
+                    "fecha",
+                    "total",
+                    "nombrecliente",
+                ],
+                filter: filtroFinal,
+                order: ordenLegacyDesdeOrden(orden),
+            },
+        }
+    );
+
+    return {
+        datos: (respuesta.data ?? []).map(devolucionPedidoDesdeApi),
+        total: Number(respuesta.page?.count ?? -1),
+    };
+};
+
+export const getDevolucionPedido = async (idPedido: string): Promise<DevolucionPedido> => {
+    const respuesta = await legacyGet<{ data?: DevolucionPedidoAPI[] } | DevolucionPedidoAPI>(baseUrl, {
+        id: idPedido,
+        params: {
+            fields: fieldsDetallePedido,
+            order: "fecha DESC",
+        },
+    });
+
+    if ("data" in respuesta && Array.isArray(respuesta.data) && respuesta.data.length > 0) {
+        return devolucionPedidoDesdeApi(respuesta.data[0]);
+    }
+
+    return devolucionPedidoDesdeApi(respuesta as DevolucionPedidoAPI);
+};
+
+export const getLineasDevolucionPedido = async (
+    idPedido: string
+): Promise<LineaDevolucionPedido[]> => {
+    const idPedidoNumerico = Number(idPedido);
+    const respuesta = await legacyGet<{ data: LineaDevolucionPedidoAPI[] }>(baseUrl, {
+        action: "get_lotes_devolucion",
+        staticAction: true,
+        params: {
+            fields: [
+                "id",
+                "referencia",
+                "descripcion",
+                "codigo",
+                "codlote",
+                "fechacaducidad",
+                "cantidad_factura",
+                "cantidadok",
+                "cantidadko",
+                "idlineapc",
+            ],
+            filter: { and: [Number.isNaN(idPedidoNumerico) ? idPedido : idPedidoNumerico] },
+            page: { limit: 9999 },
+        },
+    });
+
+    return (respuesta.data ?? []).map(lineaDevolucionPedidoDesdeApi);
+};
+
+export const getFacturaDevolucion = async (idFactura: string): Promise<FacturaDevolucion> => {
+    const respuesta = await legacyGet<RespuestaFacturaDevolucionAPI>(facturasBaseUrl, {
+        id: "static",
+        action: "dame_objeto_factura",
+        params: {
+            fields: ["idfactura", "codigo"],
+            filter: { idfactura: idFactura },
+        },
+    });
+
+    return facturaDevolucionDesdeApi({
+        cabeceraFactura: {
+            id: String(respuesta.cabecera?.id ?? respuesta.cabecera?.idfactura ?? idFactura),
+            codigo: respuesta.cabecera?.codigo ?? "",
+            nombrecliente: respuesta.cabecera?.nombre ?? respuesta.cabecera?.nombrecliente ?? "",
+            codcliente: respuesta.cabecera?.codcliente,
+            fecha: respuesta.cabecera?.fecha ?? null,
+            total: Number(respuesta.cabecera?.total ?? 0),
+        },
+        lineas: respuesta.lineas ?? [],
+    });
+};
+
+export const prepararDevolucionPedido = async (payload: PrepararDevolucionPedidoPayload): Promise<DevolucionPedido> => {
+    const respuesta = await legacyPost<unknown>(baseUrl, {
+        action: "preparar_devolucion",
+        body: payload.lineasDevolucion,
+    });
+
+    return normalizarDevolucionPedidoRespuesta(respuesta);
+};
+
+export const crearDevolucionPedido = async (payload: CrearDevolucionPedidoPayload): Promise<DevolucionPedido> => {
+    const lineasConDevolucionesLegacy = payload.lineasConDevoluciones.map((linea) => ({
+        idlinea: linea.idLineaFactura,
+        cantidadDevolver: linea.cantidadDevolver,
+    }));
+
+    const respuesta = await legacyPost<unknown>(baseUrl, {
+        action: "crear_devolucion",
+        body: {
+            idFactura: payload.idFactura,
+            razonDevolucion: payload.razonDevolucion,
+            lineasConDevoluciones: JSON.stringify(lineasConDevolucionesLegacy),
+        },
+    });
+
+    return normalizarDevolucionPedidoRespuesta(respuesta);
+};
