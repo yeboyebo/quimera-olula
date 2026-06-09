@@ -1,12 +1,13 @@
 import { RestAPI } from "@olula/lib/api/rest_api.js";
 import { Filtro, Orden, Paginacion } from "@olula/lib/diseño.js";
 import { criteriaQuery } from "@olula/lib/infraestructura.js";
-import Rrhh_Urls from "./comun/urls.ts";
+import Rrhh_Urls from "../comun/urls.ts";
 import {
     AnulacionJornada,
     CambiosJornada,
     GetJornada,
     GetJornadas,
+    GetVerificarFirma,
     NuevaJornada,
     PatchAnularJornada,
     PatchAprobarJornada,
@@ -27,6 +28,7 @@ interface PausaJornadaApi {
 interface RegistroJornadaApi {
     id: string;
     empleado_id: string;
+    empleado: string;
     fecha: string;
     hora_entrada: string | null;
     hora_salida: string | null;
@@ -49,6 +51,7 @@ const pausaDesdeApi = (p: PausaJornadaApi): PausaJornada => ({
 export const registroJornadaDesdeApi = (j: RegistroJornadaApi): RegistroJornada => ({
     id: j.id,
     empleadoId: j.empleado_id,
+    empleado: j.empleado,
     fecha: new Date(j.fecha),
     horaEntrada: j.hora_entrada,
     horaSalida: j.hora_salida,
@@ -128,4 +131,26 @@ export const patchAnularJornada: PatchAnularJornada = async (id, anulacion: Anul
         { motivo: anulacion.motivo },
         "Error al anular la jornada"
     );
+};
+
+// Tipos API verificar firma
+interface ResultadoVerificacionJornadaApi {
+    verificada: boolean;
+    total_eventos: number;
+    eventos_pre_firma: number;
+    primer_id_invalido: number | null;
+}
+
+const verificacionUrl = new Rrhh_Urls().JORNADA + "/verificar";
+
+export const getVerificarFirma: GetVerificarFirma = async (desde: string | null) => {
+    const query = desde ? `?desde=${encodeURIComponent(desde)}` : '';
+    const respuesta = await RestAPI.get<{ datos: ResultadoVerificacionJornadaApi }>(verificacionUrl + query);
+    const datos = respuesta.datos;
+    return {
+        verificada: datos.verificada,
+        totalEventos: datos.total_eventos,
+        eventosPrefirma: datos.eventos_pre_firma,
+        primerIdInvalido: datos.primer_id_invalido,
+    };
 };

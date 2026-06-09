@@ -7,15 +7,20 @@
         grid-column: span 4;
     }
 
-    div#minutosJornada {
+    quimera-input[nombre="minutosJornada"] {
         grid-column: span 4;
-        display: flex;
-        align-items: flex-end;
-        padding-bottom: var(--espaciado-s);
-        font-weight: 500;
     }
 
     quimera-input[nombre="observaciones"] {
         grid-column: 1 / span 12;
+    }
+}
+
+@media (max-width: 768px) {
+    .DetalleJornada quimera-formulario {
+        quimera-input[nombre="horaEntrada"],
+        quimera-input[nombre="horaSalida"] {
+            grid-column: span 1 !important;
+        }
     }
 }

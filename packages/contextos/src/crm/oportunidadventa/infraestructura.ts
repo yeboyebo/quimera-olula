@@ -1,3 +1,4 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import UrlsVentasClass from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
@@ -73,9 +74,12 @@ export const getPresupuestosOportunidad = async (oportunidadId: string): Respues
 
 export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente_id: string): Promise<string> => {
     const nuevoPresupuesto: Partial<NuevoPresupuesto> = {
-        cliente_id: oportunidadId,
-        direccion_id: cliente_id,
-        empresa_id: "1",
+        oportunidad_id: oportunidadId,
+        cliente: {
+            cliente_id: cliente_id,
+            direccion_id: "1",
+        },
+        empresa_id: empresaActual(),
     };
 
     return await RestAPI.post(UrlsVentas.PRESUPUESTO, nuevoPresupuesto, "Error al crear presupuesto").then((respuesta) => respuesta.id);

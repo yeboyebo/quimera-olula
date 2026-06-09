@@ -2,6 +2,7 @@ import { MetaModelo } from "@olula/lib/dominio.js";
 
 export type NuevaJornadaForm = {
     empleadoId: string;
+    nombre: string;
     fecha: Date;
     horaEntrada: string;
     horaSalida: string;
@@ -10,6 +11,7 @@ export type NuevaJornadaForm = {
 
 export const nuevaJornadaFormInicial: NuevaJornadaForm = {
     empleadoId: "",
+    nombre: "",
     fecha: new Date(),
     horaEntrada: "",
     horaSalida: "",

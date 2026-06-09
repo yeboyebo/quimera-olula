@@ -26,6 +26,12 @@
     }
 }
 
+.logo-app {
+    height: 22px;
+    width: auto;
+    display: block;
+}
+
 #etiqueta-menu-usuario-abierto {
     margin-left: 0;
     order: 99;
