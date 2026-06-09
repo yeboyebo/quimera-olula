@@ -1,5 +1,5 @@
 import { menuRrhh } from "./menu.ts"
 
-export class FactoryRrhhOlula {
+export class FactoryRrhhEmpleadoOlula {
     static menu = menuRrhh
 }
