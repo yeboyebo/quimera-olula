@@ -11,7 +11,7 @@ export type CabeceraProps = {
   logoSrc?: string;
   logoAlt?: string;
   logoClassName?: string;
-  Logo?: () => React.ReactNode;
+  Logo?: (() => React.ReactNode) | null;
   Titulo?: () => React.ReactNode;
   AccionesCabecera?: () => React.ReactNode;
   MenuUsuario?: () => React.ReactNode;
@@ -21,7 +21,13 @@ export type CabeceraProps = {
 export const CabeceraBase = ({
   logoSrc = "/olula-wordmark.svg",
   logoAlt = "Olula | Inicio",
-  Logo = () => OlulaWordmark({ color: '#ffffff', bowlColor: '#ffffff', className: 'logo-app', style: {} }),
+  Logo = () =>
+    OlulaWordmark({
+      color: "#ffffff",
+      bowlColor: "#ffffff",
+      className: "logo-app",
+      style: {},
+    }),
   Titulo,
   AccionesCabecera,
   MenuUsuario,
@@ -30,6 +36,7 @@ export const CabeceraBase = ({
   const { toggleMenu } = useMenuControl();
   const autenticado = estaAutentificado();
 
+  console.log("Logo", Logo);
   return (
     <>
       <header className="cabecera-principal">
@@ -41,7 +48,11 @@ export const CabeceraBase = ({
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          {Logo ? <Logo /> : <img src={logoSrc} alt={logoAlt} className="logo-app" />}
+          {Logo ? (
+            <Logo />
+          ) : (
+            <img src={logoSrc} alt={logoAlt} className="logo-app" />
+          )}
         </Link>
         {ExtraLogo ? <ExtraLogo /> : null}
         <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
