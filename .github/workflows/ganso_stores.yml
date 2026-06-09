@@ -8,7 +8,7 @@ on:
 
 jobs:
   Docker:
-    if: ${{ github.ref_name == 'Deploy_Ganso' }} && ${{vars.ORGANIZATION_VAR == 'yeboyebo'}}
+    if: ${{ github.ref_name == 'Deploy_Ganso' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -58,7 +58,7 @@ jobs:
 
   deploy-to-cluster:
     name: deploy to cluster
-    if: ${{ github.ref_name == 'Deploy_Ganso' }} && ${{vars.ORGANIZATION_VAR == 'yeboyebo'}}
+    if: ${{ github.ref_name == 'Deploy_Ganso' }}
     runs-on: ubuntu-latest
     needs: Docker
     steps:
