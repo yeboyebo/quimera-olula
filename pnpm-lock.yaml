@@ -2195,6 +2195,9 @@ importers:
 
   legacy/libs/core:
     dependencies:
+      '@mui/material':
+        specifier: ^7.0.0
+        version: 7.3.5(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@quimera/comps':
         specifier: workspace:*
         version: link:../comps
