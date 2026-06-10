@@ -108,9 +108,8 @@ export const Cabecera = (props: CabeceraProps) => {
     "/forgot-password",
     "/signup",
     "/welcome",
-    "/logout",
-    "auth/passkey/enlace-magico",
-    "auth//reset-password",
+    "/auth/passkey/enlace-magico",
+    "/auth/reset-password",
   ];
   const esRutaExcluida = rutasExcluidas.some((ruta) =>
     pathname.startsWith(ruta)
