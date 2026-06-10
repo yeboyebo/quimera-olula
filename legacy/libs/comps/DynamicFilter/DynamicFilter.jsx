@@ -28,6 +28,7 @@ function DynamicFilter({ id, propiedades = [], valores, filtrosPredefinidos = []
   const [opcionesAutocomplete, setOpcionesAutocomplete] = useState(propiedades);
   const [textFieldAutocompleteValue, setTextFieldAutocompleteValue] = useState("");
 
+
   const handleChipClick = (event, option) => {
     setAnchorEl(event.currentTarget);
     setSelectedOption(option);
