@@ -14,8 +14,8 @@ import {
   Table,
   Typography,
 } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useEffect } from "react";
 
 import { ModalInventarioAlVuelo, ModaLotesLinea, Ubicacion } from "../../comps";
 
@@ -336,7 +336,7 @@ function ShPreparacionDePedido({
                       order="descripcion"
                       pl={2}
                       value={linea => linea.descripcion}
-                      width={550}
+                      width={500}
                     />
                     {/* <Column.Text
                       id="ubicacion"
@@ -347,7 +347,7 @@ function ShPreparacionDePedido({
                     /> */}
                     <Column.Action
                       id="actioncodubicacion"
-                      width={90}
+                      width={115}
                       header="Ubic."
                       order="sh_codubicacionarticulo"
                       value={(linea, idx) => (
@@ -417,7 +417,7 @@ function ShPreparacionDePedido({
                       order="refprov"
                       pl={2}
                       value={linea => linea.referenciaProv}
-                      width={150}
+                      width={175}
                     />
                     <Column.Text
                       id="codPedido"
