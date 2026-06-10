@@ -6,6 +6,7 @@ declare namespace React {
             'quimera-date': NodoComun;
             'quimera-input': NodoComun;
             'quimera-checkbox': NodoComun;
+            'quimera-radio': NodoComun;
             'quimera-select': NodoComun;
             'quimera-tabla': NodoComun;
             'quimera-lista': NodoComun;

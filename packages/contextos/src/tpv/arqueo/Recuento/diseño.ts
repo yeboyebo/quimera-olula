@@ -17,7 +17,7 @@ export type RecuentoArqueoTpv = {
     m005: number
     m002: number
     m001: number
-    // recuentoEfectivo: number,
+    recuentoEfectivo: number,
     recuentoTarjeta: number,
     recuentoVales: number
 }
@@ -42,6 +42,7 @@ export const metaRecuentoArqueoTpv: MetaModelo<RecuentoArqueoTpv> = {
         m005: metaCampoMoneda,
         m002: metaCampoMoneda,
         m001: metaCampoMoneda,
+        recuentoEfectivo: { requerido: true, tipo: "moneda", bloqueado: true },
         recuentoTarjeta: { requerido: true, tipo: "moneda" },
         recuentoVales: { requerido: true, tipo: "moneda" },
     },
@@ -64,7 +65,7 @@ export const recuentoArqueoTpvInicial: RecuentoArqueoTpv = {
     m005: 0,
     m002: 0,
     m001: 0,
-    // recuentoEfectivo: 0,
+    recuentoEfectivo: 0,
     recuentoTarjeta: 0,
     recuentoVales: 0
 };

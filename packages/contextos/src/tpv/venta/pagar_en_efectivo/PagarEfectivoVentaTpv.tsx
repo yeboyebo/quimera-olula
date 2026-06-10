@@ -12,6 +12,7 @@ import {
   metaNuevoPagoEfectivo,
   nuevoPagoEfectivoInicial,
 } from "./pagar_en_efectivo.ts";
+import { EuroDenominacion } from "./EuroDenominacion.tsx";
 import "./PagarEfectivoVentaTpv.css";
 
 export const PagarEfectivoVentaTpv = ({
@@ -53,7 +54,7 @@ export const PagarEfectivoVentaTpv = ({
 
   const sumar = (valor: number) => {
     return () => {
-      setImporte(Number(modelo.importe) + valor);
+      setImporte(redondeaMoneda(Number(modelo.importe) + valor, venta.divisa_id));
     };
   };
 
@@ -94,24 +95,24 @@ export const PagarEfectivoVentaTpv = ({
         </div>
 
         <div className="botones maestro-botones ">
-          <QBoton onClick={sumar(0.01)}>0,01€</QBoton>
-          <QBoton onClick={sumar(0.02)}>0,02€</QBoton>
-          <QBoton onClick={sumar(0.05)}>0,05€</QBoton>
-          <QBoton onClick={sumar(0.1)}>0,10€</QBoton>
-          <QBoton onClick={sumar(0.2)}>0,20€</QBoton>
-          <QBoton onClick={sumar(0.5)}>0,50€</QBoton>
-          <QBoton onClick={sumar(1)}>1€</QBoton>
-          <QBoton onClick={sumar(2)}>2€</QBoton>
+          <QBoton onClick={sumar(0.01)}><EuroDenominacion valor={0.01} /></QBoton>
+          <QBoton onClick={sumar(0.02)}><EuroDenominacion valor={0.02} /></QBoton>
+          <QBoton onClick={sumar(0.05)}><EuroDenominacion valor={0.05} /></QBoton>
+          <QBoton onClick={sumar(0.1)}><EuroDenominacion valor={0.1} /></QBoton>
+          <QBoton onClick={sumar(0.2)}><EuroDenominacion valor={0.2} /></QBoton>
+          <QBoton onClick={sumar(0.5)}><EuroDenominacion valor={0.5} /></QBoton>
+          <QBoton onClick={sumar(1)}><EuroDenominacion valor={1} /></QBoton>
+          <QBoton onClick={sumar(2)}><EuroDenominacion valor={2} /></QBoton>
         </div>
 
         <div className="botones maestro-botones ">
-          <QBoton onClick={sumar(5)}>5€</QBoton>
-          <QBoton onClick={sumar(10)}>10€</QBoton>
-          <QBoton onClick={sumar(20)}>20€</QBoton>
-          <QBoton onClick={sumar(50)}>50€</QBoton>
-          <QBoton onClick={sumar(100)}>100€</QBoton>
-          <QBoton onClick={sumar(200)}>200€</QBoton>
-          <QBoton onClick={sumar(500)}>500€</QBoton>
+          <QBoton onClick={sumar(5)}><EuroDenominacion valor={5} /></QBoton>
+          <QBoton onClick={sumar(10)}><EuroDenominacion valor={10} /></QBoton>
+          <QBoton onClick={sumar(20)}><EuroDenominacion valor={20} /></QBoton>
+          <QBoton onClick={sumar(50)}><EuroDenominacion valor={50} /></QBoton>
+          <QBoton onClick={sumar(100)}><EuroDenominacion valor={100} /></QBoton>
+          <QBoton onClick={sumar(200)}><EuroDenominacion valor={200} /></QBoton>
+          <QBoton onClick={sumar(500)}><EuroDenominacion valor={500} /></QBoton>
         </div>
 
         <div className="botones maestro-botones ">

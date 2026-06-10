@@ -4,8 +4,8 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useMemo } from "react";
-import { moneda, totalEfectivo, totalMovimientos } from "../dominio.ts";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { moneda, redondear, totalEfectivo, totalMovimientos } from "../dominio.ts";
 import "./RecuentoArqueoTpv.css";
 import { metaRecuentoArqueoTpv } from "./diseño.ts";
 import {
@@ -23,15 +23,43 @@ export const RecuentoArqueoTpv = ({
 }) => {
   const recuentoInicial = useMemo(() => getRecuentoInicial(arqueo), [arqueo]);
 
-  const { modelo, uiProps, valido, init } = useModelo(
+  const tiposTarjetaIniciales = useMemo(
+    () =>
+      Object.fromEntries(
+        arqueo.recuentoTipoTarjeta.map((datos) => [
+          datos.idTipoTarjeta,
+          datos.contado,
+        ])
+      ),
+    [arqueo]
+  );
+
+  const { modelo, uiProps, valido, init, set } = useModelo(
     metaRecuentoArqueoTpv,
     recuentoInicial
   );
 
+  const [recuentoTipoTarjeta, setRecuentoTipoTarjeta] =
+    useState<Record<string, number>>(tiposTarjetaIniciales);
+
+  const hayTiposTarjeta = arqueo.recuentoTipoTarjeta.length > 0;
+
+  const totalTipoTarjeta = useMemo(
+    () =>
+      redondear(Object.values(recuentoTipoTarjeta).reduce((acc, v) => acc + v, 0)),
+    [recuentoTipoTarjeta]
+  );
+
+  useEffect(() => {
+    if (!hayTiposTarjeta) return;
+    set({ ...modelo, recuentoTarjeta: totalTipoTarjeta });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalTipoTarjeta, hayTiposTarjeta]);
+
   const aceptar = useCallback(async () => {
-    await guardarRecuento(arqueo, modelo);
+    await guardarRecuento(arqueo, modelo, recuentoTipoTarjeta);
     publicar("recuento_hecho");
-  }, [arqueo, modelo, publicar]);
+  }, [arqueo, modelo, recuentoTipoTarjeta, publicar]);
 
   const cancelar = useCallback(
     () => publicar("recuento_cancelado"),
@@ -40,6 +68,7 @@ export const RecuentoArqueoTpv = ({
 
   const limpiar = () => {
     init(getRecuentoInicial(arqueo));
+    setRecuentoTipoTarjeta(tiposTarjetaIniciales);
   };
 
   return (
@@ -67,10 +96,62 @@ export const RecuentoArqueoTpv = ({
           <QInput label="M 5c" {...uiProps("m005")} />
           <QInput label="M 2c" {...uiProps("m002")} />
           <QInput label="M 1c" {...uiProps("m001")} />
-          <div id="recuento">
+          
+
+          {arqueo.recuentoTipoTarjeta.length > 0 && (
+            <div className="tabla-tipo-tarjeta-wrapper">
+              <table className="tabla-tipo-tarjeta">
+                <thead>
+                  <tr>
+                    <th>Tipo tarjeta</th>
+                    <th>Calculado</th>
+                    <th>Contado</th>
+                    <th>Diferencia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {arqueo.recuentoTipoTarjeta.map((datos) => (
+                    <tr key={datos.idTipoTarjeta}>
+                      <td>{datos.idTipoTarjeta}</td>
+                      <td>{moneda(datos.calculado)}</td>
+                      <td>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={
+                            recuentoTipoTarjeta[datos.idTipoTarjeta] ?? 0
+                          }
+                          onChange={(e) =>
+                            setRecuentoTipoTarjeta((prev) => ({
+                              ...prev,
+                              [datos.idTipoTarjeta]:
+                                parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                        />
+                      </td>
+                      <td>
+                        {moneda(
+                          (recuentoTipoTarjeta[datos.idTipoTarjeta] ?? 0) -
+                            datos.calculado
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {/* <div id="recuento">
             {`Total: ${moneda(recuentoEfectivo(modelo))}`}
-          </div>
-          <QInput label="Tarjeta" {...uiProps("recuentoTarjeta")} />
+          </div> */}
+          <QInput label="Efectivo" {...uiProps("recuentoEfectivo")} />
+          <QInput
+            label="Tarjeta"
+            {...uiProps("recuentoTarjeta")}
+            {...(hayTiposTarjeta && { deshabilitado: true })}
+          />
           <QInput label="Vales" {...uiProps("recuentoVales")} />
 
           <h4>Teórico</h4>
