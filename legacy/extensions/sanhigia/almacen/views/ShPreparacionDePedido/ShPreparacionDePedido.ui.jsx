@@ -336,7 +336,7 @@ function ShPreparacionDePedido({
                       order="descripcion"
                       pl={2}
                       value={linea => linea.descripcion}
-                      width={500}
+                      width={mobile ? 350 : 500}
                     />
                     {/* <Column.Text
                       id="ubicacion"
@@ -347,7 +347,7 @@ function ShPreparacionDePedido({
                     /> */}
                     <Column.Action
                       id="actioncodubicacion"
-                      width={115}
+                      width={110}
                       header="Ubic."
                       order="sh_codubicacionarticulo"
                       value={(linea, idx) => (
@@ -425,7 +425,7 @@ function ShPreparacionDePedido({
                       order="codpedido"
                       pl={2}
                       value={linea => linea.codPedido}
-                      width={110}
+                      width={125}
                     />
                     <Column.Decimal
                       id="totalenalbaran"

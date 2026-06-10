@@ -421,7 +421,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                   /> */}
                   <Column.Action
                     id="actioncodubicacion"
-                    width={95}
+                    width={110}
                     header="Ubic."
                     order="sh_codubicacionarticulo"
                     value={(linea, idx) => (

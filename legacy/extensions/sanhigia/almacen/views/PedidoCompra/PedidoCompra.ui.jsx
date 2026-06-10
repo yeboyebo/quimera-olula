@@ -341,7 +341,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                     order="descripcion"
                     pl={2}
                     value={linea => linea.descripcion}
-                    width={550}
+                    width={mobile ? 350 : 550}
                   />
                   {/* <Column.Text
                     id="ubicacion"
@@ -352,7 +352,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                   /> */}
                   <Column.Action
                     id="actioncodubicacion"
-                    width={80}
+                    width={110}
                     header="Ubic."
                     order="sh_codubicacionarticulo"
                     value={(linea, idx) => (
