@@ -410,7 +410,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="descripcion"
                     pl={2}
                     value={linea => linea.descripcion}
-                    width={600}
+                    width={mobile ? 380 : 600}
                   />
                   {/* <Column.Text
                     id="ubicacion"
@@ -421,7 +421,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                   /> */}
                   <Column.Action
                     id="actioncodubicacion"
-                    width={95}
+                    width={110}
                     header="Ubic."
                     order="sh_codubicacionarticulo"
                     value={(linea, idx) => (
