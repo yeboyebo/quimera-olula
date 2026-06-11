@@ -65,6 +65,7 @@ type PagoVentaTpvApi = {
     vale: string | null;
     arqueo_id: string;
     arqueo_abierto: boolean;
+    tipo_tarjeta: string | null;
 }
 
 interface VentaTpvADevolverAPI extends VentaTpvAPI {
@@ -103,7 +104,8 @@ export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvApi): PagoVentaTpv => (
         fecha: new Date(Date.parse(p.fecha)),
         vale: p.vale,
         idArqueo: p.arqueo_id,
-        arqueoAbierto: p.arqueo_abierto
+        arqueoAbierto: p.arqueo_abierto,
+        idTipoTarjeta: p.tipo_tarjeta
     }
 );
 
@@ -207,7 +209,8 @@ export const postPago: PostPago = async (id, pago) => {
         importe: pago.importe,
         fecha: (new Date().toISOString()).slice(0, 10),
         forma_pago: pago.formaPago,
-        vale_id: pago.idVale
+        vale_id: pago.idVale,
+        tipo_tarjeta_id: pago.idTipoTarjeta,
     }
     return await RestAPI.post(`${baseUrl}/${id}/pago`,
         body,

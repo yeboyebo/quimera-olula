@@ -5,6 +5,7 @@ export * from "./atomos/qdate.tsx";
 export * from "./atomos/qfechahora.tsx";
 export * from "./atomos/qicono.tsx";
 export * from "./atomos/qinput.tsx";
+export * from "./atomos/qradio.tsx";
 export * from "./atomos/qselect.tsx";
 export * from "./atomos/qtabla.tsx";
 export * from "./atomos/qtarjetas.tsx";
