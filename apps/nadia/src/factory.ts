@@ -1,6 +1,6 @@
-import { OlulaWordmark } from '@olula/componentes/tema/Olula.jsx';
 import { FactoryAuthOlula } from '#/auth/factory.ts';
 import { FactoryTpvOlula } from '#/tpv/factory.ts';
+import { OlulaWordmark } from '@olula/componentes/tema/Olula.jsx';
 import { FactoryAlmacenNad } from './contextos/almacen/factory.ts';
 
 class FactoryComponentesNadia {

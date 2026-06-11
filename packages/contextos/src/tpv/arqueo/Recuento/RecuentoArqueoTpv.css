@@ -11,6 +11,31 @@
         grid-column: span 4;
     }
 
+    .denominacion-item {
+        grid-column: span 4;
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-xs, 4px);
+
+        quimera-input {
+            grid-column: unset;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .euro-billete {
+            width: 52px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+
+        .euro-moneda {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+    }
+
     div[id="recuento"] {
         grid-column: span 4;
     }
