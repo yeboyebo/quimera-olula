@@ -2,7 +2,10 @@ import { getTpvConfig } from "#/tpv/comun/dominio.ts";
 import { QRadio, QRadioProps } from "@olula/componentes/index.js";
 import { useEffect, useState } from "react";
 
-type TipoTarjetaProps = Omit<QRadioProps, "opciones">;
+type TipoTarjetaProps = Omit<QRadioProps, "opciones" | "label" | "nombre"> & {
+    label?: string;
+    nombre?: string;
+};
 
 export const TipoTarjetaTpv = ({
     valor,
