@@ -205,12 +205,12 @@ function ShPreparacionDePedido({
                     </Box>
                     <QTitleBox titulo="Ubic. inicial" className={classes.ubicacionBox}>
                       <Box display="flex" alignItems="flex-end" height="1.2rem">
-                        <Typography variant="h8">{preparacion.buffer.ubicacionini}</Typography>
+                        <Typography ml={mobile ? 1 : null} variant="h8">{preparacion.buffer.ubicacionini}</Typography>
                       </Box>
                     </QTitleBox>
                     <QTitleBox titulo="Ubic. final" className={classes.ubicacionBox}>
                       <Box display="flex" alignItems="flex-end" height="1.2rem">
-                        <Typography variant="h8">{preparacion.buffer.ubicacionfin}</Typography>
+                        <Typography ml={mobile ? 1 : null} variant="h8">{preparacion.buffer.ubicacionfin}</Typography>
                       </Box>
                     </QTitleBox>
                   </Box>
