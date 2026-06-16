@@ -23,6 +23,8 @@ export const getMaquina: () => Maquina<EstadoMaestroJornadas, ContextoMaestroJor
 
             aprobacion_multiple_solicitada: "APROBANDO_JORNADAS",
 
+            revision_de_firma_solicitada: "REVISANDO_JORNADAS",
+
             seleccionadas_cambiadas: async (ctx, payload) => ({ ...ctx, seleccionadas: payload as string[] }),
         },
 
@@ -36,6 +38,12 @@ export const getMaquina: () => Maquina<EstadoMaestroJornadas, ContextoMaestroJor
             jornadas_aprobadas: [aprobarJornadas],
 
             aprobacion_multiple_cancelada: "INICIAL",
+        },
+
+        REVISANDO_JORNADAS: {
+            jornadas_revisadas: "INICIAL",
+
+            revision_de_firma_cancelada: "INICIAL",
         },
     };
 };

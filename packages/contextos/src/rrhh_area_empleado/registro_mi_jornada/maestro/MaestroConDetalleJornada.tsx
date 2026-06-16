@@ -2,8 +2,9 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { MetaFiltro, getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { MetaFiltro, filtroMesAnyo } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
+import { TipoInput } from "@olula/lib/diseño.js";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
@@ -12,9 +13,9 @@ import { CrearJornada } from "../crear/CrearJornada.tsx";
 import { DetalleJornada } from "../detalle/DetalleJornada.tsx";
 import { RegistroJornada } from "../diseño.ts";
 import { minutosAHorasMinutos } from "../dominio.ts";
+import "./MaestroConDetalleJornada.css";
 import { ContextoMaestroJornadas, metaTablaJornada } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
-import "./MaestroConDetalleJornada.css";
 
 export const MaestroConDetalleJornada = () => {
     const { id, criteria } = getUrlParams();
@@ -103,16 +104,16 @@ const TarjetaJornada = (jornada: RegistroJornada) => (
 );
 
 const metaFiltro: MetaFiltro = {
-    ...getMetaFiltroDefecto(metaTablaJornada),
-    empleadoId: {
-        id: "empleadoId",
-        label: "Empleado",
-        filtro: (v) => (v ? ["empleado_id", "=", v as string] : null),
-        // render: (valor, onChange) => (
-        // <TipoAccion
-        //     valor={(valor as string) ?? ""}
-        //     onChange={(opcion) => onChange(opcion?.valor ?? "")}
-        // />
-        // ),
+    fecha: {
+        id: "fecha",
+        label: "Mes",
+        tipo: "mes_año" as TipoInput,
+        filtro: (v) => filtroMesAnyo("fecha", v),
+        fromFiltro: (filtro) => {
+            const clausula = filtro.find(([campo]) => campo === "fecha");
+            if (!clausula || clausula[1] !== "<>" || !clausula[2]) return undefined;
+            const [desde] = clausula[2].split("_");
+            return desde.slice(0, 7); // "YYYY-MM"
+        },
     },
 }

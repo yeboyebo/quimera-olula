@@ -4,6 +4,7 @@ import { RegistroJornada } from "./diseño.ts";
 export const registroJornadaVacio: RegistroJornada = {
     id: "",
     empleadoId: "",
+    empleado: "",
     fecha: new Date(0),
     horaEntrada: null,
     horaSalida: null,

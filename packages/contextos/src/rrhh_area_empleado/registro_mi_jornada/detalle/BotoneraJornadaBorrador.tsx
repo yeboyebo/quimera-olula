@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { EstadoBorradorJornada } from "../diseño.ts";
+import "./BotoneraJornadaBorrador.css";
 
 export const BotoneraJornadaBorrador = ({
     estadoBorrador,
@@ -14,16 +15,16 @@ export const BotoneraJornadaBorrador = ({
 }) => {
     if (estadoBorrador === "ACTIVA") {
         return (
-            <div className="botones maestro-botones">
-                <QBoton onClick={onPausa}>Pausa</QBoton>
-                <QBoton onClick={onStop}>Stop</QBoton>
+            <div className="BotoneraJornadaBorrador">
+                <QBoton advertencia ancho tamaño="grande" onClick={onPausa}>Pausar</QBoton>
+                <QBoton destructivo ancho tamaño="grande" onClick={onStop}>Terminar</QBoton>
             </div>
         );
     }
     if (estadoBorrador === "PAUSADA") {
         return (
-            <div className="botones maestro-botones">
-                <QBoton onClick={onPlay}>Play</QBoton>
+            <div className="BotoneraJornadaBorrador">
+                <QBoton exito ancho tamaño="grande" onClick={onPlay}>Reanudar</QBoton>
             </div>
         );
     }

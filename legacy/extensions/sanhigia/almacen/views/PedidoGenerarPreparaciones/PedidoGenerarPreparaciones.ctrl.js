@@ -45,6 +45,17 @@ export const bunch = parent => {
         name: "onEstadoPdaActualizado",
       },
     ],
+    compruebaLineasConDescuento: [
+      {
+        type: "setStateKey",
+        plug: ({ }) => ({ path: "status.lineasConDto", value: false }),
+      },
+      {
+        condition: ({ response },) => response.data.find(l => l.shCantAlbaran !== 0 && l.dtoLineal !== 0),
+        type: "setStateKey",
+        plug: ({ }) => ({ path: "status.lineasConDto", value: true }),
+      }
+    ],
     onQuitarTrabajadorConfirmado: [
       {
         type: "grape",

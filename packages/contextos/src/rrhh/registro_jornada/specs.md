@@ -30,6 +30,9 @@ stateDiagram-v2
     INICIAL --> APROBANDO_JORNADAS : aprobacion_multiple_solicitada
     APROBANDO_JORNADAS --> INICIAL : jornadas_aprobadas / aprobarJornadas (aprueba + recarga)
     APROBANDO_JORNADAS --> INICIAL : aprobacion_multiple_cancelada
+    INICIAL --> REVISANDO_JORNADAS : revision_de_firma_solicitada
+    REVISANDO_JORNADAS --> INICIAL : jornadas_revisadas (el modal gestiona la verificación internamente)
+    REVISANDO_JORNADAS --> INICIAL : revision_de_firma_cancelada
 ```
 
 <!-- [maestro-01] [x] -->
@@ -40,6 +43,13 @@ El listado permite aprobar varias jornadas si todas pueden ser aprobadas (estado
 
 <!-- [maestro-03] [x] -->
 [APROBANDO_JORNADAS] jornadas_aprobadas → INICIAL (el diálogo de confirmación se cierra tras aprobar)
+
+<!-- [maestro-03] [x] -->
+El listado permite revisar la firma concatenada de las jornadas en el sistema, preguntando al usuario una fecha / hora de inicio de la comprobación. Si esta no se indica, se toma la totalidad de los eventos desde el inicio de la puesta en marcha de la aplicación.
+
+El endpoint usado es /rrhh/registro_jornada/verificar_firma
+Parámetro querystring {desde: '(timestamp)' o null}
+[REVISANDO_JORNADAS] jornadas_revisadas → INICIAL (el diálogo de confirmación se cierra tras verificar)
 
 ### Detalle de jornada
 

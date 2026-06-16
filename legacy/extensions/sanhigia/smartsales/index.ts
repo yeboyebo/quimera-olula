@@ -286,6 +286,7 @@ export default {
       check("almacen.articulo.leer_caducidad"),
     "contactos:revisar_contacto": (check: (rule: string) => boolean) =>
       check("crm.contacto.revisar_contacto"),
+    "LicenciasFarma:visit": (check: (rule: string) => boolean) => check("ventas.licencia_farma"),
   },
   schemas,
 };
