@@ -1,5 +1,5 @@
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
-import { MetaTabla, QBoton, QModal } from "@olula/componentes/index.ts";
+import { MetaTabla, QModal } from "@olula/componentes/index.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
@@ -135,7 +135,7 @@ export const MaestroConDetalleLicenciaFarma = () => {
           <>
             <h2>Licencias Farma</h2>
             <div className="maestro-botones">
-              <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton>
+              {/* <QBoton onClick={() => emitir("ALTA_INICIADA")}>Nueva</QBoton> */}
             </div>
             <Listado<CabeceraLicenciaFarma>
               metaTabla={metaTablaLicenciaFarma}
