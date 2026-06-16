@@ -70,7 +70,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
                 <Grid container spacing={1} direction="column" >
                   <Grid size={12}>
                     <QArticuloVbarba
-                      id="linea.buffer.referencia"
+                      id="linea.buffer/referencia"
                       label="Artículo"
                       boxStyle={classes.referencia}
                       seVende
@@ -108,7 +108,7 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
               dynamicComp={() => (
                 <Grid container spacing={1} direction="column" >
                   <Grid size={6}>
-                    <Field.Schema id="linea.buffer.cantidad" schema={schema} fullWidth autoFocus />
+                    <Field.Schema id="linea.buffer/cantidad" schema={schema} fullWidth autoFocus />
                   </Grid>
                   <Grid size={6}>
                     {linea.data.aplicarPvpParticular
@@ -147,10 +147,10 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
                 dynamicComp={() => (
                   <Grid container spacing={1} direction="column" >
                     <Grid size={6}>
-                      <Field.Schema id="linea.buffer.dtoLineal" schema={schema} fullWidth />
+                      <Field.Schema id="linea.buffer/dtoLineal" schema={schema} fullWidth />
                     </Grid>
                     <Grid size={6}>
-                      <Field.Schema id="linea.buffer.dtoPor" schema={schema} fullWidth />
+                      <Field.Schema id="linea.buffer/dtoPor" schema={schema} fullWidth />
                     </Grid>
                   </Grid>
                 )}
@@ -176,16 +176,16 @@ function LineaPedidoCli({ callbackGuardada, disabled, lineaInicial, useStyles })
                 dynamicComp={() => (
                   <Grid container spacing={1} direction="column" >
                     <Grid size={6}>
-                      <Field.Schema id="linea.buffer.codImpuesto" schema={schema} fullWidth />
+                      <Field.Schema id="linea.buffer/codImpuesto" schema={schema} fullWidth />
                     </Grid>
                     <Grid size={6}>
-                      <Field.Schema id="linea.buffer.iva" schema={schema} fullWidth />
+                      <Field.Schema id="linea.buffer/iva" schema={schema} fullWidth />
                     </Grid>
                     <Grid size={6}>
-                      <Field.Schema id="linea.buffer.recargo" schema={schema} fullWidth />
+                      <Field.Schema id="linea.buffer/recargo" schema={schema} fullWidth />
                     </Grid>
                     <Grid size={6}>
-                      <Field.Schema id="linea.buffer.irpf" schema={schema} fullWidth />
+                      <Field.Schema id="linea.buffer/irpf" schema={schema} fullWidth />
                     </Grid>
                   </Grid>
                 )}
