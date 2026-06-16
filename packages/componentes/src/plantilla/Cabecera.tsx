@@ -1,6 +1,7 @@
+import { OlulaWordmark } from "@olula/componentes/tema/Olula.jsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import "./Cabecera.css";
 import { estaAutentificado } from "./autenticacion";
@@ -10,6 +11,7 @@ export type CabeceraProps = {
   logoSrc?: string;
   logoAlt?: string;
   logoClassName?: string;
+  Logo?: (() => React.ReactNode) | null;
   Titulo?: () => React.ReactNode;
   AccionesCabecera?: () => React.ReactNode;
   MenuUsuario?: () => React.ReactNode;
@@ -17,8 +19,15 @@ export type CabeceraProps = {
 };
 
 export const CabeceraBase = ({
-  logoSrc = "/olula_header_blanco.png",
+  logoSrc = "/olula-wordmark.svg",
   logoAlt = "Olula | Inicio",
+  Logo = () =>
+    OlulaWordmark({
+      color: "#ffffff",
+      bowlColor: "#ffffff",
+      className: "logo-app",
+      style: {},
+    }),
   Titulo,
   AccionesCabecera,
   MenuUsuario,
@@ -27,6 +36,7 @@ export const CabeceraBase = ({
   const { toggleMenu } = useMenuControl();
   const autenticado = estaAutentificado();
 
+  console.log("Logo", Logo);
   return (
     <>
       <header className="cabecera-principal">
@@ -38,7 +48,11 @@ export const CabeceraBase = ({
 
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
         <Link to="/">
-          <img src={logoSrc} alt={logoAlt} className="logo-app" />
+          {Logo ? (
+            <Logo />
+          ) : (
+            <img src={logoSrc} alt={logoAlt} className="logo-app" />
+          )}
         </Link>
         {ExtraLogo ? <ExtraLogo /> : null}
         <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
@@ -78,14 +92,32 @@ export const Cabecera = (props: CabeceraProps) => {
     ?.cabecera_menu_usuario as () => React.ReactNode;
   const ExtraLogo = app.Componentes
     ?.cabecera_extra_logo as () => React.ReactNode;
-
   const cProps: CabeceraProps = {
     ...props,
+    // Logo: Logo || props.Logo,
     AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
     MenuUsuario: MenuUsuario || props.MenuUsuario,
     ExtraLogo: ExtraLogo || props.ExtraLogo,
     Titulo: props.Titulo,
   };
+
+  const { pathname } = useLocation();
+
+  const rutasExcluidas = [
+    "/login",
+    "/forgot-password",
+    "/signup",
+    "/welcome",
+    "/auth/passkey/enlace-magico",
+    "/auth/reset-password",
+  ];
+  const esRutaExcluida = rutasExcluidas.some((ruta) =>
+    pathname.startsWith(ruta)
+  );
+
+  if (esRutaExcluida) {
+    return null;
+  }
 
   return CabeceraCustom ? (
     <CabeceraCustom {...cProps} />

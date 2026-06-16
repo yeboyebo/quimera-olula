@@ -25,16 +25,15 @@ export const CrearPresupuesto = ({
   publicar = async () => {},
   activo = false,
   onCancelar = () => {},
+  modeloVacio = nuevoPresupuestoVacio,
 }: {
   publicar?: EmitirEvento;
   activo: boolean;
   onCancelar?: () => void;
+  modeloVacio?: NuevoPresupuesto;
 }) => {
   const [modoNoRegistrado, setModoNoRegistrado] = useState(false);
-  const presupuestoRegistrado = useModelo(
-    metaNuevoPresupuesto,
-    nuevoPresupuestoVacio
-  );
+  const presupuestoRegistrado = useModelo(metaNuevoPresupuesto, modeloVacio);
   const presupuestoNoRegistrado = useModelo(
     metaNuevoPresupuestoClienteNoRegistrado,
     nuevoPresupuestoClienteNoRegistradoVacio
@@ -44,12 +43,12 @@ export const CrearPresupuesto = ({
     const nuevoModo = !modoNoRegistrado;
     setModoNoRegistrado(nuevoModo);
 
-    presupuestoRegistrado.init(nuevoPresupuestoVacio);
+    presupuestoRegistrado.init(modeloVacio);
     presupuestoNoRegistrado.init(nuevoPresupuestoClienteNoRegistradoVacio);
   };
 
   const cancelar = () => {
-    presupuestoRegistrado.init(nuevoPresupuestoVacio);
+    presupuestoRegistrado.init(modeloVacio);
     presupuestoNoRegistrado.init(nuevoPresupuestoClienteNoRegistradoVacio);
     setModoNoRegistrado(false);
     onCancelar();
@@ -67,6 +66,7 @@ export const CrearPresupuesto = ({
         presupuestoRegistrado={presupuestoRegistrado}
         presupuestoNoRegistrado={presupuestoNoRegistrado}
         modoNoRegistrado={modoNoRegistrado}
+        modeloVacio={modeloVacio}
         onToggleModoCliente={toggleModoCliente}
       />
     </QModal>
@@ -79,11 +79,13 @@ const FormAltaPresupuesto = ({
   presupuestoNoRegistrado,
   modoNoRegistrado,
   onToggleModoCliente,
+  modeloVacio,
 }: {
   publicar?: EmitirEvento;
   presupuestoRegistrado: HookModelo<NuevoPresupuesto>;
   presupuestoNoRegistrado: HookModelo<NuevoPresupuestoClienteNoRegistrado>;
   modoNoRegistrado: boolean;
+  modeloVacio: NuevoPresupuesto;
   onToggleModoCliente: () => void;
 }) => {
   const { intentar } = useContext(ContextoError);
@@ -102,13 +104,13 @@ const FormAltaPresupuesto = ({
     const presupuestoCreada = await getPresupuesto(id);
     publicar("presupuesto_creado", presupuestoCreada);
 
-    presupuestoRegistrado.init(nuevoPresupuestoVacio);
+    presupuestoRegistrado.init(modeloVacio);
     presupuestoNoRegistrado.init(nuevoPresupuestoClienteNoRegistradoVacio);
   };
 
   const cancelar = () => {
     publicar("creacion_presupuesto_cancelada");
-    presupuestoRegistrado.init(nuevoPresupuestoVacio);
+    presupuestoRegistrado.init(modeloVacio);
     presupuestoNoRegistrado.init(nuevoPresupuestoClienteNoRegistradoVacio);
   };
 
@@ -157,7 +159,7 @@ const FormAltaPresupuesto = ({
               ref={focus}
             />
             <DirCliente
-              clienteId={presupuestoRegistrado.modelo.cliente_id}
+              clienteId={presupuestoRegistrado.modelo.cliente.cliente_id}
               {...presupuestoRegistrado.uiProps("direccion_id")}
             />
             <QInput

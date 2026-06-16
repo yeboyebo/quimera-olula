@@ -1,9 +1,9 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { minutosAHorasMinutos } from "../dominio.ts";
 import { RegistroJornada } from "../diseño.ts";
+import { minutosAHorasMinutos } from "../dominio.ts";
 
-export type EstadoMaestroJornadas = 'INICIAL' | 'CREANDO_JORNADA' | 'APROBANDO_JORNADAS';
+export type EstadoMaestroJornadas = 'INICIAL' | 'CREANDO_JORNADA' | 'APROBANDO_JORNADAS' | 'REVISANDO_JORNADAS';
 
 export type ContextoMaestroJornadas = {
     estado: EstadoMaestroJornadas;
@@ -15,6 +15,10 @@ export type ContextoMaestroJornadas = {
 export const metaTablaJornada: MetaTabla<RegistroJornada> = [
     {
         id: "empleadoId",
+        cabecera: "Id",
+    },
+    {
+        id: "empleado",
         cabecera: "Empleado",
     },
     {

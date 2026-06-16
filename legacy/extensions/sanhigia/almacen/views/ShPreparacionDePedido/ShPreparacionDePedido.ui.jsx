@@ -14,8 +14,8 @@ import {
   Table,
   Typography,
 } from "@quimera/comps";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
+import { useEffect } from "react";
 
 import { ModalInventarioAlVuelo, ModaLotesLinea, Ubicacion } from "../../comps";
 
@@ -205,12 +205,12 @@ function ShPreparacionDePedido({
                     </Box>
                     <QTitleBox titulo="Ubic. inicial" className={classes.ubicacionBox}>
                       <Box display="flex" alignItems="flex-end" height="1.2rem">
-                        <Typography variant="h8">{preparacion.buffer.ubicacionini}</Typography>
+                        <Typography ml={mobile ? 1 : null} variant="h8">{preparacion.buffer.ubicacionini}</Typography>
                       </Box>
                     </QTitleBox>
                     <QTitleBox titulo="Ubic. final" className={classes.ubicacionBox}>
                       <Box display="flex" alignItems="flex-end" height="1.2rem">
-                        <Typography variant="h8">{preparacion.buffer.ubicacionfin}</Typography>
+                        <Typography ml={mobile ? 1 : null} variant="h8">{preparacion.buffer.ubicacionfin}</Typography>
                       </Box>
                     </QTitleBox>
                   </Box>
@@ -336,7 +336,7 @@ function ShPreparacionDePedido({
                       order="descripcion"
                       pl={2}
                       value={linea => linea.descripcion}
-                      width={550}
+                      width={mobile ? 350 : 500}
                     />
                     {/* <Column.Text
                       id="ubicacion"
@@ -347,7 +347,7 @@ function ShPreparacionDePedido({
                     /> */}
                     <Column.Action
                       id="actioncodubicacion"
-                      width={90}
+                      width={110}
                       header="Ubic."
                       order="sh_codubicacionarticulo"
                       value={(linea, idx) => (
@@ -417,7 +417,7 @@ function ShPreparacionDePedido({
                       order="refprov"
                       pl={2}
                       value={linea => linea.referenciaProv}
-                      width={150}
+                      width={175}
                     />
                     <Column.Text
                       id="codPedido"
@@ -425,7 +425,7 @@ function ShPreparacionDePedido({
                       order="codpedido"
                       pl={2}
                       value={linea => linea.codPedido}
-                      width={110}
+                      width={125}
                     />
                     <Column.Decimal
                       id="totalenalbaran"

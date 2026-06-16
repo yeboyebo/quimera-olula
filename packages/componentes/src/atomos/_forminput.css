@@ -213,5 +213,15 @@ quimera-input {
         label {
             text-align: right;
         }
+
+        .valor-solo-texto {
+            text-align: right;
+        }
+    }
+
+    &[tipo='hora'],
+    &[tipo='fecha'],
+    &[tipo='fecha_hora'] {
+        width: fit-content;
     }
 }
