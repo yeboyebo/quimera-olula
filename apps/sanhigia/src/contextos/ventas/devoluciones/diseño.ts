@@ -13,14 +13,19 @@ export interface DevolucionPedido extends Entidad {
 }
 
 export interface LineaDevolucionPedido extends Entidad {
+    referencia: string;
     codigo: string;
     descripcion: string;
     cantidad: number;
+    cantidadOk: number;
+    cantidadKo: number;
     cantidadDevolver: number;
     precio: number;
     total: number;
     codLote?: string;
     fechaCaducidad?: Date | null;
+    fechaCaducidadIso?: string;
+    idLineaPc?: number;
 }
 
 export interface LineaFacturaDevolucion extends Entidad {
@@ -46,6 +51,89 @@ export interface FacturaDevolucion {
     cabeceraFactura: CabeceraFacturaDevolucion;
     lineas: LineaFacturaDevolucion[];
 }
+
+export type CrearDevolucionPedidoPayload = {
+    idFactura: string;
+    razonDevolucion: string;
+    lineasConDevoluciones: Array<{
+        idLineaFactura: string;
+        cantidadDevolver: number;
+    }>;
+};
+
+export type PrepararDevolucionPedidoPayload = {
+    idPedido: string;
+    lineasDevolucion: LineaDevolucionPedido[];
+};
+
+export type DevolucionPedidoAPI = {
+    idpedido: number | string;
+    codigo: string;
+    codcliente: string;
+    nombrecliente: string;
+    servido: string;
+    sh_estadopago: string;
+    fecha: string | null;
+    total: number;
+};
+
+export type LineaDevolucionPedidoAPI = {
+    id: number | string;
+    idlineapc?: number;
+    referencia?: string;
+    codigo?: string;
+    descripcion?: string;
+    cantidad?: number;
+    cantidad_factura?: number;
+    cantidadok?: number;
+    cantidadko?: number;
+    cantidad_devolver?: number;
+    codlote?: string;
+    fechacaducidad?: string | null;
+    precio?: number;
+    total?: number;
+};
+
+export type LineaFacturaDevolucionAPI = {
+    id?: number | string;
+    idlinea?: number | string;
+    referencia?: string;
+    codigo?: string;
+    descripcion?: string;
+    cantidad?: number;
+    precio?: number;
+    total?: number;
+    importe?: number;
+    esKit?: boolean;
+    cantidadDevolver?: number;
+    cantidad_devolver?: number;
+};
+
+export type FacturaDevolucionAPI = {
+    cabeceraFactura: {
+        id: number | string;
+        codigo: string;
+        nombrecliente: string;
+        codcliente?: string;
+        fecha: string | null;
+        total: number;
+    };
+    lineas: LineaFacturaDevolucionAPI[];
+};
+
+export type RespuestaFacturaDevolucionAPI = {
+    cabecera?: {
+        id?: number | string;
+        idfactura?: number | string;
+        codigo?: string;
+        nombre?: string;
+        nombrecliente?: string;
+        codcliente?: string;
+        fecha?: string | null;
+        total?: number;
+    };
+    lineas?: LineaFacturaDevolucionAPI[];
+};
 
 export type EstadoMaestroDevolucionesPedidos = "INICIAL" | "BUSCANDO_FACTURA";
 

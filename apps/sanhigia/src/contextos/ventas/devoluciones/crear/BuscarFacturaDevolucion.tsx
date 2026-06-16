@@ -3,6 +3,7 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QIcono } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { FacturaSelector } from "@olula/ctx/ventas/comun/componentes/factura.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
@@ -45,6 +46,10 @@ export const BuscarFacturaDevolucion = ({
   const [lineasDevolucion, setLineasDevolucion] = useState<
     LineaFacturaDevolucion[]
   >([]);
+  const [borradoresCantidad, setBorradoresCantidad] = useState<
+    Record<string, string>
+  >({});
+  const [confirmandoCrear, setConfirmandoCrear] = useState(false);
 
   const formulario = useModelo(
     metaFormCrearDevolucion,
@@ -56,6 +61,7 @@ export const BuscarFacturaDevolucion = ({
       formulario.init(formCrearDevolucionVacio);
       setFacturaSeleccionada(null);
       setLineasDevolucion([]);
+      setBorradoresCantidad({});
       emitir("formulario_limpiado", null, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,11 +69,19 @@ export const BuscarFacturaDevolucion = ({
 
   useEffect(() => {
     if (ctx.factura) {
-      setLineasDevolucion(
-        ctx.factura.lineas.map((linea) => ({
-          ...linea,
-          cantidadDevolver: Number(linea.cantidadDevolver ?? 0),
-        }))
+      const lineas = ctx.factura.lineas.map((linea) => ({
+        ...linea,
+        cantidadDevolver: Number(linea.cantidadDevolver ?? 0),
+      }));
+      setLineasDevolucion(lineas);
+      setBorradoresCantidad(
+        lineas.reduce<Record<string, string>>(
+          (acc, linea) => ({
+            ...acc,
+            [linea.id]: String(linea.cantidadDevolver ?? 0),
+          }),
+          {}
+        )
       );
     }
   }, [ctx.factura]);
@@ -79,18 +93,22 @@ export const BuscarFacturaDevolucion = ({
     !!formulario.modelo.razonDevolucion &&
     lineasDevolucion.some((linea) => Number(linea.cantidadDevolver ?? 0) > 0);
 
-  const actualizarCantidadDevolver = (idLinea: string, cantidad: number) => {
+  const aplicarCantidadDevolver = (idLinea: string) => {
     setLineasDevolucion((actuales) =>
-      actuales.map((linea) =>
-        linea.id !== idLinea
-          ? linea
-          : {
-              ...linea,
-              cantidadDevolver: Number.isNaN(cantidad)
-                ? 0
-                : Math.max(0, Math.min(cantidad, linea.cantidad)),
-            }
-      )
+      actuales.map((linea) => {
+        if (linea.id !== idLinea) return linea;
+
+        const bruto = borradoresCantidad[idLinea]?.replace(",", ".") ?? "0";
+        const valor = Number(bruto);
+        const cantidad = Number.isNaN(valor)
+          ? 0
+          : Math.max(0, Math.min(valor, linea.cantidad));
+
+        return {
+          ...linea,
+          cantidadDevolver: cantidad,
+        };
+      })
     );
   };
 
@@ -110,6 +128,8 @@ export const BuscarFacturaDevolucion = ({
     formulario.init(formCrearDevolucionVacio);
     setFacturaSeleccionada(null);
     setLineasDevolucion([]);
+    setBorradoresCantidad({});
+    setConfirmandoCrear(false);
     emitir("formulario_limpiado");
     onCancelar();
   };
@@ -186,6 +206,7 @@ export const BuscarFacturaDevolucion = ({
                     <th className="alineado-derecha">Importe</th>
                     <th className="alineado-derecha">Cantidad</th>
                     <th className="alineado-derecha">A devolver</th>
+                    <th className="alineado-centro">Aplicar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,14 +224,26 @@ export const BuscarFacturaDevolucion = ({
                       </td>
                       <td className="alineado-derecha">
                         <input
-                          value={linea.cantidadDevolver ?? 0}
+                          value={borradoresCantidad[linea.id] ?? "0"}
                           onChange={(evento) => {
-                            const bruto = evento.target.value.replace(",", ".");
-                            actualizarCantidadDevolver(linea.id, Number(bruto));
+                            setBorradoresCantidad((actuales) => ({
+                              ...actuales,
+                              [linea.id]: evento.target.value,
+                            }));
                           }}
                           className="entrada-cantidad"
                           disabled={linea.esKit}
                         />
+                      </td>
+                      <td className="alineado-centro">
+                        <QBoton
+                          variante="texto"
+                          tamaño="pequeño"
+                          deshabilitado={linea.esKit}
+                          onClick={() => aplicarCantidadDevolver(linea.id)}
+                        >
+                          Aplicar
+                        </QBoton>
                       </td>
                     </tr>
                   ))}
@@ -222,17 +255,32 @@ export const BuscarFacturaDevolucion = ({
               <QBoton
                 variante="texto"
                 onClick={() => {
-                  setLineasDevolucion((actuales) =>
-                    actuales.map((linea) => ({
+                  setLineasDevolucion((actuales) => {
+                    const lineas = actuales.map((linea) => ({
                       ...linea,
                       cantidadDevolver: linea.esKit ? 0 : linea.cantidad,
-                    }))
-                  );
+                    }));
+
+                    setBorradoresCantidad(
+                      lineas.reduce<Record<string, string>>(
+                        (acc, linea) => ({
+                          ...acc,
+                          [linea.id]: String(linea.cantidadDevolver ?? 0),
+                        }),
+                        {}
+                      )
+                    );
+
+                    return lineas;
+                  });
                 }}
               >
                 Devolución total
               </QBoton>
-              <QBoton onClick={crearDevolucion} deshabilitado={!puedeCrear}>
+              <QBoton
+                onClick={() => setConfirmandoCrear(true)}
+                deshabilitado={!puedeCrear}
+              >
                 Crear devolución
               </QBoton>
             </div>
@@ -241,6 +289,16 @@ export const BuscarFacturaDevolucion = ({
 
         {ctx.error && <p className="mensaje-error">{ctx.error}</p>}
       </div>
+
+      <QModalConfirmacion
+        nombre="confirmar_crear_devolucion"
+        abierto={confirmandoCrear}
+        titulo="Confirmar creación"
+        mensaje="Se va a crear un pedido de devolución con las cantidades seleccionadas ¿Está seguro?"
+        onCerrar={() => setConfirmandoCrear(false)}
+        onAceptar={crearDevolucion}
+        labelAceptar="Confirmar"
+      />
     </QModal>
   );
 };

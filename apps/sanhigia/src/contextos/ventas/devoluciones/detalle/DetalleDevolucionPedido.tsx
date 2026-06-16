@@ -2,8 +2,9 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QIcono } from "@olula/componentes/index.js";
+import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./DetalleDevolucionPedido.css";
 import { contextoDetalleDevolucionPedidoVacio } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
@@ -33,6 +34,7 @@ export const DetalleDevolucionPedido = ({
     contextoDetalleDevolucionPedidoVacio,
     publicar
   );
+  const [confirmandoPreparar, setConfirmandoPreparar] = useState(false);
 
   useEffect(() => {
     emitir("id_cambiado", id ?? "", true);
@@ -56,7 +58,12 @@ export const DetalleDevolucionPedido = ({
     ? ctx.devolucion.fecha.toLocaleDateString()
     : "-";
   const total = formatoMoneda.format(ctx.devolucion.total ?? 0);
-  const confirmarDeshabilitado = ctx.lineas.length === 0;
+  const hayErroresLineas = Object.keys(ctx.erroresLineas).length > 0;
+  const hayCantidades = ctx.lineas.some(
+    (linea) => (linea.cantidadOk ?? 0) + (linea.cantidadKo ?? 0) > 0
+  );
+  const confirmarDeshabilitado =
+    ctx.lineas.length === 0 || hayErroresLineas || !hayCantidades;
 
   return (
     <Detalle
@@ -89,9 +96,7 @@ export const DetalleDevolucionPedido = ({
           <QBoton
             texto="Confirmar devolución"
             deshabilitado={confirmarDeshabilitado}
-            onClick={async () => {
-              await emitir("devolucion_preparada");
-            }}
+            onClick={() => setConfirmandoPreparar(true)}
           >
             Confirmar devolución
           </QBoton>
@@ -125,12 +130,45 @@ export const DetalleDevolucionPedido = ({
                       ? linea.fechaCaducidad.toLocaleDateString()
                       : "-"}
                   </td>
-                  <td className="alineado-derecha">
-                    {formatoNumero.format(linea.cantidadDevolver ?? 0)}
+                  <td className="alineado-derecha celda-cantidad-editar">
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={linea.cantidadOk ?? 0}
+                      onChange={(evento) =>
+                        emitir("cantidad_ok_cambiada", {
+                          idLinea: linea.id,
+                          valor: Number(evento.target.value),
+                        })
+                      }
+                    />
                   </td>
-                  <td className="alineado-derecha">0,00</td>
+                  <td className="alineado-derecha celda-cantidad-editar">
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={linea.cantidadKo ?? 0}
+                      onChange={(evento) =>
+                        emitir("cantidad_ko_cambiada", {
+                          idLinea: linea.id,
+                          valor: Number(evento.target.value),
+                        })
+                      }
+                    />
+                  </td>
                   <td className="alineado-centro">
-                    <QBoton variante="texto" tamaño="pequeño" deshabilitado>
+                    <QBoton
+                      variante="texto"
+                      tamaño="pequeño"
+                      deshabilitado={
+                        (linea.cantidadOk ?? 0) + (linea.cantidadKo ?? 0) === 0
+                      }
+                      onClick={() =>
+                        emitir("cantidades_limpiadas", { idLinea: linea.id })
+                      }
+                    >
                       <QIcono nombre="cerrar" tamaño="sm" />
                     </QBoton>
                   </td>
@@ -138,8 +176,28 @@ export const DetalleDevolucionPedido = ({
               ))}
             </tbody>
           </table>
+
+          {hayErroresLineas && (
+            <p className="detalle-devolucion-error-lineas">
+              Revisa las cantidades: correcta + dañada no puede superar la
+              cantidad de la línea.
+            </p>
+          )}
         </div>
       </div>
+
+      <QModalConfirmacion
+        nombre="confirmar_preparar_devolucion"
+        abierto={confirmandoPreparar}
+        titulo="Confirmar preparación"
+        mensaje="Se va a preparar la devolución ¿Está seguro?"
+        onCerrar={() => setConfirmandoPreparar(false)}
+        onAceptar={async () => {
+          await emitir("devolucion_preparada");
+          setConfirmandoPreparar(false);
+        }}
+        labelAceptar="Confirmar"
+      />
     </Detalle>
   );
 };

@@ -62,6 +62,17 @@
     text-align: center;
 }
 
+.celda-cantidad-editar input {
+    width: 78px;
+    text-align: right;
+    padding: 0.2rem 0.35rem;
+}
+
+.detalle-devolucion-error-lineas {
+    margin: 0.5rem 0 0;
+    color: var(--color-error, #b42318);
+}
+
 @media (max-width: 768px) {
     .devolucion-cabecera-principal {
         grid-template-columns: auto 1fr;

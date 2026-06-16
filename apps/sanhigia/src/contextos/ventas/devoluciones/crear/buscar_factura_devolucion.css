@@ -67,6 +67,10 @@
     text-align: right;
 }
 
+.alineado-centro {
+    text-align: center;
+}
+
 .entrada-cantidad {
     width: 74px;
     text-align: right;
