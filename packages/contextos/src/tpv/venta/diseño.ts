@@ -45,6 +45,7 @@ export interface PagoVentaTpv extends Entidad {
     vale: string | null;
     idArqueo: string;
     arqueoAbierto: boolean;
+    idTipoTarjeta: string | null;
 }
 
 
@@ -76,7 +77,8 @@ export type CambioClienteFactura = CambioClienteVenta;
 type PagoTpv = {
     importe: number;
     formaPago: string;
-    idVale?: string
+    idVale?: string;
+    idTipoTarjeta?: string | null;
 }
 
 // export const metaNuevoPagoEfectivo: MetaModelo<NuevoPagoEfectivo> = {

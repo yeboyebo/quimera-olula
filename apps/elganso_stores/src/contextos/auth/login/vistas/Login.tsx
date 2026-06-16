@@ -3,7 +3,6 @@ import { misPermisos, permisosGrupo } from "#/auth/login/infraestructura.ts";
 import estilosOriginal from "#/auth/login/vistas/Login.module.css";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
-import { QForm } from "@olula/componentes/atomos/qform.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -12,10 +11,10 @@ import estilos from "./Login.module.scss";
 export const Login = () => {
   const navigate = useNavigate();
   const [mostrarContraseña, setMostrarContraseña] = useState(false);
+  const [id, setId] = useState("");
+  const [contraseña, setContraseña] = useState("");
 
-  const loginSubmit = async (datos: Record<string, string>) => {
-    const { id, contraseña } = datos;
-
+  const handleLogin = async () => {
     return login(id, contraseña)
       .then(() => {
         return misPermisos().then((datosPermisos) => {
@@ -35,12 +34,14 @@ export const Login = () => {
         <h1>Iniciar sesión</h1>
       </div>
       <div className={`${estilosOriginal.loginForm} ${estilos.loginForm}`}>
-        <QForm onSubmit={loginSubmit}>
-          <QInput label="E-mail" nombre="id" tipo="email" />
+        <quimera-formulario>
+          <QInput label="E-mail" nombre="id" tipo="email" valor={id} onChange={(v) => setId(v)} />
           <QInput
             label="Contraseña"
             nombre="contraseña"
             tipo={mostrarContraseña ? "texto" : "contraseña"}
+            valor={contraseña}
+            onChange={(v) => setContraseña(v)}
           />
           <QCheckbox
             label="Mostrar contraseña"
@@ -49,10 +50,10 @@ export const Login = () => {
             onChange={(valor) => setMostrarContraseña(valor === "true")}
             opcional={true}
           />
-          <QBoton tipo="submit" tamaño="mediano">
+          <QBoton tamaño="mediano" onClick={handleLogin}>
             Entrar
           </QBoton>
-        </QForm>
+        </quimera-formulario>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import { OlulaWordmark } from "@olula/componentes/tema/Olula.jsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import "./Cabecera.css";
 import { NotificacionesCabecera } from "./NotificacionesCabecera.tsx";
@@ -12,7 +12,7 @@ export type CabeceraProps = {
   logoSrc?: string;
   logoAlt?: string;
   logoClassName?: string;
-  Logo?: () => React.ReactNode;
+  Logo?: (() => React.ReactNode) | null;
   Titulo?: () => React.ReactNode;
   NotificacionesCabecera?: () => React.ReactNode;
   AccionesCabecera?: () => React.ReactNode;
@@ -39,6 +39,7 @@ export const CabeceraBase = ({
   const { toggleMenu } = useMenuControl();
   const autenticado = estaAutentificado();
 
+  console.log("Logo", Logo);
   return (
     <>
       <header className="cabecera-principal">
@@ -113,6 +114,24 @@ export const Cabecera = (props: CabeceraProps) => {
     ExtraLogo: ExtraLogo || props.ExtraLogo,
     Titulo: props.Titulo,
   };
+
+  const { pathname } = useLocation();
+
+  const rutasExcluidas = [
+    "/login",
+    "/forgot-password",
+    "/signup",
+    "/welcome",
+    "/auth/passkey/enlace-magico",
+    "/auth/reset-password",
+  ];
+  const esRutaExcluida = rutasExcluidas.some((ruta) =>
+    pathname.startsWith(ruta)
+  );
+
+  if (esRutaExcluida) {
+    return null;
+  }
 
   return CabeceraCustom ? (
     <CabeceraCustom {...cProps} />

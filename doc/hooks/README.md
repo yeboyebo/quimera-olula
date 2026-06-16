@@ -21,6 +21,7 @@ import { useLista }   from "@olula/lib/useLista.ts";
 | [`useLayout`](./useLayout.md) | `useLayout.ts` | Toggle tarjeta/tabla con soporte responsive |
 | [`useEsMovil`](./useEsMovil.md) | `useEsMovil.ts` | Detección de viewport móvil |
 | [`useFocus`](./useFocus.md) | `useFocus.ts` | Auto-foco en un input al montar el componente |
+| [`usePreferencia`](./usePreferencia.md) | `usePreferencia.ts` | Preferencia de UI persistida en `localStorage` |
 
 ---
 
@@ -33,3 +34,4 @@ import { useLista }   from "@olula/lib/useLista.ts";
 - **Alternar entre vista tarjeta y tabla** → [`useLayout`](./useLayout.md)
 - **Detectar si el usuario está en móvil** → [`useEsMovil`](./useEsMovil.md)
 - **Poner el foco en un input al abrir un modal** → [`useFocus`](./useFocus.md)
+- **Recordar una preferencia de UI entre sesiones** → [`usePreferencia`](./usePreferencia.md)

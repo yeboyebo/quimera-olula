@@ -1,13 +1,15 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
-import { QForm } from "@olula/componentes/atomos/qform.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
+import { BotonLoginPasskey } from "../../passkey/vistas/BotonLoginPasskey.tsx";
+import { EnlaceMagicoPasskey } from "../../passkey/vistas/EnlaceMagicoPasskey.tsx";
 import { login } from "../dominio.ts";
 import { permisosGrupo, whoAmI, whoAmIStorage } from "../infraestructura.ts";
 import estilos from "./Login.module.css";
+import { OlvideMiContrasena } from "./OlvideMiContrasena.tsx";
 
 type TipoFormato = "email" | "texto";
 
@@ -15,10 +17,10 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const [mostrarContraseña, setMostrarContraseña] = useState(false);
+  const [id, setId] = useState("");
+  const [contraseña, setContraseña] = useState("");
 
-  const loginSubmit = async (datos: Record<string, string>) => {
-    const { id, contraseña } = datos;
-
+  const handleLogin = async () => {
     return login(id, contraseña)
       .then(() =>
         whoAmI().then((datosWhoAmI) => {
@@ -43,28 +45,47 @@ export const Login = () => {
         <h1>Iniciar sesión</h1>
       </div>
       <div className={estilos.loginForm}>
-        <QForm onSubmit={loginSubmit}>
+        <quimera-formulario>
           <QInput
             label={label_login}
             nombre="id"
             tipo={app.Auth.formato_login as TipoFormato}
+            valor={id}
+            onChange={(v) => setId(v)}
           />
           <QInput
             label="Contraseña"
             nombre="contraseña"
             tipo={mostrarContraseña ? "texto" : "contraseña"}
+            valor={contraseña}
+            onChange={(v) => setContraseña(v)}
           />
-          <QCheckbox
-            label="Mostrar contraseña"
-            nombre=""
-            valor={mostrarContraseña}
-            onChange={(valor) => setMostrarContraseña(valor === "true")}
-            opcional={true}
-          />
-          <QBoton tipo="submit" tamaño="mediano">
-            Iniciar sesión
-          </QBoton>
-        </QForm>
+          <div>
+            <QCheckbox
+              label="Mostrar contraseña"
+              nombre=""
+              valor={mostrarContraseña}
+              onChange={(valor) => setMostrarContraseña(valor === "true")}
+              opcional={true}
+            />
+          </div>
+          <div>
+            <QBoton tamaño="mediano" ancho onClick={handleLogin}>
+              Iniciar sesión
+            </QBoton>
+          </div>
+        </quimera-formulario>
+        <div style={{ marginTop: "0.0rem" }}>
+          <OlvideMiContrasena />
+        </div>
+
+        <div style={{ textAlign: "center", margin: "1rem 0", color: "var(--color-texto-secundario, #666)" }}>
+          o continúa con
+        </div>
+        <BotonLoginPasskey />
+        <div style={{ marginTop: "1rem" }}>
+          <EnlaceMagicoPasskey />
+        </div>
       </div>
     </section>
   );
