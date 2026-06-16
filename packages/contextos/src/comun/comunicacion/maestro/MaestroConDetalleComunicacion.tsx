@@ -1,4 +1,3 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
@@ -88,13 +87,13 @@ export const MaestroConDetalleComunicacion = () => {
               metaFiltro={metaFiltroComunicacion}
               modo="tarjetas"
               criteria={ctx.comunicaciones.criteria}
-              renderAcciones={() => (
-                <div className="maestro-botones">
-                  <QBoton onClick={() => emitir("creacion_solicitada")}>
-                    Nueva comunicación
-                  </QBoton>
-                </div>
-              )}
+              // renderAcciones={() => (
+              //   <div className="maestro-botones">
+              //     <QBoton onClick={() => emitir("creacion_solicitada")}>
+              //       Nueva comunicación
+              //     </QBoton>
+              //   </div>
+              // )}
               tarjeta={TarjetaComunicacion}
               entidades={ctx.comunicaciones.lista}
               totalEntidades={ctx.comunicaciones.total}
