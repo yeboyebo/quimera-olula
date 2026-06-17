@@ -9,7 +9,6 @@ import { Historias } from '@olula/componentes/index.ts';
 import { FondoInicio } from '@olula/componentes/plantilla/FondoInicio.tsx';
 import { crearRouter } from '@olula/lib/router.ts';
 import { RouteObject } from 'react-router';
-import { SseDemo } from "./sse/SseDemo.tsx";
 
 export class RouterFactoryOlula {
     Inicio = { router: { "": FondoInicio } };
@@ -22,8 +21,7 @@ export class RouterFactoryOlula {
     Rrhh = RouterFactoryRrhh;
     Otros = {
         router: {
-            "docs/componentes": Historias,
-            "sse-demo": SseDemo,
+            "docs/componentes": Historias
         }
     }
 }
