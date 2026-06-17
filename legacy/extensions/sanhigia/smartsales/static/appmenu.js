@@ -54,13 +54,13 @@ export default parent => ({
         color: "info",
         url: "/ss/tratosfarma",
       },
-      // licencias: {
-      //   title: "Licencias",
-      //   // rule: "TratosFarma:visit",
-      //   icons: ["medication"],
-      //   color: "info",
-      //   url: "/ss/licencias",
-      // },
+      licencias: {
+        title: "Licencias",
+        rule: "LicenciasFarma:visit",
+        icons: ["medication"],
+        color: "info",
+        url: "/ss/licencias",
+      },
       contactos: {
         title: "Contactos",
         rule: "crm.campana.leer",
