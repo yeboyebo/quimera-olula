@@ -5,8 +5,8 @@
 quimera-tarjetas {
     width: 100%;
     display: block;
-    height: 75vh;
-    overflow-y: scroll;
+    max-height: calc(94vh - var(--alto-header) - 6rem);
+    overflow-y: auto;
 
     .lista-contenedor-scroll {
         display: flex;

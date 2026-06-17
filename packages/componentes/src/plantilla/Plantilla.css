@@ -19,6 +19,7 @@
         display: flex;
         flex-grow: 1;
         overflow: hidden;
+        min-height: 0;
 
         &>*:not(menu-lateral):not(menu-usuario) {
             /* padding: 1rem; */
