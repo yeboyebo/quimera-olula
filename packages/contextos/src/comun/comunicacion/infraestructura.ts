@@ -97,6 +97,7 @@ export const borrarComunicacion = async (id: string): Promise<void> => {
     await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar comunicación");
 };
 
+
 export const getTotalComunicacionesNoLeidas = async (): Promise<number> => {
     const respuesta = await getComunicaciones(
         [["estado", "=", ESTADOS_COMUNICACION.NO_LEIDA]],
