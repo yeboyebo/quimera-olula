@@ -1,7 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
-import { QIcono } from "@olula/componentes/index.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { FacturaSelector } from "@olula/ctx/ventas/comun/componentes/factura.tsx";
@@ -16,17 +15,13 @@ import {
   formCrearDevolucionVacio,
   metaFormCrearDevolucion,
 } from "./dominio.ts";
+import { TablaLineasDevolucion } from "./lineas_devolucion/TablaLineasDevolucion.tsx";
 import { getMaquina } from "./maquina.ts";
 
 const formatoMoneda = new Intl.NumberFormat("es-ES", {
   style: "currency",
   currency: "EUR",
   minimumFractionDigits: 2,
-});
-
-const formatoNumero = new Intl.NumberFormat("es-ES", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
 });
 
 export const BuscarFacturaDevolucion = ({
@@ -39,16 +34,9 @@ export const BuscarFacturaDevolucion = ({
   activo?: boolean;
 }) => {
   const { ctx, emitir } = useMaquina(getMaquina, contextoCrearDevolucionVacio);
-  const [facturaSeleccionada, setFacturaSeleccionada] = useState<{
-    valor: string;
-    descripcion: string;
-  } | null>(null);
   const [lineasDevolucion, setLineasDevolucion] = useState<
     LineaFacturaDevolucion[]
   >([]);
-  const [borradoresCantidad, setBorradoresCantidad] = useState<
-    Record<string, string>
-  >({});
   const [confirmandoCrear, setConfirmandoCrear] = useState(false);
 
   const formulario = useModelo(
@@ -59,57 +47,21 @@ export const BuscarFacturaDevolucion = ({
   useEffect(() => {
     if (!activo) {
       formulario.init(formCrearDevolucionVacio);
-      setFacturaSeleccionada(null);
       setLineasDevolucion([]);
-      setBorradoresCantidad({});
       emitir("formulario_limpiado", null, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activo]);
 
-  useEffect(() => {
-    if (ctx.factura) {
-      const lineas = ctx.factura.lineas.map((linea) => ({
-        ...linea,
-        cantidadDevolver: Number(linea.cantidadDevolver ?? 0),
-      }));
-      setLineasDevolucion(lineas);
-      setBorradoresCantidad(
-        lineas.reduce<Record<string, string>>(
-          (acc, linea) => ({
-            ...acc,
-            [linea.id]: String(linea.cantidadDevolver ?? 0),
-          }),
-          {}
-        )
-      );
-    }
-  }, [ctx.factura]);
-
-  const idFactura = facturaSeleccionada?.valor ?? "";
+  const idFactura = ctx.facturaSeleccionada?.valor ?? "";
   const puedeContinuar = !!idFactura;
-  const puedeCrear =
-    !!ctx.factura &&
-    !!formulario.modelo.razonDevolucion &&
-    lineasDevolucion.some((linea) => Number(linea.cantidadDevolver ?? 0) > 0);
 
-  const aplicarCantidadDevolver = (idLinea: string) => {
-    setLineasDevolucion((actuales) =>
-      actuales.map((linea) => {
-        if (linea.id !== idLinea) return linea;
-
-        const bruto = borradoresCantidad[idLinea]?.replace(",", ".") ?? "0";
-        const valor = Number(bruto);
-        const cantidad = Number.isNaN(valor)
-          ? 0
-          : Math.max(0, Math.min(valor, linea.cantidad));
-
-        return {
-          ...linea,
-          cantidadDevolver: cantidad,
-        };
-      })
-    );
+  const cerrarFlujo = () => {
+    formulario.init(formCrearDevolucionVacio);
+    setLineasDevolucion([]);
+    setConfirmandoCrear(false);
+    emitir("formulario_limpiado");
+    onCancelar();
   };
 
   const crearDevolucion = async () => {
@@ -125,36 +77,29 @@ export const BuscarFacturaDevolucion = ({
     });
 
     publicar("devolucion_creada", devolucionCreada);
-    formulario.init(formCrearDevolucionVacio);
-    setFacturaSeleccionada(null);
-    setLineasDevolucion([]);
-    setBorradoresCantidad({});
-    setConfirmandoCrear(false);
-    emitir("formulario_limpiado");
-    onCancelar();
+    cerrarFlujo();
   };
 
-  if (!activo) return null;
+  const mostrarBusqueda = activo && ctx.estado === "SELECCIONANDO_FACTURA";
+  const mostrarEdicion =
+    activo && ctx.estado === "EDITANDO_DEVOLUCION" && !!ctx.factura;
 
   return (
-    <QModal
-      abierto={activo}
-      nombre="buscar_factura_devolucion"
-      titulo="Nueva devolución"
-      onCerrar={onCancelar}
-    >
-      <div className="buscar-factura-devolucion">
-        {!ctx.factura && (
+    <>
+      <QModal
+        abierto={mostrarBusqueda}
+        nombre="buscar_factura_devolucion"
+        titulo="Nueva devolución"
+        onCerrar={cerrarFlujo}
+      >
+        <div className="buscar-factura-devolucion">
           <>
             <FacturaSelector
-              valor={facturaSeleccionada?.valor ?? ""}
-              descripcion={facturaSeleccionada?.descripcion ?? ""}
+              valor={ctx.facturaSeleccionada?.valor ?? ""}
+              descripcion={ctx.facturaSeleccionada?.descripcion ?? ""}
               nombre="devolucion/factura"
               label="Buscar factura"
-              onChange={(factura) => {
-                setFacturaSeleccionada(factura);
-                emitir("formulario_limpiado");
-              }}
+              onChange={(factura) => emitir("factura_seleccionada", factura)}
             />
 
             <div className="botones">
@@ -164,21 +109,25 @@ export const BuscarFacturaDevolucion = ({
               >
                 Siguiente
               </QBoton>
-              <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
+              <QBoton tipo="reset" variante="texto" onClick={cerrarFlujo}>
                 Cancelar
               </QBoton>
             </div>
-          </>
-        )}
 
+            {ctx.error && <p className="mensaje-error">{ctx.error}</p>}
+          </>
+        </div>
+      </QModal>
+
+      <QModal
+        abierto={mostrarEdicion}
+        nombre="crear_devolucion_factura"
+        titulo="Configurar devolución"
+        onCerrar={cerrarFlujo}
+      >
         {!!ctx.factura && (
-          <div className="crear-devolucion-factura">
-            <div className="crear-devolucion-factura-cabecera">
-              <h3>Devolución Factura ({ctx.factura.cabeceraFactura.codigo})</h3>
-              <QBoton variante="texto" onClick={onCancelar}>
-                <QIcono nombre="cerrar" tamaño="sm" />
-              </QBoton>
-            </div>
+          <div className="buscar-factura-devolucion crear-devolucion-factura">
+            <h3>Devolución factura ({ctx.factura.cabeceraFactura.codigo})</h3>
 
             <div className="crear-devolucion-factura-resumen">
               <h4>{ctx.factura.cabeceraFactura.nombrecliente}</h4>
@@ -197,98 +146,29 @@ export const BuscarFacturaDevolucion = ({
               />
             </quimera-formulario>
 
-            <div className="crear-devolucion-factura-tabla">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Referencia</th>
-                    <th>Descripción</th>
-                    <th className="alineado-derecha">Importe</th>
-                    <th className="alineado-derecha">Cantidad</th>
-                    <th className="alineado-derecha">A devolver</th>
-                    <th className="alineado-centro">Aplicar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lineasDevolucion.map((linea) => (
-                    <tr key={linea.id}>
-                      <td>{linea.codigo}</td>
-                      <td>{linea.descripcion}</td>
-                      <td className="alineado-derecha">
-                        {formatoMoneda.format(
-                          linea.importe ?? linea.total ?? 0
-                        )}
-                      </td>
-                      <td className="alineado-derecha">
-                        {formatoNumero.format(linea.cantidad ?? 0)}
-                      </td>
-                      <td className="alineado-derecha">
-                        <input
-                          value={borradoresCantidad[linea.id] ?? "0"}
-                          onChange={(evento) => {
-                            setBorradoresCantidad((actuales) => ({
-                              ...actuales,
-                              [linea.id]: evento.target.value,
-                            }));
-                          }}
-                          className="entrada-cantidad"
-                          disabled={linea.esKit}
-                        />
-                      </td>
-                      <td className="alineado-centro">
-                        <QBoton
-                          variante="texto"
-                          tamaño="pequeño"
-                          deshabilitado={linea.esKit}
-                          onClick={() => aplicarCantidadDevolver(linea.id)}
-                        >
-                          Aplicar
-                        </QBoton>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <TablaLineasDevolucion
+              lineasIniciales={ctx.factura.lineas}
+              razonDevolucion={formulario.modelo.razonDevolucion}
+              onLineasCambiadas={setLineasDevolucion}
+              onCrear={() => setConfirmandoCrear(true)}
+            />
 
             <div className="botones">
               <QBoton
                 variante="texto"
-                onClick={() => {
-                  setLineasDevolucion((actuales) => {
-                    const lineas = actuales.map((linea) => ({
-                      ...linea,
-                      cantidadDevolver: linea.esKit ? 0 : linea.cantidad,
-                    }));
-
-                    setBorradoresCantidad(
-                      lineas.reduce<Record<string, string>>(
-                        (acc, linea) => ({
-                          ...acc,
-                          [linea.id]: String(linea.cantidadDevolver ?? 0),
-                        }),
-                        {}
-                      )
-                    );
-
-                    return lineas;
-                  });
-                }}
+                onClick={() => emitir("volver_a_busqueda")}
               >
-                Devolución total
+                Cambiar factura
               </QBoton>
-              <QBoton
-                onClick={() => setConfirmandoCrear(true)}
-                deshabilitado={!puedeCrear}
-              >
-                Crear devolución
+              <QBoton tipo="reset" variante="texto" onClick={cerrarFlujo}>
+                Cancelar
               </QBoton>
             </div>
+
+            {ctx.error && <p className="mensaje-error">{ctx.error}</p>}
           </div>
         )}
-
-        {ctx.error && <p className="mensaje-error">{ctx.error}</p>}
-      </div>
+      </QModal>
 
       <QModalConfirmacion
         nombre="confirmar_crear_devolucion"
@@ -299,6 +179,6 @@ export const BuscarFacturaDevolucion = ({
         onAceptar={crearDevolucion}
         labelAceptar="Confirmar"
       />
-    </QModal>
+    </>
   );
 };

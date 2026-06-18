@@ -4,6 +4,7 @@ import { getFacturaDevolucion } from "../infraestructura.ts";
 import {
     ContextoCrearDevolucion,
     EstadoCrearDevolucion,
+    FacturaSeleccionada,
     FormCrearDevolucion,
     contextoCrearDevolucionVacio,
 } from "./diseño.ts";
@@ -23,12 +24,22 @@ export type ProcesarCrearDevolucion = ProcesarContexto<
     ContextoCrearDevolucion
 >;
 
-export const buscarFacturaProceso: ProcesarCrearDevolucion = async (_contexto, payload) => {
-    const idFactura = String(payload ?? "");
+export const seleccionarFacturaProceso: ProcesarCrearDevolucion = async (contexto, payload) => {
+    return {
+        ...contexto,
+        facturaSeleccionada: (payload as FacturaSeleccionada | null) ?? null,
+        error: "",
+    };
+};
+
+export const buscarFacturaProceso: ProcesarCrearDevolucion = async (contexto, payload) => {
+    const idFactura = String(
+        payload ?? contexto.facturaSeleccionada?.valor ?? ""
+    );
 
     if (!idFactura) {
         return {
-            ...contextoCrearDevolucionVacio,
+            ...contexto,
             error: "Indica un identificador de factura",
         };
     }
@@ -36,16 +47,26 @@ export const buscarFacturaProceso: ProcesarCrearDevolucion = async (_contexto, p
     try {
         const factura = await getFacturaDevolucion(idFactura);
         return {
-            estado: "INICIAL",
+            ...contexto,
+            estado: "EDITANDO_DEVOLUCION",
             factura,
             error: "",
         };
     } catch {
         return {
-            ...contextoCrearDevolucionVacio,
+            ...contexto,
+            estado: "SELECCIONANDO_FACTURA",
+            factura: null,
             error: "No se ha podido cargar la factura",
         };
     }
 };
+
+export const volverABusquedaProceso: ProcesarCrearDevolucion = async (contexto) => ({
+    ...contexto,
+    estado: "SELECCIONANDO_FACTURA",
+    factura: null,
+    error: "",
+});
 
 export const limpiarFacturaProceso: ProcesarCrearDevolucion = async () => contextoCrearDevolucionVacio;
