@@ -191,18 +191,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
 
-  apps/ecofricalia:
-    dependencies:
-      '@olula/componentes':
-        specifier: workspace:*
-        version: link:../../packages/componentes
-      '@olula/ctx':
-        specifier: workspace:*
-        version: link:../../packages/contextos
-      '@olula/lib':
-        specifier: workspace:*
-        version: link:../../packages/lib
-
   apps/elganso_stores:
     dependencies:
       '@mui/material':
@@ -235,7 +223,7 @@ importers:
     devDependencies:
       '@aldabil/react-scheduler':
         specifier: 3.0.4
-        version: 3.0.4(89bbd646327319dc035460be83c36d25)
+        version: 3.0.4(csss2bjbxz3xdgeg5xmor3wlau)
       baseline-browser-mapping:
         specifier: ^2.9.19
         version: 2.10.0
@@ -1664,7 +1652,7 @@ importers:
     dependencies:
       '@aldabil/react-scheduler':
         specifier: 3.1.2
-        version: 3.1.2(89bbd646327319dc035460be83c36d25)
+        version: 3.1.2(csss2bjbxz3xdgeg5xmor3wlau)
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@19.2.7)(react@19.2.3)
@@ -7472,7 +7460,7 @@ snapshots:
 
   '@adobe/css-tools@4.4.4': {}
 
-  '@aldabil/react-scheduler@3.0.4(89bbd646327319dc035460be83c36d25)':
+  '@aldabil/react-scheduler@3.0.4(csss2bjbxz3xdgeg5xmor3wlau)':
     dependencies:
       '@mui/icons-material': 7.3.5(@mui/material@7.3.5(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/react@19.2.7)(react@19.2.3)
       '@mui/material': 7.3.5(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -7481,7 +7469,7 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  '@aldabil/react-scheduler@3.1.2(89bbd646327319dc035460be83c36d25)':
+  '@aldabil/react-scheduler@3.1.2(csss2bjbxz3xdgeg5xmor3wlau)':
     dependencies:
       '@mui/icons-material': 7.3.5(@mui/material@7.3.5(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@types/react@19.2.7)(react@19.2.3)
       '@mui/material': 7.3.5(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
