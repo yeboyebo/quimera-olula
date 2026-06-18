@@ -18,7 +18,7 @@
     &>section[role=main] {
         display: flex;
         flex-grow: 1;
-        overflow: hidden;
+        /* overflow: hidden; */
         min-height: 0;
 
         &>*:not(menu-lateral):not(menu-usuario) {
