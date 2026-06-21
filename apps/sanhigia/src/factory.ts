@@ -11,7 +11,6 @@ import { FactoryVentasLegacy } from "./contextos/ventas/factory.ts";
 
 class FactoryComponentesSanhigia {
     static cabecera = CabeceraSanhigia;
-    // static cabecera_acciones = AccionesCabeceraSanhigia;
     static cabecera_menu_usuario = MenuUsuarioSanhigia;
     static cabecera_extra_logo = ExtraLogoSanhigia;
     static menu_usuario_elementos = MenuUsuarioElementosSanhigia;
