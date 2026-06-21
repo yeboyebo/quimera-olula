@@ -5,7 +5,7 @@ import {
     ProcesarListaActivaEntidades,
 } from "@olula/lib/ListaActivaEntidades.js";
 import { Grupo } from "../diseño.ts";
-import { getGrupos, postGrupo } from "../infraestructura.ts";
+import { getGrupos } from "../infraestructura.ts";
 import { ContextoMaestroGrupo, EstadoMaestroGrupo } from "./diseño.ts";
 
 const conGrupos = (fn: ProcesarListaActivaEntidades<Grupo>) => (ctx: ContextoMaestroGrupo, payload?: unknown) => ({
@@ -30,7 +30,6 @@ export const recargarGrupos: ProcesarMaestroGrupo = async (contexto, payload) =>
 
 export const crearGrupo: ProcesarMaestroGrupo = async (contexto, payload) => {
     const grupo = payload as Grupo;
-    const id = await postGrupo(grupo);
 
     return {
         ...contexto,
@@ -39,7 +38,6 @@ export const crearGrupo: ProcesarMaestroGrupo = async (contexto, payload) => {
             lista: [
                 {
                     ...grupo,
-                    id,
                     nombre: grupo.nombre ?? (grupo as { descripcion?: string }).descripcion ?? "",
                 },
                 ...contexto.grupos.lista,

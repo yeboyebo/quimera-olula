@@ -18,10 +18,10 @@ export const AltaGrupo = ({
 
   return (
     <div className="AltaGrupo">
-      <h2>Nueva Acción</h2>
+      <h2>Nuevo Grupo</h2>
       <quimera-formulario>
         <QInput label="Identificador" {...nuevoGrupo.uiProps("id")} />
-        <QInput label="Descripción" {...nuevoGrupo.uiProps("descripcion")} />
+        <QInput label="Nombre" {...nuevoGrupo.uiProps("nombre")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!nuevoGrupo.valido}>
