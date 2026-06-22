@@ -5,7 +5,7 @@ import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
-import { BuscarFacturaDevolucion } from "../crear/BuscarFacturaDevolucion.tsx";
+import { CrearDevolucion } from "../crear/CrearDevolucion.tsx";
 import { DetalleDevolucionPedido } from "../detalle/DetalleDevolucionPedido.tsx";
 import { DevolucionPedido, metaTablaDevolucionesPedidos } from "../diseño.ts";
 import { getMaquina } from "../maquina.ts";
@@ -68,7 +68,7 @@ export const MaestroConDetalleDevolucionesPedidos = () => {
         modoDisposicion="modal"
       />
 
-      <BuscarFacturaDevolucion
+      <CrearDevolucion
         publicar={emitir}
         onCancelar={() => emitir("creacion_cancelada")}
         activo={ctx.estado === "BUSCANDO_FACTURA"}

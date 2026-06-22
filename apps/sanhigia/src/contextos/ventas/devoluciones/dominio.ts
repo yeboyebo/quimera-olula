@@ -31,6 +31,17 @@ export const recargarDevolucionesPedidos: ProcesarMaestroDevolucionesPedidos = a
     return Devoluciones.recargar(contexto, resultado);
 };
 
+export const recargarDevolucionesActuales: ProcesarMaestroDevolucionesPedidos = async (contexto) => {
+    const { criteria } = contexto.devoluciones;
+    const resultado = await getDevolucionesPedidos(
+        criteria.filtro,
+        criteria.orden,
+        criteria.paginacion
+    );
+
+    return Devoluciones.recargar(contexto, resultado);
+};
+
 export const ampliarDevolucionesPedidos: ProcesarMaestroDevolucionesPedidos = async (contexto, payload) => {
     const criteria = payload as Criteria;
     const resultado = await getDevolucionesPedidos(

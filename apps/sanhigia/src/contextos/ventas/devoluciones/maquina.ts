@@ -3,6 +3,7 @@ import { ContextoMaestroDevolucionesPedidos, EstadoMaestroDevolucionesPedidos } 
 import {
     Devoluciones,
     ampliarDevolucionesPedidos,
+    recargarDevolucionesActuales,
     recargarDevolucionesPedidos,
 } from "./dominio.ts";
 
@@ -11,8 +12,8 @@ export const getMaquina = (): Maquina<EstadoMaestroDevolucionesPedidos, Contexto
         INICIAL: {
             devolucion_seleccionada: Devoluciones.activar,
             devolucion_deseleccionada: Devoluciones.desactivar,
-            devolucion_actualizada: Devoluciones.cambiar,
-            devolucion_creada: [Devoluciones.incluir, "INICIAL"],
+            devolucion_actualizada: [Devoluciones.cambiar, recargarDevolucionesActuales],
+            devolucion_creada: [Devoluciones.incluir, recargarDevolucionesActuales],
             recarga_de_devoluciones_solicitada: recargarDevolucionesPedidos,
             criteria_cambiado: [Devoluciones.filtrar, recargarDevolucionesPedidos],
             siguiente_pagina: [Devoluciones.filtrar, ampliarDevolucionesPedidos],
@@ -20,7 +21,7 @@ export const getMaquina = (): Maquina<EstadoMaestroDevolucionesPedidos, Contexto
         },
 
         BUSCANDO_FACTURA: {
-            devolucion_creada: [Devoluciones.incluir, "INICIAL"],
+            devolucion_creada: [Devoluciones.incluir, "INICIAL", recargarDevolucionesActuales],
             creacion_cancelada: "INICIAL",
         },
     };

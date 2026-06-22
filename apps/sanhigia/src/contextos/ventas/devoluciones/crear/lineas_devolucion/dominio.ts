@@ -88,6 +88,24 @@ export const aplicarCantidadProceso: ProcesarLineasDevolucion = async (
     };
 };
 
+export const aplicarCantidadMaximaProceso: ProcesarLineasDevolucion = async (
+    contexto,
+    payload
+) => {
+    const idLinea = String(payload ?? "");
+    const lineas = contexto.lineas.map((linea) => {
+        if (linea.id !== idLinea) return linea;
+        const cantidad = linea.esKit ? 0 : linea.cantidad;
+        return { ...linea, cantidadDevolver: cantidad };
+    });
+
+    return {
+        ...contexto,
+        lineas,
+        borradoresCantidad: crearBorradores(lineas),
+    };
+};
+
 export const aplicarDevolucionTotalProceso: ProcesarLineasDevolucion = async (
     contexto
 ) => {

@@ -35,25 +35,6 @@
     overflow-x: auto;
 }
 
-.detalle-devolucion-pedido-lineas table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 860px;
-}
-
-.detalle-devolucion-pedido-lineas th,
-.detalle-devolucion-pedido-lineas td {
-    padding: 0.45rem 0.5rem;
-    border-bottom: 1px solid var(--color-borde-sutil);
-    white-space: nowrap;
-}
-
-.detalle-devolucion-pedido-lineas th {
-    text-align: left;
-    font-weight: 600;
-    color: var(--color-texto-secundario);
-}
-
 .alineado-derecha {
     text-align: right;
 }
@@ -62,7 +43,11 @@
     text-align: center;
 }
 
-.celda-cantidad-editar input {
+.celda-cantidad-input quimera-input .etiqueta {
+    display: none;
+}
+
+.celda-cantidad-input quimera-input input {
     width: 78px;
     text-align: right;
     padding: 0.2rem 0.35rem;

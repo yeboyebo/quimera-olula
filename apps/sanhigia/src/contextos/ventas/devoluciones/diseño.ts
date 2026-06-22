@@ -29,7 +29,7 @@ export interface LineaDevolucionPedido extends Entidad {
 }
 
 export interface LineaFacturaDevolucion extends Entidad {
-    codigo: string;
+    referencia: string;
     descripcion: string;
     cantidad: number;
     precio: number;
@@ -54,10 +54,14 @@ export interface FacturaDevolucion {
 
 export type CrearDevolucionPedidoPayload = {
     idFactura: string;
+    idMotivo: string;
     razonDevolucion: string;
     lineasConDevoluciones: Array<{
-        idLineaFactura: string;
-        cantidadDevolver: number;
+        idlinea: string;
+        referencia: string;
+        descripcion: string;
+        cantidad: number;
+        esKit: boolean;
     }>;
 };
 

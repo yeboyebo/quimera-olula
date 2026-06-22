@@ -87,8 +87,51 @@
     margin: 0;
 }
 
+.motivo-devolucion-modal {
+    display: grid;
+    gap: 1rem;
+    min-width: min(920px, 90vw);
+}
+
+.motivo-devolucion-seccion {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.motivo-devolucion-seccion h4 {
+    margin: 0;
+}
+
+.motivo-devolucion-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.boton-motivo {
+    min-width: 110px;
+}
+
+.boton-motivo--activo {
+    font-weight: 600;
+}
+
+.motivo-devolucion-modal quimera-formulario {
+    padding-inline: 0.1rem;
+}
+
+.motivo-devolucion-modal {
+    quimera-textarea[nombre="descripcion_motivo"] {
+        grid-column: 1 / span 12;
+    }
+}
+
 @media (max-width: 768px) {
     .buscar-factura-devolucion {
+        min-width: auto;
+    }
+
+    .motivo-devolucion-modal {
         min-width: auto;
     }
 

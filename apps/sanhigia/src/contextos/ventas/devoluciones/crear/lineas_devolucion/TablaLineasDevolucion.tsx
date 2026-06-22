@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { QIcono } from "@olula/componentes/index.js";
 import { useEffect } from "react";
 import { LineaFacturaDevolucion } from "../../diseño.ts";
 import {
@@ -24,12 +25,10 @@ const hayLineasConCantidad = (ctx: ContextoLineasDevolucion) =>
 
 export const TablaLineasDevolucion = ({
   lineasIniciales,
-  razonDevolucion,
   onLineasCambiadas,
   onCrear,
 }: {
   lineasIniciales: LineaFacturaDevolucion[];
-  razonDevolucion: string;
   onLineasCambiadas: (lineas: LineaFacturaDevolucion[]) => void;
   onCrear: () => void;
 }) => {
@@ -44,7 +43,7 @@ export const TablaLineasDevolucion = ({
     onLineasCambiadas(ctx.lineas);
   }, [ctx.lineas, onLineasCambiadas]);
 
-  const puedeCrear = !!razonDevolucion && hayLineasConCantidad(ctx);
+  const puedeCrear = hayLineasConCantidad(ctx);
 
   return (
     <>
@@ -63,7 +62,7 @@ export const TablaLineasDevolucion = ({
           <tbody>
             {ctx.lineas.map((linea) => (
               <tr key={linea.id}>
-                <td>{linea.codigo}</td>
+                <td>{linea.referencia}</td>
                 <td>{linea.descripcion}</td>
                 <td className="alineado-derecha">
                   {formatoMoneda.format(linea.importe ?? linea.total ?? 0)}
@@ -89,9 +88,9 @@ export const TablaLineasDevolucion = ({
                     variante="texto"
                     tamaño="pequeño"
                     deshabilitado={linea.esKit}
-                    onClick={() => emitir("cantidad_aplicada", linea.id)}
+                    onClick={() => emitir("cantidad_maxima_aplicada", linea.id)}
                   >
-                    Aplicar
+                    <QIcono nombre="paquete_export" />
                   </QBoton>
                 </td>
               </tr>

@@ -127,7 +127,7 @@ const lineaFacturaDesdeApi = (
     linea: LineaFacturaDevolucionAPI
 ): LineaFacturaDevolucion => ({
     id: String(linea.id ?? linea.idlinea ?? ""),
-    codigo: linea.referencia ?? linea.codigo ?? "",
+    referencia: linea.referencia ?? "",
     descripcion: linea.descripcion ?? "",
     cantidad: Number(linea.cantidad ?? 0),
     precio: Number(linea.precio ?? linea.importe ?? 0),
@@ -343,17 +343,25 @@ export const prepararDevolucionPedido = async (payload: PrepararDevolucionPedido
         { lineasLotesDevolucion }
     );
 
+    if (respuesta === true) {
+        return getDevolucionPedido(payload.idPedido);
+    }
+
     return normalizarDevolucionPedidoRespuesta(respuesta);
 };
 
 export const crearDevolucionPedido = async (payload: CrearDevolucionPedidoPayload): Promise<DevolucionPedido> => {
     const lineasConDevolucionesLegacy = payload.lineasConDevoluciones.map((linea) => ({
-        idlinea: Number(linea.idLineaFactura),
-        cantidadDevolver: linea.cantidadDevolver,
+        idlinea: Number(linea.idlinea),
+        referencia: linea.referencia,
+        descripcion: linea.descripcion,
+        cantidadDevolver: linea.cantidad,
+        esKit: linea.esKit,
     }));
 
     const respuesta = await LegacyAPI.post<{
         idFactura: number;
+        idMotivo: number;
         razonDevolucion: string;
         lineasConDevoluciones: string;
     }, unknown>(
@@ -363,6 +371,7 @@ export const crearDevolucionPedido = async (payload: CrearDevolucionPedidoPayloa
         }) + "?",
         {
             idFactura: Number(payload.idFactura),
+            idMotivo: Number(payload.idMotivo),
             razonDevolucion: payload.razonDevolucion,
             lineasConDevoluciones: JSON.stringify(lineasConDevolucionesLegacy),
         }

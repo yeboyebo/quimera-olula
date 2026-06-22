@@ -4,6 +4,7 @@ import {
     EstadoLineasDevolucion,
 } from "./diseño.ts";
 import {
+    aplicarCantidadMaximaProceso,
     aplicarCantidadProceso,
     aplicarDevolucionTotalProceso,
     cambiarBorradorProceso,
@@ -18,6 +19,7 @@ export const getMaquina = (): Maquina<
         lineas_cargadas: cargarLineasProceso,
         borrador_cambiado: cambiarBorradorProceso,
         cantidad_aplicada: aplicarCantidadProceso,
+        cantidad_maxima_aplicada: aplicarCantidadMaximaProceso,
         devolucion_total_aplicada: aplicarDevolucionTotalProceso,
     },
 });
