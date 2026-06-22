@@ -1,4 +1,3 @@
-import { almacenLocal } from "#/almacen/almacen/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
@@ -14,7 +13,6 @@ import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleCaja = () => {
   const { id, criteria } = getUrlParams();
-  const almacenActual = almacenLocal.obtener();
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -28,21 +26,12 @@ export const MaestroConDetalleCaja = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!almacenActual?.id) {
-    return (
-      <div>
-        Seleccione un almacén para ver las cajas.
-        <a href="./almacenes">Ir a Almacenes</a>
-      </div>
-    );
-  }
-
   return (
     <div className="Caja">
       <MaestroDetalle<Caja>
         Maestro={
           <>
-            <h2>Cajas: {almacenActual?.nombre_almacen}</h2>
+            <h2>Cajas</h2>
             <Listado<Caja>
               metaTabla={metaTablaCaja}
               criteria={ctx.cajas.criteria}

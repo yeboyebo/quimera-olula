@@ -1,4 +1,4 @@
-import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
+import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -48,7 +48,7 @@ export const CrearCaja = ({
             autoSeleccion={true}
             {...caja.uiProps("id")}
           />
-          <Almacen label="Almacén" {...caja.uiProps("codigo_almacen")} />
+          <Ubicacion label="Ubicación" {...caja.uiProps("ubicacionId")} />
         </quimera-formulario>
         <div className="botones">
           <QBoton onClick={guardar} deshabilitado={!caja.valido}>

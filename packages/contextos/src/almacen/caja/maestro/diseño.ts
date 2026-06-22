@@ -11,5 +11,5 @@ export type ContextoMaestroCaja = {
 
 export const metaTablaCaja: MetaTabla<Caja> = [
     { id: "id", cabecera: "Código" },
-    // { id: "codigo_almacen", cabecera: "Almacén" },
+    { id: "ubicacionId", cabecera: "Ubicación" },
 ];

@@ -1,34 +1,34 @@
-import { MetaTabla } from "@olula/componentes/index.js";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo, publicar, stringNoVacio } from "@olula/lib/dominio.ts";
-import { Caja, MovimientoCaja } from "../diseño.ts";
+import { Caja, CajaContenido, ComponenteCaja, MovimientoCaja } from "../diseño.ts";
 import { getCaja, patchCaja } from "../infraestructura.ts";
 import { ContextoCaja, EstadoCaja } from "./diseño.ts";
 
-export const cajaVacia: Caja = {
+export const cajaContenidoVacia: CajaContenido = {
     id: "",
-    codigo_almacen: "",
+    ubicacionId: "",
+    contenido: [],
 };
 
 export const metaCaja: MetaModelo<Caja> = {
     campos: {
-        codigo_almacen: {
+        ubicacionId: {
             requerido: true,
-            validacion: (m: Caja) => stringNoVacio(m.codigo_almacen),
+            validacion: (m: Caja) => stringNoVacio(m.ubicacionId),
         },
     },
 };
 
-export const metaTablaMovimientosCaja: MetaTabla<MovimientoCaja> = [
-    { id: "sku", cabecera: "Referencia" },
-    { id: "descripcion", cabecera: "Descripción" },
-    { id: "cantidad", cabecera: "Cantidad", tipo: "numero" },
-];
+export const esMaterial = (comp: ComponenteCaja): comp is MovimientoCaja =>
+    "sku" in comp;
+
+export const esSubcaja = (comp: ComponenteCaja): comp is CajaContenido =>
+    "contenido" in comp;
 
 type ProcesarCaja = ProcesarContexto<EstadoCaja, ContextoCaja>;
 const pipeCaja = ejecutarListaProcesos<EstadoCaja, ContextoCaja>;
 
-const cajaVaciaContexto = (): Caja => ({ ...cajaVacia });
+const cajaContenidoVaciaContexto = (): CajaContenido => ({ ...cajaContenidoVacia });
 
 const cargarCaja = (idCaja: string): ProcesarCaja => async (contexto) => {
     const caja = await getCaja(idCaja);
@@ -47,8 +47,8 @@ export const abiertoContexto: ProcesarCaja = async (contexto) => ({
 export const getContextoVacio: ProcesarCaja = async (contexto) => ({
     ...contexto,
     estado: "INICIAL",
-    caja: cajaVaciaContexto(),
-    cajaInicial: cajaVaciaContexto(),
+    caja: cajaContenidoVaciaContexto(),
+    cajaInicial: cajaContenidoVaciaContexto(),
 });
 
 export const cargarContexto: ProcesarCaja = async (contexto, payload) => {

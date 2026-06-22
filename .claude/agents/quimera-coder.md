@@ -281,6 +281,49 @@ const modelo = useModelo(metaMiEntidad, ctx.entidad, autoGuardar);
 <QBoton deshabilitado={!modelo.valido} onClick={guardar}>Guardar</QBoton>
 ```
 
+#### ⚠️ PATRÓN OBLIGATORIO PARA FORMULARIOS DE ALTA
+
+`useModelo` usa el segundo argumento como dependencia de un `useEffect` por igualdad de referencia.
+**Si se pasa una llamada a función (ej. `entidadVacia()`), se crea un nuevo objeto en cada render, lo que resetea el modelo en cada cambio del usuario y hace que los selectores/inputs no actualicen el estado.**
+
+**INCORRECTO** — crea una nueva referencia en cada render:
+```typescript
+// ❌ ordenVacia() devuelve un objeto nuevo cada vez → useEffect resetea el modelo
+const orden = useModelo(metaOrden, ordenVacia());
+```
+
+**CORRECTO** — para formularios de alta, usar un tipo `NuevaX` con una constante estable:
+```typescript
+// dominio.ts
+export type NuevaOrden = Omit<Orden, "id" | "lineas">;
+
+export const nuevaOrdenVacia: NuevaOrden = {  // ← constante, no función
+    fecha: fechaActual(),   // se evalúa una sola vez al cargar el módulo
+    tipoOrden: "",
+    almacenId: "",
+};
+
+export const metaNuevaOrden: MetaModelo<NuevaOrden> = {
+    campos: {
+        tipoOrden: { requerido: true, validacion: (m) => stringNoVacio(m.tipoOrden) },
+        almacenId: { requerido: true, validacion: (m) => stringNoVacio(m.almacenId) },
+        fecha: { requerido: true, validacion: (m) => stringNoVacio(m.fecha) },
+    },
+};
+// ⚠️ IMPORTANTE: NO usar tipo: "fecha" en MetaModelo cuando el campo se almacena como string.
+// tipo: "fecha" hace que convertirCampoHaciaUI llame a .toISOString() esperando un Date object.
+// Los campos fecha del dominio se almacenan como string ISO (ej. "2024-01-15"), no como Date.
+// Para validar que no estén vacíos, usar validacion: (m) => stringNoVacio(m.fecha).
+
+// componente de alta — la constante tiene siempre la misma referencia ✓
+const orden = useModelo(metaNuevaOrden, nuevaOrdenVacia);
+```
+
+**Regla:** Cada dominio con formulario de alta debe tener:
+- Un tipo `NuevaX = Omit<X, "id" | ...>` en `diseño.ts`
+- Una constante `nuevaXVacia: NuevaX` en `dominio.ts` (no función)
+- Un `metaNuevaX: MetaModelo<NuevaX>` con validaciones `stringNoVacio` para campos string requeridos
+
 ### `useForm` — confirmaciones simples
 
 ```typescript

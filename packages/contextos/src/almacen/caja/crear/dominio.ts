@@ -3,7 +3,7 @@ import { NuevaCaja } from "../diseño.ts";
 
 export const nuevaCajaVacia: NuevaCaja = {
     id: "",
-    codigo_almacen: "",
+    ubicacionId: "",
 };
 
 export const metaNuevaCaja: MetaModelo<NuevaCaja> = {
@@ -12,9 +12,9 @@ export const metaNuevaCaja: MetaModelo<NuevaCaja> = {
             requerido: true,
             validacion: (m: NuevaCaja) => stringNoVacio(m.id),
         },
-        codigo_almacen: {
+        ubicacionId: {
             requerido: true,
-            validacion: (m: NuevaCaja) => stringNoVacio(m.codigo_almacen),
+            validacion: (m: NuevaCaja) => stringNoVacio(m.ubicacionId),
         },
     },
 };

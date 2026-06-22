@@ -2,18 +2,14 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarCaja } from "../borrar/BorrarCaja.tsx";
-import { MovimientoCaja } from "../diseño.ts";
+import { ArbolContenidoCaja } from "./ArbolContenidoCaja.tsx";
 import "./DetalleCaja.css";
-import { cajaVacia, metaCaja } from "./dominio.ts";
-import { LeerCodBarrasCaja } from "./LeerCodBarrasCaja.tsx";
+import { cajaContenidoVacia, metaCaja } from "./dominio.ts";
 import { getMaquina } from "./maquina.ts";
-import { getMaquina as getMaquinaMovimientos } from "./movimientos/maquina.ts";
-import { TabMovimientosLista } from "./movimientos/TabMovimientosLista.tsx";
 
 const titulo = ({ id }: { id: string }) => ("Caja " + id) as string;
 
@@ -31,24 +27,10 @@ export const DetalleCaja = ({
     getMaquina,
     {
       estado: "INICIAL",
-      caja: cajaVacia,
-      cajaInicial: cajaVacia,
+      caja: cajaContenidoVacia,
+      cajaInicial: cajaContenidoVacia,
     },
     publicar
-  );
-
-  const { ctx: ctxMovimientos, emitir: emitirMovimientos } = useMaquina(
-    getMaquinaMovimientos,
-    {
-      estado: "lista",
-      movimientos: listaEntidadesInicial<MovimientoCaja>(),
-      cargando: true,
-      cajaId: cajaId ?? "",
-      formulario: {
-        codBarras: "",
-        cantidad: "1",
-      },
-    }
   );
 
   const caja = useModelo(metaCaja, ctx.caja);
@@ -58,12 +40,6 @@ export const DetalleCaja = ({
     emitir("caja_id_cambiado", cajaId, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cajaId]);
-
-  useEffect(() => {
-    if (!ctx.caja.id) return;
-    void emitirMovimientos("caja_id_cambiada", ctx.caja.id, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ctx.caja.id]);
 
   const handleGuardar = useCallback(() => {
     emitir("edicion_de_caja_lista", caja.modelo);
@@ -85,31 +61,7 @@ export const DetalleCaja = ({
     >
       {!!ctx.caja.id && (
         <>
-          <div className="DetalleCaja">
-            <div className="transferencia-caja">
-              <LeerCodBarrasCaja
-                caja={ctx.caja}
-                cajaId={ctx.caja.id}
-                emitir={emitirMovimientos}
-                formulario={ctxMovimientos.formulario}
-              />
-              <TabMovimientosLista
-                cajaId={ctx.caja.id}
-                movimientos={
-                  ctxMovimientos.cajaId === ctx.caja.id
-                    ? ctxMovimientos.movimientos.lista
-                    : []
-                }
-                seleccionada={
-                  ctxMovimientos.cajaId === ctx.caja.id
-                    ? ctxMovimientos.movimientos.activo
-                    : null
-                }
-                cargando={ctxMovimientos.cargando}
-                emitir={emitirMovimientos}
-              />
-            </div>
-          </div>
+          <ArbolContenidoCaja contenido={ctx.caja.contenido} />
           {caja.modificado && (
             <div className="botones maestro-botones">
               <QBoton onClick={handleGuardar} deshabilitado={!caja.valido}>

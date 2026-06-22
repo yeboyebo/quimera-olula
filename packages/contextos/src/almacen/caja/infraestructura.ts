@@ -1,23 +1,55 @@
-import { almacenLocal } from "#/almacen/almacen/infraestructura.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { ClausulaFiltro, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.js";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.js";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
-import { Caja, CajaAPI, MovimientoCaja } from "./diseño.ts";
+import {
+    Caja,
+    CajaAPI,
+    CajaContenido,
+    CajaContenidoAPI,
+    ComponenteCaja,
+    ComponenteCajaAPI,
+    MovimientoCajaAPI,
+} from "./diseño.ts";
 
 const baseUrlCaja = `/almacen/caja`;
-const baseUrlTransferencia = `/almacen/transferencia`;
 
 export const cajaFromApi = (cajaApi: CajaAPI): Caja => ({
-    ...cajaApi,
+    id: cajaApi.id,
+    ubicacionId: cajaApi.ubicacion_id,
+    contenedorId: cajaApi.contenedor_id,
 });
 
 export const cajaToApi = (caja: Caja): CajaAPI => ({
-    ...caja,
+    id: caja.id,
+    ubicacion_id: caja.ubicacionId,
+    contenedor_id: caja.contenedorId,
 });
 
-export const getCaja = async (id: string): Promise<Caja> =>
-    await RestAPI.get<{ datos: CajaAPI }>(`${baseUrlCaja}/${id}`).then((respuesta) =>
-        cajaFromApi(respuesta.datos)
+const esMaterialAPI = (comp: ComponenteCajaAPI): comp is MovimientoCajaAPI =>
+    "sku" in comp;
+
+export const componenteFromApi = (comp: ComponenteCajaAPI): ComponenteCaja => {
+    if (esMaterialAPI(comp)) {
+        return {
+            id: comp.id,
+            sku: comp.sku,
+            descripcion: comp.descripcion,
+            cantidad: comp.cantidad,
+        };
+    }
+    return cajaContenidoFromApi(comp);
+};
+
+export const cajaContenidoFromApi = (cajaApi: CajaContenidoAPI): CajaContenido => ({
+    id: cajaApi.id,
+    ubicacionId: cajaApi.ubicacion_id,
+    contenedorId: cajaApi.contenedor_id,
+    contenido: cajaApi.contenido.map(componenteFromApi),
+});
+
+export const getCaja = async (id: string): Promise<CajaContenido> =>
+    await RestAPI.get<{ datos: CajaContenidoAPI }>(`${baseUrlCaja}/${id}`).then(
+        (respuesta) => cajaContenidoFromApi(respuesta.datos)
     );
 
 export const getCajas = async (
@@ -25,58 +57,29 @@ export const getCajas = async (
     orden: Orden,
     paginacion?: Paginacion
 ): RespuestaLista<Caja> => {
-    const almacenId = almacenLocal.obtener()?.id ?? "";
-    const clausulaAlmacen: ClausulaFiltro = ["codigo_almacen", almacenId];
-    const filtroCombinado: Filtro = Array.isArray(filtro)
-        ? [...filtro, clausulaAlmacen]
-        : { and: [filtro, [clausulaAlmacen]] };
-    const q = criteriaQuery(filtroCombinado, orden, paginacion);
+    const q = criteriaQuery(filtro, orden, paginacion);
     const respuesta = await RestAPI.get<{ datos: CajaAPI[]; total: number }>(baseUrlCaja + q);
     return { datos: respuesta.datos.map(cajaFromApi), total: respuesta.total };
 };
 
 export const postCaja = async (caja: Partial<Caja>): Promise<string> => {
-    return await RestAPI.post(baseUrlCaja, caja, "Error al guardar Caja").then(
+    const apiCaja = {
+        id: caja.id,
+        ubicacion_id: caja.ubicacionId,
+        contenedor_id: caja.contenedorId,
+    };
+    return await RestAPI.post(baseUrlCaja, apiCaja, "Error al guardar Caja").then(
         (respuesta) => respuesta.id
     );
 };
 
 export const patchCaja = async (id: string, caja: Partial<Caja>): Promise<void> => {
-    const apiCaja = cajaToApi(caja as Caja);
-    const cajaSinNulls = Object.fromEntries(
-        Object.entries(apiCaja).map(([k, v]) => [k, v === null ? "" : v])
-    );
-    await RestAPI.patch(`${baseUrlCaja}/${id}`, cajaSinNulls, "Error al guardar Caja");
+    const apiCaja: Partial<CajaAPI> = {};
+    if (caja.ubicacionId !== undefined) apiCaja.ubicacion_id = caja.ubicacionId;
+    if (caja.contenedorId !== undefined) apiCaja.contenedor_id = caja.contenedorId;
+    await RestAPI.patch(`${baseUrlCaja}/${id}`, apiCaja, "Error al guardar Caja");
 };
 
 export const deleteCaja = async (id: string): Promise<void> => {
     await RestAPI.delete(`${baseUrlCaja}/${id}`, "Error al borrar Caja");
-};
-
-export const postLineaCaja = async (caja: Caja, sku: string, cantidad: string) => {
-    const cajaConLinea = {
-        id: caja.id,
-        caja_origen: "",
-        caja_destino: caja.id,
-        almacen_destino_id: caja.codigo_almacen,
-        almacen_origen_id: "",
-        sku,
-        cantidad: Number(cantidad),
-    };
-    return await RestAPI.post(baseUrlTransferencia + "/caja", cajaConLinea, "Error al guardar articulo en caja").then(
-        (respuesta) => respuesta.id
-    );
-};
-
-export const deleteLineaCaja = async (id: string): Promise<void> => {
-    await RestAPI.delete(`${baseUrlTransferencia}/${id}`, "Error al borrar linea de caja");
-};
-
-export const getMovimientosCaja = async (id: string): RespuestaLista<MovimientoCaja> => {
-    return await RestAPI.get<{ datos: MovimientoCaja[] }>(
-        `${baseUrlCaja}/${id}/movimientos`
-    ).then((respuesta) => {
-        const movimientos = respuesta.datos.map((d) => d);
-        return { datos: movimientos, total: movimientos.length };
-    });
 };
