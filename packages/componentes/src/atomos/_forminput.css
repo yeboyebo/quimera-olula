@@ -213,6 +213,10 @@ quimera-input {
         label {
             text-align: right;
         }
+
+        .valor-solo-texto {
+            text-align: right;
+        }
     }
 
     &[tipo='hora'],

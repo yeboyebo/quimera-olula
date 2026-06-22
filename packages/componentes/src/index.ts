@@ -5,6 +5,7 @@ export * from "./atomos/qdate.tsx";
 export * from "./atomos/qfechahora.tsx";
 export * from "./atomos/qicono.tsx";
 export * from "./atomos/qinput.tsx";
+export * from "./atomos/qradio.tsx";
 export * from "./atomos/qselect.tsx";
 export * from "./atomos/qtabla.tsx";
 export * from "./atomos/qtarjetas.tsx";
@@ -14,8 +15,10 @@ export * from "./moleculas/qtarjeta_metatabla.tsx";
 
 export * from "./moleculas/Mostrar.tsx";
 export * from "./moleculas/qacciones.tsx";
+export * from "./moleculas/qeditor_enriquecido.tsx";
 export * from "./moleculas/qmodal.tsx";
 export * from "./moleculas/qmodalconfirmacion.tsx";
+export * from "./moleculas/qtexto_enriquecido/index.ts";
 
 export * from "./menu/menu-lateral.tsx";
 export * from "./menu/menu-usuario.tsx";

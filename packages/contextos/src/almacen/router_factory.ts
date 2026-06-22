@@ -1,5 +1,5 @@
 import { MaestroAlmacen } from "./almacen/vistas/maestro/MaestroAlmacen.tsx"
-import { MaestroConDetalleArticulo } from "./articulo/vistas/MaestroConDetalleArticulo.tsx"
+import { MaestroConDetalleArticulo } from "./articulo/maestro/MaestroConDetalleArticulo.tsx"
 import { MaestroConDetalleCaja } from "./caja/maestro/MaestroConDetalleCaja.tsx"
 import { MaestroFamilia } from "./familia/vistas/maestro/MaestroFamilia.tsx"
 import { MaestroConDetalleStock } from "./stock/maestro/MaestroConDetalleStock.tsx"

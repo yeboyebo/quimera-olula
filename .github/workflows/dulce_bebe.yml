@@ -25,7 +25,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Make envfile
-        run: echo "VITE_API_URL=https://dulcebebeolula.yeboyebo.es" > .env && echo "VITE_API_URL=https://dulcebebeolula.yeboyebo.es" > ./apps/dulce_bebe/.env
+        run: echo "VITE_API_URL=https://dulcebebeapi.yeboyebo.es" > .env && echo "VITE_API_URL=https://dulcebebeapi.yeboyebo.es" > ./apps/dulce_bebe/.env
 
       - name: Install Dependecies
         run: pnpm install
@@ -54,7 +54,7 @@ jobs:
           context: ./
           file: Dockerfile
           push: true
-          tags: yeboyebohub/olula_cli_dulce_bebe:${{ github.sha }}
+          tags: yeboyebohub/olula_cli_dulcebebe:${{ github.sha }}
 
   deploy-to-cluster:
     name: deploy to cluster
@@ -66,7 +66,7 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: -n default set image --record deployment/dulcebebeolula-deployment appdulcebebe=yeboyebohub/olula_cli_dulce_bebe:${{ github.sha }}
+          command: -n default set image --record deployment/dulcebebeolula-deployment appdulcebebe=yeboyebohub/olula_cli_dulcebebe:${{ github.sha }}
 
       - name: verify deployment
         uses: steebchen/kubectl@v2.0.0

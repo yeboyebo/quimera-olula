@@ -6,6 +6,7 @@ import { Cabecera } from "./Cabecera.tsx";
 import { MenuProvider } from "./MenuContext.tsx";
 import { Pie } from "./Pie.tsx";
 import "./Plantilla.css";
+import { SseSesionGlobal } from "./SseSesionGlobal.tsx";
 
 export const Plantilla = ({ children }: PropsWithChildren<object>) => {
   const slots = { hijos: children };
@@ -13,6 +14,8 @@ export const Plantilla = ({ children }: PropsWithChildren<object>) => {
   return (
     <>
       <MenuProvider>
+        <SseSesionGlobal />
+
         <Slot nombre="cabecera" {...slots}>
           <Cabecera />
         </Slot>

@@ -1,3 +1,4 @@
+import { DocAgente } from "@quimera-extension/base-ventas";
 import {
   Box,
   Column,
@@ -14,8 +15,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import { List } from "@quimera/thirdparty";
-import { DocAgente } from "@quimera-extension/base-ventas";
-import Quimera, { getSchemas, PropValidation, useStateValue, useWidth, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
 import React, { useEffect } from "react";
 
 import {
@@ -310,7 +310,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                     order="cantidad"
                     pl={1}
                     value={linea => parseFloat(linea.cantidad)}
-                    width={50}
+                    width={65}
                   />
                   <Column.Action
                     id="recibir"
@@ -341,7 +341,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                     order="descripcion"
                     pl={2}
                     value={linea => linea.descripcion}
-                    width={550}
+                    width={mobile ? 350 : 550}
                   />
                   {/* <Column.Text
                     id="ubicacion"
@@ -352,7 +352,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                   /> */}
                   <Column.Action
                     id="actioncodubicacion"
-                    width={80}
+                    width={110}
                     header="Ubic."
                     order="sh_codubicacionarticulo"
                     value={(linea, idx) => (
