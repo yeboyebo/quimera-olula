@@ -86,7 +86,7 @@ const setOrden = (criteria: Criteria, params: URLSearchParams) => {
     params.set("orden", partes.join(","));
 }
 
-export const paginacionDefecto = { pagina: 1, limite: 10 };
+export const paginacionDefecto = { pagina: 1, limite: 100 };
 
 const getPaginacion = (params: URLSearchParams): Paginacion => {
     const p = parseInt(params.get("p") ?? paginacionDefecto.pagina.toString());

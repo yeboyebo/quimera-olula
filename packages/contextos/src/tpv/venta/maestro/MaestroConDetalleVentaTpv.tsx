@@ -9,7 +9,6 @@ import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
   criteriaDefecto,
   formatearFechaDate,
-  formatearMoneda,
 } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -18,6 +17,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { DetalleVentaTpv } from "../detalle/DetalleVentaTpv.tsx";
 import { VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "./maestro.ts";
+import { TotalPendienteVentaTpv } from "./TotalPendienteVentaTpv.tsx";
 import "./MaestroConDetalleVentaTpv.css";
 import { getMaquina } from "./maquina.ts";
 
@@ -124,7 +124,7 @@ const TarjetaVentaTpv = (venta: VentaTpv) => {
         </div>
       </div>
       <div className="tarjeta-venta-derecha">
-        {`${formatearMoneda(venta.total, venta.divisa_id)}`}
+        <TotalPendienteVentaTpv venta={venta} />
       </div>
     </div>
   );
