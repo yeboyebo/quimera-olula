@@ -16,7 +16,7 @@ import {
 } from "@quimera/comps";
 import { List } from "@quimera/thirdparty";
 import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ListItemPedidoVenta, ModaAsociarBarcode, ModaLotesLinea, Ubicacion } from "../../comps";
 
@@ -119,6 +119,10 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   ] = useStateValue();
   const classes = useStyles();
   const width = useWidth();
+  const [anchoDescripcionCalculado, setAnchoDescripcionCalculado] = useState(600);
+  const mobile = ["xs", "sm"].includes(width);
+
+  const dataLineas = lineas.idList.map(id => lineas.dict[id]);
 
   useEffect(() => {
     dispatch({
@@ -133,6 +137,16 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   useEffect(() => {
     util.publishEvent(pedido.event, callbackChanged);
   }, [pedido.event.serial]);
+
+  useEffect(() => {
+    if (mobile && dataLineas.length > 0) {
+      const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 7.5 + 40), 900);
+      setAnchoDescripcionCalculado(anchoEstimado);
+    } else {
+      setAnchoDescripcionCalculado(600);
+    }
+  }, [dataLineas, mobile]);
 
   useEffect(() => {
     !!initPedido &&
@@ -200,7 +214,6 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
     return (linea.dtoLineal !== 0 && linea.shCantAlbaran !== 0.0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
   };
 
-  const mobile = ["xs", "sm"].includes(width);
   const anchoDetalle = 1;
   const schema = getSchemas().pedidos;
   const editable = logic.pedidoEditable(pedido.data);
@@ -410,7 +423,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="descripcion"
                     pl={2}
                     value={linea => linea.descripcion}
-                    width={mobile ? 380 : 600}
+                    width={anchoDescripcionCalculado}
                   />
                   {/* <Column.Text
                     id="ubicacion"

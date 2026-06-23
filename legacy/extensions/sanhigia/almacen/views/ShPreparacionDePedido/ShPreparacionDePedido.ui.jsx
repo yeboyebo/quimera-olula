@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@quimera/comps";
 import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { ModalInventarioAlVuelo, ModaLotesLinea, Ubicacion } from "../../comps";
 
@@ -59,10 +59,27 @@ function ShPreparacionDePedido({
   ] = useStateValue();
   const classes = useStyles();
   const width = useWidth();
+  const mobile = ["xs", "sm", "md"].includes(width);
+  const [anchoDescripcionCalculado, setAnchoDescripcionCalculado] = useState(700);
+
+  const dataLineas = lineas.idList
+    // .filter(id => lineas.dict[id].shPreparacion == "En Curso")
+    .map(id => lineas.dict[id]);
 
   useEffect(() => {
     util.publishEvent(preparacion.event, callbackChanged);
   }, [preparacion.event.serial]);
+
+  useEffect(() => {
+    if (mobile && dataLineas.length > 0) {
+      const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 7.5 + 40), 900);
+
+      setAnchoDescripcionCalculado(anchoEstimado);
+    } else {
+      setAnchoDescripcionCalculado(700);
+    }
+  }, [dataLineas, mobile]);
 
   useEffect(() => {
     !!initPreparacion &&
@@ -145,15 +162,10 @@ function ShPreparacionDePedido({
     }
   };
 
-  const mobile = ["xs", "sm", "md"].includes(width);
   // const anchoDetalle = mobile ? 1 : 0.5;
   const anchoDetalle = 1;
   const schema = getSchemas().preparacionPedidos;
   const editable = true;
-
-  const dataLineas = lineas.idList
-    .filter(id => lineas.dict[id].shPreparacion == "En Curso")
-    .map(id => lineas.dict[id]);
 
   // if (!initPreparacion || initPreparacion?._status === "deleted") {
   //   return null;
@@ -336,7 +348,7 @@ function ShPreparacionDePedido({
                       order="descripcion"
                       pl={2}
                       value={linea => linea.descripcion}
-                      width={mobile ? 350 : 500}
+                      width={anchoDescripcionCalculado}
                     />
                     {/* <Column.Text
                       id="ubicacion"
