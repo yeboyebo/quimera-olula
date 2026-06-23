@@ -147,7 +147,6 @@ export const DetalleVentaTpv = ({
                     <Pagos
                     pagoActivo={pagos.activo}
                     pagos={pagos.lista}
-                    estado={estado}
                     publicar={emitir}
                     />
                 }
