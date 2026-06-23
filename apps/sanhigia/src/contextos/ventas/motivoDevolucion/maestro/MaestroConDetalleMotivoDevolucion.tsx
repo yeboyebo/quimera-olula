@@ -4,7 +4,7 @@ import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { CrearMotivoDevolucion } from "../crear/CrearMotivoDevolucion.tsx";
 import { DetalleMotivoDevolucion } from "../detalle/DetalleMotivoDevolucion.tsx";
 import { MotivoDevolucion } from "../diseño.ts";
@@ -32,6 +32,14 @@ export const MaestroConDetalleMotivoDevolucion = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const abrirCreacionNormal = useCallback(() => {
+    emitir("creacion_motivo_devolucion_solicitada");
+  }, [emitir]);
+
+  const cambiarOtro = useCallback(() => {
+    emitir("cambiar_otro_solicitado");
+  }, [emitir]);
+
   return (
     <div className="MotivoDevolucion">
       <MaestroDetalle<MotivoDevolucion>
@@ -47,12 +55,14 @@ export const MaestroConDetalleMotivoDevolucion = () => {
               seleccionada={ctx.motivosDevolucion.activo}
               renderAcciones={() => (
                 <div className="maestro-botones">
-                  <QBoton
-                    onClick={() =>
-                      emitir("creacion_motivo_devolucion_solicitada")
-                    }
-                  >
+                  <QBoton onClick={abrirCreacionNormal}>
                     Nuevo motivo de devolución
+                  </QBoton>
+                  <QBoton
+                    onClick={cambiarOtro}
+                    deshabilitado={!ctx.motivosDevolucion.activo}
+                  >
+                    Cambiar Otro
                   </QBoton>
                 </div>
               )}

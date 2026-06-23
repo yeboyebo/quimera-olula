@@ -6,8 +6,4 @@
     quimera-select[nombre="tipo"] {
         grid-column: span 4;
     }
-
-    quimera-checkbox[nombre="otros"] {
-        grid-column: span 4;
-    }
 }

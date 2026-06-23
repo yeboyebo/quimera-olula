@@ -1,5 +1,4 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QModal, QTextArea } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
@@ -53,11 +52,8 @@ export const CrearMotivoDevolucion = ({
       const motivoDevolucionId: string = await intentar(() =>
         postMotivoDevolucion({
           tipo: String(motivoDevolucion.tipo ?? "").trim(),
-          descripcion:
-            motivoDevolucion.otros && !descripcionNormalizada
-              ? null
-              : descripcionNormalizada,
-          otros: motivoDevolucion.otros,
+          descripcion: descripcionNormalizada,
+          otros: false,
         })
       );
       const motivoDevolucionCreado = await intentar(() =>
@@ -84,7 +80,6 @@ export const CrearMotivoDevolucion = ({
       <div className="crear-motivo-devolucion">
         <quimera-formulario>
           <TipoMotivoDevolucion {...uiProps("tipo")} />
-          <QCheckbox label="Otro" {...uiProps("otros")} />
           <QTextArea label="Descripción" {...uiProps("descripcion")} />
         </quimera-formulario>
 

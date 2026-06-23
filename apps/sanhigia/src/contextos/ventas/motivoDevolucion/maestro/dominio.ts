@@ -4,7 +4,7 @@ import {
     ProcesarListaActivaEntidades,
 } from "@olula/lib/ListaActivaEntidades.js";
 import { MotivoDevolucion } from "../diseño.ts";
-import { getMotivosDevolucion } from "../infraestructura.ts";
+import { getMotivosDevolucion, patchMotivoDevolucion } from "../infraestructura.ts";
 import {
     ContextoMaestroMotivoDevolucion,
     EstadoMaestroMotivoDevolucion,
@@ -48,4 +48,36 @@ export const ampliarMotivosDevolucion: ProcesarMaestroMotivoDevolucion =
         );
 
         return MotivosDevolucion.ampliar(contexto, resultado);
+    };
+
+export const cambiarOtro: ProcesarMaestroMotivoDevolucion =
+    async (contexto) => {
+        const motivoId = contexto.motivosDevolucion.activo;
+        if (!motivoId) return contexto;
+
+        // Encontrar el motivo actual para saber su estado
+        const motivoActual = contexto.motivosDevolucion.lista.find(
+            (m) => m.id === motivoId
+        );
+        if (!motivoActual) return contexto;
+
+        // Toggle: si es otros, ponerlo a false; si no, ponerlo a true
+        const nuevoOtros = !motivoActual.otros;
+
+        try {
+            await patchMotivoDevolucion(motivoId, {
+                otros: nuevoOtros,
+                descripcion: null,
+            });
+            // Recargar lista para actualizar el estado
+            return recargarMotivosDevolucion(contexto, contexto.motivosDevolucion.criteria);
+        } catch {
+            // El servidor controlará si ya existe otro con 'otros: true' para ese tipo
+            // El error será capturado por ContextoError en la UI
+            throw new Error(
+                nuevoOtros
+                    ? "No se pudo marcar como Otros. Verifique que no exista otro motivo 'Otros' para este tipo."
+                    : "No se pudo desmarcar como Otros."
+            );
+        }
     };

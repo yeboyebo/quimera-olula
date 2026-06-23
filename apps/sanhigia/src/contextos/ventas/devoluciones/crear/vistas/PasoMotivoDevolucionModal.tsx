@@ -20,7 +20,7 @@ const BotonMotivo = ({
   seleccionado: boolean;
   onClick: () => void;
 }) => (
-  <QBoton variante={seleccionado ? "solido" : "texto"} onClick={onClick}>
+  <QBoton variante={seleccionado ? "solido" : "borde"} onClick={onClick}>
     {motivo.descripcion || "Otro"}
   </QBoton>
 );

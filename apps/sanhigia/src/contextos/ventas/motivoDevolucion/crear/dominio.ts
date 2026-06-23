@@ -15,11 +15,9 @@ export const metaNuevoMotivoDevolucion: MetaModelo<NuevoMotivoDevolucion> = {
                 stringNoVacio(String(motivoDevolucion.tipo ?? "")),
         },
         descripcion: {
-            requerido: false,
+            requerido: true,
             validacion: (motivoDevolucion: NuevoMotivoDevolucion) =>
-                motivoDevolucion.otros
-                    ? true
-                    : stringNoVacio(String(motivoDevolucion.descripcion ?? "")),
+                stringNoVacio(String(motivoDevolucion.descripcion ?? "")),
         },
         otros: { requerido: true, tipo: "checkbox" },
     },

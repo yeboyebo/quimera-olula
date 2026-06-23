@@ -25,13 +25,11 @@ export const metaMotivoDevolucion: MetaModelo<MotivoDevolucion> = {
         stringNoVacio(String(motivoDevolucion.tipo ?? "")),
     },
     descripcion: {
-      requerido: false,
+      requerido: true,
       validacion: (motivoDevolucion: MotivoDevolucion) =>
-        motivoDevolucion.otros
-          ? true
-          : stringNoVacio(String(motivoDevolucion.descripcion ?? "")),
+        stringNoVacio(String(motivoDevolucion.descripcion ?? "")),
     },
-    otros: { requerido: true, tipo: "checkbox" },
+    otros: { requerido: true },
   },
 };
 
@@ -62,6 +60,22 @@ const cargarMotivoDevolucion =
       return pipe(contexto, conMotivoDevolucion(motivoDevolucion));
     };
 
+export const refrescarMotivoDevolucion: ProcesarDetalleMotivoDevolucion =
+  async (contexto) => {
+    const motivoDevolucion = await getMotivoDevolucion(contexto.motivoDevolucion.id);
+
+    return [
+      pipe(
+        contexto,
+        conMotivoDevolucion({
+          ...contexto.motivoDevolucion,
+          ...motivoDevolucion,
+        })
+      ),
+      [["motivo_devolucion_cambiado", motivoDevolucion]],
+    ];
+  };
+
 export const cambiarMotivoDevolucion: ProcesarDetalleMotivoDevolucion = async (
   contexto,
   payload
@@ -70,7 +84,7 @@ export const cambiarMotivoDevolucion: ProcesarDetalleMotivoDevolucion = async (
   await patchMotivoDevolucion(contexto.motivoDevolucion.id, motivoDevolucion);
 
   return pipeDetalleMotivoDevolucion(contexto, [
-    cargarMotivoDevolucion(contexto.motivoDevolucion.id),
+    refrescarMotivoDevolucion,
     "INICIAL",
   ]);
 };

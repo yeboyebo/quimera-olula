@@ -5,6 +5,7 @@ import {
 } from "./diseño.ts";
 import {
     ampliarMotivosDevolucion,
+    cambiarOtro,
     MotivosDevolucion,
     recargarMotivosDevolucion,
 } from "./dominio.ts";
@@ -25,6 +26,7 @@ export const getMaquina: () => Maquina<
         ],
         siguiente_pagina: [MotivosDevolucion.filtrar, ampliarMotivosDevolucion],
         creacion_motivo_devolucion_solicitada: "CREANDO_MOTIVO_DEVOLUCION",
+        cambiar_otro_solicitado: cambiarOtro,
     },
     CREANDO_MOTIVO_DEVOLUCION: {
         creacion_motivo_devolucion_cancelada: "INICIAL",
