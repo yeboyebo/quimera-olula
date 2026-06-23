@@ -74,7 +74,7 @@ export const DetalleVentaTpv = ({
     const estadoAnterior = useRef(ctx.estado); // Referencia para saber cuándo imprimir el tique
     useEffect(() => {
         const estadosPago = ["PAGANDO_EN_EFECTIVO", "PAGANDO_CON_TARJETA", "PAGANDO_CON_VALE"];
-        if (ctx.estado === 'EMITIDA' && estadosPago.includes(estadoAnterior.current)) {
+        if (ctx.estado === 'EMITIDA' && estadosPago.includes(estadoAnterior.current) && ctx.venta.pendiente === 0) {
             imprimirTicketOFactura(ctx.venta);
         }
         estadoAnterior.current = ctx.estado;
@@ -161,7 +161,7 @@ export const DetalleVentaTpv = ({
                 <CambiarDescuento publicar={emitir} venta={venta}/>
             )}
 
-            {estado !== "EMITIDA" && (
+            {venta.pendiente !== 0 && (
                 <PendienteVenta publicar={emitir} venta={venta} />
             )}
             <Lineas

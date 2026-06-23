@@ -18,7 +18,7 @@ export const Pagos = ({
 
   return (
     <>
-      {estado !== "EMITIDA" && (
+      {pagoActivo?.arqueoAbierto && (
         <div className="botones maestro-botones ">
           <QBoton texto='Borrar'
             deshabilitado={!pagoActivo}

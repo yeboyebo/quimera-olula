@@ -2,8 +2,10 @@ import { MetaTabla } from "@olula/componentes/index.js";
 
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { ProcesarListaActivaEntidades, accionesListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { createElement } from "react";
 import { ContextoMaestroVentasTpv, EstadoMaestroVentasTpv, VentaTpv } from "../diseño.ts";
 import { getVenta, getVentas, postVenta } from "../infraestructura.ts";
+import { TotalPendienteVentaTpv } from "./TotalPendienteVentaTpv.tsx";
 
 
 export const metaTablaFactura: MetaTabla<VentaTpv> = [
@@ -25,6 +27,7 @@ export const metaTablaFactura: MetaTabla<VentaTpv> = [
         id: "total",
         cabecera: "Total",
         tipo: "moneda",
+        render: (venta) => createElement(TotalPendienteVentaTpv, { venta }),
     },
 ];
 
