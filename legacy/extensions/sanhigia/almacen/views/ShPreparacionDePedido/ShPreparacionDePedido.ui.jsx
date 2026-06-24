@@ -63,7 +63,7 @@ function ShPreparacionDePedido({
   const [anchoDescripcionCalculado, setAnchoDescripcionCalculado] = useState(700);
 
   const dataLineas = lineas.idList
-    // .filter(id => lineas.dict[id].shPreparacion == "En Curso")
+    .filter(id => lineas.dict[id].shPreparacion == "En Curso")
     .map(id => lineas.dict[id]);
 
   useEffect(() => {
