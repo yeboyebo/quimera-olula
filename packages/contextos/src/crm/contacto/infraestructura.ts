@@ -1,10 +1,13 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
-import { Accion } from "../accion/diseño.ts";
+import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
 import { Cliente } from "../cliente/diseño.ts";
 import ApiUrls from "../comun/urls.ts";
-import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
+import {
+  oportunidadDesdeAPI,
+  OportunidadVentaAPI,
+} from "../oportunidadventa/infraestructura.ts";
 
 import { Contacto } from "./diseño.ts";
 
@@ -22,8 +25,6 @@ const contactoFromAPI = (c: ContactoApi): Contacto => ({
 const contactoToAPI = (c: Contacto): ContactoApi => ({
   ...c,
 });
-
-
 
 export const getContacto = async (id: string): Promise<Contacto> =>
   await RestAPI.get<{ datos: Contacto }>(`${baseUrlContactos}/${id}`).then((respuesta) => contactoFromAPI(respuesta.datos));
@@ -58,7 +59,14 @@ export const getOportunidadesVentaContacto = async (contactoId: string) => {
   const orden = [] as Orden;
 
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: OportunidadVenta[], total: number }>(baseUrlOportunidadVenta + q).then((respuesta) => respuesta);
+  return RestAPI
+    .get<{ datos: OportunidadVentaAPI[]; total: number }>(
+      baseUrlOportunidadVenta + q
+    )
+    .then((respuesta) => ({
+      ...respuesta,
+      datos: respuesta.datos.map(oportunidadDesdeAPI),
+    }));
 };
 
 export const getClientesPorContacto = async (contactoId: string) =>
@@ -70,5 +78,10 @@ export const getAccionesContacto = async (contactoId: string) => {
   const orden = [] as Orden;
 
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: Accion[], total: number }>(baseUrlAccion + q).then((respuesta) => respuesta);
+  return RestAPI
+    .get<{ datos: AccionAPI[]; total: number }>(baseUrlAccion + q)
+    .then((respuesta) => ({
+      ...respuesta,
+      datos: respuesta.datos.map(accionDesdeAPI),
+    }));
 };

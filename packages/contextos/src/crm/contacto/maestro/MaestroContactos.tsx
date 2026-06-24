@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -12,6 +11,7 @@ import { Contacto } from "../diseño.ts";
 import { metaTablaContacto } from "./maestro.ts";
 import "./MaestroContactos.css";
 import { getMaquina } from "./maquina.ts";
+import { TarjetaContacto } from "./TarjetaContacto.tsx";
 
 export const MaestroContactos = () => {
   const { id, criteria } = getUrlParams();
@@ -69,16 +69,5 @@ export const MaestroContactos = () => {
 
       {ctx.estado === "CREANDO" && <CrearContacto publicar={emitir} />}
     </div>
-  );
-};
-
-const TarjetaContacto = (contacto: Contacto) => {
-  return (
-    <QTarjetaGenerica
-      avatar={<QAvatar nombre={contacto.nombre} />}
-      arribaIzquierda={contacto.nombre}
-      abajoIzquierda={contacto.email}
-      abajoDerecha={contacto.telefono1}
-    />
   );
 };

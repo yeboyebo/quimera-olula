@@ -9,7 +9,10 @@ import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
 import { filtrarEntidad } from "./maestroFiltros/filtro.ts";
-import { MaestroFiltrosActivoControlado, MetaFiltro } from "./maestroFiltros/MaestroFiltrosActivoControlado.tsx";
+import {
+  MaestroFiltrosActivoControlado,
+  MetaFiltro,
+} from "./maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -58,7 +61,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
   onCriteriaChanged,
 }: MaestroProps<T>) => {
   const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
-  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tabla");
+  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tarjetas");
   const modoInterno = modo ?? modoEstado;
 
   const cambiarCriteria = useCallback(
@@ -80,7 +83,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
         )
       : undefined;
   const puedeTabla = metaTabla !== undefined;
-  const puedeTarjetas = tarjeta !== undefined;
+  const puedeTarjetas = tarjeta !== undefined || tarjetaGenerica !== undefined;
 
   const modoEfectivo =
     modoInterno === "tabla" && puedeTabla

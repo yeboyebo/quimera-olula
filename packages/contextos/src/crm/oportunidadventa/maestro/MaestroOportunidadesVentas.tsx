@@ -1,9 +1,7 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -13,6 +11,7 @@ import { OportunidadVenta } from "../diseño.ts";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
+import { TarjetaOportunidadVenta } from "./TarjetaOportunidadVenta.tsx";
 
 export const MaestroOportunidades = () => {
   const { id, criteria } = getUrlParams();
@@ -73,32 +72,5 @@ export const MaestroOportunidades = () => {
 
       {ctx.estado === "CREANDO" && <CrearOportunidadVenta publicar={emitir} />}
     </div>
-  );
-};
-
-const TarjetaOportunidadVenta = (oportunidad: OportunidadVenta) => {
-  const probabilidad =
-    oportunidad.probabilidad >= 75
-      ? "muyprobable"
-      : oportunidad.probabilidad >= 50
-        ? "probable"
-        : "improbable";
-
-  return (
-    <QTarjetaGenerica
-      avatar={
-        <QAvatar className={probabilidad}>
-          {oportunidad.probabilidad + "%"}
-        </QAvatar>
-      }
-      arribaIzquierda={oportunidad.descripcion}
-      arribaDerecha={
-        oportunidad.fecha_cierre
-          ? formatearFechaDate(oportunidad.fecha_cierre)
-          : ""
-      }
-      abajoIzquierda={oportunidad.nombre_cliente}
-      abajoDerecha={oportunidad.importe + " €"}
-    />
   );
 };

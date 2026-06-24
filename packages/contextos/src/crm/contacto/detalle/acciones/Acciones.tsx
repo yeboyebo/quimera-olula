@@ -2,6 +2,8 @@ import { BorrarAccion } from "#/crm/accion/borrar/BorrarAccion.tsx";
 import { nuevaAccionVacia } from "#/crm/accion/crear/crear.ts";
 import { CrearAccion } from "#/crm/accion/crear/CrearAccion.tsx";
 import { Accion } from "#/crm/accion/diseño.ts";
+import { metaTablaAccion } from "#/crm/accion/maestro/maestro.ts";
+import { TarjetaAccion } from "#/crm/accion/maestro/TarjetaAccion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
@@ -10,7 +12,6 @@ import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect, useState } from "react";
 import { Contacto } from "../../diseño.ts";
-import { metaTablaAccion } from "./acciones.ts";
 import { getMaquina } from "./maquina.ts";
 
 export const Acciones = ({ contacto }: { contacto: HookModelo<Contacto> }) => {
@@ -52,6 +53,7 @@ export const Acciones = ({ contacto }: { contacto: HookModelo<Contacto> }) => {
 
       <ListadoSemiControlado
         metaTabla={metaTablaAccion}
+        tarjeta={TarjetaAccion}
         entidades={ctx.acciones.lista}
         totalEntidades={ctx.acciones.lista.length}
         cargando={cargando}

@@ -2,6 +2,8 @@ import { BorrarOportunidadVenta } from "#/crm/oportunidadventa/borrar/BorrarOpor
 import { nuevaOportunidadVentaVacia } from "#/crm/oportunidadventa/crear/crear.ts";
 import { CrearOportunidadVenta } from "#/crm/oportunidadventa/crear/CrearOportunidadVenta.tsx";
 import { OportunidadVenta } from "#/crm/oportunidadventa/diseño.ts";
+import { metaTablaOportunidadVenta } from "#/crm/oportunidadventa/maestro/maestro.ts";
+import { TarjetaOportunidadVenta } from "#/crm/oportunidadventa/maestro/TarjetaOportunidadVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
@@ -11,7 +13,6 @@ import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect, useState } from "react";
 import { Contacto } from "../../diseño.ts";
 import { getMaquina } from "./maquina.ts";
-import { metaTablaOportunidades } from "./oportunidades.ts";
 
 export const Oportunidades = ({
   contacto,
@@ -58,7 +59,8 @@ export const Oportunidades = ({
       )}
 
       <ListadoSemiControlado
-        metaTabla={metaTablaOportunidades}
+        metaTabla={metaTablaOportunidadVenta}
+        tarjeta={TarjetaOportunidadVenta}
         entidades={ctx.oportunidades.lista}
         totalEntidades={ctx.oportunidades.lista.length}
         cargando={cargando}

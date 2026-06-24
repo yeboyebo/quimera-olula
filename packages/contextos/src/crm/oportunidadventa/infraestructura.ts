@@ -5,6 +5,7 @@ import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { NuevoPresupuesto, Presupuesto } from "../../ventas/presupuesto/diseño.ts";
 import { Accion } from "../accion/diseño.ts";
+import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
 import UrlsCrmClass from "../comun/urls.ts";
 import { NuevaOportunidadVenta } from "./crear/diseño.ts";
 import { EstadoOportunidad, OportunidadVenta } from "./diseño.ts";
@@ -12,9 +13,11 @@ import { EstadoOportunidad, OportunidadVenta } from "./diseño.ts";
 const UrlsCrm = new UrlsCrmClass();
 const UrlsVentas = new UrlsVentasClass();
 
-type OportunidadVentaAPI = OportunidadVenta & { fecha_cierre?: string };
+export type OportunidadVentaAPI = OportunidadVenta & {
+    fecha_cierre?: string | null;
+};
 
-const oportunidadDesdeAPI = (oportunidadAPI: OportunidadVentaAPI): OportunidadVenta => ({
+export const oportunidadDesdeAPI = (oportunidadAPI: OportunidadVentaAPI): OportunidadVenta => ({
     ...oportunidadAPI,
     fecha_cierre: oportunidadAPI.fecha_cierre ? new Date(Date.parse(oportunidadAPI.fecha_cierre)) : null,
 })
@@ -61,7 +64,12 @@ export const getAccionesOportunidad = async (oportunidadId: string): RespuestaLi
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: Accion[], total: number }>(UrlsCrm.ACCION + q).then((respuesta) => respuesta);
+    return RestAPI
+        .get<{ datos: AccionAPI[], total: number }>(UrlsCrm.ACCION + q)
+        .then((respuesta) => ({
+            ...respuesta,
+            datos: respuesta.datos.map(accionDesdeAPI),
+        }));
 };
 
 export const getPresupuestosOportunidad = async (oportunidadId: string): RespuestaLista<Presupuesto> => {

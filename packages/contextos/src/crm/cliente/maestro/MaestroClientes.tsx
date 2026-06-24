@@ -1,5 +1,4 @@
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -10,6 +9,7 @@ import { Cliente } from "../diseño.ts";
 import { metaTablaCliente } from "./maestro.ts";
 import "./MaestroClientes.css";
 import { getMaquina } from "./maquina.ts";
+import { TarjetaCliente } from "./TarjetaCliente.tsx";
 
 export const MaestroClientes = () => {
   const { id, criteria } = getUrlParams();
@@ -52,16 +52,5 @@ export const MaestroClientes = () => {
         modoDisposicion="maestro-50"
       />
     </div>
-  );
-};
-
-const TarjetaCliente = (cliente: Cliente) => {
-  return (
-    <QTarjetaGenerica
-      avatar={<QAvatar nombre={cliente.nombre} />}
-      arribaIzquierda={cliente.nombre}
-      abajoIzquierda={cliente.email}
-      abajoDerecha={cliente.telefono1}
-    />
   );
 };

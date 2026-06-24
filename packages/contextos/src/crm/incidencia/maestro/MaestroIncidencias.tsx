@@ -2,20 +2,19 @@ import { EstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
 import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
   filtroTextos,
   getMetaFiltroDefecto,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { CrearIncidencia } from "../crear/CrearIncidencia.tsx";
 import { DetalleIncidencia } from "../detalle/DetalleIncidencia.tsx";
 import { Incidencia } from "../diseño.ts";
+import { TarjetaIncidencia } from "../vistas/TarjetaIncidencia.tsx";
 import { metaTablaIncidencia } from "./maestro.ts";
 import "./MaestroIncidencias.css";
 import { getMaquina } from "./maquina.ts";
@@ -70,7 +69,7 @@ export const MaestroIncidencias = () => {
                 },
               }}
               criteria={ctx.incidencias.criteria}
-              tarjeta={TarjetaCrmIncidencia}
+              tarjeta={TarjetaIncidencia}
               entidades={ctx.incidencias.lista}
               totalEntidades={ctx.incidencias.total}
               seleccionada={ctx.incidencias.activo}
@@ -101,36 +100,5 @@ export const MaestroIncidencias = () => {
 
       {ctx.estado === "CREANDO" && <CrearIncidencia publicar={emitir} />}
     </div>
-  );
-};
-
-const iconoEstadoAccion = (estado: string) => {
-  const icono = {
-    nueva: "estrella",
-    en_espera: "relojarena",
-    asignada: "usuario",
-    rechazada: "cerrar",
-    cerrada: "checkdoble",
-  };
-
-  return icono[estado as keyof typeof icono];
-};
-
-const TarjetaCrmIncidencia = (incidencia: Incidencia) => {
-  return (
-    <QTarjetaGenerica
-      avatar={
-        <QAvatar className={incidencia.prioridad}>
-          <QIcono nombre={iconoEstadoAccion(incidencia.estado)} tamaño="sm" />
-        </QAvatar>
-      }
-      arribaIzquierda={incidencia.nombre}
-      arribaDerecha={formatearFechaDate(incidencia.fecha)}
-      abajoIzquierda={
-        incidencia.estado.at(0)?.toUpperCase() +
-        incidencia.estado.slice(1).replace("_", " ")
-      }
-      abajoDerecha={incidencia.descripcion}
-    />
   );
 };

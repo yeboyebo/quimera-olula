@@ -4,11 +4,11 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { Accion } from "./diseño.ts";
 
-type AccionAPI = Accion & { fecha: string };
+export type AccionAPI = Accion & { fecha: string | null };
 
-const accionDesdeAPI = (accionAPI: AccionAPI): Accion => ({
+export const accionDesdeAPI = (accionAPI: AccionAPI): Accion => ({
     ...accionAPI,
-    fecha: new Date(Date.parse(accionAPI.fecha))
+    fecha: accionAPI.fecha ? new Date(Date.parse(accionAPI.fecha)) : null,
 })
 
 export const getAccion = async (id: string): Promise<Accion> =>

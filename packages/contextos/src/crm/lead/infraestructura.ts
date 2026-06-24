@@ -2,8 +2,13 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
+import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
+import {
+    oportunidadDesdeAPI,
+    OportunidadVentaAPI,
+} from "../oportunidadventa/infraestructura.ts";
 import { Lead, LeadAPI, LeadToAPI } from "./diseño.ts";
 
 export const leadFromAPI = (l: LeadAPI): Lead => ({
@@ -86,7 +91,12 @@ export const getOportunidadesVentaLead = async (leadId: string): RespuestaLista<
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: OportunidadVenta[], total: number }>(new ApiUrls().OPORTUNIDAD_VENTA + q).then((respuesta) => respuesta);
+    return RestAPI
+        .get<{ datos: OportunidadVentaAPI[], total: number }>(new ApiUrls().OPORTUNIDAD_VENTA + q)
+        .then((respuesta) => ({
+            ...respuesta,
+            datos: respuesta.datos.map(oportunidadDesdeAPI),
+        }));
 };
 
 export const getAccionesLead = async (leadId: string): RespuestaLista<Accion> => {
@@ -94,7 +104,12 @@ export const getAccionesLead = async (leadId: string): RespuestaLista<Accion> =>
     const orden = [] as Orden;
 
     const q = criteriaQueryUrl(filtro, orden);
-    return RestAPI.get<{ datos: Accion[], total: number }>(new ApiUrls().ACCION + q).then((respuesta) => respuesta);
+    return RestAPI
+        .get<{ datos: AccionAPI[], total: number }>(new ApiUrls().ACCION + q)
+        .then((respuesta) => ({
+            ...respuesta,
+            datos: respuesta.datos.map(accionDesdeAPI),
+        }));
 };
 
 export const getFuentesLead = async (

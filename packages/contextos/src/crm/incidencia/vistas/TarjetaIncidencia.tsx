@@ -2,11 +2,7 @@ import { QAvatar } from "@olula/componentes/index.js";
 import { Incidencia } from "../diseño.ts";
 import "./TarjetaIncidencia.css";
 
-export const TarjetaIncidencia = ({
-  incidencia,
-}: {
-  incidencia: Incidencia;
-}) => (
+export const TarjetaIncidencia = (incidencia: Incidencia) => (
   <div className="tarjeta-incidencia">
     <div className="columna">
       <div className="tarjeta-icono">

@@ -2,11 +2,9 @@ import { EstadoAccion } from "#/crm/comun/componentes/estado_accion.tsx";
 import { TipoAccion } from "#/crm/comun/componentes/tipo_accion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -16,6 +14,7 @@ import { Accion } from "../diseño.ts";
 import { metaTablaAccion } from "./maestro.ts";
 import "./MaestroAcciones.css";
 import { getMaquina } from "./maquina.ts";
+import { TarjetaAccion } from "./TarjetaAccion.tsx";
 
 export const MaestroAcciones = () => {
   const { id, criteria } = getUrlParams();
@@ -67,7 +66,7 @@ export const MaestroAcciones = () => {
                 },
               }}
               criteria={ctx.acciones.criteria}
-              tarjeta={TarjetaCrmAccion}
+              tarjeta={TarjetaAccion}
               entidades={ctx.acciones.lista}
               totalEntidades={ctx.acciones.total}
               seleccionada={ctx.acciones.activo}
@@ -94,33 +93,5 @@ export const MaestroAcciones = () => {
 
       {ctx.estado === "CREANDO" && <CrearAccion publicar={emitir} />}
     </div>
-  );
-};
-
-const iconoTipoAccion = (tipo: string) => {
-  const icono = {
-    Tarea: "tarea",
-    "E-mail": "correo",
-    Teléfono: "telefono",
-    Visita: "casa",
-    Otro: "llaveinglesa",
-  };
-
-  return icono[tipo as keyof typeof icono];
-};
-
-const TarjetaCrmAccion = (accion: Accion) => {
-  return (
-    <QTarjetaGenerica
-      avatar={
-        <QAvatar className={accion.estado}>
-          <QIcono nombre={iconoTipoAccion(accion.tipo)} tamaño="sm" />
-        </QAvatar>
-      }
-      arribaIzquierda={accion.descripcion}
-      arribaDerecha={accion.fecha ? formatearFechaDate(accion.fecha) : ""}
-      abajoIzquierda={accion.estado}
-      abajoDerecha={accion.nombre_cliente}
-    />
   );
 };

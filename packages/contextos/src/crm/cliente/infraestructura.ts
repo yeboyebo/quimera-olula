@@ -2,10 +2,14 @@ import UrlsVentasClass from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
-import { Accion } from "../accion/diseño.ts";
+import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
 import UrlsCrmClass from "../comun/urls.ts";
 import { NuevaOportunidadVenta } from "../oportunidadventa/crear/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
+import {
+  oportunidadDesdeAPI,
+  OportunidadVentaAPI,
+} from "../oportunidadventa/infraestructura.ts";
 import { Cliente, GetCliente, PatchCliente } from "./diseño.ts";
 
 const UrlsCrm = new UrlsCrmClass();
@@ -54,7 +58,14 @@ export const deleteCliente = async (id: string): Promise<void> =>
   await RestAPI.delete(`${UrlsVentas.CLIENTE}/${id}`, "Error al borrar cliente");
 
 export const getOportunidadesVentaCliente = async (clienteId: string): RespuestaLista<OportunidadVenta> =>
-  await RestAPI.get<{ datos: OportunidadVenta[], total: number }>(`${UrlsCrm.CLIENTE}/${clienteId}/oportunidades_venta`).then((respuesta) => respuesta);
+  await RestAPI
+    .get<{ datos: OportunidadVentaAPI[]; total: number }>(
+      `${UrlsCrm.CLIENTE}/${clienteId}/oportunidades_venta`
+    )
+    .then((respuesta) => ({
+      ...respuesta,
+      datos: respuesta.datos.map(oportunidadDesdeAPI),
+    }));
 
 export const getOportunidadVenta = async (id: string): Promise<OportunidadVenta> =>
   await RestAPI.get<{ datos: OportunidadVenta }>(`${UrlsCrm.OPORTUNIDAD_VENTA}/${id}`).then((respuesta) => respuesta.datos);
@@ -81,5 +92,10 @@ export const getAccionesCliente = async (clienteId: string) => {
   const filtro = ['cliente_id', clienteId] as unknown as Filtro;
   const orden = [] as Orden;
   const q = criteriaQueryUrl(filtro, orden);
-  return RestAPI.get<{ datos: Accion[], total: number }>(UrlsCrm.ACCION + q).then((respuesta) => respuesta);
+  return RestAPI
+    .get<{ datos: AccionAPI[]; total: number }>(UrlsCrm.ACCION + q)
+    .then((respuesta) => ({
+      ...respuesta,
+      datos: respuesta.datos.map(accionDesdeAPI),
+    }));
 };
