@@ -63,7 +63,7 @@ function ShPreparacionDePedido({
   const [anchoDescripcionCalculado, setAnchoDescripcionCalculado] = useState(700);
 
   const dataLineas = lineas.idList
-    // .filter(id => lineas.dict[id].shPreparacion == "En Curso")
+    .filter(id => lineas.dict[id].shPreparacion == "En Curso")
     .map(id => lineas.dict[id]);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ function ShPreparacionDePedido({
   useEffect(() => {
     if (mobile && dataLineas.length > 0) {
       const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
-      const anchoEstimado = Math.min(Math.max(150, maxChars * 7.5 + 40), 900);
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 8 + 40), 900);
 
       setAnchoDescripcionCalculado(anchoEstimado);
     } else {
