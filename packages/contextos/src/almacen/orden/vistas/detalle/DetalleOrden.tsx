@@ -7,9 +7,9 @@ import { useContext } from "react";
 import { useParams } from "react-router";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
 import { OrdenAlmacen } from "../../diseño.ts";
-import { metaOrden, ordenVacia } from "../../dominio.ts";
+import { metaOrden, ordenVaciaInicial } from "../../dominio.ts";
 import { cambiarOrden, getOrden } from "../../infraestructura.ts";
-import { LineasOrden } from "../lineas/LineasOrden.tsx";
+import { LineasOrden } from "./lineas/LineasOrden.tsx";
 import { BorrarOrden } from "./BorrarOrden.tsx";
 import { useMaquinaDetalleOrden } from "./maquina_detalle_orden.ts";
 
@@ -25,7 +25,7 @@ export const DetalleOrden = ({
     const params = useParams();
     const { intentar } = useContext(ContextoError);
 
-    const orden = useModelo(metaOrden, ordenVacia());
+    const orden = useModelo(metaOrden, ordenVaciaInicial);
     const { modelo, init } = orden;
 
     const guardar = async () => {

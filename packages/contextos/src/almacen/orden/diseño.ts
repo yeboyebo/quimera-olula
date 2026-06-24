@@ -23,7 +23,7 @@ export type LineaOrdenAlmacen = {
     cajaDestinoId: string | null;
 };
 
-export type NuevaOrdenAlmacen = Omit<OrdenAlmacen, "id" | "lineas">;
+// export type NuevaOrdenAlmacen = Omit<OrdenAlmacen, "id" | "lineas">;
 
 export type NuevaLineaOrdenAlmacen = LineaOrdenAlmacen;
 

@@ -1,6 +1,6 @@
-import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
+import { MetaModelo } from "@olula/lib/dominio.ts";
 import { fechaActual } from "@olula/lib/fecha.ts";
-import { ItemOrdenAlmacen, LineaOrdenAlmacen, NuevaLineaOrdenAlmacen, NuevaOrdenAlmacen, OrdenAlmacen } from "./diseño.ts";
+import { ItemOrdenAlmacen, LineaOrdenAlmacen, NuevaLineaOrdenAlmacen, OrdenAlmacen } from "./diseño.ts";
 
 export const ERR_SKU_REQUERIDO = "El SKU es requerido";
 export const ERR_CANTIDAD_PREVISTA_REQUERIDA = "La cantidad prevista es requerida";
@@ -17,6 +17,21 @@ export const ordenVacia = (): OrdenAlmacen => ({
     cajaDestinoId: null,
     lineas: [],
 });
+
+// Constante estable para usar como modeloInicial en useModelo.
+// No llama a fechaActual() en cada render, evitando el bucle infinito de re-renders.
+export const ordenVaciaInicial: OrdenAlmacen = {
+    id: "",
+    fecha: "",
+    tipoOrden: "",
+    almacenId: "",
+    abierta: true,
+    ubicacionOrigenId: null,
+    cajaOrigenId: null,
+    ubicacionDestinoId: null,
+    cajaDestinoId: null,
+    lineas: [],
+};
 
 export const lineaOrdenVacia = (): LineaOrdenAlmacen => ({
     sku: "",
@@ -50,33 +65,9 @@ export const metaOrden: MetaModelo<OrdenAlmacen> = {
     },
 };
 
-export const nuevaOrdenVacia: NuevaOrdenAlmacen = {
-    fecha: fechaActual(),
-    tipoOrden: "",
-    almacenId: "",
-    abierta: true,
-    ubicacionOrigenId: null,
-    cajaOrigenId: null,
-    ubicacionDestinoId: null,
-    cajaDestinoId: null,
-};
 
-export const metaNuevaOrden: MetaModelo<NuevaOrdenAlmacen> = {
-    campos: {
-        tipoOrden: {
-            requerido: true,
-            validacion: (m) => stringNoVacio(m.tipoOrden),
-        },
-        almacenId: {
-            requerido: true,
-            validacion: (m) => stringNoVacio(m.almacenId),
-        },
-        fecha: {
-            requerido: true,
-            validacion: (m) => stringNoVacio(m.fecha),
-        },
-    },
-};
+
+
 
 export const metaNuevaLinea: MetaModelo<LineaOrdenAlmacen> = {
     campos: {

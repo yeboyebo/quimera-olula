@@ -90,3 +90,26 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 
 ### Component URL
 A component review page is available at `/docs/componentes` when running the dev server.
+
+### Organización de vistas de sub-recursos (líneas, pagos, etc.)
+
+Los componentes de operación sobre un sub-recurso (crear, cambiar, borrar) NO deben vivir en una subcarpeta genérica `lineas/` dentro de `vistas/`. Deben organizarse así:
+
+```
+vistas/
+├── crear_linea/          # Modal de alta: CrearLineaXxx.tsx
+├── cambiar_linea/        # Modal de edición: CambiarLineaXxx.tsx
+├── borrar_linea/         # Modal de borrado: BorrarLineaXxx.tsx
+└── detalle/
+    └── lineas/           # Lista del sub-recurso + orquestación de modales: LineasXxx.tsx
+```
+
+Referencia canónica: `packages/contextos/src/tpv/venta/` y `packages/contextos/src/almacen/orden/`.
+
+Reglas:
+
+1. **Una carpeta por operación** — `crear_linea/`, `cambiar_linea/`, `borrar_linea/` en el nivel `vistas/`.
+2. **El orquestador** (lista con botones + renderizado condicional de modales) vive en `detalle/lineas/NombreXxx.tsx`.
+3. **Modales sin prop `activo`** — el padre controla la visibilidad con `{estado === "X" && <Modal />}`.
+4. **`BorrarXxxLinea` usa `useForm`** — no llama directamente a la API ni usa `ContextoError` directamente.
+5. **Los modales reciben la entidad ya resuelta** (`linea: LineaXxxConId`), nunca un nullable ni solo un ID.

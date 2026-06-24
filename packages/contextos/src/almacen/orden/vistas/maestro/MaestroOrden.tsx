@@ -5,10 +5,11 @@ import { Listado } from "@olula/componentes/maestro/Listado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
+import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect } from "react";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
 import { DetalleOrden } from "../detalle/DetalleOrden.tsx";
-import { CrearOrden } from "../CrearOrden.tsx";
+import { CrearOrden } from "../crear/CrearOrden.tsx";
 import { Contexto, getMaquina } from "./maquina_maestro_orden.ts";
 
 const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
@@ -20,6 +21,8 @@ const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
 ];
 
 export const MaestroOrden = () => {
+    const { layout, cambiarLayout } = useLayout("TABLA");
+
     const { id, criteria } = getUrlParams();
 
     const { ctx, emitir } = useMaquina(getMaquina, {
@@ -38,17 +41,22 @@ export const MaestroOrden = () => {
         <div className="OrdenAlmacen">
             <MaestroDetalle<ItemOrdenAlmacen>
                 seleccionada={ctx.ordenes.activo}
-                layout="TABLA"
+                layout={layout}
+                modoDisposicion="maestro-50"
                 Maestro={
                     <>
                         <h2>Órdenes</h2>
                         <div className="maestro-botones">
                             <QBoton onClick={() => emitir("crear")}>Nueva orden</QBoton>
+                            <QBoton onClick={cambiarLayout}>
+                                {layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
+                            </QBoton>
                         </div>
                         <Listado<ItemOrdenAlmacen>
                             metaTabla={metaTablaOrden}
                             criteria={ctx.ordenes.criteria}
-                            modo="tabla"
+                            modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+                            tarjeta={TarjetaOrdenAlmacen}
                             entidades={ctx.ordenes.lista}
                             totalEntidades={ctx.ordenes.total}
                             seleccionada={ctx.ordenes.activo}
@@ -68,10 +76,18 @@ export const MaestroOrden = () => {
                     />
                 }
             />
-            <CrearOrden
-                publicar={emitir}
-                activo={ctx.estado === "CREANDO"}
-            />
+            {ctx.estado === "CREANDO" && (
+                <CrearOrden publicar={emitir} />
+            )}
+        </div>
+    );
+};
+
+const TarjetaOrdenAlmacen = (orden: ItemOrdenAlmacen) => {
+    return (
+        <div className="tarjeta-orden" key={orden.id}>
+            <div>{`${orden.tipo} - ${orden.fecha}`}</div>
+            <div>{orden.estado}</div>
         </div>
     );
 };

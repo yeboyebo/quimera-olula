@@ -2,18 +2,17 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { Criteria, RespuestaLista2 } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { getSeleccionada } from "@olula/lib/entidad.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { LineaOrdenAlmacenConId } from "../../diseño.ts";
-import { getOrden } from "../../infraestructura.ts";
-import { useMaquinaLineasOrden } from "../../maquina_lineas_orden.ts";
-import { BorrarLineaOrden } from "./BorrarLineaOrden.tsx";
-import { CrearLineaOrden } from "./CrearLineaOrden.tsx";
-import { EditarLineaOrden } from "./EditarLineaOrden.tsx";
+import { LineaOrdenAlmacenConId } from "../../../diseño.ts";
+import { getOrden } from "../../../infraestructura.ts";
+import { useMaquinaLineasOrden } from "../../../maquina_lineas_orden.ts";
+import { BorrarLineaOrden } from "../../borrar_linea/BorrarLineaOrden.tsx";
+import { CambiarLineaOrden } from "../../cambiar_linea/CambiarLineaOrden.tsx";
+import { CrearLineaOrden } from "../../crear_linea/CrearLineaOrden.tsx";
 
 const metaTablaLineasOrden: MetaTabla<LineaOrdenAlmacenConId> = [
     { id: "sku", cabecera: "SKU" },
@@ -114,30 +113,23 @@ export const LineasOrden = ({
                     onCriteriaChanged={cargarLineas}
                 />
             )}
-            {seleccionada && (
-                <QModal
-                    nombre="editarLineaOrden"
-                    abierto={estado === "Edicion"}
-                    onCerrar={() => emitir("edicion_cancelada")}
-                >
-                    <EditarLineaOrden
-                        emitir={emitir}
-                        lineaInicial={seleccionada}
-                        ordenId={ordenId}
-                    />
-                </QModal>
+            {estado === "Alta" && (
+                <CrearLineaOrden publicar={emitir} ordenId={ordenId} />
             )}
-            <CrearLineaOrden
-                publicar={emitir}
-                activo={estado === "Alta"}
-                ordenId={ordenId}
-            />
-            <BorrarLineaOrden
-                publicar={emitir}
-                activo={estado === "ConfirmarBorrado"}
-                linea={seleccionada}
-                ordenId={ordenId}
-            />
+            {seleccionada && estado === "Edicion" && (
+                <CambiarLineaOrden
+                    publicar={emitir}
+                    linea={seleccionada}
+                    ordenId={ordenId}
+                />
+            )}
+            {seleccionada && estado === "ConfirmarBorrado" && (
+                <BorrarLineaOrden
+                    publicar={emitir}
+                    linea={seleccionada}
+                    ordenId={ordenId}
+                />
+            )}
         </>
     );
 };

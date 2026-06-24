@@ -1,16 +1,17 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
     ItemOrdenAlmacen,
     ItemOrdenApi,
     LineaOrdenAlmacen,
     LineaOrdenAlmacenApi,
     NuevaLineaOrdenAlmacen,
-    NuevaOrdenAlmacen,
     OrdenAlmacen,
     OrdenAlmacenApi,
 } from "./diseño.ts";
+import { NuevaOrdenAlmacen } from "./vistas/crear/diseño.ts";
+
 
 const baseUrl = `/almacen/orden`;
 
@@ -82,14 +83,10 @@ export const getOrden = async (id: string): Promise<OrdenAlmacen> => {
 
 export const crearOrden = async (orden: NuevaOrdenAlmacen): Promise<string> => {
     const payload = {
-        fecha: orden.fecha,
+        fecha: (orden.fecha as Date).toISOString().slice(0, 10),
         tipo_orden: orden.tipoOrden,
         almacen_id: orden.almacenId,
         abierta: orden.abierta,
-        ubicacion_origen_id: orden.ubicacionOrigenId,
-        caja_origen_id: orden.cajaOrigenId,
-        ubicacion_destino_id: orden.ubicacionDestinoId,
-        caja_destino_id: orden.cajaDestinoId,
     };
     const respuesta = await RestAPI.post(baseUrl, payload, "Error al crear la orden");
     return respuesta.id as string;
