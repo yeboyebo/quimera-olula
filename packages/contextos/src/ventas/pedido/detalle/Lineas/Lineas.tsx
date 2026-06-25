@@ -40,6 +40,15 @@ export const Lineas = ({
       cantidad: cantidad,
     });
   };
+  console.log(
+    "Estado pedido",
+    estadoPedido,
+    "servido",
+    pedido.servido,
+    "lineaActiva",
+    lineaActiva
+  );
+  console.log("estadoPedido", estadoPedido);
 
   return (
     <>
@@ -48,9 +57,11 @@ export const Lineas = ({
         lineas={pedido.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
-        pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
+        pedidoEditable={
+          (estadoPedido === "ABIERTO" && pedido.servido != "TOTAL") || true
+        }
         acciones={
-          estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"
+          (estadoPedido === "ABIERTO" && pedido.servido != "TOTAL") || true
             ? acciones
             : undefined
         }

@@ -16,12 +16,18 @@ export const TipoPalet = ({
   const [items, setItems] = useState<ItemListaTipoPalet[]>([]);
 
   useEffect(() => {
-    getItemsListaTipoPalet([], []).then(setItems);
+    getItemsListaTipoPalet([], [], { pagina: 1, limite: 1000 }).then(setItems);
   }, []);
 
-  const opciones = items.map((item) => ({ valor: item.id, descripcion: item.descripcion }));
+  const opciones = items.map((item) => ({
+    valor: item.id,
+    descripcion: item.descripcion,
+  }));
 
-  const handleChange = (opcion: { valor: string; descripcion: string } | null, e: React.ChangeEvent<HTMLElement>) => {
+  const handleChange = (
+    opcion: { valor: string; descripcion: string } | null,
+    e: React.ChangeEvent<HTMLElement>
+  ) => {
     if (!opcion) {
       onChange?.(null, e);
       return;
