@@ -13,13 +13,13 @@ import "./LineasLista.css";
 export const LineasListaNrj = ({
   lineas,
   seleccionada,
-  onCambioCantidad,
+  // onCambioCantidad,
   pedidoEditable,
-  cantidadEditable = false,
+  // cantidadEditable = false,
   acciones,
   publicar,
-}: LineasListaProps) => {
-  const setSeleccionada = (linea: Linea) => {
+}: LineasListaProps<LineaPedidoNrj>) => {
+  const setSeleccionada = (linea: LineaPedidoNrj) => {
     if (!pedidoEditable) return;
     publicar("linea_seleccionada", linea);
   };
@@ -30,8 +30,8 @@ export const LineasListaNrj = ({
       tarjeta={(linea) => (
         <TarjetaLineaNrj
           linea={linea}
-          cantidadEditable={cantidadEditable}
-          onCambioCantidad={onCambioCantidad}
+          // cantidadEditable={cantidadEditable}
+          // onCambioCantidad={onCambioCantidad}
         />
       )}
       entidades={lineas}
@@ -92,16 +92,16 @@ export const LineasListaNrj = ({
 
 const TarjetaLineaNrj = ({
   linea,
-  seleccionada,
-  onClick,
+  // seleccionada,
+  // onClick,
 }: {
   linea: LineaPedidoNrj;
-  seleccionada: boolean;
-  onClick: () => void;
+  // seleccionada: boolean;
+  // onClick: () => void;
 }) => (
   <div
-    className={`tarjeta-linea${seleccionada ? " tarjeta-linea--seleccionada" : ""}`}
-    onClick={onClick}
+  // className={`tarjeta-linea${seleccionada ? " tarjeta-linea--seleccionada" : ""}`}
+  // onClick={onClick}
   >
     <div className="tarjeta-linea-estado">
       {formateaEstado(String(linea.estado_palets ?? ""))}
