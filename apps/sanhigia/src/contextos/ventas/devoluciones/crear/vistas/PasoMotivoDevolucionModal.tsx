@@ -1,17 +1,25 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QModal, QTextArea } from "@olula/componentes/index.js";
-import { useEffect, useMemo, useState } from "react";
+import { QAcordeon, QModal, QTextArea } from "@olula/componentes/index.js";
+import { useEffect, useState } from "react";
 import { MotivoDevolucion } from "../../../motivoDevolucion/diseño.ts";
 import { getMotivosDevolucion } from "../../../motivoDevolucion/infraestructura.ts";
+import "./PasoMotivoDevolucionModal.css";
+
+type TipoPrincipal = "Interno" | "Externo" | "Terceros";
+
+const grupoDesdeMotivo = (motivo: MotivoDevolucion): TipoPrincipal => {
+  const tipo = String(motivo.tipo ?? "").trim();
+  if (tipo === "Interno") return "Interno";
+  if (tipo === "Terceros") return "Terceros";
+  return "Externo";
+};
 
 const ordenarPorDescripcion = (a: MotivoDevolucion, b: MotivoDevolucion) =>
   String(a.descripcion ?? "").localeCompare(String(b.descripcion ?? ""), "es", {
     sensitivity: "base",
   });
 
-const esTipoInterno = (tipo: string) => tipo.trim().toLowerCase() === "interno";
-
-const BotonMotivo = ({
+const TarjetaMotivo = ({
   motivo,
   seleccionado,
   onClick,
@@ -20,9 +28,13 @@ const BotonMotivo = ({
   seleccionado: boolean;
   onClick: () => void;
 }) => (
-  <QBoton variante={seleccionado ? "solido" : "borde"} onClick={onClick}>
+  <button
+    type="button"
+    className={`tarjeta-motivo${seleccionado ? " tarjeta-motivo--seleccionada" : ""}`}
+    onClick={onClick}
+  >
     {motivo.descripcion || "Otro"}
-  </QBoton>
+  </button>
 );
 
 export const PasoMotivoDevolucionModal = ({
@@ -47,6 +59,9 @@ export const PasoMotivoDevolucionModal = ({
   const [motivos, setMotivos] = useState<MotivoDevolucion[]>([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
+  const [grupoAbierto, setGrupoAbierto] = useState<TipoPrincipal | null>(
+    "Interno"
+  );
 
   useEffect(() => {
     if (!abierto) return;
@@ -59,7 +74,7 @@ export const PasoMotivoDevolucionModal = ({
           limite: 200,
           pagina: 1,
         });
-        setMotivos((respuesta.datos ?? []).slice().sort(ordenarPorDescripcion));
+        setMotivos(respuesta.datos ?? []);
       } catch {
         setError("No se han podido cargar los motivos de devolución");
       } finally {
@@ -70,11 +85,43 @@ export const PasoMotivoDevolucionModal = ({
     cargarMotivos();
   }, [abierto]);
 
-  const { internos, externos } = useMemo(() => {
-    const internos = motivos.filter((motivo) => esTipoInterno(motivo.tipo));
-    const externos = motivos.filter((motivo) => !esTipoInterno(motivo.tipo));
-    return { internos, externos };
-  }, [motivos]);
+  useEffect(() => {
+    if (!motivoSeleccionado) return;
+    setGrupoAbierto(grupoDesdeMotivo(motivoSeleccionado));
+  }, [motivoSeleccionado]);
+
+  const internos = motivos
+    .filter((m) => grupoDesdeMotivo(m) === "Interno")
+    .sort(ordenarPorDescripcion);
+  const externos = motivos
+    .filter((m) => grupoDesdeMotivo(m) === "Externo")
+    .sort(ordenarPorDescripcion);
+  const terceros = motivos
+    .filter((m) => grupoDesdeMotivo(m) === "Terceros")
+    .sort(ordenarPorDescripcion);
+
+  const renderBotonesMotivo = (grupo: MotivoDevolucion[]) => {
+    if (!grupo.length) {
+      return (
+        <p className="motivo-devolucion-vacio">
+          No hay motivos disponibles en este bloque.
+        </p>
+      );
+    }
+
+    return (
+      <div className="motivo-devolucion-grid">
+        {grupo.map((motivo) => (
+          <TarjetaMotivo
+            key={motivo.id}
+            motivo={motivo}
+            seleccionado={motivoSeleccionado?.id === motivo.id}
+            onClick={() => onMotivoSeleccionado(motivo)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   const descripcionInformada = descripcionMotivo.trim().length > 0;
   const esOtros = !!motivoSeleccionado?.otros;
@@ -94,33 +141,36 @@ export const PasoMotivoDevolucionModal = ({
 
         {!cargando && !error && (
           <>
-            <section className="motivo-devolucion-seccion">
-              <h4>Motivos internos</h4>
-              <div className="motivo-devolucion-botones">
-                {internos.map((motivo) => (
-                  <BotonMotivo
-                    key={motivo.id}
-                    motivo={motivo}
-                    seleccionado={motivoSeleccionado?.id === motivo.id}
-                    onClick={() => onMotivoSeleccionado(motivo)}
-                  />
-                ))}
-              </div>
-            </section>
-
-            <section className="motivo-devolucion-seccion">
-              <h4>Motivos externos</h4>
-              <div className="motivo-devolucion-botones">
-                {externos.map((motivo) => (
-                  <BotonMotivo
-                    key={motivo.id}
-                    motivo={motivo}
-                    seleccionado={motivoSeleccionado?.id === motivo.id}
-                    onClick={() => onMotivoSeleccionado(motivo)}
-                  />
-                ))}
-              </div>
-            </section>
+            <QAcordeon
+              items={[
+                {
+                  id: "interno",
+                  titulo: "Causas internas",
+                  subtitulo: "Incidencias imputables a la empresa",
+                  contador: internos.length,
+                  contenido: renderBotonesMotivo(internos),
+                },
+                {
+                  id: "externo",
+                  titulo: "Causas externas",
+                  subtitulo:
+                    "Solicitudes o incidencias comunicadas por el cliente",
+                  contador: externos.length,
+                  contenido: renderBotonesMotivo(externos),
+                },
+                {
+                  id: "regulatorio",
+                  titulo: "Causas regulatorias / terceros",
+                  subtitulo: "Calidad, trazabilidad y requisitos regulatorios",
+                  contador: terceros.length,
+                  contenido: renderBotonesMotivo(terceros),
+                },
+              ]}
+              abiertoId={grupoAbierto}
+              onAbiertoCambiado={(id) =>
+                setGrupoAbierto(id as TipoPrincipal | null)
+              }
+            />
 
             <quimera-formulario>
               <QTextArea

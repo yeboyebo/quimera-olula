@@ -1,7 +1,6 @@
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useCallback, useEffect, useState } from "react";
-import { MotivoDevolucion } from "../../motivoDevolucion/diseño.ts";
 import { LineaFacturaDevolucion } from "../diseño.ts";
 import { crearDevolucionPedido } from "../infraestructura.ts";
 import "./CrearDevolucion.css";
@@ -24,41 +23,27 @@ export const CrearDevolucion = ({
   const [lineasDevolucion, setLineasDevolucion] = useState<
     LineaFacturaDevolucion[]
   >([]);
-  const [mostrandoMotivo, setMostrandoMotivo] = useState(false);
-  const [guardando, setGuardando] = useState(false);
-  const [motivoSeleccionado, setMotivoSeleccionado] =
-    useState<MotivoDevolucion | null>(null);
-  const [descripcionMotivo, setDescripcionMotivo] = useState("");
 
   useEffect(() => {
     if (!activo) {
       setLineasDevolucion([]);
-      setMostrandoMotivo(false);
-      setGuardando(false);
-      setMotivoSeleccionado(null);
-      setDescripcionMotivo("");
       emitir("formulario_limpiado", null, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activo]);
 
   const idFactura = ctx.facturaSeleccionada?.valor ?? "";
+  const guardando = ctx.estado === "GUARDANDO_DEVOLUCION";
+  const motivoSeleccionado = ctx.motivoSeleccionado;
+  const descripcionMotivo = ctx.descripcionMotivo;
 
   const cerrarFlujo = useCallback(() => {
     if (guardando) return;
 
     setLineasDevolucion([]);
-    setMostrandoMotivo(false);
-    setMotivoSeleccionado(null);
-    setDescripcionMotivo("");
     emitir("formulario_limpiado");
     onCancelar();
   }, [emitir, guardando, onCancelar]);
-
-  const onSeleccionarMotivo = (motivo: MotivoDevolucion) => {
-    setMotivoSeleccionado(motivo);
-    setDescripcionMotivo(String(motivo.descripcion ?? ""));
-  };
 
   const confirmarMotivoYCrear = useCallback(async () => {
     if (!ctx.factura || !idFactura || !motivoSeleccionado) return;
@@ -74,7 +59,7 @@ export const CrearDevolucion = ({
       ? `${descripcionFinal}`
       : motivoSeleccionado.tipo;
 
-    setGuardando(true);
+    emitir("guardado_solicitado");
     try {
       const devolucionCreada = await crearDevolucionPedido({
         idFactura,
@@ -89,17 +74,21 @@ export const CrearDevolucion = ({
         })),
       });
 
+      emitir("guardado_completado");
       publicar("devolucion_creada", devolucionCreada);
       cerrarFlujo();
+    } catch {
+      emitir("guardado_fallido");
     } finally {
-      setGuardando(false);
+      // no-op: el estado se gestiona desde la maquina
     }
   }, [
-    cerrarFlujo,
     ctx.factura,
-    descripcionMotivo,
-    idFactura,
     lineasDevolucion,
+    descripcionMotivo,
+    emitir,
+    cerrarFlujo,
+    idFactura,
     motivoSeleccionado,
     publicar,
   ]);
@@ -127,18 +116,24 @@ export const CrearDevolucion = ({
         onCerrar={cerrarFlujo}
         onCambiarFactura={() => emitir("volver_a_busqueda")}
         onLineasCambiadas={setLineasDevolucion}
-        onSolicitarConfirmacion={() => setMostrandoMotivo(true)}
+        onSolicitarConfirmacion={() => emitir("confirmacion_motivo_solicitada")}
       />
 
       <PasoMotivoDevolucionModal
-        abierto={mostrandoMotivo}
+        abierto={
+          activo &&
+          (ctx.estado === "SELECCIONANDO_MOTIVO" ||
+            ctx.estado === "GUARDANDO_DEVOLUCION")
+        }
         guardando={guardando}
         motivoSeleccionado={motivoSeleccionado}
         descripcionMotivo={descripcionMotivo}
-        onCerrar={() => setMostrandoMotivo(false)}
+        onCerrar={() => emitir("confirmacion_motivo_cancelada")}
         onGuardar={confirmarMotivoYCrear}
-        onMotivoSeleccionado={onSeleccionarMotivo}
-        onDescripcionMotivoCambiada={setDescripcionMotivo}
+        onMotivoSeleccionado={(motivo) => emitir("motivo_seleccionado", motivo)}
+        onDescripcionMotivoCambiada={(descripcion) =>
+          emitir("descripcion_motivo_cambiada", descripcion)
+        }
       />
     </div>
   );

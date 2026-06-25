@@ -1,5 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { MetaModelo } from "@olula/lib/dominio.ts";
+import { MotivoDevolucion } from "../../motivoDevolucion/diseño.ts";
 import { getFacturaDevolucion } from "../infraestructura.ts";
 import {
     ContextoCrearDevolucion,
@@ -50,6 +51,8 @@ export const buscarFacturaProceso: ProcesarCrearDevolucion = async (contexto, pa
             ...contexto,
             estado: "EDITANDO_DEVOLUCION",
             factura,
+            motivoSeleccionado: null,
+            descripcionMotivo: "",
             error: "",
         };
     } catch {
@@ -66,7 +69,50 @@ export const volverABusquedaProceso: ProcesarCrearDevolucion = async (contexto) 
     ...contexto,
     estado: "SELECCIONANDO_FACTURA",
     factura: null,
+    motivoSeleccionado: null,
+    descripcionMotivo: "",
     error: "",
+});
+
+export const solicitarConfirmacionMotivoProceso: ProcesarCrearDevolucion = async (contexto) => ({
+    ...contexto,
+    estado: "SELECCIONANDO_MOTIVO",
+    error: "",
+});
+
+export const cancelarConfirmacionMotivoProceso: ProcesarCrearDevolucion = async (contexto) => ({
+    ...contexto,
+    estado: "EDITANDO_DEVOLUCION",
+    error: "",
+});
+
+export const seleccionarMotivoProceso: ProcesarCrearDevolucion = async (contexto, payload) => {
+    const motivo = (payload as MotivoDevolucion | null) ?? null;
+
+    return {
+        ...contexto,
+        motivoSeleccionado: motivo,
+        descripcionMotivo: String(motivo?.descripcion ?? ""),
+    };
+};
+
+export const cambiarDescripcionMotivoProceso: ProcesarCrearDevolucion = async (contexto, payload) => ({
+    ...contexto,
+    descripcionMotivo: String(payload ?? ""),
+});
+
+export const solicitarGuardadoProceso: ProcesarCrearDevolucion = async (contexto) => ({
+    ...contexto,
+    estado: "GUARDANDO_DEVOLUCION",
+    error: "",
+});
+
+export const guardadoCompletadoProceso: ProcesarCrearDevolucion = async () => contextoCrearDevolucionVacio;
+
+export const guardadoFallidoProceso: ProcesarCrearDevolucion = async (contexto) => ({
+    ...contexto,
+    estado: "SELECCIONANDO_MOTIVO",
+    error: "No se ha podido crear la devolución",
 });
 
 export const limpiarFacturaProceso: ProcesarCrearDevolucion = async () => contextoCrearDevolucionVacio;

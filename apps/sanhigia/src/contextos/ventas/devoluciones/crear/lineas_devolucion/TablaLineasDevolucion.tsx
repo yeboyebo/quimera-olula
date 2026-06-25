@@ -1,6 +1,9 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QIcono } from "@olula/componentes/index.js";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useEffect } from "react";
 import { LineaFacturaDevolucion } from "../../diseño.ts";
 import {
@@ -23,6 +26,57 @@ const formatoNumero = new Intl.NumberFormat("es-ES", {
 const hayLineasConCantidad = (ctx: ContextoLineasDevolucion) =>
   ctx.lineas.some((linea) => Number(linea.cantidadDevolver ?? 0) > 0);
 
+const TarjetaLineaFacturaDevolucion = ({
+  linea,
+  valor,
+  onChange,
+  onAplicarTodo,
+}: {
+  linea: LineaFacturaDevolucion;
+  valor: string;
+  onChange: (valor: string) => void;
+  onAplicarTodo: () => void;
+}) => {
+  return (
+    <article className="tarjeta-linea-factura-devolucion">
+      <div className="tarjeta-linea-factura-devolucion-cabecera">
+        <div className="tarjeta-linea-factura-devolucion-identidad">
+          <strong>{linea.referencia}</strong>
+          <span>{linea.descripcion}</span>
+        </div>
+        <div className="tarjeta-linea-factura-devolucion-meta">
+          <span>
+            Importe: {formatoMoneda.format(linea.importe ?? linea.total ?? 0)}
+          </span>
+          <span>Cantidad: {formatoNumero.format(linea.cantidad ?? 0)}</span>
+        </div>
+      </div>
+
+      <div className="tarjeta-linea-factura-devolucion-campos">
+        <label className="tarjeta-linea-factura-devolucion-campo">
+          <span>A devolver</span>
+          <input
+            value={valor}
+            onChange={(evento) => onChange(evento.target.value)}
+            className="entrada-cantidad"
+            disabled={linea.esKit}
+          />
+        </label>
+
+        <QBoton
+          variante="texto"
+          tamaño="pequeño"
+          deshabilitado={linea.esKit}
+          onClick={onAplicarTodo}
+        >
+          <QIcono nombre="paquete_export" />
+          Todo
+        </QBoton>
+      </div>
+    </article>
+  );
+};
+
 export const TablaLineasDevolucion = ({
   lineasIniciales,
   onLineasCambiadas,
@@ -33,6 +87,7 @@ export const TablaLineasDevolucion = ({
   onCrear: () => void;
 }) => {
   const { ctx, emitir } = useMaquina(getMaquina, contextoLineasDevolucionVacio);
+  const esMovil = useEsMovil();
 
   useEffect(() => {
     emitir("lineas_cargadas", lineasIniciales, true);
@@ -44,60 +99,89 @@ export const TablaLineasDevolucion = ({
   }, [ctx.lineas, onLineasCambiadas]);
 
   const puedeCrear = hayLineasConCantidad(ctx);
+  const criteriaLineasDefecto = {
+    ...criteriaDefecto,
+    orden: ["referencia", "ASC"] as [string, "ASC" | "DESC"],
+  };
+
+  const metaTablaLineas = [
+    { id: "referencia", cabecera: "Referencia", prioridad: "alta" as const },
+    { id: "descripcion", cabecera: "Descripción", prioridad: "alta" as const },
+    {
+      id: "importe",
+      cabecera: "Importe",
+      prioridad: "media" as const,
+      render: (linea: LineaFacturaDevolucion) =>
+        formatoMoneda.format(linea.importe ?? linea.total ?? 0),
+    },
+    {
+      id: "cantidad",
+      cabecera: "Cantidad",
+      prioridad: "alta" as const,
+      render: (linea: LineaFacturaDevolucion) =>
+        formatoNumero.format(linea.cantidad ?? 0),
+    },
+    {
+      id: "cantidadDevolver",
+      cabecera: "A devolver",
+      prioridad: "alta" as const,
+      render: (linea: LineaFacturaDevolucion) => (
+        <input
+          value={ctx.borradoresCantidad[linea.id] ?? "0"}
+          onChange={(evento) =>
+            emitir("borrador_cambiado", {
+              idLinea: linea.id,
+              valor: evento.target.value,
+            })
+          }
+          className="entrada-cantidad"
+          disabled={linea.esKit}
+        />
+      ),
+    },
+    {
+      id: "aplicar",
+      cabecera: "Aplicar",
+      prioridad: "media" as const,
+      render: (linea: LineaFacturaDevolucion) => (
+        <QBoton
+          variante="texto"
+          tamaño="pequeño"
+          deshabilitado={linea.esKit}
+          onClick={() => emitir("cantidad_maxima_aplicada", linea.id)}
+        >
+          <QIcono nombre="paquete_export" />
+        </QBoton>
+      ),
+    },
+  ];
 
   return (
     <>
-      <div className="crear-devolucion-factura-tabla">
-        <table>
-          <thead>
-            <tr>
-              <th>Referencia</th>
-              <th>Descripción</th>
-              <th className="alineado-derecha">Importe</th>
-              <th className="alineado-derecha">Cantidad</th>
-              <th className="alineado-derecha">A devolver</th>
-              <th className="alineado-centro">Aplicar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ctx.lineas.map((linea) => (
-              <tr key={linea.id}>
-                <td>{linea.referencia}</td>
-                <td>{linea.descripcion}</td>
-                <td className="alineado-derecha">
-                  {formatoMoneda.format(linea.importe ?? linea.total ?? 0)}
-                </td>
-                <td className="alineado-derecha">
-                  {formatoNumero.format(linea.cantidad ?? 0)}
-                </td>
-                <td className="alineado-derecha">
-                  <input
-                    value={ctx.borradoresCantidad[linea.id] ?? "0"}
-                    onChange={(evento) =>
-                      emitir("borrador_cambiado", {
-                        idLinea: linea.id,
-                        valor: evento.target.value,
-                      })
-                    }
-                    className="entrada-cantidad"
-                    disabled={linea.esKit}
-                  />
-                </td>
-                <td className="alineado-centro">
-                  <QBoton
-                    variante="texto"
-                    tamaño="pequeño"
-                    deshabilitado={linea.esKit}
-                    onClick={() => emitir("cantidad_maxima_aplicada", linea.id)}
-                  >
-                    <QIcono nombre="paquete_export" />
-                  </QBoton>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ListadoSemiControlado<LineaFacturaDevolucion>
+        metaTabla={metaTablaLineas}
+        tarjeta={(linea) => (
+          <TarjetaLineaFacturaDevolucion
+            linea={linea}
+            valor={ctx.borradoresCantidad[linea.id] ?? "0"}
+            onChange={(valor) =>
+              emitir("borrador_cambiado", {
+                idLinea: linea.id,
+                valor,
+              })
+            }
+            onAplicarTodo={() => emitir("cantidad_maxima_aplicada", linea.id)}
+          />
+        )}
+        entidades={ctx.lineas}
+        totalEntidades={ctx.lineas.length}
+        cargando={false}
+        seleccionada={null}
+        onSeleccion={() => null}
+        criteriaInicial={criteriaLineasDefecto}
+        modo={esMovil ? "tarjetas" : "tabla"}
+        onCriteriaChanged={() => null}
+      />
 
       <div className="botones">
         <QBoton

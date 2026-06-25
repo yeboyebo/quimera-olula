@@ -1,9 +1,12 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
-import { MetaTabla, QIcono, QInput, QTabla } from "@olula/componentes/index.js";
+import { MetaTabla, QIcono, QInput } from "@olula/componentes/index.js";
+import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useEffect, useState } from "react";
 import { LineaDevolucionPedido } from "../diseño.ts";
 import "./DetalleDevolucionPedido.css";
@@ -15,6 +18,79 @@ const formatoMoneda = new Intl.NumberFormat("es-ES", {
   currency: "EUR",
   minimumFractionDigits: 2,
 });
+
+const TarjetaLineaDevolucion = ({
+  linea,
+  error,
+  onCantidadOkCambiada,
+  onCantidadKoCambiada,
+  onLimpiar,
+}: {
+  linea: LineaDevolucionPedido;
+  error?: string;
+  onCantidadOkCambiada: (valor: number) => void;
+  onCantidadKoCambiada: (valor: number) => void;
+  onLimpiar: () => void;
+}) => {
+  const referencia = linea.referencia || linea.codigo;
+  const lote = linea.codLote || "Sin lote";
+  const fechaCaducidad = linea.fechaCaducidad
+    ? linea.fechaCaducidad.toLocaleDateString()
+    : "Sin caducidad";
+
+  return (
+    <article className="tarjeta-linea-devolucion">
+      <div className="tarjeta-linea-devolucion-cabecera">
+        <div className="tarjeta-linea-devolucion-identidad">
+          <strong>{referencia}</strong>
+          <span>{linea.descripcion}</span>
+        </div>
+        <div className="tarjeta-linea-devolucion-meta">
+          <span>Cantidad: {linea.cantidad}</span>
+          <span>{lote}</span>
+          <span>{fechaCaducidad}</span>
+        </div>
+      </div>
+
+      <div className="tarjeta-linea-devolucion-campos">
+        <div className="tarjeta-linea-devolucion-campo">
+          <span>Correcta</span>
+          <QInput
+            label=""
+            nombre={`cantidad_ok_tarjeta_${linea.id}`}
+            tipo="decimal"
+            valor={String(linea.cantidadOk ?? 0)}
+            onChange={(valor) => onCantidadOkCambiada(Number(valor))}
+          />
+        </div>
+
+        <div className="tarjeta-linea-devolucion-campo">
+          <span>Dañada</span>
+          <QInput
+            label=""
+            nombre={`cantidad_ko_tarjeta_${linea.id}`}
+            tipo="decimal"
+            valor={String(linea.cantidadKo ?? 0)}
+            onChange={(valor) => onCantidadKoCambiada(Number(valor))}
+          />
+        </div>
+
+        <QBoton
+          variante="texto"
+          tamaño="pequeño"
+          deshabilitado={
+            (linea.cantidadOk ?? 0) + (linea.cantidadKo ?? 0) === 0
+          }
+          onClick={onLimpiar}
+        >
+          <QIcono nombre="cerrar" tamaño="sm" />
+        </QBoton>
+      </div>
+
+      {error && <p className="tarjeta-linea-devolucion-error">{error}</p>}
+    </article>
+  );
+};
 
 export const DetalleDevolucionPedido = ({
   id,
@@ -30,6 +106,7 @@ export const DetalleDevolucionPedido = ({
     contextoDetalleDevolucionPedidoVacio,
     publicar
   );
+  const esMovil = useEsMovil();
   const [confirmandoPreparar, setConfirmandoPreparar] = useState(false);
 
   useEffect(() => {
@@ -60,6 +137,10 @@ export const DetalleDevolucionPedido = ({
   );
   const confirmarDeshabilitado =
     ctx.lineas.length === 0 || hayErroresLineas || !hayCantidades;
+  const criteriaLineasDefecto = {
+    ...criteriaDefecto,
+    orden: ["referencia", "ASC"] as [string, "ASC" | "DESC"],
+  };
 
   const metaTablaLineas: MetaTabla<LineaDevolucionPedido> = [
     {
@@ -153,9 +234,15 @@ export const DetalleDevolucionPedido = ({
     >
       <div className="detalle-devolucion-pedido-legacy">
         <div className="devolucion-cabecera-principal">
-          <h2>Devolución {ctx.devolucion.codigo}</h2>
-          <h3>{fecha}</h3>
-          <h3>{total}</h3>
+          <h2>
+            {ctx.devolucion.codigo}
+            {ctx.devolucion.servido && (
+              <span className="devolucion-estado-badge">
+                {" "}
+                ({ctx.devolucion.servido})
+              </span>
+            )}
+          </h2>
           {mostrarBotonCerrar && (
             <QBoton
               onClick={cerrarDetalle}
@@ -169,7 +256,11 @@ export const DetalleDevolucionPedido = ({
         </div>
 
         <div className="devolucion-cabecera-secundaria">
-          <h4>{ctx.devolucion.nombrecliente}</h4>
+          <h3 className="devolucion-total">{total}</h3>
+          <h3 className="devolucion-fecha">{fecha}</h3>
+        </div>
+
+        <div className="devolucion-cabecera-acciones">
           <QBoton
             texto="Confirmar devolución"
             deshabilitado={confirmarDeshabilitado}
@@ -180,11 +271,37 @@ export const DetalleDevolucionPedido = ({
         </div>
 
         <div className="detalle-devolucion-pedido-lineas">
-          <QTabla
+          <ListadoSemiControlado<LineaDevolucionPedido>
             metaTabla={metaTablaLineas}
-            datos={ctx.lineas}
+            tarjeta={(linea) => (
+              <TarjetaLineaDevolucion
+                linea={linea}
+                error={ctx.erroresLineas[linea.id]}
+                onCantidadOkCambiada={(valor) =>
+                  emitir("cantidad_ok_cambiada", {
+                    idLinea: linea.id,
+                    valor,
+                  })
+                }
+                onCantidadKoCambiada={(valor) =>
+                  emitir("cantidad_ko_cambiada", {
+                    idLinea: linea.id,
+                    valor,
+                  })
+                }
+                onLimpiar={() =>
+                  emitir("cantidades_limpiadas", { idLinea: linea.id })
+                }
+              />
+            )}
+            entidades={ctx.lineas}
+            totalEntidades={ctx.lineas.length}
             cargando={false}
-            orden={["referencia", "ASC"]}
+            seleccionada={null}
+            onSeleccion={() => null}
+            criteriaInicial={criteriaLineasDefecto}
+            modo={esMovil ? "tarjetas" : "tabla"}
+            onCriteriaChanged={() => null}
           />
 
           {hayErroresLineas && (
