@@ -33,6 +33,7 @@
   "include": [
     "packages/**/*",
     "apps/**/*",
+    "doc/**/*",
   ],
   "exclude": [
     "**/dev-dist/**",

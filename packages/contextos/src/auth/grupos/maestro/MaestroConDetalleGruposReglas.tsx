@@ -8,7 +8,7 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
-import { ReglasGrupo } from "../detalle/ReglasGrupo.tsx";
+import { DetalleGrupo } from "../detalle/DetalleGrupo.tsx";
 import { Grupo } from "../diseño.ts";
 import { AltaGrupo } from "./AltaGrupo.tsx";
 import { ContextoMaestroGrupo, EstadoMaestroGrupo } from "./diseño.ts";
@@ -84,7 +84,7 @@ export const MaestroConDetalleGruposReglas = () => {
           </>
         }
         modoDisposicion="maestro-50"
-        Detalle={<ReglasGrupo grupoSeleccionado={grupoSeleccionado} />}
+        Detalle={<DetalleGrupo grupoSeleccionado={grupoSeleccionado} publicar={emitir} />}
       />
 
       <QModal
@@ -92,7 +92,7 @@ export const MaestroConDetalleGruposReglas = () => {
         abierto={ctx.estado === "ALTA"}
         onCerrar={() => emitir("ALTA_CANCELADA")}
       >
-        <AltaGrupo emitir={emitir} />
+        {ctx.estado === "ALTA" && <AltaGrupo emitir={emitir} />}
       </QModal>
     </div>
   );

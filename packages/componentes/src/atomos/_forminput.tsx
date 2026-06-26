@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { flushSync } from "react-dom";
+import { useEsMovil } from "../maestro/useEsMovil.ts";
 
 export type FormFieldProps = {
   id?: string;
@@ -56,6 +57,10 @@ const tiposFormInput = {
   multiseleccion: "checkbox",
 } as const;
 
+const TIPOS_NUMERICOS = new Set<string>([
+  "numero", "entero", "decimal", "moneda", "rango", "intervalo_numeros",
+]);
+
 export type FormInputProps = FormFieldProps & {
   lista?: string;
   autocompletar?: "off" | "on";
@@ -93,6 +98,7 @@ export const FormInput = ({
   useLayoutEffect(() => {
     evaluarCambioRef.current = evaluarCambio;
   });
+  const esMovil = useEsMovil();
   const obtenerValorPorDefecto = () => {
     if (valor !== undefined && valor !== "" && valor != null) return valor;
 
@@ -109,7 +115,7 @@ export const FormInput = ({
   const valorFinal = onChange ? obtenerValorPorDefecto() : undefined;
 
   const manejarFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (autoSeleccion) {
+    if (autoSeleccion || (esMovil && TIPOS_NUMERICOS.has(tipo))) {
       e.target.select();
     }
   };
