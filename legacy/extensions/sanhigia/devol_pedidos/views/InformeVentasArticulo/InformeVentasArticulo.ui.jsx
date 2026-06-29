@@ -38,7 +38,7 @@ function InformeVentasArticulo({ useStyles }) {
               id="filtro.idAgente"
               label="Agente"
               fullWidth
-              todoslosagentes={ACL.can("ss_informes:todoslosagentes")}
+              todoslosagentes={ACL.can("crm.informe.todos_los_agentes")}
             />
           </Grid>
           <Grid size={12}>
