@@ -450,6 +450,7 @@ function Recepciones() {
           columns={columns}
           slots={{ toolbar: CustomToolbar }}
           localeText={{
+            noRowsLabel: "No hay recepciones",
             toolbarQuickFilterPlaceholder: "Buscar...",
             paginationRowsPerPage: "Líneas por página",
             paginationDisplayedRows: ({ from, to, count }) =>
