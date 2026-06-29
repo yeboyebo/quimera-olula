@@ -34,6 +34,7 @@ export const PasoBuscarFacturaModal = ({
           descripcion={descripcionFactura}
           nombre="devolucion/factura"
           label="Buscar factura"
+          autoFocus={abierto}
           onChange={onFacturaSeleccionada}
         />
 

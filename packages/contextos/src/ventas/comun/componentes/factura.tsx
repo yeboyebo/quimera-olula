@@ -7,6 +7,7 @@ interface FacturaSelectorProps {
   valor: string;
   nombre?: string;
   label?: string;
+  autoFocus?: boolean;
   deshabilitado?: boolean;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
@@ -16,6 +17,7 @@ export const FacturaSelector = ({
   valor,
   nombre = "factura_id",
   label = "Seleccionar factura",
+  autoFocus = false,
   deshabilitado = false,
   onChange,
 }: FacturaSelectorProps) => {
@@ -47,6 +49,7 @@ export const FacturaSelector = ({
       onChange={onChange}
       valor={valor}
       autoSeleccion
+      autoFocus={autoFocus}
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
       deshabilitado={deshabilitado}

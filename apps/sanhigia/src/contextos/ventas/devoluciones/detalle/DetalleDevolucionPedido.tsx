@@ -53,27 +53,23 @@ const TarjetaLineaDevolucion = ({
       </div>
 
       <div className="tarjeta-linea-devolucion-campos">
-        <div className="tarjeta-linea-devolucion-campo">
-          <span>Correcta</span>
-          <QInput
-            label=""
-            nombre={`cantidad_ok_tarjeta_${linea.id}`}
-            tipo="decimal"
-            valor={String(linea.cantidadOk ?? 0)}
-            onChange={(valor) => onCantidadOkCambiada(Number(valor))}
-          />
-        </div>
+        <QInput
+          label="Correcta"
+          nombre={`cantidad_ok_tarjeta_${linea.id}`}
+          tipo="decimal"
+          valor={String(linea.cantidadOk ?? 0)}
+          autoSeleccion
+          onChange={(valor) => onCantidadOkCambiada(Number(valor))}
+        />
 
-        <div className="tarjeta-linea-devolucion-campo">
-          <span>Dañada</span>
-          <QInput
-            label=""
-            nombre={`cantidad_ko_tarjeta_${linea.id}`}
-            tipo="decimal"
-            valor={String(linea.cantidadKo ?? 0)}
-            onChange={(valor) => onCantidadKoCambiada(Number(valor))}
-          />
-        </div>
+        <QInput
+          label="Dañada"
+          nombre={`cantidad_ko_tarjeta_${linea.id}`}
+          tipo="decimal"
+          valor={String(linea.cantidadKo ?? 0)}
+          autoSeleccion
+          onChange={(valor) => onCantidadKoCambiada(Number(valor))}
+        />
 
         <QBoton
           variante="texto"
@@ -171,6 +167,7 @@ export const DetalleDevolucionPedido = ({
             nombre={`cantidad_ok_${linea.id}`}
             tipo="decimal"
             valor={String(linea.cantidadOk ?? 0)}
+            autoSeleccion
             onChange={(valor) =>
               emitir("cantidad_ok_cambiada", {
                 idLinea: linea.id,
@@ -191,6 +188,7 @@ export const DetalleDevolucionPedido = ({
             nombre={`cantidad_ko_${linea.id}`}
             tipo="decimal"
             valor={String(linea.cantidadKo ?? 0)}
+            autoSeleccion
             onChange={(valor) =>
               emitir("cantidad_ko_cambiada", {
                 idLinea: linea.id,
@@ -235,11 +233,11 @@ export const DetalleDevolucionPedido = ({
       <div className="detalle-devolucion-pedido-legacy">
         <div className="devolucion-cabecera-principal">
           <h2>
-            {ctx.devolucion.codigo}
-            {ctx.devolucion.servido && (
+            {ctx.devolucion.nombrecliente}
+            {ctx.devolucion.codigo && (
               <span className="devolucion-estado-badge">
                 {" "}
-                ({ctx.devolucion.servido})
+                ({ctx.devolucion.codigo})
               </span>
             )}
           </h2>

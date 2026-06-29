@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
-import { QIcono } from "@olula/componentes/index.js";
+import { QIcono, QInput } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -53,15 +53,15 @@ const TarjetaLineaFacturaDevolucion = ({
       </div>
 
       <div className="tarjeta-linea-factura-devolucion-campos">
-        <label className="tarjeta-linea-factura-devolucion-campo">
-          <span>A devolver</span>
-          <input
-            value={valor}
-            onChange={(evento) => onChange(evento.target.value)}
-            className="entrada-cantidad"
-            disabled={linea.esKit}
-          />
-        </label>
+        <QInput
+          label="A devolver"
+          nombre={`cantidad_devolver_tarjeta_${linea.id}`}
+          tipo="decimal"
+          valor={valor}
+          autoSeleccion
+          deshabilitado={linea.esKit}
+          onChange={(nuevoValor) => onChange(nuevoValor)}
+        />
 
         <QBoton
           variante="texto"
@@ -70,7 +70,6 @@ const TarjetaLineaFacturaDevolucion = ({
           onClick={onAplicarTodo}
         >
           <QIcono nombre="paquete_export" />
-          Todo
         </QBoton>
       </div>
     </article>
@@ -97,6 +96,13 @@ export const TablaLineasDevolucion = ({
   useEffect(() => {
     onLineasCambiadas(ctx.lineas);
   }, [ctx.lineas, onLineasCambiadas]);
+
+  const actualizarCantidadDevolver = (idLinea: string, valor: string) => {
+    emitir("cantidad_aplicada", {
+      idLinea,
+      valor,
+    });
+  };
 
   const puedeCrear = hayLineasConCantidad(ctx);
   const criteriaLineasDefecto = {
@@ -126,16 +132,14 @@ export const TablaLineasDevolucion = ({
       cabecera: "A devolver",
       prioridad: "alta" as const,
       render: (linea: LineaFacturaDevolucion) => (
-        <input
-          value={ctx.borradoresCantidad[linea.id] ?? "0"}
-          onChange={(evento) =>
-            emitir("borrador_cambiado", {
-              idLinea: linea.id,
-              valor: evento.target.value,
-            })
-          }
-          className="entrada-cantidad"
-          disabled={linea.esKit}
+        <QInput
+          label=""
+          nombre={`cantidad_devolver_${linea.id}`}
+          tipo="decimal"
+          valor={ctx.borradoresCantidad[linea.id] ?? "0"}
+          autoSeleccion
+          deshabilitado={linea.esKit}
+          onChange={(valor) => actualizarCantidadDevolver(linea.id, valor)}
         />
       ),
     },
@@ -164,12 +168,7 @@ export const TablaLineasDevolucion = ({
           <TarjetaLineaFacturaDevolucion
             linea={linea}
             valor={ctx.borradoresCantidad[linea.id] ?? "0"}
-            onChange={(valor) =>
-              emitir("borrador_cambiado", {
-                idLinea: linea.id,
-                valor,
-              })
-            }
+            onChange={(valor) => actualizarCantidadDevolver(linea.id, valor)}
             onAplicarTodo={() => emitir("cantidad_maxima_aplicada", linea.id)}
           />
         )}

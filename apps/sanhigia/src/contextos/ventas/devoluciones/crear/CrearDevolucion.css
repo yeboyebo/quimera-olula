@@ -90,10 +90,10 @@
 .tarjeta-linea-factura-devolucion {
     display: grid;
     gap: 0.75rem;
-    padding: 0.9rem;
+    /* padding: 0.9rem;
     border: 1px solid var(--color-borde-sutil);
     border-radius: var(--redondeo-borde-s, 8px);
-    background: var(--color-superficie, #fff);
+    background: var(--color-superficie, #fff); */
 }
 
 .tarjeta-linea-factura-devolucion-cabecera {
@@ -129,14 +129,14 @@
     align-items: end;
 }
 
-.tarjeta-linea-factura-devolucion-campo {
-    display: grid;
-    gap: 0.25rem;
+.tarjeta-linea-factura-devolucion-campos quimera-input {
+    width: 100%;
 }
 
-.tarjeta-linea-factura-devolucion-campo span {
-    font-size: 0.8rem;
-    font-weight: 600;
+.tarjeta-linea-factura-devolucion-campos quimera-input input {
+    width: 100%;
+    min-width: 0;
+    text-align: right;
 }
 
 .motivo-devolucion-modal {
@@ -194,7 +194,7 @@ quimera-autocomplete[nombre="devolucion/factura"] {
     }
 
     .tarjeta-linea-factura-devolucion-campos {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) auto;
     }
 
     .tarjeta-linea-factura-devolucion-campos quimera-boton,

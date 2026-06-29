@@ -7,7 +7,6 @@ import {
     aplicarCantidadMaximaProceso,
     aplicarCantidadProceso,
     aplicarDevolucionTotalProceso,
-    cambiarBorradorProceso,
     cargarLineasProceso,
 } from "./dominio.ts";
 
@@ -17,7 +16,6 @@ export const getMaquina = (): Maquina<
 > => ({
     INICIAL: {
         lineas_cargadas: cargarLineasProceso,
-        borrador_cambiado: cambiarBorradorProceso,
         cantidad_aplicada: aplicarCantidadProceso,
         cantidad_maxima_aplicada: aplicarCantidadMaximaProceso,
         devolucion_total_aplicada: aplicarDevolucionTotalProceso,

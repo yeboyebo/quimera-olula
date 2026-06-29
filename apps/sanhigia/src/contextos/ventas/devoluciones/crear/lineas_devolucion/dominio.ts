@@ -10,7 +10,7 @@ type ProcesarLineasDevolucion = ProcesarContexto<
     ContextoLineasDevolucion
 >;
 
-type PayloadBorrador = {
+type PayloadCantidadAplicada = {
     idLinea: string;
     valor: string;
 };
@@ -46,45 +46,40 @@ export const cargarLineasProceso: ProcesarLineasDevolucion = async (
     };
 };
 
-export const cambiarBorradorProceso: ProcesarLineasDevolucion = async (
-    contexto,
-    payload
-) => {
-    const { idLinea, valor } = payload as PayloadBorrador;
-
-    return {
-        ...contexto,
-        borradoresCantidad: {
-            ...contexto.borradoresCantidad,
-            [idLinea]: valor,
-        },
-    };
-};
-
 export const aplicarCantidadProceso: ProcesarLineasDevolucion = async (
     contexto,
     payload
 ) => {
-    const idLinea = String(payload ?? "");
+    const { idLinea, valor } = (payload as PayloadCantidadAplicada) ?? {
+        idLinea: "",
+        valor: "0",
+    };
+
+    const lineaObjetivo = contexto.lineas.find((linea) => linea.id === idLinea);
+    if (!lineaObjetivo) return contexto;
+
+    const bruto = String(valor ?? "0").replace(",", ".");
+    const valorNumerico = Number(bruto);
+    const cantidadNormalizada = Number.isNaN(valorNumerico)
+        ? 0
+        : Math.max(0, Math.min(valorNumerico, lineaObjetivo.cantidad));
+
     const lineas = contexto.lineas.map((linea) => {
         if (linea.id !== idLinea) return linea;
 
-        const bruto = contexto.borradoresCantidad[idLinea]?.replace(",", ".") ?? "0";
-        const valor = Number(bruto);
-        const cantidad = Number.isNaN(valor)
-            ? 0
-            : Math.max(0, Math.min(valor, linea.cantidad));
-
         return {
             ...linea,
-            cantidadDevolver: cantidad,
+            cantidadDevolver: cantidadNormalizada,
         };
     });
 
     return {
         ...contexto,
         lineas,
-        borradoresCantidad: crearBorradores(lineas),
+        borradoresCantidad: {
+            ...contexto.borradoresCantidad,
+            [idLinea]: String(cantidadNormalizada),
+        },
     };
 };
 
