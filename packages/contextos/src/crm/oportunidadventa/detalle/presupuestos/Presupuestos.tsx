@@ -5,6 +5,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -79,16 +80,20 @@ export const Presupuestos = ({
         totalEntidades={ctx.presupuestos.lista.length}
         cargando={cargando}
         renderAcciones={() => (
-          <div className="maestro-botones">
-            <QBoton onClick={() => crearPresupuesto()}>Nuevo</QBoton>
-
-            <QBoton
-              onClick={() => emitir("borrado_presupuesto_solicitado")}
-              deshabilitado={!ctx.presupuestos.activo}
-            >
-              Borrar
-            </QBoton>
-          </div>
+          <QuimeraAcciones
+            vertical
+            acciones={[
+              {
+                texto: "Nuevo",
+                onClick: () => crearPresupuesto(),
+              },
+              {
+                texto: "Borrar",
+                onClick: () => emitir("borrado_presupuesto_solicitado"),
+                deshabilitado: !ctx.presupuestos.activo,
+              },
+            ]}
+          />
         )}
         seleccionada={ctx.presupuestos.activo ?? null}
         onSeleccion={(presupuesto) =>

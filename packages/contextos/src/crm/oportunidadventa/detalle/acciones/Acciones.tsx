@@ -1,12 +1,14 @@
 import { BorrarAccion } from "#/crm/accion/borrar/BorrarAccion.tsx";
 import { nuevaAccionVacia } from "#/crm/accion/crear/crear.ts";
 import { CrearAccion } from "#/crm/accion/crear/CrearAccion.tsx";
+import { DetalleAccion } from "#/crm/accion/detalle/DetalleAccion.tsx";
 import { Accion } from "#/crm/accion/diseño.ts";
 import { metaTablaAccion } from "#/crm/accion/maestro/maestro.ts";
 import { TarjetaAccion } from "#/crm/accion/maestro/TarjetaAccion.tsx";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -20,6 +22,7 @@ export const Acciones = ({
   oportunidad: HookModelo<OportunidadVenta>;
 }) => {
   const [cargando, setCargando] = useState(false);
+  const [editando, setEditando] = useState(false);
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -38,6 +41,17 @@ export const Acciones = ({
     recargar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo.id]);
+
+  const publicarDetalle = useCallback(
+    async (evento: string, payload?: unknown) => {
+      await emitir(evento, payload);
+
+      if (evento === "accion_deseleccionada" || evento === "accion_borrada") {
+        setEditando(false);
+      }
+    },
+    [emitir]
+  );
 
   return (
     <div className="TabAcciones">
@@ -62,24 +76,44 @@ export const Acciones = ({
         totalEntidades={ctx.acciones.lista.length}
         cargando={cargando}
         renderAcciones={() => (
-          <div className="maestro-botones">
-            <QBoton onClick={() => emitir("creacion_de_accion_solicitada")}>
-              Nueva
-            </QBoton>
-
-            <QBoton
-              onClick={() => emitir("borrado_accion_solicitado")}
-              deshabilitado={!ctx.acciones.activo}
-            >
-              Borrar
-            </QBoton>
-          </div>
+          <QuimeraAcciones
+            acciones={[
+              {
+                texto: "Nueva",
+                onClick: () => emitir("creacion_de_accion_solicitada"),
+              },
+              {
+                texto: "Editar",
+                onClick: () => setEditando(true),
+                deshabilitado: !ctx.acciones.activo,
+              },
+              {
+                texto: "Borrar",
+                onClick: () => emitir("borrado_accion_solicitado"),
+                deshabilitado: !ctx.acciones.activo,
+              },
+            ]}
+          />
         )}
         seleccionada={ctx.acciones.activo ?? null}
         onSeleccion={(accion) => emitir("accion_seleccionada", accion)}
         criteriaInicial={criteriaDefecto}
         onCriteriaChanged={() => null}
       />
+
+      <QModal
+        nombre="editarAccion"
+        abierto={editando && Boolean(ctx.acciones.activo?.id)}
+        titulo="Editar acción"
+        onCerrar={() => publicarDetalle("accion_deseleccionada")}
+      >
+        {ctx.acciones.activo?.id && (
+          <DetalleAccion
+            id={ctx.acciones.activo.id}
+            publicar={publicarDetalle}
+          />
+        )}
+      </QModal>
     </div>
   );
 };

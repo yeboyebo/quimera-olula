@@ -4,9 +4,9 @@ import { CrearOportunidadVenta } from "#/crm/oportunidadventa/crear/CrearOportun
 import { OportunidadVenta } from "#/crm/oportunidadventa/diseño.ts";
 import { metaTablaOportunidadVenta } from "#/crm/oportunidadventa/maestro/maestro.ts";
 import { TarjetaOportunidadVenta } from "#/crm/oportunidadventa/maestro/TarjetaOportunidadVenta.tsx";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -65,20 +65,20 @@ export const Oportunidades = ({
         totalEntidades={ctx.oportunidades.lista.length}
         cargando={cargando}
         renderAcciones={() => (
-          <div className="maestro-botones">
-            <QBoton
-              onClick={() => emitir("creacion_de_oportunidad_solicitada")}
-            >
-              Nueva
-            </QBoton>
-
-            <QBoton
-              onClick={() => emitir("borrado_oportunidad_solicitado")}
-              deshabilitado={!ctx.oportunidades.activo}
-            >
-              Borrar
-            </QBoton>
-          </div>
+          <QuimeraAcciones
+            vertical
+            acciones={[
+              {
+                texto: "Nueva",
+                onClick: () => emitir("creacion_de_oportunidad_solicitada"),
+              },
+              {
+                texto: "Borrar",
+                onClick: () => emitir("borrado_oportunidad_solicitado"),
+                deshabilitado: !ctx.oportunidades.activo,
+              },
+            ]}
+          />
         )}
         seleccionada={ctx.oportunidades.activo ?? null}
         onSeleccion={(oportunidad) =>

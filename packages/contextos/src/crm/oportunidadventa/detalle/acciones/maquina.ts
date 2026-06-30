@@ -5,7 +5,13 @@ import { ContextoAccionesOportunidad, EstadoAccionesOportunidad } from "./diseñ
 export const getMaquina: () => Maquina<EstadoAccionesOportunidad, ContextoAccionesOportunidad> = () => {
     return {
         INICIAL: {
+            accion_cambiada: [Acciones.cambiar],
+
             accion_seleccionada: [Acciones.activar],
+
+            accion_deseleccionada: Acciones.desactivar,
+
+            accion_borrada: Acciones.quitar,
 
             recarga_de_acciones_solicitada: [recargarAcciones],
 

@@ -2,8 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
+import "./qautocompletar.css";
 
-type Opcion = { valor: string; descripcion: string, descripcionOpcion?: string };
+type Opcion = {
+  valor: string;
+  descripcion: string;
+  descripcionOpcion?: string;
+};
 
 export type QAutocompletarProps = Omit<
   FormFieldProps,
@@ -51,8 +56,8 @@ export const QAutocompletar = ({
       <option key={opcion.valor} value={descripcion}>
         {descripcion}
       </option>
-    );}
-  );
+    );
+  });
 
   const listaId = nombre + "-datalist-" + getIdUnico();
 
@@ -84,7 +89,9 @@ export const QAutocompletar = ({
   const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
     regenerarOpciones(valor);
 
-    const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
+    const opcion = opciones.find(
+      (opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor
+    );
     if (!opcion) {
       valorReal.current!.value = "";
       onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
@@ -128,7 +135,9 @@ export const QAutocompletar = ({
       <QInput
         {...props}
         nombre=""
+        tipo="autocompletar"
         lista={listaId}
+        placeholder={props.placeholder}
         autocompletar="off"
         onInput={manejarInput}
         onBlur={manejarBlur}
