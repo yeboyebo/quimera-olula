@@ -116,7 +116,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
   useEffect(() => {
     if (mobile && dataLineas.length > 0) {
       const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
-      const anchoEstimado = Math.min(Math.max(150, maxChars * 7.5 + 40), 900);
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 8 + 40), 900);
       setAnchoDescripcionCalculado(anchoEstimado);
     } else {
       setAnchoDescripcionCalculado(600);
@@ -394,7 +394,7 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                     order="refprov"
                     pl={2}
                     value={linea => linea.referenciaProv}
-                    width={160}
+                    width={175}
                   />
                   <Column.Decimal
                     id="totalenalbaran"
@@ -415,10 +415,10 @@ function PedidoCompra({ callbackChanged, idPedido, initPedido, useStyles }) {
                   <Column.Text
                     id="referencia"
                     header="Referencia"
-                    order="refrencia"
+                    order="referencia"
                     pl={2}
                     value={linea => linea.referencia}
-                    width={160}
+                    width={175}
                   />
                 </Table>
               </Box>

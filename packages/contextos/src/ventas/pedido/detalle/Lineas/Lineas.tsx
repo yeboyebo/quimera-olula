@@ -40,6 +40,14 @@ export const Lineas = ({
       cantidad: cantidad,
     });
   };
+  console.log(
+    "Estado pedido",
+    estadoPedido,
+    "servido",
+    pedido.servido,
+    "lineaActiva",
+    lineaActiva
+  );
 
   return (
     <>

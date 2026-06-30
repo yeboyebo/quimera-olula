@@ -1,61 +1,107 @@
-import { LineasListaProps } from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
-import { QTabla } from "@olula/componentes/atomos/qtabla.tsx";
-import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
+import {
+  criteriaLineasDefecto,
+  LineasListaProps,
+} from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
+import {
+  ListadoSemiControlado,
+  QuimeraAcciones,
+} from "@olula/componentes/index.js";
+import { Criteria } from "@olula/lib/diseño.js";
 import { LineaPedidoNrj } from "../../diseño.ts";
 import { formateaCategoria, formateaEstado } from "../../dominio.ts";
 import "./LineasLista.css";
-
 export const LineasListaNrj = ({
   lineas,
   seleccionada,
+  // onCambioCantidad,
+  pedidoEditable,
+  // cantidadEditable = false,
+  acciones,
   publicar,
 }: LineasListaProps<LineaPedidoNrj>) => {
-  const esMovil = useEsMovil();
-
   const setSeleccionada = (linea: LineaPedidoNrj) => {
+    if (!pedidoEditable) return;
     publicar("linea_seleccionada", linea);
   };
 
   return (
-    <>
-      {!esMovil ? (
-        <QTabla
-          metaTabla={getMetaTablaLineas()}
-          datos={lineas as LineaPedidoNrj[]}
-          cargando={false}
-          seleccionadaId={seleccionada}
-          onSeleccion={setSeleccionada}
-          orden={["id", "ASC"]}
-          onOrdenar={(_: string) => null}
+    <ListadoSemiControlado
+      metaTabla={getMetaTablaLineas()}
+      tarjeta={(linea) => (
+        <TarjetaLineaNrj
+          linea={linea}
+          // cantidadEditable={cantidadEditable}
+          // onCambioCantidad={onCambioCantidad}
         />
-      ) : (
-        <div className="lineas-tarjetas">
-          {(lineas as LineaPedidoNrj[]).map((linea) => (
-            <TarjetaLineaNrj
-              key={linea.id}
-              linea={linea}
-              seleccionada={seleccionada === linea.id}
-              onClick={() => setSeleccionada(linea)}
-            />
-          ))}
-        </div>
       )}
-    </>
+      entidades={lineas}
+      totalEntidades={lineas.length}
+      seleccionada={lineas.find((linea) => linea.id === seleccionada) ?? null}
+      onSeleccion={setSeleccionada}
+      criteriaInicial={criteriaLineasDefecto}
+      onCriteriaChanged={(_: Criteria) => null}
+      renderAcciones={() =>
+        acciones && acciones.length > 0 ? (
+          <div className="botones maestro-botones ">
+            <QuimeraAcciones acciones={acciones} />
+          </div>
+        ) : null
+      }
+    />
   );
 };
 
+// export const LineasListaNrj = ({
+//   lineas,
+//   seleccionada,
+//   publicar,
+// }: LineasListaProps<LineaPedidoNrj>) => {
+//   const esMovil = useEsMovil();
+
+//   const setSeleccionada = (linea: LineaPedidoNrj) => {
+//     publicar("linea_seleccionada", linea);
+//   };
+
+//   return (
+//     <>
+//       {!esMovil ? (
+//         <QTabla
+//           metaTabla={getMetaTablaLineas()}
+//           datos={lineas as LineaPedidoNrj[]}
+//           cargando={false}
+//           seleccionadaId={seleccionada}
+//           onSeleccion={setSeleccionada}
+//           orden={["id", "ASC"]}
+//           onOrdenar={(_: string) => null}
+//         />
+//       ) : (
+//         <div className="lineas-tarjetas">
+//           {(lineas as LineaPedidoNrj[]).map((linea) => (
+//             <TarjetaLineaNrj
+//               key={linea.id}
+//               linea={linea}
+//               seleccionada={seleccionada === linea.id}
+//               onClick={() => setSeleccionada(linea)}
+//             />
+//           ))}
+//         </div>
+//       )}
+//     </>
+//   );
+// };
+
 const TarjetaLineaNrj = ({
   linea,
-  seleccionada,
-  onClick,
+  // seleccionada,
+  // onClick,
 }: {
   linea: LineaPedidoNrj;
-  seleccionada: boolean;
-  onClick: () => void;
+  // seleccionada: boolean;
+  // onClick: () => void;
 }) => (
   <div
-    className={`tarjeta-linea${seleccionada ? " tarjeta-linea--seleccionada" : ""}`}
-    onClick={onClick}
+  // className={`tarjeta-linea${seleccionada ? " tarjeta-linea--seleccionada" : ""}`}
+  // onClick={onClick}
   >
     <div className="tarjeta-linea-estado">
       {formateaEstado(String(linea.estado_palets ?? ""))}
@@ -65,7 +111,9 @@ const TarjetaLineaNrj = ({
         <span className="tarjeta-linea-variedad">{linea.descVariedad}</span>
         <span className="tarjeta-linea-marca">{linea.descMarca}</span>
         <span className="tarjeta-linea-calibre">{linea.descCalibre}</span>
-        <span className="tarjeta-linea-categoria">{formateaCategoria(linea.categoria)}</span>
+        <span className="tarjeta-linea-categoria">
+          {formateaCategoria(linea.categoria)}
+        </span>
       </div>
       <div className="tarjeta-linea-secundario">
         <span>{linea.descPalet}</span>

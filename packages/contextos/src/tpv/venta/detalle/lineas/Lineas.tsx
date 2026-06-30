@@ -22,6 +22,15 @@ export const Lineas = ({
   estadoVenta: EstadoVentaTpv;
   publicar: EmitirEvento;
 }) => {
+  const accionStock = !!lineas.activo?.referencia && {
+    texto: "Stock",
+    onClick: () =>
+      window.open(
+        `/almacen/stock?articulo_id==__${lineas.activo!.referencia}`,
+        "_blank"
+      ),
+  };
+
   const accionesLineas = [
     venta.total >= 0 && {
       texto: "Devolución",
@@ -43,14 +52,7 @@ export const Lineas = ({
       deshabilitado: !lineas.activo,
       advertencia: true,
     },
-    !!lineas.activo?.referencia && {
-      texto: "Stock",
-      onClick: () =>
-        window.open(
-          `/almacen/stock?articulo_id==__${lineas.activo!.referencia}`,
-          "_blank"
-        ),
-    },
+    accionStock,
   ];
 
   const altaRapida = (barcode: string) => {
@@ -76,6 +78,11 @@ export const Lineas = ({
           <div className="botones maestro-botones">
             <QuimeraAcciones acciones={accionesLineas} />
           </div>
+        </div>
+      )}
+      {estadoVenta === "EMITIDA" && accionStock && (
+        <div className="botones maestro-botones">
+          <QuimeraAcciones acciones={[accionStock]} />
         </div>
       )}
       <LineasLista
