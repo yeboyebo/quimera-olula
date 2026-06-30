@@ -1,8 +1,9 @@
 export type OrdenAlmacen = {
     id: string;
     fecha: string;
-    tipoOrden: string;
+    tipoOrden: "ENTRADA" | "SALIDA" | "TRASPASO";
     almacenId: string;
+    almacen: string;
     abierta: boolean;
     ubicacionOrigenId: string | null;
     cajaOrigenId: string | null;
@@ -11,9 +12,22 @@ export type OrdenAlmacen = {
     lineas: LineaOrdenAlmacen[];
 };
 
-export type LineaOrdenAlmacen = {
-    id?: string;
+export type LecturaLineaOrden = {
+    id: string;
     sku: string;
+    loteId: string | null;
+    cantidad: number;
+    ubicacionOrigenId: string | null;
+    cajaOrigenId: string | null;
+    ubicacionDestinoId: string | null;
+    cajaDestinoId: string | null;
+    fechaHora: Date;
+};
+
+export type LineaOrdenAlmacen = {
+    id: string;
+    sku: string;
+    articulo: string;
     loteId: string | null;
     cantidadPrevista: number;
     cantidadReal?: number;
@@ -21,21 +35,28 @@ export type LineaOrdenAlmacen = {
     cajaOrigenId: string | null;
     ubicacionDestinoId: string | null;
     cajaDestinoId: string | null;
+    lecturas: LecturaLineaOrden[];
 };
 
 // export type NuevaOrdenAlmacen = Omit<OrdenAlmacen, "id" | "lineas">;
 
 export type NuevaLineaOrdenAlmacen = LineaOrdenAlmacen;
 
-export type LineaOrdenAlmacenConId = LineaOrdenAlmacen & { id: string };
+export type NuevaLecturaOrden = {
+    cantidad: number;
+    sku: string;
+    idUbicacionDestino: string | null;
+    idUbicacionOrigen: string | null;
+};
 
 // Tipos API (snake_case)
 
 export type OrdenAlmacenApi = {
     id: string;
     fecha: string;
-    tipo_orden: string;
+    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
     almacen_id: string;
+    almacen: string;
     abierta: boolean;
     ubicacion_origen_id: string | null;
     caja_origen_id: string | null;
@@ -44,9 +65,22 @@ export type OrdenAlmacenApi = {
     lineas: LineaOrdenAlmacenApi[];
 };
 
-export type LineaOrdenAlmacenApi = {
-    id?: string;
+export type LecturaLineaOrdenApi = {
+    id: string;
     sku: string;
+    lote_id: string | null;
+    cantidad: number;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
+    fecha_hora: string;
+};
+
+export type LineaOrdenAlmacenApi = {
+    id: string;
+    sku: string;
+    articulo: string;
     lote_id: string | null;
     cantidad_prevista: number;
     cantidad_real?: number;
@@ -54,6 +88,7 @@ export type LineaOrdenAlmacenApi = {
     caja_origen_id: string | null;
     ubicacion_destino_id: string | null;
     caja_destino_id: string | null;
+    lecturas: LecturaLineaOrdenApi[];
 };
 
 export type CambiosOrdenAlmacenApi = {

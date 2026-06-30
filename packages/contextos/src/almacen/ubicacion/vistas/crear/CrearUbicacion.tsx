@@ -1,3 +1,4 @@
+import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Mostrar } from "@olula/componentes/moleculas/Mostrar.tsx";
@@ -5,10 +6,8 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useContext } from "react";
-import { NuevaUbicacion } from "../diseño.ts";
-import { metaNuevaUbicacion, nuevaUbicacionVacia } from "../dominio.ts";
-import { getUbicacion, postUbicacion } from "../infraestructura.ts";
-import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
+import { getUbicacion, postUbicacion } from "../../infraestructura.ts";
+import { metaNuevaUbicacion, NuevaUbicacion, nuevaUbicacionVacia } from "./crear.ts";
 
 export const CrearUbicacion = ({
   publicar = async () => {},
@@ -59,7 +58,7 @@ const FormAltaUbicacion = ({
     <div className="CrearUbicacion">
       <h2>Nueva Ubicación</h2>
       <quimera-formulario>
-        <QInput label="Código" {...ubicacion.uiProps("id")} />
+        <QInput label="Código" {...ubicacion.uiProps("codigo")} />
         <Almacen {...ubicacion.uiProps("almacenId")} />
       </quimera-formulario>
       <div className="botones">

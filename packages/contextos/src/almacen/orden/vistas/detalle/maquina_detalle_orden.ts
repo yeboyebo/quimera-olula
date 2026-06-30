@@ -1,30 +1,30 @@
-import { ConfigMaquina4, ProcesarEvento, useMaquina4 } from "@olula/lib/useMaquina.ts";
+import { Maquina } from "@olula/lib/diseño.js";
+import { publicar } from "@olula/lib/dominio.js";
+import { activarLineaParaBorrar, cargarOrden, ContextoOrdenAlmacen, EstadoOrdenAlmacen, refrescarOrden } from "./detalle.ts";
 
-type Estado = "Editando" | "Borrando";
+export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen> = () => {
 
-type Contexto = Record<string, unknown>;
+    return {
 
-const configMaquina: ConfigMaquina4<Estado, Contexto> = {
-    inicial: {
-        estado: "Editando",
-        contexto: {},
-    },
-    estados: {
-        Editando: {
-            borrar: "Borrando",
-            orden_guardada: ({ publicar }) =>
-                publicar("orden_guardada"),
+        INICIAL: {
+            orden_id_cambiada: [cargarOrden],
         },
-        Borrando: {
-            borrado_cancelado: "Editando",
-            orden_borrada: ({ publicar }) =>
-                publicar("orden_borrada"),
-        },
-    },
-};
 
-export const useMaquinaDetalleOrden = (publicar?: ProcesarEvento) =>
-    useMaquina4<Estado, Contexto>({
-        config: configMaquina,
-        publicar,
-    });
+        ABIERTA: {
+            borrar: "BORRANDO",
+            orden_guardada: [refrescarOrden],
+            lectura_registrada: [refrescarOrden],
+            borrado_linea_solicitado: activarLineaParaBorrar,
+        },
+
+        BORRANDO: {
+            borrado_cancelado: "ABIERTA",
+            orden_borrada: publicar("orden_borrada"),
+        },
+
+        BORRANDO_LINEA: {
+            linea_orden_borrada: [refrescarOrden, "ABIERTA"],
+            borrado_cancelado: "ABIERTA",
+        },
+    }
+}

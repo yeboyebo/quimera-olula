@@ -2,7 +2,7 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useCallback } from "react";
-import { LineaOrdenAlmacenConId } from "../../diseño.ts";
+import { LineaOrdenAlmacen } from "../../diseño.ts";
 import { borrarLineasOrden } from "../../infraestructura.ts";
 
 export const BorrarLineaOrden = ({
@@ -11,7 +11,7 @@ export const BorrarLineaOrden = ({
     ordenId,
 }: {
     publicar: ProcesarEvento;
-    linea: LineaOrdenAlmacenConId;
+    linea: LineaOrdenAlmacen;
     ordenId: string;
 }) => {
     const borrar_ = useCallback(async () => {

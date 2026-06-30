@@ -2,7 +2,7 @@ import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { useCallback, useEffect, useState } from "react";
 import { QIcono } from "../atomos/qicono.tsx";
-import { MetaTabla } from "../atomos/qtabla.tsx";
+import { MetaTabla, obtenerCols } from "../atomos/qtablacontrolada.tsx";
 import { QTablaControlada } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
@@ -76,7 +76,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
   const tarjetaGenerica =
     metaTabla !== undefined
       ? (entidad: T) => (
-          <QTarjetaMetatabla entidad={entidad} metaTabla={metaTabla} />
+          <QTarjetaMetatabla entidad={entidad} metaTabla={obtenerCols(metaTabla)} />
         )
       : undefined;
   const puedeTabla = metaTabla !== undefined;

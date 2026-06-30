@@ -1,31 +1,74 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { MetaTabla, obtenerCols } from "@olula/componentes/atomos/qtablacontrolada.tsx";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { Criteria, RespuestaLista2 } from "@olula/lib/diseño.ts";
+import { Criteria, EmitirEvento, RespuestaLista2 } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { getSeleccionada } from "@olula/lib/entidad.ts";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { LineaOrdenAlmacenConId } from "../../../diseño.ts";
+import { LecturaLineaOrden, LineaOrdenAlmacen } from "../../../diseño.ts";
 import { getOrden } from "../../../infraestructura.ts";
 import { useMaquinaLineasOrden } from "../../../maquina_lineas_orden.ts";
-import { BorrarLineaOrden } from "../../borrar_linea/BorrarLineaOrden.tsx";
 import { CambiarLineaOrden } from "../../cambiar_linea/CambiarLineaOrden.tsx";
 import { CrearLineaOrden } from "../../crear_linea/CrearLineaOrden.tsx";
 
-const metaTablaLineasOrden: MetaTabla<LineaOrdenAlmacenConId> = [
-    { id: "sku", cabecera: "SKU" },
-    { id: "cantidadPrevista", cabecera: "Cantidad prevista" },
-    { id: "cantidadReal", cabecera: "Cantidad real" },
-];
+const formatearFechaHoraLectura = (fechaHora: Date | string): string => {
+    const d = fechaHora instanceof Date ? fechaHora : new Date(fechaHora);
+    return isNaN(d.getTime()) ? String(fechaHora) : d.toLocaleString();
+};
 
-const metaFiltroLineas = getMetaFiltroDefecto(metaTablaLineasOrden);
+const ExpansionLecturas = ({ entidad }: { entidad: LineaOrdenAlmacen }) => {
+    const lecturas: LecturaLineaOrden[] = entidad.lecturas ?? [];
+    if (!lecturas.length) return <p>Sin lecturas</p>;
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th>Lote</th>
+                    <th>Cantidad</th>
+                    <th>Fecha/Hora</th>
+                    <th>Ubi.Origen</th>
+                    <th>Ubi.Destino</th>
+                </tr>
+            </thead>
+            <tbody>
+                {lecturas.map((l) => (
+                    <tr key={l.id}>
+                        <td>{l.loteId}</td>
+                        <td>{l.cantidad}</td>
+                        <td>{formatearFechaHoraLectura(l.fechaHora)}</td>
+                        <td>{l.ubicacionOrigenId}</td>
+                        <td>{l.ubicacionDestinoId}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
+const metaTablaLineasOrden: MetaTabla<LineaOrdenAlmacen> = {
+    cols: [
+        { id: "sku", cabecera: "SKU" },
+        { id: "articulo", cabecera: "Descripción" },
+        { id: "cantidadPrevista", cabecera: "Cantidad prevista" },
+        { id: "cantidadReal", cabecera: "Cantidad real" },
+        { id: "ubicacionOrigenId", cabecera: "Ubi.Origen" },
+        { id: "ubicacionDestinoId", cabecera: "Ubi.Destino" },
+    ],
+    expansion: ExpansionLecturas,
+};
+
+const metaFiltroLineas = getMetaFiltroDefecto(obtenerCols(metaTablaLineasOrden));
 
 export const LineasOrden = ({
     ordenId,
+    lineas: lineasProp,
+    publicar,
 }: {
     ordenId: string;
+    lineas?: LineaOrdenAlmacen[];
+    publicar: EmitirEvento;
 }) => {
     const { intentar } = useContext(ContextoError);
 
@@ -39,15 +82,15 @@ export const LineasOrden = ({
 
     const [ordenIdAnterior, setOrdenIdAnterior] = useState<string | null>(null);
     const [lineasRespuesta, setLineasRespuesta] = useState<
-        RespuestaLista2<LineaOrdenAlmacenConId>
+        RespuestaLista2<LineaOrdenAlmacen>
     >({ datos: [], total: 0 });
 
     const setEntidades = useCallback(
-        (payload: LineaOrdenAlmacenConId[]) => emitir("lineas_cargadas", payload),
+        (payload: LineaOrdenAlmacen[]) => emitir("lineas_cargadas", payload),
         [emitir]
     );
     const setSeleccionada = useCallback(
-        (payload: LineaOrdenAlmacenConId) => emitir("linea_seleccionada", payload),
+        (payload: LineaOrdenAlmacen) => emitir("linea_seleccionada", payload),
         [emitir]
     );
 
@@ -57,8 +100,8 @@ export const LineasOrden = ({
         async (_criteria: Criteria = criteriaDefecto) => {
             if (ordenId) {
                 const orden = await intentar(() => getOrden(ordenId));
-                const lineasConId = (orden.lineas as LineaOrdenAlmacenConId[]).filter(
-                    (l): l is LineaOrdenAlmacenConId => !!l.id
+                const lineasConId = (orden.lineas as LineaOrdenAlmacen[]).filter(
+                    (l): l is LineaOrdenAlmacen => !!l.id
                 );
                 setEntidades(lineasConId);
                 setLineasRespuesta({
@@ -81,6 +124,13 @@ export const LineasOrden = ({
         }
     }, [ordenId, cargarLineas, ordenIdAnterior]);
 
+    useEffect(() => {
+        if (lineasProp !== undefined) {
+            setEntidades(lineasProp);
+            setLineasRespuesta({ datos: lineasProp, total: lineasProp.length });
+        }
+    }, [lineasProp, setEntidades]);
+
     return (
         <>
             <div className="botones maestro-botones">
@@ -93,7 +143,7 @@ export const LineasOrden = ({
                 </QBoton>
                 <QBoton
                     deshabilitado={!seleccionada}
-                    onClick={() => emitir("borrado_solicitado")}
+                    onClick={() => seleccionada && publicar("borrado_linea_solicitado", seleccionada)}
                 >
                     Borrar
                 </QBoton>
@@ -118,13 +168,6 @@ export const LineasOrden = ({
             )}
             {seleccionada && estado === "Edicion" && (
                 <CambiarLineaOrden
-                    publicar={emitir}
-                    linea={seleccionada}
-                    ordenId={ordenId}
-                />
-            )}
-            {seleccionada && estado === "ConfirmarBorrado" && (
-                <BorrarLineaOrden
                     publicar={emitir}
                     linea={seleccionada}
                     ordenId={ordenId}

@@ -4,9 +4,9 @@ import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar
 type TipoOrdenProps = Omit<QAutocompletarProps, "obtenerOpciones" | "label"> & { label?: string };
 
 const TIPOS_ORDEN = [
-    { valor: "entrada", descripcion: "Entrada" },
-    { valor: "salida", descripcion: "Salida" },
-    { valor: "traspaso", descripcion: "Traspaso" },
+    { valor: "ENTRADA", descripcion: "Entrada" },
+    { valor: "SALIDA", descripcion: "Salida" },
+    { valor: "TRASPASO", descripcion: "Traspaso" },
 ];
 
 export const TipoOrden = ({

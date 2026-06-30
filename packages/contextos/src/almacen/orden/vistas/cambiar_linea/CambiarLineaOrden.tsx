@@ -2,10 +2,10 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { useModelo } from "@olula/lib/useModelo.ts";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
+import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext } from "react";
-import { LineaOrdenAlmacenConId } from "../../diseño.ts";
+import { LineaOrdenAlmacen } from "../../diseño.ts";
 import { metaNuevaLinea } from "../../dominio.ts";
 import { cambiarLineaOrden } from "../../infraestructura.ts";
 
@@ -15,7 +15,7 @@ export const CambiarLineaOrden = ({
     ordenId,
 }: {
     publicar: ProcesarEvento;
-    linea: LineaOrdenAlmacenConId;
+    linea: LineaOrdenAlmacen;
     ordenId: string;
 }) => {
     const { intentar } = useContext(ContextoError);
@@ -42,7 +42,7 @@ export const CambiarLineaOrden = ({
                 <quimera-formulario>
                     <QInput label="SKU" {...uiProps("sku")} />
                     <QInput label="Cantidad prevista" {...uiProps("cantidadPrevista")} />
-                    <QInput label="Cantidad real" {...uiProps("cantidadReal")} />
+                    <QInput label="Cantidad real" {...uiProps("cantidadReal")} soloTexto />
                 </quimera-formulario>
                 <div className="botones maestro-botones">
                     <QBoton onClick={guardar} deshabilitado={!valido}>

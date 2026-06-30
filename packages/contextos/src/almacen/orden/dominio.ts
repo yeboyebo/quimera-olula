@@ -1,30 +1,30 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
-import { fechaActual } from "@olula/lib/fecha.ts";
-import { ItemOrdenAlmacen, LineaOrdenAlmacen, NuevaLineaOrdenAlmacen, OrdenAlmacen } from "./diseño.ts";
+import { ItemOrdenAlmacen, LineaOrdenAlmacen, OrdenAlmacen } from "./diseño.ts";
 
 export const ERR_SKU_REQUERIDO = "El SKU es requerido";
 export const ERR_CANTIDAD_PREVISTA_REQUERIDA = "La cantidad prevista es requerida";
 
-export const ordenVacia = (): OrdenAlmacen => ({
-    id: "",
-    fecha: fechaActual(),
-    tipoOrden: "",
-    almacenId: "",
-    abierta: true,
-    ubicacionOrigenId: null,
-    cajaOrigenId: null,
-    ubicacionDestinoId: null,
-    cajaDestinoId: null,
-    lineas: [],
-});
+// export const ordenVacia = (): OrdenAlmacen => ({
+//     id: "",
+//     fecha: fechaActual(),
+//     tipoOrden: "",
+//     almacenId: "",
+//     abierta: true,
+//     ubicacionOrigenId: null,
+//     cajaOrigenId: null,
+//     ubicacionDestinoId: null,
+//     cajaDestinoId: null,
+//     lineas: [],
+// });
 
 // Constante estable para usar como modeloInicial en useModelo.
 // No llama a fechaActual() en cada render, evitando el bucle infinito de re-renders.
 export const ordenVaciaInicial: OrdenAlmacen = {
     id: "",
     fecha: "",
-    tipoOrden: "",
+    tipoOrden: "ENTRADA",
     almacenId: "",
+    almacen: "",
     abierta: true,
     ubicacionOrigenId: null,
     cajaOrigenId: null,
@@ -33,17 +33,17 @@ export const ordenVaciaInicial: OrdenAlmacen = {
     lineas: [],
 };
 
-export const lineaOrdenVacia = (): LineaOrdenAlmacen => ({
-    sku: "",
-    loteId: null,
-    cantidadPrevista: 0,
-    ubicacionOrigenId: null,
-    cajaOrigenId: null,
-    ubicacionDestinoId: null,
-    cajaDestinoId: null,
-});
+// export const lineaOrdenVacia = (): LineaOrdenAlmacen => ({
+//     sku: "",
+//     loteId: null,
+//     cantidadPrevista: 0,
+//     ubicacionOrigenId: null,
+//     cajaOrigenId: null,
+//     ubicacionDestinoId: null,
+//     cajaDestinoId: null,
+// });
 
-export const nuevaLineaOrdenVacia = (): NuevaLineaOrdenAlmacen => lineaOrdenVacia();
+// export const nuevaLineaOrdenVacia = (): NuevaLineaOrdenAlmacen => lineaOrdenVacia();
 
 export const itemOrdenAlmacenVacio = (): ItemOrdenAlmacen => ({
     id: "",
@@ -62,6 +62,11 @@ export const metaOrden: MetaModelo<OrdenAlmacen> = {
         tipoOrden: { requerido: true },
         almacenId: { requerido: true },
         fecha: { requerido: true },
+        abierta: { tipo: "checkbox", requerido: true },
+        cajaOrigenId: {},
+        ubicacionOrigenId: {},
+        cajaDestinoId: {},
+        ubicacionDestinoId: {},
     },
 };
 

@@ -12,6 +12,7 @@ export type QAutocompletarProps = Omit<
   tiempoEspera?: number;
   longitudMinima?: number;
   descripcion?: string;
+  soloTexto?: boolean;
   obtenerOpciones: (valor: string) => Promise<Opcion[]>;
   onChange?: (
     opcion: Opcion | null,
@@ -32,6 +33,7 @@ export const QAutocompletar = ({
   onBlur,
   onChange,
   descripcion = "",
+  soloTexto = false,
   ...props
 }: QAutocompletarProps) => {
   const attrs = {
@@ -134,6 +136,7 @@ export const QAutocompletar = ({
         onBlur={manejarBlur}
         onChange={manejarChange}
         valor={valorDescrito}
+        soloTexto={soloTexto}
       />
     </quimera-autocompletar>
   );

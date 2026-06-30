@@ -2,11 +2,13 @@ import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/d
 
 export interface Ubicacion extends Entidad {
     id: string;
+    codigo: string;
     almacenId: string;
 };
 
 export interface UbicacionAPI extends Entidad {
     id: string;
+    codigo: string;
     almacen_id: string;
 }
 
@@ -21,7 +23,4 @@ export type PostUbicacion = (ubicacion: Partial<Ubicacion>) => Promise<string>;
 export type PatchUbicacion = (id: string, ubicacion: Partial<Ubicacion>) => Promise<void>;
 export type DeleteUbicacion = (id: string) => Promise<void>;
 
-export type NuevaUbicacion = {
-    id: string;
-    almacenId: string;
-};
+

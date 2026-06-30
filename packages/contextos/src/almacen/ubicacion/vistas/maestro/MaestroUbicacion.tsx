@@ -1,14 +1,14 @@
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import {
-  Listado,
-  MaestroDetalle,
-  QBoton,
+    Listado,
+    MaestroDetalle,
+    QBoton,
 } from "@olula/componentes/index.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { Ubicacion } from "../../diseño.ts";
-import { CrearUbicacion } from "../CrearUbicacion.tsx";
+import { CrearUbicacion } from "../crear/CrearUbicacion.tsx";
 import { DetalleUbicacion } from "../detalle/DetalleUbicacion.tsx";
 import { metaTablaUbicacion } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";

@@ -4,8 +4,11 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
     ItemOrdenAlmacen,
     ItemOrdenApi,
+    LecturaLineaOrden,
+    LecturaLineaOrdenApi,
     LineaOrdenAlmacen,
     LineaOrdenAlmacenApi,
+    NuevaLecturaOrden,
     NuevaLineaOrdenAlmacen,
     OrdenAlmacen,
     OrdenAlmacenApi,
@@ -20,8 +23,9 @@ const baseUrl = `/almacen/orden`;
 export const ordenDesdeApi = (api: OrdenAlmacenApi): OrdenAlmacen => ({
     id: api.id,
     fecha: api.fecha,
-    tipoOrden: api.tipo_orden,
+    tipoOrden: api.tipo,
     almacenId: api.almacen_id,
+    almacen: api.almacen,
     abierta: api.abierta,
     ubicacionOrigenId: api.ubicacion_origen_id,
     cajaOrigenId: api.caja_origen_id,
@@ -30,9 +34,23 @@ export const ordenDesdeApi = (api: OrdenAlmacenApi): OrdenAlmacen => ({
     lineas: api.lineas.map(lineaOrdenDesdeApi),
 });
 
+export const lecturaLineaOrdenDesdeApi = (api: LecturaLineaOrdenApi): LecturaLineaOrden => ({
+    id: api.id,
+    sku: api.sku,
+    loteId: api.lote_id,
+    cantidad: api.cantidad,
+    ubicacionOrigenId: api.ubicacion_origen_id,
+    cajaOrigenId: api.caja_origen_id,
+    ubicacionDestinoId: api.ubicacion_destino_id,
+    cajaDestinoId: api.caja_destino_id,
+    fechaHora: new Date(api.fecha_hora),
+});
+
 export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen => ({
     ...(api.id !== undefined ? { id: api.id } : {}),
+    id: api.id,
     sku: api.sku,
+    articulo: api.articulo,
     loteId: api.lote_id,
     cantidadPrevista: api.cantidad_prevista,
     ...(api.cantidad_real !== undefined ? { cantidadReal: api.cantidad_real } : {}),
@@ -40,11 +58,14 @@ export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen
     cajaOrigenId: api.caja_origen_id,
     ubicacionDestinoId: api.ubicacion_destino_id,
     cajaDestinoId: api.caja_destino_id,
+    lecturas: api.lecturas.map(lecturaLineaOrdenDesdeApi),
 });
 
 export const lineaOrdenAApi = (linea: LineaOrdenAlmacen): LineaOrdenAlmacenApi => ({
     ...(linea.id !== undefined ? { id: linea.id } : {}),
+    id: linea.id,
     sku: linea.sku,
+    articulo: linea.articulo,
     lote_id: linea.loteId,
     cantidad_prevista: linea.cantidadPrevista,
     ...(linea.cantidadReal !== undefined ? { cantidad_real: linea.cantidadReal } : {}),
@@ -52,6 +73,17 @@ export const lineaOrdenAApi = (linea: LineaOrdenAlmacen): LineaOrdenAlmacenApi =
     caja_origen_id: linea.cajaOrigenId,
     ubicacion_destino_id: linea.ubicacionDestinoId,
     caja_destino_id: linea.cajaDestinoId,
+    lecturas: linea.lecturas.map((lectura) => ({
+        id: lectura.id,
+        sku: lectura.sku,
+        lote_id: lectura.loteId,
+        cantidad: lectura.cantidad,
+        ubicacion_origen_id: lectura.ubicacionOrigenId,
+        caja_origen_id: lectura.cajaOrigenId,
+        ubicacion_destino_id: lectura.ubicacionDestinoId,
+        caja_destino_id: lectura.cajaDestinoId,
+        fecha_hora: lectura.fechaHora.toISOString(),
+    })),
 });
 
 export const itemOrdenDesdeApi = (api: ItemOrdenApi): ItemOrdenAlmacen => ({
@@ -93,10 +125,19 @@ export const crearOrden = async (orden: NuevaOrdenAlmacen): Promise<string> => {
 };
 
 export const cambiarOrden = async (id: string, cambios: Partial<OrdenAlmacen>): Promise<void> => {
-    const payload: Record<string, unknown> = {};
-    if (cambios.fecha !== undefined) payload.fecha = cambios.fecha;
-    if (cambios.tipoOrden !== undefined) payload.tipo_orden = cambios.tipoOrden;
-    if (cambios.abierta !== undefined) payload.abierta = cambios.abierta;
+    // const payload: Record<string, unknown> = {};
+    // if (cambios.fecha !== undefined) payload.fecha = cambios.fecha;
+    // if (cambios.tipoOrden !== undefined) payload.tipo_orden = cambios.tipoOrden;
+    // if (cambios.abierta !== undefined) payload.abierta = cambios.abierta;
+    // if (cambios.cajaOrigenId !== undefined) payload.caja_origen_id = cambios.cajaOrigenId;
+    // if (cambios.ubicacionOrigenId !== undefined) payload.ubicacion_origen_id = cambios.ubicacionOrigenId;
+    // if (cambios.cajaDestinoId !== undefined) payload.caja_destino_id = cambios.cajaDestinoId;
+    const payload = {
+        caja_origen_id: cambios.cajaOrigenId,
+        ubicacion_origen_id: cambios.ubicacionOrigenId,
+        caja_destino_id: cambios.cajaDestinoId,
+        ubicacion_destino_id: cambios.ubicacionDestinoId,
+    }
     await RestAPI.patch(`${baseUrl}/${id}`, payload, "Error al actualizar la orden " + id);
 };
 
@@ -137,5 +178,22 @@ export const borrarLineasOrden = async (id: string, lineaIds: string[]): Promise
         `${baseUrl}/${id}/linea/borrar`,
         { linea_ids: lineaIds },
         "Error al borrar líneas de la orden"
+    );
+};
+
+export const registrarLecturaOrden = async (
+    id: string,
+    lectura: NuevaLecturaOrden
+): Promise<void> => {
+    await RestAPI.post(
+        `${baseUrl}/${id}/lectura`,
+        {
+            sku: lectura.sku,
+            lote_id: null,
+            cantidad: lectura.cantidad,
+            ubicacion_destino_id: lectura.idUbicacionDestino,
+            ubicacion_origen_id: lectura.idUbicacionOrigen,
+        },
+        "Error al registrar lectura de la orden"
     );
 };

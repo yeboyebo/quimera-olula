@@ -1,60 +1,76 @@
+import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
+import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
+import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QInput } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
-import { ProcesarEvento } from "@olula/lib/useMaquina.js";
+import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
-import { OrdenAlmacen } from "../../diseño.ts";
 import { metaOrden, ordenVaciaInicial } from "../../dominio.ts";
-import { cambiarOrden, getOrden } from "../../infraestructura.ts";
-import { LineasOrden } from "./lineas/LineasOrden.tsx";
+import { cambiarOrden } from "../../infraestructura.ts";
+import { BorrarLineaOrden } from "../borrar_linea/BorrarLineaOrden.tsx";
 import { BorrarOrden } from "./BorrarOrden.tsx";
-import { useMaquinaDetalleOrden } from "./maquina_detalle_orden.ts";
+import { ContextoOrdenAlmacen } from "./detalle.ts";
+import "./DetalleOrden.css";
+import { LecturaOrden } from "./lectura/LecturaOrden.tsx";
+import { LineasOrden } from "./lineas/LineasOrden.tsx";
+import { getMaquina } from "./maquina_detalle_orden.ts";
 
-const titulo = (orden: OrdenAlmacen) => orden.tipoOrden || orden.id;
+const titulo = (orden: ContextoOrdenAlmacen["orden"]) => orden.tipoOrden || orden.id;
 
 export const DetalleOrden = ({
     id,
     publicar = async () => {},
 }: {
     id?: string;
-    publicar?: ProcesarEvento;
+    publicar?: EmitirEvento;
 }) => {
     const params = useParams();
     const { intentar } = useContext(ContextoError);
 
-    const orden = useModelo(metaOrden, ordenVaciaInicial);
+    const ordenId = id ?? params.id;
+
+    const contextoInicial: ContextoOrdenAlmacen = {
+        estado: "INICIAL",
+        orden: ordenVaciaInicial,
+        lineaActiva: null,
+    };
+
+    const { ctx, emitir } = useMaquina(getMaquina, contextoInicial, publicar);
+
+    const orden = useModelo(metaOrden, ctx.orden);
     const { modelo, init } = orden;
+
+    const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipoOrden);
+    const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipoOrden);
+
+    useEffect(() => {
+        if (ordenId) {
+            emitir("orden_id_cambiada", ordenId, true);
+        }
+    }, [ordenId]);
 
     const guardar = async () => {
         await intentar(() => cambiarOrden(modelo.id, modelo));
-        recargarCabecera();
         emitir("orden_guardada");
     };
 
     const cancelar = () => {
         init();
     };
-
-    const [emitir, { estado }] = useMaquinaDetalleOrden(publicar);
-
-    const recargarCabecera = async () => {
-        const nuevaOrden = await intentar(() => getOrden(modelo.id));
-        init(nuevaOrden);
-        publicar("orden_cambiada", nuevaOrden);
-    };
-
-    const ordenId = id ?? params.id;
+    console.log("Estado", ctx.estado)
 
     return (
         <Detalle
             id={ordenId}
             obtenerTitulo={titulo}
-            setEntidad={(accionInicial) => init(accionInicial)}
-            entidad={modelo}
-            cargar={getOrden}
+            setEntidad={() => {}}
+            entidad={ctx.orden.id ? ctx.orden : null}
             cerrarDetalle={() => publicar("cancelar_seleccion")}
         >
             {!!ordenId && (
@@ -64,19 +80,38 @@ export const DetalleOrden = ({
                     </div>
                     <div className="DetalleOrden">
                         <quimera-formulario>
-                            <TipoOrden {...orden.uiProps("tipoOrden")} />
-                            <div>
-                                <label>Almacén</label>
-                                <span>{modelo.almacenId}</span>
-                            </div>
-                            <div>
-                                <label>Fecha</label>
-                                <span>{modelo.fecha}</span>
-                            </div>
-                            <div>
-                                <label>Abierta</label>
-                                <span>{modelo.abierta ? "Sí" : "No"}</span>
-                            </div>
+                            <TipoOrden {...orden.uiProps("tipoOrden")} soloTexto />
+                            <Almacen {...orden.uiProps("almacenId")} soloTexto />
+                            <QInput label="Fecha" {...orden.uiProps("fecha")} soloTexto />
+                            <QInput label="Abierta" {...orden.uiProps("abierta")} soloTexto />
+                            {mostrarOrigen && (
+                                <Caja
+                                    {...orden.uiProps("cajaOrigenId")}
+                                    label="Caja origen"
+                                    nombre="cajaOrigenId"
+                                />
+                            )}
+                            {mostrarOrigen && (
+                                <Ubicacion
+                                    {...orden.uiProps("ubicacionOrigenId")}
+                                    label="Ubicación origen"
+                                    nombre="ubicacionOrigenId"
+                                />
+                            )}
+                            {mostrarDestino && (
+                                <Caja
+                                    {...orden.uiProps("cajaDestinoId")}
+                                    label="Caja destino"
+                                    nombre="cajaDestinoId"
+                                />
+                            )}
+                            {mostrarDestino && (
+                                <Ubicacion
+                                    {...orden.uiProps("ubicacionDestinoId")}
+                                    label="Ubicación destino"
+                                    nombre="ubicacionDestinoId"
+                                />
+                            )}
                         </quimera-formulario>
                     </div>
                     {orden.modificado && (
@@ -94,12 +129,20 @@ export const DetalleOrden = ({
                             </QBoton>
                         </div>
                     )}
-                    <LineasOrden ordenId={ordenId} />
+                    <LecturaOrden publicar={emitir} orden={modelo} tipoOrden={modelo.tipoOrden} />
+                    <LineasOrden ordenId={ordenId} lineas={ctx.orden.lineas} publicar={emitir} />
                     <BorrarOrden
                         publicar={emitir}
-                        activo={estado === "Borrando"}
-                        orden={modelo}
+                        activo={ctx.estado === "BORRANDO"}
+                        orden={ctx.orden}
                     />
+                    {ctx.estado === "BORRANDO_LINEA" && ctx.lineaActiva && (
+                        <BorrarLineaOrden
+                            publicar={emitir}
+                            linea={ctx.lineaActiva}
+                            ordenId={ctx.orden.id}
+                        />
+                    )}
                 </>
             )}
         </Detalle>

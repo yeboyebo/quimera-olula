@@ -32,7 +32,11 @@ export const QInput = ({
       <quimera-input solo-texto="" nombre={nombre} tipo={tipo} condensado={condensado}>
         <label>
           <Etiqueta label={label} />
-          <span className="valor-solo-texto">{valor || "—"}</span>
+          {tipo === "checkbox" ? (
+            <input type="checkbox" checked={valor === "true"} disabled readOnly />
+          ) : (
+            <span className="valor-solo-texto">{valor || "—"}</span>
+          )}
         </label>
       </quimera-input>
     );

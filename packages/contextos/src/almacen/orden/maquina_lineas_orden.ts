@@ -6,19 +6,19 @@ import {
     Maquina3,
     useMaquina4,
 } from "@olula/lib/useMaquina.ts";
-import { LineaOrdenAlmacenConId } from "./diseño.ts";
+import { LineaOrdenAlmacen } from "./diseño.ts";
 
 type Estado = "Lista" | "Alta" | "Edicion" | "ConfirmarBorrado";
 
 type Contexto = {
-    lineas: ListaSeleccionable<LineaOrdenAlmacenConId>;
+    lineas: ListaSeleccionable<LineaOrdenAlmacen>;
 };
 
 const setLineasOrden =
     (
         aplicable: (
-            lineas: ListaSeleccionable<LineaOrdenAlmacenConId>
-        ) => ListaSeleccionable<LineaOrdenAlmacenConId>
+            lineas: ListaSeleccionable<LineaOrdenAlmacen>
+        ) => ListaSeleccionable<LineaOrdenAlmacen>
     ) =>
         (maquina: Maquina3<Estado, Contexto>) => {
             return {
@@ -34,7 +34,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
     inicial: {
         estado: "Lista",
         contexto: {
-            lineas: listaSeleccionableVacia<LineaOrdenAlmacenConId>(),
+            lineas: listaSeleccionableVacia<LineaOrdenAlmacen>(),
         },
     },
     estados: {
@@ -43,7 +43,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
                 pipe(
                     maquina,
                     setEstado("Lista" as Estado),
-                    setLineasOrden(incluirItem(payload as LineaOrdenAlmacenConId, {}))
+                    setLineasOrden(incluirItem(payload as LineaOrdenAlmacen, {}))
                 ),
             creacion_cancelada: "Lista",
         },
@@ -52,7 +52,7 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
                 pipe(
                     maquina,
                     setEstado("Lista" as Estado),
-                    setLineasOrden(cambiarItem(payload as LineaOrdenAlmacenConId))
+                    setLineasOrden(cambiarItem(payload as LineaOrdenAlmacen))
                 ),
             edicion_cancelada: "Lista",
         },
@@ -62,13 +62,13 @@ const configMaquina: ConfigMaquina4<Estado, Contexto> = {
             linea_seleccionada: ({ maquina, payload }) =>
                 pipe(
                     maquina,
-                    setLineasOrden(seleccionarItem(payload as LineaOrdenAlmacenConId))
+                    setLineasOrden(seleccionarItem(payload as LineaOrdenAlmacen))
                 ),
             lineas_cargadas: ({ maquina, payload, setEstado }) =>
                 pipe(
                     maquina,
                     setEstado("Lista" as Estado),
-                    setLineasOrden(cargar(payload as LineaOrdenAlmacenConId[]))
+                    setLineasOrden(cargar(payload as LineaOrdenAlmacen[]))
                 ),
             borrado_solicitado: "ConfirmarBorrado",
         },
