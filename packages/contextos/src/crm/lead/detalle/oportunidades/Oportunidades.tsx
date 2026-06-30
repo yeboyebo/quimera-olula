@@ -1,12 +1,14 @@
 import { BorrarOportunidadVenta } from "#/crm/oportunidadventa/borrar/BorrarOportunidadVenta.tsx";
 import { nuevaOportunidadVentaVacia } from "#/crm/oportunidadventa/crear/crear.ts";
 import { CrearOportunidadVenta } from "#/crm/oportunidadventa/crear/CrearOportunidadVenta.tsx";
+import { DetalleOportunidadVenta } from "#/crm/oportunidadventa/detalle/DetalleOportunidadVenta.tsx";
 import { OportunidadVenta } from "#/crm/oportunidadventa/diseño.ts";
 import { metaTablaOportunidadVenta } from "#/crm/oportunidadventa/maestro/maestro.ts";
 import { TarjetaOportunidadVenta } from "#/crm/oportunidadventa/maestro/TarjetaOportunidadVenta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -35,6 +37,13 @@ export const Oportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo.id]);
 
+  const publicarDetalle = useCallback(
+    async (evento: string, payload?: unknown) => {
+      await emitir(evento, payload);
+    },
+    [emitir]
+  );
+
   return (
     <div className="TabOportunidades">
       {ctx.estado === "CREANDO" && (
@@ -62,11 +71,15 @@ export const Oportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
         cargando={cargando}
         renderAcciones={() => (
           <QuimeraAcciones
-            vertical
             acciones={[
               {
                 texto: "Nueva",
                 onClick: () => emitir("creacion_de_oportunidad_solicitada"),
+              },
+              {
+                texto: "Editar",
+                onClick: () => emitir("edicion_oportunidad_solicitada"),
+                deshabilitado: !ctx.oportunidades.activo,
               },
               {
                 texto: "Borrar",
@@ -83,6 +96,24 @@ export const Oportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
         criteriaInicial={criteriaDefecto}
         onCriteriaChanged={() => null}
       />
+
+      <QModal
+        nombre="editarOportunidad"
+        abierto={
+          ctx.estado === "EDITANDO" && Boolean(ctx.oportunidades.activo?.id)
+        }
+        titulo="Editar oportunidad"
+        onCerrar={() => publicarDetalle("oportunidad_deseleccionada")}
+        mostrarBotonCerrar={false}
+        mostrarCabecera={false}
+      >
+        {ctx.oportunidades.activo?.id && (
+          <DetalleOportunidadVenta
+            id={ctx.oportunidades.activo.id}
+            publicar={publicarDetalle}
+          />
+        )}
+      </QModal>
     </div>
   );
 };

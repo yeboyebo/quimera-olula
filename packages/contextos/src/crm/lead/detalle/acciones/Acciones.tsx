@@ -1,10 +1,12 @@
 import { BorrarAccion } from "#/crm/accion/borrar/BorrarAccion.tsx";
 import { nuevaAccionVacia } from "#/crm/accion/crear/crear.ts";
 import { CrearAccion } from "#/crm/accion/crear/CrearAccion.tsx";
+import { DetalleAccion } from "#/crm/accion/detalle/DetalleAccion.tsx";
 import { Accion } from "#/crm/accion/diseño.ts";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
+import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -34,6 +36,13 @@ export const Acciones = ({ lead }: { lead: HookModelo<Lead> }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo.id]);
 
+  const publicarDetalle = useCallback(
+    async (evento: string, payload?: unknown) => {
+      await emitir(evento, payload);
+    },
+    [emitir]
+  );
+
   return (
     <div className="TabAcciones">
       {ctx.estado === "CREANDO" && (
@@ -57,11 +66,15 @@ export const Acciones = ({ lead }: { lead: HookModelo<Lead> }) => {
         cargando={cargando}
         renderAcciones={() => (
           <QuimeraAcciones
-            vertical
             acciones={[
               {
                 texto: "Nueva",
                 onClick: () => emitir("creacion_de_accion_solicitada"),
+              },
+              {
+                texto: "Editar",
+                onClick: () => emitir("edicion_accion_solicitada"),
+                deshabilitado: !ctx.acciones.activo,
               },
               {
                 texto: "Borrar",
@@ -76,6 +89,22 @@ export const Acciones = ({ lead }: { lead: HookModelo<Lead> }) => {
         criteriaInicial={criteriaDefecto}
         onCriteriaChanged={() => null}
       />
+
+      <QModal
+        nombre="editarAccion"
+        abierto={ctx.estado === "EDITANDO" && Boolean(ctx.acciones.activo?.id)}
+        titulo="Editar acción"
+        onCerrar={() => publicarDetalle("accion_deseleccionada")}
+        mostrarBotonCerrar={false}
+        mostrarCabecera={false}
+      >
+        {ctx.acciones.activo?.id && (
+          <DetalleAccion
+            id={ctx.acciones.activo.id}
+            publicar={publicarDetalle}
+          />
+        )}
+      </QModal>
     </div>
   );
 };

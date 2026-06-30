@@ -9,6 +9,8 @@ type QModalProps = {
   abierto?: boolean;
   onCerrar?: () => void;
   pantallaCompletaMovil?: boolean;
+  mostrarCabecera?: boolean;
+  mostrarBotonCerrar?: boolean;
 };
 
 export const QModal = ({
@@ -17,6 +19,8 @@ export const QModal = ({
   abierto = false,
   onCerrar = () => {},
   pantallaCompletaMovil = true,
+  mostrarCabecera = true,
+  mostrarBotonCerrar = true,
   children,
 }: PropsWithChildren<QModalProps>) => {
   const refModal = useRef<HTMLDialogElement>(null);
@@ -78,19 +82,23 @@ export const QModal = ({
   return (
     <quimera-modal {...attrs}>
       <dialog ref={refModal} aria-labelledby={titulo ? titleId : undefined}>
-        <header>
-          {titulo && <h2 id={titleId}>{titulo}</h2>}
-          <form method="dialog">
-            <QBoton
-              tamaño="mediano"
-              variante="texto"
-              tipo="submit"
-              props={{ "aria-label": "Cerrar modal", title: "Cerrar" }}
-            >
-              <QIcono nombre="cerrar" tamaño="sm" />
-            </QBoton>
-          </form>
-        </header>
+        {mostrarCabecera && (
+          <header>
+            {titulo && <h2 id={titleId}>{titulo}</h2>}
+            {mostrarBotonCerrar && (
+              <form method="dialog">
+                <QBoton
+                  tamaño="mediano"
+                  variante="texto"
+                  tipo="submit"
+                  props={{ "aria-label": "Cerrar modal", title: "Cerrar" }}
+                >
+                  <QIcono nombre="cerrar" tamaño="sm" />
+                </QBoton>
+              </form>
+            )}
+          </header>
+        )}
         <main>{children}</main>
       </dialog>
     </quimera-modal>

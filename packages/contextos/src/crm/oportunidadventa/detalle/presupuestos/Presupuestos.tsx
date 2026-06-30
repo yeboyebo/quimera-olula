@@ -10,7 +10,7 @@ import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { OportunidadVenta } from "../../diseño.ts";
 import { crearPresupuestoOportunidad } from "../../infraestructura.ts";
 import { getMaquina } from "./maquina.ts";
@@ -36,6 +36,7 @@ export const Presupuestos = ({
 }: {
   oportunidad: HookModelo<OportunidadVenta>;
 }) => {
+  const navigate = useNavigate();
   const [cargando, setCargando] = useState(false);
 
   const { ctx, emitir } = useMaquina(getMaquina, {
@@ -81,11 +82,21 @@ export const Presupuestos = ({
         cargando={cargando}
         renderAcciones={() => (
           <QuimeraAcciones
-            vertical
             acciones={[
               {
                 texto: "Nuevo",
                 onClick: () => crearPresupuesto(),
+              },
+              {
+                texto: "Editar",
+                onClick: () => {
+                  if (ctx.presupuestos.activo?.id) {
+                    navigate(
+                      `/ventas/presupuesto?id=${ctx.presupuestos.activo.id}`
+                    );
+                  }
+                },
+                deshabilitado: !ctx.presupuestos.activo,
               },
               {
                 texto: "Borrar",

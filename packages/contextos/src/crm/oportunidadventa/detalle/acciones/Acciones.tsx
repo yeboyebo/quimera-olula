@@ -12,7 +12,7 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { OportunidadVenta } from "../../diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
@@ -21,9 +21,6 @@ export const Acciones = ({
 }: {
   oportunidad: HookModelo<OportunidadVenta>;
 }) => {
-  const [cargando, setCargando] = useState(false);
-  const [editando, setEditando] = useState(false);
-
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     acciones: listaEntidadesInicial<Accion>(),
@@ -32,10 +29,8 @@ export const Acciones = ({
   const { modelo } = oportunidad;
 
   const recargar = useCallback(async () => {
-    setCargando(true);
     await emitir("recarga_de_acciones_solicitada", modelo.id);
-    setCargando(false);
-  }, [emitir, setCargando, modelo.id]);
+  }, [emitir, modelo.id]);
 
   useEffect(() => {
     recargar();
@@ -45,10 +40,6 @@ export const Acciones = ({
   const publicarDetalle = useCallback(
     async (evento: string, payload?: unknown) => {
       await emitir(evento, payload);
-
-      if (evento === "accion_deseleccionada" || evento === "accion_borrada") {
-        setEditando(false);
-      }
     },
     [emitir]
   );
@@ -74,7 +65,6 @@ export const Acciones = ({
         tarjeta={TarjetaAccion}
         entidades={ctx.acciones.lista}
         totalEntidades={ctx.acciones.lista.length}
-        cargando={cargando}
         renderAcciones={() => (
           <QuimeraAcciones
             acciones={[
@@ -84,7 +74,7 @@ export const Acciones = ({
               },
               {
                 texto: "Editar",
-                onClick: () => setEditando(true),
+                onClick: () => emitir("edicion_accion_solicitada"),
                 deshabilitado: !ctx.acciones.activo,
               },
               {
@@ -103,9 +93,11 @@ export const Acciones = ({
 
       <QModal
         nombre="editarAccion"
-        abierto={editando && Boolean(ctx.acciones.activo?.id)}
+        abierto={ctx.estado === "EDITANDO" && Boolean(ctx.acciones.activo?.id)}
         titulo="Editar acción"
         onCerrar={() => publicarDetalle("accion_deseleccionada")}
+        mostrarBotonCerrar={false}
+        mostrarCabecera={false}
       >
         {ctx.acciones.activo?.id && (
           <DetalleAccion

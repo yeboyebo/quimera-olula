@@ -17,6 +17,19 @@ export const getMaquina: () => Maquina<EstadoAccionesOportunidad, ContextoAccion
 
             creacion_de_accion_solicitada: "CREANDO",
 
+            edicion_accion_solicitada: "EDITANDO",
+
+            borrado_accion_solicitado: "BORRANDO",
+        },
+        EDITANDO: {
+            accion_cambiada: [Acciones.cambiar],
+
+            accion_seleccionada: [Acciones.activar],
+
+            accion_deseleccionada: [Acciones.desactivar, "INICIAL"],
+
+            accion_borrada: [Acciones.quitar, "INICIAL"],
+
             borrado_accion_solicitado: "BORRANDO",
         },
         CREANDO: {
