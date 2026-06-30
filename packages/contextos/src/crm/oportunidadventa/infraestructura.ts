@@ -1,4 +1,5 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
+import { getDireccion, getDirecciones } from "#/ventas/cliente/infraestructura.ts";
 import UrlsVentasClass from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
@@ -81,11 +82,24 @@ export const getPresupuestosOportunidad = async (oportunidadId: string): Respues
 };
 
 export const crearPresupuestoOportunidad = async (oportunidadId: string, cliente_id: string): Promise<string> => {
+    if (!cliente_id) {
+        throw new Error("No se puede crear presupuesto sin cliente");
+    }
+
+    const direcciones = await getDirecciones(cliente_id);
+    const direccionFacturacion = direcciones.find((direccion) => direccion.dir_facturacion) ?? direcciones[0];
+
+    if (!direccionFacturacion) {
+        throw new Error("El cliente no tiene direcciones disponibles");
+    }
+
+    const direccion = await getDireccion(cliente_id, direccionFacturacion.id);
+
     const nuevoPresupuesto: Partial<NuevoPresupuesto> = {
         oportunidad_id: oportunidadId,
         cliente: {
             cliente_id: cliente_id,
-            direccion_id: "1",
+            direccion_id: direccion.id,
         },
         empresa_id: empresaActual(),
     };

@@ -1,5 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
 import { Cliente } from "../cliente/diseño.ts";
@@ -15,6 +16,24 @@ import { Contacto } from "./diseño.ts";
 const baseUrlContactos = new ApiUrls().CONTACTO;
 const baseUrlAccion = new ApiUrls().ACCION;
 const baseUrlOportunidadVenta = new ApiUrls().OPORTUNIDAD_VENTA;
+
+const criteriaOportunidadesRelacionadasDefecto: Criteria = {
+  ...criteriaDefecto,
+  orden: ["probabilidad", "DESC"],
+};
+
+const combinarFiltroOportunidades = (
+  contactoId: string,
+  filtro: Filtro
+): Filtro => {
+  const filtroRelacion = [["contacto_id", "=", contactoId]] as unknown as Filtro;
+
+  if (Array.isArray(filtro) && filtro.length === 0) {
+    return filtroRelacion;
+  }
+
+  return { and: [filtroRelacion, filtro] };
+};
 
 type ContactoApi = Contacto;
 
@@ -53,12 +72,15 @@ export const deleteContacto = async (id: string): Promise<void> =>
   await RestAPI.delete(`${baseUrlContactos}/${id}`, "Error al borrar contacto");
 
 
-export const getOportunidadesVentaContacto = async (contactoId: string) => {
-  const filtro = ['contacto_id', contactoId] as unknown as Filtro;
-
-  const orden = [] as Orden;
-
-  const q = criteriaQueryUrl(filtro, orden);
+export const getOportunidadesVentaContacto = async (
+  contactoId: string,
+  criteria: Criteria = criteriaOportunidadesRelacionadasDefecto
+) => {
+  const q = criteriaQuery(
+    combinarFiltroOportunidades(contactoId, criteria.filtro),
+    criteria.orden,
+    criteria.paginacion
+  );
   return RestAPI
     .get<{ datos: OportunidadVentaAPI[]; total: number }>(
       baseUrlOportunidadVenta + q

@@ -5,12 +5,12 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarContacto } from "../borrar/BorrarContacto.tsx";
-import { TabClientes } from "../vistas/DetalleContacto/Clientes/TabClientes.tsx";
 import { Acciones } from "./acciones/Acciones.tsx";
 import { contactoVacio, metaContacto } from "./detalle.ts";
 import "./DetalleContacto.css";
 import { getMaquina } from "./maquina.ts";
 import { Oportunidades } from "./oportunidades/Oportunidades.tsx";
+import { TabClientes } from "./tabs/TabClientes.tsx";
 import { TabGeneral } from "./tabs/TabGeneral.tsx";
 
 export const DetalleContacto = ({

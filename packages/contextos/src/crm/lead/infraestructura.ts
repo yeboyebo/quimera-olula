@@ -1,5 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
 import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
@@ -10,6 +11,24 @@ import {
     OportunidadVentaAPI,
 } from "../oportunidadventa/infraestructura.ts";
 import { Lead, LeadAPI, LeadToAPI } from "./diseño.ts";
+
+const criteriaOportunidadesRelacionadasDefecto: Criteria = {
+    ...criteriaDefecto,
+    orden: ["probabilidad", "DESC"],
+};
+
+const combinarFiltroOportunidades = (
+    leadId: string,
+    filtro: Filtro
+): Filtro => {
+    const filtroRelacion = [["tarjeta_id", "=", leadId]] as unknown as Filtro;
+
+    if (Array.isArray(filtro) && filtro.length === 0) {
+        return filtroRelacion;
+    }
+
+    return { and: [filtroRelacion, filtro] };
+};
 
 export const leadFromAPI = (l: LeadAPI): Lead => ({
     ...l,
@@ -86,11 +105,15 @@ export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> 
 export const deleteLead = async (id: string): Promise<void> =>
     await RestAPI.delete(`${new ApiUrls().LEAD}/${id}`, "Error al borrar lead");
 
-export const getOportunidadesVentaLead = async (leadId: string): RespuestaLista<OportunidadVenta> => {
-    const filtro = ['tarjeta_id', leadId] as unknown as Filtro;
-    const orden = [] as Orden;
-
-    const q = criteriaQueryUrl(filtro, orden);
+export const getOportunidadesVentaLead = async (
+    leadId: string,
+    criteria: Criteria = criteriaOportunidadesRelacionadasDefecto
+): RespuestaLista<OportunidadVenta> => {
+    const q = criteriaQuery(
+        combinarFiltroOportunidades(leadId, criteria.filtro),
+        criteria.orden,
+        criteria.paginacion
+    );
     return RestAPI
         .get<{ datos: OportunidadVentaAPI[], total: number }>(new ApiUrls().OPORTUNIDAD_VENTA + q)
         .then((respuesta) => ({

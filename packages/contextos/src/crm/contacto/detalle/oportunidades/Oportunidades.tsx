@@ -9,10 +9,11 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import type { Criteria, Orden } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Contacto } from "../../diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
@@ -22,6 +23,14 @@ export const Oportunidades = ({
   contacto: HookModelo<Contacto>;
 }) => {
   const [cargando, setCargando] = useState(false);
+  const criteriaInicial = useMemo(
+    () => ({
+      ...criteriaDefecto,
+      orden: ["probabilidad", "DESC"] as unknown as Orden,
+    }),
+    []
+  );
+  const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -32,14 +41,21 @@ export const Oportunidades = ({
 
   const recargar = useCallback(async () => {
     setCargando(true);
-    await emitir("recarga_de_oportunidades_solicitada", modelo.id);
+    await emitir("recarga_de_oportunidades_solicitada", {
+      contactoId: modelo.id,
+      criteria,
+    });
     setCargando(false);
-  }, [emitir, setCargando, modelo.id]);
+  }, [criteria, emitir, setCargando, modelo.id]);
+
+  useEffect(() => {
+    setCriteria(criteriaInicial);
+  }, [criteriaInicial, modelo.id]);
 
   useEffect(() => {
     recargar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelo.id]);
+  }, [modelo.id, criteria]);
 
   const publicarDetalle = useCallback(
     async (evento: string, payload?: unknown) => {
@@ -71,8 +87,9 @@ export const Oportunidades = ({
         metaTabla={metaTablaOportunidadVenta}
         tarjeta={TarjetaOportunidadVenta}
         entidades={ctx.oportunidades.lista}
-        totalEntidades={ctx.oportunidades.lista.length}
+        totalEntidades={ctx.oportunidades.total}
         cargando={cargando}
+        idReiniciarCriteria={modelo.id}
         renderAcciones={() => (
           <QuimeraAcciones
             acciones={[
@@ -97,8 +114,8 @@ export const Oportunidades = ({
         onSeleccion={(oportunidad) =>
           emitir("oportunidad_seleccionada", oportunidad)
         }
-        criteriaInicial={criteriaDefecto}
-        onCriteriaChanged={() => null}
+        criteriaInicial={criteriaInicial}
+        onCriteriaChanged={(nuevoCriteria) => setCriteria(nuevoCriteria)}
       />
 
       <QModal

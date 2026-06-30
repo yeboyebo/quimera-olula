@@ -1,19 +1,22 @@
 import UrlsVentasClass from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
 import UrlsCrmClass from "../comun/urls.ts";
 import { NuevaOportunidadVenta } from "../oportunidadventa/crear/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
-import {
-  oportunidadDesdeAPI,
-  OportunidadVentaAPI,
-} from "../oportunidadventa/infraestructura.ts";
+import { oportunidadDesdeAPI, OportunidadVentaAPI } from "../oportunidadventa/infraestructura.ts";
 import { Cliente, GetCliente, PatchCliente } from "./diseño.ts";
 
 const UrlsCrm = new UrlsCrmClass();
 const UrlsVentas = new UrlsVentasClass();
+
+const criteriaOportunidadesRelacionadasDefecto: Criteria = {
+  ...criteriaDefecto,
+  orden: ["probabilidad", "DESC"],
+};
 
 export type ClienteApi = Cliente;
 
@@ -57,10 +60,17 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
 export const deleteCliente = async (id: string): Promise<void> =>
   await RestAPI.delete(`${UrlsVentas.CLIENTE}/${id}`, "Error al borrar cliente");
 
-export const getOportunidadesVentaCliente = async (clienteId: string): RespuestaLista<OportunidadVenta> =>
+export const getOportunidadesVentaCliente = async (
+  clienteId: string,
+  criteria: Criteria = criteriaOportunidadesRelacionadasDefecto
+): RespuestaLista<OportunidadVenta> =>
   await RestAPI
     .get<{ datos: OportunidadVentaAPI[]; total: number }>(
-      `${UrlsCrm.CLIENTE}/${clienteId}/oportunidades_venta`
+      `${UrlsCrm.CLIENTE}/${clienteId}/oportunidades_venta${criteriaQuery(
+        criteria.filtro,
+        criteria.orden,
+        criteria.paginacion
+      )}`
     )
     .then((respuesta) => ({
       ...respuesta,

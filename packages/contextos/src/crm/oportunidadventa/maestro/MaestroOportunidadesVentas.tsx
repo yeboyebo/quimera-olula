@@ -1,13 +1,17 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import type { QKanbanColumna } from "@olula/componentes/atomos/qkanban.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import type { Filtro, Orden } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { OportunidadVenta } from "../diseño.ts";
+import { getEstadosOportunidadVenta } from "../infraestructura.ts";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
@@ -15,10 +19,27 @@ import { TarjetaOportunidadVenta } from "./TarjetaOportunidadVenta.tsx";
 
 export const MaestroOportunidades = () => {
   const { id, criteria } = getUrlParams();
+  const [columnasKanban, setColumnasKanban] = useState<QKanbanColumna[]>([]);
+  const criteriaBaseOportunidades = useMemo(
+    () => ({
+      ...criteriaDefecto,
+      orden: ["probabilidad", "DESC"] as unknown as Orden,
+    }),
+    []
+  );
+
+  const criteriaInicial =
+    criteria.filtro.length > 0 ||
+    criteria.orden.toString() !== criteriaDefecto.orden.toString()
+      ? criteria
+      : criteriaBaseOportunidades;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    oportunidades: listaActivaEntidadesInicial<OportunidadVenta>(id, criteria),
+    oportunidades: listaActivaEntidadesInicial<OportunidadVenta>(
+      id,
+      criteriaInicial
+    ),
   });
 
   useUrlParams(ctx.oportunidades.activo, ctx.oportunidades.criteria);
@@ -26,6 +47,37 @@ export const MaestroOportunidades = () => {
   useEffect(() => {
     emitir("recarga_de_oportunidades_solicitada", ctx.oportunidades.criteria);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    let activo = true;
+
+    const cargarColumnasKanban = async () => {
+      const criteriosEstados = {
+        filtro: [] as unknown as Filtro,
+        orden: ["id"] as unknown as Orden,
+      };
+
+      const estados = await getEstadosOportunidadVenta(
+        criteriosEstados.filtro,
+        criteriosEstados.orden
+      );
+
+      if (!activo) return;
+
+      setColumnasKanban(
+        estados.map((estado) => ({
+          id: String(estado.id),
+          etiqueta: estado.descripcion ?? String(estado.id),
+        }))
+      );
+    };
+
+    cargarColumnasKanban();
+
+    return () => {
+      activo = false;
+    };
   }, []);
 
   return (
@@ -41,6 +93,14 @@ export const MaestroOportunidades = () => {
               tarjeta={TarjetaOportunidadVenta}
               entidades={ctx.oportunidades.lista}
               totalEntidades={ctx.oportunidades.total}
+              columnasKanban={columnasKanban}
+              campoEstadoKanban="estado_id"
+              onCambioEstadoKanban={(idOportunidad, nuevoEstado) =>
+                emitir("estado_oportunidad_cambiado", {
+                  idOportunidad,
+                  nuevoEstado,
+                })
+              }
               seleccionada={ctx.oportunidades.activo}
               renderAcciones={() => (
                 <div className="maestro-botones">
