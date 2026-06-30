@@ -247,10 +247,10 @@ export const onLineaCreada: ProcesarVentaTpv = async (contexto, payload) => {
 
 export const crearLineaPorBarcode: ProcesarVentaTpv = async (contexto, payload) => {
 
-    const barcode = payload as string;
+    const { barcode, cantidad } = payload as { barcode: string; cantidad: number };
     const idLinea = await postLineaPorBarcode(contexto.venta.id, {
         barcode,
-        cantidad: 1
+        cantidad
     });
 
     return pipeVentaTpv(contexto, [

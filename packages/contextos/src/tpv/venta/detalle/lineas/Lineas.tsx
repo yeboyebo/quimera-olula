@@ -2,14 +2,13 @@ import { BorrarLineaVentaTpv } from "#/tpv/venta/borrar_linea/BorrarLineaVentaTp
 import { CrearLineaVentaTpv } from "#/tpv/venta/crear_linea/CrearLineaVentaTpv.tsx";
 import { VentaTpv } from "#/tpv/venta/diseño.ts";
 import { LineaFactura } from "#/ventas/factura/diseño.ts";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
-import { useFocus } from "@olula/lib/useFocus.js";
 import { CambiarLineaTpv } from "../../cambiar_linea/CambiarLineaTpv.tsx";
 import { EstadoVentaTpv } from "../detalle.ts";
 import "./Lineas.css";
+import { AltaRapida } from "./alta_rapida/AltaRapida.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 export const Lineas = ({
   venta,
@@ -55,26 +54,11 @@ export const Lineas = ({
     accionStock,
   ];
 
-  const altaRapida = (barcode: string) => {
-    publicar("alta_de_linea_por_barcode_lista", barcode);
-    if (focus?.current) {
-      const control = focus.current as HTMLInputElement;
-      control.value = "";
-    }
-  };
-
-  const focus = useFocus();
-
   return (
     <>
       {estadoVenta !== "EMITIDA" && (
         <div className="lineas-venta-tpv">
-          <QInput
-            label="Barcode"
-            nombre="barcode"
-            onEnterKeyUp={altaRapida}
-            ref={focus}
-          />
+          <AltaRapida publicar={publicar} />
           <div className="botones maestro-botones">
             <QuimeraAcciones acciones={accionesLineas} />
           </div>

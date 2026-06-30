@@ -317,6 +317,13 @@ export const convertirCampoDesdeUI = <T extends Modelo>(meta: MetaModelo<T>) => 
 
             return new Date(Date.parse(valor));
         }
+        case 'fecha_hora': {
+            if (valor === null || valor === '') {
+                return null;
+            }
+
+            return new Date(Date.parse(valor));
+        }
         default:
             return valor;
     }
@@ -399,6 +406,9 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
         }
         case 'fecha': {
             return (valor as Date).toISOString().slice(0, 10);
+        }
+        case 'fecha_hora': {
+            return (valor as Date).toISOString().slice(0, 16);
         }
 
         default:
