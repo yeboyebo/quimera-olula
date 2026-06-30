@@ -66,7 +66,7 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with:
           config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: -n default set image --record deployment/dulcebebeolula-deployment appdulcebebe=yeboyebohub/olula_cli_dulcebebe:${{ github.sha }}
+          command: -n default set image --record deployment/dulcebebe-deployment appdulcebebe=yeboyebohub/olula_cli_dulcebebe:${{ github.sha }}
 
       - name: verify deployment
         uses: steebchen/kubectl@v2.0.0
@@ -75,4 +75,4 @@ jobs:
           KUBECTL_VERSION: "1.28"
         with:
           config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: -n default rollout status deployment/dulcebebeolula-deployment
+          command: -n default rollout status deployment/dulcebebe-deployment
