@@ -73,7 +73,7 @@ function ShPreparacionDePedido({
   useEffect(() => {
     if (mobile && dataLineas.length > 0) {
       const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
-      const anchoEstimado = Math.min(Math.max(150, maxChars * 8 + 40), 900);
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 8.5 + 40), 900);
 
       setAnchoDescripcionCalculado(anchoEstimado);
     } else {
@@ -429,7 +429,7 @@ function ShPreparacionDePedido({
                       order="refprov"
                       pl={2}
                       value={linea => linea.referenciaProv}
-                      width={175}
+                      width={180}
                     />
                     <Column.Text
                       id="codPedido"
