@@ -211,8 +211,10 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   };
 
   const lineaBloqueada = (linea) => {
-    return (linea.dtoLineal !== 0 && linea.shCantAlbaran !== 0.0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
+    return (linea.dtoLineal !== 0 && (linea.shCantAlbaran ?? 0) !== 0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
   };
+
+
 
   const anchoDetalle = 1;
   const schema = getSchemas().pedidos;
@@ -380,6 +382,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                         }
                         disabled={lineaBloqueada(linea)}
                       >
+                        {console.log('mimensaje_lineas', linea.referencia, "dto", linea.dtoLineal, "cantAlb", linea.shCantAlbaran, "cantidad", parseFloat(linea.cantidad), "canServ", linea.canServida, "total", parseFloat(linea.canServida + linea.shCantAlbaran), linea.shCantAlbaran !== 0.0)}
                         <Icon className={lineaBloqueada(linea) ? classes.iconoBloqueado : classes.iconoCabecera}>
                           {linea.cerradaPDA ? "lock" : "lock_open"}
                         </Icon>
