@@ -405,9 +405,11 @@ export const convertirCampoHaciaUI = <T extends Modelo>(meta: MetaModelo<T>) => 
             return [desde?.toISOString().slice(0, 10) as string, hasta?.toISOString().slice(0, 10) as string] as unknown as string;
         }
         case 'fecha': {
+            if (typeof valor === 'string') return valor.slice(0, 10);
             return (valor as Date).toISOString().slice(0, 10);
         }
         case 'fecha_hora': {
+            if (typeof valor === 'string') return valor.slice(0, 16);
             return (valor as Date).toISOString().slice(0, 16);
         }
 
