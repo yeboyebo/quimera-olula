@@ -278,7 +278,7 @@ export default {
     "TratosFarma:visit": (check: (rule: string) => boolean) => check("crm.trato.farma"),
     "ss_informes:marketing": (check: (rule: string) => boolean) => check("crm.informe.marketing"),
     "ss_informes:todoslosagentes": (check: (rule: string) => boolean) =>
-      check("crm.informe.todos"),
+      check("crm.informe.todos_los_agentes"),
     "clientes:acceso": (check: (rule: string) => boolean) => check("ventas.cliente.leer"),
     "lead_pacientes:visit": (check: (rule: string) => boolean) =>
       check("crm.campana.lead_pacientes"),
