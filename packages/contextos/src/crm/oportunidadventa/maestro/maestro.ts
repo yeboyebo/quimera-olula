@@ -35,12 +35,32 @@ export const recargarOportunidades: ProcesarOportunidades = async (contexto, pay
 type PayloadCambioEstadoOportunidad = {
     idOportunidad: string;
     nuevoEstado: string;
+    descripcionEstado?: string | null;
+    probabilidadEstado?: number;
 };
 
 export const cambiarEstadoOportunidad: ProcesarOportunidades = async (contexto, payload) => {
-    const { idOportunidad, nuevoEstado } = payload as PayloadCambioEstadoOportunidad;
+    const {
+        idOportunidad,
+        nuevoEstado,
+        descripcionEstado,
+        probabilidadEstado,
+    } = payload as PayloadCambioEstadoOportunidad;
 
-    await patchOportunidadVenta(idOportunidad, { estado_id: nuevoEstado });
+    const oportunidadActual = contexto.oportunidades.lista.find(
+        (oportunidad) => oportunidad.id === idOportunidad
+    );
+
+    if (!oportunidadActual) {
+        return contexto;
+    }
+
+    await patchOportunidadVenta(idOportunidad, {
+        ...oportunidadActual,
+        estado_id: nuevoEstado,
+        descripcion_estado: descripcionEstado ?? oportunidadActual.descripcion_estado,
+        probabilidad: probabilidadEstado ?? oportunidadActual.probabilidad,
+    });
 
     const { filtro, orden, paginacion } = contexto.oportunidades.criteria;
     const resultado = await getOportunidadesVenta(filtro, orden, paginacion);

@@ -38,6 +38,7 @@ type ListadoProps<T extends Entidad> = {
   metaFiltro?: MetaFiltro;
   cargando?: boolean;
   tarjeta?: (entidad: T) => React.ReactNode;
+  tarjetaKanban?: (entidad: T) => React.ReactNode;
   columnasKanban?: QKanbanColumna[];
   campoEstadoKanban?: keyof T;
   onCambioEstadoKanban?: (id: string, nuevoEstado: string) => void;
@@ -67,6 +68,7 @@ export const Listado = <T extends Entidad>({
   criteriaInicial = criteriaDefecto,
   criteria = criteriaDefecto,
   tarjeta,
+  tarjetaKanban,
   columnasKanban,
   campoEstadoKanban,
   onCambioEstadoKanban,
@@ -284,6 +286,7 @@ export const Listado = <T extends Entidad>({
     }
 
     if (modoEfectivo === "kanban") {
+      if (tarjetaKanban) return renderKanban(entidades, tarjetaKanban);
       if (tarjeta) return renderKanban(entidades, tarjeta);
       if (tarjetaGenerica) return renderKanban(entidades, tarjetaGenerica);
     }

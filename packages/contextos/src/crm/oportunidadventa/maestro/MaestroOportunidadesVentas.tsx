@@ -10,16 +10,23 @@ import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect, useMemo, useState } from "react";
 import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
-import { OportunidadVenta } from "../diseño.ts";
+import { EstadoOportunidad, OportunidadVenta } from "../diseño.ts";
 import { getEstadosOportunidadVenta } from "../infraestructura.ts";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
 import { TarjetaOportunidadVenta } from "./TarjetaOportunidadVenta.tsx";
+import { TarjetaOportunidadVentaKanban } from "./TarjetaOportunidadVentaKanban.tsx";
 
 export const MaestroOportunidades = () => {
   const { id, criteria } = getUrlParams();
   const [columnasKanban, setColumnasKanban] = useState<QKanbanColumna[]>([]);
+  const [estadosOportunidad, setEstadosOportunidad] = useState<
+    EstadoOportunidad[]
+  >([]);
+  const [modoListado, setModoListado] = useState<
+    "tabla" | "tarjetas" | "kanban"
+  >("tarjetas");
   const criteriaBaseOportunidades = useMemo(
     () => ({
       ...criteriaDefecto,
@@ -65,6 +72,8 @@ export const MaestroOportunidades = () => {
 
       if (!activo) return;
 
+      setEstadosOportunidad(estados);
+
       setColumnasKanban(
         estados.map((estado) => ({
           id: String(estado.id),
@@ -91,16 +100,30 @@ export const MaestroOportunidades = () => {
               metaTabla={metaTablaOportunidadVenta}
               criteria={ctx.oportunidades.criteria}
               tarjeta={TarjetaOportunidadVenta}
+              tarjetaKanban={TarjetaOportunidadVentaKanban}
               entidades={ctx.oportunidades.lista}
               totalEntidades={ctx.oportunidades.total}
               columnasKanban={columnasKanban}
               campoEstadoKanban="estado_id"
-              onCambioEstadoKanban={(idOportunidad, nuevoEstado) =>
+              onCambioEstadoKanban={(idOportunidad, nuevoEstado) => {
+                const estadoDestino = estadosOportunidad.find(
+                  (estado) => String(estado.id) === nuevoEstado
+                );
+
                 emitir("estado_oportunidad_cambiado", {
                   idOportunidad,
                   nuevoEstado,
-                })
-              }
+                  descripcionEstado: estadoDestino?.descripcion,
+                  probabilidadEstado: estadoDestino?.probabilidad,
+                });
+              }}
+              onModoChanged={(nuevoModo) => {
+                setModoListado(nuevoModo);
+
+                if (nuevoModo === "kanban") {
+                  emitir("oportunidad_deseleccionada");
+                }
+              }}
               seleccionada={ctx.oportunidades.activo}
               renderAcciones={() => (
                 <div className="maestro-botones">
@@ -127,7 +150,9 @@ export const MaestroOportunidades = () => {
           />
         }
         seleccionada={ctx.oportunidades.activo}
-        modoDisposicion="maestro-50"
+        modoDisposicion={
+          modoListado === "kanban" ? "pantalla-completa" : "maestro-50"
+        }
       />
 
       {ctx.estado === "CREANDO" && <CrearOportunidadVenta publicar={emitir} />}

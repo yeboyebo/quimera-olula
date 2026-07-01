@@ -1,0 +1,55 @@
+.TarjetaOportunidadVentaKanban {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-xs);
+    width: 100%;
+    text-align: left;
+
+    .tarjeta-kanban-cabecera {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--espaciado-xs);
+    }
+
+    .tarjeta-kanban-titulo {
+        font-size: var(--tamaño-letra-l);
+        font-weight: var(--grosor-letra-7);
+        line-height: 1.2;
+        color: var(--color-texto-principal);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-wrap: balance;
+    }
+
+    .tarjeta-kanban-cliente {
+        font-size: var(--tamaño-letra-s);
+        color: var(--color-texto-secundario);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .tarjeta-kanban-pie {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--espaciado-s);
+    }
+
+    .tarjeta-kanban-fecha {
+        font-size: var(--tamaño-letra-xs);
+        color: var(--color-texto-secundario);
+    }
+
+    .tarjeta-kanban-importe {
+        font-size: var(--tamaño-letra-m);
+        font-weight: var(--grosor-letra-7);
+        color: var(--color-texto-principal);
+        margin-left: auto;
+        white-space: nowrap;
+    }
+}
