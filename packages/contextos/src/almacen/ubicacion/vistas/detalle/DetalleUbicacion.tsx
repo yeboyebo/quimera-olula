@@ -13,6 +13,7 @@ import { patchUbicacion } from "../../infraestructura.ts";
 import { BorrarUbicacion } from "./BorrarUbicacion.tsx";
 import { metaUbicacion, ubicacionVacia } from "./dominio.ts";
 import { getMaquina } from "./maquina.ts";
+import { StocksUbicacion } from "./stocks/StocksUbicacion.tsx";
 
 const titulo = (ubicacion: Ubicacion) => ubicacion.codigo as string;
 
@@ -30,6 +31,7 @@ export const DetalleUbicacion = ({
         {
             estado: "INICIAL",
             ubicacion: ubicacionVacia(),
+            stocks: [],
         },
         publicar
     );
@@ -70,6 +72,9 @@ export const DetalleUbicacion = ({
                                 <QInput label="Código" {...modelo.uiProps("codigo")} />
                                 <Almacen {...modelo.uiProps("almacenId")} />
                             </quimera-formulario>
+                        </Tab>,
+                        <Tab key="stock" label="Stock">
+                            <StocksUbicacion stocks={ctx.stocks} />
                         </Tab>,
                     ]}
                 />

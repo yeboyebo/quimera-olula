@@ -3,10 +3,13 @@ import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
     DeleteUbicacion,
+    GetStocksUbicacion,
     GetUbicacion,
     GetUbicaciones,
     PatchUbicacion,
     PostUbicacion,
+    StockUbicacion,
+    StockUbicacionAPI,
     Ubicacion,
     UbicacionAPI
 } from "./diseño.ts";
@@ -66,4 +69,23 @@ export const patchUbicacion: PatchUbicacion = async (id, ubicacion) => {
 
 export const deleteUbicacion: DeleteUbicacion = async (id) => {
     await RestAPI.delete(`${baseUrlUbicacion}/${id}`, "Error al borrar Ubicación");
+};
+
+const baseUrlStockUbicacion = `/almacen/stock_ubicacion`;
+
+export const stockUbicacionFromApi = (api: StockUbicacionAPI): StockUbicacion => ({
+    id: api.id,
+    stockId: api.stock_id,
+    ubicacionId: api.ubicacion_id,
+    ubicacion: api.ubicacion,
+    articulo: api.articulo,
+    articuloId: api.articulo_id,
+    cantidadFisica: api.cantidad_fisica,
+});
+
+export const getStocksUbicacion: GetStocksUbicacion = async (ubicacionId) => {
+    const filtro: Filtro = [["ubicacion_id", "==", ubicacionId]];
+    const q = criteriaQuery(filtro, []);
+    const respuesta = await RestAPI.get<{ datos: StockUbicacionAPI[] }>(baseUrlStockUbicacion + q);
+    return respuesta.datos.map(stockUbicacionFromApi);
 };
