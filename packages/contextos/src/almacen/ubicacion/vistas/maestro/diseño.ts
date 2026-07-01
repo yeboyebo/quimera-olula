@@ -10,6 +10,6 @@ export type ContextoMaestroUbicacion = {
 };
 
 export const metaTablaUbicacion: MetaTabla<Ubicacion> = [
-    { id: "id", cabecera: "Código" },
+    { id: "codigo", cabecera: "Código" },
     { id: "almacenId", cabecera: "Almacén" },
 ];

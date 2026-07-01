@@ -2,24 +2,26 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
-    Ubicacion,
-    UbicacionAPI,
     DeleteUbicacion,
     GetUbicacion,
     GetUbicaciones,
     PatchUbicacion,
-    PostUbicacion
+    PostUbicacion,
+    Ubicacion,
+    UbicacionAPI
 } from "./diseño.ts";
 
 const baseUrlUbicacion = `/almacen/ubicacion`;
 
 export const ubicacionFromApi = (ubicacionApi: UbicacionAPI): Ubicacion => ({
     id: ubicacionApi.id,
+    codigo: ubicacionApi.codigo,
     almacenId: ubicacionApi.almacen_id,
 });
 
 export const ubicacionToApi = (ubicacion: Ubicacion): UbicacionAPI => ({
     id: ubicacion.id,
+    codigo: ubicacion.codigo,
     almacen_id: ubicacion.almacenId,
 });
 
@@ -46,7 +48,7 @@ export const getUbicaciones: GetUbicaciones = async (
 
 export const postUbicacion: PostUbicacion = async (ubicacion) => {
     const apiUbicacion = {
-        id: ubicacion.id,
+        codigo: ubicacion.codigo,
         almacen_id: ubicacion.almacenId,
     };
     return await RestAPI.post(baseUrlUbicacion, apiUbicacion, "Error al guardar Ubicación").then(

@@ -1,20 +1,21 @@
 import { Maquina } from "@olula/lib/diseño.ts";
 import { publicar } from "@olula/lib/dominio.js";
 import { ContextoUbicacion, EstadoUbicacion } from "./diseño.ts";
-import { cancelarEdicion, cargarContexto, refrescarUbicacion } from "./dominio.ts";
+import { cargarContexto, refrescarUbicacion } from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoUbicacion, ContextoUbicacion> = () => ({
     INICIAL: {
         ubicacion_id_cambiada: [cargarContexto],
+        ubicacion_deseleccionada: publicar("ubicacion_deseleccionada", null),
     },
-    Editando: {
+    ABIERTO: {
+        ubicacion_id_cambiada: [cargarContexto],
         ubicacion_guardada: [refrescarUbicacion],
-        cancelar_edicion: cancelarEdicion,
-        borrar: "Borrando",
-        cancelar_seleccion: publicar("seleccion_cancelada"),
+        borrado_solicitado: "BORRANDO",
+        ubicacion_deseleccionada: publicar("ubicacion_deseleccionada", null),
     },
-    Borrando: {
-        borrado_cancelado: "Editando",
-        ubicacion_borrada: publicar("ubicacion_borrada"),
+    BORRANDO: {
+        borrado_cancelado: "ABIERTO",
+        ubicacion_borrada: [publicar("ubicacion_borrada", null), "INICIAL"],
     },
 });

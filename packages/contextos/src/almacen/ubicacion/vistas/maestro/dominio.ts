@@ -18,6 +18,11 @@ export const Ubicaciones = accionesListaActivaEntidades(conUbicaciones);
 export const recargarUbicaciones: ProcesarMaestroUbicacion = async (contexto, payload) => {
     const criteria = payload as Criteria;
     const resultado = await getUbicaciones(criteria.filtro, criteria.orden, criteria.paginacion);
-
     return Ubicaciones.recargar(contexto, resultado);
+};
+
+export const ampliarUbicaciones: ProcesarMaestroUbicacion = async (contexto, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getUbicaciones(criteria.filtro, criteria.orden, criteria.paginacion);
+    return Ubicaciones.ampliar(contexto, resultado);
 };

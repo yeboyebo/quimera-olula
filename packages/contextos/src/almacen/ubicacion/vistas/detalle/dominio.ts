@@ -8,26 +8,26 @@ type ProcesarUbicacion = ProcesarContexto<EstadoUbicacion, ContextoUbicacion>;
 
 export const ubicacionVacia = (): Ubicacion => ({
     id: "",
+    codigo: "",
     almacenId: "",
 });
 
 export const metaUbicacion: MetaModelo<Ubicacion> = {
     campos: {
-        id: { requerido: true, validacion: (m: Ubicacion) => stringNoVacio(m.id) },
+        codigo: { requerido: true, validacion: (m: Ubicacion) => stringNoVacio(m.codigo) },
         almacenId: { requerido: true, validacion: (m: Ubicacion) => stringNoVacio(m.almacenId) },
     },
 };
 
 export const cargarContexto: ProcesarUbicacion = async (contexto, payload) => {
     const id = payload as string;
-    if (!id) return { ...contexto, estado: "INICIAL", ubicacion: ubicacionVacia(), ubicacionInicial: ubicacionVacia() };
+    if (!id) return { ...contexto, estado: "INICIAL", ubicacion: ubicacionVacia() };
 
     const ubicacion = await getUbicacion(id);
     return {
         ...contexto,
-        estado: "Editando",
+        estado: "ABIERTO",
         ubicacion,
-        ubicacionInicial: ubicacion,
     };
 };
 
@@ -36,16 +36,8 @@ export const refrescarUbicacion: ProcesarUbicacion = async (contexto) => {
     return [
         {
             ...contexto,
-            ubicacion: {
-                ...contexto.ubicacion,
-                ...ubicacion,
-            },
+            ubicacion,
         },
         [["ubicacion_cambiada", ubicacion]],
     ];
 };
-
-export const cancelarEdicion: ProcesarUbicacion = async (ctx) => ({
-    ...ctx,
-    ubicacion: ctx.ubicacionInicial,
-});
