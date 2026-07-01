@@ -31,7 +31,7 @@ export const QAcordeon = ({
   abiertoId,
   abiertoInicialId = null,
   onAbiertoCambiado,
-  permitirCerrar = true,
+  permitirCerrar = false,
 }: QAcordeonProps) => {
   const acordeonId = useId();
   const primerItemHabilitado = useMemo(

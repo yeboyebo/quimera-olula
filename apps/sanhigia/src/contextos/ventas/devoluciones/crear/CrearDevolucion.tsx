@@ -59,7 +59,7 @@ export const CrearDevolucion = ({
       ? `${descripcionFinal}`
       : motivoSeleccionado.tipo;
 
-    emitir("guardado_solicitado");
+    await emitir("guardado_solicitado");
     try {
       const devolucionCreada = await crearDevolucionPedido({
         idFactura,
@@ -74,11 +74,11 @@ export const CrearDevolucion = ({
         })),
       });
 
-      emitir("guardado_completado");
+      await emitir("guardado_completado");
       publicar("devolucion_creada", devolucionCreada);
       cerrarFlujo();
     } catch {
-      emitir("guardado_fallido");
+      await emitir("guardado_fallido");
     } finally {
       // no-op: el estado se gestiona desde la maquina
     }

@@ -32,6 +32,8 @@ export const getMaquina = (): Maquina<EstadoCrearDevolucion, ContextoCrearDevolu
         descripcion_motivo_cambiada: cambiarDescripcionMotivoProceso,
         confirmacion_motivo_cancelada: cancelarConfirmacionMotivoProceso,
         guardado_solicitado: solicitarGuardadoProceso,
+        guardado_completado: guardadoCompletadoProceso,
+        guardado_fallido: guardadoFallidoProceso,
         formulario_limpiado: limpiarFacturaProceso,
     },
 

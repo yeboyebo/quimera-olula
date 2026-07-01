@@ -6,12 +6,22 @@ import { getMotivosDevolucion } from "../../../motivoDevolucion/infraestructura.
 import "./PasoMotivoDevolucionModal.css";
 
 type TipoPrincipal = "Interno" | "Externo" | "Terceros";
+type GrupoAcordeonId = "interno" | "externo" | "regulatorio";
 
 const grupoDesdeMotivo = (motivo: MotivoDevolucion): TipoPrincipal => {
   const tipo = String(motivo.tipo ?? "").trim();
   if (tipo === "Interno") return "Interno";
   if (tipo === "Terceros") return "Terceros";
   return "Externo";
+};
+
+const grupoAcordeonDesdeMotivo = (
+  motivo: MotivoDevolucion
+): GrupoAcordeonId => {
+  const grupo = grupoDesdeMotivo(motivo);
+  if (grupo === "Interno") return "interno";
+  if (grupo === "Terceros") return "regulatorio";
+  return "externo";
 };
 
 const ordenarPorDescripcion = (a: MotivoDevolucion, b: MotivoDevolucion) =>
@@ -59,8 +69,8 @@ export const PasoMotivoDevolucionModal = ({
   const [motivos, setMotivos] = useState<MotivoDevolucion[]>([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
-  const [grupoAbierto, setGrupoAbierto] = useState<TipoPrincipal | null>(
-    "Interno"
+  const [grupoAbierto, setGrupoAbierto] = useState<GrupoAcordeonId | null>(
+    "interno"
   );
 
   useEffect(() => {
@@ -87,7 +97,7 @@ export const PasoMotivoDevolucionModal = ({
 
   useEffect(() => {
     if (!motivoSeleccionado) return;
-    setGrupoAbierto(grupoDesdeMotivo(motivoSeleccionado));
+    setGrupoAbierto(grupoAcordeonDesdeMotivo(motivoSeleccionado));
   }, [motivoSeleccionado]);
 
   const internos = motivos
@@ -142,6 +152,7 @@ export const PasoMotivoDevolucionModal = ({
         {!cargando && !error && (
           <>
             <QAcordeon
+              permitirCerrar
               items={[
                 {
                   id: "interno",
@@ -168,7 +179,7 @@ export const PasoMotivoDevolucionModal = ({
               ]}
               abiertoId={grupoAbierto}
               onAbiertoCambiado={(id) =>
-                setGrupoAbierto(id as TipoPrincipal | null)
+                setGrupoAbierto(id as GrupoAcordeonId | null)
               }
             />
 

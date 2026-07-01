@@ -1,6 +1,9 @@
 import { DevolucionPedido, LineaDevolucionPedido } from "../diseño.ts";
 
-export type EstadoDetalleDevolucionPedido = "INICIAL" | "ABIERTO";
+export type EstadoDetalleDevolucionPedido =
+    | "INICIAL"
+    | "ABIERTO"
+    | "CONFIRMANDO_PREPARAR";
 
 export type ContextoDetalleDevolucionPedido = {
     estado: EstadoDetalleDevolucionPedido;

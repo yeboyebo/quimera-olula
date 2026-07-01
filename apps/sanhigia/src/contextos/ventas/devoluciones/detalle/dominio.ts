@@ -127,6 +127,17 @@ export const limpiarCantidadesDetalleDevolucionPedido: ProcesarDetalleDevolucion
     };
 };
 
+export const solicitarConfirmacionPrepararDetalleDevolucionPedido: ProcesarDetalleDevolucionPedido = async (contexto) => ({
+    ...contexto,
+    estado: "CONFIRMANDO_PREPARAR",
+    error: "",
+});
+
+export const cancelarConfirmacionPrepararDetalleDevolucionPedido: ProcesarDetalleDevolucionPedido = async (contexto) => ({
+    ...contexto,
+    estado: "ABIERTO",
+});
+
 export const prepararDetalleDevolucionPedido: ProcesarDetalleDevolucionPedido = async (contexto) => {
     if (!contexto.devolucion) {
         return contexto;
@@ -147,6 +158,7 @@ export const prepararDetalleDevolucionPedido: ProcesarDetalleDevolucionPedido = 
     return [
         {
             ...contexto,
+            estado: "ABIERTO",
             devolucion: devolucionPreparada,
             error: "",
         },

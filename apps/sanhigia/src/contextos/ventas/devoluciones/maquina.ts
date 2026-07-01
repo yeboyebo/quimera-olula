@@ -12,7 +12,11 @@ export const getMaquina = (): Maquina<EstadoMaestroDevolucionesPedidos, Contexto
         INICIAL: {
             devolucion_seleccionada: Devoluciones.activar,
             devolucion_deseleccionada: Devoluciones.desactivar,
-            devolucion_actualizada: [Devoluciones.cambiar, recargarDevolucionesActuales],
+            devolucion_actualizada: [
+                Devoluciones.cambiar,
+                Devoluciones.desactivar,
+                recargarDevolucionesActuales,
+            ],
             devolucion_creada: [Devoluciones.incluir, recargarDevolucionesActuales],
             recarga_de_devoluciones_solicitada: recargarDevolucionesPedidos,
             criteria_cambiado: [Devoluciones.filtrar, recargarDevolucionesPedidos],

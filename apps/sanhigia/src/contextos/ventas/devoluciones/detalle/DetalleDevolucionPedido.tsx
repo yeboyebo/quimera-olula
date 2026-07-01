@@ -7,7 +7,7 @@ import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.js";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { LineaDevolucionPedido } from "../diseño.ts";
 import "./DetalleDevolucionPedido.css";
 import { contextoDetalleDevolucionPedidoVacio } from "./diseño.ts";
@@ -103,7 +103,6 @@ export const DetalleDevolucionPedido = ({
     publicar
   );
   const esMovil = useEsMovil();
-  const [confirmandoPreparar, setConfirmandoPreparar] = useState(false);
 
   useEffect(() => {
     emitir("id_cambiado", id ?? "", true);
@@ -133,6 +132,7 @@ export const DetalleDevolucionPedido = ({
   );
   const confirmarDeshabilitado =
     ctx.lineas.length === 0 || hayErroresLineas || !hayCantidades;
+  const confirmandoPreparar = ctx.estado === "CONFIRMANDO_PREPARAR";
   const criteriaLineasDefecto = {
     ...criteriaDefecto,
     orden: ["referencia", "ASC"] as [string, "ASC" | "DESC"],
@@ -262,7 +262,7 @@ export const DetalleDevolucionPedido = ({
           <QBoton
             texto="Confirmar devolución"
             deshabilitado={confirmarDeshabilitado}
-            onClick={() => setConfirmandoPreparar(true)}
+            onClick={() => emitir("confirmacion_preparar_solicitada")}
           >
             Confirmar devolución
           </QBoton>
@@ -316,11 +316,10 @@ export const DetalleDevolucionPedido = ({
         abierto={confirmandoPreparar}
         titulo="Confirmar preparación"
         mensaje="Se va a preparar la devolución ¿Está seguro?"
-        onCerrar={() => setConfirmandoPreparar(false)}
+        onCerrar={() => emitir("confirmacion_preparar_cancelada")}
         onAceptar={async () => {
           await emitir("devolucion_preparada");
-          publicar("devolucion_deseleccionada", null);
-          setConfirmandoPreparar(false);
+          await cerrarDetalle();
         }}
         labelAceptar="Confirmar"
       />

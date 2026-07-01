@@ -6,9 +6,11 @@ import {
 import {
     cambiarCantidadKoDetalleDevolucionPedido,
     cambiarCantidadOkDetalleDevolucionPedido,
+    cancelarConfirmacionPrepararDetalleDevolucionPedido,
     cargarDetalleDevolucionPedido,
     limpiarCantidadesDetalleDevolucionPedido,
     prepararDetalleDevolucionPedido,
+    solicitarConfirmacionPrepararDetalleDevolucionPedido,
 } from "./dominio.ts";
 
 export const getMaquina = (): Maquina<
@@ -23,6 +25,17 @@ export const getMaquina = (): Maquina<
         cantidad_ok_cambiada: cambiarCantidadOkDetalleDevolucionPedido,
         cantidad_ko_cambiada: cambiarCantidadKoDetalleDevolucionPedido,
         cantidades_limpiadas: limpiarCantidadesDetalleDevolucionPedido,
+        confirmacion_preparar_solicitada:
+            solicitarConfirmacionPrepararDetalleDevolucionPedido,
+        devolucion_preparada: prepararDetalleDevolucionPedido,
+    },
+    CONFIRMANDO_PREPARAR: {
+        id_cambiado: cargarDetalleDevolucionPedido,
+        cantidad_ok_cambiada: cambiarCantidadOkDetalleDevolucionPedido,
+        cantidad_ko_cambiada: cambiarCantidadKoDetalleDevolucionPedido,
+        cantidades_limpiadas: limpiarCantidadesDetalleDevolucionPedido,
+        confirmacion_preparar_cancelada:
+            cancelarConfirmacionPrepararDetalleDevolucionPedido,
         devolucion_preparada: prepararDetalleDevolucionPedido,
     },
 });
