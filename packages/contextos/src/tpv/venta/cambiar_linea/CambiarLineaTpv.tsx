@@ -57,9 +57,11 @@ export const CambiarLineaTpv = ({
 
           <QInput label="Precio" {...uiProps("pvp_unitario")} />
 
-          <QCheckbox label="IVA incluido" {...uiProps("iva_incluido")} />
-
           <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
+
+          <QInput label="Dto. Lineal" {...uiProps("dto_lineal")} />
+
+          <QCheckbox label="IVA incluido" {...uiProps("iva_incluido")} />
         </quimera-formulario>
 
         <div className="botones maestro-botones ">
