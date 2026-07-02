@@ -21,7 +21,7 @@ import { LecturaOrden } from "./lectura/LecturaOrden.tsx";
 import { LineasOrden } from "./lineas/LineasOrden.tsx";
 import { getMaquina } from "./maquina_detalle_orden.ts";
 
-const titulo = (orden: ContextoOrdenAlmacen["orden"]) => orden.tipoOrden || orden.id;
+const titulo = (orden: ContextoOrdenAlmacen["orden"]) => orden.tipo || orden.id;
 
 export const DetalleOrden = ({
     id,
@@ -46,8 +46,8 @@ export const DetalleOrden = ({
     const orden = useModelo(metaOrden, ctx.orden);
     const { modelo, init } = orden;
 
-    const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipoOrden);
-    const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipoOrden);
+    const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipo);
+    const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipo);
 
     useEffect(() => {
         if (ordenId) {
@@ -80,7 +80,7 @@ export const DetalleOrden = ({
                     </div>
                     <div className="DetalleOrden">
                         <quimera-formulario>
-                            <TipoOrden {...orden.uiProps("tipoOrden")} soloTexto />
+                            <TipoOrden {...orden.uiProps("tipo")} soloTexto />
                             <Almacen {...orden.uiProps("almacenId")} soloTexto />
                             <QInput label="Fecha" {...orden.uiProps("fecha")} soloTexto />
                             <QInput label="Abierta" {...orden.uiProps("abierta")} soloTexto />
@@ -129,7 +129,7 @@ export const DetalleOrden = ({
                             </QBoton>
                         </div>
                     )}
-                    <LecturaOrden publicar={emitir} orden={modelo} tipoOrden={modelo.tipoOrden} />
+                    <LecturaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
                     <LineasOrden ordenId={ordenId} lineas={ctx.orden.lineas} publicar={emitir} />
                     <BorrarOrden
                         publicar={emitir}

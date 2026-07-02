@@ -10,6 +10,7 @@ import {
     LineaOrdenAlmacenApi,
     NuevaLecturaOrden,
     NuevaLineaOrdenAlmacen,
+    NuevaLineaOrdenAlmacenApi,
     OrdenAlmacen,
     OrdenAlmacenApi,
 } from "./diseño.ts";
@@ -23,7 +24,7 @@ const baseUrl = `/almacen/orden`;
 export const ordenDesdeApi = (api: OrdenAlmacenApi): OrdenAlmacen => ({
     id: api.id,
     fecha: api.fecha,
-    tipoOrden: api.tipo,
+    tipo: api.tipo,
     almacenId: api.almacen_id,
     almacen: api.almacen,
     abierta: api.abierta,
@@ -73,17 +74,29 @@ export const lineaOrdenAApi = (linea: LineaOrdenAlmacen): LineaOrdenAlmacenApi =
     caja_origen_id: linea.cajaOrigenId,
     ubicacion_destino_id: linea.ubicacionDestinoId,
     caja_destino_id: linea.cajaDestinoId,
-    lecturas: linea.lecturas.map((lectura) => ({
-        id: lectura.id,
-        sku: lectura.sku,
-        lote_id: lectura.loteId,
-        cantidad: lectura.cantidad,
-        ubicacion_origen_id: lectura.ubicacionOrigenId,
-        caja_origen_id: lectura.cajaOrigenId,
-        ubicacion_destino_id: lectura.ubicacionDestinoId,
-        caja_destino_id: lectura.cajaDestinoId,
-        fecha_hora: lectura.fechaHora.toISOString(),
-    })),
+    lecturas: linea.lecturas
+        ? linea.lecturas.map((lectura) => ({
+            id: lectura.id,
+            sku: lectura.sku,
+            lote_id: lectura.loteId,
+            cantidad: lectura.cantidad,
+            ubicacion_origen_id: lectura.ubicacionOrigenId,
+            caja_origen_id: lectura.cajaOrigenId,
+            ubicacion_destino_id: lectura.ubicacionDestinoId,
+            caja_destino_id: lectura.cajaDestinoId,
+            fecha_hora: lectura.fechaHora.toISOString(),
+        }))
+        : []
+    ,
+});
+export const nuevaLineaOrdenAApi = (linea: NuevaLineaOrdenAlmacen): NuevaLineaOrdenAlmacenApi => ({
+    sku: linea.sku,
+    lote_id: linea.loteId,
+    cantidad_prevista: linea.cantidadPrevista,
+    ubicacion_origen_id: linea.ubicacionOrigenId,
+    caja_origen_id: linea.cajaOrigenId,
+    ubicacion_destino_id: linea.ubicacionDestinoId,
+    caja_destino_id: linea.cajaDestinoId,
 });
 
 export const itemOrdenDesdeApi = (api: ItemOrdenApi): ItemOrdenAlmacen => ({
@@ -149,7 +162,7 @@ export const crearLineasOrden = async (
     id: string,
     lineas: NuevaLineaOrdenAlmacen[]
 ): Promise<void> => {
-    const payload = lineas.map(lineaOrdenAApi);
+    const payload = lineas.map(nuevaLineaOrdenAApi);
     await RestAPI.post(`${baseUrl}/${id}/linea`, payload, "Error al crear líneas de la orden");
 };
 

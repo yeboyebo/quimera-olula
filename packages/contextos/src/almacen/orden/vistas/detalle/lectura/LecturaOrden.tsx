@@ -15,11 +15,11 @@ import "./LecturaOrden.css";
 export const LecturaOrden = ({
     publicar,
     orden,
-    tipoOrden,
+    tipo,
 }: {
     publicar: ProcesarEvento;
     orden: OrdenAlmacen;
-    tipoOrden: "ENTRADA" | "SALIDA" | "TRASPASO";
+    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
 }) => {
     const { intentar } = useContext(ContextoError);
 
@@ -33,8 +33,8 @@ export const LecturaOrden = ({
         lecturaInicial
     );
 
-    const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(tipoOrden);
-    const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(tipoOrden);
+    const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(tipo);
+    const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(tipo);
 
     const registrar = useCallback(async () => {
         await intentar(() =>

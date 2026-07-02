@@ -7,7 +7,7 @@
 
 .DetalleOrden {
 
-    quimera-select[nombre="tipoOrden"] {
+    quimera-select[nombre="tipo"] {
         grid-column: span 4;
     }
 

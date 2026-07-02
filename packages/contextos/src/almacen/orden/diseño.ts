@@ -1,7 +1,7 @@
 export type OrdenAlmacen = {
     id: string;
     fecha: string;
-    tipoOrden: "ENTRADA" | "SALIDA" | "TRASPASO";
+    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
     almacenId: string;
     almacen: string;
     abierta: boolean;
@@ -40,7 +40,16 @@ export type LineaOrdenAlmacen = {
 
 // export type NuevaOrdenAlmacen = Omit<OrdenAlmacen, "id" | "lineas">;
 
-export type NuevaLineaOrdenAlmacen = LineaOrdenAlmacen;
+export type NuevaLineaOrdenAlmacen = {
+    sku: string;
+    loteId: string | null;
+    cantidadPrevista: number;
+    cantidadReal?: number;
+    ubicacionOrigenId: string | null;
+    cajaOrigenId: string | null;
+    ubicacionDestinoId: string | null;
+    cajaDestinoId: string | null;
+};
 
 export type NuevaLecturaOrden = {
     cantidad: number;
@@ -89,6 +98,17 @@ export type LineaOrdenAlmacenApi = {
     ubicacion_destino_id: string | null;
     caja_destino_id: string | null;
     lecturas: LecturaLineaOrdenApi[];
+};
+
+
+export type NuevaLineaOrdenAlmacenApi = {
+    sku: string;
+    lote_id: string | null;
+    cantidad_prevista: number;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
 };
 
 export type CambiosOrdenAlmacenApi = {
