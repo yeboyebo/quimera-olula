@@ -1,4 +1,6 @@
-import type { API } from "./diseño.ts";
+import { Filtro, Orden, Paginacion } from "../diseño.ts";
+import { criteriaQuery } from "../infraestructura.ts";
+import type { API, RespuestaGetItem, RespuestaGetLista, RespuestaGetQuery } from "./diseño.ts";
 import { tokenAcceso } from "./token_acceso.ts";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -75,8 +77,55 @@ const enviarPostBlob = async <T>(
     .then(r => r.blob());
 };
 
+export const getQuery = async <T, TAPI>(
+  url: string,
+  conversor: (t: TAPI) => T,
+  filtro: Filtro,
+  orden: Orden,
+  paginacion: Paginacion,
+  msgError?: string,
+): Promise<RespuestaGetQuery<T>> => {
+
+  const q = criteriaQuery(filtro, orden, paginacion);
+  const respuesta = await consulta<RespuestaGetQuery<TAPI>>(
+    `${url}${q}`, msgError
+  )
+  return {
+    datos: respuesta.datos.map(conversor),
+    total: respuesta.total,
+  };
+};
+
+export const getLista = async <T, TAPI>(
+  url: string,
+  conversor: (t: TAPI) => T,
+  msgError?: string,
+): Promise<T[]> => {
+
+  const respuesta = await consulta<RespuestaGetLista<TAPI>>(
+    url, msgError
+  )
+  return respuesta.datos.map(conversor);
+};
+
+export const getItem = async <T, TAPI>(
+  url: string,
+  conversor: (t: TAPI) => T,
+  msgError?: string,
+): Promise<T> => {
+
+  const respuesta = await consulta<RespuestaGetItem<TAPI>>(
+    url, msgError
+  )
+  return conversor(respuesta.datos)
+
+};
+
 export const RestAPI: API = {
   get: <T>(url: string, msgError?: string) => consulta<T>(url, msgError),
+  getLista: getLista,
+  getQuery: getQuery,
+  getItem: getItem,
   post: <T>(url: string, body: T, msgError?: string) => comando<T, { id: string }>("POST", url, msgError, body),
   put: <T>(url: string, body: T, msgError?: string) => comando<T, void>("PUT", url, msgError, body),
   patch: <T>(url: string, body: Partial<T>, msgError?: string) => comando<T, void>("PATCH", url, msgError, body),
