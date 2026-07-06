@@ -456,6 +456,7 @@ function PlanificadorSemanalResumen() {
           }}
           columns={columns}
           localeText={{
+            noRowsLabel: "No hay agentes por planificar",
             toolbarQuickFilterPlaceholder: "Buscar...",
             paginationRowsPerPage: "Líneas por página",
             paginationDisplayedRows: ({ from, to, count }) =>

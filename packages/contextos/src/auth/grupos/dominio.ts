@@ -10,8 +10,15 @@ export const grupoVacio: Grupo = {
 
 export const metaNuevoGrupo: MetaModelo<Grupo> = {
     campos: {
-        id: { requerido: true },
-        nombre: { requerido: false },
+        id: { tipo: "texto", requerido: true },
+        nombre: { tipo: "texto", requerido: true },
+    },
+};
+
+export const metaGrupo: MetaModelo<Grupo> = {
+    campos: {
+        id: { tipo: "texto", requerido: true },
+        nombre: { tipo: "texto", requerido: true },
     },
 };
 

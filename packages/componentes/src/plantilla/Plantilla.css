@@ -9,6 +9,7 @@
         /* padding: 1.5rem; */
         color: var(--color-fondo);
         height: var(--alto-header);
+        position: fixed;
 
         & a:visited {
             color: var(--color-fondo);
@@ -18,8 +19,8 @@
     &>section[role=main] {
         display: flex;
         flex-grow: 1;
-        overflow: hidden;
-        min-height: 0;
+        margin-top: var(--alto-header);
+        overflow-x: hidden;
 
         &>*:not(menu-lateral):not(menu-usuario) {
             /* padding: 1rem; */

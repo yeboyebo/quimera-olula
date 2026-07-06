@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import { MetaFiltro, filtroMesAnyo } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { MetaFiltro, filtroMesAnyoConManual } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { TipoInput } from "@olula/lib/diseño.js";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
@@ -108,12 +108,6 @@ const metaFiltro: MetaFiltro = {
         id: "fecha",
         label: "Mes",
         tipo: "mes_año" as TipoInput,
-        filtro: (v) => filtroMesAnyo("fecha", v),
-        fromFiltro: (filtro) => {
-            const clausula = filtro.find(([campo]) => campo === "fecha");
-            if (!clausula || clausula[1] !== "<>" || !clausula[2]) return undefined;
-            const [desde] = clausula[2].split("_");
-            return desde.slice(0, 7); // "YYYY-MM"
-        },
+        filtro: (v) => filtroMesAnyoConManual("fecha", v),
     },
 }

@@ -122,7 +122,7 @@ const getMetaTablaLineas = (
   ];
 };
 
-const criteriaLineasDefecto: Criteria = {
+export const criteriaLineasDefecto: Criteria = {
   ...criteriaDefecto,
   orden: ["linea", "ASC"],
 };

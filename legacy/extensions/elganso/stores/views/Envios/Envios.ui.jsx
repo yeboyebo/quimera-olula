@@ -447,6 +447,7 @@ function Envios() {
           columns={columns}
           slots={{ toolbar: CustomToolbar }}
           localeText={{
+            noRowsLabel: "No hay envíos",
             toolbarQuickFilterPlaceholder: "Buscar...",
             paginationRowsPerPage: "Líneas por página",
             paginationDisplayedRows: ({ from, to, count }) =>

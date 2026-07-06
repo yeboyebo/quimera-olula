@@ -419,6 +419,7 @@ function Inventarios() {
             columns={columns}
             slots={{ toolbar: CustomToolbar }}
             localeText={{
+              noRowsLabel: "No hay inventarios",
               toolbarQuickFilterPlaceholder: "Buscar...",
               paginationRowsPerPage: "Líneas por página",
               paginationDisplayedRows: ({ from, to, count }) =>

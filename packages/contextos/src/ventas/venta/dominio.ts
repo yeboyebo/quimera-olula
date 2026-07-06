@@ -79,12 +79,20 @@ const metaDtoPorcentual: MetaCampo<LineaVenta> = {
     maximo: 100
 };
 
+const metaDtoLineal: MetaCampo<LineaVenta> = {
+    tipo: "decimal",
+    requerido: false,
+    decimales: 2,
+    positivo: true,
+};
+
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         iva_incluido: { tipo: "checkbox", requerido: true },
         pvp_unitario: { tipo: "moneda", requerido: true },
         dto_porcentual: metaDtoPorcentual,
+        dto_lineal: metaDtoLineal,
         referencia: { requerido: true },
     }
 };

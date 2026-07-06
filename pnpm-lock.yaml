@@ -191,18 +191,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
 
-  apps/ecofricalia:
-    dependencies:
-      '@olula/componentes':
-        specifier: workspace:*
-        version: link:../../packages/componentes
-      '@olula/ctx':
-        specifier: workspace:*
-        version: link:../../packages/contextos
-      '@olula/lib':
-        specifier: workspace:*
-        version: link:../../packages/lib
-
   apps/elganso_stores:
     dependencies:
       '@mui/material':
