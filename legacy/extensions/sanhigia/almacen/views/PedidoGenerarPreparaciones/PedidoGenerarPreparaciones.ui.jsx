@@ -141,7 +141,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   useEffect(() => {
     if (mobile && dataLineas.length > 0) {
       const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
-      const anchoEstimado = Math.min(Math.max(150, maxChars * 8 + 40), 900);
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 8.5 + 40), 900);
       setAnchoDescripcionCalculado(anchoEstimado);
     } else {
       setAnchoDescripcionCalculado(600);
@@ -211,8 +211,10 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   };
 
   const lineaBloqueada = (linea) => {
-    return (linea.dtoLineal !== 0 && linea.shCantAlbaran !== 0.0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
+    return (linea.dtoLineal !== 0 && (linea.shCantAlbaran ?? 0) !== 0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
   };
+
+
 
   const anchoDetalle = 1;
   const schema = getSchemas().pedidos;
@@ -380,6 +382,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                         }
                         disabled={lineaBloqueada(linea)}
                       >
+                        {console.log('mimensaje_lineas', linea.referencia, "dto", linea.dtoLineal, "cantAlb", linea.shCantAlbaran, "cantidad", parseFloat(linea.cantidad), "canServ", linea.canServida, "total", parseFloat(linea.canServida + linea.shCantAlbaran), linea.shCantAlbaran !== 0.0)}
                         <Icon className={lineaBloqueada(linea) ? classes.iconoBloqueado : classes.iconoCabecera}>
                           {linea.cerradaPDA ? "lock" : "lock_open"}
                         </Icon>
@@ -463,7 +466,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="refprov"
                     pl={2}
                     value={linea => linea.referenciaProv}
-                    width={175}
+                    width={180}
                   />
                   <Column.Decimal
                     id="totalenalbaran"
@@ -497,7 +500,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="referencia"
                     pl={2}
                     value={linea => linea.referencia}
-                    width={175}
+                    width={180}
                   />
                   <Column.Text
                     id="dtolineal"

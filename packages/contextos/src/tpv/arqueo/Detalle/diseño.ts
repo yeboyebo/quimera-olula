@@ -5,6 +5,8 @@ export const metaArqueoTpv: MetaModelo<ArqueoTpv> = {
     campos: {
         efectivoInicial: { tipo: 'moneda', requerido: true },
         idAgenteInicial: { requerido: true },
+        fechahoraApertura: { tipo: 'fecha_hora', requerido: true },
+        fechahoraCierre: { tipo: 'fecha_hora' },
     },
 };
 

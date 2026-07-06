@@ -411,6 +411,7 @@ function PedidoWeb({ _estilos, ...props }) {
               }
             }}
             localeText={{
+              noRowsLabel: "No hay artículos",
               toolbarQuickFilterPlaceholder: "Buscar...",
               paginationRowsPerPage: "Líneas por página",
               paginationDisplayedRows: ({ from, to, count }) =>

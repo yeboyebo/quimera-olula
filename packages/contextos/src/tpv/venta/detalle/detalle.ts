@@ -16,7 +16,7 @@ export const metaCambioClienteFactura: MetaModelo<CambioClienteFactura> = metaCa
 
 export type EstadoVentaTpv = (
     'INICIAL' | "ABIERTA" | "EMITIDA"
-    | "BORRANDO_VENTA"
+    | "BORRANDO_VENTA" | "EMITIENDO_VENTA"
     | "PAGANDO_EN_EFECTIVO" | "PAGANDO_CON_TARJETA" | "PAGANDO_CON_VALE"
     | "BORRANDO_PAGO" | "CAMBIANDO_CLIENTE" | "CAMBIANDO_DESCUENTO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
@@ -247,10 +247,10 @@ export const onLineaCreada: ProcesarVentaTpv = async (contexto, payload) => {
 
 export const crearLineaPorBarcode: ProcesarVentaTpv = async (contexto, payload) => {
 
-    const barcode = payload as string;
+    const { barcode, cantidad } = payload as { barcode: string; cantidad: number };
     const idLinea = await postLineaPorBarcode(contexto.venta.id, {
         barcode,
-        cantidad: 1
+        cantidad
     });
 
     return pipeVentaTpv(contexto, [

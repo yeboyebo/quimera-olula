@@ -115,3 +115,7 @@ body .buttonSincro-black {
     width: fit-content;
     margin: 10px auto;
 }
+
+.qtarjeta-metatabla-campo .qtarjeta-metatabla-valor {
+    color: var(--color-texto-primario);
+}

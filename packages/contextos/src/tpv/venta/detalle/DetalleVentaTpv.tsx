@@ -17,6 +17,7 @@ import { getReportVale, getReportVenta } from "../infraestructura.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
+import { EmitirVentaTpv } from "../emitir/EmitirVentaTpv.tsx";
 import { TiqueRegaloVentaTpv } from "../tique_regalo/TiqueRegaloVentaTpv.tsx";
 import { PendienteVenta } from "./comps/PendienteVenta.tsx";
 import { ContextoVentaTpv, guardarVenta, metaVentaTpv } from "./detalle.ts";
@@ -113,6 +114,12 @@ export const DetalleVentaTpv = ({
             )}
             <QBoton texto="Imprimir" onClick={imprimir} />
             <QBoton texto="Cajón" onClick={abrirCajon} />
+            {estado === "ABIERTA" && (
+                <QBoton
+                texto="Emitir"
+                onClick={() => emitir("emision_solicitada")}
+                />
+            )}
             {estado == "EMITIDA" && venta.total > 0 && (
                 <QBoton
                 texto="Tique regalo"
@@ -171,6 +178,9 @@ export const DetalleVentaTpv = ({
             />
             {estado === "BORRANDO_VENTA" && (
                 <BorrarVentaTpv publicar={emitir} venta={venta} />
+            )}
+            {estado === "EMITIENDO_VENTA" && (
+                <EmitirVentaTpv publicar={emitir} venta={venta} />
             )}
             {estado === "PAGANDO_EN_EFECTIVO" && (
                 <PagarEfectivoVentaTpv publicar={emitir} venta={venta} />

@@ -13,6 +13,7 @@ export interface LineaPedidoAPI {
   cantidad: number;
   pvp_unitario: number;
   dto_porcentual: number;
+  dto_lineal: number;
   pvp_total: number;
   grupo_iva_producto_id: string;
   iva_incluido: boolean;

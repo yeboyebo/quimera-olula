@@ -110,6 +110,7 @@ function ControlHorario() {
           }
         }}
         localeText={{
+          noRowsLabel: "No hay tramos",
           toolbarQuickFilterPlaceholder: "Buscar...",
           paginationRowsPerPage: "Líneas por página",
           paginationDisplayedRows: ({ from, to, count }) =>
