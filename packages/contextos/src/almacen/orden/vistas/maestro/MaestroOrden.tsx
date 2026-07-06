@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
 import { DetalleOrden } from "../detalle/DetalleOrden.tsx";
 import { CrearOrden } from "../crear/CrearOrden.tsx";
-import { Contexto, getMaquina } from "./maquina_maestro_orden.ts";
+import { ContextoMaestroOrden, getMaquina } from "./maquina.ts";
 
 const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
     { id: "id", cabecera: "ID" },
@@ -28,7 +28,7 @@ export const MaestroOrden = () => {
     const { ctx, emitir } = useMaquina(getMaquina, {
         estado: "INICIAL",
         ordenes: listaActivaEntidadesInicial<ItemOrdenAlmacen>(id, criteria),
-    } as Contexto);
+    } as ContextoMaestroOrden);
 
     useUrlParams(ctx.ordenes.activo, ctx.ordenes.criteria);
 
@@ -47,7 +47,7 @@ export const MaestroOrden = () => {
                     <>
                         <h2>Órdenes</h2>
                         <div className="maestro-botones">
-                            <QBoton onClick={() => emitir("crear")}>Nueva orden</QBoton>
+                            <QBoton onClick={() => emitir("crear_modulo_solicitado")}>Nueva orden</QBoton>
                             <QBoton onClick={cambiarLayout}>
                                 {layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
                             </QBoton>

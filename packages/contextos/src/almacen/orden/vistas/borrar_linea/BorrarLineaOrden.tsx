@@ -1,26 +1,26 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
-import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useCallback } from "react";
-import { LineaOrdenAlmacen } from "../../diseño.ts";
-import { borrarLineasOrden } from "../../infraestructura.ts";
+import { LineaOrdenAlmacen, OrdenAlmacen } from "../../diseño.ts";
+import { deleteLineasOrden } from "../../infraestructura.ts";
 
 export const BorrarLineaOrden = ({
     publicar,
     linea,
-    ordenId,
+    orden,
 }: {
-    publicar: ProcesarEvento;
+    publicar: EmitirEvento;
     linea: LineaOrdenAlmacen;
-    ordenId: string;
+    orden: OrdenAlmacen;
 }) => {
     const borrar_ = useCallback(async () => {
-        await borrarLineasOrden(ordenId, [linea.id]);
-        publicar("linea_orden_borrada");
-    }, [publicar, linea.id, ordenId]);
+        await deleteLineasOrden(orden.id, [linea.id]);
+        publicar("linea_borrada", linea.id);
+    }, [publicar, linea.id, orden.id]);
 
     const cancelar_ = useCallback(() => {
-        publicar("borrado_cancelado");
+        publicar("borrado_de_linea_cancelado");
     }, [publicar]);
 
     const [borrar, cancelar] = useForm(borrar_, cancelar_);

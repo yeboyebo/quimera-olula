@@ -21,14 +21,14 @@
 .TabGeneral {
 
     /* Fila 1: Nombre (9 cols) + Estado (3 cols) = 12 */
-    quimera-input[nombre="nombre"] {
+    quimera-input[nombre="campoString"] {
         grid-column: span 9;
     }
 
-    quimera-select[nombre="estado"] {
+    quimera-select[nombre="campoOpcion"] {
         grid-column: span 3;
     }
 
-    /* Descripción: ancho completo (12 cols es el valor por defecto, no hace falta declararlo) */
-    /* quimera-input[nombre="descripcion"] { grid-column: span 12; } */
+    /* campoNumero: ancho completo (12 cols es el valor por defecto, no hace falta declararlo) */
+    /* quimera-input[nombre="campoNumero"] { grid-column: span 12; } */
 }

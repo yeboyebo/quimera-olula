@@ -1,4 +1,4 @@
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 
 /**
  * Interfaz principal del Módulo
@@ -9,6 +9,7 @@ export interface Modulo extends Entidad {
     id: string;
     campoString: string;
     campoTexto: string;
+    campoNumero: number;
     campoOpcion: CampoOpcion;
     campoFecha: Date;
 }
@@ -16,9 +17,10 @@ export interface Modulo extends Entidad {
 /**
  * Tipo para crear nuevo módulo (sin id ni otros parámetros que se calculen en el servidor)
  */
-export interface NuevoModulo {
+export interface NuevoModulo extends Modelo {
     campoString: string;
     campoTexto: string;
+    campoNumero: number;
     campoOpcion: CampoOpcion;
     campoFecha: Date;
 }

@@ -6,16 +6,15 @@ import { useFocus } from "@olula/lib/useFocus.ts";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback } from "react";
-import { postModulo } from "../infraestructura.js";
-import "./CrearModulo.css";
-import { metaNuevoModulo, nuevoModuloInicial } from "./crear.js";
+import { postModLin } from "../infraestructura.js";
+import { metaNuevoModLin, nuevoModLinVacio } from "./crear.js";
 
 /**
- * Modal de alta de módulo.
+ * Modal de alta de módulo (con líneas).
  *
  * Patrón:
  *   - El maestro lo renderiza condicionalmente cuando estado === "CREANDO".
- *   - Llama a postModulo internamente y emite:
+ *   - Llama a postModLin internamente y emite:
  *       "modulo_creado"            con el ID devuelto por la API  (éxito)
  *       "alta_de_modulo_cancelada" sin payload                    (cancelar)
  *   - No recibe prop `activo`; la visibilidad la controla el padre.
@@ -25,17 +24,17 @@ export const CrearModulo = ({
 }: {
     publicar: EmitirEvento;
 }) => {
-    const { modelo: modulo, uiProps, valido } = useModelo(
-        metaNuevoModulo,
-        nuevoModuloInicial()
+    const { modelo: modLin, uiProps, valido } = useModelo(
+        metaNuevoModLin,
+        nuevoModLinVacio()
     );
 
     const crear_ = useCallback(
         async () => {
-            const id = await postModulo(modulo);
+            const id = await postModLin(modLin);
             publicar("modulo_creado", id);
         },
-        [modulo, publicar]
+        [modLin, publicar]
     );
 
     const cancelar_ = useCallback(
@@ -57,7 +56,6 @@ export const CrearModulo = ({
             <div className="CrearModulo">
                 <quimera-formulario>
                     <QInput label="Campo string" {...uiProps("campoString")} ref={focus} />
-                    <QInput label="Campo texto" {...uiProps("campoTexto")} />
                 </quimera-formulario>
 
                 <div className="botones maestro-botones">

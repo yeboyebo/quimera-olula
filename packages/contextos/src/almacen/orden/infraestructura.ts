@@ -1,25 +1,92 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
+    CambiosLineaOrdenAlmacen,
+    CambiosOrdenAlmacen,
+    DeleteLineasOrden,
+    DeleteOrden,
+    GetOrden,
+    GetOrdenes,
     ItemOrdenAlmacen,
-    ItemOrdenApi,
     LecturaLineaOrden,
-    LecturaLineaOrdenApi,
     LineaOrdenAlmacen,
-    LineaOrdenAlmacenApi,
     NuevaLecturaOrden,
     NuevaLineaOrdenAlmacen,
-    NuevaLineaOrdenAlmacenApi,
+    NuevaOrdenAlmacen,
     OrdenAlmacen,
-    OrdenAlmacenApi,
+    PatchLineaOrden,
+    PatchOrden,
+    PostLineasOrden,
+    PostOrden,
 } from "./diseño.ts";
-import { NuevaOrdenAlmacen } from "./vistas/crear/diseño.ts";
 
+// Tipos API (snake_case)
+
+interface OrdenAlmacenApi {
+    id: string;
+    fecha: string;
+    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
+    almacen_id: string;
+    almacen: string;
+    abierta: boolean;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
+    lineas: LineaOrdenAlmacenApi[];
+}
+
+interface LecturaLineaOrdenApi {
+    id: string;
+    sku: string;
+    lote_id: string | null;
+    cantidad: number;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
+    fecha_hora: string;
+}
+
+export interface LineaOrdenAlmacenApi {
+    id: string;
+    sku: string;
+    articulo: string;
+    lote_id: string | null;
+    cantidad_prevista: number;
+    cantidad_real?: number;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
+    lecturas: LecturaLineaOrdenApi[];
+}
+
+interface NuevaLineaOrdenAlmacenApi {
+    sku: string;
+    lote_id: string | null;
+    cantidad_prevista: number;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
+}
+
+export interface ItemOrdenApi {
+    id: string;
+    fecha: string;
+    tipo: string;
+    abierta: boolean;
+    estado: string;
+    ubicacion_origen_id: string | null;
+    caja_origen_id: string | null;
+    ubicacion_destino_id: string | null;
+    caja_destino_id: string | null;
+}
 
 const baseUrl = `/almacen/orden`;
 
-// Mappers
+// Mappers API → dominio
 
 export const ordenDesdeApi = (api: OrdenAlmacenApi): OrdenAlmacen => ({
     id: api.id,
@@ -48,7 +115,6 @@ export const lecturaLineaOrdenDesdeApi = (api: LecturaLineaOrdenApi): LecturaLin
 });
 
 export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen => ({
-    ...(api.id !== undefined ? { id: api.id } : {}),
     id: api.id,
     sku: api.sku,
     articulo: api.articulo,
@@ -62,8 +128,9 @@ export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen
     lecturas: api.lecturas.map(lecturaLineaOrdenDesdeApi),
 });
 
+// Mappers dominio → API
+
 export const lineaOrdenAApi = (linea: LineaOrdenAlmacen): LineaOrdenAlmacenApi => ({
-    ...(linea.id !== undefined ? { id: linea.id } : {}),
     id: linea.id,
     sku: linea.sku,
     articulo: linea.articulo,
@@ -86,10 +153,10 @@ export const lineaOrdenAApi = (linea: LineaOrdenAlmacen): LineaOrdenAlmacenApi =
             caja_destino_id: lectura.cajaDestinoId,
             fecha_hora: lectura.fechaHora.toISOString(),
         }))
-        : []
-    ,
+        : [],
 });
-export const nuevaLineaOrdenAApi = (linea: NuevaLineaOrdenAlmacen): NuevaLineaOrdenAlmacenApi => ({
+
+const nuevaLineaOrdenAApi = (linea: NuevaLineaOrdenAlmacen): NuevaLineaOrdenAlmacenApi => ({
     sku: linea.sku,
     lote_id: linea.loteId,
     cantidad_prevista: linea.cantidadPrevista,
@@ -111,66 +178,23 @@ export const itemOrdenDesdeApi = (api: ItemOrdenApi): ItemOrdenAlmacen => ({
     cajaDestinoId: api.caja_destino_id,
 });
 
-// Funciones REST
+const nuevaOrdenAApi = (orden: NuevaOrdenAlmacen) => ({
+    fecha: (orden.fecha as Date).toISOString().slice(0, 10),
+    tipo_orden: orden.tipoOrden,
+    almacen_id: orden.almacenId,
+    abierta: orden.abierta,
+});
 
-export const getOrdenes = (filtro: Filtro, orden: Orden, paginacion?: Paginacion): RespuestaLista<ItemOrdenAlmacen> => {
-    const q = criteriaQuery(filtro, orden, paginacion);
-    return RestAPI.get<{ datos: ItemOrdenApi[]; total: number }>(baseUrl + q).then((respuesta) => ({
-        datos: respuesta.datos.map(itemOrdenDesdeApi),
-        total: respuesta.total,
-    }));
+const cambiosOrdenAApi = (cambios: CambiosOrdenAlmacen) => {
+    const payload: Record<string, unknown> = {};
+    if (cambios.cajaOrigenId !== undefined) payload.caja_origen_id = cambios.cajaOrigenId;
+    if (cambios.ubicacionOrigenId !== undefined) payload.ubicacion_origen_id = cambios.ubicacionOrigenId;
+    if (cambios.cajaDestinoId !== undefined) payload.caja_destino_id = cambios.cajaDestinoId;
+    if (cambios.ubicacionDestinoId !== undefined) payload.ubicacion_destino_id = cambios.ubicacionDestinoId;
+    return payload;
 };
 
-export const getOrden = async (id: string): Promise<OrdenAlmacen> => {
-    const respuesta = await RestAPI.get<{ datos: OrdenAlmacenApi }>(`${baseUrl}/${id}`);
-    return ordenDesdeApi(respuesta.datos);
-};
-
-export const crearOrden = async (orden: NuevaOrdenAlmacen): Promise<string> => {
-    const payload = {
-        fecha: (orden.fecha as Date).toISOString().slice(0, 10),
-        tipo_orden: orden.tipoOrden,
-        almacen_id: orden.almacenId,
-        abierta: orden.abierta,
-    };
-    const respuesta = await RestAPI.post(baseUrl, payload, "Error al crear la orden");
-    return respuesta.id as string;
-};
-
-export const cambiarOrden = async (id: string, cambios: Partial<OrdenAlmacen>): Promise<void> => {
-    // const payload: Record<string, unknown> = {};
-    // if (cambios.fecha !== undefined) payload.fecha = cambios.fecha;
-    // if (cambios.tipoOrden !== undefined) payload.tipo_orden = cambios.tipoOrden;
-    // if (cambios.abierta !== undefined) payload.abierta = cambios.abierta;
-    // if (cambios.cajaOrigenId !== undefined) payload.caja_origen_id = cambios.cajaOrigenId;
-    // if (cambios.ubicacionOrigenId !== undefined) payload.ubicacion_origen_id = cambios.ubicacionOrigenId;
-    // if (cambios.cajaDestinoId !== undefined) payload.caja_destino_id = cambios.cajaDestinoId;
-    const payload = {
-        caja_origen_id: cambios.cajaOrigenId,
-        ubicacion_origen_id: cambios.ubicacionOrigenId,
-        caja_destino_id: cambios.cajaDestinoId,
-        ubicacion_destino_id: cambios.ubicacionDestinoId,
-    }
-    await RestAPI.patch(`${baseUrl}/${id}`, payload, "Error al actualizar la orden " + id);
-};
-
-export const borrarOrden = async (id: string): Promise<void> => {
-    await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar la orden " + id);
-};
-
-export const crearLineasOrden = async (
-    id: string,
-    lineas: NuevaLineaOrdenAlmacen[]
-): Promise<void> => {
-    const payload = lineas.map(nuevaLineaOrdenAApi);
-    await RestAPI.post(`${baseUrl}/${id}/linea`, payload, "Error al crear líneas de la orden");
-};
-
-export const cambiarLineaOrden = async (
-    id: string,
-    lineaId: string,
-    cambios: Partial<LineaOrdenAlmacen>
-): Promise<void> => {
+const cambiosLineaOrdenAApi = (cambios: CambiosLineaOrdenAlmacen) => {
     const payload: Record<string, unknown> = {};
     if (cambios.sku !== undefined) payload.sku = cambios.sku;
     if (cambios.loteId !== undefined) payload.lote_id = cambios.loteId;
@@ -179,14 +203,51 @@ export const cambiarLineaOrden = async (
     if (cambios.cajaOrigenId !== undefined) payload.caja_origen_id = cambios.cajaOrigenId;
     if (cambios.ubicacionDestinoId !== undefined) payload.ubicacion_destino_id = cambios.ubicacionDestinoId;
     if (cambios.cajaDestinoId !== undefined) payload.caja_destino_id = cambios.cajaDestinoId;
+    return payload;
+};
+
+// Funciones CRUD
+
+export const getOrdenes: GetOrdenes = (filtro, orden, paginacion) => {
+    const q = criteriaQuery(filtro, orden, paginacion);
+    return RestAPI.get<{ datos: ItemOrdenApi[]; total: number }>(baseUrl + q).then((respuesta) => ({
+        datos: respuesta.datos.map(itemOrdenDesdeApi),
+        total: respuesta.total,
+    }));
+};
+
+export const getOrden: GetOrden = async (id) => {
+    const respuesta = await RestAPI.get<{ datos: OrdenAlmacenApi }>(`${baseUrl}/${id}`);
+    return ordenDesdeApi(respuesta.datos);
+};
+
+export const postOrden: PostOrden = async (nuevaOrden) => {
+    const respuesta = await RestAPI.post(baseUrl, nuevaOrdenAApi(nuevaOrden), "Error al crear la orden");
+    return respuesta.id as string;
+};
+
+export const patchOrden: PatchOrden = async (id, cambios) => {
+    await RestAPI.patch(`${baseUrl}/${id}`, cambiosOrdenAApi(cambios), "Error al actualizar la orden");
+};
+
+export const deleteOrden: DeleteOrden = async (id) => {
+    await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar la orden");
+};
+
+export const postLineasOrden: PostLineasOrden = async (id, lineas) => {
+    const payload = lineas.map(nuevaLineaOrdenAApi);
+    await RestAPI.post(`${baseUrl}/${id}/linea`, payload, "Error al crear líneas de la orden");
+};
+
+export const patchLineaOrden: PatchLineaOrden = async (id, lineaId, cambios) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/linea/${lineaId}`,
-        payload,
-        "Error al actualizar la línea " + lineaId
+        cambiosLineaOrdenAApi(cambios),
+        "Error al actualizar la línea"
     );
 };
 
-export const borrarLineasOrden = async (id: string, lineaIds: string[]): Promise<void> => {
+export const deleteLineasOrden: DeleteLineasOrden = async (id, lineaIds) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/linea/borrar`,
         { linea_ids: lineaIds },

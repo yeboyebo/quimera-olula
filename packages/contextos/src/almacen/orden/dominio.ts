@@ -1,28 +1,13 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
-import { ItemOrdenAlmacen, LineaOrdenAlmacen, OrdenAlmacen } from "./diseño.ts";
+import { LineaOrdenAlmacen, OrdenAlmacen } from "./diseño.ts";
 
 export const ERR_SKU_REQUERIDO = "El SKU es requerido";
 export const ERR_CANTIDAD_PREVISTA_REQUERIDA = "La cantidad prevista es requerida";
 
-// export const ordenVacia = (): OrdenAlmacen => ({
-//     id: "",
-//     fecha: fechaActual(),
-//     tipoOrden: "",
-//     almacenId: "",
-//     abierta: true,
-//     ubicacionOrigenId: null,
-//     cajaOrigenId: null,
-//     ubicacionDestinoId: null,
-//     cajaDestinoId: null,
-//     lineas: [],
-// });
-
-// Constante estable para usar como modeloInicial en useModelo.
-// No llama a fechaActual() en cada render, evitando el bucle infinito de re-renders.
-export const ordenVaciaInicial: OrdenAlmacen = {
+export const ordenVacia = (): OrdenAlmacen => ({
     id: "",
-    fecha: "",
-    tipoOrden: "ENTRADA",
+    fecha: new Date().toISOString().slice(0, 10),
+    tipo: "ENTRADA",
     almacenId: "",
     almacen: "",
     abierta: true,
@@ -31,35 +16,24 @@ export const ordenVaciaInicial: OrdenAlmacen = {
     ubicacionDestinoId: null,
     cajaDestinoId: null,
     lineas: [],
-};
+});
 
-// export const lineaOrdenVacia = (): LineaOrdenAlmacen => ({
-//     sku: "",
-//     loteId: null,
-//     cantidadPrevista: 0,
-//     ubicacionOrigenId: null,
-//     cajaOrigenId: null,
-//     ubicacionDestinoId: null,
-//     cajaDestinoId: null,
-// });
-
-// export const nuevaLineaOrdenVacia = (): NuevaLineaOrdenAlmacen => lineaOrdenVacia();
-
-export const itemOrdenAlmacenVacio = (): ItemOrdenAlmacen => ({
+export const lineaOrdenVacia = (): LineaOrdenAlmacen => ({
     id: "",
-    fecha: "",
-    tipo: "",
-    abierta: false,
-    estado: "",
+    sku: "",
+    articulo: "",
+    loteId: null,
+    cantidadPrevista: 0,
     ubicacionOrigenId: null,
     cajaOrigenId: null,
     ubicacionDestinoId: null,
     cajaDestinoId: null,
+    lecturas: [],
 });
 
 export const metaOrden: MetaModelo<OrdenAlmacen> = {
     campos: {
-        tipoOrden: { requerido: true },
+        tipo: { requerido: true },
         almacenId: { requerido: true },
         fecha: { requerido: true },
         abierta: { tipo: "checkbox", requerido: true },
@@ -69,10 +43,6 @@ export const metaOrden: MetaModelo<OrdenAlmacen> = {
         ubicacionDestinoId: {},
     },
 };
-
-
-
-
 
 export const metaNuevaLinea: MetaModelo<LineaOrdenAlmacen> = {
     campos: {

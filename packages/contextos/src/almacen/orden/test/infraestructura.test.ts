@@ -3,7 +3,8 @@ import {
     lineaOrdenDesdeApi,
     lineaOrdenAApi,
 } from "#/almacen/orden/infraestructura.ts";
-import type { LineaOrdenAlmacen, LineaOrdenAlmacenApi } from "#/almacen/orden/diseño.ts";
+import type { LineaOrdenAlmacenApi } from "#/almacen/orden/infraestructura.ts";
+import type { LineaOrdenAlmacen } from "#/almacen/orden/diseño.ts";
 
 // ---------------------------------------------------------------------------
 // [orden-infra-01] lineaOrdenDesdeApi convierte de snake_case API a camelCase dominio
@@ -11,13 +12,16 @@ import type { LineaOrdenAlmacen, LineaOrdenAlmacenApi } from "#/almacen/orden/di
 
 describe("[orden-infra-01] lineaOrdenDesdeApi convierte correctamente de snake_case API a camelCase dominio", () => {
     const lineaApi: LineaOrdenAlmacenApi = {
+        id: "linea-1",
         sku: "PROD-001",
+        articulo: "Producto 001",
         lote_id: "LOTE-123",
         cantidad_prevista: 10,
         ubicacion_origen_id: "UBI-001",
         caja_origen_id: null,
         ubicacion_destino_id: "UBI-002",
         caja_destino_id: null,
+        lecturas: [],
     };
 
     test("mapea sku correctamente", () => {
@@ -68,13 +72,16 @@ describe("[orden-infra-01] lineaOrdenDesdeApi convierte correctamente de snake_c
 
 describe("[orden-infra-02] lineaOrdenAApi convierte correctamente de camelCase dominio a snake_case API", () => {
     const lineaDominio: LineaOrdenAlmacen = {
+        id: "linea-1",
         sku: "PROD-001",
+        articulo: "Producto 001",
         loteId: "LOTE-123",
         cantidadPrevista: 10,
         ubicacionOrigenId: "UBI-001",
         cajaOrigenId: null,
         ubicacionDestinoId: "UBI-002",
         cajaDestinoId: null,
+        lecturas: [],
     };
 
     test("mapea sku correctamente", () => {

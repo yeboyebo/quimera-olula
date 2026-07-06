@@ -1,4 +1,4 @@
-import { NuevaOrdenAlmacen } from "./diseño.ts";
+import { NuevaOrdenAlmacen } from "../../diseño.ts";
 
 
 export const nuevaOrdenAlmacenVacia: NuevaOrdenAlmacen = {

@@ -1,7 +1,23 @@
 import { Maquina } from "@olula/lib/diseño.ts";
 import { publicar } from "@olula/lib/dominio.ts";
-import { ContextoDetalleModulo, EstadoDetalleModulo } from "./diseño.js";
-import { cargarContexto, refrescarModulo } from "./dominio.js";
+import { Modulo } from "../diseño.js";
+import { cargarContexto, refrescarModulo } from "./detalle.js";
+
+/**
+ * Estados posibles en la vista de detalle.
+ */
+export type EstadoDetalleModulo =
+    | 'INICIAL'
+    | 'ABIERTO'
+    | 'BORRANDO';
+
+/**
+ * Contexto del detalle (edición de un módulo)
+ */
+export type ContextoDetalleModulo = {
+    estado: EstadoDetalleModulo;
+    modulo: Modulo;
+};
 
 /**
  * Máquina de estados para la vista detalle.

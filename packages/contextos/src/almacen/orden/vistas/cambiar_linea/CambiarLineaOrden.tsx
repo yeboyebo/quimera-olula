@@ -1,35 +1,35 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { ProcesarEvento } from "@olula/lib/useMaquina.js";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext } from "react";
-import { LineaOrdenAlmacen } from "../../diseño.ts";
+import { useCallback } from "react";
+import { LineaOrdenAlmacen, OrdenAlmacen } from "../../diseño.ts";
 import { metaNuevaLinea } from "../../dominio.ts";
-import { cambiarLineaOrden } from "../../infraestructura.ts";
+import { patchLineaOrden } from "../../infraestructura.ts";
 
 export const CambiarLineaOrden = ({
     publicar,
     linea,
-    ordenId,
+    orden,
 }: {
-    publicar: ProcesarEvento;
+    publicar: EmitirEvento;
     linea: LineaOrdenAlmacen;
-    ordenId: string;
+    orden: OrdenAlmacen;
 }) => {
-    const { intentar } = useContext(ContextoError);
-
     const { modelo, uiProps, valido } = useModelo(metaNuevaLinea, linea);
 
-    const guardar = useCallback(async () => {
-        await intentar(() => cambiarLineaOrden(ordenId, linea.id, modelo));
-        publicar("linea_orden_cambiada", modelo);
-    }, [modelo, publicar, ordenId, linea.id, intentar]);
+    const guardar_ = useCallback(async () => {
+        await patchLineaOrden(orden.id, linea.id, modelo);
+        publicar("linea_cambiada", modelo);
+    }, [modelo, publicar, orden.id, linea.id]);
 
-    const cancelar = useCallback(() => {
-        publicar("edicion_cancelada");
+    const cancelar_ = useCallback(() => {
+        publicar("cambio_de_linea_cancelado");
     }, [publicar]);
+
+    const [guardar, cancelar] = useForm(guardar_, cancelar_);
 
     return (
         <QModal

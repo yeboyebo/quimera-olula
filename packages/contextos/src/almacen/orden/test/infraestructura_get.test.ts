@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { itemOrdenDesdeApi } from "#/almacen/orden/infraestructura.ts";
-import type { ItemOrdenAlmacen, ItemOrdenApi } from "#/almacen/orden/diseño.ts";
+import { itemOrdenDesdeApi, ItemOrdenApi } from "#/almacen/orden/infraestructura.ts";
+import type { ItemOrdenAlmacen } from "#/almacen/orden/diseño.ts";
 
 // ---------------------------------------------------------------------------
 // [orden-infra-03] itemOrdenDesdeApi convierte un ItemOrdenApi (snake_case) al tipo dominio ItemOrdenAlmacen (camelCase)

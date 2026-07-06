@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { MetaTabla } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -7,11 +8,32 @@ import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js"
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect, useMemo } from "react";
+import { CrearModulo } from "../crear/CrearModulo.js";
 import { DetalleModulo } from "../detalle/DetalleModulo.js";
 import { Modulo } from "../diseño.js";
-import { metaTablaModulo } from "./diseño.js";
 import "./MaestroConDetalleModulo.css";
 import { getMaquina } from "./maquina.js";
+
+/**
+ * Metadatos para renderizar la tabla.
+ *
+ * Opciones de columna:
+ *   - Sin nada extra     → renderiza el valor tal cual
+ *   - tipo: "fecha"      → formatea como fecha
+ *   - tipo: "moneda"     → formatea como moneda con divisa
+ *   - render: (m) => ... → render personalizado
+ */
+const metaTablaModulo: MetaTabla<Modulo> = [
+    { id: 'id', cabecera: 'ID' },
+    { id: 'campoString', cabecera: 'C. String' },
+    { id: 'campoNumero', cabecera: 'C. Numero' },
+    {
+        id: 'campoOpcion',
+        cabecera: 'Opción',
+        render: (m: Modulo) => m.campoOpcion.toUpperCase(),
+    },
+    { id: 'campoFecha', cabecera: 'Fecha', tipo: 'fecha', },
+];
 
 /**
  * Componente principal: listado (maestro) + detalle.
@@ -23,8 +45,10 @@ import { getMaquina } from "./maquina.js";
  *   - listaActivaEntidadesInicial → inicializa con ID y criteria de la URL
  *   - Listado          → gestiona criteria internamente; emite onCriteriaChanged y onSiguientePagina
  *   - MaestroDetalle   → recibe layout para adaptar la disposición en móvil
+ *   - CREANDO          → modal de alta; crear_modulo_solicitado → CREANDO → modulo_creado|alta_de_modulo_cancelada → INICIAL
  */
 export const MaestroConDetalleModulo = () => {
+
     // Criteria base del módulo (orden por defecto, etc.)
     const criteriaBase = useMemo(() => criteriaDefecto, []);
 
@@ -40,12 +64,14 @@ export const MaestroConDetalleModulo = () => {
         modulos: listaActivaEntidadesInicial<Modulo>(id, criteriaInicial),
     });
 
+    const { estado, modulos } = ctx;
+
     // Escribe activo y criteria en la URL al cambiar
-    useUrlParams(ctx.modulos.activo, ctx.modulos.criteria);
+    useUrlParams(modulos.activo, modulos.criteria);
 
     // Carga inicial
     useEffect(() => {
-        emitir("recarga_de_modulos_solicitada", ctx.modulos.criteria);
+        emitir("recarga_de_modulos_solicitada", modulos.criteria);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -63,12 +89,12 @@ export const MaestroConDetalleModulo = () => {
                         </div>
                         <Listado<Modulo>
                             metaTabla={metaTablaModulo}
-                            criteria={ctx.modulos.criteria}
+                            criteria={modulos.criteria}
                             modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
                             tarjeta={TarjetaModulo}
-                            entidades={ctx.modulos.lista}
-                            totalEntidades={ctx.modulos.total}
-                            seleccionada={ctx.modulos.activo}
+                            entidades={modulos.lista}
+                            totalEntidades={modulos.total}
+                            seleccionada={modulos.activo}
                             renderAcciones={() => (
                                 <div className="maestro-botones">
                                     <QBoton onClick={() => emitir("crear_modulo_solicitado")}>
@@ -82,11 +108,18 @@ export const MaestroConDetalleModulo = () => {
                         />
                     </>
                 }
-                Detalle={<DetalleModulo id={ctx.modulos.activo} publicar={emitir} />}
+                Detalle={<DetalleModulo id={modulos.activo} publicar={emitir} />}
                 layout={layout}
-                seleccionada={ctx.modulos.activo}
+                seleccionada={modulos.activo}
                 modoDisposicion="maestro-50"
             />
+            
+             {/* Modales condicionales: se activan según el estado de la máquina */}
+            {estado === "CREANDO" && (
+                <CrearModulo
+                    publicar={emitir}
+                />
+            )}
         </div>
     );
 };
@@ -98,9 +131,9 @@ export const MaestroConDetalleModulo = () => {
 const TarjetaModulo = (modulo: Modulo) => {
     return (
         <div className="tarjeta-modulo" key={modulo.id}>
-            <div className="tarjeta-modulo-nombre">{modulo.nombre}</div>
-            <div className={`tarjeta-modulo-estado estado-${modulo.estado}`}>
-                {modulo.estado}
+            <div className="tarjeta-modulo-nombre">{modulo.campoString}</div>
+            <div className={`tarjeta-modulo-estado estado-${modulo.campoOpcion}`}>
+                {modulo.campoOpcion}
             </div>
         </div>
     );

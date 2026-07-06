@@ -1,17 +1,18 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { BorrarModulo } from "../borrar/BorrarModulo.js";
 import { Modulo } from "../diseño.js";
+import { contextoDetalleModuloInicial, guardarModulo, metaModulo } from "./detalle.js";
 import "./DetalleModulo.css";
-import { guardarModulo, metaModulo, moduloVacio } from "./dominio.js";
 import { getMaquina } from "./maquina.js";
 import { TabGeneral } from "./TabGeneral.js";
 import { TabInformacion } from "./TabInformacion.js";
+
 
 /**
  * Componente detalle.
@@ -36,12 +37,10 @@ export const DetalleModulo = ({
     id?: string;
     publicar?: EmitirEvento;
 }) => {
+
     const { ctx, emitir } = useMaquina(
         getMaquina,
-        {
-            estado: "INICIAL",
-            modulo: moduloVacio(),
-        },
+        contextoDetalleModuloInicial,
         publicar
     );
 
@@ -54,7 +53,9 @@ export const DetalleModulo = ({
         [ctx, emitir]
     );
 
-    const modelo = useModelo(metaModulo, ctx.modulo, autoGuardar);
+    const formModelo = useModelo(metaModulo, ctx.modulo, autoGuardar);
+
+    const { estado, modulo } = ctx;
 
     // Recargar cuando el ID cambia (o se deselecciona con undefined)
     useEffect(() => {
@@ -63,7 +64,20 @@ export const DetalleModulo = ({
 
     if (!ctx.modulo.id) return null;
 
-    const titulo = (m: Modulo) => m.nombre as string;
+    const titulo = (m: Modulo) => m.campoString;
+
+    const accionesModulo = [
+        modulo.campoNumero >= 0 && {
+            texto: "Accion1",
+            onClick: () => publicar("accion_1_solicitada"),
+        },
+        {
+            texto: "Borrar",
+            onClick: () => publicar("borrado_solicitado"),
+            deshabilitado: !modulo.activo,
+            advertencia: true,
+        },
+    ];
 
     return (
         <Detalle
@@ -74,34 +88,32 @@ export const DetalleModulo = ({
             cerrarDetalle={() => emitir("modulo_deseleccionado", null, true)}
         >
             <div className="DetalleModulo">
-                <div className="maestro-botones">
-                    <QBoton onClick={() => emitir("borrado_solicitado")}>
-                        Borrar
-                    </QBoton>
-                </div>
-                <Tabs
-                    children={[
-                        <Tab
-                            key="tab-general"
-                            label="General"
-                            children={<TabGeneral form={modelo} />}
-                        />,
-                        <Tab
-                            key="tab-info"
-                            label="Información"
-                            children={<TabInformacion modulo={ctx.modulo} />}
-                        />,
-                    ]}
-                />
+                <QuimeraAcciones acciones={accionesModulo} />
+                <Tabs children={[
+                    <Tab label="General"
+                        key="tab-general"
+                        children={
+                            <TabGeneral
+                                form={formModelo}
+                                publicar={emitir}
+                            />
+                        }
+                    />,
+                    <Tab label="Información"
+                        key="tab-info"
+                        children={
+                            <TabInformacion form={formModelo}
+                        />}
+                    />,
+                    
+                ]}/>
             </div>
 
             {/* Modales condicionales: se activan según el estado de la máquina */}
-            {ctx.estado === "BORRANDO" && (
+            {estado === "BORRANDO" && (
                 <BorrarModulo
-                    moduloId={ctx.modulo.id}
-                    moduloNombre={ctx.modulo.nombre}
+                    modulo={ctx.modulo}
                     publicar={emitir}
-                    onCancelar={() => emitir("borrado_cancelado")}
                 />
             )}
         </Detalle>

@@ -1,12 +1,5 @@
 import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
-
-
-export type NuevaOrdenAlmacen = {
-    fecha?: Date;
-    tipoOrden: string;
-    almacenId: string;
-    abierta: boolean;
-};
+import { NuevaOrdenAlmacen } from "../../diseño.ts";
 
 export const metaNuevaOrden: MetaModelo<NuevaOrdenAlmacen> = {
     campos: {

@@ -1,7 +1,11 @@
-export type OrdenAlmacen = {
+import { Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+
+export type TipoOrden = "ENTRADA" | "SALIDA" | "TRASPASO";
+
+export interface OrdenAlmacen extends Entidad {
     id: string;
     fecha: string;
-    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
+    tipo: TipoOrden;
     almacenId: string;
     almacen: string;
     abierta: boolean;
@@ -10,21 +14,9 @@ export type OrdenAlmacen = {
     ubicacionDestinoId: string | null;
     cajaDestinoId: string | null;
     lineas: LineaOrdenAlmacen[];
-};
+}
 
-export type LecturaLineaOrden = {
-    id: string;
-    sku: string;
-    loteId: string | null;
-    cantidad: number;
-    ubicacionOrigenId: string | null;
-    cajaOrigenId: string | null;
-    ubicacionDestinoId: string | null;
-    cajaDestinoId: string | null;
-    fechaHora: Date;
-};
-
-export type LineaOrdenAlmacen = {
+export interface LineaOrdenAlmacen extends Entidad {
     id: string;
     sku: string;
     articulo: string;
@@ -36,11 +28,28 @@ export type LineaOrdenAlmacen = {
     ubicacionDestinoId: string | null;
     cajaDestinoId: string | null;
     lecturas: LecturaLineaOrden[];
-};
+}
 
-// export type NuevaOrdenAlmacen = Omit<OrdenAlmacen, "id" | "lineas">;
+export interface LecturaLineaOrden {
+    id: string;
+    sku: string;
+    loteId: string | null;
+    cantidad: number;
+    ubicacionOrigenId: string | null;
+    cajaOrigenId: string | null;
+    ubicacionDestinoId: string | null;
+    cajaDestinoId: string | null;
+    fechaHora: Date;
+}
 
-export type NuevaLineaOrdenAlmacen = {
+export interface NuevaOrdenAlmacen extends Modelo {
+    fecha?: Date;
+    tipoOrden: string;
+    almacenId: string;
+    abierta: boolean;
+}
+
+export interface NuevaLineaOrdenAlmacen extends Modelo {
     sku: string;
     loteId: string | null;
     cantidadPrevista: number;
@@ -49,105 +58,16 @@ export type NuevaLineaOrdenAlmacen = {
     cajaOrigenId: string | null;
     ubicacionDestinoId: string | null;
     cajaDestinoId: string | null;
-};
+}
 
-export type NuevaLecturaOrden = {
+export interface NuevaLecturaOrden extends Modelo {
     cantidad: number;
     sku: string;
     idUbicacionDestino: string | null;
     idUbicacionOrigen: string | null;
-};
+}
 
-// Tipos API (snake_case)
-
-export type OrdenAlmacenApi = {
-    id: string;
-    fecha: string;
-    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
-    almacen_id: string;
-    almacen: string;
-    abierta: boolean;
-    ubicacion_origen_id: string | null;
-    caja_origen_id: string | null;
-    ubicacion_destino_id: string | null;
-    caja_destino_id: string | null;
-    lineas: LineaOrdenAlmacenApi[];
-};
-
-export type LecturaLineaOrdenApi = {
-    id: string;
-    sku: string;
-    lote_id: string | null;
-    cantidad: number;
-    ubicacion_origen_id: string | null;
-    caja_origen_id: string | null;
-    ubicacion_destino_id: string | null;
-    caja_destino_id: string | null;
-    fecha_hora: string;
-};
-
-export type LineaOrdenAlmacenApi = {
-    id: string;
-    sku: string;
-    articulo: string;
-    lote_id: string | null;
-    cantidad_prevista: number;
-    cantidad_real?: number;
-    ubicacion_origen_id: string | null;
-    caja_origen_id: string | null;
-    ubicacion_destino_id: string | null;
-    caja_destino_id: string | null;
-    lecturas: LecturaLineaOrdenApi[];
-};
-
-
-export type NuevaLineaOrdenAlmacenApi = {
-    sku: string;
-    lote_id: string | null;
-    cantidad_prevista: number;
-    ubicacion_origen_id: string | null;
-    caja_origen_id: string | null;
-    ubicacion_destino_id: string | null;
-    caja_destino_id: string | null;
-};
-
-export type CambiosOrdenAlmacenApi = {
-    fecha: string;
-    tipo_orden: string;
-    abierta: boolean;
-    estado: string;
-};
-
-export type CambiosLineaOrdenAlmacenApi = {
-    sku: string;
-    lote_id: string | null;
-    cantidad_prevista: number;
-    cantidad_real: number;
-    ubicacion_origen_id: string | null;
-    caja_origen_id: string | null;
-    ubicacion_destino_id: string | null;
-    caja_destino_id: string | null;
-};
-
-export type BorrarLineasOrdenAlmacenApi = {
-    linea_ids: string[];
-};
-
-// Tipos para el listado de órdenes (GET /almacen/orden)
-
-export type ItemOrdenApi = {
-    id: string;
-    fecha: string;
-    tipo: string;
-    abierta: boolean;
-    estado: string;
-    ubicacion_origen_id: string | null;
-    caja_origen_id: string | null;
-    ubicacion_destino_id: string | null;
-    caja_destino_id: string | null;
-};
-
-export type ItemOrdenAlmacen = {
+export interface ItemOrdenAlmacen extends Entidad {
     id: string;
     fecha: string;
     tipo: string;
@@ -157,4 +77,16 @@ export type ItemOrdenAlmacen = {
     cajaOrigenId: string | null;
     ubicacionDestinoId: string | null;
     cajaDestinoId: string | null;
-};
+}
+
+export type CambiosOrdenAlmacen = Partial<OrdenAlmacen>;
+export type CambiosLineaOrdenAlmacen = Partial<LineaOrdenAlmacen>;
+
+export type GetOrden = (id: string) => Promise<OrdenAlmacen>;
+export type GetOrdenes = (filtro: Filtro, orden: Orden, paginacion?: Paginacion) => RespuestaLista<ItemOrdenAlmacen>;
+export type PostOrden = (nuevaOrden: NuevaOrdenAlmacen) => Promise<string>;
+export type PatchOrden = (id: string, cambios: CambiosOrdenAlmacen) => Promise<void>;
+export type DeleteOrden = (id: string) => Promise<void>;
+export type PostLineasOrden = (id: string, lineas: NuevaLineaOrdenAlmacen[]) => Promise<void>;
+export type PatchLineaOrden = (id: string, lineaId: string, cambios: CambiosLineaOrdenAlmacen) => Promise<void>;
+export type DeleteLineasOrden = (id: string, lineaIds: string[]) => Promise<void>;

@@ -1,61 +1,47 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
-import { ProcesarEvento } from "@olula/lib/useMaquina.js";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useMemo } from "react";
-import { crearLineasOrden } from "../../infraestructura.ts";
+import { useCallback } from "react";
+import { OrdenAlmacen } from "../../diseño.ts";
+import { postLineasOrden } from "../../infraestructura.ts";
 import { nuevaLineaOrdenVacia } from "./crear_linea.ts";
 import { metaNuevaLineaOrden } from "./diseño.ts";
 
 export const CrearLineaOrden = ({
     publicar,
-    ordenId,
+    orden,
 }: {
-    publicar: ProcesarEvento;
-    ordenId: string;
+    publicar: EmitirEvento;
+    orden: OrdenAlmacen;
 }) => {
-    const { intentar } = useContext(ContextoError);
-
-    const lineaInicial = useMemo(() => nuevaLineaOrdenVacia, []);
-
-    const { modelo, uiProps, valido, init } = useModelo(
+    const { modelo, uiProps, valido } = useModelo(
         metaNuevaLineaOrden,
-        lineaInicial
+        nuevaLineaOrdenVacia
     );
 
-    const crear = useCallback(async () => {
-        await intentar(() =>
-            crearLineasOrden(ordenId, [
-                {
-                    sku: modelo.sku,
-                    cantidadPrevista: modelo.cantidadPrevista,
-                    loteId: null,
-                    ubicacionOrigenId: null,
-                    cajaOrigenId: null,
-                    ubicacionDestinoId: null,
-                    cajaDestinoId: null,
-                },
-            ])
-        );
-        publicar("linea_creada", {
-            id: crypto.randomUUID(),
-            sku: modelo.sku,
-            cantidadPrevista: modelo.cantidadPrevista,
-            loteId: null,
-            ubicacionOrigenId: null,
-            cajaOrigenId: null,
-            ubicacionDestinoId: null,
-            cajaDestinoId: null,
-        });
-        init();
-    }, [modelo, publicar, ordenId, intentar, init]);
+    const crear_ = useCallback(async () => {
+        await postLineasOrden(orden.id, [
+            {
+                sku: modelo.sku,
+                cantidadPrevista: modelo.cantidadPrevista,
+                loteId: null,
+                ubicacionOrigenId: null,
+                cajaOrigenId: null,
+                ubicacionDestinoId: null,
+                cajaDestinoId: null,
+            },
+        ]);
+        publicar("linea_creada");
+    }, [modelo, publicar, orden.id]);
 
-    const cancelar = useCallback(() => {
-        init();
-        publicar("creacion_cancelada");
-    }, [publicar, init]);
+    const cancelar_ = useCallback(() => {
+        publicar("alta_de_linea_cancelada");
+    }, [publicar]);
+
+    const [crear, cancelar] = useForm(crear_, cancelar_);
 
     return (
         <QModal

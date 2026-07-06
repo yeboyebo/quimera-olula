@@ -22,8 +22,8 @@ describe("[orden-dominio-01] ordenVacia retorna una orden con los campos por def
         expect(ordenVacia().fecha.length).toBeGreaterThan(0);
     });
 
-    test("tiene tipo_orden vacío", () => {
-        expect(ordenVacia().tipoOrden).toBe("");
+    test("tiene tipo ENTRADA por defecto", () => {
+        expect(ordenVacia().tipo).toBe("ENTRADA");
     });
 
     test("tiene almacen_id vacío", () => {

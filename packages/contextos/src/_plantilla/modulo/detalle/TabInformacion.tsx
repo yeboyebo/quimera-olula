@@ -1,43 +1,21 @@
-import { Modulo } from "../diseño.js";
+import { QInput } from "@olula/componentes/index.js";
+import { FormModelo } from "@olula/lib/dominio.js";
 
-/**
- * Tab Información: solo lectura, muestra datos del módulo
- */
-export const TabInformacion = ({ modulo }: { modulo: Modulo }) => {
-  return (
-    <div className="TabInformacion">
-      <div className="info-grupo">
-        <h4>Detalles del Módulo</h4>
-        <p>
-          <strong>ID:</strong> {modulo.id}
-        </p>
-        <p>
-          <strong>Nombre:</strong> {modulo.nombre}
-        </p>
-        <p>
-          <strong>Estado:</strong>{" "}
-          <span className={`badge estado-${modulo.estado}`}>
-            {modulo.estado}
-          </span>
-        </p>
-        <p>
-          <strong>Fecha de creación:</strong>{" "}
-          {modulo.fecha_creacion.toLocaleDateString("es-ES", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </p>
-      </div>
+interface TabInformacionProps {
+    form: FormModelo;
+}
 
-      <div className="info-grupo">
-        <h4>Descripción</h4>
-        <p className="descripcion-texto">
-          {modulo.descripcion || <em>Sin descripción</em>}
-        </p>
-      </div>
-    </div>
-  );
+export const TabInformacion = ({
+  form,
+}: TabInformacionProps) => {
+
+    const { uiProps } = form;
+
+    return (
+        <div className="TabInformacion">
+            <quimera-formulario>
+                <QInput label="Campo Texto" {...uiProps("texto")} />
+            </quimera-formulario>
+        </div>
+    );
 };

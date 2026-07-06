@@ -5,17 +5,19 @@ import { CambiosModulo, CampoOpcion, DeleteModulo, GetModulo, GetModulos, Modulo
 
 type OpcionApi = 'opcion_1' | 'opcion_2';
 
-interface ModuloApi {
+export interface ModuloApi {
     id: string;
     campo_string: string;
     campo_texto: string;
+    campo_numero: number;
     campo_opcion: OpcionApi;
     campo_fecha: string;
 }
 
-interface NuevoModuloApi {
+export interface NuevoModuloApi {
     campo_string: string;
     campo_texto: string;
+    campo_numero: number;
     campo_opcion: OpcionApi;
     campo_fecha: string;
 }
@@ -38,10 +40,11 @@ const campoOpcionAApi: Record<CampoOpcion, OpcionApi> = {
  * Mapea respuesta de API a interfaz del dominio
  * Convierte tipos del API a tipos del dominio (ej: string a Date)
 */
-const moduloDesdeApi = (api: ModuloApi): Modulo => ({
+export const moduloDesdeApi = (api: ModuloApi): Modulo => ({
     id: api.id,
     campoString: api.campo_string,
     campoTexto: api.campo_texto,
+    campoNumero: api.campo_numero,
     campoOpcion: campoOpcionDesdeApi[api.campo_opcion],
     campoFecha: new Date(Date.parse(api.campo_fecha)),
 });
@@ -50,9 +53,10 @@ const moduloDesdeApi = (api: ModuloApi): Modulo => ({
  * Mapea datos de creación y cambio de dominio a API
  * Convierte tipos del dominio a tipos que entiende el backend
  */
-const nuevoModuloAApi = (m: NuevoModulo): NuevoModuloApi => ({
+export const nuevoModuloAApi = (m: NuevoModulo): NuevoModuloApi => ({
     campo_string: m.campoString,
     campo_texto: m.campoTexto,
+    campo_numero: m.campoNumero,
     campo_opcion: campoOpcionAApi[m.campoOpcion],
     campo_fecha: m.campoFecha.toISOString(),
 });
@@ -61,6 +65,7 @@ const cambiosModuloAApi = (m: CambiosModulo): CambiosModuloApi => {
     const cambios: CambiosModuloApi = {}
     if (m.campoString !== undefined) cambios['campo_string'] = m.campoString;
     if (m.campoTexto !== undefined) cambios['campo_texto'] = m.campoTexto;
+    if (m.campoNumero !== undefined) cambios['campo_numero'] = m.campoNumero;
     if (m.campoOpcion !== undefined) cambios['campo_opcion'] = campoOpcionAApi[m.campoOpcion];
     if (m.campoFecha !== undefined) cambios['campo_fecha'] = m.campoFecha.toISOString();
     return cambios;
@@ -74,7 +79,7 @@ const cambiosModuloAApi = (m: CambiosModulo): CambiosModuloApi => {
 export const getModulo: GetModulo = async (id) => {
 
     return await RestAPI.getItem<Modulo, ModuloApi>(
-        `${baseUrl}/{id}`,
+        `${baseUrl}/${id}`,
         moduloDesdeApi,
     );
 }

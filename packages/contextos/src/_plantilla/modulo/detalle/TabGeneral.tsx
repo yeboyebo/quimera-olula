@@ -1,7 +1,8 @@
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
-import { HookModelo } from "@olula/lib/useModelo.js";
-import { Modulo } from "../diseño.js";
+import { QBoton } from "@olula/componentes/index.js";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { FormModelo } from "@olula/lib/dominio.js";
 import "./TabGeneral.css";
 
 /**
@@ -16,30 +17,36 @@ import "./TabGeneral.css";
  *
  * El atributo `nombre` llega automáticamente al spread de uiProps("campo").
  */
-export const TabGeneral = ({ form }: { form: HookModelo<Modulo> }) => {
-    const { uiProps } = form;
+interface TabGeneralProps {
+    form: FormModelo;
+    publicar: EmitirEvento;
+}
+
+
+export const TabGeneral = ({
+  form,
+  publicar = async () => {},
+}: TabGeneralProps) => {
+
+    const { uiProps, editable } = form;
 
     return (
         <div className="TabGeneral">
             <quimera-formulario>
-                {/*
-                 * Fila 1: Nombre (9 cols) + Estado (3 cols)
-                 * Posicionado en TabGeneral.css
-                 */}
-                <QInput label="Nombre" {...uiProps("nombre")} />
+                <QInput label="Campo String" {...uiProps("campoString")} />
                 <QSelect
-                    label="Estado"
-                    {...uiProps("estado")}
+                    label="Opcion"
+                    {...uiProps("campoOpcion")}
                     opciones={[
-                        { valor: "activo", descripcion: "Activo" },
-                        { valor: "inactivo", descripcion: "Inactivo" },
+                        { valor: "opcion1", descripcion: "Opción 1" },
+                        { valor: "opcion2", descripcion: "Opción 2" },
                     ]}
                 />
-
-                {/*
-                 * Fila 2: Descripción (12 cols, ancho completo por defecto)
-                 */}
-                <QInput label="Descripción" {...uiProps("descripcion")} />
+                <QBoton texto='Accion Tab General'
+                    onClick={() => publicar("borrado_solicitado")}
+                    deshabilitado={!editable}
+                />
+                <QInput label="Campo Número" {...uiProps("campoNumero")} />
             </quimera-formulario>
         </div>
     );

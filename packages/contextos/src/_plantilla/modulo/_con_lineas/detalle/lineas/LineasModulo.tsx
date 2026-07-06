@@ -1,22 +1,22 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
-import { BorrarLineaOrden } from "../../borrar_linea/BorrarLineaOrden.tsx";
-import { CambiarLineaOrden } from "../../cambiar_linea/CambiarLineaOrden.tsx";
-import { CrearLineaOrden } from "../../crear_linea/CrearLineaOrden.tsx";
-import { LineaOrdenAlmacen, OrdenAlmacen } from "../../../diseño.ts";
-import { EstadoOrdenAlmacen } from "../maquina.ts";
-import { LineasOrdenLista } from "./LineasOrdenLista.tsx";
+import { BorrarLineaModulo } from "../../borrar_linea/BorrarLineaModulo.js";
+import { CambiarLineaModulo } from "../../cambiar_linea/CambiarLineaModulo.js";
+import { CrearLineaModulo } from "../../crear_linea/CrearLineaModulo.js";
+import { LineaModulo, ModLin } from "../../diseño.js";
+import { EstadoDetalleModLin } from "../maquina.js";
+import { LineasLista } from "./LineasLista.js";
 
-export const LineasOrden = ({
-    orden,
+export const LineasModulo = ({
+    modLin,
     lineas,
     estado,
     publicar,
 }: {
-    orden: OrdenAlmacen;
-    lineas: ListaEntidades<LineaOrdenAlmacen>;
-    estado: EstadoOrdenAlmacen;
+    modLin: ModLin;
+    lineas: ListaEntidades<LineaModulo>;
+    estado: EstadoDetalleModLin;
     publicar: EmitirEvento;
 }) => {
     return (
@@ -38,24 +38,24 @@ export const LineasOrden = ({
                     Borrar
                 </QBoton>
             </div>
-            <LineasOrdenLista
+            <LineasLista
                 lineas={lineas.lista}
                 seleccionada={lineas.activo?.id}
                 publicar={publicar}
             />
             {estado === "CREANDO_LINEA" && (
-                <CrearLineaOrden orden={orden} publicar={publicar} />
+                <CrearLineaModulo modLin={modLin} publicar={publicar} />
             )}
             {lineas.activo && estado === "CAMBIANDO_LINEA" && (
-                <CambiarLineaOrden
-                    orden={orden}
+                <CambiarLineaModulo
+                    modLin={modLin}
                     linea={lineas.activo}
                     publicar={publicar}
                 />
             )}
             {lineas.activo && estado === "BORRANDO_LINEA" && (
-                <BorrarLineaOrden
-                    orden={orden}
+                <BorrarLineaModulo
+                    modLin={modLin}
                     linea={lineas.activo}
                     publicar={publicar}
                 />

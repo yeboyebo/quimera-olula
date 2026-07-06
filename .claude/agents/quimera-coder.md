@@ -913,15 +913,44 @@ Crea siempre `DetalleXxx.css` e impórtalo. Si hay campos fuera de tabs aplica e
 
 ---
 
+## PASO 0: VERIFICAR PLANTILLA CANÓNICA ANTES DE IMPLEMENTAR
+
+**Obligatorio antes de escribir cualquier código nuevo.** Las plantillas canónicas son la referencia de implementación; usarlas garantiza homogeneidad en el codebase.
+
+### Plantillas disponibles
+
+| Tipo de módulo | Carpeta |
+|----------------|---------|
+| CRUD simple (sin sub-recursos) | `packages/contextos/src/_plantilla/modulo/` |
+| Con líneas/sub-recursos | Base + delta `packages/contextos/src/_plantilla/modulo/_con_lineas/` |
+
+El delta `_con_lineas/` incluye un `README.md` que especifica qué ficheros reemplazar y qué añadir sobre la base.
+
+### Proceso de verificación
+
+1. **Identifica el tipo** — ¿el módulo tiene sub-recursos (líneas, pagos…)? Si no → `modulo/`; si sí → `modulo/` + `_con_lineas/`.
+2. **Lee los ficheros de la plantilla aplicable** — lee todos los ficheros relevantes para entender el patrón completo antes de empezar.
+3. **Copia y adapta** — usa los ficheros de plantilla como base literal, sustituyendo los nombres `Modulo`/`ModLin`/`LineaModulo` por los del dominio real.
+4. **Justifica cualquier desviación** — si el requisito obliga a apartarse del patrón, indícalo explícitamente antes de implementar.
+
+### Cuándo aplica la plantilla completa vs. un cambio puntual
+
+- **Nuevo módulo desde cero** → seguir la plantilla completa.
+- **Nueva funcionalidad en módulo existente** (nuevo estado, nuevo modal, nuevo sub-recurso) → leer el fichero equivalente de la plantilla para ese fragmento concreto y compararlo con lo que hay en el módulo real antes de modificar.
+- **Corrección de bug o refactor menor** → no es obligatorio consultar la plantilla, pero sí revisar que el resultado sea coherente con ella.
+
+---
+
 ## FLUJO DE TRABAJO AL IMPLEMENTAR NUEVA FUNCIONALIDAD
 
-1. **Identificar el dominio** — ¿nuevo sub-recurso, nuevo modal, nuevo estado?
-2. **Actualizar `diseño.ts`** — añadir interfaces, tipos de función y (si hay máquina nueva) tipos de estado/contexto.
-3. **Actualizar `dominio.ts`** — entidades vacías y metadatos si hacen falta.
-4. **Actualizar `infraestructura.ts`** — tipo API, mapper, función REST.
-5. **Actualizar `maquina.ts`** — nuevos estados y transiciones.
-6. **Crear componente React** — modal, lista o formulario, según el caso.
-7. **Conectar en el componente padre** — añadir estado a la máquina del padre y renderizado condicional `{estado === "..." && <NuevoModal ... />}`.
+1. **Verificar plantilla canónica** — ver Paso 0 arriba.
+2. **Identificar el dominio** — ¿nuevo sub-recurso, nuevo modal, nuevo estado?
+3. **Actualizar `diseño.ts`** — añadir interfaces, tipos de función y (si hay máquina nueva) tipos de estado/contexto.
+4. **Actualizar `dominio.ts`** — entidades vacías y metadatos si hacen falta.
+5. **Actualizar `infraestructura.ts`** — tipo API, mapper, función REST.
+6. **Actualizar `maquina.ts`** — nuevos estados y transiciones.
+7. **Crear componente React** — modal, lista o formulario, según el caso.
+8. **Conectar en el componente padre** — añadir estado a la máquina del padre y renderizado condicional `{estado === "..." && <NuevoModal ... />}`.
 
 Siempre leer los ficheros existentes del dominio antes de proponer cambios. No inventar convenciones que no estén presentes en el codebase.
 

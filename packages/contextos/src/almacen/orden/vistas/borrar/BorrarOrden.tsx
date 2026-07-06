@@ -2,26 +2,26 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useCallback } from "react";
-import { Modulo } from "../diseño.js";
-import { deleteModulo } from "../infraestructura.js";
+import { OrdenAlmacen } from "../../diseño.ts";
+import { deleteOrden } from "../../infraestructura.ts";
 
-export const BorrarModulo = ({
+export const BorrarOrden = ({
     publicar,
-    modulo,
+    orden,
 }: {
-    modulo: Modulo;
     publicar: EmitirEvento;
+    orden: OrdenAlmacen;
 }) => {
     const borrar_ = useCallback(
         async () => {
-            await deleteModulo(modulo.id);
-            publicar("modulo_borrado", modulo);
+            await deleteOrden(orden.id);
+            publicar("orden_borrada", orden);
         },
-        [publicar, modulo]
+        [publicar, orden]
     );
 
     const cancelar_ = useCallback(
-        () => publicar("borrado_de_modulo_cancelado"),
+        () => publicar("borrado_cancelado"),
         [publicar]
     );
 
@@ -29,10 +29,10 @@ export const BorrarModulo = ({
 
     return (
         <QModalConfirmacion
-            nombre="borrarModulo"
+            nombre="confirmarBorrarOrden"
             abierto={true}
-            titulo="Borrar módulo"
-            mensaje={`¿Está seguro de que desea borrar el módulo ${modulo.campoString}?`}
+            titulo="Confirmar borrado"
+            mensaje={`¿Está seguro de que desea borrar la orden "${orden.tipo}"?`}
             onCerrar={cancelar}
             onAceptar={borrar}
         />
