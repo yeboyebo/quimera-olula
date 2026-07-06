@@ -16,7 +16,7 @@ export const metaCambioClienteFactura: MetaModelo<CambioClienteFactura> = metaCa
 
 export type EstadoVentaTpv = (
     'INICIAL' | "ABIERTA" | "EMITIDA"
-    | "BORRANDO_VENTA"
+    | "BORRANDO_VENTA" | "EMITIENDO_VENTA"
     | "PAGANDO_EN_EFECTIVO" | "PAGANDO_CON_TARJETA" | "PAGANDO_CON_VALE"
     | "BORRANDO_PAGO" | "CAMBIANDO_CLIENTE" | "CAMBIANDO_DESCUENTO"
     | "CREANDO_LINEA" | "BORRANDO_LINEA" | "CAMBIANDO_LINEA"
