@@ -65,7 +65,7 @@ type PagoVentaTpvApi = {
     vale: string | null;
     arqueo_id: string;
     arqueo_abierto: boolean;
-    tipo_tarjeta: string | null;
+    tipo_tarjeta_id: string | null;
 }
 
 interface VentaTpvADevolverAPI extends VentaTpvAPI {
@@ -105,7 +105,7 @@ export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvApi): PagoVentaTpv => (
         vale: p.vale,
         idArqueo: p.arqueo_id,
         arqueoAbierto: p.arqueo_abierto,
-        idTipoTarjeta: p.tipo_tarjeta
+        idTipoTarjeta: p.tipo_tarjeta_id
     }
 );
 
