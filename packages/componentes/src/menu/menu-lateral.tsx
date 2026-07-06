@@ -1,6 +1,7 @@
 import { puede } from "@olula/lib/dominio.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { ElementoMenu, ElementoMenuPadre } from "@olula/lib/menu.ts";
+import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -13,6 +14,10 @@ export const MenuLateral = () => {
   const rutaActual = useLocation().pathname;
   const [busqueda, setBusqueda] = useState("");
   const { menuAbierto, cerrarMenu } = useMenuControl();
+  const [gruposAbiertos, setGruposAbiertos] = usePreferencia<Record<string, boolean>>(
+    "menu.lateral.grupos-abiertos",
+    {}
+  );
 
   const renderBuscador = () => (
     <div id="buscador">
@@ -61,8 +66,21 @@ export const MenuLateral = () => {
       .filter(Boolean);
     if (!subelementos.length) return null;
 
+    const estaAbierto = busqueda ? true : (gruposAbiertos[elemento.nombre] ?? false);
+
     return (
-      <details key={elemento.nombre} open>
+      <details
+        key={elemento.nombre}
+        open={estaAbierto}
+        onToggle={(e) => {
+          if (!busqueda) {
+            setGruposAbiertos({
+              ...gruposAbiertos,
+              [elemento.nombre]: (e.target as HTMLDetailsElement).open,
+            });
+          }
+        }}
+      >
         <summary>
           {icono} {elemento.nombre}
         </summary>

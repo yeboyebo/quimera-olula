@@ -1,24 +1,4 @@
-import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
-import { Articulo } from "./diseño";
+// Re-exportamos para compatibilidad con importaciones externas
+export { metaNuevoArticulo, nuevoArticuloVacio } from "./crear/dominio.ts";
+export { articuloVacio, metaArticulo } from "./detalle/dominio.ts";
 
-export const articuloVacio: Articulo = {
-    id: "",
-    descripcion: "",
-};
-
-export const metaArticulo: MetaModelo<Articulo> = {
-    campos: {
-        descripcion: { requerido: true, validacion: (m: Articulo) => stringNoVacio(m.descripcion) },
-    },
-};
-
-export const nuevoArticuloVacio: Partial<Articulo> = {
-    descripcion: "",
-
-};
-
-export const metaNuevoArticulo: MetaModelo<Partial<Articulo>> = {
-    campos: {
-        descripcion: { requerido: true, validacion: (m) => stringNoVacio(m.descripcion || "") },
-    },
-};

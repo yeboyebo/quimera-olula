@@ -3,16 +3,15 @@ header {
     min-height: 60px;
 
     a {
-        height: 30px;
+        height: 22px;
         margin-left: 20px;
 
         &.login {
             margin-left: 0;
         }
 
-        img {
+        .logo-app {
             filter: brightness(0) invert(1);
-            height: 20px;
         }
     }
 

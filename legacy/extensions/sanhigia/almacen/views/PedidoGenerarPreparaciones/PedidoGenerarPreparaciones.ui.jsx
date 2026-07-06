@@ -16,7 +16,7 @@ import {
 } from "@quimera/comps";
 import { List } from "@quimera/thirdparty";
 import Quimera, { getSchemas, useStateValue, useWidth, util } from "quimera";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ListItemPedidoVenta, ModaAsociarBarcode, ModaLotesLinea, Ubicacion } from "../../comps";
 
@@ -119,6 +119,10 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   ] = useStateValue();
   const classes = useStyles();
   const width = useWidth();
+  const [anchoDescripcionCalculado, setAnchoDescripcionCalculado] = useState(600);
+  const mobile = ["xs", "sm"].includes(width);
+
+  const dataLineas = lineas.idList.map(id => lineas.dict[id]);
 
   useEffect(() => {
     dispatch({
@@ -133,6 +137,16 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   useEffect(() => {
     util.publishEvent(pedido.event, callbackChanged);
   }, [pedido.event.serial]);
+
+  useEffect(() => {
+    if (mobile && dataLineas.length > 0) {
+      const maxChars = Math.max(...dataLineas.map(l => (l.descripcion || "").length));
+      const anchoEstimado = Math.min(Math.max(150, maxChars * 8.5 + 40), 900);
+      setAnchoDescripcionCalculado(anchoEstimado);
+    } else {
+      setAnchoDescripcionCalculado(600);
+    }
+  }, [dataLineas, mobile]);
 
   useEffect(() => {
     !!initPedido &&
@@ -197,10 +211,11 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
   };
 
   const lineaBloqueada = (linea) => {
-    return (linea.dtoLineal !== 0 && linea.shCantAlbaran !== 0.0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
+    return (linea.dtoLineal !== 0 && (linea.shCantAlbaran ?? 0) !== 0 && parseFloat(linea.cantidad) !== (parseFloat(linea.canServida + linea.shCantAlbaran)))
   };
 
-  const mobile = ["xs", "sm"].includes(width);
+
+
   const anchoDetalle = 1;
   const schema = getSchemas().pedidos;
   const editable = logic.pedidoEditable(pedido.data);
@@ -367,6 +382,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                         }
                         disabled={lineaBloqueada(linea)}
                       >
+                        {console.log('mimensaje_lineas', linea.referencia, "dto", linea.dtoLineal, "cantAlb", linea.shCantAlbaran, "cantidad", parseFloat(linea.cantidad), "canServ", linea.canServida, "total", parseFloat(linea.canServida + linea.shCantAlbaran), linea.shCantAlbaran !== 0.0)}
                         <Icon className={lineaBloqueada(linea) ? classes.iconoBloqueado : classes.iconoCabecera}>
                           {linea.cerradaPDA ? "lock" : "lock_open"}
                         </Icon>
@@ -410,7 +426,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="descripcion"
                     pl={2}
                     value={linea => linea.descripcion}
-                    width={600}
+                    width={anchoDescripcionCalculado}
                   />
                   {/* <Column.Text
                     id="ubicacion"
@@ -421,7 +437,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                   /> */}
                   <Column.Action
                     id="actioncodubicacion"
-                    width={95}
+                    width={110}
                     header="Ubic."
                     order="sh_codubicacionarticulo"
                     value={(linea, idx) => (
@@ -450,7 +466,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="refprov"
                     pl={2}
                     value={linea => linea.referenciaProv}
-                    width={160}
+                    width={180}
                   />
                   <Column.Decimal
                     id="totalenalbaran"
@@ -484,7 +500,7 @@ function PedidoGenerarPreparaciones({ callbackChanged, callbackPedidoEnviadoPda,
                     order="referencia"
                     pl={2}
                     value={linea => linea.referencia}
-                    width={160}
+                    width={180}
                   />
                   <Column.Text
                     id="dtolineal"

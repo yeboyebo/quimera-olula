@@ -25,7 +25,12 @@ jobs:
           cache: 'pnpm'
 
       - name: Make envfile
-        run: echo "VITE_API_URL=https://apiolula.elganso.com" > .env && echo "VITE_API_URL=https://apiolula.elganso.com" > ./apps/elganso_stores/.env
+        run: |
+          echo "VITE_API_URL=https://apiolula.elganso.com" > .env
+          echo "VITE_LEGACY_API_URL=https://apistore.elganso.com/api/" >> .env
+
+          echo "VITE_API_URL=https://apiolula.elganso.com" > ./apps/elganso_stores/.env
+          echo "VITE_LEGACY_API_URL=https://apistore.elganso.com/api/" >> ./apps/elganso_stores/.env
 
       - name: Install Dependecies
         run: pnpm install
@@ -55,24 +60,3 @@ jobs:
           file: Dockerfile
           push: true
           tags: yeboyebohub/olula_cli_ganso:${{ github.sha }}
-
-  deploy-to-cluster:
-    name: deploy to cluster
-    if: ${{ github.ref_name == 'Deploy_Ganso' }}
-    runs-on: ubuntu-latest
-    needs: Docker
-    steps:
-      - name: deploy to cluster
-        uses: steebchen/kubectl@v2.0.0
-        with:
-          config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: -n default set image --record deployment/gansoolula-deployment appganso=yeboyebohub/olula_cli_ganso:${{ github.sha }}
-
-      - name: verify deployment
-        uses: steebchen/kubectl@v2.0.0
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-          KUBECTL_VERSION: "1.28"
-        with:
-          config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: -n default rollout status deployment/gansoolula-deployment

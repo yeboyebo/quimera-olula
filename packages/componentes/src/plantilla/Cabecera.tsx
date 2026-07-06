@@ -1,9 +1,10 @@
 import { OlulaWordmark } from "@olula/componentes/tema/Olula.jsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
 import "./Cabecera.css";
+import { NotificacionesCabecera } from "./NotificacionesCabecera.tsx";
 import { estaAutentificado } from "./autenticacion";
 import { useMenuControl } from "./useMenuControl";
 
@@ -13,6 +14,7 @@ export type CabeceraProps = {
   logoClassName?: string;
   Logo?: (() => React.ReactNode) | null;
   Titulo?: () => React.ReactNode;
+  NotificacionesCabecera?: () => React.ReactNode;
   AccionesCabecera?: () => React.ReactNode;
   MenuUsuario?: () => React.ReactNode;
   ExtraLogo?: () => React.ReactNode;
@@ -29,6 +31,7 @@ export const CabeceraBase = ({
       style: {},
     }),
   Titulo,
+  NotificacionesCabecera: Notificaciones,
   AccionesCabecera,
   MenuUsuario,
   ExtraLogo,
@@ -56,8 +59,13 @@ export const CabeceraBase = ({
         </Link>
         {ExtraLogo ? <ExtraLogo /> : null}
         <div id="cabecera-titulo">{Titulo ? <Titulo /> : null}</div>
-        <div id="cabecera-acciones-extra">
-          {AccionesCabecera ? <AccionesCabecera /> : null}
+        <div id="cabecera-acciones">
+          <div id="cabecera-acciones-globales">
+            {Notificaciones ? <Notificaciones /> : null}
+          </div>
+          <div id="cabecera-acciones-extra">
+            {AccionesCabecera ? <AccionesCabecera /> : null}
+          </div>
         </div>
         {autenticado && (
           <>
@@ -86,6 +94,8 @@ export const CabeceraBase = ({
 export const Cabecera = (props: CabeceraProps) => {
   const { app } = useContext(FactoryCtx);
   const CabeceraCustom = app.Componentes?.cabecera as typeof CabeceraBase;
+  const NotificacionesCabeceraCustom = app.Componentes
+    ?.cabecera_notificaciones as () => React.ReactNode;
   const AccionesCabecera = app.Componentes
     ?.cabecera_acciones as () => React.ReactNode;
   const MenuUsuario = app.Componentes
@@ -94,12 +104,34 @@ export const Cabecera = (props: CabeceraProps) => {
     ?.cabecera_extra_logo as () => React.ReactNode;
   const cProps: CabeceraProps = {
     ...props,
+    NotificacionesCabecera:
+      NotificacionesCabeceraCustom ||
+      props.NotificacionesCabecera ||
+      NotificacionesCabecera,
     // Logo: Logo || props.Logo,
     AccionesCabecera: AccionesCabecera || props.AccionesCabecera,
     MenuUsuario: MenuUsuario || props.MenuUsuario,
     ExtraLogo: ExtraLogo || props.ExtraLogo,
     Titulo: props.Titulo,
   };
+
+  const { pathname } = useLocation();
+
+  const rutasExcluidas = [
+    "/login",
+    "/forgot-password",
+    "/signup",
+    "/welcome",
+    "/auth/passkey/enlace-magico",
+    "/auth/reset-password",
+  ];
+  const esRutaExcluida = rutasExcluidas.some((ruta) =>
+    pathname.startsWith(ruta)
+  );
+
+  if (esRutaExcluida) {
+    return null;
+  }
 
   return CabeceraCustom ? (
     <CabeceraCustom {...cProps} />
