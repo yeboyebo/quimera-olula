@@ -29,6 +29,7 @@ export * from "./detalle/FormularioGenerico.tsx";
 export * from "./detalle/helpers.tsx";
 export * from "./detalle/tabs/Tabs.tsx";
 export * from "./helpers.ts";
+export * from "./home/Home.tsx";
 
 export * from "./maestro/Listado.tsx";
 export * from "./maestro/ListadoSemiControlado.tsx";

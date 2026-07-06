@@ -1,0 +1,24 @@
+.widget-prevision-oportunidades {
+    display: grid;
+    gap: var(--espaciado-s);
+}
+
+.widget-prevision-oportunidades__titulo {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.widget-prevision-oportunidades__valor {
+    font-size: 1.125rem;
+    line-height: 1.35;
+}
+
+.widget-prevision-oportunidades__acciones {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.widget-prevision-oportunidades__enlace {
+    font-weight: 600;
+}

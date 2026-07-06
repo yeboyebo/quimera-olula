@@ -3,6 +3,7 @@ import type { QKanbanColumna } from "@olula/componentes/atomos/qkanban.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import type { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -12,6 +13,7 @@ import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { EstadoOportunidad, OportunidadVenta } from "../diseño.ts";
 import { getEstadosOportunidadVenta } from "../infraestructura.ts";
+import { FiltroEstadosCheckboxes } from "./FiltroEstadosCheckboxes.tsx";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
@@ -98,6 +100,38 @@ export const MaestroOportunidades = () => {
 
             <Listado<OportunidadVenta>
               metaTabla={metaTablaOportunidadVenta}
+              metaFiltro={{
+                ...getMetaFiltroDefecto(metaTablaOportunidadVenta),
+                estado_id: {
+                  id: "estado_id",
+                  label: "Estado",
+                  filtro: () => null, // El filtro se maneja en el componente de checkboxes
+                  render: () => {
+                    const filtroArray = Array.isArray(
+                      ctx.oportunidades.criteria.filtro
+                    )
+                      ? ctx.oportunidades.criteria.filtro
+                      : [];
+                    return (
+                      <FiltroEstadosCheckboxes
+                        estados={estadosOportunidad}
+                        filtroActual={filtroArray}
+                        onChange={(nuevoFiltro) => {
+                          const filtroFiltrado = filtroArray.filter(
+                            (f) => f[0] !== "estado_id"
+                          );
+                          emitir("criteria_cambiado", {
+                            ...ctx.oportunidades.criteria,
+                            filtro: nuevoFiltro
+                              ? [...filtroFiltrado, nuevoFiltro]
+                              : filtroFiltrado,
+                          });
+                        }}
+                      />
+                    );
+                  },
+                },
+              }}
               criteria={ctx.oportunidades.criteria}
               tarjeta={TarjetaOportunidadVenta}
               tarjetaKanban={TarjetaOportunidadVentaKanban}

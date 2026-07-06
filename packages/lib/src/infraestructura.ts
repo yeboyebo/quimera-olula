@@ -164,7 +164,7 @@ const filtrosEspeciales: Record<string, (campo: string) => ClausulaFiltro> = {
 const transformarFiltrosEspeciales = (clausula: ClausulaFiltro): ClausulaFiltro => {
     const [campo, _, valor] = clausula;
 
-    if (!valor?.startsWith("@")) return clausula;
+    if (typeof valor !== "string" || !valor.startsWith("@")) return clausula;
 
     const clausulaFn = filtrosEspeciales[valor as keyof typeof filtrosEspeciales];
     if (!clausulaFn) return clausula;

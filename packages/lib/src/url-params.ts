@@ -37,7 +37,16 @@ const getFiltro = (params: URLSearchParams) => {
         const valor = v.split("__");
 
         if (valor.length === 2) {
-            filtro.push([k, valor[0], valor[1]])
+            const operador = valor[0];
+            const valorStr = valor[1];
+
+            // Soportar arrays para operadores 'in' y '!in'
+            if ((operador === "in" || operador === "!in") && valorStr.includes(",")) {
+                const valorArray = valorStr.split(",");
+                filtro.push([k, operador, valorArray as unknown as string]);
+            } else {
+                filtro.push([k, operador, valorStr]);
+            }
         }
         else filtro.push([k, "~", v])
     }
@@ -54,11 +63,14 @@ const setFiltro = (criteria: Criteria, params: URLSearchParams) => {
         const [campoFiltro, operador, valor] = f;
 
         if (valor === undefined) {
-            params.set(campoFiltro, operador)
+            params.append(campoFiltro, operador)
         } else if (operador === "~") {
-            params.set(campoFiltro, valor ?? "");
+            params.append(campoFiltro, valor ?? "");
+        } else if ((operador === "in" || operador === "!in") && Array.isArray(valor)) {
+            // Para operadores 'in' y '!in' con arrays, serializar como valores separados por comas
+            params.append(campoFiltro, operador + "__" + (valor as string[]).join(","));
         } else {
-            params.set(campoFiltro, operador + "__" + valor);
+            params.append(campoFiltro, operador + "__" + valor);
         }
     });
 }
