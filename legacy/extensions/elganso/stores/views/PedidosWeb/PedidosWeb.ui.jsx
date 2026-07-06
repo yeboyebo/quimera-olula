@@ -258,7 +258,7 @@ function PedidosWeb({ useStyles }) {
     const { pedidosWeb } = state;
 
     const pedidosPorEnviar = pedidosWeb.filter(function (linea) {
-      return rowSelectionModel.indexOf(linea.idtpv_comanda) !== -1;
+      return rowSelectionModel.indexOf(String(linea.idtpv_comanda)) != -1;
     });
 
     let pedidosPorEnviarGrouped = null;
@@ -449,7 +449,31 @@ function PedidosWeb({ useStyles }) {
       <div id="PedidosWeb" className="page-container">
         <h2 className="main">Gestión Pedidos</h2>
         {/* <BarcodeScanner /> */}
+        {filtroSeleccionado ? (
+          <>
+            <div className="filtrosFooter">
+              <div>
+                <span className="filtro-footer-label">Filtros aplicados:</span>
+                <div>
+                  <span className={`filtro-footer-selected-${valueFromId(colorsArray, filtroSeleccionado)["value"]}`}>
+                    {valueFromId(colorsArray, filtroSeleccionado)["label"]}
+                  </span>
+                </div>
+
+              </div>
+              <Button
+                id="limpiarFiltros"
+                text="Limpiar"
+                className="modalButton-ClearFilter"
+                onClick={() => {
+                  setFiltroSeleccionado(null);
+                }}
+              />
+            </div>
+          </>
+        ) : null}
         <DataGrid
+          className="dataGridPedidosWeb"
           rows={pedidos}
           disableAutosize
           disableColumnFilter
@@ -478,6 +502,7 @@ function PedidosWeb({ useStyles }) {
           columns={columns}
           slots={{ toolbar: CustomToolbar }}
           localeText={{
+            noRowsLabel: "No hay pedidos",
             toolbarQuickFilterPlaceholder: "Buscar...",
             paginationRowsPerPage: "Líneas por página",
             paginationDisplayedRows: ({ from, to, count }) =>
@@ -658,30 +683,6 @@ function PedidosWeb({ useStyles }) {
             </DialogActions>
           </Dialog>
         </Container>
-        {filtroSeleccionado ? (
-          <>
-            <div className="filtrosFooter-container"></div>
-            <div className="filtrosFooter">
-              <div>
-                Filtros aplicados:
-                <div>
-                  <span className={`filtro-footer-selected-${valueFromId(colorsArray, filtroSeleccionado)["value"]}`}>
-                    {valueFromId(colorsArray, filtroSeleccionado)["label"]}
-                  </span>
-                </div>
-
-              </div>
-              <Button
-                id="limpiarFiltros"
-                text="Limpiar"
-                className="modalButton-ClearFilter"
-                onClick={() => {
-                  setFiltroSeleccionado(null);
-                }}
-              />
-            </div>
-          </>
-        ) : null}
       </div>
     );
   };

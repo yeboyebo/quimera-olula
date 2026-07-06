@@ -210,6 +210,7 @@ function ConsultaStock({ useStyles }) {
           ".MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
         }}
         localeText={{
+          noRowsLabel: "No hay stock disponible para la talla seleccionada.",
           toolbarQuickFilterPlaceholder: "Buscar...",
           paginationRowsPerPage: "Líneas por página",
           paginationDisplayedRows: ({ from, to, count }) =>
