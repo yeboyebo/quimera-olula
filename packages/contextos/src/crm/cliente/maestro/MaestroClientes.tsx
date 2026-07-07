@@ -1,6 +1,8 @@
+import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -35,6 +37,20 @@ export const MaestroClientes = () => {
 
             <Listado<Cliente>
               metaTabla={metaTablaCliente}
+              metaFiltro={{
+                ...getMetaFiltroDefecto(metaTablaCliente),
+                agente_id: {
+                  id: "agente_id",
+                  label: "Agente",
+                  filtro: (v) => (v ? ["agente_id", "=", v as string] : null),
+                  render: (valor, onChange) => (
+                    <Agente
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+              }}
               criteria={ctx.clientes.criteria}
               tarjeta={TarjetaCliente}
               entidades={ctx.clientes.lista}

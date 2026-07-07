@@ -50,6 +50,7 @@ type ListadoProps<T extends Entidad> = {
   seleccionada?: string;
   onSeleccion: (seleccionada: string) => void;
   modo?: Modo;
+  mostrarCambioModo?: boolean;
   onModoChanged?: (modo: Modo) => void;
   onCriteriaChanged: (criteria: Criteria) => void;
   onSiguientePagina?: (criteria: Criteria) => void;
@@ -78,6 +79,7 @@ export const Listado = <T extends Entidad>({
   seleccionada,
   onSeleccion,
   modo,
+  mostrarCambioModo,
   onModoChanged,
   onCriteriaChanged,
   onSiguientePagina,
@@ -169,8 +171,12 @@ export const Listado = <T extends Entidad>({
     return modosDisponibles[(indice + 1) % modosDisponibles.length];
   };
 
-  const mostrarCambioModo =
-    modosDisponibles.length > 1 && modoEfectivo && !modo;
+  const mostrarCambioModoPorDefecto =
+    modosDisponibles.length > 1 && Boolean(modoEfectivo) && !modo;
+  const mostrarCambioModoFinal =
+    (mostrarCambioModo ?? mostrarCambioModoPorDefecto) &&
+    modosDisponibles.length > 1 &&
+    Boolean(modoEfectivo);
   const acciones = renderAcciones?.();
 
   const renderTabla = (datos: T[]) => {
@@ -349,7 +355,7 @@ export const Listado = <T extends Entidad>({
               </span>
             </div>
           )}
-          {mostrarCambioModo && (
+          {mostrarCambioModoFinal && (
             <div className="cambio-modo">
               <span
                 className="cambio-modo-icono"

@@ -25,9 +25,9 @@ export const modeloWidgetPrevisionInicial: ModeloWidgetPrevision = {
 };
 
 const construirUrlConFiltro = (filtro: ClausulaFiltro[]): string => {
-    if (filtro.length === 0) return RUTA_OPO_VENTA;
-
     const params = new URLSearchParams();
+    params.set("modo", "kanban");
+
     for (const [campo, operador, valor] of filtro) {
         params.append(campo, valor === undefined ? operador : `${operador}__${valor}`);
     }

@@ -4,7 +4,7 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import type { Filtro, Orden } from "@olula/lib/diseño.ts";
+import type { ClausulaFiltro, Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -22,13 +22,17 @@ import { TarjetaOportunidadVentaKanban } from "./TarjetaOportunidadVentaKanban.t
 
 export const MaestroOportunidades = () => {
   const { id, criteria } = getUrlParams();
+  const modoUrl = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("modo");
+  }, []);
   const [columnasKanban, setColumnasKanban] = useState<QKanbanColumna[]>([]);
   const [estadosOportunidad, setEstadosOportunidad] = useState<
     EstadoOportunidad[]
   >([]);
-  const [modoListado, setModoListado] = useState<
-    "tabla" | "tarjetas" | "kanban"
-  >("tarjetas");
+  const [modoActual, setModoActual] = useState<"tabla" | "tarjetas" | "kanban">(
+    modoUrl === "kanban" ? "kanban" : "tarjetas"
+  );
   const criteriaBaseOportunidades = useMemo(
     () => ({
       ...criteriaDefecto,
@@ -50,6 +54,36 @@ export const MaestroOportunidades = () => {
       criteriaInicial
     ),
   });
+
+  const columnasKanbanFiltradas = useMemo(() => {
+    const filtroArray = Array.isArray(ctx.oportunidades.criteria.filtro)
+      ? (ctx.oportunidades.criteria.filtro as ClausulaFiltro[])
+      : [];
+
+    const filtrosEstado = filtroArray.filter(
+      ([campo, operador]) =>
+        campo === "estado_id" && (operador === "in" || operador === "!in")
+    );
+
+    if (!filtrosEstado.length) return columnasKanban;
+
+    return columnasKanban.filter((columna) => {
+      const idColumna = String(columna.id);
+
+      return filtrosEstado.every(([, operador, valor]) => {
+        const valores = Array.isArray(valor)
+          ? valor.map(String)
+          : String(valor)
+              .split(",")
+              .map((v) => v.trim())
+              .filter(Boolean);
+
+        if (operador === "in") return valores.includes(idColumna);
+        if (operador === "!in") return !valores.includes(idColumna);
+        return true;
+      });
+    });
+  }, [ctx.oportunidades.criteria.filtro, columnasKanban]);
 
   useUrlParams(ctx.oportunidades.activo, ctx.oportunidades.criteria);
 
@@ -133,11 +167,13 @@ export const MaestroOportunidades = () => {
                 },
               }}
               criteria={ctx.oportunidades.criteria}
+              modo={modoActual}
+              mostrarCambioModo
               tarjeta={TarjetaOportunidadVenta}
               tarjetaKanban={TarjetaOportunidadVentaKanban}
               entidades={ctx.oportunidades.lista}
               totalEntidades={ctx.oportunidades.total}
-              columnasKanban={columnasKanban}
+              columnasKanban={columnasKanbanFiltradas}
               campoEstadoKanban="estado_id"
               onCambioEstadoKanban={(idOportunidad, nuevoEstado) => {
                 const estadoDestino = estadosOportunidad.find(
@@ -152,7 +188,7 @@ export const MaestroOportunidades = () => {
                 });
               }}
               onModoChanged={(nuevoModo) => {
-                setModoListado(nuevoModo);
+                setModoActual(nuevoModo);
 
                 if (nuevoModo === "kanban") {
                   emitir("oportunidad_deseleccionada");
@@ -184,9 +220,9 @@ export const MaestroOportunidades = () => {
           />
         }
         seleccionada={ctx.oportunidades.activo}
-        modoDisposicion={
-          modoListado === "kanban" ? "pantalla-completa" : "maestro-50"
-        }
+        nombreModal="detalleOportunidadKanban"
+        onCerrarDetalle={() => emitir("oportunidad_deseleccionada")}
+        modoDisposicion={modoActual === "kanban" ? "modal" : "maestro-50"}
       />
 
       {ctx.estado === "CREANDO" && <CrearOportunidadVenta publicar={emitir} />}

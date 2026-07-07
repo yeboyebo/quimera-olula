@@ -5,6 +5,8 @@ export interface Cliente extends Entidad {
   nombre: string;
   nombre_comercial: string | null;
   id_fiscal: string;
+  agente_id: string | null;
+  nombre_agente: string | null;
   tipo_id_fiscal: string;
   grupo_iva_negocio_id: string;
   grupo_id: string;

@@ -1,5 +1,4 @@
 import { TabCrmContactos } from "#/ventas/cliente/detalle/CRMContactos/TabCrmContactos.tsx";
-import { TabDirecciones } from "#/ventas/cliente/detalle/Direcciones/TabDirecciones.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
@@ -68,10 +67,6 @@ export const DetalleCliente = ({
 
             <Tab label="Contactos">
               <TabCrmContactos clienteId={clienteId} />
-            </Tab>
-
-            <Tab label="Direcciones">
-              <TabDirecciones clienteId={clienteId} />
             </Tab>
 
             <Tab label="Oportunidades">

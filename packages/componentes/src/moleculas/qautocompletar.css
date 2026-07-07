@@ -14,3 +14,8 @@ quimera-autocompletar quimera-input[tipo='autocompletar'] label input[list] {
 quimera-autocompletar:focus-within quimera-input[tipo='autocompletar'] label input[list] {
     background-position: left var(--espaciado-xxs) center;
 }
+
+quimera-autocompletar quimera-input[tipo='autocompletar'] label input[list]:disabled {
+    background-image: none;
+    padding-left: var(--espaciado-s);
+}

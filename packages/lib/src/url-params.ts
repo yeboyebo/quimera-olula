@@ -24,7 +24,7 @@ export const setIdUrlParams = (id: string | undefined) => {
     history.replaceState({}, "", formarUrl(params));
 }
 
-const clavesReservadas = ["id", "orden", "p", "l"];
+const clavesReservadas = ["id", "modo", "orden", "p", "l"];
 
 export const filtroDefecto: ClausulaFiltro[] = [];
 
@@ -130,9 +130,11 @@ export const getCriteriaUrlParams = () => {
 export const setCriteriaUrlParams = (criteria: Criteria) => {
     const previo = new URLSearchParams(window.location.search);
     const id = previo.get("id");
+    const modo = previo.get("modo");
 
     const params = new URLSearchParams();
     if (id) params.set("id", id);
+    if (modo) params.set("modo", modo);
 
     setFiltro(criteria, params);
     setOrden(criteria, params);

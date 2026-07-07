@@ -1,11 +1,17 @@
 import {
   type DragEndEvent,
+  type DragStartEvent,
   DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
   useDraggable,
   useDroppable,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import { Entidad } from "@olula/lib/diseño.ts";
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import "./qkanban.css";
 import { MetaTabla } from "./qtabla.tsx";
@@ -55,6 +61,8 @@ const QKanbanTarjeta = <T extends Entidad>({
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : undefined,
         opacity: isDragging ? 0.55 : 1,
+        position: "relative",
+        zIndex: isDragging ? 1000 : "auto",
       }}
       {...attributes}
       {...listeners}
@@ -126,6 +134,14 @@ export const QKanban = <T extends Entidad>({
   onSeleccion,
   onCambioEstado,
 }: QKanbanProps<T>) => {
+  const [idActivaArrastre, setIdActivaArrastre] = useState<string | null>(null);
+  const sensores = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
   const tarjetaRender =
     tarjeta ??
     (metaTabla
@@ -142,6 +158,8 @@ export const QKanban = <T extends Entidad>({
   }));
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
+    setIdActivaArrastre(null);
+
     if (!over || active.id === over.id) return;
 
     const nuevaColumna = columnas.find(
@@ -159,6 +177,18 @@ export const QKanban = <T extends Entidad>({
     onCambioEstado(String(active.id), nuevaColumna.id);
   };
 
+  const onDragStart = ({ active }: DragStartEvent) => {
+    setIdActivaArrastre(String(active.id));
+  };
+
+  const onDragCancel = () => {
+    setIdActivaArrastre(null);
+  };
+
+  const entidadActiva = idActivaArrastre
+    ? entidades.find((entidad) => entidad.id === idActivaArrastre)
+    : undefined;
+
   if (cargando && entidades.length === 0) {
     return (
       <div className="QKanban">
@@ -168,7 +198,12 @@ export const QKanban = <T extends Entidad>({
   }
 
   return (
-    <DndContext onDragEnd={onDragEnd}>
+    <DndContext
+      sensors={sensores}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragCancel={onDragCancel}
+    >
       <div className="QKanban">
         <div className="qkanban-contenedor">
           {columnasAgrupadas.map((columna) => (
@@ -188,6 +223,13 @@ export const QKanban = <T extends Entidad>({
           ))}
         </div>
       </div>
+      <DragOverlay>
+        {entidadActiva && tarjetaRender ? (
+          <div className="qkanban-tarjeta-arrastrable">
+            <quimera-tarjeta>{tarjetaRender(entidadActiva)}</quimera-tarjeta>
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };
