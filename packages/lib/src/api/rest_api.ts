@@ -1,5 +1,5 @@
-import { Filtro, Orden, Paginacion } from "../diseño.ts";
-import { criteriaQuery } from "../infraestructura.ts";
+import { Criteria } from "../diseño.ts";
+import { criteriaAQueryString } from "../infraestructura.ts";
 import type { API, RespuestaGetItem, RespuestaGetLista, RespuestaGetQuery } from "./diseño.ts";
 import { tokenAcceso } from "./token_acceso.ts";
 
@@ -79,19 +79,19 @@ const enviarPostBlob = async <T>(
 
 export const getQuery = async <T, TAPI>(
   url: string,
-  conversor: (t: TAPI) => T,
-  filtro: Filtro,
-  orden: Orden,
-  paginacion: Paginacion,
+  criteria: Criteria,
+  conversor?: (t: TAPI) => T,
   msgError?: string,
 ): Promise<RespuestaGetQuery<T>> => {
 
-  const q = criteriaQuery(filtro, orden, paginacion);
+  const q = criteriaAQueryString(criteria);
   const respuesta = await consulta<RespuestaGetQuery<TAPI>>(
     `${url}${q}`, msgError
   )
   return {
-    datos: respuesta.datos.map(conversor),
+    datos: conversor
+      ? respuesta.datos.map(conversor)
+      : respuesta.datos as unknown as T[],
     total: respuesta.total,
   };
 };

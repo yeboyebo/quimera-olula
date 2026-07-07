@@ -107,11 +107,11 @@ export const getModLin: GetModLin = async (id) => {
 /**
  * Obtener lista de módulos con filtros
  */
-export const getModLins: GetModLins = async (filtro, orden, paginacion) => {
+export const getModLins: GetModLins = async (criteria) => {
     return await RestAPI.getQuery<ItemModLin, ItemModLinApi>(
         baseUrl,
+        criteria,
         itemModLinDesdeApi,
-        filtro, orden, paginacion,
         "Error al obtener módulos",
     );
 };

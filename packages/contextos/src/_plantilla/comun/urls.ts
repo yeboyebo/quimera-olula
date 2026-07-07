@@ -4,8 +4,8 @@
  * Esto es igual a ventas/comun/urls.ts y tpv/comun/urls.ts
  */
 
-class Modulo_Urls {
-    readonly MODULO = `/ventas/modulo`; // Ajusta la ruta según tu backend
+class Contexto_Urls {
+    readonly MODULO = `/contexto/modulo`; // Ajusta la ruta según tu backend
 }
 
-export default Modulo_Urls;
+export default Contexto_Urls;

@@ -1,4 +1,4 @@
-import { Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
 import { Modulo, NuevoModulo } from "../diseño.ts";
 
 // Consolidar en un solo interfaz al usar la plantilla con líneas.
@@ -32,7 +32,7 @@ export type CambiosModLin = Partial<ModLin>;
 export type CambiosLineaModulo = Partial<LineaModulo>;
 
 export type GetModLin = (id: string) => Promise<ModLin>;
-export type GetModLins = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<ItemModLin>;
+export type GetModLins = (criteria: Criteria) => RespuestaLista<ItemModLin>;
 export type PostModLin = (nuevoModLin: NuevoModLin) => Promise<string>;
 export type PostLineaModulo = (id: string, nuevaLinea: NuevaLineaModulo) => Promise<string>;
 export type PatchModLin = (id: string, cambios: CambiosModLin) => Promise<void>;

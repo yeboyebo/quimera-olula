@@ -22,6 +22,8 @@ export interface NuevoModuloApi {
     campo_fecha: string;
 }
 
+
+
 type CambiosModuloApi = Partial<ModuloApi>
 
 const baseUrl = new ApiUrls().MODULO;
@@ -86,16 +88,12 @@ export const getModulo: GetModulo = async (id) => {
 /**
  * Obtener lista de módulos con filtros
  */
-export const getModulos: GetModulos = async (
-    filtro,
-    orden,
-    paginacion
-) => {
+export const getModulos: GetModulos = async (criteria) => {
 
     return await RestAPI.getQuery<Modulo, ModuloApi>(
         baseUrl,
+        criteria,
         moduloDesdeApi,
-        filtro, orden, paginacion,
     )
 };
 

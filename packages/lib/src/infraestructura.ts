@@ -177,9 +177,9 @@ const transformarFiltro = (filtro: Filtro): Filtro => {
         return filtro.map(transformarFiltrosEspeciales);
     }
     if ('or' in filtro) {
-        return { or: filtro.or.map(transformarFiltro) };
+        return { or: transformarFiltro(filtro.or) };
     }
-    return { and: filtro.and.map(transformarFiltro) };
+    return { and: transformarFiltro(filtro.and) };
 }
 
 // const transformarFiltro = (filtro: Filtro): FiltroAPI => {

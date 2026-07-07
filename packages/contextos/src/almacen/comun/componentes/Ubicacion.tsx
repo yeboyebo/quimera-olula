@@ -1,40 +1,70 @@
-import { QSelect } from "@olula/componentes/index.js";
-import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Filtro, Orden } from "@olula/lib/diseño.ts";
-import { useEffect, useState } from "react";
-import { obtenerUbicaciones } from "../../ubicacion/infraestructura.ts";
+import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { RestAPI } from "@olula/lib/api/rest_api.js";
+import { Criteria } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 
-type UbicacionProps = Omit<QAutocompletarProps, "obtenerOpciones" | "label"> & { label?: string };
 
-type OpcionUbicacion = {
+interface UbicacionProps {
+  descripcion?: string;
   valor: string;
-  descripcion: string;
-};
+  nombre?: string;
+  label?: string;
+  autoFocus?: boolean;
+  ref?: React.RefObject<HTMLInputElement | null>;
+  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+}
 
 export const Ubicacion = ({
+  descripcion = "",
   valor,
-  nombre = "ubicacion",
+  nombre = "ubicacion_id",
   label = "Ubicación",
   onChange,
   ...props
 }: UbicacionProps) => {
-  const [opciones, setOpciones] = useState<OpcionUbicacion[]>([]);
 
-  useEffect(() => {
-    obtenerUbicaciones(undefined as unknown as Filtro, undefined as unknown as Orden).then(
-      (ubicaciones) =>
-        setOpciones(ubicaciones.map((u) => ({ valor: u.id, descripcion: u.id })))
+    const obtenerOpciones = async (texto: string) => {
+        const criteria: Criteria = {
+            ...criteriaDefecto,
+            filtro: [["codigo", "~", texto]],
+            orden: ["codigo", "ASC"],
+        };
+
+        const ubicaciones = await getTagsUbicacion(criteria);
+
+        return ubicaciones.map((ubicacion) => ({
+            valor: ubicacion.id,
+            descripcion: ubicacion.codigo,
+        }));
+    };
+
+    return (
+        <QAutocompletar
+            label={`${label} ${valor}`}
+            nombre={nombre}
+            onChange={onChange}
+            valor={valor}
+            obtenerOpciones={obtenerOpciones}
+            descripcion={descripcion}
+            {...props}
+        />
     );
-  }, []);
+};
 
-  return (
-    <QSelect
-      label={label}
-      nombre={nombre}
-      valor={valor}
-      onChange={onChange}
-      opciones={opciones}
-      {...props}
-    />
-  );
+
+interface TagUbicacionApi {
+    id: string;
+    codigo: string;
+}
+
+const url = `/almacen/ubicacion`;
+
+
+const getTagsUbicacion = async (criteria: Criteria): Promise<TagUbicacionApi[]> => {
+
+    const respuesta = await RestAPI.getQuery<TagUbicacionApi, TagUbicacionApi>(
+        url,
+        criteria,
+    )
+    return respuesta.datos
 };

@@ -1,4 +1,4 @@
-import { Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
 
 /**
  * Interfaz principal del Módulo
@@ -13,6 +13,8 @@ export interface Modulo extends Entidad {
     campoOpcion: CampoOpcion;
     campoFecha: Date;
 }
+
+
 
 /**
  * Tipo para crear nuevo módulo (sin id ni otros parámetros que se calculen en el servidor)
@@ -35,11 +37,7 @@ export type CambiosModulo = Partial<Modulo>;
  */
 export type GetModulo = (id: string) => Promise<Modulo>;
 
-export type GetModulos = (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-) => RespuestaLista<Modulo>;
+export type GetModulos = (criteria: Criteria) => RespuestaLista<Modulo>;
 
 export type PostModulo = (nuevoModulo: NuevoModulo) => Promise<string>;
 

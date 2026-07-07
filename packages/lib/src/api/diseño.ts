@@ -1,4 +1,4 @@
-import { Filtro, Orden, Paginacion } from "../diseño.ts";
+import { Criteria } from "../diseño.ts";
 
 export type RespuestaGetItem<T> = {
   datos: T
@@ -17,10 +17,8 @@ export type API = {
   get: <T>(url: string, msgError?: string) => Promise<T>;
   getQuery: <T, TAPI>(
     url: string,
-    conversor: (t: TAPI) => T,
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion,
+    criteria: Criteria,
+    conversor?: (t: TAPI) => T,
     msgError?: string,
   ) => Promise<RespuestaGetQuery<T>>;
   getLista: <T, TAPI>(

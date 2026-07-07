@@ -24,7 +24,7 @@ export const Modulos = accionesListaActivaEntidades(conModulos);
  */
 export const recargarModulos: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getModulos(criteria.filtro, criteria.orden, criteria.paginacion);
+    const resultado = await getModulos(criteria);
     return Modulos.recargar(contexto, resultado);
 };
 
@@ -34,7 +34,7 @@ export const recargarModulos: ProcesarMaestro = async (contexto, payload) => {
  */
 export const ampliarModulos: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getModulos(criteria.filtro, criteria.orden, criteria.paginacion);
+    const resultado = await getModulos(criteria);
     return Modulos.ampliar(contexto, resultado);
 };
 
