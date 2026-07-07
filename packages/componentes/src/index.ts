@@ -15,6 +15,7 @@ export * from "./moleculas/qtarjeta_metatabla.tsx";
 
 export * from "./moleculas/Mostrar.tsx";
 export * from "./moleculas/qacciones.tsx";
+export * from "./moleculas/qacordeon.tsx";
 export * from "./moleculas/qeditor_enriquecido.tsx";
 export * from "./moleculas/qmodal.tsx";
 export * from "./moleculas/qmodalconfirmacion.tsx";

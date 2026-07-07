@@ -36,6 +36,7 @@ declare namespace React {
             'etiquetas-filtro': NodoComun;
             'quimera-acciones': NodoComun;
             'quimera-autocompletar': NodoComun;
+            'quimera-acordeon': NodoComun;
             'quimera-modal': NodoComun;
             'qhistorias-componente': NodoComun;
             'qhistorias-historia': NodoComun;
