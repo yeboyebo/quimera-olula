@@ -6,20 +6,19 @@ import { ContextoError } from "@olula/lib/contexto.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 
-import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
+import { formateaCategoria } from "../dominio.ts";
 import "./EditarLinea.css";
 import {
   FormEditarLineaDefecto,
   metaEditarLinea,
   patchLineaNrj,
 } from "./editar_linea.ts";
-import { formateaCategoria } from "../dominio.ts";
 
 export const EditarLineaNrj = ({
   pedidoId,
@@ -56,15 +55,15 @@ export const EditarLineaNrj = ({
     if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
-  useEffect(() => {
-    if (!modelo.idTipoPalet) return;
-    getItemsListaTipoPalet([], []).then((items) => {
-      const item = items.find((i) => i.id === modelo.idTipoPalet);
-      if (item && item.cantidadEnvase !== modelo.envasesPorPalet) {
-        set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
-      }
-    });
-  }, [modelo, set]);
+  // useEffect(() => {
+  //   if (!modelo.idTipoPalet) return;
+  //   getItemsListaTipoPalet([], []).then((items) => {
+  //     const item = items.find((i) => i.id === modelo.idTipoPalet);
+  //     if (item && item.cantidadEnvase !== modelo.envasesPorPalet) {
+  //       set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
+  //     }
+  //   });
+  // }, [modelo, set]);
 
   const focus = useFocus();
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;

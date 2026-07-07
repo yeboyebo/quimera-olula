@@ -458,7 +458,7 @@ const getUiProps = <M extends Modelo>(
             tipo: tipo,
             deshabilitado: !editable,
             valido: cambiado && valido,
-            erroneo: cambiado && !valido,
+            erroneo: !valido,
             advertido: false,
             opcional,
             modificado: cambiado,
