@@ -18,20 +18,10 @@ import {
 } from "./crear_linea.ts";
 
 export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
-  const { modelo, uiProps, valido, set } = useModelo(
+  const { modelo, uiProps, valido } = useModelo(
     metaCrearLinea,
     FormCrearLineaDefecto
   );
-
-  // useEffect(() => {
-  //   if (!modelo.idTipoPalet) return;
-  //   getItemsListaTipoPalet([], []).then((items) => {
-  //     const item = items.find((i) => i.id === modelo.idTipoPalet);
-  //     if (item && item.cantidadEnvase !== modelo.envasesPorPalet) {
-  //       set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
-  //     }
-  //   });
-  // }, [modelo, set]);
 
   const crear = useCallback(async () => {
     await postLineaNrj(pedidoId, modelo);
