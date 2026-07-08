@@ -6,12 +6,14 @@ import { ContextoError } from "@olula/lib/contexto.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { Calibre } from "../../comun/componentes/Calibre.tsx";
 import { Marca } from "../../comun/componentes/Marca.tsx";
 import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
+import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 import { formateaCategoria } from "../dominio.ts";
 import "./EditarLinea.css";
 import {
@@ -55,15 +57,16 @@ export const EditarLineaNrj = ({
     if (!cambiando) publicar("editar_linea_cancelado");
   }, [cambiando, publicar]);
 
-  // useEffect(() => {
-  //   if (!modelo.idTipoPalet) return;
-  //   getItemsListaTipoPalet([], []).then((items) => {
-  //     const item = items.find((i) => i.id === modelo.idTipoPalet);
-  //     if (item && item.cantidadEnvase !== modelo.envasesPorPalet) {
-  //       set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
-  //     }
-  //   });
-  // }, [modelo, set]);
+  useEffect(() => {
+    if (!linea.idTipoPalet) return;
+    getItemsListaTipoPalet(criteriaDefecto).then((items) => {
+      const item = items.find((i) => i.id === linea.idTipoPalet);
+      if (item && item.cantidadEnvase !== modelo.envasesPorPalet) {
+        set({ ...modelo, envasesPorPalet: item.cantidadEnvase });
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linea.idTipoPalet]);
 
   const focus = useFocus();
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
