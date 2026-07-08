@@ -6,10 +6,20 @@ import {
 
 export type EstadoCargaWidget = "cargando" | "listo";
 
+export type SerieEstadoPrevision = {
+    estadoId: string;
+    estadoDescripcion: string;
+    probabilidad: number;
+    oportunidades: number;
+    importeTotal: number;
+    prevision: number;
+};
+
 export type ModeloWidgetPrevision = {
     estado: EstadoCargaWidget;
     oportunidadesAbiertas: number;
     previsionPotencial: number;
+    seriePorEstado: SerieEstadoPrevision[];
     urlVer: string;
 };
 
@@ -21,6 +31,7 @@ export const modeloWidgetPrevisionInicial: ModeloWidgetPrevision = {
     estado: "cargando",
     oportunidadesAbiertas: 0,
     previsionPotencial: 0,
+    seriePorEstado: [],
     urlVer: RUTA_OPO_VENTA,
 };
 
@@ -64,27 +75,6 @@ const cargarOportunidades = async (
     return datos;
 };
 
-const obtenerIdsEstadosTerminales = async (): Promise<string[]> => {
-    const estados = await getEstadosOportunidadVenta(
-        [] as unknown as Filtro,
-        ["id"] as unknown as Orden
-    );
-
-    // Estados terminales: perdidas (0) y ganadas (100)
-    return estados
-        .filter((estado) => estado.probabilidad === 0 || estado.probabilidad === 100)
-        .map((estado) => String(estado.id));
-};
-
-const calcularPrevision = (
-    oportunidades: Array<{ importe: number; probabilidad: number }>
-) =>
-    oportunidades.reduce(
-        (acumulado, oportunidad) =>
-            acumulado + (oportunidad.importe * oportunidad.probabilidad) / 100,
-        0
-    );
-
 const cargarOportunidadesAbiertas = async (idsTerminales: string[]) => {
     const filtro = construirFiltroAbiertas(idsTerminales);
     const filtroApi = construirFiltroApiAbiertas(idsTerminales);
@@ -96,14 +86,59 @@ const cargarOportunidadesAbiertas = async (idsTerminales: string[]) => {
     return { oportunidades, filtro };
 };
 
+const agruparPrevisionPorEstado = (
+    oportunidades: Array<{ estado_id: string; descripcion_estado: string | null; importe: number; probabilidad: number }>,
+    probabilidadesPorEstado: Map<string, number>
+): SerieEstadoPrevision[] => {
+    const acumulado = new Map<string, SerieEstadoPrevision>();
+
+    for (const oportunidad of oportunidades) {
+        const estadoId = String(oportunidad.estado_id);
+        const probabilidad = probabilidadesPorEstado.get(estadoId) ?? oportunidad.probabilidad ?? 0;
+        const existente = acumulado.get(estadoId);
+
+        if (!existente) {
+            acumulado.set(estadoId, {
+                estadoId,
+                estadoDescripcion: oportunidad.descripcion_estado ?? `Estado ${estadoId}`,
+                probabilidad,
+                oportunidades: 1,
+                importeTotal: oportunidad.importe,
+                prevision: (oportunidad.importe * probabilidad) / 100,
+            });
+            continue;
+        }
+
+        existente.oportunidades += 1;
+        existente.importeTotal += oportunidad.importe;
+        existente.prevision += (oportunidad.importe * probabilidad) / 100;
+    }
+
+    return Array.from(acumulado.values()).sort((a, b) => b.prevision - a.prevision);
+};
+
 export const cargarModeloWidgetPrevision = async (): Promise<ModeloWidgetPrevision> => {
-    const idsTerminales = await obtenerIdsEstadosTerminales();
+    const estados = await getEstadosOportunidadVenta(
+        [] as unknown as Filtro,
+        ["id"] as unknown as Orden
+    );
+
+    const idsTerminales = estados
+        .filter((estado) => estado.probabilidad === 0 || estado.probabilidad === 100)
+        .map((estado) => String(estado.id));
+
+    const probabilidadesPorEstado = new Map(
+        estados.map((estado) => [String(estado.id), estado.probabilidad])
+    );
+
     const { oportunidades, filtro } = await cargarOportunidadesAbiertas(idsTerminales);
+    const seriePorEstado = agruparPrevisionPorEstado(oportunidades, probabilidadesPorEstado);
 
     return {
         estado: "listo",
         oportunidadesAbiertas: oportunidades.length,
-        previsionPotencial: calcularPrevision(oportunidades),
+        previsionPotencial: seriePorEstado.reduce((acc, item) => acc + item.prevision, 0),
+        seriePorEstado,
         urlVer: construirUrlConFiltro(filtro),
     };
 };

@@ -1,5 +1,6 @@
 import { formatearMoneda } from "@olula/lib/dominio.ts";
-import { useEffect, useState } from "react";
+import { max, scaleLinear } from "d3";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import {
   cargarModeloWidgetPrevision,
@@ -33,6 +34,16 @@ export const WidgetPrevisionOportunidades = () => {
   }, []);
 
   const textoPrevision = formatearMoneda(modelo.previsionPotencial, "EUR");
+  const maximoPrevision =
+    max(modelo.seriePorEstado, (item) => item.prevision) ?? 0;
+
+  const escalaAncho = useMemo(
+    () =>
+      scaleLinear<number, number>()
+        .domain([0, maximoPrevision || 1])
+        .range([6, 100]),
+    [maximoPrevision]
+  );
 
   if (modelo.estado === "cargando") {
     return <div>Cargando previsión de oportunidades...</div>;
@@ -53,6 +64,34 @@ export const WidgetPrevisionOportunidades = () => {
       <div className="widget-prevision-oportunidades__valor">
         Prevision de ventas potencial <strong>{textoPrevision}</strong>
       </div>
+
+      <div className="widget-prevision-oportunidades__serie" role="list">
+        {modelo.seriePorEstado.map((estado) => {
+          const ancho = `${Math.round(escalaAncho(estado.prevision))}%`;
+
+          return (
+            <div
+              key={estado.estadoId}
+              className="widget-prevision-oportunidades__fila"
+              role="listitem"
+            >
+              <div className="widget-prevision-oportunidades__estado">
+                {estado.estadoDescripcion}
+              </div>
+              <div className="widget-prevision-oportunidades__barra-fondo">
+                <div
+                  className="widget-prevision-oportunidades__barra-valor"
+                  style={{ width: ancho }}
+                />
+              </div>
+              <div className="widget-prevision-oportunidades__importe">
+                {formatearMoneda(estado.prevision, "EUR")}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       <div className="widget-prevision-oportunidades__acciones">
         <Link
           className="widget-prevision-oportunidades__enlace"

@@ -1,0 +1,81 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import "../../widgets/WidgetCrmLista.css";
+import {
+  cargarModeloWidgetUltimasTarjetas,
+  ModeloWidgetUltimasTarjetas,
+  modeloWidgetUltimasTarjetasInicial,
+} from "./dominio_ultimas_tarjetas.ts";
+
+export const WidgetUltimasTarjetas = () => {
+  const [modelo, setModelo] = useState<ModeloWidgetUltimasTarjetas>(
+    modeloWidgetUltimasTarjetasInicial
+  );
+
+  useEffect(() => {
+    let cancelado = false;
+
+    cargarModeloWidgetUltimasTarjetas()
+      .then((siguienteModelo) => {
+        if (cancelado) return;
+        setModelo(siguienteModelo);
+      })
+      .catch((error) => {
+        if (cancelado) return;
+        console.error("Error cargando últimas tarjetas", error);
+        setModelo((previo) => ({ ...previo, estado: "listo" }));
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  if (modelo.estado === "cargando") {
+    return <div>Cargando últimas tarjetas...</div>;
+  }
+
+  return (
+    <div className="widget-crm-lista">
+      <div className="widget-crm-lista__cabecera">
+        <h3 className="widget-crm-lista__titulo">Últimas tarjetas</h3>
+        <div className="widget-crm-lista__subtitulo">
+          Últimos códigos de tarjeta asignados
+        </div>
+      </div>
+
+      {modelo.tarjetas.length === 0 ? (
+        <div className="widget-crm-lista__vacio">No hay tarjetas recientes</div>
+      ) : (
+        <div className="widget-crm-lista__lista">
+          {modelo.tarjetas.map((tarjeta) => (
+            <article key={tarjeta.id} className="widget-crm-lista__item">
+              <div className="widget-crm-lista__item-principal">
+                <div className="widget-crm-lista__item-titulo">
+                  {tarjeta.id}
+                </div>
+                <div className="widget-crm-lista__item-extra">
+                  {tarjeta.estado_id}
+                </div>
+              </div>
+              <div className="widget-crm-lista__item-secundario">
+                <div className="widget-crm-lista__item-meta">
+                  {tarjeta.nombre}
+                </div>
+                <div className="widget-crm-lista__item-extra">
+                  {tarjeta.tipo}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <div className="widget-crm-lista__acciones">
+        <Link className="widget-crm-lista__enlace" to={modelo.urlVer}>
+          Ver todas
+        </Link>
+      </div>
+    </div>
+  );
+};

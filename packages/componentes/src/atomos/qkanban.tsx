@@ -20,6 +20,7 @@ export type QKanbanColumna = {
   id: string;
   etiqueta: string;
   color?: string;
+  resumen?: string;
 };
 
 export type QKanbanProps<T extends Entidad> = {
@@ -100,7 +101,12 @@ const QKanbanColumnaVista = <T extends Entidad>({
       }}
     >
       <header className="qkanban-columna-cabecera">
-        <div className="qkanban-columna-titulo">{columna.etiqueta}</div>
+        <div className="qkanban-columna-cabecera-textos">
+          <div className="qkanban-columna-titulo">{columna.etiqueta}</div>
+          {columna.resumen && (
+            <div className="qkanban-columna-resumen">{columna.resumen}</div>
+          )}
+        </div>
         <div className="qkanban-columna-badge">{entidades.length}</div>
       </header>
 

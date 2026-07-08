@@ -5,7 +5,7 @@ import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import type { ClausulaFiltro, Filtro, Orden } from "@olula/lib/diseño.ts";
-import { criteriaDefecto } from "@olula/lib/dominio.ts";
+import { criteriaDefecto, formatearMoneda } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect, useMemo, useState } from "react";
@@ -13,7 +13,6 @@ import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { EstadoOportunidad, OportunidadVenta } from "../diseño.ts";
 import { getEstadosOportunidadVenta } from "../infraestructura.ts";
-import { FiltroEstadosCheckboxes } from "./FiltroEstadosCheckboxes.tsx";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
@@ -32,6 +31,10 @@ export const MaestroOportunidades = () => {
   >([]);
   const [modoActual, setModoActual] = useState<"tabla" | "tarjetas" | "kanban">(
     modoUrl === "kanban" ? "kanban" : "tarjetas"
+  );
+  const todosLosEstados = useMemo(
+    () => estadosOportunidad.map((estado) => String(estado.id)),
+    [estadosOportunidad]
   );
   const criteriaBaseOportunidades = useMemo(
     () => ({
@@ -84,6 +87,39 @@ export const MaestroOportunidades = () => {
       });
     });
   }, [ctx.oportunidades.criteria.filtro, columnasKanban]);
+
+  const columnasKanbanConTotales = useMemo(() => {
+    const probabilidadPorEstado = new Map(
+      estadosOportunidad.map((estado) => [
+        String(estado.id),
+        estado.probabilidad,
+      ])
+    );
+
+    return columnasKanbanFiltradas.map((columna) => {
+      const oportunidadesColumna = ctx.oportunidades.lista.filter(
+        (oportunidad) => String(oportunidad.estado_id) === String(columna.id)
+      );
+
+      const totalImporte = oportunidadesColumna.reduce(
+        (acc, oportunidad) => acc + (oportunidad.importe ?? 0),
+        0
+      );
+
+      const totalPrevision = oportunidadesColumna.reduce((acc, oportunidad) => {
+        const probabilidadEstado =
+          probabilidadPorEstado.get(String(oportunidad.estado_id)) ??
+          oportunidad.probabilidad ??
+          0;
+        return acc + ((oportunidad.importe ?? 0) * probabilidadEstado) / 100;
+      }, 0);
+
+      return {
+        ...columna,
+        resumen: `${formatearMoneda(totalImporte, "EUR")} · ${formatearMoneda(totalPrevision, "EUR")}`,
+      };
+    });
+  }, [columnasKanbanFiltradas, ctx.oportunidades.lista, estadosOportunidad]);
 
   useUrlParams(ctx.oportunidades.activo, ctx.oportunidades.criteria);
 
@@ -139,30 +175,29 @@ export const MaestroOportunidades = () => {
                 estado_id: {
                   id: "estado_id",
                   label: "Estado",
-                  filtro: () => null, // El filtro se maneja en el componente de checkboxes
-                  render: () => {
-                    const filtroArray = Array.isArray(
-                      ctx.oportunidades.criteria.filtro
-                    )
-                      ? ctx.oportunidades.criteria.filtro
-                      : [];
-                    return (
-                      <FiltroEstadosCheckboxes
-                        estados={estadosOportunidad}
-                        filtroActual={filtroArray}
-                        onChange={(nuevoFiltro) => {
-                          const filtroFiltrado = filtroArray.filter(
-                            (f) => f[0] !== "estado_id"
-                          );
-                          emitir("criteria_cambiado", {
-                            ...ctx.oportunidades.criteria,
-                            filtro: nuevoFiltro
-                              ? [...filtroFiltrado, nuevoFiltro]
-                              : filtroFiltrado,
-                          });
-                        }}
-                      />
-                    );
+                  tipo: "multiseleccion",
+                  opciones: estadosOportunidad.map((estado) => ({
+                    valor: String(estado.id),
+                    descripcion: estado.descripcion ?? String(estado.id),
+                  })),
+                  valorDefecto: todosLosEstados,
+                  filtro: (valor) => {
+                    const valores = Array.isArray(valor)
+                      ? valor.map(String).filter(Boolean)
+                      : typeof valor === "string"
+                        ? valor
+                            .split(",")
+                            .map((v) => v.trim())
+                            .filter(Boolean)
+                        : [];
+
+                    if (!valores.length) return null;
+
+                    return [
+                      "estado_id",
+                      "in",
+                      valores.join(","),
+                    ] as ClausulaFiltro;
                   },
                 },
               }}
@@ -173,7 +208,7 @@ export const MaestroOportunidades = () => {
               tarjetaKanban={TarjetaOportunidadVentaKanban}
               entidades={ctx.oportunidades.lista}
               totalEntidades={ctx.oportunidades.total}
-              columnasKanban={columnasKanbanFiltradas}
+              columnasKanban={columnasKanbanConTotales}
               campoEstadoKanban="estado_id"
               onCambioEstadoKanban={(idOportunidad, nuevoEstado) => {
                 const estadoDestino = estadosOportunidad.find(
