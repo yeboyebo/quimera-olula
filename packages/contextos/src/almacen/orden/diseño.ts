@@ -63,6 +63,7 @@ export interface NuevaLineaOrdenAlmacen extends Modelo {
 export interface NuevaLecturaOrden extends Modelo {
     cantidad: number;
     sku: string;
+    idLote: string | null;
     idUbicacionDestino: string | null;
     idUbicacionOrigen: string | null;
 }

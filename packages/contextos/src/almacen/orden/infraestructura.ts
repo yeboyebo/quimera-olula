@@ -255,6 +255,23 @@ export const deleteLineasOrden: DeleteLineasOrden = async (id, lineaIds) => {
     );
 };
 
+interface SkuLoteApi {
+    sku: string;
+    descripcion: string;
+    lote_id: string | null;
+}
+
+export const getSkuLote = async (codigo: string) => {
+    const respuesta = await RestAPI.get<{ datos: SkuLoteApi }>(
+        `/almacen/articulo/sku_lote/${codigo}`
+    );
+    return {
+        sku: respuesta.datos.sku,
+        descripcion: respuesta.datos.descripcion,
+        loteId: respuesta.datos.lote_id,
+    };
+};
+
 export const registrarLecturaOrden = async (
     id: string,
     lectura: NuevaLecturaOrden
@@ -263,7 +280,7 @@ export const registrarLecturaOrden = async (
         `${baseUrl}/${id}/lectura`,
         {
             sku: lectura.sku,
-            lote_id: null,
+            lote_id: lectura.idLote,
             cantidad: lectura.cantidad,
             ubicacion_destino_id: lectura.idUbicacionDestino,
             ubicacion_origen_id: lectura.idUbicacionOrigen,

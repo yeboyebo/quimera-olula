@@ -1,3 +1,4 @@
+import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
 import { OrdenAlmacen } from "#/almacen/orden/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -11,6 +12,7 @@ import { registrarLecturaOrden } from "../../../infraestructura.ts";
 import { metaNuevaLecturaOrden } from "./diseño.ts";
 import { getNuevaLecturaOrdenVacia } from "./lectura_orden.ts";
 import "./LecturaOrden.css";
+import { LecturaSkuLote } from "./LecturaSkuLote.tsx";
 
 export const LecturaOrden = ({
     publicar,
@@ -28,7 +30,7 @@ export const LecturaOrden = ({
         [orden]
     );
 
-    const { modelo, uiProps, valido, init } = useModelo(
+    const { modelo, uiProps, valido, init, set } = useModelo(
         metaNuevaLecturaOrden,
         lecturaInicial
     );
@@ -40,6 +42,7 @@ export const LecturaOrden = ({
         await intentar(() =>
             registrarLecturaOrden(orden.id, {
                 sku: modelo.sku,
+                idLote: modelo.idLote,
                 cantidad: modelo.cantidad,
                 idUbicacionDestino: mostrarDestino
                     ? modelo.idUbicacionDestino
@@ -53,16 +56,27 @@ export const LecturaOrden = ({
         init();
     }, [modelo, publicar, orden.id, intentar, init, mostrarDestino, mostrarOrigen]);
 
-    const skuProps = uiProps("sku");
     const ubicacionDestinoProps = uiProps("idUbicacionDestino");
     const ubicacionOrigenProps = uiProps("idUbicacionOrigen");
+
+    const onSkuLoteLeido = useCallback(
+        (resultado: { sku: string; descripcion: string; loteId: string | null }) => {
+            set({ ...modelo, sku: resultado.sku, idLote: resultado.loteId });
+        },
+        [modelo, set]
+    );
 
     return (
         <div className="LecturaOrden">
             <h3>LECTURA</h3>
             <quimera-formulario>
+                <LecturaSkuLote onLectura={onSkuLoteLeido} />
                 <Articulo
-                    {...skuProps}
+                    {...uiProps("sku")}
+                />
+                <Lote
+                    sku={modelo.sku}
+                    {...uiProps("idLote")}
                 />
                 <QInput label="Cantidad" {...uiProps("cantidad")} />
                 {mostrarOrigen && (
