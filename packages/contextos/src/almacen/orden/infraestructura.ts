@@ -30,8 +30,10 @@ interface OrdenAlmacenApi {
     almacen: string;
     abierta: boolean;
     ubicacion_origen_id: string | null;
+    ubicacion_origen: string | null;
     caja_origen_id: string | null;
     ubicacion_destino_id: string | null;
+    ubicacion_destino: string | null;
     caja_destino_id: string | null;
     lineas: LineaOrdenAlmacenApi[];
 }
@@ -96,8 +98,10 @@ export const ordenDesdeApi = (api: OrdenAlmacenApi): OrdenAlmacen => ({
     almacen: api.almacen,
     abierta: api.abierta,
     ubicacionOrigenId: api.ubicacion_origen_id,
+    ubicacionOrigen: api.ubicacion_origen,
     cajaOrigenId: api.caja_origen_id,
     ubicacionDestinoId: api.ubicacion_destino_id,
+    ubicacionDestino: api.ubicacion_destino,
     cajaDestinoId: api.caja_destino_id,
     lineas: api.lineas.map(lineaOrdenDesdeApi),
 });
@@ -256,7 +260,7 @@ export const deleteLineasOrden: DeleteLineasOrden = async (id, lineaIds) => {
 };
 
 interface SkuLoteApi {
-    sku: string;
+    id: string;
     descripcion: string;
     lote_id: string | null;
 }
@@ -266,7 +270,7 @@ export const getSkuLote = async (codigo: string) => {
         `/almacen/articulo/sku_lote/${codigo}`
     );
     return {
-        sku: respuesta.datos.sku,
+        sku: respuesta.datos.id,
         descripcion: respuesta.datos.descripcion,
         loteId: respuesta.datos.lote_id,
     };

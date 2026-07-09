@@ -44,6 +44,7 @@ export const LecturaOrden = ({
                 sku: modelo.sku,
                 idLote: modelo.idLote,
                 cantidad: modelo.cantidad,
+                articulo: modelo.articulo,
                 idUbicacionDestino: mostrarDestino
                     ? modelo.idUbicacionDestino
                     : null,
@@ -56,12 +57,9 @@ export const LecturaOrden = ({
         init();
     }, [modelo, publicar, orden.id, intentar, init, mostrarDestino, mostrarOrigen]);
 
-    const ubicacionDestinoProps = uiProps("idUbicacionDestino");
-    const ubicacionOrigenProps = uiProps("idUbicacionOrigen");
-
     const onSkuLoteLeido = useCallback(
         (resultado: { sku: string; descripcion: string; loteId: string | null }) => {
-            set({ ...modelo, sku: resultado.sku, idLote: resultado.loteId });
+            set({ ...modelo, sku: resultado.sku, articulo: resultado.descripcion, idLote: resultado.loteId });
         },
         [modelo, set]
     );
@@ -72,7 +70,7 @@ export const LecturaOrden = ({
             <quimera-formulario>
                 <LecturaSkuLote onLectura={onSkuLoteLeido} />
                 <Articulo
-                    {...uiProps("sku")}
+                    {...uiProps("sku", "articulo")}
                 />
                 <Lote
                     sku={modelo.sku}
@@ -81,20 +79,12 @@ export const LecturaOrden = ({
                 <QInput label="Cantidad" {...uiProps("cantidad")} />
                 {mostrarOrigen && (
                     <Ubicacion
-                        {...ubicacionOrigenProps}
-                        // valor={modelo.idUbicacionOrigen ?? ""}
-                        // label="Ubicación origen"
-                        // nombre="idUbicacionOrigen"
-                        // onChange={ubicacionOrigenProps.onChange}
+                        {...uiProps("idUbicacionOrigen")}
                     />
                 )}
                 {mostrarDestino && (
                     <Ubicacion
-                        {...ubicacionDestinoProps}
-                        // valor={modelo.idUbicacionDestino ?? ""}
-                        // label="Ubicación destino"
-                        // nombre="idUbicacionDestino"
-                        // onChange={ubicacionDestinoProps.onChange}
+                        {...uiProps("idUbicacionDestino")}
                     />
                 )}
             </quimera-formulario>

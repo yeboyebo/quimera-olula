@@ -86,12 +86,16 @@ export const QAutocompletar = ({
   const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
     regenerarOpciones(valor);
 
+    console.log("manejarInput", valor)
+
     const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
     if (!opcion) {
       valorReal.current!.value = "";
       onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
+      console.log("opcion nula")
       return;
     }
+    console.log("opcion", opcion)
 
     const descripcion = opcion?.descripcionOpcion || opcion.descripcion;
     const objetivo = e.target as HTMLInputElement;

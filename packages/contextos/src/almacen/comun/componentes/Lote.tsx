@@ -52,12 +52,12 @@ export const Lote = ({
 
     return (
         <QAutocompletar
-            label={`${label} ${valor}`}
+            label={label}
             nombre={nombre}
             onChange={onChange}
             valor={valor}
             obtenerOpciones={obtenerOpciones}
-            descripcion={descripcion}
+            descripcion={valor}
             {...props}
         />
     );

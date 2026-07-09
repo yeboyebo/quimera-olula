@@ -21,39 +21,40 @@ export const Articulo = ({
   onChange,
   ...props
 }: ArticuloProps) => {
-  const obtenerOpciones = async (texto: string) => {
-    const criteria = {
-      filtro: {
-        or: [
-          ["descripcion", "~", texto],
-          ["id", "~", texto],
-        ],
-      },
-      orden: ["id"],
+
+    const obtenerOpciones = async (texto: string) => {
+        const criteria = {
+            filtro: {
+                or: [
+                    ["descripcion", "~", texto],
+                    ["id", "~", texto],
+                ],
+            },
+            orden: ["id"],
+        };
+
+        const articulos = await getTagsArticulo(
+            criteria.filtro as unknown as Filtro,
+            criteria.orden as Orden
+        );
+
+        return articulos.map((articulo) => ({
+            valor: articulo.id,
+            descripcion: articulo.descripcion,
+            descripcionOpcion: `${articulo.id} - ${articulo.descripcion}`,
+            datos: articulo,
+        }));
     };
 
-    const articulos = await getTagsArticulo(
-      criteria.filtro as unknown as Filtro,
-      criteria.orden as Orden
+    return (
+        <QAutocompletar
+            label={`${label} ${valor}`}
+            nombre={nombre}
+            onChange={onChange}
+            valor={valor}
+            obtenerOpciones={obtenerOpciones}
+            descripcion={descripcion}
+            {...props}
+        />
     );
-
-    return articulos.map((articulo) => ({
-      valor: articulo.id,
-      descripcion: articulo.descripcion,
-      descripcionOpcion: `${articulo.id} - ${articulo.descripcion}`,
-      datos: articulo,
-    }));
-  };
-
-  return (
-    <QAutocompletar
-      label={`${label} ${valor}`}
-      nombre={nombre}
-      onChange={onChange}
-      valor={valor}
-      obtenerOpciones={obtenerOpciones}
-      descripcion={descripcion}
-      {...props}
-    />
-  );
 };

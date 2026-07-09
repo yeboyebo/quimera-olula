@@ -17,11 +17,13 @@ interface UbicacionProps {
 export const Ubicacion = ({
   descripcion = "",
   valor,
-  nombre = "ubicacion_id",
+  nombre = "ubicacion_id2",
   label = "Ubicación",
   onChange,
   ...props
 }: UbicacionProps) => {
+
+    console.log("Valor ubicacion", valor)
 
     const obtenerOpciones = async (texto: string) => {
         const criteria: Criteria = {

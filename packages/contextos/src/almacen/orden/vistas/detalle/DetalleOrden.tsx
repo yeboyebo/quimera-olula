@@ -51,6 +51,7 @@ export const DetalleOrden = ({
     const orden = useModelo(metaOrden, ctx.orden, autoGuardar);
     const { modelo } = orden;
 
+    console.log("modelo", modelo);
     const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipo);
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipo);
 
@@ -102,7 +103,7 @@ export const DetalleOrden = ({
                     )}
                     {mostrarDestino && (
                         <Ubicacion
-                            {...orden.uiProps("ubicacionDestinoId")}
+                            {...orden.uiProps("ubicacionDestinoId", "ubicacionDestino")}
                             label="Ubicación destino"
                             nombre="ubicacionDestinoId"
                         />

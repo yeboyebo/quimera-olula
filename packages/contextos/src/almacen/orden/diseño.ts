@@ -10,8 +10,10 @@ export interface OrdenAlmacen extends Entidad {
     almacen: string;
     abierta: boolean;
     ubicacionOrigenId: string | null;
+    ubicacionOrigen: string | null;
     cajaOrigenId: string | null;
     ubicacionDestinoId: string | null;
+    ubicacionDestino: string | null;
     cajaDestinoId: string | null;
     lineas: LineaOrdenAlmacen[];
 }
@@ -63,6 +65,7 @@ export interface NuevaLineaOrdenAlmacen extends Modelo {
 export interface NuevaLecturaOrden extends Modelo {
     cantidad: number;
     sku: string;
+    articulo: string;
     idLote: string | null;
     idUbicacionDestino: string | null;
     idUbicacionOrigen: string | null;
