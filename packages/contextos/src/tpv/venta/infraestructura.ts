@@ -131,11 +131,15 @@ export const getVentas: GetVentasTpv = async (
     const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
     const filtroPuntoVenta: ClausulaFiltro = [
         "punto_venta_id",
+        "=",
         miPuntoVentaLocal?.id ?? "",
     ];
 
-    const filtroCombinado: Filtro = Array.isArray(filtro)
-        ? [...filtro, filtroPuntoVenta]
+    const esListaDeClausulas =
+        Array.isArray(filtro) && (filtro.length === 0 || Array.isArray(filtro[0]));
+
+    const filtroCombinado: Filtro = esListaDeClausulas
+        ? [...(filtro as ClausulaFiltro[]), filtroPuntoVenta]
         : { and: [filtro, [filtroPuntoVenta]] };
     const q = criteriaQuery(filtroCombinado, orden, paginacion);
 

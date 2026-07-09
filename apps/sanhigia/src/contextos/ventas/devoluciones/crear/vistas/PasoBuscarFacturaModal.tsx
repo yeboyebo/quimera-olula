@@ -1,6 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { FacturaSelector } from "@olula/ctx/ventas/comun/componentes/factura.tsx";
+import { FacturaSelectorDevoluciones } from "../../../../../componentes/FacturaSelectorDevoluciones.tsx";
 
 export const PasoBuscarFacturaModal = ({
   abierto,
@@ -29,7 +29,7 @@ export const PasoBuscarFacturaModal = ({
       onCerrar={onCerrar}
     >
       <div className="buscar-factura-devolucion">
-        <FacturaSelector
+        <FacturaSelectorDevoluciones
           valor={idFactura}
           descripcion={descripcionFactura}
           nombre="devolucion/factura"
