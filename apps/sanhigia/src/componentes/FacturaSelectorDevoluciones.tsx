@@ -44,7 +44,7 @@ export const FacturaSelectorDevoluciones = ({
 
     return datos.map((factura) => ({
       valor: factura.id,
-      descripcion: `${factura.codigo} - ${factura.cliente?.nombre_cliente ?? ""} - ${formatearFechaDate(factura.fecha)}`,
+      descripcion: `${factura.cliente?.nombre_cliente ?? ""} - ${factura.codigo} - ${formatearFechaDate(factura.fecha)}`,
     }));
   };
 
