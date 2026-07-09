@@ -21,7 +21,7 @@ export const accionVacia: Accion = {
     descripcion_oportunidad: "",
     tarjeta_id: "",
     incidencia_id: "",
-    responsable_id: "",
+    usuario_id: "",
 };
 
 export const metaAccion: MetaModelo<Accion> = {

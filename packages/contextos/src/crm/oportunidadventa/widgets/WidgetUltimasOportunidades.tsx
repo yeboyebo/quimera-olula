@@ -1,7 +1,7 @@
-import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.ts";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import "../../widgets/WidgetCrmLista.css";
+import { TarjetaOportunidadVenta } from "../maestro/TarjetaOportunidadVenta.tsx";
 import {
   cargarModeloWidgetUltimasOportunidades,
   ModeloWidgetUltimasOportunidades,
@@ -52,28 +52,13 @@ export const WidgetUltimasOportunidades = () => {
       ) : (
         <div className="widget-crm-lista__lista">
           {modelo.oportunidades.map((oportunidad) => (
-            <article key={oportunidad.id} className="widget-crm-lista__item">
-              <div className="widget-crm-lista__item-principal">
-                <div className="widget-crm-lista__item-titulo">
-                  {oportunidad.descripcion}
-                </div>
-                <div className="widget-crm-lista__item-valor">
-                  {formatearMoneda(oportunidad.importe, "EUR")}
-                </div>
-              </div>
-              <div className="widget-crm-lista__item-secundario">
-                <div className="widget-crm-lista__item-meta">
-                  {oportunidad.nombre_cliente ||
-                    oportunidad.descripcion_estado ||
-                    "Sin cliente"}
-                </div>
-                <div className="widget-crm-lista__item-extra">
-                  {oportunidad.fecha_cierre
-                    ? formatearFechaDate(oportunidad.fecha_cierre)
-                    : ""}
-                </div>
-              </div>
-            </article>
+            <Link
+              key={oportunidad.id}
+              className="widget-crm-lista__tarjeta-enlace"
+              to={`/crm/oportunidadventa?id=${oportunidad.id}`}
+            >
+              <TarjetaOportunidadVenta {...oportunidad} />
+            </Link>
           ))}
         </div>
       )}

@@ -1,19 +1,16 @@
 import { ClausulaFiltro, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
+    agruparPrevisionPorEstado,
+    crearMapaProbabilidadEstados,
+    obtenerIdsEstadosTerminales,
+    type SerieEstadoPrevision,
+} from "../dominio.ts";
+import {
     getEstadosOportunidadVenta,
     getOportunidadesVenta,
 } from "../infraestructura.ts";
 
 export type EstadoCargaWidget = "cargando" | "listo";
-
-export type SerieEstadoPrevision = {
-    estadoId: string;
-    estadoDescripcion: string;
-    probabilidad: number;
-    oportunidades: number;
-    importeTotal: number;
-    prevision: number;
-};
 
 export type ModeloWidgetPrevision = {
     estado: EstadoCargaWidget;
@@ -86,50 +83,14 @@ const cargarOportunidadesAbiertas = async (idsTerminales: string[]) => {
     return { oportunidades, filtro };
 };
 
-const agruparPrevisionPorEstado = (
-    oportunidades: Array<{ estado_id: string; descripcion_estado: string | null; importe: number; probabilidad: number }>,
-    probabilidadesPorEstado: Map<string, number>
-): SerieEstadoPrevision[] => {
-    const acumulado = new Map<string, SerieEstadoPrevision>();
-
-    for (const oportunidad of oportunidades) {
-        const estadoId = String(oportunidad.estado_id);
-        const probabilidad = probabilidadesPorEstado.get(estadoId) ?? oportunidad.probabilidad ?? 0;
-        const existente = acumulado.get(estadoId);
-
-        if (!existente) {
-            acumulado.set(estadoId, {
-                estadoId,
-                estadoDescripcion: oportunidad.descripcion_estado ?? `Estado ${estadoId}`,
-                probabilidad,
-                oportunidades: 1,
-                importeTotal: oportunidad.importe,
-                prevision: (oportunidad.importe * probabilidad) / 100,
-            });
-            continue;
-        }
-
-        existente.oportunidades += 1;
-        existente.importeTotal += oportunidad.importe;
-        existente.prevision += (oportunidad.importe * probabilidad) / 100;
-    }
-
-    return Array.from(acumulado.values()).sort((a, b) => b.prevision - a.prevision);
-};
-
 export const cargarModeloWidgetPrevision = async (): Promise<ModeloWidgetPrevision> => {
     const estados = await getEstadosOportunidadVenta(
         [] as unknown as Filtro,
         ["id"] as unknown as Orden
     );
 
-    const idsTerminales = estados
-        .filter((estado) => estado.probabilidad === 0 || estado.probabilidad === 100)
-        .map((estado) => String(estado.id));
-
-    const probabilidadesPorEstado = new Map(
-        estados.map((estado) => [String(estado.id), estado.probabilidad])
-    );
+    const idsTerminales = obtenerIdsEstadosTerminales(estados);
+    const probabilidadesPorEstado = crearMapaProbabilidadEstados(estados);
 
     const { oportunidades, filtro } = await cargarOportunidadesAbiertas(idsTerminales);
     const seriePorEstado = agruparPrevisionPorEstado(oportunidades, probabilidadesPorEstado);

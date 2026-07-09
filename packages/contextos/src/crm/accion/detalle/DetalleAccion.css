@@ -26,7 +26,7 @@
         grid-column: span 4;
     }
 
-    quimera-input[nombre="responsable_id"] {
+    quimera-input[nombre="usuario_id"] {
         grid-column: 1 / span 12;
     }
 

@@ -5,7 +5,8 @@ import {
     obtenerUsuarioActualId,
 } from "../../widgets/comun.ts";
 import { OportunidadVenta } from "../diseño.ts";
-import { getOportunidadesVenta } from "../infraestructura.ts";
+import { obtenerIdsEstadosTerminales } from "../dominio.ts";
+import { getEstadosOportunidadVenta, getOportunidadesVenta } from "../infraestructura.ts";
 
 export type ModeloWidgetUltimasOportunidades = {
     estado: EstadoCargaWidget;
@@ -14,7 +15,7 @@ export type ModeloWidgetUltimasOportunidades = {
 };
 
 const RUTA_OPO_VENTA = "/crm/oportunidadventa";
-const ORDEN_ULTIMAS: Orden = ["id", "DESC"] as unknown as Orden;
+const ORDEN_ULTIMAS: Orden = ["fecha_cierre", "DESC", "id", "DESC"] as unknown as Orden;
 const PAGINACION_ULTIMAS: Paginacion = { pagina: 1, limite: 3 };
 
 export const modeloWidgetUltimasOportunidadesInicial: ModeloWidgetUltimasOportunidades = {
@@ -25,14 +26,27 @@ export const modeloWidgetUltimasOportunidadesInicial: ModeloWidgetUltimasOportun
 
 export const cargarModeloWidgetUltimasOportunidades = async (): Promise<ModeloWidgetUltimasOportunidades> => {
     const usuarioId = obtenerUsuarioActualId();
+    const estados = await getEstadosOportunidadVenta(
+        [] as unknown as Filtro,
+        ["id"] as unknown as Orden
+    );
+    const idsTerminales = obtenerIdsEstadosTerminales(estados);
+
     const filtro: ClausulaFiltro[] = [];
+    const filtroApi: ClausulaFiltro[] = [];
+
+    if (idsTerminales.length > 0) {
+        filtro.push(["estado_id", "!in", idsTerminales.join(",")] as ClausulaFiltro);
+        filtroApi.push(["estado_id", "!in", idsTerminales as unknown as string] as ClausulaFiltro);
+    }
 
     if (usuarioId) {
         filtro.push(["usuario_id", "=", usuarioId] as ClausulaFiltro);
+        filtroApi.push(["usuario_id", "=", usuarioId] as ClausulaFiltro);
     }
 
     const resultado = await getOportunidadesVenta(
-        filtro as unknown as Filtro,
+        filtroApi as unknown as Filtro,
         ORDEN_ULTIMAS,
         PAGINACION_ULTIMAS
     );

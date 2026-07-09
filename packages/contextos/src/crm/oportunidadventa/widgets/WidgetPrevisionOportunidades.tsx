@@ -75,7 +75,10 @@ export const WidgetPrevisionOportunidades = () => {
               className="widget-prevision-oportunidades__fila"
               role="listitem"
             >
-              <div className="widget-prevision-oportunidades__estado">
+              <div
+                className="widget-prevision-oportunidades__estado"
+                title={estado.estadoDescripcion}
+              >
                 {estado.estadoDescripcion}
               </div>
               <div className="widget-prevision-oportunidades__barra-fondo">

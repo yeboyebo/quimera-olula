@@ -14,5 +14,5 @@ export interface Accion extends Entidad {
     descripcion_oportunidad?: string;
     tarjeta_id: string;
     incidencia_id: string;
-    responsable_id: string;
+    usuario_id: string;
 }

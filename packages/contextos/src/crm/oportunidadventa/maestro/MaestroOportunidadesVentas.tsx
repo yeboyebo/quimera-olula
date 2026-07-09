@@ -1,18 +1,24 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import type { QKanbanColumna } from "@olula/componentes/atomos/qkanban.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import type { ClausulaFiltro, Filtro, Orden } from "@olula/lib/diseño.ts";
-import { criteriaDefecto, formatearMoneda } from "@olula/lib/dominio.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect, useMemo, useState } from "react";
 import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { EstadoOportunidad, OportunidadVenta } from "../diseño.ts";
+import { filtrarColumnasKanbanPorEstado } from "../dominio.ts";
 import { getEstadosOportunidadVenta } from "../infraestructura.ts";
+import {
+  crearColumnasKanbanOportunidad,
+  crearFiltroEstadoOportunidad,
+  crearOpcionesFiltroEstadoOportunidad,
+  enriquecerColumnasKanbanOportunidad,
+} from "./kanban.ts";
 import { metaTablaOportunidadVenta } from "./maestro.ts";
 import "./MaestroOportunidadesVenta.css";
 import { getMaquina } from "./maquina.ts";
@@ -25,7 +31,6 @@ export const MaestroOportunidades = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get("modo");
   }, []);
-  const [columnasKanban, setColumnasKanban] = useState<QKanbanColumna[]>([]);
   const [estadosOportunidad, setEstadosOportunidad] = useState<
     EstadoOportunidad[]
   >([]);
@@ -34,6 +39,10 @@ export const MaestroOportunidades = () => {
   );
   const todosLosEstados = useMemo(
     () => estadosOportunidad.map((estado) => String(estado.id)),
+    [estadosOportunidad]
+  );
+  const columnasKanban = useMemo(
+    () => crearColumnasKanbanOportunidad(estadosOportunidad),
     [estadosOportunidad]
   );
   const criteriaBaseOportunidades = useMemo(
@@ -62,63 +71,15 @@ export const MaestroOportunidades = () => {
     const filtroArray = Array.isArray(ctx.oportunidades.criteria.filtro)
       ? (ctx.oportunidades.criteria.filtro as ClausulaFiltro[])
       : [];
-
-    const filtrosEstado = filtroArray.filter(
-      ([campo, operador]) =>
-        campo === "estado_id" && (operador === "in" || operador === "!in")
-    );
-
-    if (!filtrosEstado.length) return columnasKanban;
-
-    return columnasKanban.filter((columna) => {
-      const idColumna = String(columna.id);
-
-      return filtrosEstado.every(([, operador, valor]) => {
-        const valores = Array.isArray(valor)
-          ? valor.map(String)
-          : String(valor)
-              .split(",")
-              .map((v) => v.trim())
-              .filter(Boolean);
-
-        if (operador === "in") return valores.includes(idColumna);
-        if (operador === "!in") return !valores.includes(idColumna);
-        return true;
-      });
-    });
+    return filtrarColumnasKanbanPorEstado(columnasKanban, filtroArray);
   }, [ctx.oportunidades.criteria.filtro, columnasKanban]);
 
   const columnasKanbanConTotales = useMemo(() => {
-    const probabilidadPorEstado = new Map(
-      estadosOportunidad.map((estado) => [
-        String(estado.id),
-        estado.probabilidad,
-      ])
+    return enriquecerColumnasKanbanOportunidad(
+      columnasKanbanFiltradas,
+      ctx.oportunidades.lista,
+      estadosOportunidad
     );
-
-    return columnasKanbanFiltradas.map((columna) => {
-      const oportunidadesColumna = ctx.oportunidades.lista.filter(
-        (oportunidad) => String(oportunidad.estado_id) === String(columna.id)
-      );
-
-      const totalImporte = oportunidadesColumna.reduce(
-        (acc, oportunidad) => acc + (oportunidad.importe ?? 0),
-        0
-      );
-
-      const totalPrevision = oportunidadesColumna.reduce((acc, oportunidad) => {
-        const probabilidadEstado =
-          probabilidadPorEstado.get(String(oportunidad.estado_id)) ??
-          oportunidad.probabilidad ??
-          0;
-        return acc + ((oportunidad.importe ?? 0) * probabilidadEstado) / 100;
-      }, 0);
-
-      return {
-        ...columna,
-        resumen: `${formatearMoneda(totalImporte, "EUR")} · ${formatearMoneda(totalPrevision, "EUR")}`,
-      };
-    });
   }, [columnasKanbanFiltradas, ctx.oportunidades.lista, estadosOportunidad]);
 
   useUrlParams(ctx.oportunidades.activo, ctx.oportunidades.criteria);
@@ -145,13 +106,6 @@ export const MaestroOportunidades = () => {
       if (!activo) return;
 
       setEstadosOportunidad(estados);
-
-      setColumnasKanban(
-        estados.map((estado) => ({
-          id: String(estado.id),
-          etiqueta: estado.descripcion ?? String(estado.id),
-        }))
-      );
     };
 
     cargarColumnasKanban();
@@ -176,29 +130,10 @@ export const MaestroOportunidades = () => {
                   id: "estado_id",
                   label: "Estado",
                   tipo: "multiseleccion",
-                  opciones: estadosOportunidad.map((estado) => ({
-                    valor: String(estado.id),
-                    descripcion: estado.descripcion ?? String(estado.id),
-                  })),
+                  opciones:
+                    crearOpcionesFiltroEstadoOportunidad(estadosOportunidad),
                   valorDefecto: todosLosEstados,
-                  filtro: (valor) => {
-                    const valores = Array.isArray(valor)
-                      ? valor.map(String).filter(Boolean)
-                      : typeof valor === "string"
-                        ? valor
-                            .split(",")
-                            .map((v) => v.trim())
-                            .filter(Boolean)
-                        : [];
-
-                    if (!valores.length) return null;
-
-                    return [
-                      "estado_id",
-                      "in",
-                      valores.join(","),
-                    ] as ClausulaFiltro;
-                  },
+                  filtro: crearFiltroEstadoOportunidad,
                 },
               }}
               criteria={ctx.oportunidades.criteria}

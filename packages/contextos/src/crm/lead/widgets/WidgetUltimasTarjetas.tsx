@@ -1,3 +1,4 @@
+import { QTarjetaGenerica } from "@olula/componentes/index.js";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import "../../widgets/WidgetCrmLista.css";
@@ -49,24 +50,18 @@ export const WidgetUltimasTarjetas = () => {
       ) : (
         <div className="widget-crm-lista__lista">
           {modelo.tarjetas.map((tarjeta) => (
-            <article key={tarjeta.id} className="widget-crm-lista__item">
-              <div className="widget-crm-lista__item-principal">
-                <div className="widget-crm-lista__item-titulo">
-                  {tarjeta.id}
-                </div>
-                <div className="widget-crm-lista__item-extra">
-                  {tarjeta.estado_id}
-                </div>
-              </div>
-              <div className="widget-crm-lista__item-secundario">
-                <div className="widget-crm-lista__item-meta">
-                  {tarjeta.nombre}
-                </div>
-                <div className="widget-crm-lista__item-extra">
-                  {tarjeta.tipo}
-                </div>
-              </div>
-            </article>
+            <Link
+              key={tarjeta.id}
+              className="widget-crm-lista__tarjeta-enlace"
+              to={`/crm/lead?id=${tarjeta.id}`}
+            >
+              <QTarjetaGenerica
+                arribaIzquierda={tarjeta.nombre}
+                arribaDerecha={tarjeta.id}
+                abajoIzquierda={tarjeta.estado_id}
+                abajoDerecha={tarjeta.tipo}
+              />
+            </Link>
           ))}
         </div>
       )}

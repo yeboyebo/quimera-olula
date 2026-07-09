@@ -30,12 +30,13 @@
 
 .widget-prevision-oportunidades__fila {
     display: grid;
-    grid-template-columns: minmax(90px, auto) 1fr auto;
+    grid-template-columns: clamp(9rem, 34%, 13rem) minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--espaciado-xs);
 }
 
 .widget-prevision-oportunidades__estado {
+    min-width: 0;
     font-size: 0.875rem;
     white-space: nowrap;
     overflow: hidden;

@@ -2,8 +2,7 @@ import { ClausulaFiltro, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts
 import {
     construirUrlConFiltro,
     EstadoCargaWidget,
-    fechaLocalStr,
-    obtenerUsuarioActualId,
+    fechaLocalStr
 } from "../../widgets/comun.ts";
 import { Accion } from "../diseño.ts";
 import { getAcciones } from "../infraestructura.ts";
@@ -47,15 +46,12 @@ const agruparPorTipo = (acciones: Accion[]): GrupoAccionesHoy[] => {
 };
 
 export const cargarModeloWidgetAccionesHoy = async (): Promise<ModeloWidgetAccionesHoy> => {
-    const usuarioId = obtenerUsuarioActualId();
     const hoy = fechaLocalStr(new Date());
     const filtro: ClausulaFiltro[] = [
         ["fecha", "<>", `${hoy}_${hoy}`] as ClausulaFiltro,
     ];
 
-    if (usuarioId) {
-        filtro.push(["responsable_id", "=", usuarioId] as ClausulaFiltro);
-    }
+
 
     const resultado = await getAcciones(
         filtro as unknown as Filtro,
