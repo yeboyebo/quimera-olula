@@ -38,6 +38,7 @@ export const MaestroContactos = () => {
             <Listado<Contacto>
               metaTabla={metaTablaContacto}
               criteria={ctx.contactos.criteria}
+              modosDisponibles={["tarjetas"]}
               tarjeta={TarjetaContacto}
               entidades={ctx.contactos.lista}
               totalEntidades={ctx.contactos.total}

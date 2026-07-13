@@ -5,7 +5,7 @@
 
 .widget-crm-lista__cabecera {
     display: grid;
-    gap: 2px;
+    gap: var(--espaciado-xs);
 }
 
 .widget-crm-lista__titulo {
@@ -17,6 +17,50 @@
 .widget-crm-lista__subtitulo {
     font-size: 0.875rem;
     color: var(--color-texto-secundario);
+}
+
+.widget-acciones-situacion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espaciado-xs);
+}
+
+.widget-situacion-item {
+    font-size: var(--tamaño-letra-sm, 0.75rem);
+    font-weight: var(--grosor-letra-medium, 500);
+    padding: 2px var(--espaciado-xs);
+    border-radius: var(--redondeo-borde-xs);
+    border: none;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+button.widget-situacion-item {
+    appearance: none;
+}
+
+.widget-situacion-item:hover {
+    filter: brightness(0.97);
+}
+
+.widget-situacion-item.activo {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 35%, transparent);
+    transform: translateY(-1px);
+}
+
+.widget-situacion-pendientes {
+    background-color: var(--color-deshabilitado-claro);
+    color: var(--color-texto-secundario);
+}
+
+.widget-situacion-retrasadas {
+    background-color: var(--color-error-claro);
+    color: var(--color-error-oscuro);
+}
+
+.widget-situacion-hoy {
+    background-color: var(--color-advertencia-claro);
+    color: var(--color-advertencia-oscuro);
 }
 
 .widget-crm-lista__lista,

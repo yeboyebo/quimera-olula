@@ -11,7 +11,10 @@ import { useEffect, useMemo, useState } from "react";
 import { CrearOportunidadVenta } from "../crear/CrearOportunidadVenta.tsx";
 import { DetalleOportunidadVenta } from "../detalle/DetalleOportunidadVenta.tsx";
 import { EstadoOportunidad, OportunidadVenta } from "../diseño.ts";
-import { filtrarColumnasKanbanPorEstado } from "../dominio.ts";
+import {
+  filtrarColumnasKanbanPorEstado,
+  obtenerIdsEstadosTerminales,
+} from "../dominio.ts";
 import { getEstadosOportunidadVenta } from "../infraestructura.ts";
 import {
   crearColumnasKanbanOportunidad,
@@ -37,9 +40,17 @@ export const MaestroOportunidades = () => {
   const [modoActual, setModoActual] = useState<"tabla" | "tarjetas" | "kanban">(
     modoUrl === "kanban" ? "kanban" : "tarjetas"
   );
+  const idsEstadosTerminales = useMemo(
+    () => obtenerIdsEstadosTerminales(estadosOportunidad),
+    [estadosOportunidad]
+  );
   const todosLosEstados = useMemo(
     () => estadosOportunidad.map((estado) => String(estado.id)),
     [estadosOportunidad]
+  );
+  const estadosNoTerminales = useMemo(
+    () => todosLosEstados.filter((id) => !idsEstadosTerminales.includes(id)),
+    [todosLosEstados, idsEstadosTerminales]
   );
   const columnasKanban = useMemo(
     () => crearColumnasKanbanOportunidad(estadosOportunidad),
@@ -53,11 +64,12 @@ export const MaestroOportunidades = () => {
     []
   );
 
-  const criteriaInicial =
+  const [criteriaInicial, setCriteriaInicial] = useState(
     criteria.filtro.length > 0 ||
-    criteria.orden.toString() !== criteriaDefecto.orden.toString()
+      criteria.orden.toString() !== criteriaDefecto.orden.toString()
       ? criteria
-      : criteriaBaseOportunidades;
+      : criteriaBaseOportunidades
+  );
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -85,11 +97,6 @@ export const MaestroOportunidades = () => {
   useUrlParams(ctx.oportunidades.activo, ctx.oportunidades.criteria);
 
   useEffect(() => {
-    emitir("recarga_de_oportunidades_solicitada", ctx.oportunidades.criteria);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     let activo = true;
 
     const cargarColumnasKanban = async () => {
@@ -106,6 +113,27 @@ export const MaestroOportunidades = () => {
       if (!activo) return;
 
       setEstadosOportunidad(estados);
+
+      if (criteria.filtro.length === 0) {
+        const idsTerminales = obtenerIdsEstadosTerminales(estados);
+        const idsNoTerminales = estados
+          .map((e) => String(e.id))
+          .filter((id) => !idsTerminales.includes(id));
+        // Actualizar criteriaInicial para que el Listado sepa cuál es el filtro base
+        const filtroNoTerminales: ClausulaFiltro[] = [
+          ["estado_id", "in", idsNoTerminales as unknown as string],
+        ];
+
+        const criteriaConFiltro = {
+          ...criteriaBaseOportunidades,
+          filtro: filtroNoTerminales,
+        };
+        setCriteriaInicial(criteriaConFiltro);
+
+        emitir("criteria_cambiado", criteriaConFiltro);
+      } else {
+        emitir("recarga_de_oportunidades_solicitada", criteria);
+      }
     };
 
     cargarColumnasKanban();
@@ -113,6 +141,7 @@ export const MaestroOportunidades = () => {
     return () => {
       activo = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -132,11 +161,13 @@ export const MaestroOportunidades = () => {
                   tipo: "multiseleccion",
                   opciones:
                     crearOpcionesFiltroEstadoOportunidad(estadosOportunidad),
-                  valorDefecto: todosLosEstados,
+                  valorDefecto: estadosNoTerminales,
                   filtro: crearFiltroEstadoOportunidad,
                 },
               }}
               criteria={ctx.oportunidades.criteria}
+              criteriaInicial={criteriaInicial}
+              modosDisponibles={["tarjetas", "kanban"]}
               modo={modoActual}
               mostrarCambioModo
               tarjeta={TarjetaOportunidadVenta}

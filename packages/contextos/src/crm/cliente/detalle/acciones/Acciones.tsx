@@ -5,6 +5,7 @@ import { DetalleAccion } from "#/crm/accion/detalle/DetalleAccion.tsx";
 import { Accion } from "#/crm/accion/diseño.ts";
 import { metaTablaAccion } from "#/crm/accion/maestro/maestro.ts";
 import { TarjetaAccion } from "#/crm/accion/maestro/TarjetaAccion.tsx";
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
@@ -63,28 +64,32 @@ export const Acciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
       <ListadoSemiControlado
         metaTabla={metaTablaAccion}
         tarjeta={TarjetaAccion}
+        modosDisponibles={["tarjetas"]}
         entidades={ctx.acciones.lista}
         totalEntidades={ctx.acciones.lista.length}
         cargando={cargando}
         renderAcciones={() => (
-          <QuimeraAcciones
-            acciones={[
-              {
-                texto: "Nueva",
-                onClick: () => emitir("creacion_de_accion_solicitada"),
-              },
-              {
-                texto: "Editar",
-                onClick: () => emitir("edicion_accion_solicitada"),
-                deshabilitado: !ctx.acciones.activo,
-              },
-              {
-                texto: "Borrar",
-                onClick: () => emitir("borrado_accion_solicitado"),
-                deshabilitado: !ctx.acciones.activo,
-              },
-            ]}
-          />
+          <div className="maestro-botones">
+            <QBoton onClick={() => emitir("creacion_de_accion_solicitada")}>
+              Nueva
+            </QBoton>
+            <QBoton
+              onClick={() => emitir("edicion_accion_solicitada")}
+              deshabilitado={!ctx.acciones.activo}
+            >
+              Editar
+            </QBoton>
+            <QuimeraAcciones
+              acciones={[
+                {
+                  texto: "Borrar",
+                  onClick: () => emitir("borrado_accion_solicitado"),
+                  deshabilitado: !ctx.acciones.activo,
+                  advertencia: true,
+                },
+              ]}
+            />
+          </div>
         )}
         seleccionada={ctx.acciones.activo ?? null}
         onSeleccion={(accion) => emitir("accion_seleccionada", accion)}

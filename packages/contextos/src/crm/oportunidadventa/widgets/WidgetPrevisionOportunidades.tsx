@@ -57,10 +57,10 @@ export const WidgetPrevisionOportunidades = () => {
       </div>
     );
   }
-
+  console.log(modelo.urlVer);
   return (
     <div className="widget-prevision-oportunidades">
-      <h3 className="widget-prevision-oportunidades__titulo">CRM</h3>
+      <h3 className="widget-prevision-oportunidades__titulo">Oportunidades</h3>
       <div className="widget-prevision-oportunidades__valor">
         Prevision de ventas potencial <strong>{textoPrevision}</strong>
       </div>

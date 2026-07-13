@@ -1,8 +1,7 @@
 import { ClausulaFiltro, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
     construirUrlConFiltro,
-    EstadoCargaWidget,
-    obtenerUsuarioActualId,
+    EstadoCargaWidget
 } from "../../widgets/comun.ts";
 import { Lead } from "../diseño.ts";
 import { getLeads } from "../infraestructura.ts";
@@ -24,12 +23,7 @@ export const modeloWidgetUltimasTarjetasInicial: ModeloWidgetUltimasTarjetas = {
 };
 
 export const cargarModeloWidgetUltimasTarjetas = async (): Promise<ModeloWidgetUltimasTarjetas> => {
-    const usuarioId = obtenerUsuarioActualId();
     const filtro: ClausulaFiltro[] = [];
-
-    if (usuarioId) {
-        filtro.push(["responsable_id", "=", usuarioId] as ClausulaFiltro);
-    }
 
     const resultado = await getLeads(
         filtro as unknown as Filtro,

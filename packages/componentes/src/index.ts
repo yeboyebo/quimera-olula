@@ -1,4 +1,5 @@
 export * from "./atomos/qavatar.tsx";
+export * from "./atomos/qbadge.tsx";
 export * from "./atomos/qboton.tsx";
 export * from "./atomos/qcheckbox.tsx";
 export * from "./atomos/qdate.tsx";

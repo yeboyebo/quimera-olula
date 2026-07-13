@@ -8,6 +8,7 @@ import {
   Tab,
   Tabs,
 } from "@olula/componentes/index.js";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
@@ -61,13 +62,20 @@ export const DetalleAccion = ({
     >
       {!!accionId && (
         <div className="DetalleAccion">
-          <div className="maestro-botones ">
+          <div className="maestro-botones">
             <QBoton onClick={() => emitir("finalizacion_accion_solicitada")}>
               Finalizar
             </QBoton>
-            <QBoton onClick={() => emitir("borrado_accion_solicitado")}>
-              Borrar
-            </QBoton>
+            <QuimeraAcciones
+              vertical
+              acciones={[
+                {
+                  texto: "Borrar",
+                  onClick: () => emitir("borrado_accion_solicitado"),
+                  advertencia: true,
+                },
+              ]}
+            />
           </div>
 
           <Tabs>

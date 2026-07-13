@@ -1,6 +1,7 @@
 import { TabCrmContactos } from "#/ventas/cliente/detalle/CRMContactos/TabCrmContactos.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento, Entidad } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
@@ -54,11 +55,15 @@ export const DetalleCliente = ({
     >
       {!!clienteId && (
         <div className="DetalleCliente">
-          <div className="maestro-botones ">
-            <QBoton onClick={() => emitir("borrado_cliente_solicitado")}>
-              Borrar
-            </QBoton>
-          </div>
+          <QuimeraAcciones
+            acciones={[
+              {
+                texto: "Borrar",
+                onClick: () => emitir("borrado_cliente_solicitado"),
+                advertencia: true,
+              },
+            ]}
+          />
 
           <Tabs>
             <Tab label="General">

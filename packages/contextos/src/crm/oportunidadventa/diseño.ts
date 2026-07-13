@@ -18,6 +18,7 @@ export interface OportunidadVenta extends Entidad {
     observaciones: string | null;
     valor_defecto: boolean;
     agente_id: string | null;
+    acciones_pendientes?: number | null;
 };
 
 export type EstadoOportunidad = {

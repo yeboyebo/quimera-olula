@@ -69,6 +69,7 @@ export const MaestroIncidencias = () => {
                 },
               }}
               criteria={ctx.incidencias.criteria}
+              modosDisponibles={["tarjetas"]}
               tarjeta={TarjetaIncidencia}
               entidades={ctx.incidencias.lista}
               totalEntidades={ctx.incidencias.total}

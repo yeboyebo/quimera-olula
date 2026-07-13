@@ -23,7 +23,10 @@ export const WidgetUltimasOportunidades = () => {
       })
       .catch((error) => {
         if (cancelado) return;
-        console.error("Error cargando últimas oportunidades", error);
+        console.error(
+          "Error cargando oportunidades que requieren atención",
+          error
+        );
         setModelo((previo) => ({ ...previo, estado: "listo" }));
       });
 
@@ -33,21 +36,23 @@ export const WidgetUltimasOportunidades = () => {
   }, []);
 
   if (modelo.estado === "cargando") {
-    return <div>Cargando últimas oportunidades...</div>;
+    return <div>Cargando oportunidades que requieren atención...</div>;
   }
 
   return (
     <div className="widget-crm-lista">
       <div className="widget-crm-lista__cabecera">
-        <h3 className="widget-crm-lista__titulo">Últimas oportunidades</h3>
+        <h3 className="widget-crm-lista__titulo">
+          Oportunidades que requieren atención
+        </h3>
         <div className="widget-crm-lista__subtitulo">
-          Tus 3 oportunidades más recientes
+          Priorizadas por vencimiento y urgencia comercial
         </div>
       </div>
 
       {modelo.oportunidades.length === 0 ? (
         <div className="widget-crm-lista__vacio">
-          No hay oportunidades recientes
+          No hay oportunidades urgentes ahora mismo
         </div>
       ) : (
         <div className="widget-crm-lista__lista">

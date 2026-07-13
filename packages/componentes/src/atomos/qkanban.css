@@ -61,11 +61,25 @@
     }
 
     .qkanban-columna-resumen {
-        font-size: var(--texto-xs);
+        font-size: var(--tamaño-letra-m);
         color: var(--color-texto-secundario);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+
+    .qkanban-resumen-oportunidad {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .qkanban-resumen-total {
+        font-weight: var(--grosor-letra-6);
+        color: var(--color-texto-primario);
+    }
+
+    .qkanban-resumen-ponderado {
+        font-size: var(--tamaño-letra-s);
+        color: var(--color-texto-secundario);
     }
 
     .qkanban-columna-badge {

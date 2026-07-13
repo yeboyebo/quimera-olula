@@ -39,6 +39,7 @@ const construirUrlConFiltro = (filtro: ClausulaFiltro[]): string => {
     for (const [campo, operador, valor] of filtro) {
         params.append(campo, valor === undefined ? operador : `${operador}__${valor}`);
     }
+    console.log("URL params:", params.toString());
 
     return `${RUTA_OPO_VENTA}?${params.toString()}`;
 };

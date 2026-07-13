@@ -1,7 +1,7 @@
 .TarjetaOportunidadVentaKanban {
     display: flex;
     flex-direction: column;
-    gap: var(--espaciado-xs);
+    gap: var(--espaciado-xxs);
     width: 100%;
     text-align: left;
 
@@ -12,8 +12,24 @@
         gap: var(--espaciado-xs);
     }
 
+    .tarjeta-kanban-indicadores {
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-xs);
+        min-width: 0;
+    }
+
+    .tarjeta-kanban-estado {
+        font-size: var(--tamaño-letra-xs);
+        color: var(--color-texto-secundario);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+    }
+
     .tarjeta-kanban-titulo {
-        font-size: var(--tamaño-letra-l);
+        font-size: var(--tamaño-letra-m);
         font-weight: var(--grosor-letra-7);
         line-height: 1.2;
         color: var(--color-texto-principal);
@@ -33,10 +49,17 @@
         text-overflow: ellipsis;
     }
 
-    .tarjeta-kanban-pie {
+    .tarjeta-kanban-linea-datos {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: var(--espaciado-s);
+    }
+
+    .tarjeta-kanban-pie {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
         gap: var(--espaciado-s);
     }
 
@@ -49,7 +72,46 @@
         font-size: var(--tamaño-letra-m);
         font-weight: var(--grosor-letra-7);
         color: var(--color-texto-principal);
-        margin-left: auto;
         white-space: nowrap;
+    }
+
+    .importe-alta {
+        background-color: var(--color-exito-claro);
+        color: var(--color-exito-oscuro);
+        padding: 2px var(--espaciado-s);
+        font-weight: var(--grosor-letra-6);
+    }
+
+    .importe-media {
+        background-color: var(--color-advertencia-claro);
+        color: var(--color-advertencia-oscuro);
+        padding: 2px var(--espaciado-s);
+        font-weight: var(--grosor-letra-6);
+    }
+
+    .importe-baja {
+        background-color: var(--color-error-claro);
+        color: var(--color-error-oscuro);
+        padding: 2px var(--espaciado-s);
+        font-weight: var(--grosor-letra-6);
+    }
+
+    .badges-container {
+        display: flex;
+        gap: var(--espaciado-xs);
+        flex-wrap: wrap;
+    }
+
+    .tarjeta-kanban-urgencia {
+        margin-top: 2px;
+    }
+
+    .tarjeta-kanban-acciones-pendientes {
+        font-size: var(--tamaño-letra-xs);
+        color: var(--color-texto-secundario);
+    }
+
+    .tarjeta-kanban-acciones-pendientes.sin-dato {
+        opacity: 0.75;
     }
 }

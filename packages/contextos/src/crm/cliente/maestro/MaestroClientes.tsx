@@ -52,6 +52,7 @@ export const MaestroClientes = () => {
                 },
               }}
               criteria={ctx.clientes.criteria}
+              modosDisponibles={["tarjetas"]}
               tarjeta={TarjetaCliente}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}

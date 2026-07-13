@@ -1,6 +1,7 @@
 import type { QKanbanColumna } from "@olula/componentes/atomos/qkanban.tsx";
 import type { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import { formatearMoneda } from "@olula/lib/dominio.ts";
+import { createElement } from "react";
 import type { EstadoOportunidad, OportunidadVenta } from "../diseño.ts";
 import {
     crearMapaProbabilidadEstados,
@@ -29,7 +30,7 @@ export const crearFiltroEstadoOportunidad = (
 
     if (!valores.length) return null;
 
-    return ["estado_id", "in", valores.join(",")] as ClausulaFiltro;
+    return ["estado_id", "in", valores as unknown as string] as ClausulaFiltro;
 };
 
 export const crearOpcionesFiltroEstadoOportunidad = (
@@ -58,7 +59,20 @@ export const enriquecerColumnasKanbanOportunidad = (
 
         return {
             ...columna,
-            resumen: `${formatearMoneda(totalImporte, "EUR")} · ${formatearMoneda(totalPrevision, "EUR")}`,
+            resumen: createElement(
+                "div",
+                { className: "qkanban-resumen-oportunidad" },
+                createElement(
+                    "div",
+                    { className: "qkanban-resumen-total" },
+                    createElement("strong", null, `Total: ${formatearMoneda(totalImporte, "EUR")}`)
+                ),
+                createElement(
+                    "div",
+                    { className: "qkanban-resumen-ponderado" },
+                    `Ponderado: ${formatearMoneda(totalPrevision, "EUR")}`
+                )
+            ),
         };
     });
 };

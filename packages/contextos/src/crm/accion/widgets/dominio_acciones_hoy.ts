@@ -12,11 +12,20 @@ export type GrupoAccionesHoy = {
     acciones: Accion[];
 };
 
+export type FiltroAccionesWidget = "pendientes" | "retrasadas" | "hoy";
+
 export type ModeloWidgetAccionesHoy = {
     estado: EstadoCargaWidget;
     totalAcciones: number;
-    grupos: GrupoAccionesHoy[];
+    totalRetrasadas: number;
+    totalPendientes: number;
+    gruposHoy: GrupoAccionesHoy[];
+    gruposRetrasadas: GrupoAccionesHoy[];
+    gruposPendientes: GrupoAccionesHoy[];
     urlVer: string;
+    urlVerHoy: string;
+    urlVerRetrasadas: string;
+    urlVerPendientes: string;
 };
 
 const RUTA_ACCIONES = "/crm/accion";
@@ -26,8 +35,15 @@ const PAGINACION_ACCIONES: Paginacion = { pagina: 1, limite: 200 };
 export const modeloWidgetAccionesHoyInicial: ModeloWidgetAccionesHoy = {
     estado: "cargando",
     totalAcciones: 0,
-    grupos: [],
+    totalRetrasadas: 0,
+    totalPendientes: 0,
+    gruposHoy: [],
+    gruposRetrasadas: [],
+    gruposPendientes: [],
     urlVer: RUTA_ACCIONES,
+    urlVerHoy: RUTA_ACCIONES,
+    urlVerRetrasadas: RUTA_ACCIONES,
+    urlVerPendientes: RUTA_ACCIONES,
 };
 
 const agruparPorTipo = (acciones: Accion[]): GrupoAccionesHoy[] => {
@@ -47,22 +63,41 @@ const agruparPorTipo = (acciones: Accion[]): GrupoAccionesHoy[] => {
 
 export const cargarModeloWidgetAccionesHoy = async (): Promise<ModeloWidgetAccionesHoy> => {
     const hoy = fechaLocalStr(new Date());
-    const filtro: ClausulaFiltro[] = [
+    const filtroHoy: ClausulaFiltro[] = [
         ["fecha", "<>", `${hoy}_${hoy}`] as ClausulaFiltro,
+        ["estado", "in", ["Pendiente", "Borrador"] as unknown as string] as ClausulaFiltro,
     ];
 
+    const filtroRetrasadas: ClausulaFiltro[] = [
+        ["fecha", "<", hoy] as ClausulaFiltro,
+        ["estado", "in", ["Pendiente", "Borrador"] as unknown as string] as ClausulaFiltro,
+    ];
 
+    const filtroPendientes: ClausulaFiltro[] = [
+        ["estado", "in", ["Pendiente", "Borrador"] as unknown as string] as ClausulaFiltro,
+    ];
 
-    const resultado = await getAcciones(
-        filtro as unknown as Filtro,
-        ORDEN_ACCIONES,
-        PAGINACION_ACCIONES
-    );
+    const [resultadoHoy, resultadoRetrasadas, resultadoPendientes] = await Promise.all([
+        getAcciones(filtroHoy as unknown as Filtro, ORDEN_ACCIONES, PAGINACION_ACCIONES),
+        getAcciones(filtroRetrasadas as unknown as Filtro, ORDEN_ACCIONES, PAGINACION_ACCIONES),
+        getAcciones(filtroPendientes as unknown as Filtro, ORDEN_ACCIONES, PAGINACION_ACCIONES),
+    ]);
+
+    const urlVerHoy = construirUrlConFiltro(RUTA_ACCIONES, filtroHoy);
+    const urlVerRetrasadas = construirUrlConFiltro(RUTA_ACCIONES, filtroRetrasadas);
+    const urlVerPendientes = construirUrlConFiltro(RUTA_ACCIONES, filtroPendientes);
 
     return {
         estado: "listo",
-        totalAcciones: resultado.total,
-        grupos: agruparPorTipo(resultado.datos),
-        urlVer: construirUrlConFiltro(RUTA_ACCIONES, filtro),
+        totalAcciones: resultadoHoy.total,
+        totalRetrasadas: resultadoRetrasadas.total,
+        totalPendientes: resultadoPendientes.total,
+        gruposHoy: agruparPorTipo(resultadoHoy.datos),
+        gruposRetrasadas: agruparPorTipo(resultadoRetrasadas.datos),
+        gruposPendientes: agruparPorTipo(resultadoPendientes.datos),
+        urlVer: urlVerHoy,
+        urlVerHoy,
+        urlVerRetrasadas,
+        urlVerPendientes,
     };
 };

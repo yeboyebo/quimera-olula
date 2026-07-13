@@ -25,14 +25,14 @@
 
 .widget-prevision-oportunidades__serie {
     display: grid;
-    gap: var(--espaciado-xs);
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    column-gap: var(--espaciado-s);
+    row-gap: var(--espaciado-xs);
+    align-items: center;
 }
 
 .widget-prevision-oportunidades__fila {
-    display: grid;
-    grid-template-columns: clamp(9rem, 34%, 13rem) minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--espaciado-xs);
+    display: contents;
 }
 
 .widget-prevision-oportunidades__estado {
@@ -41,6 +41,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: right;
 }
 
 .widget-prevision-oportunidades__barra-fondo {
@@ -60,4 +61,7 @@
     font-variant-numeric: tabular-nums;
     font-weight: 600;
     font-size: 0.875rem;
+    text-align: right;
+    white-space: nowrap;
+    text-align: left;
 }

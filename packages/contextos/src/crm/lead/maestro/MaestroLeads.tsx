@@ -38,6 +38,7 @@ export const MaestroLeads = () => {
             <Listado<Lead>
               metaTabla={metaTablaLead}
               criteria={ctx.leads.criteria}
+              modosDisponibles={["tarjetas"]}
               tarjeta={TarjetaLead}
               entidades={ctx.leads.lista}
               totalEntidades={ctx.leads.total}

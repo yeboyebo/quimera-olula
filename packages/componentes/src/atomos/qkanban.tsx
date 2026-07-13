@@ -20,7 +20,7 @@ export type QKanbanColumna = {
   id: string;
   etiqueta: string;
   color?: string;
-  resumen?: string;
+  resumen?: ReactNode;
 };
 
 export type QKanbanProps<T extends Entidad> = {

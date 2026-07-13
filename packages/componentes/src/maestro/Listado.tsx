@@ -50,6 +50,7 @@ type ListadoProps<T extends Entidad> = {
   seleccionada?: string;
   onSeleccion: (seleccionada: string) => void;
   modo?: Modo;
+  modosDisponibles?: Modo[];
   mostrarCambioModo?: boolean;
   onModoChanged?: (modo: Modo) => void;
   onCriteriaChanged: (criteria: Criteria) => void;
@@ -79,6 +80,7 @@ export const Listado = <T extends Entidad>({
   seleccionada,
   onSeleccion,
   modo,
+  modosDisponibles,
   mostrarCambioModo,
   onModoChanged,
   onCriteriaChanged,
@@ -149,15 +151,22 @@ export const Listado = <T extends Entidad>({
     campoEstadoKanban !== undefined &&
     onCambioEstadoKanban !== undefined;
 
-  const modosDisponibles: Modo[] = [
-    ...(puedeKanban ? (["kanban"] as Modo[]) : []),
-    ...(puedeTarjetas ? (["tarjetas"] as Modo[]) : []),
-    ...(puedeTabla ? (["tabla"] as Modo[]) : []),
-  ];
+  const modosDisponiblesCalculados: Modo[] = modosDisponibles
+    ? modosDisponibles.filter((modo) => {
+        if (modo === "tabla") return puedeTabla;
+        if (modo === "tarjetas") return puedeTarjetas;
+        if (modo === "kanban") return puedeKanban;
+        return false;
+      })
+    : [
+        ...(puedeKanban ? (["kanban"] as Modo[]) : []),
+        ...(puedeTarjetas ? (["tarjetas"] as Modo[]) : []),
+        ...(puedeTabla ? (["tabla"] as Modo[]) : []),
+      ];
 
-  const modoEfectivo = modosDisponibles.includes(modoInterno)
+  const modoEfectivo = modosDisponiblesCalculados.includes(modoInterno)
     ? modoInterno
-    : (modosDisponibles[0] ?? null);
+    : (modosDisponiblesCalculados[0] ?? null);
 
   const cambiarModo = (nuevoModo: Modo) => {
     if (modo === undefined) setModoEstado(nuevoModo);
@@ -165,17 +174,19 @@ export const Listado = <T extends Entidad>({
   };
 
   const siguienteModo = (): Modo | null => {
-    if (!modoEfectivo || modosDisponibles.length === 0) return null;
+    if (!modoEfectivo || modosDisponiblesCalculados.length === 0) return null;
 
-    const indice = modosDisponibles.indexOf(modoEfectivo);
-    return modosDisponibles[(indice + 1) % modosDisponibles.length];
+    const indice = modosDisponiblesCalculados.indexOf(modoEfectivo);
+    return modosDisponiblesCalculados[
+      (indice + 1) % modosDisponiblesCalculados.length
+    ];
   };
 
   const mostrarCambioModoPorDefecto =
-    modosDisponibles.length > 1 && Boolean(modoEfectivo) && !modo;
+    modosDisponiblesCalculados.length > 1 && Boolean(modoEfectivo) && !modo;
   const mostrarCambioModoFinal =
     (mostrarCambioModo ?? mostrarCambioModoPorDefecto) &&
-    modosDisponibles.length > 1 &&
+    modosDisponiblesCalculados.length > 1 &&
     Boolean(modoEfectivo);
   const acciones = renderAcciones?.();
 
