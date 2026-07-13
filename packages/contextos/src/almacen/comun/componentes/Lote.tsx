@@ -5,7 +5,6 @@ import { criteriaDefecto } from "@olula/lib/dominio.js";
 
 
 interface LoteProps {
-  descripcion?: string;
   valor: string;
   sku?: string;
   nombre?: string;
@@ -16,7 +15,6 @@ interface LoteProps {
 }
 
 export const Lote = ({
-  descripcion = "",
   valor,
   sku,
   nombre = "lote_id",

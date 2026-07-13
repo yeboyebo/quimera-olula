@@ -285,7 +285,9 @@ export const QTablaControlada = <T extends Entidad>({
   const toggleExpansion = (id: string) =>
     setExpandidas((prev) => {
       const s = new Set(prev);
-      s.has(id) ? s.delete(id) : s.add(id);
+      if (s.has(id)) {
+        s.delete(id)
+      } else s.add(id);
       return s;
     });
 

@@ -165,7 +165,7 @@ export const QAutocompletar = ({
         name={nombre}
         value={valor || ""}
         defaultValue={undefined}
-        required={!props.opcional}
+        required={!opcional}
       />
       <div className="autocompletar-wrapper">
         <QInput

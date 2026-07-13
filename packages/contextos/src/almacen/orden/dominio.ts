@@ -12,8 +12,10 @@ export const ordenVacia = (): OrdenAlmacen => ({
     almacen: "",
     abierta: true,
     ubicacionOrigenId: null,
+    ubicacionOrigen: null,
     cajaOrigenId: null,
     ubicacionDestinoId: null,
+    ubicacionDestino: null,
     cajaDestinoId: null,
     lineas: [],
 });

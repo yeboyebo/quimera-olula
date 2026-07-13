@@ -1,5 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import ApiUrls from "../../comun/urls.js";
+import { NuevoModulo } from "../diseño.js";
 import { ModuloApi, moduloDesdeApi, nuevoModuloAApi, NuevoModuloApi } from "../infraestructura.js";
 import {
     CambiosLineaModulo,
@@ -12,7 +13,6 @@ import {
     LineaModulo,
     ModLin,
     NuevaLineaModulo,
-    NuevoModLin,
     PatchLineaModulo,
     PatchModLin,
     PostLineaModulo,
@@ -24,8 +24,6 @@ interface ModLinApi extends ModuloApi {
     lineas: LineaModuloApi[];
 }
 
-interface NuevoModLinApi extends NuevoModuloApi {
-}
 
 type CambiosModLinApi = Partial<ModLinApi>;
 
@@ -74,7 +72,7 @@ const itemModLinDesdeApi = (api: ItemModLinApi): ItemModLin => ({
  * Mapea datos de creación y cambio de dominio a API
  * Convierte tipos del dominio a tipos que entiende el backend
  */
-const nuevoModLinAApi = (m: NuevoModLin): NuevoModLinApi => nuevoModuloAApi(m);
+const nuevoModLinAApi = (m: NuevoModulo): NuevoModuloApi => nuevoModuloAApi(m);
 
 const cambiosModLinAApi = (m: CambiosModLin): CambiosModLinApi => {
     const cambios: CambiosModLinApi = {};
@@ -120,7 +118,7 @@ export const getModLins: GetModLins = async (criteria) => {
  * Crear nuevo módulo
  */
 export const postModLin: PostModLin = async (nuevoModLin) => {
-    const respuesta = await RestAPI.post<NuevoModLinApi>(
+    const respuesta = await RestAPI.post<NuevoModuloApi>(
         baseUrl,
         nuevoModLinAApi(nuevoModLin),
         "Error al crear módulo"

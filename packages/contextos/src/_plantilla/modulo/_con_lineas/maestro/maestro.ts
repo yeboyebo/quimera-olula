@@ -13,13 +13,13 @@ export const ModLins = accionesListaActivaEntidades(conModLins);
 
 export const recargarModLins: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getModLins(criteria.filtro, criteria.orden, criteria.paginacion);
+    const resultado = await getModLins(criteria);
     return ModLins.recargar(contexto, resultado);
 };
 
 export const ampliarModLins: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getModLins(criteria.filtro, criteria.orden, criteria.paginacion);
+    const resultado = await getModLins(criteria);
     return ModLins.ampliar(contexto, resultado);
 };
 

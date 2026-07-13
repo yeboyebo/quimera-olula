@@ -178,18 +178,12 @@ const transformarFiltro = (filtro: Filtro): Filtro => {
     }
     if (Array.isArray(filtro)) return transformarFiltrosEspeciales(filtro as ClausulaFiltro);
     if ('or' in filtro) {
-        return { or: transformarFiltro(filtro.or) };
+        return { or: filtro.or.map(transformarFiltro) };
     }
-    return { and: transformarFiltro(filtro.and) };
+    return { and: filtro.and.map(transformarFiltro) };
 }
 
-// const transformarFiltro = (filtro: Filtro): FiltroAPI => {
-//     return Object.entries(filtro).map(([campo, valor]) => [campo, '~', valor['LIKE']]);
-// }
 
-// const transformarOrden = (orden: Orden): OrdenAPI => {
-//     return Object.entries(orden).map(([campo, orden]) => [campo, orden]).flat();
-// }
 
 export const obtenerOpcionesSelector =
     (path: string) => async () =>

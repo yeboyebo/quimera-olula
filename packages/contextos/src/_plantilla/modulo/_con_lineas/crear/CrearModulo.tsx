@@ -7,7 +7,7 @@ import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback } from "react";
 import { postModLin } from "../infraestructura.js";
-import { metaNuevoModLin, nuevoModLinVacio } from "./crear.js";
+import { metaNuevoModulo, nuevoModLinVacio } from "./crear.js";
 
 /**
  * Modal de alta de módulo (con líneas).
@@ -25,7 +25,7 @@ export const CrearModulo = ({
     publicar: EmitirEvento;
 }) => {
     const { modelo: modLin, uiProps, valido } = useModelo(
-        metaNuevoModLin,
+        metaNuevoModulo,
         nuevoModLinVacio()
     );
 

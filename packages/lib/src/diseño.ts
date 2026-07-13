@@ -19,10 +19,10 @@ export type Criteria = {
 
 export type ClausulaFiltro = [string, string, string?];
 type FiltroOr = {
-    or: Filtro;
+    or: Filtro[];
 }
 type FiltroAnd = {
-    and: Filtro;
+    and: Filtro[];
 }
 
 export type Filtro = ClausulaFiltro | ClausulaFiltro[] | FiltroOr | FiltroAnd;

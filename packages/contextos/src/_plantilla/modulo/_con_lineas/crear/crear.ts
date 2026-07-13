@@ -1,11 +1,11 @@
 import { MetaModelo } from "@olula/lib/dominio.js";
 import { nuevoModuloInicial } from "../../crear/crear.js";
-import { NuevoModLin } from "../diseño.js";
+import { NuevoModulo } from "../../diseño.js";
 
-export const metaNuevoModLin: MetaModelo<NuevoModLin> = {
+export const metaNuevoModulo: MetaModelo<NuevoModulo> = {
     campos: {
         campoString: { requerido: true, minimo: 3 },
     },
 };
 
-export const nuevoModLinVacio = (): NuevoModLin => nuevoModuloInicial();
+export const nuevoModLinVacio = (): NuevoModulo => nuevoModuloInicial();

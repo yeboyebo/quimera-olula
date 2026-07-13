@@ -11,8 +11,6 @@ export interface LineaModulo extends Entidad {
     campoString: string
 }
 
-export interface NuevoModLin extends NuevoModulo {
-}
 
 export interface NuevaLineaModulo extends Modelo {
     campoString: string
@@ -33,7 +31,7 @@ export type CambiosLineaModulo = Partial<LineaModulo>;
 
 export type GetModLin = (id: string) => Promise<ModLin>;
 export type GetModLins = (criteria: Criteria) => RespuestaLista<ItemModLin>;
-export type PostModLin = (nuevoModLin: NuevoModLin) => Promise<string>;
+export type PostModLin = (nuevoModLin: NuevoModulo) => Promise<string>;
 export type PostLineaModulo = (id: string, nuevaLinea: NuevaLineaModulo) => Promise<string>;
 export type PatchModLin = (id: string, cambios: CambiosModLin) => Promise<void>;
 export type PatchLineaModulo = (id: string, lineaId: string, cambios: CambiosLineaModulo) => Promise<void>;

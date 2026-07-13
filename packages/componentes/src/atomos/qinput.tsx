@@ -11,20 +11,6 @@ export type QInputProps = FormInputProps & {
   soloTexto?: boolean;
 };
 
-const formatearFechaHora = (valor?: string) => {
-  if (!valor) return "—";
-  const fecha = new Date(valor);
-  if (isNaN(fecha.getTime())) return valor;
-  return fecha.toLocaleString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-};
-
 export const QInput = ({
   label,
   nombre,
