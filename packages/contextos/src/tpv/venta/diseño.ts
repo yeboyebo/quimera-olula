@@ -134,6 +134,8 @@ export type GetReportVenta = (id: string) => Promise<Blob>;
 
 export type GetReportVale = (id: string) => Promise<Blob>;
 
+export type PatchEmitirVenta = (id: string) => Promise<void>;
+
 
 export type EstadoMaestroVentasTpv = (
     'INICIAL'

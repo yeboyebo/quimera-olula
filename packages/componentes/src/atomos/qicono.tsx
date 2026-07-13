@@ -7,6 +7,7 @@ import {
   IconArrowBarRight,
   IconArrowForwardUp,
   IconBackground,
+  IconBasketDown,
   IconBuildingStore,
   IconCalendar,
   IconCalendarEvent,
@@ -164,6 +165,7 @@ const iconos: Record<string, Icon> = {
   usuarios: IconUsers,
   pausa: IconPlayerPause,
   pausa_relleno: IconPlayerPauseFilled,
+  devolucion: IconBasketDown,
 };
 
 export const QIcono = ({

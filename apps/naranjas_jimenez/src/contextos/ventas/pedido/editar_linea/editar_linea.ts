@@ -85,10 +85,10 @@ const onChange = (modelo: FormEditarLinea, campo: string, _: unknown, otro?: Rec
 export const metaEditarLinea: MetaModelo<FormEditarLinea> = {
     campos: {
         idVariedad: { tipo: "texto", requerido: true },
-        idTipoPalet: { tipo: "texto", requerido: true },
+        idTipoPalet: { tipo: "texto", requerido: false },
         idMarca: { tipo: "texto", requerido: true },
         idCalibre: { tipo: "texto", requerido: true },
-        idEnvase: { tipo: "texto", requerido: true },
+        idEnvase: { tipo: "texto", requerido: false },
         categoria: { tipo: "texto", requerido: false },
         observaciones: { tipo: "texto", requerido: false },
         cantidadPalets: { tipo: "entero", requerido: false },
@@ -112,7 +112,7 @@ export const patchLineaNrj: PatchLineaNrj = async (idPedido, idLinea, linea) => 
                 calibre_id: linea.idCalibre,
                 categoria: linea.categoria ? linea.categoria[0] : undefined,
                 cantidad: linea.cantidadEnvases,
-                tipo_palet_id: linea.idTipoPalet,
+                tipo_palet_id: linea.idTipoPalet === "" ? null : linea.idTipoPalet,
                 cantidad_palets: linea.cantidadPalets,
                 observaciones: linea.observaciones
             }

@@ -4,7 +4,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { ClausulaFiltro, Direccion, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchEmitirVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().VENTA;
 const baseUrlFactura = new Ventas_Urls().FACTURA;
@@ -65,7 +65,7 @@ type PagoVentaTpvApi = {
     vale: string | null;
     arqueo_id: string;
     arqueo_abierto: boolean;
-    tipo_tarjeta: string | null;
+    tipo_tarjeta_id: string | null;
 }
 
 interface VentaTpvADevolverAPI extends VentaTpvAPI {
@@ -105,7 +105,7 @@ export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvApi): PagoVentaTpv => (
         vale: p.vale,
         idArqueo: p.arqueo_id,
         arqueoAbierto: p.arqueo_abierto,
-        idTipoTarjeta: p.tipo_tarjeta
+        idTipoTarjeta: p.tipo_tarjeta_id
     }
 );
 
@@ -129,11 +129,15 @@ export const getVentas: GetVentasTpv = async (
     const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
     const filtroPuntoVenta: ClausulaFiltro = [
         "punto_venta_id",
+        "=",
         miPuntoVentaLocal?.id ?? "",
     ];
 
-    const filtroCombinado: Filtro = Array.isArray(filtro)
-        ? [...filtro, filtroPuntoVenta]
+    const esListaDeClausulas =
+        Array.isArray(filtro) && (filtro.length === 0 || Array.isArray(filtro[0]));
+
+    const filtroCombinado: Filtro = esListaDeClausulas
+        ? [...(filtro as ClausulaFiltro[]), filtroPuntoVenta]
         : { and: [filtro, [filtroPuntoVenta]] };
     const q = criteriaQuery(filtroCombinado, orden, paginacion);
 
@@ -265,6 +269,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
             pvp_unitario: linea.pvp_unitario,
             iva_incluido: linea.iva_incluido,
             dto_porcentual: linea.dto_porcentual,
+            dto_lineal: linea.dto_lineal,
             grupo_iva_producto_id: linea.grupo_iva_producto_id,
         },
     };
@@ -348,5 +353,9 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
     await RestAPI.patch(`${baseUrl}/${id}`, {
         por_descuento: dto_porcentual,
     }, "Error al cambiar descuento de la venta");
+};
+
+export const patchEmitirVenta: PatchEmitirVenta = async (id) => {
+    await RestAPI.patch(`${baseUrlFactura}/${id}/emitir`, {}, "Error al emitir la venta");
 };
 

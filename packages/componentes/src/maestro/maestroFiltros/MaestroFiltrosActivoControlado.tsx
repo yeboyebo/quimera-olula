@@ -81,6 +81,16 @@ export const filtroNumeros = (id: string, valor: unknown): ClausulaFiltro | null
   ] as ClausulaFiltro;
 };
 
+export const filtroMesAnyoConManual = (id: string, valor: unknown): ClausulaFiltro | null => {
+  if (Array.isArray(valor)) {
+    const [desde, hasta] = valor as [string, string];
+    if (!desde && !hasta) return null;
+    const operador = desde && hasta ? "<>" : desde ? ">=" : "<=";
+    return [id, operador, [desde, hasta].filter(Boolean).join("_")] as ClausulaFiltro;
+  }
+  return filtroMesAnyo(id, valor);
+};
+
 export const filtroMesAnyo = (id: string, valor: unknown): ClausulaFiltro | null => {
   if (!valor || typeof valor !== "string") return null;
   const [anyo, mes] = valor.split("-").map(Number);
@@ -207,6 +217,21 @@ export const filtroToValores = (filtro: ClausulaFiltro[], meta: MetaFiltro) => {
       case "fecha":
         valores[id] = new Date(Date.parse(valor_final as string));
         break;
+    }
+
+    if ((meta[id].tipo as string) === "mes_año" && Array.isArray(valor_final)) {
+      const [desde, hasta] = valor_final as [string, string];
+      if (desde && hasta) {
+        const [anyo, mes] = desde.split("-").map(Number);
+        if (anyo && mes) {
+          const ultimoDia = new Date(anyo, mes, 0).getDate();
+          const esperadoDesde = `${anyo}-${String(mes).padStart(2, "0")}-01`;
+          const esperadoHasta = `${anyo}-${String(mes).padStart(2, "0")}-${String(ultimoDia).padStart(2, "0")}`;
+          if (desde === esperadoDesde && hasta === esperadoHasta) {
+            valores[id] = desde.slice(0, 7);
+          }
+        }
+      }
     }
   }
 

@@ -38,6 +38,8 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
 
             devolucion_solicitada: "DEVOLVIENDO_VENTA",
 
+            emision_solicitada: "EMITIENDO_VENTA",
+
             emision_de_vale_solicitada: emitirVale,
 
             pago_efectivo_solicitado: "PAGANDO_EN_EFECTIVO",
@@ -103,6 +105,13 @@ export const getMaquina: () => Maquina<EstadoVentaTpv, ContextoVentaTpv> = () =>
             venta_borrada: onVentaBorrada,
 
             borrado_de_venta_cancelado: "ABIERTA",
+        },
+
+        EMITIENDO_VENTA: {
+
+            emision_confirmada: [refrescarCabecera, abiertaOEmitidaContexto],
+
+            emision_cancelada: "ABIERTA",
         },
 
         PAGANDO_EN_EFECTIVO: {

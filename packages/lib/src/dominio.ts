@@ -458,7 +458,7 @@ const getUiProps = <M extends Modelo>(
             tipo: tipo,
             deshabilitado: !editable,
             valido: cambiado && valido,
-            erroneo: cambiado && !valido,
+            erroneo: !valido,
             advertido: false,
             opcional,
             modificado: cambiado,
@@ -695,6 +695,9 @@ export const formatearHoraDate = (date: Date): string => {
     return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 };
 
+export const formatearDireccionUnaLinea = (direccion: Direccion): string => {
+    return `${direccion.tipo_via ? `${direccion.tipo_via} ` : ''} ${direccion.nombre_via ? `${direccion.nombre_via} ` : ''}, ${direccion.ciudad ? `${direccion.ciudad}` : ''}`;
+};
 export const calcularPaginacionSimplificada = (
     total: number | undefined,
     paginaActual: number,
@@ -798,12 +801,17 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     const transformarClausula = (clausula: ClausulaFiltro): ClausulaFiltro =>
         clausula.with(0, relacion[clausula[0]] ?? clausula[0]) as ClausulaFiltro;
 
+    // const transformarFiltro = (filtro: Filtro): Filtro => {
+    //     if (Array.isArray(filtro)) return filtro.map(transformarClausula);
+    //     if ('or' in filtro) return { or: filtro.or.map(transformarFiltro) };
+    //     return { and: filtro.and.map(transformarFiltro) };
+    // };
     const transformarFiltro = (filtro: Filtro): Filtro => {
-        if (Array.isArray(filtro)) return filtro.map(transformarClausula);
+        if (Array.isArray(filtro) && Array.isArray(filtro[0])) return (filtro as ClausulaFiltro[]).map(transformarClausula);
+        if (Array.isArray(filtro)) return transformarClausula(filtro as ClausulaFiltro);
         if ('or' in filtro) return { or: filtro.or.map(transformarFiltro) };
         return { and: filtro.and.map(transformarFiltro) };
     };
-
     const transformarOrden = (orden: Orden): Orden => orden.with(0, relacion[orden[0]] ?? orden[0]) as Orden;
 
     return (criteria) => ({

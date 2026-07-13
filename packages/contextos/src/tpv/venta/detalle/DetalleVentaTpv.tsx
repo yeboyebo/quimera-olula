@@ -13,6 +13,7 @@ import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { DevolverVentaTpv } from "../devolver/DevolverVentaTpv.tsx";
 import { LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
+import { EmitirVentaTpv } from "../emitir/EmitirVentaTpv.tsx";
 import { getReportVale, getReportVenta } from "../infraestructura.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
 import { PagoValeVentaTpv } from "../pagar_con_vale/PagoValeVentaTpv.tsx";
@@ -104,23 +105,32 @@ export const DetalleVentaTpv = ({
         >
         <div className="DetalleFactura">
             <div className="botones maestro-botones ">
-                {estado !== "EMITIDA" && (
-                    <QBoton texto="Borrar venta"
-                        onClick={() => emitir("borrar_solicitado")}
-                    />
-                )}
-                <QBoton texto="Imprimir" onClick={imprimir} />
-                <QBoton texto="Cajón" onClick={abrirCajon} />
-                {estado == "EMITIDA" && venta.total > 0 && (
-                    <QBoton texto="Tique regalo"
-                        onClick={() => emitir("tique_regalo_solicitado")}
-                    />
-                )}
-                {estado == "EMITIDA" && venta.total < 0 && (
-                    <QBoton texto="Imprimir vale"
-                        onClick={imprimir_vale}
-                    />
-                )}
+            {estado !== "EMITIDA" && (
+                <QBoton
+                texto="Borrar venta"
+                onClick={() => emitir("borrar_solicitado")}
+                />
+            )}
+            <QBoton texto="Imprimir" onClick={imprimir} />
+            <QBoton texto="Cajón" onClick={abrirCajon} />
+            {estado === "ABIERTA" && (
+                <QBoton
+                texto="Emitir"
+                onClick={() => emitir("emision_solicitada")}
+                />
+            )}
+            {estado == "EMITIDA" && venta.total > 0 && (
+                <QBoton
+                texto="Tique regalo"
+                onClick={() => emitir("tique_regalo_solicitado")}
+                />
+            )}
+            {estado == "EMITIDA" && venta.total < 0 && (
+                <QBoton
+                texto="Imprimir vale"
+                onClick={imprimir_vale}
+                />
+            )}
             </div>
             <Tabs
             children={[
@@ -167,6 +177,9 @@ export const DetalleVentaTpv = ({
             />
             {estado === "BORRANDO_VENTA" && (
                 <BorrarVentaTpv publicar={emitir} venta={venta} />
+            )}
+            {estado === "EMITIENDO_VENTA" && (
+                <EmitirVentaTpv publicar={emitir} venta={venta} />
             )}
             {estado === "PAGANDO_EN_EFECTIVO" && (
                 <PagarEfectivoVentaTpv publicar={emitir} venta={venta} />

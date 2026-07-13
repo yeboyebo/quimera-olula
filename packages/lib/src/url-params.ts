@@ -50,7 +50,14 @@ const setFiltro = (criteria: Criteria, params: URLSearchParams) => {
 
     if (!Array.isArray(filtro)) return;
 
-    filtro.forEach(f => {
+    // `Filtro` can be either a single clause tuple or a list of tuples.
+    // Normalize to a list to avoid iterating tuple elements as strings.
+    const clausulas: ClausulaFiltro[] =
+        filtro.length === 0 || Array.isArray(filtro[0])
+            ? (filtro as ClausulaFiltro[])
+            : [filtro as ClausulaFiltro];
+
+    clausulas.forEach(f => {
         const [campoFiltro, operador, valor] = f;
 
         if (valor === undefined) {

@@ -21,7 +21,15 @@ export default parent => ({
         icons: ["receipt", "rotate_left"],
         color: "warning",
         variant: "main",
-        url: "/DevolucionesPedidos",
+        url: "/ventas/devoluciones",
+      },
+      motivosDevolucion: {
+        title: "Motivos de devolución",
+        icons: ["receipt", "rotate_left"],
+        color: "warning",
+        variant: "main",
+        rule: "crm.motivo_devolucion",
+        url: "/ventas/motivo_devolucion",
       },
       previsionCompras: {
         title: "Previsión de compras",

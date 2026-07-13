@@ -173,9 +173,10 @@ const transformarFiltrosEspeciales = (clausula: ClausulaFiltro): ClausulaFiltro 
 }
 
 const transformarFiltro = (filtro: Filtro): Filtro => {
-    if (Array.isArray(filtro)) {
-        return filtro.map(transformarFiltrosEspeciales);
+    if (Array.isArray(filtro) && Array.isArray(filtro[0])) {
+        return (filtro as ClausulaFiltro[]).map(transformarFiltrosEspeciales);
     }
+    if (Array.isArray(filtro)) return transformarFiltrosEspeciales(filtro as ClausulaFiltro);
     if ('or' in filtro) {
         return { or: transformarFiltro(filtro.or) };
     }

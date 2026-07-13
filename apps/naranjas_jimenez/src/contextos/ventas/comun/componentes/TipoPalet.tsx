@@ -1,5 +1,6 @@
 import { QSelect } from "@olula/componentes/index.js";
 import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { Criteria } from "@olula/lib/diseño.js";
 import { useEffect, useState } from "react";
 import { ItemListaTipoPalet } from "../../tipo_palet/diseño.ts";
 import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
@@ -15,8 +16,14 @@ export const TipoPalet = ({
 }: TipoPaletProps) => {
   const [items, setItems] = useState<ItemListaTipoPalet[]>([]);
 
+  const criteria: Criteria = {
+      filtro: [],
+      orden: ["descripcion", "ASC"],
+      paginacion: { limite: 1000, pagina: 1 },
+    };
+
   useEffect(() => {
-    getItemsListaTipoPalet([], [], { pagina: 1, limite: 1000 }).then(setItems);
+    getItemsListaTipoPalet(criteria).then(setItems);
   }, []);
 
   const opciones = items.map((item) => ({
