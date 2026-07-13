@@ -1,7 +1,7 @@
 .buscar-factura-devolucion {
     display: grid;
     gap: 1rem;
-    min-width: min(920px, 90vw);
+    min-width: min(1080px, 95vw);
 }
 
 .crear-devolucion-factura {
@@ -175,8 +175,14 @@
     }
 }
 
-quimera-autocomplete[nombre="devolucion/factura"] {
+.buscar-factura-devolucion quimera-autocompletar[nombre="devolucion/factura"] {
     grid-column: 1 / span 12;
+    width: 100%;
+}
+
+.buscar-factura-devolucion quimera-autocompletar[nombre="devolucion/factura"] quimera-input,
+.buscar-factura-devolucion quimera-autocompletar[nombre="devolucion/factura"] input {
+    width: 100%;
 }
 
 @media (max-width: 768px) {
