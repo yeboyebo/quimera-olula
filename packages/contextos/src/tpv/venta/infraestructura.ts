@@ -146,9 +146,9 @@ export const getVentas: GetVentasTpv = async (
 };
 
 
-export const postVenta: PostVentaTpv = async () => {
+export const postVenta: PostVentaTpv = async (agenteId?: string) => {
     const payload = {
-        agente_id: agenteActivo.obtener()?.id,
+        agente_id: agenteId ?? agenteActivo.obtener()?.id,
         punto_venta_id: puntoVentaLocal.obtener()?.id,
     };
     return await RestAPI.post(baseUrl, payload, "Error al crear la venta").then((respuesta) => respuesta.id);

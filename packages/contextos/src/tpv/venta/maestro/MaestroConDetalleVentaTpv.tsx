@@ -10,6 +10,8 @@ import {
   criteriaDefecto,
   formatearFechaDate,
 } from "@olula/lib/dominio.js";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
@@ -77,15 +79,10 @@ export const MaestroConDetalleVentaTpv = () => {
               entidades={ctx.ventas.lista}
               totalEntidades={ctx.ventas.total}
               seleccionada={ctx.ventas.activo}
-              renderAcciones={() => (
-                <div className="maestro-botones">
-                  <QBoton
-                    onClick={() => emitir("creacion_de_venta_solicitada")}
-                  >
-                    Nueva Venta
-                  </QBoton>
-                </div>
-              )}
+              renderAcciones={() => {
+                const BotonNuevaVenta_ = (FactoryObj.app.TPV?.venta_BotonNuevaVenta as typeof BotonNuevaVentaBase) ?? BotonNuevaVentaBase;
+                return <BotonNuevaVenta_ emitir={emitir} />;
+              }}
               onSeleccion={(payload) => emitir("venta_seleccionada", payload)}
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
@@ -104,6 +101,18 @@ export const MaestroConDetalleVentaTpv = () => {
     </div>
   );
 };
+
+export type BotonNuevaVentaProps = {
+  emitir: EmitirEvento;
+};
+
+export const BotonNuevaVentaBase = ({ emitir }: BotonNuevaVentaProps) => (
+  <div className="maestro-botones">
+    <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>
+      Nueva Venta
+    </QBoton>
+  </div>
+);
 
 const TarjetaVentaTpv = (venta: VentaTpv) => {
   return (

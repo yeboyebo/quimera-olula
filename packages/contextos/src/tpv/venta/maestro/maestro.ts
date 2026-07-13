@@ -54,9 +54,10 @@ export const ampliarVentas: ProcesarVentasTpv = async (contexto, payload) => {
     return Ventas.ampliar(contexto, resultado);
 }
 
-export const crearVenta: ProcesarVentasTpv = async (contexto) => {
+export const crearVenta: ProcesarVentasTpv = async (contexto, payload) => {
 
-    const idVenta = await postVenta();
+    const datos = payload as { agenteId?: string } | undefined;
+    const idVenta = await postVenta(datos?.agenteId);
     const venta = await getVenta(idVenta);
     return {
         ...contexto,
