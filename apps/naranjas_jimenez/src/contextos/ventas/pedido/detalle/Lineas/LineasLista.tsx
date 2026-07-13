@@ -99,10 +99,7 @@ const TarjetaLineaNrj = ({
   // seleccionada: boolean;
   // onClick: () => void;
 }) => (
-  <div
-  // className={`tarjeta-linea${seleccionada ? " tarjeta-linea--seleccionada" : ""}`}
-  // onClick={onClick}
-  >
+  <div className="tarjeta-linea">
     <div className="tarjeta-linea-estado">
       {formateaEstado(String(linea.estado_palets ?? ""))}
     </div>

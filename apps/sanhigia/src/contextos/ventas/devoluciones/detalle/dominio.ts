@@ -92,6 +92,7 @@ export const cargarDetalleDevolucionPedido: ProcesarDetalleDevolucionPedido = as
             error: "",
         };
     } catch (error) {
+        console.log(error);
         return {
             ...contextoDetalleDevolucionPedidoVacio,
             error: "No se ha podido cargar la devolución.",
