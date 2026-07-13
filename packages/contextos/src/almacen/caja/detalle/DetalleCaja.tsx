@@ -1,90 +1,78 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
-import { useParams } from "react-router";
-import { BorrarCaja } from "../borrar/BorrarCaja.tsx";
+import { Caja } from "../diseño.ts";
+import { BorrarCaja } from "../borrar/BorrarCaja.js";
 import { ArbolContenidoCaja } from "./ArbolContenidoCaja.tsx";
 import "./DetalleCaja.css";
-import { cajaContenidoVacia, metaCaja } from "./dominio.ts";
+import { contextoDetalleCajaInicial, guardarCaja, metaCaja } from "./dominio.ts";
 import { getMaquina } from "./maquina.ts";
 
-const titulo = ({ id }: { id: string }) => ("Caja " + id) as string;
+const titulo = ({ lpn }: { lpn: string }) => "Caja " + lpn;
 
 export const DetalleCaja = ({
-  id,
-  publicar = async () => {},
+    id,
+    publicar = async () => {},
 }: {
-  id?: string;
-  publicar?: EmitirEvento;
+    id?: string;
+    publicar?: EmitirEvento;
 }) => {
-  const params = useParams();
-  const cajaId = id ?? params.id;
+    const { ctx, emitir } = useMaquina(
+        getMaquina,
+        contextoDetalleCajaInicial,
+        publicar
+    );
 
-  const { ctx, emitir } = useMaquina(
-    getMaquina,
-    {
-      estado: "INICIAL",
-      caja: cajaContenidoVacia,
-      cajaInicial: cajaContenidoVacia,
-    },
-    publicar
-  );
+    const autoGuardar = useCallback(
+        async (caja: Caja) => {
+            await guardarCaja(ctx, caja);
+            await emitir("caja_guardada");
+        },
+        [ctx, emitir]
+    );
 
-  const caja = useModelo(metaCaja, ctx.caja);
-  const { estado } = ctx;
+    // Auto-guardado: useModelo detecta cambios y llama a autoGuardar
+    useModelo(metaCaja, ctx.caja, autoGuardar);
 
-  useEffect(() => {
-    emitir("caja_id_cambiado", cajaId, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cajaId]);
+    const { estado, caja } = ctx;
 
-  const handleGuardar = useCallback(() => {
-    emitir("edicion_de_caja_lista", caja.modelo);
-  }, [emitir, caja]);
+    useEffect(() => {
+        emitir("caja_id_cambiado", id, true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
-  const handleCancelar = useCallback(() => {
-    emitir("edicion_de_caja_cancelada");
-  }, [emitir]);
+    if (!caja.id) return null;
 
-  if (!ctx.caja.id) return null;
+    const accionesCaja = [
+        {
+            texto: "Borrar",
+            onClick: () => emitir("borrado_solicitado"),
+            advertencia: true,
+        },
+    ];
 
-  return (
-    <Detalle
-      id={ctx.caja.id}
-      obtenerTitulo={titulo}
-      setEntidad={() => {}}
-      entidad={ctx.caja}
-      cerrarDetalle={() => emitir("caja_deseleccionada", null)}
-    >
-      {!!ctx.caja.id && (
-        <>
-          <ArbolContenidoCaja contenido={ctx.caja.contenido} />
-          {caja.modificado && (
-            <div className="botones maestro-botones">
-              <QBoton onClick={handleGuardar} deshabilitado={!caja.valido}>
-                Guardar
-              </QBoton>
-              <QBoton
-                tipo="reset"
-                variante="texto"
-                onClick={handleCancelar}
-                deshabilitado={!caja.modificado}
-              >
-                Cancelar
-              </QBoton>
+    return (
+        <Detalle
+            id={id}
+            obtenerTitulo={titulo}
+            setEntidad={() => {}}
+            entidad={caja}
+            cerrarDetalle={() => emitir("caja_deseleccionada", null, true)}
+        >
+            <div className="DetalleCaja">
+                <QuimeraAcciones acciones={accionesCaja} />
+                <ArbolContenidoCaja contenido={caja.contenido} />
             </div>
-          )}
-          <BorrarCaja
-            activo={estado === "BORRANDO_CAJA"}
-            caja={ctx.caja}
-            publicar={emitir}
-            onCancelar={() => emitir("borrado_cancelado")}
-          />
-        </>
-      )}
-    </Detalle>
-  );
+
+            {estado === "BORRANDO" && (
+                <BorrarCaja
+                    caja={ctx.caja}
+                    publicar={emitir}
+                />
+            )}
+        </Detalle>
+    );
 };

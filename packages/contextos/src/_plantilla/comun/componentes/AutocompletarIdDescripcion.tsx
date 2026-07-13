@@ -61,7 +61,7 @@ export const AutocompletarIdDescripcion = ({
     );
 };
 
-
+// INFRAESTRUCTURA
 interface TagModuloApi {
     id: string;
     campo_string: string;

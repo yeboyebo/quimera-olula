@@ -1,25 +1,13 @@
-import { Entidad } from "@olula/lib/diseño.ts";
+import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
 
 export interface Caja extends Entidad {
     id: string;
+    lpn: string;
     ubicacionId: string;
     contenedorId?: string | null;
 }
 
-export interface CajaAPI extends Entidad {
-    id: string;
-    ubicacion_id: string;
-    contenedor_id?: string | null;
-}
-
 export interface MovimientoCaja extends Entidad {
-    id: string;
-    sku: string;
-    descripcion: string;
-    cantidad: number;
-}
-
-export interface MovimientoCajaAPI {
     id: string;
     sku: string;
     descripcion: string;
@@ -31,15 +19,21 @@ export interface CajaContenido extends Caja {
     contenido: ComponenteCaja[];
 }
 
-export interface CajaContenidoAPI extends CajaAPI {
-    contenido: ComponenteCajaAPI[];
-}
-
 export type ComponenteCaja = CajaContenido | MovimientoCaja;
-export type ComponenteCajaAPI = CajaContenidoAPI | MovimientoCajaAPI;
 
-export type NuevaCaja = {
-    id: string;
+export interface NuevaCaja extends Modelo {
     ubicacionId: string;
     contenedorId?: string | null;
-};
+}
+
+export type CambiosCaja = Partial<Caja>;
+
+export type GetCaja = (id: string) => Promise<CajaContenido>;
+
+export type GetCajas = (criteria: Criteria) => RespuestaLista<Caja>;
+
+export type PostCaja = (nuevaCaja: NuevaCaja) => Promise<string>;
+
+export type PatchCaja = (id: string, cambios: CambiosCaja) => Promise<void>;
+
+export type DeleteCaja = (id: string) => Promise<void>;

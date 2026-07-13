@@ -53,7 +53,7 @@ export const Ubicacion = ({
     );
 };
 
-
+// INFRAESTRUCTURA
 interface TagUbicacionApi {
     id: string;
     codigo: string;

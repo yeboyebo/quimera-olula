@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
+import "./qautocompletar.css";
 
 type Opcion = { valor: string; descripcion: string, descripcionOpcion?: string };
 
@@ -34,6 +35,8 @@ export const QAutocompletar = ({
   onChange,
   descripcion = "",
   soloTexto = false,
+  opcional,
+  deshabilitado,
   ...props
 }: QAutocompletarProps) => {
   const attrs = {
@@ -43,6 +46,9 @@ export const QAutocompletar = ({
   const [valorDescrito, setValorDescrito] = useState<string>("");
 
   const valorReal = useRef<HTMLInputElement>(null);
+  const editando = useRef(false);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
   const temporizador = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   );
@@ -56,7 +62,7 @@ export const QAutocompletar = ({
     );}
   );
 
-  const listaId = nombre + "-datalist-" + getIdUnico();
+  const listaId = useRef(nombre + "-datalist-" + getIdUnico());
 
   const regenerarOpciones = async (valor: string) => {
     clearTimeout(temporizador.current);
@@ -70,59 +76,89 @@ export const QAutocompletar = ({
   };
 
   useEffect(() => {
-    setValorDescrito(descripcion || "");
+    if (!editando.current) {
+      setValorDescrito(descripcion || "");
+    }
   }, [descripcion]);
 
   useEffect(() => {
-    if (!valor) setValorDescrito("");
+    if (!editando.current && !valor) {
+      setValorDescrito("");
+    }
   }, [valor]);
+
+  useEffect(() => {
+    if (!editando.current || opciones.length === 0) return;
+
+    const opcion = opciones.find(
+      (o) => (o?.descripcionOpcion || o.descripcion) === valorDescrito
+    );
+    if (opcion && valorReal.current!.value !== opcion.valor) {
+      valorReal.current!.value = opcion.valor;
+      onChangeRef.current?.(opcion, {} as React.ChangeEvent<HTMLElement>);
+    }
+  }, [opciones, valorDescrito]);
 
   const manejarChange = (valor: string) => {
     if (valor === valorDescrito) return;
-
+    editando.current = true;
     setValorDescrito(valor);
   };
 
   const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
-    regenerarOpciones(valor);
-
-    console.log("manejarInput", valor)
+    editando.current = true;
 
     const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
-    if (!opcion) {
-      valorReal.current!.value = "";
-      onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
-      console.log("opcion nula")
-      return;
+
+    if (opcion) {
+      clearTimeout(temporizador.current);
+      const descripcion = opcion?.descripcionOpcion || opcion.descripcion;
+      const objetivo = e.target as HTMLInputElement;
+      objetivo.value = descripcion;
+
+      valorReal.current!.value = opcion.valor;
+      onChange?.(opcion, e as unknown as React.ChangeEvent<HTMLElement>);
+    } else {
+      regenerarOpciones(valor);
+      if (valorReal.current!.value !== "") {
+        valorReal.current!.value = "";
+        onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
+      }
     }
-    console.log("opcion", opcion)
+  };
 
-    const descripcion = opcion?.descripcionOpcion || opcion.descripcion;
-    const objetivo = e.target as HTMLInputElement;
-    objetivo.value = descripcion;
-
-    valorReal.current!.value = opcion.valor;
-    onChange?.(opcion, e as unknown as React.ChangeEvent<HTMLElement>);
+  const manejarLimpiar = () => {
+    editando.current = false;
+    setValorDescrito("");
+    setOpciones([]);
+    valorReal.current!.value = "";
+    onChange?.(null, {} as React.ChangeEvent<HTMLElement>);
   };
 
   const manejarBlur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
-    const opcion = opciones.find((opcion) => opcion.valor === valor);
+    editando.current = false;
+
+    const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
 
     if (opcion) {
+      valorReal.current!.value = opcion.valor;
+      onChange?.(opcion, e as unknown as React.ChangeEvent<HTMLElement>);
       onBlur?.(opcion, e);
-      return;
+    } else {
+      if (valorReal.current!.value !== "") {
+        valorReal.current!.value = "";
+        onChange?.(null, e as unknown as React.ChangeEvent<HTMLElement>);
+      }
+      if (valor !== "") {
+        setValorDescrito("");
+      }
+      onBlur?.(null, e);
     }
-
-    // const objetivo = e.target as HTMLInputElement;
-    // objetivo.value = "";
-
-    // valorReal.current!.value = "";
-    // onBlur?.(null, e);
   };
 
   return (
     <quimera-autocompletar {...attrs}>
-      <datalist id={listaId}>{renderOpciones}</datalist>
+      <datalist id={listaId.current}>{renderOpciones}</datalist>
       <input
         ref={valorReal}
         type="hidden"
@@ -131,17 +167,32 @@ export const QAutocompletar = ({
         defaultValue={undefined}
         required={!props.opcional}
       />
-      <QInput
-        {...props}
-        nombre=""
-        lista={listaId}
-        autocompletar="off"
-        onInput={manejarInput}
-        onBlur={manejarBlur}
-        onChange={manejarChange}
-        valor={valorDescrito}
-        soloTexto={soloTexto}
-      />
+      <div className="autocompletar-wrapper">
+        <QInput
+          {...props}
+          opcional={opcional}
+          deshabilitado={deshabilitado}
+          nombre=""
+          lista={listaId.current}
+          autocompletar="off"
+          onInput={manejarInput}
+          onBlur={manejarBlur}
+          onChange={manejarChange}
+          valor={valorDescrito}
+          soloTexto={soloTexto}
+        />
+        {opcional && valor && !deshabilitado && !soloTexto && (
+          <button
+            type="button"
+            className="autocompletar-limpiar"
+            onClick={manejarLimpiar}
+            aria-label="Limpiar selección"
+            tabIndex={-1}
+          >
+            ×
+          </button>
+        )}
+      </div>
     </quimera-autocompletar>
   );
 };

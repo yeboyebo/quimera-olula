@@ -5,63 +5,62 @@ import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
-import { CrearCaja } from "../crear/CrearCaja";
-import { DetalleCaja } from "../detalle/DetalleCaja";
+import { CrearCaja } from "../crear/CrearCaja.js";
+import { DetalleCaja } from "../detalle/DetalleCaja.js";
 import { Caja } from "../diseño.ts";
 import { metaTablaCaja } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleCaja = () => {
-  const { id, criteria } = getUrlParams();
+    const { id, criteria } = getUrlParams();
 
-  const { ctx, emitir } = useMaquina(getMaquina, {
-    estado: "INICIAL",
-    cajas: listaActivaEntidadesInicial<Caja>(id, criteria),
-  });
+    const { ctx, emitir } = useMaquina(getMaquina, {
+        estado: "INICIAL",
+        cajas: listaActivaEntidadesInicial<Caja>(id, criteria),
+    });
 
-  useUrlParams(ctx.cajas.activo, ctx.cajas.criteria);
+    const { estado, cajas } = ctx;
 
-  useEffect(() => {
-    emitir("recarga_de_cajas_solicitada", ctx.cajas.criteria);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useUrlParams(cajas.activo, cajas.criteria);
 
-  return (
-    <div className="Caja">
-      <MaestroDetalle<Caja>
-        Maestro={
-          <>
-            <h2>Cajas</h2>
-            <Listado<Caja>
-              metaTabla={metaTablaCaja}
-              criteria={ctx.cajas.criteria}
-              entidades={ctx.cajas.lista}
-              totalEntidades={ctx.cajas.total}
-              seleccionada={ctx.cajas.activo}
-              renderAcciones={() => (
-                <div className="maestro-botones">
-                  <QBoton onClick={() => emitir("creacion_solicitada")}>
-                    Nueva Caja
-                  </QBoton>
-                </div>
-              )}
-              onSeleccion={(payload) => emitir("caja_seleccionada", payload)}
-              onCriteriaChanged={(payload) =>
-                emitir("criteria_cambiado", payload)
-              }
+    useEffect(() => {
+        emitir("recarga_de_cajas_solicitada", cajas.criteria);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return (
+        <div className="Caja">
+            <MaestroDetalle<Caja>
+                Maestro={
+                    <>
+                        <h2>Cajas</h2>
+                        <Listado<Caja>
+                            metaTabla={metaTablaCaja}
+                            criteria={cajas.criteria}
+                            entidades={cajas.lista}
+                            totalEntidades={cajas.total}
+                            seleccionada={cajas.activo}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("crear_caja_solicitado")}>
+                                        Nueva Caja
+                                    </QBoton>
+                                </div>
+                            )}
+                            onSeleccion={(payload) => emitir("caja_seleccionada", payload)}
+                            onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+                            onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
+                        />
+                    </>
+                }
+                Detalle={<DetalleCaja id={cajas.activo} publicar={emitir} />}
+                seleccionada={cajas.activo}
+                modoDisposicion="maestro-50"
             />
-          </>
-        }
-        Detalle={<DetalleCaja id={ctx.cajas.activo} publicar={emitir} />}
-        seleccionada={ctx.cajas.activo}
-        modoDisposicion="maestro-50"
-      />
 
-      <CrearCaja
-        publicar={emitir}
-        onCancelar={() => emitir("creacion_cancelada")}
-        activo={ctx.estado === "CREANDO_CAJA"}
-      />
-    </div>
-  );
+            {estado === "CREANDO" && (
+                <CrearCaja publicar={emitir} />
+            )}
+        </div>
+    );
 };

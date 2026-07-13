@@ -1,34 +1,50 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.js";
-import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { Entidad } from "@olula/lib/diseño.js";
 import {
     Caja,
-    CajaAPI,
     CajaContenido,
-    CajaContenidoAPI,
+    CambiosCaja,
     ComponenteCaja,
-    ComponenteCajaAPI,
-    MovimientoCajaAPI,
+    DeleteCaja,
+    GetCaja,
+    GetCajas,
+    NuevaCaja,
+    PatchCaja,
+    PostCaja,
 } from "./diseño.ts";
 
-const baseUrlCaja = `/almacen/caja`;
+interface CajaAPI extends Entidad {
+    id: string;
+    lpn: string;
+    ubicacion_id: string;
+    contenedor_id?: string | null;
+}
 
-export const cajaFromApi = (cajaApi: CajaAPI): Caja => ({
-    id: cajaApi.id,
-    ubicacionId: cajaApi.ubicacion_id,
-    contenedorId: cajaApi.contenedor_id,
-});
+interface MovimientoCajaAPI {
+    id: string;
+    sku: string;
+    descripcion: string;
+    cantidad: number;
+}
 
-export const cajaToApi = (caja: Caja): CajaAPI => ({
-    id: caja.id,
-    ubicacion_id: caja.ubicacionId,
-    contenedor_id: caja.contenedorId,
-});
+interface CajaContenidoAPI extends CajaAPI {
+    contenido: ComponenteCajaAPI[];
+}
+type ComponenteCajaAPI = CajaContenidoAPI | MovimientoCajaAPI;
+
+interface NuevaCajaAPI {
+    ubicacion_id: string;
+    contenedor_id?: string | null;
+}
+
+type CambiosCajaAPI = Partial<CajaAPI>;
+
+const baseUrl = `/almacen/caja`;
 
 const esMaterialAPI = (comp: ComponenteCajaAPI): comp is MovimientoCajaAPI =>
     "sku" in comp;
 
-export const componenteFromApi = (comp: ComponenteCajaAPI): ComponenteCaja => {
+const componenteDesdeApi = (comp: ComponenteCajaAPI): ComponenteCaja => {
     if (esMaterialAPI(comp)) {
         return {
             id: comp.id,
@@ -37,49 +53,73 @@ export const componenteFromApi = (comp: ComponenteCajaAPI): ComponenteCaja => {
             cantidad: comp.cantidad,
         };
     }
-    return cajaContenidoFromApi(comp);
+    return cajaContenidoDesdeApi(comp);
 };
 
-export const cajaContenidoFromApi = (cajaApi: CajaContenidoAPI): CajaContenido => ({
+export const cajaDesdeApi = (cajaApi: CajaAPI): Caja => ({
     id: cajaApi.id,
+    lpn: cajaApi.lpn,
     ubicacionId: cajaApi.ubicacion_id,
+    ubicacion: cajaApi.ubicacion,
     contenedorId: cajaApi.contenedor_id,
-    contenido: cajaApi.contenido.map(componenteFromApi),
+    contenedor: cajaApi.contenedor,
 });
 
-export const getCaja = async (id: string): Promise<CajaContenido> =>
-    await RestAPI.get<{ datos: CajaContenidoAPI }>(`${baseUrlCaja}/${id}`).then(
-        (respuesta) => cajaContenidoFromApi(respuesta.datos)
+const cajaContenidoDesdeApi = (cajaApi: CajaContenidoAPI): CajaContenido => ({
+    id: cajaApi.id,
+    lpn: cajaApi.lpn,
+    ubicacionId: cajaApi.ubicacion_id,
+    contenedorId: cajaApi.contenedor_id,
+    contenido: cajaApi.contenido.map(componenteDesdeApi),
+});
+
+const nuevaCajaAApi = (caja: NuevaCaja): NuevaCajaAPI => ({
+    ubicacion_id: caja.ubicacionId,
+    contenedor_id: caja.contenedorId,
+});
+
+const cambiosCajaAApi = (cambios: CambiosCaja): CambiosCajaAPI => {
+    const api: CambiosCajaAPI = {};
+    if (cambios.ubicacionId !== undefined) api.ubicacion_id = cambios.ubicacionId;
+    if (cambios.contenedorId !== undefined) api.contenedor_id = cambios.contenedorId;
+    return api;
+};
+
+export const getCaja: GetCaja = async (id) => {
+    return await RestAPI.getItem<CajaContenido, CajaContenidoAPI>(
+        `${baseUrl}/${id}`,
+        cajaContenidoDesdeApi,
     );
-
-export const getCajas = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion?: Paginacion
-): RespuestaLista<Caja> => {
-    const q = criteriaQuery(filtro, orden, paginacion);
-    const respuesta = await RestAPI.get<{ datos: CajaAPI[]; total: number }>(baseUrlCaja + q);
-    return { datos: respuesta.datos.map(cajaFromApi), total: respuesta.total };
 };
 
-export const postCaja = async (caja: Partial<Caja>): Promise<string> => {
-    const apiCaja = {
-        id: caja.id,
-        ubicacion_id: caja.ubicacionId,
-        contenedor_id: caja.contenedorId,
-    };
-    return await RestAPI.post(baseUrlCaja, apiCaja, "Error al guardar Caja").then(
-        (respuesta) => respuesta.id
+export const getCajas: GetCajas = async (criteria) => {
+    return await RestAPI.getQuery<Caja, CajaAPI>(
+        baseUrl,
+        criteria,
+        cajaDesdeApi,
     );
 };
 
-export const patchCaja = async (id: string, caja: Partial<Caja>): Promise<void> => {
-    const apiCaja: Partial<CajaAPI> = {};
-    if (caja.ubicacionId !== undefined) apiCaja.ubicacion_id = caja.ubicacionId;
-    if (caja.contenedorId !== undefined) apiCaja.contenedor_id = caja.contenedorId;
-    await RestAPI.patch(`${baseUrlCaja}/${id}`, apiCaja, "Error al guardar Caja");
+export const postCaja: PostCaja = async (nuevaCaja) => {
+    const respuesta = await RestAPI.post<NuevaCajaAPI>(
+        baseUrl,
+        nuevaCajaAApi(nuevaCaja),
+        "Error al crear caja"
+    );
+    return respuesta.id;
 };
 
-export const deleteCaja = async (id: string): Promise<void> => {
-    await RestAPI.delete(`${baseUrlCaja}/${id}`, "Error al borrar Caja");
+export const patchCaja: PatchCaja = async (id, cambios) => {
+    await RestAPI.patch<CambiosCajaAPI>(
+        `${baseUrl}/${id}`,
+        cambiosCajaAApi(cambios),
+        "Error al guardar caja"
+    );
+};
+
+export const deleteCaja: DeleteCaja = async (id) => {
+    await RestAPI.delete(
+        `${baseUrl}/${id}`,
+        "Error al borrar caja"
+    );
 };

@@ -1,3 +1,4 @@
+import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
 import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
 import { OrdenAlmacen } from "#/almacen/orden/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
@@ -48,9 +49,12 @@ export const LecturaOrden = ({
                 idUbicacionDestino: mostrarDestino
                     ? modelo.idUbicacionDestino
                     : null,
+                idCajaDestino: mostrarDestino ? modelo.idCajaDestino : null,
                 idUbicacionOrigen: mostrarOrigen
                     ? modelo.idUbicacionOrigen
                     : null,
+                idCajaOrigen: mostrarOrigen ? modelo.idCajaOrigen : null,
+
             })
         );
         publicar("lectura_registrada");
@@ -83,9 +87,14 @@ export const LecturaOrden = ({
                     />
                 )}
                 {mostrarDestino && (
-                    <Ubicacion
-                        {...uiProps("idUbicacionDestino")}
-                    />
+                    <>
+                        <Ubicacion
+                            {...uiProps("idUbicacionDestino")}
+                        />
+                        <Caja
+                            {...uiProps("idCajaDestino")}
+                        />
+                    </>
                 )}
             </quimera-formulario>
             <div className="botones maestro-botones">

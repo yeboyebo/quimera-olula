@@ -67,7 +67,9 @@ export interface NuevaLecturaOrden extends Modelo {
     sku: string;
     articulo: string;
     idLote: string | null;
+    idCajaDestino: string | null;
     idUbicacionDestino: string | null;
+    idCajaOrigen: string | null;
     idUbicacionOrigen: string | null;
 }
 

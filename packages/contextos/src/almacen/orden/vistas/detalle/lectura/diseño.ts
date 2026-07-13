@@ -25,4 +25,14 @@ export const metaNuevaLecturaOrden: MetaModelo<NuevaLecturaOrden> = {
             requerido: false,
         },
     },
+    onChange: (lectura, campo, _, otros) => {
+        if (campo === "idCajaDestino" && otros) {
+            const nuevoValor: NuevaLecturaOrden = {
+                ...lectura,
+                idUbicacionDestino: otros.idUbicacion as string
+            }
+            return nuevoValor
+        }
+        return lectura
+    }
 };

@@ -7,6 +7,9 @@ export const getNuevaLecturaOrdenVacia = (orden: OrdenAlmacen): NuevaLecturaOrde
     articulo: "",
     idLote: null,
     idUbicacionDestino: orden.ubicacionDestinoId,
-    codUbicaciondestino: orden.codUbicacionDestino,
+    idCajaDestino: orden.cajaDestinoId,
+    // codUbicacionDestino: orden.codUbicacionDestino,
+    idCajaOrigen: orden.cajaOrigenId,
     idUbicacionOrigen: orden.ubicacionOrigenId,
+    // codUbicacionOrigen: orden.codUbicacionOrigen,
 });
