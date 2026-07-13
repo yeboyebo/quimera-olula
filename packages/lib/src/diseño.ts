@@ -25,7 +25,7 @@ type FiltroAnd = {
     and: Filtro[];
 }
 
-export type Filtro = (ClausulaFiltro[] | FiltroOr | FiltroAnd);
+export type Filtro = ClausulaFiltro | ClausulaFiltro[] | FiltroOr | FiltroAnd;
 // export type Filtro = ClausulaFiltro[];
 
 export type Orden = string[];

@@ -147,9 +147,9 @@ export const DetalleDevolucionPedido = ({
     { id: "descripcion", cabecera: "Descripción" },
     { id: "cantidad", cabecera: "Cantidad", tipo: "numero" },
     {
-      id: "codLote",
+      id: "codigo",
       cabecera: "Cód. Lote",
-      render: (linea) => linea.codLote || "-",
+      render: (linea) => linea.codigo || "-",
     },
     {
       id: "fechaCaducidad",
