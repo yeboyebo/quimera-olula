@@ -64,6 +64,7 @@ type PagoVentaTpvApi = {
     fecha: string;
     vale: string | null;
     arqueo_id: string;
+    saldo_vale: number | null;
     arqueo_abierto: boolean;
     tipo_tarjeta_id: string | null;
 }
@@ -103,6 +104,7 @@ export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvApi): PagoVentaTpv => (
         formaPago: p.forma_pago,
         fecha: new Date(Date.parse(p.fecha)),
         vale: p.vale,
+        saldoVale: p.saldo_vale,
         idArqueo: p.arqueo_id,
         arqueoAbierto: p.arqueo_abierto,
         idTipoTarjeta: p.tipo_tarjeta_id

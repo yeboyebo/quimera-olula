@@ -43,6 +43,7 @@ export interface PagoVentaTpv extends Entidad {
     formaPago: string;
     fecha: Date;
     vale: string | null;
+    saldoVale: number | null;
     idArqueo: string;
     arqueoAbierto: boolean;
     idTipoTarjeta: string | null;
