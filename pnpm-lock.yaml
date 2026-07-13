@@ -243,24 +243,6 @@ importers:
         specifier: workspace:*
         version: link:../olula
 
-  apps/legacy_app:
-    dependencies:
-      '@olula/componentes':
-        specifier: workspace:*
-        version: link:../../packages/componentes
-      '@olula/ctx':
-        specifier: workspace:*
-        version: link:../../packages/contextos
-      '@olula/lib':
-        specifier: workspace:*
-        version: link:../../packages/lib
-      '@olula/olula':
-        specifier: workspace:*
-        version: link:../olula
-      quimera:
-        specifier: workspace:@quimera/core@*
-        version: link:../../legacy/libs/core
-
   apps/monterelax_area_clientes:
     dependencies:
       '@olula/componentes':

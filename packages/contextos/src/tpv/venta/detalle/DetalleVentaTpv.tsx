@@ -64,8 +64,8 @@ export const DetalleVentaTpv = ({
 
     const autoGuardar = useCallback(
         async (venta: VentaTpv) => {
-        await guardarVenta(ctx, venta);
-        await emitir("venta_guardada");
+            await guardarVenta(ctx, venta);
+            await emitir("venta_guardada");
         },
         [ctx, emitir]
     );
@@ -94,7 +94,6 @@ export const DetalleVentaTpv = ({
     const imprimir_vale = async () => {
         await imprimirVale(ctx.venta.codigo);
     };
-
 
     const { estado, pagos, lineas, venta } = ctx;
 
@@ -140,27 +139,27 @@ export const DetalleVentaTpv = ({
             <Tabs
             children={[
                 <Tab
-                key="tab-1"
-                label="Cliente"
-                children={
-                    <TabCliente
-                    venta={venta}
-                    estado={estado}
-                    form={modeloVenta}
-                    publicar={emitir}
-                    />
-                }
+                    key="tab-1"
+                    label="Cliente"
+                    children={
+                        <TabCliente
+                            venta={venta}
+                            estado={estado}
+                            form={modeloVenta}
+                            publicar={emitir}
+                        />
+                    }
                 />,
                 <Tab
-                key="tab-3"
-                label="Pagos"
-                children={
-                    <Pagos
-                    pagoActivo={pagos.activo}
-                    pagos={pagos.lista}
-                    publicar={emitir}
-                    />
-                }
+                    key="tab-3"
+                    label="Pagos"
+                    children={
+                        <Pagos
+                            pagoActivo={pagos.activo}
+                            pagos={pagos.lista}
+                            publicar={emitir}
+                        />
+                    }
                 />,
             ]}
             ></Tabs>

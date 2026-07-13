@@ -1,0 +1,22 @@
+quimera-autocompletar {
+    .autocompletar-wrapper {
+        position: relative;
+
+        .autocompletar-limpiar {
+            position: absolute;
+            right: 1.5em;
+            bottom: var(--espaciado-xxs);
+            background: none;
+            border: none;
+            color: var(--color-texto-secundario);
+            cursor: pointer;
+            font-size: var(--tamaño-letra-m);
+            padding: 0 var(--espaciado-xxs);
+            line-height: 1;
+
+            &:hover {
+                color: var(--color-texto-primario);
+            }
+        }
+    }
+}

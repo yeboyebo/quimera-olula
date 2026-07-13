@@ -7,7 +7,7 @@ import {
   formatearHoraString,
   formatearMoneda,
 } from "@olula/lib/dominio.ts";
-import { ReactNode } from "react";
+import { ComponentType, Fragment, ReactNode, useState } from "react";
 import { QBoton } from "./qboton.tsx";
 import "./qtabla.css";
 
@@ -30,10 +30,16 @@ type MetaColumna<T extends Entidad> = {
   render?: (entidad: T) => string | ReactNode;
 };
 
-export type MetaTabla<T extends Entidad> = MetaColumna<T>[];
+export type MetaTabla<T extends Entidad> =
+  | MetaColumna<T>[]
+  | { cols: MetaColumna<T>[]; expansion?: ComponentType<{ entidad: T }> };
+
+export const obtenerCols = <T extends Entidad>(
+  m: MetaTabla<T>
+): MetaColumna<T>[] => (Array.isArray(m) ? m : m.cols);
 
 const cabecera = <T extends Entidad>(
-  metaTabla: MetaTabla<T>,
+  cols: MetaColumna<T>[],
   orden: Orden,
   onOrdenChanged?: (orden: Orden) => void
 ) => {
@@ -58,7 +64,7 @@ const cabecera = <T extends Entidad>(
     </th>
   );
 
-  return metaTabla.map(renderCabecera);
+  return cols.map(renderCabecera);
 };
 
 const a_string = (
@@ -103,7 +109,7 @@ const a_string = (
 
 const fila = <T extends Entidad>(
   entidad: Entidad,
-  metaTabla: MetaTabla<T>,
+  cols: MetaColumna<T>[],
   cargando: boolean
 ) => {
   const renderColumna = ({
@@ -130,7 +136,7 @@ const fila = <T extends Entidad>(
     );
   };
 
-  return metaTabla.map(renderColumna);
+  return cols.map(renderColumna);
 };
 
 type PaginaSeleccionada = number | "<" | ">" | "<<" | ">>";
@@ -269,15 +275,31 @@ export const QTablaControlada = <T extends Entidad>({
   onSetSeleccionadas,
 }: QTablaProps<T>) => {
   const modoMulti = seleccionadasIds !== undefined;
+
+  const { cols, expansion } = Array.isArray(metaTabla)
+    ? { cols: metaTabla, expansion: undefined }
+    : metaTabla;
+
+  const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
+
+  const toggleExpansion = (id: string) =>
+    setExpandidas((prev) => {
+      const s = new Set(prev);
+      if (s.has(id)) {
+        s.delete(id)
+      } else s.add(id);
+      return s;
+    });
+
   // Detectar si hay anchos específicos
-  const tieneAnchosFijos = metaTabla.some((col) => col.ancho);
+  const tieneAnchosFijos = cols.some((col) => col.ancho);
 
   // Completar columnas sin ancho
-  const metaTablaCompleta = tieneAnchosFijos
-    ? metaTabla.map((col) => {
+  const colsCompletas = tieneAnchosFijos
+    ? cols.map((col) => {
         if (col.ancho) return col;
 
-        const hayPorcentajes = metaTabla.some((c) => c.ancho?.includes("%"));
+        const hayPorcentajes = cols.some((c) => c.ancho?.includes("%"));
         const anchos = hayPorcentajes
           ? {
               texto: "20%",
@@ -303,7 +325,7 @@ export const QTablaControlada = <T extends Entidad>({
           ancho: anchos[col.tipo as keyof typeof anchos] || anchos.defecto,
         };
       })
-    : metaTabla;
+    : cols;
 
   const todosSeleccionados =
     modoMulti &&
@@ -325,12 +347,20 @@ export const QTablaControlada = <T extends Entidad>({
     }
   };
 
+  const totalCols =
+    colsCompletas.length + (modoMulti ? 1 : 0) + (expansion ? 1 : 0);
+
+  const ExpansionComp = expansion;
+
   return (
     <quimera-tabla>
       <div className="tabla-contenedor-scroll">
         <table data-anchos-fijos={tieneAnchosFijos}>
           <thead>
             <tr>
+              {expansion && (
+                <th className="col-expansion" style={{ width: "36px" }} />
+              )}
               {modoMulti && (
                 <th className="col-multiseleccion" style={{ width: "36px" }}>
                   <input
@@ -346,30 +376,51 @@ export const QTablaControlada = <T extends Entidad>({
                   />
                 </th>
               )}
-              {cabecera(metaTablaCompleta, orden, onOrdenChanged)}
+              {cabecera(colsCompletas, orden, onOrdenChanged)}
             </tr>
           </thead>
           <tbody data-cargando={cargando}>
             {datos.map((entidad: T) => (
-              <tr
-                key={entidad.id}
-                onClick={() => onSeleccion?.(entidad)}
-                data-seleccionada={entidad.id === seleccionadaId}
-              >
-                {modoMulti && (
-                  <td
-                    className="col-multiseleccion"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={seleccionadasIds!.includes(entidad.id)}
-                      onChange={() => onMultiSeleccionToggle?.(entidad.id)}
-                    />
-                  </td>
+              <Fragment key={entidad.id}>
+                <tr
+                  onClick={() => onSeleccion?.(entidad)}
+                  data-seleccionada={entidad.id === seleccionadaId}
+                >
+                  {expansion && (
+                    <td
+                      className="col-expansion"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpansion(entidad.id);
+                      }}
+                    >
+                      <button className="btn-expansion">
+                        {expandidas.has(entidad.id) ? "▾" : "▸"}
+                      </button>
+                    </td>
+                  )}
+                  {modoMulti && (
+                    <td
+                      className="col-multiseleccion"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={seleccionadasIds!.includes(entidad.id)}
+                        onChange={() => onMultiSeleccionToggle?.(entidad.id)}
+                      />
+                    </td>
+                  )}
+                  {fila(entidad, colsCompletas, cargando)}
+                </tr>
+                {ExpansionComp && expandidas.has(entidad.id) && (
+                  <tr className="fila-expansion">
+                    <td colSpan={totalCols}>
+                      <ExpansionComp entidad={entidad} />
+                    </td>
+                  </tr>
                 )}
-                {fila(entidad, metaTablaCompleta, cargando)}
-              </tr>
+              </Fragment>
             ))}
           </tbody>
         </table>

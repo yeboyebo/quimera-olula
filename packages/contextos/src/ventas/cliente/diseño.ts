@@ -1,4 +1,4 @@
-import { Entidad } from "@olula/lib/diseño.ts";
+import { Direccion, Entidad } from "@olula/lib/diseño.ts";
 
 export interface Cliente extends Entidad {
   id: string;
@@ -43,21 +43,21 @@ export type NuevoCliente = {
   agente_id: string;
 };
 
-export type DirCliente = {
+export interface DirCliente extends Direccion {
   id: string;
   dir_envio: boolean;
   dir_facturacion: boolean;
-  nombre_via: string;
-  tipo_via: string;
-  numero: string;
-  otros: string;
-  cod_postal: string;
-  ciudad: string;
-  provincia_id: number;
-  provincia: string;
-  pais_id: string;
-  apartado: string;
-  telefono: string;
+  // nombre_via: string;
+  // tipo_via: string;
+  // numero: string;
+  // otros: string;
+  // cod_postal: string;
+  // ciudad: string;
+  // provincia_id: number;
+  // provincia: string;
+  // pais_id: string;
+  // apartado: string;
+  // telefono: string;
 };
 
 export type NuevaDireccion = {
