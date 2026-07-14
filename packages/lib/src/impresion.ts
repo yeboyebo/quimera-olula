@@ -1,18 +1,20 @@
-export const imprimir_blob = (blob: Blob) => {
+export const imprimir_blob = (blob: Blob): Promise<void> => {
+    return new Promise((resolve) => {
+        const blobURL = URL.createObjectURL(blob);
 
-    const blobURL = URL.createObjectURL(blob);
+        const iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
 
-    const iframe = document.createElement('iframe');
-    document.body.appendChild(iframe);
-
-    iframe.style.display = 'none';
-    iframe.src = blobURL;
-    iframe.onload = function () {
-        setTimeout(function () {
-            iframe.focus();
-            iframe.contentWindow?.print();
-        }, 1);
-    };
+        iframe.style.display = 'none';
+        iframe.src = blobURL;
+        iframe.onload = function () {
+            setTimeout(function () {
+                iframe.focus();
+                iframe.contentWindow?.print();
+                resolve();
+            }, 1);
+        };
+    });
 }
 
 export const imprimir_pagina_blanca = () => {

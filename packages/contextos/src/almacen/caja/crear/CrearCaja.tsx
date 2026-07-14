@@ -1,64 +1,56 @@
-import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
+import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useFocus } from "@olula/lib/useFocus.ts";
+import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
+import { useCallback } from "react";
 import { postCaja } from "../infraestructura.ts";
-import { metaNuevaCaja, nuevaCajaVacia } from "./dominio.ts";
-
-interface CrearCajaProps {
-  publicar?: EmitirEvento;
-  onCancelar?: () => void;
-  activo?: boolean;
-}
+import { metaNuevaCaja, nuevaCajaVacia } from "./crear_caja.ts";
 
 export const CrearCaja = ({
-  publicar = async () => {},
-  onCancelar = () => {},
-  activo = false,
-}: CrearCajaProps) => {
-  const caja = useModelo(metaNuevaCaja, nuevaCajaVacia);
-  const { intentar } = useContext(ContextoError);
+    publicar,
+}: {
+    publicar: EmitirEvento;
+}) => {
+    const { modelo: nuevaCaja, uiProps, valido } = useModelo(
+        metaNuevaCaja,
+        nuevaCajaVacia()
+    );
 
-  const guardar = async () => {
-    const cajaNueva = { ...caja.modelo };
-    const id = await intentar(() => postCaja(caja.modelo));
-    cajaNueva.id = id;
-    caja.init(nuevaCajaVacia);
-    publicar("caja_creada", cajaNueva);
-    onCancelar();
-  };
+    const crear_ = useCallback(
+        async () => {
+            const id = await postCaja(nuevaCaja);
+            publicar("caja_creada", id);
+        },
+        [nuevaCaja, publicar]
+    );
 
-  if (!activo) return null;
+    const cancelar_ = useCallback(
+        () => publicar("alta_de_caja_cancelada"),
+        [publicar]
+    );
 
-  return (
-    <QModal
-      abierto={activo}
-      nombre="crear_caja"
-      titulo="Nueva Caja"
-      onCerrar={onCancelar}
-    >
-      <>
-        <quimera-formulario>
-          <QInput
-            label="Código caja"
-            autoSeleccion={true}
-            {...caja.uiProps("id")}
-          />
-          <Almacen label="Almacén" {...caja.uiProps("codigo_almacen")} />
-        </quimera-formulario>
-        <div className="botones">
-          <QBoton onClick={guardar} deshabilitado={!caja.valido}>
-            Guardar
-          </QBoton>
-          <QBoton tipo="reset" variante="texto" onClick={onCancelar}>
-            Cancelar
-          </QBoton>
-        </div>
-      </>
-    </QModal>
-  );
+    const [crear, cancelar] = useForm(crear_, cancelar_);
+
+    const focus = useFocus();
+
+    return (
+        <QModal
+            abierto={true}
+            nombre="crear_caja"
+            titulo="Nueva Caja"
+            onCerrar={cancelar}
+        >
+            <quimera-formulario>
+                <Ubicacion label="Ubicación" {...uiProps("ubicacionId")} ref={focus} />
+            </quimera-formulario>
+            <div className="botones maestro-botones">
+                <QBoton onClick={crear} deshabilitado={!valido}>
+                    Crear
+                </QBoton>
+            </div>
+        </QModal>
+    );
 };
