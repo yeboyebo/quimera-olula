@@ -10,10 +10,12 @@ import {
   criteriaDefecto,
   formatearFechaDate,
 } from "@olula/lib/dominio.js";
+import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
 import { useCallback, useEffect, useMemo } from "react";
+import { CrearVentaTpv as CrearVentaTpvBase } from "../crear/CrearVentaTpv.tsx";
 import { DetalleVentaTpv } from "../detalle/DetalleVentaTpv.tsx";
 import { VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "./maestro.ts";
@@ -79,9 +81,7 @@ export const MaestroConDetalleVentaTpv = () => {
               seleccionada={ctx.ventas.activo}
               renderAcciones={() => (
                 <div className="maestro-botones">
-                  <QBoton
-                    onClick={() => emitir("creacion_de_venta_solicitada")}
-                  >
+                  <QBoton onClick={() => emitir("crear_venta_solicitada")}>
                     Nueva Venta
                   </QBoton>
                 </div>
@@ -101,6 +101,10 @@ export const MaestroConDetalleVentaTpv = () => {
         seleccionada={ctx.ventas.activo}
         modoDisposicion="maestro-50"
       />
+      {ctx.estado === "CREANDO" && (() => {
+        const CrearVenta_ = (FactoryObj.app.TPV?.venta_CrearVenta as typeof CrearVentaTpvBase) ?? CrearVentaTpvBase;
+        return <CrearVenta_ publicar={emitir} />;
+      })()}
     </div>
   );
 };

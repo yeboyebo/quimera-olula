@@ -183,13 +183,7 @@ const transformarFiltro = (filtro: Filtro): Filtro => {
     return { and: filtro.and.map(transformarFiltro) };
 }
 
-// const transformarFiltro = (filtro: Filtro): FiltroAPI => {
-//     return Object.entries(filtro).map(([campo, valor]) => [campo, '~', valor['LIKE']]);
-// }
 
-// const transformarOrden = (orden: Orden): OrdenAPI => {
-//     return Object.entries(orden).map(([campo, orden]) => [campo, orden]).flat();
-// }
 
 export const obtenerOpcionesSelector =
     (path: string) => async () =>

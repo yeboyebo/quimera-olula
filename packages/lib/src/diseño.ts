@@ -54,7 +54,7 @@ export type RespuestaListaConResumen<T, Resumen extends Record<string, unknown>>
     total: TotalRegistros;
 } & Resumen>;
 
-export type Direccion = {
+export interface Direccion extends Modelo {
     nombre_via: string;
     tipo_via: string;
     numero: string;

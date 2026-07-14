@@ -725,6 +725,9 @@ export const formatearHoraDate = (date: Date): string => {
     return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 };
 
+export const formatearDireccionUnaLinea = (direccion: Direccion): string => {
+    return `${direccion.tipo_via ? `${direccion.tipo_via} ` : ''} ${direccion.nombre_via ? `${direccion.nombre_via} ` : ''}, ${direccion.ciudad ? `${direccion.ciudad}` : ''}`;
+};
 export const calcularPaginacionSimplificada = (
     total: number | undefined,
     paginaActual: number,

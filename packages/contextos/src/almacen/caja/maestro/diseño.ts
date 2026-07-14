@@ -2,7 +2,7 @@ import { MetaTabla } from "@olula/componentes/index.js";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Caja } from "../diseño.ts";
 
-export type EstadoMaestroCaja = "INICIAL" | "CREANDO_CAJA";
+export type EstadoMaestroCaja = "INICIAL" | "CREANDO";
 
 export type ContextoMaestroCaja = {
     estado: EstadoMaestroCaja;
@@ -10,6 +10,6 @@ export type ContextoMaestroCaja = {
 };
 
 export const metaTablaCaja: MetaTabla<Caja> = [
-    { id: "id", cabecera: "Código" },
-    // { id: "codigo_almacen", cabecera: "Almacén" },
+    { id: "lpn", cabecera: "Código" },
+    { id: "ubicacion", cabecera: "Ubicación" },
 ];
