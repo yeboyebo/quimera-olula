@@ -1,7 +1,7 @@
-.TarjetaOportunidadVenta {
+/* .TarjetaOportunidadVenta {
     background-color: var(--color-superficie);
     padding: var(--espaciado-m);
-}
+} */
 
 .TarjetaOportunidadVenta .tarjeta-descripcion {
     font-size: var(--tamaño-letra-m);

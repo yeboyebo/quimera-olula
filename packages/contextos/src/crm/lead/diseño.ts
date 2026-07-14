@@ -20,6 +20,7 @@ export interface Lead extends Entidad {
     email: string;
     web: string;
     contacto_id: string;
+    contacto?: ContactoLead | null;
     fuente_id: string;
     responsable_id: string;
 }
@@ -36,9 +37,18 @@ export interface LeadAPI extends Entidad {
     email: string;
     web: string;
     contacto_id: string;
+    contacto?: ContactoLeadAPI | null;
     fuente_id: string;
     responsable_id: string;
 }
+
+export type ContactoLead = {
+    nombre: string;
+};
+
+export type ContactoLeadAPI = {
+    nombre: string | null;
+};
 
 export type LeadToAPI = Omit<LeadAPI, "direccion"> & {
     direccion: DireccionLead;

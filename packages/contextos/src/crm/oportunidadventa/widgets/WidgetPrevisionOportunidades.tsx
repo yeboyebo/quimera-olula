@@ -57,7 +57,6 @@ export const WidgetPrevisionOportunidades = () => {
       </div>
     );
   }
-  console.log(modelo.urlVer);
   return (
     <div className="widget-prevision-oportunidades">
       <h3 className="widget-prevision-oportunidades__titulo">Oportunidades</h3>

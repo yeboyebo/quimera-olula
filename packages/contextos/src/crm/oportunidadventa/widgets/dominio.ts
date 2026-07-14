@@ -1,4 +1,5 @@
 import { ClausulaFiltro, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { construirUrlConFiltro } from "../../widgets/comun.ts";
 import {
     agruparPrevisionPorEstado,
     crearMapaProbabilidadEstados,
@@ -22,7 +23,7 @@ export type ModeloWidgetPrevision = {
 
 const RUTA_OPO_VENTA = "/crm/oportunidadventa";
 const PAGINACION_INICIAL: Paginacion = { pagina: 1, limite: 200 };
-const ORDEN_DEFECTO: Orden = ["probabilidad", "DESC"];
+const ORDEN_DEFECTO: Orden = ["probabilidad", "DESC", "fecha_cierre", "ASC"] as unknown as Orden;
 
 export const modeloWidgetPrevisionInicial: ModeloWidgetPrevision = {
     estado: "cargando",
@@ -30,18 +31,6 @@ export const modeloWidgetPrevisionInicial: ModeloWidgetPrevision = {
     previsionPotencial: 0,
     seriePorEstado: [],
     urlVer: RUTA_OPO_VENTA,
-};
-
-const construirUrlConFiltro = (filtro: ClausulaFiltro[]): string => {
-    const params = new URLSearchParams();
-    params.set("modo", "kanban");
-
-    for (const [campo, operador, valor] of filtro) {
-        params.append(campo, valor === undefined ? operador : `${operador}__${valor}`);
-    }
-    console.log("URL params:", params.toString());
-
-    return `${RUTA_OPO_VENTA}?${params.toString()}`;
 };
 
 const construirFiltroAbiertas = (idsTerminales: string[]): ClausulaFiltro[] =>
@@ -101,6 +90,9 @@ export const cargarModeloWidgetPrevision = async (): Promise<ModeloWidgetPrevisi
         oportunidadesAbiertas: oportunidades.length,
         previsionPotencial: seriePorEstado.reduce((acc, item) => acc + item.prevision, 0),
         seriePorEstado,
-        urlVer: construirUrlConFiltro(filtro),
+        urlVer: construirUrlConFiltro(RUTA_OPO_VENTA, filtro, {
+            orden: ORDEN_DEFECTO,
+            params: { modo: "kanban" },
+        }),
     };
 };

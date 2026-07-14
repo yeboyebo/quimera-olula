@@ -1,4 +1,4 @@
-import { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Orden } from "@olula/lib/diseño.ts";
 
 export type EstadoCargaWidget = "cargando" | "listo";
 
@@ -12,15 +12,38 @@ export const fechaLocalStr = (fecha: Date): string => {
 
 export const construirUrlConFiltro = (
     ruta: string,
-    filtro: ClausulaFiltro[]
+    filtro: ClausulaFiltro[],
+    opciones?: {
+        orden?: Orden;
+        params?: Record<string, string>;
+    }
 ): string => {
     const params = new URLSearchParams();
+
+    if (opciones?.params) {
+        Object.entries(opciones.params).forEach(([clave, valor]) => {
+            params.set(clave, valor);
+        });
+    }
 
     for (const [campo, operador, valor] of filtro) {
         params.append(
             campo,
             valor === undefined ? operador : `${operador}__${valor}`
         );
+    }
+
+    if (opciones?.orden && opciones.orden.length > 0) {
+        const partes: string[] = [];
+        for (let i = 0; i < opciones.orden.length; i += 2) {
+            const campo = opciones.orden[i];
+            const direccion = opciones.orden[i + 1];
+            partes.push(direccion === "ASC" ? campo : `-${campo}`);
+        }
+
+        if (partes.length > 0) {
+            params.set("orden", partes.join(","));
+        }
     }
 
     const query = params.toString();

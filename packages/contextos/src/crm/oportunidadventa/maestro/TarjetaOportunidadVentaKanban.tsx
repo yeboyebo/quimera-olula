@@ -115,7 +115,7 @@ export const TarjetaOportunidadVentaKanban = (
             variante="advertencia"
             className="tarjeta-kanban-acciones-pendientes"
           >
-            {`${accionesPendientes} pendientes`}
+            {`${accionesPendientes} acciones pendientes`}
           </QEtiqueta>
         </div>
       )}

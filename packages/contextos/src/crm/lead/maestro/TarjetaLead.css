@@ -1,0 +1,15 @@
+.lead-tarjeta-info-columna {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.lead-tarjeta-info-columna-derecha {
+    text-align: right;
+}
+
+.lead-tarjeta-info-columna span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

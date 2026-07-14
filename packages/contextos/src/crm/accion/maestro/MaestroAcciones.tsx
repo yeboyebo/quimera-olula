@@ -5,7 +5,7 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import type { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import type { ClausulaFiltro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -20,6 +20,7 @@ import { TarjetaAccionRapida } from "./TarjetaAccionRapida.tsx";
 
 const criteriaBaseAcciones = {
   ...criteriaDefecto,
+  orden: ["fecha", "DESC"] as unknown as Orden,
   filtro: [
     ["estado", "in", ["Pendiente", "Borrador"] as unknown as string],
   ] as ClausulaFiltro[],
@@ -29,7 +30,10 @@ export const MaestroAcciones = () => {
   const { id, criteria } = getUrlParams();
 
   const criteriaInicial =
-    criteria.filtro.length > 0 ? criteria : criteriaBaseAcciones;
+    criteria.filtro.length > 0 ||
+    criteria.orden.toString() !== criteriaDefecto.orden.toString()
+      ? criteria
+      : criteriaBaseAcciones;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",

@@ -52,6 +52,10 @@ export const MaestroOportunidades = () => {
     () => todosLosEstados.filter((id) => !idsEstadosTerminales.includes(id)),
     [todosLosEstados, idsEstadosTerminales]
   );
+  const ordenBaseOportunidades = useMemo(
+    () => ["probabilidad", "DESC", "fecha_cierre", "ASC"] as unknown as Orden,
+    []
+  );
   const columnasKanban = useMemo(
     () => crearColumnasKanbanOportunidad(estadosOportunidad),
     [estadosOportunidad]
@@ -59,15 +63,23 @@ export const MaestroOportunidades = () => {
   const criteriaBaseOportunidades = useMemo(
     () => ({
       ...criteriaDefecto,
-      orden: ["probabilidad", "DESC"] as unknown as Orden,
+      orden: ordenBaseOportunidades,
     }),
-    []
+    [ordenBaseOportunidades]
+  );
+
+  const criteriaDesdeUrl = useMemo(
+    () =>
+      criteria.orden.toString() === criteriaDefecto.orden.toString()
+        ? { ...criteria, orden: ordenBaseOportunidades }
+        : criteria,
+    [criteria, ordenBaseOportunidades]
   );
 
   const [criteriaInicial, setCriteriaInicial] = useState(
     criteria.filtro.length > 0 ||
       criteria.orden.toString() !== criteriaDefecto.orden.toString()
-      ? criteria
+      ? criteriaDesdeUrl
       : criteriaBaseOportunidades
   );
 
@@ -132,7 +144,7 @@ export const MaestroOportunidades = () => {
 
         emitir("criteria_cambiado", criteriaConFiltro);
       } else {
-        emitir("recarga_de_oportunidades_solicitada", criteria);
+        emitir("recarga_de_oportunidades_solicitada", criteriaDesdeUrl);
       }
     };
 

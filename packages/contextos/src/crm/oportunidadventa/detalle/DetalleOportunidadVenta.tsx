@@ -57,6 +57,7 @@ export const DetalleOportunidadVenta = ({
       {!!oportunidadId && (
         <div className="DetalleOportunidad">
           <QuimeraAcciones
+            vertical
             acciones={[
               {
                 texto: "Borrar",
@@ -67,12 +68,9 @@ export const DetalleOportunidadVenta = ({
           />
 
           <div className="oportunidad-resumen-banda">
-            <span className="oportunidad-resumen-probabilidad">
-              {modelo.probabilidad ?? 0}%
-            </span>
             {modelo.descripcion_estado && (
               <span className="oportunidad-resumen-estado">
-                {modelo.descripcion_estado}
+                {modelo.descripcion_estado} ({modelo.probabilidad ?? 0}%)
               </span>
             )}
             <span className="oportunidad-resumen-importe">

@@ -1,7 +1,7 @@
-import { QTarjetaGenerica } from "@olula/componentes/index.js";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import "../../widgets/WidgetCrmLista.css";
+import { TarjetaLead } from "../maestro/TarjetaLead.tsx";
 import {
   cargarModeloWidgetUltimasTarjetas,
   ModeloWidgetUltimasTarjetas,
@@ -55,12 +55,7 @@ export const WidgetUltimasTarjetas = () => {
               className="widget-crm-lista__tarjeta-enlace"
               to={`/crm/lead?id=${tarjeta.id}`}
             >
-              <QTarjetaGenerica
-                arribaIzquierda={tarjeta.nombre}
-                arribaDerecha={tarjeta.id}
-                abajoIzquierda={tarjeta.estado_id}
-                abajoDerecha={tarjeta.tipo}
-              />
+              <TarjetaLead {...tarjeta} />
             </Link>
           ))}
         </div>

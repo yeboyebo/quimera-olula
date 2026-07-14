@@ -29,7 +29,7 @@ export type ModeloWidgetAccionesHoy = {
 };
 
 const RUTA_ACCIONES = "/crm/accion";
-const ORDEN_ACCIONES: Orden = ["tipo", "ASC", "fecha", "ASC", "id", "DESC"] as unknown as Orden;
+const ORDEN_ACCIONES: Orden = ["fecha", "ASC", "id", "DESC"] as unknown as Orden;
 const PAGINACION_ACCIONES: Paginacion = { pagina: 1, limite: 200 };
 
 export const modeloWidgetAccionesHoyInicial: ModeloWidgetAccionesHoy = {
@@ -83,9 +83,15 @@ export const cargarModeloWidgetAccionesHoy = async (): Promise<ModeloWidgetAccio
         getAcciones(filtroPendientes as unknown as Filtro, ORDEN_ACCIONES, PAGINACION_ACCIONES),
     ]);
 
-    const urlVerHoy = construirUrlConFiltro(RUTA_ACCIONES, filtroHoy);
-    const urlVerRetrasadas = construirUrlConFiltro(RUTA_ACCIONES, filtroRetrasadas);
-    const urlVerPendientes = construirUrlConFiltro(RUTA_ACCIONES, filtroPendientes);
+    const urlVerHoy = construirUrlConFiltro(RUTA_ACCIONES, filtroHoy, {
+        orden: ORDEN_ACCIONES,
+    });
+    const urlVerRetrasadas = construirUrlConFiltro(RUTA_ACCIONES, filtroRetrasadas, {
+        orden: ORDEN_ACCIONES,
+    });
+    const urlVerPendientes = construirUrlConFiltro(RUTA_ACCIONES, filtroPendientes, {
+        orden: ORDEN_ACCIONES,
+    });
 
     return {
         estado: "listo",

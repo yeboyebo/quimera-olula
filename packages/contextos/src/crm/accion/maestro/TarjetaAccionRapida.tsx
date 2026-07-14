@@ -1,9 +1,4 @@
-import {
-  QAvatar,
-  QBoton,
-  QIcono,
-  QTarjetaGenerica,
-} from "@olula/componentes/index.js";
+import { QAvatar, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import type { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { Accion } from "../diseño.ts";
@@ -35,13 +30,12 @@ const estaVencida = (fecha: Date | null): boolean => {
 
 export const TarjetaAccionRapida = ({
   accion,
-  publicar,
 }: {
   accion: Accion;
   publicar: EmitirEvento;
 }) => {
   const vencida = estaVencida(accion.fecha);
-  const deshabilitarFinalizar = accion.estado === "Hecha";
+  // const deshabilitarFinalizar = accion.estado === "Hecha";
 
   return (
     <QTarjetaGenerica
@@ -62,22 +56,22 @@ export const TarjetaAccionRapida = ({
       }
       abajoIzquierda={accion.estado}
       abajoDerecha={accion.nombre_cliente}
-      expansion={
-        <div className="tarjeta-accion-rapida-acciones">
-          <QBoton
-            tamaño="pequeño"
-            variante="borde"
-            deshabilitado={deshabilitarFinalizar}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (deshabilitarFinalizar) return;
-              publicar("accion_finalizada_rapido", accion.id);
-            }}
-          >
-            Finalizar
-          </QBoton>
-        </div>
-      }
+      // expansion={
+      //   <div className="tarjeta-accion-rapida-acciones">
+      //     <QBoton
+      //       tamaño="pequeño"
+      //       variante="borde"
+      //       deshabilitado={deshabilitarFinalizar}
+      //       onClick={(e) => {
+      //         e.stopPropagation();
+      //         if (deshabilitarFinalizar) return;
+      //         publicar("accion_finalizada_rapido", accion.id);
+      //       }}
+      //     >
+      //       Finalizar
+      //     </QBoton>
+      //   </div>
+      // }
     />
   );
 };

@@ -51,6 +51,7 @@ export const DetalleLead = ({
     >
       <div className="DetalleLead">
         <QuimeraAcciones
+          vertical
           acciones={[
             {
               texto: "Borrar",

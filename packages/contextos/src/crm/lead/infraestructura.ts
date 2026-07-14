@@ -41,6 +41,11 @@ export const leadFromAPI = (l: LeadAPI): Lead => ({
     pais: l.direccion?.pais ?? null,
     telefono_1: l.direccion?.telefono_1 ?? "",
     telefono_2: l.direccion?.telefono_2 ?? "",
+    contacto: l.contacto
+        ? {
+            nombre: l.contacto.nombre ?? "",
+        }
+        : null,
 });
 
 export const leadToAPI = (l: Lead): LeadToAPI => {

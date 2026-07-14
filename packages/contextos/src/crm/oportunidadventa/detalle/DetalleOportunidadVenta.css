@@ -3,7 +3,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--espaciado-sm);
-    padding: var(--espaciado-sm) var(--espaciado-md);
+    margin: var(--espaciado-m) 0;
     background-color: var(--color-fondo-secundario, #f5f5f5);
     border-radius: var(--redondeo-borde-xs);
     border: 1px solid var(--color-borde, #e0e0e0);
@@ -31,14 +31,17 @@
     font-weight: var(--grosor-letra-bold);
     color: var(--color-exito-oscuro);
     margin-left: auto;
+    padding-left: var(--espaciado-s);
 }
 
 .oportunidad-resumen-fecha {
     color: var(--color-texto-secundario, #666);
+    padding-left: var(--espaciado-s);
 }
 
 .oportunidad-resumen-cliente {
     color: var(--color-texto-secundario, #666);
+    padding-left: var(--espaciado-s);
     font-style: italic;
 }
 

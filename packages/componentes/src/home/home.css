@@ -9,6 +9,6 @@
 .home-widget {
     background: var(--color-fondo-elevado);
     border-radius: var(--radio-m);
-    padding: var(--espaciado-m);
+    padding: var(--espaciado-s);
     border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
 }

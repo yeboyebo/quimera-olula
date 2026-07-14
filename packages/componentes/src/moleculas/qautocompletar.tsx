@@ -181,11 +181,13 @@ export const QAutocompletar = ({
           opcional={opcional}
           deshabilitado={deshabilitado}
           nombre=""
+          tipo="autocompletar"
           lista={listaId.current}
           autocompletar="off"
           onInput={manejarInput}
           onBlur={manejarBlur}
           onChange={manejarChange}
+          placeholder={props.placeholder}
           valor={valorDescrito}
           soloTexto={soloTexto}
         />
