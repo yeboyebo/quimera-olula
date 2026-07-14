@@ -1,9 +1,14 @@
 .TarjetaOportunidadVentaKanban {
-    display: flex;
-    flex-direction: column;
-    gap: var(--espaciado-xxs);
+    display: grid;
+    gap: var(--espaciado-xs);
     width: 100%;
     text-align: left;
+    padding: var(--espaciado-m);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde-m);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--color-fondo) 94%, var(--color-primario) 6%) 0%, var(--color-fondo) 100%);
+    box-shadow: var(--sombra-xs);
 
     .tarjeta-kanban-cabecera {
         display: flex;
@@ -19,13 +24,26 @@
         min-width: 0;
     }
 
-    .tarjeta-kanban-estado {
-        font-size: var(--tamaño-letra-xs);
-        color: var(--color-texto-secundario);
+    .tarjeta-kanban-total {
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 140px;
+        font-size: var(--tamaño-letra-s);
+        font-weight: var(--grosor-letra-7);
+        justify-self: end;
+    }
+
+    .tarjeta-kanban-total.q-etiqueta.importe-grande {
+        background-color: var(--color-exito-claro);
+        color: var(--color-exito-oscuro);
+    }
+
+    .tarjeta-kanban-total.q-etiqueta.importe-medio {
+        background-color: var(--color-advertencia-claro);
+        color: var(--color-advertencia-oscuro);
+    }
+
+    .tarjeta-kanban-total.q-etiqueta.importe-pequeño {
+        background-color: var(--color-deshabilitado-claro);
+        color: var(--color-texto-secundario);
     }
 
     .tarjeta-kanban-titulo {
@@ -41,77 +59,81 @@
         text-wrap: balance;
     }
 
-    .tarjeta-kanban-cliente {
-        font-size: var(--tamaño-letra-s);
+    .tarjeta-kanban-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-xs);
+        min-width: 0;
         color: var(--color-texto-secundario);
+        font-size: var(--tamaño-letra-m);
+        line-height: 1.35;
+    }
+
+    .tarjeta-kanban-meta .tarjeta-kanban-texto {
+        min-width: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .tarjeta-kanban-linea-datos {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--espaciado-s);
+    .tarjeta-kanban-meta-fecha {
+        flex-wrap: wrap;
+        row-gap: var(--espaciado-xxs);
     }
 
-    .tarjeta-kanban-pie {
-        display: flex;
-        align-items: center;
+    .tarjeta-kanban-meta-acciones {
         justify-content: flex-start;
-        gap: var(--espaciado-s);
+        padding-top: 2px;
     }
 
-    .tarjeta-kanban-fecha {
-        font-size: var(--tamaño-letra-xs);
-        color: var(--color-texto-secundario);
-    }
-
-    .tarjeta-kanban-importe {
-        font-size: var(--tamaño-letra-m);
-        font-weight: var(--grosor-letra-7);
-        color: var(--color-texto-principal);
+    .tarjeta-kanban-vencimiento,
+    .tarjeta-kanban-acciones-pendientes {
         white-space: nowrap;
     }
 
-    .importe-alta {
-        background-color: var(--color-exito-claro);
-        color: var(--color-exito-oscuro);
-        padding: 2px var(--espaciado-s);
-        font-weight: var(--grosor-letra-6);
+    .tarjeta-kanban-vencimiento.q-etiqueta.primario {
+        background-color: color-mix(in srgb, var(--color-primario-claro) 35%, var(--color-fondo));
+        color: var(--color-primario-oscuro);
     }
 
-    .importe-media {
+    .tarjeta-kanban-vencimiento.q-etiqueta.advertencia,
+    .tarjeta-kanban-acciones-pendientes.q-etiqueta.advertencia {
         background-color: var(--color-advertencia-claro);
         color: var(--color-advertencia-oscuro);
-        padding: 2px var(--espaciado-s);
-        font-weight: var(--grosor-letra-6);
     }
 
-    .importe-baja {
+    .tarjeta-kanban-vencimiento.q-etiqueta.error {
         background-color: var(--color-error-claro);
         color: var(--color-error-oscuro);
-        padding: 2px var(--espaciado-s);
-        font-weight: var(--grosor-letra-6);
     }
 
-    .badges-container {
-        display: flex;
-        gap: var(--espaciado-xs);
-        flex-wrap: wrap;
+    @media (max-width: 420px) {
+        padding: var(--espaciado-s);
+
+        .tarjeta-kanban-cabecera {
+            align-items: flex-start;
+        }
+
+        .tarjeta-kanban-titulo {
+            font-size: var(--tamaño-letra-s);
+        }
+
+        .tarjeta-kanban-meta {
+            flex-wrap: wrap;
+        }
+
+        .tarjeta-kanban-total {
+            font-size: var(--tamaño-letra-xs);
+        }
     }
 
-    .tarjeta-kanban-urgencia {
-        margin-top: 2px;
-    }
-
-    .tarjeta-kanban-acciones-pendientes {
-        font-size: var(--tamaño-letra-xs);
+    .tarjeta-kanban-meta-persona {
         color: var(--color-texto-secundario);
     }
 
-    .tarjeta-kanban-acciones-pendientes.sin-dato {
-        opacity: 0.75;
+    .tarjeta-kanban-meta-persona .qicono,
+    .tarjeta-kanban-meta-fecha .qicono,
+    .tarjeta-kanban-meta-acciones .qicono {
+        flex-shrink: 0;
     }
 }

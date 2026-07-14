@@ -11,10 +11,16 @@ import {
 export const crearColumnasKanbanOportunidad = (
     estados: EstadoOportunidad[]
 ): QKanbanColumna[] =>
-    estados.map((estado) => ({
-        id: String(estado.id),
-        etiqueta: estado.descripcion ?? String(estado.id),
-    }));
+    [...estados]
+        .sort(
+            (a, b) =>
+                b.probabilidad - a.probabilidad ||
+                String(a.id).localeCompare(String(b.id))
+        )
+        .map((estado) => ({
+            id: String(estado.id),
+            etiqueta: estado.descripcion ?? String(estado.id),
+        }));
 
 export const crearFiltroEstadoOportunidad = (
     valor: unknown

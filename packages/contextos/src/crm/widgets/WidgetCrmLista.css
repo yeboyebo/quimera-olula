@@ -50,17 +50,17 @@ button.widget-situacion-item {
 
 .widget-situacion-pendientes {
     background-color: var(--color-deshabilitado-claro);
-    color: var(--color-texto-secundario);
+    /* color: var(--color-texto-secundario); */
 }
 
 .widget-situacion-retrasadas {
     background-color: var(--color-error-claro);
-    color: var(--color-error-oscuro);
+    /* color: var(--color-error-oscuro); */
 }
 
 .widget-situacion-hoy {
     background-color: var(--color-advertencia-claro);
-    color: var(--color-advertencia-oscuro);
+    /* color: var(--color-advertencia-oscuro); */
 }
 
 .widget-crm-lista__lista,

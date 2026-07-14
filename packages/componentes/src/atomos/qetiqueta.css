@@ -1,36 +1,39 @@
-.q-badge {
+.q-etiqueta {
     display: inline-block;
     border-radius: var(--redondeo-borde-xs);
-    font-weight: var(--grosor-letra-6);
+    font-weight: var(--grosor-letra-7);
+    color: var(--color-texto-primario);
     white-space: nowrap;
+    transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.q-badge.sm {
+.q-etiqueta.sm {
     padding: var(--espaciado-xs) var(--espaciado-s);
     font-size: var(--tamaño-letra-xs);
 }
 
-.q-badge.md {
+.q-etiqueta.md {
     padding: var(--espaciado-s) var(--espaciado-m);
     font-size: var(--tamaño-letra-s);
 }
 
-.q-badge.exito {
+.q-etiqueta.exito {
     background-color: var(--color-exito-claro);
-    color: var(--color-exito-oscuro);
 }
 
-.q-badge.error {
+.q-etiqueta.error {
     background-color: var(--color-error-claro);
-    color: var(--color-error-oscuro);
 }
 
-.q-badge.advertencia {
+.q-etiqueta.advertencia {
     background-color: var(--color-advertencia-claro);
-    color: var(--color-advertencia-oscuro);
 }
 
-.q-badge.primario {
+.q-etiqueta.primario {
     background-color: var(--color-primario-claro);
-    color: var(--color-primario-oscuro);
+}
+
+.q-etiqueta:hover {
+    filter: saturate(1.15) brightness(0.98);
+    transform: translateY(-1px);
 }

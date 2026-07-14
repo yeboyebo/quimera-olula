@@ -22,6 +22,10 @@
         grid-column: 1 / span 4;
     }
 
+    quimera-input[nombre="tarjeta_id"] {
+        grid-column: 1 / span 4;
+    }
+
     quimera-autocompletar[nombre="contacto_id"] {
         grid-column: span 4;
     }
@@ -39,4 +43,51 @@
     quimera-textarea[nombre="observaciones"] {
         grid-column: span 12;
     }
+}
+
+.DetalleAccion .contactos-cliente {
+    margin-top: 1rem;
+}
+
+.DetalleAccion .contactos-cliente h4 {
+    margin: 0 0 0.75rem;
+}
+
+.DetalleAccion .contactos-tarjeta {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    color: var(--q-color-texto-secundario, #666);
+}
+
+.DetalleAccion .contactos-vacio {
+    margin: 0;
+    color: var(--q-color-texto-secundario, #666);
+}
+
+.DetalleAccion .contacto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--q-color-borde-suave, #ddd);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.DetalleAccion .contacto-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.DetalleAccion .contacto-acciones {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.DetalleAccion .contacto-acciones a {
+    text-decoration: none;
+    font-size: 0.875rem;
 }

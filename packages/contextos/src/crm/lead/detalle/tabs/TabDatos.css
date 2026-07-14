@@ -12,10 +12,6 @@
         grid-column: span 4;
     }
 
-    quimera-select[nombre="tipo"] {
-        grid-column: 1 / span 5;
-    }
-
     quimera-autocompletar[nombre="cliente_id"] {
         grid-column: span 5;
     }

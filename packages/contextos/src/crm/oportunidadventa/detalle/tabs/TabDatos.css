@@ -4,7 +4,7 @@
         grid-column: 1 / span 5;
     }
 
-    quimera-input[nombre="nombre_cliente"] {
+    quimera-autocompletar[nombre="tarjeta_id"] {
         grid-column: span 5;
     }
 
@@ -17,10 +17,6 @@
     }
 
     quimera-input[nombre="probabilidad"] {
-        grid-column: span 3;
-    }
-
-    quimera-autocompletar[nombre="tarjeta_id"] {
         grid-column: span 3;
     }
 

@@ -3,7 +3,6 @@ import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
 import { ContactoSelector } from "#/crm/comun/componentes/contacto.tsx";
 import { EstadoLead } from "#/crm/comun/componentes/estado_lead.tsx";
 import { FuenteLead } from "#/crm/comun/componentes/fuente_lead.tsx";
-import { TipoEntidadLead } from "#/crm/comun/componentes/tipo_entidad_lead.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Lead } from "../../diseño.ts";
@@ -23,19 +22,13 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
           valor={modelo.contacto_id ?? ""}
           descripcion={modelo.contacto_id ?? ""}
         />
-
-        <TipoEntidadLead {...uiProps("tipo")} />
         {modelo.tipo === "Cliente" && modelo.cliente_id ? (
           <Cliente {...uiProps("cliente_id", "nombre")} />
         ) : (
           // <Proveedor {...uiProps("proveedor_id", "nombre")} />
           <></>
         )}
-        <QInput
-          label="Nombre"
-          {...uiProps("nombre")}
-          deshabilitado={!!modelo.cliente_id}
-        />
+        <QInput label="Nombre" {...uiProps("nombre")} />
         <QInput label="CIF/NIF" {...uiProps("id_fiscal")} />
         <QInput label="Dirección" {...uiProps("direccion")} />
         <QInput label="Ciudad" {...uiProps("ciudad")} />

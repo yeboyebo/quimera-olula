@@ -86,11 +86,7 @@ export const MaestroAcciones = () => {
               criteria={ctx.acciones.criteria}
               modosDisponibles={["tarjetas"]}
               tarjeta={(accion) => (
-                <TarjetaAccionRapida
-                  accion={accion}
-                  onFinalizar={(id) => emitir("accion_finalizada_rapido", id)}
-                  onEditar={(a) => emitir("accion_seleccionada", a)}
-                />
+                <TarjetaAccionRapida accion={accion} publicar={emitir} />
               )}
               entidades={ctx.acciones.lista}
               totalEntidades={ctx.acciones.total}

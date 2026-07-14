@@ -1,4 +1,5 @@
-import { ClienteConNombre } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
+import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
+import { LeadSelector } from "#/crm/comun/componentes/lead.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
@@ -27,9 +28,33 @@ export const CrearOportunidadVenta = ({
   const { intentar } = useContext(ContextoError);
 
   const [creando, setCreando] = useState(false);
-  const { modelo, uiProps, valido } = useModelo(
+  const { modelo, uiProps, valido, set } = useModelo(
     metaNuevaOportunidadVenta,
     modeloVacio
+  );
+
+  const seleccionarCliente = useCallback(
+    (opcion: { valor: string; descripcion: string } | null) => {
+      set({
+        ...modelo,
+        cliente_id: opcion?.valor ?? "",
+        nombre_cliente: opcion?.descripcion ?? "",
+        tarjeta_id: opcion?.valor ? "" : modelo.tarjeta_id,
+      });
+    },
+    [modelo, set]
+  );
+
+  const seleccionarTarjeta = useCallback(
+    (opcion: { valor: string; descripcion: string } | null) => {
+      set({
+        ...modelo,
+        tarjeta_id: opcion?.valor ?? "",
+        cliente_id: opcion?.valor ? "" : modelo.cliente_id,
+        nombre_cliente: opcion?.valor ? "" : modelo.nombre_cliente,
+      });
+    },
+    [modelo, set]
   );
 
   const crear = useCallback(async () => {
@@ -53,10 +78,21 @@ export const CrearOportunidadVenta = ({
       <div className="CrearOportunidadVenta">
         <quimera-formulario>
           <QInput label="Descripción" {...uiProps("descripcion")} />
-          <ClienteConNombre
+          <Cliente
             {...uiProps("cliente_id", "nombre_cliente")}
-            label="Seleccionar cliente"
+            label="Cod. cliente"
+            valor={modelo.cliente_id ?? ""}
+            descripcion={modelo.nombre_cliente ?? ""}
+            onChange={seleccionarCliente}
           />
+          <LeadSelector
+            {...uiProps("tarjeta_id")}
+            label="Cod. tarjeta"
+            valor={modelo.tarjeta_id ?? ""}
+            descripcion={modelo.tarjeta_id ?? ""}
+            onChange={seleccionarTarjeta}
+          />
+          {/* Pendiente: permitir nombre_cliente manual para clientes no registrados. */}
           <QInput label="Total" {...uiProps("importe")} />
         </quimera-formulario>
 

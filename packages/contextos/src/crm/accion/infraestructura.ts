@@ -4,12 +4,16 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { Accion } from "./diseño.ts";
 
-export type AccionAPI = Accion & { fecha: string | null };
+export type AccionAPI = Omit<Accion, "fecha" | "fecha_fin"> & {
+    fecha: string | null;
+    fecha_fin?: string | null;
+};
 
 export const accionDesdeAPI = (accionAPI: AccionAPI): Accion => ({
     ...accionAPI,
     fecha: accionAPI.fecha ? new Date(Date.parse(accionAPI.fecha)) : null,
-})
+    fecha_fin: accionAPI.fecha_fin ? new Date(Date.parse(accionAPI.fecha_fin)) : null,
+} as Accion)
 
 export const getAccion = async (id: string): Promise<Accion> =>
     await RestAPI.get<{ datos: AccionAPI }>(`${new ApiUrls().ACCION}/${id}`).then((respuesta) => accionDesdeAPI(respuesta.datos));
@@ -35,8 +39,9 @@ export const postAccion = async (accion: Partial<Accion>): Promise<string> => {
 };
 
 export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<void> => {
+    const { cliente, ...accionPatch } = accion;
     const accionSinNulls = Object.fromEntries(
-        Object.entries(accion).map(([k, v]) => [k, v === null ? "" : v])
+        Object.entries(accionPatch).map(([k, v]) => [k, v === null ? "" : v])
     );
     await RestAPI.patch(`${new ApiUrls().ACCION}/${id}`, accionSinNulls, "Error al guardar acción");
 };

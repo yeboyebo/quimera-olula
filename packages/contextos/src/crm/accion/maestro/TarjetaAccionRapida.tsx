@@ -4,6 +4,7 @@ import {
   QIcono,
   QTarjetaGenerica,
 } from "@olula/componentes/index.js";
+import type { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { Accion } from "../diseño.ts";
 import "./TarjetaAccionRapida.css";
@@ -22,19 +23,25 @@ const iconoTipoAccion = (tipo: string) => {
 
 const estaVencida = (fecha: Date | null): boolean => {
   if (!fecha) return false;
-  return new Date(fecha) < new Date();
+
+  const fechaAccion = new Date(fecha);
+  fechaAccion.setHours(0, 0, 0, 0);
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  return fechaAccion < hoy;
 };
 
 export const TarjetaAccionRapida = ({
   accion,
-  onFinalizar,
-  onEditar,
+  publicar,
 }: {
   accion: Accion;
-  onFinalizar: (id: string) => void;
-  onEditar: (accion: Accion) => void;
+  publicar: EmitirEvento;
 }) => {
   const vencida = estaVencida(accion.fecha);
+  const deshabilitarFinalizar = accion.estado === "Hecha";
 
   return (
     <QTarjetaGenerica
@@ -60,22 +67,14 @@ export const TarjetaAccionRapida = ({
           <QBoton
             tamaño="pequeño"
             variante="borde"
+            deshabilitado={deshabilitarFinalizar}
             onClick={(e) => {
               e.stopPropagation();
-              onFinalizar(accion.id);
+              if (deshabilitarFinalizar) return;
+              publicar("accion_finalizada_rapido", accion.id);
             }}
           >
-            ✓ Hecha
-          </QBoton>
-          <QBoton
-            tamaño="pequeño"
-            variante="texto"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditar(accion);
-            }}
-          >
-            Editar
+            Finalizar
           </QBoton>
         </div>
       }

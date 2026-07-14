@@ -8,6 +8,7 @@ import { ContextoDetalleAccion, EstadoDetalleAccion } from "./diseño.ts";
 export const accionVacia: Accion = {
     id: "",
     fecha: new Date(),
+    fecha_fin: null,
     descripcion: "",
     estado: "",
     observaciones: "",
@@ -22,6 +23,7 @@ export const accionVacia: Accion = {
     tarjeta_id: "",
     incidencia_id: "",
     usuario_id: "",
+    cliente: null,
 };
 
 export const metaAccion: MetaModelo<Accion> = {
