@@ -1,5 +1,5 @@
 import { menuTPV } from "./menu.ts";
-import { BotonNuevaVentaBase } from "./venta/maestro/MaestroConDetalleVentaTpv.tsx";
+import { CrearVentaTpv } from "./venta/crear/CrearVentaTpv.tsx";
 
 export class FactoryTpvOlula {
     // static PedidoTabDatos = PedidoTabDatosBase
@@ -7,6 +7,6 @@ export class FactoryTpvOlula {
     // static metaTablaPedido = metaTablaPedido
     // static api_payloadPatchPedido = payloadPatchPedido
     // static metaPedido = metaPedido
-    static venta_BotonNuevaVenta = BotonNuevaVentaBase
+    static venta_CrearVenta = CrearVentaTpv
     static menu = menuTPV
 }

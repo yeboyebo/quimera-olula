@@ -10,12 +10,12 @@ import {
   criteriaDefecto,
   formatearFechaDate,
 } from "@olula/lib/dominio.js";
-import { EmitirEvento } from "@olula/lib/diseño.js";
 import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
 import { useCallback, useEffect, useMemo } from "react";
+import { CrearVentaTpv as CrearVentaTpvBase } from "../crear/CrearVentaTpv.tsx";
 import { DetalleVentaTpv } from "../detalle/DetalleVentaTpv.tsx";
 import { VentaTpv } from "../diseño.ts";
 import { metaTablaFactura } from "./maestro.ts";
@@ -79,10 +79,13 @@ export const MaestroConDetalleVentaTpv = () => {
               entidades={ctx.ventas.lista}
               totalEntidades={ctx.ventas.total}
               seleccionada={ctx.ventas.activo}
-              renderAcciones={() => {
-                const BotonNuevaVenta_ = (FactoryObj.app.TPV?.venta_BotonNuevaVenta as typeof BotonNuevaVentaBase) ?? BotonNuevaVentaBase;
-                return <BotonNuevaVenta_ emitir={emitir} />;
-              }}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton onClick={() => emitir("crear_venta_solicitada")}>
+                    Nueva Venta
+                  </QBoton>
+                </div>
+              )}
               onSeleccion={(payload) => emitir("venta_seleccionada", payload)}
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
@@ -98,21 +101,13 @@ export const MaestroConDetalleVentaTpv = () => {
         seleccionada={ctx.ventas.activo}
         modoDisposicion="maestro-50"
       />
+      {ctx.estado === "CREANDO" && (() => {
+        const CrearVenta_ = (FactoryObj.app.TPV?.venta_CrearVenta as typeof CrearVentaTpvBase) ?? CrearVentaTpvBase;
+        return <CrearVenta_ publicar={emitir} />;
+      })()}
     </div>
   );
 };
-
-export type BotonNuevaVentaProps = {
-  emitir: EmitirEvento;
-};
-
-export const BotonNuevaVentaBase = ({ emitir }: BotonNuevaVentaProps) => (
-  <div className="maestro-botones">
-    <QBoton onClick={() => emitir("creacion_de_venta_solicitada")}>
-      Nueva Venta
-    </QBoton>
-  </div>
-);
 
 const TarjetaVentaTpv = (venta: VentaTpv) => {
   return (
