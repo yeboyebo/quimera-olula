@@ -26,11 +26,11 @@ jobs:
 
       - name: Make envfile
         run: |
-          echo "VITE_API_URL=https://apiolula.elganso.com" > .env
-          echo "VITE_LEGACY_API_URL=https://apistore.elganso.com/api/" >> .env
+          echo "VITE_API_URL=https://apiolula.elganso.world" > .env
+          echo "VITE_LEGACY_API_URL=https://apistore.elganso.world/api/" >> .env
 
-          echo "VITE_API_URL=https://apiolula.elganso.com" > ./apps/elganso_stores/.env
-          echo "VITE_LEGACY_API_URL=https://apistore.elganso.com/api/" >> ./apps/elganso_stores/.env
+          echo "VITE_API_URL=https://apiolula.elganso.world" > ./apps/elganso_stores/.env
+          echo "VITE_LEGACY_API_URL=https://apistore.elganso.world/api/" >> ./apps/elganso_stores/.env
 
       - name: Install Dependecies
         run: pnpm install
