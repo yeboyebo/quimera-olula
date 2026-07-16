@@ -56,6 +56,7 @@ export const DetalleCliente = ({
       {!!clienteId && (
         <div className="DetalleCliente">
           <QuimeraAcciones
+            vertical
             acciones={[
               {
                 texto: "Borrar",

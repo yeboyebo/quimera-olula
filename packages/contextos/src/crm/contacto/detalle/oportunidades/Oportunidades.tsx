@@ -86,6 +86,7 @@ export const Oportunidades = ({
       <ListadoSemiControlado
         metaTabla={metaTablaOportunidadVenta}
         tarjeta={TarjetaOportunidadVenta}
+        modosDisponibles={["tarjetas"]}
         entidades={ctx.oportunidades.lista}
         totalEntidades={ctx.oportunidades.total}
         cargando={cargando}
@@ -127,6 +128,7 @@ export const Oportunidades = ({
         onCerrar={() => publicarDetalle("oportunidad_deseleccionada")}
         mostrarBotonCerrar={false}
         mostrarCabecera={false}
+        anchoEstable
       >
         {ctx.oportunidades.activo?.id && (
           <DetalleOportunidadVenta

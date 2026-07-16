@@ -82,6 +82,7 @@ export const Oportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
       <ListadoSemiControlado
         metaTabla={metaTablaOportunidadVenta}
         tarjeta={TarjetaOportunidadVenta}
+        modosDisponibles={["tarjetas"]}
         entidades={ctx.oportunidades.lista}
         totalEntidades={ctx.oportunidades.total}
         cargando={cargando}
@@ -123,6 +124,7 @@ export const Oportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
         onCerrar={() => publicarDetalle("oportunidad_deseleccionada")}
         mostrarBotonCerrar={false}
         mostrarCabecera={false}
+        anchoEstable
       >
         {ctx.oportunidades.activo?.id && (
           <DetalleOportunidadVenta

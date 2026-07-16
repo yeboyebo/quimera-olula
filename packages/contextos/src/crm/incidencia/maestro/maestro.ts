@@ -30,3 +30,10 @@ export const recargarIncidencias: ProcesarIncidencias = async (contexto, payload
 
     return Incidencias.recargar(contexto, resultado);
 }
+
+export const ampliarIncidencias: ProcesarIncidencias = async (contexto, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getIncidencias(criteria.filtro, criteria.orden, criteria.paginacion);
+
+    return Incidencias.ampliar(contexto, resultado);
+}

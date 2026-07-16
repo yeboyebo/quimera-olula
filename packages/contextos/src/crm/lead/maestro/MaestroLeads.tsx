@@ -54,6 +54,9 @@ export const MaestroLeads = () => {
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
               }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
+              }
             />
           </>
         }

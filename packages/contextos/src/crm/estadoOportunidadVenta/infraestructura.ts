@@ -1,8 +1,14 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { NuevoEstadoOportunidad } from "./crear/diseño.ts";
-import { EstadoOportunidad } from "./diseño.ts";
+import {
+    DeleteEstadoOportunidad,
+    EstadoOportunidad,
+    GetEstadoOportunidad,
+    GetEstadosOportunidad,
+    PatchEstadoOportunidad,
+    PostEstadoOportunidad,
+} from "./diseño.ts";
 
 const baseUrlEstadoOportunidadVenta = `/crm/estado_oportunidad_venta`;
 
@@ -32,32 +38,28 @@ export const estadoOportunidadToAPI = (e: NuevoEstadoOportunidad) => {
     };
 };
 
-export const getEstadoOportunidad = async (id: string): Promise<EstadoOportunidad> =>
+export const getEstadoOportunidad: GetEstadoOportunidad = async (id) =>
     await RestAPI.get<{ datos: EstadoOportunidadAPI }>(`${baseUrlEstadoOportunidadVenta}/${id}`).then((respuesta) => estadoOportunidadDesdeAPI(respuesta.datos));
 
 
-export const getEstadosOportunidad = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-): RespuestaLista<EstadoOportunidad> => {
+export const getEstadosOportunidad: GetEstadosOportunidad = async (filtro, orden, paginacion) => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: EstadoOportunidadAPI[]; total: number }>(baseUrlEstadoOportunidadVenta + q);
     return { datos: respuesta.datos.map(estadoOportunidadDesdeAPI), total: respuesta.total };
 };
 
-export const postEstadoOportunidad = async (estado: NuevoEstadoOportunidad): Promise<string> => {
+export const postEstadoOportunidad: PostEstadoOportunidad = async (estado) => {
     const payload = estadoOportunidadToAPI(estado);
     return await RestAPI.post(baseUrlEstadoOportunidadVenta, payload, "Error al guardar el estado de oportunidad de venta").then((respuesta) => respuesta.id);
 };
 
-export const patchEstadoOportunidad = async (id: string, estado: Partial<EstadoOportunidad>): Promise<void> => {
+export const patchEstadoOportunidad: PatchEstadoOportunidad = async (id, estado) => {
     const payload = estadoOportunidadToAPI(estado as EstadoOportunidad);
     await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}`, payload, "Error al guardar el estado de oportunidad de venta");
 };
 
-export const deleteEstadoOportunidad = async (id: string): Promise<void> =>
+export const deleteEstadoOportunidad: DeleteEstadoOportunidad = async (id) =>
     await RestAPI.delete(`${baseUrlEstadoOportunidadVenta}/${id}`, "Error al borrar el estado de oportunidad de venta");
 
 export const marcarPorDefectoEstadoOportunidad = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}/pordefecto`, {}, "Error al marcar por defecto el estado de oportunidad de venta");

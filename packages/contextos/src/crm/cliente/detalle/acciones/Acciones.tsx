@@ -82,6 +82,7 @@ export const Acciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
               Editar
             </QBoton>
             <QuimeraAcciones
+              vertical
               acciones={[
                 {
                   texto: "Borrar",
@@ -106,6 +107,7 @@ export const Acciones = ({ cliente }: { cliente: HookModelo<Cliente> }) => {
         onCerrar={() => publicarDetalle("accion_deseleccionada")}
         mostrarBotonCerrar={false}
         mostrarCabecera={false}
+        anchoEstable
       >
         {ctx.acciones.activo?.id && (
           <DetalleAccion

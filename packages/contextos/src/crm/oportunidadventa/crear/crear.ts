@@ -14,6 +14,7 @@ export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
     nombre_cliente: '',
     contacto_id: '',
     tarjeta_id: '',
+    nombre_tarjeta: '',
 };
 
 export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {

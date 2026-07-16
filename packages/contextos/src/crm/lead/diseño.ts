@@ -1,4 +1,5 @@
-import { Entidad } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import type { NuevoLead } from "./crear/diseño.ts";
 
 export interface Lead extends Entidad {
     id: string;
@@ -84,3 +85,15 @@ export type DireccionLeadAPI = {
     otros: string;
     apartado: string;
 };
+
+export type CambiosLead = Partial<Lead>;
+
+export type GetLead = (id: string) => Promise<Lead>;
+
+export type GetLeads = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Lead>;
+
+export type PostLead = (lead: NuevoLead) => Promise<string>;
+
+export type PatchLead = (id: string, lead: CambiosLead) => Promise<void>;
+
+export type DeleteLead = (id: string) => Promise<void>;

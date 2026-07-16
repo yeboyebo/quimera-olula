@@ -1,8 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { Accion } from "./diseño.ts";
+import { Accion, DeleteAccion, GetAccion, GetAcciones, PatchAccion, PostAccion } from "./diseño.ts";
 
 export type AccionAPI = Omit<Accion, "fecha" | "fecha_fin"> & {
     fecha: string | null;
@@ -15,21 +14,17 @@ export const accionDesdeAPI = (accionAPI: AccionAPI): Accion => ({
     fecha_fin: accionAPI.fecha_fin ? new Date(Date.parse(accionAPI.fecha_fin)) : null,
 } as Accion)
 
-export const getAccion = async (id: string): Promise<Accion> =>
+export const getAccion: GetAccion = async (id) =>
     await RestAPI.get<{ datos: AccionAPI }>(`${new ApiUrls().ACCION}/${id}`).then((respuesta) => accionDesdeAPI(respuesta.datos));
 
-export const getAcciones = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-): RespuestaLista<Accion> => {
+export const getAcciones: GetAcciones = async (filtro, orden, paginacion) => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: AccionAPI[]; total: number }>(new ApiUrls().ACCION + q);
     return { datos: respuesta.datos.map(accionDesdeAPI), total: respuesta.total };
 };
 
-export const postAccion = async (accion: Partial<Accion>): Promise<string> => {
+export const postAccion: PostAccion = async (accion) => {
     const body = {
         ...accion,
         fecha: accion.fecha?.toISOString().slice(0, 10)
@@ -38,15 +33,15 @@ export const postAccion = async (accion: Partial<Accion>): Promise<string> => {
     return await RestAPI.post(new ApiUrls().ACCION, body, "Error al guardar acción").then((respuesta) => respuesta.id);
 };
 
-export const patchAccion = async (id: string, accion: Partial<Accion>): Promise<void> => {
-    const { cliente, ...accionPatch } = accion;
+export const patchAccion: PatchAccion = async (id, accion) => {
+    const { cliente: _cliente, ...accionPatch } = accion;
     const accionSinNulls = Object.fromEntries(
         Object.entries(accionPatch).map(([k, v]) => [k, v === null ? "" : v])
     );
     await RestAPI.patch(`${new ApiUrls().ACCION}/${id}`, accionSinNulls, "Error al guardar acción");
 };
 
-export const deleteAccion = async (id: string): Promise<void> =>
+export const deleteAccion: DeleteAccion = async (id) =>
     await RestAPI.delete(`${new ApiUrls().ACCION}/${id}`, "Error al borrar acción");
 
 export const finalizarAccion = async (id: string): Promise<void> => {

@@ -79,3 +79,5 @@ export const TarjetaAccionRapida = ({
     />
   );
 };
+// Poder tener un estilo de tarjeta para no resaltadas, que no se vea tan grande
+// tener un estandar https://mui.com/material-ui/customization/default-theme/

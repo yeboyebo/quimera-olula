@@ -32,6 +32,13 @@ export const recargarOportunidades: ProcesarOportunidades = async (contexto, pay
     return Oportunidades.recargar(contexto, resultado);
 }
 
+export const ampliarOportunidades: ProcesarOportunidades = async (contexto, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getOportunidadesVenta(criteria.filtro, criteria.orden, criteria.paginacion);
+
+    return Oportunidades.ampliar(contexto, resultado);
+}
+
 type PayloadCambioEstadoOportunidad = {
     idOportunidad: string;
     nuevoEstado: string;

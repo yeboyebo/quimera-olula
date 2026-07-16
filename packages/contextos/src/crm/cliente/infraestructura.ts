@@ -1,6 +1,6 @@
 import UrlsVentasClass from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Criteria, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Filtro, Orden, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
@@ -8,7 +8,7 @@ import UrlsCrmClass from "../comun/urls.ts";
 import { NuevaOportunidadVenta } from "../oportunidadventa/crear/diseño.ts";
 import { OportunidadVenta } from "../oportunidadventa/diseño.ts";
 import { oportunidadDesdeAPI, OportunidadVentaAPI } from "../oportunidadventa/infraestructura.ts";
-import { Cliente, GetCliente, PatchCliente } from "./diseño.ts";
+import { Cliente, DeleteCliente, GetCliente, GetClientes, PatchCliente } from "./diseño.ts";
 
 const UrlsCrm = new UrlsCrmClass();
 const UrlsVentas = new UrlsVentasClass();
@@ -27,11 +27,7 @@ const clienteFromAPI = (c: ClienteApi): Cliente => ({
 export const getCliente: GetCliente = async (id) =>
   await RestAPI.get<{ datos: Cliente }>(`${UrlsVentas.CLIENTE}/${id}`).then((respuesta) => clienteFromAPI(respuesta.datos));
 
-export const getClientes = async (
-  filtro: Filtro,
-  orden: Orden,
-  paginacion: Paginacion
-): RespuestaLista<Cliente> => {
+export const getClientes: GetClientes = async (filtro, orden, paginacion) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
   const respuesta = await RestAPI.get<{ datos: ClienteApi[]; total: number }>(UrlsVentas.CLIENTE + q);
@@ -57,7 +53,7 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
     },
   }, "Error al guardar cliente");
 
-export const deleteCliente = async (id: string): Promise<void> =>
+export const deleteCliente: DeleteCliente = async (id) =>
   await RestAPI.delete(`${UrlsVentas.CLIENTE}/${id}`, "Error al borrar cliente");
 
 export const getOportunidadesVentaCliente = async (

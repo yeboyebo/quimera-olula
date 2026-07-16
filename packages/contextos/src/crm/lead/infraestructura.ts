@@ -1,5 +1,5 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Criteria, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Filtro, Orden, RespuestaLista } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { Accion } from "../accion/diseño.ts";
@@ -10,7 +10,16 @@ import {
     oportunidadDesdeAPI,
     OportunidadVentaAPI,
 } from "../oportunidadventa/infraestructura.ts";
-import { Lead, LeadAPI, LeadToAPI } from "./diseño.ts";
+import {
+    DeleteLead,
+    GetLead,
+    GetLeads,
+    Lead,
+    LeadAPI,
+    LeadToAPI,
+    PatchLead,
+    PostLead,
+} from "./diseño.ts";
 
 const criteriaOportunidadesRelacionadasDefecto: Criteria = {
     ...criteriaDefecto,
@@ -80,34 +89,30 @@ export const leadToAPI = (l: Lead): LeadToAPI => {
     };
 };
 
-export const getLead = async (id: string): Promise<Lead> =>
+export const getLead: GetLead = async (id) =>
     await RestAPI.get<{ datos: LeadAPI }>(`${new ApiUrls().LEAD}/${id}`).then((respuesta) =>
         leadFromAPI(respuesta.datos)
     );
 
-export const getLeads = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-): RespuestaLista<Lead> => {
+export const getLeads: GetLeads = async (filtro, orden, paginacion) => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(new ApiUrls().LEAD + q);
     return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
 };
 
-export const postLead = async (lead: Partial<Lead>): Promise<string> => {
+export const postLead: PostLead = async (lead) => {
     return await RestAPI.post(new ApiUrls().LEAD, lead, "Error al guardar lead").then(
         (respuesta) => respuesta.id
     );
 };
 
-export const patchLead = async (id: string, lead: Partial<Lead>): Promise<void> => {
+export const patchLead: PatchLead = async (id, lead) => {
     const apiLead = leadToAPI(lead as Lead);
     await RestAPI.patch(`${new ApiUrls().LEAD}/${id}`, apiLead, "Error al guardar lead");
 };
 
-export const deleteLead = async (id: string): Promise<void> =>
+export const deleteLead: DeleteLead = async (id) =>
     await RestAPI.delete(`${new ApiUrls().LEAD}/${id}`, "Error al borrar lead");
 
 export const getOportunidadesVentaLead = async (

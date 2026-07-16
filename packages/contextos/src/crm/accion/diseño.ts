@@ -1,4 +1,5 @@
-import { Entidad } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import type { NuevaAccion } from "./crear/diseño.ts";
 
 export interface ContactoAccion {
     nombre: string;
@@ -36,3 +37,15 @@ export interface Accion extends Entidad {
     usuario_id: string;
     cliente?: ClienteAccion | null;
 }
+
+export type CambiosAccion = Partial<Accion>;
+
+export type GetAccion = (id: string) => Promise<Accion>;
+
+export type GetAcciones = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Accion>;
+
+export type PostAccion = (accion: NuevaAccion) => Promise<string>;
+
+export type PatchAccion = (id: string, cambios: CambiosAccion) => Promise<void>;
+
+export type DeleteAccion = (id: string) => Promise<void>;

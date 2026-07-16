@@ -1,4 +1,4 @@
-import { Entidad } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 
 export interface Cliente extends Entidad {
   id: string;
@@ -24,4 +24,6 @@ export interface IdFiscal {
 }
 
 export type GetCliente = (id: string) => Promise<Cliente>;
+export type GetClientes = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Cliente>;
 export type PatchCliente = (id: string, cliente: Cliente) => Promise<void>;
+export type DeleteCliente = (id: string) => Promise<void>;

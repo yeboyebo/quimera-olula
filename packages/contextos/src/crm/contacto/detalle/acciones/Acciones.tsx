@@ -106,6 +106,7 @@ export const Acciones = ({ contacto }: { contacto: HookModelo<Contacto> }) => {
         onCerrar={() => publicarDetalle("accion_deseleccionada")}
         mostrarBotonCerrar={false}
         mostrarCabecera={false}
+        anchoEstable
       >
         {ctx.acciones.activo?.id && (
           <DetalleAccion

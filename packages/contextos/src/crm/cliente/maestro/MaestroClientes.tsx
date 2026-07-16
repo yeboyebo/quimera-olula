@@ -61,6 +61,9 @@ export const MaestroClientes = () => {
               onCriteriaChanged={(payload) =>
                 emitir("criteria_cambiado", payload)
               }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
+              }
             />
           </>
         }

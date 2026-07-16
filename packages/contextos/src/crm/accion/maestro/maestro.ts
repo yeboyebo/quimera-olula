@@ -31,6 +31,13 @@ export const recargarAcciones: ProcesarAcciones = async (contexto, payload) => {
     return Acciones.recargar(contexto, resultado);
 }
 
+export const ampliarAcciones: ProcesarAcciones = async (contexto, payload) => {
+    const criteria = payload as Criteria;
+    const resultado = await getAcciones(criteria.filtro, criteria.orden, criteria.paginacion);
+
+    return Acciones.ampliar(contexto, resultado);
+}
+
 export const finalizarAccionRapida: ProcesarAcciones = async (contexto, payload) => {
     const accionId = payload as string;
     await finalizarAccion(accionId);

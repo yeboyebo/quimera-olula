@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoMaestroOportunidades, EstadoMaestroOportunidades } from "./diseño.ts";
-import { cambiarEstadoOportunidad, Oportunidades, recargarOportunidades } from "./maestro.ts";
+import { ampliarOportunidades, cambiarEstadoOportunidad, Oportunidades, recargarOportunidades } from "./maestro.ts";
 
 export const getMaquina: () => Maquina<EstadoMaestroOportunidades, ContextoMaestroOportunidades> = () => {
     return {
@@ -18,6 +18,8 @@ export const getMaquina: () => Maquina<EstadoMaestroOportunidades, ContextoMaest
             recarga_de_oportunidades_solicitada: recargarOportunidades,
 
             criteria_cambiado: [Oportunidades.filtrar, recargarOportunidades],
+
+            siguiente_pagina: [Oportunidades.filtrar, ampliarOportunidades],
 
             creacion_de_oportunidad_solicitada: "CREANDO",
         },

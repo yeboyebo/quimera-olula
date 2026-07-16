@@ -1,5 +1,5 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { Criteria, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQuery, criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
 import { AccionAPI, accionDesdeAPI } from "../accion/infraestructura.ts";
@@ -10,7 +10,14 @@ import {
   OportunidadVentaAPI,
 } from "../oportunidadventa/infraestructura.ts";
 
-import { Contacto } from "./diseño.ts";
+import {
+  Contacto,
+  DeleteContacto,
+  GetContacto,
+  GetContactos,
+  PatchContacto,
+  PostContacto,
+} from "./diseño.ts";
 
 
 const baseUrlContactos = new ApiUrls().CONTACTO;
@@ -45,30 +52,26 @@ const contactoToAPI = (c: Contacto): ContactoApi => ({
   ...c,
 });
 
-export const getContacto = async (id: string): Promise<Contacto> =>
+export const getContacto: GetContacto = async (id) =>
   await RestAPI.get<{ datos: Contacto }>(`${baseUrlContactos}/${id}`).then((respuesta) => contactoFromAPI(respuesta.datos));
 
-export const getContactos = async (
-  filtro: Filtro,
-  orden: Orden,
-  paginacion: Paginacion
-): RespuestaLista<Contacto> => {
+export const getContactos: GetContactos = async (filtro, orden, paginacion) => {
   const q = criteriaQuery(filtro, orden, paginacion);
 
   const respuesta = await RestAPI.get<{ datos: Contacto[]; total: number }>(baseUrlContactos + q);
   return { datos: respuesta.datos.map(contactoFromAPI), total: respuesta.total };
 };
 
-export const patchContacto = async (id: string, contacto: Contacto) =>
+export const patchContacto: PatchContacto = async (id, contacto) =>
   await RestAPI.patch(`${baseUrlContactos}/${id}`, contacto, "Error al guardar contacto");
 
-export const postContacto = async (contacto: Partial<Contacto>): Promise<string> => {
+export const postContacto: PostContacto = async (contacto) => {
   return await RestAPI.post(baseUrlContactos, contactoToAPI(contacto as Contacto), "Error al guardar contacto").then(
     (respuesta) => respuesta.id
   );
 };
 
-export const deleteContacto = async (id: string): Promise<void> =>
+export const deleteContacto: DeleteContacto = async (id) =>
   await RestAPI.delete(`${baseUrlContactos}/${id}`, "Error al borrar contacto");
 
 
