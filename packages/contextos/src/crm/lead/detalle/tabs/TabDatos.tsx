@@ -1,4 +1,3 @@
-import { PaisSelector } from "#/comun/componentes/pais/pais.tsx";
 import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
 import { ContactoSelector } from "#/crm/comun/componentes/contacto.tsx";
 import { EstadoLead } from "#/crm/comun/componentes/estado_lead.tsx";
@@ -9,11 +8,12 @@ import { formatearDireccionUnaLinea } from "@olula/lib/dominio.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useState } from "react";
 import { Lead } from "../../diseño.ts";
+import { CambiarDireccionLead } from "./CambiarDireccionLead.tsx";
 import "./TabDatos.css";
 
 export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
   const { uiProps, modelo } = lead;
-  const [mostrarDireccion, setMostrarDireccion] = useState(false);
+  const [editandoDireccion, setEditandoDireccion] = useState(false);
 
   const direccionResumen = formatearDireccionUnaLinea({
     tipo_via: "",
@@ -58,22 +58,19 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
             <QBoton
               tamaño="pequeño"
               variante="texto"
-              onClick={() => setMostrarDireccion((abierto) => !abierto)}
+              onClick={() => setEditandoDireccion(true)}
             >
-              {mostrarDireccion ? "Ocultar" : "Editar"}
+              Editar
             </QBoton>
           </div>
         </section>
-        {mostrarDireccion && (
-          <>
-            <QInput label="Dirección" {...uiProps("direccion")} />
-            <QInput label="Ciudad" {...uiProps("ciudad")} />
-            <QInput label="Código Postal" {...uiProps("cod_postal")} />
-            <QInput label="Provincia" {...uiProps("provincia")} />
-            <PaisSelector label="País" {...uiProps("pais_id", "pais")} />
-          </>
-        )}
       </quimera-formulario>
+      {editandoDireccion && (
+        <CambiarDireccionLead
+          lead={lead}
+          onCerrar={() => setEditandoDireccion(false)}
+        />
+      )}
     </div>
   );
 };

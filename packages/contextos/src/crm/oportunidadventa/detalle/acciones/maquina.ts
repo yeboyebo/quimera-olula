@@ -7,7 +7,7 @@ export const getMaquina: () => Maquina<EstadoAccionesOportunidad, ContextoAccion
         INICIAL: {
             accion_cambiada: [Acciones.cambiar],
 
-            accion_seleccionada: [Acciones.activar, "EDITANDO"],
+            accion_seleccionada: [Acciones.activar],
 
             accion_deseleccionada: Acciones.desactivar,
 

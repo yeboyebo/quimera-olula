@@ -33,17 +33,17 @@
 
     .tarjeta-kanban-total.q-etiqueta.importe-grande {
         background-color: var(--color-exito-claro);
-        color: var(--color-exito-oscuro);
+        /* color: var(--color-exito-oscuro); */
     }
 
     .tarjeta-kanban-total.q-etiqueta.importe-medio {
         background-color: var(--color-advertencia-claro);
-        color: var(--color-advertencia-oscuro);
+        /* color: var(--color-advertencia-oscuro); */
     }
 
     .tarjeta-kanban-total.q-etiqueta.importe-pequeño {
         background-color: var(--color-deshabilitado-claro);
-        color: var(--color-texto-secundario);
+        /* color: var(--color-texto-secundario); */
     }
 
     .tarjeta-kanban-titulo {
@@ -93,18 +93,18 @@
 
     .tarjeta-kanban-vencimiento.q-etiqueta.primario {
         background-color: color-mix(in srgb, var(--color-primario-claro) 35%, var(--color-fondo));
-        color: var(--color-primario-oscuro);
+        /* color: var(--color-primario-oscuro); */
     }
 
     .tarjeta-kanban-vencimiento.q-etiqueta.advertencia,
     .tarjeta-kanban-acciones-pendientes.q-etiqueta.advertencia {
         background-color: var(--color-advertencia-claro);
-        color: var(--color-advertencia-oscuro);
+        /* color: var(--color-advertencia-oscuro); */
     }
 
     .tarjeta-kanban-vencimiento.q-etiqueta.error {
         background-color: var(--color-error-claro);
-        color: var(--color-error-oscuro);
+        /* color: var(--color-error-oscuro); */
     }
 
     @media (max-width: 420px) {

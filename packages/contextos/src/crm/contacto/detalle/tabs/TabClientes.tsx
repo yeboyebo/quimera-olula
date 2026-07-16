@@ -27,12 +27,13 @@ export const TabClientes = ({
   const [estado, setEstado] = useState<Estado>("lista");
   const contactoId = contacto.modelo.id;
 
+  const { setLista } = clientes;
   const cargarClientes = useCallback(async () => {
     setCargando(true);
     const nuevosClientes = await getClientesPorContacto(contactoId);
-    clientes.setLista(nuevosClientes.datos);
+    setLista(nuevosClientes.datos);
     setCargando(false);
-  }, [clientes, contactoId]);
+  }, [setLista, contactoId]);
 
   useEffect(() => {
     if (contactoId) cargarClientes();

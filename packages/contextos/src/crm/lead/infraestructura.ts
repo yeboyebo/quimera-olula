@@ -140,24 +140,3 @@ export const getAccionesLead = async (leadId: string): RespuestaLista<Accion> =>
         }));
 };
 
-export const getFuentesLead = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-): RespuestaLista<Lead> => {
-    const q = criteriaQuery(filtro, orden, paginacion);
-
-    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(new ApiUrls().FUENTE_LEAD + q);
-    return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
-};
-
-export const getEstadosLead = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
-): RespuestaLista<Lead> => {
-    const q = criteriaQuery(filtro, orden, paginacion);
-
-    const respuesta = await RestAPI.get<{ datos: LeadAPI[]; total: number }>(new ApiUrls().ESTADO_LEAD + q);
-    return { datos: respuesta.datos.map(leadFromAPI), total: respuesta.total };
-};

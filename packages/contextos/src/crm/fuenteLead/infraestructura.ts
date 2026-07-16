@@ -5,13 +5,30 @@ import { FuenteLead } from "./diseño.ts";
 
 const baseUrlFuenteLead = `/crm/fuente_lead`;
 
-export const fuenteLeadToAPI = (e: FuenteLead) => ({
-    ...e,
-    valordefecto: e.valor_defecto,
+export interface FuenteLeadAPI {
+    id: string;
+    descripcion: string;
+    valor_defecto: boolean;
+}
+
+export const fuenteLeadDesdeAPI = (api: FuenteLeadAPI): FuenteLead => ({
+    id: api.id,
+    descripcion: api.descripcion,
+    valorDefecto: api.valor_defecto,
 });
 
+// El endpoint de escritura espera la clave "valordefecto" (sin guion bajo),
+// distinta de "valor_defecto" que devuelve la lectura.
+export const fuenteLeadToAPI = (f: FuenteLead) => {
+    const { valorDefecto, ...rest } = f;
+    return {
+        ...rest,
+        valordefecto: valorDefecto,
+    };
+};
+
 export const getFuenteLead = async (id: string): Promise<FuenteLead> =>
-    await RestAPI.get<{ datos: FuenteLead }>(`${baseUrlFuenteLead}/${id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: FuenteLeadAPI }>(`${baseUrlFuenteLead}/${id}`).then((respuesta) => fuenteLeadDesdeAPI(respuesta.datos));
 
 
 export const getFuentesLead = async (
@@ -21,8 +38,8 @@ export const getFuentesLead = async (
 ): RespuestaLista<FuenteLead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: FuenteLead[]; total: number }>(baseUrlFuenteLead + q);
-    return { datos: respuesta.datos, total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: FuenteLeadAPI[]; total: number }>(baseUrlFuenteLead + q);
+    return { datos: respuesta.datos.map(fuenteLeadDesdeAPI), total: respuesta.total };
 };
 
 export const postFuenteLead = async (fuente: FuenteLead): Promise<string> => {
@@ -38,4 +55,4 @@ export const patchFuenteLead = async (id: string, fuente: Partial<FuenteLead>): 
 export const deleteFuenteLead = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlFuenteLead}/${id}`, "Error al borrar la fuente de lead");
 
-export const marcarPorDefectoFuenteLead = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlFuenteLead}/${id}/pordefecto`, "Error al marcar por defecto la fuente de lead");
+export const marcarPorDefectoFuenteLead = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlFuenteLead}/${id}/pordefecto`, {}, "Error al marcar por defecto la fuente de lead");

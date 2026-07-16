@@ -12,5 +12,5 @@ export const nuevoEstadoOportunidadVacio: NuevoEstadoOportunidad = {
     id: '',
     descripcion: '',
     probabilidad: 0,
-    valor_defecto: false,
+    valorDefecto: false,
 };

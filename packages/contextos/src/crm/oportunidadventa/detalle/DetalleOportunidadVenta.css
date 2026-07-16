@@ -2,18 +2,18 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--espaciado-sm);
+    gap: var(--espaciado-s);
     margin: var(--espaciado-m) 0;
-    background-color: var(--color-fondo-secundario, #f5f5f5);
+    background-color: var(--color-superficie-elevada);
     border-radius: var(--redondeo-borde-xs);
-    border: 1px solid var(--color-borde, #e0e0e0);
-    margin-bottom: var(--espaciado-sm);
-    font-size: var(--tamaño-letra-sm);
+    border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+    margin-bottom: var(--espaciado-s);
+    font-size: var(--tamaño-letra-s);
 }
 
 .oportunidad-resumen-probabilidad {
-    font-size: var(--tamaño-letra-md);
-    font-weight: var(--grosor-letra-bold);
+    font-size: var(--tamaño-letra-m);
+    font-weight: var(--grosor-letra-7);
     color: var(--color-primario);
     min-width: 3rem;
     text-align: center;
@@ -23,14 +23,28 @@
     padding: 2px var(--espaciado-xs);
     background-color: var(--color-primario-claro);
     border-radius: var(--redondeo-borde-xs);
-    font-weight: var(--grosor-letra-medium);
+    font-weight: var(--grosor-letra-5);
     color: var(--color-primario-oscuro);
 }
 
 .oportunidad-resumen-importe {
-    font-weight: var(--grosor-letra-bold);
-    color: var(--color-exito-oscuro);
+    font-weight: var(--grosor-letra-7);
     margin-left: auto;
+}
+
+.oportunidad-resumen-importe.importe-grande {
+    background-color: var(--color-exito-claro);
+}
+
+.oportunidad-resumen-importe.importe-medio {
+    background-color: var(--color-advertencia-claro);
+}
+
+.oportunidad-resumen-importe.importe-pequeño {
+    background-color: var(--color-deshabilitado-claro);
+}
+
+.oportunidad-resumen-acciones-pendientes {
     padding-left: var(--espaciado-s);
 }
 

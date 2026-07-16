@@ -3,10 +3,10 @@ import { LeadSelector } from "#/crm/comun/componentes/lead.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
+import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useState } from "react";
+import { useCallback } from "react";
 import {
   getOportunidadVenta,
   postOportunidadVenta,
@@ -25,9 +25,6 @@ export const CrearOportunidadVenta = ({
   publicar: ProcesarEvento;
   modeloVacio?: NuevaOportunidadVenta;
 }) => {
-  const { intentar } = useContext(ContextoError);
-
-  const [creando, setCreando] = useState(false);
   const { modelo, uiProps, valido, set } = useModelo(
     metaNuevaOportunidadVenta,
     modeloVacio
@@ -57,16 +54,17 @@ export const CrearOportunidadVenta = ({
     [modelo, set]
   );
 
-  const crear = useCallback(async () => {
-    setCreando(true);
-    const id = await intentar(() => postOportunidadVenta(modelo));
-    const oportunidad = await intentar(() => getOportunidadVenta(id));
+  const crear_ = useCallback(async () => {
+    const id = await postOportunidadVenta(modelo);
+    const oportunidad = await getOportunidadVenta(id);
     publicar("oportunidad_creada", oportunidad);
-  }, [modelo, publicar, intentar]);
+  }, [modelo, publicar]);
 
-  const cancelar = useCallback(() => {
-    if (!creando) publicar("creacion_oportunidad_cancelada");
-  }, [creando, publicar]);
+  const cancelar_ = useCallback(() => {
+    publicar("creacion_oportunidad_cancelada");
+  }, [publicar]);
+
+  const [crear, cancelar] = useForm(crear_, cancelar_);
 
   return (
     <QModal

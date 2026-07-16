@@ -10,5 +10,5 @@ export const metaNuevaFuenteLead: MetaModelo<FuenteLead> = {
 export const nuevaFuenteLeadVacia: FuenteLead = {
     id: '',
     descripcion: '',
-    valor_defecto: false,
+    valorDefecto: false,
 };

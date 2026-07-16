@@ -8,7 +8,8 @@ export interface ContactoAccion {
 }
 
 export interface ClienteAccion {
-    id: string;
+    cliente_id: string | null;
+    tarjeta_id: string | null;
     nombre: string;
     email?: string | null;
     telefono?: string | null;

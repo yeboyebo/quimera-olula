@@ -17,6 +17,9 @@ export const TarjetaOportunidadVenta = (oportunidad: OportunidadVenta) => {
   const probabilidad = oportunidad.probabilidad ?? 0;
   const vencePronto = estaVencePronto(oportunidad.fecha_cierre);
   const claseImporte = claseImportePorImporte(importe);
+  const accionesPendientes = oportunidad.acciones_pendientes;
+  const tieneAccionesPendientes =
+    typeof accionesPendientes === "number" && accionesPendientes > 0;
 
   return (
     <article className="TarjetaOportunidadVenta">
@@ -44,6 +47,14 @@ export const TarjetaOportunidadVenta = (oportunidad: OportunidadVenta) => {
             {vencePronto && (
               <QEtiqueta variante="error" className="tarjeta-aviso-cliente">
                 Vence pronto
+              </QEtiqueta>
+            )}
+            {tieneAccionesPendientes && (
+              <QEtiqueta
+                variante="advertencia"
+                className="tarjeta-aviso-cliente"
+              >
+                {`${accionesPendientes} acciones pendientes`}
               </QEtiqueta>
             )}
           </div>

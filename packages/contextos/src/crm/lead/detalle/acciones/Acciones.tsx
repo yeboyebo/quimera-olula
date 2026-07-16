@@ -3,6 +3,7 @@ import { nuevaAccionVacia } from "#/crm/accion/crear/crear.ts";
 import { CrearAccion } from "#/crm/accion/crear/CrearAccion.tsx";
 import { DetalleAccion } from "#/crm/accion/detalle/DetalleAccion.tsx";
 import { Accion } from "#/crm/accion/diseño.ts";
+import { TarjetaAccionRapida } from "#/crm/accion/maestro/TarjetaAccionRapida.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
@@ -63,6 +64,9 @@ export const Acciones = ({ lead }: { lead: HookModelo<Lead> }) => {
       <ListadoSemiControlado
         metaTabla={metaTablaAccion}
         modosDisponibles={["tarjetas"]}
+        tarjeta={(accion) => (
+          <TarjetaAccionRapida accion={accion} publicar={emitir} />
+        )}
         entidades={ctx.acciones.lista}
         totalEntidades={ctx.acciones.lista.length}
         cargando={cargando}

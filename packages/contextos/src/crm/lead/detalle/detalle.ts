@@ -34,7 +34,7 @@ export const metaLead: MetaModelo<Lead> = {
         tipo: { requerido: true, bloqueado: true },
         estado_id: { requerido: true },
         nombre: { requerido: true },
-        id_fiscal: { requerido: true },
+        id_fiscal: { requerido: false },
         cliente_id: { requerido: false },
         proveedor_id: { requerido: false },
         direccion: { requerido: false },

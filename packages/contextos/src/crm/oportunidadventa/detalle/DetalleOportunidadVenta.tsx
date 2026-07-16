@@ -1,3 +1,4 @@
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
@@ -7,6 +8,7 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarOportunidadVenta } from "../borrar/BorrarOportunidadVenta.tsx";
+import { claseImportePorImporte } from "../comun/config_visual.ts";
 import { Acciones } from "./acciones/Acciones.tsx";
 import { metaOportunidadVenta, oportunidadVentaVacia } from "./detalle.ts";
 import "./DetalleOportunidadVenta.css";
@@ -38,6 +40,9 @@ export const DetalleOportunidadVenta = ({
 
   const oportunidad = useModelo(metaOportunidadVenta, ctx.oportunidad);
   const { modelo, modificado, valido } = oportunidad;
+  const accionesPendientes = modelo.acciones_pendientes;
+  const tieneAccionesPendientes =
+    typeof accionesPendientes === "number" && accionesPendientes > 0;
 
   useEffect(() => {
     if (oportunidadId) {
@@ -73,9 +78,11 @@ export const DetalleOportunidadVenta = ({
                 {modelo.descripcion_estado} ({modelo.probabilidad ?? 0}%)
               </span>
             )}
-            <span className="oportunidad-resumen-importe">
+            <QEtiqueta
+              className={`oportunidad-resumen-importe ${claseImportePorImporte(modelo.importe ?? 0)}`}
+            >
               {formatearMoneda(modelo.importe, "EUR")}
-            </span>
+            </QEtiqueta>
             {modelo.fecha_cierre && (
               <span className="oportunidad-resumen-fecha">
                 {formatearFechaDate(new Date(modelo.fecha_cierre))}
@@ -85,6 +92,14 @@ export const DetalleOportunidadVenta = ({
               <span className="oportunidad-resumen-cliente">
                 {modelo.nombre_cliente}
               </span>
+            )}
+            {tieneAccionesPendientes && (
+              <QEtiqueta
+                variante="advertencia"
+                className="oportunidad-resumen-acciones-pendientes"
+              >
+                {`${accionesPendientes} acciones pendientes`}
+              </QEtiqueta>
             )}
           </div>
 

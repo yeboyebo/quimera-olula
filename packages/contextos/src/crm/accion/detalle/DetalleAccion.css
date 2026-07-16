@@ -14,28 +14,13 @@
     quimera-input[nombre="fecha"] {
         grid-column: span 3;
     }
-}
-
-.DetalleAccion .TabDatos {
-
-    quimera-autocompletar[nombre="cliente_id"] {
-        grid-column: 1 / span 4;
-    }
-
-    quimera-input[nombre="tarjeta_id"] {
-        grid-column: 1 / span 4;
-    }
 
     quimera-autocompletar[nombre="contacto_id"] {
-        grid-column: span 4;
-    }
-
-    quimera-input[nombre="usuario_id"] {
-        grid-column: 1 / span 12;
+        grid-column: span 6;
     }
 
     quimera-autocompletar[nombre="oportunidad_id"] {
-        grid-column: span 4;
+        grid-column: span 6;
     }
 }
 
@@ -45,49 +30,54 @@
     }
 }
 
-.DetalleAccion .contactos-cliente {
+.DetalleAccion .cliente-resumen {
     margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-xs);
 }
 
-.DetalleAccion .contactos-cliente h4 {
-    margin: 0 0 0.75rem;
-}
-
-.DetalleAccion .contactos-tarjeta {
-    margin: 0 0 0.75rem;
-    font-size: 0.875rem;
-    color: var(--q-color-texto-secundario, #666);
+.DetalleAccion .cliente-resumen h4 {
+    margin: var(--espaciado-s) 0;
 }
 
 .DetalleAccion .contactos-vacio {
     margin: 0;
-    color: var(--q-color-texto-secundario, #666);
+    color: var(--color-texto-secundario);
 }
 
-.DetalleAccion .contacto-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border: 1px solid var(--q-color-borde-suave, #ddd);
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-}
-
-.DetalleAccion .contacto-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
+.DetalleAccion .contacto-tarjeta {
+    background: linear-gradient(180deg, var(--color-superficie) 0%, var(--color-superficie-elevada) 100%);
+    border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+    border-radius: var(--redondeo-borde-m);
+    box-shadow: var(--sombra-xs);
+    padding: var(--espaciado-s) var(--espaciado-m);
 }
 
 .DetalleAccion .contacto-acciones {
     display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    gap: var(--espaciado-xs);
+    justify-content: flex-end;
 }
 
 .DetalleAccion .contacto-acciones a {
-    text-decoration: none;
-    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+    color: var(--color-texto-primario);
+}
+
+.DetalleAccion .contacto-acciones a:hover {
+    background: var(--color-superficie-elevada);
+}
+
+.DetalleAccion .accion-finalizada {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-exito);
+    font-weight: var(--grosor-letra-4, 600);
 }

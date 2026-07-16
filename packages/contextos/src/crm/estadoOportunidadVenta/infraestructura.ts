@@ -6,14 +6,34 @@ import { EstadoOportunidad } from "./diseño.ts";
 
 const baseUrlEstadoOportunidadVenta = `/crm/estado_oportunidad_venta`;
 
-// Convierte EstadoOportunidad a formato API (valor_defecto -> valordefecto)
-export const estadoOportunidadToAPI = (e: NuevoEstadoOportunidad) => ({
-    ...e,
-    valordefecto: e.valor_defecto,
+export interface EstadoOportunidadAPI {
+    id: string;
+    estadobase: string;
+    descripcion: string;
+    probabilidad: number;
+    valor_defecto: boolean;
+}
+
+export const estadoOportunidadDesdeAPI = (api: EstadoOportunidadAPI): EstadoOportunidad => ({
+    id: api.id,
+    estadobase: api.estadobase,
+    descripcion: api.descripcion,
+    probabilidad: api.probabilidad,
+    valorDefecto: api.valor_defecto,
 });
 
+// El endpoint de escritura espera la clave "valordefecto" (sin guion bajo),
+// distinta de "valor_defecto" que devuelve la lectura.
+export const estadoOportunidadToAPI = (e: NuevoEstadoOportunidad) => {
+    const { valorDefecto, ...rest } = e;
+    return {
+        ...rest,
+        valordefecto: valorDefecto,
+    };
+};
+
 export const getEstadoOportunidad = async (id: string): Promise<EstadoOportunidad> =>
-    await RestAPI.get<{ datos: EstadoOportunidad }>(`${baseUrlEstadoOportunidadVenta}/${id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: EstadoOportunidadAPI }>(`${baseUrlEstadoOportunidadVenta}/${id}`).then((respuesta) => estadoOportunidadDesdeAPI(respuesta.datos));
 
 
 export const getEstadosOportunidad = async (
@@ -23,8 +43,8 @@ export const getEstadosOportunidad = async (
 ): RespuestaLista<EstadoOportunidad> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: EstadoOportunidad[]; total: number }>(baseUrlEstadoOportunidadVenta + q);
-    return { datos: respuesta.datos, total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: EstadoOportunidadAPI[]; total: number }>(baseUrlEstadoOportunidadVenta + q);
+    return { datos: respuesta.datos.map(estadoOportunidadDesdeAPI), total: respuesta.total };
 };
 
 export const postEstadoOportunidad = async (estado: NuevoEstadoOportunidad): Promise<string> => {
@@ -40,4 +60,4 @@ export const patchEstadoOportunidad = async (id: string, estado: Partial<EstadoO
 export const deleteEstadoOportunidad = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlEstadoOportunidadVenta}/${id}`, "Error al borrar el estado de oportunidad de venta");
 
-export const marcarPorDefectoEstadoOportunidad = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}/pordefecto`, "Error al marcar por defecto el estado de oportunidad de venta");
+export const marcarPorDefectoEstadoOportunidad = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}/pordefecto`, {}, "Error al marcar por defecto el estado de oportunidad de venta");

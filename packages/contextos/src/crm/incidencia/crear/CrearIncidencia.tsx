@@ -3,33 +3,31 @@ import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QDate, QModal, QTextArea } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useState } from "react";
+import { useCallback } from "react";
 import { getIncidencia, postIncidencia } from "../infraestructura.ts";
 import "./CrearIncidencia.css";
 import { metaNuevaIncidencia, nuevaIncidenciaVacia } from "./crear.ts";
 
 export const CrearIncidencia = ({ publicar }: { publicar: EmitirEvento }) => {
-  const { intentar } = useContext(ContextoError);
-
-  const [creando, setCreando] = useState(false);
   const { modelo, uiProps, valido } = useModelo(
     metaNuevaIncidencia,
     nuevaIncidenciaVacia
   );
 
-  const crear = useCallback(async () => {
-    setCreando(true);
-    const id = await intentar(() => postIncidencia(modelo));
-    const incidencia = await intentar(() => getIncidencia(id));
+  const crear_ = useCallback(async () => {
+    const id = await postIncidencia(modelo);
+    const incidencia = await getIncidencia(id);
     publicar("incidencia_creada", incidencia);
-  }, [modelo, publicar, intentar]);
+  }, [modelo, publicar]);
 
-  const cancelar = useCallback(() => {
-    if (!creando) publicar("creacion_incidencia_cancelada");
-  }, [creando, publicar]);
+  const cancelar_ = useCallback(() => {
+    publicar("creacion_incidencia_cancelada");
+  }, [publicar]);
+
+  const [crear, cancelar] = useForm(crear_, cancelar_);
 
   return (
     <QModal

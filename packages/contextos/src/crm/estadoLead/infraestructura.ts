@@ -5,13 +5,30 @@ import { EstadoLead } from "./diseño.ts";
 
 const baseUrlEstadoLead = `/crm/estado_lead`;
 
-export const estadoLeadToAPI = (e: EstadoLead) => ({
-    ...e,
-    valordefecto: e.valor_defecto,
+export interface EstadoLeadAPI {
+    id: string;
+    descripcion: string;
+    valor_defecto: boolean;
+}
+
+export const estadoLeadDesdeAPI = (api: EstadoLeadAPI): EstadoLead => ({
+    id: api.id,
+    descripcion: api.descripcion,
+    valorDefecto: api.valor_defecto,
 });
 
+// El endpoint de escritura espera la clave "valordefecto" (sin guion bajo),
+// distinta de "valor_defecto" que devuelve la lectura.
+export const estadoLeadToAPI = (e: EstadoLead) => {
+    const { valorDefecto, ...rest } = e;
+    return {
+        ...rest,
+        valordefecto: valorDefecto,
+    };
+};
+
 export const getEstadoLead = async (id: string): Promise<EstadoLead> =>
-    await RestAPI.get<{ datos: EstadoLead }>(`${baseUrlEstadoLead}/${id}`).then((respuesta) => respuesta.datos);
+    await RestAPI.get<{ datos: EstadoLeadAPI }>(`${baseUrlEstadoLead}/${id}`).then((respuesta) => estadoLeadDesdeAPI(respuesta.datos));
 
 
 export const getEstadosLead = async (
@@ -21,8 +38,8 @@ export const getEstadosLead = async (
 ): RespuestaLista<EstadoLead> => {
     const q = criteriaQuery(filtro, orden, paginacion);
 
-    const respuesta = await RestAPI.get<{ datos: EstadoLead[]; total: number }>(baseUrlEstadoLead + q);
-    return { datos: respuesta.datos, total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: EstadoLeadAPI[]; total: number }>(baseUrlEstadoLead + q);
+    return { datos: respuesta.datos.map(estadoLeadDesdeAPI), total: respuesta.total };
 };
 
 export const postEstadoLead = async (estado: EstadoLead): Promise<string> => {
@@ -38,4 +55,4 @@ export const patchEstadoLead = async (id: string, estado: Partial<EstadoLead>): 
 export const deleteEstadoLead = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlEstadoLead}/${id}`, "Error al borrar el estado de lead");
 
-export const marcarPorDefectoEstadoLead = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlEstadoLead}/${id}/pordefecto`, "Error al marcar por defecto el estado de lead");
+export const marcarPorDefectoEstadoLead = async (id: string): Promise<void> => await RestAPI.patch(`${baseUrlEstadoLead}/${id}/pordefecto`, {}, "Error al marcar por defecto el estado de lead");

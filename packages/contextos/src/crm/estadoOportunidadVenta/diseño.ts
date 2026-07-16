@@ -5,5 +5,5 @@ export interface EstadoOportunidad extends Entidad {
     estadobase: string;
     descripcion: string;
     probabilidad: number;
-    valor_defecto: boolean;
+    valorDefecto: boolean;
 };

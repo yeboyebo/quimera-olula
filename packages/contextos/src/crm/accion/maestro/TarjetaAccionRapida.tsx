@@ -54,7 +54,11 @@ export const TarjetaAccionRapida = ({
           ""
         )
       }
-      abajoIzquierda={accion.estado}
+      abajoIzquierda={
+        accion.estado === "Hecha" && accion.fecha_fin
+          ? `${accion.estado} · ${formatearFechaDate(accion.fecha_fin)}`
+          : accion.estado
+      }
       abajoDerecha={accion.nombre_cliente}
       // expansion={
       //   <div className="tarjeta-accion-rapida-acciones">

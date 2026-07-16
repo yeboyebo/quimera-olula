@@ -10,5 +10,5 @@ export const metaNuevoEstadoLead: MetaModelo<EstadoLead> = {
 export const nuevoEstadoLeadVacio: EstadoLead = {
     id: '',
     descripcion: '',
-    valor_defecto: false,
+    valorDefecto: false,
 };

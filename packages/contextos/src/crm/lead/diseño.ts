@@ -5,7 +5,7 @@ export interface Lead extends Entidad {
     tipo: string;
     estado_id: string;
     nombre: string;
-    id_fiscal: string;
+    id_fiscal: string | null;
     cliente_id: string;
     proveedor_id: string | null;
     direccion: string;

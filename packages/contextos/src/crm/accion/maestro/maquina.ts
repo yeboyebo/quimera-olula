@@ -26,6 +26,5 @@ export const getMaquina: () => Maquina<EstadoMaestroAcciones, ContextoMaestroAcc
 
             accion_creada: [Acciones.incluir, Acciones.activar, "INICIAL"],
         },
-        FINALIZANDO: {},
     }
 }
