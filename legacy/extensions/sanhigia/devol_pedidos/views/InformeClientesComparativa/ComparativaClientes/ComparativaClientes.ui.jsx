@@ -155,8 +155,10 @@ function ComparativaClientes({ useStyles }) {
       {estadoVista === "lanzando" && <LinearProgress />}
       {desktop ? (
         estadoVista === "lanzadoConResultados" && (
-          <Box id="scrollableTablaClientesComparativa">
-            <Table
+          <Box id="scrollableTablaClientesComparativa" style={{ height: `calc(100vh - ${470}px)`, overflow: "auto" }}>
+            {console.log('mimensaje_table, hasMore:', paginaCli.next !== null, "!soloSeleccionados:", !soloSeleccionados)}
+
+            < Table
               id="tdbClientesComparativa"
               idField="codCliente"
               data={
@@ -274,8 +276,8 @@ function ComparativaClientes({ useStyles }) {
                 divider={true}
                 onClick={() =>
                   dispatch({
-                    type: "onTdbClientesInactivosRowClicked",
-                    payload: { id: cliente.codCliente },
+                    type: "onTdbClientesComparativaRowClicked",
+                    payload: { codCliente: cliente.codCliente },
                   })
                 }
               >
@@ -285,9 +287,10 @@ function ComparativaClientes({ useStyles }) {
                     id="seleccionarCliente"
                     size="small"
                     tooltip={cliente.seleccionada ? "Deseleccionar cliente" : "Seleccionar cliente"}
-                    onClick={() =>
-                      dispatch({ type: "onSeleccionarClienteClicked", payload: { data: cliente } })
-                    }
+                    onClick={event => {
+                      event.stopPropagation();
+                      dispatch({ type: "onSeleccionarClienteClicked", payload: { data: cliente } });
+                    }}
                   >
                     {cliente.seleccionada ? (
                       <Icon>check_box</Icon>
@@ -326,15 +329,18 @@ function ComparativaClientes({ useStyles }) {
             ))}
           </ListInfiniteScroll>
         </Box>
-      )}
+      )
+      }
 
-      {estadoVista === "lanzadoSinResultados" && (
-        <Box mt={4} display="flex" justifyContent="center">
-          <Typography component="span" variant="h6">
-            No existen registros para este criterio de búsqueda
-          </Typography>
-        </Box>
-      )}
+      {
+        estadoVista === "lanzadoSinResultados" && (
+          <Box mt={4} display="flex" justifyContent="center">
+            <Typography component="span" variant="h6">
+              No existen registros para este criterio de búsqueda
+            </Typography>
+          </Box>
+        )
+      }
 
       <Dialog
         open={abrirMostrarEmails}
@@ -362,7 +368,7 @@ function ComparativaClientes({ useStyles }) {
           </Box>
         </DialogContent>
       </Dialog>
-    </Quimera.Template>
+    </Quimera.Template >
   );
 }
 

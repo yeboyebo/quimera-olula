@@ -16,10 +16,7 @@ function ComparativaArticulos({ useStyles }) {
     dispatch,
   ] = useStateValue();
   const classes = useStyles();
-  const nombreCliente =
-    cliComparativa.length > 0
-      ? cliComparativa.filter(c => c.codCliente === idCliente)[0].nombreCliente
-      : "";
+  const nombreCliente = cliComparativa.find(c => c.codCliente === idCliente)?.nombreCliente ?? "";
   const cabecera = `Cliente: ${nombreCliente ? nombreCliente : ""}; Año 1: ${
     anyoUno ? anyoUno : ""
   }; Año 2: ${anyoDos ? anyoDos : ""}; ${
