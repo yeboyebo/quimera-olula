@@ -246,7 +246,6 @@ export const bunch = parent => ({
   ],
   onMostrarSiguienteClicked: [
     {
-      log: (payload, state) => ['mimensaje_sssssssssssssssssccccccccccccc', variables],
       type: "grape",
       name: "cargarClientes",
       plug: () => ({ page: "next" }),

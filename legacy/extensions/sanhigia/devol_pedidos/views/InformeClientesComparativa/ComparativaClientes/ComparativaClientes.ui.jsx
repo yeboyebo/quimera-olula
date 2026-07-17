@@ -24,6 +24,7 @@ import {
   ListItemText,
 } from "@quimera/thirdparty";
 import Quimera, { useStateValue, useWidth, util } from "quimera";
+import { useRef } from "react";
 
 import initialData from "../initial-data";
 
@@ -48,6 +49,17 @@ function ComparativaClientes({ useStyles }) {
   const classes = useStyles();
   const width = useWidth();
   const desktop = isWidthUp("sm", width);
+  const ultimaLongitudPaginada = useRef(-1);
+
+  const onScrollTablaClientes = event => {
+    if (soloSeleccionados || paginaCli.next === null) return;
+    const { scrollTop, scrollHeight, clientHeight } = event.target;
+    const cercaDelFinal = scrollHeight - scrollTop - clientHeight < 100;
+    if (cercaDelFinal && ultimaLongitudPaginada.current !== cliComparativa.length) {
+      ultimaLongitudPaginada.current = cliComparativa.length;
+      dispatch({ type: "onMostrarSiguienteClicked" });
+    }
+  };
 
   const puedoLanzar = () =>
     estadoVista === "limpio" && !soloSeleccionados && anyoUno != null && anyoDos != null;
@@ -155,10 +167,12 @@ function ComparativaClientes({ useStyles }) {
       {estadoVista === "lanzando" && <LinearProgress />}
       {desktop ? (
         estadoVista === "lanzadoConResultados" && (
-          <Box id="scrollableTablaClientesComparativa" style={{ height: `calc(100vh - ${470}px)`, overflow: "auto" }}>
-            {console.log('mimensaje_table, hasMore:', paginaCli.next !== null, "!soloSeleccionados:", !soloSeleccionados)}
-
-            < Table
+          <Box
+            id="scrollableTablaClientesComparativa"
+            style={{ height: `calc(100vh - 200px)`, overflow: "auto" }}
+            onScroll={onScrollTablaClientes}
+          >
+            <Table
               id="tdbClientesComparativa"
               idField="codCliente"
               data={
@@ -169,12 +183,11 @@ function ComparativaClientes({ useStyles }) {
               next={() => !soloSeleccionados && dispatch({ type: "onMostrarSiguienteClicked" })}
               hasMore={paginaCli.next !== null}
               loader={soloSeleccionados ? " " : null}
-              scrollableTarget="scrollableTablaClientesComparativa"
               bgcolorRowFunction={cliente => (cliente.variacion > 0 ? "#ace1af" : "#fa8072")}
             >
               <Column.Action
                 id="marcarCliente"
-                width={35}
+                width={40}
                 value={linea => (
                   <FormControlLabel
                     style={{ margin: "0px", padding: "0px" }}
