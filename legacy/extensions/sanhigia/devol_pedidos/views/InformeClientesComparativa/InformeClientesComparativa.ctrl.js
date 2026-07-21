@@ -328,8 +328,25 @@ export const bunch = parent => ({
   ],
   onTdbClientesComparativaRowClicked: [
     {
-      type: "navigate",
-      url: ({ codCliente }) => `/informe-clientes-comparativa/${codCliente}`,
+      type: "setStateKey",
+      plug: ({ codCliente }) => ({ path: "idCliente", value: codCliente }),
+    },
+    {
+      type: "grape",
+      name: "cargarDatosCliente",
+    },
+  ],
+  onCerrarComparativaArticulos: [
+    {
+      type: "setStateKeys",
+      plug: () => ({
+        keys: {
+          idCliente: null,
+          artiComparativa: [],
+          ordenArtComparativa: { field: "referencia", direction: "ASC" },
+          paginaArt: { limit: 25, next: null, previous: null },
+        },
+      }),
     },
   ],
   onTdbArticulosComparativaColumnClicked: [
