@@ -1,13 +1,12 @@
 import { authMiddleware } from "#/auth/middlewares.ts";
 import { useTimerRefresco } from "#/auth/useTimerRefresco.ts";
-import { Vista } from "@olula/componentes/index.ts";
+import { InicioOlula, Vista } from "@olula/componentes/index.ts";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
 import { crearMenu, MenuContextFactory } from "@olula/lib/menu.ts";
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
-import { InicioOlula } from "@olula/componentes/index.ts";
 import { FactoryOlula } from "./factory.ts";
 import { router } from "./router_factory.ts";
 
