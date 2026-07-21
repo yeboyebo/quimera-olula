@@ -33,17 +33,23 @@ const imprimirTicketOFactura = async (venta: VentaTpv, pagos: PagoVentaTpv[]) =>
         window.open(url, "_blank");
     } else {
         const blob = await getReportVenta(venta.id);
+        console.log('imprimiendo venta');
         await imprimir_blob(blob);
+        console.log('imprimiendo venta impresa');
         const pagos_vale = pagos.filter((p) => p.vale && p.saldoVale && p.saldoVale > 0);
         for (const p of pagos_vale) {
+            console.log("Imprimiendo vale", p.vale);
             await imprimirVale(p.vale!);
         }
     }
 }
 
 const imprimirVale = async (idVale: string) => {
+    console.log("getReportVale llamado con", idVale);
     const blob = await getReportVale(idVale);
+    console.log("blob recibido", blob?.size, blob?.type);
     await imprimir_blob(blob);
+    console.log("imprimir_blob completado para vale");
 }
 
 export const DetalleVentaTpv = ({

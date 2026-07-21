@@ -10,8 +10,10 @@ export const imprimir_blob = (blob: Blob): Promise<void> => {
         iframe.onload = function () {
             setTimeout(function () {
                 iframe.focus();
+                window.addEventListener('focus', () => {
+                    resolve();
+                }, { once: true });
                 iframe.contentWindow?.print();
-                resolve();
             }, 1);
         };
     });
