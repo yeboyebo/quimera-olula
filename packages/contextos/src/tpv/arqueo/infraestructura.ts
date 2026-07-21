@@ -90,11 +90,13 @@ export const getArqueos: GetArqueosTpv = async (
         miPuntoVentaLocal?.id ?? "",
     ];
 
-    const filtroCombinado: Filtro = Array.isArray(filtro)
-        ? Array.isArray(filtro[0])
-            ? [...filtro as ClausulaFiltro[], clausulaFiltroPuntoVenta]
-            : [filtro as ClausulaFiltro, clausulaFiltroPuntoVenta]
+    const esListaDeClausulas =
+        Array.isArray(filtro) && (filtro.length === 0 || Array.isArray(filtro[0]));
+
+    const filtroCombinado: Filtro = esListaDeClausulas
+        ? [...(filtro as ClausulaFiltro[]), clausulaFiltroPuntoVenta]
         : { and: [filtro, [clausulaFiltroPuntoVenta]] };
+
     const q = criteriaQuery(filtroCombinado, orden, paginacion);
 
     const respuesta = await RestAPI.get<{ datos: CabeceraArqueoTpvApi[]; total: number }>(`${baseUrl}_items` + q);
