@@ -8,6 +8,7 @@ type QModalProps = {
   titulo?: string;
   abierto?: boolean;
   onCerrar?: () => void;
+  bloquearCierre?: boolean;
   pantallaCompletaMovil?: boolean;
   anchoEstable?: boolean;
   mostrarCabecera?: boolean;
@@ -19,6 +20,7 @@ export const QModal = ({
   titulo,
   abierto = false,
   onCerrar = () => {},
+  bloquearCierre = false,
   pantallaCompletaMovil = true,
   anchoEstable = false,
   mostrarCabecera = true,
@@ -60,6 +62,11 @@ export const QModal = ({
     const modal = refModal.current;
     if (!modal) return;
 
+    const manejarCancel = (e: Event) => {
+      if (!bloquearCierre) return;
+      e.preventDefault();
+    };
+
     const manejarClose = () => {
       if (cerradoPorEstadoRef.current) {
         cerradoPorEstadoRef.current = false;
@@ -72,18 +79,22 @@ export const QModal = ({
       if (!modal) return;
 
       if (e.target === modal) {
+        if (bloquearCierre) return;
         return modal.close();
       }
     };
 
+    modal.addEventListener("cancel", manejarCancel);
     modal.addEventListener("close", manejarClose);
-    modal.addEventListener("click", (e) => manejarClick(e, modal));
+    const clickHandler = (e: MouseEvent) => manejarClick(e, modal);
+    modal.addEventListener("click", clickHandler);
 
     return () => {
+      modal.removeEventListener("cancel", manejarCancel);
       modal.removeEventListener("close", manejarClose);
-      modal.removeEventListener("click", (e) => manejarClick(e, modal));
+      modal.removeEventListener("click", clickHandler);
     };
-  }, [onCerrar]);
+  }, [bloquearCierre, onCerrar]);
 
   return (
     <quimera-modal {...attrs}>
