@@ -1,4 +1,4 @@
-import { EstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
+import { opcionesEstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
 import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -8,23 +8,42 @@ import {
   filtroTextos,
   getMetaFiltroDefecto,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import type { Orden } from "@olula/lib/diseño.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { CrearIncidencia } from "../crear/CrearIncidencia.tsx";
 import { DetalleIncidencia } from "../detalle/DetalleIncidencia.tsx";
 import { Incidencia } from "../diseño.ts";
 import { TarjetaIncidencia } from "../vistas/TarjetaIncidencia.tsx";
-import { metaTablaIncidencia } from "./maestro.ts";
+import {
+  crearFiltroEstadoIncidencia,
+  estadosIncidenciaOcultosPorDefecto,
+  metaTablaIncidencia,
+} from "./maestro.ts";
 import "./MaestroIncidencias.css";
 import { getMaquina } from "./maquina.ts";
+
+const ordenPorPrioridad = ["prioridad", "ASC"] as unknown as Orden;
+
+const estadosVisiblesPorDefecto = opcionesEstadoIncidencia
+  .map((opcion) => opcion.valor)
+  .filter((valor) => !estadosIncidenciaOcultosPorDefecto.includes(valor));
 
 export const MaestroIncidencias = () => {
   const { id, criteria } = getUrlParams();
 
+  const criteriaInicial = useMemo(
+    () => ({
+      ...criteria,
+      orden: criteria.orden.length ? criteria.orden : ordenPorPrioridad,
+    }),
+    [criteria]
+  );
+
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    incidencias: listaActivaEntidadesInicial<Incidencia>(id, criteria),
+    incidencias: listaActivaEntidadesInicial<Incidencia>(id, criteriaInicial),
   });
 
   useUrlParams(ctx.incidencias.activo, ctx.incidencias.criteria);
@@ -48,13 +67,10 @@ export const MaestroIncidencias = () => {
                 estado: {
                   id: "estado",
                   label: "Estado",
-                  filtro: (v) => filtroTextos("estado", v),
-                  render: (valor, onChange) => (
-                    <EstadoIncidencia
-                      valor={(valor as string) ?? ""}
-                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
-                    />
-                  ),
+                  tipo: "multiseleccion",
+                  opciones: opcionesEstadoIncidencia,
+                  valorDefecto: estadosVisiblesPorDefecto,
+                  filtro: crearFiltroEstadoIncidencia,
                 },
                 prioridad: {
                   id: "prioridad",
@@ -69,6 +85,7 @@ export const MaestroIncidencias = () => {
                 },
               }}
               criteria={ctx.incidencias.criteria}
+              criteriaInicial={criteriaInicial}
               modosDisponibles={["tarjetas"]}
               tarjeta={TarjetaIncidencia}
               entidades={ctx.incidencias.lista}

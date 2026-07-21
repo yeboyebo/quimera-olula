@@ -1,3 +1,4 @@
+import { TipoAccion } from "#/crm/comun/componentes/tipo_accion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
@@ -41,6 +42,7 @@ export const CrearAccion = ({
       <div className="CrearAccion">
         <quimera-formulario>
           <QInput label="Descripción" {...uiProps("descripcion")} />
+          <TipoAccion {...uiProps("tipo")} />
           <QInput label="Fecha" {...uiProps("fecha")} />
         </quimera-formulario>
 

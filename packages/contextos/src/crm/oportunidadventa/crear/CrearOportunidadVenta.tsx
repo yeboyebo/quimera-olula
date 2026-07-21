@@ -21,9 +21,11 @@ import { NuevaOportunidadVenta } from "./diseño.ts";
 export const CrearOportunidadVenta = ({
   publicar,
   modeloVacio = nuevaOportunidadVentaVacia,
+  ocultarOrigen = false,
 }: {
   publicar: ProcesarEvento;
   modeloVacio?: NuevaOportunidadVenta;
+  ocultarOrigen?: boolean;
 }) => {
   const { modelo, uiProps, valido, set } = useModelo(
     metaNuevaOportunidadVenta,
@@ -78,26 +80,30 @@ export const CrearOportunidadVenta = ({
       <div className="CrearOportunidadVenta">
         <quimera-formulario>
           <QInput label="Descripción" {...uiProps("descripcion")} />
-          <Cliente
-            {...uiProps("cliente_id", "nombre_cliente")}
-            label="Cliente"
-            valor={modelo.cliente_id ?? ""}
-            descripcion={modelo.nombre_cliente ?? ""}
-            onChange={seleccionarCliente}
-            deshabilitado={Boolean(modelo.tarjeta_id)}
-            erroneo={false}
-            opcional
-          />
-          <LeadSelector
-            {...uiProps("tarjeta_id")}
-            label="Tarjeta"
-            valor={modelo.tarjeta_id ?? ""}
-            descripcion={modelo.nombre_tarjeta ?? ""}
-            onChange={seleccionarTarjeta}
-            deshabilitado={Boolean(modelo.cliente_id)}
-            erroneo={false}
-            opcional
-          />
+          {!ocultarOrigen && (
+            <>
+              <Cliente
+                {...uiProps("cliente_id", "nombre_cliente")}
+                label="Cliente"
+                valor={modelo.cliente_id ?? ""}
+                descripcion={modelo.nombre_cliente ?? ""}
+                onChange={seleccionarCliente}
+                deshabilitado={Boolean(modelo.tarjeta_id)}
+                erroneo={false}
+                opcional
+              />
+              <LeadSelector
+                {...uiProps("tarjeta_id")}
+                label="Tarjeta"
+                valor={modelo.tarjeta_id ?? ""}
+                descripcion={modelo.nombre_tarjeta ?? ""}
+                onChange={seleccionarTarjeta}
+                deshabilitado={Boolean(modelo.cliente_id)}
+                erroneo={false}
+                opcional
+              />
+            </>
+          )}
           {/* Pendiente: permitir nombre_cliente manual para clientes no registrados. */}
           <QInput label="Total" {...uiProps("importe")} />
         </quimera-formulario>

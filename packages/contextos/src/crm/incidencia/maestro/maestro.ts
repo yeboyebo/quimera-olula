@@ -1,5 +1,5 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
+import { ClausulaFiltro, Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import {
     accionesListaActivaEntidades,
     ProcesarListaActivaEntidades,
@@ -15,6 +15,26 @@ export const metaTablaIncidencia: MetaTabla<Incidencia> = [
     { id: "estado", cabecera: "Estado" },
     { id: "prioridad", cabecera: "Prioridad" },
 ];
+
+// Estados que NO se muestran por defecto en el maestro.
+export const estadosIncidenciaOcultosPorDefecto = ["rechazada", "cerrada"];
+
+export const crearFiltroEstadoIncidencia = (
+    valor: unknown
+): ClausulaFiltro | null => {
+    const valores = Array.isArray(valor)
+        ? valor.map(String).filter(Boolean)
+        : typeof valor === "string"
+            ? valor
+                .split(",")
+                .map((v) => v.trim())
+                .filter(Boolean)
+            : [];
+
+    if (!valores.length) return null;
+
+    return ["estado", "in", valores as unknown as string] as ClausulaFiltro;
+};
 
 type ProcesarIncidencias = ProcesarContexto<EstadoMaestroIncidencias, ContextoMaestroIncidencias>;
 

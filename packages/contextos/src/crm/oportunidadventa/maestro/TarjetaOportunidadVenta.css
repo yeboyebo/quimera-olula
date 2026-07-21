@@ -12,6 +12,14 @@
 
 .TarjetaOportunidadVenta .tarjeta-linea-secundaria {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaciado-xs);
+}
+
+.TarjetaOportunidadVenta .tarjeta-avisos {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--espaciado-s);
 }
@@ -28,7 +36,6 @@
 }
 
 .TarjetaOportunidadVenta .tarjeta-aviso-cliente {
-    margin-left: var(--espaciado-s);
     font-size: var(--tamaño-letra-m);
 }
 

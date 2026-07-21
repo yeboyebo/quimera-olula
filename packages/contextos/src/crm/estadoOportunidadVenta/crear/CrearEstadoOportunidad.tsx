@@ -46,6 +46,7 @@ export const CrearEstadoOportunidad = ({
     >
       <div className="CrearEstadoOportunidad">
         <quimera-formulario>
+          <QInput label="Código" maxLength={10} {...uiProps("id")} />
           <QInput label="Descripción" {...uiProps("descripcion")} />
           <QInput label="Probabilidad (%)" {...uiProps("probabilidad")} />
         </quimera-formulario>

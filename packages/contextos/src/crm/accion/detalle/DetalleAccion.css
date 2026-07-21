@@ -19,7 +19,7 @@
         grid-column: span 6;
     }
 
-    quimera-autocompletar[nombre="oportunidad_id"] {
+    quimera-input[nombre="origen"] {
         grid-column: span 6;
     }
 }

@@ -1,5 +1,4 @@
 import { EstadoAccion } from "#/crm/comun/componentes/estado_accion.tsx";
-import { OportunidadVenta } from "#/crm/comun/componentes/oportunidad_venta.tsx";
 import { TipoAccion } from "#/crm/comun/componentes/tipo_accion.tsx";
 import { ContactoSelector } from "#/ventas/comun/componentes/contacto.tsx";
 import { QAvatar } from "@olula/componentes/atomos/qavatar.tsx";
@@ -79,10 +78,19 @@ export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
   const contactosCliente = cliente?.contactos ?? [];
   const esTarjeta = !modelo.cliente_id && Boolean(modelo.tarjeta_id);
 
+  // Una acción puede venir de una oportunidad, un cliente, una tarjeta o una
+  // incidencia. Mostramos, en solo lectura, el dato que corresponda: la
+  // descripción de la oportunidad si la hay, o el nombre del cliente.
+  const tieneOportunidad = Boolean(modelo.oportunidad_id);
+  const origenLabel = tieneOportunidad ? "Oportunidad" : "Cliente";
+  const origenValor = tieneOportunidad
+    ? modelo.descripcion_oportunidad ?? ""
+    : modelo.nombre_cliente ?? "";
+
   return (
     <div className="TabDatos">
       <quimera-formulario>
-        <QInput label="Descripción" {...uiProps("descripcion")} />
+        <QInput label="Tarea" {...uiProps("descripcion")} />
         <QInput label="Fecha" {...uiProps("fecha")} />
         <EstadoAccion {...uiProps("estado")} />
         <TipoAccion {...uiProps("tipo")} />
@@ -90,8 +98,11 @@ export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
 
       <quimera-formulario>
         <ContactoSelector {...uiProps("contacto_id", "nombre_contacto")} />
-        <OportunidadVenta
-          {...uiProps("oportunidad_id", "descripcion_oportunidad")}
+        <QInput
+          label={origenLabel}
+          nombre="origen"
+          soloTexto
+          valor={origenValor}
         />
       </quimera-formulario>
 

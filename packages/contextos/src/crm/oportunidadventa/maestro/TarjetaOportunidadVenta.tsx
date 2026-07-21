@@ -44,18 +44,22 @@ export const TarjetaOportunidadVenta = (oportunidad: OportunidadVenta) => {
             <span className="tarjeta-cliente">
               {oportunidad.nombre_cliente || "-"}
             </span>
-            {vencePronto && (
-              <QEtiqueta variante="error" className="tarjeta-aviso-cliente">
-                Vence pronto
-              </QEtiqueta>
-            )}
-            {tieneAccionesPendientes && (
-              <QEtiqueta
-                variante="advertencia"
-                className="tarjeta-aviso-cliente"
-              >
-                {`${accionesPendientes} acciones pendientes`}
-              </QEtiqueta>
+            {(vencePronto || tieneAccionesPendientes) && (
+              <div className="tarjeta-avisos">
+                {vencePronto && (
+                  <QEtiqueta variante="error" className="tarjeta-aviso-cliente">
+                    Vence pronto
+                  </QEtiqueta>
+                )}
+                {tieneAccionesPendientes && (
+                  <QEtiqueta
+                    variante="advertencia"
+                    className="tarjeta-aviso-cliente"
+                  >
+                    {`${accionesPendientes} acciones pendientes`}
+                  </QEtiqueta>
+                )}
+              </div>
             )}
           </div>
         }

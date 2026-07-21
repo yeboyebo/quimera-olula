@@ -14,7 +14,7 @@ export const crearColumnasKanbanOportunidad = (
     [...estados]
         .sort(
             (a, b) =>
-                b.probabilidad - a.probabilidad ||
+                a.probabilidad - b.probabilidad ||
                 String(a.id).localeCompare(String(b.id))
         )
         .map((estado) => ({

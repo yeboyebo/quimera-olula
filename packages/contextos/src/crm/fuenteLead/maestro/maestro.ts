@@ -11,7 +11,6 @@ import { ContextoMaestroFuentesLead, EstadoMaestroFuentesLead } from "./diseño.
 export const metaTablaFuenteLead: MetaTabla<FuenteLead> = [
     { id: "id", cabecera: "Código" },
     { id: "descripcion", cabecera: "Descripción" },
-    { id: "valorDefecto", cabecera: "Por defecto", tipo: "booleano" },
 ];
 
 type ProcesarFuentesLead = ProcesarContexto<EstadoMaestroFuentesLead, ContextoMaestroFuentesLead>;

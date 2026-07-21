@@ -1,4 +1,3 @@
-import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
 import { EstadoOportunidad } from "#/crm/comun/componentes/estado_oportunidad_venta.tsx";
 import { LeadSelector } from "#/crm/comun/componentes/lead.tsx";
 import { ContactoSelector } from "#/ventas/comun/componentes/contacto.tsx";
@@ -16,18 +15,6 @@ export const TabDatos = ({
   const { uiProps, modelo, set } = oportunidad;
   const tieneCliente = Boolean(modelo.cliente_id);
   const tieneTarjeta = Boolean(modelo.tarjeta_id);
-
-  const seleccionarCliente = useCallback(
-    (opcion: { valor: string; descripcion: string } | null) => {
-      set({
-        ...modelo,
-        cliente_id: opcion?.valor ?? null,
-        nombre_cliente: opcion?.descripcion ?? null,
-        tarjeta_id: opcion?.valor ? null : modelo.tarjeta_id,
-      });
-    },
-    [modelo, set]
-  );
 
   const seleccionarTarjeta = useCallback(
     (opcion: { valor: string; descripcion: string } | null) => {
@@ -47,12 +34,11 @@ export const TabDatos = ({
         <QInput label="Descripción" {...uiProps("descripcion")} />
 
         {!tieneTarjeta && (
-          <Cliente
-            {...uiProps("cliente_id", "nombre_cliente")}
-            label="Cod. cliente"
-            valor={modelo.cliente_id ?? ""}
-            descripcion={modelo.nombre_cliente ?? ""}
-            onChange={seleccionarCliente}
+          <QInput
+            label="Cliente"
+            nombre="cliente"
+            soloTexto
+            valor={modelo.nombre_cliente ?? modelo.cliente_id ?? ""}
           />
         )}
 

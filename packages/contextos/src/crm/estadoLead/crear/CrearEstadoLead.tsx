@@ -36,6 +36,7 @@ export const CrearEstadoLead = ({ publicar }: { publicar: EmitirEvento }) => {
     >
       <div className="CrearEstadoLead">
         <quimera-formulario>
+          <QInput label="Código" maxLength={10} {...uiProps("id")} />
           <QInput label="Descripción" {...uiProps("descripcion")} />
         </quimera-formulario>
 

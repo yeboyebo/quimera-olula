@@ -65,9 +65,12 @@ export const Oportunidades = ({ lead }: { lead: HookModelo<Lead> }) => {
       {ctx.estado === "CREANDO" && (
         <CrearOportunidadVenta
           publicar={emitir}
+          ocultarOrigen
           modeloVacio={{
             ...nuevaOportunidadVentaVacia,
             tarjeta_id: modelo.id,
+            nombre_tarjeta: modelo.nombre,
+            nombre_cliente: modelo.nombre,
           }}
         />
       )}

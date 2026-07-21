@@ -69,9 +69,11 @@ export const Oportunidades = ({
       {ctx.estado === "CREANDO" && (
         <CrearOportunidadVenta
           publicar={emitir}
+          ocultarOrigen
           modeloVacio={{
             ...nuevaOportunidadVentaVacia,
             cliente_id: modelo.id,
+            nombre_cliente: modelo.nombre,
           }}
         />
       )}

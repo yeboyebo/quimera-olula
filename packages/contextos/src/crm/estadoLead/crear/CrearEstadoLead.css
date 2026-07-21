@@ -1,4 +1,14 @@
 .CrearEstadoLead {
+    quimera-input[nombre="id"] {
+        grid-column: 1 / span 4;
+        grid-row: 1;
+    }
+
+    quimera-input[nombre="descripcion"] {
+        grid-column: 5 / span 8;
+        grid-row: 1;
+    }
+
     quimera-checkbox[nombre="valorDefecto"] {
         grid-column: 1 / span 6;
     }

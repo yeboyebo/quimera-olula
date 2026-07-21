@@ -70,7 +70,7 @@ export const DetalleLead = ({
             <TabObservaciones lead={lead} />
           </Tab>
 
-          <Tab label="Oportunidades de Venta">
+          <Tab label="Oportunidades">
             <Oportunidades lead={lead} />
           </Tab>
 
