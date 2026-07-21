@@ -1,10 +1,10 @@
 import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
 import { NuevaOportunidadVenta } from "./diseño.ts";
 
-const tieneClienteOTarjeta = (oportunidad: NuevaOportunidadVenta) => {
-    return oportunidad.cliente_id || oportunidad.tarjeta_id
+const tieneOrigen = (oportunidad: NuevaOportunidadVenta) => {
+    return oportunidad.cliente_id || oportunidad.tarjeta_id || oportunidad.contacto_id
         ? true
-        : "Debe indicar codcliente o codtarjeta";
+        : "Debe indicar cliente, tarjeta o contacto";
 };
 
 export const nuevaOportunidadVentaVacia: NuevaOportunidadVenta = {
@@ -21,7 +21,7 @@ export const metaNuevaOportunidadVenta: MetaModelo<NuevaOportunidadVenta> = {
     campos: {
         descripcion: { requerido: true, validacion: (oportunidad: NuevaOportunidadVenta) => stringNoVacio(oportunidad.descripcion) },
         importe: { requerido: false, tipo: "moneda" },
-        cliente_id: { requerido: false, tipo: "autocompletar", validacion: tieneClienteOTarjeta },
-        tarjeta_id: { requerido: false, tipo: "autocompletar", validacion: tieneClienteOTarjeta },
+        cliente_id: { requerido: false, tipo: "autocompletar", validacion: tieneOrigen },
+        tarjeta_id: { requerido: false, tipo: "autocompletar", validacion: tieneOrigen },
     },
 };

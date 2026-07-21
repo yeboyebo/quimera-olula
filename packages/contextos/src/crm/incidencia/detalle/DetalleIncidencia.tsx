@@ -54,6 +54,7 @@ export const DetalleIncidencia = ({
       {!!incidenciaId && (
         <div className="DetalleIncidencia">
           <QuimeraAcciones
+            vertical
             acciones={[
               {
                 texto: "Borrar",

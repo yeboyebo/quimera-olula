@@ -16,7 +16,6 @@ export const metaTablaIncidencia: MetaTabla<Incidencia> = [
     { id: "prioridad", cabecera: "Prioridad" },
 ];
 
-// Estados que NO se muestran por defecto en el maestro.
 export const estadosIncidenciaOcultosPorDefecto = ["rechazada", "cerrada"];
 
 export const crearFiltroEstadoIncidencia = (

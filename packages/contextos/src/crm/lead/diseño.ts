@@ -5,6 +5,7 @@ export interface Lead extends Entidad {
     id: string;
     tipo: string;
     estado_id: string;
+    estado: string;
     nombre: string;
     id_fiscal: string | null;
     cliente_id: string;
@@ -23,6 +24,7 @@ export interface Lead extends Entidad {
     contacto_id: string;
     contacto?: ContactoLead | null;
     fuente_id: string;
+    fuente: string;
     responsable_id: string;
 }
 
@@ -30,6 +32,7 @@ export interface LeadAPI extends Entidad {
     id: string;
     tipo: string;
     estado_id: string;
+    estado: string;
     nombre: string;
     id_fiscal: string;
     cliente_id: string;
@@ -40,6 +43,7 @@ export interface LeadAPI extends Entidad {
     contacto_id: string;
     contacto?: ContactoLeadAPI | null;
     fuente_id: string;
+    fuente: string;
     responsable_id: string;
 }
 

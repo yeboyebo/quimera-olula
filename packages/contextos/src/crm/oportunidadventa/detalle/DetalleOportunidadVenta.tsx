@@ -93,6 +93,11 @@ export const DetalleOportunidadVenta = ({
                 {modelo.nombre_cliente}
               </span>
             )}
+            {modelo.nombre_contacto && (
+              <span className="oportunidad-resumen-cliente">
+                {modelo.nombre_contacto}
+              </span>
+            )}
             {tieneAccionesPendientes && (
               <QEtiqueta
                 variante="advertencia"

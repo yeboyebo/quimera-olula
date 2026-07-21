@@ -8,10 +8,11 @@ import {
   filtroTextos,
   getMetaFiltroDefecto,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import type { Orden } from "@olula/lib/diseño.js";
+import type { ClausulaFiltro, Orden } from "@olula/lib/diseño.js";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { CrearIncidencia } from "../crear/CrearIncidencia.tsx";
 import { DetalleIncidencia } from "../detalle/DetalleIncidencia.tsx";
 import { Incidencia } from "../diseño.ts";
@@ -21,7 +22,6 @@ import {
   estadosIncidenciaOcultosPorDefecto,
   metaTablaIncidencia,
 } from "./maestro.ts";
-import "./MaestroIncidencias.css";
 import { getMaquina } from "./maquina.ts";
 
 const ordenPorPrioridad = ["prioridad", "ASC"] as unknown as Orden;
@@ -30,16 +30,22 @@ const estadosVisiblesPorDefecto = opcionesEstadoIncidencia
   .map((opcion) => opcion.valor)
   .filter((valor) => !estadosIncidenciaOcultosPorDefecto.includes(valor));
 
+const criteriaBaseIncidencias = {
+  ...criteriaDefecto,
+  orden: ordenPorPrioridad,
+  filtro: [
+    ["estado", "in", estadosVisiblesPorDefecto as unknown as string],
+  ] as ClausulaFiltro[],
+};
+
 export const MaestroIncidencias = () => {
   const { id, criteria } = getUrlParams();
 
-  const criteriaInicial = useMemo(
-    () => ({
-      ...criteria,
-      orden: criteria.orden.length ? criteria.orden : ordenPorPrioridad,
-    }),
-    [criteria]
-  );
+  const criteriaInicial =
+    criteria.filtro.length > 0 ||
+    criteria.orden.toString() !== criteriaDefecto.orden.toString()
+      ? criteria
+      : criteriaBaseIncidencias;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
@@ -49,7 +55,7 @@ export const MaestroIncidencias = () => {
   useUrlParams(ctx.incidencias.activo, ctx.incidencias.criteria);
 
   useEffect(() => {
-    emitir("recarga_de_incidencias_solicitada", ctx.incidencias.criteria);
+    emitir("recarga_de_incidencias_solicitada", criteriaInicial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,7 +75,6 @@ export const MaestroIncidencias = () => {
                   label: "Estado",
                   tipo: "multiseleccion",
                   opciones: opcionesEstadoIncidencia,
-                  valorDefecto: estadosVisiblesPorDefecto,
                   filtro: crearFiltroEstadoIncidencia,
                 },
                 prioridad: {
@@ -85,7 +90,6 @@ export const MaestroIncidencias = () => {
                 },
               }}
               criteria={ctx.incidencias.criteria}
-              criteriaInicial={criteriaInicial}
               modosDisponibles={["tarjetas"]}
               tarjeta={TarjetaIncidencia}
               entidades={ctx.incidencias.lista}

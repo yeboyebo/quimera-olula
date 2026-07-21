@@ -1,7 +1,8 @@
 .DetalleLead .TabMasDatos {
 
+
     .lead-direccion-resumen {
-        grid-column: 1 / span 12;
+        grid-column: 1 / -1;
         display: grid;
         gap: 0.35rem;
     }

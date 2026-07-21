@@ -15,10 +15,10 @@ const onChangeOportunidad = (oportunidad: OportunidadVenta, campo: string, _: un
     return oportunidad;
 }
 
-const tieneClienteOTarjeta = (oportunidad: OportunidadVenta) => {
-    return oportunidad.cliente_id || oportunidad.tarjeta_id
+const tieneOrigen = (oportunidad: OportunidadVenta) => {
+    return oportunidad.cliente_id || oportunidad.tarjeta_id || oportunidad.contacto_id
         ? true
-        : "Debe indicar codcliente o codtarjeta";
+        : "Debe indicar cliente, tarjeta o contacto";
 };
 
 export const oportunidadVentaVacia: OportunidadVenta = {
@@ -48,8 +48,8 @@ export const metaOportunidadVenta: MetaModelo<OportunidadVenta> = {
         probabilidad: { requerido: true, tipo: "numero" },
         fecha_cierre: { requerido: false, tipo: "fecha" },
         estado_id: { requerido: true, tipo: "selector" },
-        cliente_id: { requerido: false, tipo: "autocompletar", validacion: tieneClienteOTarjeta },
-        tarjeta_id: { requerido: false, tipo: "autocompletar", validacion: tieneClienteOTarjeta },
+        cliente_id: { requerido: false, tipo: "autocompletar", validacion: tieneOrigen },
+        tarjeta_id: { requerido: false, tipo: "autocompletar", validacion: tieneOrigen },
         nombre_cliente: { requerido: false },
     },
     onChange: onChangeOportunidad

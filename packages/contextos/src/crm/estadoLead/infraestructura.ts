@@ -18,7 +18,7 @@ export const estadoLeadDesdeAPI = (api: EstadoLeadAPI): EstadoLead => ({
 
 // El endpoint de escritura espera la clave "valordefecto" (sin guion bajo),
 // distinta de "valor_defecto" que devuelve la lectura.
-export const estadoLeadToAPI = (e: EstadoLead) => {
+export const estadoLeadToAPI = (e: Partial<EstadoLead>) => {
     const { valorDefecto, ...rest } = e;
     return {
         ...rest,
@@ -43,7 +43,7 @@ export const postEstadoLead: PostEstadoLead = async (estado) => {
 };
 
 export const patchEstadoLead: PatchEstadoLead = async (id, estado) => {
-    const payload = estadoLeadToAPI(estado as EstadoLead);
+    const payload = estadoLeadToAPI(estado);
     await RestAPI.patch(`${baseUrlEstadoLead}/${id}`, payload, "Error al guardar el estado de lead");
 };
 

@@ -82,26 +82,28 @@ export const CrearOportunidadVenta = ({
           <QInput label="Descripción" {...uiProps("descripcion")} />
           {!ocultarOrigen && (
             <>
-              <Cliente
-                {...uiProps("cliente_id", "nombre_cliente")}
-                label="Cliente"
-                valor={modelo.cliente_id ?? ""}
-                descripcion={modelo.nombre_cliente ?? ""}
-                onChange={seleccionarCliente}
-                deshabilitado={Boolean(modelo.tarjeta_id)}
-                erroneo={false}
-                opcional
-              />
-              <LeadSelector
-                {...uiProps("tarjeta_id")}
-                label="Tarjeta"
-                valor={modelo.tarjeta_id ?? ""}
-                descripcion={modelo.nombre_tarjeta ?? ""}
-                onChange={seleccionarTarjeta}
-                deshabilitado={Boolean(modelo.cliente_id)}
-                erroneo={false}
-                opcional
-              />
+              {!modelo.tarjeta_id && (
+                <Cliente
+                  {...uiProps("cliente_id", "nombre_cliente")}
+                  label="Cliente"
+                  valor={modelo.cliente_id ?? ""}
+                  descripcion={modelo.nombre_cliente ?? ""}
+                  onChange={seleccionarCliente}
+                  erroneo={false}
+                  opcional
+                />
+              )}
+              {!modelo.cliente_id && (
+                <LeadSelector
+                  {...uiProps("tarjeta_id")}
+                  label="Lead"
+                  valor={modelo.tarjeta_id ?? ""}
+                  descripcion={modelo.nombre_tarjeta ?? ""}
+                  onChange={seleccionarTarjeta}
+                  erroneo={false}
+                  opcional
+                />
+              )}
             </>
           )}
           {/* Pendiente: permitir nombre_cliente manual para clientes no registrados. */}

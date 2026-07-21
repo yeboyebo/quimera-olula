@@ -13,3 +13,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.lead-tarjeta-secundario {
+    font-size: var(--tamaño-letra-s);
+    color: var(--color-texto-secundario);
+}

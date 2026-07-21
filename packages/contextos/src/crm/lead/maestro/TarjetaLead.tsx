@@ -10,14 +10,14 @@ export const TarjetaLead = (lead: Lead) => {
       arribaDerecha={lead.contacto?.nombre || "-"}
       abajoIzquierda={
         <div className="lead-tarjeta-info-columna">
-          {/* <span>{lead.fuente_id || "-"}</span> */}
           <span>{lead.email || "-"}</span>
+          <span className="lead-tarjeta-secundario">{lead.estado || "-"}</span>
         </div>
       }
       abajoDerecha={
         <div className="lead-tarjeta-info-columna lead-tarjeta-info-columna-derecha">
-          {/* <span>{lead.contacto?.nombre || "-"}</span> */}
           <span>{lead.telefono_1 || "-"}</span>
+          <span className="lead-tarjeta-secundario">{lead.fuente || "-"}</span>
         </div>
       }
     />

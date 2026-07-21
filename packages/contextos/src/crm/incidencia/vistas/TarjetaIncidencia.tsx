@@ -1,21 +1,42 @@
 import { descripcionEstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
-import { QAvatar } from "@olula/componentes/index.js";
+import { QAvatar, QEtiqueta, QTarjetaGenerica } from "@olula/componentes/index.js";
+import { formatearFechaDate } from "@olula/lib/dominio.ts";
 import { Incidencia } from "../diseño.ts";
 import "./TarjetaIncidencia.css";
 
+const varianteEstado: Record<
+  string,
+  "primario" | "advertencia" | "error" | "exito"
+> = {
+  nueva: "primario",
+  en_espera: "advertencia",
+  asignada: "primario",
+  rechazada: "error",
+  cerrada: "exito",
+};
+
 export const TarjetaIncidencia = (incidencia: Incidencia) => (
-  <div className={`tarjeta-incidencia estado-${incidencia.estado}`}>
-    <div className="columna">
-      <div className="tarjeta-icono">
-        <QAvatar nombre={incidencia.descripcion} tamaño="sm" />
-      </div>
-    </div>
-    <div className="columna">
-      <div className="tarjeta-titulo">{incidencia.descripcion}</div>
-      <div className="tarjeta-detalle">ID: {incidencia.id}</div>
-      <div className="tarjeta-estado">
-        {descripcionEstadoIncidencia(incidencia.estado)}
-      </div>
-    </div>
-  </div>
+  <article className="TarjetaIncidencia">
+    <QTarjetaGenerica
+      avatar={
+        <QAvatar nombre={incidencia.descripcion} className={incidencia.prioridad} />
+      }
+      arribaIzquierda={incidencia.descripcion}
+      arribaDerecha={
+        <QEtiqueta variante={varianteEstado[incidencia.estado] ?? "primario"}>
+          {descripcionEstadoIncidencia(incidencia.estado)}
+        </QEtiqueta>
+      }
+      abajoIzquierda={
+        <span className="tarjeta-incidencia-cliente">
+          {incidencia.nombre || "-"}
+        </span>
+      }
+      abajoDerecha={
+        <span className="tarjeta-incidencia-fecha">
+          {incidencia.fecha ? formatearFechaDate(incidencia.fecha) : "-"}
+        </span>
+      }
+    />
+  </article>
 );

@@ -9,6 +9,7 @@ export const leadVacio: Lead = {
     id: "",
     tipo: "Cliente",
     estado_id: "",
+    estado: "",
     nombre: "",
     id_fiscal: "",
     cliente_id: "",
@@ -26,6 +27,7 @@ export const leadVacio: Lead = {
     web: "",
     contacto_id: "",
     fuente_id: "",
+    fuente: "",
     responsable_id: "",
 };
 

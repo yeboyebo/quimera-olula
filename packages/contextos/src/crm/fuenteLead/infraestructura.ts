@@ -18,7 +18,7 @@ export const fuenteLeadDesdeAPI = (api: FuenteLeadAPI): FuenteLead => ({
 
 // El endpoint de escritura espera la clave "valordefecto" (sin guion bajo),
 // distinta de "valor_defecto" que devuelve la lectura.
-export const fuenteLeadToAPI = (f: FuenteLead) => {
+export const fuenteLeadToAPI = (f: Partial<FuenteLead>) => {
     const { valorDefecto, ...rest } = f;
     return {
         ...rest,
@@ -43,7 +43,7 @@ export const postFuenteLead: PostFuenteLead = async (fuente) => {
 };
 
 export const patchFuenteLead: PatchFuenteLead = async (id, fuente) => {
-    const payload = fuenteLeadToAPI(fuente as FuenteLead);
+    const payload = fuenteLeadToAPI(fuente);
     await RestAPI.patch(`${baseUrlFuenteLead}/${id}`, payload, "Error al guardar la fuente de lead");
 };
 

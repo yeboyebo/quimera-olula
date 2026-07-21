@@ -1,52 +1,21 @@
-.tarjeta-incidencia {
-    display: flex;
-    flex-direction: row;
-    gap: var(--espaciado-l);
-    padding: var(--espaciado-s) var(--espaciado-s) var(--espaciado-s) var(--espaciado-m);
-    border-left: 4px solid var(--color-borde-sutil);
-
-    .columna {
-        width: max-content;
-        display: block;
-        float: left;
-    }
+.TarjetaIncidencia .q-avatar.baja {
+    background-color: var(--color-exito-claro);
 }
 
-/* Color de la tarjeta en función del estado de la incidencia */
-.tarjeta-incidencia.estado-nueva {
-    border-left-color: var(--color-primario);
+.TarjetaIncidencia .q-avatar.media {
+    background-color: var(--color-advertencia-claro);
 }
 
-.tarjeta-incidencia.estado-en_espera {
-    border-left-color: var(--color-advertencia);
+.TarjetaIncidencia .q-avatar.alta {
+    background-color: var(--color-error-claro);
 }
 
-.tarjeta-incidencia.estado-asignada {
-    border-left-color: var(--color-info, var(--color-primario));
-}
-
-.tarjeta-incidencia.estado-rechazada {
-    border-left-color: var(--color-error);
-}
-
-.tarjeta-incidencia.estado-cerrada {
-    border-left-color: var(--color-exito);
-}
-
-.tarjeta-titulo {
-    font-size: var(--tamaño-letra-l);
-    font-weight: var(--grosor-letra-6);
-    color: var(--color-texto-principal);
-}
-
-.tarjeta-detalle {
+.TarjetaIncidencia .tarjeta-incidencia-cliente {
     font-size: var(--tamaño-letra-m);
     color: var(--color-texto-secundario);
 }
 
-.tarjeta-estado {
+.TarjetaIncidencia .tarjeta-incidencia-fecha {
     font-size: var(--tamaño-letra-s);
-    font-weight: var(--grosor-letra-6);
     color: var(--color-texto-secundario);
-    text-transform: uppercase;
 }

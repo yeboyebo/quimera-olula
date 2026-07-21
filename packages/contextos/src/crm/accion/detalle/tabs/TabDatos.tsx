@@ -78,9 +78,6 @@ export const TabDatos = ({ accion }: { accion: HookModelo<Accion> }) => {
   const contactosCliente = cliente?.contactos ?? [];
   const esTarjeta = !modelo.cliente_id && Boolean(modelo.tarjeta_id);
 
-  // Una acción puede venir de una oportunidad, un cliente, una tarjeta o una
-  // incidencia. Mostramos, en solo lectura, el dato que corresponda: la
-  // descripción de la oportunidad si la hay, o el nombre del cliente.
   const tieneOportunidad = Boolean(modelo.oportunidad_id);
   const origenLabel = tieneOportunidad ? "Oportunidad" : "Cliente";
   const origenValor = tieneOportunidad

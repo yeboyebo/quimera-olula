@@ -1,4 +1,3 @@
-// import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
 import { ContactoSelector } from "#/crm/comun/componentes/contacto.tsx";
 import { EstadoLead } from "#/crm/comun/componentes/estado_lead.tsx";
 import { FuenteLead } from "#/crm/comun/componentes/fuente_lead.tsx";
@@ -29,8 +28,6 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
     telefono: modelo.telefono_1 ?? "",
   }).trim();
 
-  // formatearDireccionUnaLinea mantiene los separadores (comas) aunque los
-  // campos vengan vacíos, así que comprobamos si queda contenido real.
   const direccionSinDefinir =
     direccionResumen.replace(/[,\s]/g, "").length === 0;
 
@@ -45,12 +42,6 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
           valor={modelo.contacto_id ?? ""}
           descripcion={modelo.contacto?.nombre ?? modelo.contacto_id ?? ""}
         />
-        {/* Campo cliente (codcliente) oculto de momento.
-        {modelo.tipo === "Cliente" && modelo.cliente_id ? (
-          <Cliente {...uiProps("cliente_id", "nombre")} />
-        ) : (
-          <></>
-        )} */}
         <QInput label="Nombre" {...uiProps("nombre")} />
         <QInput label="CIF/NIF" {...uiProps("id_fiscal")} />
         <QInput label="Teléfono 1" {...uiProps("telefono_1")} />
@@ -73,10 +64,12 @@ export const TabDatos = ({ lead }: { lead: HookModelo<Lead> }) => {
         </section>
       </quimera-formulario>
       {editandoDireccion && (
-        <CambiarDireccionLead
-          lead={lead}
-          onCerrar={() => setEditandoDireccion(false)}
-        />
+        <div className="lead-direccion-editar">
+          <CambiarDireccionLead
+            lead={lead}
+            onCerrar={() => setEditandoDireccion(false)}
+          />
+        </div>
       )}
     </div>
   );

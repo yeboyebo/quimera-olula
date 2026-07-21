@@ -56,6 +56,7 @@ export const DetalleContacto = ({
       {!!contactoId && (
         <div className="DetalleContacto">
           <QuimeraAcciones
+            vertical
             acciones={[
               {
                 texto: "Borrar",

@@ -1,6 +1,5 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
-import { NuevoEstadoOportunidad } from "./crear/diseño.ts";
 import {
     DeleteEstadoOportunidad,
     EstadoOportunidad,
@@ -30,7 +29,7 @@ export const estadoOportunidadDesdeAPI = (api: EstadoOportunidadAPI): EstadoOpor
 
 // El endpoint de escritura espera la clave "valordefecto" (sin guion bajo),
 // distinta de "valor_defecto" que devuelve la lectura.
-export const estadoOportunidadToAPI = (e: NuevoEstadoOportunidad) => {
+export const estadoOportunidadToAPI = (e: Partial<EstadoOportunidad>) => {
     const { valorDefecto, ...rest } = e;
     return {
         ...rest,
@@ -55,7 +54,7 @@ export const postEstadoOportunidad: PostEstadoOportunidad = async (estado) => {
 };
 
 export const patchEstadoOportunidad: PatchEstadoOportunidad = async (id, estado) => {
-    const payload = estadoOportunidadToAPI(estado as EstadoOportunidad);
+    const payload = estadoOportunidadToAPI(estado);
     await RestAPI.patch(`${baseUrlEstadoOportunidadVenta}/${id}`, payload, "Error al guardar el estado de oportunidad de venta");
 };
 
