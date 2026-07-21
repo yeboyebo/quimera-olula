@@ -1,3 +1,5 @@
+import type { Filtro } from "../diseño.ts";
+
 type LegacyMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export type LegacyOrder = {
@@ -137,4 +139,141 @@ export const LegacyAPI = {
     patch: <T, U = void>(url: string, body: Partial<T>, msgError?: string) => comando<T, U>("PATCH", url, msgError, body),
     delete: <U = void>(url: string, msgError?: string) => comando<unknown, U>("DELETE", url, msgError),
     blob: (url: string, msgError?: string) => llamada({ method: "GET", url, msgError }).then((r) => r.blob()),
+};
+
+type LegacyClause = [string, string, unknown?];
+
+const isClause = (value: unknown): value is [string, string, unknown?] =>
+    Array.isArray(value)
+    && typeof value[0] === "string"
+    && typeof value[1] === "string";
+
+const flattenFilter = (filter: unknown): [string, string, unknown?][] => {
+    if (isClause(filter)) return [filter];
+
+    if (Array.isArray(filter)) {
+        return filter.filter(isClause);
+    }
+
+    if (filter && typeof filter === "object") {
+        if ("and" in filter && Array.isArray((filter as { and?: unknown[] }).and)) {
+            return (filter as { and: unknown[] }).and.flatMap((item) => flattenFilter(item));
+        }
+
+        if ("or" in filter && Array.isArray((filter as { or?: unknown[] }).or)) {
+            return (filter as { or: unknown[] }).or.flatMap((item) => flattenFilter(item));
+        }
+    }
+
+    return [];
+};
+
+const isoLocalDate = (date: Date): string => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+};
+
+const specialDateRange = (value: string): [string, string] | null => {
+    const today = new Date();
+
+    const day = today.getDay() || 7;
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - (day - 1));
+    const endOfWeek = new Date(today);
+    endOfWeek.setDate(today.getDate() + (7 - day));
+
+    switch (value) {
+        case "@hoy": {
+            const d = isoLocalDate(today);
+            return [d, d];
+        }
+        case "@ayer": {
+            const d = new Date(today);
+            d.setDate(d.getDate() - 1);
+            const s = isoLocalDate(d);
+            return [s, s];
+        }
+        case "@manana":
+        case "@mañana": {
+            const d = new Date(today);
+            d.setDate(d.getDate() + 1);
+            const s = isoLocalDate(d);
+            return [s, s];
+        }
+        case "@esta-semana":
+            return [isoLocalDate(startOfWeek), isoLocalDate(endOfWeek)];
+        case "@semana-anterior": {
+            const start = new Date(startOfWeek);
+            start.setDate(start.getDate() - 7);
+            const end = new Date(endOfWeek);
+            end.setDate(end.getDate() - 7);
+            return [isoLocalDate(start), isoLocalDate(end)];
+        }
+        case "@semana-siguiente": {
+            const start = new Date(startOfWeek);
+            start.setDate(start.getDate() + 7);
+            const end = new Date(endOfWeek);
+            end.setDate(end.getDate() + 7);
+            return [isoLocalDate(start), isoLocalDate(end)];
+        }
+        default:
+            return null;
+    }
+};
+
+const splitRange = (value: unknown): [string | undefined, string | undefined] => {
+    if (typeof value !== "string") return [undefined, undefined];
+
+    if (value.includes("_")) {
+        const [from, to] = value.split("_");
+        return [from || undefined, to || undefined];
+    }
+
+    const special = specialDateRange(value);
+    if (special) return special;
+
+    return [value || undefined, undefined];
+};
+
+const convertClause = (clause: [string, string, unknown?]): LegacyClause[] => {
+    const [field, op, value] = clause;
+
+    if (op === "~") return [[field, "like", value]];
+    if (op === ">=") return [[field, "gte", value]];
+    if (op === "<=") return [[field, "lte", value]];
+
+    if (op === "=") {
+        if (typeof value === "string" && value.startsWith("@")) {
+            const [from, to] = splitRange(value);
+            return [
+                ...(from ? [[field, "gte", from] as LegacyClause] : []),
+                ...(to ? [[field, "lte", to] as LegacyClause] : []),
+            ];
+        }
+
+        return [[field, "eq", value]];
+    }
+
+    if (op === "<>") {
+        const [from, to] = splitRange(value);
+        return [
+            ...(from ? [[field, "gte", from] as LegacyClause] : []),
+            ...(to ? [[field, "lte", to] as LegacyClause] : []),
+        ];
+    }
+
+    return [[field, op, value]];
+};
+
+export const legacyFilterFromCriteria = (
+    filter: Filtro | unknown,
+    base: LegacyClause[] = []
+) => {
+    const criteriaClauses = flattenFilter(filter).flatMap(convertClause);
+
+    return {
+        and: [...base, ...criteriaClauses],
+    };
 };
