@@ -1,0 +1,12 @@
+.ExpansionTramosSimple {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.ExpansionTramosSimple quimera-input {
+  flex: 0 0 auto;
+  width: 7rem;
+}

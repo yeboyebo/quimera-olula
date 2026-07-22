@@ -7,7 +7,15 @@ const baseUrl = new ApiUrls().PEDIDO;
 
 export const patchAlbaranarPedido: PatchAlbaranarPedido = async (id, lineas) => {
     const cambios = { lineas: transformarLineasAlbaran(lineas) };
-    await RestAPI.patch(`${baseUrl}/${id}/albaranar`, cambios, "Error al cambiar cliente del pedido");
+    const respuesta = (await RestAPI.patch(
+        `${baseUrl}/${id}/albaranar`,
+        cambios,
+        "Error al albaranar el pedido"
+    )) as unknown as
+        | { datos: { id: string; codigo: string } }
+        | { id: string; codigo: string };
+    const datos = "datos" in respuesta ? respuesta.datos : respuesta;
+    return { id: String(datos.id ?? ""), codigo: String(datos.codigo ?? "") };
 }
 
 export const patchCerrarLineaPedido: PatchCerrarLineaPedido = async (pedidoId, lineaId, cerrada) => {
