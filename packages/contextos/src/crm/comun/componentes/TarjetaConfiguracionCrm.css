@@ -1,6 +1,4 @@
 .TarjetaConfiguracionCrm .tarjeta-config-descripcion {
-    font-size: var(--tamaño-letra-m);
-    font-weight: var(--grosor-letra-7);
     color: var(--color-texto-primario);
 }
 

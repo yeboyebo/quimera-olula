@@ -13,7 +13,7 @@
 
 .oportunidad-resumen-probabilidad {
     font-size: var(--tamaño-letra-m);
-    font-weight: var(--grosor-letra-7);
+    font-weight: var(--grosor-letra-5);
     color: var(--color-primario);
     min-width: 3rem;
     text-align: center;
@@ -28,7 +28,7 @@
 }
 
 .oportunidad-resumen-importe {
-    font-weight: var(--grosor-letra-7);
+    font-weight: var(--grosor-letra-5);
     margin-left: auto;
 }
 

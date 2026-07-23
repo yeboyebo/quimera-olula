@@ -1,7 +1,7 @@
 .q-etiqueta {
     display: inline-block;
     border-radius: var(--redondeo-borde-xs);
-    font-weight: var(--grosor-letra-7);
+    font-weight: var(--grosor-letra-5);
     color: var(--color-texto-primario);
     white-space: nowrap;
     transition: filter 0.15s ease, transform 0.15s ease;

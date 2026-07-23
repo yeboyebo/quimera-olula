@@ -58,7 +58,7 @@
 
     .qtarjeta-generica-grid-arriba {
         font-size: large;
-        font-weight: bold;
+        font-weight: var(--grosor-letra-5);
     }
 }
 

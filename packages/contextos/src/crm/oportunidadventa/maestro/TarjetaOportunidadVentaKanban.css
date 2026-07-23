@@ -27,7 +27,7 @@
     .tarjeta-kanban-total {
         white-space: nowrap;
         font-size: var(--tamaño-letra-s);
-        font-weight: var(--grosor-letra-7);
+        font-weight: var(--grosor-letra-6);
         justify-self: end;
     }
 
@@ -47,8 +47,8 @@
     }
 
     .tarjeta-kanban-titulo {
-        font-size: var(--tamaño-letra-m);
-        font-weight: var(--grosor-letra-7);
+        font-size: var(--tamaño-letra-l);
+        font-weight: var(--grosor-letra-5);
         line-height: 1.2;
         color: var(--color-texto-principal);
         display: -webkit-box;
@@ -115,7 +115,7 @@
         }
 
         .tarjeta-kanban-titulo {
-            font-size: var(--tamaño-letra-s);
+            font-size: var(--tamaño-letra-m);
         }
 
         .tarjeta-kanban-meta {
