@@ -8,7 +8,6 @@ import { accionesListaEntidades, ListaEntidades, ProcesarListaEntidades } from "
 import { CambioClienteFactura, LineaFactura, PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { ventaTpvVacia } from "../dominio.ts";
 import { getLineas, getPagos, getReportVale, getReportVenta, getVenta, patchCambiarDescuento, patchFechaVenta, patchVenta, postEmitirVale, postLineaPorBarcode } from "../infraestructura.ts";
-import { imprimirTicketOFactura, imprimirVale } from "./DetalleVentaTpv.tsx";
 
 
 export const cambioClienteFacturaVacio: CambioClienteFactura = cambioClienteVentaVacio;
@@ -380,6 +379,8 @@ export const cargarContexto: ProcesarVentaTpv = async (contexto, payload) => {
         return getContextoVacio(contexto);
     }
 }
+
+
 
 export const imprimirTicketOFactura = async (venta: VentaTpv, pagos: PagoVentaTpv[]) => {
     if (venta.cliente) {
