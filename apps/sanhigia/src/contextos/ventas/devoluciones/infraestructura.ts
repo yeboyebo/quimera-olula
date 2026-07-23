@@ -1,4 +1,8 @@
-import { LegacyAPI, legacyUrl } from "@olula/lib/api/legacy_api.ts";
+import {
+    LegacyAPI,
+    legacyFilterFromCriteria,
+    legacyUrl,
+} from "@olula/lib/api/legacy_api.ts";
 import {
     Filtro,
     Orden,
@@ -198,36 +202,62 @@ const ordenLegacyDesdeOrden = (orden: Orden): string => {
 export const getDevolucionesPedidos = async (
     filtro: Filtro,
     orden: Orden,
-    _paginacion: Paginacion
+    paginacion: Paginacion
 ): RespuestaLista<DevolucionPedido> => {
-    const filtroFinal = {
-        and: [
-            ...(filtroBase as unknown as []),
-            ...(Array.isArray(filtro) ? filtro : []),
-        ],
-    };
+    const filtroFinal = legacyFilterFromCriteria(
+        filtro,
+        filtroBase as unknown as [string, string, unknown?][]
+    );
+
+    const fieldsListado = [
+        "idpedido",
+        "codigo",
+        "codcliente",
+        "servido",
+        "sh_estadopago",
+        "fecha",
+        "total",
+        "nombrecliente",
+    ];
+
+    const ordenFinal = ordenLegacyDesdeOrden(orden);
 
     const respuesta = await LegacyAPI.get<{ data: DevolucionPedidoAPI[]; page?: { count?: number } }>(
         legacyUrl(baseUrl, {
+            id: "static",
+            action: "total_devoluciones",
             params: {
-                fields: [
-                    "idpedido",
-                    "codigo",
-                    "codcliente",
-                    "servido",
-                    "sh_estadopago",
-                    "fecha",
-                    "total",
-                    "nombrecliente",
-                ],
+                fields: fieldsListado,
                 filter: filtroFinal,
-                order: ordenLegacyDesdeOrden(orden),
+                order: ordenFinal,
             },
         })
     );
 
+    // Algunos backends legacy devuelven solo el total en esta acción estática.
+    // Si no llegan filas aquí, cargamos el listado en el endpoint base.
+    let datos = (respuesta.data ?? []).map(devolucionPedidoDesdeApi);
+
+    if (!datos.length) {
+        const respuestaListado = await LegacyAPI.get<{ data: DevolucionPedidoAPI[] }>(
+            legacyUrl(baseUrl, {
+                params: {
+                    fields: fieldsListado,
+                    filter: filtroFinal,
+                    order: ordenFinal,
+                    page: {
+                        limit: paginacion.limite,
+                        page: paginacion.pagina,
+                    },
+                },
+            })
+        );
+
+        datos = (respuestaListado.data ?? []).map(devolucionPedidoDesdeApi);
+    }
+
     return {
-        datos: (respuesta.data ?? []).map(devolucionPedidoDesdeApi),
+        datos,
         total: Number(respuesta.page?.count ?? -1),
     };
 };
@@ -351,13 +381,15 @@ export const prepararDevolucionPedido = async (payload: PrepararDevolucionPedido
 };
 
 export const crearDevolucionPedido = async (payload: CrearDevolucionPedidoPayload): Promise<DevolucionPedido> => {
-    const lineasConDevolucionesLegacy = payload.lineasConDevoluciones.map((linea) => ({
-        idlinea: Number(linea.idlinea),
-        referencia: linea.referencia,
-        descripcion: linea.descripcion,
-        cantidadDevolver: linea.cantidad,
-        esKit: linea.esKit,
-    }));
+    const lineasConDevolucionesLegacy = payload.lineasConDevoluciones
+        .filter((linea) => Number(linea.cantidad ?? 0) > 0)
+        .map((linea) => ({
+            idlinea: Number(linea.idlinea),
+            referencia: linea.referencia,
+            descripcion: linea.descripcion,
+            cantidadDevolver: linea.cantidad,
+            esKit: linea.esKit,
+        }));
 
     const respuesta = await LegacyAPI.post<{
         idFactura: number;

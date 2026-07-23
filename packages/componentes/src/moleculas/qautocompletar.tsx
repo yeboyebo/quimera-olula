@@ -4,7 +4,11 @@ import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
 import "./qautocompletar.css";
 
-type Opcion = { valor: string; descripcion: string, descripcionOpcion?: string };
+type Opcion = {
+  valor: string;
+  descripcion: string;
+  descripcionOpcion?: string;
+};
 
 export type QAutocompletarProps = Omit<
   FormFieldProps,
@@ -59,8 +63,8 @@ export const QAutocompletar = ({
       <option key={opcion.valor} value={descripcion}>
         {descripcion}
       </option>
-    );}
-  );
+    );
+  });
 
   const listaId = useRef(nombre + "-datalist-" + getIdUnico());
 
@@ -119,7 +123,9 @@ export const QAutocompletar = ({
   const manejarInput = (valor: string, e: React.FormEvent<HTMLElement>) => {
     editando.current = true;
 
-    const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
+    const opcion = opciones.find(
+      (opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor
+    );
 
     if (opcion) {
       clearTimeout(temporizador.current);
@@ -149,7 +155,9 @@ export const QAutocompletar = ({
   const manejarBlur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
     editando.current = false;
 
-    const opcion = opciones.find((opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor);
+    const opcion = opciones.find(
+      (opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor
+    );
 
     if (opcion) {
       valorReal.current!.value = opcion.valor;
@@ -184,11 +192,13 @@ export const QAutocompletar = ({
           opcional={opcional}
           deshabilitado={deshabilitado}
           nombre=""
+          tipo="autocompletar"
           lista={listaId.current}
           autocompletar="off"
           onInput={manejarInput}
           onBlur={manejarBlur}
           onChange={manejarChange}
+          placeholder={props.placeholder}
           valor={valorDescrito}
           soloTexto={soloTexto}
         />

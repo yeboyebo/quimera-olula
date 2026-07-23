@@ -2,6 +2,11 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  filtroFechas,
+  filtroTextos,
+  MetaFiltro,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -10,6 +15,27 @@ import { DetalleDevolucionPedido } from "../detalle/DetalleDevolucionPedido.tsx"
 import { DevolucionPedido, metaTablaDevolucionesPedidos } from "../diseño.ts";
 import { getMaquina } from "../maquina.ts";
 import "./MaestroConDetalleDevolucionesPedidos.css";
+
+const metaFiltroDevolucionesPedidos: MetaFiltro = {
+  codigo: {
+    id: "codigo",
+    label: "Codigo",
+    tipo: "texto",
+    filtro: (valor) => filtroTextos("codigo", valor),
+  },
+  nombrecliente: {
+    id: "nombrecliente",
+    label: "Cliente",
+    tipo: "texto",
+    filtro: (valor) => filtroTextos("nombrecliente", valor),
+  },
+  fecha: {
+    id: "fecha",
+    label: "Fecha",
+    tipo: "intervalo_fechas",
+    filtro: (valor) => filtroFechas("fecha", valor),
+  },
+};
 
 export const MaestroConDetalleDevolucionesPedidos = () => {
   const { id, criteria } = getUrlParams();
@@ -34,6 +60,7 @@ export const MaestroConDetalleDevolucionesPedidos = () => {
             <h2>Devoluciones de pedidos</h2>
             <Listado<DevolucionPedido>
               metaTabla={metaTablaDevolucionesPedidos}
+              metaFiltro={metaFiltroDevolucionesPedidos}
               modo="tabla"
               criteria={ctx.devoluciones.criteria}
               entidades={ctx.devoluciones.lista}

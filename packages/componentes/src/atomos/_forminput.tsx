@@ -9,6 +9,7 @@ export type FormFieldProps = {
   deshabilitado?: boolean;
   placeholder?: string;
   valor?: string;
+  maxLength?: number;
   textoValidacion?: string;
   erroneo?: boolean;
   advertido?: boolean;
@@ -87,6 +88,7 @@ export const FormInput = ({
   autocompletar,
   autoSeleccion,
   autoFocus,
+  maxLength,
   ref,
   onChange,
   onBlur,
@@ -159,6 +161,7 @@ export const FormInput = ({
     placeholder: placeholder,
     disabled: deshabilitado,
     required: !opcional,
+    maxLength: maxLength,
     list: lista,
     autoComplete: autocompletar,
     onChange: manejarChange,
