@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -17,7 +18,10 @@ const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
     { id: "id", cabecera: "ID" },
     { id: "descripcion", cabecera: "Orden" },
     { id: "fecha", cabecera: "Fecha", tipo:"fecha" },
-    { id: "estado", cabecera: "Estado" },
+    { id: "estado", cabecera: "Estado", render: (orden: ItemOrdenAlmacen) => {
+        const variante = orden.estado === "PENDIENTE" ? "error" : orden.estado === "EN_CURSO" ? "advertencia" : "exito";
+        return <QEtiqueta variante={variante}>{orden.estado}</QEtiqueta>;
+    }},
     { id: "abierta", cabecera: "Abierta", tipo: "booleano" },
 ];
 

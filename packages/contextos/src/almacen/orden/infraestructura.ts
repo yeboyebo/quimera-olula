@@ -13,6 +13,7 @@ import {
     LineaOrdenAlmacen,
     NuevaLecturaCajaOrden,
     NuevaLecturaOrden,
+    NuevaLecturaUbicacionOrden,
     NuevaLineaOrdenAlmacen,
     NuevaOrdenAlmacen,
     OrdenAlmacen,
@@ -368,5 +369,21 @@ export const registrarLecturaCajaOrden = async (
             caja_destino_id: lectura.idCajaDestino,
         },
         "Error al registrar lectura de caja de la orden"
+    );
+};
+
+
+export const registrarLecturaUbicacionOrden = async (
+    id: string,
+    lectura: NuevaLecturaUbicacionOrden
+): Promise<void> => {
+    await RestAPI.post(
+        `${baseUrl}/${id}/lectura_ubicacion`,
+        {
+            ubicacion_id: lectura.idUbicacion,
+            ubicacion_destino_id: lectura.idUbicacionDestino,
+            caja_destino_id: lectura.idCajaDestino,
+        },
+        "Error al registrar lectura de ubicación de la orden"
     );
 };

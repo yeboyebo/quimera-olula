@@ -1,3 +1,4 @@
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtablacontrolada.tsx";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
@@ -46,9 +47,24 @@ const ExpansionLecturas = (orden: OrdenAlmacen) =>
 const metaTablaLineasOrden = (orden: OrdenAlmacen): MetaTabla<LineaOrdenAlmacen> => ({
     cols: [
         { id: "sku", cabecera: "SKU" },
-        { id: "articulo", cabecera: "Descripción" },
-        { id: "cantidadPrevista", cabecera: "Cantidad prevista" },
-        { id: "cantidadReal", cabecera: "Cantidad real" },
+        { id: "articulo", cabecera: "Descripción", tipo: "texto" },
+        ...(orden.abierta
+            ? [{ id: "cantidadReal" as const, cabecera: "Cantidad real" }]
+            : [{
+                id: "cantidadPrevista" as const,
+                cabecera: "Cantidad",
+                tipo: 'numero' as const,
+                render: (linea: LineaOrdenAlmacen) => {
+                    const real = linea.cantidadReal ?? 0;
+                    const prevista = linea.cantidadPrevista;
+                    const variante = real === 0 ? "error" : real < prevista ? "advertencia" : "exito";
+                    return (
+                        <QEtiqueta variante={variante}>{real} / {prevista}</QEtiqueta>
+                    );
+                },
+                
+            }]
+        ),
         ...(orden.tipo !== "ENTRADA" ? [{ id: "ubicacionOrigen" as const, cabecera: "Ubi.Origen" }] : []),
         ...(orden.tipo !== "SALIDA" ? [{ id: "ubicacionDestino" as const, cabecera: "Ubi.Destino" }] : []),
     ],

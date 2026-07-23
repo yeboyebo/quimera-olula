@@ -105,6 +105,13 @@ export interface NuevaLecturaCajaOrden extends Modelo {
 }
 
 
+export interface NuevaLecturaUbicacionOrden extends Modelo {
+    idUbicacion: string;
+    idUbicacionDestino: string | null;
+    idCajaDestino: string | null;
+}
+
+
 export interface ItemOrdenAlmacen extends Entidad {
     id: string;
     fecha: string;
