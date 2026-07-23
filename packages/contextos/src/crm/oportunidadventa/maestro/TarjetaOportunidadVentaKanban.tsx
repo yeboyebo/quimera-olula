@@ -59,6 +59,10 @@ export const TarjetaOportunidadVentaKanban = (
 
   return (
     <article className="TarjetaOportunidadVentaKanban">
+      <div className="tarjeta-kanban-titulo">
+        {oportunidad.descripcion || "-"}
+      </div>
+
       <header className="tarjeta-kanban-cabecera">
         <div className="tarjeta-kanban-indicadores">
           <QAvatar
@@ -75,10 +79,6 @@ export const TarjetaOportunidadVentaKanban = (
           {formatearMoneda(importe, "EUR")}
         </QEtiqueta>
       </header>
-
-      <div className="tarjeta-kanban-titulo">
-        {oportunidad.descripcion || "-"}
-      </div>
 
       <div className="tarjeta-kanban-meta tarjeta-kanban-meta-persona">
         <QIcono nombre="usuario" tamaño="sm" />

@@ -6,7 +6,7 @@
 .widget-prevision-oportunidades__titulo {
     margin: 0;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .widget-prevision-oportunidades__valor {
@@ -20,7 +20,7 @@
 }
 
 .widget-prevision-oportunidades__enlace {
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .widget-prevision-oportunidades__serie {
@@ -59,7 +59,7 @@
 
 .widget-prevision-oportunidades__importe {
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    font-weight: 400;
     font-size: 0.875rem;
     text-align: right;
     white-space: nowrap;

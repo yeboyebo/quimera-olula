@@ -1,6 +1,6 @@
 .tarjeta-accion-fecha-vencida {
     color: var(--color-error-oscuro);
-    font-weight: var(--grosor-letra-medium);
+    font-weight: var(--grosor-letra-5);
 }
 
 .tarjeta-accion-rapida-acciones {
