@@ -5,12 +5,13 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useContext, useState } from "react";
-import { Cliente } from "../../../../cliente/diseño.ts";
+import { Cliente } from "../../../cliente/diseño.ts";
 import {
   desvincularContactoCliente,
   vincularContactoCliente,
-} from "../../../../cliente/infraestructura.ts";
-import { Contacto } from "../../../diseño.ts";
+} from "../../../cliente/infraestructura.ts";
+import { Contacto } from "../../diseño.ts";
+import { getClientesPorContacto } from "../../infraestructura.ts";
 
 interface Props {
   seleccionada?: Cliente | null;
@@ -33,22 +34,40 @@ export const TabClientesAcciones = ({
   const { intentar } = useContext(ContextoError);
 
   const onAsociar = async () => {
-    if (clienteSeleccionado) {
-      await intentar(() =>
-        vincularContactoCliente(contactoId, clienteSeleccionado.valor)
-      );
-      emitir("CLIENTE_VINCULADO", clienteSeleccionado);
-      //   setClienteSeleccionado(null);
+    if (!clienteSeleccionado) return;
+
+    await intentar(() =>
+      vincularContactoCliente(contactoId, clienteSeleccionado.valor)
+    );
+
+    const nuevosClientes = await intentar(() =>
+      getClientesPorContacto(contactoId)
+    );
+    setClienteSeleccionado(null);
+
+    if (nuevosClientes) {
+      emitir("CLIENTES_ACTUALIZADOS", {
+        clientes: nuevosClientes.datos,
+        clienteId: clienteSeleccionado.valor,
+      });
     }
   };
 
   const onDesvincular = async () => {
-    if (clienteSeleccionado) {
-      await intentar(() =>
-        desvincularContactoCliente(contactoId, clienteSeleccionado.valor)
-      );
-      emitir("CLIENTE_DESVINCULADO", clienteSeleccionado);
-      //   setClienteSeleccionado(null);
+    if (!seleccionada) return;
+
+    await intentar(() =>
+      desvincularContactoCliente(contactoId, seleccionada.id)
+    );
+
+    const nuevosClientes = await intentar(() =>
+      getClientesPorContacto(contactoId)
+    );
+
+    if (nuevosClientes) {
+      emitir("CLIENTES_ACTUALIZADOS", {
+        clientes: nuevosClientes.datos,
+      });
     }
   };
 
@@ -68,7 +87,10 @@ export const TabClientesAcciones = ({
         nombre="asociarCliente"
         abierto={estado === "vincular_cliente"}
         titulo="Asociar cliente"
-        onCerrar={() => emitir("CANCELAR_VINCULACION")}
+        onCerrar={() => {
+          setClienteSeleccionado(null);
+          emitir("CANCELAR_VINCULACION");
+        }}
       >
         <ClienteSelector
           valor={clienteSeleccionado?.valor || ""}
@@ -78,13 +100,16 @@ export const TabClientesAcciones = ({
           onChange={(cliente) => setClienteSeleccionado(cliente)}
         />
         <div className="botones">
-          <QBoton onClick={onAsociar} deshabilitado={false}>
+          <QBoton onClick={onAsociar} deshabilitado={!clienteSeleccionado}>
             Guardar
           </QBoton>
           <QBoton
             tipo="reset"
             variante="texto"
-            onClick={() => emitir("CANCELAR_VINCULACION")}
+            onClick={() => {
+              setClienteSeleccionado(null);
+              emitir("CANCELAR_VINCULACION");
+            }}
           >
             Cancelar
           </QBoton>
@@ -96,7 +121,7 @@ export const TabClientesAcciones = ({
         abierto={estado === "desvincular_cliente"}
         titulo="Confirmar desvincular"
         mensaje="¿Está seguro de que desea desvincular este cliente?"
-        onCerrar={() => emitir("CANCELAR_VINCULACION")}
+        onCerrar={() => emitir("CANCELAR_DESVINCULACION")}
         onAceptar={onDesvincular}
       />
     </div>

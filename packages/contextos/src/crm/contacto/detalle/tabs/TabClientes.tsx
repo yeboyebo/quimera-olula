@@ -5,12 +5,17 @@ import { useLista } from "@olula/lib/useLista.ts";
 import { Maquina, useMaquina } from "@olula/lib/useMaquina.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect, useState } from "react";
-import { Cliente } from "../../../../cliente/diseño.ts";
-import { Contacto } from "../../../diseño.ts";
-import { getClientesPorContacto } from "../../../infraestructura.ts";
+import { Cliente } from "../../../cliente/diseño.ts";
+import { Contacto } from "../../diseño.ts";
+import { getClientesPorContacto } from "../../infraestructura.ts";
 import { TabClientesAcciones } from "./TabClientesAcciones.tsx";
 
 type Estado = "lista" | "vincular_cliente" | "desvincular_cliente";
+
+type PayloadClientesActualizados = {
+  clientes: Cliente[];
+  clienteId?: string;
+};
 
 export const TabClientes = ({
   contacto,
@@ -22,14 +27,13 @@ export const TabClientes = ({
   const [estado, setEstado] = useState<Estado>("lista");
   const contactoId = contacto.modelo.id;
 
-  const setListaClientes = clientes.setLista;
-
+  const { setLista } = clientes;
   const cargarClientes = useCallback(async () => {
     setCargando(true);
     const nuevosClientes = await getClientesPorContacto(contactoId);
-    setListaClientes(nuevosClientes.datos);
+    setLista(nuevosClientes.datos);
     setCargando(false);
-  }, [contactoId, setListaClientes]);
+  }, [setLista, contactoId]);
 
   useEffect(() => {
     if (contactoId) cargarClientes();
@@ -45,17 +49,19 @@ export const TabClientes = ({
       },
     },
     desvincular_cliente: {
-      CLIENTE_DESVINCULADO: async (payload: unknown) => {
-        const cliente = payload as Cliente;
-        clientes.eliminar(cliente);
+      CLIENTES_ACTUALIZADOS: async (payload: unknown) => {
+        const { clientes: listaClientes, clienteId } =
+          payload as PayloadClientesActualizados;
+        clientes.refrescar(listaClientes, clienteId);
         return "lista" as Estado;
       },
       CANCELAR_DESVINCULACION: "lista",
     },
     vincular_cliente: {
-      CLIENTE_VINCULADO: async (payload: unknown) => {
-        const cliente = payload as Cliente;
-        clientes.añadir(cliente);
+      CLIENTES_ACTUALIZADOS: async (payload: unknown) => {
+        const { clientes: listaClientes, clienteId } =
+          payload as PayloadClientesActualizados;
+        clientes.refrescar(listaClientes, clienteId);
         return "lista" as Estado;
       },
       CANCELAR_VINCULACION: "lista",
