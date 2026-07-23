@@ -153,7 +153,13 @@ export const QAutocompletar = ({
   };
 
   const manejarBlur = (valor: string, e: React.FocusEvent<HTMLElement>) => {
+    const estabaEditando = editando.current;
     editando.current = false;
+
+    if (!estabaEditando) {
+      onBlur?.(null, e);
+      return;
+    }
 
     const opcion = opciones.find(
       (opcion) => (opcion?.descripcionOpcion || opcion.descripcion) === valor
