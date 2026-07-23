@@ -23,7 +23,6 @@ export interface LineasAlabaranPatch {
 
 export type AlbaranCreado = {
     id: string;
-    codigo: string;
 };
 
 export type PatchAlbaranarPedido = (id: string, lineas: LineaAlbaranarPedido[]) => Promise<AlbaranCreado>;

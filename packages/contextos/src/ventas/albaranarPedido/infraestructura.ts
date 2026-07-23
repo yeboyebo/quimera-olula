@@ -12,10 +12,10 @@ export const patchAlbaranarPedido: PatchAlbaranarPedido = async (id, lineas) => 
         cambios,
         "Error al albaranar el pedido"
     )) as unknown as
-        | { datos: { id: string; codigo: string } }
-        | { id: string; codigo: string };
+        | { datos: { albaran_id: string } }
+        | { albaran_id: string };
     const datos = "datos" in respuesta ? respuesta.datos : respuesta;
-    return { id: String(datos.id ?? ""), codigo: String(datos.codigo ?? "") };
+    return { id: String(datos.albaran_id ?? "") };
 }
 
 export const patchCerrarLineaPedido: PatchCerrarLineaPedido = async (pedidoId, lineaId, cerrada) => {

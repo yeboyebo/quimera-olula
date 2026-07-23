@@ -60,6 +60,7 @@ export const ExpansionTramosSimple = ({
         onChange={handleChange}
         erroneo={!!estado}
         textoValidacion={estado}
+        autoSeleccion
       />
       <QBoton tamaño="pequeño" deshabilitado={linea.cerrada} onClick={guardar}>
         Aprobar

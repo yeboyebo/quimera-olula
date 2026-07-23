@@ -1,17 +1,31 @@
 import { QBoton, QModal } from "@olula/componentes/index.ts";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { useEffect, useRef } from "react";
+import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
+import { useContext, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import "./DetalleAlbaranarPedido.css";
 import { contextoVacio } from "./dominio.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 
+type UrlPorId = (id: string) => string;
+
 export const DetalleAlbaranarPedido = () => {
   const params = useParams();
   const navigate = useNavigate();
   const pedidoId = params.id;
   const pedidoIdCargadoRef = useRef<string | null>(null);
+
+  // Las rutas de retorno dependen de la app: olula usa rutas propias
+  // (singular), mientras que las apps con legacy (p.ej. cabrera) navegan a las
+  // vistas legacy (plural). Se resuelven por factory con fallback a olula.
+  const { app } = useContext(FactoryCtx);
+  const urlPedido =
+    (app.Ventas?.albaranar_url_pedido as UrlPorId | undefined) ??
+    ((id: string) => `/ventas/pedido/${id}`);
+  const urlAlbaran =
+    (app.Ventas?.albaranar_url_albaran as UrlPorId | undefined) ??
+    ((id: string) => `/ventas/albaran/${id}`);
 
   const { ctx, emitir } = useMaquina(getMaquina, contextoVacio, async () => {});
 
@@ -54,18 +68,18 @@ export const DetalleAlbaranarPedido = () => {
         onCerrar={() => emitir("albaranado_completado_cerrado")}
       >
         <div className="mensaje" style={{ whiteSpace: "pre-line" }}>
-          {`El albarán ${albaranCreado?.codigo ?? ""} se ha generado correctamente.`}
+          El albarán se ha generado correctamente.
         </div>
         <div className="botones">
           <QBoton
             variante="texto"
-            onClick={() => navigate(`/ventas/pedido/${pedidoId}`)}
+            onClick={() => pedidoId && navigate(urlPedido(pedidoId))}
           >
             Volver al pedido
           </QBoton>
           <QBoton
             onClick={() =>
-              albaranCreado && navigate(`/ventas/albaran/${albaranCreado.id}`)
+              albaranCreado && navigate(urlAlbaran(albaranCreado.id))
             }
           >
             Ir al albarán creado
