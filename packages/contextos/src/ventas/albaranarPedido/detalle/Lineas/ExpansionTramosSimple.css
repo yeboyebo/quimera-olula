@@ -10,3 +10,9 @@
   flex: 0 0 auto;
   width: 7rem;
 }
+
+/* Mantiene 'condensado' (input pequeño) pero devuelve la etiqueta a su
+   tamaño normal, ya que condensado la reduce a --tamaño-letra-xs. */
+.ExpansionTramosSimple quimera-input label .etiqueta {
+  font-size: var(--tamaño-letra-s);
+}

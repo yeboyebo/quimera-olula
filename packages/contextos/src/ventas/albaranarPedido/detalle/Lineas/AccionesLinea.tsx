@@ -3,7 +3,7 @@ import { ContextoError } from "@olula/lib/contexto.ts";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useContext } from "react";
 import { LineaAlbaranarPedido } from "../../diseño.ts";
-import { calcularAEnviar } from "../../dominio.ts";
+import { calcularAEnviar, lineaAprobadaCompleta } from "../../dominio.ts";
 import { patchCerrarLineaPedido } from "../../infraestructura.ts";
 import "./AccionesLinea.css";
 
@@ -18,16 +18,16 @@ export const AccionesLinea = ({
 }) => {
   const { intentar } = useContext(ContextoError);
 
-  const servida = linea.servida || 0;
   const aEnviar = calcularAEnviar(linea);
-  const completo = aEnviar > 0 && aEnviar + servida >= linea.cantidad;
+  const completo = lineaAprobadaCompleta(linea);
 
-  const colorAprobar =
-    linea.cerrada || aEnviar <= 0
-      ? undefined
-      : completo
-        ? "var(--color-exito)"
-        : "var(--color-advertencia)";
+  const colorAprobar = linea.cerrada
+    ? undefined
+    : completo
+      ? "var(--color-exito)"
+      : aEnviar > 0
+        ? "var(--color-advertencia)"
+        : undefined;
 
   const toggleCerrada = async (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -18,6 +18,20 @@ export const ExpansionTramosSimple = ({
   const [cantidad, setCantidad] = useState<string>(
     tramoExistente ? String(tramoExistente.cantidad) : "0"
   );
+  const [estado, setEstado] = useState("");
+
+  const validacion = (cantidadRaw: string): string => {
+    const valor = Number(cantidadRaw);
+    if (isNaN(valor) || valor < 0)
+      return "Debe tener una cantidad mayor que cero.";
+    if (valor > maximo) return "No puede enviar más de la cantidad pendiente.";
+    return "";
+  };
+
+  const handleChange = (v: string) => {
+    setEstado(validacion(v));
+    setCantidad(v);
+  };
 
   const guardar = () => {
     const valor = Math.min(maximo, Math.max(0, Number(cantidad) || 0));
@@ -43,7 +57,9 @@ export const ExpansionTramosSimple = ({
         condensado
         deshabilitado={linea.cerrada}
         valor={cantidad}
-        onChange={(v) => setCantidad(v)}
+        onChange={handleChange}
+        erroneo={!!estado}
+        textoValidacion={estado}
       />
       <QBoton tamaño="pequeño" deshabilitado={linea.cerrada} onClick={guardar}>
         Aprobar

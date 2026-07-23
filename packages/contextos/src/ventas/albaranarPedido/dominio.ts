@@ -66,7 +66,7 @@ export const calcularDisponible = (linea: LineaAlbaranarPedido): number =>
 
 export const lineaAprobadaCompleta = (linea: LineaAlbaranarPedido): boolean => {
     const aEnviar = calcularAEnviar(linea);
-    return aEnviar > 0 && aEnviar + (linea.servida || 0) >= linea.cantidad;
+    return linea.cantidad > 0 && aEnviar + (linea.servida || 0) >= linea.cantidad;
 };
 
 export const obtenerClaseEstadoAlbaranado = (linea: LineaAlbaranarPedido) => {
