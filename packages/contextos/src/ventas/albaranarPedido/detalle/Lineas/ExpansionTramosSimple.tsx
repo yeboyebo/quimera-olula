@@ -24,7 +24,7 @@ export const ExpansionTramosSimple = ({
     const valor = Number(cantidadRaw);
     if (isNaN(valor) || valor < 0)
       return "Debe tener una cantidad mayor que cero.";
-    if (valor > maximo) return "No puede enviar más de la cantidad pendiente.";
+    if (valor > maximo) return "No puede añadir más de la cantidad en pedido.";
     return "";
   };
 
