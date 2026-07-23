@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.tsx";
@@ -8,14 +9,14 @@ import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect } from "react";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
-import { DetalleOrden } from "../detalle/DetalleOrden.tsx";
 import { CrearOrden } from "../crear/CrearOrden.tsx";
+import { DetalleOrden } from "../detalle/DetalleOrden.tsx";
 import { ContextoMaestroOrden, getMaquina } from "./maquina.ts";
 
 const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
     { id: "id", cabecera: "ID" },
-    { id: "tipo", cabecera: "Tipo" },
-    { id: "fecha", cabecera: "Fecha" },
+    { id: "descripcion", cabecera: "Orden" },
+    { id: "fecha", cabecera: "Fecha", tipo:"fecha" },
     { id: "estado", cabecera: "Estado" },
     { id: "abierta", cabecera: "Abierta", tipo: "booleano" },
 ];
@@ -48,9 +49,15 @@ export const MaestroOrden = () => {
                         <h2>Órdenes</h2>
                         <div className="maestro-botones">
                             <QBoton onClick={() => emitir("crear_modulo_solicitado")}>Nueva orden</QBoton>
-                            <QBoton onClick={cambiarLayout}>
-                                {layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
-                            </QBoton>
+                            <span
+                                className="cambio-modo-icono"
+                                onClick={cambiarLayout}
+                            >
+                                <QIcono
+                                    nombre={layout === "TABLA" ? "lista" : "tabla"}
+                                    tamaño="md"
+                                />
+                            </span>
                         </div>
                         <Listado<ItemOrdenAlmacen>
                             metaTabla={metaTablaOrden}

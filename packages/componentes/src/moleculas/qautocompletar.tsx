@@ -14,7 +14,7 @@ export type QAutocompletarProps = Omit<
   longitudMinima?: number;
   descripcion?: string;
   soloTexto?: boolean;
-  obtenerOpciones: (valor: string) => Promise<Opcion[]>;
+  obtenerOpciones: (texto: string, id?: string) => Promise<Opcion[]>;
   onChange?: (
     opcion: Opcion | null,
     evento: React.ChangeEvent<HTMLElement>
@@ -86,6 +86,17 @@ export const QAutocompletar = ({
       setValorDescrito("");
     }
   }, [valor]);
+
+  useEffect(() => {
+    if (editando.current || !valor || descripcion) return;
+
+    obtenerOpciones("", valor).then((opciones) => {
+      const opcion = opciones.find((o) => o.valor === valor);
+      if (opcion) {
+        setValorDescrito(opcion.descripcion);
+      }
+    });
+  }, [valor, descripcion]);
 
   useEffect(() => {
     if (!editando.current || opciones.length === 0) return;

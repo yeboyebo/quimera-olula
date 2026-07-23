@@ -170,11 +170,12 @@ export const FormInput = ({
     ref: ref as React.RefObject<HTMLInputElement>,
   }
   if (tipo === "checkbox") {
+    const checkedValue = checked ?? valor === "true";
     return (
       <input
         {...inputProps}
-        checked={onChange ? checked : undefined}
-        defaultChecked={onChange ? undefined : checked}
+        checked={onChange ? checkedValue : undefined}
+        defaultChecked={onChange ? undefined : checkedValue}
       />
     );
   }

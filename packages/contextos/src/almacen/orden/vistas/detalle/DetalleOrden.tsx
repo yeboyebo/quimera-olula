@@ -4,7 +4,7 @@ import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QInput } from "@olula/componentes/index.js";
+import { QInput, Tab, Tabs } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
@@ -17,10 +17,12 @@ import { BorrarOrden } from "../borrar/BorrarOrden.tsx";
 import { guardarOrden } from "./detalle.ts";
 import "./DetalleOrden.css";
 import { LecturaOrden } from "./lectura/LecturaOrden.tsx";
+import { LecturaCajaOrden } from "./lectura_caja/LecturaCajaOrden.tsx";
+import { LecturasCajaOrden } from "./lecturas_caja/LecturasCajaOrden.tsx";
 import { LineasOrden } from "./lineas/LineasOrden.tsx";
 import { ContextoOrdenAlmacen, getMaquina } from "./maquina.ts";
 
-const titulo = (orden: OrdenAlmacen) => orden.tipo || orden.id;
+const titulo = (orden: OrdenAlmacen) => `${orden.descripcion}`
 
 export const DetalleOrden = ({
     id,
@@ -51,7 +53,6 @@ export const DetalleOrden = ({
     const orden = useModelo(metaOrden, ctx.orden, autoGuardar);
     const { modelo } = orden;
 
-    console.log("modelo", modelo);
     const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipo);
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipo);
 
@@ -76,48 +77,61 @@ export const DetalleOrden = ({
             </div>
             <div className="DetalleOrden">
                 <quimera-formulario>
+                    <QInput label="Descripción" {...orden.uiProps("descripcion")}/>
                     <TipoOrden {...orden.uiProps("tipo")} soloTexto />
                     <Almacen {...orden.uiProps("almacenId")} soloTexto />
                     <QInput label="Fecha" {...orden.uiProps("fecha")} soloTexto />
                     <QInput label="Abierta" {...orden.uiProps("abierta")} soloTexto />
                     {mostrarOrigen && (
                         <Caja
-                            {...orden.uiProps("cajaOrigenId")}
+                            {...orden.uiProps("idCajaOrigen")}
                             label="Caja origen"
-                            nombre="cajaOrigenId"
+                            nombre="idCajaOrigen"
                         />
                     )}
                     {mostrarOrigen && (
                         <Ubicacion
-                            {...orden.uiProps("ubicacionOrigenId")}
+                            {...orden.uiProps("idUbicacionOrigen")}
                             label="Ubicación origen"
-                            nombre="ubicacionOrigenId"
+                            nombre="idUbicacionOrigen"
                         />
                     )}
                     {mostrarDestino && (
                         <Caja
-                            {...orden.uiProps("cajaDestinoId")}
+                            {...orden.uiProps("idCajaDestino")}
                             label="Caja destino"
-                            nombre="cajaDestinoId"
+                            nombre="idCajaDestino"
                         />
                     )}
                     {mostrarDestino && (
                         <Ubicacion
-                            {...orden.uiProps("ubicacionDestinoId", "ubicacionDestino")}
+                            {...orden.uiProps("idUbicacionDestino", "ubicacionDestino")}
                             label="Ubicación destino"
-                            nombre="ubicacionDestinoId"
+                            nombre="idUbicacionDestino"
                         />
                     )}
                 </quimera-formulario>
             </div>
-            <LecturaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+            <Tabs>
+                <Tab label="Artículos" >
+                    <LecturaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+                </Tab>
+                <Tab label="Cajas" >
+                    {["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
+                        <>
+                            <LecturaCajaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+                            <LecturasCajaOrden orden={ctx.orden} />
+                        </>
+                    )}
+                </Tab>
+            </Tabs>
             <LineasOrden
                 orden={ctx.orden}
                 lineas={ctx.lineas}
                 estado={ctx.estado}
                 publicar={emitir}
             />
-
+            
             {ctx.estado === "BORRANDO" && (
                 <BorrarOrden
                     publicar={emitir}

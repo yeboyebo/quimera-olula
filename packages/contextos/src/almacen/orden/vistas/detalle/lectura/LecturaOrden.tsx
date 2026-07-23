@@ -1,6 +1,6 @@
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
 import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
-import { OrdenAlmacen } from "#/almacen/orden/diseño.ts";
+import { OrdenAlmacen, TipoOrden } from "#/almacen/orden/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ContextoError } from "@olula/lib/contexto.ts";
@@ -10,8 +10,7 @@ import { useCallback, useContext, useMemo } from "react";
 import { Articulo } from "../../../../comun/componentes/Articulo.tsx";
 import { Ubicacion } from "../../../../comun/componentes/Ubicacion.tsx";
 import { registrarLecturaOrden } from "../../../infraestructura.ts";
-import { metaNuevaLecturaOrden } from "./diseño.ts";
-import { getNuevaLecturaOrdenVacia } from "./lectura_orden.ts";
+import { getLecturaOrdenVacia, getMetaLecturaOrden } from "./lectura_orden.ts";
 import "./LecturaOrden.css";
 import { LecturaSkuLote } from "./LecturaSkuLote.tsx";
 
@@ -22,12 +21,15 @@ export const LecturaOrden = ({
 }: {
     publicar: ProcesarEvento;
     orden: OrdenAlmacen;
-    tipo: "ENTRADA" | "SALIDA" | "TRASPASO";
+    tipo: TipoOrden;
 }) => {
     const { intentar } = useContext(ContextoError);
 
-    const lecturaInicial = useMemo(
-        () => getNuevaLecturaOrdenVacia(orden),
+    const [lecturaInicial, metaNuevaLecturaOrden] = useMemo(
+        () => [
+            getLecturaOrdenVacia(orden),
+            getMetaLecturaOrden(orden.tipo),
+        ],
         [orden]
     );
 
@@ -40,6 +42,8 @@ export const LecturaOrden = ({
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(tipo);
 
     const registrar = useCallback(async () => {
+
+        console.log("modelo"    , modelo);
         await intentar(() =>
             registrarLecturaOrden(orden.id, {
                 sku: modelo.sku,
@@ -72,26 +76,35 @@ export const LecturaOrden = ({
         <div className="LecturaOrden">
             <h3>LECTURA</h3>
             <quimera-formulario>
-                <LecturaSkuLote onLectura={onSkuLoteLeido} />
+                <LecturaSkuLote nombre="sku-lote" onLectura={onSkuLoteLeido} />
+                <QInput label="Cantidad" {...uiProps("cantidad")} />
                 <Articulo
                     {...uiProps("sku", "articulo")}
                 />
                 <Lote
                     sku={modelo.sku}
-                    {...uiProps("idLote")}
+                    {...uiProps("idLote", "idLote")}
                 />
-                <QInput label="Cantidad" {...uiProps("cantidad")} />
                 {mostrarOrigen && (
-                    <Ubicacion
-                        {...uiProps("idUbicacionOrigen")}
-                    />
+                    <>
+                        <Ubicacion
+                            label={"U. Origen"}
+                            {...uiProps("idUbicacionOrigen")}
+                        />
+                        <Caja
+                            label={"Caja Origen"}
+                            {...uiProps("idCajaOrigen")}
+                        />
+                    </>
                 )}
                 {mostrarDestino && (
                     <>
                         <Ubicacion
+                            label={"U. Destino"}
                             {...uiProps("idUbicacionDestino")}
                         />
                         <Caja
+                            label={"Caja Destino"}
                             {...uiProps("idCajaDestino")}
                         />
                     </>

@@ -1,10 +1,10 @@
-import { describe, test, expect } from "vitest";
-import {
-    lineaOrdenDesdeApi,
-    lineaOrdenAApi,
-} from "#/almacen/orden/infraestructura.ts";
-import type { LineaOrdenAlmacenApi } from "#/almacen/orden/infraestructura.ts";
 import type { LineaOrdenAlmacen } from "#/almacen/orden/diseño.ts";
+import type { LineaOrdenAlmacenApi } from "#/almacen/orden/infraestructura.ts";
+import {
+    lineaOrdenAApi,
+    lineaOrdenDesdeApi,
+} from "#/almacen/orden/infraestructura.ts";
+import { describe, expect, test } from "vitest";
 
 // ---------------------------------------------------------------------------
 // [orden-infra-01] lineaOrdenDesdeApi convierte de snake_case API a camelCase dominio
@@ -39,24 +39,24 @@ describe("[orden-infra-01] lineaOrdenDesdeApi convierte correctamente de snake_c
         expect(linea.cantidadPrevista).toBe(10);
     });
 
-    test("mapea ubicacion_origen_id a ubicacionOrigenId", () => {
+    test("mapea ubicacion_origen_id a idUbicacionOrigen", () => {
         const linea = lineaOrdenDesdeApi(lineaApi);
-        expect(linea.ubicacionOrigenId).toBe("UBI-001");
+        expect(linea.idUbicacionOrigen).toBe("UBI-001");
     });
 
-    test("mapea caja_origen_id a cajaOrigenId (null)", () => {
+    test("mapea caja_origen_id a idCajaOrigen (null)", () => {
         const linea = lineaOrdenDesdeApi(lineaApi);
-        expect(linea.cajaOrigenId).toBeNull();
+        expect(linea.idCajaOrigen).toBeNull();
     });
 
-    test("mapea ubicacion_destino_id a ubicacionDestinoId", () => {
+    test("mapea ubicacion_destino_id a idUbicacionDestino", () => {
         const linea = lineaOrdenDesdeApi(lineaApi);
-        expect(linea.ubicacionDestinoId).toBe("UBI-002");
+        expect(linea.idUbicacionDestino).toBe("UBI-002");
     });
 
-    test("mapea caja_destino_id a cajaDestinoId (null)", () => {
+    test("mapea caja_destino_id a idCajaDestino (null)", () => {
         const linea = lineaOrdenDesdeApi(lineaApi);
-        expect(linea.cajaDestinoId).toBeNull();
+        expect(linea.idCajaDestino).toBeNull();
     });
 
     test("mapea lote_id null correctamente", () => {
@@ -77,10 +77,10 @@ describe("[orden-infra-02] lineaOrdenAApi convierte correctamente de camelCase d
         articulo: "Producto 001",
         loteId: "LOTE-123",
         cantidadPrevista: 10,
-        ubicacionOrigenId: "UBI-001",
-        cajaOrigenId: null,
-        ubicacionDestinoId: "UBI-002",
-        cajaDestinoId: null,
+        idUbicacionOrigen: "UBI-001",
+        idCajaOrigen: null,
+        idUbicacionDestino: "UBI-002",
+        idCajaDestino: null,
         lecturas: [],
     };
 
@@ -99,22 +99,22 @@ describe("[orden-infra-02] lineaOrdenAApi convierte correctamente de camelCase d
         expect(lineaApi.cantidad_prevista).toBe(10);
     });
 
-    test("mapea ubicacionOrigenId a ubicacion_origen_id", () => {
+    test("mapea idUbicacionOrigen a ubicacion_origen_id", () => {
         const lineaApi = lineaOrdenAApi(lineaDominio);
         expect(lineaApi.ubicacion_origen_id).toBe("UBI-001");
     });
 
-    test("mapea cajaOrigenId a caja_origen_id (null)", () => {
+    test("mapea idCajaOrigen a caja_origen_id (null)", () => {
         const lineaApi = lineaOrdenAApi(lineaDominio);
         expect(lineaApi.caja_origen_id).toBeNull();
     });
 
-    test("mapea ubicacionDestinoId a ubicacion_destino_id", () => {
+    test("mapea idUbicacionDestino a ubicacion_destino_id", () => {
         const lineaApi = lineaOrdenAApi(lineaDominio);
         expect(lineaApi.ubicacion_destino_id).toBe("UBI-002");
     });
 
-    test("mapea cajaDestinoId a caja_destino_id (null)", () => {
+    test("mapea idCajaDestino a caja_destino_id (null)", () => {
         const lineaApi = lineaOrdenAApi(lineaDominio);
         expect(lineaApi.caja_destino_id).toBeNull();
     });
