@@ -68,9 +68,7 @@ export const MaestroConDetallePresupuesto = () => {
             <h2>Presupuestos</h2>
             <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
-              criteria={ctx.presupuestos.criteria}
-              modo={"tabla"}
-              entidades={ctx.presupuestos.lista}
+              criteria={ctx.presupuestos.criteria}              entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}
               seleccionada={ctx.presupuestos.activo}
               renderAcciones={() => (

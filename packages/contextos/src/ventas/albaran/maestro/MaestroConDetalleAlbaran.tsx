@@ -74,9 +74,7 @@ export const MaestroConDetalleAlbaran = () => {
                     Nuevo Albarán
                   </QBoton>
                 </div>
-              )}
-              modo={"tabla"}
-              entidades={ctx.albaranes.lista}
+              )}              entidades={ctx.albaranes.lista}
               totalEntidades={ctx.albaranes.total}
               seleccionada={ctx.albaranes.activo}
               onSeleccion={(payload) => emitir("albaran_seleccionado", payload)}

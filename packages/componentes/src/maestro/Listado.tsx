@@ -92,7 +92,7 @@ export const Listado = <T extends Entidad>({
   urlDescarga,
   formatosDescarga,
 }: ListadoProps<T>) => {
-  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tarjetas");
+  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? "tabla");
   const modoInterno = modo ?? modoEstado;
 
   const [multiseleccionEstado, setMultiseleccionEstado] = useState(false);

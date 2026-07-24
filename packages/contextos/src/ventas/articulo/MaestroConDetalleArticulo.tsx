@@ -36,9 +36,7 @@ export const MaestroConDetalleArticulo = () => {
                         <Listado<Articulo>
                             metaTabla={metaTablaArticulo}
                             metaFiltro={metaFiltro}
-                            criteria={ctx.articulos.criteria}
-                            modo="tabla"
-                            entidades={ctx.articulos.lista}
+                            criteria={ctx.articulos.criteria}                            entidades={ctx.articulos.lista}
                             totalEntidades={ctx.articulos.total}
                             seleccionada={ctx.articulos.activo}
                             onSeleccion={(payload) => emitir("articulo_seleccionado", payload)}

@@ -34,9 +34,7 @@ export const MaestroConDetalleCliente = () => {
           <>
             <h2>Clientes</h2>
             <Listado<Cliente>
-              metaTabla={metaTablaCliente}
-              modo="tabla"
-              criteria={ctx.clientes.criteria}
+              metaTabla={metaTablaCliente}              criteria={ctx.clientes.criteria}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}
               seleccionada={ctx.clientes.activo}
