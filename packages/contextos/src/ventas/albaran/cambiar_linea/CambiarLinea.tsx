@@ -3,17 +3,17 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
+import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { TagArticulo } from "../../articulo/diseño.ts";
 import { LineaAlbaran } from "../diseño.ts";
 import { patchLinea } from "../infraestructura.ts";
 import { metaLineaAlbaran } from "./dominio.ts";
-import "./EditarLinea.css";
+import "./CambiarLinea.css";
 
-export const EditarLinea = ({
+export const CambiarLinea = ({
   publicar,
   linea,
   albaranId,
@@ -22,18 +22,20 @@ export const EditarLinea = ({
   albaranId: string;
   publicar: ProcesarEvento;
 }) => {
-  const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido, set } = useModelo(metaLineaAlbaran, linea);
   const [mostrarMas, setMostrarMas] = useState(false);
 
-  const cambiar = useCallback(async () => {
-    await intentar(() => patchLinea(albaranId, modelo));
+  const cambiar_ = useCallback(async () => {
+    await patchLinea(albaranId, modelo);
     publicar("linea_actualizada");
-  }, [modelo, publicar, albaranId, intentar]);
+  }, [modelo, publicar, albaranId]);
 
-  const cancelar = useCallback(() => {
-    publicar("editar_linea_cancelado");
-  }, [publicar]);
+  const cancelar_ = useCallback(
+    () => publicar("editar_linea_cancelado"),
+    [publicar]
+  );
+
+  const [cambiar, cancelar] = useForm(cambiar_, cancelar_);
 
   const handleArticuloChange = useCallback(
     (

@@ -1,7 +1,7 @@
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { Albaran, LineaAlbaran } from "../../diseño.ts";
-import { EditarLinea } from "../../editar_linea/EditarLinea.tsx";
+import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
 export const Lineas = ({
@@ -58,7 +58,7 @@ export const Lineas = ({
       )}
 
       {lineaActiva && estadoAlbaran === "CAMBIANDO_LINEA" && (
-        <EditarLinea
+        <CambiarLinea
           publicar={publicar}
           linea={lineaActiva}
           albaranId={albaran.id}
@@ -68,7 +68,7 @@ export const Lineas = ({
       {lineaActiva && estadoAlbaran === "BORRANDO_LINEA" && (
         <BorrarLinea
           publicar={publicar}
-          idLinea={lineaActiva.id}
+          linea={lineaActiva}
           albaranId={albaran.id}
         />
       )}

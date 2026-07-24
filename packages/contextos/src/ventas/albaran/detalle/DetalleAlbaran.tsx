@@ -13,7 +13,7 @@ import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
 import { albaranVacio, editable, metaAlbaran } from "../dominio.ts";
 import "./DetalleAlbaran.css";
-import { Lineas } from "./Lineas/Lineas.tsx";
+import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
