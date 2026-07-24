@@ -1,6 +1,8 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
 import {
+    cuentaActualizada,
+    cuentaCreada,
     Cuentas,
     desmarcarDomiciliacionProceso,
     domiciliarCuentaProceso,
@@ -28,13 +30,13 @@ export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco>
         },
 
         alta: {
-            cuenta_creada: [recargarCuentas, "lista"],
+            cuenta_creada: cuentaCreada,
 
             alta_cancelada: "lista",
         },
 
         edicion: {
-            cuenta_actualizada: [Cuentas.cambiar, recargarCuentas, "lista"],
+            cuenta_actualizada: cuentaActualizada,
 
             edicion_cancelada: "lista",
         },

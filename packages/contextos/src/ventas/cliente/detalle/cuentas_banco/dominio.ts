@@ -1,5 +1,5 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { MetaModelo } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
 import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CuentaBanco, NuevaCuentaBanco } from "../../diseño.ts";
 import {
@@ -50,6 +50,18 @@ export const recargarCuentas: ProcesarCuentasBanco = async (contexto, payload) =
         clienteId,
         cargando: false,
     }
+}
+
+const pipeCuentas = ejecutarListaProcesos<EstadoCuentasBanco, ContextoCuentasBanco>;
+
+// Recarga usando contexto.clienteId (sin propagar el payload del evento, que trae
+// el id de la cuenta y no el del cliente). Espeja el patrón de direcciones.
+export const cuentaCreada: ProcesarCuentasBanco = async (contexto) => {
+    return pipeCuentas(contexto, [recargarCuentas, "lista"]);
+}
+
+export const cuentaActualizada: ProcesarCuentasBanco = async (contexto) => {
+    return pipeCuentas(contexto, [recargarCuentas, "lista"]);
 }
 
 export const domiciliarCuentaProceso: ProcesarCuentasBanco = async (contexto) => {
