@@ -1,7 +1,7 @@
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { LineaPedido, Pedido } from "../../diseño.ts";
-import { EditarLinea } from "../../editar_linea/EditarLinea.tsx";
+import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
 export const Lineas = ({
@@ -40,14 +40,6 @@ export const Lineas = ({
       cantidad: cantidad,
     });
   };
-  console.log(
-    "Estado pedido",
-    estadoPedido,
-    "servido",
-    pedido.servido,
-    "lineaActiva",
-    lineaActiva
-  );
 
   return (
     <>
@@ -70,7 +62,7 @@ export const Lineas = ({
       )}
 
       {lineaActiva && estadoPedido === "CAMBIANDO_LINEA" && (
-        <EditarLinea
+        <CambiarLinea
           pedidoId={pedido.id}
           publicar={publicar}
           linea={lineaActiva}
@@ -81,7 +73,7 @@ export const Lineas = ({
         <BorrarLinea
           pedidoId={pedido.id}
           publicar={publicar}
-          idLinea={lineaActiva.id}
+          linea={lineaActiva}
         />
       )}
     </>

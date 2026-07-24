@@ -15,14 +15,14 @@ import { TipoPalet } from "../../comun/componentes/TipoPalet.tsx";
 import { Variedad } from "../../comun/componentes/Variedad.tsx";
 import { getItemsListaTipoPalet } from "../../tipo_palet/infraestructura.ts";
 import { formateaCategoria } from "../dominio.ts";
-import "./EditarLinea.css";
+import "./CambiarLinea.css";
 import {
   FormEditarLineaDefecto,
   metaEditarLinea,
   patchLineaNrj,
-} from "./editar_linea.ts";
+} from "./cambiar_linea.ts";
 
-export const EditarLineaNrj = ({
+export const CambiarLineaNrj = ({
   pedidoId,
   publicar,
   linea,

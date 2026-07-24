@@ -1,7 +1,7 @@
 import {
   criteriaLineasDefecto,
   LineasListaProps,
-} from "#/ventas/pedido/detalle/Lineas/LineasLista.tsx";
+} from "#/ventas/pedido/detalle/lineas/LineasLista.tsx";
 import {
   ListadoSemiControlado,
   QuimeraAcciones,

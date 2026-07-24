@@ -3,8 +3,8 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
+import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
@@ -12,40 +12,40 @@ import { TagArticulo } from "../../articulo/diseño.ts";
 import { LineaPedido } from "../diseño.ts";
 import { patchLinea } from "../infraestructura.ts";
 import { metaLinea } from "./dominio.ts";
-import "./EditarLinea.css";
+import "./CambiarLinea.css";
 
-export type EditarLineaProps = {
+export type CambiarLineaProps = {
   pedidoId: string;
   linea: LineaPedido;
   publicar: ProcesarEvento;
 };
 
-export const EditarLinea = (props: EditarLineaProps) => {
+export const CambiarLinea = (props: CambiarLineaProps) => {
   const { app } = useContext(FactoryCtx);
-  const EditarLinea_ = app.Ventas.pedido_EditarLinea as typeof EditarLineaBase;
+  const CambiarLinea_ = app.Ventas.pedido_CambiarLinea as typeof CambiarLineaBase;
 
-  return EditarLinea_(props);
+  return CambiarLinea_(props);
 };
 
-export const EditarLineaBase = ({
+export const CambiarLineaBase = ({
   pedidoId,
   publicar,
   linea,
-}: EditarLineaProps) => {
-  const { intentar } = useContext(ContextoError);
+}: CambiarLineaProps) => {
   const { modelo, uiProps, valido, set } = useModelo(metaLinea, linea);
-  const [cambiando, setCambiando] = useState(false);
   const [mostrarMas, setMostrarMas] = useState(false);
 
-  const cambiar = useCallback(async () => {
-    await intentar(() => patchLinea(pedidoId, modelo));
-    setCambiando(true);
+  const cambiar_ = useCallback(async () => {
+    await patchLinea(pedidoId, modelo);
     publicar("linea_actualizada");
-  }, [modelo, publicar, pedidoId, intentar]);
+  }, [modelo, publicar, pedidoId]);
 
-  const cancelar = useCallback(() => {
-    if (!cambiando) publicar("editar_linea_cancelado");
-  }, [cambiando, publicar]);
+  const cancelar_ = useCallback(
+    () => publicar("editar_linea_cancelado"),
+    [publicar]
+  );
+
+  const [cambiar, cancelar] = useForm(cambiar_, cancelar_);
 
   const handleArticuloChange = useCallback(
     (
