@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { BorrarDireccion } from "../../borrar_direccion/BorrarDireccion.tsx";
 import { CrearDireccion } from "../../crear_direccion/CrearDireccion.tsx";
 import { DirCliente } from "../../diseño.ts";
-import { EdicionDireccion } from "../../editar_direccion/EdicionDireccion.tsx";
+import { CambiarDireccion } from "../../cambiar_direccion/CambiarDireccion.tsx";
 import { TabDireccionesLista } from "./TabDireccionesLista.tsx";
 import { getMaquina } from "./maquina.ts";
 
@@ -50,7 +50,7 @@ export const TabDirecciones = ({ clienteId }: { clienteId: string }) => {
         titulo="Editar Dirección"
       >
         {ctx.direcciones.activo && (
-          <EdicionDireccion
+          <CambiarDireccion
             direccion={ctx.direcciones.activo}
             clienteId={clienteId}
             publicar={emitir}

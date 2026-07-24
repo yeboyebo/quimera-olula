@@ -6,7 +6,7 @@ import { getDirecciones, setDirFacturacion } from "../../infraestructura.ts";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
 
 export { metaNuevaDireccion, nuevaDireccionVacia } from "../../crear_direccion/dominio.ts";
-export { metaDireccion } from "../../editar_direccion/dominio.ts";
+export { metaDireccion } from "../../cambiar_direccion/dominio.ts";
 
 type ProcesarDirecciones = ProcesarContexto<EstadoDirecciones, ContextoDirecciones>;
 

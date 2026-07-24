@@ -1,16 +1,16 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { useFocus } from "@olula/lib/useFocus.js";
+import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useState } from "react";
+import { useCallback } from "react";
 import { DirCliente } from "../diseño.ts";
 import { actualizarDireccion } from "../infraestructura.ts";
 import { metaDireccion } from "./dominio.ts";
 
-export const EdicionDireccion = ({
+export const CambiarDireccion = ({
   direccion,
   clienteId,
   publicar,
@@ -19,22 +19,20 @@ export const EdicionDireccion = ({
   clienteId: string;
   publicar: ProcesarEvento;
 }) => {
-  const { intentar } = useContext(ContextoError);
   const direccionEditada = useModelo(metaDireccion, direccion);
-  const [editando, setEditando] = useState(false);
   const focus = useFocus();
 
-  const guardar = useCallback(async () => {
-    await intentar(() =>
-      actualizarDireccion(clienteId, direccionEditada.modelo)
-    );
-    setEditando(true);
+  const guardar_ = useCallback(async () => {
+    await actualizarDireccion(clienteId, direccionEditada.modelo);
     publicar("direccion_actualizada");
-  }, [direccionEditada.modelo, publicar, clienteId, intentar]);
+  }, [direccionEditada.modelo, publicar, clienteId]);
 
-  const cancelar = useCallback(() => {
-    if (!editando) publicar("edicion_cancelada");
-  }, [editando, publicar]);
+  const cancelar_ = useCallback(
+    () => publicar("edicion_cancelada"),
+    [publicar]
+  );
+
+  const [guardar, cancelar] = useForm(guardar_, cancelar_);
 
   const opciones = [
     { valor: "Calle", descripcion: "Calle" },

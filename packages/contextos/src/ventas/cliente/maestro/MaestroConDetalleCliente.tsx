@@ -62,11 +62,12 @@ export const MaestroConDetalleCliente = () => {
         modoDisposicion="maestro-50"
       />
 
-      <CrearCliente
-        publicar={emitir}
-        onCancelar={() => emitir("creacion_cancelada")}
-        activo={ctx.estado === "CREANDO_CLIENTE"}
-      />
+      {ctx.estado === "CREANDO_CLIENTE" && (
+        <CrearCliente
+          publicar={emitir}
+          onCancelar={() => emitir("creacion_cancelada")}
+        />
+      )}
     </div>
   );
 };
