@@ -2,7 +2,7 @@ import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
 import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { DirCliente } from "../../diseño.ts";
-import { getDirecciones, setDirFacturacion } from "../../infraestructura.ts";
+import { getDirecciones, setDirEnvio, setDirFacturacion } from "../../infraestructura.ts";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
 
 export { metaNuevaDireccion, nuevaDireccionVacia } from "../../crear_direccion/dominio.ts";
@@ -84,6 +84,20 @@ export const marcarDireccionFacturacion: ProcesarDirecciones = async (contexto) 
     if (!contexto.direcciones.activo?.id) return contexto;
 
     await setDirFacturacion(contexto.clienteId, contexto.direcciones.activo.id);
+
+    return pipeDirecciones(contexto, [
+        cargarDirecciones,
+    ]);
+}
+
+export const puedoMarcarDireccionEnvio = (direccion: DirCliente) => {
+    return !direccion.dir_envio;
+}
+
+export const marcarDireccionEnvio: ProcesarDirecciones = async (contexto) => {
+    if (!contexto.direcciones.activo?.id) return contexto;
+
+    await setDirEnvio(contexto.clienteId, contexto.direcciones.activo.id);
 
     return pipeDirecciones(contexto, [
         cargarDirecciones,

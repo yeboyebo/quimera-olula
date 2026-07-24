@@ -3,7 +3,7 @@ import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { boolAString, direccionCompleta } from "@olula/lib/dominio.ts";
 import { DirCliente } from "../../diseño.ts";
-import { puedoMarcarDireccionFacturacion } from "./dominio.ts";
+import { puedoMarcarDireccionEnvio, puedoMarcarDireccionFacturacion } from "./dominio.ts";
 import "./TabDirecciones.css";
 
 const metaTablaDirecciones = [
@@ -58,6 +58,11 @@ export const TabDireccionesLista = ({
       onClick: () => emitir("facturacion_solicitada"),
       deshabilitado:
         !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada),
+    },
+    {
+      texto: "Envío",
+      onClick: () => emitir("envio_solicitada"),
+      deshabilitado: !seleccionada || !puedoMarcarDireccionEnvio(seleccionada),
     },
   ];
 

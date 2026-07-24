@@ -9,6 +9,7 @@ import {
     cargarDirecciones,
     direccionActualizada,
     direccionCreada,
+    marcarDireccionEnvio,
     marcarDireccionFacturacion,
 } from "./dominio.ts";
 
@@ -28,6 +29,8 @@ export const getMaquina: () => Maquina<EstadoDirecciones, ContextoDirecciones> =
             borrado_solicitado: "confirmar_borrado",
 
             facturacion_solicitada: marcarDireccionFacturacion,
+
+            envio_solicitada: marcarDireccionEnvio,
 
             direccion_creada: direccionCreada,
 

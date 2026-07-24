@@ -152,6 +152,9 @@ export const postDireccion = async (clienteId: string, direccion: NuevaDireccion
 export const setDirFacturacion = async (clienteId: string, direccionId: string): Promise<void> =>
   RestAPI.patch(`${UrlsVentas.CLIENTE}/${clienteId}/direccion/${direccionId}/facturacion`, {}, "Error al establecer dirección de facturación");
 
+export const setDirEnvio = async (clienteId: string, direccionId: string): Promise<void> =>
+  RestAPI.patch(`${UrlsVentas.CLIENTE}/${clienteId}/direccion/${direccionId}/envio`, {}, "Error al establecer dirección de envío");
+
 
 export const actualizarDireccion = async (clienteId: string, direccion: DirCliente): Promise<void> =>
   RestAPI.patch(

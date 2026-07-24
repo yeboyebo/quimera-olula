@@ -1,3 +1,4 @@
+import { PaisSelector } from "#/comun/componentes/pais/pais.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
@@ -54,14 +55,51 @@ export const CambiarDireccion = ({
             ref={focus}
           />
         </div>
-        <div style={{ gridColumn: "span 10" }}>
+        <div style={{ gridColumn: "span 7" }}>
           <QInput
             label="Nombre de la Vía"
             {...direccionEditada.uiProps("nombre_via")}
           />
         </div>
-        <div style={{ gridColumn: "span 12" }}>
+        <div style={{ gridColumn: "span 3" }}>
+          <QInput label="Número" {...direccionEditada.uiProps("numero")} />
+        </div>
+        <div style={{ gridColumn: "span 6" }}>
+          <QInput label="Otros" {...direccionEditada.uiProps("otros")} />
+        </div>
+        <div style={{ gridColumn: "span 3" }}>
+          <QInput
+            label="Apdo. Correos"
+            {...direccionEditada.uiProps("apartado")}
+          />
+        </div>
+        <div style={{ gridColumn: "span 3" }}>
+          <QInput
+            label="Cód. Postal"
+            {...direccionEditada.uiProps("cod_postal")}
+          />
+        </div>
+        <div style={{ gridColumn: "span 6" }}>
           <QInput label="Ciudad" {...direccionEditada.uiProps("ciudad")} />
+        </div>
+        <div style={{ gridColumn: "span 6" }}>
+          <QInput label="Provincia" {...direccionEditada.uiProps("provincia")} />
+        </div>
+        <div style={{ gridColumn: "span 6" }}>
+          <PaisSelector
+            label="País"
+            nombre="direccion/pais_id"
+            valor={direccionEditada.modelo.pais_id}
+            onChange={(opcion) =>
+              direccionEditada.set({
+                ...direccionEditada.modelo,
+                pais_id: opcion?.valor ?? "",
+              })
+            }
+          />
+        </div>
+        <div style={{ gridColumn: "span 6" }}>
+          <QInput label="Teléfono" {...direccionEditada.uiProps("telefono")} />
         </div>
       </quimera-formulario>
       <div className="botones maestro-botones">
