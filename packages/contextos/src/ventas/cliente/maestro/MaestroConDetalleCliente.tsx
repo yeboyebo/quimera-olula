@@ -9,6 +9,7 @@ import { CrearCliente } from "../crear/CrearCliente.tsx";
 import { DetalleCliente } from "../detalle/DetalleCliente.tsx";
 import { Cliente } from "../diseño.ts";
 import { metaTablaCliente } from "./diseño.ts";
+import { TarjetaCliente } from "./TarjetaCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 import { getMaquina } from "./maquina.ts";
 
@@ -34,7 +35,9 @@ export const MaestroConDetalleCliente = () => {
           <>
             <h2>Clientes</h2>
             <Listado<Cliente>
-              metaTabla={metaTablaCliente}              criteria={ctx.clientes.criteria}
+              metaTabla={metaTablaCliente}
+              tarjeta={TarjetaCliente}
+              criteria={ctx.clientes.criteria}
               entidades={ctx.clientes.lista}
               totalEntidades={ctx.clientes.total}
               seleccionada={ctx.clientes.activo}
