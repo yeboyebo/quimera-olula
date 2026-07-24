@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router";
 import { PanelAsistenteBase } from "#/asistente/vistas/PanelAsistente.tsx";
+import { useNavigate } from "react-router";
 
 /**
  * Se monta dentro de Plantilla (packages/componentes), vía Componentes.panel_asistente

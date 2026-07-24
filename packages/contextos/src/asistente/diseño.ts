@@ -27,12 +27,28 @@ export interface AccionNavegacion {
     parametros?: Record<string, string>;
 }
 
+/** Audio/documento (Excel, PDF) que se manda junto con un mensaje. */
+export interface AdjuntoIa {
+    nombre: string;
+    tipoMime: string;
+    datosBase64: string;
+}
+
 export interface ConsultaIa {
     pregunta: string;
     threadId: string | null;
     capacidades?: Capacidad[];
     capacidadesHash?: string;
     contextoApp?: { rutaActual?: string; app?: string };
+    adjuntos?: AdjuntoIa[];
+}
+
+/** Metadatos (sin bytes) de un adjunto ya persistido — llega en RespuestaIa/MensajeHiloIa;
+ * los bytes se piden aparte con obtenerAdjuntoHilo cuando hacen falta. */
+export interface AdjuntoHiloIa {
+    id: string;
+    nombre: string;
+    tipoMime: string;
 }
 
 export interface RespuestaIa {
@@ -43,6 +59,8 @@ export interface RespuestaIa {
     capacidadesHash: string | null;
     necesitaCapacidades: boolean;
     accionNavegacion: AccionNavegacion | null;
+    /** Metadatos de los adjuntos de este turno, ya persistidos en el servidor. */
+    adjuntos: AdjuntoHiloIa[];
 }
 
 export interface A2uiClientAction {
@@ -55,13 +73,50 @@ export interface A2uiClientAction {
 
 export type EventoStreamIa =
     | { tipo: "delta"; contenido: string }
+    /** Aviso de progreso transitorio (p.ej. "Buscando el cliente…") — el cliente lo
+     * muestra sustituyendo el texto del mensaje, no acumulándolo: desaparece en
+     * cuanto llega el primer "delta" real de la respuesta final. */
+    | { tipo: "estado"; contenido: string }
     | { tipo: "a2ui"; a2uiMessage: unknown }
     | { tipo: "accion_navegacion"; accionNavegacion: AccionNavegacion }
-    | { tipo: "fin"; threadId: string; necesitaCapacidades?: boolean }
+    | { tipo: "fin"; threadId: string; necesitaCapacidades?: boolean; adjuntos: AdjuntoHiloIa[] }
     | { tipo: "error"; contenido: string };
+
+/** Adjunto tal como vive en el estado del mensaje en el navegador — `datosBase64` se
+ * rellena en cuanto se graba/adjunta (reproducción inmediata, sin esperar red) durante
+ * la sesión en curso; `id` llega del servidor al mandar el turno, y es lo único
+ * disponible al reconstruir un hilo antiguo (no hay `datosBase64` local en ese caso). */
+export interface AdjuntoMensaje {
+    id?: string;
+    nombre: string;
+    tipoMime: string;
+    datosBase64?: string;
+}
 
 export interface MensajeAsistente {
     id: string;
     rol: "user" | "assistant";
     texto: string;
+    adjuntos?: AdjuntoMensaje[];
+}
+
+/** GET /comun/ia/hilos: hilos (conversaciones) previos del usuario autenticado. */
+export interface HiloIa {
+    threadId: string;
+    titulo: string;
+    actualizadoEn: string;
+}
+
+/** GET /comun/ia/hilos/{threadId}/mensajes: historial completo (texto + A2UI + adjuntos) de un hilo. */
+export interface MensajeHiloIa {
+    id: string;
+    rol: "user" | "assistant";
+    texto: string;
+    a2uiMessages: unknown[];
+    adjuntos: AdjuntoHiloIa[];
+}
+
+export interface MensajesHiloIa {
+    threadId: string;
+    mensajes: MensajeHiloIa[];
 }

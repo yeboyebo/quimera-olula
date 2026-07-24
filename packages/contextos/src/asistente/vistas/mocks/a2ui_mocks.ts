@@ -135,6 +135,7 @@ export const getMockRespuestaIa = (consulta: ConsultaIa): RespuestaIa => {
             capacidadesHash,
             necesitaCapacidades: false,
             accionNavegacion: null,
+            adjuntos: [],
         };
     }
 
@@ -146,6 +147,7 @@ export const getMockRespuestaIa = (consulta: ConsultaIa): RespuestaIa => {
             capacidadesHash,
             necesitaCapacidades: false,
             accionNavegacion: null,
+            adjuntos: [],
         };
     }
 
@@ -157,6 +159,7 @@ export const getMockRespuestaIa = (consulta: ConsultaIa): RespuestaIa => {
             capacidadesHash,
             necesitaCapacidades: false,
             accionNavegacion: null,
+            adjuntos: [],
         };
     }
 
@@ -168,6 +171,7 @@ export const getMockRespuestaIa = (consulta: ConsultaIa): RespuestaIa => {
             capacidadesHash,
             necesitaCapacidades: false,
             accionNavegacion: { ruta: "/ventas/pedido", parametros: {} },
+            adjuntos: [],
         };
     }
 
@@ -178,5 +182,6 @@ export const getMockRespuestaIa = (consulta: ConsultaIa): RespuestaIa => {
         capacidadesHash,
         necesitaCapacidades: false,
         accionNavegacion: null,
+        adjuntos: [],
     };
 };

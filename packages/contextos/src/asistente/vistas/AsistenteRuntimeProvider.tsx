@@ -18,23 +18,34 @@ import { MessageProcessor } from "@a2ui/web_core/v0_9";
 import type { SurfaceModel } from "@a2ui/web_core/v0_9";
 import type { ReactComponentImplementation } from "@a2ui/react/v0_9";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
+import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { catalogoAsistente } from "#/asistente/vistas/catalogo/catalogo.ts";
-import { consultarIa, consultarIaStream, enviarAccionA2ui } from "#/asistente/infraestructura.ts";
-import { construirCapacidades, mensajeVacio } from "#/asistente/dominio.ts";
+import { consultarIa, consultarIaStream, enviarAccionA2ui, obtenerMensajesHilo } from "#/asistente/infraestructura.ts";
+import { adjuntosParaEnviar, construirCapacidades, mensajeVacio } from "#/asistente/dominio.ts";
 import { getMockRespuestaIa } from "#/asistente/vistas/mocks/a2ui_mocks.ts";
-import type { A2uiClientAction, AccionNavegacion, ConsultaIa, MensajeAsistente, RespuestaIa } from "#/asistente/diseño.ts";
+import type {
+    A2uiClientAction, AccionNavegacion, AdjuntoHiloIa, AdjuntoIa, AdjuntoMensaje, ConsultaIa, MensajeAsistente,
+    RespuestaIa,
+} from "#/asistente/diseño.ts";
 
 const ASISTENTE_MOCK_ENABLED = import.meta.env.VITE_ASISTENTE_MOCK === "true";
 
 interface AsistenteContextValue {
     isRunning: boolean;
-    enviarMensaje: (texto: string) => Promise<void>;
+    enviarMensaje: (texto: string, adjuntos?: AdjuntoMensaje[]) => Promise<void>;
     cancelarMensaje: () => void;
     streamingEnabled: boolean;
     setStreamingEnabled: (v: boolean) => void;
     a2uiSurfaces: SurfaceModel<ReactComponentImplementation>[];
     messageSurfaceMap: Record<string, string[]>;
     enviarAccion: (accion: A2uiClientAction) => Promise<void>;
+    threadIdActivo: string | null;
+    cambiarAHilo: (threadId: string) => Promise<void>;
+    nuevaConversacion: () => void;
+    /** Adjuntos (audio/documentos) por id de mensaje — el runtime de assistant-ui solo
+     * conoce texto (ver convertMessage), así que la UI accede a esto por fuera, igual
+     * que ya hace messageSurfaceMap para los bloques A2UI. */
+    adjuntosPorMensaje: Record<string, AdjuntoMensaje[]>;
 }
 
 const AsistenteContext = createContext<AsistenteContextValue | null>(null);
@@ -72,6 +83,14 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
     const [streamingEnabled, setStreamingEnabled] = useState(false);
     const [a2uiSurfaces, setA2uiSurfaces] = useState<SurfaceModel<ReactComponentImplementation>[]>([]);
     const [messageSurfaceMap, setMessageSurfaceMap] = useState<Record<string, string[]>>({});
+    const [threadIdActivo, setThreadIdActivo] = useState<string | null>(null);
+
+    // Última conversación abierta — solo una conveniencia para restaurarla al reabrir
+    // el panel; la vía real para retomar cualquier hilo anterior es cambiarAHilo, ver
+    // más abajo (listado explícito, no depende de este valor).
+    const [threadIdPersistido, setThreadIdPersistido] = usePreferencia<string | null>(
+        "asistente.threadIdActivo", null
+    );
 
     const threadIdRef = useRef<string | null>(null);
     // Hash de capacidades calculado por el SERVIDOR — se guarda tal cual y se reenvía
@@ -80,6 +99,15 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
     const currentMessageIdRef = useRef<string | null>(null);
     const abortRef = useRef<AbortController | null>(null);
     const actionHandlerRef = useRef<(accion: A2uiClientAction) => void>(() => {});
+
+    const establecerThreadId = useCallback(
+        (threadId: string | null) => {
+            threadIdRef.current = threadId;
+            setThreadIdActivo(threadId);
+            setThreadIdPersistido(threadId);
+        },
+        [setThreadIdPersistido]
+    );
 
     const [a2uiProcessor] = useState<MessageProcessor<ReactComponentImplementation>>(() =>
         crearProcessor(accion => actionHandlerRef.current(accion))
@@ -154,7 +182,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
     );
 
     const construirConsulta = useCallback(
-        (pregunta: string, forzarCapacidadesCompletas: boolean): ConsultaIa => {
+        (pregunta: string, forzarCapacidadesCompletas: boolean, adjuntos?: AdjuntoIa[]): ConsultaIa => {
             const threadId = threadIdRef.current;
             const hashConocido = capacidadesHashRef.current;
             return {
@@ -163,6 +191,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 ...(hashConocido && !forzarCapacidadesCompletas
                     ? { capacidadesHash: hashConocido }
                     : { capacidades }),
+                ...(adjuntos?.length ? { adjuntos } : {}),
             };
         },
         [capacidades]
@@ -176,7 +205,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
 
     const aplicarRespuesta = useCallback(
         (respuesta: RespuestaIa, assistantId: string) => {
-            threadIdRef.current = respuesta.threadId;
+            establecerThreadId(respuesta.threadId);
             capacidadesHashRef.current = respuesta.capacidadesHash;
             setMensajes(prev => prev.map(m => (m.id === assistantId ? { ...m, texto: respuesta.respuesta } : m)));
             if (respuesta.a2uiMessages.length) {
@@ -186,51 +215,95 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 onAccionNavegacion?.(respuesta.accionNavegacion);
             }
         },
-        [onAccionNavegacion, procesarMensajesA2ui]
+        [establecerThreadId, onAccionNavegacion, procesarMensajesA2ui]
     );
 
-    const procesarTexto = useCallback(
-        async (texto: string) => {
-            if (!texto.trim()) return;
+    // El servidor devuelve el id con el que ha persistido cada adjunto — se guarda en
+    // el propio mensaje de usuario para poder recuperarlo más adelante (p. ej. si se
+    // reabre el hilo tras recargar la página). Compartido por el camino streaming y
+    // el no-streaming.
+    const aplicarIdsAdjuntos = useCallback((mensajeId: string, adjuntosApi: AdjuntoHiloIa[]) => {
+        if (!adjuntosApi.length) return;
+        setMensajes(prev => prev.map(m => (
+            m.id === mensajeId && m.adjuntos?.length
+                ? { ...m, adjuntos: m.adjuntos.map((a, i) => (adjuntosApi[i] ? { ...a, id: adjuntosApi[i].id } : a)) }
+                : m
+        )));
+    }, []);
 
-            setMensajes(prev => [...prev, { id: nuevoId(), rol: "user", texto }]);
+    const procesarTexto = useCallback(
+        async (texto: string, adjuntos?: AdjuntoMensaje[]) => {
+            if (!texto.trim() && !adjuntos?.length) return;
+
+            const userMessageId = nuevoId();
+            setMensajes(prev => [...prev, { id: userMessageId, rol: "user", texto, adjuntos }]);
             setIsRunning(true);
             abortRef.current = new AbortController();
+
+            const adjuntosApi = adjuntosParaEnviar(adjuntos);
 
             try {
                 if (streamingEnabled && !ASISTENTE_MOCK_ENABLED) {
                     const assistantId = nuevoId();
                     setMensajes(prev => [...prev, mensajeVacio(assistantId, "assistant")]);
 
-                    let acumulado = "";
-                    for await (const evento of consultarIaStream(
-                        construirConsulta(texto, false),
-                        abortRef.current.signal
-                    )) {
-                        if (evento.tipo === "delta") {
-                            acumulado += evento.contenido;
-                            setMensajes(prev => prev.map(m => (m.id === assistantId ? { ...m, texto: acumulado } : m)));
-                        } else if (evento.tipo === "a2ui") {
-                            procesarMensajesA2ui([evento.a2uiMessage], assistantId);
-                        } else if (evento.tipo === "accion_navegacion") {
-                            onAccionNavegacion?.(evento.accionNavegacion);
-                        } else if (evento.tipo === "fin") {
-                            threadIdRef.current = evento.threadId;
-                        } else if (evento.tipo === "error") {
-                            setMensajes(prev =>
-                                prev.map(m => (m.id === assistantId ? { ...m, texto: `Error: ${evento.contenido}` } : m))
-                            );
+                    // Igual que en el camino no-streaming: si el servidor no reconoce el
+                    // capacidades_hash enviado, hay que reintentar UNA vez con las
+                    // capacidades completas (nunca se persiste nada en el intento
+                    // fallido, así que reenviar los mismos adjuntos es seguro).
+                    const ejecutarStream = async (forzarCapacidadesCompletas: boolean): Promise<boolean> => {
+                        let acumulado = "";
+                        let necesitaCapacidades = false;
+                        for await (const evento of consultarIaStream(
+                            construirConsulta(texto, forzarCapacidadesCompletas, adjuntosApi),
+                            abortRef.current?.signal
+                        )) {
+                            if (evento.tipo === "delta") {
+                                acumulado += evento.contenido;
+                                setMensajes(prev => prev.map(m => (m.id === assistantId ? { ...m, texto: acumulado } : m)));
+                            } else if (evento.tipo === "estado") {
+                                // Aviso de progreso transitorio (p.ej. "Buscando el
+                                // cliente…") — se muestra sustituyendo el texto, sin
+                                // tocar `acumulado`, así que el primer "delta" real
+                                // lo reemplaza igual que si nunca hubiera estado.
+                                setMensajes(prev =>
+                                    prev.map(m => (m.id === assistantId ? { ...m, texto: evento.contenido } : m))
+                                );
+                            } else if (evento.tipo === "a2ui") {
+                                procesarMensajesA2ui([evento.a2uiMessage], assistantId);
+                            } else if (evento.tipo === "accion_navegacion") {
+                                onAccionNavegacion?.(evento.accionNavegacion);
+                            } else if (evento.tipo === "fin") {
+                                establecerThreadId(evento.threadId);
+                                if (evento.necesitaCapacidades) {
+                                    necesitaCapacidades = true;
+                                } else {
+                                    aplicarIdsAdjuntos(userMessageId, evento.adjuntos);
+                                }
+                            } else if (evento.tipo === "error") {
+                                setMensajes(prev =>
+                                    prev.map(m => (m.id === assistantId ? { ...m, texto: `Error: ${evento.contenido}` } : m))
+                                );
+                            }
                         }
+                        return necesitaCapacidades;
+                    };
+
+                    if (await ejecutarStream(false)) {
+                        await ejecutarStream(true);
                     }
                 } else {
                     const assistantId = nuevoId();
                     setMensajes(prev => [...prev, mensajeVacio(assistantId, "assistant")]);
 
-                    let respuesta = await consultar(construirConsulta(texto, false));
+                    let respuesta = await consultar(construirConsulta(texto, false, adjuntosApi));
                     if (respuesta.necesitaCapacidades) {
-                        respuesta = await consultar({ ...construirConsulta(texto, true), threadId: respuesta.threadId });
+                        respuesta = await consultar({
+                            ...construirConsulta(texto, true, adjuntosApi), threadId: respuesta.threadId,
+                        });
                     }
                     aplicarRespuesta(respuesta, assistantId);
+                    aplicarIdsAdjuntos(userMessageId, respuesta.adjuntos);
                 }
             } catch (err) {
                 if ((err as Error).name === "AbortError") return;
@@ -242,7 +315,10 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 setIsRunning(false);
             }
         },
-        [streamingEnabled, construirConsulta, consultar, aplicarRespuesta, procesarMensajesA2ui, onAccionNavegacion]
+        [
+            streamingEnabled, construirConsulta, consultar, aplicarRespuesta, aplicarIdsAdjuntos,
+            procesarMensajesA2ui, establecerThreadId, onAccionNavegacion,
+        ]
     );
 
     const onNew = useCallback(async (appendMsg: AppendMessage) => {
@@ -254,7 +330,10 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
         setIsRunning(false);
     }, []);
 
-    const enviarMensaje = useCallback((texto: string) => procesarTexto(texto), [procesarTexto]);
+    const enviarMensaje = useCallback(
+        (texto: string, adjuntos?: AdjuntoMensaje[]) => procesarTexto(texto, adjuntos),
+        [procesarTexto]
+    );
 
     const cancelarMensaje = useCallback(() => {
         abortRef.current?.abort();
@@ -302,6 +381,67 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
         actionHandlerRef.current = enviarAccion;
     }, [enviarAccion]);
 
+    const limpiarSurfaces = useCallback(() => {
+        // Borra TODAS las superficies activas (no solo las de la conversación en curso)
+        // antes de cargar/vaciar un hilo — si no, las tarjetas/tablas del hilo anterior
+        // seguirían visibles mezcladas con las del que se acaba de abrir.
+        for (const id of Array.from(a2uiProcessor.model.surfacesMap.keys())) {
+            a2uiProcessor.model.deleteSurface(id);
+        }
+    }, [a2uiProcessor]);
+
+    const cambiarAHilo = useCallback(
+        async (threadId: string) => {
+            abortRef.current?.abort();
+            setIsRunning(true);
+            try {
+                const hilo = await obtenerMensajesHilo(threadId);
+                limpiarSurfaces();
+                // Se desconoce el capacidades_hash vigente en el servidor para un hilo
+                // recuperado — se limpia para que el siguiente mensaje reenvíe
+                // "capacidades" completas (siempre válido, el servidor recalcula el hash).
+                capacidadesHashRef.current = null;
+                establecerThreadId(hilo.threadId);
+                setMensajes(hilo.mensajes.map(m => ({
+                    id: m.id, rol: m.rol, texto: m.texto,
+                    adjuntos: m.adjuntos.length ? m.adjuntos : undefined,
+                })));
+                for (const m of hilo.mensajes) {
+                    if (m.a2uiMessages.length) procesarMensajesA2ui(m.a2uiMessages, m.id);
+                }
+            } finally {
+                setIsRunning(false);
+            }
+        },
+        [limpiarSurfaces, establecerThreadId, procesarMensajesA2ui]
+    );
+
+    const nuevaConversacion = useCallback(() => {
+        abortRef.current?.abort();
+        limpiarSurfaces();
+        capacidadesHashRef.current = null;
+        establecerThreadId(null);
+        setMensajes([]);
+        setIsRunning(false);
+    }, [limpiarSurfaces, establecerThreadId]);
+
+    useEffect(() => {
+        // Al abrir el panel (este provider solo se monta mientras está abierto),
+        // restaura la última conversación como conveniencia — el resto de hilos
+        // anteriores se recuperan explícitamente vía cambiarAHilo (historial).
+        if (threadIdPersistido) {
+            cambiarAHilo(threadIdPersistido).catch(() => setThreadIdPersistido(null));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const adjuntosPorMensaje = useMemo(
+        () => Object.fromEntries(
+            mensajes.filter(m => m.adjuntos?.length).map(m => [m.id, m.adjuntos as AdjuntoMensaje[]])
+        ),
+        [mensajes]
+    );
+
     const runtime = useExternalStoreRuntime({
         isRunning,
         messages: mensajes,
@@ -321,6 +461,10 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 a2uiSurfaces,
                 messageSurfaceMap,
                 enviarAccion,
+                adjuntosPorMensaje,
+                threadIdActivo,
+                cambiarAHilo,
+                nuevaConversacion,
             }}
         >
             <AssistantRuntimeProvider runtime={runtime}>{children}</AssistantRuntimeProvider>

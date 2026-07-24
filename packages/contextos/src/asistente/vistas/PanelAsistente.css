@@ -56,3 +56,30 @@ panel-asistente.activo {
     white-space: normal;
     border-left-color: #e5e7eb;
 }
+
+/* En móvil, el panel como "flex item" que empuja el contenido (igual que
+   menu-lateral en escritorio) no funciona: al activarse ocupa min(24rem,100vw) =
+   100vw pero sigue dentro del flujo flex de section[role=main] junto al resto de
+   hermanos, que compiten por el mismo espacio — mismo problema que ya resuelve
+   menu-lateral.css con su media query: pasar a position:fixed como overlay a
+   pantalla completa, fuera del flujo, en vez de intentar animar un ancho. */
+@media (max-width: 768px) {
+    panel-asistente {
+        position: fixed;
+        top: var(--alto-header);
+        left: 0;
+        z-index: 1003;
+        width: 100vw;
+        height: calc(100vh - var(--alto-header));
+        white-space: normal;
+        box-shadow: none;
+        border-left: none;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    panel-asistente.activo {
+        width: 100vw;
+        transform: translateX(0);
+    }
+}
