@@ -1,7 +1,6 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.js";
@@ -45,7 +44,6 @@ export const CrearPedido = ({
           clienteId={nuevoPedido.modelo.cliente_id}
           {...nuevoPedido.uiProps("direccion_id")}
         />
-        <QInput label="Empresa" {...nuevoPedido.uiProps("empresa_id")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!nuevoPedido.valido}>

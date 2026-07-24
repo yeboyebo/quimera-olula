@@ -151,10 +151,6 @@ const FormAltaPresupuesto = ({
               label="Ciudad"
               {...presupuestoNoRegistrado.uiProps("ciudad")}
             />
-            <QInput
-              label="Empresa"
-              {...presupuestoNoRegistrado.uiProps("empresa_id")}
-            />
           </>
         ) : (
           <>
@@ -166,10 +162,6 @@ const FormAltaPresupuesto = ({
             <DirCliente
               clienteId={presupuestoRegistrado.modelo.cliente.cliente_id}
               {...presupuestoRegistrado.uiProps("direccion_id")}
-            />
-            <QInput
-              label="Empresa"
-              {...presupuestoRegistrado.uiProps("empresa_id")}
             />
           </>
         )}
