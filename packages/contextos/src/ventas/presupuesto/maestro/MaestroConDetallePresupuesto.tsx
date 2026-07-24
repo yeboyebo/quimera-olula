@@ -100,11 +100,12 @@ export const MaestroConDetallePresupuesto = () => {
         seleccionada={ctx.presupuestos.activo}
       />
 
-      <CrearPresupuesto
-        publicar={emitir}
-        onCancelar={() => emitir("creacion_presupuesto_cancelada")}
-        activo={ctx.estado === "CREANDO_PRESUPUESTO"}
-      />
+      {ctx.estado === "CREANDO_PRESUPUESTO" && (
+        <CrearPresupuesto
+          publicar={emitir}
+          onCancelar={() => emitir("creacion_presupuesto_cancelada")}
+        />
+      )}
     </div>
   );
 };

@@ -3,17 +3,17 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { Articulo } from "@olula/ctx/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { TagArticulo } from "../../articulo/diseño.ts";
 import { LineaPresupuesto } from "../diseño.ts";
 import { patchLinea } from "../infraestructura.ts";
 import { metaLinea } from "./dominio.ts";
-import "./EditarLinea.css";
+import "./CambiarLinea.css";
 
-export const EditarLinea = ({
+export const CambiarLinea = ({
   presupuestoId,
   publicar,
   linea,
@@ -22,20 +22,20 @@ export const EditarLinea = ({
   linea: LineaPresupuesto;
   publicar: EmitirEvento;
 }) => {
-  const { intentar } = useContext(ContextoError);
   const { modelo, uiProps, valido, set } = useModelo(metaLinea, linea);
-  const [cambiando, setCambiando] = useState(false);
   const [mostrarMas, setMostrarMas] = useState(false);
 
-  const cambiar = useCallback(async () => {
-    await intentar(() => patchLinea(presupuestoId, modelo));
-    setCambiando(true);
+  const cambiar_ = useCallback(async () => {
+    await patchLinea(presupuestoId, modelo);
     publicar("linea_actualizada");
-  }, [modelo, publicar, presupuestoId, intentar]);
+  }, [modelo, publicar, presupuestoId]);
 
-  const cancelar = useCallback(() => {
-    if (!cambiando) publicar("editar_linea_cancelado");
-  }, [cambiando, publicar]);
+  const cancelar_ = useCallback(
+    () => publicar("editar_linea_cancelado"),
+    [publicar]
+  );
+
+  const [cambiar, cancelar] = useForm(cambiar_, cancelar_);
 
   const handleArticuloChange = useCallback(
     (
