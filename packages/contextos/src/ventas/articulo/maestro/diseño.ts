@@ -1,6 +1,6 @@
 import { MetaTabla } from "@olula/componentes/index.js";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { Articulo } from "../../diseño.ts";
+import { Articulo } from "../diseño.ts";
 
 export type EstadoMaestroArticulo = "INICIAL";
 

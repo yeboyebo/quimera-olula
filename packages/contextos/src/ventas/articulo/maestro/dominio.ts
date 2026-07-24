@@ -3,8 +3,8 @@ import {
     accionesListaActivaEntidades,
     ProcesarListaActivaEntidades,
 } from "@olula/lib/ListaActivaEntidades.js";
-import { Articulo } from "../../diseño.ts";
-import { getArticulos } from "../../infraestructura.ts";
+import { Articulo } from "../diseño.ts";
+import { getArticulos } from "../infraestructura.ts";
 import { ContextoMaestroArticulo, EstadoMaestroArticulo } from "./diseño.ts";
 
 export type ProcesarMaestroArticulo = ProcesarContexto<

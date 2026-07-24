@@ -7,7 +7,7 @@ import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { Articulo as ArticuloSelect } from "#/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "#/ventas/comun/componentes/grupo_iva_producto.tsx";
-import { Articulo } from "../diseño.ts";
+import { Articulo } from "./diseño.ts";
 import { DetalleArticulo } from "./detalle/DetalleArticulo.tsx";
 import { metaTablaArticulo } from "./maestro/diseño.ts";
 import { getMaquina } from "./maestro/maquina.ts";

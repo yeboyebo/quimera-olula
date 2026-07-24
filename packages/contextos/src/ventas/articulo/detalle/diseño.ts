@@ -1,4 +1,4 @@
-import { Articulo } from "../../diseño.ts";
+import { Articulo } from "../diseño.ts";
 
 export type EstadoDetalleArticulo = "INICIAL" | "ABIERTO";
 

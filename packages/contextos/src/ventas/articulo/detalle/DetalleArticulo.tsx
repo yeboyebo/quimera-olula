@@ -5,8 +5,8 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useEffect } from "react";
 import { useParams } from "react-router";
-import { Articulo } from "../../diseño.ts";
-import { articuloVacio } from "../../dominio.ts";
+import { Articulo } from "../diseño.ts";
+import { articuloVacio } from "../dominio.ts";
 import "./DetalleArticulo.css";
 import { getMaquina } from "./maquina.ts";
 
