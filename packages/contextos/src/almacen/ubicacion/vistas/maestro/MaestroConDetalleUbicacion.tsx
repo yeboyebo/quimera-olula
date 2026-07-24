@@ -83,7 +83,7 @@ const TarjetaUbicacion = (ubicacion: Ubicacion) => {
     return (
         <div className="tarjeta-ubicacion" key={ubicacion.id}>
             <div>{ubicacion.codigo}</div>
-            <div>{ubicacion.zonaId}</div>
+            <div>{ubicacion.zona}</div>
         </div>
     );
 };

@@ -13,6 +13,7 @@ describe("[orden-infra-03] itemOrdenDesdeApi convierte un ItemOrdenApi (snake_ca
         tipo: "ENTRADA",
         abierta: true,
         estado: "PENDIENTE",
+        descripcion: "DESCRIPCION",
         ubicacion_origen_id: "UBI-001",
         caja_origen_id: "CAJA-001",
         ubicacion_destino_id: "UBI-002",

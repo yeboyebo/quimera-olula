@@ -11,7 +11,7 @@ export const metaCaja: MetaModelo<Caja> = {
     campos: {
         ubicacionId: {
             requerido: true,
-            validacion: (m: Caja) => stringNoVacio(m.ubicacionId),
+            validacion: (m: Caja) => stringNoVacio(m.idUbicacion),
         },
     },
 };
@@ -19,7 +19,8 @@ export const metaCaja: MetaModelo<Caja> = {
 export const cajaContenidoVacia = (): CajaContenido => ({
     id: "",
     lpn: "",
-    ubicacionId: "",
+    idUbicacion: "",
+    ubicacion: "",
     contenido: [],
 });
 

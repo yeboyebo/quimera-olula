@@ -9,13 +9,14 @@ type ProcesarUbicacion = ProcesarContexto<EstadoUbicacion, ContextoUbicacion>;
 export const ubicacionVacia = (): Ubicacion => ({
     id: "",
     codigo: "",
-    zonaId: "",
+    idZona: "",
+    zona: "",
 });
 
 export const metaUbicacion: MetaModelo<Ubicacion> = {
     campos: {
         codigo: { requerido: true, validacion: (m: Ubicacion) => stringNoVacio(m.codigo) },
-        zonaId: { requerido: true, validacion: (m: Ubicacion) => stringNoVacio(m.zonaId) },
+        idZona: { requerido: true, validacion: (m: Ubicacion) => stringNoVacio(m.idZona) },
     },
 };
 
