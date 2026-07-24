@@ -4,6 +4,7 @@ import { InicioOlula, Vista } from "@olula/componentes/index.ts";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
 import { crearMenu, MenuContextFactory } from "@olula/lib/menu.ts";
+import { crearWidgets, WidgetContextFactory } from "@olula/lib/widgets.ts";
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
@@ -29,6 +30,11 @@ const App = () => {
     FactoryObj.setMenu(
       crearMenu(
         new FactoryOlula() as unknown as Record<string, MenuContextFactory>
+      )
+    );
+    FactoryObj.setWidgets(
+      crearWidgets(
+        new FactoryOlula() as unknown as Record<string, WidgetContextFactory>
       )
     );
     FactoryObj.setApp(

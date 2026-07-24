@@ -8,6 +8,7 @@ export interface Incidencia extends Entidad {
     id: string;
     descripcion: string;
     descripcion_larga: string;
+    resolucion: string;
     nombre: string;
     responsable_id: string | null;
     prioridad: PrioridadIncidencia;
