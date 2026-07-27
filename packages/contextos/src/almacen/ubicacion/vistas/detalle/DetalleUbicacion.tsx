@@ -70,7 +70,7 @@ export const DetalleUbicacion = ({
                         <Tab key="general" label="General">
                             <quimera-formulario>
                                 <QInput label="Código" {...modelo.uiProps("codigo")} />
-                                <Zona {...modelo.uiProps("zonaId")} />
+                                <Zona {...modelo.uiProps("idZona")} />
                             </quimera-formulario>
                         </Tab>,
                         <Tab key="stock" label="Stock">

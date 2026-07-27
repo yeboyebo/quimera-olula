@@ -351,6 +351,7 @@ export const registrarLecturaOrden = async (
             ubicacion_destino_id: lectura.idUbicacionDestino,
             caja_destino_id: lectura.idCajaDestino,
             ubicacion_origen_id: lectura.idUbicacionOrigen,
+            caja_origen_id: lectura.idCajaOrigen,
         },
         "Error al registrar lectura de la orden"
     );
