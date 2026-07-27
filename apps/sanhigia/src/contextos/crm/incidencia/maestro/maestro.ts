@@ -9,8 +9,9 @@ import { getIncidencias } from "../infraestructura.ts";
 import { ContextoMaestroIncidencias, EstadoMaestroIncidencias } from "./diseño.ts";
 
 export const metaTablaIncidencia: MetaTabla<Incidencia> = [
+    { id: "descripcion", cabecera: "Descripción", tipo: "texto" },
+    { id: "nombre_causante", cabecera: "Causante", render: (i: Incidencia) => i.nombreCausante },
     { id: "fecha", cabecera: "Fecha", tipo: "fecha" },
-    { id: "nombre_causante", cabecera: "Causante" },
     // {
     //     id: "tipoIncidencia",
     //     cabecera: "Tipo",
