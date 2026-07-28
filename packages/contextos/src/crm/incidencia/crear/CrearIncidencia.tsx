@@ -1,5 +1,6 @@
 import { EstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
 import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
+import { TipoIncidencia } from "#/crm/comun/componentes/TipoIncidencia.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QDate, QModal, QTextArea } from "@olula/componentes/index.js";
@@ -43,6 +44,7 @@ export const CrearIncidencia = ({ publicar }: { publicar: EmitirEvento }) => {
           <QDate label="Fecha" {...uiProps("fecha")} />
           <PrioridadIncidencia {...uiProps("prioridad")} />
           <EstadoIncidencia {...uiProps("estado")} />
+          <TipoIncidencia {...uiProps("tipo_incidencia")} />
           <QTextArea
             label="Descripción larga"
             rows={5}

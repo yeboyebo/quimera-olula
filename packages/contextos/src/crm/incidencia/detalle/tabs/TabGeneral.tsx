@@ -1,5 +1,7 @@
+import { Usuario } from "#/comun/componentes/usuario.tsx";
 import { EstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
 import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
+import { TipoIncidencia } from "#/crm/comun/componentes/TipoIncidencia.tsx";
 import {
   QDate,
   QInput,
@@ -25,6 +27,11 @@ export const TabGeneral = ({
         <QDate label="Fecha" {...uiProps("fecha")} />
         <PrioridadIncidencia {...uiProps("prioridad")} />
         <EstadoIncidencia {...uiProps("estado")} />
+        <TipoIncidencia {...uiProps("tipo_incidencia")} />
+        <Usuario
+          {...uiProps("responsable_id", "nombre_responsable")}
+          label="Responsable"
+        />
         <div className="Tabs">
           <Tabs>
             <Tab label="Descripción">

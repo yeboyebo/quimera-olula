@@ -46,3 +46,7 @@ export * from "./SinDatos/SinDatos.tsx";
 export * from "./slot/Slot.tsx";
 export * from "./vista/Vista.tsx";
 
+export * from "./arbol_documentos/index.ts";
+export * from "./gestor_documentos/index.ts";
+export * from "./lista_documentos/index.ts";
+
