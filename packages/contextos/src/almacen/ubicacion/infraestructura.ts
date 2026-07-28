@@ -15,7 +15,7 @@ import {
     Ubicacion,
 } from "./diseño.ts";
 
-interface StockUbicacionItemApi {
+export interface StockUbicacionItemApi {
     id: string;
     stock_id: string;
     ubicacion_id: string;
@@ -33,6 +33,7 @@ interface MoviStockUbicacionApi extends Entidad {
     lote: string;
     caja_id: string | null;
     caja: string | null;
+    concepto: string;
 }
 
 interface StockUbicacionApi extends StockUbicacionItemApi {
@@ -112,7 +113,7 @@ export const deleteUbicacion: DeleteUbicacion = async (id) => {
     await RestAPI.delete(`${baseUrlUbicacion}/${id}`, "Error al borrar Ubicación");
 };
 
-const baseUrlStockUbicacion = `/almacen/stock_ubicacion`;
+export const baseUrlStockUbicacion = `/almacen/stock_ubicacion`;
 
 const stockUbicacionItemFromApi = (api: StockUbicacionItemApi): StockUbicacionItem => ({
     id: api.id,
@@ -140,6 +141,7 @@ const movimientoFromApi = (movimiento: MoviStockUbicacionApi): MoviStockUbicacio
         lote: movimiento.lote,
         idCaja: movimiento.caja_id,
         caja: movimiento.caja,
+        concepto: movimiento.concepto,
     }
 }
 

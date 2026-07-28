@@ -27,6 +27,7 @@ export interface MoviStockUbicacion extends Entidad {
     lote: string
     idCaja: string | null;
     caja: string | null
+    concepto: string
 }
 
 export interface StockUbicacion extends StockUbicacionItem {

@@ -33,6 +33,7 @@ const TablaMovimientosPlana = ({ movimientos }: { movimientos: MoviStockUbicacio
                 <th>Fecha/Hora</th>
                 <th>Lote</th>
                 <th>Caja</th>
+                <th>Concepto</th>
                 <th>Cantidad</th>
             </tr>
         </thead>
@@ -42,6 +43,7 @@ const TablaMovimientosPlana = ({ movimientos }: { movimientos: MoviStockUbicacio
                     <td>{m.fechaHora.toLocaleString("es-ES")}</td>
                     <td>{m.lote}</td>
                     <td>{m.caja ?? "Sin caja"}</td>
+                    <td>{m.concepto}</td>
                     <td>{m.cantidad.toLocaleString("es-ES")}</td>
                 </tr>
             ))}

@@ -30,6 +30,7 @@ interface MovimientoCajaAPI {
     lote_id: string;
     ubicacion_id: string;
     ubicacion: string;
+    concepto: string;
 }
 
 interface MaterialCajaAPI {
@@ -64,6 +65,7 @@ const movimientoDesdeApi = (mov: MovimientoCajaAPI): MovimientoCaja => ({
     idLote: mov.lote_id,
     idUbicacion: mov.ubicacion_id,
     ubicacion: mov.ubicacion,
+    concepto: mov.concepto,
 });
 
 const materialDesdeApi = (mat: MaterialCajaAPI): MaterialCaja => ({

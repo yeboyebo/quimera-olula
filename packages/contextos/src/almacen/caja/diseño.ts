@@ -15,6 +15,7 @@ export interface MovimientoCaja extends Entidad {
     fechaHora: Date;
     idUbicacion: string;
     ubicacion: string;
+    concepto: string;
 }
 
 export interface MaterialCaja extends Entidad {
