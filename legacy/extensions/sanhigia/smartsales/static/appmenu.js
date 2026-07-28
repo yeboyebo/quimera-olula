@@ -82,16 +82,16 @@ export default parent => ({
         color: "info",
         url: "/ss/clientes",
       },
-      // incidencias: {
+      // incidencias_old: {
       //   title: "Incidencias",
       //   // rule: "incidencias:acceso",
       //   icons: ["error_outline"],
       //   color: "info",
       //   url: "/ss/incidencias",
       // },
-      incidencias_new: {
+      incidencias: {
         title: "Incidencias",
-        // rule: "incidencias:acceso",
+        rule: "crm.incidencia",
         icons: ["error_outline"],
         color: "info",
         url: "/crm/incidencia",
@@ -123,7 +123,7 @@ export default parent => ({
         icons: ["error_outline", "article"],
         color: "primary",
         variant: "main",
-        rule: "crm.informe",
+        rule: "crm.incidencia",
         url: "/informes/incidencias",
       },
     },
