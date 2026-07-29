@@ -30,7 +30,6 @@ export const EdicionCuentaBanco = ({
     <div className="EdicionCuentaBanco">
       <quimera-formulario>
         <QInput label="IBAN" {...uiProps("iban")} ref={focus} />
-        <QInput label="BIC" {...uiProps("bic")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!valido}>

@@ -7,6 +7,7 @@ import {
     desmarcarDomiciliacionProceso,
     domiciliarCuentaProceso,
     recargarCuentas,
+    remesaElegidaProceso,
 } from "./dominio.ts";
 
 export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco> = () => {
@@ -27,6 +28,14 @@ export const getMaquina: () => Maquina<EstadoCuentasBanco, ContextoCuentasBanco>
             domiciliar_solicitada: domiciliarCuentaProceso,
 
             desmarcar_domiciliacion: desmarcarDomiciliacionProceso,
+
+            seleccionar_remesa_solicitada: "remesa",
+        },
+
+        remesa: {
+            remesa_elegida: remesaElegidaProceso,
+
+            remesa_cancelada: "lista",
         },
 
         alta: {

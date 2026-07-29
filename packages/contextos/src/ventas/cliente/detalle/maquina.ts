@@ -4,6 +4,7 @@ import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 import {
     abiertoContexto,
     actualizarCuentaDomiciliada,
+    asignarCuentaRemesaProceso,
     borrarCliente,
     cambiarCliente,
     cancelarCambioCliente,
@@ -48,6 +49,8 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
             cuenta_domiciliada: actualizarCuentaDomiciliada,
 
             cuenta_domiciliacion_desmarcada: limpiarCuentaDomiciliada,
+
+            cuenta_remesa_seleccionada: asignarCuentaRemesaProceso,
         },
 
         BAJANDO_CLIENTE: {

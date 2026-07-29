@@ -7,6 +7,7 @@ import { Cliente, CuentaBanco } from "../../diseño.ts";
 import { BorrarCuentaBanco } from "./BorrarCuentaBanco.tsx";
 import { CrearCuentaBanco } from "./CrearCuentaBanco.tsx";
 import { EdicionCuentaBanco } from "./EdicionCuentaBanco.tsx";
+import { SeleccionarRemesa } from "./SeleccionarRemesa.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabCuentasBancoLista } from "./TabCuentasBancoLista.tsx";
 
@@ -39,17 +40,8 @@ export const TabCuentasBanco = ({
 
   const acciones = [
     {
-      texto: "Nueva",
-      onClick: () => emitir("alta_solicitada"),
-    },
-    {
       texto: "Desmarcar domiciliación",
       onClick: () => emitir("desmarcar_domiciliacion"),
-    },
-    {
-      texto: "Editar",
-      onClick: () => ctx.cuentas.activo && emitir("edicion_solicitada"),
-      deshabilitado: !ctx.cuentas.activo,
     },
     {
       texto: "Cuenta de domiciliación",
@@ -75,6 +67,8 @@ export const TabCuentasBanco = ({
         cargando={ctx.cargando}
         cuentaDomiciliadaId={cliente.cuenta_domiciliada ?? ""}
         acciones={acciones}
+        descripcionCuentaRemesa={cliente.descripcion_cuenta_remesa ?? ""}
+        onSeleccionarRemesa={() => emitir("seleccionar_remesa_solicitada")}
       />
       <QModal
         nombre="altaCuentaBanco"
@@ -106,6 +100,19 @@ export const TabCuentasBanco = ({
           emitir={emitir}
         />
       )}
+
+      <QModal
+        nombre="seleccionarRemesa"
+        abierto={estado === "remesa"}
+        titulo="Cuenta de remesa"
+        onCerrar={() => emitir("remesa_cancelada")}
+      >
+        <SeleccionarRemesa
+          cuentaRemesaId={cliente.cuenta_remesa ?? ""}
+          descripcionCuentaRemesa={cliente.descripcion_cuenta_remesa ?? ""}
+          emitir={emitir}
+        />
+      </QModal>
     </div>
   );
 };

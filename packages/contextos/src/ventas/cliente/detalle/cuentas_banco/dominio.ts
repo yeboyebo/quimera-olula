@@ -12,7 +12,6 @@ import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
 export const metaCuentaBanco: MetaModelo<CuentaBanco> = {
     campos: {
         iban: { requerido: true },
-        bic: { requerido: true },
     }
 };
 
@@ -25,7 +24,6 @@ export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
 export const nuevaCuentaBancoVacia: NuevaCuentaBanco = {
     descripcion: '',
     iban: '',
-    bic: '',
 }
 
 export const metaTablaCuentasBanco = [
@@ -62,6 +60,14 @@ export const cuentaCreada: ProcesarCuentasBanco = async (contexto) => {
 
 export const cuentaActualizada: ProcesarCuentasBanco = async (contexto) => {
     return pipeCuentas(contexto, [recargarCuentas, "lista"]);
+}
+
+export const remesaElegidaProceso: ProcesarCuentasBanco = async (contexto, payload) => {
+    const { cuenta_id, descripcion } = payload as { cuenta_id: string; descripcion: string };
+    return [
+        { ...contexto, estado: "lista" },
+        [["cuenta_remesa_seleccionada", { cuenta_id, descripcion }]],
+    ];
 }
 
 export const domiciliarCuentaProceso: ProcesarCuentasBanco = async (contexto) => {

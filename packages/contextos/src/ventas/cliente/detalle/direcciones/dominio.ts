@@ -1,9 +1,31 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos } from "@olula/lib/dominio.js";
+import { boolAString, ejecutarListaProcesos, formatearDireccionUnaLinea } from "@olula/lib/dominio.js";
 import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { DirCliente } from "../../diseño.ts";
 import { getDirecciones, setDirEnvio, setDirFacturacion } from "../../infraestructura.ts";
 import { ContextoDirecciones, EstadoDirecciones } from "./diseño.ts";
+
+export const metaTablaDirecciones = [
+    {
+        id: "direccion",
+        cabecera: "Dirección",
+        render: (direccion: DirCliente) => formatearDireccionUnaLinea(direccion),
+    },
+    { id: "cod_postal", cabecera: "Cód. postal" },
+    { id: "provincia", cabecera: "Provincia" },
+    { id: "pais_id", cabecera: "País" },
+    { id: "telefono", cabecera: "Teléfono" },
+    {
+        id: "dir_facturacion",
+        cabecera: "Facturación",
+        render: (direccion: DirCliente) => boolAString(direccion.dir_facturacion),
+    },
+    {
+        id: "dir_envio",
+        cabecera: "Envío",
+        render: (direccion: DirCliente) => boolAString(direccion.dir_envio),
+    },
+];
 
 export { metaNuevaDireccion, nuevaDireccionVacia } from "../../crear_direccion/dominio.ts";
 export { metaDireccion } from "../../cambiar_direccion/dominio.ts";

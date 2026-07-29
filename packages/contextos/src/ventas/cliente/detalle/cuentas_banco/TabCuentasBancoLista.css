@@ -5,3 +5,14 @@
     width: 100%;
     height: 100%;
 }
+
+.cuenta-remesa {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+    margin-bottom: var(--espaciado-s);
+}
+
+.cuenta-remesa-valor {
+    color: var(--color-texto-secundario);
+}

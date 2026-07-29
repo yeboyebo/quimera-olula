@@ -1,3 +1,4 @@
+import { QBoton } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -33,6 +34,14 @@ export const TabCrmContactosLista = ({
         onCriteriaChanged={() => null}
         renderAcciones={() => (
           <div className="detalle-cliente-tab-contenido maestro-botones">
+            <QBoton onClick={() => emitir("alta_solicitada")}>Nuevo</QBoton>
+            <QBoton
+              variante="borde"
+              deshabilitado={!seleccionado}
+              onClick={() => seleccionado && emitir("edicion_solicitada")}
+            >
+              Editar
+            </QBoton>
             <QuimeraAcciones acciones={acciones} vertical />
           </div>
         )}

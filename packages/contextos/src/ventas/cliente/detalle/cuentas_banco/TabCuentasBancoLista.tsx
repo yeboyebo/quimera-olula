@@ -1,4 +1,4 @@
-import { MetaTabla, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
+import { MetaTabla, QBoton, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -13,6 +13,8 @@ export const TabCuentasBancoLista = ({
   cargando,
   cuentaDomiciliadaId,
   acciones,
+  descripcionCuentaRemesa,
+  onSeleccionarRemesa,
 }: {
   clienteId: string;
   cuentas: CuentaBanco[];
@@ -21,6 +23,8 @@ export const TabCuentasBancoLista = ({
   cargando: boolean;
   cuentaDomiciliadaId: string;
   acciones: Parameters<typeof QuimeraAcciones>[0]["acciones"];
+  descripcionCuentaRemesa: string;
+  onSeleccionarRemesa: () => void;
 }) => {
   const metaTablaCuentasBanco = [
     {
@@ -42,6 +46,16 @@ export const TabCuentasBancoLista = ({
 
   return (
     <div className="CuentasBanco">
+      <div className="cuenta-remesa">
+        <span className="cuenta-remesa-label">Remesa:</span>
+        <span className="cuenta-remesa-valor">
+          {descripcionCuentaRemesa || "Sin asignar"}
+        </span>
+        <QBoton variante="borde" onClick={onSeleccionarRemesa}>
+          Seleccionar
+        </QBoton>
+      </div>
+
       <ListadoSemiControlado
         metaTabla={metaTablaCuentasBanco}
         tarjeta={(cuenta) => (
@@ -60,6 +74,14 @@ export const TabCuentasBancoLista = ({
         onCriteriaChanged={() => null}
         renderAcciones={() => (
           <div className="detalle-cliente-tab-contenido maestro-botones">
+            <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
+            <QBoton
+              variante="borde"
+              deshabilitado={!seleccionada}
+              onClick={() => seleccionada && emitir("edicion_solicitada")}
+            >
+              Editar
+            </QBoton>
             <QuimeraAcciones acciones={acciones} vertical />
           </div>
         )}

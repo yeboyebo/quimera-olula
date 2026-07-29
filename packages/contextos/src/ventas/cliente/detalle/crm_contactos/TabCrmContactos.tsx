@@ -31,17 +31,8 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
 
   const acciones = [
     {
-      texto: "Nuevo",
-      onClick: () => emitir("alta_solicitada"),
-    },
-    {
       texto: "Asociar Contacto",
       onClick: () => emitir("asociar_solicitado"),
-    },
-    {
-      texto: "Editar",
-      onClick: () => ctx.contactoActivo && emitir("edicion_solicitada"),
-      deshabilitado: !ctx.contactoActivo,
     },
     {
       texto: "Eliminar asociación",

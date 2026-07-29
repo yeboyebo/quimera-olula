@@ -68,7 +68,6 @@ export const CambiarLinea = ({
         <quimera-formulario>
           <div className="articulo-info">
             <span className="articulo-ref">Ref. {linea.referencia}</span>
-            {/* <span className="articulo-desc">{linea.descripcion}</span> */}
           </div>
 
           <Articulo

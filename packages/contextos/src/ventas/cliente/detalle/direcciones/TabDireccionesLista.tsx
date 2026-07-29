@@ -1,29 +1,15 @@
-import { QTarjetaGenerica } from "@olula/componentes/index.js";
+import { QBoton } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
-import { boolAString, direccionCompleta } from "@olula/lib/dominio.ts";
 import { DirCliente } from "../../diseño.ts";
-import { puedoMarcarDireccionEnvio, puedoMarcarDireccionFacturacion } from "./dominio.ts";
+import {
+  metaTablaDirecciones,
+  puedoMarcarDireccionEnvio,
+  puedoMarcarDireccionFacturacion,
+} from "./dominio.ts";
+import { TarjetaDireccion } from "./TarjetaDireccion.tsx";
 import "./TabDirecciones.css";
-
-const metaTablaDirecciones = [
-  {
-    id: "direccion",
-    cabecera: "Dirección",
-    render: (direccion: DirCliente) => direccionCompleta(direccion),
-  },
-  {
-    id: "dir_facturacion",
-    cabecera: "Facturación",
-    render: (direccion: DirCliente) => boolAString(direccion.dir_facturacion),
-  },
-  {
-    id: "dir_envio",
-    cabecera: "Envío",
-    render: (direccion: DirCliente) => boolAString(direccion.dir_envio),
-  },
-];
 
 export const TabDireccionesLista = ({
   direcciones,
@@ -39,30 +25,21 @@ export const TabDireccionesLista = ({
 }) => {
   const acciones = [
     {
-      texto: "Nueva",
-      onClick: () => emitir("alta_solicitada"),
-    },
-    {
-      texto: "Editar",
-      onClick: () => seleccionada && emitir("edicion_solicitada"),
-      deshabilitado: !seleccionada,
-    },
-    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
-      onClick: () => emitir("borrado_solicitado"),
+      onClick: () => seleccionada && emitir("borrado_solicitado"),
       deshabilitado: !seleccionada,
     },
     {
       texto: "Facturación",
-      onClick: () => emitir("facturacion_solicitada"),
+      onClick: () => seleccionada && emitir("facturacion_solicitada"),
       deshabilitado:
         !seleccionada || !puedoMarcarDireccionFacturacion(seleccionada),
     },
     {
       texto: "Envío",
-      onClick: () => emitir("envio_solicitada"),
+      onClick: () => seleccionada && emitir("envio_solicitada"),
       deshabilitado: !seleccionada || !puedoMarcarDireccionEnvio(seleccionada),
     },
   ];
@@ -70,13 +47,7 @@ export const TabDireccionesLista = ({
   return (
     <ListadoSemiControlado
       metaTabla={metaTablaDirecciones}
-      tarjeta={(direccion) => (
-        <QTarjetaGenerica
-          arribaIzquierda={direccionCompleta(direccion)}
-          abajoIzquierda={`Facturación: ${boolAString(direccion.dir_facturacion)}`}
-          abajoDerecha={`Envío: ${boolAString(direccion.dir_envio)}`}
-        />
-      )}
+      tarjeta={TarjetaDireccion}
       entidades={direcciones}
       totalEntidades={direcciones.length}
       cargando={cargando}
@@ -86,7 +57,15 @@ export const TabDireccionesLista = ({
       onCriteriaChanged={() => null}
       renderAcciones={() => (
         <div className="TabDireccionesLista maestro-botones">
-          <QuimeraAcciones acciones={acciones} />
+          <QBoton onClick={() => emitir("alta_solicitada")}>Nueva</QBoton>
+          <QBoton
+            variante="borde"
+            deshabilitado={!seleccionada}
+            onClick={() => seleccionada && emitir("edicion_solicitada")}
+          >
+            Editar
+          </QBoton>
+          <QuimeraAcciones acciones={acciones} vertical />
         </div>
       )}
     />

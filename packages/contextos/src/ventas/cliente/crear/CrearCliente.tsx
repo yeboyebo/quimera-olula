@@ -49,7 +49,6 @@ export const CrearCliente = ({
           />
           <TipoIdFiscal {...nuevoCliente.uiProps("tipo_id_fiscal")} />
           <QInput label="ID Fiscal" {...nuevoCliente.uiProps("id_fiscal")} />
-          {/* <Agente {...nuevoCliente.uiProps("agente_id", "nombre_agente")} /> */}
         </quimera-formulario>
         <div className="botones">
           <QBoton

@@ -60,11 +60,10 @@ const dirClienteToAPI = (d: DirCliente): DireccionAPI => (
   }
 )
 
-const CuentaBancoToAPI = (c: CuentaBanco): CuentaBancoAPIPatch => ({
+const CuentaBancoToAPI = (c: NuevaCuentaBanco): CuentaBancoAPIPatch => ({
   descripcion: c.descripcion,
   cuenta: {
     iban: c.iban,
-    bic: c.bic,
   },
 });
 
@@ -177,14 +176,13 @@ export const getCuentaBanco = async (clienteId: string, cuentaId: string): Promi
   );
 
 export const postCuentaBanco = async (clienteId: string, cuenta: NuevaCuentaBanco): Promise<string> => {
-  return await RestAPI.post(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_banco`, CuentaBancoToAPI(cuenta as CuentaBanco)).then((respuesta) => respuesta.id);
+  return await RestAPI.post(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_banco`, CuentaBancoToAPI(cuenta)).then((respuesta) => respuesta.id);
 };
 
 export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {
   const payload = {
     cuenta: {
       iban: cuenta.iban,
-      bic: cuenta.bic,
     },
   };
   await RestAPI.patch(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_banco/${cuenta.id}`, payload, "Error al actualizar cuenta bancaria");
@@ -203,6 +201,9 @@ export const domiciliarCuenta = async (clienteId: string, cuentaId: string): Pro
   await RestAPI.patch(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_domiciliacion`, payload, "Error al domiciliar cuenta");
 };
 
+export const asignarCuentaRemesa = async (clienteId: string, cuentaId: string): Promise<void> =>
+  await RestAPI.patch(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_remesa`, { cuenta_remesa: cuentaId }, "Error al asignar la cuenta de remesa");
+
 export type CuentaBancoAPI = {
   id: string;
   cuenta: {
@@ -216,7 +217,6 @@ export type CuentaBancoAPIPatch = {
   descripcion: string;
   cuenta: {
     iban: string;
-    bic: string;
   };
 };
 

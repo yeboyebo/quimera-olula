@@ -4,12 +4,6 @@ import "./TarjetaDocumentoVenta.css";
 
 export type EstadoDocumento = "cerrado" | "pendiente";
 
-/**
- * Tarjeta compartida para documentos de venta (pedido, albarán, presupuesto).
- * - Título: código + nombre de cliente (recortado a 2 líneas si es largo).
- * - Avatar coloreado según estado (gris = cerrado, verde = pendiente), como el
- *   icono de estado de la tabla.
- */
 export const TarjetaDocumentoVenta = ({
   codigo,
   nombreCliente,

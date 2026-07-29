@@ -1,4 +1,3 @@
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -41,8 +40,14 @@ export const DetallePresupuesto = ({
     publicar
   );
 
-  const presupuesto = useModelo(metaPresupuesto, ctx.presupuesto);
-  const { modificado, valido } = presupuesto;
+  const autoGuardar = useCallback(
+    async (modelo: Presupuesto) => {
+      emitir("edicion_de_presupuesto_lista", modelo);
+    },
+    [emitir]
+  );
+
+  const presupuesto = useModelo(metaPresupuesto, ctx.presupuesto, autoGuardar);
 
   useEffect(() => {
     emitir("presupuesto_id_cambiado", presupuestoId, true);
@@ -52,14 +57,6 @@ export const DetallePresupuesto = ({
   const { estado, lineaActiva } = ctx;
 
   const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
-
-  const handleGuardar = useCallback(() => {
-    emitir("edicion_de_presupuesto_lista", presupuesto.modelo);
-  }, [emitir, presupuesto]);
-
-  const handleCancelar = useCallback(() => {
-    emitir("edicion_de_presupuesto_cancelada");
-  }, [emitir]);
 
   if (!ctx.presupuesto.id) return;
 
@@ -107,17 +104,6 @@ export const DetallePresupuesto = ({
           <TabObservaciones presupuesto={presupuesto} />
         </Tab>
       </Tabs>
-
-      {estado === "ABIERTO" && !ctx.presupuesto.aprobado && modificado && (
-        <div className="botones maestro-botones">
-          <QBoton onClick={handleGuardar} deshabilitado={!valido}>
-            Guardar Cambios
-          </QBoton>
-          <QBoton tipo="reset" variante="texto" onClick={handleCancelar}>
-            Cancelar
-          </QBoton>
-        </div>
-      )}
 
       <TotalesVenta modeloVenta={presupuesto} publicar={emitir} />
 
