@@ -14,6 +14,7 @@ import {
   Presupuesto,
 } from "./diseño.ts";
 import "./MaestroConDetallePresupuesto.css";
+import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetallePresupuesto = () => {
@@ -68,6 +69,15 @@ export const MaestroConDetallePresupuesto = () => {
             <h2>Presupuestos</h2>
             <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
+              tarjeta={(presupuesto) => (
+                <TarjetaDocumentoVenta
+                  codigo={presupuesto.codigo}
+                  nombreCliente={presupuesto.cliente.nombre_cliente}
+                  fecha={presupuesto.fecha}
+                  total={presupuesto.total}
+                  estado={presupuesto.aprobado ? "cerrado" : "pendiente"}
+                />
+              )}
               criteria={ctx.presupuestos.criteria}              entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}
               seleccionada={ctx.presupuestos.activo}

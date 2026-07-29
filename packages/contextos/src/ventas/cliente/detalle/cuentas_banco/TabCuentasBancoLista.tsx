@@ -1,4 +1,4 @@
-import { MetaTabla, QIcono } from "@olula/componentes/index.js";
+import { MetaTabla, QIcono, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -44,6 +44,13 @@ export const TabCuentasBancoLista = ({
     <div className="CuentasBanco">
       <ListadoSemiControlado
         metaTabla={metaTablaCuentasBanco}
+        tarjeta={(cuenta) => (
+          <QTarjetaGenerica
+            arribaIzquierda={cuenta.descripcion}
+            abajoIzquierda={cuenta.iban}
+            abajoDerecha={cuenta.bic}
+          />
+        )}
         entidades={cuentas}
         totalEntidades={cuentas.length}
         cargando={cargando}

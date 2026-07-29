@@ -1,3 +1,4 @@
+import { QTarjetaGenerica } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -69,6 +70,13 @@ export const TabDireccionesLista = ({
   return (
     <ListadoSemiControlado
       metaTabla={metaTablaDirecciones}
+      tarjeta={(direccion) => (
+        <QTarjetaGenerica
+          arribaIzquierda={direccionCompleta(direccion)}
+          abajoIzquierda={`Facturación: ${boolAString(direccion.dir_facturacion)}`}
+          abajoDerecha={`Envío: ${boolAString(direccion.dir_envio)}`}
+        />
+      )}
       entidades={direcciones}
       totalEntidades={direcciones.length}
       cargando={cargando}

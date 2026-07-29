@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { Articulo as ArticuloSelect } from "#/ventas/comun/componentes/articulo.tsx";
 import { GrupoIvaProducto } from "#/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { Articulo } from "./diseño.ts";
+import { TarjetaArticulo } from "./TarjetaArticulo.tsx";
 import { DetalleArticulo } from "./detalle/DetalleArticulo.tsx";
 import { metaTablaArticulo } from "./maestro/diseño.ts";
 import { getMaquina } from "./maestro/maquina.ts";
@@ -35,6 +36,7 @@ export const MaestroConDetalleArticulo = () => {
                         <h2>Artículos</h2>
                         <Listado<Articulo>
                             metaTabla={metaTablaArticulo}
+                            tarjeta={TarjetaArticulo}
                             metaFiltro={metaFiltro}
                             criteria={ctx.articulos.criteria}                            entidades={ctx.articulos.lista}
                             totalEntidades={ctx.articulos.total}
