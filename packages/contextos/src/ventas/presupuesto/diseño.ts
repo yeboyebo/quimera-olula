@@ -65,6 +65,8 @@ export type GetPresupuestos = (filtro: Filtro, orden: Orden, paginacion: Paginac
 
 export type GetPresupuesto = (id: string) => Promise<Presupuesto>;
 
+export type GetReportPresupuesto = (id: string) => Promise<Blob>;
+
 export type PostPresupuesto = (presupuesto: NuevoPresupuesto | NuevoPresupuestoClienteNoRegistrado) => Promise<string>;
 
 export type CambiarArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;

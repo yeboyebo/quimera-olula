@@ -3,7 +3,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -75,6 +75,9 @@ export const getPresupuesto: GetPresupuesto = async (id) =>
   RestAPI.get<{ datos: PresupuestoAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
     return presupuestoFromAPI(respuesta.datos);
   });
+
+export const getReportPresupuesto: GetReportPresupuesto = async (id) =>
+  RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del presupuesto");
 
 export const getPresupuestos: GetPresupuestos = async (
   filtro: Filtro,

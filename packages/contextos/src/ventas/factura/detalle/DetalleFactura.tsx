@@ -2,7 +2,9 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
@@ -11,6 +13,7 @@ import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
 import { facturaVacia } from "../dominio.ts";
+import { getReportFactura } from "../infraestructura.ts";
 import "./DetalleFactura.css";
 import { editable, metaFactura } from "./diseño.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
@@ -62,6 +65,11 @@ export const DetalleFactura = ({
     emitir("borrar_solicitado");
   }, [emitir]);
 
+  const imprimir = useCallback(async () => {
+    const blob = await getReportFactura(ctx.factura.id);
+    imprimir_blob(blob);
+  }, [ctx.factura.id]);
+
   if (!ctx.factura.id) return;
 
   return (
@@ -79,6 +87,15 @@ export const DetalleFactura = ({
           </QBoton>
         </div>
       )}
+
+      <QuimeraAcciones
+        acciones={[
+          {
+            texto: "Imprimir",
+            onClick: imprimir,
+          },
+        ]}
+      />
 
       <Tabs>
         <Tab label="Cliente">

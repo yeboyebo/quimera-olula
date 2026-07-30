@@ -3,6 +3,7 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
@@ -11,6 +12,7 @@ import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { AprobarPresupuesto } from "../aprobar/AprobarPresupuesto.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
+import { getReportPresupuesto } from "../infraestructura.ts";
 import "./DetallePresupuesto.css";
 import { metaPresupuesto, presupuestoVacio } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -60,6 +62,11 @@ export const DetallePresupuesto = ({
 
   if (!ctx.presupuesto.id) return;
 
+  const imprimir = async () => {
+    const blob = await getReportPresupuesto(ctx.presupuesto.id);
+    imprimir_blob(blob);
+  };
+
   const acciones = [
     {
       texto: "Aprobar",
@@ -73,6 +80,10 @@ export const DetallePresupuesto = ({
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: ctx.presupuesto.aprobado,
     },
+    {
+      texto: "Imprimir",
+      onClick: imprimir,
+    },
   ];
 
   return (
@@ -83,9 +94,7 @@ export const DetallePresupuesto = ({
       entidad={ctx.presupuesto}
       cerrarDetalle={() => emitir("presupuesto_deseleccionado", null)}
     >
-      {estado === "ABIERTO" && !ctx.presupuesto.aprobado && (
-        <QuimeraAcciones acciones={acciones} vertical />
-      )}
+      <QuimeraAcciones acciones={acciones} vertical />
 
       <Tabs>
         <Tab label="Cliente">
