@@ -1,4 +1,4 @@
-import { TabCrmContactos } from "#/ventas/cliente/detalle/CRMContactos/TabCrmContactos.tsx";
+import { TabCrmContactos } from "#/ventas/cliente/detalle/crm_contactos/TabCrmContactos.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Detalle, QBoton, Tab, Tabs } from "@olula/componentes/index.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
