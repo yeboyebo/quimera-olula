@@ -1,3 +1,4 @@
+import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -23,6 +24,8 @@ export const TabDatosBase = ({ presupuesto }: TabDatosProps) => {
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
         <Agente {...uiProps("agente_id", "nombre_agente")} />
+        <QInput label="% Comisión" {...uiProps("por_comision")} />
+        <Almacen {...uiProps("almacen_id")} />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
       </quimera-formulario>

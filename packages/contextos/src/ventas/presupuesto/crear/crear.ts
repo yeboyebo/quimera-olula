@@ -3,10 +3,8 @@ import { MetaModelo } from "@olula/lib/dominio.js";
 import { NuevoPresupuesto, NuevoPresupuestoClienteNoRegistrado } from "../diseño.ts";
 
 export const nuevoPresupuestoVacio: NuevoPresupuesto = {
-    cliente: {
-        cliente_id: "",
-        direccion_id: "",
-    },
+    cliente_id: "",
+    direccion_id: "",
     empresa_id: empresaActual(),
 };
 
@@ -37,8 +35,8 @@ export const nuevoPresupuestoClienteNoRegistradoVacio: NuevoPresupuestoClienteNo
 
 export const metaNuevoPresupuestoClienteNoRegistrado: MetaModelo<NuevoPresupuestoClienteNoRegistrado> = {
     campos: {
-        cliente_nombre: { requerido: true },
-        direccion_nombre_via: { requerido: true },
+        nombre_cliente: { requerido: true },
+        nombre_via: { requerido: true },
         empresa_id: { requerido: true },
     }
 };

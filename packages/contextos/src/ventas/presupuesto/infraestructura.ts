@@ -24,6 +24,8 @@ type PresupuestoAPI = {
   forma_pago_id: string;
   nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
+  por_comision: number;
+  almacen_id: string;
   observaciones: string;
   cliente_id: string | null;
   nombre_cliente: string;
@@ -90,8 +92,8 @@ export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<str
 
   if (esClienteRegistrado(presupuesto)) {
     clientePayload = {
-      cliente_id: presupuesto.cliente.cliente_id,
-      direccion_id: presupuesto.cliente.direccion_id
+      cliente_id: presupuesto.cliente_id,
+      direccion_id: presupuesto.direccion_id
     };
   } else {
     clientePayload = {
@@ -251,6 +253,8 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       direccion_id: presupuesto.cliente.direccion_id,
       forma_pago_id: presupuesto.forma_pago_id,
       grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
+      por_comision: presupuesto.por_comision,
+      almacen_id: presupuesto.almacen_id,
       observaciones: presupuesto.observaciones,
     },
   };

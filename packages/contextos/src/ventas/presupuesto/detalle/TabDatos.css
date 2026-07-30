@@ -17,6 +17,14 @@
 
 
     quimera-autocompletar[nombre="agente_id"] {
+        grid-column: 1 / span 8;
+    }
+
+    quimera-input[nombre="por_comision"] {
+        grid-column: span 4;
+    }
+
+    quimera-select[nombre="almacen_id"] {
         grid-column: 1 / span 12;
     }
 

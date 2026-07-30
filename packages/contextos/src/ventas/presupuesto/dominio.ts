@@ -24,15 +24,15 @@ export const presupuestoVacio = (): Presupuesto => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     aprobado: false,
+    por_comision: 0,
+    almacen_id: "",
     fecha_salida: new Date(),
     lineas: [],
 });
 
 export const nuevoPresupuestoVacio: NuevoPresupuesto = {
-    cliente: {
-        cliente_id: "",
-        direccion_id: "",
-    },
+    cliente_id: "",
+    direccion_id: "",
     empresa_id: empresaActual(),
 };
 

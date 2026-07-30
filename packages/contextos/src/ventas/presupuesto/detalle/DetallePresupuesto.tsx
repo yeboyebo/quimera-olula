@@ -123,7 +123,7 @@ export const DetallePresupuesto = ({
       )}
 
       {estado === "APROBANDO_PRESUPUESTO" && (
-        <AprobarPresupuesto presupuesto={ctx.presupuesto} publicar={emitir} />
+        <AprobarPresupuesto publicar={emitir} />
       )}
     </Detalle>
   );

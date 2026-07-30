@@ -34,6 +34,7 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
         divisa_id: { requerido: true },
+        por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 },
     },
     editable: (presupuesto: Presupuesto) => !presupuesto.aprobado,
 };
@@ -45,6 +46,8 @@ export const presupuestoVacio = (): Presupuesto => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     aprobado: false,
+    por_comision: 0,
+    almacen_id: "",
     fecha_salida: new Date(),
     lineas: [],
 })

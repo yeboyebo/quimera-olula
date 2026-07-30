@@ -6,14 +6,14 @@ export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
   fecha_salida: Date;
   aprobado: boolean;
+  por_comision: number;
+  almacen_id: string;
   lineas: LineaPresupuesto[];
 }
 
 export type NuevoPresupuesto = {
-  cliente: {
-    cliente_id: string;
-    direccion_id: string;
-  };
+  cliente_id: string;
+  direccion_id: string;
   empresa_id: string;
   oportunidad_id?: string | null;
 }
@@ -58,7 +58,7 @@ export type Cliente = {
 }
 
 export const esClienteRegistrado = (presupuesto: NuevoPresupuesto | NuevoPresupuestoClienteNoRegistrado): presupuesto is NuevoPresupuesto => {
-  return 'cliente_id' in presupuesto && 'direccion_id' in presupuesto;
+  return 'cliente_id' in presupuesto;
 };
 
 export type GetPresupuestos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Presupuesto>;

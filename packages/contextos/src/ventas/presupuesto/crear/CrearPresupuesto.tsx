@@ -160,14 +160,21 @@ const FormAltaPresupuesto = ({
               ref={focus}
             />
             <DirCliente
-              clienteId={presupuestoRegistrado.modelo.cliente.cliente_id}
+              clienteId={presupuestoRegistrado.modelo.cliente_id}
               {...presupuestoRegistrado.uiProps("direccion_id")}
             />
           </>
         )}
       </quimera-formulario>
       <div className="botones">
-        <QBoton onClick={crear} deshabilitado={!presupuestoRegistrado.valido}>
+        <QBoton
+          onClick={crear}
+          deshabilitado={
+            modoNoRegistrado
+              ? !presupuestoNoRegistrado.valido
+              : !presupuestoRegistrado.valido
+          }
+        >
           Guardar
         </QBoton>
         <QBoton onClick={cancelar} variante="texto">
