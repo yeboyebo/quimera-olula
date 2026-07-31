@@ -21,6 +21,8 @@ export type GetPedidos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) 
 
 export type GetPedido = (id: string) => Promise<Pedido>;
 
+export type GetReportPedido = (id: string) => Promise<Blob>;
+
 export type GetLineasPedido = (id: string) => Promise<LineaPedido[]>;
 
 export type PostPedido = (presupuesto: NuevoPedido) => Promise<string>;

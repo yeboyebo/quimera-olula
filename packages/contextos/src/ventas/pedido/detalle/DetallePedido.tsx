@@ -6,11 +6,13 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
+import { getReportPedido } from "../infraestructura.ts";
 import "./DetallePedido.css";
 import { editable, metaPedido, pedidoVacio } from "./detalle.ts";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -79,18 +81,29 @@ export const DetallePedidoBase = ({
 
   if (!ctx.pedido.id) return;
 
+  const esEditable = editable(ctx.pedido);
+
+  const imprimir = async () => {
+    const blob = await getReportPedido(ctx.pedido.id);
+    imprimir_blob(blob);
+  };
+
   const acciones = [
     {
       texto: "Albaranar",
       onClick: handleAlbaranar,
-      deshabilitado: false,
+      deshabilitado: !esEditable,
     },
     {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
-      deshabilitado: false,
+      deshabilitado: !esEditable,
+    },
+    {
+      texto: "Imprimir",
+      onClick: imprimir,
     },
   ];
 
@@ -102,7 +115,7 @@ export const DetallePedidoBase = ({
       entidad={ctx.pedido}
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
-      {editable(ctx.pedido) && <QuimeraAcciones acciones={acciones} vertical />}
+      <QuimeraAcciones acciones={acciones} vertical />
 
       <Tabs>
         <Tab label="Cliente">

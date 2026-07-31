@@ -22,6 +22,8 @@ export type GetAlbaranes = (filtro: Filtro, orden: Orden, paginacion: Paginacion
 
 export type GetAlbaran = (id: string) => Promise<Albaran>;
 
+export type GetReportAlbaran = (id: string) => Promise<Blob>;
+
 export type GetLineasAlbaran = (id: string) => Promise<LineaAlbaran[]>;
 
 export type PostAlbaran = (albaran: NuevoAlbaran) => Promise<string>;

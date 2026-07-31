@@ -4,7 +4,7 @@ import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
+import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {
   id: string;
@@ -88,6 +88,9 @@ export const getPedido: GetPedido = async (id) => {
       return pedidoDesdeAPI(respuesta.datos);
     });
 }
+
+export const getReportPedido: GetReportPedido = async (id) =>
+  RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del pedido");
 
 export const getPedidos: GetPedidos = async (
   filtro: Filtro,

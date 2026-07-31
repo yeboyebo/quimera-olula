@@ -3,6 +3,7 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
@@ -11,6 +12,7 @@ import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
 import { albaranVacio, editable, metaAlbaran } from "../dominio.ts";
+import { getReportAlbaran } from "../infraestructura.ts";
 import "./DetalleAlbaran.css";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
@@ -59,12 +61,24 @@ export const DetalleAlbaran = ({
 
   if (!ctx.albaran.id) return;
 
+  const esEditable = editable(ctx.albaran);
+
+  const imprimir = async () => {
+    const blob = await getReportAlbaran(ctx.albaran.id);
+    imprimir_blob(blob);
+  };
+
   const acciones = [
     {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
+      deshabilitado: !esEditable,
+    },
+    {
+      texto: "Imprimir",
+      onClick: imprimir,
     },
   ];
 
@@ -76,9 +90,7 @@ export const DetalleAlbaran = ({
       entidad={ctx.albaran}
       cerrarDetalle={() => emitir("albaran_deseleccionado", null)}
     >
-      {editable(ctx.albaran) && (
-        <QuimeraAcciones acciones={acciones} vertical />
-      )}
+      <QuimeraAcciones acciones={acciones} vertical />
 
       <Tabs>
         <Tab label="Cliente">

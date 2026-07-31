@@ -9,6 +9,7 @@ import {
   GetAlbaran,
   GetAlbaranes,
   GetLineasAlbaran,
+  GetReportAlbaran,
   LineaAlbaran,
   PatchArticuloLinea,
   PatchCantidadLinea,
@@ -70,6 +71,9 @@ export const getAlbaran: GetAlbaran = async (id) => {
     return albaranDesdeAPI(respuesta.datos);
   });
 };
+
+export const getReportAlbaran: GetReportAlbaran = async (id) =>
+  RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del albarán");
 
 export const getAlbaranes: GetAlbaranes = async (
   filtro: Filtro,
