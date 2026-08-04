@@ -49,6 +49,8 @@ export const LecturaOrden = ({
             registrarLecturaOrden(orden.id, {
                 sku: modelo.sku,
                 idLote: modelo.idLote,
+                idLinea: null,
+                cajaCompleta: false,
                 cantidad: modelo.cantidad,
                 articulo: modelo.articulo,
                 idUbicacionDestino: mostrarDestino

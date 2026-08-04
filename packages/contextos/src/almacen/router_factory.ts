@@ -6,6 +6,7 @@ import { MaestroOrden } from "./orden/vistas/maestro/MaestroOrden.tsx"
 import { MaestroConDetalleStock } from "./stock/maestro/MaestroConDetalleStock.tsx"
 import { MaestroDetalleTransferenciasStock } from "./transferencias/vistas/MaestroDetalleTransferenciasStock.tsx"
 import { MaestroConDetalleUbicacion } from "./ubicacion/vistas/maestro/MaestroConDetalleUbicacion.tsx"
+import { MaestroConDetalleTipoCaja } from "./tipo_caja/vistas/maestro/MaestroConDetalleTipoCaja.tsx"
 import { MaestroConDetalleZona } from "./zona/vistas/maestro/MaestroConDetalleZona.tsx"
 
 export class RouterFactoryAlmacenOlula {
@@ -18,6 +19,7 @@ export class RouterFactoryAlmacenOlula {
                 "almacen/ordenes": MaestroOrden,
                 "almacen/stock": MaestroConDetalleStock,
                 "almacen/ubicaciones": MaestroConDetalleUbicacion,
+                "almacen/tipos_caja": MaestroConDetalleTipoCaja,
                 "almacen/zonas": MaestroConDetalleZona,
         }
 }

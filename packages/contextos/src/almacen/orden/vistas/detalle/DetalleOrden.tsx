@@ -1,3 +1,4 @@
+import { CrearCaja } from "#/almacen/caja/crear/CrearCaja.tsx";
 import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
 import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
@@ -5,13 +6,11 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QInput } from "@olula/componentes/index.js";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
-import { postCaja } from "../../../caja/infraestructura.ts";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "../../diseño.ts";
 import { metaOrden, ordenVacia } from "../../dominio.ts";
@@ -19,9 +18,9 @@ import { BorrarOrden } from "../borrar/BorrarOrden.tsx";
 import { guardarOrden } from "./detalle.ts";
 import "./DetalleOrden.css";
 import { LecturaOrden } from "./lectura/LecturaLineaOrden.tsx";
-import { LecturaCajaOrden } from "./lectura_caja/LecturaCajaOrden.tsx";
-import { LecturaUbicacionOrden } from "./lectura_ubicacion/LecturaUbicacionOrden.tsx";
 import { LecturasCajaOrden } from "./lecturas_caja/LecturasCajaOrden.tsx";
+import { LecturaCajaOrden } from "./leer_caja/LecturaCajaOrden.tsx";
+import { LecturaUbicacionOrden } from "./leer_ubicacion/LecturaUbicacionOrden.tsx";
 import { LineasOrden } from "./lineas/LineasOrden.tsx";
 import { ContextoOrdenAlmacen, getMaquina } from "./maquina.ts";
 
@@ -54,18 +53,7 @@ export const DetalleOrden = ({
     );
 
     const orden = useModelo(metaOrden, ctx.orden, autoGuardar);
-    const { modelo, set } = orden;
-    const { intentar } = useContext(ContextoError);
-
-    const crearCaja = useCallback(async () => {
-        if (!modelo.idUbicacionDestino) return;
-        const id = await intentar(() =>
-            postCaja({ idUbicacion: modelo.idUbicacionDestino! })
-        );
-        if (id) {
-            set({ ...modelo, idCajaDestino: id });
-        }
-    }, [modelo, intentar, set]);
+    const { modelo } = orden;
 
     const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipo);
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipo);
@@ -118,7 +106,7 @@ export const DetalleOrden = ({
                         />
                     )}
                     {mostrarDestino && (
-                        <QBoton texto='Nueva caja' onClick={crearCaja} deshabilitado={!modelo.idUbicacionDestino} />
+                        <QBoton texto='Nueva caja' onClick={() => emitir("creacion_de_caja_solicitada")} />
                     )}
                     {mostrarDestino && (
                         <Ubicacion
@@ -161,6 +149,9 @@ export const DetalleOrden = ({
             )}
             {ctx.estado === "LEYENDO_UBICACION" && (
                 <LecturaUbicacionOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+            )}
+            {ctx.estado === "CREANDO_CAJA" && (
+                <CrearCaja publicar={emitir} idUbicacion={modelo.idUbicacionDestino} />
             )}
         </Detalle>
     );

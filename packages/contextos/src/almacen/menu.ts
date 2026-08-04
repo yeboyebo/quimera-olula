@@ -8,5 +8,6 @@ export const menuAlmacen = {
     "Almacén/Órdenes": { url: "/almacen/ordenes", regla: "almacen.orden.leer" },
     "Almacén/Stock": { url: "/almacen/stock", regla: "almacen.stock" },
     "Almacén/Ubicaciones": { url: "/almacen/ubicaciones", regla: "almacen.ubicacion" },
+    "Almacén/Tipos de Caja": { url: "/almacen/tipos_caja", regla: "almacen.tipo_caja" },
     "Almacén/Zonas": { url: "/almacen/zonas", regla: "almacen.zona" },
 };

@@ -1,0 +1,22 @@
+.LeerLineaOrden {
+    dl {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--espaciado-xs) var(--espaciado-m);
+        margin: 0;
+
+        dt {
+            font-size: var(--tamaño-letra-s);
+            font-weight: var(--grosor-letra-4);
+            line-height: var(--altura-linea-normal);
+            color: var(--color-texto-secundario);
+        }
+
+        dd {
+            font-size: var(--tamaño-letra-m);
+            font-weight: var(--grosor-letra-4);
+            line-height: var(--altura-linea-normal);
+            margin: 0;
+        }
+    }
+}

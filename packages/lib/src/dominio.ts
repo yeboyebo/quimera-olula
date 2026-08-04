@@ -538,7 +538,7 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     }
     const requerido = campo in campos && campos[campo]?.requerido
 
-    if (requerido && (valor === null || valor === undefined)) {
+    if (requerido && (valor === null || valor === undefined || valor === "")) {
         return "Campo requerido";
     }
 

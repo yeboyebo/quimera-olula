@@ -4,13 +4,13 @@ import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
 import "./qautocompletar.css";
 
-type Opcion = {
+type OpcionBase = {
   valor: string;
   descripcion: string;
   descripcionOpcion?: string;
 };
 
-export type QAutocompletarProps = Omit<
+export type QAutocompletarProps<T extends OpcionBase = OpcionBase> = Omit<
   FormFieldProps,
   "onChange" | "onBlur"
 > & {
@@ -18,18 +18,18 @@ export type QAutocompletarProps = Omit<
   longitudMinima?: number;
   descripcion?: string;
   soloTexto?: boolean;
-  obtenerOpciones: (texto: string, id?: string) => Promise<Opcion[]>;
+  obtenerOpciones: (texto: string, id?: string) => Promise<T[]>;
   onChange?: (
-    opcion: Opcion | null,
+    opcion: T | null,
     evento: React.ChangeEvent<HTMLElement>
   ) => void;
   onBlur?: (
-    opcion: Opcion | null,
+    opcion: T | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
 };
 
-export const QAutocompletar = ({
+export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
   nombre,
   valor,
   tiempoEspera = 150,
@@ -42,11 +42,11 @@ export const QAutocompletar = ({
   opcional,
   deshabilitado,
   ...props
-}: QAutocompletarProps) => {
+}: QAutocompletarProps<T>) => {
   const attrs = {
     nombre,
   };
-  const [opciones, setOpciones] = useState<Opcion[]>([]);
+  const [opciones, setOpciones] = useState<T[]>([]);
   const [valorDescrito, setValorDescrito] = useState<string>("");
 
   const valorReal = useRef<HTMLInputElement>(null);

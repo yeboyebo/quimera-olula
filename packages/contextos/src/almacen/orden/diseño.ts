@@ -26,6 +26,7 @@ export interface LineaOrdenAlmacen extends Entidad {
     sku: string;
     articulo: string;
     loteId: string | null;
+    porLotes: boolean;
     cantidadPrevista: number;
     cantidadReal?: number;
     idUbicacionOrigen: string | null;
@@ -91,6 +92,8 @@ export interface NuevaLecturaOrden extends Modelo {
     sku: string;
     articulo: string;
     idLote: string | null;
+    idLinea: string | null;
+    cajaCompleta: boolean;
     idCajaDestino: string | null;
     idUbicacionDestino: string | null;
     idCajaOrigen: string | null;

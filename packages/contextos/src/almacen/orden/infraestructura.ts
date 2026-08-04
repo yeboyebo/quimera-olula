@@ -79,6 +79,7 @@ export interface LineaOrdenAlmacenApi {
     sku: string;
     articulo: string;
     lote_id: string | null;
+    por_lotes: boolean;
     cantidad_prevista: number;
     cantidad_real?: number;
     ubicacion_origen_id: string | null;
@@ -172,6 +173,7 @@ export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen
     sku: api.sku,
     articulo: api.articulo,
     loteId: api.lote_id,
+    porLotes: api.por_lotes,
     cantidadPrevista: api.cantidad_prevista,
     ...(api.cantidad_real !== undefined ? { cantidadReal: api.cantidad_real } : {}),
     idUbicacionOrigen: api.ubicacion_origen_id,
@@ -347,11 +349,13 @@ export const registrarLecturaOrden = async (
         {
             sku: lectura.sku,
             lote_id: lectura.idLote,
+            linea_id: lectura.idLinea,
             cantidad: lectura.cantidad,
-            ubicacion_destino_id: lectura.idUbicacionDestino,
-            caja_destino_id: lectura.idCajaDestino,
             ubicacion_origen_id: lectura.idUbicacionOrigen,
             caja_origen_id: lectura.idCajaOrigen,
+            caja_completa: lectura.cajaCompleta,
+            ubicacion_destino_id: lectura.idUbicacionDestino,
+            caja_destino_id: lectura.idCajaDestino,
         },
         "Error al registrar lectura de la orden"
     );
@@ -373,6 +377,10 @@ export const registrarLecturaCajaOrden = async (
     );
 };
 
+
+export const deleteLecturaOrden = async (id: string, lecturaId: string): Promise<void> => {
+    await RestAPI.delete(`${baseUrl}/${id}/lectura/${lecturaId}`, "Error al borrar la lectura");
+};
 
 export const registrarLecturaUbicacionOrden = async (
     id: string,
