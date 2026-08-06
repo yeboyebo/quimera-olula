@@ -37,7 +37,6 @@ const baseUrl = new ApiUrls().PRESUPUESTO;
 
 type LineaPresupuestoAPI = LineaPresupuesto;
 
-// export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => p;
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
