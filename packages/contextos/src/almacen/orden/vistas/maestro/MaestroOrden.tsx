@@ -1,18 +1,57 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
+import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect } from "react";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
 import { CrearOrden } from "../crear/CrearOrden.tsx";
+import { CrearEntradaDesdePedido } from "../crear_entrada_desde_pedido/CrearEntradaDesdePedido.tsx";
 import { DetalleOrden } from "../detalle/DetalleOrden.tsx";
 import { ContextoMaestroOrden, getMaquina } from "./maquina.ts";
+
+const OPCIONES_RESPONSABLE = [
+    { valor: "libres", descripcion: "Libres" },
+    { valor: "mios", descripcion: "Míos" },
+];
+
+const metaFiltroOrden: MetaFiltro = {
+    responsable: {
+        id: "responsable",
+        campo: "responsable_id",
+        label: "Responsable",
+        filtro: (valor) => {
+            if (!valor || valor === "") return null;
+            if (valor === "libres") return ["responsable_id", "is_null"];
+            if (valor === "mios") {
+                const whoamiRaw = localStorage.getItem("whoami");
+                const usuarioId = whoamiRaw
+                    ? (JSON.parse(whoamiRaw) as { usuario_id: string }).usuario_id
+                    : null;
+                if (!usuarioId) return null;
+                return ["responsable_id", "=", usuarioId];
+            }
+            return null;
+        },
+        render: (valor, onChange) => (
+            <QSelect
+                label="Responsable"
+                nombre="responsable"
+                valor={(valor as string) ?? ""}
+                onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                opciones={OPCIONES_RESPONSABLE}
+                placeholder="Todos"
+            />
+        ),
+    },
+};
 
 const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
     { id: "id", cabecera: "ID" },
@@ -53,6 +92,7 @@ export const MaestroOrden = () => {
                         <h2>Órdenes</h2>
                         <div className="maestro-botones">
                             <QBoton onClick={() => emitir("crear_modulo_solicitado")}>Nueva orden</QBoton>
+                            <QBoton onClick={() => emitir("crear_entrada_desde_pedido_solicitado")}>Entrada desde pedido</QBoton>
                             <span
                                 className="cambio-modo-icono"
                                 onClick={cambiarLayout}
@@ -65,6 +105,7 @@ export const MaestroOrden = () => {
                         </div>
                         <Listado<ItemOrdenAlmacen>
                             metaTabla={metaTablaOrden}
+                            metaFiltro={metaFiltroOrden}
                             criteria={ctx.ordenes.criteria}
                             modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
                             tarjeta={TarjetaOrdenAlmacen}
@@ -89,6 +130,9 @@ export const MaestroOrden = () => {
             />
             {ctx.estado === "CREANDO" && (
                 <CrearOrden publicar={emitir} />
+            )}
+            {ctx.estado === "CREANDO_ENTRADA_DESDE_PEDIDO_COMPRA" && (
+                <CrearEntradaDesdePedido publicar={emitir} />
             )}
         </div>
     );

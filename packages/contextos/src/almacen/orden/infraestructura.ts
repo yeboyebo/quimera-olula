@@ -19,6 +19,8 @@ import {
     OrdenAlmacen,
     PatchLineaOrden,
     PatchOrden,
+    NuevaEntradaDesdePedido,
+    PostEntradaDesdePedido,
     PostLineasOrden,
     PostOrden,
 } from "./diseño.ts";
@@ -90,6 +92,7 @@ export interface LineaOrdenAlmacenApi {
     ubicacion_destino: string | null;
     caja_destino_id: string | null;
     caja_destino: string | null;
+    linea_pick_id: string | null;
     lecturas: LecturaLineaOrdenApi[];
 }
 
@@ -184,6 +187,7 @@ export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen
     ubicacionDestino: api.ubicacion_destino,
     idCajaDestino: api.caja_destino_id,
     cajaDestino: api.caja_destino,
+    idLineaPick: api.linea_pick_id,
     lecturas: api.lecturas.map(lecturaLineaOrdenDesdeApi),
 });
 
@@ -395,4 +399,13 @@ export const registrarLecturaUbicacionOrden = async (
         },
         "Error al registrar lectura de ubicación de la orden"
     );
+};
+
+export const postEntradaDesdePedido: PostEntradaDesdePedido = async (nueva: NuevaEntradaDesdePedido) => {
+    const respuesta = await RestAPI.post(
+        `${baseUrl}/desde_pedido_compra`,
+        { ubicacion_id: nueva.ubicacionId, pedido_id: nueva.pedidoCompraId },
+        "Error al crear entrada desde pedido de compra"
+    );
+    return respuesta.id as string;
 };

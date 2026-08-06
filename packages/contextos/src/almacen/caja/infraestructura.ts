@@ -71,7 +71,7 @@ type CambiosCajaAPI = Partial<CajaAPI>;
 const baseUrl = `/almacen/caja`;
 
 const esMaterialAPI = (comp: ComponenteCajaAPI): comp is MaterialCajaAPI =>
-    "sku" in comp;
+    !("lpn" in comp);
 
 const esCajaMonoproductoContenidoAPI = (
     caja: CajaContenidoAPI

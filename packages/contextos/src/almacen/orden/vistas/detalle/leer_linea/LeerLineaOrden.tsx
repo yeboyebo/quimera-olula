@@ -40,10 +40,15 @@ const guion: Record<string, PasoGuion[]> = {
     "71": ["caja-origen-completa", "ubi-destino"], // R1 en cajas > MS-1
     // Reposición de picking
     "77": ["caja-origen-completa"], // R1 en cajas desde MS-1 > TR
-    "78": ["ubi-destino"], // R1 en cajas desde TR > MS-1
+    "78": ["caja-origen-completa", "ubi-destino"], // R1 en cajas desde TR > MS-1
     // Picking
     "73": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a BD1
-    "74": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a BD2
+    "74": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a BD2   
+    // Packing
+    // "75": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a nueva caja desde BD1 (se hace con lectura de bandeja, no con lectura de línea)
+    // "76": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a nueva caja desde BD2 (se hace con lectura de bandeja, no con lectura de línea)
+    // Paletizar
+    // "79": ["caja-origen-completa", "caja-destino"], // 2 ud de R1. Llevamos su caja dentro del palet
 };
 
 const PasoWrapper = ({ instruccion, children }: { instruccion: string; children: ReactNode }) => (
