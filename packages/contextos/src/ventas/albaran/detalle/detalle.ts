@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import {
@@ -10,8 +12,10 @@ import {
     getAlbaran,
     getLineas,
     patchAlbaran,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
+    patchCambiarDivisa,
     patchCantidadLinea
 } from "../infraestructura.ts";
 import { ContextoAlbaran, EstadoAlbaran } from "./diseño.ts";
@@ -143,6 +147,27 @@ export const cambiarCliente: ProcesarAlbaran = async (contexto, payload) => {
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarDivisa: ProcesarAlbaran = async (contexto, payload) => {
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.albaran.id, cambio);
+
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
+        refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarAgente: ProcesarAlbaran = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.albaran.id, cambio);
+
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
         'ABIERTO',
     ]);
 }

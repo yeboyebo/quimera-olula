@@ -28,6 +28,7 @@ const metaPedidoNrj = {
   campos: {
     ...getMetaPedido<PedidoNrj>().campos,
     portes_cliente: { tipo: "checkbox" as const, requerido: false },
+    agente_id: { bloqueado: false },
   },
 };
 

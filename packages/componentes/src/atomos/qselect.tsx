@@ -1,7 +1,7 @@
 import "./_forminput.css";
 import { Etiqueta, FormFieldProps, Validacion } from "./_forminput.tsx";
 
-type Opcion = { valor: string; descripcion: string };
+type Opcion = { valor: string; descripcion: string;[dato: string]: unknown };
 
 export type QSelectProps = Omit<FormFieldProps, "onChange" | "onBlur"> & {
   opciones: Opcion[] | Opcion[][];

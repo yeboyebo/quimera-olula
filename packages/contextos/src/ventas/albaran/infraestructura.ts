@@ -12,6 +12,8 @@ import {
   GetReportAlbaran,
   LineaAlbaran,
   PatchArticuloLinea,
+  PatchCambiarAgente,
+  PatchCambiarDivisa,
   PatchCantidadLinea,
   PatchClienteAlbaran,
   PatchLinea,
@@ -45,12 +47,15 @@ interface AlbaranAPI {
   forma_pago_id: string;
   nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
+  por_comision: number;
   observaciones: string;
   idfactura: string | null;
 }
 
 export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   ...p,
+  // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
+  regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
@@ -176,7 +181,8 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
       id_fiscal: albaran.cliente.id_fiscal,
       direccion_id: albaran.cliente.direccion_id,
       forma_pago_id: albaran.forma_pago_id,
-      grupo_iva_negocio_id: albaran.grupo_iva_negocio_id,
+      regimen_iva: albaran.regimen_iva,
+      por_comision: albaran.por_comision,
       observaciones: albaran.observaciones,
     },
   };
@@ -207,4 +213,24 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
       por_descuento: dto_porcentual,
     }
   }, "Error al cambiar descuento del albarán");
+};
+
+export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      divisa: {
+        divisa_id: cambio.divisa_id,
+        tasa_conversion: cambio.tasa_conversion,
+      }
+    }
+  }, "Error al cambiar divisa del albarán");
+};
+
+export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      agente_id: cambio.agente_id,
+      por_comision: cambio.por_comision,
+    }
+  }, "Error al cambiar agente del albarán");
 };

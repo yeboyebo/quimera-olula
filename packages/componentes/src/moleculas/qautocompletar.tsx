@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { FormFieldProps } from "../atomos/_forminput.tsx";
+import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
 import "./qautocompletar.css";
 
-type Opcion = {
+export type Opcion = {
   valor: string;
   descripcion: string;
   descripcionOpcion?: string;
+  [dato: string]: unknown;
 };
 
 export type QAutocompletarProps = Omit<
@@ -18,6 +20,7 @@ export type QAutocompletarProps = Omit<
   longitudMinima?: number;
   descripcion?: string;
   soloTexto?: boolean;
+  enlace?: string;
   obtenerOpciones: (texto: string, id?: string) => Promise<Opcion[]>;
   onChange?: (
     opcion: Opcion | null,
@@ -39,6 +42,7 @@ export const QAutocompletar = ({
   onChange,
   descripcion = "",
   soloTexto = false,
+  enlace,
   opcional,
   deshabilitado,
   ...props
@@ -218,6 +222,18 @@ export const QAutocompletar = ({
           >
             ×
           </button>
+        )}
+        {enlace && valor && !soloTexto && (
+          <a
+            className="autocompletar-enlace"
+            href={`${enlace.replace(/\/$/, "")}/${valor}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir ${props.label ?? "ficha"}`}
+            tabIndex={-1}
+          >
+            <QIcono nombre="arriba_derecha" tamaño="sm" />
+          </a>
         )}
       </div>
     </quimera-autocompletar>

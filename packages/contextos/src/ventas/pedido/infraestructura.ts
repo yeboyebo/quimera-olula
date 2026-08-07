@@ -4,7 +4,7 @@ import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
+import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {
   id: string;
@@ -42,6 +42,7 @@ interface PedidoAPI {
   forma_pago_id: string;
   nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
+  por_comision: number;
   observaciones: string;
   servido: string;
 }
@@ -69,6 +70,8 @@ export const ventasPedidoInfra: VentasPedidoInfra = {
 
 export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => ({
   ...p,
+  // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
+  regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
@@ -132,6 +135,26 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
       por_descuento: dto_porcentual,
     }
   }, "Error al cambiar descuento del pedido");
+}
+
+export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      divisa: {
+        divisa_id: cambio.divisa_id,
+        tasa_conversion: cambio.tasa_conversion,
+      }
+    }
+  }, "Error al cambiar divisa del pedido");
+}
+
+export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      agente_id: cambio.agente_id,
+      por_comision: cambio.por_comision,
+    }
+  }, "Error al cambiar agente del pedido");
 }
 
 export const getLineas: GetLineasPedido = async (id) =>
@@ -223,7 +246,8 @@ export const payloadPatchPedido = (pedido: Pedido) => {
       id_fiscal: pedido.cliente.id_fiscal,
       direccion_id: pedido.cliente.direccion_id,
       forma_pago_id: pedido.forma_pago_id,
-      grupo_iva_negocio_id: pedido.grupo_iva_negocio_id,
+      regimen_iva: pedido.regimen_iva,
+      por_comision: pedido.por_comision,
       observaciones: pedido.observaciones,
     },
   };

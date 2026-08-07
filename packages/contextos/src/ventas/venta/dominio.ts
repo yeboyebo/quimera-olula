@@ -40,7 +40,7 @@ export const ventaVacia: Venta = {
     total_irpf: 0,
     forma_pago_id: '',
     nombre_forma_pago: '',
-    grupo_iva_negocio_id: '',
+    regimen_iva: '',
     observaciones: '',
     dtoPorcentual: 0,
     netoSinDto: 0,
@@ -61,6 +61,8 @@ export const nuevaLineaVentaVacia: NuevaLineaVenta = {
     referencia: "",
     cantidad: 1,
 };
+
+export const puedeCambiarDivisa = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
 
 export const metaVenta: MetaModelo<Venta> = {
     campos: {

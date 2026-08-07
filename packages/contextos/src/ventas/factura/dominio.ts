@@ -32,6 +32,7 @@ export const facturaVacia = (): Factura => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     editable: false,
+    por_comision: 0,
 });
 
 export const nuevaFacturaVacia: NuevaFactura = nuevaVentaVacia;

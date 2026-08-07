@@ -1,3 +1,4 @@
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, ClienteVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
@@ -79,7 +80,7 @@ export type PostLinea = (id: string, linea: NuevaLinea) => Promise<string>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
-export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>;
+export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
 
 export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
 
@@ -101,6 +102,7 @@ export type EstadoPresupuesto = (
   | 'CAMBIANDO_DIVISA'
   | 'CAMBIANDO_CLIENTE'
   | 'CAMBIANDO_DESCUENTO'
+  | 'CAMBIANDO_AGENTE'
   | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 

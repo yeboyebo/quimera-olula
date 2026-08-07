@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
@@ -5,6 +7,7 @@ import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVen
 export interface Pedido extends Venta {
   cliente: ClienteVenta;
   servido: string;
+  por_comision: number;
   lineas: LineaPedido[];
 }
 export interface LineaPedido extends LineaVenta {
@@ -41,11 +44,17 @@ export type PatchCantidadLinea = (id: string, linea: LineaPedido, cantidad: numb
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
+export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
+
+export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
+
 export type EstadoPedido = (
     'INICIAL' | 'ABIERTO' | 'SERVIDO'
     | 'BORRANDO_PEDIDO'
     | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'
+    | 'CAMBIANDO_DIVISA'
+    | 'CAMBIANDO_AGENTE'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 

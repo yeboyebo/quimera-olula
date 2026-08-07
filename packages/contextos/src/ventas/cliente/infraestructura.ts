@@ -8,9 +8,14 @@ import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaB
 const UrlsVentas = new UrlsVentasClass();
 const UrlsCrm = new UrlsCrmClass();
 
-type ClienteApi = Cliente & { fecha_baja: string | null };
+// TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
+type ClienteApi = Cliente & {
+  grupo_iva_negocio_id: string;
+  fecha_baja: string | null;
+};
 const clienteFromAPI = (c: ClienteApi): Cliente => ({
   ...c,
+  regimen_iva: c.grupo_iva_negocio_id,
   fecha_baja: c.fecha_baja ? new Date(Date.parse(c.fecha_baja)) : null,
 });
 
@@ -93,7 +98,7 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       divisa_id: cliente.divisa_id,
       serie_id: cliente.serie_id,
       forma_pago_id: cliente.forma_pago_id,
-      grupo_iva_negocio_id: cliente.grupo_iva_negocio_id,
+      regimen_iva: cliente.regimen_iva,
       nombre_comercial: cliente.nombre_comercial,
       web: cliente.web,
       telefono1: cliente.telefono1,

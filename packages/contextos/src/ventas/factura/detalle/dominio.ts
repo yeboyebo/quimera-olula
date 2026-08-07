@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import { CambioClienteFactura, Factura, LineaFactura } from "../diseño.ts";
@@ -6,8 +8,10 @@ import {
     deleteLinea,
     getFactura,
     getLineas,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
+    patchCambiarDivisa,
     patchCantidadLinea,
     patchFactura
 } from "../infraestructura.ts";
@@ -134,6 +138,27 @@ export const cambiarCliente: ProcesarFactura = async (contexto, payload) => {
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
+export const cambiarDivisa: ProcesarFactura = async (contexto, payload) => {
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.factura.id, cambio);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
+        refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
+export const cambiarAgente: ProcesarFactura = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.factura.id, cambio);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
         "ABIERTO",
     ]);
 };

@@ -6,10 +6,12 @@ import {
     activarLinea,
     borrarAlbaran,
     borrarLinea,
+    cambiarAgente,
     cambiarAlbaran,
     cambiarCantidadLinea,
     cambiarCliente,
     cambiarDescuento,
+    cambiarDivisa,
     cambiarLinea,
     cancelarCambioAlbaran,
     cargarContexto,
@@ -50,6 +52,10 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             borrar_solicitado: "BORRANDO_ALBARAN",
 
             cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
+
+            cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
+
+            cambio_agente_solicitado: "CAMBIANDO_AGENTE",
 
             descuento_solicitado: "CAMBIANDO_DESCUENTO",
 
@@ -95,6 +101,20 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             cambio_cliente_listo: [cambiarCliente, "ABIERTO"],
 
             cambio_cliente_cancelado: "ABIERTO",
+        },
+
+        CAMBIANDO_DIVISA: {
+
+            cambio_divisa_listo: [cambiarDivisa],
+
+            cambio_divisa_cancelado: "ABIERTO",
+        },
+
+        CAMBIANDO_AGENTE: {
+
+            cambio_agente_listo: [cambiarAgente],
+
+            cambio_agente_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_DESCUENTO: {

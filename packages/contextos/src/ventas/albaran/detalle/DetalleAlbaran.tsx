@@ -7,7 +7,9 @@ import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
+import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
@@ -98,7 +100,7 @@ export const DetalleAlbaran = ({
         </Tab>
 
         <Tab label="Datos">
-          <TabDatos albaran={albaran} />
+          <TabDatos albaran={albaran} estado={estado} publicar={emitir} />
         </Tab>
 
         <Tab label="Observaciones">
@@ -110,6 +112,23 @@ export const DetalleAlbaran = ({
 
       {estado === "CAMBIANDO_DESCUENTO" && (
         <CambiarDescuento publicar={emitir} venta={ctx.albaran} />
+      )}
+
+      {estado === "CAMBIANDO_DIVISA" && (
+        <CambiarDivisa
+          publicar={emitir}
+          divisaId={ctx.albaran.divisa_id}
+          tasaConversion={ctx.albaran.tasa_conversion}
+        />
+      )}
+
+      {estado === "CAMBIANDO_AGENTE" && (
+        <CambiarAgente
+          publicar={emitir}
+          agenteId={ctx.albaran.agente_id}
+          nombreAgente={ctx.albaran.nombre_agente}
+          porComision={ctx.albaran.por_comision}
+        />
       )}
 
       <Lineas

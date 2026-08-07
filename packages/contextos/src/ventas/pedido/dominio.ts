@@ -23,6 +23,7 @@ export const pedidoVacio = (): Pedido => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     servido: 'No',
+    por_comision: 0,
     lineas: [],
 });
 

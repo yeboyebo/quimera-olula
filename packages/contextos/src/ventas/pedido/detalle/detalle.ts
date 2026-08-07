@@ -1,6 +1,8 @@
 import { cambioClienteVentaVacio, clienteVentaVacio, metaCambioClienteVenta, metaLineaVenta, metaNuevaLineaVenta, metaVenta, nuevaLineaVentaVacia, ventaVacia } from "#/ventas/venta/dominio.ts";
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, modeloEsValido, publicar } from "@olula/lib/dominio.ts";
+import { ejecutarListaProcesos, MetaCampo, MetaModelo, modeloEsEditable, modeloEsValido, publicar } from "@olula/lib/dominio.ts";
 import {
     CambioClientePedido,
     LineaPedido,
@@ -10,8 +12,10 @@ import {
 import {
     getLineas,
     getPedido,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
+    patchCambiarDivisa,
     patchCantidadLinea,
     patchPedido
 } from "../infraestructura.ts";
@@ -22,6 +26,7 @@ export const pedidoVacio = (): Pedido => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     servido: 'No',
+    por_comision: 0,
     lineas: [],
 })
 
@@ -35,11 +40,17 @@ export const nuevaLineaPedidoVacia: NuevaLineaPedido = nuevaLineaVentaVacia;
 
 export const metaCambioClientePedido: MetaModelo<CambioClientePedido> = metaCambioClienteVenta;
 
+const camposPedido: Record<string, MetaCampo<Pedido>> = {
+    ...metaVenta.campos,
+    fecha: { tipo: "fecha", requerido: false },
+    divisa_id: { requerido: true, bloqueado: true },
+    tasa_conversion: { tipo: "numero", requerido: true, bloqueado: true },
+    agente_id: { bloqueado: true },
+    por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
+};
+
 export const metaPedido: MetaModelo<Pedido> = {
-    campos: {
-        ...metaVenta.campos,
-        fecha: { tipo: "fecha", requerido: false },
-    },
+    campos: camposPedido,
     editable: (pedido: Pedido, _?: string) => {
         const servido = pedido.servido?.toUpperCase();
         return servido !== 'TOTAL' && servido !== 'SERVIDO';
@@ -48,8 +59,7 @@ export const metaPedido: MetaModelo<Pedido> = {
 
 export const getMetaPedido = <T extends Pedido>() => <MetaModelo<T>>({
     campos: {
-        ...metaVenta.campos,
-        fecha: { tipo: "fecha", requerido: false },
+        ...camposPedido,
     },
     editable: (pedido: T, _?: string) => {
         const servido = pedido.servido?.toUpperCase();
@@ -205,6 +215,27 @@ export const cambiarCliente: ProcesarPedido = async (contexto, payload) => {
     return pipePedido(contexto, [
         refrescarPedido,
         refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarDivisa: ProcesarPedido = async (contexto, payload) => {
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.pedido.id, cambio);
+
+    return pipePedido(contexto, [
+        refrescarPedido,
+        refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarAgente: ProcesarPedido = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.pedido.id, cambio);
+
+    return pipePedido(contexto, [
+        refrescarPedido,
         'ABIERTO',
     ]);
 }

@@ -7,6 +7,7 @@ import { useForm } from "@olula/lib/useForm.ts";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback } from "react";
 import { Presupuesto } from "../../diseño.ts";
+import "./CambiarDireccionPresupuesto.css";
 
 type DireccionPresupuesto = {
   tipo_via: string;
@@ -14,9 +15,11 @@ type DireccionPresupuesto = {
   numero: string;
   otros: string;
   cod_postal: string;
+  apartado: string;
   ciudad: string;
   provincia: string;
   pais_id: string;
+  telefono: string;
 };
 
 const metaDireccionPresupuesto: MetaModelo<DireccionPresupuesto> = {
@@ -42,9 +45,11 @@ export const CambiarDireccionPresupuesto = ({
     numero: direccion.numero ?? "",
     otros: direccion.otros ?? "",
     cod_postal: direccion.cod_postal ?? "",
+    apartado: direccion.apartado ?? "",
     ciudad: direccion.ciudad ?? "",
     provincia: direccion.provincia ?? "",
     pais_id: direccion.pais_id ?? "",
+    telefono: direccion.telefono ?? "",
   });
 
   const guardar_ = useCallback(async () => {
@@ -67,16 +72,19 @@ export const CambiarDireccionPresupuesto = ({
       titulo="Dirección"
       onCerrar={cancelar}
     >
-      <quimera-formulario>
-        <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
-        <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
-        <QInput label="Número" {...uiProps("numero")} />
-        <QInput label="Otros" {...uiProps("otros")} />
-        <QInput label="Código Postal" {...uiProps("cod_postal")} />
-        <QInput label="Ciudad" {...uiProps("ciudad")} />
-        <QInput label="Provincia" {...uiProps("provincia")} />
-        <PaisSelector label="País" {...uiProps("pais_id")} />
-      </quimera-formulario>
+      <div className="CambiarDireccionPresupuesto">
+        <quimera-formulario>
+          <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
+          <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
+          <QInput label="Número" {...uiProps("numero")} />
+          <QInput label="Otros" {...uiProps("otros")} />
+          <QInput label="Cód. Postal" {...uiProps("cod_postal")} />
+          <QInput label="Ciudad" {...uiProps("ciudad")} />
+          <QInput label="Provincia" {...uiProps("provincia")} />
+          <PaisSelector label="País" {...uiProps("pais_id")} />
+          <QInput label="Teléfono" {...uiProps("telefono")} />
+        </quimera-formulario>
+      </div>
       <div className="botones maestro-botones">
         <QBoton onClick={guardar} deshabilitado={!valido}>
           Guardar

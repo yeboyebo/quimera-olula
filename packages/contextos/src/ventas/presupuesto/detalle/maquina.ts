@@ -7,6 +7,7 @@ import {
     aprobarPresupuesto,
     borrarLinea,
     borrarPresupuesto,
+    cambiarAgente,
     cambiarCantidadLinea,
     cambiarCliente,
     cambiarDescuento,
@@ -56,6 +57,8 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
             cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
 
             cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
+
+            cambio_agente_solicitado: "CAMBIANDO_AGENTE",
 
             descuento_solicitado: "CAMBIANDO_DESCUENTO",
 
@@ -115,6 +118,13 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
             cambio_cliente_listo: [cambiarCliente],
 
             cambio_cliente_cancelado: "ABIERTO",
+        },
+
+        CAMBIANDO_AGENTE: {
+
+            cambio_agente_listo: [cambiarAgente],
+
+            cambio_agente_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_DESCUENTO: {

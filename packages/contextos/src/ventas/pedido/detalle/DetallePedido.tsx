@@ -1,4 +1,6 @@
+import { CambiarAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
+import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
@@ -123,7 +125,7 @@ export const DetallePedidoBase = ({
         </Tab>
 
         <Tab label="Datos">
-          <TabDatos pedido={pedido} />
+          <TabDatos pedido={pedido} estado={estado} publicar={emitir} />
         </Tab>
 
         <Tab label="Observaciones">
@@ -135,6 +137,23 @@ export const DetallePedidoBase = ({
 
       {estado === "CAMBIANDO_DESCUENTO" && (
         <CambiarDescuento publicar={emitir} venta={ctx.pedido} />
+      )}
+
+      {estado === "CAMBIANDO_DIVISA" && (
+        <CambiarDivisa
+          publicar={emitir}
+          divisaId={ctx.pedido.divisa_id}
+          tasaConversion={ctx.pedido.tasa_conversion}
+        />
+      )}
+
+      {estado === "CAMBIANDO_AGENTE" && (
+        <CambiarAgente
+          publicar={emitir}
+          agenteId={ctx.pedido.agente_id}
+          nombreAgente={ctx.pedido.nombre_agente}
+          porComision={ctx.pedido.por_comision}
+        />
       )}
 
       <Lineas

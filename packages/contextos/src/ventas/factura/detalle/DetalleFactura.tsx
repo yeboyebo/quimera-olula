@@ -8,7 +8,9 @@ import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
+import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
@@ -103,7 +105,7 @@ export const DetalleFactura = ({
         </Tab>
 
         <Tab label="Datos">
-          <TabDatos factura={factura} />
+          <TabDatos factura={factura} estado={estado} publicar={emitir} />
         </Tab>
 
         <Tab label="Observaciones">
@@ -115,6 +117,23 @@ export const DetalleFactura = ({
 
       {estado === "CAMBIANDO_DESCUENTO" && (
         <CambiarDescuento publicar={emitir} venta={ctx.factura} />
+      )}
+
+      {estado === "CAMBIANDO_DIVISA" && (
+        <CambiarDivisa
+          publicar={emitir}
+          divisaId={ctx.factura.divisa_id}
+          tasaConversion={ctx.factura.tasa_conversion}
+        />
+      )}
+
+      {estado === "CAMBIANDO_AGENTE" && (
+        <CambiarAgente
+          publicar={emitir}
+          agenteId={ctx.factura.agente_id}
+          nombreAgente={ctx.factura.nombre_agente}
+          porComision={ctx.factura.por_comision}
+        />
       )}
 
       <Lineas

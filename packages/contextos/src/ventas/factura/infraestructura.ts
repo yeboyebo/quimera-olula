@@ -3,7 +3,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
+import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -32,11 +32,14 @@ interface FacturaAPI {
   forma_pago_id: string;
   nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
+  por_comision: number;
   observaciones: string;
   editable?: boolean;
 }
 export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   ...p,
+  // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
+  regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
@@ -188,7 +191,8 @@ export const patchFactura = async (id: string, factura: Factura) => {
       id_fiscal: factura.cliente.id_fiscal,
       direccion_id: factura.cliente.direccion_id,
       forma_pago_id: factura.forma_pago_id,
-      grupo_iva_negocio_id: factura.grupo_iva_negocio_id,
+      regimen_iva: factura.regimen_iva,
+      por_comision: factura.por_comision,
       observaciones: factura.observaciones,
     },
   };
@@ -208,4 +212,24 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
       por_descuento: dto_porcentual,
     }
   }, "Error al cambiar descuento de la factura");
+};
+
+export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      divisa: {
+        divisa_id: cambio.divisa_id,
+        tasa_conversion: cambio.tasa_conversion,
+      }
+    }
+  }, "Error al cambiar divisa de la factura");
+};
+
+export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      agente_id: cambio.agente_id,
+      por_comision: cambio.por_comision,
+    }
+  }, "Error al cambiar agente de la factura");
 };

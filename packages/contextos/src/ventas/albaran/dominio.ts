@@ -42,6 +42,7 @@ export const albaranVacio = (): Albaran => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     idfactura: null,
+    por_comision: 0,
     lineas: [],
 })
 
@@ -59,6 +60,10 @@ export const metaAlbaran: MetaModelo<Albaran> = {
     campos: {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
+        divisa_id: { requerido: true, bloqueado: true },
+        tasa_conversion: { tipo: "numero", requerido: true, bloqueado: true },
+        agente_id: { bloqueado: true },
+        por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
     editable: (albaran: Albaran, _?: string) => {
         return !albaran.idfactura;

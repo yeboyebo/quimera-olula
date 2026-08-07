@@ -17,7 +17,7 @@ export interface Venta extends Entidad {
     netoSinDto: number;
     forma_pago_id: string;
     nombre_forma_pago: string;
-    grupo_iva_negocio_id: string;
+    regimen_iva: string;
     observaciones: string;
 }
 

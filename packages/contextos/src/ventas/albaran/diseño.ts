@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
@@ -5,6 +7,7 @@ import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVen
 export interface Albaran extends Venta {
     cliente: ClienteVenta;
     idfactura: string | null;
+    por_comision: number;
     lineas: LineaAlbaran[];
 }
 
@@ -42,11 +45,17 @@ export type PatchCantidadLinea = (id: string, linea: LineaAlbaran, cantidad: num
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
+export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
+
+export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
+
 export type EstadoAlbaran = (
     'INICIAL' | 'ABIERTO' | 'FACTURADO'
     | 'BORRANDO_ALBARAN'
     | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'
+    | 'CAMBIANDO_DIVISA'
+    | 'CAMBIANDO_AGENTE'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 

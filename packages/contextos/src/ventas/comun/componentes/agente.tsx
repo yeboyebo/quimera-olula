@@ -8,6 +8,7 @@ interface AgenteProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  enlace?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -16,6 +17,7 @@ export const Agente = ({
   valor,
   nombre = "agente_id",
   label = "Agente",
+  enlace = "/ventas/agente",
   onChange,
   ...props
 }: AgenteProps) => {
@@ -35,6 +37,7 @@ export const Agente = ({
     return agentes.map((agente) => ({
       valor: agente.id,
       descripcion: agente.nombre,
+      por_comision: agente.por_comision,
     }));
   };
 
@@ -46,6 +49,7 @@ export const Agente = ({
       valor={valor}
       autoSeleccion
       obtenerOpciones={obtenerOpciones}
+      enlace={enlace}
       descripcion={descripcion}
       {...props}
     />

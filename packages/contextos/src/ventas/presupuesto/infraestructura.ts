@@ -1,3 +1,4 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
@@ -23,7 +24,7 @@ type PresupuestoAPI = {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
+  regimen_iva: string;
   por_comision: number;
   almacen_id: string;
   observaciones: string;
@@ -130,12 +131,24 @@ export const borrarPresupuesto = async (id: string): Promise<void> => {
   await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar presupuesto");
 }
 
-export const patchCambiarAgente = async (id: string, agenteId: string) => {
-  await RestAPI.patch(`${baseUrl}/${id}`, { cambios: { agente_id: agenteId } }, "Error al cambiar agente del presupuesto");
+export const patchCambiarAgente = async (id: string, cambio: CambioAgente) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      agente_id: cambio.agente_id,
+      por_comision: cambio.por_comision,
+    }
+  }, "Error al cambiar agente del presupuesto");
 }
 
-export const patchCambiarDivisa: PatchCambiarDivisa = async (id, divisaId) => {
-  await RestAPI.patch(`${baseUrl}/${id}`, { cambios: { divisa_id: divisaId } }, "Error al cambiar divisa del presupuesto");
+export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      divisa: {
+        divisa_id: cambio.divisa_id,
+        tasa_conversion: cambio.tasa_conversion,
+      }
+    }
+  }, "Error al cambiar divisa del presupuesto");
 }
 
 export const patchCambiarCliente = async (id: string, cambio: CambioClientePresupuesto): Promise<void> => {
@@ -255,7 +268,7 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       id_fiscal: presupuesto.cliente.id_fiscal,
       direccion_id: presupuesto.cliente.direccion_id,
       forma_pago_id: presupuesto.forma_pago_id,
-      grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
+      regimen_iva: presupuesto.regimen_iva,
       por_comision: presupuesto.por_comision,
       almacen_id: presupuesto.almacen_id,
       observaciones: presupuesto.observaciones,

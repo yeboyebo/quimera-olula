@@ -75,6 +75,8 @@ interface VentaTpvADevolverAPI extends VentaTpvAPI {
 
 export const ventaDesdeAPI = (v: VentaTpvAPI): VentaTpv => ({
     ...v,
+    // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
+    regimen_iva: v.grupo_iva_negocio_id,
     idAgente: v.agente_id,
     fecha: new Date(Date.parse(v.fecha as unknown as string)),
     dtoPorcentual: v.por_descuento,
