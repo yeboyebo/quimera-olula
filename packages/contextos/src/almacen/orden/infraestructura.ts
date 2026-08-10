@@ -11,6 +11,7 @@ import {
     LecturaCajaOrden,
     LecturaLineaOrden,
     LineaOrdenAlmacen,
+    NuevaEntradaDesdePedido,
     NuevaLecturaCajaOrden,
     NuevaLecturaOrden,
     NuevaLecturaUbicacionOrden,
@@ -19,7 +20,6 @@ import {
     OrdenAlmacen,
     PatchLineaOrden,
     PatchOrden,
-    NuevaEntradaDesdePedido,
     PostEntradaDesdePedido,
     PostLineasOrden,
     PostOrden,
@@ -117,6 +117,7 @@ export interface ItemOrdenApi {
     caja_origen_id: string | null;
     ubicacion_destino_id: string | null;
     caja_destino_id: string | null;
+    responsable_id: string | null;
 }
 
 const baseUrl = `/almacen/orden`;
@@ -246,6 +247,7 @@ export const itemOrdenDesdeApi = (api: ItemOrdenApi): ItemOrdenAlmacen => ({
     idCajaOrigen: api.caja_origen_id,
     idUbicacionDestino: api.ubicacion_destino_id,
     idCajaDestino: api.caja_destino_id,
+    idResponsable: api.responsable_id,
 });
 
 const nuevaOrdenAApi = (orden: NuevaOrdenAlmacen) => ({

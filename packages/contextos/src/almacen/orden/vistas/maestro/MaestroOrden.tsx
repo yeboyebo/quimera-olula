@@ -29,7 +29,7 @@ const metaFiltroOrden: MetaFiltro = {
         label: "Responsable",
         filtro: (valor) => {
             if (!valor || valor === "") return null;
-            if (valor === "libres") return ["responsable_id", "is_null"];
+            if (valor === "libres") return ["responsable_id", "null"];
             if (valor === "mios") {
                 const whoamiRaw = localStorage.getItem("whoami");
                 const usuarioId = whoamiRaw
@@ -39,6 +39,12 @@ const metaFiltroOrden: MetaFiltro = {
                 return ["responsable_id", "=", usuarioId];
             }
             return null;
+        },
+        fromFiltro: (filtro) => {
+            const clausula = filtro.find(c => c[0] === "responsable_id");
+            if (!clausula) return "";
+            if (clausula[1] === "null") return "libres";
+            return "mios";
         },
         render: (valor, onChange) => (
             <QSelect
@@ -61,7 +67,7 @@ const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
         const variante = orden.estado === "PENDIENTE" ? "error" : orden.estado === "EN_CURSO" ? "advertencia" : "exito";
         return <QEtiqueta variante={variante}>{orden.estado}</QEtiqueta>;
     }},
-    { id: "abierta", cabecera: "Abierta", tipo: "booleano" },
+    { id: "idResponsable", cabecera: "Responsable"},
 ];
 
 export const MaestroOrden = () => {

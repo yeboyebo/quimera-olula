@@ -85,7 +85,9 @@ const metaTablaLineasOrden = (orden: OrdenAlmacen, publicar: EmitirEvento): Meta
             }]
         ),
         ...(orden.tipo !== "ENTRADA" ? [{ id: "ubicacionOrigen" as const, cabecera: "Ubi.Origen" }] : []),
+        ...(orden.tipo !== "ENTRADA" ? [{ id: "cajaOrigen" as const, cabecera: "LPN Origen" }] : []),
         ...(orden.tipo !== "SALIDA" ? [{ id: "ubicacionDestino" as const, cabecera: "Ubi.Destino" }] : []),
+        ...(orden.tipo !== "SALIDA" ? [{ id: "cajaDestino" as const, cabecera: "LPN Destino" }] : []),
         {
             id: "acciones",
             cabecera: "",

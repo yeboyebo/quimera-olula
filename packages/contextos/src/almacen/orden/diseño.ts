@@ -127,6 +127,7 @@ export interface ItemOrdenAlmacen extends Entidad {
     idCajaOrigen: string | null;
     idUbicacionDestino: string | null;
     idCajaDestino: string | null;
+    idResponsable: string | null;
 }
 
 export interface NuevaEntradaDesdePedido {
