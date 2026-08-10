@@ -3,12 +3,16 @@
         grid-column: span 2;
     }
 
+    quimera-date[nombre="hora"] {
+        grid-column: span 2;
+    }
+
     quimera-select[nombre="divisa_id"] {
-        grid-column: span 5;
+        grid-column: span 4;
     }
 
     quimera-input[nombre="tasa_conversion"] {
-        grid-column: span 5;
+        grid-column: span 4;
     }
 
 
@@ -27,6 +31,14 @@
 
 @media (max-width: 768px) {
     .Factura .TabDatos quimera-formulario {
+        quimera-date[nombre="fecha"] {
+            grid-column: 1 / span 1 !important;
+        }
+
+        quimera-date[nombre="hora"] {
+            grid-column: 2 / span 1 !important;
+        }
+
         quimera-select[nombre="divisa_id"] {
             grid-column: 1 / span 1 !important;
         }

@@ -13,6 +13,7 @@ interface FacturaAPI {
   id: string;
   codigo: string;
   fecha: string;
+  hora: string;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;
@@ -183,6 +184,7 @@ export const patchFactura = async (id: string, factura: Factura) => {
         tasa_conversion: factura.tasa_conversion,
       },
       fecha: factura.fecha,
+      hora: factura.hora,
       cliente_id: factura.cliente.cliente_id,
       nombre_cliente: factura.cliente.nombre_cliente,
       id_fiscal: factura.cliente.id_fiscal,

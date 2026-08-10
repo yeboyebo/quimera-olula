@@ -19,6 +19,7 @@ export const TabDatos = ({ factura }: TabDatosProps) => {
     <div className="TabDatos">
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
+        <QDate label="Hora" {...uiProps("hora")} tipo="hora" />
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
         <Agente {...uiProps("agente_id", "nombre_agente")} />

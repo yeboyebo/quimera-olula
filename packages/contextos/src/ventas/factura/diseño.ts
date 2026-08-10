@@ -6,6 +6,7 @@ export interface Factura extends Venta {
     cliente: ClienteVenta;
     editable?: boolean;
     lineas?: LineaFactura[];
+    hora?: string;
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;

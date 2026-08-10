@@ -8,6 +8,7 @@ export const metaFactura: MetaModelo<Factura> = {
     campos: {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
+        hora: { tipo: "hora", requerido: false },
     },
     editable: (factura: Factura, _?: string) => {
         return factura.editable ?? false;
