@@ -1,4 +1,5 @@
-import { idFiscalValido, tipoIdFiscalValido } from "#/valores/idfiscal.ts";
+import { CambioIdFiscal } from "#/ventas/comun/componentes/moleculas/CambiarIdFiscal/diseño.ts";
+import { camposIdFiscal } from "#/ventas/comun/componentes/moleculas/CambiarIdFiscal/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
 import { Cliente } from "../diseño.ts";
@@ -14,14 +15,7 @@ import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 export const metaCliente: MetaModelo<Cliente> = {
     campos: {
         nombre: { requerido: true },
-        id_fiscal: {
-            requerido: true,
-            validacion: (cliente: Cliente) => idFiscalValido(cliente.tipo_id_fiscal)(cliente.id_fiscal),
-        },
-        tipo_id_fiscal: {
-            requerido: true,
-            validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
-        },
+        ...camposIdFiscal<Cliente>(true),
         nombre_agente: { bloqueado: true },
         email: { tipo: "email" },
         fecha_baja: { tipo: "fecha" },
@@ -138,6 +132,16 @@ export const cargarContexto: ProcesarCliente = async (contexto, payload) => {
 export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
     const cliente = payload as Cliente;
     await patchCliente(contexto.cliente.id, cliente);
+
+    return pipeCliente(contexto, [
+        refrescarCliente,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarIdFiscalCliente: ProcesarCliente = async (contexto, payload) => {
+    const cambio = payload as CambioIdFiscal;
+    await patchCliente(contexto.cliente.id, { ...contexto.cliente, ...cambio });
 
     return pipeCliente(contexto, [
         refrescarCliente,
