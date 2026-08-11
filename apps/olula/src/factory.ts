@@ -1,5 +1,6 @@
 import { FactoryAlmacenOlula } from '#/almacen/factory.ts';
 import { FactoryAuthOlula } from '#/auth/factory.ts';
+import { FactoryComunOlula } from '#/comun/factory.ts';
 import { FactoryCrmOlula } from '#/crm/factory.ts';
 import { FactoryRrhhOlula } from '#/rrhh/factory.ts';
 import { FactoryTpvOlula } from '#/tpv/factory.ts';
@@ -23,6 +24,7 @@ export class FactoryOlula {
     TPV = FactoryTpvOlula;
     Auth = FactoryAuthOlula;
     Rrhh = FactoryRrhhOlula
+    Comun = FactoryComunOlula;
 }
 
 export default FactoryOlula;

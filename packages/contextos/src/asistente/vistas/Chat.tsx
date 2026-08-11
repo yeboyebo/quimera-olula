@@ -5,6 +5,7 @@ import { HistorialHilos } from "#/asistente/vistas/HistorialHilos.tsx";
 import { useGrabacionAudio } from "#/asistente/vistas/useGrabacionAudio.ts";
 import { renderMarkdown } from "@a2ui/markdown-it";
 import { A2uiSurface, MarkdownContext } from "@a2ui/react/v0_9";
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MessagePrimitive, ThreadPrimitive, useMessage } from "@assistant-ui/react";
 import {
     IconBolt,
@@ -489,14 +490,66 @@ function AdjuntoMensajeVista({ adjunto }: AdjuntoMensajeVistaProps) {
 function AssistantMessage() {
     return (
         <MessagePrimitive.Root className="asistente-chat__mensaje asistente-chat__mensaje--asistente">
-            <div className="asistente-chat__burbuja-fila">
-                <div className="asistente-chat__avatar">
-                    <IconRobot size={13} />
-                </div>
-                <AssistantMessageContent />
-            </div>
+            <AssistantMessageBurbujaFila />
             <AssistantMessageA2ui />
+            <AssistantMessageAccionNavegacion />
         </MessagePrimitive.Root>
+    );
+}
+
+/** Componentes A2UI "autoexplicativos": ya traen su propio título y detalles
+ * (confirmación de una acción / resultado de ejecutarla), así que mostrar también la
+ * burbuja de texto del LLM al lado es puramente redundante — a veces literalmente la
+ * misma frase (ver _a2ui_tarjeta_confirmacion/_resultado_escritura_a2ui_str en el
+ * backend, que usan el mismo texto tanto para "respuesta" como para el título de la
+ * tarjeta). */
+const COMPONENTES_AUTOEXPLICATIVOS = new Set(["TarjetaConfirmacion", "TarjetaResultado"]);
+
+function AssistantMessageBurbujaFila() {
+    const messageId = useMessage(m => m.id);
+    const { a2uiSurfaces, messageSurfaceMap } = useAsistenteContext();
+
+    const surfaceIds = messageSurfaceMap[messageId] ?? [];
+    const ocultarTexto = a2uiSurfaces.some(
+        s => surfaceIds.includes(s.id) &&
+            Array.from(s.componentsModel.entries).some(([, c]) => COMPONENTES_AUTOEXPLICATIVOS.has(c.type))
+    );
+
+    if (ocultarTexto) return null;
+
+    return (
+        <div className="asistente-chat__burbuja-fila">
+            <div className="asistente-chat__avatar">
+                <IconRobot size={13} />
+            </div>
+            <AssistantMessageContent />
+        </div>
+    );
+}
+
+function AssistantMessageAccionNavegacion() {
+    const messageId = useMessage(m => m.id);
+    const { accionNavegacionPorMensaje, enviarAccion } = useAsistenteContext();
+    const accion = accionNavegacionPorMensaje[messageId];
+
+    if (!accion) return null;
+
+    const navegar = () => {
+        void enviarAccion({
+            name: "navegar",
+            surfaceId: "",
+            sourceComponentId: "",
+            timestamp: new Date().toISOString(),
+            context: { ruta: accion.ruta, parametros: accion.parametros ?? {} },
+        });
+    };
+
+    return (
+        <div className="asistente-chat__navegacion">
+            <QBoton variante="borde" onClick={navegar}>
+                {accion.descripcion ?? "Ir a la pantalla solicitada"}
+            </QBoton>
+        </div>
     );
 }
 
