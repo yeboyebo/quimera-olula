@@ -3,7 +3,7 @@ import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QTarjetaResumen } from "@olula/componentes/atomos/qtarjeta_resumen.tsx";
 import { Listado } from "@olula/componentes/maestro/Listado.tsx";
-import { Criteria } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Criteria } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -133,7 +133,7 @@ const criteriaInicial: Criteria = {
 const aplicarCriteria = (datos: AnalisisStock[], criteria: Criteria): { datos: AnalisisStock[]; total: number } => {
     let resultado = [...datos];
 
-    for (const f of criteria.filtro) {
+    for (const f of criteria.filtro as ClausulaFiltro[]) {
         const [campo, , valor] = f;
         if (campo && valor) {
             const valorStr = String(valor).toLowerCase();
