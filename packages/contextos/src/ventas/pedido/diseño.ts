@@ -58,7 +58,9 @@ export type EstadoPedido = (
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 
-export type EstadoMaestroPedido = ('INICIAL' | 'CREANDO_PEDIDO');
+export type EstadoMaestroPedido = (
+    'INICIAL' | 'CREANDO_PEDIDO' | 'ALBARANANDO_PEDIDOS' | 'ALBARANES_CREADOS'
+);
 
 export type ContextoPedido<T extends Pedido = Pedido> = {
     estado: EstadoPedido;
@@ -70,4 +72,7 @@ export type ContextoPedido<T extends Pedido = Pedido> = {
 export type ContextoMaestroPedido = {
     estado: EstadoMaestroPedido;
     pedidos: ListaActivaEntidades<Pedido>;
+    seleccionados: string[];
+    albaranesCreados: string[];
+    fallidos: string[];
 };

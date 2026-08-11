@@ -16,7 +16,8 @@ import {
     patchCambiarCliente,
     patchCambiarDescuento,
     patchCambiarDivisa,
-    patchCantidadLinea
+    patchCantidadLinea,
+    patchFacturarAlbaran
 } from "../infraestructura.ts";
 import { ContextoAlbaran, EstadoAlbaran } from "./diseño.ts";
 
@@ -100,8 +101,27 @@ export const getContextoVacio: ProcesarAlbaran = async (contexto) => {
         ...contexto,
         estado: 'INICIAL',
         albaran: albaranVacioContexto(),
-        lineaActiva: null
+        lineaActiva: null,
+        facturaCreada: null
     }
+}
+
+export const facturarAlbaran: ProcesarAlbaran = async (contexto) => {
+    const facturaCreada = await patchFacturarAlbaran(contexto.albaran.id);
+    const albaran = await getAlbaran(contexto.albaran.id);
+
+    return [
+        {
+            ...contexto,
+            albaran: {
+                ...contexto.albaran,
+                ...albaran
+            },
+            facturaCreada,
+            estado: "FACTURA_CREADA" as EstadoAlbaran,
+        },
+        [["albaran_cambiado", albaran]]
+    ]
 }
 
 export const cargarContexto: ProcesarAlbaran = async (contexto, payload) => {
@@ -220,6 +240,7 @@ export const cambiarCantidadLinea: ProcesarAlbaran = async (contexto, payload) =
         },
         albaranInicial: contexto.albaranInicial,
         lineaActiva: lineasActualizadas.find(l => l.id === lineaId) || null,
+        facturaCreada: contexto.facturaCreada,
     };
 }
 

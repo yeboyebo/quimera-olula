@@ -1,6 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.js";
 import ApiUrls from "../comun/urls.ts";
-import { PatchAlbaranarPedido, PatchCerrarLineaPedido } from "./diseño.ts";
+import { PatchAlbaranarPedido, PatchCerrarLineaPedido, PostAlbaranarPedidos } from "./diseño.ts";
 import { transformarLineasAlbaran } from "./dominio.ts";
 
 const baseUrl = new ApiUrls().PEDIDO;
@@ -11,6 +11,18 @@ export const patchAlbaranarPedido: PatchAlbaranarPedido = async (id, lineas) => 
         `${baseUrl}/${id}/albaranar`,
         cambios,
         "Error al albaranar el pedido"
+    )) as unknown as
+        | { datos: { albaran_id: string } }
+        | { albaran_id: string };
+    const datos = "datos" in respuesta ? respuesta.datos : respuesta;
+    return { id: String(datos.albaran_id ?? "") };
+}
+
+export const postAlbaranarPedidos: PostAlbaranarPedidos = async (pedidoIds) => {
+    const respuesta = (await RestAPI.post(
+        `${new ApiUrls().ALBARAN}/desde-pedidos`,
+        { pedido_ids: pedidoIds },
+        "Error al albaranar los pedidos"
     )) as unknown as
         | { datos: { albaran_id: string } }
         | { albaran_id: string };

@@ -14,6 +14,8 @@ import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
 import { albaranVacio, editable, metaAlbaran } from "../dominio.ts";
+import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
+import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
 import { getReportAlbaran } from "../infraestructura.ts";
 import "./DetalleAlbaran.css";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -39,6 +41,7 @@ export const DetalleAlbaran = ({
       albaran: albaranVacio(),
       albaranInicial: albaranVacio(),
       lineaActiva: null,
+      facturaCreada: null,
     },
     publicar
   );
@@ -57,7 +60,7 @@ export const DetalleAlbaran = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [albaranId]);
 
-  const { estado, lineaActiva } = ctx;
+  const { estado, lineaActiva, facturaCreada } = ctx;
 
   const titulo = (albaran: Albaran) => albaran.codigo || "Nuevo Albarán";
 
@@ -76,6 +79,11 @@ export const DetalleAlbaran = ({
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
+      deshabilitado: !esEditable,
+    },
+    {
+      texto: "Facturar",
+      onClick: () => emitir("facturar_solicitado"),
       deshabilitado: !esEditable,
     },
     {
@@ -140,6 +148,14 @@ export const DetalleAlbaran = ({
 
       {estado === "BORRANDO_ALBARAN" && (
         <BorrarAlbaran albaran={ctx.albaran} publicar={emitir} />
+      )}
+
+      {estado === "FACTURANDO_ALBARAN" && (
+        <FacturarAlbaran albaran={ctx.albaran} publicar={emitir} />
+      )}
+
+      {estado === "FACTURA_CREADA" && facturaCreada && (
+        <FacturaGenerada factura={facturaCreada} publicar={emitir} />
       )}
     </Detalle>
   );

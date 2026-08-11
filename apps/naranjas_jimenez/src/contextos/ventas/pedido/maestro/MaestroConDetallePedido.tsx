@@ -76,6 +76,9 @@ export const MaestroConDetallePedidoNrj = () => {
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     pedidos: listaActivaEntidadesInicial<PedidoNrj>(id, criteriaBase),
+    seleccionados: [],
+    albaranesCreados: [],
+    fallidos: [],
   });
 
   useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);

@@ -16,6 +16,7 @@ import {
     cancelarCambioAlbaran,
     cargarContexto,
     crearLinea,
+    facturarAlbaran,
     getContextoVacio,
     refrescarAlbaran,
     refrescarLineas
@@ -50,6 +51,8 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
 
             borrar_solicitado: "BORRANDO_ALBARAN",
+
+            facturar_solicitado: "FACTURANDO_ALBARAN",
 
             cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
 
@@ -94,6 +97,18 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             borrado_de_albaran_listo: borrarAlbaran,
 
             borrar_cancelado: "ABIERTO",
+        },
+
+        FACTURANDO_ALBARAN: {
+
+            facturacion_lista: [facturarAlbaran],
+
+            facturar_cancelado: "ABIERTO",
+        },
+
+        FACTURA_CREADA: {
+
+            factura_creada_cerrada: [abiertoOFacturado],
         },
 
         CAMBIANDO_CLIENTE: {

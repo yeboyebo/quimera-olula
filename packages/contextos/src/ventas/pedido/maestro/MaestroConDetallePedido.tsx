@@ -9,10 +9,13 @@ import { useEffect } from "react";
 import { CrearPedido } from "../crear/CrearPedido.tsx";
 import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
+import { AlbaranarPedidos } from "./AlbaranarPedidos.tsx";
 import "./MaestroConDetallePedido.css";
 import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
+import { agruparPorCliente, todosPuedenAlbaranarse } from "./maestro.ts";
 import { getMaquina } from "./maquina.ts";
 import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
+import { ResultadoAlbaranado } from "./ResultadoAlbaranado.tsx";
 
 export const MaestroConDetallePedido = () => {
   const { id, criteria } = getUrlParams();
@@ -20,6 +23,9 @@ export const MaestroConDetallePedido = () => {
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
     pedidos: listaActivaEntidadesInicial<Pedido>(id, criteria),
+    seleccionados: [],
+    albaranesCreados: [],
+    fallidos: [],
   });
 
   useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
@@ -52,11 +58,18 @@ export const MaestroConDetallePedido = () => {
               entidades={ctx.pedidos.lista}
               totalEntidades={ctx.pedidos.total}
               seleccionada={ctx.pedidos.activo}
+              seleccionadas={ctx.seleccionados}
+              onMultiSeleccion={(ids) => emitir("seleccionados_cambiados", ids)}
               renderAcciones={() => (
                 <div className="maestro-botones">
                   <QBoton onClick={() => emitir("crear_pedido_solicitado")}>
                     Nuevo Pedido
                   </QBoton>
+                  {todosPuedenAlbaranarse(ctx.seleccionados, ctx.pedidos.lista) && (
+                    <QBoton onClick={() => emitir("albaranado_multiple_solicitado")}>
+                      Albaranar ({ctx.seleccionados.length})
+                    </QBoton>
+                  )}
                 </div>
               )}
               onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
@@ -80,6 +93,22 @@ export const MaestroConDetallePedido = () => {
       >
         <CrearPedido publicar={emitir} />
       </QModal>
+
+      {ctx.estado === "ALBARANANDO_PEDIDOS" && (
+        <AlbaranarPedidos
+          publicar={emitir}
+          pedidos={ctx.seleccionados.length}
+          grupos={agruparPorCliente(ctx.seleccionados, ctx.pedidos.lista).length}
+        />
+      )}
+
+      {ctx.estado === "ALBARANES_CREADOS" && (
+        <ResultadoAlbaranado
+          publicar={emitir}
+          creados={ctx.albaranesCreados}
+          fallidos={ctx.fallidos}
+        />
+      )}
     </div>
   );
 };

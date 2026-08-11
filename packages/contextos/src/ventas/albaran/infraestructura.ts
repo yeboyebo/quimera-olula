@@ -16,6 +16,7 @@ import {
   PatchCambiarDivisa,
   PatchCantidadLinea,
   PatchClienteAlbaran,
+  PatchFacturarAlbaran,
   PatchLinea,
   PostAlbaran,
   PostLinea
@@ -224,6 +225,18 @@ export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
       }
     }
   }, "Error al cambiar divisa del albarán");
+};
+
+export const patchFacturarAlbaran: PatchFacturarAlbaran = async (id) => {
+  const respuesta = (await RestAPI.patch(
+    `${baseUrl}/${id}/facturar`,
+    {},
+    "Error al facturar el albarán"
+  )) as unknown as
+    | { datos: { factura_id: string } }
+    | { factura_id: string };
+  const datos = "datos" in respuesta ? respuesta.datos : respuesta;
+  return { id: String(datos.factura_id ?? "") };
 };
 
 export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {

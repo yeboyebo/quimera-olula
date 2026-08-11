@@ -15,8 +15,8 @@ import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
 import { getReportPedido } from "../infraestructura.ts";
-import "./DetallePedido.css";
 import { editable, metaPedido, pedidoVacio } from "./detalle.ts";
+import "./DetallePedido.css";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
@@ -92,7 +92,7 @@ export const DetallePedidoBase = ({
 
   const acciones = [
     {
-      texto: "Albaranar",
+      texto: "Albaran parcial",
       onClick: handleAlbaranar,
       deshabilitado: !esEditable,
     },

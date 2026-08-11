@@ -49,9 +49,16 @@ export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<v
 
 export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
 
+export type FacturaCreada = {
+    id: string;
+};
+
+export type PatchFacturarAlbaran = (id: string) => Promise<FacturaCreada>;
+
 export type EstadoAlbaran = (
     'INICIAL' | 'ABIERTO' | 'FACTURADO'
     | 'BORRANDO_ALBARAN'
+    | 'FACTURANDO_ALBARAN' | 'FACTURA_CREADA'
     | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'
     | 'CAMBIANDO_DIVISA'
@@ -66,6 +73,7 @@ export type ContextoAlbaran = {
     albaran: Albaran;
     albaranInicial: Albaran;
     lineaActiva: LineaAlbaran | null;
+    facturaCreada: FacturaCreada | null;
 };
 
 export type ContextoMaestroAlbaran = {
