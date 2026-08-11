@@ -7,6 +7,7 @@ import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
 import { getSkuLote, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
 import { IndicadorVoz } from "@olula/componentes/atomos/indicador_voz.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QPasos } from "@olula/componentes/atomos/qpasos.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -61,15 +62,157 @@ const PasoWrapper = ({ instruccion, children }: { instruccion: string; children:
     </div>
 );
 
+type FilaResumen = {
+    campo: string;
+    previsto: string | null;
+    efectivo: string | null;
+    pendiente: boolean;
+};
+
+const calcularFilasResumen = (
+    orden: OrdenAlmacen,
+    linea: LineaOrdenAlmacen,
+    valores: ValoresAcumulados,
+    pasoGuion: PasoGuion[],
+    pasoActual: number,
+    cantidadARegistrar: number,
+): FilaResumen[] => {
+    const filas: FilaResumen[] = [];
+    const mostrarOrigen = orden.tipo === "SALIDA" || orden.tipo === "TRASPASO";
+    const mostrarDestino = orden.tipo === "ENTRADA" || orden.tipo === "TRASPASO";
+
+    const enGuion = (pasos: PasoGuion[]): boolean =>
+        pasos.some((p) => pasoGuion.includes(p));
+
+    const completado = (pasos: PasoGuion[]): boolean =>
+        pasos.some((p) => {
+            const idx = pasoGuion.indexOf(p);
+            return idx !== -1 && idx < pasoActual;
+        });
+
+    // SKU
+    const skuEnGuion = enGuion(["sku-lote"]);
+    const skuPrevisto = linea.sku ? `${linea.sku} - ${linea.articulo}` : null;
+    const skuEfectivo = valores.sku
+        ? `${valores.sku} - ${valores.articulo ?? ""}`
+        : (!skuEnGuion && linea.sku ? `${linea.sku} - ${linea.articulo}` : null);
+    filas.push({ campo: "SKU", previsto: skuPrevisto, efectivo: skuEfectivo, pendiente: !skuEfectivo });
+
+    // Lote
+    if (linea.porLotes) {
+        const loteEnGuion = enGuion(["sku-lote"]);
+        const loteEfectivo = valores.loteId !== undefined
+            ? valores.loteId
+            : (!loteEnGuion ? linea.loteId : null);
+        filas.push({ campo: "Lote", previsto: linea.loteId, efectivo: loteEfectivo, pendiente: !loteEfectivo });
+    }
+
+    // Cantidad
+    const cantPasos: PasoGuion[] = ["cantidad", "caja-destino-capacidad", "caja-origen-completa"];
+    const cantEnGuion = enGuion(cantPasos);
+    const cantPendiente = cantEnGuion && valores.cantidad === undefined && !completado(cantPasos);
+    filas.push({
+        campo: "Cantidad",
+        previsto: String(linea.cantidadPrevista),
+        efectivo: cantPendiente ? null : String(cantidadARegistrar),
+        pendiente: cantPendiente,
+    });
+
+    // Ubi. Origen
+    if (mostrarOrigen) {
+        const ubiOrigenEnGuion = enGuion(["ubi-origen"]);
+        const efectivo = valores.ubicacionOrigen
+            ?? (!ubiOrigenEnGuion ? linea.ubicacionOrigen : null);
+        filas.push({ campo: "Ubi. Origen", previsto: linea.ubicacionOrigen, efectivo, pendiente: !efectivo });
+    }
+
+    // Caja Origen
+    if (mostrarOrigen) {
+        const cajaOrigenEnGuion = enGuion(["caja-origen", "caja-origen-completa"]);
+        const efectivo = valores.cajaOrigen
+            ?? (!cajaOrigenEnGuion ? linea.cajaOrigen : null);
+        filas.push({ campo: "Caja Origen", previsto: linea.cajaOrigen, efectivo, pendiente: !efectivo });
+    }
+
+    // Ubi. Destino
+    if (mostrarDestino) {
+        const ubiDestinoEnGuion = enGuion(["ubi-destino"]);
+        const efectivo = valores.ubicacionDestino
+            ?? (!ubiDestinoEnGuion ? linea.ubicacionDestino : null);
+        filas.push({ campo: "Ubi. Destino", previsto: linea.ubicacionDestino, efectivo, pendiente: !efectivo });
+    }
+
+    // Caja Destino
+    if (mostrarDestino) {
+        const cajaDestinoEnGuion = enGuion(["caja-destino", "caja-destino-capacidad"]);
+        const efectivo = valores.cajaDestino
+            ?? (!cajaDestinoEnGuion ? linea.cajaDestino : null);
+        filas.push({ campo: "Caja Destino", previsto: linea.cajaDestino, efectivo, pendiente: !efectivo });
+    }
+
+    return filas;
+};
+
+const ResumenLeerLinea = ({
+    orden,
+    linea,
+    valores,
+    pasoGuion,
+    pasoActual,
+    cantidadARegistrar,
+}: {
+    orden: OrdenAlmacen;
+    linea: LineaOrdenAlmacen;
+    valores: ValoresAcumulados;
+    pasoGuion: PasoGuion[];
+    pasoActual: number;
+    cantidadARegistrar: number;
+}) => {
+    const filas = calcularFilasResumen(orden, linea, valores, pasoGuion, pasoActual, cantidadARegistrar);
+
+    return (
+        <table className="resumen-leer-linea">
+            <thead>
+                <tr>
+                    <th>Campo</th>
+                    <th>Previsto</th>
+                    <th>Efectivo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {filas.map((fila) => (
+                    <tr key={fila.campo}>
+                        <td className="resumen-leer-linea__campo">{fila.campo}</td>
+                        <td className="resumen-leer-linea__previsto">
+                            {fila.previsto ?? <span className="q-texto-secundario">--</span>}
+                        </td>
+                        <td className="resumen-leer-linea__efectivo">
+                            {fila.efectivo ? (
+                                <QEtiqueta variante="exito">{fila.efectivo}</QEtiqueta>
+                            ) : (
+                                <QEtiqueta variante="advertencia">Pendiente</QEtiqueta>
+                            )}
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
 type ValoresAcumulados = {
     sku?: string;
     articulo?: string;
     loteId?: string | null;
     cantidad?: number;
     idCajaOrigen?: string;
+    cajaOrigen?: string;
     idCajaDestino?: string;
+    cajaDestino?: string;
     idUbicacionDestino?: string;
+    ubicacionDestino?: string;
     idUbicacionOrigen?: string;
+    ubicacionOrigen?: string;
 };
 
 const getPreguntaVozParaPaso = (paso: PasoGuion): PreguntaVoz | null => {
@@ -227,22 +370,30 @@ export const LeerLineaOrden = ({
         switch (paso) {
             case "cantidad":
                 return { cantidad: valor as number };
-            case "caja-destino":
-                return { idCajaDestino: (valor as { id: string }).id };
+            case "caja-destino": {
+                const caja = valor as { id: string; lpn: string };
+                return { idCajaDestino: caja.id, cajaDestino: caja.lpn };
+            }
             case "caja-destino-capacidad": {
-                const caja = valor as { id: string; capacidad: number | null };
-                return { idCajaDestino: caja.id, cantidad: caja.capacidad ?? undefined };
+                const caja = valor as { id: string; lpn: string; capacidad: number | null };
+                return { idCajaDestino: caja.id, cajaDestino: caja.lpn, cantidad: caja.capacidad ?? undefined };
             }
-            case "caja-origen":
-                return { idCajaOrigen: (valor as { id: string }).id };
+            case "caja-origen": {
+                const caja = valor as { id: string; lpn: string };
+                return { idCajaOrigen: caja.id, cajaOrigen: caja.lpn };
+            }
             case "caja-origen-completa": {
-                const caja = valor as { id: string; cantidad: number | null };
-                return { idCajaOrigen: caja.id, cantidad: caja.cantidad ?? undefined };
+                const caja = valor as { id: string; lpn: string; cantidad: number | null };
+                return { idCajaOrigen: caja.id, cajaOrigen: caja.lpn, cantidad: caja.cantidad ?? undefined };
             }
-            case "ubi-destino":
-                return { idUbicacionDestino: (valor as { id: string }).id };
-            case "ubi-origen":
-                return { idUbicacionOrigen: (valor as { id: string }).id };
+            case "ubi-destino": {
+                const ubi = valor as { id: string; codigo: string };
+                return { idUbicacionDestino: ubi.id, ubicacionDestino: ubi.codigo };
+            }
+            case "ubi-origen": {
+                const ubi = valor as { id: string; codigo: string };
+                return { idUbicacionOrigen: ubi.id, ubicacionOrigen: ubi.codigo };
+            }
             case "sku-lote": {
                 const r = valor as { sku: string; descripcion: string; loteId: string | null };
                 return { sku: r.sku, articulo: r.descripcion, loteId: r.loteId };
@@ -305,7 +456,6 @@ export const LeerLineaOrden = ({
     const esUltimoPaso = pasoActual === pasoGuion.length - 1;
 
     const skuEfectivo = valores.sku ?? linea.sku;
-    const articuloEfectivo = valores.articulo ?? linea.articulo;
     const loteEfectivo = valores.loteId !== undefined ? valores.loteId : linea.loteId;
 
     const preguntaCantidad = pasoGuion.includes("cantidad");
@@ -400,18 +550,14 @@ export const LeerLineaOrden = ({
             onCerrar={cancelar}
         >
             <div className="LeerLineaOrden" ref={contenedorRef}>
-                <dl>
-                    <dt>SKU</dt>
-                    <dd>{`${skuEfectivo} - ${articuloEfectivo}`}</dd>
-                    {!!loteEfectivo && !pasoGuion.includes("sku-lote") && (
-                        <>
-                            <dt>Lote</dt>
-                            <dd>{loteEfectivo}</dd>
-                        </>
-                    )}
-                    <dt>Cantidad a registrar</dt>
-                    <dd>{cantidadARegistrar}</dd>
-                </dl>
+                <ResumenLeerLinea
+                    orden={orden}
+                    linea={linea}
+                    valores={valores}
+                    pasoGuion={pasoGuion}
+                    pasoActual={pasoActual}
+                    cantidadARegistrar={cantidadARegistrar}
+                />
                 {cantidadBloqueada && (
                     <p className="q-texto-error">La cantidad ya está completa (prevista: {linea.cantidadPrevista}, real: {linea.cantidadReal}). No hay nada que registrar.</p>
                 )}
@@ -466,7 +612,11 @@ export const LeerLineaOrden = ({
                             nombre="idUbicacionDestino"
                             valor={valores.idUbicacionDestino ?? ""}
                             onChange={(opcion) =>
-                                setValores((v) => ({ ...v, idUbicacionDestino: opcion?.valor ?? "" }))
+                                setValores((v) => ({
+                                    ...v,
+                                    idUbicacionDestino: opcion?.valor ?? "",
+                                    ubicacionDestino: opcion?.descripcion ?? "",
+                                }))
                             }
                         />
                     </PasoWrapper>
@@ -479,7 +629,11 @@ export const LeerLineaOrden = ({
                             nombre="idUbicacionOrigen"
                             valor={valores.idUbicacionOrigen ?? ""}
                             onChange={(opcion) =>
-                                setValores((v) => ({ ...v, idUbicacionOrigen: opcion?.valor ?? "" }))
+                                setValores((v) => ({
+                                    ...v,
+                                    idUbicacionOrigen: opcion?.valor ?? "",
+                                    ubicacionOrigen: opcion?.descripcion ?? "",
+                                }))
                             }
                         />
                     </PasoWrapper>
@@ -492,7 +646,11 @@ export const LeerLineaOrden = ({
                             nombre="idCajaDestino"
                             valor={valores.idCajaDestino ?? ""}
                             onChange={(opcion) =>
-                                setValores((v) => ({ ...v, idCajaDestino: opcion?.valor ?? "" }))
+                                setValores((v) => ({
+                                    ...v,
+                                    idCajaDestino: opcion?.valor ?? "",
+                                    cajaDestino: opcion?.descripcion ?? "",
+                                }))
                             }
                         />
                     </PasoWrapper>
@@ -508,6 +666,7 @@ export const LeerLineaOrden = ({
                                 setValores((v) => ({
                                     ...v,
                                     idCajaDestino: opcion?.valor ?? "",
+                                    cajaDestino: opcion?.descripcion ?? "",
                                     cantidad: opcion?.capacidad ?? undefined,
                                 }))
                             }
@@ -522,7 +681,11 @@ export const LeerLineaOrden = ({
                             nombre="idCajaOrigen"
                             valor={valores.idCajaOrigen ?? ""}
                             onChange={(opcion) =>
-                                setValores((v) => ({ ...v, idCajaOrigen: opcion?.valor ?? "" }))
+                                setValores((v) => ({
+                                    ...v,
+                                    idCajaOrigen: opcion?.valor ?? "",
+                                    cajaOrigen: opcion?.descripcion ?? "",
+                                }))
                             }
                         />
                     </PasoWrapper>
@@ -538,6 +701,7 @@ export const LeerLineaOrden = ({
                                 setValores((v) => ({
                                     ...v,
                                     idCajaOrigen: opcion?.valor ?? "",
+                                    cajaOrigen: opcion?.descripcion ?? "",
                                     cantidad: opcion?.cantidad ?? undefined,
                                 }))
                             }
