@@ -9,6 +9,8 @@ import { QInput } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
+import { usePreferencia } from "@olula/lib/usePreferencia.ts";
+import { desbloquearTTS, useSintesisVoz } from "@olula/lib/voz/useSintesisVoz.ts";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
@@ -43,6 +45,8 @@ export const DetalleOrden = ({
     };
 
     const { ctx, emitir } = useMaquina(getMaquina, contextoInicial, publicar);
+    const [modoVoz, setModoVoz] = usePreferencia("sga.modo-voz", false);
+    const tts = useSintesisVoz();
 
     const autoGuardar = useCallback(
         async (orden: OrdenAlmacen) => {
@@ -125,6 +129,16 @@ export const DetalleOrden = ({
                 {["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
                     <QBoton onClick={() => emitir("lectura_ubicacion_solicitada")}>Lectura bandeja</QBoton>
                 )}
+                <QBoton onClick={() => {
+                    const nuevoValor = !modoVoz;
+                    if (nuevoValor) desbloquearTTS();
+                    setModoVoz(nuevoValor);
+                }}>
+                    {modoVoz ? "Voz ON" : "Voz OFF"}
+                </QBoton>
+                {modoVoz && !tts.vocesDisponibles && (
+                    <p className="q-texto-error">No hay voces TTS instaladas. Instala espeak-ng en el sistema.</p>
+                )}
             </div>
             <LecturasCajaOrden orden={ctx.orden} />
             <h3>LÍNEAS</h3>
@@ -133,6 +147,7 @@ export const DetalleOrden = ({
                 lineas={ctx.lineas}
                 estado={ctx.estado}
                 publicar={emitir}
+                modoVoz={modoVoz}
             />
 
             {ctx.estado === "BORRANDO" && (
@@ -142,13 +157,13 @@ export const DetalleOrden = ({
                 />
             )}
             {ctx.estado === "LEYENDO_LINEA" && (
-                <LecturaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+                <LecturaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} modoVoz={modoVoz} />
             )}
             {ctx.estado === "LEYENDO_CAJA" && (
-                <LecturaCajaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+                <LecturaCajaOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} modoVoz={modoVoz} />
             )}
             {ctx.estado === "LEYENDO_UBICACION" && (
-                <LecturaUbicacionOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} />
+                <LecturaUbicacionOrden publicar={emitir} orden={modelo} tipo={modelo.tipo} modoVoz={modoVoz} />
             )}
             {ctx.estado === "CREANDO_CAJA" && (
                 <CrearCaja publicar={emitir} idUbicacion={modelo.idUbicacionDestino} />

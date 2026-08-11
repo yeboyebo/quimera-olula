@@ -14,11 +14,13 @@ export const LineasOrden = ({
     lineas,
     estado,
     publicar,
+    modoVoz = false,
 }: {
     orden: OrdenAlmacen;
     lineas: ListaEntidades<LineaOrdenAlmacen>;
     estado: EstadoOrdenAlmacen;
     publicar: EmitirEvento;
+    modoVoz?: boolean;
 }) => {
     return (
         <>
@@ -67,6 +69,7 @@ export const LineasOrden = ({
                     orden={orden}
                     linea={lineas.activo}
                     publicar={publicar}
+                    modoVoz={modoVoz}
                 />
             )}
         </>
