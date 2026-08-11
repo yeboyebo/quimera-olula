@@ -24,6 +24,8 @@ export interface Cliente extends Entidad {
   contacto_id: string;
   cuenta_domiciliada: string;
   descripcion_cuenta: string;
+  cuenta_remesa: string;
+  descripcion_cuenta_remesa: string;
   forma_pago: string;
   divisa: string;
   serie: string;
@@ -47,23 +49,19 @@ export interface DirCliente extends Direccion {
   id: string;
   dir_envio: boolean;
   dir_facturacion: boolean;
-  // nombre_via: string;
-  // tipo_via: string;
-  // numero: string;
-  // otros: string;
-  // cod_postal: string;
-  // ciudad: string;
-  // provincia_id: number;
-  // provincia: string;
-  // pais_id: string;
-  // apartado: string;
-  // telefono: string;
 };
 
 export type NuevaDireccion = {
   nombre_via: string;
   tipo_via: string;
+  numero: string;
+  otros: string;
+  cod_postal: string;
   ciudad: string;
+  provincia: string;
+  pais_id: string;
+  apartado: string;
+  telefono: string;
 };
 
 export type FormBaja = {
@@ -88,7 +86,6 @@ export type CuentaBancoAPI = {
 export type NuevaCuentaBanco = {
   descripcion: string;
   iban: string;
-  bic: string;
 };
 
 export interface CrmContacto extends Entidad {
