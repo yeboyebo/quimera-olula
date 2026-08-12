@@ -46,10 +46,22 @@ export const TotalesVenta = <T extends Venta>({
         <label>Neto:</label>
         <span>{formatearMoneda(venta.neto, venta.divisa_id)}</span>
       </div>
+      {venta.total_irpf !== 0 && (
+        <div className="totales-venta-item">
+          <label>IRPF:</label>
+          <span>{formatearMoneda(venta.total_irpf, venta.divisa_id)}</span>
+        </div>
+      )}
       <div className="totales-venta-item">
         <label>IVA:</label>
         <span>{formatearMoneda(venta.total_iva, venta.divisa_id)}</span>
       </div>
+      {!!venta.total_recargo && (
+        <div className="totales-venta-item">
+          <label>R. Equivalencia:</label>
+          <span>{formatearMoneda(venta.total_recargo, venta.divisa_id)}</span>
+        </div>
+      )}
       <div className="totales-venta-item">
         <label>Total:</label>
         <span>{formatearMoneda(venta.total, venta.divisa_id)}</span>
