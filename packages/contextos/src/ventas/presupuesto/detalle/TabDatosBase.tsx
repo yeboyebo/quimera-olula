@@ -2,6 +2,7 @@ import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
 import { Divisa } from "../../comun/componentes/divisa.tsx";
@@ -43,6 +44,7 @@ export const TabDatosBase = ({
             </QBoton>
           </div>
         )}
+        <TotalDivisaEmpresa venta={modelo} />
         <Agente {...uiProps("agente_id", "nombre_agente")} />
         <QInput label="% Comisión" {...uiProps("por_comision")} />
         {mostrarBotonesCambio && (

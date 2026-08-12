@@ -13,7 +13,7 @@ import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/C
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
-import { albaranVacio, editable, metaAlbaran } from "../dominio.ts";
+import { albaranVacio, editable, metaAlbaran, tituloAlbaran } from "../dominio.ts";
 import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
 import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
 import { getReportAlbaran } from "../infraestructura.ts";
@@ -62,7 +62,7 @@ export const DetalleAlbaran = ({
 
   const { estado, lineaActiva, facturaCreada } = ctx;
 
-  const titulo = (albaran: Albaran) => albaran.codigo || "Nuevo Albarán";
+  const titulo = tituloAlbaran;
 
   if (!ctx.albaran.id) return;
 

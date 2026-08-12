@@ -60,12 +60,10 @@
             quimera-select[nombre="direccion_id"],
             quimera-input[nombre="direccion_cliente"] {
                 grid-column: 1 / -1;
-                grid-row: 2;
             }
 
             .TabCliente-accion {
                 grid-column: 1 / -1;
-                grid-row: 3;
                 justify-content: flex-end;
             }
         }

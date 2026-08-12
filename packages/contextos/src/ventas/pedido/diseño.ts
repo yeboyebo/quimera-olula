@@ -8,6 +8,9 @@ export interface Pedido extends Venta {
   cliente: ClienteVenta;
   servido: string;
   por_comision: number;
+  fecha_salida: Date | null;
+  almacen_id: string;
+  nombre_almacen: string;
   lineas: LineaPedido[];
 }
 export interface LineaPedido extends LineaVenta {

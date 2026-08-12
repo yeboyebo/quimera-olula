@@ -1,7 +1,7 @@
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
@@ -40,15 +40,8 @@ export type NuevoPresupuestoClienteNoRegistrado = {
 
 export type CambioClientePresupuesto = CambioClienteVenta;
 
-export interface LineaPresupuesto extends Entidad {
-  id: string;
-  referencia: string;
-  descripcion: string;
-  cantidad: number;
-  pvp_unitario: number;
-  dto_porcentual: number;
-  pvp_total: number;
-  grupo_iva_producto_id: string;
+export interface LineaPresupuesto extends LineaVenta {
+  otro_campo?: string;
 };
 
 export type NuevaLinea = NuevaLineaVenta

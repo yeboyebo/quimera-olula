@@ -1,6 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
 import {
@@ -29,6 +30,10 @@ interface AlbaranAPI {
   id: string;
   codigo: string;
   fecha: string;
+  hora: string;
+  almacen_id: string;
+  nombre_almacen: string;
+  de_abono: boolean;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;
@@ -42,6 +47,7 @@ interface AlbaranAPI {
   neto: number;
   total_iva: number;
   total_irpf: number;
+  total_recargo: number;
   total_divisa_empresa: number;
   por_descuento: number;
   neto_sin_dto: number;
@@ -144,7 +150,10 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
+      dto_lineal: linea.dto_lineal,
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
+      tipo_irpf: linea.tipo_irpf,
+      comision: linea.por_comision,
     },
   }
   await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar la línea del albarán");
@@ -169,6 +178,8 @@ export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Pro
 }
 
 export const patchAlbaran = async (id: string, albaran: Albaran) => {
+  const hora = normalizarHora(albaran.hora);
+
   const payload = {
     cambios: {
       agente_id: albaran.agente_id,
@@ -177,6 +188,9 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
         tasa_conversion: albaran.tasa_conversion,
       },
       fecha: albaran.fecha,
+      ...(hora ? { hora } : {}),
+      almacen_id: albaran.almacen_id,
+      de_abono: esVerdadero(albaran.de_abono),
       cliente_id: albaran.cliente.cliente_id,
       nombre_cliente: albaran.cliente.nombre_cliente,
       id_fiscal: albaran.cliente.id_fiscal,

@@ -27,6 +27,9 @@ export const pedidoVacio = (): Pedido => ({
     cliente: clienteVentaVacio,
     servido: 'No',
     por_comision: 0,
+    fecha_salida: null,
+    almacen_id: '',
+    nombre_almacen: '',
     lineas: [],
 })
 
@@ -43,6 +46,9 @@ export const metaCambioClientePedido: MetaModelo<CambioClientePedido> = metaCamb
 const camposPedido: Record<string, MetaCampo<Pedido>> = {
     ...metaVenta.campos,
     fecha: { tipo: "fecha", requerido: false },
+    fecha_salida: { tipo: "fecha", requerido: false },
+    almacen_id: { requerido: true },
+    nombre_almacen: { bloqueado: true },
     divisa_id: { requerido: true, bloqueado: true },
     tasa_conversion: { tipo: "numero", requerido: true, bloqueado: true },
     agente_id: { bloqueado: true },

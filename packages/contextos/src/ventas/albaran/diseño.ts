@@ -8,6 +8,10 @@ export interface Albaran extends Venta {
     cliente: ClienteVenta;
     idfactura: string | null;
     por_comision: number;
+    hora: string;
+    almacen_id: string;
+    nombre_almacen: string;
+    de_abono: boolean;
     lineas: LineaAlbaran[];
 }
 

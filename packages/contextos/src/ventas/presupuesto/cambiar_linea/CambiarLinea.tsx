@@ -93,6 +93,14 @@ export const CambiarLinea = ({
             <>
               <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} />
               <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
+              <QInput label="Dto. lineal" {...uiProps("dto_lineal")} />
+              <QInput label="% R. equivalencia" {...uiProps("tipo_recargo")} />
+              <QInput label="% I.R.P.F." {...uiProps("tipo_irpf")} />
+              <QInput label="% Comisión agente" {...uiProps("por_comision")} />
+              <QInput
+                label="Importe comisión"
+                {...uiProps("importe_comision")}
+              />
             </>
           )}
         </quimera-formulario>

@@ -14,16 +14,22 @@ export type LineaVentaTarjeta = {
   dto_porcentual?: number | null;
   dto_lineal?: number | null;
   grupo_iva_producto_id?: string | null;
+  tipo_irpf?: number | null;
+  tipo_recargo?: number | null;
+  por_comision?: number | null;
+  importe_comision?: number | null;
 };
 
 export const TarjetaLineaVenta = <L extends LineaVentaTarjeta>({
   linea,
   cantidadEditable = false,
   onCambioCantidad,
+  divisa = "EUR",
 }: {
   linea: L;
   cantidadEditable?: boolean;
   onCambioCantidad?: (linea: L, cantidad: number) => void;
+  divisa?: string;
 }) => {
   const cantidad = Number(linea.cantidad) || 0;
   const [cantidadInput, setCantidadInput] = useState(String(cantidad));
@@ -37,17 +43,28 @@ export const TarjetaLineaVenta = <L extends LineaVentaTarjeta>({
   const partesDto: string[] = [];
   if (linea.dto_porcentual) partesDto.push(`${linea.dto_porcentual}% Dto`);
   if (linea.dto_lineal)
-    partesDto.push(`${formatearMoneda(linea.dto_lineal, "EUR")} Dto`);
+    partesDto.push(`${formatearMoneda(linea.dto_lineal, divisa)} Dto`);
   const dtoTexto = partesDto.length ? ` (${partesDto.join(", ")})` : "";
 
   const desglose = `${cantidad} x ${formatearMoneda(
     linea.pvp_unitario,
-    "EUR"
+    divisa
   )}${dtoTexto}`;
 
-  const ivaTexto = linea.grupo_iva_producto_id
-    ? `IVA ${linea.grupo_iva_producto_id}`
-    : "";
+  const partesFiscales: string[] = [];
+  if (linea.grupo_iva_producto_id)
+    partesFiscales.push(`IVA ${linea.grupo_iva_producto_id}`);
+  if (linea.tipo_recargo) partesFiscales.push(`R.E. ${linea.tipo_recargo}%`);
+  if (linea.tipo_irpf) partesFiscales.push(`IRPF ${linea.tipo_irpf}%`);
+  if (linea.por_comision)
+    partesFiscales.push(
+      `Com. ${linea.por_comision}%${
+        linea.importe_comision
+          ? ` (${formatearMoneda(linea.importe_comision, divisa)})`
+          : ""
+      }`
+    );
+  const ivaTexto = partesFiscales.join(" · ");
 
   useEffect(() => {
     setCantidadInput(String(cantidad));
@@ -111,7 +128,7 @@ export const TarjetaLineaVenta = <L extends LineaVentaTarjeta>({
   return (
     <QTarjetaGenerica
       arribaIzquierda={titulo}
-      arribaDerecha={formatearMoneda(linea.pvp_total, "EUR")}
+      arribaDerecha={formatearMoneda(linea.pvp_total, divisa)}
       abajoIzquierda={permitirEditarCantidad ? stepper : desglose}
       abajoDerecha={ivaTexto}
     />

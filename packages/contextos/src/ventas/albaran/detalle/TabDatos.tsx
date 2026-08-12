@@ -1,11 +1,14 @@
+import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
 import { RegimenIva } from "#/ventas/comun/componentes/regimen_iva.tsx";
 import { puedeCambiarDivisa } from "#/ventas/venta/dominio.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Albaran, EstadoAlbaran } from "../diseño.ts";
 import { editable } from "../dominio.ts";
@@ -29,6 +32,9 @@ export const TabDatos = ({
     <div className="TabDatos">
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
+        <QInput label="Hora" {...uiProps("hora")} />
+        <QCheckbox label="Abono" {...uiProps("de_abono")} />
+        <Almacen {...uiProps("almacen_id", "nombre_almacen")} />
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
         {mostrarBotonesCambio && (
@@ -41,6 +47,7 @@ export const TabDatos = ({
             </QBoton>
           </div>
         )}
+        <TotalDivisaEmpresa venta={modelo} />
         <Agente {...uiProps("agente_id", "nombre_agente")} />
         <QInput label="% Comisión" {...uiProps("por_comision")} />
         {mostrarBotonesCambio && (

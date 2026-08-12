@@ -3,6 +3,14 @@
         grid-column: 1 / span 3;
     }
 
+    quimera-date[nombre="fecha_salida"] {
+        grid-column: span 3;
+    }
+
+    quimera-select[nombre="almacen_id"] {
+        grid-column: 1 / span 12;
+    }
+
     quimera-select[nombre="divisa_id"] {
         grid-column: 1 / span 7;
         min-width: 0;
@@ -71,6 +79,14 @@
 
 @media (max-width: 768px) {
     .Pedido .TabDatos quimera-formulario {
+        quimera-date[nombre="fecha"] {
+            grid-column: 1 / span 1 !important;
+        }
+
+        quimera-date[nombre="fecha_salida"] {
+            grid-column: 2 / span 1 !important;
+        }
+
         quimera-select[nombre="divisa_id"] {
             grid-column: 1 / span 1 !important;
         }

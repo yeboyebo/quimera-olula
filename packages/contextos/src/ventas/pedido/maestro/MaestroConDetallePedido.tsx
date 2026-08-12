@@ -51,6 +51,7 @@ export const MaestroConDetallePedido = () => {
                   nombreCliente={pedido.cliente.nombre_cliente}
                   fecha={pedido.fecha}
                   total={pedido.total}
+                  divisa={pedido.divisa_id}
                   estado={pedido.servido === "TOTAL" ? "cerrado" : "pendiente"}
                 />
               )}

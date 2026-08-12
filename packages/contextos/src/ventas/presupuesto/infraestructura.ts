@@ -20,6 +20,7 @@ type PresupuestoAPI = {
   neto: number;
   total_iva: number;
   total_irpf: number;
+  total_recargo: number;
   por_descuento: number;
   neto_sin_dto: number;
   forma_pago_id: string;
@@ -229,7 +230,10 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
+      dto_lineal: linea.dto_lineal,
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
+      tipo_irpf: linea.tipo_irpf,
+      comision: linea.por_comision,
     },
   }
   await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea del presupuesto");

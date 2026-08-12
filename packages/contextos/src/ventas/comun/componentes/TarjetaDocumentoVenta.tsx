@@ -1,5 +1,6 @@
 import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { formatearMoneda } from "@olula/lib/dominio.ts";
+import { ReactNode } from "react";
 import "./TarjetaDocumentoVenta.css";
 
 export type EstadoDocumento = "cerrado" | "pendiente";
@@ -10,12 +11,16 @@ export const TarjetaDocumentoVenta = ({
   fecha,
   total,
   estado,
+  divisa = "EUR",
+  etiqueta,
 }: {
   codigo: string;
   nombreCliente: string;
   fecha: Date;
   total: number;
   estado: EstadoDocumento;
+  divisa?: string;
+  etiqueta?: ReactNode;
 }) => {
   return (
     <QTarjetaGenerica
@@ -29,10 +34,11 @@ export const TarjetaDocumentoVenta = ({
         <span className="tarjeta-doc-titulo">
           {codigo}
           {nombreCliente ? ` · ${nombreCliente}` : ""}
+          {etiqueta}
         </span>
       }
       abajoIzquierda={fecha ? new Date(fecha).toLocaleDateString("es-ES") : ""}
-      abajoDerecha={formatearMoneda(total, "EUR")}
+      abajoDerecha={formatearMoneda(total, divisa)}
     />
   );
 };

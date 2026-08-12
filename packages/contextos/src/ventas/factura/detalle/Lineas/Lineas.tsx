@@ -49,6 +49,7 @@ export const Lineas = ({
         lineas={factura.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
+        divisa={factura.divisa_id}
         facturaEditable={facturaEsEditable}
         acciones={facturaEsEditable ? acciones : undefined}
         publicar={publicar}

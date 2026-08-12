@@ -17,12 +17,19 @@ export interface LineaPedidoAPI {
   pvp_total: number;
   grupo_iva_producto_id: string;
   iva_incluido: boolean;
+  tipo_irpf: number;
+  tipo_recargo: number;
+  por_comision: number;
+  importe_comision: number;
 };
 
 interface PedidoAPI {
   id: string;
   codigo: string;
   fecha: string;
+  fecha_salida: string | null;
+  almacen_id: string;
+  nombre_almacen: string;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;
@@ -36,6 +43,7 @@ interface PedidoAPI {
   neto: number;
   total_iva: number;
   total_irpf: number;
+  total_recargo: number;
   total_divisa_empresa: number;
   por_descuento: number;
   neto_sin_dto: number;
@@ -73,6 +81,7 @@ export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => ({
   // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
   regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
+  fecha_salida: p.fecha_salida ? new Date(Date.parse(p.fecha_salida)) : null,
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
   cliente: {
@@ -197,7 +206,10 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
+      dto_lineal: linea.dto_lineal,
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
+      tipo_irpf: linea.tipo_irpf,
+      comision: linea.por_comision,
     },
   }
   await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de pedido");
@@ -232,28 +244,7 @@ export const patchPedido = async (id: string, pedido: Pedido) => {
 };
 
 
-export const payloadPatchPedido = (pedido: Pedido) => {
-  const payload = {
-    cambios: {
-      agente_id: pedido.agente_id,
-      divisa: {
-        divisa_id: pedido.divisa_id,
-        tasa_conversion: pedido.tasa_conversion,
-      },
-      fecha: pedido.fecha,
-      cliente_id: pedido.cliente.cliente_id,
-      nombre_cliente: pedido.cliente.nombre_cliente,
-      id_fiscal: pedido.cliente.id_fiscal,
-      direccion_id: pedido.cliente.direccion_id,
-      forma_pago_id: pedido.forma_pago_id,
-      regimen_iva: pedido.regimen_iva,
-      por_comision: pedido.por_comision,
-      observaciones: pedido.observaciones,
-    },
-  };
-
-  return payload;
-}
+export { payloadPatchPedido } from "./infraestructura_base.ts";
 
 export const borrarPedido = async (id: string) => {
   await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar pedido");

@@ -1,7 +1,7 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { MetaTabla, QIcono } from "@olula/componentes/index.js";
+import { MetaTabla, QEtiqueta, QIcono } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -74,7 +74,13 @@ export const MaestroConDetalleAlbaran = () => {
                   nombreCliente={albaran.cliente.nombre_cliente}
                   fecha={albaran.fecha}
                   total={albaran.total}
+                  divisa={albaran.divisa_id}
                   estado={albaran.idfactura ? "cerrado" : "pendiente"}
+                  etiqueta={
+                    albaran.de_abono ? (
+                      <QEtiqueta variante="advertencia">Abono</QEtiqueta>
+                    ) : undefined
+                  }
                 />
               )}
               criteria={ctx.albaranes.criteria}

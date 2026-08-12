@@ -24,6 +24,9 @@ export const pedidoVacio = (): Pedido => ({
     cliente: clienteVentaVacio,
     servido: 'No',
     por_comision: 0,
+    fecha_salida: null,
+    almacen_id: '',
+    nombre_almacen: '',
     lineas: [],
 });
 

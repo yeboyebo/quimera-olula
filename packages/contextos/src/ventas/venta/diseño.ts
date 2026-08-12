@@ -12,6 +12,7 @@ export interface Venta extends Entidad {
     neto: number;
     total_iva: number;
     total_irpf: number;
+    total_recargo: number;
     total_divisa_empresa: number;
     dtoPorcentual: number;
     netoSinDto: number;
@@ -32,6 +33,10 @@ export interface LineaVenta extends Entidad {
     pvp_total: number;
     iva_incluido: boolean;
     grupo_iva_producto_id: string;
+    tipo_irpf: number;
+    tipo_recargo: number;
+    por_comision: number;
+    importe_comision: number;
 };
 
 export type NuevaVenta = {

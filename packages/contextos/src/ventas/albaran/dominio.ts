@@ -25,16 +25,31 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
     {
         id: "codigo",
         cabecera: "Código",
+        prioridad: "alta",
     },
     {
         id: "nombre_cliente",
         cabecera: "Cliente",
+        prioridad: "alta",
         render: (a) => a.cliente.nombre_cliente,
+    },
+    {
+        id: "almacen_id",
+        cabecera: "Almacén",
+        prioridad: "baja",
+        render: (a) => a.nombre_almacen || a.almacen_id,
+    },
+    {
+        id: "de_abono",
+        cabecera: "Abono",
+        prioridad: "baja",
+        render: (a) => (a.de_abono ? "Sí" : ""),
     },
     {
         id: "total",
         cabecera: "Total",
         tipo: "moneda",
+        prioridad: "alta",
     },
 ];
 
@@ -43,8 +58,17 @@ export const albaranVacio = (): Albaran => ({
     cliente: clienteVentaVacio,
     idfactura: null,
     por_comision: 0,
+    hora: '',
+    almacen_id: '',
+    nombre_almacen: '',
+    de_abono: false,
     lineas: [],
 })
+
+export const tituloAlbaran = (albaran: Albaran): string => {
+    const codigo = albaran.codigo || "Nuevo Albarán";
+    return albaran.de_abono ? `${codigo} · Abono` : codigo;
+}
 
 export const nuevoAlbaranVacio: NuevoAlbaran = nuevaVentaVacia;
 
@@ -60,6 +84,10 @@ export const metaAlbaran: MetaModelo<Albaran> = {
     campos: {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
+        hora: { tipo: "hora", requerido: false },
+        almacen_id: { requerido: true },
+        nombre_almacen: { bloqueado: true },
+        de_abono: { tipo: "checkbox", requerido: false },
         divisa_id: { requerido: true, bloqueado: true },
         tasa_conversion: { tipo: "numero", requerido: true, bloqueado: true },
         agente_id: { bloqueado: true },

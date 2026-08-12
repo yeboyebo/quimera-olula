@@ -1,3 +1,4 @@
+import { fechaAISO } from "../comun/dominio.ts";
 import { Pedido } from "./diseño.ts";
 
 type PedidoAPI = Pedido
@@ -13,6 +14,8 @@ export const payloadPatchPedido = (pedido: Pedido) => {
                 tasa_conversion: pedido.tasa_conversion,
             },
             fecha: pedido.fecha,
+            fecha_salida: fechaAISO(pedido.fecha_salida),
+            almacen_id: pedido.almacen_id,
             cliente_id: pedido.cliente.cliente_id,
             nombre_cliente: pedido.cliente.nombre_cliente,
             id_fiscal: pedido.cliente.id_fiscal,

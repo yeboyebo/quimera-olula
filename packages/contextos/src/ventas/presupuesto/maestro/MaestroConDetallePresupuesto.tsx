@@ -75,6 +75,7 @@ export const MaestroConDetallePresupuesto = () => {
                   nombreCliente={presupuesto.cliente.nombre_cliente}
                   fecha={presupuesto.fecha}
                   total={presupuesto.total}
+                  divisa={presupuesto.divisa_id}
                   estado={presupuesto.aprobado ? "cerrado" : "pendiente"}
                 />
               )}

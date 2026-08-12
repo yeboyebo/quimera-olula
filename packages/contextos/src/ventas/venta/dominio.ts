@@ -38,6 +38,7 @@ export const ventaVacia: Venta = {
     neto: 0,
     total_iva: 0,
     total_irpf: 0,
+    total_recargo: 0,
     forma_pago_id: '',
     nombre_forma_pago: '',
     regimen_iva: '',
@@ -64,6 +65,21 @@ export const nuevaLineaVentaVacia: NuevaLineaVenta = {
 
 export const puedeCambiarDivisa = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
 
+export const DIVISA_EMPRESA = "EUR";
+
+export const enDivisaExtranjera = (venta: { divisa_id: string }): boolean => {
+    const divisa = venta.divisa_id?.trim().toUpperCase() ?? "";
+    return divisa !== "" && divisa !== DIVISA_EMPRESA;
+};
+
+export const mostrarImporte = (importe?: number | null): boolean => !!importe;
+
+export const formatearTasaConversion = (tasa: number): string =>
+    `×${new Intl.NumberFormat("es-ES", {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+    }).format(tasa)}`;
+
 export const metaVenta: MetaModelo<Venta> = {
     campos: {
         tasa_conversion: { tipo: "numero", requerido: false },
@@ -88,6 +104,14 @@ const metaDtoLineal: MetaCampo<LineaVenta> = {
     positivo: true,
 };
 
+const metaPorcentajeLinea: MetaCampo<LineaVenta> = {
+    tipo: "decimal",
+    requerido: false,
+    decimales: 2,
+    positivo: true,
+    maximo: 100,
+};
+
 export const metaLineaVenta: MetaModelo<LineaVenta> = {
     campos: {
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
@@ -95,6 +119,10 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         pvp_unitario: { tipo: "moneda", requerido: true },
         dto_porcentual: metaDtoPorcentual,
         dto_lineal: metaDtoLineal,
+        tipo_irpf: metaPorcentajeLinea,
+        por_comision: metaPorcentajeLinea,
+        tipo_recargo: { ...metaPorcentajeLinea, bloqueado: true },
+        importe_comision: { tipo: "moneda", requerido: false, bloqueado: true },
         referencia: { requerido: true },
     }
 };
