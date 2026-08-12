@@ -9,7 +9,8 @@ import {
     patchCambiarCliente,
     patchCambiarDescuento,
     patchCantidadLinea,
-    patchFactura
+    patchFactura,
+    patchLinea
 } from "../infraestructura.ts";
 import { ContextoFactura, EstadoFactura } from "./diseño.ts";
 
@@ -157,7 +158,11 @@ export const crearLinea: ProcesarFactura = async (contexto) => {
     ]);
 };
 
-export const cambiarLinea: ProcesarFactura = async (contexto) => {
+export const cambiarLinea: ProcesarFactura = async (contexto, payload) => {
+    const linea = payload as LineaFactura;
+
+    await patchLinea(contexto.factura.id, linea);
+
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,
