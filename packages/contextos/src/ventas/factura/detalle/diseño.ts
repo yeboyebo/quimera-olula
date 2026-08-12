@@ -9,6 +9,7 @@ export const metaFactura: MetaModelo<Factura> = {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
         hora: { tipo: "hora", requerido: false },
+        por_comision_agente: { tipo: "decimal", decimales: 2, requerido: false },
     },
     editable: (factura: Factura, _?: string) => {
         return factura.editable ?? false;

@@ -7,6 +7,7 @@ export interface Factura extends Venta {
     editable?: boolean;
     lineas?: LineaFactura[];
     hora?: string;
+    por_comision_agente?: number | null;
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;

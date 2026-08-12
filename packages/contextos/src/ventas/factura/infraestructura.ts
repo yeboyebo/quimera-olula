@@ -21,6 +21,7 @@ interface FacturaAPI {
   direccion: Direccion;
   agente_id: string;
   nombre_agente: string;
+  por_comision_agente: number | null;
   divisa_id: string;
   tasa_conversion: number;
   total: number;

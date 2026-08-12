@@ -23,6 +23,7 @@ export const TabDatos = ({ factura }: TabDatosProps) => {
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
         <Agente {...uiProps("agente_id", "nombre_agente")} />
+        <QInput label="% Comisión" {...uiProps("por_comision_agente")} deshabilitado />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
       </quimera-formulario>
