@@ -16,6 +16,9 @@ export interface Factura extends Venta {
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
+    tipo_irpf?: number;
+    tipo_recargo?: number;
+    por_comision?: number | null;
 }
 
 export type NuevaFactura = {
