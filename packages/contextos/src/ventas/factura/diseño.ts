@@ -8,6 +8,8 @@ export interface Factura extends Venta {
     lineas?: LineaFactura[];
     hora?: string;
     por_comision_agente?: number | null;
+    almacen_id?: string;
+    nombre_almacen?: string;
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;

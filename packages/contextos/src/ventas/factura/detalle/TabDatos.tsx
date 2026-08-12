@@ -2,6 +2,7 @@ import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
 import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
+import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -26,6 +27,7 @@ export const TabDatos = ({ factura }: TabDatosProps) => {
         <QInput label="% Comisión" {...uiProps("por_comision_agente")} deshabilitado />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
+        <Almacen {...uiProps("almacen_id", "nombre_almacen")} />
       </quimera-formulario>
     </div>
   );

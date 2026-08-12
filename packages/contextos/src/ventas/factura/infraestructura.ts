@@ -33,6 +33,8 @@ interface FacturaAPI {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
+  almacen_id: string;
+  nombre_almacen: string;
   grupo_iva_negocio_id: string;
   observaciones: string;
   editable?: boolean;
@@ -191,6 +193,7 @@ export const patchFactura = async (id: string, factura: Factura) => {
       id_fiscal: factura.cliente.id_fiscal,
       direccion_id: factura.cliente.direccion_id,
       forma_pago_id: factura.forma_pago_id,
+      almacen_id: factura.almacen_id,
       grupo_iva_negocio_id: factura.grupo_iva_negocio_id,
       observaciones: factura.observaciones,
     },

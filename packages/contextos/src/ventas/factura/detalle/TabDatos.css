@@ -25,11 +25,15 @@
     }
 
     quimera-select[nombre="forma_pago_id"] {
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 4;
+    }
+
+    quimera-select[nombre="almacen_id"] {
+        grid-column: span 4;
     }
 
     quimera-select[nombre="grupo_iva_negocio_id"] {
-        grid-column: span 6;
+        grid-column: span 4;
     }
 }
 
@@ -63,8 +67,12 @@
             grid-column: 1 / span 1 !important;
         }
 
-        quimera-select[nombre="grupo_iva_negocio_id"] {
+        quimera-select[nombre="almacen_id"] {
             grid-column: 2 / span 1 !important;
+        }
+
+        quimera-select[nombre="grupo_iva_negocio_id"] {
+            grid-column: 1 / span 1 !important;
         }
     }
 }
