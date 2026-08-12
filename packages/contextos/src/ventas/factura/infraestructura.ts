@@ -35,6 +35,9 @@ interface FacturaAPI {
   nombre_forma_pago: string;
   almacen_id: string;
   nombre_almacen: string;
+  automatica: boolean;
+  servicios: boolean;
+  rectificativa_id: string | null;
   grupo_iva_negocio_id: string;
   observaciones: string;
   editable?: boolean;

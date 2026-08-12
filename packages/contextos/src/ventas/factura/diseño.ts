@@ -10,6 +10,9 @@ export interface Factura extends Venta {
     por_comision_agente?: number | null;
     almacen_id?: string;
     nombre_almacen?: string;
+    automatica?: boolean;
+    servicios?: boolean;
+    rectificativa_id?: string | null;
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
