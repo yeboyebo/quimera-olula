@@ -72,10 +72,13 @@ export const CambiarLineaNrj = ({
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="cambiarLinea"
+      titulo="Editar línea NRJ"
+      onCerrar={cancelar}
+    >
       <div className="EditarLinea">
-        <h2>Editar línea NRJ</h2>
-
         <quimera-formulario>
           <TipoPalet
             label="Tipo Palet"

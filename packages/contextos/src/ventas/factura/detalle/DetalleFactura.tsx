@@ -14,6 +14,7 @@ import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/C
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
+import { tituloDocumentoVenta } from "../../venta/dominio.ts";
 import { facturaVacia } from "../dominio.ts";
 import { getReportFactura } from "../infraestructura.ts";
 import "./DetalleFactura.css";
@@ -61,7 +62,8 @@ export const DetalleFactura = ({
 
   const { estado, lineaActiva } = ctx;
 
-  const titulo = (factura: Factura) => factura.codigo || "Nueva Factura";
+  const titulo = (factura: Factura) =>
+    tituloDocumentoVenta(factura, "Nueva Factura");
 
   const handleBorrar = useCallback(() => {
     emitir("borrar_solicitado");

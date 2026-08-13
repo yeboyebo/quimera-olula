@@ -25,6 +25,7 @@ export const metaTablaFactura: MetaTabla<Factura> = [
         id: "total",
         cabecera: "Total",
         tipo: "moneda",
+        divisa: (factura) => factura.divisa_id,
     },
 ];
 

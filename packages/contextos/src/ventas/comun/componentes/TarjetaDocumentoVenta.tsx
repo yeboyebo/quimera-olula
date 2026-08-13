@@ -1,5 +1,5 @@
 import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
-import { formatearMoneda } from "@olula/lib/dominio.ts";
+import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
 import "./TarjetaDocumentoVenta.css";
 
@@ -37,7 +37,7 @@ export const TarjetaDocumentoVenta = ({
           {etiqueta}
         </span>
       }
-      abajoIzquierda={fecha ? new Date(fecha).toLocaleDateString("es-ES") : ""}
+      abajoIzquierda={fecha ? formatearFechaDate(new Date(fecha)) : ""}
       abajoDerecha={formatearMoneda(total, divisa)}
     />
   );

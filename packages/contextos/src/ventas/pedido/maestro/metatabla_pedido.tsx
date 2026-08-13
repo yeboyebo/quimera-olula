@@ -58,5 +58,6 @@ const metaTablaPedido: MetaTabla<Pedido> = [
     cabecera: "Total",
     tipo: "moneda",
     prioridad: "alta",
+    divisa: (pedido) => pedido.divisa_id,
   },
 ];

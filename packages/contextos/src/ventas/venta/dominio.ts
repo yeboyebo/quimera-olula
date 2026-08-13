@@ -74,6 +74,15 @@ export const enDivisaExtranjera = (venta: { divisa_id: string }): boolean => {
 
 export const mostrarImporte = (importe?: number | null): boolean => !!importe;
 
+export const tituloDocumentoVenta = (
+    documento: { codigo: string; cliente: { nombre_cliente: string } },
+    fallback: string
+): string => {
+    const codigo = documento.codigo || fallback;
+    const nombreCliente = documento.cliente?.nombre_cliente?.trim() ?? "";
+    return nombreCliente ? `${codigo} · ${nombreCliente}` : codigo;
+};
+
 export const formatearTasaConversion = (tasa: number): string =>
     `×${new Intl.NumberFormat("es-ES", {
         minimumFractionDigits: 4,

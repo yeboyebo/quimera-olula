@@ -10,6 +10,7 @@ import { useParams } from "react-router";
 import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
+import { tituloDocumentoVenta } from "../../venta/dominio.ts";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { AprobarPresupuesto } from "../aprobar/AprobarPresupuesto.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
@@ -60,7 +61,8 @@ export const DetallePresupuesto = ({
 
   const { estado, lineaActiva } = ctx;
 
-  const titulo = (presupuesto: Presupuesto) => presupuesto.codigo;
+  const titulo = (presupuesto: Presupuesto) =>
+    tituloDocumentoVenta(presupuesto, "Nuevo Presupuesto");
 
   if (!ctx.presupuesto.id) return;
 

@@ -11,6 +11,7 @@ import {
     metaVenta,
     nuevaLineaVentaVacia,
     nuevaVentaVacia,
+    tituloDocumentoVenta,
     ventaVacia
 } from "../venta/dominio.ts";
 import {
@@ -50,6 +51,7 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
         cabecera: "Total",
         tipo: "moneda",
         prioridad: "alta",
+        divisa: (albaran) => albaran.divisa_id,
     },
 ];
 
@@ -66,8 +68,8 @@ export const albaranVacio = (): Albaran => ({
 })
 
 export const tituloAlbaran = (albaran: Albaran): string => {
-    const codigo = albaran.codigo || "Nuevo Albarán";
-    return albaran.de_abono ? `${codigo} · Abono` : codigo;
+    const titulo = tituloDocumentoVenta(albaran, "Nuevo Albarán");
+    return albaran.de_abono ? `${titulo} · Abono` : titulo;
 }
 
 export const nuevoAlbaranVacio: NuevoAlbaran = nuevaVentaVacia;

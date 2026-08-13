@@ -121,8 +121,9 @@ export const MaestroConDetallePedidoNrj = () => {
       />
 
       <QModal
-        nombre="modal"
+        nombre="altaPedido"
         abierto={ctx.estado === "CREANDO_PEDIDO"}
+        titulo="Nuevo Pedido"
         onCerrar={() => emitir("creacion_pedido_cancelada")}
       >
         <CrearPedido publicar={emitir} />
