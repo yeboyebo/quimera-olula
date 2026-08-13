@@ -1,5 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
-import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
+import { ejecutarListaProcesos, MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
+import { ERR_IBAN_NO_VALIDO, ibanValido } from "@olula/lib/iban.ts";
 import { CuentaBancaria } from "../diseño.js";
 import { getCuentaBancaria, patchCuentaBancaria } from "../infraestructura.js";
 import { ContextoDetalleCuentaBancaria, EstadoDetalleCuentaBancaria } from "./maquina.js";
@@ -8,15 +9,15 @@ type ProcesarDetalle = ProcesarContexto<EstadoDetalleCuentaBancaria, ContextoDet
 
 const pipeCuenta = ejecutarListaProcesos<EstadoDetalleCuentaBancaria, ContextoDetalleCuentaBancaria>;
 
-/**
- * Metadatos del formulario: validaciones y configuración de campos.
- */
+const ibanCuentaValido = (cuenta: CuentaBancaria): boolean | string =>
+    !stringNoVacio(cuenta.iban) || ibanValido(cuenta.iban) || ERR_IBAN_NO_VALIDO;
+
 export const metaCuentaBancaria: MetaModelo<CuentaBancaria> = {
     campos: {
         codigoCuenta: { requerido: true },
         paisId: { requerido: true },
         descripcion: { requerido: false },
-        iban: { requerido: false },
+        iban: { requerido: false, validacion: ibanCuentaValido },
         bic: { requerido: false },
         entidad: { requerido: false },
         agencia: { requerido: false },
@@ -47,9 +48,6 @@ export const contextoDetalleCuentaBancariaInicial: ContextoDetalleCuentaBancaria
     cuenta: cuentaBancariaInicial(),
 };
 
-/**
- * Refresca la entidad desde la API y propaga el cambio al maestro.
- */
 export const refrescarCuenta: ProcesarDetalle = async (contexto) => {
     const cuenta = await getCuentaBancaria(contexto.cuenta.id);
     return [
@@ -58,9 +56,6 @@ export const refrescarCuenta: ProcesarDetalle = async (contexto) => {
     ];
 };
 
-/**
- * Guarda cambios en la API (se llama desde el auto-guardado de useModelo).
- */
 export const guardarCuenta = async (
     contexto: ContextoDetalleCuentaBancaria,
     cuenta: CuentaBancaria,

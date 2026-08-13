@@ -1,4 +1,5 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
+import { normalizarIban } from "@olula/lib/iban.ts";
 import Empresa_Urls from "../comun/urls.js";
 import {
     CambiosCuentaBancaria,
@@ -27,26 +28,14 @@ export interface CuentaBancariaApi {
 }
 
 export interface NuevaCuentaBancariaApi {
-    codigo_cuenta: string;
-    pais_id: string;
-    empresa_id?: string;
+    iban: string;
     descripcion?: string;
-    iban?: string;
-    bic?: string;
-    entidad?: string;
-    agencia?: string;
-    digito_control?: string;
-    cuenta?: string;
 }
 
 type CambiosCuentaBancariaApi = Partial<CuentaBancariaApi>;
 
 const baseUrl = new Empresa_Urls().CUENTAS_BANCARIAS;
 
-/**
- * Mapea respuesta de API a interfaz del dominio (snake_case → camelCase).
- * Los campos opcionales del backend (null) se normalizan a cadena vacía.
- */
 export const cuentaBancariaDesdeApi = (api: CuentaBancariaApi): CuentaBancaria => ({
     id: api.id,
     codigoCuenta: api.codigo_cuenta,
@@ -62,20 +51,9 @@ export const cuentaBancariaDesdeApi = (api: CuentaBancariaApi): CuentaBancaria =
     cuenta: api.cuenta ?? "",
 });
 
-/**
- * Mapea datos de creación de dominio a API (camelCase → snake_case).
- */
 export const nuevaCuentaBancariaAApi = (c: NuevaCuentaBancaria): NuevaCuentaBancariaApi => ({
-    codigo_cuenta: c.codigoCuenta,
-    pais_id: c.paisId,
-    empresa_id: c.empresaId || undefined,
+    iban: normalizarIban(c.iban),
     descripcion: c.descripcion || undefined,
-    iban: c.iban || undefined,
-    bic: c.bic || undefined,
-    entidad: c.entidad || undefined,
-    agencia: c.agencia || undefined,
-    digito_control: c.digitoControl || undefined,
-    cuenta: c.cuenta || undefined,
 });
 
 const cambiosCuentaBancariaAApi = (c: CambiosCuentaBancaria): CambiosCuentaBancariaApi => {

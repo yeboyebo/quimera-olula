@@ -1,6 +1,7 @@
 import UrlsCrmClass from "@olula/ctx/crm/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { normalizarIban } from "@olula/lib/iban.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import UrlsVentasClass from "../comun/urls.ts";
 import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaBanco, NuevaDireccion, NuevoCrmContacto, PatchCliente, PostCliente } from "./diseño.ts";
@@ -8,14 +9,11 @@ import { Cliente, CrmContacto, CuentaBanco, DirCliente, GetCliente, NuevaCuentaB
 const UrlsVentas = new UrlsVentasClass();
 const UrlsCrm = new UrlsCrmClass();
 
-// TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
 type ClienteApi = Cliente & {
-  grupo_iva_negocio_id: string;
   fecha_baja: string | null;
 };
 const clienteFromAPI = (c: ClienteApi): Cliente => ({
   ...c,
-  regimen_iva: c.grupo_iva_negocio_id,
   fecha_baja: c.fecha_baja ? new Date(Date.parse(c.fecha_baja)) : null,
 });
 
@@ -68,7 +66,7 @@ const dirClienteToAPI = (d: DirCliente): DireccionAPI => (
 const CuentaBancoToAPI = (c: NuevaCuentaBanco): CuentaBancoAPIPatch => ({
   descripcion: c.descripcion,
   cuenta: {
-    iban: c.iban,
+    iban: normalizarIban(c.iban),
   },
 });
 
@@ -187,7 +185,7 @@ export const postCuentaBanco = async (clienteId: string, cuenta: NuevaCuentaBanc
 export const patchCuentaBanco = async (clienteId: string, cuenta: CuentaBanco): Promise<void> => {
   const payload = {
     cuenta: {
-      iban: cuenta.iban,
+      iban: normalizarIban(cuenta.iban),
     },
   };
   await RestAPI.patch(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_banco/${cuenta.id}`, payload, "Error al actualizar cuenta bancaria");
@@ -212,9 +210,15 @@ export const asignarCuentaRemesa = async (clienteId: string, cuentaId: string): 
 export type CuentaBancoAPI = {
   id: string;
   cuenta: {
-    descripcion: string;
-    iban: string;
-    bic: string;
+    descripcion: string | null;
+    iban: string | null;
+    bic: string | null;
+    codigo_cuenta: string | null;
+    pais_id: string | null;
+    entidad: string | null;
+    agencia: string | null;
+    digito_control: string | null;
+    cuenta: string | null;
   };
 };
 
@@ -228,9 +232,15 @@ export type CuentaBancoAPIPatch = {
 
 export const cuentaBancoFromAPI = (c: CuentaBancoAPI): CuentaBanco => ({
   id: c.id,
-  descripcion: c.cuenta.descripcion,
-  iban: c.cuenta.iban,
-  bic: c.cuenta.bic,
+  descripcion: c.cuenta.descripcion ?? "",
+  iban: c.cuenta.iban ?? "",
+  bic: c.cuenta.bic ?? "",
+  codigo_cuenta: c.cuenta.codigo_cuenta ?? "",
+  pais_id: c.cuenta.pais_id ?? "",
+  entidad: c.cuenta.entidad ?? "",
+  agencia: c.cuenta.agencia ?? "",
+  digito_control: c.cuenta.digito_control ?? "",
+  cuenta: c.cuenta.cuenta ?? "",
 });
 
 export const getCrmContactosCliente = async (clienteId: string): Promise<CrmContacto[]> =>

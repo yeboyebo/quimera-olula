@@ -47,10 +47,7 @@ export const CrearCuentaBancaria = ({
             <div className="CrearCuentaBancaria">
                 <quimera-formulario>
                     <QInput label="Descripción" {...uiProps("descripcion")} ref={focus} />
-                    <QInput label="Código de cuenta" {...uiProps("codigoCuenta")} />
-                    <QInput label="País" {...uiProps("paisId")} />
                     <QInput label="IBAN" {...uiProps("iban")} />
-                    <QInput label="BIC / SWIFT" {...uiProps("bic")} />
                 </quimera-formulario>
 
                 <div className="botones maestro-botones">

@@ -124,7 +124,7 @@ const FormAltaPresupuesto = ({
     <>
       <div className="modo-cliente">
         <QBoton onClick={onToggleModoCliente} variante="texto" tipo="button">
-          {modoNoRegistrado ? "Cliente no registrado" : "Cliente registrado"}
+          {modoNoRegistrado ? "Cliente registrado" : "Cliente no registrado"}
         </QBoton>
       </div>
       <div className="CrearPresupuesto">
