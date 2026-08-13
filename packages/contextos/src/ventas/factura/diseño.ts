@@ -1,4 +1,4 @@
-import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
@@ -6,9 +6,19 @@ export interface Factura extends Venta {
     cliente: ClienteVenta;
     editable?: boolean;
     lineas?: LineaFactura[];
+    hora?: string;
+    por_comision_agente?: number | null;
+    almacen_id?: string;
+    nombre_almacen?: string;
+    automatica?: boolean;
+    servicios?: boolean;
+    rectificativa_id?: string | null;
 }
 export interface LineaFactura extends LineaVenta {
     otro_campo?: string;
+    tipo_irpf?: number;
+    tipo_recargo?: number;
+    por_comision?: number | null;
 }
 
 export type NuevaFactura = {
@@ -55,6 +65,17 @@ export type PatchArticuloLinea = (id: string, lineaId: string, referencia: strin
 export type PatchCantidadLinea = (id: string, linea: LineaFactura, cantidad: number) => Promise<void>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export interface ReciboFactura extends Entidad {
+    id: string;
+    codigo: string;
+    fecha_emision: string;
+    fecha_vencimiento: string;
+    estado: string;
+    importe: number;
+}
+
+export type GetRecibosFactura = (facturaId: string) => Promise<ReciboFactura[]>;
 
 
 export type EstadoFactura = (

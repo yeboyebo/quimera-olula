@@ -12,6 +12,7 @@ export interface Venta extends Entidad {
     neto: number;
     total_iva: number;
     total_irpf: number;
+    total_recargo?: number;
     total_divisa_empresa: number;
     dtoPorcentual: number;
     netoSinDto: number;

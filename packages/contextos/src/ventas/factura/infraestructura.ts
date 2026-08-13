@@ -3,7 +3,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
+import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -13,6 +13,7 @@ interface FacturaAPI {
   id: string;
   codigo: string;
   fecha: string;
+  hora: string;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;
@@ -20,17 +21,24 @@ interface FacturaAPI {
   direccion: Direccion;
   agente_id: string;
   nombre_agente: string;
+  por_comision_agente: number | null;
   divisa_id: string;
   tasa_conversion: number;
   total: number;
   neto: number;
   total_iva: number;
   total_irpf: number;
+  total_recargo: number;
   total_divisa_empresa: number;
   por_descuento: number;
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
+  almacen_id: string;
+  nombre_almacen: string;
+  automatica: boolean;
+  servicios: boolean;
+  rectificativa_id: string | null;
   grupo_iva_negocio_id: string;
   observaciones: string;
   editable?: boolean;
@@ -150,7 +158,10 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
+      dto_lineal: linea.dto_lineal,
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
+      tipo_irpf: linea.tipo_irpf,
+      comision: linea.por_comision,
     },
   };
   await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de factura");
@@ -183,11 +194,13 @@ export const patchFactura = async (id: string, factura: Factura) => {
         tasa_conversion: factura.tasa_conversion,
       },
       fecha: factura.fecha,
+      hora: factura.hora,
       cliente_id: factura.cliente.cliente_id,
       nombre_cliente: factura.cliente.nombre_cliente,
       id_fiscal: factura.cliente.id_fiscal,
       direccion_id: factura.cliente.direccion_id,
       forma_pago_id: factura.forma_pago_id,
+      almacen_id: factura.almacen_id,
       grupo_iva_negocio_id: factura.grupo_iva_negocio_id,
       observaciones: factura.observaciones,
     },
@@ -208,4 +221,29 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
       por_descuento: dto_porcentual,
     }
   }, "Error al cambiar descuento de la factura");
+};
+
+interface ReciboFacturaAPI {
+  id: string;
+  factura_id: string;
+  codigo: string;
+  fecha_emision: string;
+  fecha_vencimiento: string;
+  estado: string;
+  importe: number;
+  cliente_id: string;
+  id_fiscal: string;
+}
+
+export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
+  return RestAPI.get<{ datos: ReciboFacturaAPI[] }>(
+    `/tesoreria/recibo_venta/por_factura/${facturaId}`
+  ).then((respuesta) => respuesta.datos.map((r): ReciboFactura => ({
+    id: r.id,
+    codigo: r.codigo,
+    fecha_emision: r.fecha_emision,
+    fecha_vencimiento: r.fecha_vencimiento,
+    estado: r.estado,
+    importe: r.importe,
+  })));
 };
