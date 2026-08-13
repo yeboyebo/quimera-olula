@@ -35,8 +35,6 @@ export type PostPedido = (presupuesto: NuevoPedido) => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
 
-export type PatchPedido = (id: string, presupuesto: Pedido) => Promise<void>;
-
 export type PatchClientePedido = (id: string, cambio: CambioClientePedido) => Promise<void>;
 
 export type PatchLinea = (id: string, linea: LineaPedido) => Promise<void>;

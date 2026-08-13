@@ -75,8 +75,6 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
 
-export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
-
 
 export type EstadoMaestroPresupuesto = (
   'INICIAL' | 'CREANDO_PRESUPUESTO'

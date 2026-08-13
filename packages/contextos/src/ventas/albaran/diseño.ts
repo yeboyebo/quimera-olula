@@ -37,8 +37,6 @@ export type PostAlbaran = (albaran: NuevoAlbaran) => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
 
-export type PatchAlbaran = (id: string, albaran: Albaran) => Promise<void>;
-
 export type PatchClienteAlbaran = (id: string, cambio: CambioClienteAlbaran) => Promise<void>;
 
 export type PatchLinea = (id: string, linea: LineaAlbaran) => Promise<void>;

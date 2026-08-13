@@ -53,8 +53,6 @@ export type PostFactura = (factura: NuevaFactura) => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
 
-export type PatchFactura = (id: string, factura: Factura) => Promise<void>;
-
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
 
 export type PatchLinea = (id: string, linea: LineaFactura) => Promise<void>;

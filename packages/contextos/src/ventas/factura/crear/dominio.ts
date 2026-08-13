@@ -62,11 +62,4 @@ export const crearFacturaNoRegistrada = async (alta: ModeloAltaFacturaNoRegistra
     });
 }
 
-export const metaNuevaFactura: MetaModelo<NuevaFactura> = {
-    campos: {
-        cliente_id: { requerido: true },
-        empresa_id: { requerido: true },
-    }
-};
-
 export const nuevaFacturaVacia: NuevaFactura = nuevaVentaVacia;

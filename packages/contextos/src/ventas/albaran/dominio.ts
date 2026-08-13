@@ -1,10 +1,7 @@
-import { empresaActual } from "#/valores/empresaActual.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
-import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
+import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import {
-    cambioClienteVentaVacio,
     clienteVentaVacio,
-    metaCambioClienteVenta,
     metaLineaVenta,
     metaNuevaLineaVenta,
     metaNuevaVenta,
@@ -74,13 +71,9 @@ export const tituloAlbaran = (albaran: Albaran): string => {
 
 export const nuevoAlbaranVacio: NuevoAlbaran = nuevaVentaVacia;
 
-export const cambioClienteAlbaranVacio: CambioClienteAlbaran = cambioClienteVentaVacio;
-
 export const nuevaLineaAlbaranVacia: NuevaLineaAlbaran = nuevaLineaVentaVacia;
 
 export const metaNuevoAlbaran: MetaModelo<NuevoAlbaran> = metaNuevaVenta;
-
-export const metaCambioClienteAlbaran: MetaModelo<CambioClienteAlbaran> = metaCambioClienteVenta;
 
 export const metaAlbaran: MetaModelo<Albaran> = {
     campos: {
@@ -101,7 +94,6 @@ export const metaAlbaran: MetaModelo<Albaran> = {
 };
 
 export const editable = modeloEsEditable<Albaran>(metaAlbaran);
-export const albaranValido = modeloEsValido<Albaran>(metaAlbaran);
 
 export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
 
@@ -110,12 +102,6 @@ export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = metaNuevaLin
 const albaranVacioObjeto: Albaran = albaranVacio();
 
 export const albaranVacioContexto = (): Albaran => ({ ...albaranVacioObjeto });
-
-export const nuevoClienteRegistradoVacio: NuevoAlbaran = {
-    cliente_id: "",
-    direccion_id: "",
-    empresa_id: empresaActual(),
-} as NuevoAlbaran;
 
 export const cambioClienteVacio = (): CambioClienteAlbaran => ({
     cliente_id: "",

@@ -1,4 +1,4 @@
-import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
+import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import { metaVenta } from "../../venta/dominio.ts";
 import { ContextoFactura, EstadoFactura, Factura, LineaFactura } from "../diseño.ts";
 
@@ -22,5 +22,4 @@ export const metaFactura: MetaModelo<Factura> = {
 };
 
 export const editable = modeloEsEditable<Factura>(metaFactura);
-export const facturaValida = modeloEsValido<Factura>(metaFactura);
 

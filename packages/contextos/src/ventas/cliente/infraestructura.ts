@@ -173,11 +173,6 @@ export const getCuentasBanco = async (clienteId: string): Promise<CuentaBanco[]>
     respuesta.datos.map(cuentaBancoFromAPI)
   );
 
-export const getCuentaBanco = async (clienteId: string, cuentaId: string): Promise<CuentaBanco> =>
-  await RestAPI.get<{ datos: CuentaBancoAPI }>(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_banco/${cuentaId}`).then((respuesta) =>
-    cuentaBancoFromAPI(respuesta.datos)
-  );
-
 export const postCuentaBanco = async (clienteId: string, cuenta: NuevaCuentaBanco): Promise<string> => {
   return await RestAPI.post(`${UrlsVentas.CLIENTE}/${clienteId}/cuenta_banco`, CuentaBancoToAPI(cuenta)).then((respuesta) => respuesta.id);
 };
@@ -253,9 +248,6 @@ export const postCrmContacto = async (contacto: NuevoCrmContacto): Promise<strin
   };
   return await RestAPI.post(`${UrlsCrm.CONTACTO}`, payload, "Error al crear contacto").then((respuesta) => respuesta.id);
 };
-
-export const getCrmContacto = async (contactoId: string): Promise<CrmContacto> =>
-  await RestAPI.get<{ datos: CrmContacto }>(`${UrlsCrm.CONTACTO}/${contactoId}`).then((respuesta) => respuesta.datos);
 
 export const getCrmContactos = async (filtro: Filtro, orden: Orden): Promise<CrmContacto[]> => {
   const q = criteriaQuery(filtro, orden);

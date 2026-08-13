@@ -1,12 +1,11 @@
-import { cambioClienteVentaVacio, clienteVentaVacio, metaCambioClienteVenta, metaLineaVenta, metaNuevaLineaVenta, metaVenta, nuevaLineaVentaVacia, ventaVacia } from "#/ventas/venta/dominio.ts";
+import { cambioClienteVentaVacio, clienteVentaVacio, metaVenta, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaCampo, MetaModelo, modeloEsEditable, modeloEsValido, publicar } from "@olula/lib/dominio.ts";
+import { ejecutarListaProcesos, MetaCampo, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
 import {
     CambioClientePedido,
     LineaPedido,
-    NuevaLineaPedido,
     Pedido
 } from "../diseño.ts";
 import {
@@ -36,12 +35,6 @@ export const pedidoVacio = (): Pedido => ({
 
 
 export const cambioClientePedidoVacio: CambioClientePedido = cambioClienteVentaVacio;
-
-export const nuevaLineaPedidoVacia: NuevaLineaPedido = nuevaLineaVentaVacia;
-
-
-
-export const metaCambioClientePedido: MetaModelo<CambioClientePedido> = metaCambioClienteVenta;
 
 const camposPedido: Record<string, MetaCampo<Pedido>> = {
     ...metaVenta.campos,
@@ -74,11 +67,6 @@ export const getMetaPedido = <T extends Pedido>() => <MetaModelo<T>>({
 });
 
 export const editable = modeloEsEditable<Pedido>(metaPedido);
-export const pedidoValido = modeloEsValido<Pedido>(metaPedido);
-
-export const metaLineaPedido: MetaModelo<LineaPedido> = metaLineaVenta;
-
-export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = metaNuevaLineaVenta;
 
 export const pedidoVacioObjeto: Pedido = pedidoVacio();
 

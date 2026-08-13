@@ -57,20 +57,6 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   lineas: [],
 });
 
-export const presupuestoToAPI = (l: Presupuesto): PresupuestoAPI => {
-  return {
-    ...l,
-    fecha: l.fecha.toISOString(),
-    fecha_salida: l.fecha_salida.toISOString(),
-    por_descuento: l.dtoPorcentual,
-    neto_sin_dto: l.netoSinDto,
-    cliente_id: l.cliente.cliente_id ?? "",
-    nombre_cliente: l.cliente.nombre_cliente,
-    id_fiscal: l.cliente.id_fiscal,
-    direccion_id: l.cliente.direccion_id ?? "",
-    direccion: l.cliente.direccion,
-  };
-};
 export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => l;
 
 export const getPresupuesto: GetPresupuesto = async (id) =>

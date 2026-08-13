@@ -6,7 +6,6 @@ import { Cliente } from "../diseño.ts";
 import {
     asignarCuentaRemesa,
     darDeAltaCliente,
-    darDeBajaCliente,
     getCliente,
     patchCliente
 } from "../infraestructura.ts";
@@ -160,16 +159,6 @@ export const borrarCliente: ProcesarCliente = async (contexto, payload) => {
 
 export const darDeAltaClienteProceso: ProcesarCliente = async (contexto) => {
     await darDeAltaCliente(contexto.cliente.id);
-
-    return pipeCliente(contexto, [
-        cargarCliente(contexto.cliente.id),
-        abiertoContexto,
-    ]);
-}
-
-export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload) => {
-    const fechaBaja = payload as string;
-    await darDeBajaCliente(contexto.cliente.id, new Date(fechaBaja));
 
     return pipeCliente(contexto, [
         cargarCliente(contexto.cliente.id),

@@ -30,17 +30,6 @@ export const clienteRegistradoVacio: ModeloClienteVentaRegistrado = {
     nombre: "",
 }
 
-export const clienteRegistradoDesdeVenta = (venta?: VentaTpv): ModeloClienteVentaRegistrado => {
-
-    return venta?.cliente?.id
-        ? {
-            idCliente: venta.cliente.id,
-            idDireccion: venta.cliente.idDireccion ?? "",
-            nombre: venta.cliente.nombre,
-        }
-        : clienteRegistradoVacio;
-}
-
 export const clienteNoRegistradoDesdeVenta = (venta?: VentaTpv): ModeloClienteVentaNoRegistrado => {
 
     return venta?.cliente && !venta.cliente.id
