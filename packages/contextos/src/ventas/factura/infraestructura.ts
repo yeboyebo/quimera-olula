@@ -3,7 +3,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea } from "./diseño.ts";
+import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -13,6 +13,7 @@ interface FacturaAPI {
   id: string;
   codigo: string;
   fecha: string;
+  hora: string;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;
@@ -32,6 +33,11 @@ interface FacturaAPI {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
+  almacen_id: string;
+  nombre_almacen: string;
+  automatica: boolean;
+  servicios: boolean;
+  rectificativa_id: string | null;
   grupo_iva_negocio_id: string;
   por_comision: number;
   observaciones: string;
@@ -190,11 +196,13 @@ export const patchFactura = async (id: string, factura: Factura) => {
         tasa_conversion: factura.tasa_conversion,
       },
       fecha: factura.fecha,
+      hora: factura.hora,
       cliente_id: factura.cliente.cliente_id,
       nombre_cliente: factura.cliente.nombre_cliente,
       id_fiscal: factura.cliente.id_fiscal,
       direccion_id: factura.cliente.direccion_id,
       forma_pago_id: factura.forma_pago_id,
+      almacen_id: factura.almacen_id,
       regimen_iva: factura.regimen_iva,
       por_comision: factura.por_comision,
       observaciones: factura.observaciones,
@@ -236,4 +244,29 @@ export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {
       por_comision: cambio.por_comision,
     }
   }, "Error al cambiar agente de la factura");
+};
+
+interface ReciboFacturaAPI {
+  id: string;
+  factura_id: string;
+  codigo: string;
+  fecha_emision: string;
+  fecha_vencimiento: string;
+  estado: string;
+  importe: number;
+  cliente_id: string;
+  id_fiscal: string;
+}
+
+export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
+  return RestAPI.get<{ datos: ReciboFacturaAPI[] }>(
+    `/tesoreria/recibo_venta/por_factura/${facturaId}`
+  ).then((respuesta) => respuesta.datos.map((r): ReciboFactura => ({
+    id: r.id,
+    codigo: r.codigo,
+    fecha_emision: r.fecha_emision,
+    fecha_vencimiento: r.fecha_vencimiento,
+    estado: r.estado,
+    importe: r.importe,
+  })));
 };

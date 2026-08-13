@@ -3,6 +3,10 @@
         grid-column: 1 / span 3;
     }
 
+    quimera-date[nombre="hora"] {
+        grid-column: 4 / span 3;
+    }
+
     quimera-select[nombre="divisa_id"] {
         grid-column: 1 / span 7;
         min-width: 0;
@@ -61,16 +65,28 @@
     }
 
     quimera-select[nombre="forma_pago_id"] {
-        grid-column: 1 / span 6;
+        grid-column: 1 / span 4;
     }
 
     quimera-select[nombre="regimen_iva"] {
-        grid-column: span 6;
+        grid-column: span 4;
+    }
+
+    quimera-select[nombre="almacen_id"] {
+        grid-column: span 4;
     }
 }
 
 @media (max-width: 768px) {
     .Factura .TabDatos quimera-formulario {
+        quimera-date[nombre="fecha"] {
+            grid-column: 1 / span 1 !important;
+        }
+
+        quimera-date[nombre="hora"] {
+            grid-column: 2 / span 1 !important;
+        }
+
         quimera-select[nombre="divisa_id"] {
             grid-column: 1 / span 1 !important;
         }
@@ -93,6 +109,10 @@
 
         quimera-select[nombre="regimen_iva"] {
             grid-column: 2 / span 1 !important;
+        }
+
+        quimera-select[nombre="almacen_id"] {
+            grid-column: 1 / span 1 !important;
         }
 
         .TabDatos-accion {

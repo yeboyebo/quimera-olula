@@ -24,6 +24,7 @@ import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
+import { TabRecibos } from "./TabRecibos.tsx";
 
 export const DetalleFactura = ({
   id,
@@ -112,6 +113,10 @@ export const DetalleFactura = ({
 
         <Tab label="Observaciones">
           <TabObservaciones factura={factura} />
+        </Tab>
+
+        <Tab label="Recibos">
+          <TabRecibos facturaId={ctx.factura.id} />
         </Tab>
       </Tabs>
 

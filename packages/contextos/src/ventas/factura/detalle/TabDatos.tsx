@@ -1,3 +1,4 @@
+import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
@@ -30,6 +31,7 @@ export const TabDatos = ({
     <div className="TabDatos">
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
+        <QDate label="Hora" {...uiProps("hora")} tipo="hora" />
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
         {mostrarBotonesCambio && (
@@ -54,6 +56,7 @@ export const TabDatos = ({
         )}
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <RegimenIva {...uiProps("regimen_iva")} />
+        <Almacen {...uiProps("almacen_id", "nombre_almacen")} />
       </quimera-formulario>
     </div>
   );
