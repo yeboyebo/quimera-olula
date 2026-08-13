@@ -1,4 +1,4 @@
-import { metaTablaLineaVenta } from "#/ventas/venta/vistas/metatabla_linea_venta.tsx";
+import { metaTablaLineaVentaResumida } from "#/ventas/venta/vistas/metatabla_linea_venta.tsx";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
@@ -35,7 +35,7 @@ export const LineasLista = ({
 
   return (
     <ListadoSemiControlado
-      metaTabla={metaTablaLineaVenta<Linea>({
+      metaTabla={metaTablaLineaVentaResumida<Linea>({
         divisa,
         renderCantidad:
           cantidadEditable && onCambioCantidad

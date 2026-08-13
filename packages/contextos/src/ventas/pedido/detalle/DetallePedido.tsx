@@ -1,6 +1,9 @@
 import { CambiarAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
+import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
+import "#/ventas/comun/estilos/campos.css";
+import "#/ventas/comun/estilos/detalle_documento.css";
 import { tituloDocumentoVenta } from "#/ventas/venta/dominio.ts";
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -119,7 +122,10 @@ export const DetallePedidoBase = ({
       entidad={ctx.pedido}
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
-      <QuimeraAcciones acciones={acciones} vertical />
+      <div className="fila-acciones-documento">
+        <IndicadorGuardado modificado={pedido.modificado} />
+        <QuimeraAcciones acciones={acciones} vertical />
+      </div>
 
       <Tabs>
         <Tab label="Cliente">

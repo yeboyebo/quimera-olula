@@ -20,6 +20,7 @@ export type QAutocompletarProps = Omit<
   longitudMinima?: number;
   descripcion?: string;
   soloTexto?: boolean;
+  /** Ruta de la ficha. Con `{id}` se sustituye por el valor; sin él se añade como `/valor`. */
   enlace?: string;
   obtenerOpciones: (texto: string, id?: string) => Promise<Opcion[]>;
   onChange?: (
@@ -226,7 +227,11 @@ export const QAutocompletar = ({
         {enlace && valor && !soloTexto && (
           <a
             className="autocompletar-enlace"
-            href={`${enlace.replace(/\/$/, "")}/${valor}`}
+            href={
+              enlace.includes("{id}")
+                ? enlace.replace("{id}", encodeURIComponent(valor))
+                : `${enlace.replace(/\/$/, "")}/${valor}`
+            }
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Abrir ${props.label ?? "ficha"}`}

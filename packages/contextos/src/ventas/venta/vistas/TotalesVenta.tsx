@@ -6,7 +6,6 @@ import { Venta } from "../diseño.ts";
 import {
   DIVISA_EMPRESA,
   enDivisaExtranjera,
-  formatearTasaConversion,
   mostrarImporte,
 } from "../dominio.ts";
 import "./TotalesVenta.css";
@@ -74,9 +73,7 @@ export const TotalesVenta = <T extends Venta>({
       </div>
       {enDivisaExtranjera(venta) && (
         <div className="totales-venta-item totales-venta-item--divisa-empresa">
-          <label>{`Total en ${DIVISA_EMPRESA} (${formatearTasaConversion(
-            venta.tasa_conversion
-          )}):`}</label>
+          <label>{`Total en ${DIVISA_EMPRESA}:`}</label>
           <span>
             {formatearMoneda(venta.total_divisa_empresa, DIVISA_EMPRESA)}
           </span>

@@ -14,6 +14,9 @@ import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/C
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
+import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
+import "../../comun/estilos/campos.css";
+import "../../comun/estilos/detalle_documento.css";
 import { tituloDocumentoVenta } from "../../venta/dominio.ts";
 import { facturaVacia } from "../dominio.ts";
 import { getReportFactura } from "../infraestructura.ts";
@@ -93,14 +96,17 @@ export const DetalleFactura = ({
         </div>
       )}
 
-      <QuimeraAcciones
-        acciones={[
-          {
-            texto: "Imprimir",
-            onClick: imprimir,
-          },
-        ]}
-      />
+      <div className="fila-acciones-documento">
+        <IndicadorGuardado modificado={factura.modificado} />
+        <QuimeraAcciones
+          acciones={[
+            {
+              texto: "Imprimir",
+              onClick: imprimir,
+            },
+          ]}
+        />
+      </div>
 
       <Tabs>
         <Tab label="Cliente">

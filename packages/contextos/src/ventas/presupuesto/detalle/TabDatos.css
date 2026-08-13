@@ -1,3 +1,12 @@
+/*
+ * TabDatos.css — posicionado de campos de la pestaña Datos del presupuesto.
+ * Grid de 12 columnas (quimera-formulario). Toda fila suma 12:
+ *   Fila 1: fecha (3) + fecha_salida (3) + almacen_id (6)
+ *   Fila 2: divisa_id (3) + tasa_conversion (2) + icono cambiar divisa (1)
+ *           + agente_id (3) + por_comision (2) + icono cambiar agente (1)
+ *   Fila 3: total en divisa de empresa (12, desde TotalDivisaEmpresa.css)
+ *   Fila 4: forma_pago_id (6) + regimen_iva (6)
+ */
 .Presupuesto .TabDatos {
     quimera-date[nombre="fecha"] {
         grid-column: 1 / span 3;
@@ -7,29 +16,31 @@
         grid-column: span 3;
     }
 
+    quimera-select[nombre="almacen_id"] {
+        grid-column: span 6;
+    }
+
     quimera-select[nombre="divisa_id"] {
-        grid-column: 1 / span 7;
+        grid-column: 1 / span 3;
         min-width: 0;
     }
 
     quimera-input[nombre="tasa_conversion"] {
-        grid-column: 8 / span 3;
+        grid-column: 4 / span 2;
         min-width: 0;
     }
 
-
     quimera-autocompletar[nombre="agente_id"] {
-        grid-column: 1 / span 7;
+        grid-column: 7 / span 3;
         min-width: 0;
     }
 
     quimera-input[nombre="por_comision"] {
-        grid-column: 8 / span 3;
+        grid-column: 10 / span 2;
         min-width: 0;
     }
 
     .TabDatos-accion {
-        grid-column: 11 / span 2;
         display: flex;
         justify-content: flex-end;
         align-items: end;
@@ -37,35 +48,12 @@
         min-width: 0;
     }
 
-    .TabDatos-accion quimera-boton {
-        width: max-content;
+    .TabDatos-accion--divisa {
+        grid-column: 6 / span 1;
     }
 
-    quimera-input[deshabilitado] input,
-    quimera-autocompletar quimera-input[deshabilitado] input {
-        background-color: var(--gris-0);
-        color: var(--color-texto-secundario);
-        border-bottom-color: var(--gris-2);
-        border-radius: var(--redondeo-borde-xs);
-        box-shadow: inset 0 0 0 1px var(--gris-1);
-    }
-
-    quimera-input[deshabilitado] .etiqueta,
-    quimera-autocompletar quimera-input[deshabilitado] .etiqueta,
-    quimera-select[deshabilitado] .etiqueta {
-        color: var(--color-texto-secundario);
-    }
-
-    quimera-select[deshabilitado] select {
-        background-color: var(--gris-0);
-        color: var(--color-texto-secundario);
-        border-bottom-color: var(--gris-2);
-        border-radius: var(--redondeo-borde-xs);
-        box-shadow: inset 0 0 0 1px var(--gris-1);
-    }
-
-    quimera-select[nombre="almacen_id"] {
-        grid-column: 1 / span 12;
+    .TabDatos-accion--agente {
+        grid-column: 12 / span 1;
     }
 
     quimera-select[nombre="forma_pago_id"] {

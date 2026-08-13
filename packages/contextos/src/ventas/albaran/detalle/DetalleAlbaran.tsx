@@ -10,6 +10,9 @@ import { useParams } from "react-router";
 import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
+import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
+import "../../comun/estilos/campos.css";
+import "../../comun/estilos/detalle_documento.css";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
@@ -100,7 +103,10 @@ export const DetalleAlbaran = ({
       entidad={ctx.albaran}
       cerrarDetalle={() => emitir("albaran_deseleccionado", null)}
     >
-      <QuimeraAcciones acciones={acciones} vertical />
+      <div className="fila-acciones-documento">
+        <IndicadorGuardado modificado={albaran.modificado} />
+        <QuimeraAcciones acciones={acciones} vertical />
+      </div>
 
       <Tabs>
         <Tab label="Cliente">

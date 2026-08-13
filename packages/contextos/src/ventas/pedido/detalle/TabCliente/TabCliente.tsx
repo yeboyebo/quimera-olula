@@ -3,7 +3,7 @@ import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Pedido } from "../../diseño.ts";
@@ -47,9 +47,10 @@ export const TabCliente = ({
 
         {clienteEditable && (
           <div className="TabCliente-accion">
-            <QBoton onClick={() => publicar("cambio_cliente_solicitado")}>
-              Cambiar Cliente
-            </QBoton>
+            <BotonCambiar
+              titulo="Cambiar cliente y dirección"
+              onClick={() => publicar("cambio_cliente_solicitado")}
+            />
           </div>
         )}
 

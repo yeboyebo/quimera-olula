@@ -1,7 +1,7 @@
-import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
+import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
-import { MetaTabla, QIcono } from "@olula/componentes/index.js";
+import { MetaTabla } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
@@ -9,12 +9,12 @@ import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { CrearPresupuesto } from "../crear/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "../detalle/DetallePresupuesto.tsx";
+import { EstadoPresupuesto } from "../vistas/EstadoPresupuesto.tsx";
 import {
   metaTablaPresupuesto as metaTablaBase,
   Presupuesto,
 } from "./diseño.ts";
 import "./MaestroConDetallePresupuesto.css";
-import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetallePresupuesto = () => {
@@ -37,25 +37,7 @@ export const MaestroConDetallePresupuesto = () => {
       id: "estado",
       cabecera: "",
       render: (presupuesto: Presupuesto) => (
-        <ColumnaEstadoTabla
-          estados={{
-            aprobado: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-deshabilitado-oscuro)"
-              />
-            ),
-            pendiente: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-exito-oscuro)"
-              />
-            ),
-          }}
-          estadoActual={presupuesto.aprobado ? "aprobado" : "pendiente"}
-        />
+        <EstadoPresupuesto aprobado={presupuesto.aprobado} />
       ),
     },
     ...metaTablaBase,
@@ -76,10 +58,13 @@ export const MaestroConDetallePresupuesto = () => {
                   fecha={presupuesto.fecha}
                   total={presupuesto.total}
                   divisa={presupuesto.divisa_id}
+                  tasaConversion={presupuesto.tasa_conversion}
+                  totalDivisaEmpresa={presupuesto.total_divisa_empresa}
                   estado={presupuesto.aprobado ? "cerrado" : "pendiente"}
                 />
               )}
-              criteria={ctx.presupuestos.criteria}              entidades={ctx.presupuestos.lista}
+              criteria={ctx.presupuestos.criteria}
+              entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}
               seleccionada={ctx.presupuestos.activo}
               renderAcciones={() => (

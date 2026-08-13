@@ -1,4 +1,6 @@
+import { DetalleLineaExpandido } from "#/ventas/comun/componentes/DetalleLineaExpandido.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { MetaTabla as MetaTablaExpandible } from "@olula/componentes/atomos/qtablacontrolada.tsx";
 import { ReactNode } from "react";
 import { LineaVenta } from "../diseño.ts";
 
@@ -87,3 +89,14 @@ export const metaTablaLineaVenta = <L extends LineaVenta>({
     divisa,
   },
 ];
+
+export const metaTablaLineaVentaResumida = <L extends LineaVenta>(
+  opciones: OpcionesMetaTablaLineaVenta<L> = {}
+): MetaTablaExpandible<L> => ({
+  cols: metaTablaLineaVenta(opciones).filter(
+    (columna) => columna.prioridad !== "baja"
+  ),
+  expansion: ({ entidad }) => (
+    <DetalleLineaExpandido linea={entidad} divisa={opciones.divisa} />
+  ),
+});

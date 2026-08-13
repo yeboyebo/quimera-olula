@@ -75,6 +75,8 @@ export const MaestroConDetalleAlbaran = () => {
                   fecha={albaran.fecha}
                   total={albaran.total}
                   divisa={albaran.divisa_id}
+                  tasaConversion={albaran.tasa_conversion}
+                  totalDivisaEmpresa={albaran.total_divisa_empresa}
                   estado={albaran.idfactura ? "cerrado" : "pendiente"}
                   etiqueta={
                     albaran.de_abono ? (

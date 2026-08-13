@@ -1,6 +1,7 @@
 import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
 import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
+import { DIVISA_EMPRESA, enDivisaExtranjera } from "../../venta/dominio.ts";
 import "./TarjetaDocumentoVenta.css";
 
 export type EstadoDocumento = "cerrado" | "pendiente";
@@ -12,6 +13,8 @@ export const TarjetaDocumentoVenta = ({
   total,
   estado,
   divisa = "EUR",
+  tasaConversion,
+  totalDivisaEmpresa,
   etiqueta,
 }: {
   codigo: string;
@@ -20,8 +23,15 @@ export const TarjetaDocumentoVenta = ({
   total: number;
   estado: EstadoDocumento;
   divisa?: string;
+  tasaConversion?: number;
+  totalDivisaEmpresa?: number;
   etiqueta?: ReactNode;
 }) => {
+  const mostrarContravalor =
+    enDivisaExtranjera({ divisa_id: divisa }) &&
+    totalDivisaEmpresa !== undefined &&
+    tasaConversion !== undefined;
+
   return (
     <QTarjetaGenerica
       avatar={
@@ -38,7 +48,18 @@ export const TarjetaDocumentoVenta = ({
         </span>
       }
       abajoIzquierda={fecha ? formatearFechaDate(new Date(fecha)) : ""}
-      abajoDerecha={formatearMoneda(total, divisa)}
+      abajoDerecha={
+        <span className="tarjeta-doc-importes">
+          <span className="tarjeta-doc-total">
+            {formatearMoneda(total, divisa)}
+          </span>
+          {mostrarContravalor && (
+            <span className="tarjeta-doc-contravalor">
+              {formatearMoneda(totalDivisaEmpresa, DIVISA_EMPRESA)}
+            </span>
+          )}
+        </span>
+      }
     />
   );
 };

@@ -2,7 +2,7 @@ import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { useState } from "react";
@@ -46,9 +46,10 @@ export const TabCliente = ({
 
         {clienteEditable && (
           <div className="TabCliente-accion">
-            <QBoton onClick={() => setCambiandoCliente(true)}>
-              Cambiar Cliente
-            </QBoton>
+            <BotonCambiar
+              titulo="Cambiar cliente y dirección"
+              onClick={() => setCambiandoCliente(true)}
+            />
           </div>
         )}
 

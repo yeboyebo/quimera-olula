@@ -1,5 +1,5 @@
 import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
@@ -32,29 +32,29 @@ export const TabDatosBase = ({
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
         <QDate label="Fecha salida" {...uiProps("fecha_salida")} />
+        <Almacen {...uiProps("almacen_id")} />
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
         {mostrarBotonesCambio && (
-          <div className="TabDatos-accion">
-            <QBoton
+          <div className="TabDatos-accion TabDatos-accion--divisa">
+            <BotonCambiar
+              titulo="Cambiar divisa y tasa de conversión"
               onClick={() => publicar("cambio_divisa_solicitado")}
               deshabilitado={!puedeCambiarDivisa(modelo)}
-            >
-              Cambiar Divisa
-            </QBoton>
+            />
           </div>
         )}
-        <TotalDivisaEmpresa venta={modelo} />
         <Agente {...uiProps("agente_id", "nombre_agente")} />
         <QInput label="% Comisión" {...uiProps("por_comision")} />
         {mostrarBotonesCambio && (
-          <div className="TabDatos-accion">
-            <QBoton onClick={() => publicar("cambio_agente_solicitado")}>
-              Cambiar Agente
-            </QBoton>
+          <div className="TabDatos-accion TabDatos-accion--agente">
+            <BotonCambiar
+              titulo="Cambiar agente y % de comisión"
+              onClick={() => publicar("cambio_agente_solicitado")}
+            />
           </div>
         )}
-        <Almacen {...uiProps("almacen_id")} />
+        <TotalDivisaEmpresa venta={modelo} />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
         <RegimenIva {...uiProps("regimen_iva")} />
       </quimera-formulario>
