@@ -4,6 +4,12 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  getMetaFiltroDefecto,
+  MetaFiltro,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -17,12 +23,38 @@ import {
 import "./MaestroConDetallePresupuesto.css";
 import { getMaquina } from "./maquina.ts";
 
+const SIN_APROBAR = "true";
+const APROBADO = "false";
+
+const filtroSinAprobar: ClausulaFiltro[] = [["editable", "=", SIN_APROBAR]];
+
+const campoFiltroAprobado: MetaFiltro = {
+  editable: {
+    id: "editable",
+    label: "Estado",
+    tipo: "multiseleccion",
+    opciones: [
+      { valor: SIN_APROBAR, descripcion: "Pendiente" },
+      { valor: APROBADO, descripcion: "Aprobado" },
+    ],
+    filtro: (valor) => {
+      const elegidos = (valor as string[]) ?? [];
+      if (elegidos.length !== 1) return null;
+      return ["editable", "=", elegidos[0]];
+    },
+  },
+};
+
 export const MaestroConDetallePresupuesto = () => {
   const { id, criteria } = getUrlParams();
+  const criteriaInicial =
+    criteria.filtro.length === 0
+      ? { ...criteriaDefecto, filtro: filtroSinAprobar }
+      : criteria;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    presupuestos: listaActivaEntidadesInicial<Presupuesto>(id, criteria),
+    presupuestos: listaActivaEntidadesInicial<Presupuesto>(id, criteriaInicial),
   });
 
   useUrlParams(ctx.presupuestos.activo, ctx.presupuestos.criteria);
@@ -43,6 +75,11 @@ export const MaestroConDetallePresupuesto = () => {
     ...metaTablaBase,
   ] as MetaTabla<Presupuesto>;
 
+  const metaFiltroPresupuesto: MetaFiltro = {
+    ...getMetaFiltroDefecto(metaTablaPresupuesto),
+    ...campoFiltroAprobado,
+  };
+
   return (
     <div className="Presupuesto">
       <MaestroDetalle<Presupuesto>
@@ -51,6 +88,7 @@ export const MaestroConDetallePresupuesto = () => {
             <h2>Presupuestos</h2>
             <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
+              metaFiltro={metaFiltroPresupuesto}
               tarjeta={(presupuesto) => (
                 <TarjetaDocumentoVenta
                   codigo={presupuesto.codigo}

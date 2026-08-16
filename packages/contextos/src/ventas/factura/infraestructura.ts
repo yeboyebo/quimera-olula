@@ -38,15 +38,13 @@ interface FacturaAPI {
   automatica: boolean;
   servicios: boolean;
   rectificativa_id: string | null;
-  grupo_iva_negocio_id: string;
+  regimen_iva: string;
   por_comision: number;
   observaciones: string;
   editable?: boolean;
 }
 export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   ...p,
-  // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
-  regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
@@ -96,7 +94,6 @@ export const postFactura: PostFactura = async (factura) => {
         otros: factura.otros || "",
         cod_postal: factura.cod_postal || "",
         ciudad: factura.ciudad || "",
-        provincia_id: factura.provincia_id || "",
         pais_id: factura.pais_id || "",
         apartado: factura.apartado || "",
         telefono: factura.telefono || ""

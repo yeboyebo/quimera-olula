@@ -1,6 +1,7 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { Pedido } from "../diseño.ts";
+import { estadoServidoPedido } from "./maestro.ts";
 
 export const getMetaTablaPedido = () => metaTablaPedido;
 
@@ -11,11 +12,18 @@ const metaTablaPedido: MetaTabla<Pedido> = [
     render: (pedido: Pedido) => (
       <ColumnaEstadoTabla
         estados={{
-          aprobado: (
+          cerrado: (
             <QIcono
               nombre={"circulo_relleno"}
               tamaño="sm"
               color="var(--color-deshabilitado-oscuro)"
+            />
+          ),
+          parcial: (
+            <QIcono
+              nombre={"circulo_relleno"}
+              tamaño="sm"
+              color="var(--color-advertencia-oscuro)"
             />
           ),
           pendiente: (
@@ -26,7 +34,7 @@ const metaTablaPedido: MetaTabla<Pedido> = [
             />
           ),
         }}
-        estadoActual={pedido.servido == "TOTAL" ? "aprobado" : "pendiente"}
+        estadoActual={estadoServidoPedido(pedido)}
       />
     ),
   },

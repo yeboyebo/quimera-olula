@@ -1,5 +1,4 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
@@ -63,33 +62,23 @@ export const TabCliente = ({
           </div>
         )}
 
-        {!clienteNoRegistrado ? (
-          <DirCliente
-            clienteId={modelo.cliente.cliente_id ?? undefined}
-            nombre="direccion_id"
-            valor={modelo.cliente.direccion_id ?? ""}
-            deshabilitado={!puedeEditarCliente}
-            onChange={() => {}}
-          />
-        ) : (
-          <section className="TabCliente-direccion-resumen">
-            <div className="TabCliente-direccion-resumen-label">Dirección</div>
-            <div className="TabCliente-direccion-resumen-contenido">
-              <span>
-                {direccionSinDefinir ? "Dirección sin definir" : direccionResumen}
-              </span>
-              {puedeEditarCliente && (
-                <QBoton
-                  tamaño="pequeño"
-                  variante="texto"
-                  onClick={() => setEditandoDireccion(true)}
-                >
-                  Editar
-                </QBoton>
-              )}
-            </div>
-          </section>
-        )}
+        <section className="TabCliente-direccion-resumen">
+          <div className="TabCliente-direccion-resumen-label">Dirección</div>
+          <div className="TabCliente-direccion-resumen-contenido">
+            <span>
+              {direccionSinDefinir ? "Dirección sin definir" : direccionResumen}
+            </span>
+            {clienteNoRegistrado && puedeEditarCliente && (
+              <QBoton
+                tamaño="pequeño"
+                variante="texto"
+                onClick={() => setEditandoDireccion(true)}
+              >
+                Editar
+              </QBoton>
+            )}
+          </div>
+        </section>
       </quimera-formulario>
 
       {puedeEditarCliente && estado === "CAMBIANDO_CLIENTE" && (

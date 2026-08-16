@@ -31,7 +31,7 @@ const albaranApi: AlbaranAPI = {
     neto_sin_dto: 100,
     forma_pago_id: "CONT",
     nombre_forma_pago: "Contado",
-    grupo_iva_negocio_id: "GENERAL",
+    regimen_iva: "General",
     por_comision: 0,
     observaciones: "",
     idfactura: null,
@@ -52,5 +52,9 @@ describe("albaranDesdeAPI mapea hora, almacén y abono", () => {
     test("el abono llega como booleano", () => {
         expect(albaran.de_abono).toBe(true);
         expect(albaranDesdeAPI({ ...albaranApi, de_abono: false }).de_abono).toBe(false);
+    });
+
+    test("el régimen de IVA llega tal cual y no se pisa", () => {
+        expect(albaran.regimen_iva).toBe("General");
     });
 });

@@ -1,5 +1,4 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
 import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
@@ -53,16 +52,6 @@ export const TabCliente = ({
               onClick={() => publicar("cambio_cliente_solicitado")}
             />
           </div>
-        )}
-
-        {modelo.cliente.cliente_id !== null && (
-          <DirCliente
-            clienteId={modelo.cliente.cliente_id ?? undefined}
-            nombre="direccion_id"
-            valor={modelo.cliente.direccion_id ?? ""}
-            deshabilitado={!clienteEditable}
-            onChange={() => {}}
-          />
         )}
 
         <QInput

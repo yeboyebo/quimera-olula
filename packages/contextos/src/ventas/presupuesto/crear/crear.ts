@@ -26,7 +26,6 @@ export const nuevoPresupuestoClienteNoRegistradoVacio: NuevoPresupuestoClienteNo
     otros: "",
     cod_postal: "",
     ciudad: "",
-    provincia_id: null,
     provincia: "",
     pais_id: "",
     apartado: "",

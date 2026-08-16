@@ -30,7 +30,7 @@ const pedidoApi: PedidoAPI = {
     neto_sin_dto: 100,
     forma_pago_id: "CONT",
     nombre_forma_pago: "Contado",
-    grupo_iva_negocio_id: "GENERAL",
+    regimen_iva: "General",
     por_comision: 0,
     observaciones: "",
     servido: "No",
@@ -52,6 +52,18 @@ describe("pedidoDesdeAPI mapea los campos de salida y almacén", () => {
         const pedido = pedidoDesdeAPI(pedidoApi);
         expect(pedido.almacen_id).toBe("ALM1");
         expect(pedido.nombre_almacen).toBe("Almacén central");
+    });
+
+    test("el régimen de IVA llega tal cual y no se pisa", () => {
+        const pedido = pedidoDesdeAPI(pedidoApi);
+        expect(pedido.regimen_iva).toBe("General");
+    });
+});
+
+describe("payloadPatchPedido devuelve el régimen que se ve en pantalla", () => {
+    test("el régimen viaja de vuelta sin perderse", () => {
+        const pedido = pedidoDesdeAPI(pedidoApi);
+        expect(payloadPatchPedido(pedido).cambios.regimen_iva).toBe("General");
     });
 });
 

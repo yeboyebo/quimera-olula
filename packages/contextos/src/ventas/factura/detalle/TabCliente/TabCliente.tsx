@@ -1,5 +1,5 @@
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { DirCliente } from "#/ventas/comun/componentes/dirCliente.tsx";
+import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
@@ -53,22 +53,12 @@ export const TabCliente = ({
           </div>
         )}
 
-        {modelo.cliente.cliente_id !== null ? (
-          <DirCliente
-            clienteId={modelo.cliente.cliente_id ?? undefined}
-            nombre="direccion_id"
-            valor={modelo.cliente.direccion_id ?? ""}
-            deshabilitado={!clienteEditable}
-            onChange={() => {}}
-          />
-        ) : (
-          <QInput
-            deshabilitado={true}
-            label="Direccion"
-            nombre="direccion_cliente"
-            valor={`${modelo.cliente.direccion.tipo_via} ${modelo.cliente.direccion.nombre_via}, ${modelo.cliente.direccion.ciudad}`}
-          />
-        )}
+        <QInput
+          deshabilitado={true}
+          label="Dirección"
+          nombre="direccion_cliente"
+          valor={formatearDireccionVenta(modelo.cliente.direccion)}
+        />
       </quimera-formulario>
 
       {clienteEditable && cambiandoCliente && (

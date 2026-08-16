@@ -4,6 +4,7 @@ import {
     formatearTasaConversion,
     metaLineaVenta,
     mostrarImporte,
+    puedeCambiarDivisa,
 } from "#/ventas/venta/dominio.ts";
 import { modeloEsEditable } from "@olula/lib/dominio.ts";
 import { describe, expect, test } from "vitest";
@@ -56,5 +57,19 @@ describe("campos fiscales de la línea de venta", () => {
     test("tipo_recargo e importe_comision son de solo lectura", () => {
         expect(editable(linea, "tipo_recargo")).toBe(false);
         expect(editable(linea, "importe_comision")).toBe(false);
+    });
+});
+
+describe("puedeCambiarDivisa solo deja tocar la divisa con el documento vacío", () => {
+    test("sin ninguna línea se puede cambiar", () => {
+        expect(puedeCambiarDivisa({ lineas: [] })).toBe(true);
+    });
+
+    test("con una línea ya no", () => {
+        expect(puedeCambiarDivisa({ lineas: [{}] })).toBe(false);
+    });
+
+    test("un documento cuyas líneas aún no han llegado cuenta como vacío", () => {
+        expect(puedeCambiarDivisa({})).toBe(true);
     });
 });

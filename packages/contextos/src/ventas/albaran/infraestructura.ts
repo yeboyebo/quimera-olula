@@ -53,7 +53,7 @@ interface AlbaranAPI {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
+  regimen_iva: string;
   por_comision: number;
   observaciones: string;
   idfactura: string | null;
@@ -61,8 +61,6 @@ interface AlbaranAPI {
 
 export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   ...p,
-  // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
-  regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,

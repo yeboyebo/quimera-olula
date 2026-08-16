@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { DIVISA_EMPRESA, enDivisaExtranjera } from "../../venta/dominio.ts";
 import "./TarjetaDocumentoVenta.css";
 
-export type EstadoDocumento = "cerrado" | "pendiente";
+export type EstadoDocumento = "cerrado" | "parcial" | "pendiente";
 
 export const TarjetaDocumentoVenta = ({
   codigo,

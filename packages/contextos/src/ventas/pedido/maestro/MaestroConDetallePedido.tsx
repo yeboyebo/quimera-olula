@@ -2,7 +2,13 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  getMetaFiltroDefecto,
+  MetaFiltro,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -12,17 +18,47 @@ import { Pedido } from "../diseño.ts";
 import { AlbaranarPedidos } from "./AlbaranarPedidos.tsx";
 import "./MaestroConDetallePedido.css";
 import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
-import { agruparPorCliente, todosPuedenAlbaranarse } from "./maestro.ts";
+import { agruparPorCliente, estadoServidoPedido, todosPuedenAlbaranarse } from "./maestro.ts";
 import { getMaquina } from "./maquina.ts";
 import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
 import { ResultadoAlbaranado } from "./ResultadoAlbaranado.tsx";
 
+const SERVIDO_NO = "No";
+const SERVIDO_PARCIAL = "Parcial";
+const SERVIDO_SI = "Sí";
+
+const filtroSinServir: ClausulaFiltro[] = [
+  ["servido", "in", [SERVIDO_NO, SERVIDO_PARCIAL] as unknown as string],
+];
+
+const campoFiltroServido: MetaFiltro = {
+  servido: {
+    id: "servido",
+    label: "Servido",
+    tipo: "multiseleccion",
+    opciones: [
+      { valor: SERVIDO_NO, descripcion: "Pendiente" },
+      { valor: SERVIDO_PARCIAL, descripcion: "Parcial" },
+      { valor: SERVIDO_SI, descripcion: "Servido" },
+    ],
+    filtro: (valor) => {
+      const elegidos = (valor as string[]) ?? [];
+      if (elegidos.length === 0 || elegidos.length === 3) return null;
+      return ["servido", "in", elegidos as unknown as string];
+    },
+  },
+};
+
 export const MaestroConDetallePedido = () => {
   const { id, criteria } = getUrlParams();
+  const criteriaInicial =
+    criteria.filtro.length === 0
+      ? { ...criteriaDefecto, filtro: filtroSinServir }
+      : criteria;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    pedidos: listaActivaEntidadesInicial<Pedido>(id, criteria),
+    pedidos: listaActivaEntidadesInicial<Pedido>(id, criteriaInicial),
     seleccionados: [],
     albaranesCreados: [],
     fallidos: [],
@@ -36,6 +72,10 @@ export const MaestroConDetallePedido = () => {
   }, []);
 
   const metaTablaPedido = getMetaTablaPedido();
+  const metaFiltroPedido: MetaFiltro = {
+    ...getMetaFiltroDefecto(metaTablaPedido),
+    ...campoFiltroServido,
+  };
 
   return (
     <div className="Pedido">
@@ -45,6 +85,7 @@ export const MaestroConDetallePedido = () => {
             <h2>Pedidos</h2>
             <Listado<Pedido>
               metaTabla={metaTablaPedido}
+              metaFiltro={metaFiltroPedido}
               tarjeta={(pedido) => (
                 <TarjetaDocumentoVenta
                   codigo={pedido.codigo}
@@ -54,7 +95,7 @@ export const MaestroConDetallePedido = () => {
                   divisa={pedido.divisa_id}
                   tasaConversion={pedido.tasa_conversion}
                   totalDivisaEmpresa={pedido.total_divisa_empresa}
-                  estado={pedido.servido === "TOTAL" ? "cerrado" : "pendiente"}
+                  estado={estadoServidoPedido(pedido)}
                 />
               )}
               criteria={ctx.pedidos.criteria}

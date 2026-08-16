@@ -19,12 +19,6 @@
             min-width: 0;
         }
 
-
-        quimera-select[nombre="direccion_id"],
-        quimera-input[nombre="direccion_cliente"] {
-            grid-column: 1 / -1;
-        }
-
         .TabCliente-direccion-resumen {
             grid-column: 1 / -1;
             display: grid;
@@ -68,8 +62,7 @@
                 grid-column: 2 / span 1 !important;
             }
 
-            quimera-select[nombre="direccion_id"],
-            quimera-input[nombre="direccion_cliente"] {
+            .TabCliente-direccion-resumen {
                 grid-column: 1 / -1;
                 grid-row: 2;
             }

@@ -54,7 +54,6 @@ export const crearFacturaNoRegistrada = async (alta: ModeloAltaFacturaNoRegistra
         otros: alta.otros || "",
         cod_postal: alta.codPostal,
         ciudad: alta.ciudad || "",
-        provincia_id: alta.idProvincia || "",
         pais_id: alta.idPais || "",
         apartado: alta.apartado || "",
         telefono: alta.telefono || "",

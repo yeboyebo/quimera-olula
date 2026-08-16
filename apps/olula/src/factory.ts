@@ -3,6 +3,7 @@ import { FactoryAuthOlula } from '#/auth/factory.ts';
 import { FactoryCrmOlula } from '#/crm/factory.ts';
 import { FactoryEmpresaOlula } from '#/empresa/factory.ts';
 import { FactoryRrhhOlula } from '#/rrhh/factory.ts';
+import { FactoryTesoreriaOlula } from '#/tesoreria/factory.ts';
 import { FactoryTpvOlula } from '#/tpv/factory.ts';
 import { FactoryVentasOlula } from '#/ventas/factory.ts';
 import { FactoryComponentesOlula } from '@olula/componentes/factory.ts';
@@ -25,6 +26,7 @@ export class FactoryOlula {
     TPV = FactoryTpvOlula;
     Auth = FactoryAuthOlula;
     Rrhh = FactoryRrhhOlula
+    Tesoreria = FactoryTesoreriaOlula;
 }
 
 export default FactoryOlula;

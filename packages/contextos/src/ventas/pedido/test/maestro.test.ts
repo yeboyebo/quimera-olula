@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { Pedido } from "../diseño.ts";
 import { pedidoVacio } from "../detalle/detalle.ts";
-import { agruparPorCliente, puedeAlbaranarse, todosPuedenAlbaranarse } from "../maestro/maestro.ts";
+import { agruparPorCliente, estadoServidoPedido, puedeAlbaranarse, todosPuedenAlbaranarse } from "../maestro/maestro.ts";
 
 const pedido = (
     id: string,
@@ -80,5 +80,30 @@ describe("agruparPorCliente", () => {
 
     test("sin seleccionados no hay grupos", () => {
         expect(agruparPorCliente([], lista)).toEqual([]);
+    });
+});
+
+describe("estadoServidoPedido pinta el punto de la lista", () => {
+    test("un pedido sin servir sale en verde", () => {
+        expect(estadoServidoPedido(pedido("1", "PENDIENTE"))).toBe("pendiente");
+    });
+
+    test("uno servido a medias sale en naranja", () => {
+        expect(estadoServidoPedido(pedido("1", "PARCIAL"))).toBe("parcial");
+    });
+
+    test("uno servido del todo sale apagado", () => {
+        expect(estadoServidoPedido(pedido("1", "TOTAL"))).toBe("cerrado");
+        expect(estadoServidoPedido(pedido("1", "SERVIDO"))).toBe("cerrado");
+    });
+
+    test("el estado se compara sin distinguir mayúsculas", () => {
+        expect(estadoServidoPedido(pedido("1", "parcial"))).toBe("parcial");
+        expect(estadoServidoPedido(pedido("1", "Total"))).toBe("cerrado");
+    });
+
+    test("un estado desconocido no se da por servido", () => {
+        expect(estadoServidoPedido(pedido("1", ""))).toBe("pendiente");
+        expect(estadoServidoPedido({})).toBe("pendiente");
     });
 });

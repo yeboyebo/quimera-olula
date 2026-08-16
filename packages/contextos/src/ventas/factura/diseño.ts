@@ -30,7 +30,6 @@ export type NuevaFactura = {
     otros?: string;
     cod_postal?: string;
     ciudad?: string;
-    provincia_id?: string;
     pais_id?: string;
     apartado?: string;
     telefono?: string;

@@ -17,7 +17,6 @@ export interface ModeloClienteVentaNoRegistrado extends Modelo {
     otros?: string;
     codPostal: string;
     ciudad?: string;
-    idProvincia?: string;
     provincia?: string;
     idPais?: string;
     apartado?: string;
@@ -51,7 +50,6 @@ export const clienteVentaNoRegistradoVacio: ModeloClienteVentaNoRegistrado = {
     otros: "",
     codPostal: "",
     ciudad: "",
-    idProvincia: "",
     provincia: "",
     idPais: "",
     apartado: "",

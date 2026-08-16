@@ -5,7 +5,7 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { useForm } from "@olula/lib/useForm.ts";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Presupuesto } from "../../diseño.ts";
 import "./CambiarDireccionPresupuesto.css";
 
@@ -39,29 +39,47 @@ export const CambiarDireccionPresupuesto = ({
 }) => {
   const { direccion, nombre_cliente, id_fiscal } = presupuesto.modelo.cliente;
 
-  const { modelo, uiProps, valido } = useModelo(metaDireccionPresupuesto, {
-    tipo_via: direccion.tipo_via ?? "",
-    nombre_via: direccion.nombre_via ?? "",
-    numero: direccion.numero ?? "",
-    otros: direccion.otros ?? "",
-    cod_postal: direccion.cod_postal ?? "",
-    apartado: direccion.apartado ?? "",
-    ciudad: direccion.ciudad ?? "",
-    provincia: direccion.provincia ?? "",
-    pais_id: direccion.pais_id ?? "",
-    telefono: direccion.telefono ?? "",
-  });
+  const direccionInicial = useMemo(
+    () => ({
+      tipo_via: direccion.tipo_via ?? "",
+      nombre_via: direccion.nombre_via ?? "",
+      numero: direccion.numero ?? "",
+      otros: direccion.otros ?? "",
+      cod_postal: direccion.cod_postal ?? "",
+      apartado: direccion.apartado ?? "",
+      ciudad: direccion.ciudad ?? "",
+      provincia: direccion.provincia ?? "",
+      pais_id: direccion.pais_id ?? "",
+      telefono: direccion.telefono ?? "",
+    }),
+    [
+      direccion.tipo_via,
+      direccion.nombre_via,
+      direccion.numero,
+      direccion.otros,
+      direccion.cod_postal,
+      direccion.apartado,
+      direccion.ciudad,
+      direccion.provincia,
+      direccion.pais_id,
+      direccion.telefono,
+    ]
+  );
+
+  const { modelo, uiProps, valido } = useModelo(
+    metaDireccionPresupuesto,
+    direccionInicial
+  );
 
   const guardar_ = useCallback(async () => {
     publicar("cliente_cambiado", {
       cliente_id: "",
       nombre_cliente,
       id_fiscal,
-      provincia_id: direccion.provincia_id,
       ...modelo,
     });
     onCerrar();
-  }, [modelo, publicar, onCerrar, nombre_cliente, id_fiscal, direccion.provincia_id]);
+  }, [modelo, publicar, onCerrar, nombre_cliente, id_fiscal]);
 
   const [guardar, cancelar] = useForm(guardar_, onCerrar);
 

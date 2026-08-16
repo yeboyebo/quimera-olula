@@ -1,4 +1,5 @@
 import { pedidoEsEditable } from "#/ventas/albaranarPedido/detalle/dominio.ts";
+import { EstadoDocumento } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { postAlbaranarPedidos } from "#/ventas/albaranarPedido/infraestructura.ts";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
@@ -25,6 +26,13 @@ export const ampliarPedidos: ProcesarPedidos = async (contexto, payload) => {
 
     return Pedidos.ampliar(contexto, resultado);
 }
+
+export const estadoServidoPedido = (pedido: { servido?: string }): EstadoDocumento => {
+    const servido = pedido.servido?.toUpperCase();
+    if (servido === 'TOTAL' || servido === 'SERVIDO') return "cerrado";
+    if (servido === 'PARCIAL') return "parcial";
+    return "pendiente";
+};
 
 export const puedeAlbaranarse = (pedido: Pedido): boolean => pedidoEsEditable(pedido);
 

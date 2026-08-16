@@ -49,7 +49,7 @@ interface PedidoAPI {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
+  regimen_iva: string;
   por_comision: number;
   observaciones: string;
   servido: string;
@@ -78,8 +78,6 @@ export const ventasPedidoInfra: VentasPedidoInfra = {
 
 export const pedidoDesdeAPI = (p: PedidoAPI): Pedido => ({
   ...p,
-  // TODO: la consulta del servidor aún expone el régimen como grupo_iva_negocio_id
-  regimen_iva: p.grupo_iva_negocio_id,
   fecha: new Date(Date.parse(p.fecha)),
   fecha_salida: p.fecha_salida ? new Date(Date.parse(p.fecha_salida)) : null,
   dtoPorcentual: p.por_descuento,
