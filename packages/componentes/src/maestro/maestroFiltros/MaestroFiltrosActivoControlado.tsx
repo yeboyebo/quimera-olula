@@ -116,7 +116,7 @@ export const filtroMesAnyo = (
   return [id, "<>", `${desde}_${hasta}`];
 };
 
-type MetaCampoFiltro = {
+export type MetaCampoFiltro = {
   id: string;
   /** Nombre del campo en la API (snake_case). Si difiere de `id`, permite la hidratación
    * automática desde URL sin necesidad de declarar `fromFiltro`. */

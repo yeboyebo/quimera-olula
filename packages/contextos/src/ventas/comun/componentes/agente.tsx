@@ -8,6 +8,7 @@ interface AgenteProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  opcional?: boolean;
   enlace?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
@@ -21,11 +22,11 @@ export const Agente = ({
   onChange,
   ...props
 }: AgenteProps) => {
-  const obtenerOpciones = async (valor: string) => {
-    if (valor.length < 3) return [];
+  const obtenerOpciones = async (valor: string, id?: string) => {
+    if (!id && valor.length < 3) return [];
 
     const criteria = {
-      filtro: ["nombre", "~", valor],
+      filtro: id ? [["id", "=", id]] : ["nombre", "~", valor],
       orden: ["id"],
     };
 

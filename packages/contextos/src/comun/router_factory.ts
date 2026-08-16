@@ -3,6 +3,5 @@ import { MaestroConDetalleComunicacion } from "./comunicacion/maestro/MaestroCon
 export class RouterFactoryComunOlula {
     static router = {
         "comun/comunicacion": MaestroConDetalleComunicacion,
-        "comun/comunicacion/:id": MaestroConDetalleComunicacion,
     };
 }

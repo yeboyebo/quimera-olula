@@ -4,8 +4,6 @@ import { MaestroConDetalleEmpresa } from "./empresa/maestro/MaestroConDetalleEmp
 export class RouterFactoryEmpresaOlula {
     static router = {
         "empresa/empresa": MaestroConDetalleEmpresa,
-        "empresa/empresa/:id": MaestroConDetalleEmpresa,
         "empresa/cuentas_bancarias": MaestroConDetalleCuentaBancaria,
-        "empresa/cuentas_bancarias/:id": MaestroConDetalleCuentaBancaria,
     }
 }

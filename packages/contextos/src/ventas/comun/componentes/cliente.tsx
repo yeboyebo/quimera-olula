@@ -26,9 +26,9 @@ export const Cliente = ({
 }: ClienteProps) => {
   const clienteRegistrado = !!valor && valor !== "None";
 
-  const obtenerOpciones = async (texto: string) => {
+  const obtenerOpciones = async (texto: string, id?: string) => {
     const criteria = {
-      filtro: ["nombre", "~", texto],
+      filtro: id ? [["id", "=", id]] : ["nombre", "~", texto],
       orden: ["id"],
     };
 

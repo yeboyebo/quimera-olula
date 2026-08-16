@@ -197,7 +197,7 @@ export const cambiarPedido: ProcesarPedido = async (contexto, payload) => {
 
 export const borrarPedido: ProcesarPedido = async (contexto) => {
     return pipePedido(contexto, [
-        publicar('pedido_borrado', (ctx) => ctx.pedido),
+        publicar('pedido_borrado', (ctx) => ctx.pedido.id),
         getContextoVacio
     ]);
 }

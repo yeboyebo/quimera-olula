@@ -19,7 +19,7 @@ export const FacturaGenerada = ({
     const { app } = useContext(FactoryCtx);
     const urlFactura =
         (app.Ventas?.albaran_url_factura as UrlPorId | undefined) ??
-        ((id: string) => `/ventas/factura/${id}`);
+        ((id: string) => `/ventas/factura?id=${id}`);
 
     const cerrar = () => publicar("factura_creada_cerrada");
 

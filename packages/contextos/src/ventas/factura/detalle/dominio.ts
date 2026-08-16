@@ -129,7 +129,7 @@ export const cambiarFactura: ProcesarFactura = async (contexto, payload) => {
 };
 
 export const borrarFactura: ProcesarFactura = async (contexto) => {
-    return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", contexto.factura)]);
+    return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", contexto.factura.id)]);
 };
 
 export const cambiarCliente: ProcesarFactura = async (contexto, payload) => {

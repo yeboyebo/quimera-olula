@@ -155,7 +155,7 @@ export const cambiarAlbaran: ProcesarAlbaran = async (contexto, payload) => {
 
 export const borrarAlbaran: ProcesarAlbaran = async (contexto) => {
     return pipeAlbaran(contexto, [
-        publicar('albaran_borrado', (ctx) => ctx.albaran),
+        publicar('albaran_borrado', (ctx) => ctx.albaran.id),
         getContextoVacio,
     ]);
 }

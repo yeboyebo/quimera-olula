@@ -4,15 +4,19 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
-import {
-  getMetaFiltroDefecto,
-  MetaFiltro,
-} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
+import {
+  filtroAgente,
+  filtroAlmacen,
+  filtroCliente,
+  filtroCodigo,
+  filtroFechaDocumento,
+} from "../../comun/filtros.tsx";
 import { CrearPresupuesto } from "../crear/CrearPresupuesto.tsx";
 import { DetallePresupuesto } from "../detalle/DetallePresupuesto.tsx";
 import { EstadoPresupuesto } from "../vistas/EstadoPresupuesto.tsx";
@@ -76,7 +80,11 @@ export const MaestroConDetallePresupuesto = () => {
   ] as MetaTabla<Presupuesto>;
 
   const metaFiltroPresupuesto: MetaFiltro = {
-    ...getMetaFiltroDefecto(metaTablaPresupuesto),
+    codigo: filtroCodigo,
+    cliente_id: filtroCliente,
+    agente_id: filtroAgente,
+    fecha: filtroFechaDocumento,
+    almacen_id: filtroAlmacen,
     ...campoFiltroAprobado,
   };
 

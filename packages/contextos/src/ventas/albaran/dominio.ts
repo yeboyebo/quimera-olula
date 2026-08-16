@@ -40,6 +40,7 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
     {
         id: "de_abono",
         cabecera: "Abono",
+        tipo: "booleano",
         prioridad: "baja",
         render: (a) => (a.de_abono ? "Sí" : ""),
     },

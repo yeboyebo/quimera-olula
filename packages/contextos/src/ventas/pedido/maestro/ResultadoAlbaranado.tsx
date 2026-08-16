@@ -20,7 +20,7 @@ export const ResultadoAlbaranado = ({
     const { app } = useContext(FactoryCtx);
     const urlAlbaran =
         (app.Ventas?.albaranar_url_albaran as UrlPorId | undefined) ??
-        ((id: string) => `/ventas/albaran/${id}`);
+        ((id: string) => `/ventas/albaran?id=${id}`);
 
     const cerrar = () => publicar("resultado_albaranado_cerrado");
 
