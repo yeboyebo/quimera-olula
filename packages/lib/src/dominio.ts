@@ -837,6 +837,7 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     //     return { and: filtro.and.map(transformarFiltro) };
     // };
     const transformarFiltro = (filtro: Filtro): Filtro => {
+        if (Array.isArray(filtro) && filtro.length === 0) return filtro;
         if (Array.isArray(filtro) && Array.isArray(filtro[0])) return (filtro as ClausulaFiltro[]).map(transformarClausula);
         if (Array.isArray(filtro)) return transformarClausula(filtro as ClausulaFiltro);
         if ('or' in filtro) return { or: filtro.or.map(transformarFiltro) };
