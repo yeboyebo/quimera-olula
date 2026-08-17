@@ -96,7 +96,7 @@ export const patchCliente: PatchCliente = async (id, cliente) =>
       divisa_id: cliente.divisa_id,
       serie_id: cliente.serie_id,
       forma_pago_id: cliente.forma_pago_id,
-      regimen_iva: cliente.regimen_iva,
+      grupo_iva_negocio_id: cliente.grupo_iva_negocio_id,
       nombre_comercial: cliente.nombre_comercial,
       web: cliente.web,
       telefono1: cliente.telefono1,

@@ -19,6 +19,7 @@ import {
     NuevoAlbaran,
 } from "./diseño.ts";
 
+// La columna de estado la añade delante MaestroConDetalleAlbaran.
 export const metaTablaAlbaran: MetaTabla<Albaran> = [
     {
         id: "codigo",
@@ -30,6 +31,24 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
         cabecera: "Cliente",
         prioridad: "alta",
         render: (a) => a.cliente.nombre_cliente,
+    },
+    {
+        id: "fecha",
+        cabecera: "Fecha",
+        tipo: "fecha",
+        prioridad: "alta",
+    },
+    {
+        id: "total",
+        cabecera: "Total",
+        tipo: "moneda",
+        prioridad: "alta",
+        divisa: (albaran) => albaran.divisa_id,
+    },
+    {
+        id: "nombre_agente",
+        cabecera: "Agente",
+        prioridad: "baja",
     },
     {
         id: "almacen_id",
@@ -44,19 +63,12 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
         prioridad: "baja",
         render: (a) => (a.de_abono ? "Sí" : ""),
     },
-    {
-        id: "total",
-        cabecera: "Total",
-        tipo: "moneda",
-        prioridad: "alta",
-        divisa: (albaran) => albaran.divisa_id,
-    },
 ];
 
 export const albaranVacio = (): Albaran => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
-    idfactura: null,
+    facturado: false,
     por_comision: 0,
     hora: '',
     almacen_id: '',
@@ -90,7 +102,7 @@ export const metaAlbaran: MetaModelo<Albaran> = {
         por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
     editable: (albaran: Albaran, _?: string) => {
-        return !albaran.idfactura;
+        return !albaran.facturado;
     },
 };
 

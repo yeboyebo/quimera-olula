@@ -21,7 +21,7 @@ export const payloadPatchPedido = (pedido: Pedido) => {
             id_fiscal: pedido.cliente.id_fiscal,
             direccion_id: pedido.cliente.direccion_id,
             forma_pago_id: pedido.forma_pago_id,
-            regimen_iva: pedido.regimen_iva,
+            grupo_iva_negocio_id: pedido.grupo_iva_negocio_id,
             por_comision: pedido.por_comision,
             observaciones: pedido.observaciones,
         },

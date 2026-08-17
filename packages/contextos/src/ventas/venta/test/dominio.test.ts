@@ -2,12 +2,13 @@ import {
     DIVISA_EMPRESA,
     enDivisaExtranjera,
     formatearTasaConversion,
+    grupoIvaNegocioEnDocumento,
     metaLineaVenta,
     mostrarImporte,
     puedeCambiarDivisa,
 } from "#/ventas/venta/dominio.ts";
 import { modeloEsEditable } from "@olula/lib/dominio.ts";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 
 describe("mostrarImporte solo muestra importes distintos de cero", () => {
     test("un importe distinto de cero se muestra", () => {
@@ -71,5 +72,28 @@ describe("puedeCambiarDivisa solo deja tocar la divisa con el documento vacío",
 
     test("un documento cuyas líneas aún no han llegado cuenta como vacío", () => {
         expect(puedeCambiarDivisa({})).toBe(true);
+    });
+});
+
+describe("grupoIvaNegocioEnDocumento oculta el grupo solo en legacy", () => {
+    const conIvaNav = (valor: string) =>
+        localStorage.setItem("whoami", JSON.stringify({ plugins: { iva_nav: valor } }));
+
+    afterEach(() => localStorage.removeItem("whoami"));
+
+    test("legacy no lleva grupo en el documento", () => {
+        conIvaNav("legacy");
+        expect(grupoIvaNegocioEnDocumento()).toBe(false);
+    });
+
+    test("el resto de variantes sí lo llevan", () => {
+        for (const valor of ["activo", "base", "inactivo", "sin_regimen_en_ventas", "NoConfigurado"]) {
+            conIvaNav(valor);
+            expect(grupoIvaNegocioEnDocumento()).toBe(true);
+        }
+    });
+
+    test("sin whoami se muestra el grupo", () => {
+        expect(grupoIvaNegocioEnDocumento()).toBe(true);
     });
 });

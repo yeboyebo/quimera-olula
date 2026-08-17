@@ -39,7 +39,7 @@ describe("campos nuevos de la cabecera del albarán", () => {
     });
 
     test("un albarán facturado los bloquea todos", () => {
-        const facturado = { ...albaranVacio(), idfactura: "fac-1" };
+        const facturado = { ...albaranVacio(), facturado: true };
         expect(editable(facturado, "hora")).toBe(false);
         expect(editable(facturado, "almacen_id")).toBe(false);
         expect(editable(facturado, "de_abono")).toBe(false);

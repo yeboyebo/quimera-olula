@@ -1,33 +1,35 @@
+import { capitalizarDescripcion } from "#/ventas/comun/dominio.ts";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
-import { obtenerOpcionesSelector } from "@olula/lib/infraestructura.ts";
+import { obtenerDatosSelector } from "@olula/lib/infraestructura.ts";
 import { useEffect, useState } from "react";
 
-interface RegimenIvaProps {
+interface GrupoIvaNegocioProps {
   valor: string;
   label?: string;
   nombre?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
-export const RegimenIva = ({
+export const GrupoIvaNegocio = ({
   valor,
-  label = "Régimen IVA",
-  nombre = "regimen_iva",
+  label = "Grupo IVA negocio",
+  nombre = "grupo_iva_negocio_id",
   onChange,
   ...props
-}: RegimenIvaProps) => {
+}: GrupoIvaNegocioProps) => {
   const [opciones, setOpciones] = useState<
     { valor: string; descripcion: string }[]
   >([]);
 
   useEffect(() => {
     const cargarOpciones = async () => {
-      const opciones = await obtenerOpcionesSelector("regimen_iva")();
-      const opcionesMapeadas = opciones.map((opcion) => ({
-        valor: opcion[0],
-        descripcion: opcion[1],
-      }));
-      setOpciones(opcionesMapeadas);
+      const datos = await obtenerDatosSelector("grupo_iva_negocio")();
+      setOpciones(
+        datos.map((grupo) => ({
+          valor: String(grupo.id ?? ""),
+          descripcion: capitalizarDescripcion(String(grupo.descripcion ?? "")),
+        }))
+      );
     };
 
     cargarOpciones();

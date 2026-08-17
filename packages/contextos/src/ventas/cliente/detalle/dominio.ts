@@ -34,7 +34,7 @@ export const clienteVacio = (): Cliente => ({
     tipo_id_fiscal: '',
     serie_id: '',
     forma_pago_id: '',
-    regimen_iva: '',
+    grupo_iva_negocio_id: '',
     de_baja: false,
     fecha_baja: null,
     grupo_id: '',
@@ -53,7 +53,6 @@ export const clienteVacio = (): Cliente => ({
     debaja: false,
     forma_pago: '',
     divisa: '',
-    grupo_iva_negocio: '',
     serie: '',
     grupo: '',
 })

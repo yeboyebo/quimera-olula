@@ -49,7 +49,7 @@ interface PedidoAPI {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  regimen_iva: string;
+  grupo_iva_negocio_id: string;
   por_comision: number;
   observaciones: string;
   servido: string;

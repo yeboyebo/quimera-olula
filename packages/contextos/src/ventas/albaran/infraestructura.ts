@@ -53,10 +53,10 @@ interface AlbaranAPI {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  regimen_iva: string;
+  grupo_iva_negocio_id: string;
   por_comision: number;
   observaciones: string;
-  idfactura: string | null;
+  facturado: boolean;
 }
 
 export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
@@ -194,7 +194,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
       id_fiscal: albaran.cliente.id_fiscal,
       direccion_id: albaran.cliente.direccion_id,
       forma_pago_id: albaran.forma_pago_id,
-      regimen_iva: albaran.regimen_iva,
+      grupo_iva_negocio_id: albaran.grupo_iva_negocio_id,
       por_comision: albaran.por_comision,
       observaciones: albaran.observaciones,
     },

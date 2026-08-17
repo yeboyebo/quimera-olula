@@ -1,8 +1,9 @@
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
-import { RegimenIva } from "#/ventas/comun/componentes/regimen_iva.tsx";
+import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
 import { Presupuesto } from "#/ventas/presupuesto/diseño.ts";
+import { grupoIvaNegocioEnDocumento } from "#/ventas/venta/dominio.ts";
 import "#/ventas/presupuesto/vistas/TabDatos.css";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -28,7 +29,9 @@ export const TabDatosGua = ({ ctxPresupuesto }: TabDatosProps) => {
         <Agente {...uiProps("agente_id", "nombre_agente")} />
         <div id="espacio_agente" />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
-        <RegimenIva {...uiProps("regimen_iva")} />
+        {grupoIvaNegocioEnDocumento() && (
+          <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
+        )}
       </quimera-formulario>
     </>
   );

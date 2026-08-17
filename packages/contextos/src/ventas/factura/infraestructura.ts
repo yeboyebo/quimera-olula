@@ -38,7 +38,7 @@ interface FacturaAPI {
   automatica: boolean;
   servicios: boolean;
   rectificativa_id: string | null;
-  regimen_iva: string;
+  grupo_iva_negocio_id: string;
   por_comision: number;
   observaciones: string;
   editable?: boolean;
@@ -200,7 +200,7 @@ export const patchFactura = async (id: string, factura: Factura) => {
       direccion_id: factura.cliente.direccion_id,
       forma_pago_id: factura.forma_pago_id,
       almacen_id: factura.almacen_id,
-      regimen_iva: factura.regimen_iva,
+      grupo_iva_negocio_id: factura.grupo_iva_negocio_id,
       por_comision: factura.por_comision,
       observaciones: factura.observaciones,
     },

@@ -50,9 +50,21 @@ const metaTablaPedido: MetaTabla<Pedido> = [
     render: (p) => p.cliente.nombre_cliente,
   },
   {
-    id: "fecha_salida",
-    cabecera: "Fecha salida",
+    id: "fecha",
+    cabecera: "Fecha",
     tipo: "fecha",
+    prioridad: "alta",
+  },
+  {
+    id: "total",
+    cabecera: "Total",
+    tipo: "moneda",
+    prioridad: "alta",
+    divisa: (pedido) => pedido.divisa_id,
+  },
+  {
+    id: "nombre_agente",
+    cabecera: "Agente",
     prioridad: "baja",
   },
   {
@@ -62,10 +74,9 @@ const metaTablaPedido: MetaTabla<Pedido> = [
     render: (p) => p.nombre_almacen || p.almacen_id,
   },
   {
-    id: "total",
-    cabecera: "Total",
-    tipo: "moneda",
-    prioridad: "alta",
-    divisa: (pedido) => pedido.divisa_id,
+    id: "fecha_salida",
+    cabecera: "Fecha salida",
+    tipo: "fecha",
+    prioridad: "baja",
   },
 ];

@@ -25,7 +25,7 @@ type PresupuestoAPI = {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  regimen_iva: string;
+  grupo_iva_negocio_id: string;
   por_comision: number;
   almacen_id: string;
   observaciones: string;
@@ -258,7 +258,7 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       id_fiscal: presupuesto.cliente.id_fiscal,
       direccion_id: presupuesto.cliente.direccion_id,
       forma_pago_id: presupuesto.forma_pago_id,
-      regimen_iva: presupuesto.regimen_iva,
+      grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
       por_comision: presupuesto.por_comision,
       almacen_id: presupuesto.almacen_id,
       observaciones: presupuesto.observaciones,
