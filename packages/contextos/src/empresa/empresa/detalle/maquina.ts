@@ -26,6 +26,8 @@ export const getMaquina: () => Maquina<EstadoDetalleEmpresa, ContextoDetalleEmpr
         ABIERTO: {
             empresa_guardada: [refrescarEmpresa],
 
+            direccion_cambiada: [refrescarEmpresa],
+
             borrado_solicitado: "BORRANDO",
 
             empresa_id_cambiado: [cargarContexto],

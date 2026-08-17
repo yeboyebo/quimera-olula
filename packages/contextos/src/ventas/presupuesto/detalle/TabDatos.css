@@ -65,14 +65,22 @@
     }
 }
 
+/*
+ * Móvil: 2 columnas de campos + 1 columna estrecha para el icono de cambio,
+ * que solo existe cuando se renderiza algún .TabDatos-accion.
+ */
 @media (max-width: 768px) {
+    .Presupuesto .TabDatos quimera-formulario:has(.TabDatos-accion) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 2.5rem;
+    }
+
     .Presupuesto .TabDatos quimera-formulario {
         quimera-date[nombre="fecha"] {
             grid-column: 1 / span 1 !important;
         }
 
         quimera-date[nombre="fecha_salida"] {
-            grid-column: 2 / span 1 !important;
+            grid-column: 2 / -1 !important;
         }
 
         quimera-select[nombre="divisa_id"] {
@@ -88,7 +96,7 @@
         }
 
         quimera-select[nombre="regimen_iva"] {
-            grid-column: 2 / span 1 !important;
+            grid-column: 2 / -1 !important;
         }
 
         quimera-autocompletar[nombre="agente_id"] {
@@ -100,7 +108,7 @@
         }
 
         .TabDatos-accion {
-            grid-column: 1 / -1 !important;
+            grid-column: 3 / span 1 !important;
             justify-content: flex-end;
         }
     }

@@ -1,4 +1,4 @@
-.TabComercial {
+.TabValoresDefecto {
 
     quimera-select[nombre="empresa/divisa_id"] {
         grid-column: span 6;
@@ -8,11 +8,11 @@
         grid-column: span 6;
     }
 
-    quimera-input[nombre="empresa/serie_id"] {
+    quimera-select[nombre="empresa/almacen_id"] {
         grid-column: span 6;
     }
 
-    quimera-input[nombre="empresa/almacen_id"] {
+    quimera-input[nombre="empresa/serie_id"] {
         grid-column: span 6;
     }
 }

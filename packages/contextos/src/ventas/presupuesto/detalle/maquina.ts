@@ -106,6 +106,11 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
             aprobacion_cancelada: "ABIERTO",
         },
 
+        PEDIDO_CREADO: {
+
+            pedido_creado_cerrado: [abiertoOAprobadoContexto],
+        },
+
         CAMBIANDO_DIVISA: {
 
             cambio_divisa_listo: cambiarDivisa,

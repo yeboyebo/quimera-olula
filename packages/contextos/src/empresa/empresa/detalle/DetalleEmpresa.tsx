@@ -14,9 +14,8 @@ import {
 } from "./detalle.js";
 import "./DetalleEmpresa.css";
 import { getMaquina } from "./maquina.js";
-import { TabComercial } from "./TabComercial.js";
-import { TabDireccion } from "./TabDireccion.js";
 import { TabGeneral } from "./TabGeneral.js";
+import { TabValoresDefecto } from "./TabValoresDefecto.js";
 
 export const DetalleEmpresa = ({
     id,
@@ -56,7 +55,7 @@ export const DetalleEmpresa = ({
     const accionesEmpresa = [
         {
             texto: "Borrar",
-            onClick: () => publicar("borrado_solicitado"),
+            onClick: () => emitir("borrado_solicitado"),
             advertencia: true,
         },
     ];
@@ -74,15 +73,16 @@ export const DetalleEmpresa = ({
                 <Tabs children={[
                     <Tab label="General"
                         key="tab-general"
-                        children={<TabGeneral form={formModelo} />}
+                        children={
+                            <TabGeneral
+                                form={formModelo}
+                                publicar={emitir}
+                            />
+                        }
                     />,
-                    <Tab label="Dirección"
-                        key="tab-direccion"
-                        children={<TabDireccion form={formModelo} />}
-                    />,
-                    <Tab label="Comercial"
-                        key="tab-comercial"
-                        children={<TabComercial form={formModelo} />}
+                    <Tab label="Valores por defecto"
+                        key="tab-valores-defecto"
+                        children={<TabValoresDefecto form={formModelo} />}
                     />,
                 ]}/>
             </div>

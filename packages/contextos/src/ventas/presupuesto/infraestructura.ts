@@ -4,7 +4,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -269,8 +269,14 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
 };
 
 
-export const aprobarPresupuesto = async (id: string) => {
-  await RestAPI.patch(`${baseUrl}/${id}/aprobar`, {}, "Error al aprobar presupuesto");
+export const aprobarPresupuesto: PatchAprobarPresupuesto = async (id) => {
+  const respuesta = (await RestAPI.patch(
+    `${baseUrl}/${id}/aprobar`,
+    {},
+    "Error al aprobar presupuesto"
+  )) as unknown as { pedido_id: string };
+
+  return { id: String(respuesta.pedido_id) };
 };
 
 export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {

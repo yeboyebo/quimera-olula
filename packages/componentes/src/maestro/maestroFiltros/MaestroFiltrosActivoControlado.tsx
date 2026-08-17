@@ -401,7 +401,7 @@ export const MaestroFiltrosActivoControlado = ({
     );
 
   return (
-    <div className="MaestroFiltrosControlado">
+    <div className="MaestroFiltrosControlado" data-abierto="true">
       <QBoton tamaño="pequeño" onClick={() => setMostar(false)}>
         Cerrar filtros
       </QBoton>

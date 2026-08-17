@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { useMemo } from "react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
 import { HookModelo, useModelo } from "@olula/lib/useModelo.ts";
@@ -39,9 +40,11 @@ const Anfitrion = ({
 }: {
   publicar: (evento: string, payload?: unknown) => void;
 }) => {
+  const inicial = useMemo(presupuestoConClienteNoRegistrado, []);
+
   const presupuesto: HookModelo<Presupuesto> = useModelo(
     metaPresupuesto,
-    presupuestoConClienteNoRegistrado()
+    inicial
   );
 
   return (

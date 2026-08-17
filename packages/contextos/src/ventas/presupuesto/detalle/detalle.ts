@@ -151,7 +151,8 @@ export const getContextoVacio: ProcesarPresupuesto = async (contexto) => {
         ...contexto,
         estado: 'INICIAL',
         presupuesto: presupuestoVacioContexto(),
-        lineaActiva: null
+        lineaActiva: null,
+        pedidoCreado: null
     }
 }
 
@@ -192,12 +193,12 @@ export const borrarPresupuesto: ProcesarPresupuesto = async (contexto) => {
 }
 
 export const aprobarPresupuesto: ProcesarPresupuesto = async (contexto) => {
-    await aprobarPresupuestoFuncion(contexto.presupuesto.id);
+    const pedidoCreado = await aprobarPresupuestoFuncion(contexto.presupuesto.id);
 
-    return pipePresupuesto(contexto, [
+    return pipePresupuesto({ ...contexto, pedidoCreado }, [
         refrescarPresupuesto,
         refrescarLineas,
-        'APROBADO',
+        'PEDIDO_CREADO',
     ]);
 }
 

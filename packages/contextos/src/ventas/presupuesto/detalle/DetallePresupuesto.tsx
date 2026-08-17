@@ -16,6 +16,7 @@ import "../../comun/estilos/detalle_documento.css";
 import { tituloDocumentoVenta } from "../../venta/dominio.ts";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { AprobarPresupuesto } from "../aprobar/AprobarPresupuesto.tsx";
+import { PedidoGenerado } from "../aprobar/PedidoGenerado.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getReportPresupuesto } from "../infraestructura.ts";
@@ -45,6 +46,7 @@ export const DetallePresupuesto = ({
       presupuesto: presupuestoVacio(),
       presupuestoInicial: presupuestoVacio(),
       lineaActiva: null,
+      pedidoCreado: null,
     },
     publicar
   );
@@ -63,7 +65,7 @@ export const DetallePresupuesto = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [presupuestoId]);
 
-  const { estado, lineaActiva } = ctx;
+  const { estado, lineaActiva, pedidoCreado } = ctx;
 
   const titulo = (presupuesto: Presupuesto) => (
     <span className="titulo-documento">
@@ -169,6 +171,10 @@ export const DetallePresupuesto = ({
 
       {estado === "APROBANDO_PRESUPUESTO" && (
         <AprobarPresupuesto publicar={emitir} />
+      )}
+
+      {estado === "PEDIDO_CREADO" && pedidoCreado && (
+        <PedidoGenerado pedido={pedidoCreado} publicar={emitir} />
       )}
     </Detalle>
   );

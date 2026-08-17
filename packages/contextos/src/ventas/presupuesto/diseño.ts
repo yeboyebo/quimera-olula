@@ -74,6 +74,12 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
 export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
 
+export type PedidoCreado = {
+  id: string;
+};
+
+export type PatchAprobarPresupuesto = (id: string) => Promise<PedidoCreado>;
+
 
 export type EstadoMaestroPresupuesto = (
   'INICIAL' | 'CREANDO_PRESUPUESTO'
@@ -88,7 +94,7 @@ export type ContextoMaestroPresupuesto = {
 export type EstadoPresupuesto = (
   'INICIAL' | 'ABIERTO' | 'APROBADO'
   | 'BORRANDO_PRESUPUESTO'
-  | 'APROBANDO_PRESUPUESTO'
+  | 'APROBANDO_PRESUPUESTO' | 'PEDIDO_CREADO'
   | 'CAMBIANDO_DIVISA'
   | 'CAMBIANDO_CLIENTE'
   | 'CAMBIANDO_DESCUENTO'
@@ -101,4 +107,5 @@ export type ContextoPresupuesto = {
   presupuesto: Presupuesto;
   presupuestoInicial: Presupuesto;
   lineaActiva: LineaPresupuesto | null;
+  pedidoCreado: PedidoCreado | null;
 };
