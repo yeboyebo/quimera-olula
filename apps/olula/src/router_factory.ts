@@ -3,6 +3,7 @@ import { RouterFactoryAuthOlula } from '#/auth/router_factory.ts';
 import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
 import { RouterFactoryCrmOlula } from '#/crm/router_factory.ts';
 import { RouterFactoryEmpresaOlula } from '#/empresa/router_factory.ts';
+import { RouterFactoryPrediccionesOlula } from '#/predicciones/router_factory.ts';
 import { RouterFactoryRrhh } from '#/rrhh/router_factory.ts';
 import { RouterFactoryTesoreriaOlula } from '#/tesoreria/router_factory.ts';
 import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
@@ -21,6 +22,7 @@ export class RouterFactoryOlula {
     Crm = RouterFactoryCrmOlula;
     Empresa = RouterFactoryEmpresaOlula;
     Tpv = RouterFactoryTpvOlula;
+    Predicciones = RouterFactoryPrediccionesOlula;
     Comun = RouterFactoryComunOlula;
     Rrhh = RouterFactoryRrhh;
     Tesoreria = RouterFactoryTesoreriaOlula;

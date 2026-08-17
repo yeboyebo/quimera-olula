@@ -225,6 +225,14 @@
     flex-direction: column;
     gap: 0.5rem;
     margin: 0.5rem 0 0 2.25rem;
+
+    h2 {
+        font-size: var(--tamaño-letra-mediana, 1rem);
+    }
+}
+
+.asistente-chat__navegacion {
+    margin: 0.5rem 0 0 2.25rem;
 }
 
 .asistente-chat__puntos {
