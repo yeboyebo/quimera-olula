@@ -1,3 +1,4 @@
+import { AlbaranCreado } from "#/ventas/albaranarPedido/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
@@ -13,7 +14,7 @@ export const ResultadoAlbaranado = ({
     fallidos,
 }: {
     publicar: EmitirEvento;
-    creados: string[];
+    creados: AlbaranCreado[];
     fallidos: string[];
 }) => {
     const navigate = useNavigate();
@@ -40,10 +41,10 @@ export const ResultadoAlbaranado = ({
             </div>
             {creados.length > 0 && (
                 <ul>
-                    {creados.map((id) => (
-                        <li key={id}>
-                            <QBoton variante="texto" onClick={() => navigate(urlAlbaran(id))}>
-                                Ir al albarán {id}
+                    {creados.map((albaran) => (
+                        <li key={albaran.id}>
+                            <QBoton variante="texto" onClick={() => navigate(urlAlbaran(albaran.id))}>
+                                Ir al albarán {albaran.codigo}
                             </QBoton>
                         </li>
                     ))}

@@ -245,10 +245,11 @@ export const patchFacturarAlbaran: PatchFacturarAlbaran = async (id) => {
     {},
     "Error al facturar el albarán"
   )) as unknown as
-    | { datos: { factura_id: string } }
-    | { factura_id: string };
+    | { datos: { factura_id: string; codigo?: string } }
+    | { factura_id: string; codigo?: string };
   const datos = "datos" in respuesta ? respuesta.datos : respuesta;
-  return { id: String(datos.factura_id ?? "") };
+  const facturaId = String(datos.factura_id ?? "");
+  return { id: facturaId, codigo: String(datos.codigo ?? facturaId) };
 };
 
 export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {

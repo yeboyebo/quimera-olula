@@ -54,6 +54,7 @@ export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<v
 
 export type FacturaCreada = {
     id: string;
+    codigo: string;
 };
 
 export type PatchFacturarAlbaran = (id: string) => Promise<FacturaCreada>;

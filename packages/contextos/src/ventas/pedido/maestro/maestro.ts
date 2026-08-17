@@ -69,7 +69,7 @@ export const albaranarPedidos: ProcesarPedidos = async (contexto) => {
 
     const albaranesCreados = resultados
         .filter((resultado) => resultado.status === "fulfilled")
-        .map((resultado) => resultado.value.id);
+        .map((resultado) => resultado.value);
 
     const fallidos = resultados.flatMap((resultado, indice) =>
         resultado.status === "rejected"

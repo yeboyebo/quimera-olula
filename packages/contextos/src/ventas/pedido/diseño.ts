@@ -1,3 +1,4 @@
+import { AlbaranCreado } from "#/ventas/albaranarPedido/diseño.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
@@ -74,6 +75,6 @@ export type ContextoMaestroPedido = {
     estado: EstadoMaestroPedido;
     pedidos: ListaActivaEntidades<Pedido>;
     seleccionados: string[];
-    albaranesCreados: string[];
+    albaranesCreados: AlbaranCreado[];
     fallidos: string[];
 };
