@@ -29,7 +29,7 @@ export interface Empresa extends Entidad {
     otros: string;
     codPostal: string;
     ciudad: string;
-    provinciaId: number;
+    provinciaId: string;
     provincia: string;
     paisId: string;
     apartado: string;
@@ -58,7 +58,7 @@ export interface NuevaEmpresa extends Modelo {
     otros: string;
     codPostal: string;
     ciudad: string;
-    provinciaId: number;
+    provinciaId: string;
     provincia: string;
     paisId: string;
     apartado: string;

@@ -19,7 +19,7 @@
         grid-column: span 3;
     }
 
-    quimera-select[nombre="cliente/grupo_iva_negocio_id"] {
+    quimera-select[nombre="cliente/regimen_iva"] {
         grid-column: span 3;
     }
 }

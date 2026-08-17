@@ -48,6 +48,7 @@ export const Lineas = ({
         lineas={pedido.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
+        divisa={pedido.divisa_id}
         pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
         acciones={
           estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"

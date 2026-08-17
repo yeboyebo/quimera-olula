@@ -7,6 +7,7 @@ import {
     asignarCuentaRemesaProceso,
     borrarCliente,
     cambiarCliente,
+    cambiarIdFiscalCliente,
     cancelarCambioCliente,
     cargarContexto,
     darDeAltaClienteProceso,
@@ -38,6 +39,8 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
 
             edicion_de_cliente_lista: [cambiarCliente],
 
+            cambio_id_fiscal_solicitado: "CAMBIANDO_ID_FISCAL",
+
             edicion_de_cliente_cancelada: [cancelarCambioCliente],
 
             baja_solicitada: "BAJANDO_CLIENTE",
@@ -51,6 +54,12 @@ export const getMaquina: () => Maquina<EstadoCliente, ContextoCliente> = () => {
             cuenta_domiciliacion_desmarcada: limpiarCuentaDomiciliada,
 
             cuenta_remesa_seleccionada: asignarCuentaRemesaProceso,
+        },
+
+        CAMBIANDO_ID_FISCAL: {
+            cambio_id_fiscal_listo: [cambiarIdFiscalCliente],
+
+            cambio_id_fiscal_cancelado: "ABIERTO",
         },
 
         BAJANDO_CLIENTE: {

@@ -1,19 +1,20 @@
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
   fecha_salida: Date;
   aprobado: boolean;
+  por_comision: number;
+  almacen_id: string;
   lineas: LineaPresupuesto[];
 }
 
 export type NuevoPresupuesto = {
-  cliente: {
-    cliente_id: string;
-    direccion_id: string;
-  };
+  cliente_id: string;
+  direccion_id: string;
   empresa_id: string;
   oportunidad_id?: string | null;
 }
@@ -30,7 +31,6 @@ export type NuevoPresupuestoClienteNoRegistrado = {
   otros?: string;
   cod_postal?: string;
   ciudad?: string;
-  provincia_id?: number | null;
   provincia?: string;
   pais_id?: string;
   apartado?: string;
@@ -39,15 +39,8 @@ export type NuevoPresupuestoClienteNoRegistrado = {
 
 export type CambioClientePresupuesto = CambioClienteVenta;
 
-export interface LineaPresupuesto extends Entidad {
-  id: string;
-  referencia: string;
-  descripcion: string;
-  cantidad: number;
-  pvp_unitario: number;
-  dto_porcentual: number;
-  pvp_total: number;
-  grupo_iva_producto_id: string;
+export interface LineaPresupuesto extends LineaVenta {
+  otro_campo?: string;
 };
 
 export type NuevaLinea = NuevaLineaVenta
@@ -58,12 +51,14 @@ export type Cliente = {
 }
 
 export const esClienteRegistrado = (presupuesto: NuevoPresupuesto | NuevoPresupuestoClienteNoRegistrado): presupuesto is NuevoPresupuesto => {
-  return 'cliente_id' in presupuesto && 'direccion_id' in presupuesto;
+  return 'cliente_id' in presupuesto;
 };
 
 export type GetPresupuestos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Presupuesto>;
 
 export type GetPresupuesto = (id: string) => Promise<Presupuesto>;
+
+export type GetReportPresupuesto = (id: string) => Promise<Blob>;
 
 export type PostPresupuesto = (presupuesto: NuevoPresupuesto | NuevoPresupuestoClienteNoRegistrado) => Promise<string>;
 
@@ -77,9 +72,13 @@ export type PostLinea = (id: string, linea: NuevaLinea) => Promise<string>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
-export type PatchCambiarDivisa = (id: string, divisaId: string) => Promise<void>;
+export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
 
-export type PatchPresupuesto = (id: string, presupuesto: Presupuesto) => Promise<void>;
+export type PedidoCreado = {
+  id: string;
+};
+
+export type PatchAprobarPresupuesto = (id: string) => Promise<PedidoCreado>;
 
 
 export type EstadoMaestroPresupuesto = (
@@ -95,10 +94,11 @@ export type ContextoMaestroPresupuesto = {
 export type EstadoPresupuesto = (
   'INICIAL' | 'ABIERTO' | 'APROBADO'
   | 'BORRANDO_PRESUPUESTO'
-  | 'APROBANDO_PRESUPUESTO'
+  | 'APROBANDO_PRESUPUESTO' | 'PEDIDO_CREADO'
   | 'CAMBIANDO_DIVISA'
   | 'CAMBIANDO_CLIENTE'
   | 'CAMBIANDO_DESCUENTO'
+  | 'CAMBIANDO_AGENTE'
   | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 
@@ -107,4 +107,5 @@ export type ContextoPresupuesto = {
   presupuesto: Presupuesto;
   presupuestoInicial: Presupuesto;
   lineaActiva: LineaPresupuesto | null;
+  pedidoCreado: PedidoCreado | null;
 };

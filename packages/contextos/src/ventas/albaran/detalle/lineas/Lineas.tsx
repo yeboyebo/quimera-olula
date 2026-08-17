@@ -48,6 +48,7 @@ export const Lineas = ({
         lineas={albaran.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
+        divisa={albaran.divisa_id}
         albaranEditable={esEditable}
         acciones={esEditable ? acciones : undefined}
         publicar={publicar}

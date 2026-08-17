@@ -1,3 +1,4 @@
+import { CambiarIdFiscal } from "#/ventas/comun/componentes/moleculas/CambiarIdFiscal/CambiarIdFiscal.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -146,6 +147,14 @@ export const DetalleCliente = ({
                 />,
               ]}
             />
+            {estado === "CAMBIANDO_ID_FISCAL" && (
+              <CambiarIdFiscal
+                publicar={emitir}
+                tipoIdFiscal={ctx.cliente.tipo_id_fiscal}
+                idFiscal={ctx.cliente.id_fiscal}
+              />
+            )}
+
             {estado === "BORRANDO_CLIENTE" && (
               <BorrarCliente
                 clienteId={ctx.cliente.id}

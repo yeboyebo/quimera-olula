@@ -1,30 +1,21 @@
-import { MetaModelo } from "@olula/lib/dominio.js";
+import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
+import { ERR_IBAN_NO_VALIDO, ERR_IBAN_REQUERIDO, ibanValido } from "@olula/lib/iban.js";
 import { NuevaCuentaBancaria } from "../diseño.js";
+
+const ibanNuevaCuentaValido = (cuenta: NuevaCuentaBancaria): boolean | string => {
+    if (!stringNoVacio(cuenta.iban)) return ERR_IBAN_REQUERIDO;
+    if (!ibanValido(cuenta.iban)) return ERR_IBAN_NO_VALIDO;
+    return true;
+};
 
 export const metaNuevaCuentaBancaria: MetaModelo<NuevaCuentaBancaria> = {
     campos: {
-        codigoCuenta: { requerido: true },
-        paisId: { requerido: true },
         descripcion: { requerido: false },
-        iban: { requerido: false },
-        bic: { requerido: false },
-        entidad: { requerido: false },
-        agencia: { requerido: false },
-        digitoControl: { requerido: false },
-        cuenta: { requerido: false },
-        empresaId: { requerido: false },
+        iban: { requerido: true, validacion: ibanNuevaCuentaValido },
     },
 };
 
 export const nuevaCuentaBancariaInicial = (): NuevaCuentaBancaria => ({
-    codigoCuenta: "",
-    paisId: "",
-    empresaId: "",
     descripcion: "",
     iban: "",
-    bic: "",
-    entidad: "",
-    agencia: "",
-    digitoControl: "",
-    cuenta: "",
 });

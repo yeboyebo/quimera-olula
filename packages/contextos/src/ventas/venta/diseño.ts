@@ -12,13 +12,13 @@ export interface Venta extends Entidad {
     neto: number;
     total_iva: number;
     total_irpf: number;
-    total_recargo?: number;
+    total_recargo: number;
     total_divisa_empresa: number;
     dtoPorcentual: number;
     netoSinDto: number;
     forma_pago_id: string;
     nombre_forma_pago: string;
-    grupo_iva_negocio_id: string;
+    regimen_iva: string;
     observaciones: string;
 }
 
@@ -33,6 +33,10 @@ export interface LineaVenta extends Entidad {
     pvp_total: number;
     iva_incluido: boolean;
     grupo_iva_producto_id: string;
+    tipo_irpf: number;
+    tipo_recargo: number;
+    por_comision: number;
+    importe_comision: number;
 };
 
 export type NuevaVenta = {
@@ -52,7 +56,6 @@ export type CambioClienteVenta = {
     otros?: string;
     cod_postal?: string;
     ciudad?: string;
-    provincia_id?: number | null;
     provincia?: string;
     pais_id?: string;
     apartado?: string;

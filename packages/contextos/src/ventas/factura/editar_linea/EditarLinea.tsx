@@ -88,17 +88,13 @@ export const EditarLinea = ({
             <>
               <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} />
               <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
-              <QInput label="Dto. Lineal" {...uiProps("dto_lineal")} />
-              <QInput label="% R. Equivalencia" {...uiProps("tipo_recargo")} deshabilitado />
+              <QInput label="Dto. lineal" {...uiProps("dto_lineal")} />
+              <QInput label="% R. equivalencia" {...uiProps("tipo_recargo")} />
               <QInput label="% I.R.P.F." {...uiProps("tipo_irpf")} />
               <QInput label="% Comisión agente" {...uiProps("por_comision")} />
               <QInput
-                label="Importe Comisión"
-                nombre="importe_comision"
-                valor={(
-                  (modelo.pvp_total ?? 0) * ((modelo.por_comision ?? 0) / 100)
-                ).toFixed(2)}
-                deshabilitado
+                label="Importe comisión"
+                {...uiProps("importe_comision")}
               />
             </>
           )}

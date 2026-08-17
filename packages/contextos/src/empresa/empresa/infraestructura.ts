@@ -58,7 +58,7 @@ const direccionAApi = (e: {
     otros: string;
     codPostal: string;
     ciudad: string;
-    provinciaId: number;
+    provinciaId: string;
     provincia: string;
     paisId: string;
     apartado: string;
@@ -101,7 +101,7 @@ export const empresaDesdeApi = (api: EmpresaApi): Empresa => ({
     otros: api.direccion?.otros ?? "",
     codPostal: api.direccion?.cod_postal ?? "",
     ciudad: api.direccion?.ciudad ?? "",
-    provinciaId: api.direccion?.provincia_id ?? 0,
+    provinciaId: api.direccion?.provincia_id ?? "0",
     provincia: api.direccion?.provincia ?? "",
     paisId: api.direccion?.pais_id ?? "",
     apartado: api.direccion?.apartado ?? "",
@@ -154,7 +154,7 @@ const cambiosEmpresaAApi = (e: CambiosEmpresa): CambiosEmpresaApi => {
             otros: e.otros ?? "",
             codPostal: e.codPostal ?? "",
             ciudad: e.ciudad ?? "",
-            provinciaId: e.provinciaId ?? 0,
+            provinciaId: e.provinciaId ?? "",
             provincia: e.provincia ?? "",
             paisId: e.paisId ?? "",
             apartado: e.apartado ?? "",

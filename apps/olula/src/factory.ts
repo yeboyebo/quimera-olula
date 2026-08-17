@@ -5,6 +5,7 @@ import { FactoryCrmOlula } from '#/crm/factory.ts';
 import { FactoryEmpresaOlula } from '#/empresa/factory.ts';
 import { FactoryPrediccionesOlula } from '#/predicciones/factory.ts';
 import { FactoryRrhhOlula } from '#/rrhh/factory.ts';
+import { FactoryTesoreriaOlula } from '#/tesoreria/factory.ts';
 import { FactoryTpvOlula } from '#/tpv/factory.ts';
 import { FactoryVentasOlula } from '#/ventas/factory.ts';
 import { FactoryComponentesOlula } from '@olula/componentes/factory.ts';
@@ -28,6 +29,7 @@ export class FactoryOlula {
     Predicciones = FactoryPrediccionesOlula;
     Auth = FactoryAuthOlula;
     Rrhh = FactoryRrhhOlula
+    Tesoreria = FactoryTesoreriaOlula;
     Comun = FactoryComunOlula;
 }
 

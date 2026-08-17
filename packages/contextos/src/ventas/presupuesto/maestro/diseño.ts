@@ -16,5 +16,6 @@ export const metaTablaPresupuesto: MetaTabla<Presupuesto> = [
         id: "total",
         cabecera: "Total",
         tipo: "moneda",
+        divisa: (presupuesto) => presupuesto.divisa_id,
     },
 ];

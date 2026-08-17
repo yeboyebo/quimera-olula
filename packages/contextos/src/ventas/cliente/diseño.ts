@@ -11,7 +11,7 @@ export interface Cliente extends Entidad {
   tipo_id_fiscal: string;
   serie_id: string;
   forma_pago_id: string;
-  grupo_iva_negocio_id: string;
+  regimen_iva: string;
   de_baja: boolean;
   fecha_baja: Date | null;
   grupo_id: string;
@@ -73,14 +73,12 @@ export interface CuentaBanco extends Entidad {
   descripcion: string;
   iban: string;
   bic: string;
-};
-
-export type CuentaBancoAPI = {
-  descripcion: string;
-  cuenta: {
-    iban: string;
-    bic: string;
-  };
+  codigo_cuenta: string;
+  pais_id: string;
+  entidad: string;
+  agencia: string;
+  digito_control: string;
+  cuenta: string;
 };
 
 export type NuevaCuentaBanco = {

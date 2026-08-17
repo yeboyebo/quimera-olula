@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import { CambioClienteFactura, Factura, LineaFactura } from "../diseño.ts";
@@ -6,8 +8,10 @@ import {
     deleteLinea,
     getFactura,
     getLineas,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
+    patchCambiarDivisa,
     patchCantidadLinea,
     patchFactura,
     patchLinea
@@ -125,7 +129,7 @@ export const cambiarFactura: ProcesarFactura = async (contexto, payload) => {
 };
 
 export const borrarFactura: ProcesarFactura = async (contexto) => {
-    return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", contexto.factura)]);
+    return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", contexto.factura.id)]);
 };
 
 export const cambiarCliente: ProcesarFactura = async (contexto, payload) => {
@@ -135,6 +139,27 @@ export const cambiarCliente: ProcesarFactura = async (contexto, payload) => {
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
+export const cambiarDivisa: ProcesarFactura = async (contexto, payload) => {
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.factura.id, cambio);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
+        refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
+export const cambiarAgente: ProcesarFactura = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.factura.id, cambio);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
         "ABIERTO",
     ]);
 };

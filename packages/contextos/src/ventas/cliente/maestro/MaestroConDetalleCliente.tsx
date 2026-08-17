@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { CrearCliente } from "../crear/CrearCliente.tsx";
 import { DetalleCliente } from "../detalle/DetalleCliente.tsx";
 import { Cliente } from "../diseño.ts";
-import { metaTablaCliente } from "./diseño.ts";
+import { metaFiltroCliente, metaTablaCliente } from "./diseño.ts";
 import { TarjetaCliente } from "./TarjetaCliente.tsx";
 import "./MaestroConDetalleCliente.css";
 import { getMaquina } from "./maquina.ts";
@@ -36,6 +36,7 @@ export const MaestroConDetalleCliente = () => {
             <h2>Clientes</h2>
             <Listado<Cliente>
               metaTabla={metaTablaCliente}
+              metaFiltro={metaFiltroCliente}
               tarjeta={TarjetaCliente}
               modoInicial="tarjetas"
               criteria={ctx.clientes.criteria}

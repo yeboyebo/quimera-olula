@@ -5,7 +5,7 @@ import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useFocus } from "@olula/lib/useFocus.ts";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { postEmpresa } from "../infraestructura.js";
 import "./CrearEmpresa.css";
 import { metaNuevaEmpresa, nuevaEmpresaInicial } from "./crear.js";
@@ -15,9 +15,13 @@ export const CrearEmpresa = ({
 }: {
     publicar: EmitirEvento;
 }) => {
+    // useModelo reinicia el modelo cuando cambia la identidad del inicial, así que
+    // crearlo en cada render entra en bucle y borra lo escrito.
+    const inicial = useMemo(nuevaEmpresaInicial, []);
+
     const { modelo: empresa, uiProps, valido } = useModelo(
         metaNuevaEmpresa,
-        nuevaEmpresaInicial(),
+        inicial,
     );
 
     const crear_ = useCallback(

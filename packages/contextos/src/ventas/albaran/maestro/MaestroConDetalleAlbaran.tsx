@@ -1,13 +1,24 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { MetaTabla, QIcono } from "@olula/componentes/index.js";
+import { MetaTabla, QEtiqueta, QIcono } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import {
+  filtroBooleanos,
+  MetaFiltro,
+} from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
+import {
+  filtroAgente,
+  filtroAlmacen,
+  filtroCliente,
+  filtroCodigo,
+  filtroFechaDocumento,
+} from "../../comun/filtros.tsx";
 import { CrearAlbaran } from "../crear/CrearAlbaran.tsx";
 import { DetalleAlbaran } from "../detalle/DetalleAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
@@ -15,6 +26,26 @@ import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumen
 import { metaTablaAlbaran as metaTablaBase } from "../dominio.ts";
 import "./MaestroConDetalleAlbaran.css";
 import { getMaquina } from "./maquina.ts";
+
+const PENDIENTE = "false";
+const FACTURADO = "true";
+
+const campoFiltroFacturado: MetaFiltro = {
+  facturado: {
+    id: "facturado",
+    label: "Estado",
+    tipo: "multiseleccion",
+    opciones: [
+      { valor: PENDIENTE, descripcion: "Pendiente" },
+      { valor: FACTURADO, descripcion: "Facturado" },
+    ],
+    filtro: (valor) => {
+      const elegidos = (valor as string[]) ?? [];
+      if (elegidos.length !== 1) return null;
+      return ["facturado", "=", elegidos[0]];
+    },
+  },
+};
 
 export const MaestroConDetalleAlbaran = () => {
   const { id, criteria } = getUrlParams();
@@ -60,6 +91,21 @@ export const MaestroConDetalleAlbaran = () => {
     ...metaTablaBase,
   ] as MetaTabla<Albaran>;
 
+  const metaFiltroAlbaran: MetaFiltro = {
+    codigo: filtroCodigo,
+    cliente_id: filtroCliente,
+    agente_id: filtroAgente,
+    fecha: filtroFechaDocumento,
+    almacen_id: filtroAlmacen,
+    de_abono: {
+      id: "de_abono",
+      label: "Abono",
+      tipo: "checkbox",
+      filtro: (v) => (v ? filtroBooleanos("de_abono", v) : null),
+    },
+    ...campoFiltroFacturado,
+  };
+
   return (
     <div className="Albaran">
       <MaestroDetalle<Albaran>
@@ -68,13 +114,22 @@ export const MaestroConDetalleAlbaran = () => {
             <h2>Albaranes</h2>
             <Listado<Albaran>
               metaTabla={metaTablaAlbaran}
+              metaFiltro={metaFiltroAlbaran}
               tarjeta={(albaran) => (
                 <TarjetaDocumentoVenta
                   codigo={albaran.codigo}
                   nombreCliente={albaran.cliente.nombre_cliente}
                   fecha={albaran.fecha}
                   total={albaran.total}
+                  divisa={albaran.divisa_id}
+                  tasaConversion={albaran.tasa_conversion}
+                  totalDivisaEmpresa={albaran.total_divisa_empresa}
                   estado={albaran.idfactura ? "cerrado" : "pendiente"}
+                  etiqueta={
+                    albaran.de_abono ? (
+                      <QEtiqueta variante="advertencia">Abono</QEtiqueta>
+                    ) : undefined
+                  }
                 />
               )}
               criteria={ctx.albaranes.criteria}

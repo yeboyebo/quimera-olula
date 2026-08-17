@@ -2,15 +2,24 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
+import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
+import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
+import "../../comun/estilos/campos.css";
+import "../../comun/estilos/detalle_documento.css";
+import { tituloDocumentoVenta } from "../../venta/dominio.ts";
 import { facturaVacia } from "../dominio.ts";
+import { getReportFactura } from "../infraestructura.ts";
 import "./DetalleFactura.css";
 import { editable, metaFactura } from "./diseño.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
@@ -57,11 +66,17 @@ export const DetalleFactura = ({
 
   const { estado, lineaActiva } = ctx;
 
-  const titulo = (factura: Factura) => factura.codigo || "Nueva Factura";
+  const titulo = (factura: Factura) =>
+    tituloDocumentoVenta(factura, "Nueva Factura");
 
   const handleBorrar = useCallback(() => {
     emitir("borrar_solicitado");
   }, [emitir]);
+
+  const imprimir = useCallback(async () => {
+    const blob = await getReportFactura(ctx.factura.id);
+    imprimir_blob(blob);
+  }, [ctx.factura.id]);
 
   if (!ctx.factura.id) return;
 
@@ -81,13 +96,25 @@ export const DetalleFactura = ({
         </div>
       )}
 
+      <div className="fila-acciones-documento">
+        <IndicadorGuardado modificado={factura.modificado} />
+        <QuimeraAcciones
+          acciones={[
+            {
+              texto: "Imprimir",
+              onClick: imprimir,
+            },
+          ]}
+        />
+      </div>
+
       <Tabs>
         <Tab label="Cliente">
           <TabCliente factura={factura} publicar={emitir} />
         </Tab>
 
         <Tab label="Datos">
-          <TabDatos factura={factura} />
+          <TabDatos factura={factura} estado={estado} publicar={emitir} />
         </Tab>
 
         <Tab label="Observaciones">
@@ -103,6 +130,23 @@ export const DetalleFactura = ({
 
       {estado === "CAMBIANDO_DESCUENTO" && (
         <CambiarDescuento publicar={emitir} venta={ctx.factura} />
+      )}
+
+      {estado === "CAMBIANDO_DIVISA" && (
+        <CambiarDivisa
+          publicar={emitir}
+          divisaId={ctx.factura.divisa_id}
+          tasaConversion={ctx.factura.tasa_conversion}
+        />
+      )}
+
+      {estado === "CAMBIANDO_AGENTE" && (
+        <CambiarAgente
+          publicar={emitir}
+          agenteId={ctx.factura.agente_id}
+          nombreAgente={ctx.factura.nombre_agente}
+          porComision={ctx.factura.por_comision}
+        />
       )}
 
       <Lineas

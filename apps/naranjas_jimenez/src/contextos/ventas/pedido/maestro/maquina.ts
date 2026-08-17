@@ -19,5 +19,11 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
             pedido_creado: [Pedidos.incluir, "INICIAL"],
             creacion_pedido_cancelada: "INICIAL",
         },
+        ALBARANANDO_PEDIDOS: {
+            albaranado_multiple_cancelado: "INICIAL",
+        },
+        ALBARANES_CREADOS: {
+            resultado_albaranado_cerrado: "INICIAL",
+        },
     };
 };

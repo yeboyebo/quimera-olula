@@ -1,4 +1,4 @@
-import { MetaModelo, modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
+import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import { metaVenta } from "../../venta/dominio.ts";
 import { ContextoFactura, EstadoFactura, Factura, LineaFactura } from "../diseño.ts";
 
@@ -9,7 +9,10 @@ export const metaFactura: MetaModelo<Factura> = {
         ...metaVenta.campos,
         fecha: { tipo: "fecha", requerido: false },
         hora: { tipo: "hora", requerido: false },
-        por_comision_agente: { tipo: "decimal", decimales: 2, requerido: false },
+        divisa_id: { requerido: true, bloqueado: true },
+        tasa_conversion: { tipo: "numero", requerido: true, bloqueado: true },
+        agente_id: { bloqueado: true },
+        por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
         automatica: { tipo: "checkbox", requerido: false },
         servicios: { tipo: "checkbox", requerido: false },
     },
@@ -19,5 +22,4 @@ export const metaFactura: MetaModelo<Factura> = {
 };
 
 export const editable = modeloEsEditable<Factura>(metaFactura);
-export const facturaValida = modeloEsValido<Factura>(metaFactura);
 

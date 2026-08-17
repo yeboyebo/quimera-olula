@@ -1,6 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
 import {
@@ -9,10 +10,14 @@ import {
   GetAlbaran,
   GetAlbaranes,
   GetLineasAlbaran,
+  GetReportAlbaran,
   LineaAlbaran,
   PatchArticuloLinea,
+  PatchCambiarAgente,
+  PatchCambiarDivisa,
   PatchCantidadLinea,
   PatchClienteAlbaran,
+  PatchFacturarAlbaran,
   PatchLinea,
   PostAlbaran,
   PostLinea
@@ -25,6 +30,10 @@ interface AlbaranAPI {
   id: string;
   codigo: string;
   fecha: string;
+  hora: string;
+  almacen_id: string;
+  nombre_almacen: string;
+  de_abono: boolean;
   cliente_id: string;
   nombre_cliente: string;
   id_fiscal: string;
@@ -38,12 +47,14 @@ interface AlbaranAPI {
   neto: number;
   total_iva: number;
   total_irpf: number;
+  total_recargo: number;
   total_divisa_empresa: number;
   por_descuento: number;
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
+  regimen_iva: string;
+  por_comision: number;
   observaciones: string;
   idfactura: string | null;
 }
@@ -70,6 +81,9 @@ export const getAlbaran: GetAlbaran = async (id) => {
     return albaranDesdeAPI(respuesta.datos);
   });
 };
+
+export const getReportAlbaran: GetReportAlbaran = async (id) =>
+  RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del albarán");
 
 export const getAlbaranes: GetAlbaranes = async (
   filtro: Filtro,
@@ -134,7 +148,10 @@ export const patchLinea: PatchLinea = async (id, linea) => {
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
+      dto_lineal: linea.dto_lineal,
       grupo_iva_producto_id: linea.grupo_iva_producto_id,
+      tipo_irpf: linea.tipo_irpf,
+      comision: linea.por_comision,
     },
   }
   await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar la línea del albarán");
@@ -159,6 +176,8 @@ export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Pro
 }
 
 export const patchAlbaran = async (id: string, albaran: Albaran) => {
+  const hora = normalizarHora(albaran.hora);
+
   const payload = {
     cambios: {
       agente_id: albaran.agente_id,
@@ -167,12 +186,16 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
         tasa_conversion: albaran.tasa_conversion,
       },
       fecha: albaran.fecha,
+      ...(hora ? { hora } : {}),
+      almacen_id: albaran.almacen_id,
+      de_abono: esVerdadero(albaran.de_abono),
       cliente_id: albaran.cliente.cliente_id,
       nombre_cliente: albaran.cliente.nombre_cliente,
       id_fiscal: albaran.cliente.id_fiscal,
       direccion_id: albaran.cliente.direccion_id,
       forma_pago_id: albaran.forma_pago_id,
-      grupo_iva_negocio_id: albaran.grupo_iva_negocio_id,
+      regimen_iva: albaran.regimen_iva,
+      por_comision: albaran.por_comision,
       observaciones: albaran.observaciones,
     },
   };
@@ -203,4 +226,36 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
       por_descuento: dto_porcentual,
     }
   }, "Error al cambiar descuento del albarán");
+};
+
+export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      divisa: {
+        divisa_id: cambio.divisa_id,
+        tasa_conversion: cambio.tasa_conversion,
+      }
+    }
+  }, "Error al cambiar divisa del albarán");
+};
+
+export const patchFacturarAlbaran: PatchFacturarAlbaran = async (id) => {
+  const respuesta = (await RestAPI.patch(
+    `${baseUrl}/${id}/facturar`,
+    {},
+    "Error al facturar el albarán"
+  )) as unknown as
+    | { datos: { factura_id: string } }
+    | { factura_id: string };
+  const datos = "datos" in respuesta ? respuesta.datos : respuesta;
+  return { id: String(datos.factura_id ?? "") };
+};
+
+export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: {
+      agente_id: cambio.agente_id,
+      por_comision: cambio.por_comision,
+    }
+  }, "Error al cambiar agente del albarán");
 };
