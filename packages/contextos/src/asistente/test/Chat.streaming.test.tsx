@@ -19,16 +19,18 @@ const streamDe = (eventos: EventoStreamIa[]) =>
         for (const evento of eventos) yield evento;
     })();
 
-const esperar = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Con "streamDe" todos los eventos llegan en el mismo tick — insuficiente para
-// comprobar que un "estado" transitorio realmente se ve antes de ser sustituido.
-const streamDeConPausas = (eventos: EventoStreamIa[]) =>
+// Con "streamDe" todos los eventos llegan en el mismo tick, y con pausas por
+// tiempo la ventana para observar un "estado" transitorio depende de la carga de
+// la máquina. Aquí el test decide cuándo continúa el stream.
+const streamConPuerta = (
+    antes: EventoStreamIa[],
+    puerta: Promise<void>,
+    despues: EventoStreamIa[]
+) =>
     (async function* () {
-        for (const evento of eventos) {
-            await esperar(10);
-            yield evento;
-        }
+        for (const evento of antes) yield evento;
+        await puerta;
+        for (const evento of despues) yield evento;
     })();
 
 beforeEach(() => {
@@ -90,11 +92,19 @@ test("[asistente-chat-stream-02] necesita_capacidades reintenta automáticamente
 });
 
 test("[asistente-chat-stream-04] un evento estado se muestra y se sustituye por el primer delta real", async () => {
-    vi.mocked(consultarIaStream).mockReturnValue(streamDeConPausas([
-        { tipo: "estado", contenido: "Buscando el cliente…" },
-        { tipo: "delta", contenido: "Aquí tienes el cliente." },
-        { tipo: "fin", threadId: "hilo-1", necesitaCapacidades: false, adjuntos: [] },
-    ]));
+    let abrirPuerta = () => {};
+    const puerta = new Promise<void>(resolve => {
+        abrirPuerta = resolve;
+    });
+
+    vi.mocked(consultarIaStream).mockReturnValue(streamConPuerta(
+        [{ tipo: "estado", contenido: "Buscando el cliente…" }],
+        puerta,
+        [
+            { tipo: "delta", contenido: "Aquí tienes el cliente." },
+            { tipo: "fin", threadId: "hilo-1", necesitaCapacidades: false, adjuntos: [] },
+        ]
+    ));
 
     render(
         <AsistenteRuntimeProvider>
@@ -108,6 +118,9 @@ test("[asistente-chat-stream-04] un evento estado se muestra y se sustituye por 
     await userEvent.click(screen.getByRole("button", { name: "Enviar" }));
 
     await screen.findByText("Buscando el cliente…");
+
+    abrirPuerta();
+
     await screen.findByText("Aquí tienes el cliente.");
     expect(screen.queryByText("Buscando el cliente…")).toBeNull();
 });
