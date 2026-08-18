@@ -5,7 +5,7 @@ import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useFocus } from "@olula/lib/useFocus.ts";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { postCuentaBancaria } from "../infraestructura.js";
 import "./CrearCuentaBancaria.css";
 import { metaNuevaCuentaBancaria, nuevaCuentaBancariaInicial } from "./crear.js";
@@ -15,9 +15,13 @@ export const CrearCuentaBancaria = ({
 }: {
     publicar: EmitirEvento;
 }) => {
+    // useModelo reinicia el modelo cuando cambia la identidad del inicial, así que
+    // crearlo en cada render entra en bucle y borra lo escrito.
+    const inicial = useMemo(nuevaCuentaBancariaInicial, []);
+
     const { modelo: cuenta, uiProps, valido } = useModelo(
         metaNuevaCuentaBancaria,
-        nuevaCuentaBancariaInicial(),
+        inicial,
     );
 
     const crear_ = useCallback(
@@ -47,10 +51,7 @@ export const CrearCuentaBancaria = ({
             <div className="CrearCuentaBancaria">
                 <quimera-formulario>
                     <QInput label="Descripción" {...uiProps("descripcion")} ref={focus} />
-                    <QInput label="Código de cuenta" {...uiProps("codigoCuenta")} />
-                    <QInput label="País" {...uiProps("paisId")} />
                     <QInput label="IBAN" {...uiProps("iban")} />
-                    <QInput label="BIC / SWIFT" {...uiProps("bic")} />
                 </quimera-formulario>
 
                 <div className="botones maestro-botones">

@@ -1,11 +1,11 @@
-import { idFiscalValido, tipoIdFiscalValido } from "#/valores/idfiscal.ts";
+import { CambioIdFiscal } from "#/ventas/comun/componentes/moleculas/CambiarIdFiscal/diseño.ts";
+import { camposIdFiscal } from "#/ventas/comun/componentes/moleculas/CambiarIdFiscal/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo, publicar } from "@olula/lib/dominio.js";
 import { Cliente } from "../diseño.ts";
 import {
     asignarCuentaRemesa,
     darDeAltaCliente,
-    darDeBajaCliente,
     getCliente,
     patchCliente
 } from "../infraestructura.ts";
@@ -14,14 +14,7 @@ import { ContextoCliente, EstadoCliente } from "./diseño.ts";
 export const metaCliente: MetaModelo<Cliente> = {
     campos: {
         nombre: { requerido: true },
-        id_fiscal: {
-            requerido: true,
-            validacion: (cliente: Cliente) => idFiscalValido(cliente.tipo_id_fiscal)(cliente.id_fiscal),
-        },
-        tipo_id_fiscal: {
-            requerido: true,
-            validacion: (cliente: Cliente) => tipoIdFiscalValido(cliente.tipo_id_fiscal),
-        },
+        ...camposIdFiscal<Cliente>(true),
         nombre_agente: { bloqueado: true },
         email: { tipo: "email" },
         fecha_baja: { tipo: "fecha" },
@@ -60,7 +53,6 @@ export const clienteVacio = (): Cliente => ({
     debaja: false,
     forma_pago: '',
     divisa: '',
-    grupo_iva_negocio: '',
     serie: '',
     grupo: '',
 })
@@ -145,6 +137,16 @@ export const cambiarCliente: ProcesarCliente = async (contexto, payload) => {
     ]);
 }
 
+export const cambiarIdFiscalCliente: ProcesarCliente = async (contexto, payload) => {
+    const cambio = payload as CambioIdFiscal;
+    await patchCliente(contexto.cliente.id, { ...contexto.cliente, ...cambio });
+
+    return pipeCliente(contexto, [
+        refrescarCliente,
+        'ABIERTO',
+    ]);
+}
+
 export const borrarCliente: ProcesarCliente = async (contexto, payload) => {
     const { clienteId } = payload as { clienteId: string } ?? { clienteId: contexto.cliente.id };
 
@@ -156,16 +158,6 @@ export const borrarCliente: ProcesarCliente = async (contexto, payload) => {
 
 export const darDeAltaClienteProceso: ProcesarCliente = async (contexto) => {
     await darDeAltaCliente(contexto.cliente.id);
-
-    return pipeCliente(contexto, [
-        cargarCliente(contexto.cliente.id),
-        abiertoContexto,
-    ]);
-}
-
-export const darDeBajaClienteProceso: ProcesarCliente = async (contexto, payload) => {
-    const fechaBaja = payload as string;
-    await darDeBajaCliente(contexto.cliente.id, new Date(fechaBaja));
 
     return pipeCliente(contexto, [
         cargarCliente(contexto.cliente.id),

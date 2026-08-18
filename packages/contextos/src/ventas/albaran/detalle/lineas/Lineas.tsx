@@ -1,6 +1,7 @@
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { Albaran, LineaAlbaran } from "../../diseño.ts";
+import { editable } from "../../dominio.ts";
 import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
@@ -22,7 +23,7 @@ export const Lineas = ({
     });
   };
 
-  const esEditable = estadoAlbaran === "ABIERTO" && !albaran.idfactura;
+  const esEditable = estadoAlbaran === "ABIERTO" && editable(albaran);
   const acciones = [
     {
       texto: "Nueva",
@@ -48,6 +49,7 @@ export const Lineas = ({
         lineas={albaran.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
+        divisa={albaran.divisa_id}
         albaranEditable={esEditable}
         acciones={esEditable ? acciones : undefined}
         publicar={publicar}

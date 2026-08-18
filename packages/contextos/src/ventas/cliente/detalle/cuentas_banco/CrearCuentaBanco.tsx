@@ -28,7 +28,6 @@ export const CrearCuentaBanco = ({
 
   return (
     <div className="alta-cuenta-banco">
-      <h2>Nueva Cuenta Bancaria</h2>
       <quimera-formulario>
         <QInput label="Descripción" {...uiProps("descripcion")} ref={focus} />
         <QInput label="IBAN" {...uiProps("iban")} />

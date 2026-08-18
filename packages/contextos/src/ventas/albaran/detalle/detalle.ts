@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import {
@@ -10,9 +12,12 @@ import {
     getAlbaran,
     getLineas,
     patchAlbaran,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
-    patchCantidadLinea
+    patchCambiarDivisa,
+    patchCantidadLinea,
+    patchFacturarAlbaran
 } from "../infraestructura.ts";
 import { ContextoAlbaran, EstadoAlbaran } from "./diseño.ts";
 
@@ -51,10 +56,9 @@ export const cancelarCambioAlbaran: ProcesarAlbaran = async (contexto) => {
 }
 
 export const abiertoOFacturado: ProcesarAlbaran = async (contexto) => {
-    const esFacturado = !!contexto.albaran.idfactura;
     return {
         ...contexto,
-        estado: esFacturado ? "FACTURADO" : "ABIERTO"
+        estado: contexto.albaran.facturado ? "FACTURADO" : "ABIERTO"
     }
 }
 
@@ -96,8 +100,27 @@ export const getContextoVacio: ProcesarAlbaran = async (contexto) => {
         ...contexto,
         estado: 'INICIAL',
         albaran: albaranVacioContexto(),
-        lineaActiva: null
+        lineaActiva: null,
+        facturaCreada: null
     }
+}
+
+export const facturarAlbaran: ProcesarAlbaran = async (contexto) => {
+    const facturaCreada = await patchFacturarAlbaran(contexto.albaran.id);
+    const albaran = await getAlbaran(contexto.albaran.id);
+
+    return [
+        {
+            ...contexto,
+            albaran: {
+                ...contexto.albaran,
+                ...albaran
+            },
+            facturaCreada,
+            estado: "FACTURA_CREADA" as EstadoAlbaran,
+        },
+        [["albaran_cambiado", albaran]]
+    ]
 }
 
 export const cargarContexto: ProcesarAlbaran = async (contexto, payload) => {
@@ -131,7 +154,7 @@ export const cambiarAlbaran: ProcesarAlbaran = async (contexto, payload) => {
 
 export const borrarAlbaran: ProcesarAlbaran = async (contexto) => {
     return pipeAlbaran(contexto, [
-        publicar('albaran_borrado', (ctx) => ctx.albaran),
+        publicar('albaran_borrado', (ctx) => ctx.albaran.id),
         getContextoVacio,
     ]);
 }
@@ -143,6 +166,27 @@ export const cambiarCliente: ProcesarAlbaran = async (contexto, payload) => {
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarDivisa: ProcesarAlbaran = async (contexto, payload) => {
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.albaran.id, cambio);
+
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
+        refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarAgente: ProcesarAlbaran = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.albaran.id, cambio);
+
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
         'ABIERTO',
     ]);
 }
@@ -195,6 +239,7 @@ export const cambiarCantidadLinea: ProcesarAlbaran = async (contexto, payload) =
         },
         albaranInicial: contexto.albaranInicial,
         lineaActiva: lineasActualizadas.find(l => l.id === lineaId) || null,
+        facturaCreada: contexto.facturaCreada,
     };
 }
 

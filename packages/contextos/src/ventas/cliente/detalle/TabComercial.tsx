@@ -35,7 +35,6 @@ export const TabComercial = ({ form }: TabComercialProps) => {
           nombre="cliente/forma_pago_id"
         />
         <GrupoIvaNegocio
-          label="Grupo IVA"
           {...uiProps("grupo_iva_negocio_id")}
           nombre="cliente/grupo_iva_negocio_id"
         />

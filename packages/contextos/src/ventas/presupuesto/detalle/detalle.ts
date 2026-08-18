@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { LineaVenta } from "#/ventas/venta/diseño.ts";
 import { clienteVentaVacio, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
@@ -7,6 +9,7 @@ import {
     aprobarPresupuesto as aprobarPresupuestoFuncion,
     getLineas,
     getPresupuesto,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
     patchCambiarDivisa,
@@ -30,10 +33,12 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
     campos: {
         fecha: { tipo: "fecha", requerido: false },
         fecha_salida: { tipo: "fecha", requerido: false },
-        tasa_conversion: { tipo: "numero", requerido: true },
+        tasa_conversion: { tipo: "numero", requerido: true, bloqueado: true },
         total_divisa_empresa: { tipo: "numero", bloqueado: true },
         codigo: { bloqueado: true },
-        divisa_id: { requerido: true },
+        divisa_id: { requerido: true, bloqueado: true },
+        agente_id: { bloqueado: true },
+        por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
     editable: (presupuesto: Presupuesto) => !presupuesto.aprobado,
 };
@@ -45,6 +50,8 @@ export const presupuestoVacio = (): Presupuesto => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     aprobado: false,
+    por_comision: 0,
+    almacen_id: "",
     fecha_salida: new Date(),
     lineas: [],
 })
@@ -144,7 +151,8 @@ export const getContextoVacio: ProcesarPresupuesto = async (contexto) => {
         ...contexto,
         estado: 'INICIAL',
         presupuesto: presupuestoVacioContexto(),
-        lineaActiva: null
+        lineaActiva: null,
+        pedidoCreado: null
     }
 }
 
@@ -185,22 +193,32 @@ export const borrarPresupuesto: ProcesarPresupuesto = async (contexto) => {
 }
 
 export const aprobarPresupuesto: ProcesarPresupuesto = async (contexto) => {
-    await aprobarPresupuestoFuncion(contexto.presupuesto.id);
+    const pedidoCreado = await aprobarPresupuestoFuncion(contexto.presupuesto.id);
 
-    return pipePresupuesto(contexto, [
+    return pipePresupuesto({ ...contexto, pedidoCreado }, [
         refrescarPresupuesto,
         refrescarLineas,
-        'APROBADO',
+        'PEDIDO_CREADO',
     ]);
 }
 
 export const cambiarDivisa: ProcesarPresupuesto = async (contexto, payload) => {
-    const divisaId = payload as string;
-    await patchCambiarDivisa(contexto.presupuesto.id, divisaId);
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.presupuesto.id, cambio);
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
         refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarAgente: ProcesarPresupuesto = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.presupuesto.id, cambio);
+
+    return pipePresupuesto(contexto, [
+        refrescarPresupuesto,
         'ABIERTO',
     ]);
 }

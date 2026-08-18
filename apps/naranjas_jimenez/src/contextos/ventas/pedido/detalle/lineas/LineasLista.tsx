@@ -143,11 +143,11 @@ const AsignacionesLinea = ({ linea }: { linea: LineaPedidoNrj }) => {
       />
       <QModal
         abierto={mostrando}
-        nombre="mostrar"
+        nombre="asignaciones"
+        titulo="Asignaciones"
         onCerrar={() => setMostrando(false)}
       >
         <div className="CrearLinea">
-          <h2>Asignaciones</h2>
           <QTabla
             metaTabla={getMetaTablaPalets()}
             datos={linea.palets}

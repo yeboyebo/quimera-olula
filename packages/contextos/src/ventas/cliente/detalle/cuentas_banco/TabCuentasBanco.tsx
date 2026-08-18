@@ -73,6 +73,7 @@ export const TabCuentasBanco = ({
       <QModal
         nombre="altaCuentaBanco"
         abierto={estado === "alta"}
+        titulo="Nueva Cuenta Bancaria"
         onCerrar={() => emitir("alta_cancelada")}
       >
         <CrearCuentaBanco clienteId={clienteId} emitir={emitir} />
@@ -81,6 +82,7 @@ export const TabCuentasBanco = ({
       <QModal
         nombre="edicionCuentaBanco"
         abierto={estado === "edicion"}
+        titulo="Editar Cuenta Bancaria"
         onCerrar={() => emitir("edicion_cancelada")}
       >
         {ctx.cuentas.activo && (

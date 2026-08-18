@@ -23,6 +23,7 @@ export interface CambioClienteProps<T extends VentaConCliente> {
   titulo?: string;
   inicializarDesdeVenta?: boolean;
   permitirClienteNoRegistrado?: boolean;
+  editarDireccionNoRegistrado?: boolean;
 }
 
 const esClienteRegistrado = (clienteId: string | null | undefined) =>
@@ -36,6 +37,7 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
   titulo = "Cambiar cliente",
   inicializarDesdeVenta = false,
   permitirClienteNoRegistrado = true,
+  editarDireccionNoRegistrado = true,
 }: CambioClienteProps<T>) => {
   const { modelo, uiProps, valido, init } = useModelo(
     metaCambioCliente,
@@ -106,9 +108,13 @@ export const CambioClienteVenta = <T extends VentaConCliente>({
                 {...uiProps("nombre_cliente")}
               />
               <QInput label="ID Fiscal" {...uiProps("id_fiscal")} />
-              <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
-              <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
-              <QInput label="Ciudad" {...uiProps("ciudad")} />
+              {editarDireccionNoRegistrado && (
+                <>
+                  <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
+                  <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
+                  <QInput label="Ciudad" {...uiProps("ciudad")} />
+                </>
+              )}
             </>
           ) : (
             <>

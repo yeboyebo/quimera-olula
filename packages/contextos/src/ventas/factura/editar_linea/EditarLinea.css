@@ -49,7 +49,27 @@
         grid-column: 1 / span 6;
     }
 
+    quimera-input[nombre="tipo_recargo"] {
+        grid-column: span 6;
+    }
+
     quimera-input[nombre="dto_porcentual"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="dto_lineal"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="tipo_irpf"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="por_comision"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="importe_comision"] {
         grid-column: span 6;
     }
 
@@ -75,7 +95,23 @@
                 grid-column: 1 / span 1 !important;
             }
 
+            quimera-input[nombre="tipo_recargo"] {
+                grid-column: 2 / span 1 !important;
+            }
+
             quimera-input[nombre="dto_porcentual"] {
+                grid-column: 1 / span 1 !important;
+            }
+
+            quimera-input[nombre="dto_lineal"] {
+                grid-column: 2 / span 1 !important;
+            }
+
+            quimera-input[nombre="por_comision"] {
+                grid-column: 1 / span 1 !important;
+            }
+
+            quimera-input[nombre="importe_comision"] {
                 grid-column: 2 / span 1 !important;
             }
         }

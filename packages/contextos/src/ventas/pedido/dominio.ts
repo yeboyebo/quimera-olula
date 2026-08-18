@@ -16,6 +16,7 @@ export const metaTablaPedido: MetaTabla<Pedido> = [
         id: "total",
         cabecera: "Total",
         tipo: "moneda",
+        divisa: (pedido) => pedido.divisa_id,
     },
 ];
 
@@ -23,6 +24,10 @@ export const pedidoVacio = (): Pedido => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
     servido: 'No',
+    por_comision: 0,
+    fecha_salida: null,
+    almacen_id: '',
+    nombre_almacen: '',
     lineas: [],
 });
 

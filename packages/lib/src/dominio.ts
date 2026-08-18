@@ -676,6 +676,11 @@ export const formatearMoneda = (cantidad: number | string, divisa: string): stri
     }).format(numero);
 };
 
+export const resolverDivisa = <T,>(
+    divisa: string | ((entidad: T) => string) | undefined,
+    entidad: T
+): string | undefined => (typeof divisa === "function" ? divisa(entidad) : divisa);
+
 function decimalesPorMoneda(divisa: string): number {
     const numberFormatUSD = new Intl.NumberFormat('en-US', {
         style: 'currency', currency: divisa
@@ -837,6 +842,7 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     //     return { and: filtro.and.map(transformarFiltro) };
     // };
     const transformarFiltro = (filtro: Filtro): Filtro => {
+        if (Array.isArray(filtro) && filtro.length === 0) return filtro;
         if (Array.isArray(filtro) && Array.isArray(filtro[0])) return (filtro as ClausulaFiltro[]).map(transformarClausula);
         if (Array.isArray(filtro)) return transformarClausula(filtro as ClausulaFiltro);
         if ('or' in filtro) return { or: filtro.or.map(transformarFiltro) };

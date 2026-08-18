@@ -3,51 +3,35 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { formatearMoneda } from "@olula/lib/dominio.ts";
 import { useEffect, useState } from "react";
+import {
+  desgloseLineaVenta,
+  fiscalidadLineaVenta,
+  tituloLineaVenta,
+  type LineaVentaTarjeta,
+} from "./linea_venta_texto.ts";
 import "./TarjetaLineaVenta.css";
 
-export type LineaVentaTarjeta = {
-  referencia?: string | null;
-  descripcion?: string | null;
-  cantidad: number;
-  pvp_unitario: number;
-  pvp_total: number;
-  dto_porcentual?: number | null;
-  dto_lineal?: number | null;
-  grupo_iva_producto_id?: string | null;
-};
+export type { LineaVentaTarjeta };
 
 export const TarjetaLineaVenta = <L extends LineaVentaTarjeta>({
   linea,
   cantidadEditable = false,
   onCambioCantidad,
+  divisa = "EUR",
 }: {
   linea: L;
   cantidadEditable?: boolean;
   onCambioCantidad?: (linea: L, cantidad: number) => void;
+  divisa?: string;
 }) => {
   const cantidad = Number(linea.cantidad) || 0;
   const [cantidadInput, setCantidadInput] = useState(String(cantidad));
 
   const permitirEditarCantidad = cantidadEditable && onCambioCantidad;
 
-  const titulo = `${linea.referencia ? `${linea.referencia} - ` : ""}${
-    linea.descripcion || "Sin descripción"
-  }`;
-
-  const partesDto: string[] = [];
-  if (linea.dto_porcentual) partesDto.push(`${linea.dto_porcentual}% Dto`);
-  if (linea.dto_lineal)
-    partesDto.push(`${formatearMoneda(linea.dto_lineal, "EUR")} Dto`);
-  const dtoTexto = partesDto.length ? ` (${partesDto.join(", ")})` : "";
-
-  const desglose = `${cantidad} x ${formatearMoneda(
-    linea.pvp_unitario,
-    "EUR"
-  )}${dtoTexto}`;
-
-  const ivaTexto = linea.grupo_iva_producto_id
-    ? `IVA ${linea.grupo_iva_producto_id}`
-    : "";
+  const titulo = tituloLineaVenta(linea);
+  const desglose = desgloseLineaVenta(linea, divisa);
+  const ivaTexto = fiscalidadLineaVenta(linea, divisa);
 
   useEffect(() => {
     setCantidadInput(String(cantidad));
@@ -111,7 +95,7 @@ export const TarjetaLineaVenta = <L extends LineaVentaTarjeta>({
   return (
     <QTarjetaGenerica
       arribaIzquierda={titulo}
-      arribaDerecha={formatearMoneda(linea.pvp_total, "EUR")}
+      arribaDerecha={formatearMoneda(linea.pvp_total, divisa)}
       abajoIzquierda={permitirEditarCantidad ? stepper : desglose}
       abajoDerecha={ivaTexto}
     />

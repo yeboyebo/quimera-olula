@@ -48,6 +48,7 @@ export const Lineas = ({
         lineas={presupuesto.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
+        divisa={presupuesto.divisa_id}
         presupuestoEditable={
           estadoPresupuesto === "ABIERTO" && !presupuesto.aprobado
         }
