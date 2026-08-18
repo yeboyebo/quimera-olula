@@ -82,7 +82,7 @@ export const DetalleAlbaranarPedido = () => {
               albaranCreado && navigate(urlAlbaran(albaranCreado.id))
             }
           >
-            Ir al albarán creado
+            Ir al albarán {albaranCreado?.codigo}
           </QBoton>
         </div>
       </QModal>

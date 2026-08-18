@@ -33,7 +33,7 @@ const facturaApi: FacturaAPI = {
     automatica: false,
     servicios: false,
     rectificativa_id: null,
-    regimen_iva: "General",
+    grupo_iva_negocio_id: "GENERAL",
     por_comision: 0,
     observaciones: "",
 };
@@ -41,8 +41,8 @@ const facturaApi: FacturaAPI = {
 describe("facturaDesdeAPI mapea la cabecera", () => {
     const factura = facturaDesdeAPI(facturaApi);
 
-    test("el régimen de IVA llega tal cual y no se pisa", () => {
-        expect(factura.regimen_iva).toBe("General");
+    test("el grupo de IVA de negocio llega tal cual y no se pisa", () => {
+        expect(factura.grupo_iva_negocio_id).toBe("GENERAL");
     });
 
     test("la fecha llega como Date", () => {

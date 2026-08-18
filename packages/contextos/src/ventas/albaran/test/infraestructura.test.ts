@@ -31,10 +31,10 @@ const albaranApi: AlbaranAPI = {
     neto_sin_dto: 100,
     forma_pago_id: "CONT",
     nombre_forma_pago: "Contado",
-    regimen_iva: "General",
+    grupo_iva_negocio_id: "GENERAL",
     por_comision: 0,
     observaciones: "",
-    idfactura: null,
+    facturado: false,
 };
 
 describe("albaranDesdeAPI mapea hora, almacén y abono", () => {
@@ -54,7 +54,12 @@ describe("albaranDesdeAPI mapea hora, almacén y abono", () => {
         expect(albaranDesdeAPI({ ...albaranApi, de_abono: false }).de_abono).toBe(false);
     });
 
-    test("el régimen de IVA llega tal cual y no se pisa", () => {
-        expect(albaran.regimen_iva).toBe("General");
+    test("el grupo de IVA de negocio llega tal cual y no se pisa", () => {
+        expect(albaran.grupo_iva_negocio_id).toBe("GENERAL");
+    });
+
+    test("facturado llega como booleano y decide el bloqueo", () => {
+        expect(albaran.facturado).toBe(false);
+        expect(albaranDesdeAPI({ ...albaranApi, facturado: true }).facturado).toBe(true);
     });
 });

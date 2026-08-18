@@ -7,8 +7,11 @@ import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
 import { Divisa } from "../../comun/componentes/divisa.tsx";
 import { FormaPago } from "../../comun/componentes/formapago.tsx";
-import { RegimenIva } from "../../comun/componentes/regimen_iva.tsx";
-import { puedeCambiarDivisa } from "../../venta/dominio.ts";
+import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
+import {
+  grupoIvaNegocioEnDocumento,
+  puedeCambiarDivisa,
+} from "../../venta/dominio.ts";
 import { Presupuesto } from "../diseño.ts";
 import { EstadoPresupuesto } from "./diseño.ts";
 import "./TabDatos.css";
@@ -56,7 +59,9 @@ export const TabDatosBase = ({
         )}
         <TotalDivisaEmpresa venta={modelo} />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
-        <RegimenIva {...uiProps("regimen_iva")} />
+        {grupoIvaNegocioEnDocumento() && (
+          <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
+        )}
       </quimera-formulario>
     </div>
   );

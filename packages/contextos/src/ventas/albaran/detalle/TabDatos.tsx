@@ -2,10 +2,12 @@ import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
-import { RegimenIva } from "#/ventas/comun/componentes/regimen_iva.tsx";
-import { puedeCambiarDivisa } from "#/ventas/venta/dominio.ts";
+import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
+import {
+  grupoIvaNegocioEnDocumento,
+  puedeCambiarDivisa,
+} from "#/ventas/venta/dominio.ts";
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
-import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
@@ -33,7 +35,6 @@ export const TabDatos = ({
       <quimera-formulario>
         <QDate label="Fecha" {...uiProps("fecha")} />
         <QInput label="Hora" {...uiProps("hora")} />
-        <QCheckbox label="Abono" {...uiProps("de_abono")} />
         <Almacen {...uiProps("almacen_id", "nombre_almacen")} />
         <Divisa {...uiProps("divisa_id")} />
         <QInput label="T. Conversión" {...uiProps("tasa_conversion")} />
@@ -58,7 +59,9 @@ export const TabDatos = ({
         )}
         <TotalDivisaEmpresa venta={modelo} />
         <FormaPago {...uiProps("forma_pago_id", "nombre_forma_pago")} />
-        <RegimenIva {...uiProps("regimen_iva")} />
+        {grupoIvaNegocioEnDocumento() && (
+          <GrupoIvaNegocio {...uiProps("grupo_iva_negocio_id")} />
+        )}
       </quimera-formulario>
     </div>
   );

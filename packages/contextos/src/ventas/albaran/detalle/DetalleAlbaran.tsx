@@ -20,6 +20,7 @@ import { albaranVacio, editable, metaAlbaran, tituloAlbaran } from "../dominio.t
 import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
 import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
 import { getReportAlbaran } from "../infraestructura.ts";
+import { EstadoAlbaran } from "../vistas/EstadoAlbaran.tsx";
 import "./DetalleAlbaran.css";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
@@ -65,7 +66,12 @@ export const DetalleAlbaran = ({
 
   const { estado, lineaActiva, facturaCreada } = ctx;
 
-  const titulo = tituloAlbaran;
+  const titulo = (albaran: Albaran) => (
+    <span className="titulo-documento">
+      <EstadoAlbaran facturado={albaran.facturado} />
+      {tituloAlbaran(albaran)}
+    </span>
+  );
 
   if (!ctx.albaran.id) return;
 

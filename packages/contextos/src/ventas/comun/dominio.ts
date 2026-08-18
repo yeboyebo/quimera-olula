@@ -51,3 +51,25 @@ export const normalizarHora = (hora?: string | null): string | null => {
  */
 export const esVerdadero = (valor: unknown): boolean =>
     valor === true || valor === "true" || valor === "1";
+
+/**
+ * Descripción de maestro en mayúscula inicial. Los maestros de cada app las
+ * guardan a su manera ("GENERAL", "Recargo equivalencia"), así que se rebaja a
+ * minúscula lo que venga en mayúsculas, salvo siglas ("U.E.", "IVA").
+ */
+export const capitalizarDescripcion = (descripcion?: string | null): string => {
+    const valor = texto(descripcion);
+    if (valor === "") return "";
+
+    const esSigla = (palabra: string) =>
+        palabra.includes(".") || palabra.replace(/[^A-ZÁÉÍÓÚÜÑ]/g, "").length <= 3;
+
+    const palabras = valor.split(" ").map((palabra) =>
+        palabra === palabra.toLocaleLowerCase() || esSigla(palabra)
+            ? palabra
+            : palabra.toLocaleLowerCase()
+    );
+
+    const [primera = "", ...resto] = palabras;
+    return [primera.charAt(0).toLocaleUpperCase() + primera.slice(1), ...resto].join(" ");
+};

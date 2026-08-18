@@ -1,6 +1,6 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
 import { Direccion } from "@olula/lib/diseño.js";
-import { MetaCampo, MetaModelo } from "@olula/lib/dominio.ts";
+import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
@@ -41,7 +41,7 @@ export const ventaVacia: Venta = {
     total_recargo: 0,
     forma_pago_id: '',
     nombre_forma_pago: '',
-    regimen_iva: '',
+    grupo_iva_negocio_id: '',
     observaciones: '',
     dtoPorcentual: 0,
     netoSinDto: 0,
@@ -73,6 +73,12 @@ export const enDivisaExtranjera = (venta: { divisa_id: string }): boolean => {
 };
 
 export const mostrarImporte = (importe?: number | null): boolean => !!importe;
+
+/**
+ * En `legacy` el documento no lleva grupo de IVA de negocio: el servidor lo
+ * devuelve siempre como GENERAL y descarta lo que se le mande.
+ */
+export const grupoIvaNegocioEnDocumento = (): boolean => plugin("iva_nav") !== "legacy";
 
 export const tituloDocumentoVenta = (
     documento: { codigo: string; cliente: { nombre_cliente: string } },

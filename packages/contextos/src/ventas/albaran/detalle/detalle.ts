@@ -56,10 +56,9 @@ export const cancelarCambioAlbaran: ProcesarAlbaran = async (contexto) => {
 }
 
 export const abiertoOFacturado: ProcesarAlbaran = async (contexto) => {
-    const esFacturado = !!contexto.albaran.idfactura;
     return {
         ...contexto,
-        estado: esFacturado ? "FACTURADO" : "ABIERTO"
+        estado: contexto.albaran.facturado ? "FACTURADO" : "ABIERTO"
     }
 }
 

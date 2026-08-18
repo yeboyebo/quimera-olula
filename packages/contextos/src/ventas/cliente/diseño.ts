@@ -11,7 +11,7 @@ export interface Cliente extends Entidad {
   tipo_id_fiscal: string;
   serie_id: string;
   forma_pago_id: string;
-  regimen_iva: string;
+  grupo_iva_negocio_id: string;
   de_baja: boolean;
   fecha_baja: Date | null;
   grupo_id: string;

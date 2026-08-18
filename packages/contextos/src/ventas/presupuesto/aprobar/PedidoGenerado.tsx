@@ -38,7 +38,7 @@ export const PedidoGenerado = ({
                     Seguir en el presupuesto
                 </QBoton>
                 <QBoton onClick={() => navigate(urlPedido(pedido.id))}>
-                    Ir al pedido creado
+                    Ir al pedido {pedido.codigo}
                 </QBoton>
             </div>
         </QModal>

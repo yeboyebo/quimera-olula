@@ -1,7 +1,7 @@
-import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
+import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { MetaTabla, QEtiqueta, QIcono } from "@olula/componentes/index.js";
+import { MetaTabla, QEtiqueta } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
@@ -9,6 +9,8 @@ import {
   MetaFiltro,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
@@ -22,13 +24,15 @@ import {
 import { CrearAlbaran } from "../crear/CrearAlbaran.tsx";
 import { DetalleAlbaran } from "../detalle/DetalleAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
-import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { metaTablaAlbaran as metaTablaBase } from "../dominio.ts";
+import { EstadoAlbaran } from "../vistas/EstadoAlbaran.tsx";
 import "./MaestroConDetalleAlbaran.css";
 import { getMaquina } from "./maquina.ts";
 
 const PENDIENTE = "false";
 const FACTURADO = "true";
+
+const filtroPendientes: ClausulaFiltro[] = [["facturado", "=", PENDIENTE]];
 
 const campoFiltroFacturado: MetaFiltro = {
   facturado: {
@@ -41,7 +45,7 @@ const campoFiltroFacturado: MetaFiltro = {
     ],
     filtro: (valor) => {
       const elegidos = (valor as string[]) ?? [];
-      if (elegidos.length !== 1) return null;
+      if (elegidos.length === 0 || elegidos.length === 2) return null;
       return ["facturado", "=", elegidos[0]];
     },
   },
@@ -49,10 +53,14 @@ const campoFiltroFacturado: MetaFiltro = {
 
 export const MaestroConDetalleAlbaran = () => {
   const { id, criteria } = getUrlParams();
+  const criteriaInicial =
+    criteria.filtro.length === 0
+      ? { ...criteriaDefecto, filtro: filtroPendientes }
+      : criteria;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    albaranes: listaActivaEntidadesInicial<Albaran>(id, criteria),
+    albaranes: listaActivaEntidadesInicial<Albaran>(id, criteriaInicial),
   });
 
   useUrlParams(ctx.albaranes.activo, ctx.albaranes.criteria);
@@ -67,25 +75,7 @@ export const MaestroConDetalleAlbaran = () => {
       id: "estado",
       cabecera: "",
       render: (albaran: Albaran) => (
-        <ColumnaEstadoTabla
-          estados={{
-            facturado: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-deshabilitado-oscuro)"
-              />
-            ),
-            pendiente: (
-              <QIcono
-                nombre={"circulo_relleno"}
-                tamaño="sm"
-                color="var(--color-exito-oscuro)"
-              />
-            ),
-          }}
-          estadoActual={albaran.idfactura ? "facturado" : "pendiente"}
-        />
+        <EstadoAlbaran facturado={albaran.facturado} />
       ),
     },
     ...metaTablaBase,
@@ -124,7 +114,7 @@ export const MaestroConDetalleAlbaran = () => {
                   divisa={albaran.divisa_id}
                   tasaConversion={albaran.tasa_conversion}
                   totalDivisaEmpresa={albaran.total_divisa_empresa}
-                  estado={albaran.idfactura ? "cerrado" : "pendiente"}
+                  estado={albaran.facturado ? "cerrado" : "pendiente"}
                   etiqueta={
                     albaran.de_abono ? (
                       <QEtiqueta variante="advertencia">Abono</QEtiqueta>
@@ -139,7 +129,8 @@ export const MaestroConDetalleAlbaran = () => {
                     Nuevo Albarán
                   </QBoton>
                 </div>
-              )}              entidades={ctx.albaranes.lista}
+              )}
+              entidades={ctx.albaranes.lista}
               totalEntidades={ctx.albaranes.total}
               seleccionada={ctx.albaranes.activo}
               onSeleccion={(payload) => emitir("albaran_seleccionado", payload)}

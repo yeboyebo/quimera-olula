@@ -7,7 +7,6 @@ export const metaLineaFactura: MetaModelo<LineaFactura> = {
     campos: {
         ...metaLineaVenta.campos,
         tipo_irpf: { tipo: "decimal", requerido: false, decimales: 2 },
-        tipo_recargo: { tipo: "decimal", requerido: false, decimales: 2 },
         por_comision: { tipo: "decimal", requerido: false, decimales: 2 },
     },
 };

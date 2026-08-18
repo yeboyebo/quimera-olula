@@ -6,7 +6,8 @@ import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVen
 
 export interface Albaran extends Venta {
     cliente: ClienteVenta;
-    idfactura: string | null;
+    /** Fuente de verdad del estado: un albarán facturado queda bloqueado. */
+    facturado: boolean;
     por_comision: number;
     hora: string;
     almacen_id: string;
@@ -53,6 +54,7 @@ export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<v
 
 export type FacturaCreada = {
     id: string;
+    codigo: string;
 };
 
 export type PatchFacturarAlbaran = (id: string) => Promise<FacturaCreada>;

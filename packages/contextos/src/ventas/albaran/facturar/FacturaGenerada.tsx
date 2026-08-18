@@ -38,7 +38,7 @@ export const FacturaGenerada = ({
                     Seguir en el albarán
                 </QBoton>
                 <QBoton onClick={() => navigate(urlFactura(factura.id))}>
-                    Ir a la factura creada
+                    Ir a la factura {factura.codigo}
                 </QBoton>
             </div>
         </QModal>

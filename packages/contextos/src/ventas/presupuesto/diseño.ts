@@ -45,6 +45,20 @@ export interface LineaPresupuesto extends LineaVenta {
 
 export type NuevaLinea = NuevaLineaVenta
 
+/**
+ * Línea sin artículo de catálogo. El servidor no exige `articulo_id`: basta con
+ * descripción, cantidad y pvp_unitario (que puede ser 0).
+ */
+export type NuevaLineaLibre = {
+  descripcion: string;
+  cantidad: number;
+  pvp_unitario: number;
+}
+
+export const esLineaConArticulo = (
+  linea: NuevaLinea | NuevaLineaLibre
+): linea is NuevaLinea => 'referencia' in linea;
+
 export type Cliente = {
   cliente_id: string;
   direccion_id: string;
@@ -68,7 +82,7 @@ export type PatchLinea = (id: string, linea: LineaPresupuesto) => Promise<void>;
 
 export type CambiarCantidadLinea = (id: string, linea: LineaPresupuesto, cantidad: number) => Promise<void>;
 
-export type PostLinea = (id: string, linea: NuevaLinea) => Promise<string>;
+export type PostLinea = (id: string, linea: NuevaLinea | NuevaLineaLibre) => Promise<string>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
@@ -76,6 +90,7 @@ export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<v
 
 export type PedidoCreado = {
   id: string;
+  codigo: string;
 };
 
 export type PatchAprobarPresupuesto = (id: string) => Promise<PedidoCreado>;

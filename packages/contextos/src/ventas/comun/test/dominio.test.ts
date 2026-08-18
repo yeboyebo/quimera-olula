@@ -1,4 +1,5 @@
 import {
+    capitalizarDescripcion,
     esVerdadero,
     fechaAISO,
     formatearDireccionVenta,
@@ -115,5 +116,32 @@ describe("esVerdadero normaliza los checkbox de useModelo", () => {
         expect(esVerdadero("false")).toBe(false);
         expect(esVerdadero(null)).toBe(false);
         expect(esVerdadero(undefined)).toBe(false);
+    });
+});
+
+describe("capitalizarDescripcion deja la descripción con mayúscula inicial", () => {
+    test("una descripción en mayúsculas se rebaja a mayúscula inicial", () => {
+        expect(capitalizarDescripcion("GENERAL")).toBe("General");
+        expect(capitalizarDescripcion("RECARGO EQUIVALENCIA")).toBe("Recargo equivalencia");
+    });
+
+    test("una descripción ya escrita a mano se respeta", () => {
+        expect(capitalizarDescripcion("Recargo equivalencia")).toBe("Recargo equivalencia");
+        expect(capitalizarDescripcion("Exportaciones")).toBe("Exportaciones");
+    });
+
+    test("una descripción en minúsculas solo gana la mayúscula inicial", () => {
+        expect(capitalizarDescripcion("exento")).toBe("Exento");
+    });
+
+    test("las siglas no se rebajan", () => {
+        expect(capitalizarDescripcion("U.E.")).toBe("U.E.");
+        expect(capitalizarDescripcion("IVA GENERAL")).toBe("IVA general");
+    });
+
+    test("vacío, null y undefined dan cadena vacía", () => {
+        expect(capitalizarDescripcion("")).toBe("");
+        expect(capitalizarDescripcion(null)).toBe("");
+        expect(capitalizarDescripcion(undefined)).toBe("");
     });
 });

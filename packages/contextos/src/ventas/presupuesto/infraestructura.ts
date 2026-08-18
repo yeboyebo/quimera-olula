@@ -4,7 +4,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, esLineaConArticulo, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -25,7 +25,7 @@ type PresupuestoAPI = {
   neto_sin_dto: number;
   forma_pago_id: string;
   nombre_forma_pago: string;
-  regimen_iva: string;
+  grupo_iva_negocio_id: string;
   por_comision: number;
   almacen_id: string;
   observaciones: string;
@@ -185,11 +185,19 @@ export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [{
+  const lineaApi = esLineaConArticulo(linea)
+    ? {
       articulo_id: linea.referencia,
-      cantidad: linea.cantidad
-    }]
+      cantidad: linea.cantidad,
+    }
+    : {
+      descripcion: linea.descripcion,
+      cantidad: linea.cantidad,
+      pvp_unitario: linea.pvp_unitario,
+    };
+
+  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
+    lineas: [lineaApi]
   }, "Error al crear línea de presupuesto").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
@@ -258,7 +266,7 @@ export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => 
       id_fiscal: presupuesto.cliente.id_fiscal,
       direccion_id: presupuesto.cliente.direccion_id,
       forma_pago_id: presupuesto.forma_pago_id,
-      regimen_iva: presupuesto.regimen_iva,
+      grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
       por_comision: presupuesto.por_comision,
       almacen_id: presupuesto.almacen_id,
       observaciones: presupuesto.observaciones,
@@ -274,9 +282,10 @@ export const aprobarPresupuesto: PatchAprobarPresupuesto = async (id) => {
     `${baseUrl}/${id}/aprobar`,
     {},
     "Error al aprobar presupuesto"
-  )) as unknown as { pedido_id: string };
+  )) as unknown as { pedido_id: string; codigo?: string };
 
-  return { id: String(respuesta.pedido_id) };
+  const pedidoId = String(respuesta.pedido_id ?? "");
+  return { id: pedidoId, codigo: String(respuesta.codigo ?? pedidoId) };
 };
 
 export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {
