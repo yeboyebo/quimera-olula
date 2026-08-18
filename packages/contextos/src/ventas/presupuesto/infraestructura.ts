@@ -4,8 +4,8 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia, esLineaConArticulo } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -80,35 +80,8 @@ export const getPresupuestos: GetPresupuestos = async (
 };
 
 export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<string> => {
-  let clientePayload;
-
-  if (esClienteRegistrado(presupuesto)) {
-    clientePayload = {
-      cliente_id: presupuesto.cliente_id,
-      direccion_id: presupuesto.direccion_id
-    };
-  } else {
-    clientePayload = {
-      nombre: presupuesto.nombre_cliente,
-      id_fiscal: presupuesto.id_fiscal,
-      direccion: {
-        nombre_via: presupuesto.nombre_via,
-        tipo_via: presupuesto.tipo_via || null,
-        numero: presupuesto.numero || null,
-        otros: presupuesto.otros || null,
-        cod_postal: presupuesto.cod_postal || null,
-        ciudad: presupuesto.ciudad,
-        provincia_id: null,
-        provincia: presupuesto.provincia || null,
-        pais_id: presupuesto.pais_id || null,
-        apartado: presupuesto.apartado || null,
-        telefono: presupuesto.telefono || null,
-      }
-    };
-  }
-
   const payload = {
-    cliente: clientePayload,
+    cliente: payloadCambioCliente(presupuesto),
     empresa_id: empresaActual()
   };
 
@@ -140,42 +113,9 @@ export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
 }
 
 export const patchCambiarCliente = async (id: string, cambio: CambioClientePresupuesto): Promise<void> => {
-  if (cambio.cliente_id) {
-    const clientePayload = {
-      cambios: {
-        cliente: {
-          cliente_id: cambio.cliente_id,
-          direccion_id: cambio.direccion_id
-        }
-      }
-    }
-    await RestAPI.patch(`${baseUrl}/${id}`, clientePayload, "Error al cambiar cliente del presupuesto");
-  } else {
-    const clientePayload = {
-      cambios: {
-        cliente: {
-          nombre: cambio.nombre_cliente || "",
-          id_fiscal: cambio.id_fiscal,
-          direccion: {
-            nombre_via: cambio.nombre_via,
-            tipo_via: cambio.tipo_via || null,
-            numero: cambio.numero || null,
-            otros: cambio.otros || null,
-            cod_postal: cambio.cod_postal || null,
-            ciudad: cambio.ciudad || null,
-            provincia_id: null,
-            provincia: cambio.provincia || null,
-            pais_id: cambio.pais_id || null,
-            apartado: cambio.apartado || null,
-            telefono: cambio.telefono || null,
-          }
-        }
-      }
-    }
-    await RestAPI.patch(`${baseUrl}/${id}`, clientePayload, "Error al cambiar cliente del presupuesto");
-  }
-
-
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: { cliente: payloadCambioCliente(cambio) }
+  }, "Error al cambiar cliente del presupuesto");
 }
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
@@ -186,19 +126,8 @@ export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  const lineaApi = esLineaConArticulo(linea)
-    ? {
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad,
-    }
-    : {
-      descripcion: linea.descripcion,
-      cantidad: linea.cantidad,
-      pvp_unitario: linea.pvp_unitario,
-    };
-
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [lineaApi]
+    lineas: [altaLineaApi(linea)]
   }, "Error al crear línea de presupuesto").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];

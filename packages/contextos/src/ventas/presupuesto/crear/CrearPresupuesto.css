@@ -1,4 +1,4 @@
-/* Los campos de dirección se posicionan en CamposDireccion.css (.campos-direccion). */
+/* Los campos de dirección se posicionan en CamposDireccionVenta.css (.campos-direccion). */
 .CrearPresupuesto {
     quimera-autocompletar[nombre="clientePresupuesto"] {
         grid-column: span 12;

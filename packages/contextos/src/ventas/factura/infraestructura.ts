@@ -3,7 +3,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
@@ -110,12 +110,7 @@ export const postFactura: PostFactura = async (factura) => {
 
 export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      cliente: {
-        cliente_id: cambio.cliente_id,
-        direccion_id: cambio.direccion_id
-      }
-    }
+    cambios: { cliente: payloadCambioCliente(cambio) }
   }, "Error al cambiar cliente de la factura");
 };
 
@@ -128,10 +123,7 @@ export const getLineas: GetLineasFactura = async (id) =>
 
 export const postLinea: PostLinea = async (id, linea) => {
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [{
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad
-    }]
+    lineas: [altaLineaApi(linea)]
   }, "Error al crear linea de factura").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];

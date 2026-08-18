@@ -63,8 +63,6 @@ export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
 
             linea_seleccionada: [activarLinea],
 
-            cliente_cambiado: [cambiarCliente],
-
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
 
             pedido_deseleccionado: [

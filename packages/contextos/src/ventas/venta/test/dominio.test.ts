@@ -1,4 +1,6 @@
 import {
+    altaLineaApi,
+    payloadCambioCliente,
     DIVISA_EMPRESA,
     enDivisaExtranjera,
     formatearTasaConversion,
@@ -131,5 +133,80 @@ describe("validez de la línea sin artículo de catálogo", () => {
 
     test("pero sin descripción no: la línea se queda sin identidad", () => {
         expect(valido(linea({ referencia: null, descripcion: "" }))).toBe(false);
+    });
+});
+
+describe("altaLineaApi serializa el alta de línea igual para los cuatro documentos", () => {
+    test("la línea de catálogo va como articulo.articulo_id, con la cantidad fuera", () => {
+        expect(altaLineaApi({ referencia: "ART-001", cantidad: 3 })).toEqual({
+            articulo: { articulo_id: "ART-001" },
+            cantidad: 3,
+        });
+    });
+
+    test("la línea libre va como articulo.descripcion y pvp_unitario", () => {
+        expect(
+            altaLineaApi({ descripcion: "Portes", cantidad: 1, pvp_unitario: 15 })
+        ).toEqual({
+            articulo: { descripcion: "Portes", pvp_unitario: 15 },
+            cantidad: 1,
+        });
+    });
+
+    test("un pvp de 0 se manda tal cual", () => {
+        expect(
+            altaLineaApi({ descripcion: "Muestra", cantidad: 2, pvp_unitario: 0 })
+        ).toEqual({
+            articulo: { descripcion: "Muestra", pvp_unitario: 0 },
+            cantidad: 2,
+        });
+    });
+});
+
+describe("payloadCambioCliente bifurca según haya cliente de maestro o de paso", () => {
+    test("con cliente_id manda solo el par de ids", () => {
+        expect(
+            payloadCambioCliente({ cliente_id: "CLI-1", direccion_id: "DIR-1" })
+        ).toEqual({ cliente_id: "CLI-1", direccion_id: "DIR-1" });
+    });
+
+    test("sin cliente_id manda el nombre y la dirección anidada", () => {
+        expect(
+            payloadCambioCliente({
+                nombre_cliente: "Cliente de paso",
+                id_fiscal: "B12345678",
+                tipo_via: "Calle",
+                nombre_via: "Gran Vía",
+                numero: "5",
+                cod_postal: "18001",
+                ciudad: "Granada",
+                provincia: "Granada",
+                pais_id: "ES",
+                telefono: "958000000",
+            })
+        ).toEqual({
+            nombre: "Cliente de paso",
+            id_fiscal: "B12345678",
+            direccion: {
+                nombre_via: "Gran Vía",
+                tipo_via: "Calle",
+                numero: "5",
+                otros: null,
+                cod_postal: "18001",
+                ciudad: "Granada",
+                provincia_id: null,
+                provincia: "Granada",
+                pais_id: "ES",
+                apartado: null,
+                telefono: "958000000",
+            },
+        });
+    });
+
+    test("la clave del nombre es `nombre`, no `nombre_cliente`", () => {
+        const payload = payloadCambioCliente({ nombre_cliente: "Paso" });
+
+        expect(payload).not.toHaveProperty("nombre_cliente");
+        expect(payload).toHaveProperty("nombre", "Paso");
     });
 });

@@ -64,7 +64,7 @@ export const DetallePedidoBase = ({
 
   const autoGuardar = useCallback(
     async (modelo: Pedido) => {
-      emitir("edicion_de_pedido_lista", modelo);
+      await emitir("edicion_de_pedido_lista", modelo);
     },
     [emitir]
   );
@@ -123,7 +123,11 @@ export const DetallePedidoBase = ({
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={pedido.modificado} />
+        <IndicadorGuardado
+          modificado={pedido.modificado}
+          error={pedido.errorGuardado}
+          guardados={pedido.guardados}
+        />
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 

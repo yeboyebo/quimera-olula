@@ -1,3 +1,4 @@
+import { metaNuevaVentaClienteNoRegistrado, nuevaVentaClienteNoRegistradaVacia } from "#/ventas/venta/dominio.ts";
 import { MetaModelo } from "@olula/lib/dominio.js";
 import { NuevoPresupuesto, NuevoPresupuestoClienteNoRegistrado } from "../diseño.ts";
 
@@ -15,27 +16,8 @@ export const metaNuevoPresupuesto: MetaModelo<NuevoPresupuesto> = {
     }
 };
 
-export const nuevoPresupuestoClienteNoRegistradoVacio: NuevoPresupuestoClienteNoRegistrado = {
-    empresa_id: "",
-    nombre_cliente: "",
-    id_fiscal: "",
-    nombre_via: "",
-    tipo_via: "",
-    numero: "",
-    otros: "",
-    cod_postal: "",
-    ciudad: "",
-    provincia: "",
-    pais_id: "",
-    apartado: "",
-    telefono: "",
-};
+export const nuevoPresupuestoClienteNoRegistradoVacio: NuevoPresupuestoClienteNoRegistrado =
+    nuevaVentaClienteNoRegistradaVacia;
 
-export const metaNuevoPresupuestoClienteNoRegistrado: MetaModelo<NuevoPresupuestoClienteNoRegistrado> = {
-    campos: {
-        nombre_cliente: { requerido: true },
-        nombre_via: { requerido: true },
-        empresa_id: { requerido: true },
-    }
-};
-
+export const metaNuevoPresupuestoClienteNoRegistrado: MetaModelo<NuevoPresupuestoClienteNoRegistrado> =
+    metaNuevaVentaClienteNoRegistrado;

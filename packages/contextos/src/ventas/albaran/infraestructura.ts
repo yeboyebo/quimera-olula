@@ -4,7 +4,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia, esLineaConArticulo } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -100,10 +100,7 @@ export const getAlbaranes: GetAlbaranes = async (
 
 export const postAlbaran: PostAlbaran = async (albaran) => {
   const payload = {
-    cliente: {
-      cliente_id: albaran.cliente_id,
-      direccion_id: albaran.direccion_id,
-    },
+    cliente: payloadCambioCliente(albaran),
     empresa_id: empresaActual(),
   };
   return await RestAPI.post(baseUrl, payload, "Error al guardar albarán").then((respuesta) => respuesta.id);
@@ -118,19 +115,8 @@ export const getLineas: GetLineasAlbaran = async (id) =>
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  const lineaApi = esLineaConArticulo(linea)
-    ? {
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad,
-    }
-    : {
-      descripcion: linea.descripcion,
-      cantidad: linea.cantidad,
-      pvp_unitario: linea.pvp_unitario,
-    };
-
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [lineaApi]
+    lineas: [altaLineaApi(linea)]
   }, "Error al guardar").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
@@ -211,12 +197,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
 
 export const patchCambiarCliente: PatchClienteAlbaran = async (id, cambio) => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      cliente: {
-        cliente_id: cambio.cliente_id,
-        direccion_id: cambio.direccion_id,
-      },
-    },
+    cambios: { cliente: payloadCambioCliente(cambio) }
   }, "Error al cambiar cliente del albarán");
 };
 

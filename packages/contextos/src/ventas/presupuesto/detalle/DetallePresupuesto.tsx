@@ -52,7 +52,7 @@ export const DetallePresupuesto = ({
 
   const autoGuardar = useCallback(
     async (modelo: Presupuesto) => {
-      emitir("edicion_de_presupuesto_lista", modelo);
+      await emitir("edicion_de_presupuesto_lista", modelo);
     },
     [emitir]
   );
@@ -107,7 +107,11 @@ export const DetallePresupuesto = ({
       cerrarDetalle={() => emitir("presupuesto_deseleccionado", null)}
     >
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={presupuesto.modificado} />
+        <IndicadorGuardado
+          modificado={presupuesto.modificado}
+          error={presupuesto.errorGuardado}
+          guardados={presupuesto.guardados}
+        />
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 

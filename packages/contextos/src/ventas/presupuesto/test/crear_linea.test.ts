@@ -1,3 +1,4 @@
+import { AltaLineaVentaApi } from "#/ventas/venta/diseño.ts";
 import { esLineaConArticulo } from "#/ventas/venta/dominio.ts";
 import {
     metaNuevaLinea,
@@ -20,7 +21,7 @@ vi.mock("@olula/lib/api/rest_api.ts", () => ({
 const { postLinea } = await import("#/ventas/presupuesto/infraestructura.ts");
 
 const cuerpoEnviado = () =>
-    (post.mock.calls[0][1] as { lineas: Record<string, unknown>[] }).lineas[0];
+    (post.mock.calls[0][1] as { lineas: AltaLineaVentaApi[] }).lineas[0];
 
 describe("esLineaConArticulo distingue las dos formas de línea", () => {
     test("con referencia es línea de catálogo", () => {
@@ -37,13 +38,16 @@ describe("esLineaConArticulo distingue las dos formas de línea", () => {
 describe("postLinea adapta el payload a cada forma", () => {
     beforeEach(() => post.mockClear());
 
-    test("la línea de catálogo manda articulo_id y cantidad", async () => {
+    test("la línea de catálogo manda articulo.articulo_id y cantidad aparte", async () => {
         await postLinea("pre-1", { referencia: "ART-001", cantidad: 3 });
 
-        expect(cuerpoEnviado()).toEqual({ articulo_id: "ART-001", cantidad: 3 });
+        expect(cuerpoEnviado()).toEqual({
+            articulo: { articulo_id: "ART-001" },
+            cantidad: 3,
+        });
     });
 
-    test("la línea libre manda descripción y pvp, sin articulo_id", async () => {
+    test("la línea libre manda descripción y pvp en articulo, sin articulo_id", async () => {
         await postLinea("pre-1", {
             descripcion: "Mano de obra",
             cantidad: 2,
@@ -51,11 +55,10 @@ describe("postLinea adapta el payload a cada forma", () => {
         });
 
         expect(cuerpoEnviado()).toEqual({
-            descripcion: "Mano de obra",
+            articulo: { descripcion: "Mano de obra", pvp_unitario: 50 },
             cantidad: 2,
-            pvp_unitario: 50,
         });
-        expect(cuerpoEnviado()).not.toHaveProperty("articulo_id");
+        expect(cuerpoEnviado().articulo).not.toHaveProperty("articulo_id");
     });
 
     test("devuelve el id que responde el servidor", async () => {

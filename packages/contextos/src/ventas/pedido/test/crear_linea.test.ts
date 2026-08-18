@@ -1,3 +1,4 @@
+import { AltaLineaVentaApi } from "#/ventas/venta/diseño.ts";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const post = vi.fn(
@@ -13,18 +14,21 @@ vi.mock("@olula/lib/api/rest_api.ts", () => ({
 const { postLinea } = await import("#/ventas/pedido/infraestructura.ts");
 
 const cuerpoEnviado = () =>
-    (post.mock.calls[0][1] as { lineas: Record<string, unknown>[] }).lineas[0];
+    (post.mock.calls[0][1] as { lineas: AltaLineaVentaApi[] }).lineas[0];
 
 describe("postLinea del pedido adapta el payload a cada forma", () => {
     beforeEach(() => post.mockClear());
 
-    test("la línea de catálogo manda articulo_id y cantidad", async () => {
+    test("la línea de catálogo manda articulo.articulo_id y cantidad aparte", async () => {
         await postLinea("ped-1", { referencia: "ART-001", cantidad: 3 });
 
-        expect(cuerpoEnviado()).toEqual({ articulo_id: "ART-001", cantidad: 3 });
+        expect(cuerpoEnviado()).toEqual({
+            articulo: { articulo_id: "ART-001" },
+            cantidad: 3,
+        });
     });
 
-    test("la línea libre manda descripción y pvp, sin articulo_id", async () => {
+    test("la línea libre manda descripción y pvp en articulo, sin articulo_id", async () => {
         await postLinea("ped-1", {
             descripcion: "Mano de obra",
             cantidad: 2,
@@ -32,10 +36,9 @@ describe("postLinea del pedido adapta el payload a cada forma", () => {
         });
 
         expect(cuerpoEnviado()).toEqual({
-            descripcion: "Mano de obra",
+            articulo: { descripcion: "Mano de obra", pvp_unitario: 50 },
             cantidad: 2,
-            pvp_unitario: 50,
         });
-        expect(cuerpoEnviado()).not.toHaveProperty("articulo_id");
+        expect(cuerpoEnviado().articulo).not.toHaveProperty("articulo_id");
     });
 });

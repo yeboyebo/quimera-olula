@@ -57,7 +57,7 @@ export const DetalleAlbaran = ({
 
   const autoGuardar = useCallback(
     async (modelo: Albaran) => {
-      emitir("edicion_de_albaran_lista", modelo);
+      await emitir("edicion_de_albaran_lista", modelo);
     },
     [emitir]
   );
@@ -115,7 +115,11 @@ export const DetalleAlbaran = ({
       cerrarDetalle={() => emitir("albaran_deseleccionado", null)}
     >
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={albaran.modificado} />
+        <IndicadorGuardado
+          modificado={albaran.modificado}
+          error={albaran.errorGuardado}
+          guardados={albaran.guardados}
+        />
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 

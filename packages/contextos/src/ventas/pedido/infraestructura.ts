@@ -4,7 +4,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia, esLineaConArticulo } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {
@@ -116,10 +116,7 @@ export const getPedidos: GetPedidos = async (
 
 export const postPedido: PostPedido = async (pedido) => {
   const payload = {
-    cliente: {
-      cliente_id: pedido.cliente_id,
-      direccion_id: pedido.direccion_id
-    },
+    cliente: payloadCambioCliente(pedido),
     empresa_id: empresaActual()
   }
   return await RestAPI.post(baseUrl, payload, "Error al crear pedido").then((respuesta) => respuesta.id);
@@ -128,12 +125,7 @@ export const postPedido: PostPedido = async (pedido) => {
 
 export const patchCambiarCliente: PatchClientePedido = async (id, cambio) => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      cliente: {
-        cliente_id: cambio.cliente_id,
-        direccion_id: cambio.direccion_id
-      }
-    }
+    cambios: { cliente: payloadCambioCliente(cambio) }
   }, "Error al cambiar cliente del pedido");
 }
 
@@ -174,19 +166,8 @@ export const getLineas: GetLineasPedido = async (id) =>
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  const lineaApi = esLineaConArticulo(linea)
-    ? {
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad,
-    }
-    : {
-      descripcion: linea.descripcion,
-      cantidad: linea.cantidad,
-      pvp_unitario: linea.pvp_unitario,
-    };
-
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [lineaApi]
+    lineas: [altaLineaApi(linea)]
   }, "Error al crear linea de pedido").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];

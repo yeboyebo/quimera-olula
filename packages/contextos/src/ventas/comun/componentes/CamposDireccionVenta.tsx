@@ -1,17 +1,17 @@
 import { PaisSelector } from "#/comun/componentes/pais/pais.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { UiProps } from "@olula/lib/useModelo.ts";
-import "./CamposDireccion.css";
+import "./CamposDireccionVenta.css";
 
 /**
- * Campos de dirección en snake_case, compartidos por el alta de documento con
- * cliente no registrado y por el modal de cambio de dirección.
+ * Campos de dirección en snake_case, compartidos por el alta de documento de
+ * venta con cliente no registrado y por el cambio de cliente del detalle.
  *
  * Devuelve un fragmento: tiene que ser hijo directo de `quimera-formulario`
  * para que las columnas del grid apliquen. El contenedor del formulario debe
  * llevar la clase `campos-direccion`.
  */
-export const CamposDireccion = ({
+export const CamposDireccionVenta = ({
   uiProps,
 }: {
   uiProps: (campo: string, secundario?: string) => UiProps;

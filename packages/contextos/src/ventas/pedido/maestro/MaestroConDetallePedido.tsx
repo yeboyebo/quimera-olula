@@ -153,7 +153,7 @@ export const MaestroConDetallePedido = () => {
         titulo="Nuevo Pedido"
         onCerrar={() => emitir("creacion_pedido_cancelada")}
       >
-        <CrearPedido publicar={emitir} />
+        {ctx.estado === "CREANDO_PEDIDO" && <CrearPedido publicar={emitir} />}
       </QModal>
 
       {ctx.estado === "ALBARANANDO_PEDIDOS" && (

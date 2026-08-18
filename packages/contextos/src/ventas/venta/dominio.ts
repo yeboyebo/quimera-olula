@@ -1,6 +1,6 @@
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+import { AltaLineaVentaApi, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -51,6 +51,22 @@ export const nuevaVentaVacia: NuevaVenta = {
     cliente_id: "",
     direccion_id: "",
     empresa_id: "",
+}
+
+export const nuevaVentaClienteNoRegistradaVacia: NuevaVentaClienteNoRegistrado = {
+    empresa_id: "",
+    nombre_cliente: "",
+    id_fiscal: "",
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
 }
 
 export const cambioClienteVentaVacio: CambioClienteVenta = {
@@ -153,6 +169,18 @@ export const metaNuevaVenta: MetaModelo<NuevaVenta> = {
     }
 };
 
+/**
+ * Cliente de paso: no hay ids que validar, lo mínimo es el nombre y la vía.
+ * El `tipo: "texto"` es lo que hace que un valor vacío invalide el campo.
+ */
+export const metaNuevaVentaClienteNoRegistrado: MetaModelo<NuevaVentaClienteNoRegistrado> = {
+    campos: {
+        nombre_cliente: { requerido: true, tipo: "texto" },
+        nombre_via: { requerido: true, tipo: "texto" },
+        empresa_id: { requerido: true },
+    }
+};
+
 export const metaCambioClienteVenta: MetaModelo<CambioClienteVenta> = {
     campos: {
         cliente_id: { requerido: true },
@@ -198,3 +226,46 @@ export const esLineaConArticulo = (
     linea: NuevaLineaVenta | NuevaLineaLibreVenta
 ): linea is NuevaLineaVenta => 'referencia' in linea;
 
+/**
+ * Serializa un alta de línea al cuerpo que espera el servidor, igual para los
+ * cuatro documentos de venta.
+ */
+export const altaLineaApi = (
+    linea: NuevaLineaVenta | NuevaLineaLibreVenta
+): AltaLineaVentaApi => ({
+    articulo: esLineaConArticulo(linea)
+        ? { articulo_id: linea.referencia }
+        : { descripcion: linea.descripcion, pvp_unitario: linea.pvp_unitario },
+    cantidad: linea.cantidad,
+});
+
+
+/**
+ * Bloque `cliente` que espera el servidor al cambiar el cliente de un documento
+ * o al crearlo: o el par de ids del maestro, o el cliente de paso con su
+ * dirección anidada. `provincia_id` viaja siempre a null, porque la dirección de
+ * un cliente no registrado no referencia el maestro de provincias.
+ */
+export const payloadCambioCliente = (cambio: CambioClienteVenta) =>
+    'cliente_id' in cambio
+        ? {
+            cliente_id: cambio.cliente_id,
+            direccion_id: cambio.direccion_id,
+        }
+        : {
+            nombre: cambio.nombre_cliente || "",
+            id_fiscal: cambio.id_fiscal,
+            direccion: {
+                nombre_via: cambio.nombre_via,
+                tipo_via: cambio.tipo_via || null,
+                numero: cambio.numero || null,
+                otros: cambio.otros || null,
+                cod_postal: cambio.cod_postal || null,
+                ciudad: cambio.ciudad || null,
+                provincia_id: null,
+                provincia: cambio.provincia || null,
+                pais_id: cambio.pais_id || null,
+                apartado: cambio.apartado || null,
+                telefono: cambio.telefono || null,
+            },
+        };

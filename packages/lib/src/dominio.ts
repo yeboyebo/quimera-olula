@@ -1,4 +1,5 @@
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
+import { QError } from "./contexto.ts";
 import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
 import { filtroDefecto, ordenDefecto, paginacionDefecto } from "./url-params.ts";
 import { UiProps, ValorControl } from "./useModelo.ts";
@@ -423,7 +424,8 @@ const getUiProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onModeloListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M) => Promise<void>,
+    errorGuardado?: QError | null
 ) =>
     (campo: string, secundario?: string): UiProps => {
 
@@ -437,6 +439,7 @@ const getUiProps = <M extends Modelo>(
                 : '';
         const editable = modeloEsEditable(meta)(modelo, campo);
         const cambiado = valor !== modeloInicial[campo];
+        const falloGuardado = !!errorGuardado && cambiado;
         const campos = meta.campos || {};
         const tipoCampo = campo in campos && campos[campo]?.tipo
             ? campos[campo].tipo
@@ -457,8 +460,8 @@ const getUiProps = <M extends Modelo>(
             valor: valorUI,
             tipo: tipo,
             deshabilitado: !editable,
-            valido: cambiado && valido,
-            erroneo: !valido,
+            valido: cambiado && valido && !falloGuardado,
+            erroneo: !valido || falloGuardado,
             advertido: false,
             opcional,
             modificado: cambiado,
@@ -607,7 +610,8 @@ export const getFormProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onModeloListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M) => Promise<void>,
+    errorGuardado?: QError | null
 ): FormModelo => {
     return {
         uiProps: getUiProps(
@@ -615,7 +619,8 @@ export const getFormProps = <M extends Modelo>(
             modeloInicial,
             meta,
             onModeloCambiado,
-            onModeloListo
+            onModeloListo,
+            errorGuardado
         ),
         modificado: modeloModificado(modeloInicial, modelo),
         valido: modeloEsValido(meta)(modelo),

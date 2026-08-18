@@ -52,7 +52,7 @@ export const DetalleFactura = ({
 
   const autoGuardar = useCallback(
     async (modelo: Factura) => {
-      emitir("edicion_de_factura_lista", modelo);
+      await emitir("edicion_de_factura_lista", modelo);
     },
     [emitir]
   );
@@ -97,7 +97,11 @@ export const DetalleFactura = ({
       )}
 
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={factura.modificado} />
+        <IndicadorGuardado
+          modificado={factura.modificado}
+          error={factura.errorGuardado}
+          guardados={factura.guardados}
+        />
         <QuimeraAcciones
           acciones={[
             {
@@ -110,7 +114,7 @@ export const DetalleFactura = ({
 
       <Tabs>
         <Tab label="Cliente">
-          <TabCliente factura={factura} publicar={emitir} />
+          <TabCliente factura={factura} estado={estado} publicar={emitir} />
         </Tab>
 
         <Tab label="Datos">

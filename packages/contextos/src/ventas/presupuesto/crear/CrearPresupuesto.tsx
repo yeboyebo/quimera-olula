@@ -1,4 +1,4 @@
-import { CamposDireccion } from "#/ventas/comun/componentes/CamposDireccion.tsx";
+import { CamposDireccionVenta } from "#/ventas/comun/componentes/CamposDireccionVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -140,7 +140,7 @@ const FormAltaPresupuesto = ({
                 label="ID Fiscal"
                 {...presupuestoNoRegistrado.uiProps("id_fiscal")}
               />
-              <CamposDireccion uiProps={presupuestoNoRegistrado.uiProps} />
+              <CamposDireccionVenta uiProps={presupuestoNoRegistrado.uiProps} />
             </>
           ) : (
             <>
