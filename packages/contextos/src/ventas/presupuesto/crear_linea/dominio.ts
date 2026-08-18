@@ -1,4 +1,5 @@
 import { MetaModelo } from "@olula/lib/dominio.js";
+import { metaNuevaLineaLibreVenta, nuevaLineaLibreVentaVacia } from "../../venta/dominio.ts";
 import { NuevaLinea, NuevaLineaLibre } from "../diseño.ts";
 
 export const nuevaLineaVacia: NuevaLinea = {
@@ -13,16 +14,6 @@ export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
     }
 };
 
-export const nuevaLineaLibreVacia: NuevaLineaLibre = {
-    descripcion: "",
-    cantidad: 1,
-    pvp_unitario: 0,
-};
+export const nuevaLineaLibreVacia: NuevaLineaLibre = nuevaLineaLibreVentaVacia;
 
-export const metaNuevaLineaLibre: MetaModelo<NuevaLineaLibre> = {
-    campos: {
-        descripcion: { requerido: true, tipo: "texto" },
-        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
-        pvp_unitario: { tipo: "moneda", requerido: true },
-    }
-};
+export const metaNuevaLineaLibre: MetaModelo<NuevaLineaLibre> = metaNuevaLineaLibreVenta;

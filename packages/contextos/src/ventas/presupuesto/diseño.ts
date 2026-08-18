@@ -1,7 +1,7 @@
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
@@ -45,19 +45,7 @@ export interface LineaPresupuesto extends LineaVenta {
 
 export type NuevaLinea = NuevaLineaVenta
 
-/**
- * Línea sin artículo de catálogo. El servidor no exige `articulo_id`: basta con
- * descripción, cantidad y pvp_unitario (que puede ser 0).
- */
-export type NuevaLineaLibre = {
-  descripcion: string;
-  cantidad: number;
-  pvp_unitario: number;
-}
-
-export const esLineaConArticulo = (
-  linea: NuevaLinea | NuevaLineaLibre
-): linea is NuevaLinea => 'referencia' in linea;
+export type NuevaLineaLibre = NuevaLineaLibreVenta
 
 export type Cliente = {
   cliente_id: string;

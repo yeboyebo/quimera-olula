@@ -67,6 +67,16 @@ export type NuevaLineaVenta = {
     cantidad: number;
 };
 
+/**
+ * Línea sin artículo de catálogo. El servidor no exige `articulo_id`: basta con
+ * descripción, cantidad y pvp_unitario (que puede ser 0).
+ */
+export type NuevaLineaLibreVenta = {
+    descripcion: string;
+    cantidad: number;
+    pvp_unitario: number;
+};
+
 
 export type ClienteVenta = {
     cliente_id: string | null;

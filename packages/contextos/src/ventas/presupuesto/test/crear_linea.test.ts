@@ -1,4 +1,4 @@
-import { esLineaConArticulo } from "#/ventas/presupuesto/diseño.ts";
+import { esLineaConArticulo } from "#/ventas/venta/dominio.ts";
 import {
     metaNuevaLinea,
     metaNuevaLineaLibre,

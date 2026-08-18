@@ -1,10 +1,11 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, esLineaConArticulo, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { articuloDeLinea, direccionVacia, esLineaConArticulo } from "../venta/dominio.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -108,7 +109,7 @@ export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<str
 
   const payload = {
     cliente: clientePayload,
-    empresa_id: presupuesto.empresa_id
+    empresa_id: empresaActual()
   };
 
   return await RestAPI.post(baseUrl, payload, "Error al crear presupuesto").then((respuesta) => respuesta.id);
@@ -218,9 +219,7 @@ export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, refe
 export const patchLinea: PatchLinea = async (id, linea) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
+      articulo: articuloDeLinea(linea),
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
@@ -237,9 +236,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
 export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
       cantidad: cantidad,
     },
   }

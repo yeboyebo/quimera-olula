@@ -20,7 +20,6 @@ import { PedidoGenerado } from "../aprobar/PedidoGenerado.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getReportPresupuesto } from "../infraestructura.ts";
-import { EstadoPresupuesto } from "../vistas/EstadoPresupuesto.tsx";
 import { metaPresupuesto, presupuestoVacio } from "./detalle.ts";
 import "./DetallePresupuesto.css";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -69,7 +68,6 @@ export const DetallePresupuesto = ({
 
   const titulo = (presupuesto: Presupuesto) => (
     <span className="titulo-documento">
-      <EstadoPresupuesto aprobado={presupuesto.aprobado} />
       {tituloDocumentoVenta(presupuesto, "Nuevo Presupuesto")}
     </span>
   );

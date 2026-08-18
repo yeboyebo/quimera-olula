@@ -1,7 +1,6 @@
-import { empresaActual } from "#/valores/empresaActual.ts";
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -47,10 +46,11 @@ export const ventaVacia: Venta = {
     netoSinDto: 0,
 }
 
+/** La empresa la resuelve la infraestructura al enviar, con `empresaActual()`. */
 export const nuevaVentaVacia: NuevaVenta = {
     cliente_id: "",
     direccion_id: "",
-    empresa_id: empresaActual(),
+    empresa_id: "",
 }
 
 export const cambioClienteVentaVacio: CambioClienteVenta = {
@@ -138,7 +138,10 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         por_comision: metaPorcentajeLinea,
         tipo_recargo: { ...metaPorcentajeLinea, bloqueado: true },
         importe_comision: { tipo: "moneda", requerido: false, bloqueado: true },
-        referencia: { requerido: true },
+        // Las líneas sin artículo de catálogo no tienen referencia: su identidad
+        // es la descripción, que sí es obligatoria.
+        referencia: { requerido: false },
+        descripcion: { requerido: true, tipo: "texto" },
     }
 };
 
@@ -163,4 +166,35 @@ export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
         referencia: { requerido: true, tipo: "texto" },
     }
 };
+
+export const nuevaLineaLibreVentaVacia: NuevaLineaLibreVenta = {
+    descripcion: "",
+    cantidad: 1,
+    pvp_unitario: 0,
+};
+
+export const metaNuevaLineaLibreVenta: MetaModelo<NuevaLineaLibreVenta> = {
+    campos: {
+        descripcion: { requerido: true, tipo: "texto" },
+        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
+        pvp_unitario: { requerido: true, tipo: "moneda" },
+    }
+};
+
+/**
+ * El bloque `articulo` del PATCH de línea es excluyente: o el id del catálogo,
+ * o la descripción, que es lo que convierte (o mantiene) la línea sin referencia.
+ */
+export const articuloDeLinea = (
+    linea: Pick<LineaVenta, 'referencia' | 'descripcion'>
+) => linea.referencia
+        ? { articulo_id: linea.referencia }
+        : { descripcion: linea.descripcion };
+
+/**
+ * Discrimina las dos formas de alta de línea que acepta el servidor.
+ */
+export const esLineaConArticulo = (
+    linea: NuevaLineaVenta | NuevaLineaLibreVenta
+): linea is NuevaLineaVenta => 'referencia' in linea;
 

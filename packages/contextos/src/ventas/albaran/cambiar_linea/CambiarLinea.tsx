@@ -25,6 +25,10 @@ export const CambiarLinea = ({
   const { modelo, uiProps, valido, set } = useModelo(metaLineaAlbaran, linea);
   const [mostrarMas, setMostrarMas] = useState(false);
 
+  // Sin artículo de catálogo la identidad de la línea es su descripción, así que
+  // se edita como texto en lugar de con el autocompletar.
+  const esLineaLibre = !linea.referencia;
+
   const cambiar_ = useCallback(async () => {
     await patchLinea(albaranId, modelo);
     publicar("linea_actualizada");
@@ -66,14 +70,20 @@ export const CambiarLinea = ({
     >
       <div className="EditarLinea">
         <quimera-formulario>
-          <div className="articulo-info">
-            <span className="articulo-ref">Ref. {linea.referencia}</span>
-          </div>
+          {esLineaLibre ? (
+            <QInput label="Descripción" {...uiProps("descripcion")} />
+          ) : (
+            <>
+              <div className="articulo-info">
+                <span className="articulo-ref">Ref. {linea.referencia}</span>
+              </div>
 
-          <Articulo
-            {...uiProps("referencia", "descripcion")}
-            onChange={handleArticuloChange}
-          />
+              <Articulo
+                {...uiProps("referencia", "descripcion")}
+                onChange={handleArticuloChange}
+              />
+            </>
+          )}
 
           <QInput label="Cantidad" {...uiProps("cantidad")} />
 

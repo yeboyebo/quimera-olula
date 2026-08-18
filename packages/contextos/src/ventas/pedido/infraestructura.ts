@@ -1,9 +1,10 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { direccionVacia } from "../venta/dominio.ts";
+import { articuloDeLinea, direccionVacia, esLineaConArticulo } from "../venta/dominio.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {
@@ -119,7 +120,7 @@ export const postPedido: PostPedido = async (pedido) => {
       cliente_id: pedido.cliente_id,
       direccion_id: pedido.direccion_id
     },
-    empresa_id: pedido.empresa_id
+    empresa_id: empresaActual()
   }
   return await RestAPI.post(baseUrl, payload, "Error al crear pedido").then((respuesta) => respuesta.id);
 }
@@ -173,11 +174,19 @@ export const getLineas: GetLineasPedido = async (id) =>
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [{
+  const lineaApi = esLineaConArticulo(linea)
+    ? {
       articulo_id: linea.referencia,
-      cantidad: linea.cantidad
-    }]
+      cantidad: linea.cantidad,
+    }
+    : {
+      descripcion: linea.descripcion,
+      cantidad: linea.cantidad,
+      pvp_unitario: linea.pvp_unitario,
+    };
+
+  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
+    lineas: [lineaApi]
   }, "Error al crear linea de pedido").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
@@ -198,9 +207,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
 export const patchLinea: PatchLinea = async (id, linea) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
+      articulo: articuloDeLinea(linea),
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
@@ -216,9 +223,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
       cantidad: cantidad,
     },
   }

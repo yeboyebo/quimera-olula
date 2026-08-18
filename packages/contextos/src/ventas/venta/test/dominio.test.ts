@@ -7,7 +7,8 @@ import {
     mostrarImporte,
     puedeCambiarDivisa,
 } from "#/ventas/venta/dominio.ts";
-import { modeloEsEditable } from "@olula/lib/dominio.ts";
+import { LineaVenta } from "#/ventas/venta/diseño.ts";
+import { modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("mostrarImporte solo muestra importes distintos de cero", () => {
@@ -95,5 +96,40 @@ describe("grupoIvaNegocioEnDocumento oculta el grupo solo en legacy", () => {
 
     test("sin whoami se muestra el grupo", () => {
         expect(grupoIvaNegocioEnDocumento()).toBe(true);
+    });
+});
+
+describe("validez de la línea sin artículo de catálogo", () => {
+    const valido = modeloEsValido(metaLineaVenta);
+
+    const linea = (cambios: Partial<LineaVenta>): LineaVenta => ({
+        id: "lin-1",
+        referencia: null,
+        descripcion: "Mano de obra",
+        cantidad: 1,
+        pvp_unitario: 0,
+        dto_porcentual: 0,
+        dto_lineal: 0,
+        pvp_total: 0,
+        iva_incluido: false,
+        grupo_iva_producto_id: "GEN",
+        tipo_irpf: 0,
+        tipo_recargo: 0,
+        por_comision: 0,
+        importe_comision: 0,
+        ...cambios,
+    });
+
+    test("una línea sin referencia se puede guardar", () => {
+        expect(valido(linea({ referencia: null }))).toBe(true);
+        expect(valido(linea({ referencia: "" }))).toBe(true);
+    });
+
+    test("con referencia sigue siendo válida", () => {
+        expect(valido(linea({ referencia: "ART-001" }))).toBe(true);
+    });
+
+    test("pero sin descripción no: la línea se queda sin identidad", () => {
+        expect(valido(linea({ referencia: null, descripcion: "" }))).toBe(false);
     });
 });

@@ -1,4 +1,4 @@
-import { PaisSelector } from "#/comun/componentes/pais/pais.tsx";
+import { CamposDireccion } from "#/ventas/comun/componentes/CamposDireccion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -127,7 +127,7 @@ const FormAltaPresupuesto = ({
           {modoNoRegistrado ? "Cliente registrado" : "Cliente no registrado"}
         </QBoton>
       </div>
-      <div className="CrearPresupuesto">
+      <div className="CrearPresupuesto campos-direccion">
         <quimera-formulario>
           {modoNoRegistrado ? (
             <>
@@ -140,42 +140,7 @@ const FormAltaPresupuesto = ({
                 label="ID Fiscal"
                 {...presupuestoNoRegistrado.uiProps("id_fiscal")}
               />
-              <QInput
-                label="Nombre de la Vía"
-                {...presupuestoNoRegistrado.uiProps("nombre_via")}
-              />
-              <QInput
-                label="Tipo de Vía"
-                {...presupuestoNoRegistrado.uiProps("tipo_via")}
-              />
-              <QInput
-                label="Número"
-                {...presupuestoNoRegistrado.uiProps("numero")}
-              />
-              <QInput
-                label="Otros"
-                {...presupuestoNoRegistrado.uiProps("otros")}
-              />
-              <QInput
-                label="Cód. Postal"
-                {...presupuestoNoRegistrado.uiProps("cod_postal")}
-              />
-              <QInput
-                label="Ciudad"
-                {...presupuestoNoRegistrado.uiProps("ciudad")}
-              />
-              <QInput
-                label="Provincia"
-                {...presupuestoNoRegistrado.uiProps("provincia")}
-              />
-              <PaisSelector
-                label="País"
-                {...presupuestoNoRegistrado.uiProps("pais_id")}
-              />
-              <QInput
-                label="Teléfono"
-                {...presupuestoNoRegistrado.uiProps("telefono")}
-              />
+              <CamposDireccion uiProps={presupuestoNoRegistrado.uiProps} />
             </>
           ) : (
             <>

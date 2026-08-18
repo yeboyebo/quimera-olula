@@ -12,6 +12,10 @@ export type OpcionesMetaTablaLineaVenta<L extends LineaVenta> = {
 const porcentaje = (valor: number | null | undefined) =>
   valor ? `${valor}%` : "";
 
+/** Las líneas sin artículo de catálogo no tienen referencia: solo descripción. */
+const etiquetaLinea = (linea: LineaVenta) =>
+  linea.referencia ? `${linea.referencia}: ${linea.descripcion}` : linea.descripcion;
+
 export const metaTablaLineaVenta = <L extends LineaVenta>({
   divisa,
   renderCantidad,
@@ -20,7 +24,7 @@ export const metaTablaLineaVenta = <L extends LineaVenta>({
     id: "linea",
     cabecera: "Línea",
     prioridad: "alta" as const,
-    render: (linea: L) => `${linea.referencia}: ${linea.descripcion}`,
+    render: etiquetaLinea,
   },
   {
     id: "cantidad",

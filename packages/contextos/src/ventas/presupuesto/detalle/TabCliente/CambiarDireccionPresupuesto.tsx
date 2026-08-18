@@ -1,6 +1,5 @@
-import { PaisSelector } from "#/comun/componentes/pais/pais.tsx";
+import { CamposDireccion } from "#/ventas/comun/componentes/CamposDireccion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { useForm } from "@olula/lib/useForm.ts";
@@ -90,17 +89,9 @@ export const CambiarDireccionPresupuesto = ({
       titulo="Dirección"
       onCerrar={cancelar}
     >
-      <div className="CambiarDireccionPresupuesto">
+      <div className="CambiarDireccionPresupuesto campos-direccion">
         <quimera-formulario>
-          <QInput label="Nombre de la Vía" {...uiProps("nombre_via")} />
-          <QInput label="Tipo de Vía" {...uiProps("tipo_via")} />
-          <QInput label="Número" {...uiProps("numero")} />
-          <QInput label="Otros" {...uiProps("otros")} />
-          <QInput label="Cód. Postal" {...uiProps("cod_postal")} />
-          <QInput label="Ciudad" {...uiProps("ciudad")} />
-          <QInput label="Provincia" {...uiProps("provincia")} />
-          <PaisSelector label="País" {...uiProps("pais_id")} />
-          <QInput label="Teléfono" {...uiProps("telefono")} />
+          <CamposDireccion uiProps={uiProps} />
         </quimera-formulario>
       </div>
       <div className="botones maestro-botones">
