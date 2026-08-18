@@ -7,16 +7,21 @@ import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
-import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import "../../comun/estilos/campos.css";
 import "../../comun/estilos/detalle_documento.css";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
-import { albaranVacio, editable, metaAlbaran, tituloAlbaran } from "../dominio.ts";
+import {
+  albaranVacio,
+  editable,
+  metaAlbaran,
+  tituloAlbaran,
+} from "../dominio.ts";
 import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
 import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
 import { getReportAlbaran } from "../infraestructura.ts";
@@ -84,13 +89,6 @@ export const DetalleAlbaran = ({
 
   const acciones = [
     {
-      icono: "eliminar",
-      texto: "Borrar",
-      advertencia: true,
-      onClick: () => emitir("borrar_solicitado"),
-      deshabilitado: !esEditable,
-    },
-    {
       texto: "Facturar",
       onClick: () => emitir("facturar_solicitado"),
       deshabilitado: !esEditable,
@@ -98,6 +96,13 @@ export const DetalleAlbaran = ({
     {
       texto: "Imprimir",
       onClick: imprimir,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      advertencia: true,
+      onClick: () => emitir("borrar_solicitado"),
+      deshabilitado: !esEditable,
     },
   ];
 

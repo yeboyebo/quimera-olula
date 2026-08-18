@@ -86,15 +86,15 @@ export const DetallePresupuesto = ({
       deshabilitado: ctx.presupuesto.aprobado,
     },
     {
+      texto: "Imprimir",
+      onClick: imprimir,
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: ctx.presupuesto.aprobado,
-    },
-    {
-      texto: "Imprimir",
-      onClick: imprimir,
     },
   ];
 

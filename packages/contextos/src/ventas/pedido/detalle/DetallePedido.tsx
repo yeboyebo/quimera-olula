@@ -1,7 +1,7 @@
+import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
 import { CambiarAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
-import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
 import "#/ventas/comun/estilos/campos.css";
 import "#/ventas/comun/estilos/detalle_documento.css";
 import { tituloDocumentoVenta } from "#/ventas/venta/dominio.ts";
@@ -102,15 +102,15 @@ export const DetallePedidoBase = ({
       deshabilitado: !esEditable,
     },
     {
+      texto: "Imprimir",
+      onClick: imprimir,
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: !esEditable,
-    },
-    {
-      texto: "Imprimir",
-      onClick: imprimir,
     },
   ];
 
