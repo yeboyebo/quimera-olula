@@ -18,6 +18,7 @@ const lineaApi: LineaVenta = {
     grupo_iva_producto_id: "GENERAL",
     tipo_irpf: 15,
     tipo_recargo: 5.2,
+    tipo_iva: 21,
     por_comision: 3.5,
     importe_comision: 24.85,
 };
@@ -40,6 +41,10 @@ describe.each(casos)("los campos fiscales llegan al dominio (%s)", (_, linea) =>
 
     test("tipo de recargo de equivalencia", () => {
         expect(linea.tipo_recargo).toBe(5.2);
+    });
+
+    test("tipo de IVA", () => {
+        expect(linea.tipo_iva).toBe(21);
     });
 
     test("porcentaje e importe de comisión", () => {

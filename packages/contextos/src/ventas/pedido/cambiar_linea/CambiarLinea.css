@@ -13,7 +13,8 @@
         }
     }
 
-    quimera-autocompletar[nombre="referencia"] {
+    quimera-autocompletar[nombre="referencia"],
+    quimera-input[nombre="descripcion"] {
         grid-column: 1 / span 12;
     }
 
@@ -49,7 +50,7 @@
         grid-column: 1 / span 6;
     }
 
-    quimera-input[nombre="tipo_recargo"] {
+    quimera-input[nombre="tipo_iva"] {
         grid-column: span 6;
     }
 
@@ -95,7 +96,7 @@
                 grid-column: 1 / span 1 !important;
             }
 
-            quimera-input[nombre="tipo_recargo"] {
+            quimera-input[nombre="tipo_iva"] {
                 grid-column: 2 / span 1 !important;
             }
 

@@ -64,7 +64,6 @@ export const TabCliente = ({
       {clienteEditable && estado === "CAMBIANDO_CLIENTE" && (
         <CambioClienteVenta
           venta={pedido}
-          inicializarDesdeVenta={true}
           onGuardar={onGuardarCambioCliente}
           onCancelar={() => publicar("cambio_cliente_cancelado")}
         />

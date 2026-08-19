@@ -19,6 +19,7 @@ const linea = (cambios: Partial<LineaAlbaranarPedido> = {}): LineaAlbaranarPedid
     grupo_iva_producto_id: "GENERAL",
     tipo_irpf: 0,
     tipo_recargo: 0,
+    tipo_iva: 21,
     por_comision: 0,
     importe_comision: 0,
     ...cambios,

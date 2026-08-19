@@ -20,7 +20,6 @@ import { PedidoGenerado } from "../aprobar/PedidoGenerado.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
 import { getReportPresupuesto } from "../infraestructura.ts";
-import { EstadoPresupuesto } from "../vistas/EstadoPresupuesto.tsx";
 import { metaPresupuesto, presupuestoVacio } from "./detalle.ts";
 import "./DetallePresupuesto.css";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -53,7 +52,7 @@ export const DetallePresupuesto = ({
 
   const autoGuardar = useCallback(
     async (modelo: Presupuesto) => {
-      emitir("edicion_de_presupuesto_lista", modelo);
+      await emitir("edicion_de_presupuesto_lista", modelo);
     },
     [emitir]
   );
@@ -69,7 +68,6 @@ export const DetallePresupuesto = ({
 
   const titulo = (presupuesto: Presupuesto) => (
     <span className="titulo-documento">
-      <EstadoPresupuesto aprobado={presupuesto.aprobado} />
       {tituloDocumentoVenta(presupuesto, "Nuevo Presupuesto")}
     </span>
   );
@@ -88,15 +86,15 @@ export const DetallePresupuesto = ({
       deshabilitado: ctx.presupuesto.aprobado,
     },
     {
+      texto: "Imprimir",
+      onClick: imprimir,
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: ctx.presupuesto.aprobado,
-    },
-    {
-      texto: "Imprimir",
-      onClick: imprimir,
     },
   ];
 
@@ -109,7 +107,11 @@ export const DetallePresupuesto = ({
       cerrarDetalle={() => emitir("presupuesto_deseleccionado", null)}
     >
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={presupuesto.modificado} />
+        <IndicadorGuardado
+          modificado={presupuesto.modificado}
+          error={presupuesto.errorGuardado}
+          guardados={presupuesto.guardados}
+        />
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 

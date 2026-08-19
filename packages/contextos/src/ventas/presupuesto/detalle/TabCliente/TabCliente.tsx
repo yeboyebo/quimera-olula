@@ -1,15 +1,12 @@
+import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
-import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
-import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { formatearDireccionUnaLinea } from "@olula/lib/dominio.ts";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useState } from "react";
 import { Presupuesto } from "../../diseño.ts";
 import { EstadoPresupuesto } from "../diseño.ts";
-import { CambiarDireccionPresupuesto } from "./CambiarDireccionPresupuesto.tsx";
 import "./TabCliente.css";
 
 interface TabClienteProps {
@@ -26,12 +23,6 @@ export const TabCliente = ({
   const { modelo } = presupuesto;
   const puedeEditarCliente = !modelo.aprobado;
   const mostrarBotonCambiarCliente = estado === "ABIERTO" && puedeEditarCliente;
-  const clienteId = modelo.cliente.cliente_id;
-  const clienteNoRegistrado = !clienteId || clienteId === "None";
-  const [editandoDireccion, setEditandoDireccion] = useState(false);
-
-  const direccionResumen = formatearDireccionUnaLinea(modelo.cliente.direccion).trim();
-  const direccionSinDefinir = direccionResumen.replace(/[,\s]/g, "").length === 0;
 
   const onGuardarCambioCliente = async (cambios: CambioCliente) => {
     publicar("cambio_cliente_listo", cambios);
@@ -62,40 +53,19 @@ export const TabCliente = ({
           </div>
         )}
 
-        <section className="TabCliente-direccion-resumen">
-          <div className="TabCliente-direccion-resumen-label">Dirección</div>
-          <div className="TabCliente-direccion-resumen-contenido">
-            <span>
-              {direccionSinDefinir ? "Dirección sin definir" : direccionResumen}
-            </span>
-            {clienteNoRegistrado && puedeEditarCliente && (
-              <QBoton
-                tamaño="pequeño"
-                variante="texto"
-                onClick={() => setEditandoDireccion(true)}
-              >
-                Editar
-              </QBoton>
-            )}
-          </div>
-        </section>
+        <QInput
+          deshabilitado={true}
+          label="Dirección"
+          nombre="direccion_cliente"
+          valor={formatearDireccionVenta(modelo.cliente.direccion)}
+        />
       </quimera-formulario>
 
       {puedeEditarCliente && estado === "CAMBIANDO_CLIENTE" && (
         <CambioClienteVenta
           venta={presupuesto}
-          inicializarDesdeVenta={true}
-          editarDireccionNoRegistrado={false}
           onGuardar={onGuardarCambioCliente}
           onCancelar={() => publicar("cambio_cliente_cancelado")}
-        />
-      )}
-
-      {clienteNoRegistrado && editandoDireccion && (
-        <CambiarDireccionPresupuesto
-          presupuesto={presupuesto}
-          publicar={publicar}
-          onCerrar={() => setEditandoDireccion(false)}
         />
       )}
     </div>
