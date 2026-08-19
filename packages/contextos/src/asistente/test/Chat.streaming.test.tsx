@@ -23,10 +23,12 @@ const esperar = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Con "streamDe" todos los eventos llegan en el mismo tick — insuficiente para
 // comprobar que un "estado" transitorio realmente se ve antes de ser sustituido.
+// El delay (100 ms) supera el intervalo de polling de RTL (50 ms) para que
+// findByText tenga al menos un ciclo completo con el texto en el DOM.
 const streamDeConPausas = (eventos: EventoStreamIa[]) =>
     (async function* () {
         for (const evento of eventos) {
-            await esperar(10);
+            await esperar(100);
             yield evento;
         }
     })();
