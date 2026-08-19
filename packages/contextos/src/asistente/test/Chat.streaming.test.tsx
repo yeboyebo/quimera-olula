@@ -19,18 +19,18 @@ const streamDe = (eventos: EventoStreamIa[]) =>
         for (const evento of eventos) yield evento;
     })();
 
-// Con "streamDe" todos los eventos llegan en el mismo tick, y con pausas por
-// tiempo la ventana para observar un "estado" transitorio depende de la carga de
-// la máquina. Aquí el test decide cuándo continúa el stream.
-const streamConPuerta = (
-    antes: EventoStreamIa[],
-    puerta: Promise<void>,
-    despues: EventoStreamIa[]
-) =>
+const esperar = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Con "streamDe" todos los eventos llegan en el mismo tick — insuficiente para
+// comprobar que un "estado" transitorio realmente se ve antes de ser sustituido.
+// El delay (100 ms) supera el intervalo de polling de RTL (50 ms) para que
+// findByText tenga al menos un ciclo completo con el texto en el DOM.
+const streamDeConPausas = (eventos: EventoStreamIa[]) =>
     (async function* () {
-        for (const evento of antes) yield evento;
-        await puerta;
-        for (const evento of despues) yield evento;
+        for (const evento of eventos) {
+            await esperar(100);
+            yield evento;
+        }
     })();
 
 beforeEach(() => {

@@ -4,6 +4,7 @@ import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
 import { RouterFactoryCrmOlula } from '#/crm/router_factory.ts';
 import { RouterFactoryEmpresaOlula } from '#/empresa/router_factory.ts';
 import { RouterFactoryPrediccionesOlula } from '#/predicciones/router_factory.ts';
+import { RouterFactoryProyectosOlula } from '#/proyectos/router_factory.ts';
 import { RouterFactoryRrhh } from '#/rrhh/router_factory.ts';
 import { RouterFactoryTesoreriaOlula } from '#/tesoreria/router_factory.ts';
 import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
@@ -25,6 +26,7 @@ export class RouterFactoryOlula {
     Predicciones = RouterFactoryPrediccionesOlula;
     Comun = RouterFactoryComunOlula;
     Rrhh = RouterFactoryRrhh;
+    Proyectos = RouterFactoryProyectosOlula;
     Tesoreria = RouterFactoryTesoreriaOlula;
     Otros = {
         router: {
