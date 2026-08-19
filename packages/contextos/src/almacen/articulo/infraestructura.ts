@@ -66,6 +66,6 @@ export const deleteArticulo: DeleteArticulo = async (id) => {
 };
 
 export const leerCodBarras: LeerCodBarras = async (codigo) =>
-    await RestAPI.get<{ datos: ArticuloAPI }>(`${baseUrlArticulo}/get_sku/${codigo}`).then((respuesta) =>
+    await RestAPI.get<{ datos: ArticuloAPI }>(`${baseUrlArticulo}/sku_lote/${codigo}`).then((respuesta) =>
         ArticuloFromApi(respuesta.datos)
     );

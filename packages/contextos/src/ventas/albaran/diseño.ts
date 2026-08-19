@@ -1,10 +1,18 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Albaran extends Venta {
     cliente: ClienteVenta;
-    idfactura: string | null;
+    /** Fuente de verdad del estado: un albarán facturado queda bloqueado. */
+    facturado: boolean;
+    por_comision: number;
+    hora: string;
+    almacen_id: string;
+    nombre_almacen: string;
+    de_abono: boolean;
     lineas: LineaAlbaran[];
 }
 
@@ -22,13 +30,13 @@ export type GetAlbaranes = (filtro: Filtro, orden: Orden, paginacion: Paginacion
 
 export type GetAlbaran = (id: string) => Promise<Albaran>;
 
+export type GetReportAlbaran = (id: string) => Promise<Blob>;
+
 export type GetLineasAlbaran = (id: string) => Promise<LineaAlbaran[]>;
 
 export type PostAlbaran = (albaran: NuevoAlbaran) => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
-
-export type PatchAlbaran = (id: string, albaran: Albaran) => Promise<void>;
 
 export type PatchClienteAlbaran = (id: string, cambio: CambioClienteAlbaran) => Promise<void>;
 
@@ -40,11 +48,25 @@ export type PatchCantidadLinea = (id: string, linea: LineaAlbaran, cantidad: num
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
+export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
+
+export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
+
+export type FacturaCreada = {
+    id: string;
+    codigo: string;
+};
+
+export type PatchFacturarAlbaran = (id: string) => Promise<FacturaCreada>;
+
 export type EstadoAlbaran = (
     'INICIAL' | 'ABIERTO' | 'FACTURADO'
     | 'BORRANDO_ALBARAN'
+    | 'FACTURANDO_ALBARAN' | 'FACTURA_CREADA'
     | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'
+    | 'CAMBIANDO_DIVISA'
+    | 'CAMBIANDO_AGENTE'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 
@@ -55,6 +77,7 @@ export type ContextoAlbaran = {
     albaran: Albaran;
     albaranInicial: Albaran;
     lineaActiva: LineaAlbaran | null;
+    facturaCreada: FacturaCreada | null;
 };
 
 export type ContextoMaestroAlbaran = {

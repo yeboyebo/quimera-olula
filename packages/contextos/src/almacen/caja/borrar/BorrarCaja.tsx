@@ -1,41 +1,40 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useContext } from "react";
+import { useForm } from "@olula/lib/useForm.js";
+import { useCallback } from "react";
 import { Caja } from "../diseño.ts";
 import { deleteCaja } from "../infraestructura.ts";
 
-interface BorrarCajaProps {
-  caja: Caja;
-  activo?: boolean;
-  publicar?: EmitirEvento;
-  onCancelar?: () => void;
-}
-
 export const BorrarCaja = ({
-  caja,
-  activo = false,
-  publicar = async () => {},
-  onCancelar = () => {},
-}: BorrarCajaProps) => {
-  const { intentar } = useContext(ContextoError);
+    caja,
+    publicar,
+}: {
+    caja: Caja;
+    publicar: EmitirEvento;
+}) => {
+    const borrar_ = useCallback(
+        async () => {
+            await deleteCaja(caja.id);
+            publicar("caja_borrada", caja);
+        },
+        [publicar, caja]
+    );
 
-  const borrar = async () => {
-    if (caja.id) {
-      await intentar(() => deleteCaja(caja.id));
-    }
-    publicar("caja_borrada", { cajaId: caja.id });
-    onCancelar();
-  };
+    const cancelar_ = useCallback(
+        () => publicar("borrado_cancelado"),
+        [publicar]
+    );
 
-  return (
-    <QModalConfirmacion
-      nombre="confirmarBorrarCaja"
-      abierto={activo}
-      titulo="Confirmar borrado"
-      mensaje={`¿Está seguro de que desea borrar la caja "${caja.id}"?`}
-      onCerrar={onCancelar}
-      onAceptar={borrar}
-    />
-  );
+    const [borrar, cancelar] = useForm(borrar_, cancelar_);
+
+    return (
+        <QModalConfirmacion
+            nombre="borrarCaja"
+            abierto={true}
+            titulo="Borrar caja"
+            mensaje={`¿Está seguro de que desea borrar la caja "${caja.lpn || caja.id}"?`}
+            onCerrar={cancelar}
+            onAceptar={borrar}
+        />
+    );
 };

@@ -132,6 +132,44 @@ quimera-tabla {
         white-space: nowrap;
     }
 
+    /* Columna de expansión de fila */
+    th.col-expansion,
+    td.col-expansion {
+        width: 36px;
+        padding: 0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .btn-expansion {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: var(--tamaño-letra-m);
+        color: var(--color-texto-secundario);
+        padding: var(--espaciado-xs);
+        line-height: 1;
+
+        &:hover {
+            color: var(--color-primario);
+        }
+    }
+
+    /* Fila de contenido expandido */
+    tr.fila-expansion {
+        background: var(--color-superficie-elevada);
+
+        &:hover {
+            background: var(--color-superficie-elevada);
+            cursor: default;
+        }
+
+        > td {
+            padding: var(--espaciado-m) var(--espaciado-l);
+            white-space: normal;
+        }
+    }
+
     /* Alineación a la derecha para números y monedas */
     td.moneda,
     td.numero,

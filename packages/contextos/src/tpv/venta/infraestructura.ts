@@ -1,7 +1,7 @@
 import ApiUrls from "#/tpv/comun/urls.ts";
 import Ventas_Urls from "#/ventas/comun/urls.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { ClausulaFiltro, Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Direccion, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
 import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchEmitirVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
@@ -39,6 +39,7 @@ type VentaTpvAPI = {
     neto: number;
     total_iva: number;
     total_irpf: number;
+    total_recargo: number;
     total_divisa_empresa: number;
     forma_pago_id: string;
     nombre_forma_pago: string;
@@ -64,6 +65,7 @@ type PagoVentaTpvApi = {
     fecha: string;
     vale: string | null;
     arqueo_id: string;
+    saldo_vale: number | null;
     arqueo_abierto: boolean;
     tipo_tarjeta_id: string | null;
 }
@@ -103,6 +105,7 @@ export const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvApi): PagoVentaTpv => (
         formaPago: p.forma_pago,
         fecha: new Date(Date.parse(p.fecha)),
         vale: p.vale,
+        saldoVale: p.saldo_vale,
         idArqueo: p.arqueo_id,
         arqueoAbierto: p.arqueo_abierto,
         idTipoTarjeta: p.tipo_tarjeta_id
@@ -124,18 +127,20 @@ export const getVentaADevolver: GetVentaTpvADevolver = async (codigo) => {
 };
 
 export const getVentas: GetVentasTpv = async (
-    filtro: Filtro,
-    orden: Orden,
-    paginacion: Paginacion
+    filtro, orden, paginacion
 ) => {
     const miPuntoVentaLocal = puntoVentaLocal.obtenerSeguro();
     const filtroPuntoVenta: ClausulaFiltro = [
         "punto_venta_id",
+        "=",
         miPuntoVentaLocal?.id ?? "",
     ];
 
-    const filtroCombinado: Filtro = Array.isArray(filtro)
-        ? [...filtro, filtroPuntoVenta]
+    const esListaDeClausulas =
+        Array.isArray(filtro) && (filtro.length === 0 || Array.isArray(filtro[0]));
+
+    const filtroCombinado: Filtro = esListaDeClausulas
+        ? [...(filtro as ClausulaFiltro[]), filtroPuntoVenta]
         : { and: [filtro, [filtroPuntoVenta]] };
     const q = criteriaQuery(filtroCombinado, orden, paginacion);
 
@@ -144,9 +149,9 @@ export const getVentas: GetVentasTpv = async (
 };
 
 
-export const postVenta: PostVentaTpv = async () => {
+export const postVenta: PostVentaTpv = async (agenteId?: string) => {
     const payload = {
-        agente_id: agenteActivo.obtener()?.id,
+        agente_id: agenteId ?? agenteActivo.obtener()?.id,
         punto_venta_id: puntoVentaLocal.obtener()?.id,
     };
     return await RestAPI.post(baseUrl, payload, "Error al crear la venta").then((respuesta) => respuesta.id);

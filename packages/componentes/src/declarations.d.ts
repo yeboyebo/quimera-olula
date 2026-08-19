@@ -31,17 +31,20 @@ declare namespace React {
             'box-icon': BoxIcon;
             'quimera-tarjetas': NodoComun;
             'quimera-tarjeta': NodoComun;
+            'quimera-tarjeta-resumen': NodoComun;
             'maestro-detalle': NodoComun;
             'etiqueta-filtro': NodoComun;
             'etiquetas-filtro': NodoComun;
             'quimera-acciones': NodoComun;
             'quimera-autocompletar': NodoComun;
+            'quimera-acordeon': NodoComun;
             'quimera-modal': NodoComun;
             'qhistorias-componente': NodoComun;
             'qhistorias-historia': NodoComun;
             'quimera-historias': NodoComun;
             'menu-lateral': NodoComun;
             'menu-usuario': NodoComun;
+            'panel-asistente': NodoComun;
             'quimera-editor-enriquecido': NodoComun;
         }
     }

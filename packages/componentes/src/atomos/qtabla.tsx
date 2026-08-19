@@ -5,6 +5,7 @@ import {
   formatearFechaString,
   formatearHoraString,
   formatearMoneda,
+  resolverDivisa,
 } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
 import { QBoton } from "./qboton.tsx";
@@ -24,7 +25,7 @@ type MetaColumna<T extends Entidad> = {
     | "fechahora"
     | "booleano"
     | undefined;
-  divisa?: string;
+  divisa?: string | ((entidad: T) => string);
   ancho?: string;
   render?: (entidad: T) => string | ReactNode;
 };
@@ -65,8 +66,13 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     let datos = render?.(entidad as T) ?? (entidad[id] as unknown);
 
     // Formateo automático según tipo
-    if (tipo === "moneda" && typeof datos === "number") {
-      datos = formatearMoneda(datos, divisa ?? "EUR");
+    if (tipo === "moneda") {
+      if (typeof datos === "number" || typeof datos === "string") {
+        datos = formatearMoneda(
+          datos,
+          resolverDivisa(divisa, entidad as T) ?? "EUR"
+        );
+      }
     } else if (tipo === "fecha" && typeof datos === "string") {
       datos = formatearFechaString(datos);
     } else if (tipo === "fecha" && typeof datos === "object") {
@@ -74,7 +80,7 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     } else if (tipo === "hora" && typeof datos === "string") {
       datos = formatearHoraString(datos);
     } else if (tipo === "numero" && typeof datos === "number") {
-      datos = datos.toLocaleString();
+      datos = datos.toLocaleString("es-ES");
     } else if (tipo === "booleano" && typeof datos === "boolean") {
       datos = datos ? "Sí" : "No";
     }

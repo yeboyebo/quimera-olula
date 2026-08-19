@@ -1,4 +1,7 @@
-import { getTagsArticulo } from "#/ventas/articulo/infraestructura.ts";
+import {
+  getArticulo,
+  getTagsArticulo,
+} from "#/ventas/articulo/infraestructura.ts";
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { useEffect, useState } from "react";
@@ -8,123 +11,68 @@ interface ArticuloProps {
   valor: string;
   nombre?: string;
   label?: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
-}
-
-interface ArticuloProps {
-  descripcion?: string;
-  valor: string;
-  nombre?: string;
-  label?: string;
   autoFocus?: boolean;
+  deshabilitado?: boolean;
+  opcional?: boolean;
   ref?: React.RefObject<HTMLInputElement | null>;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const Articulo = ({
-  descripcion: descripcionProp = "",
+  descripcion = "",
   valor,
   nombre = "referencia",
   label = "Artículo",
   onChange,
   ...props
 }: ArticuloProps) => {
-    const [descripcion, setDescripcion] = useState(descripcionProp);
+  const [descripcionResuelta, setDescripcionResuelta] = useState(descripcion);
 
-    useEffect(() => {
-        if (valor && !descripcionProp) {
-            getTagsArticulo([["id", "=", valor]], ["id"]).then((articulos) => {
-                if (articulos[0]) setDescripcion(articulos[0].descripcion);
-            });
-        } else {
-            setDescripcion(descripcionProp);
-        }
-    }, [valor, descripcionProp]);
+  useEffect(() => {
+    setDescripcionResuelta(descripcion);
+  }, [descripcion]);
 
-    const obtenerOpciones = async (texto: string) => {
-        const criteria = {
-            filtro: {
-                or: [
-                    ["descripcion", "~", texto],
-                    ["id", "~", texto],
-                ],
-            },
-            orden: ["id"],
-        };
+  useEffect(() => {
+    if (!valor || descripcion) return;
 
-        const articulos = await getTagsArticulo(
-            criteria.filtro as unknown as Filtro,
-            criteria.orden as Orden
-        );
+    getArticulo(valor).then((articulo) =>
+      setDescripcionResuelta(articulo.descripcion)
+    );
+  }, [valor, descripcion]);
 
-        return articulos.map((articulo) => ({
-            valor: articulo.id,
-            descripcion: articulo.descripcion,
-            descripcionOpcion: `${articulo.id} - ${articulo.descripcion}`,
-            datos: articulo,
-        }));
+  const obtenerOpciones = async (texto: string) => {
+    const criteria = {
+      filtro: {
+        or: [
+          ["descripcion", "~", texto],
+          ["id", "~", texto],
+        ],
+      },
+      orden: ["id"],
     };
+
+    const articulos = await getTagsArticulo(
+      criteria.filtro as unknown as Filtro,
+      criteria.orden as Orden
+    );
+
+    return articulos.map((articulo) => ({
+      valor: articulo.id,
+      descripcion: articulo.descripcion,
+      descripcionOpcion: `${articulo.id} - ${articulo.descripcion}`,
+      datos: articulo,
+    }));
+  };
 
   return (
     <QAutocompletar
-        label={`${label} ${valor}`}
-        nombre={nombre}
-        onChange={onChange}
-        valor={valor}
-        obtenerOpciones={obtenerOpciones}
-        descripcion={descripcion}
-        {...props}
+      label={`${label} ${valor}`}
+      nombre={nombre}
+      onChange={onChange}
+      valor={valor}
+      obtenerOpciones={obtenerOpciones}
+      descripcion={descripcionResuelta}
+      {...props}
     />
   );
 };
-
-// export const Articulo = ({
-//   descripcion: descripcionProp = "",
-//   valor,
-//   nombre = "referencia",
-//   label = "Artículo",
-//   onChange,
-//   ...props
-// }: ArticuloProps) => {
-//   const [descripcion, setDescripcion] = useState(descripcionProp);
-
-//   useEffect(() => {
-//     if (valor && !descripcionProp) {
-//       obtenerArticulosAlmacen([["id", "=", valor]], ["id"]).then((articulos) => {
-//         if (articulos[0]) setDescripcion(articulos[0].descripcion);
-//       });
-//     } else {
-//       setDescripcion(descripcionProp);
-//     }
-//   }, [valor, descripcionProp]);
-
-//   const obtenerOpciones = async (texto: string) => {
-//     const criteria: Criteria = {
-//       filtro: [["descripcion", "~", texto]],
-//       orden: ["id"],
-//       paginacion: { limite: 10, pagina: 1 },
-//     };
-
-//     const articulos = await obtenerArticulosAlmacen(
-//       criteria.filtro,
-//       criteria.orden
-//     );
-
-//     return articulos.map((articulo) => ({
-//       valor: articulo.id,
-//       descripcion: articulo.descripcion,
-//     }));
-//   };
-
-//   return (
-//     <QAutocompletar
-//       label={label}
-//       nombre={nombre}
-//       onChange={onChange}
-//       valor={valor}
-//       obtenerOpciones={obtenerOpciones}
-//       descripcion={descripcion}
-//       {...props}
-//     />
-//   );
-// };

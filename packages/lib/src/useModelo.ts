@@ -19,7 +19,7 @@ export function useModelo<T extends Modelo>(
         const modeloAUsar = nuevoModelo || modeloInicialProp;
         setModelo(modeloAUsar);
         setModeloInicial(modeloAUsar);
-    }, [setModelo, setModeloInicial]);
+    }, [modeloInicialProp]);
 
     const onModeloListoConError = useCallback(
         async (modelo: T) => {

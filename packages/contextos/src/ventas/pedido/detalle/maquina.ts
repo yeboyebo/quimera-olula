@@ -6,9 +6,11 @@ import {
     activarLinea,
     borrarLinea,
     borrarPedido,
+    cambiarAgente,
     cambiarCantidadLinea,
     cambiarCliente,
     cambiarDescuento,
+    cambiarDivisa,
     cambiarLinea,
     cambiarPedido,
     cancelarCambioPedido,
@@ -16,7 +18,7 @@ import {
     crearLinea,
     getContextoVacio,
     refrescarPedido
-} from "./dominio.ts";
+} from "./detalle.ts";
 
 
 export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
@@ -44,6 +46,10 @@ export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
             borrar_solicitado: "BORRANDO_PEDIDO",
 
             cambio_cliente_solicitado: "CAMBIANDO_CLIENTE",
+
+            cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
+
+            cambio_agente_solicitado: "CAMBIANDO_AGENTE",
 
             descuento_solicitado: "CAMBIANDO_DESCUENTO",
 
@@ -89,6 +95,20 @@ export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
             cambio_cliente_listo: cambiarCliente,
 
             cambio_cliente_cancelado: "ABIERTO",
+        },
+
+        CAMBIANDO_DIVISA: {
+
+            cambio_divisa_listo: [cambiarDivisa],
+
+            cambio_divisa_cancelado: "ABIERTO",
+        },
+
+        CAMBIANDO_AGENTE: {
+
+            cambio_agente_listo: [cambiarAgente],
+
+            cambio_agente_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_DESCUENTO: {

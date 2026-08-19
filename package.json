@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "pnpm -r run lint",
     "type-check": "pnpm -r run type-check",
-    "ci": "pnpm -r run ci",
+    "ci": "pnpm -r --reporter=append-only run ci",
     "test": "pnpm -r run --filter @olula/* test"
   },
   "dependencies": {
