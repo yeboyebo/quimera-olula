@@ -35,6 +35,7 @@ export interface LineaVenta extends Entidad {
     grupo_iva_producto_id: string;
     tipo_irpf: number;
     tipo_recargo: number;
+    tipo_iva: number;
     por_comision: number;
     importe_comision: number;
 };

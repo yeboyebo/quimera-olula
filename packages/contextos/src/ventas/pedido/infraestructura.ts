@@ -20,6 +20,7 @@ export interface LineaPedidoAPI {
   iva_incluido: boolean;
   tipo_irpf: number;
   tipo_recargo: number;
+  tipo_iva: number;
   por_comision: number;
   importe_comision: number;
 };

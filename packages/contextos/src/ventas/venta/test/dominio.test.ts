@@ -117,6 +117,7 @@ describe("validez de la línea sin artículo de catálogo", () => {
         grupo_iva_producto_id: "GEN",
         tipo_irpf: 0,
         tipo_recargo: 0,
+        tipo_iva: 21,
         por_comision: 0,
         importe_comision: 0,
         ...cambios,

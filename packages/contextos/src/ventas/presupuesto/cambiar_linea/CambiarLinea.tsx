@@ -102,11 +102,7 @@ export const CambiarLinea = ({
           {mostrarMas && (
             <>
               <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} />
-              <QInput
-                label="% R. equivalencia"
-                {...uiProps("tipo_recargo")}
-                soloTexto
-              />
+              <QInput label="% IVA" {...uiProps("tipo_iva")} soloTexto />
               <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
               <QInput label="Dto. lineal" {...uiProps("dto_lineal")} />
               <QInput label="% I.R.P.F." {...uiProps("tipo_irpf")} />

@@ -153,6 +153,8 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         tipo_irpf: metaPorcentajeLinea,
         por_comision: metaPorcentajeLinea,
         tipo_recargo: { ...metaPorcentajeLinea, bloqueado: true },
+        // Lo calcula el servidor a partir del grupo de IVA: se muestra y nunca se envía.
+        tipo_iva: { ...metaPorcentajeLinea, bloqueado: true },
         importe_comision: { tipo: "moneda", requerido: false, bloqueado: true },
         // Las líneas sin artículo de catálogo no tienen referencia: su identidad
         // es la descripción, que sí es obligatoria.
