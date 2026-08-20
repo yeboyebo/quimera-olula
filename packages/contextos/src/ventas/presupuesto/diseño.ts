@@ -10,6 +10,7 @@ export interface Presupuesto extends Venta {
   por_comision: number;
   almacen_id: string;
   lineas: LineaPresupuesto[];
+  servido?: string;
 }
 
 export type NuevoPresupuesto = {

@@ -5,8 +5,8 @@ import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router";
+import { useCallback, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router";
 import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
@@ -37,7 +37,13 @@ export const DetallePresupuesto = ({
   publicar?: EmitirEvento;
 }) => {
   const params = useParams();
+  const navigate = useNavigate();
   const presupuestoId = id ?? params.id;
+
+  // Con presupuesto parcial se eligen las cantidades en una pantalla aparte;
+  // sin él, aprobar sigue generando el pedido completo desde este detalle.
+  // const parcial = plugin("presupuesto_parcial") === "activo";
+  const parcial = true;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
@@ -74,31 +80,36 @@ export const DetallePresupuesto = ({
     </span>
   );
 
-  if (!ctx.presupuesto.id) return;
-
-  const imprimir = async () => {
+  const imprimir = useCallback(async () => {
     const blob = await getReportPresupuesto(ctx.presupuesto.id);
     imprimir_blob(blob);
-  };
+  }, [ctx.presupuesto.id]);
 
-  const acciones = [
-    {
-      texto: "Aprobar",
-      onClick: () => emitir("aprobacion_solicitada", ctx.presupuesto),
-      deshabilitado: ctx.presupuesto.aprobado,
-    },
-    {
-      icono: "eliminar",
-      texto: "Borrar",
-      advertencia: true,
-      onClick: () => emitir("borrar_solicitado"),
-      deshabilitado: ctx.presupuesto.aprobado,
-    },
-    {
-      texto: "Imprimir",
-      onClick: imprimir,
-    },
-  ];
+  const acciones = useMemo(
+    () => [
+      {
+        texto: "Aprobar",
+        onClick: parcial
+          ? () => navigate(`/ventas/aprobar-presupuesto/${ctx.presupuesto.id}`)
+          : () => emitir("aprobacion_solicitada", ctx.presupuesto),
+        deshabilitado: ctx.presupuesto.aprobado,
+      },
+      {
+        icono: "eliminar",
+        texto: "Borrar",
+        advertencia: true,
+        onClick: () => emitir("borrar_solicitado"),
+        deshabilitado: ctx.presupuesto.aprobado,
+      },
+      {
+        texto: "Imprimir",
+        onClick: imprimir,
+      },
+    ],
+    [parcial, navigate, emitir, imprimir, ctx.presupuesto]
+  );
+
+  if (!ctx.presupuesto.id) return;
 
   return (
     <Detalle

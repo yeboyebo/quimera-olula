@@ -1,7 +1,6 @@
 ---
 shortcuts: []
 state:
-  generandoPedido: false
   modalVistaEnviarDocumento:  false
 bunch:
   onImprimirPresupuestoClicked:
@@ -15,38 +14,8 @@ bunch:
       filename:
         const: presupuesto.pdf
       success: none
-  onGenerarPedidoClicked:
-    - _type: set
-      path: generandoPedido
-      value:
-        const: true
-    - _type: patch
-      action: generar_pedido
-      schema: presupuestosCli
-      id:
-        statePath: presupuesto.buffer.idPresupuesto
-      data:
-        - key: servircompleto
-          value:
-            const: true
-      success: onGenerarPedidoSuccess
-      error: onGenerarPedidoError
-  onGenerarPedidoSuccess:
-    - _type: set
-      path: generandoPedido
-      value:
-        const: false
-    - _type: alert
-      text: Pedido Generado
-      severity: success
-  onGenerarPedidoError:
-    - _type: set
-      path: generandoPedido
-      value:
-        const: false  
-    - _type: alert
-      text: Error al generar pedido
-      severity: error
+  # El botón generarPedido ya no despacha aquí: navega a la pantalla de
+  # quimera /ventas/aprobar-presupuesto/:id, donde se eligen las cantidades.
   onEnviarEmailClicked:
     - _type: set 
       path: modalVistaEnviarDocumento

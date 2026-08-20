@@ -1,0 +1,9 @@
+.AprobarPresupuesto {
+    padding: 20px 20% !important;
+}
+
+@media (max-width: 768px) {
+    .AprobarPresupuesto {
+        padding: 10px !important;
+    }
+}
