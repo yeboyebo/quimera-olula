@@ -1,6 +1,6 @@
+import { getProveedores } from "#/compras/proveedor/infraestructura.ts";
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
-import { Filtro } from "@olula/lib/diseño.ts";
-import { getProveedores } from "../../../compras/proveedor/infraestructura.ts";
+import { Criteria } from "@olula/lib/diseño.ts";
 
 interface ProveedorProps {
   descripcion?: string;
@@ -21,16 +21,18 @@ export const Proveedor = ({
   onChange,
   ...props
 }: ProveedorProps) => {
-  const obtenerOpciones = async (texto: string) => {
-    const criteria = {
-      filtro: ["nombre", "~", texto],
+  // El segundo argumento llega cuando QAutocompletar tiene un id sin descripción
+  // y necesita resolver su nombre.
+  const obtenerOpciones = async (texto: string, id?: string) => {
+    if (!id && texto.length < 2) return [];
+
+    const criteria: Criteria = {
+      filtro: id ? [["id", "=", id]] : [["nombre", "~", texto]],
       orden: ["id"],
+      paginacion: { pagina: 1, limite: 10 },
     };
 
-    const proveedores = await getProveedores(
-      criteria.filtro as unknown as Filtro,
-      criteria.orden
-    );
+    const { datos: proveedores } = await getProveedores(criteria);
 
     return proveedores.map((proveedor) => ({
       valor: proveedor.id,
@@ -44,6 +46,7 @@ export const Proveedor = ({
       nombre={nombre}
       onChange={onChange}
       valor={valor}
+      autoSeleccion
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
       deshabilitado={deshabilitado}

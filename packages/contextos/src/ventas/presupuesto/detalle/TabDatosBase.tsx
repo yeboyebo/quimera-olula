@@ -5,9 +5,9 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
-import { Divisa } from "../../comun/componentes/divisa.tsx";
-import { FormaPago } from "../../comun/componentes/formapago.tsx";
-import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
+import { Divisa } from "#/comun/componentes/divisa.tsx";
+import { FormaPago } from "#/comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "#/comun/componentes/grupo_iva_negocio.tsx";
 import {
   grupoIvaNegocioEnDocumento,
   puedeCambiarDivisa,

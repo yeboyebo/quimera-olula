@@ -1,0 +1,47 @@
+/*
+ * Posicionado de campos en el grid de 12 columnas de <quimera-formulario>.
+ * Cada componente renderiza un elemento custom con el atributo `nombre`
+ * que llega del spread de uiProps("campo").
+ */
+.TabGeneral {
+    quimera-input[nombre="nombre"],
+    quimera-input[nombre="nombreComercial"] {
+        grid-column: span 12;
+    }
+
+    quimera-select[nombre="tipoIdFiscal"] {
+        grid-column: 1 / span 4;
+    }
+
+    quimera-input[nombre="idFiscal"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="telefono1"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="telefono2"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="email"],
+    quimera-input[nombre="web"],
+    quimera-textarea[nombre="observaciones"] {
+        grid-column: span 12;
+    }
+
+    quimera-date[nombre="fechaBaja"] {
+        grid-column: span 4;
+    }
+
+    @media (max-width: 768px) {
+        quimera-select[nombre="tipoIdFiscal"],
+        quimera-input[nombre="idFiscal"],
+        quimera-input[nombre="telefono1"],
+        quimera-input[nombre="telefono2"],
+        quimera-date[nombre="fechaBaja"] {
+            grid-column: span 1 !important;
+        }
+    }
+}
