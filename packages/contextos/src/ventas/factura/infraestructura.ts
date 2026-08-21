@@ -3,7 +3,8 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi } from "../venta/infraestructura.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;

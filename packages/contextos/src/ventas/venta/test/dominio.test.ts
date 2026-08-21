@@ -139,7 +139,7 @@ describe("validez de la línea sin artículo de catálogo", () => {
 
 describe("altaLineaApi serializa el alta de línea igual para los cuatro documentos", () => {
     test("la línea de catálogo va como articulo.articulo_id, con la cantidad fuera", () => {
-        expect(altaLineaApi({ referencia: "ART-001", cantidad: 3 })).toEqual({
+        expect(altaLineaApi({ articulo: { articuloId: "ART-001" }, cantidad: 3 })).toEqual({
             articulo: { articulo_id: "ART-001" },
             cantidad: 3,
         });
@@ -147,7 +147,7 @@ describe("altaLineaApi serializa el alta de línea igual para los cuatro documen
 
     test("la línea libre va como articulo.descripcion y pvp_unitario", () => {
         expect(
-            altaLineaApi({ descripcion: "Portes", cantidad: 1, pvp_unitario: 15 })
+            altaLineaApi({ articulo: { descripcion: "Portes", pvpUnitario: 15 }, cantidad: 1 })
         ).toEqual({
             articulo: { descripcion: "Portes", pvp_unitario: 15 },
             cantidad: 1,
@@ -156,7 +156,7 @@ describe("altaLineaApi serializa el alta de línea igual para los cuatro documen
 
     test("un pvp de 0 se manda tal cual", () => {
         expect(
-            altaLineaApi({ descripcion: "Muestra", cantidad: 2, pvp_unitario: 0 })
+            altaLineaApi({ articulo: { descripcion: "Muestra", pvpUnitario: 0 }, cantidad: 2 })
         ).toEqual({
             articulo: { descripcion: "Muestra", pvp_unitario: 0 },
             cantidad: 2,

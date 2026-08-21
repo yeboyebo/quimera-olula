@@ -4,7 +4,8 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi } from "../venta/infraestructura.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {

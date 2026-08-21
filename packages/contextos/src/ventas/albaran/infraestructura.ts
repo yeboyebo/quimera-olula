@@ -4,7 +4,8 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
-import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi } from "../venta/infraestructura.ts";
 import {
   Albaran,
   DeleteLinea,

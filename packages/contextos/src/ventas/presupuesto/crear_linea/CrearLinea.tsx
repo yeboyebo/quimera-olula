@@ -7,6 +7,7 @@ import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
+import { altaLineaDesdeNuevaLinea, altaLineaDesdeNuevaLineaLibre } from "../../venta/dominio.ts";
 import { postLinea } from "../infraestructura.ts";
 import "./CrearLinea.css";
 import {
@@ -41,8 +42,10 @@ export const CrearLinea = ({
   };
 
   const crear_ = useCallback(async () => {
-    const modelo = modoLibre ? lineaLibre.modelo : lineaArticulo.modelo;
-    const idLinea = await postLinea(presupuestoId, modelo);
+    const altaLinea = modoLibre
+      ? altaLineaDesdeNuevaLineaLibre(lineaLibre.modelo)
+      : altaLineaDesdeNuevaLinea(lineaArticulo.modelo);
+    const idLinea = await postLinea(presupuestoId, altaLinea);
     publicar("linea_creada", idLinea);
   }, [modoLibre, lineaLibre, lineaArticulo, presupuestoId, publicar]);
 

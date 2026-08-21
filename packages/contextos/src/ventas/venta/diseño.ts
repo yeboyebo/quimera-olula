@@ -99,14 +99,37 @@ export type NuevaLineaLibreVenta = {
 };
 
 /**
+ * Tipos dominio (camelCase) para el alta de línea — comunes a todos los
+ * documentos de venta. Se convierten a los tipos API con `altaLineaApi`.
+ */
+export interface ArticuloLineaRegistrado {
+    articuloId: string;
+    pvpUnitario?: number;
+}
+export interface ArticuloLineaGenerico extends ArticuloLineaRegistrado {
+    descripcion: string;
+}
+export interface ArticuloLineaLibre {
+    descripcion: string;
+    pvpUnitario: number;
+}
+export type ArticuloLinea =
+    | ArticuloLineaRegistrado
+    | ArticuloLineaGenerico
+    | ArticuloLineaLibre;
+
+/** Tipo dominio unificado para el alta de línea (input de `altaLineaApi`). */
+export type AltaLineaVenta = {
+    articulo: ArticuloLinea;
+    cantidad: number;
+};
+
+/**
  * Cuerpo de un alta de línea tal y como lo espera el servidor: el bloque
  * `articulo` es excluyente (id de catálogo o descripción con precio) y la
  * cantidad va fuera de él. Común a presupuesto, pedido, albarán y factura.
  */
-export type AltaLineaVentaApi = {
-    articulo: { articulo_id: string } | { descripcion: string; pvp_unitario: number };
-    cantidad: number;
-};
+
 
 
 export type ClienteVenta = {
@@ -116,4 +139,3 @@ export type ClienteVenta = {
     direccion_id: string | null;
     direccion: Direccion;
 }
-

@@ -4,7 +4,8 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi } from "../venta/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {

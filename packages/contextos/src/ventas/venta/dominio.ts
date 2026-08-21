@@ -1,6 +1,6 @@
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
-import { AltaLineaVentaApi, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "./diseño.ts";
+import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -226,20 +226,25 @@ export const articuloDeLinea = (
  */
 export const esLineaConArticulo = (
     linea: NuevaLineaVenta | NuevaLineaLibreVenta
-): linea is NuevaLineaVenta => 'referencia' in linea;
+): linea is NuevaLineaVenta => 'referencia' in linea && !!linea.referencia;
 
 /**
- * Serializa un alta de línea al cuerpo que espera el servidor, igual para los
- * cuatro documentos de venta.
+ * Convierte los tipos planos de UI (NuevaLineaVenta / NuevaLineaLibreVenta)
+ * al tipo unificado AltaLineaVenta que acepta altaLineaApi.
  */
-export const altaLineaApi = (
-    linea: NuevaLineaVenta | NuevaLineaLibreVenta
-): AltaLineaVentaApi => ({
-    articulo: esLineaConArticulo(linea)
-        ? { articulo_id: linea.referencia }
-        : { descripcion: linea.descripcion, pvp_unitario: linea.pvp_unitario },
+export const altaLineaDesdeNuevaLinea = (linea: NuevaLineaVenta): AltaLineaVenta => ({
+    articulo: { articuloId: linea.referencia },
     cantidad: linea.cantidad,
 });
+
+export const altaLineaDesdeNuevaLineaLibre = (linea: NuevaLineaLibreVenta): AltaLineaVenta => ({
+    articulo: { descripcion: linea.descripcion, pvpUnitario: linea.pvp_unitario },
+    cantidad: linea.cantidad,
+});
+
+
+
+
 
 
 /**

@@ -39,7 +39,7 @@ describe("postLinea adapta el payload a cada forma", () => {
     beforeEach(() => post.mockClear());
 
     test("la línea de catálogo manda articulo.articulo_id y cantidad aparte", async () => {
-        await postLinea("pre-1", { referencia: "ART-001", cantidad: 3 });
+        await postLinea("pre-1", { articulo: { articuloId: "ART-001" }, cantidad: 3 });
 
         expect(cuerpoEnviado()).toEqual({
             articulo: { articulo_id: "ART-001" },
@@ -49,9 +49,8 @@ describe("postLinea adapta el payload a cada forma", () => {
 
     test("la línea libre manda descripción y pvp en articulo, sin articulo_id", async () => {
         await postLinea("pre-1", {
-            descripcion: "Mano de obra",
+            articulo: { descripcion: "Mano de obra", pvpUnitario: 50 },
             cantidad: 2,
-            pvp_unitario: 50,
         });
 
         expect(cuerpoEnviado()).toEqual({
@@ -62,7 +61,7 @@ describe("postLinea adapta el payload a cada forma", () => {
     });
 
     test("devuelve el id que responde el servidor", async () => {
-        const id = await postLinea("pre-1", { referencia: "ART-001", cantidad: 1 });
+        const id = await postLinea("pre-1", { articulo: { articuloId: "ART-001" }, cantidad: 1 });
         expect(id).toBe("lin-1");
     });
 });
