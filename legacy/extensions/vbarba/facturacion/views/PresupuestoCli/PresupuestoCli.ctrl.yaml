@@ -3,6 +3,95 @@ shortcuts: []
 state:
   modalVistaEnviarDocumento:  false
 bunch:
+  # El select de cliente despacha onPresupuestoBufferCodClienteChanged con el
+  # cliente completo en payload.option. Sin esta clave el reducer cae en el
+  # fallback genérico de BaseController, que solo escribe codCliente y descarta
+  # option: nombreCliente y cifNif quedaban con los del cliente anterior y se
+  # persistían así en el PATCH.
+  onPresupuestoBufferCodClienteChanged:
+    - _type: set
+      path: presupuesto.buffer.codCliente
+      value:
+        payloadPath: value
+    - _type: set
+      path: presupuesto.buffer.nombreCliente
+      value:
+        payloadPath: option.nombre
+    - _type: set
+      path: presupuesto.buffer.cifNif
+      value:
+        payloadPath: option.cifNif
+    # La dirección del cliente anterior ya no vale: se limpia para forzar
+    # reelección en el select de dirección (que recarga opciones con el nuevo
+    # codCliente). Al ser `direccion` required, el guardado queda deshabilitado
+    # hasta elegir una, en vez de persistir la dirección antigua.
+    - _type: set
+      path: presupuesto.buffer.codDir
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.dirTipoVia
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.direccion
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.dirNum
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.dirOtros
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.codPostal
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.ciudad
+      value:
+        const: null
+    - _type: set
+      path: presupuesto.buffer.provincia
+      value:
+        const: null
+  # Igual que con el cliente: el fallback genérico solo escribiría codDir, así
+  # que los campos denormalizados de la dirección se volcaban del option.
+  onPresupuestoBufferCodDirChanged:
+    - _type: set
+      path: presupuesto.buffer.codDir
+      value:
+        payloadPath: value
+    - _type: set
+      path: presupuesto.buffer.dirTipoVia
+      value:
+        payloadPath: option.dirTipoVia
+    - _type: set
+      path: presupuesto.buffer.direccion
+      value:
+        payloadPath: option.direccion
+    - _type: set
+      path: presupuesto.buffer.dirNum
+      value:
+        payloadPath: option.dirNum
+    - _type: set
+      path: presupuesto.buffer.dirOtros
+      value:
+        payloadPath: option.dirOtros
+    - _type: set
+      path: presupuesto.buffer.codPostal
+      value:
+        payloadPath: option.codPostal
+    - _type: set
+      path: presupuesto.buffer.ciudad
+      value:
+        payloadPath: option.ciudad
+    - _type: set
+      path: presupuesto.buffer.provincia
+      value:
+        payloadPath: option.provincia
   onImprimirPresupuestoClicked:
     - _type: download
       schema: presupuestosCli
