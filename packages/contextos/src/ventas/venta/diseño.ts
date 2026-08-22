@@ -26,6 +26,7 @@ export interface LineaVenta extends Entidad {
     id: string;
     referencia: string | null;
     descripcion: string;
+    descripcionArticulo: string | null;
     cantidad: number;
     pvp_unitario: number;
     dto_porcentual: number;
@@ -45,6 +46,8 @@ export type NuevaVenta = {
     direccion_id: string;
     empresa_id: string;
 };
+
+export type TipoArticuloLinea = "registrado" | "libre" | "generico";
 
 /**
  * Alta de documento para un cliente de paso: no hay ids de maestro, la dirección
@@ -99,14 +102,37 @@ export type NuevaLineaLibreVenta = {
 };
 
 /**
+ * Tipos dominio (camelCase) para el alta de línea — comunes a todos los
+ * documentos de venta. Se convierten a los tipos API con `altaLineaApi`.
+ */
+export interface ArticuloLineaRegistrado {
+    articuloId: string;
+    pvpUnitario?: number;
+}
+export interface ArticuloLineaGenerico extends ArticuloLineaRegistrado {
+    descripcion: string;
+}
+export interface ArticuloLineaLibre {
+    descripcion: string;
+    pvpUnitario: number;
+}
+export type ArticuloLinea =
+    | ArticuloLineaRegistrado
+    | ArticuloLineaGenerico
+    | ArticuloLineaLibre;
+
+/** Tipo dominio unificado para el alta de línea (input de `altaLineaApi`). */
+export type AltaLineaVenta = {
+    articulo: ArticuloLinea;
+    cantidad: number;
+};
+
+/**
  * Cuerpo de un alta de línea tal y como lo espera el servidor: el bloque
  * `articulo` es excluyente (id de catálogo o descripción con precio) y la
  * cantidad va fuera de él. Común a presupuesto, pedido, albarán y factura.
  */
-export type AltaLineaVentaApi = {
-    articulo: { articulo_id: string } | { descripcion: string; pvp_unitario: number };
-    cantidad: number;
-};
+
 
 
 export type ClienteVenta = {
@@ -117,3 +143,18 @@ export type ClienteVenta = {
     direccion: Direccion;
 }
 
+/** Extiende cualquier LineaVenta concreta con el campo de UI `tipoArticulo`. */
+export type ConTipoArticulo<T extends LineaVenta> = T & { tipoArticulo: TipoArticuloLinea };
+
+/**
+ * Modelo de UI compartido para el alta de línea en todos los documentos de venta.
+ * Independiente del tipo concreto de documento (pedido, presupuesto, albarán, factura).
+ */
+export type ModeloNuevaLinea = {
+    tipoArticulo: TipoArticuloLinea;
+    referencia: string | null;
+    descripcionArticulo: string | null;
+    descripcion: string | null;
+    cantidad: number;
+    pvp_unitario: number | null;
+};

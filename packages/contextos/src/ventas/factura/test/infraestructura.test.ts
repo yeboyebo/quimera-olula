@@ -36,6 +36,7 @@ const facturaApi: FacturaAPI = {
     grupo_iva_negocio_id: "GENERAL",
     por_comision: 0,
     observaciones: "",
+    estado_expedicion: "",
 };
 
 describe("facturaDesdeAPI mapea la cabecera", () => {
