@@ -1,5 +1,4 @@
 import {
-    altaLineaApi,
     payloadCambioCliente,
     DIVISA_EMPRESA,
     enDivisaExtranjera,
@@ -9,6 +8,7 @@ import {
     mostrarImporte,
     puedeCambiarDivisa,
 } from "#/ventas/venta/dominio.ts";
+import { altaLineaApi } from "#/ventas/venta/infraestructura.ts";
 import { LineaVenta } from "#/ventas/venta/diseño.ts";
 import { modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import { afterEach, describe, expect, test } from "vitest";
@@ -108,6 +108,7 @@ describe("validez de la línea sin artículo de catálogo", () => {
         id: "lin-1",
         referencia: null,
         descripcion: "Mano de obra",
+        descripcionArticulo: null,
         cantidad: 1,
         pvp_unitario: 0,
         dto_porcentual: 0,

@@ -1,19 +1,21 @@
 import { Articulo } from "#/almacen/comun/componentes/Articulo.tsx";
+import { TipoArticuloLinea } from "#/ventas/venta/diseño.ts";
 import { QIcono, QInput } from "@olula/componentes/index.js";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import "./ArticuloLinea.css";
 
 export type CamposArticuloLinea = {
-    tipoArticulo: "registrado" | "libre" | "generico";
+    tipoArticulo: TipoArticuloLinea;
     referencia: string | null;
     descripcionArticulo: string | null;
-    descripcion: string | null;
+    descripcion: string;
 };
 
 interface ArticuloLineaProps extends CamposArticuloLinea {
     nombre?: string;
     onChange: (cambios: Partial<CamposArticuloLinea>) => void;
     ref?: React.RefObject<HTMLInputElement | null>;
+    bloqueado?: boolean;
 }
 
 export const ArticuloLinea = ({
@@ -23,30 +25,43 @@ export const ArticuloLinea = ({
     descripcion,
     nombre = "referencia",
     onChange,
+    bloqueado = false,
 }: ArticuloLineaProps) => {
     const refArticulo = useRef<HTMLInputElement | null>(null);
     const refDescripcionRegistrado = useRef<HTMLInputElement | null>(null);
     const refDescripcionLibre = useRef<HTMLInputElement | null>(null);
+    const montado = useRef(false);
+
+    useEffect(() => {
+        if (!montado.current) {
+            montado.current = true;
+            return;
+        }
+        if (tipoArticulo === "generico") {
+            refDescripcionRegistrado.current?.focus();
+            refDescripcionRegistrado.current?.select();
+        } else if (tipoArticulo === "libre") {
+            refDescripcionLibre.current?.focus();
+            refDescripcionLibre.current?.select();
+        } else if (tipoArticulo === "registrado") {
+            refArticulo.current?.focus();
+        }
+    }, [tipoArticulo]);
 
     const toggleDescripcion = () => {
         const nuevoTipo = tipoArticulo === "registrado" ? "generico" : "registrado";
-        onChange({ tipoArticulo: nuevoTipo });
-        if (tipoArticulo === "generico") {
-            setTimeout(() => {
-                refDescripcionRegistrado.current?.focus();
-                refDescripcionRegistrado.current?.select();
-            }, 0);
-        }
+        onChange({
+            tipoArticulo: nuevoTipo,
+            descripcion: descripcionArticulo!
+        });
     };
 
     const abrir = () => {
-        onChange({ tipoArticulo: "libre", referencia: null, descripcionArticulo: null, descripcion: null });
-        setTimeout(() => refDescripcionLibre.current?.focus(), 0);
+        onChange({ tipoArticulo: "libre", referencia: null, descripcionArticulo: null, descripcion: "" });
     };
 
     const cerrar = () => {
-        onChange({ tipoArticulo: "registrado", referencia: null, descripcionArticulo: null, descripcion: null });
-        setTimeout(() => refArticulo.current?.focus(), 0);
+        onChange({ tipoArticulo: "registrado", referencia: null, descripcionArticulo: null, descripcion: "" });
     };
 
     if (tipoArticulo !== "libre") {
@@ -64,6 +79,7 @@ export const ArticuloLinea = ({
                             })
                         }
                         ref={refArticulo}
+                        soloTexto={bloqueado}
                     />
                     {referencia && (
                         <button
@@ -76,22 +92,24 @@ export const ArticuloLinea = ({
                             <QIcono nombre="editar_2" tamaño="sm" />
                         </button>
                     )}
-                    <button
-                        type="button"
-                        onClick={abrir}
-                        title="Abrir descripción libre"
-                        aria-label="Abrir descripción libre"
-                        className="ArticuloLinea-boton-candado"
-                    >
-                        <QIcono nombre="candado_abierto" tamaño="sm" />
-                    </button>
+                    {!bloqueado &&
+                        <button
+                            type="button"
+                            onClick={abrir}
+                            title="Abrir descripción libre"
+                            aria-label="Abrir descripción libre"
+                            className="ArticuloLinea-boton-candado"
+                        >
+                            <QIcono nombre="candado_abierto" tamaño="sm" />
+                        </button>
+                    }
                 </div>
                 {tipoArticulo === "generico" && (
                     <QInput
                         nombre="descripcion"
-                        label="Descripción"
+                        label="Descripción personalizada"
                         valor={descripcion ?? ""}
-                        onChange={(val) => onChange({ descripcion: val || null })}
+                        onChange={(val) => onChange({ descripcion: val })}
                         ref={refDescripcionRegistrado}
                     />
                 )}
@@ -105,18 +123,20 @@ export const ArticuloLinea = ({
                 nombre="descripcion"
                 label="Descripción"
                 valor={descripcion ?? ""}
-                onChange={(val) => onChange({ descripcion: val || null })}
+                onChange={(val) => onChange({ descripcion: val })}
                 ref={refDescripcionLibre}
             />
-            <button
-                type="button"
-                onClick={cerrar}
-                title="Cerrar descripción libre"
-                aria-label="Cerrar descripción libre"
-                className="ArticuloLinea-boton-candado"
-            >
-                <QIcono nombre="candado" tamaño="sm" />
-            </button>
+            {!bloqueado &&
+                <button
+                    type="button"
+                    onClick={cerrar}
+                    title="Cerrar descripción libre"
+                    aria-label="Cerrar descripción libre"
+                    className="ArticuloLinea-boton-candado"
+                >
+                    <QIcono nombre="candado" tamaño="sm" />
+                </button>
+            }
         </div>
     );
 };

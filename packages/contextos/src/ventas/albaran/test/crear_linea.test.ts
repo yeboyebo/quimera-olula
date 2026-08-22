@@ -1,4 +1,4 @@
-import { AltaLineaVentaApi } from "#/ventas/venta/diseño.ts";
+import { AltaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const post = vi.fn(

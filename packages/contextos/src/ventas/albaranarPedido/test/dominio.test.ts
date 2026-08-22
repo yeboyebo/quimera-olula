@@ -10,6 +10,7 @@ const linea = (cambios: Partial<LineaAlbaranarPedido> = {}): LineaAlbaranarPedid
     id: "lin-1",
     referencia: "ART1",
     descripcion: "Artículo 1",
+    descripcionArticulo: null,
     cantidad: 10,
     pvp_unitario: 5,
     pvp_total: 50,

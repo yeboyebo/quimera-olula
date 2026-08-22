@@ -58,7 +58,7 @@ export const CrearLineaBase = ({ pedidoId, publicar }: CrearLineaProps) => {
                         tipoArticulo={linea.tipoArticulo}
                         referencia={linea.referencia}
                         descripcionArticulo={linea.descripcionArticulo}
-                        descripcion={linea.descripcion}
+                        descripcion={linea.descripcion ?? ""}
                         nombre="referencia_nueva_linea_pedido"
                         onChange={(cambios) => lineaArticulo.set({ ...linea, ...cambios })}
                     />

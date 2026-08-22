@@ -6,13 +6,14 @@ import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLine
 
 export interface Factura extends Venta {
     cliente: ClienteVenta;
+    estadoExpedicion: string;
     editable?: boolean;
     por_comision: number;
     lineas?: LineaFactura[];
     hora?: string;
     almacen_id?: string;
     nombre_almacen?: string;
-    automatica?: boolean;
+    // automatica?: boolean;
     servicios?: boolean;
     rectificativa_id?: string | null;
 }

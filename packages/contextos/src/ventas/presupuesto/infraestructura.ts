@@ -4,8 +4,8 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi } from "../venta/infraestructura.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
@@ -41,7 +41,14 @@ type PresupuestoAPI = {
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
-type LineaPresupuestoAPI = LineaPresupuesto;
+interface LineaPresupuestoAPI extends Omit<LineaPresupuesto, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
+
+export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaPresupuesto);
 
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
@@ -58,8 +65,6 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   },
   lineas: [],
 });
-
-export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => l;
 
 export const getPresupuesto: GetPresupuesto = async (id) =>
   RestAPI.get<{ datos: PresupuestoAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
@@ -120,10 +125,9 @@ export const patchCambiarCliente = async (id: string, cambio: CambioClientePresu
 }
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
-  await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) => {
-    const lineas = respuesta.datos.map((d) => lineaPresupuestoFromAPI(d));
-    return lineas
-  });
+  await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
+    respuesta.datos.map(lineaPresupuestoFromAPI)
+  );
 
 
 export const postLinea: PostLinea = async (id, linea) => {

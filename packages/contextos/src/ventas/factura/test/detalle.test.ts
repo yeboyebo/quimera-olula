@@ -4,20 +4,19 @@ import { Factura } from "#/ventas/factura/diseño.ts";
 import { modeloEsEditable } from "@olula/lib/dominio.ts";
 import { describe, expect, test } from "vitest";
 
-const abierta = (): Factura => ({ ...facturaVacia(), editable: true });
+const abierta = (): Factura => ({ ...facturaVacia(), estadoExpedicion: "BORRADOR" });
 
 describe("es el servidor quien decide si una factura se edita", () => {
-    test("con la marca puesta se edita", () => {
+    test("en estado BORRADOR se edita", () => {
         expect(editable(abierta())).toBe(true);
     });
 
-    test("con la marca quitada no", () => {
-        expect(editable({ ...facturaVacia(), editable: false })).toBe(false);
+    test("en cualquier otro estado no", () => {
+        expect(editable({ ...facturaVacia(), estadoExpedicion: "EXPEDIDA" })).toBe(false);
     });
 
-    test("sin marca ninguna se considera cerrada", () => {
-        const sinMarca = { ...facturaVacia(), editable: undefined };
-        expect(editable(sinMarca)).toBe(false);
+    test("sin estado (cadena vacía) se considera cerrada", () => {
+        expect(editable(facturaVacia())).toBe(false);
     });
 });
 

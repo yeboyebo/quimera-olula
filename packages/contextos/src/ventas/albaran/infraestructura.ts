@@ -4,8 +4,8 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi } from "../venta/infraestructura.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -27,7 +27,10 @@ import {
 
 const baseUrl = new ApiUrls().ALBARAN;
 
-type LineaAlbaranAPI = LineaAlbaran;
+interface LineaAlbaranAPI extends Omit<LineaAlbaran, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
+
 interface AlbaranAPI {
   id: string;
   codigo: string;
@@ -76,7 +79,10 @@ export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   lineas: [],
 });
 
-export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => l;
+export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaAlbaran);
 
 export const getAlbaran: GetAlbaran = async (id) => {
   return RestAPI.get<{ datos: AlbaranAPI }>(`${baseUrl}/${id}`).then((respuesta) => {

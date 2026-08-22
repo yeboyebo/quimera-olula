@@ -3,13 +3,15 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi } from "../venta/infraestructura.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
-type LineaFacturaAPI = LineaFactura;
+interface LineaFacturaAPI extends Omit<LineaFactura, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
 
 interface FacturaAPI {
   id: string;
@@ -44,12 +46,14 @@ interface FacturaAPI {
   por_comision: number;
   observaciones: string;
   editable?: boolean;
+  estado_expedicion: string;
 }
 export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
+  estadoExpedicion: p.estado_expedicion,
   cliente: {
     cliente_id: p.cliente_id ?? null,
     nombre_cliente: p.nombre_cliente ?? "",
@@ -59,7 +63,10 @@ export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   },
   lineas: [],
 });
-export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
+export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaFactura);
 
 export const getFactura: GetFactura = async (id) => {
   return RestAPI.get<{ datos: FacturaAPI }>(

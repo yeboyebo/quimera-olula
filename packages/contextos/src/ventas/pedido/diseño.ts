@@ -18,6 +18,18 @@ export interface LineaPedido extends LineaVenta {
     otro_campo?: string;
 }
 
+export interface CambiosLineaPedido {
+    descripcion: string,
+    cantidad: number,
+    pvp_unitario: number,
+    dto_porcentual: number,
+    dto_lineal: number,
+    grupo_iva_producto_id: string,
+    iva_incluido: boolean,
+    tipo_irpf: number,
+    por_comision: number,
+}
+
 export type NuevoPedido = NuevaVenta
 
 export type NuevoPedidoClienteNoRegistrado = NuevaVentaClienteNoRegistrado

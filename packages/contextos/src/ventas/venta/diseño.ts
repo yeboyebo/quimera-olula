@@ -26,6 +26,7 @@ export interface LineaVenta extends Entidad {
     id: string;
     referencia: string | null;
     descripcion: string;
+    descripcionArticulo: string | null;
     cantidad: number;
     pvp_unitario: number;
     dto_porcentual: number;
@@ -45,6 +46,8 @@ export type NuevaVenta = {
     direccion_id: string;
     empresa_id: string;
 };
+
+export type TipoArticuloLinea = "registrado" | "libre" | "generico";
 
 /**
  * Alta de documento para un cliente de paso: no hay ids de maestro, la dirección
@@ -139,3 +142,19 @@ export type ClienteVenta = {
     direccion_id: string | null;
     direccion: Direccion;
 }
+
+/** Extiende cualquier LineaVenta concreta con el campo de UI `tipoArticulo`. */
+export type ConTipoArticulo<T extends LineaVenta> = T & { tipoArticulo: TipoArticuloLinea };
+
+/**
+ * Modelo de UI compartido para el alta de línea en todos los documentos de venta.
+ * Independiente del tipo concreto de documento (pedido, presupuesto, albarán, factura).
+ */
+export type ModeloNuevaLinea = {
+    tipoArticulo: TipoArticuloLinea;
+    referencia: string | null;
+    descripcionArticulo: string | null;
+    descripcion: string | null;
+    cantidad: number;
+    pvp_unitario: number | null;
+};

@@ -1,9 +1,8 @@
-import { AltaLineaVentaApi } from "#/ventas/venta/diseño.ts";
+import { AltaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
 import { esLineaConArticulo } from "#/ventas/venta/dominio.ts";
 import {
     metaNuevaLinea,
-    metaNuevaLineaLibre,
-    nuevaLineaLibreVacia,
+    nuevaLineaVacia,
 } from "#/ventas/presupuesto/crear_linea/dominio.ts";
 import { modeloEsValido } from "@olula/lib/dominio.ts";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -66,18 +65,19 @@ describe("postLinea adapta el payload a cada forma", () => {
     });
 });
 
-describe("validación de la línea libre", () => {
-    const valido = modeloEsValido(metaNuevaLineaLibre);
+describe("validación de la nueva línea", () => {
+    const valido = modeloEsValido(metaNuevaLinea);
+    const lineaLibreBase = { ...nuevaLineaVacia, tipoArticulo: "libre" as const, referencia: null };
 
-    test("un pvp de 0 es válido", () => {
-        expect(valido({ ...nuevaLineaLibreVacia, descripcion: "Portes", pvp_unitario: 0 })).toBe(true);
+    test("un pvp de 0 es válido en una línea libre", () => {
+        expect(valido({ ...lineaLibreBase, descripcion: "Portes", pvp_unitario: 0 })).toBe(true);
     });
 
-    test("sin descripción no vale", () => {
-        expect(valido({ ...nuevaLineaLibreVacia, descripcion: "" })).toBe(false);
+    test("sin descripción no vale en línea libre", () => {
+        expect(valido({ ...lineaLibreBase, descripcion: "", pvp_unitario: 15 })).toBe(false);
     });
 
-    test("la línea de catálogo sigue exigiendo referencia", () => {
-        expect(modeloEsValido(metaNuevaLinea)({ referencia: "", cantidad: 1 })).toBe(false);
+    test("sin referencia ni descripción no vale", () => {
+        expect(valido({ ...nuevaLineaVacia, referencia: null, descripcion: null, pvp_unitario: 15 })).toBe(false);
     });
 });
