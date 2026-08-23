@@ -79,7 +79,7 @@ export const ArticuloLinea = ({
                             })
                         }
                         ref={refArticulo}
-                        soloTexto={bloqueado}
+                        soloLectura={bloqueado}
                     />
                     {referencia && (
                         <button

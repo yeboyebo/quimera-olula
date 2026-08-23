@@ -152,6 +152,10 @@ test("[asistente-chat-stream-04] un evento estado se muestra y se sustituye por 
   await screen.findByText("Buscando el cliente…");
   await screen.findByText("Aquí tienes el cliente.");
   expect(screen.queryByText("Buscando el cliente…")).toBeNull();
+
+  // Esperar a que el stream termine completamente (evento "fin") para evitar
+  // que setIsRunning(false) se ejecute tras el teardown del entorno jsdom.
+  await screen.findByRole("button", { name: "Enviar" });
 });
 
 function Probe() {
