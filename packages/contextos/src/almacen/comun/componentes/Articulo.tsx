@@ -15,7 +15,7 @@ interface ArticuloProps {
   deshabilitado?: boolean;
   opcional?: boolean;
   ref?: React.RefObject<HTMLInputElement | null>;
-  soloTexto?: boolean;
+  soloLectura?: boolean;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 

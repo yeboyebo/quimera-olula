@@ -88,8 +88,8 @@ export const CambiarLineaBase = ({
                 <>
                     <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
                     <QInput label="Dto. lineal" {...uiProps("dto_lineal")} />
-                    <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} soloTexto={!libre} />
-                    <QInput label="% IVA" {...uiProps("tipo_iva")} soloTexto />
+                    <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} soloLectura={!libre} />
+                    <QInput label="% IVA" {...uiProps("tipo_iva")} soloLectura />
                     <QInput label="% I.R.P.F." {...uiProps("tipo_irpf")} />
                     <QInput label="% Comisión agente" {...uiProps("por_comision")} />
                     <QInput
