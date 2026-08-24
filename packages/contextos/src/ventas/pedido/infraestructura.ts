@@ -6,7 +6,7 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
-import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
+import { DeleteLinea, GetCambiosLineaPedido, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {
   id: string;
@@ -170,6 +170,32 @@ export const getLineas: GetLineasPedido = async (id) =>
       return lineas
     });
 
+export const getCambiosLineaPedido: GetCambiosLineaPedido = async (linea, _campo, _contexto) => {
+  // Mock: en producción, llamar al servidor usando _contexto.pedidoId para
+  // resolver tarifas del cliente, almacén, etc.
+  // Campos disparadores actuales: 'referencia'
+  if (linea.referencia === 'R1') {
+    return {
+      ...linea,
+      descripcion: 'Artículo R1 - Descripción del servidor',
+      pvp_unitario: 10.0,
+      grupo_iva_producto_id: 'GENERAL',
+      tipo_iva: 21,
+      pvp_total: linea.cantidad * linea.pvp_unitario
+    };
+  }
+  if (linea.referencia === 'R2') {
+    return {
+      ...linea,
+      descripcion: 'Artículo R2 - Descripción del servidor',
+      pvp_unitario: 25.5,
+      grupo_iva_producto_id: 'REDUCIDO',
+      tipo_iva: 10,
+      pvp_total: linea.cantidad * linea.pvp_unitario
+    };
+  }
+  return linea;
+}
 
 export const postLinea: PostLinea = async (id, linea) => {
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {

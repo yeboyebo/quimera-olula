@@ -46,6 +46,17 @@ export type GetReportPedido = (id: string) => Promise<Blob>;
 
 export type GetLineasPedido = (id: string) => Promise<LineaPedido[]>;
 
+/** Datos de contexto que necesita el servidor para recalcular una línea de pedido. */
+export type ContextoCambiosLineaPedido = {
+    pedidoId: string;
+};
+
+export type GetCambiosLineaPedido = (
+    linea: LineaPedido,
+    campo: string,
+    contexto: ContextoCambiosLineaPedido
+) => Promise<LineaPedido>;
+
 export type PostPedido = (pedido: NuevoPedido | NuevoPedidoClienteNoRegistrado) => Promise<string>;
 
 export type PostLinea = (id: string, linea: NuevaLineaPedido) => Promise<string>;

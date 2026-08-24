@@ -157,4 +157,5 @@ export type ModeloNuevaLinea = {
     descripcion: string | null;
     cantidad: number;
     pvp_unitario: number | null;
+    pvp_total: number | null;
 };

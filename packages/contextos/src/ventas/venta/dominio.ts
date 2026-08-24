@@ -264,6 +264,7 @@ export const nuevaLineaVacia: ModeloNuevaLinea = {
     descripcion: null,
     cantidad: 1,
     pvp_unitario: null,
+    pvp_total: null,
 };
 
 export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
