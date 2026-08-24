@@ -1,6 +1,6 @@
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
-import { AltaLineaVentaApi, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "./diseño.ts";
+import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, ConTipoArticulo, LineaVenta, ModeloNuevaLinea, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, TipoArticuloLinea, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -215,32 +215,91 @@ export const metaNuevaLineaLibreVenta: MetaModelo<NuevaLineaLibreVenta> = {
  * El bloque `articulo` del PATCH de línea es excluyente: o el id del catálogo,
  * o la descripción, que es lo que convierte (o mantiene) la línea sin referencia.
  */
-export const articuloDeLinea = (
-    linea: Pick<LineaVenta, 'referencia' | 'descripcion'>
-) => linea.referencia
-        ? { articulo_id: linea.referencia }
-        : { descripcion: linea.descripcion };
+// export const articuloDeLinea = (
+//     linea: Pick<LineaVenta, 'referencia' | 'descripcion'>
+// ) => linea.referencia
+//         ? { articulo_id: linea.referencia }
+//         : { descripcion: linea.descripcion };
 
+
+
+export const getTipoArticulo = (linea: LineaVenta): TipoArticuloLinea => {
+    return linea.referencia
+        ? linea.descripcion != linea.descripcionArticulo
+            ? "generico"
+            : "registrado"
+        : "libre"
+}
 /**
  * Discrimina las dos formas de alta de línea que acepta el servidor.
  */
 export const esLineaConArticulo = (
     linea: NuevaLineaVenta | NuevaLineaLibreVenta
-): linea is NuevaLineaVenta => 'referencia' in linea;
+): linea is NuevaLineaVenta => 'referencia' in linea && !!linea.referencia;
 
 /**
- * Serializa un alta de línea al cuerpo que espera el servidor, igual para los
- * cuatro documentos de venta.
+ * Convierte los tipos planos de UI (NuevaLineaVenta / NuevaLineaLibreVenta)
+ * al tipo unificado AltaLineaVenta que acepta altaLineaApi.
  */
-export const altaLineaApi = (
-    linea: NuevaLineaVenta | NuevaLineaLibreVenta
-): AltaLineaVentaApi => ({
-    articulo: esLineaConArticulo(linea)
-        ? { articulo_id: linea.referencia }
-        : { descripcion: linea.descripcion, pvp_unitario: linea.pvp_unitario },
+export const altaLineaDesdeNuevaLinea = (linea: NuevaLineaVenta): AltaLineaVenta => ({
+    articulo: { articuloId: linea.referencia },
     cantidad: linea.cantidad,
 });
 
+export const altaLineaDesdeNuevaLineaLibre = (linea: NuevaLineaLibreVenta): AltaLineaVenta => ({
+    articulo: { descripcion: linea.descripcion, pvpUnitario: linea.pvp_unitario },
+    cantidad: linea.cantidad,
+});
+
+
+
+
+
+
+/** Modelo de alta de línea vacío, compartido por todos los documentos de venta. */
+export const nuevaLineaVacia: ModeloNuevaLinea = {
+    tipoArticulo: "registrado",
+    referencia: null,
+    descripcionArticulo: null,
+    descripcion: null,
+    cantidad: 1,
+    pvp_unitario: null,
+};
+
+export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
+    campos: {
+        referencia: { tipo: "texto" },
+        descripcion: { tipo: "texto" },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
+        pvp_unitario: { requerido: (linea) => !linea.referencia, tipo: "moneda" },
+    },
+    validacion: (linea) => !!(linea.referencia || linea.descripcion),
+};
+
+/**
+ * Convierte el modelo de UI de nueva línea al tipo unificado AltaLineaVenta
+ * que acepta altaLineaApi. Común a todos los documentos de venta.
+ */
+export const altaLineaDesdeModelo = (linea: ModeloNuevaLinea): AltaLineaVenta => {
+    const { cantidad } = linea;
+    switch (linea.tipoArticulo) {
+        case "registrado":
+            return { articulo: { articuloId: linea.referencia! }, cantidad };
+        case "generico":
+            return { articulo: { articuloId: linea.referencia!, descripcion: linea.descripcion! }, cantidad };
+        case "libre":
+            return { articulo: { descripcion: linea.descripcion!, pvpUnitario: linea.pvp_unitario! }, cantidad };
+    }
+};
+
+/**
+ * Inicializa el modelo de edición de línea a partir de la línea recibida de la API,
+ * infiriendo el tipoArticulo. Genérico para todos los documentos de venta.
+ */
+export const getModeloInicial = <T extends LineaVenta>(linea: T): ConTipoArticulo<T> => ({
+    ...linea,
+    tipoArticulo: getTipoArticulo(linea),
+});
 
 /**
  * Bloque `cliente` que espera el servidor al cambiar el cliente de un documento

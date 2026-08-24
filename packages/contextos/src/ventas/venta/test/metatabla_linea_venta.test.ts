@@ -6,6 +6,7 @@ const lineaVacia = (): LineaVenta => ({
     id: "lin-1",
     referencia: null,
     descripcion: "",
+    descripcionArticulo: null,
     cantidad: 1,
     pvp_unitario: 0,
     dto_porcentual: 0,

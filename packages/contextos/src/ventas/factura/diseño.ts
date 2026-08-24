@@ -2,17 +2,18 @@ import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 export interface Factura extends Venta {
     cliente: ClienteVenta;
+    estadoExpedicion: string;
     editable?: boolean;
     por_comision: number;
     lineas?: LineaFactura[];
     hora?: string;
     almacen_id?: string;
     nombre_almacen?: string;
-    automatica?: boolean;
+    // automatica?: boolean;
     servicios?: boolean;
     rectificativa_id?: string | null;
 }
@@ -50,7 +51,7 @@ export type GetReportFactura = (id: string) => Promise<Blob>;
 
 export type PostFactura = (factura: NuevaFactura) => Promise<string>;
 
-export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
+export type PostLinea = (id: string, linea: AltaLineaVenta) => Promise<string>;
 
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
 
