@@ -18,6 +18,14 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
             siguiente_pagina: [maestro.Pedidos.filtrar, maestro.ampliarPedidos],
 
             crear_pedido_solicitado: "CREANDO",
+
+            seleccionados_cambiados: maestro.seleccionadosCambiados,
+            albaranado_solicitado: "ALBARANANDO",
+        },
+
+        ALBARANANDO: {
+            albaranado_confirmado: maestro.albaranarSeleccionados,
+            albaranado_cancelado: "INICIAL",
         },
 
         CREANDO: {

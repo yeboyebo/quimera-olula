@@ -3,7 +3,7 @@
  * Cada componente renderiza un elemento custom con el atributo `nombre`
  * que llega del spread de uiProps("campo").
  */
-.TabGeneral {
+.Proveedor .TabGeneral {
     quimera-input[nombre="nombre"],
     quimera-input[nombre="nombreComercial"] {
         grid-column: span 12;

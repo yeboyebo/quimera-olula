@@ -1,30 +1,33 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import {
-    LineaPedido,
-    NuevaLineaLibrePedido,
-    NuevaLineaPedido,
-    Pedido,
+    Albaran,
+    LineaAlbaran,
+    NuevaLineaAlbaran,
+    NuevaLineaLibreAlbaran,
 } from "./diseño.ts";
 
 /**
- * Un pedido que no está pendiente rechaza con 409 los cambios que afectan a lo
- * recibido: crear o borrar líneas, importes, impuestos, artículo, proveedor,
- * grupo de IVA y el propio borrado. Sí acepta observaciones o fecha de entrada.
+ * Un albarán con factura rechaza con 409 los cambios que afectan a lo facturado:
+ * líneas, proveedor, divisa, grupo de IVA, descuento, importes e impuestos, y el
+ * propio borrado. Sí acepta fecha, hora, nº de proveedor, almacén, forma de pago
+ * y observaciones.
+ *
+ * Nota: no hay factura de compra en el servidor, así que nada marca un albarán
+ * como facturado desde la API; el 409 solo aparece en los que ya venían así.
  */
-export const pedidoPendiente = (pedido: Pedido): boolean =>
-    pedido.recibido === null || pedido.recibido === "No";
+export const albaranFacturado = (albaran: Albaran): boolean => albaran.facturaId !== null;
 
-export const descripcionRecibido = (pedido: Pedido): string =>
-    pedido.recibido ?? "No";
-
-/** Queda algo por recibir mientras el pedido no esté recibido del todo. */
-export const pedidoAlbaranable = (pedido: Pedido): boolean => pedido.recibido !== "Sí";
+export const descripcionEstadoFactura = (albaran: Albaran): string =>
+    albaranFacturado(albaran) ? "Facturado" : "Pendiente de facturar";
 
 /** Las líneas sin artículo de catálogo no tienen referencia: solo descripción. */
-export const etiquetaLinea = (linea: LineaPedido): string =>
+export const etiquetaLinea = (linea: LineaAlbaran): string =>
     linea.referencia ? `${linea.referencia}: ${linea.descripcion}` : linea.descripcion;
 
-export const metaLineaPedido: MetaModelo<LineaPedido> = {
+/** Las líneas añadidas a mano no vienen de un pedido y no mueven nada en ninguno. */
+export const lineaDePedido = (linea: LineaAlbaran): boolean => linea.pedidoId !== null;
+
+export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = {
     campos: {
         descripcion: { requerido: true },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
@@ -36,11 +39,10 @@ export const metaLineaPedido: MetaModelo<LineaPedido> = {
         pvpTotal: { tipo: "moneda", bloqueado: true },
         tipoIva: { tipo: "decimal", bloqueado: true },
         tipoRecargo: { tipo: "decimal", bloqueado: true },
-        cantidadRecibida: { tipo: "decimal", bloqueado: true },
     },
 };
 
-export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = {
+export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = {
     campos: {
         referencia: { requerido: true, tipo: "texto" },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
@@ -48,7 +50,7 @@ export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = {
     },
 };
 
-export const metaNuevaLineaLibrePedido: MetaModelo<NuevaLineaLibrePedido> = {
+export const metaNuevaLineaLibreAlbaran: MetaModelo<NuevaLineaLibreAlbaran> = {
     campos: {
         descripcion: { requerido: true },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
@@ -56,14 +58,14 @@ export const metaNuevaLineaLibrePedido: MetaModelo<NuevaLineaLibrePedido> = {
     },
 };
 
-export const nuevaLineaPedidoVacia = (): NuevaLineaPedido => ({
+export const nuevaLineaAlbaranVacia = (): NuevaLineaAlbaran => ({
     referencia: "",
     descripcion: "",
     cantidad: 1,
     pvpUnitario: 0,
 });
 
-export const nuevaLineaLibrePedidoVacia = (): NuevaLineaLibrePedido => ({
+export const nuevaLineaLibreAlbaranVacia = (): NuevaLineaLibreAlbaran => ({
     descripcion: "",
     cantidad: 1,
     pvpUnitario: 0,

@@ -6,24 +6,24 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useMemo, useState } from "react";
-import { postPedido } from "../infraestructura.ts";
+import { postAlbaran } from "../infraestructura.ts";
 import {
-    metaNuevoPedido,
-    metaNuevoPedidoProveedorNoRegistrado,
-    nuevoPedidoInicial,
-    nuevoPedidoProveedorNoRegistradoInicial,
+    metaNuevoAlbaran,
+    metaNuevoAlbaranProveedorNoRegistrado,
+    nuevoAlbaranInicial,
+    nuevoAlbaranProveedorNoRegistradoInicial,
 } from "./crear.ts";
-import "./CrearPedido.css";
+import "./CrearAlbaran.css";
 
-export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
+export const CrearAlbaran = ({ publicar }: { publicar: EmitirEvento }) => {
     const [modoNoRegistrado] = useState(false);
 
-    const inicialRegistrado = useMemo(nuevoPedidoInicial, []);
-    const inicialNoRegistrado = useMemo(nuevoPedidoProveedorNoRegistradoInicial, []);
+    const inicialRegistrado = useMemo(nuevoAlbaranInicial, []);
+    const inicialNoRegistrado = useMemo(nuevoAlbaranProveedorNoRegistradoInicial, []);
 
-    const registrado = useModelo(metaNuevoPedido, inicialRegistrado);
+    const registrado = useModelo(metaNuevoAlbaran, inicialRegistrado);
     const noRegistrado = useModelo(
-        metaNuevoPedidoProveedorNoRegistrado,
+        metaNuevoAlbaranProveedorNoRegistrado,
         inicialNoRegistrado
     );
 
@@ -35,12 +35,12 @@ export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
 
     const crear_ = useCallback(async () => {
         const modelo = modoNoRegistrado ? noRegistrado.modelo : registrado.modelo;
-        const id = await postPedido(modelo);
-        publicar("pedido_creado", id);
+        const id = await postAlbaran(modelo);
+        publicar("albaran_creado", id);
     }, [modoNoRegistrado, noRegistrado.modelo, registrado.modelo, publicar]);
 
     const cancelar_ = useCallback(
-        () => publicar("alta_de_pedido_cancelada"),
+        () => publicar("alta_de_albaran_cancelada"),
         [publicar]
     );
 
@@ -51,8 +51,8 @@ export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
     return (
         <QModal
             abierto={true}
-            nombre="crearPedidoCompra"
-            titulo="Crear pedido de compra"
+            nombre="crearAlbaranCompra"
+            titulo="Crear albarán de compra"
             onCerrar={cancelar}
         >
             {/* <div className="modo-proveedor">
@@ -60,7 +60,7 @@ export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
                     {modoNoRegistrado ? "Proveedor registrado" : "Proveedor no registrado"}
                 </QBoton>
             </div> */}
-            <div className="CrearPedido">
+            <div className="CrearAlbaran">
                 <quimera-formulario>
                     {modoNoRegistrado ? (
                         <>
@@ -73,7 +73,7 @@ export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
                     ) : (
                         <Proveedor
                             {...registrado.uiProps("proveedorId", "nombreProveedor")}
-                            nombre="proveedorPedido"
+                            nombre="proveedorAlbaran"
                         />
                     )}
                     <QInput label="Nº proveedor" {...form.uiProps("numeroProveedor")} />

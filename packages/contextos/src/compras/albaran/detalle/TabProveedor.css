@@ -1,0 +1,30 @@
+.Albaran .TabProveedor {
+    quimera-autocompletar[nombre="proveedorId"] {
+        grid-column: 1 / span 8;
+        min-width: 0;
+    }
+
+    quimera-input[nombre="idFiscal"] {
+        grid-column: 9 / span 4;
+        min-width: 0;
+    }
+
+    quimera-input[nombre="numeroProveedor"] {
+        grid-column: 1 / span 4;
+    }
+
+    quimera-date[nombre="fecha"],
+    quimera-input[nombre="hora"] {
+        grid-column: span 4;
+    }
+
+    @media (max-width: 768px) {
+        quimera-autocompletar[nombre="proveedorId"],
+        quimera-input[nombre="idFiscal"],
+        quimera-input[nombre="numeroProveedor"],
+        quimera-date[nombre="fecha"],
+        quimera-input[nombre="hora"] {
+            grid-column: span 1 !important;
+        }
+    }
+}

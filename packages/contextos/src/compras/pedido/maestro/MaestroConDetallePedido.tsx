@@ -10,68 +10,85 @@ import { CrearPedido } from "../crear/CrearPedido.tsx";
 import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
 import "./MaestroConDetallePedido.css";
+import { AlbaranarPedidos } from "./AlbaranarPedidos.tsx";
+import { puedenAlbaranarse } from "./maestro.ts";
 import { getMaquina } from "./maquina.ts";
 import { metaTablaPedido } from "./metatabla_pedido.tsx";
 import { TarjetaPedido } from "./TarjetaPedido.tsx";
 
 const criteriaPedidos = {
-    ...criteriaDefecto,
-    orden: ["fecha", "DESC"],
+  ...criteriaDefecto,
+  orden: ["fecha", "DESC"],
 };
 
 export const MaestroConDetallePedido = () => {
-    const criteriaBase = useMemo(() => criteriaPedidos, []);
+  const criteriaBase = useMemo(() => criteriaPedidos, []);
 
-    const { id, criteria } = getUrlParams();
-    const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
+  const { id, criteria } = getUrlParams();
+  const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
 
-    const { ctx, emitir } = useMaquina(getMaquina, {
-        estado: "INICIAL",
-        pedidos: listaActivaEntidadesInicial<Pedido>(id, criteriaInicial),
-    });
+  const { ctx, emitir } = useMaquina(getMaquina, {
+    estado: "INICIAL",
+    pedidos: listaActivaEntidadesInicial<Pedido>(id, criteriaInicial),
+    seleccionados: [],
+  });
 
-    const { estado, pedidos } = ctx;
+  const { estado, pedidos, seleccionados } = ctx;
 
-    useUrlParams(pedidos.activo, pedidos.criteria);
+  useUrlParams(pedidos.activo, pedidos.criteria);
 
-    useEffect(() => {
-        emitir("recarga_de_pedidos_solicitada", pedidos.criteria);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  useEffect(() => {
+    emitir("recarga_de_pedidos_solicitada", pedidos.criteria);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    return (
-        <div className="Pedido">
-            <MaestroDetalle<Pedido>
-                Maestro={
-                    <>
-                        <h2>Pedidos de compra</h2>
-                        <Listado<Pedido>
-                            metaTabla={metaTablaPedido}
-                            criteria={pedidos.criteria}
-                            modoInicial="tarjetas"
-                            tarjeta={TarjetaPedido}
-                            entidades={pedidos.lista}
-                            totalEntidades={pedidos.total}
-                            seleccionada={pedidos.activo}
-                            renderAcciones={() => (
-                                <div className="maestro-botones">
-                                    <QBoton onClick={() => emitir("crear_pedido_solicitado")}>
-                                        Nuevo Pedido
-                                    </QBoton>
-                                </div>
-                            )}
-                            onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
-                            onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
-                            onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
-                        />
-                    </>
-                }
-                Detalle={<DetallePedido id={pedidos.activo} publicar={emitir} />}
-                seleccionada={pedidos.activo}
-                modoDisposicion="maestro-50"
+  return (
+    <div className="Pedido">
+      <MaestroDetalle<Pedido>
+        Maestro={
+          <>
+            <h2>Pedidos de compra</h2>
+            <Listado<Pedido>
+              metaTabla={metaTablaPedido}
+              criteria={pedidos.criteria}
+              tarjeta={TarjetaPedido}
+              entidades={pedidos.lista}
+              totalEntidades={pedidos.total}
+              seleccionada={pedidos.activo}
+              seleccionadas={seleccionados}
+              onMultiSeleccion={(ids) => emitir("seleccionados_cambiados", ids)}
+              renderAcciones={() => (
+                <div className="maestro-botones">
+                  <QBoton onClick={() => emitir("crear_pedido_solicitado")}>
+                    Nuevo Pedido
+                  </QBoton>
+                  {puedenAlbaranarse(seleccionados, pedidos.lista) && (
+                    <QBoton onClick={() => emitir("albaranado_solicitado")}>
+                      {`Albaranar (${seleccionados.length})`}
+                    </QBoton>
+                  )}
+                </div>
+              )}
+              onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
+              onCriteriaChanged={(payload) =>
+                emitir("criteria_cambiado", payload)
+              }
+              onSiguientePagina={(payload) =>
+                emitir("siguiente_pagina", payload)
+              }
             />
+          </>
+        }
+        Detalle={<DetallePedido id={pedidos.activo} publicar={emitir} />}
+        seleccionada={pedidos.activo}
+        // modoDisposicion="maestro-50"
+      />
 
-            {estado === "CREANDO" && <CrearPedido publicar={emitir} />}
-        </div>
-    );
+      {estado === "CREANDO" && <CrearPedido publicar={emitir} />}
+
+      {estado === "ALBARANANDO" && (
+        <AlbaranarPedidos pedidos={seleccionados.length} publicar={emitir} />
+      )}
+    </div>
+  );
 };
