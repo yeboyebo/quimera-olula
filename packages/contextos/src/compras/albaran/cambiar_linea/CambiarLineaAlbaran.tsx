@@ -1,4 +1,4 @@
-import { Articulo } from "#/ventas/comun/componentes/articulo.tsx";
+import { ArticuloLinea } from "#/compras/comun/componentes/articulo_linea/ArticuloLinea.tsx";
 import { GrupoIvaProducto } from "#/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -6,9 +6,9 @@ import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Albaran, LineaAlbaran } from "../diseño.ts";
-import { lineaDePedido, metaLineaAlbaran } from "../dominio.ts";
+import { lineaDePedido, metaLineaAlbaran, modeloLineaAlbaran } from "../dominio.ts";
 import { patchLineaAlbaran } from "../infraestructura.ts";
 import "./CambiarLineaAlbaran.css";
 
@@ -21,7 +21,8 @@ export const CambiarLineaAlbaran = ({
     linea: LineaAlbaran;
     publicar: EmitirEvento;
 }) => {
-    const { modelo, uiProps, valido } = useModelo(metaLineaAlbaran, linea);
+    const inicial = useMemo(() => modeloLineaAlbaran(linea), [linea]);
+    const { modelo, uiProps, valido, set } = useModelo(metaLineaAlbaran, inicial);
 
     const cambiar_ = useCallback(async () => {
         await patchLineaAlbaran(albaran.id, linea.id, modelo);
@@ -50,20 +51,21 @@ export const CambiarLineaAlbaran = ({
                     </p>
                 )}
                 <quimera-formulario>
-                    {/* Con articulo se puede convertir una línea de catálogo en libre y al revés. */}
-                    <Articulo
-                        {...uiProps("referencia", "descripcion")}
+                    {/* El artículo de una línea que viene de un pedido no se puede cambiar. */}
+                    <ArticuloLinea
+                        tipoArticulo={modelo.tipoArticulo}
+                        referencia={modelo.referencia}
+                        descripcionArticulo={modelo.descripcionArticulo}
+                        descripcion={modelo.descripcion}
                         nombre="referenciaLineaAlbaranCompra"
+                        onChange={(cambios) => set({ ...modelo, ...cambios })}
+                        bloqueado={lineaDePedido(linea)}
                     />
-                    <QInput label="Descripción" {...uiProps("descripcion")} />
                     <QInput label="Cantidad" {...uiProps("cantidad")} />
                     <QInput label="Coste unitario" {...uiProps("pvpUnitario")} />
                     <QInput label="% Descuento" {...uiProps("dtoPorcentual")} />
                     <QInput label="Descuento lineal" {...uiProps("dtoLineal")} />
-                    <GrupoIvaProducto
-                        {...uiProps("grupoIvaProductoId")}
-                        nombre="grupoIvaProductoId"
-                    />
+                    <GrupoIvaProducto {...uiProps("grupoIvaProductoId")} />
                     <QInput label="% I.R.P.F." {...uiProps("tipoIrpf")} />
                 </quimera-formulario>
                 <div className="botones maestro-botones">

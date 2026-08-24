@@ -1,9 +1,10 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
+import { articuloDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
 import {
     Albaran,
     LineaAlbaran,
+    ModeloLineaAlbaran,
     NuevaLineaAlbaran,
-    NuevaLineaLibreAlbaran,
 } from "./diseño.ts";
 
 /**
@@ -27,7 +28,13 @@ export const etiquetaLinea = (linea: LineaAlbaran): string =>
 /** Las líneas añadidas a mano no vienen de un pedido y no mueven nada en ninguno. */
 export const lineaDePedido = (linea: LineaAlbaran): boolean => linea.pedidoId !== null;
 
-export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = {
+/** La línea llega del servidor sin el tipo de artículo: se infiere al abrir el formulario. */
+export const modeloLineaAlbaran = (linea: LineaAlbaran): ModeloLineaAlbaran => ({
+    ...linea,
+    tipoArticulo: getTipoArticulo(linea),
+});
+
+export const metaLineaAlbaran: MetaModelo<ModeloLineaAlbaran> = {
     campos: {
         descripcion: { requerido: true },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
@@ -40,33 +47,25 @@ export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = {
         tipoIva: { tipo: "decimal", bloqueado: true },
         tipoRecargo: { tipo: "decimal", bloqueado: true },
     },
+    validacion: articuloDeLineaValido,
 };
 
+/** En compras no hay tarifa de proveedor: el coste unitario es obligatorio siempre. */
 export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = {
     campos: {
-        referencia: { requerido: true, tipo: "texto" },
+        referencia: { tipo: "texto" },
+        descripcion: { tipo: "texto" },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
         pvpUnitario: { requerido: true, tipo: "moneda", decimales: 2 },
     },
-};
-
-export const metaNuevaLineaLibreAlbaran: MetaModelo<NuevaLineaLibreAlbaran> = {
-    campos: {
-        descripcion: { requerido: true },
-        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
-        pvpUnitario: { requerido: true, tipo: "moneda", decimales: 2 },
-    },
+    validacion: articuloDeLineaValido,
 };
 
 export const nuevaLineaAlbaranVacia = (): NuevaLineaAlbaran => ({
-    referencia: "",
+    tipoArticulo: "registrado",
+    referencia: null,
     descripcion: "",
-    cantidad: 1,
-    pvpUnitario: 0,
-});
-
-export const nuevaLineaLibreAlbaranVacia = (): NuevaLineaLibreAlbaran => ({
-    descripcion: "",
+    descripcionArticulo: null,
     cantidad: 1,
     pvpUnitario: 0,
 });

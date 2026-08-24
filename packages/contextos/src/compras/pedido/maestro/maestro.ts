@@ -75,10 +75,15 @@ export const puedenAlbaranarse = (ids: string[], pedidos: Pedido[]): boolean => 
  * Al crearse, cada pedido recalcula cantidad_recibida y su estado recibido.
  */
 export const albaranarSeleccionados: ProcesarMaestro = async (contexto) => {
-    await albaranarPedidos(contexto.seleccionados);
+    const albaranCreado = await albaranarPedidos(contexto.seleccionados);
 
     const resultado = await getPedidos(contexto.pedidos.criteria);
     const recargado = (await Pedidos.recargar(contexto, resultado)) as ContextoMaestroPedido;
 
-    return { ...recargado, estado: "INICIAL", seleccionados: [] };
+    return {
+        ...recargado,
+        estado: "ALBARAN_CREADO",
+        seleccionados: [],
+        albaranCreado,
+    };
 };

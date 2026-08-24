@@ -1,4 +1,5 @@
 import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
+import { TipoArticuloLinea } from "../comun/diseño.ts";
 
 /**
  * Cabecera del albarán de compra. ItemAlbaran (el elemento del listado) tiene
@@ -51,6 +52,8 @@ export interface LineaAlbaran extends Entidad {
     /** null en línea libre, sin artículo del catálogo. */
     referencia: string | null;
     descripcion: string;
+    /** Descripción del catálogo; distinta de `descripcion` en las líneas genéricas. */
+    descripcionArticulo: string | null;
     cantidad: number;
     /** Coste unitario. */
     pvpUnitario: number;
@@ -83,18 +86,29 @@ export interface NuevoAlbaranProveedorNoRegistrado extends Modelo {
     observaciones: string | null;
 }
 
+/**
+ * Alta de línea. `tipoArticulo` decide qué viaja al servidor: la referencia, la
+ * descripción, o las dos.
+ */
 export interface NuevaLineaAlbaran extends Modelo {
-    referencia: string;
+    tipoArticulo: TipoArticuloLinea;
+    referencia: string | null;
     descripcion: string;
+    descripcionArticulo: string | null;
     cantidad: number;
     pvpUnitario: number;
 }
 
-export interface NuevaLineaLibreAlbaran extends Modelo {
-    descripcion: string;
-    cantidad: number;
-    pvpUnitario: number;
+/** Línea en edición: la del servidor más el tipo de artículo inferido. */
+export interface ModeloLineaAlbaran extends LineaAlbaran {
+    tipoArticulo: TipoArticuloLinea;
 }
+
+/** Albarán recién generado desde pedidos: el servidor devuelve id y código. */
+export type AlbaranCreado = {
+    id: string;
+    codigo: string;
+};
 
 /** Cantidad concreta a recibir de una línea de pedido. */
 export type LineaAAlbaranar = {
@@ -104,7 +118,7 @@ export type LineaAAlbaranar = {
 
 export type CambiosAlbaran = Partial<Albaran>;
 
-export type CambiosLineaAlbaran = Partial<LineaAlbaran>;
+export type CambiosLineaAlbaran = Partial<ModeloLineaAlbaran>;
 
 export type GetAlbaran = (id: string) => Promise<Albaran>;
 export type GetAlbaranes = (criteria: Criteria) => RespuestaLista<Albaran>;
@@ -115,7 +129,7 @@ export type PostAlbaran = (
 export type AlbaranarPedidos = (
     pedidoIds: string[],
     lineas?: LineaAAlbaranar[]
-) => Promise<string>;
+) => Promise<AlbaranCreado>;
 export type PatchAlbaran = (id: string, cambios: CambiosAlbaran) => Promise<void>;
 export type DeleteAlbaran = (id: string) => Promise<void>;
 
@@ -123,7 +137,7 @@ export type GetLineasAlbaran = (id: string) => Promise<LineaAlbaran[]>;
 export type GetLineaAlbaran = (id: string, lineaId: string) => Promise<LineaAlbaran>;
 export type PostLineasAlbaran = (
     id: string,
-    lineas: (NuevaLineaAlbaran | NuevaLineaLibreAlbaran)[]
+    lineas: NuevaLineaAlbaran[]
 ) => Promise<string[]>;
 export type PatchLineaAlbaran = (
     id: string,

@@ -1,6 +1,7 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import ApiUrls from "../comun/urls.ts";
+import { ArticuloLineaCompraApi, articuloLineaApi } from "../comun/infraestructura.ts";
 import {
     BorrarLineasPedido,
     CambiosLineaPedido,
@@ -12,7 +13,6 @@ import {
     GetPedido,
     GetPedidos,
     LineaPedido,
-    NuevaLineaLibrePedido,
     NuevaLineaPedido,
     NuevoPedido,
     NuevoPedidoProveedorNoRegistrado,
@@ -61,6 +61,7 @@ export interface LineaPedidoApi {
     pedido_id: string;
     referencia: string | null;
     descripcion: string;
+    descripcion_articulo: string | null;
     cantidad: number;
     pvp_unitario: number;
     dto_porcentual: number;
@@ -80,13 +81,8 @@ type ProveedorPedidoApi =
     | { proveedor_id: string }
     | { nombre: string; id_fiscal: string };
 
-/** articulo discrimina por la presencia de articulo_id, como la línea de venta. */
-type ArticuloLineaApi =
-    | { articulo_id: string; descripcion?: string }
-    | { descripcion: string };
-
 interface NuevaLineaPedidoApi {
-    articulo: ArticuloLineaApi;
+    articulo: ArticuloLineaCompraApi;
     cantidad: number;
     pvp_unitario: number;
 }
@@ -114,7 +110,7 @@ interface CambiosPedidoApi {
 }
 
 interface CambiosLineaPedidoApi {
-    articulo?: ArticuloLineaApi;
+    articulo?: ArticuloLineaCompraApi;
     cantidad?: number;
     pvp_unitario?: number;
     dto_porcentual?: number;
@@ -160,6 +156,7 @@ export const lineaPedidoDesdeApi = (api: LineaPedidoApi): LineaPedido => ({
     pedidoId: api.pedido_id,
     referencia: api.referencia,
     descripcion: api.descripcion,
+    descripcionArticulo: api.descripcion_articulo,
     cantidad: api.cantidad,
     pvpUnitario: api.pvp_unitario,
     dtoPorcentual: api.dto_porcentual,
@@ -220,37 +217,22 @@ const cambiosPedidoAApi = (p: CambiosPedido): CambiosPedidoApi => {
     return cambios;
 };
 
-const esLineaLibre = (
-    linea: NuevaLineaPedido | NuevaLineaLibrePedido
-): linea is NuevaLineaLibrePedido =>
-    !(linea as NuevaLineaPedido).referencia;
-
-const articuloAApi = (linea: NuevaLineaPedido | NuevaLineaLibrePedido): ArticuloLineaApi =>
-    esLineaLibre(linea)
-        ? { descripcion: linea.descripcion }
-        : {
-            articulo_id: linea.referencia,
-            ...(linea.descripcion ? { descripcion: linea.descripcion } : {}),
-        };
-
 /** pvp_unitario es obligatorio siempre: en compras no hay tarifa de la que derivarlo. */
-const nuevaLineaAApi = (
-    linea: NuevaLineaPedido | NuevaLineaLibrePedido
-): NuevaLineaPedidoApi => ({
-    articulo: articuloAApi(linea),
+const nuevaLineaAApi = (linea: NuevaLineaPedido): NuevaLineaPedidoApi => ({
+    articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
     pvp_unitario: linea.pvpUnitario,
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaPedido): CambiosLineaPedidoApi => {
     const cambios: CambiosLineaPedidoApi = {};
-    if (linea.referencia !== undefined || linea.descripcion !== undefined) {
-        cambios.articulo = linea.referencia
-            ? {
-                articulo_id: linea.referencia,
-                ...(linea.descripcion ? { descripcion: linea.descripcion } : {}),
-            }
-            : { descripcion: linea.descripcion ?? "" };
+    if (linea.tipoArticulo !== undefined) {
+        cambios.articulo = articuloLineaApi({
+            tipoArticulo: linea.tipoArticulo,
+            referencia: linea.referencia ?? null,
+            descripcion: linea.descripcion ?? "",
+            descripcionArticulo: linea.descripcionArticulo ?? null,
+        });
     }
     if (linea.cantidad !== undefined) cambios.cantidad = linea.cantidad;
     if (linea.pvpUnitario !== undefined) cambios.pvp_unitario = linea.pvpUnitario;
@@ -326,7 +308,7 @@ export const postLineasPedido: PostLineasPedido = async (id, lineas) => {
 
 export const postLineaPedido = async (
     id: string,
-    linea: NuevaLineaPedido | NuevaLineaLibrePedido
+    linea: NuevaLineaPedido
 ): Promise<string> => {
     const [lineaId] = await postLineasPedido(id, [linea]);
     return lineaId;

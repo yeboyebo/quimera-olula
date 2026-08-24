@@ -9,9 +9,10 @@ import { useEffect, useMemo } from "react";
 import { CrearPedido } from "../crear/CrearPedido.tsx";
 import { DetallePedido } from "../detalle/DetallePedido.tsx";
 import { Pedido } from "../diseño.ts";
-import "./MaestroConDetallePedido.css";
 import { AlbaranarPedidos } from "./AlbaranarPedidos.tsx";
 import { puedenAlbaranarse } from "./maestro.ts";
+import { ResultadoAlbaranado } from "./ResultadoAlbaranado.tsx";
+import "./MaestroConDetallePedido.css";
 import { getMaquina } from "./maquina.ts";
 import { metaTablaPedido } from "./metatabla_pedido.tsx";
 import { TarjetaPedido } from "./TarjetaPedido.tsx";
@@ -31,9 +32,10 @@ export const MaestroConDetallePedido = () => {
     estado: "INICIAL",
     pedidos: listaActivaEntidadesInicial<Pedido>(id, criteriaInicial),
     seleccionados: [],
+    albaranCreado: null,
   });
 
-  const { estado, pedidos, seleccionados } = ctx;
+  const { estado, pedidos, seleccionados, albaranCreado } = ctx;
 
   useUrlParams(pedidos.activo, pedidos.criteria);
 
@@ -88,6 +90,10 @@ export const MaestroConDetallePedido = () => {
 
       {estado === "ALBARANANDO" && (
         <AlbaranarPedidos pedidos={seleccionados.length} publicar={emitir} />
+      )}
+
+      {estado === "ALBARAN_CREADO" && albaranCreado && (
+        <ResultadoAlbaranado albaran={albaranCreado} publicar={emitir} />
       )}
     </div>
   );

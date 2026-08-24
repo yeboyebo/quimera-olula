@@ -1,4 +1,5 @@
 import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
+import { TipoArticuloLinea } from "../comun/diseño.ts";
 
 /** Estado agregado de recepción, derivado de las líneas en el servidor. */
 export type Recibido = 'No' | 'Parcial' | 'Sí';
@@ -43,6 +44,8 @@ export interface LineaPedido extends Entidad {
     /** null cuando la línea no tiene artículo del catálogo. */
     referencia: string | null;
     descripcion: string;
+    /** Descripción del catálogo; distinta de `descripcion` en las líneas genéricas. */
+    descripcionArticulo: string | null;
     cantidad: number;
     /** Coste unitario. */
     pvpUnitario: number;
@@ -81,23 +84,27 @@ export interface NuevoPedidoProveedorNoRegistrado extends Modelo {
 }
 
 /** Línea con artículo del catálogo. */
+/**
+ * Alta de línea. `tipoArticulo` decide qué viaja al servidor: la referencia, la
+ * descripción, o las dos. Las líneas libres caen en el grupo de IVA GEN.
+ */
 export interface NuevaLineaPedido extends Modelo {
-    referencia: string;
+    tipoArticulo: TipoArticuloLinea;
+    referencia: string | null;
     descripcion: string;
+    descripcionArticulo: string | null;
     cantidad: number;
     pvpUnitario: number;
 }
 
-/** Línea libre, sin artículo. El grupo de IVA de producto cae en GEN. */
-export interface NuevaLineaLibrePedido extends Modelo {
-    descripcion: string;
-    cantidad: number;
-    pvpUnitario: number;
+/** Línea en edición: la del servidor más el tipo de artículo inferido. */
+export interface ModeloLineaPedido extends LineaPedido {
+    tipoArticulo: TipoArticuloLinea;
 }
 
 export type CambiosPedido = Partial<Pedido>;
 
-export type CambiosLineaPedido = Partial<LineaPedido>;
+export type CambiosLineaPedido = Partial<ModeloLineaPedido>;
 
 export type GetPedido = (id: string) => Promise<Pedido>;
 export type GetPedidos = (criteria: Criteria) => RespuestaLista<Pedido>;
@@ -111,7 +118,7 @@ export type GetLineasPedido = (id: string) => Promise<LineaPedido[]>;
 export type GetLineaPedido = (id: string, lineaId: string) => Promise<LineaPedido>;
 export type PostLineasPedido = (
     id: string,
-    lineas: (NuevaLineaPedido | NuevaLineaLibrePedido)[]
+    lineas: NuevaLineaPedido[]
 ) => Promise<string[]>;
 export type PatchLineaPedido = (
     id: string,

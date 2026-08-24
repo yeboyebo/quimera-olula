@@ -1,3 +1,4 @@
+import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { LineaAlbaran } from "../../diseño.ts";
 import { etiquetaLinea, lineaDePedido } from "../../dominio.ts";
@@ -9,7 +10,14 @@ export const metaTablaLineaAlbaran = (divisa?: string): MetaTabla<LineaAlbaran> 
         id: "pedidoId",
         cabecera: "",
         // Marca las líneas que vienen de un pedido: cambiarlas reajusta lo recibido.
-        render: (linea: LineaAlbaran) => (lineaDePedido(linea) ? "↩" : ""),
+        render: (linea: LineaAlbaran) =>
+            lineaDePedido(linea) ? (
+                <span title="Viene de un pedido">
+                    <QIcono nombre="enlace" tamaño="sm" />
+                </span>
+            ) : (
+                ""
+            ),
     },
     {
         id: "descripcion",

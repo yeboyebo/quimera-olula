@@ -1,3 +1,4 @@
+import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { LineaPedido } from "../../diseño.ts";
 import { etiquetaLinea } from "../../dominio.ts";
@@ -8,7 +9,14 @@ export const metaTablaLineaPedido = (divisa?: string): MetaTabla<LineaPedido> =>
     {
         id: "cerrada",
         cabecera: "",
-        render: (linea: LineaPedido) => (linea.cerrada ? "🔒" : ""),
+        render: (linea: LineaPedido) =>
+            linea.cerrada ? (
+                <span title="Línea cerrada">
+                    <QIcono nombre="candado" tamaño="sm" />
+                </span>
+            ) : (
+                ""
+            ),
     },
     {
         id: "descripcion",

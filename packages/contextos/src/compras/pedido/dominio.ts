@@ -1,7 +1,8 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
+import { articuloDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
 import {
     LineaPedido,
-    NuevaLineaLibrePedido,
+    ModeloLineaPedido,
     NuevaLineaPedido,
     Pedido,
 } from "./diseño.ts";
@@ -24,7 +25,17 @@ export const pedidoAlbaranable = (pedido: Pedido): boolean => pedido.recibido !=
 export const etiquetaLinea = (linea: LineaPedido): string =>
     linea.referencia ? `${linea.referencia}: ${linea.descripcion}` : linea.descripcion;
 
-export const metaLineaPedido: MetaModelo<LineaPedido> = {
+/** La línea llega del servidor sin el tipo de artículo: se infiere al abrir el formulario. */
+export const modeloLineaPedido = (linea: LineaPedido): ModeloLineaPedido => ({
+    ...linea,
+    tipoArticulo: getTipoArticulo(linea),
+});
+
+/** El artículo de una línea recibida o cerrada no se puede cambiar. */
+export const articuloLineaBloqueado = (linea: LineaPedido): boolean =>
+    linea.cerrada || linea.cantidadRecibida > 0;
+
+export const metaLineaPedido: MetaModelo<ModeloLineaPedido> = {
     campos: {
         descripcion: { requerido: true },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
@@ -38,33 +49,25 @@ export const metaLineaPedido: MetaModelo<LineaPedido> = {
         tipoRecargo: { tipo: "decimal", bloqueado: true },
         cantidadRecibida: { tipo: "decimal", bloqueado: true },
     },
+    validacion: articuloDeLineaValido,
 };
 
+/** En compras no hay tarifa de proveedor: el coste unitario es obligatorio siempre. */
 export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = {
     campos: {
-        referencia: { requerido: true, tipo: "texto" },
+        referencia: { tipo: "texto" },
+        descripcion: { tipo: "texto" },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
         pvpUnitario: { requerido: true, tipo: "moneda", decimales: 2 },
     },
-};
-
-export const metaNuevaLineaLibrePedido: MetaModelo<NuevaLineaLibrePedido> = {
-    campos: {
-        descripcion: { requerido: true },
-        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
-        pvpUnitario: { requerido: true, tipo: "moneda", decimales: 2 },
-    },
+    validacion: articuloDeLineaValido,
 };
 
 export const nuevaLineaPedidoVacia = (): NuevaLineaPedido => ({
-    referencia: "",
+    tipoArticulo: "registrado",
+    referencia: null,
     descripcion: "",
-    cantidad: 1,
-    pvpUnitario: 0,
-});
-
-export const nuevaLineaLibrePedidoVacia = (): NuevaLineaLibrePedido => ({
-    descripcion: "",
+    descripcionArticulo: null,
     cantidad: 1,
     pvpUnitario: 0,
 });

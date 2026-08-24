@@ -1,6 +1,7 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import ApiUrls from "../comun/urls.ts";
+import { ArticuloLineaCompraApi, articuloLineaApi } from "../comun/infraestructura.ts";
 import {
     Albaran,
     AlbaranarPedidos,
@@ -14,7 +15,6 @@ import {
     GetLineasAlbaran,
     LineaAlbaran,
     NuevaLineaAlbaran,
-    NuevaLineaLibreAlbaran,
     NuevoAlbaran,
     NuevoAlbaranProveedorNoRegistrado,
     PatchAlbaran,
@@ -63,6 +63,7 @@ export interface LineaAlbaranApi {
     linea_pedido_id: string | null;
     referencia: string | null;
     descripcion: string;
+    descripcion_articulo: string | null;
     cantidad: number;
     pvp_unitario: number;
     dto_porcentual: number;
@@ -80,12 +81,8 @@ type ProveedorAlbaranApi =
     | { proveedor_id: string }
     | { nombre: string; id_fiscal: string };
 
-type ArticuloLineaAlbaranApi =
-    | { articulo_id: string; descripcion?: string }
-    | { descripcion: string };
-
 interface NuevaLineaAlbaranApi {
-    articulo: ArticuloLineaAlbaranApi;
+    articulo: ArticuloLineaCompraApi;
     cantidad: number;
     pvp_unitario: number;
 }
@@ -111,7 +108,7 @@ interface CambiosAlbaranApi {
 }
 
 interface CambiosLineaAlbaranApi {
-    articulo?: ArticuloLineaAlbaranApi;
+    articulo?: ArticuloLineaCompraApi;
     cantidad?: number;
     pvp_unitario?: number;
     dto_porcentual?: number;
@@ -160,6 +157,7 @@ export const lineaAlbaranDesdeApi = (api: LineaAlbaranApi): LineaAlbaran => ({
     lineaPedidoId: api.linea_pedido_id,
     referencia: api.referencia,
     descripcion: api.descripcion,
+    descripcionArticulo: api.descripcion_articulo,
     cantidad: api.cantidad,
     pvpUnitario: api.pvp_unitario,
     dtoPorcentual: api.dto_porcentual,
@@ -217,38 +215,22 @@ const cambiosAlbaranAApi = (a: CambiosAlbaran): CambiosAlbaranApi => {
     return cambios;
 };
 
-const esLineaLibre = (
-    linea: NuevaLineaAlbaran | NuevaLineaLibreAlbaran
-): linea is NuevaLineaLibreAlbaran => !(linea as NuevaLineaAlbaran).referencia;
-
-const articuloAApi = (
-    linea: NuevaLineaAlbaran | NuevaLineaLibreAlbaran
-): ArticuloLineaAlbaranApi =>
-    esLineaLibre(linea)
-        ? { descripcion: linea.descripcion }
-        : {
-            articulo_id: linea.referencia,
-            ...(linea.descripcion ? { descripcion: linea.descripcion } : {}),
-        };
-
 /** pvp_unitario es obligatorio siempre: en compras no hay tarifa de la que derivarlo. */
-const nuevaLineaAApi = (
-    linea: NuevaLineaAlbaran | NuevaLineaLibreAlbaran
-): NuevaLineaAlbaranApi => ({
-    articulo: articuloAApi(linea),
+const nuevaLineaAApi = (linea: NuevaLineaAlbaran): NuevaLineaAlbaranApi => ({
+    articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
     pvp_unitario: linea.pvpUnitario,
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaAlbaran): CambiosLineaAlbaranApi => {
     const cambios: CambiosLineaAlbaranApi = {};
-    if (linea.referencia !== undefined || linea.descripcion !== undefined) {
-        cambios.articulo = linea.referencia
-            ? {
-                articulo_id: linea.referencia,
-                ...(linea.descripcion ? { descripcion: linea.descripcion } : {}),
-            }
-            : { descripcion: linea.descripcion ?? "" };
+    if (linea.tipoArticulo !== undefined) {
+        cambios.articulo = articuloLineaApi({
+            tipoArticulo: linea.tipoArticulo,
+            referencia: linea.referencia ?? null,
+            descripcion: linea.descripcion ?? "",
+            descripcionArticulo: linea.descripcionArticulo ?? null,
+        });
     }
     if (linea.cantidad !== undefined) cambios.cantidad = linea.cantidad;
     if (linea.pvpUnitario !== undefined) cambios.pvp_unitario = linea.pvpUnitario;
@@ -291,7 +273,7 @@ export const postAlbaran: PostAlbaran = async (nuevoAlbaran) => {
  * almacén y forma de pago: si no, el servidor responde 409.
  */
 export const albaranarPedidos: AlbaranarPedidos = async (pedidoIds, lineas) => {
-    const respuesta = await RestAPI.post(
+    const respuesta = (await RestAPI.post(
         `${baseUrl}/desde-pedidos`,
         {
             pedido_ids: pedidoIds,
@@ -305,8 +287,9 @@ export const albaranarPedidos: AlbaranarPedidos = async (pedidoIds, lineas) => {
                 : {}),
         },
         "Error al albaranar los pedidos"
-    );
-    return respuesta.id;
+    )) as unknown as { id: string; codigo?: string };
+    // El código llega del servidor; mientras no lo devuelva, se muestra el id.
+    return { id: respuesta.id, codigo: respuesta.codigo ?? respuesta.id };
 };
 
 export const patchAlbaran: PatchAlbaran = async (id, cambios) => {
@@ -348,7 +331,7 @@ export const postLineasAlbaran: PostLineasAlbaran = async (id, lineas) => {
 
 export const postLineaAlbaran = async (
     id: string,
-    linea: NuevaLineaAlbaran | NuevaLineaLibreAlbaran
+    linea: NuevaLineaAlbaran
 ): Promise<string> => {
     const [lineaId] = await postLineasAlbaran(id, [linea]);
     return lineaId;

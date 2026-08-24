@@ -28,6 +28,10 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
             albaranado_cancelado: "INICIAL",
         },
 
+        ALBARAN_CREADO: {
+            resultado_albaranado_cerrado: "INICIAL",
+        },
+
         CREANDO: {
             alta_de_pedido_cancelada: "INICIAL",
 
