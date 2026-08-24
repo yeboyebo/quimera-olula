@@ -1,0 +1,77 @@
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.ts";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.ts";
+import { useEffect, useMemo } from "react";
+import { CrearPedido } from "../crear/CrearPedido.tsx";
+import { DetallePedido } from "../detalle/DetallePedido.tsx";
+import { Pedido } from "../diseño.ts";
+import "./MaestroConDetallePedido.css";
+import { getMaquina } from "./maquina.ts";
+import { metaTablaPedido } from "./metatabla_pedido.tsx";
+import { TarjetaPedido } from "./TarjetaPedido.tsx";
+
+const criteriaPedidos = {
+    ...criteriaDefecto,
+    orden: ["fecha", "DESC"],
+};
+
+export const MaestroConDetallePedido = () => {
+    const criteriaBase = useMemo(() => criteriaPedidos, []);
+
+    const { id, criteria } = getUrlParams();
+    const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
+
+    const { ctx, emitir } = useMaquina(getMaquina, {
+        estado: "INICIAL",
+        pedidos: listaActivaEntidadesInicial<Pedido>(id, criteriaInicial),
+    });
+
+    const { estado, pedidos } = ctx;
+
+    useUrlParams(pedidos.activo, pedidos.criteria);
+
+    useEffect(() => {
+        emitir("recarga_de_pedidos_solicitada", pedidos.criteria);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return (
+        <div className="Pedido">
+            <MaestroDetalle<Pedido>
+                Maestro={
+                    <>
+                        <h2>Pedidos de compra</h2>
+                        <Listado<Pedido>
+                            metaTabla={metaTablaPedido}
+                            criteria={pedidos.criteria}
+                            modoInicial="tarjetas"
+                            tarjeta={TarjetaPedido}
+                            entidades={pedidos.lista}
+                            totalEntidades={pedidos.total}
+                            seleccionada={pedidos.activo}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("crear_pedido_solicitado")}>
+                                        Nuevo Pedido
+                                    </QBoton>
+                                </div>
+                            )}
+                            onSeleccion={(payload) => emitir("pedido_seleccionado", payload)}
+                            onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+                            onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
+                        />
+                    </>
+                }
+                Detalle={<DetallePedido id={pedidos.activo} publicar={emitir} />}
+                seleccionada={pedidos.activo}
+                modoDisposicion="maestro-50"
+            />
+
+            {estado === "CREANDO" && <CrearPedido publicar={emitir} />}
+        </div>
+    );
+};

@@ -1,0 +1,22 @@
+.modo-proveedor {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.CrearPedido {
+    quimera-autocompletar[nombre="proveedorPedido"],
+    quimera-input[nombre="nombre"] {
+        grid-column: span 12;
+    }
+
+    quimera-input[nombre="idFiscal"],
+    quimera-date[nombre="fecha"],
+    quimera-date[nombre="fechaEntrada"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="numeroProveedor"],
+    quimera-select[nombre="almacenId"] {
+        grid-column: span 6;
+    }
+}
