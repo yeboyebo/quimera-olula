@@ -21,4 +21,4 @@ export type PagoReciboVenta = {
     fecha: string;
 };
 
-export type PostPagarReciboVenta = (id: string, pago: PagoReciboVenta) => Promise<void>;
+export type PatchPagarReciboVenta = (id: string, pago: PagoReciboVenta) => Promise<void>;

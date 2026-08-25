@@ -1,11 +1,12 @@
+import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
-import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { ReciboVenta } from "../diseño.js";
+import { reciboPagable } from "../dominio.js";
 import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
@@ -13,7 +14,6 @@ import {
 import "./DetalleReciboVenta.css";
 import { getMaquina } from "./maquina.js";
 import { PagarReciboVenta } from "./pagar/PagarReciboVenta.tsx";
-import { TabGeneral } from "./TabGeneral.js";
 
 export const DetalleReciboVenta = ({
   id,
@@ -28,7 +28,7 @@ export const DetalleReciboVenta = ({
     publicar
   );
 
-  const formModelo = useModelo(metaReciboVenta, ctx.recibo);
+  const { uiProps } = useModelo(metaReciboVenta, ctx.recibo);
 
   useEffect(() => {
     emitir("recibo_id_cambiado", id, true);
@@ -43,6 +43,7 @@ export const DetalleReciboVenta = ({
     {
       texto: "Pagar",
       onClick: () => emitir("pagar_solicitado"),
+      deshabilitado: !reciboPagable(ctx.recibo),
     },
   ];
 
@@ -56,15 +57,17 @@ export const DetalleReciboVenta = ({
     >
       <div className="DetalleReciboVenta">
         <QuimeraAcciones acciones={acciones} vertical />
-        <Tabs
-          children={[
-            <Tab
-              label="General"
-              key="tab-general"
-              children={<TabGeneral form={formModelo} />}
-            />,
-          ]}
-        />
+
+        <quimera-formulario>
+          <QInput label="Código" {...uiProps("codigo")} />
+          <QInput label="Estado" {...uiProps("estado")} />
+          <QInput label="Importe" {...uiProps("importe")} />
+          <QInput label="Fecha de emisión" {...uiProps("fechaEmision")} />
+          <QInput label="Fecha de vencimiento" {...uiProps("fechaVencimiento")} />
+          <QInput label="Cliente" {...uiProps("clienteId")} />
+          <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
+          <QInput label="Factura" {...uiProps("facturaId")} />
+        </quimera-formulario>
 
         {ctx.estado === "PAGANDO" && <PagarReciboVenta publicar={emitir} />}
       </div>

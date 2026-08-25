@@ -1,7 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
-import { GetReciboVenta, GetRecibosVenta, PostPagarReciboVenta, ReciboVenta } from "./diseño.js";
+import { GetReciboVenta, GetRecibosVenta, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
 
 export interface ReciboVentaApi {
     id: string;
@@ -46,8 +46,8 @@ export const getRecibosVenta: GetRecibosVenta = async (criteria) => {
     );
 };
 
-export const postPagarReciboVenta: PostPagarReciboVenta = async (id, pago) => {
-    await RestAPI.post(
+export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => {
+    await RestAPI.patch(
         `${baseUrl}/${id}/pagar`,
         {
             cuenta_pago_id: pago.cuentaPagoId,
