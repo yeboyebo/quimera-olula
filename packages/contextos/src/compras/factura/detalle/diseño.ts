@@ -1,0 +1,17 @@
+import { ListaEntidades } from "@olula/lib/ListaEntidades.ts";
+import { Factura, LineaFactura } from "../diseño.ts";
+
+export type EstadoDetalleFactura =
+    | 'INICIAL'
+    | 'ABIERTO'
+    | 'BORRANDO'
+    | 'CAMBIANDO_RECTIFICATIVA'
+    | 'CREANDO_LINEA'
+    | 'CAMBIANDO_LINEA'
+    | 'BORRANDO_LINEA';
+
+export type ContextoDetalleFactura = {
+    estado: EstadoDetalleFactura;
+    factura: Factura;
+    lineas: ListaEntidades<LineaFactura>;
+};

@@ -1,0 +1,83 @@
+import { Maquina } from "@olula/lib/diseño.ts";
+import { publicar } from "@olula/lib/dominio.ts";
+import {
+    cambiarRectificativa,
+    cargarContexto,
+    cerrarFacturaProceso,
+    limpiarContexto,
+    Lineas,
+    onLineaBorrada,
+    onLineaCambiada,
+    onLineaCreada,
+    reabrirFacturaProceso,
+    refrescarFactura,
+} from "./detalle.ts";
+import { ContextoDetalleFactura, EstadoDetalleFactura } from "./diseño.ts";
+
+export const getMaquina: () => Maquina<EstadoDetalleFactura, ContextoDetalleFactura> = () => {
+    return {
+        INICIAL: {
+            factura_id_cambiado: [cargarContexto],
+
+            factura_deseleccionada: [
+                limpiarContexto,
+                publicar('factura_deseleccionada', null),
+            ],
+        },
+
+        ABIERTO: {
+            factura_id_cambiado: [cargarContexto],
+
+            factura_guardada: [refrescarFactura],
+
+            factura_deseleccionada: [
+                limpiarContexto,
+                publicar('factura_deseleccionada', null),
+            ],
+
+            borrado_solicitado: "BORRANDO",
+
+            cierre_solicitado: [cerrarFacturaProceso],
+            reapertura_solicitada: [reabrirFacturaProceso],
+
+            cambio_rectificativa_solicitado: "CAMBIANDO_RECTIFICATIVA",
+
+            linea_seleccionada: [Lineas.activar],
+            alta_linea_solicitada: "CREANDO_LINEA",
+            cambio_linea_solicitado: "CAMBIANDO_LINEA",
+            baja_linea_solicitada: "BORRANDO_LINEA",
+        },
+
+        BORRANDO: {
+            factura_borrada: [
+                publicar<EstadoDetalleFactura, ContextoDetalleFactura>(
+                    'factura_borrada',
+                    (contexto) => contexto.factura.id
+                ),
+                limpiarContexto,
+            ],
+
+            borrado_cancelado: "ABIERTO",
+        },
+
+        CAMBIANDO_RECTIFICATIVA: {
+            rectificativa_cambiada: [cambiarRectificativa],
+            cambio_rectificativa_cancelado: "ABIERTO",
+        },
+
+        CREANDO_LINEA: {
+            linea_creada: [onLineaCreada, "ABIERTO"],
+            alta_de_linea_cancelada: "ABIERTO",
+        },
+
+        CAMBIANDO_LINEA: {
+            linea_cambiada: [onLineaCambiada, "ABIERTO"],
+            cambio_de_linea_cancelado: "ABIERTO",
+        },
+
+        BORRANDO_LINEA: {
+            linea_borrada: [onLineaBorrada, "ABIERTO"],
+            borrado_de_linea_cancelado: "ABIERTO",
+        },
+    };
+};

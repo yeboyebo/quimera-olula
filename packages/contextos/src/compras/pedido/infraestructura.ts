@@ -12,6 +12,7 @@ import {
     GetLineasPedido,
     GetPedido,
     GetPedidos,
+    GetReportPedido,
     LineaPedido,
     NuevaLineaPedido,
     NuevoPedido,
@@ -84,7 +85,7 @@ type ProveedorPedidoApi =
 interface NuevaLineaPedidoApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
-    pvp_unitario: number;
+    pvp_unitario?: number;
 }
 
 interface NuevoPedidoApi {
@@ -217,11 +218,14 @@ const cambiosPedidoAApi = (p: CambiosPedido): CambiosPedidoApi => {
     return cambios;
 };
 
-/** pvp_unitario es obligatorio siempre: en compras no hay tarifa de la que derivarlo. */
+/**
+ * pvp_unitario se omite cuando viene vacío: con artículo del catálogo el
+ * servidor lo resuelve desde articulosprov para el proveedor del pedido.
+ */
 const nuevaLineaAApi = (linea: NuevaLineaPedido): NuevaLineaPedidoApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
-    pvp_unitario: linea.pvpUnitario,
+    ...(linea.pvpUnitario === null ? {} : { pvp_unitario: linea.pvpUnitario }),
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaPedido): CambiosLineaPedidoApi => {
@@ -280,6 +284,9 @@ export const patchPedido: PatchPedido = async (id, cambios) => {
 export const deletePedido: DeletePedido = async (id) => {
     await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar el pedido");
 };
+
+export const getReportPedido: GetReportPedido = async (id) =>
+    await RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del pedido");
 
 export const getLineasPedido: GetLineasPedido = async (id) =>
     await RestAPI.getLista<LineaPedido, LineaPedidoApi>(

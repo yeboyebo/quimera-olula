@@ -96,7 +96,8 @@ export interface NuevaLineaAlbaran extends Modelo {
     descripcion: string;
     descripcionArticulo: string | null;
     cantidad: number;
-    pvpUnitario: number;
+    /** Opcional con artículo del catálogo: el servidor lo saca de articulosprov. */
+    pvpUnitario: number | null;
 }
 
 /** Línea en edición: la del servidor más el tipo de artículo inferido. */
@@ -132,6 +133,7 @@ export type AlbaranarPedidos = (
 ) => Promise<AlbaranCreado>;
 export type PatchAlbaran = (id: string, cambios: CambiosAlbaran) => Promise<void>;
 export type DeleteAlbaran = (id: string) => Promise<void>;
+export type GetReportAlbaran = (id: string) => Promise<Blob>;
 
 export type GetLineasAlbaran = (id: string) => Promise<LineaAlbaran[]>;
 export type GetLineaAlbaran = (id: string, lineaId: string) => Promise<LineaAlbaran>;

@@ -6,68 +6,78 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
-import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
-import { Albaran } from "../diseño.ts";
-import { albaranFacturado } from "../dominio.ts";
-import { getReportAlbaran } from "../infraestructura.ts";
+import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
+import { CambiarRectificativa } from "../cambiar_rectificativa/CambiarRectificativa.tsx";
+import { Factura } from "../diseño.ts";
+import { facturaEditable } from "../dominio.ts";
+import { getReportFactura } from "../infraestructura.ts";
 import {
-    contextoDetalleAlbaranInicial,
-    guardarAlbaran,
-    metaAlbaran,
+    contextoDetalleFacturaInicial,
+    guardarFactura,
+    metaFactura,
 } from "./detalle.ts";
-import "./DetalleAlbaran.css";
-import { LineasAlbaran } from "./lineas/LineasAlbaran.tsx";
+import "./DetalleFactura.css";
+import { LineasFactura } from "./lineas/LineasFactura.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
-import { TotalesAlbaran } from "./TotalesAlbaran.tsx";
+import { TotalesFactura } from "./TotalesFactura.tsx";
 
-export const DetalleAlbaran = ({
+export const DetalleFactura = ({
     id,
     publicar = async () => {},
 }: {
     id?: string;
     publicar?: EmitirEvento;
 }) => {
-    const { ctx, emitir } = useMaquina(getMaquina, contextoDetalleAlbaranInicial, publicar);
+    const { ctx, emitir } = useMaquina(getMaquina, contextoDetalleFacturaInicial, publicar);
 
     const autoGuardar = useCallback(
-        async (albaran: Albaran) => {
-            await guardarAlbaran(ctx, albaran);
-            await emitir("albaran_guardado");
+        async (factura: Factura) => {
+            await guardarFactura(ctx, factura);
+            await emitir("factura_guardada");
         },
         [ctx, emitir]
     );
 
-    const formModelo = useModelo(metaAlbaran, ctx.albaran, autoGuardar);
+    const formModelo = useModelo(metaFactura, ctx.factura, autoGuardar);
 
-    const { estado, albaran, lineas } = ctx;
+    const { estado, factura, lineas } = ctx;
 
     useEffect(() => {
-        emitir("albaran_id_cambiado", id, true);
+        emitir("factura_id_cambiado", id, true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    if (!albaran.id) return null;
-
-    const titulo = (a: Albaran) =>
-        `${a.codigo}${a.nombreProveedor ? ` · ${a.nombreProveedor}` : ""}`;
+    if (!factura.id) return null;
 
     const imprimir = async () => {
-        const blob = await getReportAlbaran(albaran.id);
+        const blob = await getReportFactura(factura.id);
         imprimir_blob(blob);
     };
 
-    // Un albarán facturado no se puede borrar: el servidor responde 409.
-    const accionesAlbaran = [
+    const titulo = (f: Factura) =>
+        `${f.codigo}${f.nombreProveedor ? ` · ${f.nombreProveedor}` : ""}`;
+
+    const editable = facturaEditable(factura);
+
+    const accionesFactura = [
         { texto: "Imprimir", onClick: imprimir },
+        editable
+            ? { texto: "Cerrar factura", onClick: () => emitir("cierre_solicitado") }
+            : { texto: "Reabrir factura", onClick: () => emitir("reapertura_solicitada") },
+        {
+            texto: "Rectificativa",
+            onClick: () => emitir("cambio_rectificativa_solicitado"),
+            deshabilitado: !editable,
+        },
         {
             icono: "eliminar",
             texto: "Borrar",
             onClick: () => emitir("borrado_solicitado"),
             advertencia: true,
-            deshabilitado: albaranFacturado(albaran),
+            deshabilitado: !editable,
         },
     ];
 
@@ -76,12 +86,12 @@ export const DetalleAlbaran = ({
             id={id}
             obtenerTitulo={titulo}
             setEntidad={() => {}}
-            entidad={albaran}
-            cerrarDetalle={() => emitir("albaran_deseleccionado", null, true)}
+            entidad={factura}
+            cerrarDetalle={() => emitir("factura_deseleccionada", null, true)}
         >
-            <div className="DetalleAlbaran">
+            <div className="DetalleFactura">
                 <div className="maestro-botones">
-                    <QuimeraAcciones acciones={accionesAlbaran} vertical />
+                    <QuimeraAcciones acciones={accionesFactura} vertical />
                 </div>
                 <Tabs
                     children={[
@@ -102,9 +112,9 @@ export const DetalleAlbaran = ({
                         />,
                     ]}
                 />
-                <TotalesAlbaran form={formModelo} />
-                <LineasAlbaran
-                    albaran={albaran}
+                <TotalesFactura form={formModelo} />
+                <LineasFactura
+                    factura={factura}
                     lineas={lineas}
                     estado={estado}
                     publicar={emitir}
@@ -112,7 +122,11 @@ export const DetalleAlbaran = ({
             </div>
 
             {estado === "BORRANDO" && (
-                <BorrarAlbaran albaran={albaran} publicar={emitir} />
+                <BorrarFactura factura={factura} publicar={emitir} />
+            )}
+
+            {estado === "CAMBIANDO_RECTIFICATIVA" && (
+                <CambiarRectificativa factura={factura} publicar={emitir} />
             )}
         </Detalle>
     );

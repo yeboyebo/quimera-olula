@@ -22,3 +22,15 @@ export const articuloDeLineaValido = (linea: ArticuloDeLineaConTipo): boolean =>
             return !!linea.descripcion;
     }
 };
+
+/**
+ * El coste unitario solo es obligatorio en líneas libres. Con artículo del
+ * catálogo se puede omitir: el servidor lo resuelve desde articulosprov para el
+ * proveedor del documento, y si no hay registro la línea entra a 0.
+ */
+export const costeDeLineaValido = (linea: {
+    tipoArticulo: TipoArticuloLinea;
+    pvpUnitario: number | null;
+}): boolean =>
+    linea.tipoArticulo !== "libre" ||
+    (linea.pvpUnitario !== null && linea.pvpUnitario !== undefined);

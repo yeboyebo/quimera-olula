@@ -1,5 +1,5 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
-import { articuloDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
+import { articuloDeLineaValido, costeDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
 import {
     Albaran,
     LineaAlbaran,
@@ -51,14 +51,18 @@ export const metaLineaAlbaran: MetaModelo<ModeloLineaAlbaran> = {
 };
 
 /** En compras no hay tarifa de proveedor: el coste unitario es obligatorio siempre. */
+/**
+ * El coste unitario solo se exige en líneas libres: con artículo del catálogo,
+ * dejarlo vacío hace que el servidor lo resuelva desde articulosprov.
+ */
 export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = {
     campos: {
         referencia: { tipo: "texto" },
         descripcion: { tipo: "texto" },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
-        pvpUnitario: { requerido: true, tipo: "moneda", decimales: 2 },
+        pvpUnitario: { tipo: "moneda", decimales: 2 },
     },
-    validacion: articuloDeLineaValido,
+    validacion: (linea) => articuloDeLineaValido(linea) && costeDeLineaValido(linea),
 };
 
 export const nuevaLineaAlbaranVacia = (): NuevaLineaAlbaran => ({
@@ -67,5 +71,5 @@ export const nuevaLineaAlbaranVacia = (): NuevaLineaAlbaran => ({
     descripcion: "",
     descripcionArticulo: null,
     cantidad: 1,
-    pvpUnitario: 0,
+    pvpUnitario: null,
 });

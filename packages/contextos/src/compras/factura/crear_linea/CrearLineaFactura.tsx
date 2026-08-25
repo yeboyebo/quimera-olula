@@ -6,24 +6,24 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useMemo } from "react";
-import { Albaran } from "../diseño.ts";
-import { metaNuevaLineaAlbaran, nuevaLineaAlbaranVacia } from "../dominio.ts";
-import { postLineaAlbaran } from "../infraestructura.ts";
+import { Factura } from "../diseño.ts";
+import { metaNuevaLineaFactura, nuevaLineaFacturaVacia } from "../dominio.ts";
+import { postLineaFactura } from "../infraestructura.ts";
 
-export const CrearLineaAlbaran = ({
-    albaran,
+export const CrearLineaFactura = ({
+    factura,
     publicar,
 }: {
-    albaran: Albaran;
+    factura: Factura;
     publicar: EmitirEvento;
 }) => {
-    const inicial = useMemo(nuevaLineaAlbaranVacia, []);
-    const { modelo, uiProps, valido, set } = useModelo(metaNuevaLineaAlbaran, inicial);
+    const inicial = useMemo(nuevaLineaFacturaVacia, []);
+    const { modelo, uiProps, valido, set } = useModelo(metaNuevaLineaFactura, inicial);
 
     const crear_ = useCallback(async () => {
-        const idLinea = await postLineaAlbaran(albaran.id, modelo);
+        const idLinea = await postLineaFactura(factura.id, modelo);
         publicar("linea_creada", idLinea);
-    }, [modelo, albaran.id, publicar]);
+    }, [modelo, factura.id, publicar]);
 
     const cancelar_ = useCallback(
         () => publicar("alta_de_linea_cancelada"),
@@ -35,18 +35,18 @@ export const CrearLineaAlbaran = ({
     return (
         <QModal
             abierto={true}
-            nombre="crearLineaAlbaranCompra"
+            nombre="crearLineaFacturaCompra"
             titulo="Crear línea"
             onCerrar={cancelar}
         >
-            <div className="CrearLineaAlbaran">
+            <div className="CrearLineaFactura">
                 <quimera-formulario>
                     <ArticuloLinea
                         tipoArticulo={modelo.tipoArticulo}
                         referencia={modelo.referencia}
                         descripcionArticulo={modelo.descripcionArticulo}
                         descripcion={modelo.descripcion}
-                        nombre="referenciaNuevaLineaAlbaranCompra"
+                        nombre="referenciaNuevaLineaFacturaCompra"
                         onChange={(cambios) => set({ ...modelo, ...cambios })}
                         autoFocus
                     />

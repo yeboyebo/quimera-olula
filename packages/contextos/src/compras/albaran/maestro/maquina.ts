@@ -18,6 +18,14 @@ export const getMaquina: () => Maquina<EstadoMaestroAlbaran, ContextoMaestroAlba
             siguiente_pagina: [maestro.Albaranes.filtrar, maestro.ampliarAlbaranes],
 
             crear_albaran_solicitado: "CREANDO",
+
+            seleccionados_cambiados: maestro.seleccionadosCambiados,
+            facturado_solicitado: "FACTURANDO",
+        },
+
+        FACTURANDO: {
+            facturado_confirmado: maestro.facturarSeleccionados,
+            facturado_cancelado: "INICIAL",
         },
 
         CREANDO: {

@@ -11,6 +11,7 @@ import {
     DeleteAlbaran,
     GetAlbaran,
     GetAlbaranes,
+    GetReportAlbaran,
     GetLineaAlbaran,
     GetLineasAlbaran,
     LineaAlbaran,
@@ -84,7 +85,7 @@ type ProveedorAlbaranApi =
 interface NuevaLineaAlbaranApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
-    pvp_unitario: number;
+    pvp_unitario?: number;
 }
 
 interface NuevoAlbaranApi {
@@ -216,10 +217,14 @@ const cambiosAlbaranAApi = (a: CambiosAlbaran): CambiosAlbaranApi => {
 };
 
 /** pvp_unitario es obligatorio siempre: en compras no hay tarifa de la que derivarlo. */
+/**
+ * pvp_unitario se omite cuando viene vacío: con artículo del catálogo el
+ * servidor lo resuelve desde articulosprov para el proveedor del albarán.
+ */
 const nuevaLineaAApi = (linea: NuevaLineaAlbaran): NuevaLineaAlbaranApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
-    pvp_unitario: linea.pvpUnitario,
+    ...(linea.pvpUnitario === null ? {} : { pvp_unitario: linea.pvpUnitario }),
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaAlbaran): CambiosLineaAlbaranApi => {
@@ -303,6 +308,9 @@ export const patchAlbaran: PatchAlbaran = async (id, cambios) => {
 export const deleteAlbaran: DeleteAlbaran = async (id) => {
     await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar el albarán");
 };
+
+export const getReportAlbaran: GetReportAlbaran = async (id) =>
+    await RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del albarán");
 
 export const getLineasAlbaran: GetLineasAlbaran = async (id) =>
     await RestAPI.getLista<LineaAlbaran, LineaAlbaranApi>(

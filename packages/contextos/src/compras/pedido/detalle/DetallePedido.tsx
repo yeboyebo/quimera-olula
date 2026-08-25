@@ -3,11 +3,13 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
 import { pedidoPendiente } from "../dominio.ts";
+import { getReportPedido } from "../infraestructura.ts";
 import {
     contextoDetallePedidoInicial,
     guardarPedido,
@@ -52,8 +54,14 @@ export const DetallePedido = ({
     const titulo = (p: Pedido) =>
         `${p.codigo}${p.nombreProveedor ? ` · ${p.nombreProveedor}` : ""}`;
 
+    const imprimir = async () => {
+        const blob = await getReportPedido(pedido.id);
+        imprimir_blob(blob);
+    };
+
     // Un pedido que no está pendiente no se puede borrar: el servidor responde 409.
     const accionesPedido = [
+        { texto: "Imprimir", onClick: imprimir },
         {
             icono: "eliminar",
             texto: "Borrar",

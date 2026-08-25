@@ -94,7 +94,8 @@ export interface NuevaLineaPedido extends Modelo {
     descripcion: string;
     descripcionArticulo: string | null;
     cantidad: number;
-    pvpUnitario: number;
+    /** Opcional con artículo del catálogo: el servidor lo saca de articulosprov. */
+    pvpUnitario: number | null;
 }
 
 /** Línea en edición: la del servidor más el tipo de artículo inferido. */
@@ -113,6 +114,7 @@ export type PostPedido = (
 ) => Promise<string>;
 export type PatchPedido = (id: string, cambios: CambiosPedido) => Promise<void>;
 export type DeletePedido = (id: string) => Promise<void>;
+export type GetReportPedido = (id: string) => Promise<Blob>;
 
 export type GetLineasPedido = (id: string) => Promise<LineaPedido[]>;
 export type GetLineaPedido = (id: string, lineaId: string) => Promise<LineaPedido>;
