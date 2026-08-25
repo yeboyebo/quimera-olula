@@ -14,15 +14,15 @@ export const ExpansionCantidad = ({
 }) => {
   const maximo = pendienteDeLinea(linea);
 
-  const [cantidad, setCantidad] = useState<string>(String(linea.a_pedir || 0));
+  const [cantidad, setCantidad] = useState<string>(String(linea.a_aprobar || 0));
   const [estado, setEstado] = useState("");
 
-  // "Todos" y el check de la fila cambian a_pedir desde fuera; sin esto el
+  // "Todos" y el check de la fila cambian a_aprobar desde fuera; sin esto el
   // input seguiría mostrando lo que se teclease la última vez.
   useEffect(() => {
-    setCantidad(String(linea.a_pedir || 0));
+    setCantidad(String(linea.a_aprobar || 0));
     setEstado("");
-  }, [linea.a_pedir]);
+  }, [linea.a_aprobar]);
 
   const validacion = (cantidadRaw: string): string => {
     const valor = Number(cantidadRaw);

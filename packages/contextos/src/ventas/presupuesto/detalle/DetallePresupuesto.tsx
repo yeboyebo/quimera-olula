@@ -28,6 +28,7 @@ import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatosBase.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
+import { aprobado } from "../dominio.ts";
 
 export const DetallePresupuesto = ({
   id,
@@ -75,7 +76,7 @@ export const DetallePresupuesto = ({
 
   const titulo = (presupuesto: Presupuesto) => (
     <span className="titulo-documento">
-      <EstadoPresupuesto aprobado={presupuesto.aprobado} />
+      <EstadoPresupuesto aprobado={aprobado(presupuesto)} />
       {tituloDocumentoVenta(presupuesto, "Nuevo Presupuesto")}
     </span>
   );
@@ -92,14 +93,14 @@ export const DetallePresupuesto = ({
         onClick: parcial
           ? () => navigate(`/ventas/aprobar-presupuesto/${ctx.presupuesto.id}`)
           : () => emitir("aprobacion_solicitada", ctx.presupuesto),
-        deshabilitado: ctx.presupuesto.aprobado,
+        deshabilitado: aprobado(ctx.presupuesto),
       },
       {
         icono: "eliminar",
         texto: "Borrar",
         advertencia: true,
         onClick: () => emitir("borrar_solicitado"),
-        deshabilitado: ctx.presupuesto.aprobado,
+        deshabilitado: aprobado(ctx.presupuesto),
       },
       {
         texto: "Imprimir",

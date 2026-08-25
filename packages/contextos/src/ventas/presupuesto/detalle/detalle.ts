@@ -17,6 +17,7 @@ import {
     patchPresupuesto
 } from "../infraestructura.ts";
 import { ContextoPresupuesto, EstadoPresupuesto } from "./diseño.ts";
+import { aprobado } from "../dominio.ts";
 
 export { metaNuevaVenta, metaVenta } from "#/ventas/venta/dominio.ts";
 
@@ -40,7 +41,7 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
         agente_id: { bloqueado: true },
         por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
-    editable: (presupuesto: Presupuesto) => !presupuesto.aprobado,
+    editable: (presupuesto: Presupuesto) => !aprobado(presupuesto),
 };
 
 export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
@@ -49,7 +50,7 @@ export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
 export const presupuestoVacio = (): Presupuesto => ({
     ...ventaVacia,
     cliente: clienteVentaVacio,
-    aprobado: false,
+    estado_aprobado: "PENDIENTE",
     por_comision: 0,
     almacen_id: "",
     fecha_salida: new Date(),
@@ -99,7 +100,7 @@ export const cancelarCambioPresupuesto: ProcesarPresupuesto = async (contexto) =
 export const abiertoOAprobadoContexto: ProcesarPresupuesto = async (contexto) => {
     return {
         ...contexto,
-        estado: contexto.presupuesto.aprobado ? "APROBADO" : "ABIERTO"
+        estado: aprobado(contexto.presupuesto) ? "APROBADO" : "ABIERTO"
     }
 }
 

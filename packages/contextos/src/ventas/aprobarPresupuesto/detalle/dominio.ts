@@ -2,6 +2,7 @@ import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { cargar, listaSeleccionableVacia } from "@olula/lib/entidad.ts";
 import { presupuestoVacio } from "../../presupuesto/detalle/detalle.ts";
 import { getLineas, getPresupuesto } from "../../presupuesto/infraestructura.ts";
+import { LineaPresupuesto } from "../../presupuesto/diseño.ts";
 import { LineaAprobarPresupuesto } from "../diseño.ts";
 import { pendienteDeLinea } from "../dominio.ts";
 import { patchAprobarPresupuestoParcial } from "../infraestructura.ts";
@@ -15,6 +16,10 @@ export const contextoVacio: ContextoAprobarPresupuesto = {
 
 type ProcesarAprobarPresupuesto = ProcesarContexto<EstadoAprobarPresupuesto, ContextoAprobarPresupuesto>;
 
+/** La línea que llega del servidor más el campo local de esta pantalla. */
+const paraAprobar = (lineas: LineaPresupuesto[]): LineaAprobarPresupuesto[] =>
+    lineas.map((linea) => ({ ...linea, a_aprobar: 0 }));
+
 export const cargarDatos: ProcesarAprobarPresupuesto = async (contexto, presupuestoId) => {
     const presupuestoIdStr = presupuestoId as string;
     const presupuesto = await getPresupuesto(presupuestoIdStr);
@@ -23,7 +28,7 @@ export const cargarDatos: ProcesarAprobarPresupuesto = async (contexto, presupue
     return {
         ...contexto,
         presupuesto,
-        lineas: cargar(lineasData)(contexto.lineas),
+        lineas: cargar(paraAprobar(lineasData))(contexto.lineas),
         estado: "LISTO",
     };
 };
@@ -44,11 +49,10 @@ export const cambiarCantidadLinea: ProcesarAprobarPresupuesto = async (contexto,
     const lineasActualizadas = contexto.lineas.lista.map((l) => {
         if (String(l.id) !== String(id)) return l;
         const maximo = pendienteDeLinea(l);
-        const a_pedir = Math.min(maximo, Math.max(0, Number(cantidad) || 0));
         return {
             ...l,
-            a_pedir,
-        } as LineaAprobarPresupuesto;
+            a_aprobar: Math.min(maximo, Math.max(0, Number(cantidad) || 0)),
+        };
     });
 
     return {
@@ -67,7 +71,7 @@ export const actualizarEstadoCerradoLinea: ProcesarAprobarPresupuesto = async (c
         return {
             ...l,
             cerrada,
-        } as LineaAprobarPresupuesto;
+        };
     });
 
     return {
@@ -85,8 +89,8 @@ export const aprobarLinea: ProcesarAprobarPresupuesto = async (contexto, payload
         if (String(l.id) !== String(lineaId)) return l;
         return {
             ...l,
-            a_pedir: pendienteDeLinea(l),
-        } as LineaAprobarPresupuesto;
+            a_aprobar: pendienteDeLinea(l),
+        };
     });
 
     return {
@@ -103,8 +107,8 @@ export const aprobarTodas: ProcesarAprobarPresupuesto = async (contexto) => {
         if (l.cerrada) return l;
         return {
             ...l,
-            a_pedir: pendienteDeLinea(l),
-        } as LineaAprobarPresupuesto;
+            a_aprobar: pendienteDeLinea(l),
+        };
     });
 
     return {
@@ -135,7 +139,7 @@ export const aprobarPresupuesto: ProcesarAprobarPresupuesto = async (contexto) =
     return {
         ...contexto,
         presupuesto: presupuestoActualizado,
-        lineas: cargar(lineasActualizadas)(contexto.lineas),
+        lineas: cargar(paraAprobar(lineasActualizadas))(contexto.lineas),
         pedidoCreado,
     };
 };
@@ -145,15 +149,11 @@ export const puedeAprobar = (datos: {
     lineas: ContextoAprobarPresupuesto['lineas'];
 }): boolean => {
     const { presupuesto, lineas } = datos;
-    const hayLineasParaPedir = lineas.lista.some((linea) => {
-        return (
-            linea.a_pedir !== undefined &&
-            linea.a_pedir !== null &&
-            linea.a_pedir > 0
-        );
-    });
+    const hayLineasParaAprobar = lineas.lista.some(
+        (linea) => linea.a_aprobar > 0
+    );
 
-    return hayLineasParaPedir && presupuesto.servido !== "TOTAL";
+    return hayLineasParaAprobar && presupuesto.estado_aprobado !== "TOTAL";
 };
 
 export const hayPendiente = (lineas: ContextoAprobarPresupuesto['lineas']): boolean => {

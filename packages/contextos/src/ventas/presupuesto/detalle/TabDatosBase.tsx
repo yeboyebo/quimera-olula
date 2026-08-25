@@ -15,6 +15,7 @@ import {
 import { Presupuesto } from "../diseño.ts";
 import { EstadoPresupuesto } from "./diseño.ts";
 import "./TabDatos.css";
+import { aprobado } from "../dominio.ts";
 
 export interface TabDatosProps {
   presupuesto: HookModelo<Presupuesto>;
@@ -28,7 +29,7 @@ export const TabDatosBase = ({
   publicar = () => {},
 }: TabDatosProps) => {
   const { uiProps, modelo } = presupuesto;
-  const mostrarBotonesCambio = estado === "ABIERTO" && !modelo.aprobado;
+  const mostrarBotonesCambio = estado === "ABIERTO" && !aprobado(modelo);
 
   return (
     <div className="TabDatos">

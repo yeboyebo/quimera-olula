@@ -18,7 +18,7 @@ export const AccionesLinea = ({
 }) => {
   const { intentar } = useContext(ContextoError);
 
-  const aPedir = linea.a_pedir || 0;
+  const aPedir = linea.a_aprobar || 0;
   const completo = lineaCompleta(linea);
 
   const colorAprobar = linea.cerrada

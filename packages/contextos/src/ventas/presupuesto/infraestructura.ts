@@ -3,8 +3,9 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
+import { LineaVenta } from "../venta/diseño.ts";
 import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, esLineaConArticulo, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, esLineaConArticulo, GetPresupuesto, GetPresupuestos, EstadoAprobado, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -34,12 +35,20 @@ type PresupuestoAPI = {
   id_fiscal: string;
   direccion_id: string | null;
   direccion: Direccion;
-  aprobado: boolean;
+  estado_aprobado: EstadoAprobado;
 };
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
-type LineaPresupuestoAPI = LineaPresupuesto;
+/**
+ * La forma que llega del servidor. Se declara aparte de `LineaPresupuesto` a
+ * propósito: si el nombre de un campo cambia en cualquiera de los dos lados,
+ * el mapeo de abajo deja de compilar en vez de llegar `undefined` en silencio.
+ */
+type LineaPresupuestoAPI = LineaVenta & {
+  aprobada: number;
+  cerrada: boolean;
+};
 
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
@@ -57,7 +66,13 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   lineas: [],
 });
 
-export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => l;
+export const lineaPresupuestoFromAPI = (
+  { aprobada, cerrada, ...resto }: LineaPresupuestoAPI
+): LineaPresupuesto => ({
+  ...resto,
+  aprobada,
+  cerrada,
+});
 
 export const getPresupuesto: GetPresupuesto = async (id) =>
   RestAPI.get<{ datos: PresupuestoAPI }>(`${baseUrl}/${id}`).then((respuesta) => {

@@ -1,9 +1,12 @@
-import { LineaVenta } from "../venta/diseño.ts";
+import { LineaPresupuesto } from "../presupuesto/diseño.ts";
 
-export interface LineaAprobarPresupuesto extends LineaVenta {
-    servida?: number;
-    cerrada?: boolean;
-    a_pedir?: number;
+/**
+ * `aprobada` y `cerrada` vienen del servidor (están en `LineaPresupuesto`);
+ * `a_aprobar` es local: solo vive en esta pantalla y viaja como `cantidad` en
+ * el payload. Ninguno es opcional: así olvidarse de uno no compila.
+ */
+export interface LineaAprobarPresupuesto extends LineaPresupuesto {
+    a_aprobar: number;
 }
 
 export interface LineaPedidoPatch {

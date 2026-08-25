@@ -23,7 +23,9 @@ const lineaApi: LineaVenta = {
 };
 
 const casos: [string, LineaVenta][] = [
-    ["presupuesto", lineaPresupuestoFromAPI(lineaApi)],
+    ["presupuesto", lineaPresupuestoFromAPI(
+        { ...lineaApi, aprobada: 0, cerrada: false }
+    )],
     ["pedido", ventasPedidoInfra.linea_desde_api(lineaApi)],
     ["albarán", lineaAlbaranFromAPI(lineaApi)],
     ["factura", lineaFacturaFromAPI(lineaApi)],

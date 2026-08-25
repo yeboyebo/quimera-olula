@@ -55,16 +55,16 @@ export const Lineas = ({
       },
       { id: "cantidad", cabecera: "Cantidad", tipo: "numero" },
       {
-        id: "servida",
+        id: "aprobada",
         cabecera: "Servida",
         tipo: "numero",
-        render: (l) => String(l.servida || 0),
+        render: (l) => String(l.aprobada || 0),
       },
       {
-        id: "a_pedir",
+        id: "a_aprobar",
         cabecera: "A pedir",
         tipo: "numero",
-        render: (l) => String(l.a_pedir || 0),
+        render: (l) => String(l.a_aprobar || 0),
       },
       {
         id: "acciones",
