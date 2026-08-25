@@ -1,19 +1,10 @@
-import { MetaModelo } from "@olula/lib/dominio.js";
-import { metaNuevaLineaLibreVenta, nuevaLineaLibreVentaVacia } from "../../venta/dominio.ts";
-import { NuevaLinea, NuevaLineaLibre } from "../diseño.ts";
+import { ModeloNuevaLinea } from "../../venta/diseño.ts";
+import { altaLineaDesdeModelo, metaNuevaLinea, nuevaLineaVacia } from "../../venta/dominio.ts";
+import { postLinea } from "../infraestructura.ts";
 
-export const nuevaLineaVacia: NuevaLinea = {
-    referencia: "",
-    cantidad: 1,
+export type { ModeloNuevaLinea };
+export { nuevaLineaVacia, metaNuevaLinea };
+
+export const postModelo = async (presupuestoId: string, linea: ModeloNuevaLinea): Promise<string> => {
+    return await postLinea(presupuestoId, altaLineaDesdeModelo(linea));
 };
-
-export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
-    campos: {
-        referencia: { requerido: true, tipo: "texto" },
-        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
-    }
-};
-
-export const nuevaLineaLibreVacia: NuevaLineaLibre = nuevaLineaLibreVentaVacia;
-
-export const metaNuevaLineaLibre: MetaModelo<NuevaLineaLibre> = metaNuevaLineaLibreVenta;

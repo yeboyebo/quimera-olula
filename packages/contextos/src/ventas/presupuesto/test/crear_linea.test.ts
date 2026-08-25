@@ -1,9 +1,8 @@
-import { AltaLineaVentaApi } from "#/ventas/venta/diseño.ts";
+import { AltaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
 import { esLineaConArticulo } from "#/ventas/venta/dominio.ts";
 import {
     metaNuevaLinea,
-    metaNuevaLineaLibre,
-    nuevaLineaLibreVacia,
+    nuevaLineaVacia,
 } from "#/ventas/presupuesto/crear_linea/dominio.ts";
 import { modeloEsValido } from "@olula/lib/dominio.ts";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -39,7 +38,7 @@ describe("postLinea adapta el payload a cada forma", () => {
     beforeEach(() => post.mockClear());
 
     test("la línea de catálogo manda articulo.articulo_id y cantidad aparte", async () => {
-        await postLinea("pre-1", { referencia: "ART-001", cantidad: 3 });
+        await postLinea("pre-1", { articulo: { articuloId: "ART-001" }, cantidad: 3 });
 
         expect(cuerpoEnviado()).toEqual({
             articulo: { articulo_id: "ART-001" },
@@ -49,9 +48,8 @@ describe("postLinea adapta el payload a cada forma", () => {
 
     test("la línea libre manda descripción y pvp en articulo, sin articulo_id", async () => {
         await postLinea("pre-1", {
-            descripcion: "Mano de obra",
+            articulo: { descripcion: "Mano de obra", pvpUnitario: 50 },
             cantidad: 2,
-            pvp_unitario: 50,
         });
 
         expect(cuerpoEnviado()).toEqual({
@@ -62,23 +60,24 @@ describe("postLinea adapta el payload a cada forma", () => {
     });
 
     test("devuelve el id que responde el servidor", async () => {
-        const id = await postLinea("pre-1", { referencia: "ART-001", cantidad: 1 });
+        const id = await postLinea("pre-1", { articulo: { articuloId: "ART-001" }, cantidad: 1 });
         expect(id).toBe("lin-1");
     });
 });
 
-describe("validación de la línea libre", () => {
-    const valido = modeloEsValido(metaNuevaLineaLibre);
+describe("validación de la nueva línea", () => {
+    const valido = modeloEsValido(metaNuevaLinea);
+    const lineaLibreBase = { ...nuevaLineaVacia, tipoArticulo: "libre" as const, referencia: null };
 
-    test("un pvp de 0 es válido", () => {
-        expect(valido({ ...nuevaLineaLibreVacia, descripcion: "Portes", pvp_unitario: 0 })).toBe(true);
+    test("un pvp de 0 es válido en una línea libre", () => {
+        expect(valido({ ...lineaLibreBase, descripcion: "Portes", pvp_unitario: 0 })).toBe(true);
     });
 
-    test("sin descripción no vale", () => {
-        expect(valido({ ...nuevaLineaLibreVacia, descripcion: "" })).toBe(false);
+    test("sin descripción no vale en línea libre", () => {
+        expect(valido({ ...lineaLibreBase, descripcion: "", pvp_unitario: 15 })).toBe(false);
     });
 
-    test("la línea de catálogo sigue exigiendo referencia", () => {
-        expect(modeloEsValido(metaNuevaLinea)({ referencia: "", cantidad: 1 })).toBe(false);
+    test("sin referencia ni descripción no vale", () => {
+        expect(valido({ ...nuevaLineaVacia, referencia: null, descripcion: null, pvp_unitario: 15 })).toBe(false);
     });
 });

@@ -70,7 +70,7 @@ export type EstadoModelo<T extends Modelo> = {
 export type MetaCampo<T extends Modelo> = {
     nombre?: string;
     tipo?: TipoInput;
-    requerido?: boolean;
+    requerido?: boolean | ((modelo: T) => boolean);
     bloqueado?: boolean;
     validacion?: (modelo: T) => string | boolean;
     positivo?: boolean
@@ -445,7 +445,9 @@ const getUiProps = <M extends Modelo>(
             ? campos[campo].tipo
             : "texto";
 
-        const opcional = campo in campos && campos[campo]?.requerido === false;
+        const requeridoRaw = campo in campos ? campos[campo]?.requerido : undefined;
+        const requeridoResuelto = typeof requeridoRaw === 'function' ? requeridoRaw(modelo) : requeridoRaw;
+        const opcional = requeridoResuelto === false;
 
         const conversionTipo = {
             "boolean": "checkbox",
@@ -459,13 +461,13 @@ const getUiProps = <M extends Modelo>(
             nombre: campo,
             valor: valorUI,
             tipo: tipo,
-            deshabilitado: !editable,
+            deshabilitado: false,
             valido: cambiado && valido && !falloGuardado,
             erroneo: !valido || falloGuardado,
             advertido: false,
             opcional,
             modificado: cambiado,
-            soloTexto: !modeloEsEditable(meta)(modelo),
+            soloLectura: !editable || !modeloEsEditable(meta)(modelo),
             textoValidacion: textoValidacion,
             onChange: setCampo(modelo, meta, onModeloCambiado, campo, secundario),
             evaluarCambio: evaluarCambio(modelo, modeloInicial, meta, onModeloListo),
@@ -514,11 +516,12 @@ const setCampo = <M extends Modelo>(
 
     const valorModelo = convertirCampoDesdeUI(meta)(campo, valor as string);
 
+    console.log("Valor", valor, "Descripcion", descripcion)
     let nuevoModelo = {
         ...modelo,
         [campo]: valorModelo,
     } as M
-    if (segundo && descripcion) {
+    if (segundo && descripcion !== undefined) {
         nuevoModelo = {
             ...nuevoModelo,
             [segundo]: descripcion,
@@ -539,7 +542,8 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
     if (campo.split(',').length > 1) {
         campo = campo.split(',')[0].trim();
     }
-    const requerido = campo in campos && campos[campo]?.requerido
+    const requeridoRaw = campo in campos ? campos[campo]?.requerido : undefined;
+    const requerido = typeof requeridoRaw === 'function' ? requeridoRaw(modelo) : requeridoRaw;
 
     if (requerido && (valor === null || valor === undefined)) {
         return "Campo requerido";

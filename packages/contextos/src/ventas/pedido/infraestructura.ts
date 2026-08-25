@@ -4,13 +4,15 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { altaLineaApi, articuloDeLinea, direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
 import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoAPI {
   id: string;
   referencia: string | null;
   descripcion: string;
+  descripcion_articulo: string | null
   cantidad: number;
   pvp_unitario: number;
   dto_porcentual: number;
@@ -72,7 +74,10 @@ const lineaPedidoDesdeApi: LineaPedidoDesdeApi = (l) => {
   return (infra?.linea_desde_api ?? lineaPedidoDesdeApiBase)(l)
 };
 
-const lineaPedidoDesdeApiBase: LineaPedidoDesdeApi = (l) => l as LineaPedido;
+const lineaPedidoDesdeApiBase: LineaPedidoDesdeApi = (l) => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo
+} as LineaPedido);
 
 export const ventasPedidoInfra: VentasPedidoInfra = {
   linea_desde_api: lineaPedidoDesdeApiBase

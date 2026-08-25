@@ -1,50 +1,28 @@
-import { Articulo } from "#/ventas/comun/componentes/articulo.tsx";
+import { ArticuloLinea } from "#/ventas/comun/componentes/articulo_linea/ArticuloLinea.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
-import { EmitirEvento } from "@olula/lib/diseño.ts";
-import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.js";
+import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useState } from "react";
-import { postLinea } from "../infraestructura.ts";
+import { useCallback } from "react";
 import "./CrearLinea.css";
-import {
-  metaNuevaLinea,
-  metaNuevaLineaLibre,
-  nuevaLineaLibreVacia,
-  nuevaLineaVacia,
-} from "./dominio.ts";
+import { metaNuevaLinea, nuevaLineaVacia, postModelo } from "./dominio.ts";
 
 export const CrearLinea = ({
   presupuestoId,
   publicar,
 }: {
   presupuestoId: string;
-  publicar: EmitirEvento;
+  publicar: ProcesarEvento;
 }) => {
-  const [modoLibre, setModoLibre] = useState(false);
-
   const lineaArticulo = useModelo(metaNuevaLinea, nuevaLineaVacia);
-  const lineaLibre = useModelo(metaNuevaLineaLibre, nuevaLineaLibreVacia);
-
-  const focus = useFocus();
-
-  const reiniciar = useCallback(() => {
-    lineaArticulo.init(nuevaLineaVacia);
-    lineaLibre.init(nuevaLineaLibreVacia);
-  }, [lineaArticulo, lineaLibre]);
-
-  const alternarModo = () => {
-    setModoLibre(!modoLibre);
-    reiniciar();
-  };
+  const linea = lineaArticulo.modelo;
 
   const crear_ = useCallback(async () => {
-    const modelo = modoLibre ? lineaLibre.modelo : lineaArticulo.modelo;
-    const idLinea = await postLinea(presupuestoId, modelo);
+    const idLinea = await postModelo(presupuestoId, linea);
     publicar("linea_creada", idLinea);
-  }, [modoLibre, lineaLibre, lineaArticulo, presupuestoId, publicar]);
+  }, [linea, presupuestoId, publicar]);
 
   const cancelar_ = useCallback(
     () => publicar("crear_linea_cancelado"),
@@ -53,8 +31,6 @@ export const CrearLinea = ({
 
   const [crear, cancelar] = useForm(crear_, cancelar_);
 
-  const valido = modoLibre ? lineaLibre.valido : lineaArticulo.valido;
-
   return (
     <QModal
       abierto={true}
@@ -62,39 +38,26 @@ export const CrearLinea = ({
       titulo="Crear línea"
       onCerrar={cancelar}
     >
-      <div className="modo-linea">
-        <QBoton onClick={alternarModo} variante="texto" tipo="button">
-          {modoLibre ? "Artículo del catálogo" : "Línea sin artículo"}
-        </QBoton>
-      </div>
       <div className="CrearLinea">
         <quimera-formulario>
-          {modoLibre ? (
-            <>
-              <QInput
-                label="Descripción"
-                {...lineaLibre.uiProps("descripcion")}
-                ref={focus}
-              />
-              <QInput label="Cantidad" {...lineaLibre.uiProps("cantidad")} />
-              <QInput
-                label="PVP unitario"
-                {...lineaLibre.uiProps("pvp_unitario")}
-              />
-            </>
-          ) : (
-            <>
-              <Articulo
-                {...lineaArticulo.uiProps("referencia", "descripcion")}
-                nombre="referencia_nueva_linea_presupuesto"
-                ref={focus}
-              />
-              <QInput label="Cantidad" {...lineaArticulo.uiProps("cantidad")} />
-            </>
+          <ArticuloLinea
+            tipoArticulo={linea.tipoArticulo}
+            referencia={linea.referencia}
+            descripcionArticulo={linea.descripcionArticulo}
+            descripcion={linea.descripcion ?? ""}
+            nombre="referencia_nueva_linea_presupuesto"
+            onChange={(cambios) => lineaArticulo.set({ ...linea, ...cambios })}
+          />
+          <QInput label="Cantidad" {...lineaArticulo.uiProps("cantidad")} />
+          {linea.tipoArticulo === "libre" && (
+            <QInput
+              label="PVP unitario"
+              {...lineaArticulo.uiProps("pvp_unitario")}
+            />
           )}
         </quimera-formulario>
         <div className="botones maestro-botones ">
-          <QBoton onClick={crear} deshabilitado={!valido}>
+          <QBoton onClick={crear} deshabilitado={!lineaArticulo.valido}>
             Crear
           </QBoton>
         </div>
