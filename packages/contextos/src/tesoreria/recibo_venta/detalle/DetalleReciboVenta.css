@@ -1,5 +1,10 @@
 .DetalleReciboVenta {
 
+    /* Sin tabs, el formulario queda pegado a la fila de acciones. */
+    quimera-formulario {
+        margin-block-start: var(--espaciado-m);
+    }
+
     /* Fila 1: Código (6) + Estado (3) + Importe (3) = 12 */
     quimera-input[nombre="codigo"] {
         grid-column: span 6;
