@@ -1,5 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
-import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
+import { ejecutarListaProcesos, MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
+import { ERR_IBAN_NO_VALIDO, ibanValido } from "@olula/lib/iban.ts";
 import { CuentaBancaria } from "../diseño.js";
 import { getCuentaBancaria, patchCuentaBancaria } from "../infraestructura.js";
 import { ContextoDetalleCuentaBancaria, EstadoDetalleCuentaBancaria } from "./maquina.js";
@@ -8,22 +9,28 @@ type ProcesarDetalle = ProcesarContexto<EstadoDetalleCuentaBancaria, ContextoDet
 
 const pipeCuenta = ejecutarListaProcesos<EstadoDetalleCuentaBancaria, ContextoDetalleCuentaBancaria>;
 
-/**
- * Metadatos del formulario: validaciones y configuración de campos.
- */
+const ibanCuentaValido = (cuenta: CuentaBancaria): boolean | string =>
+    !stringNoVacio(cuenta.iban) || ibanValido(cuenta.iban) || ERR_IBAN_NO_VALIDO;
+
+// Los derivados van bloqueados: los calcula el servidor a partir del IBAN. Y
+// ninguno es requerido, porque el autoguardado solo dispara si el modelo entero
+// es válido y llegan vacíos hasta que el servidor los rellena.
+const derivadoDelIban = { requerido: false, bloqueado: true } as const;
+
 export const metaCuentaBancaria: MetaModelo<CuentaBancaria> = {
     campos: {
-        codigoCuenta: { requerido: true },
-        paisId: { requerido: true },
         descripcion: { requerido: false },
-        iban: { requerido: false },
-        bic: { requerido: false },
-        entidad: { requerido: false },
-        agencia: { requerido: false },
-        digitoControl: { requerido: false },
-        cuenta: { requerido: false },
+        iban: { requerido: false, validacion: ibanCuentaValido },
         empresaId: { requerido: false },
         obsoleta: { requerido: false, tipo: "checkbox" },
+
+        codigoCuenta: derivadoDelIban,
+        paisId: derivadoDelIban,
+        digitoControl: derivadoDelIban,
+        cuenta: derivadoDelIban,
+        bic: derivadoDelIban,
+        entidad: derivadoDelIban,
+        agencia: derivadoDelIban,
     },
 };
 
@@ -47,9 +54,6 @@ export const contextoDetalleCuentaBancariaInicial: ContextoDetalleCuentaBancaria
     cuenta: cuentaBancariaInicial(),
 };
 
-/**
- * Refresca la entidad desde la API y propaga el cambio al maestro.
- */
 export const refrescarCuenta: ProcesarDetalle = async (contexto) => {
     const cuenta = await getCuentaBancaria(contexto.cuenta.id);
     return [
@@ -58,29 +62,26 @@ export const refrescarCuenta: ProcesarDetalle = async (contexto) => {
     ];
 };
 
-/**
- * Guarda cambios en la API (se llama desde el auto-guardado de useModelo).
- */
 export const guardarCuenta = async (
     contexto: ContextoDetalleCuentaBancaria,
     cuenta: CuentaBancaria,
 ): Promise<void> => {
     const anterior = contexto.cuenta;
     const hayCambios =
-        cuenta.codigoCuenta !== anterior.codigoCuenta ||
-        cuenta.paisId !== anterior.paisId ||
-        cuenta.obsoleta !== anterior.obsoleta ||
-        cuenta.empresaId !== anterior.empresaId ||
         cuenta.descripcion !== anterior.descripcion ||
         cuenta.iban !== anterior.iban ||
-        cuenta.bic !== anterior.bic ||
-        cuenta.entidad !== anterior.entidad ||
-        cuenta.agencia !== anterior.agencia ||
-        cuenta.digitoControl !== anterior.digitoControl ||
-        cuenta.cuenta !== anterior.cuenta;
-    if (hayCambios) {
-        await patchCuentaBancaria(cuenta.id, cuenta);
-    }
+        cuenta.empresaId !== anterior.empresaId ||
+        cuenta.obsoleta !== anterior.obsoleta;
+    if (!hayCambios) return;
+
+    // Se envían solo los editables: mandar los derivados pisaría lo que calcula
+    // el servidor desde el IBAN.
+    await patchCuentaBancaria(cuenta.id, {
+        descripcion: cuenta.descripcion,
+        iban: cuenta.iban,
+        empresaId: cuenta.empresaId,
+        obsoleta: cuenta.obsoleta,
+    });
 };
 
 export const cargarCuenta: (_: string) => ProcesarDetalle =

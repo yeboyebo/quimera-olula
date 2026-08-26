@@ -1,5 +1,6 @@
 import { ProcesarContexto } from "@olula/lib/diseño.js";
-import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.js";
+import { ejecutarListaProcesos, MetaModelo, stringNoVacio } from "@olula/lib/dominio.js";
+import { ERR_IBAN_NO_VALIDO, ERR_IBAN_REQUERIDO, ibanValido } from "@olula/lib/iban.js";
 import { accionesListaEntidades, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CuentaBanco, NuevaCuentaBanco } from "../../diseño.ts";
 import {
@@ -9,15 +10,22 @@ import {
 } from "../../infraestructura.ts";
 import { ContextoCuentasBanco, EstadoCuentasBanco } from "./diseño.ts";
 
+const ibanCuentaValido = (cuenta: CuentaBanco | NuevaCuentaBanco): boolean | string => {
+    if (!stringNoVacio(cuenta.iban)) return ERR_IBAN_REQUERIDO;
+    if (!ibanValido(cuenta.iban)) return ERR_IBAN_NO_VALIDO;
+    return true;
+};
+
 export const metaCuentaBanco: MetaModelo<CuentaBanco> = {
     campos: {
-        iban: { requerido: true },
+        iban: { requerido: true, validacion: ibanCuentaValido },
     }
 };
 
 export const metaNuevaCuentaBanco: MetaModelo<NuevaCuentaBanco> = {
     campos: {
-        cuenta: { requerido: true },
+        descripcion: { requerido: false },
+        iban: { requerido: true, validacion: ibanCuentaValido },
     }
 };
 
@@ -30,6 +38,12 @@ export const metaTablaCuentasBanco = [
     { id: "descripcion", cabecera: "Descripcion" },
     { id: "iban", cabecera: "IBAN" },
     { id: "bic", cabecera: "BIC" },
+    { id: "codigo_cuenta", cabecera: "Código cuenta" },
+    { id: "pais_id", cabecera: "País" },
+    { id: "entidad", cabecera: "Entidad" },
+    { id: "agencia", cabecera: "Agencia" },
+    { id: "digito_control", cabecera: "D.C." },
+    { id: "cuenta", cabecera: "Cuenta" },
 ];
 
 type ProcesarCuentasBanco = ProcesarContexto<EstadoCuentasBanco, ContextoCuentasBanco>;

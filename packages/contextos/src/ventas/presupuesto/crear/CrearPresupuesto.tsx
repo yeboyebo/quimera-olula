@@ -1,3 +1,4 @@
+import { CamposDireccionVenta } from "#/ventas/comun/componentes/CamposDireccionVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -123,51 +124,48 @@ const FormAltaPresupuesto = ({
     <>
       <div className="modo-cliente">
         <QBoton onClick={onToggleModoCliente} variante="texto" tipo="button">
-          {modoNoRegistrado ? "Cliente no registrado" : "Cliente registrado"}
+          {modoNoRegistrado ? "Cliente registrado" : "Cliente no registrado"}
         </QBoton>
       </div>
-      <quimera-formulario>
-        {modoNoRegistrado ? (
-          <>
-            <QInput
-              label="Nombre del Cliente"
-              {...presupuestoNoRegistrado.uiProps("nombre_cliente")}
-              ref={focus}
-            />
-            <QInput
-              label="ID Fiscal"
-              {...presupuestoNoRegistrado.uiProps("id_fiscal")}
-            />
-
-            <QInput
-              label="Tipo de Vía"
-              {...presupuestoNoRegistrado.uiProps("tipo_via")}
-            />
-            <QInput
-              label="Nombre de la Vía"
-              {...presupuestoNoRegistrado.uiProps("nombre_via")}
-            />
-            <QInput
-              label="Ciudad"
-              {...presupuestoNoRegistrado.uiProps("ciudad")}
-            />
-          </>
-        ) : (
-          <>
-            <Cliente
-              {...presupuestoRegistrado.uiProps("cliente_id", "nombre")}
-              nombre="clientePresupuesto"
-              ref={focus}
-            />
-            <DirCliente
-              clienteId={presupuestoRegistrado.modelo.cliente.cliente_id}
-              {...presupuestoRegistrado.uiProps("direccion_id")}
-            />
-          </>
-        )}
-      </quimera-formulario>
+      <div className="CrearPresupuesto campos-direccion">
+        <quimera-formulario>
+          {modoNoRegistrado ? (
+            <>
+              <QInput
+                label="Nombre del Cliente"
+                {...presupuestoNoRegistrado.uiProps("nombre_cliente")}
+                ref={focus}
+              />
+              <QInput
+                label="ID Fiscal"
+                {...presupuestoNoRegistrado.uiProps("id_fiscal")}
+              />
+              <CamposDireccionVenta uiProps={presupuestoNoRegistrado.uiProps} />
+            </>
+          ) : (
+            <>
+              <Cliente
+                {...presupuestoRegistrado.uiProps("cliente_id", "nombre")}
+                nombre="clientePresupuesto"
+                ref={focus}
+              />
+              <DirCliente
+                clienteId={presupuestoRegistrado.modelo.cliente_id}
+                {...presupuestoRegistrado.uiProps("direccion_id")}
+              />
+            </>
+          )}
+        </quimera-formulario>
+      </div>
       <div className="botones">
-        <QBoton onClick={crear} deshabilitado={!presupuestoRegistrado.valido}>
+        <QBoton
+          onClick={crear}
+          deshabilitado={
+            modoNoRegistrado
+              ? !presupuestoNoRegistrado.valido
+              : !presupuestoRegistrado.valido
+          }
+        >
           Guardar
         </QBoton>
         <QBoton onClick={cancelar} variante="texto">

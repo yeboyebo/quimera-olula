@@ -1,5 +1,6 @@
+import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
+import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
-import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
@@ -14,8 +15,6 @@ import {
 } from "./detalle.js";
 import "./DetalleCuentaBancaria.css";
 import { getMaquina } from "./maquina.js";
-import { TabGeneral } from "./TabGeneral.js";
-import { TabIdentificacion } from "./TabIdentificacion.js";
 
 export const DetalleCuentaBancaria = ({
     id,
@@ -39,7 +38,7 @@ export const DetalleCuentaBancaria = ({
         [ctx, emitir],
     );
 
-    const formModelo = useModelo(metaCuentaBancaria, ctx.cuenta, autoGuardar);
+    const { uiProps } = useModelo(metaCuentaBancaria, ctx.cuenta, autoGuardar);
 
     const { estado, cuenta } = ctx;
 
@@ -70,16 +69,21 @@ export const DetalleCuentaBancaria = ({
         >
             <div className="DetalleCuentaBancaria">
                 <QuimeraAcciones acciones={accionesCuenta} />
-                <Tabs children={[
-                    <Tab label="General"
-                        key="tab-general"
-                        children={<TabGeneral form={formModelo} />}
-                    />,
-                    <Tab label="Identificación"
-                        key="tab-identificacion"
-                        children={<TabIdentificacion form={formModelo} />}
-                    />,
-                ]}/>
+                <quimera-formulario>
+                    <QInput label="Descripción" {...uiProps("descripcion")} />
+                    <QInput label="IBAN" {...uiProps("iban")} />
+                    <QInput label="Empresa" {...uiProps("empresaId")} />
+                    <QCheckbox label="Obsoleta" {...uiProps("obsoleta")} />
+
+                    {/* Calculados por el servidor a partir del IBAN */}
+                    <QInput label="Código de cuenta" {...uiProps("codigoCuenta")} soloLectura />
+                    <QInput label="País" {...uiProps("paisId")} soloLectura />
+                    <QInput label="Dígito control" {...uiProps("digitoControl")} soloLectura />
+                    <QInput label="Número de cuenta" {...uiProps("cuenta")} soloLectura />
+                    <QInput label="BIC / SWIFT" {...uiProps("bic")} soloLectura />
+                    <QInput label="Entidad" {...uiProps("entidad")} soloLectura />
+                    <QInput label="Agencia" {...uiProps("agencia")} soloLectura />
+                </quimera-formulario>
             </div>
 
             {estado === "BORRANDO" && (

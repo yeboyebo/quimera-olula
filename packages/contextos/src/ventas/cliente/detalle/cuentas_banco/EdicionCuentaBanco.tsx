@@ -29,7 +29,15 @@ export const EdicionCuentaBanco = ({
   return (
     <div className="EdicionCuentaBanco">
       <quimera-formulario>
+        <QInput label="Descripción" {...uiProps("descripcion")} soloLectura />
         <QInput label="IBAN" {...uiProps("iban")} ref={focus} />
+        <QInput label="BIC" {...uiProps("bic")} soloLectura />
+        <QInput label="Código cuenta" {...uiProps("codigo_cuenta")} soloLectura />
+        <QInput label="País" {...uiProps("pais_id")} soloLectura />
+        <QInput label="Entidad" {...uiProps("entidad")} soloLectura />
+        <QInput label="Agencia" {...uiProps("agencia")} soloLectura />
+        <QInput label="Dígito control" {...uiProps("digito_control")} soloLectura />
+        <QInput label="Cuenta" {...uiProps("cuenta")} soloLectura />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!valido}>

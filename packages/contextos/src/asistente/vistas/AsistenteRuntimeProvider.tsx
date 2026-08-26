@@ -21,7 +21,9 @@ import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { catalogoAsistente } from "#/asistente/vistas/catalogo/catalogo.ts";
 import { consultarIa, consultarIaStream, enviarAccionA2ui, obtenerMensajesHilo } from "#/asistente/infraestructura.ts";
-import { adjuntosParaEnviar, construirCapacidades, mensajeVacio } from "#/asistente/dominio.ts";
+import {
+    accionNavegacionConNombreCorto, adjuntosParaEnviar, construirCapacidades, mensajeVacio,
+} from "#/asistente/dominio.ts";
 import { getMockRespuestaIa } from "#/asistente/vistas/mocks/a2ui_mocks.ts";
 import type {
     A2uiClientAction, AccionNavegacion, AdjuntoHiloIa, AdjuntoIa, AdjuntoMensaje, ConsultaIa, MensajeAsistente,
@@ -46,6 +48,10 @@ interface AsistenteContextValue {
      * conoce texto (ver convertMessage), así que la UI accede a esto por fuera, igual
      * que ya hace messageSurfaceMap para los bloques A2UI. */
     adjuntosPorMensaje: Record<string, AdjuntoMensaje[]>;
+    /** Navegación propuesta por el asistente (tool proponer_navegacion), por id de
+     * mensaje — la app YA NO navega sola al recibirla: se muestra como un botón dentro
+     * del propio mensaje (ver Chat.tsx) y solo se navega cuando el usuario lo pulsa. */
+    accionNavegacionPorMensaje: Record<string, AccionNavegacion>;
 }
 
 const AsistenteContext = createContext<AsistenteContextValue | null>(null);
@@ -83,6 +89,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
     const [streamingEnabled, setStreamingEnabled] = useState(false);
     const [a2uiSurfaces, setA2uiSurfaces] = useState<SurfaceModel<ReactComponentImplementation>[]>([]);
     const [messageSurfaceMap, setMessageSurfaceMap] = useState<Record<string, string[]>>({});
+    const [accionNavegacionPorMensaje, setAccionNavegacionPorMensaje] = useState<Record<string, AccionNavegacion>>({});
     const [threadIdActivo, setThreadIdActivo] = useState<string | null>(null);
 
     // Última conversación abierta — solo una conveniencia para restaurarla al reabrir
@@ -212,10 +219,11 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 procesarMensajesA2ui(respuesta.a2uiMessages, assistantId);
             }
             if (respuesta.accionNavegacion) {
-                onAccionNavegacion?.(respuesta.accionNavegacion);
+                const accion = accionNavegacionConNombreCorto(respuesta.accionNavegacion, capacidades);
+                setAccionNavegacionPorMensaje(prev => ({ ...prev, [assistantId]: accion }));
             }
         },
-        [establecerThreadId, onAccionNavegacion, procesarMensajesA2ui]
+        [establecerThreadId, procesarMensajesA2ui, capacidades]
     );
 
     // El servidor devuelve el id con el que ha persistido cada adjunto — se guarda en
@@ -272,7 +280,8 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                             } else if (evento.tipo === "a2ui") {
                                 procesarMensajesA2ui([evento.a2uiMessage], assistantId);
                             } else if (evento.tipo === "accion_navegacion") {
-                                onAccionNavegacion?.(evento.accionNavegacion);
+                                const accion = accionNavegacionConNombreCorto(evento.accionNavegacion, capacidades);
+                                setAccionNavegacionPorMensaje(prev => ({ ...prev, [assistantId]: accion }));
                             } else if (evento.tipo === "fin") {
                                 establecerThreadId(evento.threadId);
                                 if (evento.necesitaCapacidades) {
@@ -317,7 +326,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
         },
         [
             streamingEnabled, construirConsulta, consultar, aplicarRespuesta, aplicarIdsAdjuntos,
-            procesarMensajesA2ui, establecerThreadId, onAccionNavegacion,
+            procesarMensajesA2ui, establecerThreadId, capacidades,
         ]
     );
 
@@ -462,6 +471,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 messageSurfaceMap,
                 enviarAccion,
                 adjuntosPorMensaje,
+                accionNavegacionPorMensaje,
                 threadIdActivo,
                 cambiarAHilo,
                 nuevaConversacion,

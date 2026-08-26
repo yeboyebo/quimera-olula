@@ -29,7 +29,7 @@ export const nuevaEmpresaInicial = (): NuevaEmpresa => ({
     otros: "",
     codPostal: "",
     ciudad: "",
-    provinciaId: 0,
+    provinciaId: "",
     provincia: "",
     paisId: "",
     apartado: "",

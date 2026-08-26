@@ -17,6 +17,8 @@
 
 export interface Capacidad {
     ruta: string;
+    /** Nombre corto para mostrar (p. ej. en el botón de navegación) — NO usar `descripcion` para eso: es el texto largo pensado para que el LLM decida cuándo aplica esta capacidad. */
+    nombre: string;
     descripcion: string;
     parametros?: Record<string, string>;
     regla?: string;
@@ -25,6 +27,8 @@ export interface Capacidad {
 export interface AccionNavegacion {
     ruta: string;
     parametros?: Record<string, string>;
+    /** Nombre corto de la pantalla destino (p. ej. "Pedidos") — el botón compone "Ir a {descripcion}"; nunca la descripción larga pensada para el LLM. */
+    descripcion?: string | null;
 }
 
 /** Audio/documento (Excel, PDF) que se manda junto con un mensaje. */
