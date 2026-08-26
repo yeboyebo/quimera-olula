@@ -3,6 +3,7 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { plugin } from "@olula/lib/dominio.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect, useMemo } from "react";
@@ -19,6 +20,7 @@ import { AprobarPresupuesto } from "../aprobar/AprobarPresupuesto.tsx";
 import { PedidoGenerado } from "../aprobar/PedidoGenerado.tsx";
 import { BorrarPresupuesto } from "../borrar/BorrarPresupuesto.tsx";
 import { Presupuesto } from "../diseño.ts";
+import { aprobado } from "../dominio.ts";
 import { getReportPresupuesto } from "../infraestructura.ts";
 import { EstadoPresupuesto } from "../vistas/EstadoPresupuesto.tsx";
 import { metaPresupuesto, presupuestoVacio } from "./detalle.ts";
@@ -28,7 +30,6 @@ import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatosBase as TabDatos } from "./TabDatosBase.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
-import { aprobado } from "../dominio.ts";
 
 export const DetallePresupuesto = ({
   id,
@@ -43,8 +44,8 @@ export const DetallePresupuesto = ({
 
   // Con presupuesto parcial se eligen las cantidades en una pantalla aparte;
   // sin él, aprobar sigue generando el pedido completo desde este detalle.
-  // const parcial = plugin("presupuesto_parcial") === "activo";
-  const parcial = true;
+  const parcial = plugin("presupuesto_parcial") === "activo";
+  // const parcial = true;
 
   const { ctx, emitir } = useMaquina(
     getMaquina,
