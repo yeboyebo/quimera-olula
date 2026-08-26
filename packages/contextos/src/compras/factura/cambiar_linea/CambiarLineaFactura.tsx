@@ -64,10 +64,7 @@ export const CambiarLineaFactura = ({
                     <QInput label="Coste unitario" {...uiProps("pvpUnitario")} />
                     <QInput label="% Descuento" {...uiProps("dtoPorcentual")} />
                     <QInput label="Descuento lineal" {...uiProps("dtoLineal")} />
-                    <GrupoIvaProducto
-                        {...uiProps("grupoIvaProductoId")}
-                        nombre="grupoIvaProductoId"
-                    />
+                    <GrupoIvaProducto {...uiProps("grupoIvaProductoId")} />
                     <QInput label="% I.R.P.F." {...uiProps("tipoIrpf")} />
                 </quimera-formulario>
                 <div className="botones maestro-botones">

@@ -51,7 +51,6 @@ export const MaestroConDetalleAlbaran = () => {
                         <Listado<Albaran>
                             metaTabla={metaTablaAlbaran}
                             criteria={albaranes.criteria}
-                            modoInicial="tarjetas"
                             tarjeta={TarjetaAlbaran}
                             entidades={albaranes.lista}
                             totalEntidades={albaranes.total}
@@ -78,7 +77,6 @@ export const MaestroConDetalleAlbaran = () => {
                 }
                 Detalle={<DetalleAlbaran id={albaranes.activo} publicar={emitir} />}
                 seleccionada={albaranes.activo}
-                modoDisposicion="maestro-50"
             />
 
             {estado === "CREANDO" && <CrearAlbaran publicar={emitir} />}

@@ -132,6 +132,16 @@ interface CambiosLineaFacturaApi {
 
 const fechaAApi = (fecha: Date): string => fecha.toISOString().slice(0, 10);
 
+/**
+ * El servidor devuelve la hora con microsegundos ("12:17:07.756615"), y eso un
+ * <input type="time"> no lo acepta: se queda en blanco. Se recorta a HH:MM:SS.
+ */
+const horaDesdeApi = (hora: string | null): string => (hora ?? "").slice(0, 8);
+
+/** El input puede devolver HH:MM; el servidor espera HH:MM:SS. */
+const horaAApi = (hora: string): string =>
+    hora.length === 5 ? `${hora}:00` : hora.slice(0, 8);
+
 export const facturaDesdeApi = (api: FacturaApi): Factura => ({
     id: api.id,
     codigo: api.codigo,
@@ -139,7 +149,7 @@ export const facturaDesdeApi = (api: FacturaApi): Factura => ({
     serieId: api.serie_id,
     numero: api.numero,
     fecha: new Date(Date.parse(api.fecha)),
-    hora: api.hora,
+    hora: horaDesdeApi(api.hora),
     numeroProveedor: api.numero_proveedor,
     proveedorId: api.proveedor_id,
     nombreProveedor: api.nombre_proveedor,
@@ -220,7 +230,7 @@ const nuevaFacturaAApi = (
 const cambiosFacturaAApi = (f: CambiosFactura): CambiosFacturaApi => {
     const cambios: CambiosFacturaApi = {};
     if (f.fecha !== undefined) cambios.fecha = fechaAApi(f.fecha);
-    if (f.hora !== undefined) cambios.hora = f.hora;
+    if (f.hora !== undefined) cambios.hora = horaAApi(f.hora);
     if (f.numeroProveedor !== undefined) cambios.numero_proveedor = f.numeroProveedor;
     if (f.divisaId) {
         cambios.divisa = {

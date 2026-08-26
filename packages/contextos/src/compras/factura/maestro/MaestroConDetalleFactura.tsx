@@ -48,7 +48,6 @@ export const MaestroConDetalleFactura = () => {
                         <Listado<Factura>
                             metaTabla={metaTablaFactura}
                             criteria={facturas.criteria}
-                            modoInicial="tarjetas"
                             tarjeta={TarjetaFactura}
                             entidades={facturas.lista}
                             totalEntidades={facturas.total}
@@ -68,7 +67,6 @@ export const MaestroConDetalleFactura = () => {
                 }
                 Detalle={<DetalleFactura id={facturas.activo} publicar={emitir} />}
                 seleccionada={facturas.activo}
-                modoDisposicion="maestro-50"
             />
 
             {estado === "CREANDO" && <CrearFactura publicar={emitir} />}
