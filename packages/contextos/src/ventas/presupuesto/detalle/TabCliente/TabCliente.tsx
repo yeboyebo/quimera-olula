@@ -8,6 +8,7 @@ import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Presupuesto } from "../../diseño.ts";
 import { EstadoPresupuesto } from "../diseño.ts";
 import "./TabCliente.css";
+import { aprobado } from "../../dominio.ts";
 
 interface TabClienteProps {
   presupuesto: HookModelo<Presupuesto>;
@@ -21,7 +22,7 @@ export const TabCliente = ({
   publicar = async () => {},
 }: TabClienteProps) => {
   const { modelo } = presupuesto;
-  const puedeEditarCliente = !modelo.aprobado;
+  const puedeEditarCliente = !aprobado(modelo);
   const mostrarBotonCambiarCliente = estado === "ABIERTO" && puedeEditarCliente;
 
   const onGuardarCambioCliente = async (cambios: CambioCliente) => {

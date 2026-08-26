@@ -6,7 +6,7 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, EstadoAprobado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -36,7 +36,7 @@ type PresupuestoAPI = {
   id_fiscal: string;
   direccion_id: string | null;
   direccion: Direccion;
-  aprobado: boolean;
+  estado_aprobado: EstadoAprobado;
 };
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
@@ -45,6 +45,11 @@ interface LineaPresupuestoAPI extends Omit<LineaPresupuesto, 'descripcionArticul
   descripcion_articulo: string | null;
 }
 
+/**
+ * `Entidad` tiene firma de índice, así que `Omit` degrada todos los campos a
+ * `unknown` y no hay forma de construir el resultado sin el doble cast. Los
+ * campos que no se renombran —`aprobada`, `cerrada`— viajan en el spread.
+ */
 export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => ({
   ...l,
   descripcionArticulo: l.descripcion_articulo,
