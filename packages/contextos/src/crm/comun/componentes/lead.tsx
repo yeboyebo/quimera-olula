@@ -8,6 +8,7 @@ interface LeadSelectorProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  enlace?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
   [key: string]: unknown;
 }
@@ -18,6 +19,7 @@ export const LeadSelector = ({
   nombre = "lead_id",
   label = "Seleccionar lead",
   deshabilitado = false,
+  enlace = "/crm/lead?id={id}",
   onChange,
   ...props
 }: LeadSelectorProps) => {
@@ -52,6 +54,7 @@ export const LeadSelector = ({
       autoSeleccion
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
+      enlace={enlace}
       deshabilitado={deshabilitado}
     />
   );

@@ -204,8 +204,6 @@ export const QAutocompletar = ({
               <a
                 className="enlace-solo-lectura"
                 href={enlaceHref}
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label={`Abrir ${props.label ?? "ficha"}`}
               >
                 <QIcono nombre="arriba_derecha" tamaño="sm" />
@@ -258,8 +256,6 @@ export const QAutocompletar = ({
           <a
             className="autocompletar-enlace"
             href={enlaceHref}
-            target="_blank"
-            rel="noopener noreferrer"
             aria-label={`Abrir ${props.label ?? "ficha"}`}
             tabIndex={-1}
           >
