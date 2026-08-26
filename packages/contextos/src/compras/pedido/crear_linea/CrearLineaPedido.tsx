@@ -51,7 +51,6 @@ export const CrearLineaPedido = ({
                         autoFocus
                     />
                     <QInput label="Cantidad" {...uiProps("cantidad")} />
-                    {/* En compras no hay tarifa de proveedor: el coste es obligatorio siempre. */}
                     <QInput label="Coste unitario" {...uiProps("pvpUnitario")} />
                 </quimera-formulario>
                 <div className="botones maestro-botones">

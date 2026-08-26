@@ -7,31 +7,22 @@ import {
     Pedido,
 } from "./diseño.ts";
 
-/**
- * Un pedido que no está pendiente rechaza con 409 los cambios que afectan a lo
- * recibido: crear o borrar líneas, importes, impuestos, artículo, proveedor,
- * grupo de IVA y el propio borrado. Sí acepta observaciones o fecha de entrada.
- */
 export const pedidoPendiente = (pedido: Pedido): boolean =>
     pedido.recibido === null || pedido.recibido === "No";
 
 export const descripcionRecibido = (pedido: Pedido): string =>
     pedido.recibido ?? "No";
 
-/** Queda algo por recibir mientras el pedido no esté recibido del todo. */
 export const pedidoAlbaranable = (pedido: Pedido): boolean => pedido.recibido !== "Sí";
 
-/** Las líneas sin artículo de catálogo no tienen referencia: solo descripción. */
 export const etiquetaLinea = (linea: LineaPedido): string =>
     linea.referencia ? `${linea.referencia}: ${linea.descripcion}` : linea.descripcion;
 
-/** La línea llega del servidor sin el tipo de artículo: se infiere al abrir el formulario. */
 export const modeloLineaPedido = (linea: LineaPedido): ModeloLineaPedido => ({
     ...linea,
     tipoArticulo: getTipoArticulo(linea),
 });
 
-/** El artículo de una línea recibida o cerrada no se puede cambiar. */
 export const articuloLineaBloqueado = (linea: LineaPedido): boolean =>
     linea.cerrada || linea.cantidadRecibida > 0;
 
@@ -52,10 +43,6 @@ export const metaLineaPedido: MetaModelo<ModeloLineaPedido> = {
     validacion: articuloDeLineaValido,
 };
 
-/**
- * El coste unitario solo se exige en líneas libres: con artículo del catálogo,
- * dejarlo vacío hace que el servidor lo resuelva desde articulosprov.
- */
 export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = {
     campos: {
         referencia: { tipo: "texto" },

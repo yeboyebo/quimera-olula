@@ -1,7 +1,12 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import ApiUrls from "../comun/urls.ts";
-import { ArticuloLineaCompraApi, articuloLineaApi } from "../comun/infraestructura.ts";
+import {
+    ArticuloLineaCompraApi,
+    articuloLineaApi,
+    ProveedorCompraApi,
+    proveedorCompraApi,
+} from "../comun/infraestructura.ts";
 import {
     BorrarLineasPedido,
     CambiosLineaPedido,
@@ -77,11 +82,6 @@ export interface LineaPedidoApi {
     cerrada: boolean;
 }
 
-/** Las dos formas son excluyentes: con proveedor_id se hereda del maestro. */
-type ProveedorPedidoApi =
-    | { proveedor_id: string }
-    | { nombre: string; id_fiscal: string };
-
 interface NuevaLineaPedidoApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
@@ -89,7 +89,7 @@ interface NuevaLineaPedidoApi {
 }
 
 interface NuevoPedidoApi {
-    proveedor: ProveedorPedidoApi;
+    proveedor: ProveedorCompraApi;
     fecha: string;
     empresa_id: string;
     fecha_entrada?: string;
@@ -99,7 +99,7 @@ interface NuevoPedidoApi {
 }
 
 interface CambiosPedidoApi {
-    proveedor?: ProveedorPedidoApi;
+    proveedor?: ProveedorCompraApi;
     fecha?: string;
     fecha_entrada?: string;
     numero_proveedor?: string | null;
@@ -179,7 +179,7 @@ const esProveedorNoRegistrado = (
 
 const proveedorAApi = (
     pedido: NuevoPedido | NuevoPedidoProveedorNoRegistrado
-): ProveedorPedidoApi =>
+): ProveedorCompraApi =>
     esProveedorNoRegistrado(pedido)
         ? { nombre: pedido.nombre, id_fiscal: pedido.idFiscal }
         : { proveedor_id: pedido.proveedorId };
@@ -196,12 +196,11 @@ const nuevoPedidoAApi = (
     ...(pedido.observaciones ? { observaciones: pedido.observaciones } : {}),
 });
 
-/**
- * No se puede cambiar la serie ni el número de un pedido creado, así que no
- * se mapean. Cambiar divisa, grupo de IVA o descuento retotaliza el pedido.
- */
 const cambiosPedidoAApi = (p: CambiosPedido): CambiosPedidoApi => {
     const cambios: CambiosPedidoApi = {};
+    if (p.proveedorId !== undefined || p.nombreProveedor !== undefined) {
+        cambios.proveedor = proveedorCompraApi(p);
+    }
     if (p.fecha !== undefined) cambios.fecha = fechaAApi(p.fecha);
     if (p.fechaEntrada !== undefined) cambios.fecha_entrada = fechaAApi(p.fechaEntrada);
     if (p.numeroProveedor !== undefined) cambios.numero_proveedor = p.numeroProveedor;
@@ -218,10 +217,6 @@ const cambiosPedidoAApi = (p: CambiosPedido): CambiosPedidoApi => {
     return cambios;
 };
 
-/**
- * pvp_unitario se omite cuando viene vacío: con artículo del catálogo el
- * servidor lo resuelve desde articulosprov para el proveedor del pedido.
- */
 const nuevaLineaAApi = (linea: NuevaLineaPedido): NuevaLineaPedidoApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
@@ -308,7 +303,6 @@ export const postLineasPedido: PostLineasPedido = async (id, lineas) => {
         { lineas: lineas.map(nuevaLineaAApi) },
         "Error al crear las líneas del pedido"
     );
-    // La respuesta de este endpoint es { lineas: string[] }, no { id }.
     const { lineas: ids } = respuesta as unknown as { lineas: string[] };
     return ids;
 };
@@ -337,10 +331,6 @@ export const cerrarLineaPedido: CerrarLineaPedido = async (id, lineaId, cerrada)
     );
 };
 
-/**
- * Borrar líneas es un PATCH a .../linea/borrar con la lista de ids en el cuerpo,
- * igual que en el pedido de venta. Para una sola línea se manda un id.
- */
 export const borrarLineasPedido: BorrarLineasPedido = async (id, lineas) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/linea/borrar`,

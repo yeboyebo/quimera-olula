@@ -91,9 +91,6 @@ export const contextoDetalleProveedorInicial: ContextoDetalleProveedor = {
     cuentas: listaEntidadesInicial<CuentaBancoProveedor>(),
 };
 
-/**
- * Refresca la cabecera y propaga el cambio al maestro.
- */
 export const refrescarProveedor: ProcesarDetalle = async (contexto) => {
     const proveedor = await getProveedor(contexto.proveedor.id);
     return [
@@ -102,10 +99,6 @@ export const refrescarProveedor: ProcesarDetalle = async (contexto) => {
     ];
 };
 
-/**
- * Las direcciones y las cuentas tienen endpoint propio: se refrescan aparte
- * de la cabecera.
- */
 export const refrescarDirecciones: ProcesarDetalle = async (contexto) => {
     const direcciones = await getDireccionesProveedor(contexto.proveedor.id);
     return Direcciones.recargar(contexto, { datos: direcciones, total: direcciones.length });
@@ -151,10 +144,6 @@ export const guardarProveedor = async (
     await patchProveedor(proveedor.id, cambios);
 };
 
-/**
- * La baja y el alta se hacen con los cambios de cabecera (de_baja + fecha_baja),
- * no hay endpoint dedicado.
- */
 export const darDeBajaProceso: ProcesarDetalle = async (contexto, payload) => {
     const fecha = (payload as Date | undefined) ?? new Date();
     await patchProveedor(contexto.proveedor.id, { deBaja: true, fechaBaja: fecha });
@@ -235,10 +224,6 @@ export const onCuentaCambiada: ProcesarDetalle = async (contexto, payload) => {
     return pipeProveedor(contexto, [refrescarCuentas, activarCuentaPorId(id)]);
 };
 
-/**
- * Borrar la cuenta que era la de pago la deja sin asignar en el servidor,
- * así que también hay que refrescar la cabecera.
- */
 export const onCuentaBorrada: ProcesarDetalle = async (contexto, payload) => {
     const id = payload as string;
     const indice = contexto.cuentas.lista.findIndex((c) => c.id === id);
@@ -268,10 +253,6 @@ export const desasignarCuentaPagoProceso: ProcesarDetalle = async (contexto) => 
     return pipeProveedor(contexto, [refrescarProveedor]);
 };
 
-/**
- * El listado de cuentas responde 404 cuando el proveedor no tiene ninguna,
- * así que ese caso se trata como lista vacía y no como error.
- */
 const cuentasDelProveedor = (id: string) =>
     getCuentasBancoProveedor(id).catch(() => [] as CuentaBancoProveedor[]);
 

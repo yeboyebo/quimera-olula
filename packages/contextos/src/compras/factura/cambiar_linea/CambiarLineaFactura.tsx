@@ -50,8 +50,6 @@ export const CambiarLineaFactura = ({
                     </p>
                 )}
                 <quimera-formulario>
-                    {/* Cambiar el artículo recalcula el coste desde articulosprov,
-                        salvo que se envíe también el coste en el mismo cambio. */}
                     <ArticuloLinea
                         tipoArticulo={modelo.tipoArticulo}
                         referencia={modelo.referencia}

@@ -2,7 +2,6 @@ import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { MetaTabla, QIcono } from "@olula/componentes/index.js";
 import { Pedido, Recibido } from "../diseño.ts";
 
-/** El estado agregado de recepción lo calcula el servidor en el campo recibido. */
 const estadosRecepcion: Record<Recibido, string> = {
   "Sí": "recibido",
   Parcial: "parcial",

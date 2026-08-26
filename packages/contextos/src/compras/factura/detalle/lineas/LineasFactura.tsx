@@ -21,7 +21,6 @@ export const LineasFactura = ({
     publicar: EmitirEvento;
 }) => {
     const activa = lineas.activo;
-    // Una factura cerrada rechaza con 409 crear, borrar o cambiar líneas.
     const editable = facturaEditable(factura);
 
     return (

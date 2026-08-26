@@ -2,6 +2,7 @@ import { Maquina } from "@olula/lib/diseño.ts";
 import { publicar } from "@olula/lib/dominio.ts";
 import {
     cambiarRectificativa,
+    cambiarProveedor,
     cargarContexto,
     cerrarFacturaProceso,
     limpiarContexto,
@@ -37,6 +38,8 @@ export const getMaquina: () => Maquina<EstadoDetalleFactura, ContextoDetalleFact
 
             borrado_solicitado: "BORRANDO",
 
+            cambio_proveedor_solicitado: "CAMBIANDO_PROVEEDOR",
+
             cierre_solicitado: [cerrarFacturaProceso],
             reapertura_solicitada: [reabrirFacturaProceso],
 
@@ -46,6 +49,11 @@ export const getMaquina: () => Maquina<EstadoDetalleFactura, ContextoDetalleFact
             alta_linea_solicitada: "CREANDO_LINEA",
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
             baja_linea_solicitada: "BORRANDO_LINEA",
+        },
+
+        CAMBIANDO_PROVEEDOR: {
+            cambio_proveedor_listo: [cambiarProveedor],
+            cambio_proveedor_cancelado: "ABIERTO",
         },
 
         BORRANDO: {

@@ -163,11 +163,6 @@ const nuevoProveedorAApi = (p: NuevoProveedor): NuevoProveedorApi => ({
     empresa_id: empresaActual(),
 });
 
-/**
- * El tipo de id fiscal solo cambia dentro de id_fiscal: { id, tipo }; el
- * tipo_id_fiscal suelto lo ignora el servidor. Por eso, si cambia cualquiera
- * de los dos campos, se manda el par completo.
- */
 const cambiosProveedorAApi = (p: CambiosProveedor): CambiosProveedorApi => {
     const cambios: CambiosProveedorApi = {};
     if (p.nombre !== undefined) cambios.nombre = p.nombre;
@@ -307,9 +302,6 @@ export const postDireccionProveedor: PostDireccionProveedor = async (id, direcci
     return String(respuesta.id);
 };
 
-/**
- * El flag principal no se cambia aquí: solo con marcarDireccionPrincipal.
- */
 export const patchDireccionProveedor: PatchDireccionProveedor = async (id, direccionId, cambios) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/direccion/${direccionId}`,

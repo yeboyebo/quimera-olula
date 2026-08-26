@@ -15,7 +15,6 @@ export const BorrarLineaPedido = ({
     linea: LineaPedido;
     publicar: EmitirEvento;
 }) => {
-    // No hay endpoint para borrar una línea suelta: se usa el de la lista con un id.
     const borrar_ = useCallback(async () => {
         await borrarLineasPedido(pedido.id, [linea.id]);
         publicar("linea_borrada", linea.id);

@@ -16,7 +16,7 @@ import {
 import "./CrearPedido.css";
 
 export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
-    const [modoNoRegistrado] = useState(false);
+    const [modoNoRegistrado, setModoNoRegistrado] = useState(false);
 
     const inicialRegistrado = useMemo(nuevoPedidoInicial, []);
     const inicialNoRegistrado = useMemo(nuevoPedidoProveedorNoRegistradoInicial, []);
@@ -27,11 +27,11 @@ export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
         inicialNoRegistrado
     );
 
-    // const alternarModo = () => {
-    //     setModoNoRegistrado((modo) => !modo);
-    //     registrado.init(inicialRegistrado);
-    //     noRegistrado.init(inicialNoRegistrado);
-    // };
+    const alternarModo = () => {
+        setModoNoRegistrado((modo) => !modo);
+        registrado.init(inicialRegistrado);
+        noRegistrado.init(inicialNoRegistrado);
+    };
 
     const crear_ = useCallback(async () => {
         const modelo = modoNoRegistrado ? noRegistrado.modelo : registrado.modelo;
@@ -55,11 +55,11 @@ export const CrearPedido = ({ publicar }: { publicar: EmitirEvento }) => {
             titulo="Crear pedido de compra"
             onCerrar={cancelar}
         >
-            {/* <div className="modo-proveedor">
+            <div className="modo-proveedor">
                 <QBoton onClick={alternarModo} variante="texto" tipo="button">
                     {modoNoRegistrado ? "Proveedor registrado" : "Proveedor no registrado"}
                 </QBoton>
-            </div> */}
+            </div>
             <div className="CrearPedido">
                 <quimera-formulario>
                     {modoNoRegistrado ? (

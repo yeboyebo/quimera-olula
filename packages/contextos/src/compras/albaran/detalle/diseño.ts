@@ -5,6 +5,7 @@ export type EstadoDetalleAlbaran =
     | 'INICIAL'
     | 'ABIERTO'
     | 'BORRANDO'
+    | 'CAMBIANDO_PROVEEDOR'
     | 'CREANDO_LINEA'
     | 'CAMBIANDO_LINEA'
     | 'BORRANDO_LINEA';

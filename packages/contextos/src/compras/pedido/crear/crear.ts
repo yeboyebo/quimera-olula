@@ -1,12 +1,6 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { NuevoPedido, NuevoPedidoProveedorNoRegistrado } from "../diseño.ts";
 
-/*
- * El alta pide lo mínimo: el resto lo hereda el servidor en cascada
- * (comando → proveedor → empresa). La fecha no se muestra, se manda la de hoy,
- * y la fecha de entrada se omite para que el servidor use la del pedido.
- */
-
 export const metaNuevoPedido: MetaModelo<NuevoPedido> = {
     campos: {
         proveedorId: { requerido: true },

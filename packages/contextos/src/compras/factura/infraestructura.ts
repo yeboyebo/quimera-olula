@@ -1,6 +1,11 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
-import { ArticuloLineaCompraApi, articuloLineaApi } from "../comun/infraestructura.ts";
+import {
+    ArticuloLineaCompraApi,
+    articuloLineaApi,
+    ProveedorCompraApi,
+    proveedorCompraApi,
+} from "../comun/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import {
     BorrarLineasFactura,
@@ -84,11 +89,6 @@ export interface LineaFacturaApi {
     tipo_irpf: number;
 }
 
-/** Las dos formas son excluyentes: con proveedor_id se hereda del maestro. */
-type ProveedorFacturaApi =
-    | { proveedor_id: string }
-    | { nombre: string; id_fiscal: string };
-
 interface NuevaLineaFacturaApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
@@ -96,7 +96,7 @@ interface NuevaLineaFacturaApi {
 }
 
 interface NuevaFacturaApi {
-    proveedor: ProveedorFacturaApi;
+    proveedor: ProveedorCompraApi;
     fecha: string;
     empresa_id: string;
     numero_proveedor?: string | null;
@@ -106,6 +106,7 @@ interface NuevaFacturaApi {
 }
 
 interface CambiosFacturaApi {
+    proveedor?: ProveedorCompraApi;
     fecha?: string;
     hora?: string;
     numero_proveedor?: string | null;
@@ -132,13 +133,8 @@ interface CambiosLineaFacturaApi {
 
 const fechaAApi = (fecha: Date): string => fecha.toISOString().slice(0, 10);
 
-/**
- * El servidor devuelve la hora con microsegundos ("12:17:07.756615"), y eso un
- * <input type="time"> no lo acepta: se queda en blanco. Se recorta a HH:MM:SS.
- */
 const horaDesdeApi = (hora: string | null): string => (hora ?? "").slice(0, 8);
 
-/** El input puede devolver HH:MM; el servidor espera HH:MM:SS. */
 const horaAApi = (hora: string): string =>
     hora.length === 5 ? `${hora}:00` : hora.slice(0, 8);
 
@@ -206,7 +202,7 @@ const esProveedorNoRegistrado = (
 
 const proveedorAApi = (
     factura: NuevaFactura | NuevaFacturaProveedorNoRegistrado
-): ProveedorFacturaApi =>
+): ProveedorCompraApi =>
     esProveedorNoRegistrado(factura)
         ? { nombre: factura.nombre, id_fiscal: factura.idFiscal }
         : { proveedor_id: factura.proveedorId };
@@ -223,12 +219,11 @@ const nuevaFacturaAApi = (
     ...(factura.deAbono ? { de_abono: true } : {}),
 });
 
-/**
- * La serie y el número no se pueden cambiar. Aquí almacen_id a null sí borra el
- * valor (en el albarán se ignora), pero divisa a null se ignora igual.
- */
 const cambiosFacturaAApi = (f: CambiosFactura): CambiosFacturaApi => {
     const cambios: CambiosFacturaApi = {};
+    if (f.proveedorId !== undefined || f.nombreProveedor !== undefined) {
+        cambios.proveedor = proveedorCompraApi(f);
+    }
     if (f.fecha !== undefined) cambios.fecha = fechaAApi(f.fecha);
     if (f.hora !== undefined) cambios.hora = horaAApi(f.hora);
     if (f.numeroProveedor !== undefined) cambios.numero_proveedor = f.numeroProveedor;
@@ -249,10 +244,6 @@ const cambiosFacturaAApi = (f: CambiosFactura): CambiosFacturaApi => {
     return cambios;
 };
 
-/**
- * pvp_unitario se omite cuando viene vacío: con artículo del catálogo el
- * servidor lo resuelve desde articulosprov para el proveedor de la factura.
- */
 const nuevaLineaAApi = (linea: NuevaLineaFactura): NuevaLineaFacturaApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
@@ -304,18 +295,12 @@ export const postFactura: PostFactura = async (nuevaFactura) => {
     return respuesta.id;
 };
 
-/**
- * Factura los albaranes enteros: lo recibido quedó fijado al albaranar, así que
- * no hay cantidades que elegir. Los albaranes deben compartir proveedor, serie,
- * almacén y forma de pago, y no estar ya facturados; si no, el servidor da 409.
- */
 export const facturarAlbaranes: FacturarAlbaranes = async (albaranIds) => {
     const respuesta = await RestAPI.post(
         `${baseUrl}/desde-albaranes`,
         { albaran_ids: albaranIds },
         "Error al facturar los albaranes"
     );
-    // Este endpoint responde { factura_id, codigo }, no { id }.
     const { factura_id, codigo } = respuesta as unknown as {
         factura_id: string;
         codigo: string;
@@ -366,7 +351,6 @@ export const postLineasFactura: PostLineasFactura = async (id, lineas) => {
         { lineas: lineas.map(nuevaLineaAApi) },
         "Error al crear las líneas de la factura"
     );
-    // La respuesta de este endpoint es { lineas: string[] }, no { id }.
     const { lineas: ids } = respuesta as unknown as { lineas: string[] };
     return ids;
 };

@@ -1,3 +1,4 @@
+import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
@@ -59,7 +60,6 @@ export const DetallePedido = ({
         imprimir_blob(blob);
     };
 
-    // Un pedido que no está pendiente no se puede borrar: el servidor responde 409.
     const accionesPedido = [
         { texto: "Imprimir", onClick: imprimir },
         {
@@ -88,7 +88,7 @@ export const DetallePedido = ({
                         <Tab
                             key="tab-proveedor"
                             label="Proveedor"
-                            children={<TabProveedor form={formModelo} />}
+                            children={<TabProveedor form={formModelo} publicar={emitir} />}
                         />,
                         <Tab
                             key="tab-datos"
@@ -110,6 +110,14 @@ export const DetallePedido = ({
                     publicar={emitir}
                 />
             </div>
+
+            {estado === "CAMBIANDO_PROVEEDOR" && (
+                <CambioProveedor
+                    documento={pedido}
+                    onGuardar={async (cambio) => emitir("cambio_proveedor_listo", cambio)}
+                    onCancelar={() => emitir("cambio_proveedor_cancelado")}
+                />
+            )}
 
             {estado === "BORRANDO" && (
                 <BorrarPedido pedido={pedido} publicar={emitir} />

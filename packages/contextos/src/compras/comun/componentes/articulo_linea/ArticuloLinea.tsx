@@ -7,22 +7,15 @@ import "./ArticuloLinea.css";
 
 export type CamposArticuloLinea = ArticuloDeLineaConTipo;
 
-/** Tipos entre los que alternan los botones de candado: el genérico se activa aparte. */
 type TipoArticuloAlternable = "registrado" | "libre";
 
 type ArticuloLineaProps = CamposArticuloLinea & {
     nombre?: string;
     onChange: (cambios: Partial<CamposArticuloLinea>) => void;
-    /** Impide cambiar de artículo y convertir la línea a libre. */
     bloqueado?: boolean;
-    /** Enfoca el campo de artículo al abrir el formulario. */
     autoFocus?: boolean;
 };
 
-/**
- * Campo de artículo de una línea de compra. Resuelve los tres tipos: artículo del
- * catálogo, artículo del catálogo con descripción personalizada, y línea libre.
- */
 export const ArticuloLinea = ({
     tipoArticulo,
     referencia,

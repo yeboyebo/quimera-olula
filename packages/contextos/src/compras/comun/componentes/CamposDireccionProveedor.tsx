@@ -3,11 +3,6 @@ import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { UiProps } from "@olula/lib/useModelo.ts";
 import "./CamposDireccionProveedor.css";
 
-/**
- * Campos de dirección del proveedor, compartidos por el alta y la edición.
- * Devuelve un fragmento: tiene que ser hijo directo de `quimera-formulario`,
- * y el contenedor del formulario debe llevar la clase `campos-direccion-proveedor`.
- */
 export const CamposDireccionProveedor = ({
   uiProps,
 }: {
@@ -22,7 +17,6 @@ export const CamposDireccionProveedor = ({
     <QInput label="Ciudad" {...uiProps("ciudad")} />
     <QInput label="Provincia" {...uiProps("provincia")} />
     <PaisSelector label="País" {...uiProps("paisId", "pais")} />
-    {/* <QInput label="Apartado" {...uiProps("apartado")} /> */}
     <QInput label="Teléfono" {...uiProps("telefono")} />
   </>
 );

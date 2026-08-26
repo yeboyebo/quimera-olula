@@ -6,11 +6,6 @@ import { useForm } from "@olula/lib/useForm.ts";
 import { useCallback, useState } from "react";
 import { Factura } from "../diseño.ts";
 
-/**
- * Marca la factura como rectificativa de otra. El servidor guarda además el
- * código de la factura rectificada, así que la lectura devuelve las dos cosas.
- * Dejando el campo vacío se quita la rectificación.
- */
 export const CambiarRectificativa = ({
     factura,
     publicar,
@@ -33,7 +28,6 @@ export const CambiarRectificativa = ({
 
     const [cambiar, cancelar] = useForm(cambiar_, cancelar_);
 
-    // Una factura no puede rectificarse a sí misma: el servidor responde 400.
     const esLaPropiaFactura = rectificativaId === factura.id;
 
     return (

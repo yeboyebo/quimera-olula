@@ -1,3 +1,4 @@
+import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
@@ -98,7 +99,7 @@ export const DetalleFactura = ({
                         <Tab
                             key="tab-proveedor"
                             label="Proveedor"
-                            children={<TabProveedor form={formModelo} />}
+                            children={<TabProveedor form={formModelo} publicar={emitir} />}
                         />,
                         <Tab
                             key="tab-datos"
@@ -120,6 +121,14 @@ export const DetalleFactura = ({
                     publicar={emitir}
                 />
             </div>
+
+            {estado === "CAMBIANDO_PROVEEDOR" && (
+                <CambioProveedor
+                    documento={factura}
+                    onGuardar={async (cambio) => emitir("cambio_proveedor_listo", cambio)}
+                    onCancelar={() => emitir("cambio_proveedor_cancelado")}
+                />
+            )}
 
             {estado === "BORRANDO" && (
                 <BorrarFactura factura={factura} publicar={emitir} />

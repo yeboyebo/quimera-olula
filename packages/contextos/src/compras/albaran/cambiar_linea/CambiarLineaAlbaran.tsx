@@ -51,7 +51,6 @@ export const CambiarLineaAlbaran = ({
                     </p>
                 )}
                 <quimera-formulario>
-                    {/* El artículo de una línea que viene de un pedido no se puede cambiar. */}
                     <ArticuloLinea
                         tipoArticulo={modelo.tipoArticulo}
                         referencia={modelo.referencia}

@@ -50,7 +50,6 @@ export const CrearCuentaBancoProveedor = ({
       <quimera-formulario>
         <QInput label="Descripción" {...uiProps("descripcion")} ref={focus} />
         <QInput label="IBAN" {...uiProps("iban")} />
-        {/* <QInput label="BIC" {...uiProps("bic")} /> */}
       </quimera-formulario>
       <div className="botones maestro-botones">
         <QBoton onClick={crear} deshabilitado={!valido}>

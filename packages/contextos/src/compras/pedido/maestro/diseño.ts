@@ -12,6 +12,5 @@ export type ContextoMaestroPedido = {
     estado: EstadoMaestroPedido;
     pedidos: ListaActivaEntidades<Pedido>;
     seleccionados: string[];
-    /** El albarán generado en el último albaranado, para poder navegar a él. */
     albaranCreado: AlbaranCreado | null;
 };

@@ -1,9 +1,5 @@
 import { ArticuloDeLineaConTipo } from "./diseño.ts";
 
-/**
- * El bloque `articulo` que espera el servidor es excluyente: el id del catálogo,
- * el id con descripción personalizada, o solo la descripción de una línea libre.
- */
 export type ArticuloLineaCompraApi =
     | { articulo_id: string; descripcion?: string }
     | { descripcion: string };
@@ -20,3 +16,16 @@ export const articuloLineaApi = (
             return { descripcion: linea.descripcion };
     }
 };
+
+export type ProveedorCompraApi =
+    | { proveedor_id: string }
+    | { nombre: string; id_fiscal: string };
+
+export const proveedorCompraApi = (proveedor: {
+    proveedorId?: string | null;
+    nombreProveedor?: string;
+    idFiscal?: string;
+}): ProveedorCompraApi =>
+    proveedor.proveedorId
+        ? { proveedor_id: proveedor.proveedorId }
+        : { nombre: proveedor.nombreProveedor ?? "", id_fiscal: proveedor.idFiscal ?? "" };

@@ -48,10 +48,6 @@ export const seleccionadosCambiados: ProcesarMaestro = async (contexto, payload)
 const albaranesDe = (ids: string[], albaranes: Albaran[]): Albaran[] =>
     ids.map((id) => albaranes.find((a) => a.id === id)).filter((a): a is Albaran => !!a);
 
-/**
- * El servidor genera una única factura, así que exige que los albaranes
- * compartan proveedor, serie, almacén y forma de pago; si no, responde 409.
- */
 export const albaranesHomogeneos = (ids: string[], albaranes: Albaran[]): boolean => {
     const elegidos = albaranesDe(ids, albaranes);
     if (elegidos.length === 0) return false;
@@ -66,15 +62,10 @@ export const puedenFacturarse = (ids: string[], albaranes: Albaran[]): boolean =
     const elegidos = albaranesDe(ids, albaranes);
     if (elegidos.length === 0 || elegidos.length !== ids.length) return false;
 
-    // Un albarán ya facturado da 409 y no hay forma de desfacturarlo.
     return elegidos.every((albaran) => !albaranFacturado(albaran))
         && albaranesHomogeneos(ids, albaranes);
 };
 
-/**
- * Factura los albaranes seleccionados en una sola factura. Al crearse, cada
- * albarán queda con su factura_id y deja de admitir cambios.
- */
 export const facturarSeleccionados: ProcesarMaestro = async (contexto) => {
     await facturarAlbaranes(contexto.seleccionados);
 

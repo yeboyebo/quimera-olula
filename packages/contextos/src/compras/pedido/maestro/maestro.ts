@@ -48,11 +48,6 @@ export const seleccionadosCambiados: ProcesarMaestro = async (contexto, payload)
 const pedidosDe = (ids: string[], pedidos: Pedido[]): Pedido[] =>
     ids.map((id) => pedidos.find((p) => p.id === id)).filter((p): p is Pedido => !!p);
 
-/**
- * El servidor genera un único albarán, así que exige que los pedidos compartan
- * proveedor, serie, almacén y forma de pago; si no, responde 409. Se comprueba
- * aquí para no ofrecer la acción cuando no puede funcionar.
- */
 export const pedidosHomogeneos = (ids: string[], pedidos: Pedido[]): boolean => {
     const elegidos = pedidosDe(ids, pedidos);
     if (elegidos.length === 0) return false;
@@ -70,10 +65,6 @@ export const puedenAlbaranarse = (ids: string[], pedidos: Pedido[]): boolean => 
     return elegidos.every(pedidoAlbaranable) && pedidosHomogeneos(ids, pedidos);
 };
 
-/**
- * Albarana todo lo pendiente de los pedidos seleccionados en un solo albarán.
- * Al crearse, cada pedido recalcula cantidad_recibida y su estado recibido.
- */
 export const albaranarSeleccionados: ProcesarMaestro = async (contexto) => {
     const albaranCreado = await albaranarPedidos(contexto.seleccionados);
 

@@ -5,7 +5,16 @@
     }
 
     quimera-input[nombre="idFiscal"] {
-        grid-column: 9 / span 4;
+        grid-column: 9 / span 3;
+        min-width: 0;
+    }
+
+    .TabProveedor-accion {
+        grid-column: 12 / span 1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: end;
+        margin: 0;
         min-width: 0;
     }
 

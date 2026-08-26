@@ -1,3 +1,4 @@
+import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import {
@@ -19,7 +20,6 @@ const conLineas = (fn: ProcesarListaEntidades<LineaAlbaran>) =>
 
 export const Lineas = accionesListaEntidades(conLineas);
 
-/** Un albarán facturado solo admite los cambios que no afectan a lo facturado. */
 const camposEditablesFacturado = [
     "fecha",
     "hora",
@@ -100,7 +100,6 @@ export const refrescarAlbaran: ProcesarDetalle = async (contexto) => {
     ];
 };
 
-/** Las líneas tienen endpoint propio: no vienen embebidas en la cabecera. */
 export const refrescarLineas: ProcesarDetalle = async (contexto) => {
     const lineas = await getLineasAlbaran(contexto.albaran.id);
     return Lineas.recargar(contexto, { datos: lineas, total: lineas.length });
@@ -133,6 +132,16 @@ export const guardarAlbaran = async (
     await patchAlbaran(albaran.id, cambios);
 };
 
+export const cambiarProveedor: ProcesarDetalle = async (contexto, payload) => {
+    const cambio = payload as CambioProveedor;
+    await patchAlbaran(contexto.albaran.id, {
+        proveedorId: cambio.proveedorId || null,
+        nombreProveedor: cambio.nombreProveedor,
+        idFiscal: cambio.idFiscal,
+    });
+    return pipeAlbaran(contexto, [refrescarAlbaran, 'ABIERTO']);
+};
+
 const activarLineaPorId = (id: string) => async (contexto: ContextoDetalleAlbaran) => ({
     ...contexto,
     lineas: {
@@ -157,7 +166,6 @@ const activarLineaPorIndice = (indice: number) => async (contexto: ContextoDetal
     };
 };
 
-/** Cualquier cambio en las líneas retotaliza el albarán: se refresca la cabecera. */
 export const onLineaCreada: ProcesarDetalle = async (contexto, payload) => {
     const id = payload as string;
     return pipeAlbaran(contexto, [refrescarAlbaran, refrescarLineas, activarLineaPorId(id)]);

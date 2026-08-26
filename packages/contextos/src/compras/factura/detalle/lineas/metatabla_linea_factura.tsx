@@ -9,7 +9,6 @@ export const metaTablaLineaFactura = (divisa?: string): MetaTabla<LineaFactura> 
         id: "codigoAlbaran",
         cabecera: "Albarán",
         prioridad: "media",
-        // codigo_albaran viene resuelto por JOIN: no hace falta otra petición.
         render: (linea: LineaFactura) => linea.codigoAlbaran ?? "",
     },
     {

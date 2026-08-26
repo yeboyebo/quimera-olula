@@ -21,7 +21,6 @@ export const LineasAlbaran = ({
     publicar: EmitirEvento;
 }) => {
     const activa = lineas.activo;
-    // Un albarán facturado rechaza con 409 crear, borrar o cambiar líneas.
     const editable = !albaranFacturado(albaran);
 
     return (

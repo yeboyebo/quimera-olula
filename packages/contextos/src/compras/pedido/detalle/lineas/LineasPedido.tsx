@@ -21,7 +21,6 @@ export const LineasPedido = ({
     publicar: EmitirEvento;
 }) => {
     const activa = lineas.activo;
-    // Un pedido que no está pendiente rechaza con 409 crear, borrar o cambiar líneas.
     const pendiente = pedidoPendiente(pedido);
 
     return (

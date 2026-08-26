@@ -1,3 +1,4 @@
+import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import {
@@ -24,7 +25,6 @@ const conLineas = (fn: ProcesarListaEntidades<LineaFactura>) =>
 
 export const Lineas = accionesListaEntidades(conLineas);
 
-/** Una factura cerrada solo admite los cambios que no afectan a los importes. */
 const camposEditablesCerrada = [
     "fecha",
     "hora",
@@ -120,7 +120,6 @@ export const refrescarFactura: ProcesarDetalle = async (contexto) => {
     ];
 };
 
-/** Las líneas tienen endpoint propio: no vienen embebidas en la cabecera. */
 export const refrescarLineas: ProcesarDetalle = async (contexto) => {
     const lineas = await getLineasFactura(contexto.factura.id);
     return Lineas.recargar(contexto, { datos: lineas, total: lineas.length });
@@ -156,10 +155,6 @@ export const guardarFactura = async (
     await patchFactura(factura.id, cambios);
 };
 
-/**
- * El cierre se puede levantar: editable a true reabre la factura. El PATCH de
- * editable nunca se bloquea a sí mismo.
- */
 export const cerrarFacturaProceso: ProcesarDetalle = async (contexto) => {
     await patchFactura(contexto.factura.id, { editable: false });
     return pipeFactura(contexto, [refrescarFactura]);
@@ -173,6 +168,16 @@ export const reabrirFacturaProceso: ProcesarDetalle = async (contexto) => {
 export const cambiarRectificativa: ProcesarDetalle = async (contexto, payload) => {
     const rectificativaId = (payload as string | null) || null;
     await patchRectificativa(contexto.factura.id, rectificativaId);
+    return pipeFactura(contexto, [refrescarFactura, 'ABIERTO']);
+};
+
+export const cambiarProveedor: ProcesarDetalle = async (contexto, payload) => {
+    const cambio = payload as CambioProveedor;
+    await patchFactura(contexto.factura.id, {
+        proveedorId: cambio.proveedorId || null,
+        nombreProveedor: cambio.nombreProveedor,
+        idFiscal: cambio.idFiscal,
+    });
     return pipeFactura(contexto, [refrescarFactura, 'ABIERTO']);
 };
 
@@ -200,7 +205,6 @@ const activarLineaPorIndice = (indice: number) => async (contexto: ContextoDetal
     };
 };
 
-/** Cualquier cambio en las líneas retotaliza la factura: se refresca la cabecera. */
 export const onLineaCreada: ProcesarDetalle = async (contexto, payload) => {
     const id = payload as string;
     return pipeFactura(contexto, [refrescarFactura, refrescarLineas, activarLineaPorId(id)]);

@@ -21,8 +21,6 @@ export const Proveedor = ({
   onChange,
   ...props
 }: ProveedorProps) => {
-  // El segundo argumento llega cuando QAutocompletar tiene un id sin descripción
-  // y necesita resolver su nombre.
   const obtenerOpciones = async (texto: string, id?: string) => {
     if (!id && texto.length < 2) return [];
 

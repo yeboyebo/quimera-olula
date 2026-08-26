@@ -1,13 +1,6 @@
 import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
 import { TipoArticuloLinea } from "../comun/diseño.ts";
 
-/**
- * Cabecera del albarán de compra. ItemAlbaran (el elemento del listado) tiene
- * exactamente los mismos campos.
- *
- * Frente al pedido: aquí hay hora, facturaId y pendienteFactura, y no hay
- * fechaEntrada ni recibido.
- */
 export interface Albaran extends Entidad {
     id: string;
     codigo: string;
@@ -39,23 +32,15 @@ export interface Albaran extends Entidad {
     observaciones: string | null;
 }
 
-/**
- * La línea de albarán no tiene cantidadRecibida ni cerrada: eso es del pedido.
- * Aquí cantidad ya es lo recibido en este albarán.
- */
 export interface LineaAlbaran extends Entidad {
     id: string;
     albaranId: string;
-    /** null si la línea no viene de un pedido. */
     pedidoId: string | null;
     lineaPedidoId: string | null;
-    /** null en línea libre, sin artículo del catálogo. */
     referencia: string | null;
     descripcion: string;
-    /** Descripción del catálogo; distinta de `descripcion` en las líneas genéricas. */
     descripcionArticulo: string | null;
     cantidad: number;
-    /** Coste unitario. */
     pvpUnitario: number;
     dtoPorcentual: number;
     dtoLineal: number;
@@ -76,7 +61,6 @@ export interface NuevoAlbaran extends Modelo {
     observaciones: string | null;
 }
 
-/** Sin proveedor del maestro no hay nada que heredar: todo sale de la empresa. */
 export interface NuevoAlbaranProveedorNoRegistrado extends Modelo {
     nombre: string;
     idFiscal: string;
@@ -86,32 +70,24 @@ export interface NuevoAlbaranProveedorNoRegistrado extends Modelo {
     observaciones: string | null;
 }
 
-/**
- * Alta de línea. `tipoArticulo` decide qué viaja al servidor: la referencia, la
- * descripción, o las dos.
- */
 export interface NuevaLineaAlbaran extends Modelo {
     tipoArticulo: TipoArticuloLinea;
     referencia: string | null;
     descripcion: string;
     descripcionArticulo: string | null;
     cantidad: number;
-    /** Opcional con artículo del catálogo: el servidor lo saca de articulosprov. */
     pvpUnitario: number | null;
 }
 
-/** Línea en edición: la del servidor más el tipo de artículo inferido. */
 export interface ModeloLineaAlbaran extends LineaAlbaran {
     tipoArticulo: TipoArticuloLinea;
 }
 
-/** Albarán recién generado desde pedidos: el servidor devuelve id y código. */
 export type AlbaranCreado = {
     id: string;
     codigo: string;
 };
 
-/** Cantidad concreta a recibir de una línea de pedido. */
 export type LineaAAlbaranar = {
     lineaPedidoId: string;
     cantidad: number;
@@ -126,7 +102,6 @@ export type GetAlbaranes = (criteria: Criteria) => RespuestaLista<Albaran>;
 export type PostAlbaran = (
     nuevoAlbaran: NuevoAlbaran | NuevoAlbaranProveedorNoRegistrado
 ) => Promise<string>;
-/** Genera un solo albarán a partir de uno o varios pedidos homogéneos. */
 export type AlbaranarPedidos = (
     pedidoIds: string[],
     lineas?: LineaAAlbaranar[]
@@ -146,5 +121,4 @@ export type PatchLineaAlbaran = (
     lineaId: string,
     cambios: CambiosLineaAlbaran
 ) => Promise<void>;
-/** Borrar líneas es un PATCH con la lista de ids; no hay endpoint para una suelta. */
 export type BorrarLineasAlbaran = (id: string, lineas: string[]) => Promise<void>;

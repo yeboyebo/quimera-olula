@@ -37,10 +37,6 @@ export interface NuevoProveedor extends Modelo {
 
 export type CambiosProveedor = Partial<Proveedor>;
 
-/**
- * Dirección aplanada: la API la anida en { direccion: ... } y los mappers
- * de infraestructura hacen el aplanado y el desaplanado.
- */
 export interface DireccionProveedor extends Entidad {
     id: string;
     principal: boolean;
@@ -75,10 +71,6 @@ export interface NuevaDireccionProveedor extends Modelo {
 
 export type CambiosDireccionProveedor = Partial<DireccionProveedor>;
 
-/**
- * Cuenta bancaria aplanada desde { cuenta: ... }. Los campos derivados del IBAN
- * (codigoCuenta, paisId, entidad, agencia, digitoControl, cuenta) son de solo lectura.
- */
 export interface CuentaBancoProveedor extends Entidad {
     id: string;
     descripcion: string;

@@ -1,3 +1,4 @@
+import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import {
@@ -24,11 +25,6 @@ const conLineas = (fn: ProcesarListaEntidades<LineaPedido>) =>
 
 export const Lineas = accionesListaEntidades(conLineas);
 
-/**
- * La serie y el número no se pueden cambiar una vez creado el pedido, y un
- * pedido que no está pendiente solo admite cambios que no afecten a lo
- * recibido (observaciones y fecha de entrada).
- */
 export const metaPedido: MetaModelo<Pedido> = {
     campos: {
         codigo: { bloqueado: true },
@@ -101,7 +97,6 @@ export const refrescarPedido: ProcesarDetalle = async (contexto) => {
     ];
 };
 
-/** Las líneas tienen endpoint propio: no vienen embebidas en la cabecera. */
 export const refrescarLineas: ProcesarDetalle = async (contexto) => {
     const lineas = await getLineasPedido(contexto.pedido.id);
     return Lineas.recargar(contexto, { datos: lineas, total: lineas.length });
@@ -134,6 +129,16 @@ export const guardarPedido = async (
     await patchPedido(pedido.id, cambios);
 };
 
+export const cambiarProveedor: ProcesarDetalle = async (contexto, payload) => {
+    const cambio = payload as CambioProveedor;
+    await patchPedido(contexto.pedido.id, {
+        proveedorId: cambio.proveedorId || null,
+        nombreProveedor: cambio.nombreProveedor,
+        idFiscal: cambio.idFiscal,
+    });
+    return pipePedido(contexto, [refrescarPedido, 'ABIERTO']);
+};
+
 const activarLineaPorId = (id: string) => async (contexto: ContextoDetallePedido) => ({
     ...contexto,
     lineas: {
@@ -158,7 +163,6 @@ const activarLineaPorIndice = (indice: number) => async (contexto: ContextoDetal
     };
 };
 
-/** Cualquier cambio en las líneas retotaliza el pedido, así que se refresca también la cabecera. */
 export const onLineaCreada: ProcesarDetalle = async (contexto, payload) => {
     const id = payload as string;
     return pipePedido(contexto, [refrescarPedido, refrescarLineas, activarLineaPorId(id)]);
@@ -179,7 +183,6 @@ export const onLineaBorrada: ProcesarDetalle = async (contexto, payload) => {
     ]);
 };
 
-/** Cerrar o reabrir líneas recalcula el estado de recepción del pedido. */
 export const cerrarLineaProceso: ProcesarDetalle = async (contexto) => {
     const linea = contexto.lineas.activo;
     if (!linea) return contexto;

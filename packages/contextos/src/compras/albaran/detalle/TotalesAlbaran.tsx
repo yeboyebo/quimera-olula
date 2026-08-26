@@ -3,14 +3,6 @@ import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Albaran } from "../diseño.ts";
 
-/**
- * Los totales del albarán de compra son informativos, así que por ahora se
- * reutiliza TotalesVenta adaptando el modelo: la venta usa snake_case y compras
- * camelCase. Cuando compras tenga su propio componente, se sustituye aquí.
- *
- * editable a false para que no aparezca el botón de descuento de cabecera: el
- * albarán de compra no expone por_descuento en la lectura.
- */
 export const TotalesAlbaran = ({ form }: { form: HookModelo<Albaran> }) => {
     const albaran = form.modelo;
 

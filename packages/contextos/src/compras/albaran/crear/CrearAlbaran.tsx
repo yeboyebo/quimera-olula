@@ -16,7 +16,7 @@ import {
 import "./CrearAlbaran.css";
 
 export const CrearAlbaran = ({ publicar }: { publicar: EmitirEvento }) => {
-    const [modoNoRegistrado] = useState(false);
+    const [modoNoRegistrado, setModoNoRegistrado] = useState(false);
 
     const inicialRegistrado = useMemo(nuevoAlbaranInicial, []);
     const inicialNoRegistrado = useMemo(nuevoAlbaranProveedorNoRegistradoInicial, []);
@@ -27,11 +27,11 @@ export const CrearAlbaran = ({ publicar }: { publicar: EmitirEvento }) => {
         inicialNoRegistrado
     );
 
-    // const alternarModo = () => {
-    //     setModoNoRegistrado((modo) => !modo);
-    //     registrado.init(inicialRegistrado);
-    //     noRegistrado.init(inicialNoRegistrado);
-    // };
+    const alternarModo = () => {
+        setModoNoRegistrado((modo) => !modo);
+        registrado.init(inicialRegistrado);
+        noRegistrado.init(inicialNoRegistrado);
+    };
 
     const crear_ = useCallback(async () => {
         const modelo = modoNoRegistrado ? noRegistrado.modelo : registrado.modelo;
@@ -55,11 +55,11 @@ export const CrearAlbaran = ({ publicar }: { publicar: EmitirEvento }) => {
             titulo="Crear albarán de compra"
             onCerrar={cancelar}
         >
-            {/* <div className="modo-proveedor">
+            <div className="modo-proveedor">
                 <QBoton onClick={alternarModo} variante="texto" tipo="button">
                     {modoNoRegistrado ? "Proveedor registrado" : "Proveedor no registrado"}
                 </QBoton>
-            </div> */}
+            </div>
             <div className="CrearAlbaran">
                 <quimera-formulario>
                     {modoNoRegistrado ? (

@@ -51,8 +51,6 @@ export const CrearLineaFactura = ({
                         autoFocus
                     />
                     <QInput label="Cantidad" {...uiProps("cantidad")} />
-                    {/* Con artículo del catálogo se puede dejar vacío: el servidor
-                        resuelve el coste desde articulosprov para este proveedor. */}
                     <QInput label="Coste unitario" {...uiProps("pvpUnitario")} />
                 </quimera-formulario>
                 <div className="botones maestro-botones">

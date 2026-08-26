@@ -1,7 +1,12 @@
 import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import ApiUrls from "../comun/urls.ts";
-import { ArticuloLineaCompraApi, articuloLineaApi } from "../comun/infraestructura.ts";
+import {
+    ArticuloLineaCompraApi,
+    articuloLineaApi,
+    ProveedorCompraApi,
+    proveedorCompraApi,
+} from "../comun/infraestructura.ts";
 import {
     Albaran,
     AlbaranarPedidos,
@@ -77,11 +82,6 @@ export interface LineaAlbaranApi {
     tipo_irpf: number;
 }
 
-/** Las dos formas son excluyentes: con proveedor_id se hereda del maestro. */
-type ProveedorAlbaranApi =
-    | { proveedor_id: string }
-    | { nombre: string; id_fiscal: string };
-
 interface NuevaLineaAlbaranApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
@@ -89,7 +89,7 @@ interface NuevaLineaAlbaranApi {
 }
 
 interface NuevoAlbaranApi {
-    proveedor: ProveedorAlbaranApi;
+    proveedor: ProveedorCompraApi;
     fecha: string;
     empresa_id: string;
     numero_proveedor?: string | null;
@@ -98,6 +98,7 @@ interface NuevoAlbaranApi {
 }
 
 interface CambiosAlbaranApi {
+    proveedor?: ProveedorCompraApi;
     fecha?: string;
     hora?: string;
     numero_proveedor?: string | null;
@@ -120,13 +121,8 @@ interface CambiosLineaAlbaranApi {
 
 const fechaAApi = (fecha: Date): string => fecha.toISOString().slice(0, 10);
 
-/**
- * El servidor devuelve la hora con microsegundos ("12:17:07.756615"), y eso un
- * <input type="time"> no lo acepta: se queda en blanco. Se recorta a HH:MM:SS.
- */
 const horaDesdeApi = (hora: string | null): string => (hora ?? "").slice(0, 8);
 
-/** El input puede devolver HH:MM; el servidor espera HH:MM:SS. */
 const horaAApi = (hora: string): string =>
     hora.length === 5 ? `${hora}:00` : hora.slice(0, 8);
 
@@ -188,7 +184,7 @@ const esProveedorNoRegistrado = (
 
 const proveedorAApi = (
     albaran: NuevoAlbaran | NuevoAlbaranProveedorNoRegistrado
-): ProveedorAlbaranApi =>
+): ProveedorCompraApi =>
     esProveedorNoRegistrado(albaran)
         ? { nombre: albaran.nombre, id_fiscal: albaran.idFiscal }
         : { proveedor_id: albaran.proveedorId };
@@ -204,12 +200,11 @@ const nuevoAlbaranAApi = (
     ...(albaran.observaciones ? { observaciones: albaran.observaciones } : {}),
 });
 
-/**
- * La serie y el número no se pueden cambiar. almacen_id y divisa a null los
- * ignora el servidor, así que solo se mandan con valor.
- */
 const cambiosAlbaranAApi = (a: CambiosAlbaran): CambiosAlbaranApi => {
     const cambios: CambiosAlbaranApi = {};
+    if (a.proveedorId !== undefined || a.nombreProveedor !== undefined) {
+        cambios.proveedor = proveedorCompraApi(a);
+    }
     if (a.fecha !== undefined) cambios.fecha = fechaAApi(a.fecha);
     if (a.hora !== undefined) cambios.hora = horaAApi(a.hora);
     if (a.numeroProveedor !== undefined) cambios.numero_proveedor = a.numeroProveedor;
@@ -226,11 +221,6 @@ const cambiosAlbaranAApi = (a: CambiosAlbaran): CambiosAlbaranApi => {
     return cambios;
 };
 
-/** pvp_unitario es obligatorio siempre: en compras no hay tarifa de la que derivarlo. */
-/**
- * pvp_unitario se omite cuando viene vacío: con artículo del catálogo el
- * servidor lo resuelve desde articulosprov para el proveedor del albarán.
- */
 const nuevaLineaAApi = (linea: NuevaLineaAlbaran): NuevaLineaAlbaranApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
@@ -282,11 +272,6 @@ export const postAlbaran: PostAlbaran = async (nuevoAlbaran) => {
     return respuesta.id;
 };
 
-/**
- * Genera un solo albarán con lo pendiente de los pedidos indicados. Sin lineas
- * albarana todo lo pendiente. Los pedidos deben compartir proveedor, serie,
- * almacén y forma de pago: si no, el servidor responde 409.
- */
 export const albaranarPedidos: AlbaranarPedidos = async (pedidoIds, lineas) => {
     const respuesta = (await RestAPI.post(
         `${baseUrl}/desde-pedidos`,
@@ -303,7 +288,6 @@ export const albaranarPedidos: AlbaranarPedidos = async (pedidoIds, lineas) => {
         },
         "Error al albaranar los pedidos"
     )) as unknown as { id: string; codigo?: string };
-    // El código llega del servidor; mientras no lo devuelva, se muestra el id.
     return { id: respuesta.id, codigo: respuesta.codigo ?? respuesta.id };
 };
 
@@ -342,7 +326,6 @@ export const postLineasAlbaran: PostLineasAlbaran = async (id, lineas) => {
         { lineas: lineas.map(nuevaLineaAApi) },
         "Error al crear las líneas del albarán"
     );
-    // La respuesta de este endpoint es { lineas: string[] }, no { id }.
     const { lineas: ids } = respuesta as unknown as { lineas: string[] };
     return ids;
 };
