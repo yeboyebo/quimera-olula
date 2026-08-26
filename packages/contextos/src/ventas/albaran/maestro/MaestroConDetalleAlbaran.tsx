@@ -154,7 +154,7 @@ export const MaestroConDetalleAlbaran = () => {
         onCerrar={() => emitir("creacion_cancelada")}
         titulo="Nuevo Albarán"
       >
-        <CrearAlbaran publicar={emitir} />
+        {ctx.estado === "CREANDO_ALBARAN" && <CrearAlbaran publicar={emitir} />}
       </QModal>
     </div>
   );

@@ -1,8 +1,8 @@
 import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
+import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
 import { Divisa } from "../../comun/componentes/divisa.tsx";

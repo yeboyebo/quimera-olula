@@ -72,8 +72,6 @@ export const getMaquina: () => Maquina<EstadoPresupuesto, ContextoPresupuesto> =
 
             linea_seleccionada: [activarLinea],
 
-            cliente_cambiado: [cambiarCliente],
-
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
 
             presupuesto_deseleccionado: [

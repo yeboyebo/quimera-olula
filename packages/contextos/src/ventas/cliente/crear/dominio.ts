@@ -5,7 +5,7 @@ import { NuevoCliente } from "../diseño.ts";
 export const nuevoClienteVacio: NuevoCliente = {
     nombre: '',
     id_fiscal: '',
-    empresa_id: '1',
+    empresa_id: '',
     tipo_id_fiscal: '',
     agente_id: '',
 }

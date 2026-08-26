@@ -126,7 +126,7 @@ export const MaestroConDetallePedidoNrj = () => {
         titulo="Nuevo Pedido"
         onCerrar={() => emitir("creacion_pedido_cancelada")}
       >
-        <CrearPedido publicar={emitir} />
+        {ctx.estado === "CREANDO_PEDIDO" && <CrearPedido publicar={emitir} />}
       </QModal>
     </div>
   );

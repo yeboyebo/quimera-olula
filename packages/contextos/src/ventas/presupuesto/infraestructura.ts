@@ -1,11 +1,12 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { LineaVenta } from "../venta/diseño.ts";
-import { direccionVacia } from "../venta/dominio.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, esClienteRegistrado, esLineaConArticulo, GetPresupuesto, GetPresupuestos, EstadoAprobado, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, EstadoAprobado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
   id: string;
@@ -40,15 +41,19 @@ type PresupuestoAPI = {
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
+interface LineaPresupuestoAPI extends Omit<LineaPresupuesto, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
+
 /**
- * La forma que llega del servidor. Se declara aparte de `LineaPresupuesto` a
- * propósito: si el nombre de un campo cambia en cualquiera de los dos lados,
- * el mapeo de abajo deja de compilar en vez de llegar `undefined` en silencio.
+ * `Entidad` tiene firma de índice, así que `Omit` degrada todos los campos a
+ * `unknown` y no hay forma de construir el resultado sin el doble cast. Los
+ * campos que no se renombran —`aprobada`, `cerrada`— viajan en el spread.
  */
-type LineaPresupuestoAPI = LineaVenta & {
-  aprobada: number;
-  cerrada: boolean;
-};
+export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaPresupuesto);
 
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
   ...p,
@@ -64,14 +69,6 @@ export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
     direccion: p.direccion ?? direccionVacia(),
   },
   lineas: [],
-});
-
-export const lineaPresupuestoFromAPI = (
-  { aprobada, cerrada, ...resto }: LineaPresupuestoAPI
-): LineaPresupuesto => ({
-  ...resto,
-  aprobada,
-  cerrada,
 });
 
 export const getPresupuesto: GetPresupuesto = async (id) =>
@@ -94,36 +91,9 @@ export const getPresupuestos: GetPresupuestos = async (
 };
 
 export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<string> => {
-  let clientePayload;
-
-  if (esClienteRegistrado(presupuesto)) {
-    clientePayload = {
-      cliente_id: presupuesto.cliente_id,
-      direccion_id: presupuesto.direccion_id
-    };
-  } else {
-    clientePayload = {
-      nombre: presupuesto.nombre_cliente,
-      id_fiscal: presupuesto.id_fiscal,
-      direccion: {
-        nombre_via: presupuesto.nombre_via,
-        tipo_via: presupuesto.tipo_via || null,
-        numero: presupuesto.numero || null,
-        otros: presupuesto.otros || null,
-        cod_postal: presupuesto.cod_postal || null,
-        ciudad: presupuesto.ciudad,
-        provincia_id: null,
-        provincia: presupuesto.provincia || null,
-        pais_id: presupuesto.pais_id || null,
-        apartado: presupuesto.apartado || null,
-        telefono: presupuesto.telefono || null,
-      }
-    };
-  }
-
   const payload = {
-    cliente: clientePayload,
-    empresa_id: presupuesto.empresa_id
+    cliente: payloadCambioCliente(presupuesto),
+    empresa_id: empresaActual()
   };
 
   return await RestAPI.post(baseUrl, payload, "Error al crear presupuesto").then((respuesta) => respuesta.id);
@@ -154,65 +124,20 @@ export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
 }
 
 export const patchCambiarCliente = async (id: string, cambio: CambioClientePresupuesto): Promise<void> => {
-  if (cambio.cliente_id) {
-    const clientePayload = {
-      cambios: {
-        cliente: {
-          cliente_id: cambio.cliente_id,
-          direccion_id: cambio.direccion_id
-        }
-      }
-    }
-    await RestAPI.patch(`${baseUrl}/${id}`, clientePayload, "Error al cambiar cliente del presupuesto");
-  } else {
-    const clientePayload = {
-      cambios: {
-        cliente: {
-          nombre: cambio.nombre_cliente || "",
-          id_fiscal: cambio.id_fiscal,
-          direccion: {
-            nombre_via: cambio.nombre_via,
-            tipo_via: cambio.tipo_via || null,
-            numero: cambio.numero || null,
-            otros: cambio.otros || null,
-            cod_postal: cambio.cod_postal || null,
-            ciudad: cambio.ciudad || null,
-            provincia_id: null,
-            provincia: cambio.provincia || null,
-            pais_id: cambio.pais_id || null,
-            apartado: cambio.apartado || null,
-            telefono: cambio.telefono || null,
-          }
-        }
-      }
-    }
-    await RestAPI.patch(`${baseUrl}/${id}`, clientePayload, "Error al cambiar cliente del presupuesto");
-  }
-
-
+  await RestAPI.patch(`${baseUrl}/${id}`, {
+    cambios: { cliente: payloadCambioCliente(cambio) }
+  }, "Error al cambiar cliente del presupuesto");
 }
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
-  await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) => {
-    const lineas = respuesta.datos.map((d) => lineaPresupuestoFromAPI(d));
-    return lineas
-  });
+  await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
+    respuesta.datos.map(lineaPresupuestoFromAPI)
+  );
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  const lineaApi = esLineaConArticulo(linea)
-    ? {
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad,
-    }
-    : {
-      descripcion: linea.descripcion,
-      cantidad: linea.cantidad,
-      pvp_unitario: linea.pvp_unitario,
-    };
-
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [lineaApi]
+    lineas: [altaLineaApi(linea)]
   }, "Error al crear línea de presupuesto").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
@@ -233,9 +158,7 @@ export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, refe
 export const patchLinea: PatchLinea = async (id, linea) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
+      articulo: articuloDeLinea(linea),
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
@@ -252,9 +175,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
 export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
       cantidad: cantidad,
     },
   }

@@ -54,7 +54,7 @@ export const Lineas = ({
         acciones={facturaEsEditable ? acciones : undefined}
         publicar={publicar}
       />
-      {estadoFactura === "CREANDO_LINEA" && <CrearLinea publicar={publicar} />}
+      {estadoFactura === "CREANDO_LINEA" && <CrearLinea facturaId={factura.id} publicar={publicar} />}
 
       {lineaActiva && estadoFactura === "CAMBIANDO_LINEA" && (
         <EditarLinea publicar={publicar} linea={lineaActiva} />

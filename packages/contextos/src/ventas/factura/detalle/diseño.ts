@@ -1,8 +1,11 @@
-import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
+import { MetaModelo } from "@olula/lib/dominio.ts";
 import { metaVenta } from "../../venta/dominio.ts";
 import { ContextoFactura, EstadoFactura, Factura, LineaFactura } from "../diseño.ts";
+import { facturaEditable } from "../dominio.ts";
 
 export type { ContextoFactura, EstadoFactura, Factura, LineaFactura };
+
+export const editable = (factura: Factura, _?: string) => facturaEditable(factura);
 
 export const metaFactura: MetaModelo<Factura> = {
     campos: {
@@ -16,10 +19,7 @@ export const metaFactura: MetaModelo<Factura> = {
         automatica: { tipo: "checkbox", requerido: false },
         servicios: { tipo: "checkbox", requerido: false },
     },
-    editable: (factura: Factura, _?: string) => {
-        return factura.editable ?? false;
-    },
+    editable,
 };
 
-export const editable = modeloEsEditable<Factura>(metaFactura);
 

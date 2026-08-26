@@ -2,7 +2,7 @@ import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "../venta/diseño.ts";
+import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
 
 export interface Albaran extends Venta {
     cliente: ClienteVenta;
@@ -20,11 +20,15 @@ export interface LineaAlbaran extends LineaVenta {
     otro_campo?: string;
 }
 
-export type NuevoAlbaran = NuevaVenta;
+export type NuevoAlbaran = NuevaVenta
+
+export type NuevoAlbaranClienteNoRegistrado = NuevaVentaClienteNoRegistrado;
 
 export type CambioClienteAlbaran = CambioClienteVenta;
 
 export type NuevaLineaAlbaran = NuevaLineaVenta;
+
+export type NuevaLineaLibreAlbaran = NuevaLineaLibreVenta;
 
 export type GetAlbaranes = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Albaran>;
 
@@ -34,9 +38,9 @@ export type GetReportAlbaran = (id: string) => Promise<Blob>;
 
 export type GetLineasAlbaran = (id: string) => Promise<LineaAlbaran[]>;
 
-export type PostAlbaran = (albaran: NuevoAlbaran) => Promise<string>;
+export type PostAlbaran = (albaran: NuevoAlbaran | NuevoAlbaranClienteNoRegistrado) => Promise<string>;
 
-export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
+export type PostLinea = (id: string, linea: AltaLineaVenta) => Promise<string>;
 
 export type PatchClienteAlbaran = (id: string, cambio: CambioClienteAlbaran) => Promise<void>;
 

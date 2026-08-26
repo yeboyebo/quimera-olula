@@ -1,9 +1,11 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
-import { direccionVacia } from "../venta/dominio.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -25,7 +27,10 @@ import {
 
 const baseUrl = new ApiUrls().ALBARAN;
 
-type LineaAlbaranAPI = LineaAlbaran;
+interface LineaAlbaranAPI extends Omit<LineaAlbaran, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
+
 interface AlbaranAPI {
   id: string;
   codigo: string;
@@ -74,7 +79,10 @@ export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   lineas: [],
 });
 
-export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => l;
+export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaAlbaran);
 
 export const getAlbaran: GetAlbaran = async (id) => {
   return RestAPI.get<{ datos: AlbaranAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
@@ -99,11 +107,8 @@ export const getAlbaranes: GetAlbaranes = async (
 
 export const postAlbaran: PostAlbaran = async (albaran) => {
   const payload = {
-    cliente: {
-      cliente_id: albaran.cliente_id,
-      direccion_id: albaran.direccion_id,
-    },
-    empresa_id: albaran.empresa_id,
+    cliente: payloadCambioCliente(albaran),
+    empresa_id: empresaActual(),
   };
   return await RestAPI.post(baseUrl, payload, "Error al guardar albarán").then((respuesta) => respuesta.id);
 };
@@ -118,10 +123,7 @@ export const getLineas: GetLineasAlbaran = async (id) =>
 
 export const postLinea: PostLinea = async (id, linea) => {
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [{
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad
-    }]
+    lineas: [altaLineaApi(linea)]
   }, "Error al guardar").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
@@ -142,9 +144,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
 export const patchLinea: PatchLinea = async (id, linea) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
+      articulo: articuloDeLinea(linea),
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
@@ -160,9 +160,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
       cantidad: cantidad,
     },
   }
@@ -207,12 +204,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
 
 export const patchCambiarCliente: PatchClienteAlbaran = async (id, cambio) => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      cliente: {
-        cliente_id: cambio.cliente_id,
-        direccion_id: cambio.direccion_id,
-      },
-    },
+    cambios: { cliente: payloadCambioCliente(cambio) }
   }, "Error al cambiar cliente del albarán");
 };
 

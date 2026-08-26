@@ -1,13 +1,18 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
-import { direccionVacia } from "../venta/dominio.ts";
-import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
+import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchEmitirFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
+import { estadoExpedicionDesdeApi } from "./dominio.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
-type LineaFacturaAPI = LineaFactura;
+interface LineaFacturaAPI extends Omit<LineaFactura, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
 
 interface FacturaAPI {
   id: string;
@@ -42,12 +47,14 @@ interface FacturaAPI {
   por_comision: number;
   observaciones: string;
   editable?: boolean;
+  estado_expedicion: string;
 }
 export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   ...p,
   fecha: new Date(Date.parse(p.fecha)),
   dtoPorcentual: p.por_descuento,
   netoSinDto: p.neto_sin_dto,
+  estadoExpedicion: estadoExpedicionDesdeApi(p.estado_expedicion),
   cliente: {
     cliente_id: p.cliente_id ?? null,
     nombre_cliente: p.nombre_cliente ?? "",
@@ -57,7 +64,10 @@ export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   },
   lineas: [],
 });
-export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => l;
+export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaFactura);
 
 export const getFactura: GetFactura = async (id) => {
   return RestAPI.get<{ datos: FacturaAPI }>(
@@ -76,6 +86,10 @@ export const getFacturas: GetFacturas = async (
 
   const respuesta = await RestAPI.get<{ datos: FacturaAPI[]; total: number }>(baseUrl + q);
   return { datos: respuesta.datos.map(facturaDesdeAPI), total: respuesta.total };
+};
+
+export const patchEmitirFactura: PatchEmitirFactura = async (id) => {
+  await RestAPI.patch(`${baseUrl}/${id}/emitir`, {}, "Error al emitir la factura");
 };
 
 export const getReportFactura: GetReportFactura = async (id) =>
@@ -102,19 +116,14 @@ export const postFactura: PostFactura = async (factura) => {
 
   const payload = {
     cliente,
-    empresa_id: factura.empresa_id
+    empresa_id: empresaActual()
   };
   return await RestAPI.post(baseUrl, payload, "Error al crear factura").then((respuesta) => respuesta.id);
 };
 
 export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      cliente: {
-        cliente_id: cambio.cliente_id,
-        direccion_id: cambio.direccion_id
-      }
-    }
+    cambios: { cliente: payloadCambioCliente(cambio) }
   }, "Error al cambiar cliente de la factura");
 };
 
@@ -127,10 +136,7 @@ export const getLineas: GetLineasFactura = async (id) =>
 
 export const postLinea: PostLinea = async (id, linea) => {
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [{
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad
-    }]
+    lineas: [altaLineaApi(linea)]
   }, "Error al crear linea de factura").then((respuesta) => {
     const miRespuesta = respuesta as unknown as { ids: string[] };
     return miRespuesta.ids[0];
@@ -151,9 +157,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
 export const patchLinea: PatchLinea = async (id, linea) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
+      articulo: articuloDeLinea(linea),
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
@@ -169,9 +173,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
       cantidad: cantidad,
     },
   };

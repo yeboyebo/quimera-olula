@@ -1,7 +1,6 @@
-import { empresaActual } from "#/valores/empresaActual.ts";
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, Venta } from "./diseño.ts";
+import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, ConTipoArticulo, LineaVenta, ModeloNuevaLinea, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, TipoArticuloLinea, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -47,10 +46,27 @@ export const ventaVacia: Venta = {
     netoSinDto: 0,
 }
 
+/** La empresa la resuelve la infraestructura al enviar, con `empresaActual()`. */
 export const nuevaVentaVacia: NuevaVenta = {
     cliente_id: "",
     direccion_id: "",
-    empresa_id: empresaActual(),
+    empresa_id: "",
+}
+
+export const nuevaVentaClienteNoRegistradaVacia: NuevaVentaClienteNoRegistrado = {
+    empresa_id: "",
+    nombre_cliente: "",
+    id_fiscal: "",
+    nombre_via: "",
+    tipo_via: "",
+    numero: "",
+    otros: "",
+    cod_postal: "",
+    ciudad: "",
+    provincia: "",
+    pais_id: "",
+    apartado: "",
+    telefono: "",
 }
 
 export const cambioClienteVentaVacio: CambioClienteVenta = {
@@ -137,8 +153,13 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         tipo_irpf: metaPorcentajeLinea,
         por_comision: metaPorcentajeLinea,
         tipo_recargo: { ...metaPorcentajeLinea, bloqueado: true },
+        // Lo calcula el servidor a partir del grupo de IVA: se muestra y nunca se envía.
+        tipo_iva: { ...metaPorcentajeLinea, bloqueado: true },
         importe_comision: { tipo: "moneda", requerido: false, bloqueado: true },
-        referencia: { requerido: true },
+        // Las líneas sin artículo de catálogo no tienen referencia: su identidad
+        // es la descripción, que sí es obligatoria.
+        referencia: { requerido: false },
+        descripcion: { requerido: true, tipo: "texto" },
     }
 };
 
@@ -146,6 +167,18 @@ export const metaNuevaVenta: MetaModelo<NuevaVenta> = {
     campos: {
         cliente_id: { requerido: true },
         direccion_id: { requerido: true },
+        empresa_id: { requerido: true },
+    }
+};
+
+/**
+ * Cliente de paso: no hay ids que validar, lo mínimo es el nombre y la vía.
+ * El `tipo: "texto"` es lo que hace que un valor vacío invalide el campo.
+ */
+export const metaNuevaVentaClienteNoRegistrado: MetaModelo<NuevaVentaClienteNoRegistrado> = {
+    campos: {
+        nombre_cliente: { requerido: true, tipo: "texto" },
+        nombre_via: { requerido: true, tipo: "texto" },
         empresa_id: { requerido: true },
     }
 };
@@ -164,3 +197,136 @@ export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     }
 };
 
+export const nuevaLineaLibreVentaVacia: NuevaLineaLibreVenta = {
+    descripcion: "",
+    cantidad: 1,
+    pvp_unitario: 0,
+};
+
+export const metaNuevaLineaLibreVenta: MetaModelo<NuevaLineaLibreVenta> = {
+    campos: {
+        descripcion: { requerido: true, tipo: "texto" },
+        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
+        pvp_unitario: { requerido: true, tipo: "moneda" },
+    }
+};
+
+/**
+ * El bloque `articulo` del PATCH de línea es excluyente: o el id del catálogo,
+ * o la descripción, que es lo que convierte (o mantiene) la línea sin referencia.
+ */
+// export const articuloDeLinea = (
+//     linea: Pick<LineaVenta, 'referencia' | 'descripcion'>
+// ) => linea.referencia
+//         ? { articulo_id: linea.referencia }
+//         : { descripcion: linea.descripcion };
+
+
+
+export const getTipoArticulo = (linea: LineaVenta): TipoArticuloLinea => {
+    return linea.referencia
+        ? linea.descripcion != linea.descripcionArticulo
+            ? "generico"
+            : "registrado"
+        : "libre"
+}
+/**
+ * Discrimina las dos formas de alta de línea que acepta el servidor.
+ */
+export const esLineaConArticulo = (
+    linea: NuevaLineaVenta | NuevaLineaLibreVenta
+): linea is NuevaLineaVenta => 'referencia' in linea && !!linea.referencia;
+
+/**
+ * Convierte los tipos planos de UI (NuevaLineaVenta / NuevaLineaLibreVenta)
+ * al tipo unificado AltaLineaVenta que acepta altaLineaApi.
+ */
+export const altaLineaDesdeNuevaLinea = (linea: NuevaLineaVenta): AltaLineaVenta => ({
+    articulo: { articuloId: linea.referencia },
+    cantidad: linea.cantidad,
+});
+
+export const altaLineaDesdeNuevaLineaLibre = (linea: NuevaLineaLibreVenta): AltaLineaVenta => ({
+    articulo: { descripcion: linea.descripcion, pvpUnitario: linea.pvp_unitario },
+    cantidad: linea.cantidad,
+});
+
+
+
+
+
+
+/** Modelo de alta de línea vacío, compartido por todos los documentos de venta. */
+export const nuevaLineaVacia: ModeloNuevaLinea = {
+    tipoArticulo: "registrado",
+    referencia: null,
+    descripcionArticulo: null,
+    descripcion: null,
+    cantidad: 1,
+    pvp_unitario: null,
+};
+
+export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
+    campos: {
+        referencia: { tipo: "texto" },
+        descripcion: { tipo: "texto" },
+        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
+        pvp_unitario: { requerido: (linea) => !linea.referencia, tipo: "moneda" },
+    },
+    validacion: (linea) => !!(linea.referencia || linea.descripcion),
+};
+
+/**
+ * Convierte el modelo de UI de nueva línea al tipo unificado AltaLineaVenta
+ * que acepta altaLineaApi. Común a todos los documentos de venta.
+ */
+export const altaLineaDesdeModelo = (linea: ModeloNuevaLinea): AltaLineaVenta => {
+    const { cantidad } = linea;
+    switch (linea.tipoArticulo) {
+        case "registrado":
+            return { articulo: { articuloId: linea.referencia! }, cantidad };
+        case "generico":
+            return { articulo: { articuloId: linea.referencia!, descripcion: linea.descripcion! }, cantidad };
+        case "libre":
+            return { articulo: { descripcion: linea.descripcion!, pvpUnitario: linea.pvp_unitario! }, cantidad };
+    }
+};
+
+/**
+ * Inicializa el modelo de edición de línea a partir de la línea recibida de la API,
+ * infiriendo el tipoArticulo. Genérico para todos los documentos de venta.
+ */
+export const getModeloInicial = <T extends LineaVenta>(linea: T): ConTipoArticulo<T> => ({
+    ...linea,
+    tipoArticulo: getTipoArticulo(linea),
+});
+
+/**
+ * Bloque `cliente` que espera el servidor al cambiar el cliente de un documento
+ * o al crearlo: o el par de ids del maestro, o el cliente de paso con su
+ * dirección anidada. `provincia_id` viaja siempre a null, porque la dirección de
+ * un cliente no registrado no referencia el maestro de provincias.
+ */
+export const payloadCambioCliente = (cambio: CambioClienteVenta) =>
+    'cliente_id' in cambio
+        ? {
+            cliente_id: cambio.cliente_id,
+            direccion_id: cambio.direccion_id,
+        }
+        : {
+            nombre: cambio.nombre_cliente || "",
+            id_fiscal: cambio.id_fiscal,
+            direccion: {
+                nombre_via: cambio.nombre_via,
+                tipo_via: cambio.tipo_via || null,
+                numero: cambio.numero || null,
+                otros: cambio.otros || null,
+                cod_postal: cambio.cod_postal || null,
+                ciudad: cambio.ciudad || null,
+                provincia_id: null,
+                provincia: cambio.provincia || null,
+                pais_id: cambio.pais_id || null,
+                apartado: cambio.apartado || null,
+                telefono: cambio.telefono || null,
+            },
+        };
