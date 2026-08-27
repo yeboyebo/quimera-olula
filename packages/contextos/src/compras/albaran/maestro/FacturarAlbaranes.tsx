@@ -27,7 +27,7 @@ export const FacturarAlbaranes = ({
             nombre="facturarAlbaranesCompra"
             abierto={true}
             titulo="Facturar albaranes"
-            mensaje={`¿Facturar ${albaranes === 1 ? "el albarán seleccionado" : `los ${albaranes} albaranes seleccionados`}? Se generará una única factura y los albaranes quedarán facturados, sin posibilidad de desfacturarlos.`}
+            mensaje={`¿Facturar ${albaranes === 1 ? "el albarán seleccionado" : `los ${albaranes} albaranes seleccionados`}?`}
             onCerrar={cancelar}
             onAceptar={facturar}
         />

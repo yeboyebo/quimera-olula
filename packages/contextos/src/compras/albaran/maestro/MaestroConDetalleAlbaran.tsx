@@ -12,6 +12,7 @@ import { Albaran } from "../diseño.ts";
 import "./MaestroConDetalleAlbaran.css";
 import { FacturarAlbaranes } from "./FacturarAlbaranes.tsx";
 import { puedenFacturarse } from "./maestro.ts";
+import { ResultadoFacturado } from "./ResultadoFacturado.tsx";
 import { getMaquina } from "./maquina.ts";
 import { metaTablaAlbaran } from "./metatabla_albaran.tsx";
 import { TarjetaAlbaran } from "./TarjetaAlbaran.tsx";
@@ -31,9 +32,10 @@ export const MaestroConDetalleAlbaran = () => {
         estado: "INICIAL",
         albaranes: listaActivaEntidadesInicial<Albaran>(id, criteriaInicial),
         seleccionados: [],
+        facturaCreada: null,
     });
 
-    const { estado, albaranes, seleccionados } = ctx;
+    const { estado, albaranes, seleccionados, facturaCreada } = ctx;
 
     useUrlParams(albaranes.activo, albaranes.criteria);
 
@@ -83,6 +85,10 @@ export const MaestroConDetalleAlbaran = () => {
 
             {estado === "FACTURANDO" && (
                 <FacturarAlbaranes albaranes={seleccionados.length} publicar={emitir} />
+            )}
+
+            {estado === "FACTURA_CREADA" && facturaCreada && (
+                <ResultadoFacturado factura={facturaCreada} publicar={emitir} />
             )}
         </div>
     );

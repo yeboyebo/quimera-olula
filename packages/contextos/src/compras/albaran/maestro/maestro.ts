@@ -67,10 +67,10 @@ export const puedenFacturarse = (ids: string[], albaranes: Albaran[]): boolean =
 };
 
 export const facturarSeleccionados: ProcesarMaestro = async (contexto) => {
-    await facturarAlbaranes(contexto.seleccionados);
+    const facturaCreada = await facturarAlbaranes(contexto.seleccionados);
 
     const resultado = await getAlbaranes(contexto.albaranes.criteria);
     const recargado = (await Albaranes.recargar(contexto, resultado)) as ContextoMaestroAlbaran;
 
-    return { ...recargado, estado: "INICIAL", seleccionados: [] };
+    return { ...recargado, estado: "FACTURA_CREADA", seleccionados: [], facturaCreada };
 };

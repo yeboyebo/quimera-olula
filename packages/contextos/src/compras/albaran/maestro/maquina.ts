@@ -28,6 +28,10 @@ export const getMaquina: () => Maquina<EstadoMaestroAlbaran, ContextoMaestroAlba
             facturado_cancelado: "INICIAL",
         },
 
+        FACTURA_CREADA: {
+            resultado_facturado_cerrado: "INICIAL",
+        },
+
         CREANDO: {
             alta_de_albaran_cancelada: "INICIAL",
 
