@@ -1,6 +1,7 @@
 import { Maquina } from "@olula/lib/diseño.ts";
 import { publicar } from "@olula/lib/dominio.ts";
 import {
+    cambiarDivisa,
     cambiarProveedor,
     cargarContexto,
     limpiarContexto,
@@ -36,11 +37,17 @@ export const getMaquina: () => Maquina<EstadoDetalleAlbaran, ContextoDetalleAlba
             borrado_solicitado: "BORRANDO",
 
             cambio_proveedor_solicitado: "CAMBIANDO_PROVEEDOR",
+            cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
 
             linea_seleccionada: [Lineas.activar],
             alta_linea_solicitada: "CREANDO_LINEA",
             cambio_linea_solicitado: "CAMBIANDO_LINEA",
             baja_linea_solicitada: "BORRANDO_LINEA",
+        },
+
+        CAMBIANDO_DIVISA: {
+            cambio_divisa_listo: [cambiarDivisa],
+            cambio_divisa_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_PROVEEDOR: {
