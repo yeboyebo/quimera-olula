@@ -1,8 +1,8 @@
 import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
-import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
-import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
-import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
+import { Divisa } from "#/comun/componentes/divisa.tsx";
+import { FormaPago } from "#/comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "#/comun/componentes/grupo_iva_negocio.tsx";
 import {
   grupoIvaNegocioEnDocumento,
   puedeCambiarDivisa,

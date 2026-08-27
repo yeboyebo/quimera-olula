@@ -1,0 +1,8 @@
+.CambiarLineaFactura .aviso-linea-albaran {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--redondeo-borde-xs, 4px);
+    background-color: var(--color-superficie-elevada);
+    color: var(--color-texto-secundario);
+    font-size: 0.9em;
+}

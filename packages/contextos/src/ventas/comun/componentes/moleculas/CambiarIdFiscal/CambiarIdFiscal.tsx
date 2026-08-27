@@ -1,4 +1,4 @@
-import { TipoIdFiscal } from "#/ventas/comun/componentes/tipoIdFiscal.tsx";
+import { TipoIdFiscal } from "#/comun/componentes/tipoIdFiscal.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";

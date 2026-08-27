@@ -1,0 +1,89 @@
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { Listado } from "@olula/componentes/maestro/Listado.js";
+import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
+import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.ts";
+import { getUrlParams, useUrlParams } from "@olula/lib/url-params.ts";
+import { useEffect, useMemo } from "react";
+import { CrearAlbaran } from "../crear/CrearAlbaran.tsx";
+import { DetalleAlbaran } from "../detalle/DetalleAlbaran.tsx";
+import { Albaran } from "../diseño.ts";
+import "./MaestroConDetalleAlbaran.css";
+import { FacturarAlbaranes } from "./FacturarAlbaranes.tsx";
+import { puedenFacturarse } from "./maestro.ts";
+import { getMaquina } from "./maquina.ts";
+import { metaTablaAlbaran } from "./metatabla_albaran.tsx";
+import { TarjetaAlbaran } from "./TarjetaAlbaran.tsx";
+
+const criteriaAlbaranes = {
+    ...criteriaDefecto,
+    orden: ["fecha", "DESC"],
+};
+
+export const MaestroConDetalleAlbaran = () => {
+    const criteriaBase = useMemo(() => criteriaAlbaranes, []);
+
+    const { id, criteria } = getUrlParams();
+    const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
+
+    const { ctx, emitir } = useMaquina(getMaquina, {
+        estado: "INICIAL",
+        albaranes: listaActivaEntidadesInicial<Albaran>(id, criteriaInicial),
+        seleccionados: [],
+    });
+
+    const { estado, albaranes, seleccionados } = ctx;
+
+    useUrlParams(albaranes.activo, albaranes.criteria);
+
+    useEffect(() => {
+        emitir("recarga_de_albaranes_solicitada", albaranes.criteria);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return (
+        <div className="Albaran">
+            <MaestroDetalle<Albaran>
+                Maestro={
+                    <>
+                        <h2>Albaranes de compra</h2>
+                        <Listado<Albaran>
+                            metaTabla={metaTablaAlbaran}
+                            criteria={albaranes.criteria}
+                            tarjeta={TarjetaAlbaran}
+                            entidades={albaranes.lista}
+                            totalEntidades={albaranes.total}
+                            seleccionada={albaranes.activo}
+                            seleccionadas={seleccionados}
+                            onMultiSeleccion={(ids) => emitir("seleccionados_cambiados", ids)}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("crear_albaran_solicitado")}>
+                                        Nuevo Albarán
+                                    </QBoton>
+                                    {puedenFacturarse(seleccionados, albaranes.lista) && (
+                                        <QBoton onClick={() => emitir("facturado_solicitado")}>
+                                            {`Facturar (${seleccionados.length})`}
+                                        </QBoton>
+                                    )}
+                                </div>
+                            )}
+                            onSeleccion={(payload) => emitir("albaran_seleccionado", payload)}
+                            onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
+                            onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
+                        />
+                    </>
+                }
+                Detalle={<DetalleAlbaran id={albaranes.activo} publicar={emitir} />}
+                seleccionada={albaranes.activo}
+            />
+
+            {estado === "CREANDO" && <CrearAlbaran publicar={emitir} />}
+
+            {estado === "FACTURANDO" && (
+                <FacturarAlbaranes albaranes={seleccionados.length} publicar={emitir} />
+            )}
+        </div>
+    );
+};
