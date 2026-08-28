@@ -1,3 +1,4 @@
+import type { Modelo } from "@olula/lib/diseño.ts";
 import { Direccion, Entidad } from "@olula/lib/diseño.ts";
 
 export interface Venta extends Entidad {
@@ -86,45 +87,49 @@ export type CambioClienteVenta = {
     telefono?: string;
 };
 
-export type NuevaLineaVenta = {
-    referencia: string;
-    cantidad: number;
-};
+// export type NuevaLineaVenta = {
+//     referencia: string;
+//     cantidad: number;
+// };
 
-/**
- * Línea sin artículo de catálogo. El servidor no exige `articulo_id`: basta con
- * descripción, cantidad y pvp_unitario (que puede ser 0).
- */
-export type NuevaLineaLibreVenta = {
-    descripcion: string;
-    cantidad: number;
-    pvp_unitario: number;
-};
+// /**
+//  * Línea sin artículo de catálogo. El servidor no exige `articulo_id`: basta con
+//  * descripción, cantidad y pvp_unitario (que puede ser 0).
+//  */
+// export type NuevaLineaLibreVenta = {
+//     descripcion: string;
+//     cantidad: number;
+//     pvp_unitario: number;
+// };
 
 /**
  * Tipos dominio (camelCase) para el alta de línea — comunes a todos los
  * documentos de venta. Se convierten a los tipos API con `altaLineaApi`.
  */
-export interface ArticuloLineaRegistrado {
-    articuloId: string;
-    pvpUnitario?: number;
-}
-export interface ArticuloLineaGenerico extends ArticuloLineaRegistrado {
-    descripcion: string;
-}
-export interface ArticuloLineaLibre {
-    descripcion: string;
-    pvpUnitario: number;
-}
-export type ArticuloLinea =
-    | ArticuloLineaRegistrado
-    | ArticuloLineaGenerico
-    | ArticuloLineaLibre;
+// export interface ArticuloLineaRegistrado {
+//     articuloId: string;
+//     pvpUnitario?: number;
+// }
+// export interface ArticuloLineaGenerico extends ArticuloLineaRegistrado {
+//     descripcion: string;
+// }
+// export interface ArticuloLineaLibre {
+//     descripcion: string;
+//     pvpUnitario: number;
+// }
+// export type ArticuloLinea =
+//     | ArticuloLineaRegistrado
+//     | ArticuloLineaGenerico
+//     | ArticuloLineaLibre;
 
 /** Tipo dominio unificado para el alta de línea (input de `altaLineaApi`). */
-export type AltaLineaVenta = {
-    articulo: ArticuloLinea;
+export type NuevaLineaVenta = {
+    // articulo: ArticuloLinea;
+    idArticulo: string | null;
+    descripcion: string | null;
+    pvpUnitario: number | null;
     cantidad: number;
+    pvpTotal: number;
 };
 
 /**
@@ -150,12 +155,8 @@ export type ConTipoArticulo<T extends LineaVenta> = T & { tipoArticulo: TipoArti
  * Modelo de UI compartido para el alta de línea en todos los documentos de venta.
  * Independiente del tipo concreto de documento (pedido, presupuesto, albarán, factura).
  */
-export type ModeloNuevaLinea = {
+export interface ModeloNuevaLinea extends NuevaLineaVenta, Modelo {
     tipoArticulo: TipoArticuloLinea;
-    referencia: string | null;
     descripcionArticulo: string | null;
-    descripcion: string | null;
-    cantidad: number;
-    pvp_unitario: number | null;
-    pvp_total: number | null;
+
 };

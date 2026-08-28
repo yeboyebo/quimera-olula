@@ -246,12 +246,12 @@ export const cambiarDescuento: ProcesarPresupuesto = async (contexto, payload) =
 }
 
 export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
-    const idLinea = payload as string;
+    const { id } = payload as { id: string };
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
         refrescarLineas,
-        activarLineaPorId(idLinea),
+        activarLineaPorId(id),
         'ABIERTO',
     ]);
 }

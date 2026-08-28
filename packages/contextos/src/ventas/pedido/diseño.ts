@@ -3,7 +3,7 @@ import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
 
 export interface Pedido extends Venta {
     cliente: ClienteVenta;
@@ -36,7 +36,7 @@ export type NuevoPedidoClienteNoRegistrado = NuevaVentaClienteNoRegistrado
 
 export type CambioClientePedido = CambioClienteVenta
 
-export type NuevaLineaPedido = AltaLineaVenta;
+export type NuevaLineaPedido = NuevaLineaVenta;
 
 export type GetPedidos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Pedido>;
 
@@ -59,7 +59,9 @@ export type GetCambiosLineaPedido = (
 
 export type PostPedido = (pedido: NuevoPedido | NuevoPedidoClienteNoRegistrado) => Promise<string>;
 
-export type PostLinea = (id: string, linea: NuevaLineaPedido) => Promise<string>;
+export type PostLinea = <T extends NuevaLineaPedido>(id: string, linea: T, opts?: { dryRun?: boolean }) => Promise<T>;
+
+// export type PostLineaDryRun = (id: string, linea: NuevaLineaPedido) => Promise<NuevaLineaPedido>;
 
 export type PatchClientePedido = (id: string, cambio: CambioClientePedido) => Promise<void>;
 

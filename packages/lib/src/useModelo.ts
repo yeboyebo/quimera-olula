@@ -1,8 +1,8 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { ContextoError, QError } from "./contexto.ts";
 import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { getFormProps, MetaModelo } from "./dominio.ts";
+import { getFormProps, MetaModelo, modeloEsValido } from "./dominio.ts";
 
 const aQError = (error: unknown): QError => {
     const apiError = error as QError;
@@ -17,7 +17,7 @@ const aQError = (error: unknown): QError => {
 export function useModelo<T extends Modelo>(
     meta: MetaModelo<T>,
     modeloInicialProp: T,
-    onModeloListo?: (t: T) => Promise<void>
+    onModeloListo?: (t: T, campo?: string) => Promise<void | T>
 ): HookModelo<T> {
 
     const [modelo, setModelo] = useState(modeloInicialProp);
@@ -27,10 +27,45 @@ export function useModelo<T extends Modelo>(
 
     const { intentar } = useContext(ContextoError);
 
+    // Evita que el setModelo interno de onModeloListoConError vuelva a disparar el callback
+    const enCambioDesdeCallback = useRef(false);
+
+    const onModeloListoConError = useCallback(
+        async (modelo: T, campo?: string) => {
+            if (!onModeloListo) return;
+            enCambioDesdeCallback.current = true;
+            try {
+                await intentar(async () => {
+                    const nuevoModelo = await onModeloListo(modelo, campo);
+                    if (nuevoModelo) {
+                        setModelo(nuevoModelo); // directo, sin pasar por setExterno
+                    }
+                });
+                setErrorGuardado(null);
+                setGuardados((n) => n + 1);
+            } catch (error) {
+                setErrorGuardado(aQError(error));
+            } finally {
+                enCambioDesdeCallback.current = false;
+            }
+        },
+        [intentar, onModeloListo]
+    );
+
+    // Uso interno: onChange de QInput (sin disparar onModeloListo en cada tecla)
     const cambiarModelo = useCallback((nuevoModelo: T) => {
         setErrorGuardado(null);
         setModelo(nuevoModelo);
     }, []);
+
+    // Uso externo: set() del HookModelo — evalúa onModeloListo si el modelo es válido
+    const setExterno = useCallback((nuevoModelo: T, campo?: string) => {
+        setErrorGuardado(null);
+        setModelo(nuevoModelo);
+        if (!enCambioDesdeCallback.current && onModeloListo && modeloEsValido(meta)(nuevoModelo)) {
+            void onModeloListoConError(nuevoModelo, campo);
+        }
+    }, [meta, onModeloListo, onModeloListoConError]);
 
     const init = useCallback((nuevoModelo?: T) => {
         const modeloAUsar = nuevoModelo || modeloInicialProp;
@@ -38,22 +73,6 @@ export function useModelo<T extends Modelo>(
         setModelo(modeloAUsar);
         setModeloInicial(modeloAUsar);
     }, [modeloInicialProp]);
-
-    const onModeloListoConError = useCallback(
-        async (modelo: T) => {
-            if (!onModeloListo) return;
-
-            try {
-                await intentar(async () => await onModeloListo(modelo));
-                setErrorGuardado(null);
-                setGuardados((n) => n + 1);
-            } catch (error) {
-                setErrorGuardado(aQError(error));
-            }
-        },
-        [intentar, onModeloListo]
-    );
-
 
     useEffect(() => {
         setErrorGuardado(null);
@@ -65,7 +84,7 @@ export function useModelo<T extends Modelo>(
         modelo,
         modeloInicial: modeloInicial || modeloInicialProp,
         init,
-        set: cambiarModelo,
+        set: setExterno,
         errorGuardado,
         guardados,
         ...getFormProps(modelo, modeloInicial, meta, cambiarModelo, onModeloListoConError, errorGuardado),
@@ -77,7 +96,7 @@ export type HookModelo<T extends Modelo> = {
     modeloInicial: T,
     uiProps: (campo: string, secundario?: string) => UiProps,
     init: (entidad?: T) => void,
-    set: (entidad: T) => void,
+    set: (entidad: T, campo?: string) => void,
     modificado: boolean,
     valido: boolean,
     editable: boolean,

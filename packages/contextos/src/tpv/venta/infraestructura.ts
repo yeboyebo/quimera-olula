@@ -227,14 +227,14 @@ export const postPago: PostPago = async (id, pago) => {
 
 export const postLinea: PostLinea = async (id, linea) => {
     const body = {
-        articulo_id: linea.referencia,
+        articulo_id: linea.idArticulo,
         cantidad: linea.cantidad
     }
     return await RestAPI.post(`${baseUrl}/${id}/linea`,
         body,
         "Error al crear linea de venta").then((respuesta) => {
-            const miRespuesta = respuesta as unknown as { id: string };
-            return miRespuesta.id;
+            const { id: lineaId } = respuesta as unknown as { id: string };
+            return { ...linea, id: lineaId };
         });
 };
 

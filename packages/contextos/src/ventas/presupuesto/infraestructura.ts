@@ -5,7 +5,7 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
+import { altaLineaApi, apiANuevaLineaVenta, articuloDeLinea, NuevaLineaVentaApiRes } from "../venta/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
@@ -41,11 +41,11 @@ type PresupuestoAPI = {
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
-interface LineaPresupuestoAPI extends Omit<LineaPresupuesto, 'descripcionArticulo'> {
+interface LineaPresupuestoApi extends Omit<LineaPresupuesto, 'descripcionArticulo'> {
   descripcion_articulo: string | null;
 }
 
-export const lineaPresupuestoFromAPI = (l: LineaPresupuestoAPI): LineaPresupuesto => ({
+export const lineaPresupuestoDesdeApi = (l: LineaPresupuestoApi): LineaPresupuesto => ({
   ...l,
   descripcionArticulo: l.descripcion_articulo,
 } as unknown as LineaPresupuesto);
@@ -125,17 +125,23 @@ export const patchCambiarCliente = async (id: string, cambio: CambioClientePresu
 }
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
-  await RestAPI.get<{ datos: LineaPresupuestoAPI[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
-    respuesta.datos.map(lineaPresupuestoFromAPI)
+  await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
+    respuesta.datos.map(lineaPresupuestoDesdeApi)
   );
 
 
-export const postLinea: PostLinea = async (id, linea) => {
+export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [altaLineaApi(linea)]
+    lineas: [altaLineaApi(linea)],
+    dry_run: dryRun,
   }, "Error al crear línea de presupuesto").then((respuesta) => {
-    const miRespuesta = respuesta as unknown as { ids: string[] };
-    return miRespuesta.ids[0];
+    if (dryRun) {
+      const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+      return apiANuevaLineaVenta(linea, miRespuesta[0]);
+    } else {
+      const { ids } = respuesta as unknown as { ids: string[] };
+      return { ...linea, id: ids[0] } as unknown as typeof linea;
+    }
   });
 }
 

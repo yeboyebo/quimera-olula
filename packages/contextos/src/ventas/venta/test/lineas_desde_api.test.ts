@@ -1,7 +1,7 @@
-import { lineaAlbaranFromAPI } from "#/ventas/albaran/infraestructura.ts";
-import { lineaFacturaFromAPI } from "#/ventas/factura/infraestructura.ts";
+import { lineaAlbaranDesdeApi } from "#/ventas/albaran/infraestructura.ts";
+import { lineaFacturaDesdeApi } from "#/ventas/factura/infraestructura.ts";
 import { ventasPedidoInfra } from "#/ventas/pedido/infraestructura.ts";
-import { lineaPresupuestoFromAPI } from "#/ventas/presupuesto/infraestructura.ts";
+import { lineaPresupuestoDesdeApi } from "#/ventas/presupuesto/infraestructura.ts";
 import type { LineaVenta } from "#/ventas/venta/diseño.ts";
 import { describe, expect, test } from "vitest";
 
@@ -27,10 +27,10 @@ const lineaApi = {
 };
 
 const casos: [string, LineaVenta][] = [
-    ["presupuesto", lineaPresupuestoFromAPI(lineaApi as Parameters<typeof lineaPresupuestoFromAPI>[0])],
+    ["presupuesto", lineaPresupuestoDesdeApi(lineaApi as Parameters<typeof lineaPresupuestoDesdeApi>[0])],
     ["pedido", ventasPedidoInfra.linea_desde_api(lineaApi as Parameters<typeof ventasPedidoInfra.linea_desde_api>[0])],
-    ["albarán", lineaAlbaranFromAPI(lineaApi as Parameters<typeof lineaAlbaranFromAPI>[0])],
-    ["factura", lineaFacturaFromAPI(lineaApi as Parameters<typeof lineaFacturaFromAPI>[0])],
+    ["albarán", lineaAlbaranDesdeApi(lineaApi as Parameters<typeof lineaAlbaranDesdeApi>[0])],
+    ["factura", lineaFacturaDesdeApi(lineaApi as Parameters<typeof lineaFacturaDesdeApi>[0])],
 ];
 
 describe.each(casos)("los campos fiscales llegan al dominio (%s)", (_, linea) => {

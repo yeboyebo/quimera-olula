@@ -1,6 +1,6 @@
 import { Direccion } from "@olula/lib/diseño.js";
 import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
-import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, ConTipoArticulo, LineaVenta, ModeloNuevaLinea, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, TipoArticuloLinea, Venta } from "./diseño.ts";
+import { CambioClienteVenta, ClienteVenta, ConTipoArticulo, LineaVenta, ModeloNuevaLinea, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, TipoArticuloLinea, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
     nombre_via: "",
@@ -74,10 +74,10 @@ export const cambioClienteVentaVacio: CambioClienteVenta = {
     nombre_cliente: "",
     direccion_id: "",
 }
-export const nuevaLineaVentaVacia: NuevaLineaVenta = {
-    referencia: "",
-    cantidad: 1,
-};
+// export const nuevaLineaVentaVacia: NuevaLineaVenta = {
+//     referencia: "",
+//     cantidad: 1,
+// };
 
 export const puedeCambiarDivisa = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
 
@@ -197,19 +197,19 @@ export const metaNuevaLineaVenta: MetaModelo<NuevaLineaVenta> = {
     }
 };
 
-export const nuevaLineaLibreVentaVacia: NuevaLineaLibreVenta = {
-    descripcion: "",
-    cantidad: 1,
-    pvp_unitario: 0,
-};
+// export const nuevaLineaLibreVentaVacia: NuevaLineaLibreVenta = {
+//     descripcion: "",
+//     cantidad: 1,
+//     pvp_unitario: 0,
+// };
 
-export const metaNuevaLineaLibreVenta: MetaModelo<NuevaLineaLibreVenta> = {
-    campos: {
-        descripcion: { requerido: true, tipo: "texto" },
-        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
-        pvp_unitario: { requerido: true, tipo: "moneda" },
-    }
-};
+// export const metaNuevaLineaLibreVenta: MetaModelo<NuevaLineaLibreVenta> = {
+//     campos: {
+//         descripcion: { requerido: true, tipo: "texto" },
+//         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
+//         pvp_unitario: { requerido: true, tipo: "moneda" },
+//     }
+// };
 
 /**
  * El bloque `articulo` del PATCH de línea es excluyente: o el id del catálogo,
@@ -233,23 +233,23 @@ export const getTipoArticulo = (linea: LineaVenta): TipoArticuloLinea => {
 /**
  * Discrimina las dos formas de alta de línea que acepta el servidor.
  */
-export const esLineaConArticulo = (
-    linea: NuevaLineaVenta | NuevaLineaLibreVenta
-): linea is NuevaLineaVenta => 'referencia' in linea && !!linea.referencia;
+// export const esLineaConArticulo = (
+//     linea: NuevaLineaVenta | NuevaLineaLibreVenta
+// ): linea is NuevaLineaVenta => 'referencia' in linea && !!linea.referencia;
 
 /**
  * Convierte los tipos planos de UI (NuevaLineaVenta / NuevaLineaLibreVenta)
- * al tipo unificado AltaLineaVenta que acepta altaLineaApi.
+ * al tipo unificado NuevaLineaVenta que acepta altaLineaApi.
  */
-export const altaLineaDesdeNuevaLinea = (linea: NuevaLineaVenta): AltaLineaVenta => ({
-    articulo: { articuloId: linea.referencia },
-    cantidad: linea.cantidad,
-});
+// export const altaLineaDesdeNuevaLinea = (linea: NuevaLineaVenta): NuevaLineaVenta => ({
+//     articulo: { articuloId: linea.referencia },
+//     cantidad: linea.cantidad,
+// });
 
-export const altaLineaDesdeNuevaLineaLibre = (linea: NuevaLineaLibreVenta): AltaLineaVenta => ({
-    articulo: { descripcion: linea.descripcion, pvpUnitario: linea.pvp_unitario },
-    cantidad: linea.cantidad,
-});
+// export const altaLineaDesdeNuevaLineaLibre = (linea: NuevaLineaLibreVenta): NuevaLineaVenta => ({
+//     articulo: { descripcion: linea.descripcion, pvpUnitario: linea.pvp_unitario },
+//     cantidad: linea.cantidad,
+// });
 
 
 
@@ -257,41 +257,34 @@ export const altaLineaDesdeNuevaLineaLibre = (linea: NuevaLineaLibreVenta): Alta
 
 
 /** Modelo de alta de línea vacío, compartido por todos los documentos de venta. */
-export const nuevaLineaVacia: ModeloNuevaLinea = {
+export const nuevaLineaInicial: ModeloNuevaLinea = {
     tipoArticulo: "registrado",
-    referencia: null,
+    idArticulo: null,
     descripcionArticulo: null,
     descripcion: null,
     cantidad: 1,
-    pvp_unitario: null,
-    pvp_total: null,
+    pvpUnitario: 0,
+    pvpTotal: 0,
 };
 
 export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
     campos: {
-        referencia: { tipo: "texto" },
         descripcion: { tipo: "texto" },
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
-        pvp_unitario: { requerido: (linea) => !linea.referencia, tipo: "moneda" },
+        pvpUnitario: { requerido: (linea) => !linea.idArticulo, tipo: "moneda" },
+        pvpTotal: { tipo: "moneda", requerido: false, bloqueado: true },
     },
-    validacion: (linea) => !!(linea.referencia || linea.descripcion),
+    validacion: (linea) => !!(linea.idArticulo || linea.descripcion),
 };
 
 /**
- * Convierte el modelo de UI de nueva línea al tipo unificado AltaLineaVenta
+ * Convierte el modelo de UI de nueva línea al tipo unificado NuevaLineaVenta
  * que acepta altaLineaApi. Común a todos los documentos de venta.
  */
-export const altaLineaDesdeModelo = (linea: ModeloNuevaLinea): AltaLineaVenta => {
-    const { cantidad } = linea;
-    switch (linea.tipoArticulo) {
-        case "registrado":
-            return { articulo: { articuloId: linea.referencia! }, cantidad };
-        case "generico":
-            return { articulo: { articuloId: linea.referencia!, descripcion: linea.descripcion! }, cantidad };
-        case "libre":
-            return { articulo: { descripcion: linea.descripcion!, pvpUnitario: linea.pvp_unitario! }, cantidad };
-    }
-};
+/** Extrae los campos de NuevaLineaVenta desde el modelo de UI, descartando tipoArticulo y descripcionArticulo. */
+export const altaLineaDesdeModelo = ({ idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal }: ModeloNuevaLinea): NuevaLineaVenta => ({
+    idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal,
+});
 
 /**
  * Inicializa el modelo de edición de línea a partir de la línea recibida de la API,

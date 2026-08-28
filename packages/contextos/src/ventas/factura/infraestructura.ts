@@ -4,12 +4,12 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
+import { altaLineaApi, apiANuevaLineaVenta, articuloDeLinea, NuevaLineaVentaApiRes } from "../venta/infraestructura.ts";
 import { DeleteLinea, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchLinea, PostFactura, PostLinea, ReciboFactura } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
-interface LineaFacturaAPI extends Omit<LineaFactura, 'descripcionArticulo'> {
+interface LineaFacturaApi extends Omit<LineaFactura, 'descripcionArticulo'> {
   descripcion_articulo: string | null;
 }
 
@@ -63,7 +63,7 @@ export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
   },
   lineas: [],
 });
-export const lineaFacturaFromAPI = (l: LineaFacturaAPI): LineaFactura => ({
+export const lineaFacturaDesdeApi = (l: LineaFacturaApi): LineaFactura => ({
   ...l,
   descripcionArticulo: l.descripcion_articulo,
 } as unknown as LineaFactura);
@@ -123,18 +123,24 @@ export const patchCambiarCliente: PatchClienteFactura = async (id, cambio) => {
 };
 
 export const getLineas: GetLineasFactura = async (id) =>
-  await RestAPI.get<{ datos: LineaFacturaAPI[] }>(
+  await RestAPI.get<{ datos: LineaFacturaApi[] }>(
     `${baseUrl}/${id}/linea`).then((respuesta) => {
-      const lineas = respuesta.datos.map((d) => lineaFacturaFromAPI(d));
+      const lineas = respuesta.datos.map((d) => lineaFacturaDesdeApi(d));
       return lineas;
     });
 
-export const postLinea: PostLinea = async (id, linea) => {
+export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
   return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [altaLineaApi(linea)]
-  }, "Error al crear linea de factura").then((respuesta) => {
-    const miRespuesta = respuesta as unknown as { ids: string[] };
-    return miRespuesta.ids[0];
+    lineas: [altaLineaApi(linea)],
+    dry_run: dryRun,
+  }, "Error al crear línea de factura").then((respuesta) => {
+    if (dryRun) {
+      const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+      return apiANuevaLineaVenta(linea, miRespuesta[0]);
+    } else {
+      const { ids } = respuesta as unknown as { ids: string[] };
+      return { ...linea, id: ids[0] } as unknown as typeof linea;
+    }
   });
 };
 

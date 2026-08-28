@@ -1,4 +1,4 @@
-import { AltaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
+import { NuevaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const post = vi.fn(
@@ -14,7 +14,7 @@ vi.mock("@olula/lib/api/rest_api.ts", () => ({
 const { postLinea } = await import("#/ventas/pedido/infraestructura.ts");
 
 const cuerpoEnviado = () =>
-    (post.mock.calls[0][1] as { lineas: AltaLineaVentaApi[] }).lineas[0];
+    (post.mock.calls[0][1] as { lineas: NuevaLineaVentaApi[] }).lineas[0];
 
 describe("postLinea del pedido adapta el payload a cada forma", () => {
     beforeEach(() => post.mockClear());

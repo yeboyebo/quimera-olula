@@ -1,11 +1,11 @@
-import { LineaPedidoAPI, postLinea } from "#/ventas/pedido/infraestructura.ts";
+import { LineaPedidoApi, postLinea } from "#/ventas/pedido/infraestructura.ts";
 import { LineaPedidoNrj } from "./diseño.ts";
 
 interface PaletLineaPedidoApiNrj {
     id: string
     cantidad_envases: number
 }
-export interface LineaPedidoApiNrj extends LineaPedidoAPI {
+export interface LineaPedidoApiNrj extends LineaPedidoApi {
     variedad_id: string
     marca_id: string
     calibre_id: string

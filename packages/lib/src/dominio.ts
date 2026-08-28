@@ -424,7 +424,7 @@ const getUiProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onModeloListo?: (modelo: M) => Promise<void>,
+    onModeloListo?: (modelo: M, campo: string) => Promise<void | M>,
     errorGuardado?: QError | null
 ) =>
     (campo: string, secundario?: string): UiProps => {
@@ -470,23 +470,24 @@ const getUiProps = <M extends Modelo>(
             soloLectura: !editable || !modeloEsEditable(meta)(modelo),
             textoValidacion: textoValidacion,
             onChange: setCampo(modelo, meta, onModeloCambiado, campo, secundario),
-            evaluarCambio: evaluarCambio(modelo, modeloInicial, meta, onModeloListo),
+            evaluarCambio: evaluarCambio(campo, modelo, modeloInicial, meta, onModeloListo),
             descripcion: secundario ? modelo[secundario] as string : undefined,
         }
     }
 
 const evaluarCambio = <M extends Modelo>(
+    campo: string,
     modelo: M,
     modeloInicial: M,
     meta: MetaModelo<M>,
-    onModeloListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M, campo: string) => Promise<void | M>
 ) =>
     async () => {
         if (!onModeloListo) {
             return;
         }
         if (modeloModificado(modeloInicial, modelo) && modeloEsValido(meta)(modelo)) {
-            await onModeloListo(modelo);
+            await onModeloListo(modelo, campo);
         }
     }
 
@@ -614,7 +615,7 @@ export const getFormProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onModeloListo?: (modelo: M) => Promise<void>,
+    onModeloListo?: (modelo: M, campo: string) => Promise<void | M>,
     errorGuardado?: QError | null
 ): FormModelo => {
     return {

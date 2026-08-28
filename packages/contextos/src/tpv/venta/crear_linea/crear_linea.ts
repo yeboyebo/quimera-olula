@@ -1,6 +1,17 @@
-import { metaNuevaLineaVenta, nuevaLineaVentaVacia } from "#/ventas/venta/dominio.ts";
 import { MetaModelo } from "@olula/lib/dominio.js";
 import { NuevaLineaFactura } from "./diseño.ts";
 
-export const nuevaLineaFacturaVacia: NuevaLineaFactura = nuevaLineaVentaVacia;
-export const metaNuevaLineaFactura: MetaModelo<NuevaLineaFactura> = metaNuevaLineaVenta;
+export const nuevaLineaFacturaVacia: NuevaLineaFactura = {
+    idArticulo: null,
+    descripcion: null,
+    pvpUnitario: null,
+    cantidad: 1,
+    pvpTotal: 0,
+};
+
+export const metaNuevaLineaFactura: MetaModelo<NuevaLineaFactura> = {
+    campos: {
+        idArticulo: { requerido: true, tipo: "texto" },
+        cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
+    }
+};

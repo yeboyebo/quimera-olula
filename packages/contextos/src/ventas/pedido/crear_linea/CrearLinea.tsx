@@ -3,23 +3,21 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
-import { useCambiosDesdeCampo } from "@olula/lib/useCambiosDesdeCampo.ts";
 import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useContext, useMemo, useRef } from "react";
+import { useCallback, useContext } from "react";
+import type { ModeloNuevaLinea } from "../../venta/diseño.ts";
+import { postLinea } from "../infraestructura.ts";
 import "./CrearLinea.css";
 import {
     camposConCambiosServidor,
-    getCambiosNuevaLinea,
     metaNuevaLinea,
-    ModeloNuevaLinea,
-    nuevaLineaVacia,
-    postModelo,
+    nuevaLineaInicial
 } from "./dominio.ts";
 
 export type CrearLineaProps = {
-    pedidoId: string;
+    idPedido: string;
     publicar: ProcesarEvento;
 };
 
@@ -30,75 +28,47 @@ export const CrearLinea = (props: CrearLineaProps) => {
     return CrearLinea_(props);
 };
 
-export const CrearLineaBase = ({ pedidoId, publicar }: CrearLineaProps) => {
+export const CrearLineaBase = ({ idPedido, publicar }: CrearLineaProps) => {
 
-    // 1. Contexto memoizado: incluye pedidoId para que el servidor resuelva
-    //    tarifas del cliente, almacén, etc. Ampliar si el servidor necesita más datos.
-    const contexto = useMemo(() => ({ pedidoId }), [pedidoId]);
-
-    // 2. Hook genérico de cambios servidor (debe ir antes de useModelo para que
-    //    aplicarCambiosServidor esté disponible en onModeloListo).
-    const { aplicarCambiosServidor } = useCambiosDesdeCampo(
-        camposConCambiosServidor,
-        getCambiosNuevaLinea,
-        contexto
-    );
-
-    // 3. Refs para romper la dependencia circular onModeloListo ↔ lineaArticulo.set.
-    //    modeloAnteriorRef: detectar qué campo cambió comparando viejo vs nuevo.
-    //    setLineaRef: acceder a lineaArticulo.set sin incluirlo en los deps de onModeloListo.
-    const modeloAnteriorRef = useRef<ModeloNuevaLinea>(nuevaLineaVacia);
-    const setLineaRef = useRef<(m: ModeloNuevaLinea) => void>(() => {});
-
-    // 4. Callback para campos QInput (p.ej. cantidad): se dispara en blur via
-    //    evaluarCambio, que QInput llama automáticamente en onBlur.
-    //    Detecta el campo que cambió y delega en aplicarCambiosServidor.
+    // Callback para campos QInput (cantidad…): se dispara en blur via evaluarCambio.
+    // Solo llama al servidor si el campo está en camposConCambiosServidor.
     const onModeloListo = useCallback(
-        async (nuevoModelo: ModeloNuevaLinea) => {
-            const delta = (Object.keys(nuevoModelo) as (keyof ModeloNuevaLinea)[])
-                .filter(k => nuevoModelo[k] !== modeloAnteriorRef.current[k])
-                .reduce((acc, k) => ({ ...acc, [k]: nuevoModelo[k] }), {} as Partial<ModeloNuevaLinea>);
-
-            modeloAnteriorRef.current = nuevoModelo;
-
-            await aplicarCambiosServidor(nuevoModelo, delta, setLineaRef.current);
+        async (nuevaLinea: ModeloNuevaLinea, campo?: string) => {
+            if (campo && !(camposConCambiosServidor as readonly string[]).includes(campo)) {
+                return;
+            }
+            return await postLinea(idPedido, nuevaLinea, { dryRun: true });
         },
-        [aplicarCambiosServidor]
+        [idPedido]
     );
 
-    // 5. useModelo con onModeloListo para habilitar el flujo de blur en campos QInput.
-    const lineaArticulo = useModelo(metaNuevaLinea, nuevaLineaVacia, onModeloListo);
-
-    // 6. Actualizar la ref síncrona tras cada render para que onModeloListo
-    //    siempre use el set más reciente.
-    setLineaRef.current = lineaArticulo.set;
+    const lineaArticulo = useModelo(metaNuevaLinea, nuevaLineaInicial, onModeloListo);
 
     const linea = lineaArticulo.modelo;
 
-    // 7. Handler para ArticuloLinea (onChange inmediato, no pasa por evaluarCambio).
-    //    Campos disparadores: 'referencia' (declarados en camposConCambiosServidor).
+    // Handler para ArticuloLinea (onChange inmediato, no pasa por evaluarCambio).
     const onArticuloCambiado = useCallback(
         async (cambios: Partial<CamposArticuloLinea>) => {
-            const nuevaLinea = { ...linea, ...cambios };
-            lineaArticulo.set(nuevaLinea);                            // optimista
-            await aplicarCambiosServidor(                             // recálculo servidor
-                nuevaLinea,
-                cambios as Partial<ModeloNuevaLinea>,
-                lineaArticulo.set
-            );
+            const { idArticulo, ...restCambios } = cambios;
+            const cambiosModelo = {
+                ...restCambios,
+                ...(idArticulo !== undefined ? { idArticulo, pvpUnitario: null } : {}),
+            };
+            const nuevaLinea: ModeloNuevaLinea = { ...linea, ...cambiosModelo };
+            lineaArticulo.set(nuevaLinea);
         },
-        [linea, lineaArticulo, aplicarCambiosServidor]
+        [linea, lineaArticulo, idPedido]
     );
 
     const crear_ = useCallback(async () => {
-        await postModelo(pedidoId, lineaArticulo.modelo);
-        publicar("alta_linea_lista");
-    }, [lineaArticulo, publicar, pedidoId]);
+        const lineaConId = await postLinea(idPedido, lineaArticulo.modelo);
+        publicar("linea_creada", lineaConId);
+    }, [lineaArticulo, publicar, idPedido]);
 
     const cancelar_ = useCallback(
         () => publicar("crear_linea_cancelado"),
         [publicar]
-    );
+    ); 
 
     const [crear, cancelar] = useForm(crear_, cancelar_);
 
@@ -114,11 +84,11 @@ export const CrearLineaBase = ({ pedidoId, publicar }: CrearLineaProps) => {
             <div className="CrearLinea">
                 <quimera-formulario>
                     <ArticuloLinea
-                        tipoArticulo={linea.tipoArticulo}
-                        referencia={linea.referencia}
-                        descripcionArticulo={linea.descripcionArticulo}
+                        tipo={linea.tipoArticulo}
+                        idArticulo={linea.idArticulo}
+                        articulo={linea.descripcionArticulo}
                         descripcion={linea.descripcion ?? ""}
-                        nombre="referencia_nueva_linea_pedido"
+                        nombre="idArticulo_nueva_linea_pedido"
                         onChange={onArticuloCambiado}
                     />
                     {/* cantidad: usa evaluarCambio vía onBlur automático de QInput */}
@@ -127,11 +97,11 @@ export const CrearLineaBase = ({ pedidoId, publicar }: CrearLineaProps) => {
                         <>
                         <QInput
                             label="PVP unitario"
-                            {...lineaArticulo.uiProps("pvp_unitario")}
+                            {...lineaArticulo.uiProps("pvpUnitario")}
                         />
                         <QInput
                             label="Total"
-                            {...lineaArticulo.uiProps("pvp_total")}
+                            {...lineaArticulo.uiProps("pvpTotal")}
                         />
                         </>
                     )}

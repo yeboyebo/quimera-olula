@@ -103,7 +103,7 @@ export type GetPagosVentaTpv = (id: string) => Promise<PagoVentaTpv[]>;
 
 export type PostVentaTpv = (agenteId?: string) => Promise<string>;
 
-export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<string>;
+export type PostLinea = (id: string, linea: NuevaLineaVenta) => Promise<NuevaLineaVenta>;
 
 export type PostPago = (id: string, pago: PagoTpv) => Promise<string>;
 

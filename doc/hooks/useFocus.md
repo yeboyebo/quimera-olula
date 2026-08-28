@@ -65,13 +65,13 @@ const EditarCantidad = ({ cantidad }: { cantidad: number }) => {
 
 ```tsx
 const NuevaLineaPedido = ({ publicar }: { publicar: ProcesarEvento }) => {
-    const linea = useModelo(metaNuevaLinea, nuevaLineaVacia());
+    const linea = useModelo(metaNuevaLinea, nuevaLineaInicial());
     const focus = useFocus();
 
     const guardar = async () => {
         await postLinea(linea.modelo);
         publicar("linea_creada");
-        linea.init(nuevaLineaVacia());
+        linea.init(nuevaLineaInicial());
     };
 
     return (

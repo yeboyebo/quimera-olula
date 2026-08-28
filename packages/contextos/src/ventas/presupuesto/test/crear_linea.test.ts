@@ -1,9 +1,9 @@
-import { AltaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
-import { esLineaConArticulo } from "#/ventas/venta/dominio.ts";
 import {
     metaNuevaLinea,
-    nuevaLineaVacia,
+    nuevaLineaInicial,
 } from "#/ventas/presupuesto/crear_linea/dominio.ts";
+import { esLineaConArticulo } from "#/ventas/venta/dominio.ts";
+import { NuevaLineaVentaApi } from "#/ventas/venta/infraestructura.ts";
 import { modeloEsValido } from "@olula/lib/dominio.ts";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -20,7 +20,7 @@ vi.mock("@olula/lib/api/rest_api.ts", () => ({
 const { postLinea } = await import("#/ventas/presupuesto/infraestructura.ts");
 
 const cuerpoEnviado = () =>
-    (post.mock.calls[0][1] as { lineas: AltaLineaVentaApi[] }).lineas[0];
+    (post.mock.calls[0][1] as { lineas: NuevaLineaVentaApi[] }).lineas[0];
 
 describe("esLineaConArticulo distingue las dos formas de línea", () => {
     test("con referencia es línea de catálogo", () => {
@@ -67,7 +67,7 @@ describe("postLinea adapta el payload a cada forma", () => {
 
 describe("validación de la nueva línea", () => {
     const valido = modeloEsValido(metaNuevaLinea);
-    const lineaLibreBase = { ...nuevaLineaVacia, tipoArticulo: "libre" as const, referencia: null };
+    const lineaLibreBase = { ...nuevaLineaInicial, tipoArticulo: "libre" as const, referencia: null };
 
     test("un pvp de 0 es válido en una línea libre", () => {
         expect(valido({ ...lineaLibreBase, descripcion: "Portes", pvp_unitario: 0 })).toBe(true);
@@ -78,6 +78,6 @@ describe("validación de la nueva línea", () => {
     });
 
     test("sin referencia ni descripción no vale", () => {
-        expect(valido({ ...nuevaLineaVacia, referencia: null, descripcion: null, pvp_unitario: 15 })).toBe(false);
+        expect(valido({ ...nuevaLineaInicial, referencia: null, descripcion: null, pvp_unitario: 15 })).toBe(false);
     });
 });

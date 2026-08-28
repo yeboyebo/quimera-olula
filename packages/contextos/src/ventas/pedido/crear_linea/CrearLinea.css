@@ -20,7 +20,7 @@
         grid-column: span 3;
     }
 
-    quimera-input[nombre="pvp_unitario"] {
+    quimera-input[nombre="pvpUnitario"] {
         grid-column: span 4;
     }
 }

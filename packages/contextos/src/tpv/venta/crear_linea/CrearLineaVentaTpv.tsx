@@ -32,9 +32,9 @@ export const CrearLineaVentaTpv = ({
 
   const crear = useCallback(
     async () => {
-      const idLinea = await intentar(() => postLinea(venta.id, modelo));
+      const lineaConId = await intentar(() => postLinea(venta.id, modelo));
       setCreando(true);
-      publicar("linea_creada", idLinea);
+      publicar("linea_creada", lineaConId);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [modelo, publicar, venta.id]
@@ -56,7 +56,7 @@ export const CrearLineaVentaTpv = ({
       <div className="CrearLineaVentaTpv">
         <quimera-formulario>
           <Articulo
-            {...uiProps("referencia", "descripcion")}
+            {...uiProps("idArticulo", "descripcion")}
             nombre="referencia_nueva_linea_pedido"
             ref={focus}
           />
