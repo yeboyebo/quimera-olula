@@ -124,12 +124,18 @@ export type CambioClienteVenta = {
 
 /** Tipo dominio unificado para el alta de línea (input de `altaLineaApi`). */
 export type NuevaLineaVenta = {
-    // articulo: ArticuloLinea;
     idArticulo: string | null;
     descripcion: string | null;
-    pvpUnitario: number | null;
     cantidad: number;
+    pvpUnitario: number | null;
+    dtoPorcentual: number;
+    dtoLineal: number;
     pvpTotal: number;
+    idGrupoIvaProducto: string | null;
+    ivaIncluido: boolean;
+    tipoIva: number;
+    tipoRecargo: number;
+    tipoIrpf: number;
 };
 
 /**

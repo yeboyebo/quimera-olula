@@ -7,6 +7,13 @@ export const nuevaLineaFacturaVacia: NuevaLineaFactura = {
     pvpUnitario: null,
     cantidad: 1,
     pvpTotal: 0,
+    dtoPorcentual: 0,
+    dtoLineal: 0,
+    idGrupoIvaProducto: null,
+    ivaIncluido: false,
+    tipoIva: 0,
+    tipoRecargo: 0,
+    tipoIrpf: 0,
 };
 
 export const metaNuevaLineaFactura: MetaModelo<NuevaLineaFactura> = {

@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { ContextoError, QError } from "./contexto.ts";
 import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { getFormProps, MetaModelo, modeloEsValido } from "./dominio.ts";
+import { getFormProps, MetaModelo, modeloEsValido, modeloModificado } from "./dominio.ts";
 
 const aQError = (error: unknown): QError => {
     const apiError = error as QError;
@@ -29,10 +29,14 @@ export function useModelo<T extends Modelo>(
 
     // Evita que el setModelo interno de onModeloListoConError vuelva a disparar el callback
     const enCambioDesdeCallback = useRef(false);
+    // Modelo en el último disparo exitoso; evita llamadas redundantes al servidor
+    const modeloUltimoDisparo = useRef<T>(modeloInicialProp);
 
     const onModeloListoConError = useCallback(
         async (modelo: T, campo?: string) => {
             if (!onModeloListo) return;
+            // No disparar si el modelo no cambió desde el último disparo exitoso
+            if (!modeloModificado(modeloUltimoDisparo.current, modelo)) return;
             enCambioDesdeCallback.current = true;
             try {
                 await intentar(async () => {
@@ -40,6 +44,8 @@ export function useModelo<T extends Modelo>(
                     if (nuevoModelo) {
                         setModelo(nuevoModelo); // directo, sin pasar por setExterno
                     }
+                    // Actualizar solo en caso de éxito; si falla, el siguiente blur reintenta
+                    modeloUltimoDisparo.current = nuevoModelo ?? modelo;
                 });
                 setErrorGuardado(null);
                 setGuardados((n) => n + 1);
@@ -72,12 +78,14 @@ export function useModelo<T extends Modelo>(
         setErrorGuardado(null);
         setModelo(modeloAUsar);
         setModeloInicial(modeloAUsar);
+        modeloUltimoDisparo.current = modeloAUsar;
     }, [modeloInicialProp]);
 
     useEffect(() => {
         setErrorGuardado(null);
         setModelo(modeloInicialProp);
         setModeloInicial(modeloInicialProp);
+        modeloUltimoDisparo.current = modeloInicialProp;
     }, [modeloInicialProp]);
 
     return {

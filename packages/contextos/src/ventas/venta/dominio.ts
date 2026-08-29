@@ -265,14 +265,28 @@ export const nuevaLineaInicial: ModeloNuevaLinea = {
     cantidad: 1,
     pvpUnitario: 0,
     pvpTotal: 0,
+    dtoPorcentual: 0,
+    dtoLineal: 0,
+    idGrupoIvaProducto: null,
+    ivaIncluido: false,
+    tipoIva: 0,
+    tipoRecargo: 0,
+    tipoIrpf: 0,
 };
 
 export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
     campos: {
-        descripcion: { tipo: "texto" },
+        descripcion: { tipo: "texto", requerido: (linea) => !linea.idArticulo },
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         pvpUnitario: { requerido: (linea) => !linea.idArticulo, tipo: "moneda" },
         pvpTotal: { tipo: "moneda", requerido: false, bloqueado: true },
+        dtoPorcentual: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 },
+        dtoLineal: { tipo: "decimal", requerido: false, decimales: 2, positivo: true },
+        tipoIrpf: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100 },
+        tipoIva: { tipo: "decimal", requerido: false, decimales: 2, bloqueado: true },
+        tipoRecargo: { tipo: "decimal", requerido: false, decimales: 2, bloqueado: true },
+        idGrupoIvaProducto: { requerido: false },
+        ivaIncluido: { tipo: "checkbox", requerido: false },
     },
     validacion: (linea) => !!(linea.idArticulo || linea.descripcion),
 };
@@ -282,8 +296,8 @@ export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
  * que acepta altaLineaApi. Común a todos los documentos de venta.
  */
 /** Extrae los campos de NuevaLineaVenta desde el modelo de UI, descartando tipoArticulo y descripcionArticulo. */
-export const altaLineaDesdeModelo = ({ idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal }: ModeloNuevaLinea): NuevaLineaVenta => ({
-    idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal,
+export const altaLineaDesdeModelo = ({ idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal, dtoPorcentual, dtoLineal, idGrupoIvaProducto, ivaIncluido, tipoIva, tipoRecargo, tipoIrpf }: ModeloNuevaLinea): NuevaLineaVenta => ({
+    idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal, dtoPorcentual, dtoLineal, idGrupoIvaProducto, ivaIncluido, tipoIva, tipoRecargo, tipoIrpf,
 });
 
 /**

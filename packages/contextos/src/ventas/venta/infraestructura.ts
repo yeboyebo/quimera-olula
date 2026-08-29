@@ -11,6 +11,8 @@ export interface ArticuloLineaGenericoApi extends ArticuloLineaRegistradoApi {
 export interface ArticuloLineaLibreApi {
     descripcion: string;
     pvp_unitario: number;
+    grupo_iva_producto_id?: string;
+    iva_incluido?: boolean;
 }
 export type ArticuloLineaApi =
     | ArticuloLineaRegistradoApi
@@ -20,7 +22,10 @@ export type ArticuloLineaApi =
 export type NuevaLineaVentaApiReq = {
     articulo: ArticuloLineaApi;
     cantidad: number;
-    // pvp_total: number;
+    dto_porcentual?: number;
+    dto_lineal?: number;
+    tipo_irpf?: number;
+    comision?: number;
 };
 
 export const articuloDeLinea = (
@@ -78,6 +83,8 @@ const articuloAltaGenericoApi = (linea: NuevaLineaVenta): ArticuloLineaGenericoA
 const articuloAltaLibreApi = (linea: NuevaLineaVenta): ArticuloLineaLibreApi => ({
     descripcion: linea.descripcion!,
     pvp_unitario: linea.pvpUnitario!,
+    ...(linea.idGrupoIvaProducto ? { grupo_iva_producto_id: linea.idGrupoIvaProducto } : {}),
+    ...(linea.ivaIncluido ? { iva_incluido: linea.ivaIncluido } : {}),
 });
 
 
@@ -88,6 +95,9 @@ const articuloAltaLibreApi = (linea: NuevaLineaVenta): ArticuloLineaLibreApi => 
 export const altaLineaApi = (linea: NuevaLineaVenta): NuevaLineaVentaApiReq => ({
     articulo: articuloAltaLineaApi(linea),
     cantidad: linea.cantidad,
+    ...(linea.dtoPorcentual ? { dto_porcentual: linea.dtoPorcentual } : {}),
+    ...(linea.dtoLineal ? { dto_lineal: linea.dtoLineal } : {}),
+    ...(linea.tipoIrpf ? { tipo_irpf: linea.tipoIrpf } : {}),
 });
 
 // export const altaLineaDesdeApi = (lineaApi: NuevaLineaVentaApi): NuevaLineaVenta => ({
@@ -123,6 +133,13 @@ export interface NuevaLineaVentaApiRes {
     cantidad: number;
     pvp_unitario: number;
     pvp_total: number;
+    dto_porcentual: number;
+    dto_lineal: number;
+    grupo_iva_producto_id: string;
+    tipo_iva: number;
+    tipo_recargo: number;
+    tipo_irpf: number;
+    iva_incluido: boolean;
 }
 
 // export function altaLineaVentaAApi(linea: NuevaLineaVenta): AltaLineaApiReq {
@@ -142,5 +159,12 @@ export function apiANuevaLineaVenta<T extends NuevaLineaVenta>(lineaAnterior: T,
         pvpUnitario: lineaApi.pvp_unitario,
         cantidad: lineaApi.cantidad,
         pvpTotal: lineaApi.pvp_total,
+        dtoPorcentual: lineaApi.dto_porcentual,
+        dtoLineal: lineaApi.dto_lineal,
+        idGrupoIvaProducto: lineaApi.grupo_iva_producto_id,
+        tipoIva: lineaApi.tipo_iva,
+        tipoRecargo: lineaApi.tipo_recargo,
+        tipoIrpf: lineaApi.tipo_irpf,
+        ivaIncluido: lineaApi.iva_incluido,
     } as T;
 }

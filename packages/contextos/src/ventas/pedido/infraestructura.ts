@@ -5,8 +5,8 @@ import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
-import { DeleteLinea, GetCambiosLineaPedido, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
+import { altaLineaApi, apiANuevaLineaVenta, articuloDeLinea, NuevaLineaVentaApiRes } from "../venta/infraestructura.ts";
+import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
 
 export interface LineaPedidoApi {
     id: string;
@@ -170,39 +170,41 @@ export const getLineas: GetLineasPedido = async (id) =>
             return lineas
         });
 
-export const getCambiosLineaPedido: GetCambiosLineaPedido = async (linea, _campo, _contexto) => {
-    // Mock: en producción, llamar al servidor usando _contexto.pedidoId para
-    // resolver tarifas del cliente, almacén, etc.
-    // Campos disparadores actuales: 'referencia'
-    if (linea.referencia === 'R1') {
-        return {
-            ...linea,
-            descripcion: 'Artículo R1 - Descripción del servidor',
-            pvp_unitario: 10.0,
-            grupo_iva_producto_id: 'GENERAL',
-            tipo_iva: 21,
-            pvp_total: linea.cantidad * linea.pvp_unitario
-        };
-    }
-    if (linea.referencia === 'R2') {
-        return {
-            ...linea,
-            descripcion: 'Artículo R2 - Descripción del servidor',
-            pvp_unitario: 25.5,
-            grupo_iva_producto_id: 'REDUCIDO',
-            tipo_iva: 10,
-            pvp_total: linea.cantidad * linea.pvp_unitario
-        };
-    }
-    return linea;
-}
+// export const getCambiosLineaPedido: GetCambiosLineaPedido = async (linea, _campo, _contexto) => {
+//     // Mock: en producción, llamar al servidor usando _contexto.pedidoId para
+//     // resolver tarifas del cliente, almacén, etc.
+//     // Campos disparadores actuales: 'referencia'
+//     if (linea.referencia === 'R1') {
+//         return {
+//             ...linea,
+//             descripcion: 'Artículo R1 - Descripción del servidor',
+//             pvp_unitario: 10.0,
+//             grupo_iva_producto_id: 'GENERAL',
+//             tipo_iva: 21,
+//             pvp_total: linea.cantidad * linea.pvp_unitario
+//         };
+//     }
+//     if (linea.referencia === 'R2') {
+//         return {
+//             ...linea,
+//             descripcion: 'Artículo R2 - Descripción del servidor',
+//             pvp_unitario: 25.5,
+//             grupo_iva_producto_id: 'REDUCIDO',
+//             tipo_iva: 10,
+//             pvp_total: linea.cantidad * linea.pvp_unitario
+//         };
+//     }
+//     return linea;
+// }
 
 export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
+    const lineaApi = altaLineaApi(linea);
     const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
-        lineas: [altaLineaApi(linea)],
+        lineas: [lineaApi],
         dry_run: dryRun,
     }, "Error al crear línea de pedido")
-    return respuesta as unknown as typeof linea;
+    const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+    return apiANuevaLineaVenta(linea, miRespuesta[0]);
 
     // .then((respuesta) => {
     //     if (dryRun) {
@@ -245,6 +247,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
             dto_porcentual: linea.dto_porcentual,
             dto_lineal: linea.dto_lineal,
             grupo_iva_producto_id: linea.grupo_iva_producto_id,
+            iva_incluido: linea.iva_incluido,
             tipo_irpf: linea.tipo_irpf,
             comision: linea.por_comision,
         },

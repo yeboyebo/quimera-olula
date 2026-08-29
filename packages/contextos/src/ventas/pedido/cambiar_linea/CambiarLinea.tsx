@@ -1,5 +1,6 @@
 import { ArticuloLinea } from "#/ventas/comun/componentes/articulo_linea/ArticuloLinea.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
@@ -86,10 +87,14 @@ export const CambiarLineaBase = ({
 
             {mostrarMas && (
                 <>
+                    <div className="seccion-separador">Descuento</div>
                     <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
                     <QInput label="Dto. lineal" {...uiProps("dto_lineal")} />
+
+                    <div className="seccion-separador">Impuestos</div>
                     <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} soloLectura={!libre} />
                     <QInput label="% IVA" {...uiProps("tipo_iva")} soloLectura />
+                    <QCheckbox label="IVA incluido" {...uiProps("iva_incluido")} soloLectura={!libre} />
                     <QInput label="% I.R.P.F." {...uiProps("tipo_irpf")} />
                     <QInput label="% Comisión agente" {...uiProps("por_comision")} />
                     <QInput

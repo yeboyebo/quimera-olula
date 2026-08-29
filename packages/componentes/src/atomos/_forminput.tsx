@@ -129,7 +129,10 @@ export const FormInput = ({
 
   const manejarBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     onBlur?.(e.target.value, e);
-    evaluarCambio?.();
+    // if (evaluarCambio && e.target.value !== valor) {
+    if (evaluarCambio) {
+      evaluarCambio();
+    }
   };
 
   const manejarInput = (e: React.FormEvent<HTMLInputElement>) => {

@@ -110,6 +110,7 @@ export const ArticuloLinea = ({
                         label="Descripción personalizada"
                         valor={descripcion ?? ""}
                         onChange={(val) => onChange({ descripcion: val })}
+                        valido={!!descripcion}
                         ref={refDescripcionRegistrado}
                     />
                 )}
@@ -123,6 +124,7 @@ export const ArticuloLinea = ({
                 nombre="descripcion"
                 label="Descripción"
                 valor={descripcion ?? ""}
+                erroneo={!descripcion}
                 onChange={(val) => onChange({ descripcion: val })}
                 ref={refDescripcionLibre}
             />
