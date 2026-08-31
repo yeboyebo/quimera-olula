@@ -5,229 +5,228 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi, apiANuevaLineaVenta, articuloDeLinea, NuevaLineaVentaApiRes } from "../venta/infraestructura.ts";
+import { articuloDeLinea, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
 
 type PresupuestoAPI = {
-  id: string;
-  codigo: string;
-  fecha: string;
-  fecha_salida: string;
-  agente_id: string;
-  nombre_agente: string;
-  divisa_id: string;
-  tasa_conversion: number;
-  total: number;
-  total_divisa_empresa: number;
-  neto: number;
-  total_iva: number;
-  total_irpf: number;
-  total_recargo: number;
-  por_descuento: number;
-  neto_sin_dto: number;
-  forma_pago_id: string;
-  nombre_forma_pago: string;
-  grupo_iva_negocio_id: string;
-  por_comision: number;
-  almacen_id: string;
-  observaciones: string;
-  cliente_id: string | null;
-  nombre_cliente: string;
-  id_fiscal: string;
-  direccion_id: string | null;
-  direccion: Direccion;
-  aprobado: boolean;
+    id: string;
+    codigo: string;
+    fecha: string;
+    fecha_salida: string;
+    agente_id: string;
+    nombre_agente: string;
+    divisa_id: string;
+    tasa_conversion: number;
+    total: number;
+    total_divisa_empresa: number;
+    neto: number;
+    total_iva: number;
+    total_irpf: number;
+    total_recargo: number;
+    por_descuento: number;
+    neto_sin_dto: number;
+    forma_pago_id: string;
+    nombre_forma_pago: string;
+    grupo_iva_negocio_id: string;
+    por_comision: number;
+    almacen_id: string;
+    observaciones: string;
+    cliente_id: string | null;
+    nombre_cliente: string;
+    id_fiscal: string;
+    direccion_id: string | null;
+    direccion: Direccion;
+    aprobado: boolean;
 };
 
 const baseUrl = new ApiUrls().PRESUPUESTO;
 
 interface LineaPresupuestoApi extends Omit<LineaPresupuesto, 'descripcionArticulo'> {
-  descripcion_articulo: string | null;
+    descripcion_articulo: string | null;
 }
 
 export const lineaPresupuestoDesdeApi = (l: LineaPresupuestoApi): LineaPresupuesto => ({
-  ...l,
-  descripcionArticulo: l.descripcion_articulo,
+    ...l,
+    descripcionArticulo: l.descripcion_articulo,
 } as unknown as LineaPresupuesto);
 
 export const presupuestoFromAPI = (p: PresupuestoAPI): Presupuesto => ({
-  ...p,
-  fecha: new Date(Date.parse(p.fecha)),
-  fecha_salida: new Date(Date.parse(p.fecha_salida)),
-  dtoPorcentual: p.por_descuento,
-  netoSinDto: p.neto_sin_dto,
-  cliente: {
-    cliente_id: p.cliente_id ?? null,
-    nombre_cliente: p.nombre_cliente ?? "",
-    id_fiscal: p.id_fiscal ?? "",
-    direccion_id: p.direccion_id ?? null,
-    direccion: p.direccion ?? direccionVacia(),
-  },
-  lineas: [],
+    ...p,
+    fecha: new Date(Date.parse(p.fecha)),
+    fecha_salida: new Date(Date.parse(p.fecha_salida)),
+    dtoPorcentual: p.por_descuento,
+    netoSinDto: p.neto_sin_dto,
+    cliente: {
+        cliente_id: p.cliente_id ?? null,
+        nombre_cliente: p.nombre_cliente ?? "",
+        id_fiscal: p.id_fiscal ?? "",
+        direccion_id: p.direccion_id ?? null,
+        direccion: p.direccion ?? direccionVacia(),
+    },
+    lineas: [],
 });
 
 export const getPresupuesto: GetPresupuesto = async (id) =>
-  RestAPI.get<{ datos: PresupuestoAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
-    return presupuestoFromAPI(respuesta.datos);
-  });
+    RestAPI.get<{ datos: PresupuestoAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
+        return presupuestoFromAPI(respuesta.datos);
+    });
 
 export const getReportPresupuesto: GetReportPresupuesto = async (id) =>
-  RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del presupuesto");
+    RestAPI.blob(`${baseUrl}/${id}/report`, "Error al obtener el report del presupuesto");
 
 export const getPresupuestos: GetPresupuestos = async (
-  filtro: Filtro,
-  orden: Orden,
-  paginacion: Paginacion
+    filtro: Filtro,
+    orden: Orden,
+    paginacion: Paginacion
 ) => {
-  const q = criteriaQuery(filtro, orden, paginacion);
+    const q = criteriaQuery(filtro, orden, paginacion);
 
-  const respuesta = await RestAPI.get<{ datos: PresupuestoAPI[]; total: number }>(baseUrl + q);
-  return { datos: respuesta.datos.map(presupuestoFromAPI), total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: PresupuestoAPI[]; total: number }>(baseUrl + q);
+    return { datos: respuesta.datos.map(presupuestoFromAPI), total: respuesta.total };
 };
 
 export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<string> => {
-  const payload = {
-    cliente: payloadCambioCliente(presupuesto),
-    empresa_id: empresaActual()
-  };
+    const payload = {
+        cliente: payloadCambioCliente(presupuesto),
+        empresa_id: empresaActual()
+    };
 
-  return await RestAPI.post(baseUrl, payload, "Error al crear presupuesto").then((respuesta) => respuesta.id);
+    return await RestAPI.post(baseUrl, payload, "Error al crear presupuesto").then((respuesta) => respuesta.id);
 }
 
 export const borrarPresupuesto = async (id: string): Promise<void> => {
-  await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar presupuesto");
+    await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar presupuesto");
 }
 
 export const patchCambiarAgente = async (id: string, cambio: CambioAgente) => {
-  await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      agente_id: cambio.agente_id,
-      por_comision: cambio.por_comision,
-    }
-  }, "Error al cambiar agente del presupuesto");
+    await RestAPI.patch(`${baseUrl}/${id}`, {
+        cambios: {
+            agente_id: cambio.agente_id,
+            por_comision: cambio.por_comision,
+        }
+    }, "Error al cambiar agente del presupuesto");
 }
 
 export const patchCambiarDivisa: PatchCambiarDivisa = async (id, cambio) => {
-  await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      divisa: {
-        divisa_id: cambio.divisa_id,
-        tasa_conversion: cambio.tasa_conversion,
-      }
-    }
-  }, "Error al cambiar divisa del presupuesto");
+    await RestAPI.patch(`${baseUrl}/${id}`, {
+        cambios: {
+            divisa: {
+                divisa_id: cambio.divisa_id,
+                tasa_conversion: cambio.tasa_conversion,
+            }
+        }
+    }, "Error al cambiar divisa del presupuesto");
 }
 
 export const patchCambiarCliente = async (id: string, cambio: CambioClientePresupuesto): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: { cliente: payloadCambioCliente(cambio) }
-  }, "Error al cambiar cliente del presupuesto");
+    await RestAPI.patch(`${baseUrl}/${id}`, {
+        cambios: { cliente: payloadCambioCliente(cambio) }
+    }, "Error al cambiar cliente del presupuesto");
 }
 
 export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
-  await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
-    respuesta.datos.map(lineaPresupuestoDesdeApi)
-  );
+    await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
+        respuesta.datos.map(lineaPresupuestoDesdeApi)
+    );
 
 
 export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [altaLineaApi(linea)],
-    dry_run: dryRun,
-  }, "Error al crear línea de presupuesto").then((respuesta) => {
-    if (dryRun) {
-      const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
-      return apiANuevaLineaVenta(linea, miRespuesta[0]);
-    } else {
-      const { ids } = respuesta as unknown as { ids: string[] };
-      return { ...linea, id: ids[0] } as unknown as typeof linea;
+    const lineaApi = peticionNuevaLineaApi(linea);
+    const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
+        lineas: [lineaApi],
+        dry_run: dryRun,
+    }, "Error al crear línea de presupuesto");
+    const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+    const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+    if (!dryRun) {
+        return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
     }
-  });
+    return lineaActualizada;
 }
 
 export const patchArticuloLinea: CambiarArticuloLinea = async (id, lineaId, referencia) => {
-  const payload = {
-    cambios: {
-      articulo: {
-        articulo_id: referencia
-      },
-    },
-  }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload, "Error al actualizar artículo de la línea del presupuesto");
+    const payload = {
+        cambios: {
+            articulo: {
+                articulo_id: referencia
+            },
+        },
+    }
+    await RestAPI.patch(`${baseUrl}/${id}/linea/${lineaId}`, payload, "Error al actualizar artículo de la línea del presupuesto");
 }
 
 export const patchLinea: PatchLinea = async (id, linea) => {
-  const payload = {
-    cambios: {
-      articulo: articuloDeLinea(linea),
-      cantidad: linea.cantidad,
-      pvp_unitario: linea.pvp_unitario,
-      dto_porcentual: linea.dto_porcentual,
-      dto_lineal: linea.dto_lineal,
-      grupo_iva_producto_id: linea.grupo_iva_producto_id,
-      tipo_irpf: linea.tipo_irpf,
-      comision: linea.por_comision,
-    },
-  }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea del presupuesto");
+    const payload = {
+        cambios: {
+            articulo: articuloDeLinea(linea),
+            cantidad: linea.cantidad,
+            pvp_unitario: linea.pvp_unitario,
+            dto_porcentual: linea.dto_porcentual,
+            dto_lineal: linea.dto_lineal,
+            grupo_iva_producto_id: linea.grupo_iva_producto_id,
+            tipo_irpf: linea.tipo_irpf,
+            comision: linea.por_comision,
+        },
+    }
+    await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea del presupuesto");
 }
 
 
 export const patchCantidadLinea: CambiarCantidadLinea = async (id, linea, cantidad) => {
-  const payload = {
-    cambios: {
-      cantidad: cantidad,
-    },
-  }
-  await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar cantidad de la línea del presupuesto");
+    const payload = {
+        cambios: {
+            cantidad: cantidad,
+        },
+    }
+    await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar cantidad de la línea del presupuesto");
 }
 
 export const deleteLinea: DeleteLinea = async (id: string, lineaId: string): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
-    lineas: [lineaId]
-  }, "Error al borrar línea del presupuesto");
+    await RestAPI.patch(`${baseUrl}/${id}/linea/borrar`, {
+        lineas: [lineaId]
+    }, "Error al borrar línea del presupuesto");
 }
 
 export const patchPresupuesto = async (id: string, presupuesto: Presupuesto) => {
-  const payload = {
-    cambios: {
-      agente_id: presupuesto.agente_id,
-      divisa: {
-        divisa_id: presupuesto.divisa_id,
-        tasa_conversion: presupuesto.tasa_conversion,
-      },
-      fecha: presupuesto.fecha,
-      cliente_id: presupuesto.cliente.cliente_id,
-      nombre_cliente: presupuesto.cliente.nombre_cliente,
-      id_fiscal: presupuesto.cliente.id_fiscal,
-      direccion_id: presupuesto.cliente.direccion_id,
-      forma_pago_id: presupuesto.forma_pago_id,
-      grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
-      por_comision: presupuesto.por_comision,
-      almacen_id: presupuesto.almacen_id,
-      observaciones: presupuesto.observaciones,
-    },
-  };
+    const payload = {
+        cambios: {
+            agente_id: presupuesto.agente_id,
+            divisa: {
+                divisa_id: presupuesto.divisa_id,
+                tasa_conversion: presupuesto.tasa_conversion,
+            },
+            fecha: presupuesto.fecha,
+            cliente_id: presupuesto.cliente.cliente_id,
+            nombre_cliente: presupuesto.cliente.nombre_cliente,
+            id_fiscal: presupuesto.cliente.id_fiscal,
+            direccion_id: presupuesto.cliente.direccion_id,
+            forma_pago_id: presupuesto.forma_pago_id,
+            grupo_iva_negocio_id: presupuesto.grupo_iva_negocio_id,
+            por_comision: presupuesto.por_comision,
+            almacen_id: presupuesto.almacen_id,
+            observaciones: presupuesto.observaciones,
+        },
+    };
 
-  await RestAPI.patch(`${baseUrl}/${id}`, payload, "Error al actualizar presupuesto");
+    await RestAPI.patch(`${baseUrl}/${id}`, payload, "Error al actualizar presupuesto");
 };
 
 
 export const aprobarPresupuesto: PatchAprobarPresupuesto = async (id) => {
-  const respuesta = (await RestAPI.patch(
-    `${baseUrl}/${id}/aprobar`,
-    {},
-    "Error al aprobar presupuesto"
-  )) as unknown as { pedido_id: string; codigo?: string };
+    const respuesta = (await RestAPI.patch(
+        `${baseUrl}/${id}/aprobar`,
+        {},
+        "Error al aprobar presupuesto"
+    )) as unknown as { pedido_id: string; codigo?: string };
 
-  const pedidoId = String(respuesta.pedido_id ?? "");
-  return { id: pedidoId, codigo: String(respuesta.codigo ?? pedidoId) };
+    const pedidoId = String(respuesta.pedido_id ?? "");
+    return { id: pedidoId, codigo: String(respuesta.codigo ?? pedidoId) };
 };
 
 export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {
-  await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      por_descuento: dto_porcentual,
-    }
-  }, "Error al cambiar descuento del presupuesto");
+    await RestAPI.patch(`${baseUrl}/${id}`, {
+        cambios: {
+            por_descuento: dto_porcentual,
+        }
+    }, "Error al cambiar descuento del presupuesto");
 };

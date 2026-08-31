@@ -1,15 +1,15 @@
+import { LineaVenta } from "#/ventas/venta/diseño.ts";
 import {
-    payloadCambioCliente,
     DIVISA_EMPRESA,
     enDivisaExtranjera,
     formatearTasaConversion,
     grupoIvaNegocioEnDocumento,
     metaLineaVenta,
     mostrarImporte,
+    payloadCambioCliente,
     puedeCambiarDivisa,
 } from "#/ventas/venta/dominio.ts";
-import { altaLineaApi } from "#/ventas/venta/infraestructura.ts";
-import { LineaVenta } from "#/ventas/venta/diseño.ts";
+import { peticionNuevaLineaApi } from "#/ventas/venta/infraestructura.ts";
 import { modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -138,9 +138,9 @@ describe("validez de la línea sin artículo de catálogo", () => {
     });
 });
 
-describe("altaLineaApi serializa el alta de línea igual para los cuatro documentos", () => {
+describe("peticionNuevaLineaApi serializa el alta de línea igual para los cuatro documentos", () => {
     test("la línea de catálogo va como articulo.articulo_id, con la cantidad fuera", () => {
-        expect(altaLineaApi({ articulo: { articuloId: "ART-001" }, cantidad: 3 })).toEqual({
+        expect(peticionNuevaLineaApi({ articulo: { articuloId: "ART-001" }, cantidad: 3 })).toEqual({
             articulo: { articulo_id: "ART-001" },
             cantidad: 3,
         });
@@ -148,7 +148,7 @@ describe("altaLineaApi serializa el alta de línea igual para los cuatro documen
 
     test("la línea libre va como articulo.descripcion y pvp_unitario", () => {
         expect(
-            altaLineaApi({ articulo: { descripcion: "Portes", pvpUnitario: 15 }, cantidad: 1 })
+            peticionNuevaLineaApi({ articulo: { descripcion: "Portes", pvpUnitario: 15 }, cantidad: 1 })
         ).toEqual({
             articulo: { descripcion: "Portes", pvp_unitario: 15 },
             cantidad: 1,
@@ -157,7 +157,7 @@ describe("altaLineaApi serializa el alta de línea igual para los cuatro documen
 
     test("un pvp de 0 se manda tal cual", () => {
         expect(
-            altaLineaApi({ articulo: { descripcion: "Muestra", pvpUnitario: 0 }, cantidad: 2 })
+            peticionNuevaLineaApi({ articulo: { descripcion: "Muestra", pvpUnitario: 0 }, cantidad: 2 })
         ).toEqual({
             articulo: { descripcion: "Muestra", pvp_unitario: 0 },
             cantidad: 2,

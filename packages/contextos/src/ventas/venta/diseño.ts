@@ -104,7 +104,7 @@ export type CambioClienteVenta = {
 
 /**
  * Tipos dominio (camelCase) para el alta de línea — comunes a todos los
- * documentos de venta. Se convierten a los tipos API con `altaLineaApi`.
+ * documentos de venta. Se convierten a los tipos API con `peticionNuevaLineaApi`.
  */
 // export interface ArticuloLineaRegistrado {
 //     articuloId: string;
@@ -122,7 +122,7 @@ export type CambioClienteVenta = {
 //     | ArticuloLineaGenerico
 //     | ArticuloLineaLibre;
 
-/** Tipo dominio unificado para el alta de línea (input de `altaLineaApi`). */
+/** Tipo dominio unificado para el alta de línea (input de `peticionNuevaLineaApi`). */
 export type NuevaLineaVenta = {
     idArticulo: string | null;
     descripcion: string | null;

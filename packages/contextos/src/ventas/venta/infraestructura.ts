@@ -41,46 +41,51 @@ export const articuloDeLinea = (
     }
 }
 
-// const articuloAltaLineaApi = (articulo: ArticuloLinea): ArticuloLineaApi => {
-//     if (!('articuloId' in articulo)) return articuloAltaLibreApi(articulo);
-//     if ('descripcion' in articulo) return articuloAltaGenericoApi(articulo);
-//     return articuloAltaRegistradoApi(articulo);
+// const articuloNuevaLineaApi = (articulo: ArticuloLinea): ArticuloLineaApi => {
+//     if (!('articuloId' in articulo)) return articuloLibreNuevaLineaApi(articulo);
+//     if ('descripcion' in articulo) return articuloGenericoNuevaLineaApi(articulo);
+//     return articuloRegistradoNuevaLineaApi(articulo);
 // };
 
-const articuloAltaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaApi => {
-    if (!linea.idArticulo) return articuloAltaLibreApi(linea);
-    if (linea.descripcion) return articuloAltaGenericoApi(linea);
-    return articuloAltaRegistradoApi(linea);
+const articuloNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaApi => {
+    if (!linea.idArticulo) return articuloLibreNuevaLineaApi(linea);
+    // Usar tipoArticulo si está disponible (ModeloNuevaLinea) para no depender de que
+    // descripcion esté vacía: el servidor la rellena en el dry-run y las llamadas
+    // siguientes la leerían incorrectamente como "genérico".
+    const tipoArticulo = (linea as { tipoArticulo?: string }).tipoArticulo;
+    if (tipoArticulo === 'registrado') return articuloRegistradoNuevaLineaApi(linea);
+    if (linea.descripcion) return articuloGenericoNuevaLineaApi(linea);
+    return articuloRegistradoNuevaLineaApi(linea);
 };
 
-// const articuloAltaRegistradoApi = (a: ArticuloLineaRegistrado): ArticuloLineaRegistradoApi => ({
+// const articuloRegistradoNuevaLineaApi = (a: ArticuloLineaRegistrado): ArticuloLineaRegistradoApi => ({
 //     articulo_id: a.articuloId,
 //     ...(a.pvpUnitario !== undefined ? { pvp_unitario: a.pvpUnitario } : {}),
 // });
 
-// const articuloAltaGenericoApi = (a: ArticuloLineaGenerico): ArticuloLineaGenericoApi => ({
+// const articuloGenericoNuevaLineaApi = (a: ArticuloLineaGenerico): ArticuloLineaGenericoApi => ({
 //     articulo_id: a.articuloId,
 //     descripcion: a.descripcion,
 //     ...(a.pvpUnitario !== undefined ? { pvp_unitario: a.pvpUnitario } : {}),
 // });
 
-// const articuloAltaLibreApi = (a: ArticuloLineaLibre): ArticuloLineaLibreApi => ({
+// const articuloLibreNuevaLineaApi = (a: ArticuloLineaLibre): ArticuloLineaLibreApi => ({
 //     descripcion: a.descripcion,
 //     pvp_unitario: a.pvpUnitario,
 // });
 
-const articuloAltaRegistradoApi = (linea: NuevaLineaVenta): ArticuloLineaRegistradoApi => ({
+const articuloRegistradoNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaRegistradoApi => ({
     articulo_id: linea.idArticulo!,
     ...(linea.pvpUnitario !== null ? { pvp_unitario: linea.pvpUnitario } : {}),
 });
 
-const articuloAltaGenericoApi = (linea: NuevaLineaVenta): ArticuloLineaGenericoApi => ({
+const articuloGenericoNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaGenericoApi => ({
     articulo_id: linea.idArticulo!,
     descripcion: linea.descripcion!,
     ...(linea.pvpUnitario !== null ? { pvp_unitario: linea.pvpUnitario } : {}),
 });
 
-const articuloAltaLibreApi = (linea: NuevaLineaVenta): ArticuloLineaLibreApi => ({
+const articuloLibreNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaLibreApi => ({
     descripcion: linea.descripcion!,
     pvp_unitario: linea.pvpUnitario!,
     ...(linea.idGrupoIvaProducto ? { grupo_iva_producto_id: linea.idGrupoIvaProducto } : {}),
@@ -92,8 +97,8 @@ const articuloAltaLibreApi = (linea: NuevaLineaVenta): ArticuloLineaLibreApi => 
  * Convierte un alta de línea de dominio (camelCase) al cuerpo que espera el
  * servidor (snake_case). Común a los cuatro documentos de venta.
  */
-export const altaLineaApi = (linea: NuevaLineaVenta): NuevaLineaVentaApiReq => ({
-    articulo: articuloAltaLineaApi(linea),
+export const peticionNuevaLineaApi = (linea: NuevaLineaVenta): NuevaLineaVentaApiReq => ({
+    articulo: articuloNuevaLineaApi(linea),
     cantidad: linea.cantidad,
     ...(linea.dtoPorcentual ? { dto_porcentual: linea.dtoPorcentual } : {}),
     ...(linea.dtoLineal ? { dto_lineal: linea.dtoLineal } : {}),
@@ -128,6 +133,7 @@ export const altaLineaApi = (linea: NuevaLineaVenta): NuevaLineaVentaApiReq => (
 // }
 
 export interface NuevaLineaVentaApiRes {
+    id?: string;
     articulo_id: string | null;
     descripcion: string;
     cantidad: number;
@@ -151,7 +157,7 @@ export interface NuevaLineaVentaApiRes {
 //     };
 // }
 
-export function apiANuevaLineaVenta<T extends NuevaLineaVenta>(lineaAnterior: T, lineaApi: NuevaLineaVentaApiRes): T {
+export function respuestaNuevaLineaApi<T extends NuevaLineaVenta>(lineaAnterior: T, lineaApi: NuevaLineaVentaApiRes): T {
     return {
         ...lineaAnterior,
         idArticulo: lineaApi.articulo_id,

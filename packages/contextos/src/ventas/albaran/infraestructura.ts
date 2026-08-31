@@ -5,7 +5,7 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi, apiANuevaLineaVenta, articuloDeLinea, NuevaLineaVentaApiRes } from "../venta/infraestructura.ts";
+import { articuloDeLinea, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -122,18 +122,17 @@ export const getLineas: GetLineasAlbaran = async (id) =>
 
 
 export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [altaLineaApi(linea)],
+  const lineaApi = peticionNuevaLineaApi(linea);
+  const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
+    lineas: [lineaApi],
     dry_run: dryRun,
-  }, "Error al crear línea de albarán").then((respuesta) => {
-    if (dryRun) {
-      const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
-      return apiANuevaLineaVenta(linea, miRespuesta[0]);
-    } else {
-      const { ids } = respuesta as unknown as { ids: string[] };
-      return { ...linea, id: ids[0] } as unknown as typeof linea;
-    }
-  });
+  }, "Error al crear línea de albarán");
+  const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+  const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+  if (!dryRun) {
+    return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+  }
+  return lineaActualizada;
 }
 
 export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, referencia) => {

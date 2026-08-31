@@ -239,7 +239,7 @@ export const getTipoArticulo = (linea: LineaVenta): TipoArticuloLinea => {
 
 /**
  * Convierte los tipos planos de UI (NuevaLineaVenta / NuevaLineaLibreVenta)
- * al tipo unificado NuevaLineaVenta que acepta altaLineaApi.
+ * al tipo unificado NuevaLineaVenta que acepta peticionNuevaLineaApi.
  */
 // export const altaLineaDesdeNuevaLinea = (linea: NuevaLineaVenta): NuevaLineaVenta => ({
 //     articulo: { articuloId: linea.referencia },
@@ -293,7 +293,7 @@ export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
 
 /**
  * Convierte el modelo de UI de nueva línea al tipo unificado NuevaLineaVenta
- * que acepta altaLineaApi. Común a todos los documentos de venta.
+ * que acepta peticionNuevaLineaApi. Común a todos los documentos de venta.
  */
 /** Extrae los campos de NuevaLineaVenta desde el modelo de UI, descartando tipoArticulo y descripcionArticulo. */
 export const altaLineaDesdeModelo = ({ idArticulo, descripcion, pvpUnitario, cantidad, pvpTotal, dtoPorcentual, dtoLineal, idGrupoIvaProducto, ivaIncluido, tipoIva, tipoRecargo, tipoIrpf }: ModeloNuevaLinea): NuevaLineaVenta => ({

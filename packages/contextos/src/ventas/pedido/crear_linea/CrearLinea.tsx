@@ -4,6 +4,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
+import { plugin } from "@olula/lib/dominio.js";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
@@ -83,6 +84,7 @@ export const CrearLineaBase = ({ idPedido, publicar }: CrearLineaProps) => {
     const valido = lineaArticulo.valido;
     const [mostrarMas, setMostrarMas] = useState(false);
     const libre = linea.tipoArticulo === "libre";
+    const ivaIncluidoActivo = plugin("iva_incluido") === "activo";
 
     return (
         <QModal
@@ -125,7 +127,9 @@ export const CrearLineaBase = ({ idPedido, publicar }: CrearLineaProps) => {
                             <GrupoIvaProducto {...lineaArticulo.uiProps("idGrupoIvaProducto")} soloLectura={!libre} />
                             <QInput label="% IVA" {...lineaArticulo.uiProps("tipoIva")} soloLectura />
                             <QInput label="% R.Equivalencia" {...lineaArticulo.uiProps("tipoRecargo")} soloLectura />
-                            <QCheckbox label="IVA incluido" {...lineaArticulo.uiProps("ivaIncluido")} soloLectura={!libre} />
+                            {ivaIncluidoActivo &&
+                                <QCheckbox label="IVA incluido" {...lineaArticulo.uiProps("ivaIncluido")} soloLectura={!libre} />
+                            }
                             <QInput label="% I.R.P.F." {...lineaArticulo.uiProps("tipoIrpf")} />
                         </>
                     )}

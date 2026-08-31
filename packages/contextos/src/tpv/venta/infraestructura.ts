@@ -1,5 +1,6 @@
 import ApiUrls from "#/tpv/comun/urls.ts";
 import Ventas_Urls from "#/ventas/comun/urls.ts";
+import { articuloDeLinea, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "#/ventas/venta/infraestructura.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { ClausulaFiltro, Direccion, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
@@ -225,17 +226,18 @@ export const postPago: PostPago = async (id, pago) => {
         });
 };
 
-export const postLinea: PostLinea = async (id, linea) => {
-    const body = {
-        articulo_id: linea.idArticulo,
-        cantidad: linea.cantidad
+export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
+    const lineaApi = peticionNuevaLineaApi(linea);
+    const respuesta = await RestAPI.post(`${baseUrlFactura}/${id}/linea`, {
+        lineas: [lineaApi],
+        dry_run: dryRun,
+    }, "Error al crear línea de venta");
+    const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+    const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+    if (!dryRun) {
+        return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
     }
-    return await RestAPI.post(`${baseUrl}/${id}/linea`,
-        body,
-        "Error al crear linea de venta").then((respuesta) => {
-            const { id: lineaId } = respuesta as unknown as { id: string };
-            return { ...linea, id: lineaId };
-        });
+    return lineaActualizada;
 };
 
 export const postLineaPorBarcode: PostLineaPorBarcode = async (id, linea) => {
@@ -265,9 +267,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
 export const patchLinea: PatchLinea = async (id, linea) => {
     const payload = {
         cambios: {
-            articulo: {
-                articulo_id: linea.referencia
-            },
+            articulo: articuloDeLinea(linea),
             cantidad: linea.cantidad,
             pvp_unitario: linea.pvp_unitario,
             iva_incluido: linea.iva_incluido,
@@ -276,7 +276,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
             grupo_iva_producto_id: linea.grupo_iva_producto_id,
         },
     };
-    await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de factura");
+    await RestAPI.patch(`${baseUrlFactura}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de factura");
 };
 
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
