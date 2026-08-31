@@ -52,7 +52,7 @@ export const ContactoSelector = ({
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
       enlace={enlace}
-      deshabilitado={deshabilitado}
+      soloLectura={deshabilitado}
     />
   );
 };

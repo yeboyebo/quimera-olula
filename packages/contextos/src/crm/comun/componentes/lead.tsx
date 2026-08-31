@@ -55,7 +55,7 @@ export const LeadSelector = ({
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
       enlace={enlace}
-      deshabilitado={deshabilitado}
+      soloLectura={deshabilitado}
     />
   );
 };
