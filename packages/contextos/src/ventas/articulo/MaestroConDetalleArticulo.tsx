@@ -74,6 +74,7 @@ const metaFiltro: MetaFiltro = {
         filtro: (v) => (v ? ["grupo_iva_producto_id", "=", v as string] : null),
         render: (valor, onChange) => (
             <GrupoIvaProducto
+                nombre="grupo_iva_producto"
                 valor={(valor as string) ?? ""}
                 onChange={(opcion) => onChange(opcion?.valor ?? "")}
             />
