@@ -1,0 +1,13 @@
+.CrearProveedor {
+    quimera-input[nombre="nombre"] {
+        grid-column: span 12;
+    }
+
+    quimera-select[nombre="tipoIdFiscal"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="idFiscal"] {
+        grid-column: span 6;
+    }
+}

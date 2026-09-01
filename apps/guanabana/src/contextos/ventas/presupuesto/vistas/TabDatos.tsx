@@ -1,7 +1,7 @@
 import { Agente } from "#/ventas/comun/componentes/agente.tsx";
-import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
-import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
-import { GrupoIvaNegocio } from "#/ventas/comun/componentes/grupo_iva_negocio.tsx";
+import { Divisa } from "#/comun/componentes/divisa.tsx";
+import { FormaPago } from "#/comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "#/comun/componentes/grupo_iva_negocio.tsx";
 import { Presupuesto } from "#/ventas/presupuesto/diseño.ts";
 import { grupoIvaNegocioEnDocumento } from "#/ventas/venta/dominio.ts";
 import "#/ventas/presupuesto/vistas/TabDatos.css";

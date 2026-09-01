@@ -6,7 +6,7 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto, QueryNuevaLinea } from "./diseño.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, EstadoAprobado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto, QueryNuevaLinea } from "./diseño.ts";
 
 type PresupuestoAPI = {
     id: string;
@@ -36,7 +36,7 @@ type PresupuestoAPI = {
     id_fiscal: string;
     direccion_id: string | null;
     direccion: Direccion;
-    aprobado: boolean;
+    estado_aprobado: EstadoAprobado;
 };
 
 const baseUrl = new ApiUrls().PRESUPUESTO;

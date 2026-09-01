@@ -3,10 +3,13 @@ import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
 
+/** Cuánto del presupuesto se ha llevado ya a pedidos. */
+export type EstadoAprobado = "PENDIENTE" | "PARCIAL" | "TOTAL";
+
 export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
   fecha_salida: Date;
-  aprobado: boolean;
+  estado_aprobado: EstadoAprobado;
   por_comision: number;
   almacen_id: string;
   lineas: LineaPresupuesto[];
@@ -24,6 +27,9 @@ export type NuevoPresupuestoClienteNoRegistrado = NuevaVentaClienteNoRegistrado;
 export type CambioClientePresupuesto = CambioClienteVenta;
 
 export interface LineaPresupuesto extends LineaVenta {
+  /** Cantidad ya llevada a pedidos; el pendiente es cantidad - aprobada. */
+  aprobada: number;
+  cerrada: boolean;
   otro_campo?: string;
 };
 
