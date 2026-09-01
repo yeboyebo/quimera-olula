@@ -238,12 +238,12 @@ export const onVentaBorrada: ProcesarVentaTpv = async (contexto) => {
 
 export const onLineaCreada: ProcesarVentaTpv = async (contexto, payload) => {
 
-    const idLinea = payload as string;
+    const { id } = payload as { id: string };
 
     return pipeVentaTpv(contexto, [
         refrescarCabecera,
         refrescarLineas,
-        activarLineaPorId(idLinea),
+        activarLineaPorId(id),
     ]);
 }
 

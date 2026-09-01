@@ -1,7 +1,7 @@
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
+import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { LineaPedido, Pedido } from "../../diseño.ts";
-import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
 
 export const Lineas = ({
@@ -59,7 +59,7 @@ export const Lineas = ({
       />
 
       {estadoPedido === "CREANDO_LINEA" && (
-        <CrearLinea pedidoId={pedido.id} publicar={publicar} />
+        <CrearLinea idPedido={pedido.id} publicar={publicar} />
       )}
 
       {lineaActiva && estadoPedido === "CAMBIANDO_LINEA" && (

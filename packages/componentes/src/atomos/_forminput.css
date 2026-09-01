@@ -307,6 +307,40 @@ quimera-input {
         .valor-solo-lectura {
             text-align: right;
         }
+
+        .numero-wrapper {
+            position: relative;
+
+            input {
+                width: 100%;
+            }
+
+            input.numero-oculto {
+                color: transparent !important;
+                caret-color: transparent !important;
+
+                &::-webkit-inner-spin-button,
+                &::-webkit-outer-spin-button {
+                    display: none;
+                }
+            }
+
+            .numero-formateado {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                color: var(--color-texto-primario);
+                font-size: var(--tamaño-letra-m);
+                padding: var(--espaciado-xxs);
+                line-height: var(--altura-linea-normal);
+                min-height: var(--altura-control);
+                box-sizing: border-box;
+            }
+        }
     }
 
     &[tipo='hora'],
