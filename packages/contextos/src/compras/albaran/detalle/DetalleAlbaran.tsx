@@ -9,6 +9,8 @@ import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
+import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
+import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
 import { albaranFacturado } from "../dominio.ts";
 import { getReportAlbaran } from "../infraestructura.ts";
@@ -44,7 +46,7 @@ export const DetalleAlbaran = ({
 
     const formModelo = useModelo(metaAlbaran, ctx.albaran, autoGuardar);
 
-    const { estado, albaran, lineas } = ctx;
+    const { estado, albaran, lineas, facturaCreada } = ctx;
 
     useEffect(() => {
         emitir("albaran_id_cambiado", id, true);
@@ -63,6 +65,11 @@ export const DetalleAlbaran = ({
 
     const accionesAlbaran = [
         { texto: "Imprimir", onClick: imprimir },
+        {
+            texto: "Facturar",
+            onClick: () => emitir("facturado_solicitado"),
+            deshabilitado: albaranFacturado(albaran),
+        },
         {
             icono: "eliminar",
             texto: "Borrar",
@@ -126,6 +133,14 @@ export const DetalleAlbaran = ({
                     onGuardar={async (cambio) => emitir("cambio_proveedor_listo", cambio)}
                     onCancelar={() => emitir("cambio_proveedor_cancelado")}
                 />
+            )}
+
+            {estado === "FACTURANDO" && (
+                <FacturarAlbaran albaran={albaran} publicar={emitir} />
+            )}
+
+            {estado === "FACTURA_CREADA" && facturaCreada && (
+                <FacturaGenerada factura={facturaCreada} publicar={emitir} />
             )}
 
             {estado === "BORRANDO" && (

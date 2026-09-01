@@ -4,7 +4,7 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useNavigate } from "react-router";
 import { FacturaCreada } from "../../factura/diseño.ts";
 
-export const ResultadoFacturado = ({
+export const FacturaGenerada = ({
     factura,
     publicar,
 }: {
@@ -17,20 +17,20 @@ export const ResultadoFacturado = ({
 
     return (
         <QModal
-            nombre="resultadoFacturadoCompra"
+            nombre="facturaGeneradaCompra"
             abierto={true}
             titulo="Factura generada"
             onCerrar={cerrar}
         >
             <div className="mensaje">
-                {`Se ha generado la factura ${factura.codigo} con los albaranes seleccionados.`}
+                {`Se ha generado la factura ${factura.codigo}.`}
             </div>
             <div className="botones">
                 <QBoton onClick={() => navigate(`/compras/factura?id=${factura.id}`)}>
                     {`Ir a la factura ${factura.codigo}`}
                 </QBoton>
                 <QBoton variante="texto" onClick={cerrar}>
-                    Cerrar
+                    Aceptar
                 </QBoton>
             </div>
         </QModal>

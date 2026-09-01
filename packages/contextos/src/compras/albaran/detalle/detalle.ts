@@ -1,3 +1,4 @@
+import { facturarAlbaranes } from "#/compras/factura/infraestructura.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
@@ -91,6 +92,7 @@ export const albaranVacio = (): Albaran => ({
 export const contextoDetalleAlbaranInicial: ContextoDetalleAlbaran = {
     estado: 'INICIAL',
     albaran: albaranVacio(),
+    facturaCreada: null,
     lineas: listaEntidadesInicial<LineaAlbaran>(),
 };
 
@@ -130,6 +132,12 @@ export const guardarAlbaran = async (
     if (Object.keys(cambios).length === 0) return;
 
     await patchAlbaran(albaran.id, cambios);
+};
+
+export const facturarAlbaranProceso: ProcesarDetalle = async (contexto) => {
+    const facturaCreada = await facturarAlbaranes([contexto.albaran.id]);
+    const [refrescado, eventos] = await pipeAlbaran(contexto, [refrescarAlbaran]);
+    return [{ ...refrescado, estado: 'FACTURA_CREADA', facturaCreada }, eventos];
 };
 
 export const cambiarDivisa: ProcesarDetalle = async (contexto, payload) => {
@@ -215,6 +223,7 @@ export const limpiarContexto: ProcesarDetalle = async (contexto) => ({
     ...contexto,
     estado: 'INICIAL',
     albaran: albaranVacio(),
+    facturaCreada: null,
     lineas: listaEntidadesInicial<LineaAlbaran>(),
 });
 

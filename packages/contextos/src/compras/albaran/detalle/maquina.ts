@@ -4,6 +4,7 @@ import {
     cambiarDivisa,
     cambiarProveedor,
     cargarContexto,
+    facturarAlbaranProceso,
     limpiarContexto,
     Lineas,
     onLineaBorrada,
@@ -35,6 +36,7 @@ export const getMaquina: () => Maquina<EstadoDetalleAlbaran, ContextoDetalleAlba
             ],
 
             borrado_solicitado: "BORRANDO",
+            facturado_solicitado: "FACTURANDO",
 
             cambio_proveedor_solicitado: "CAMBIANDO_PROVEEDOR",
             cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
@@ -53,6 +55,15 @@ export const getMaquina: () => Maquina<EstadoDetalleAlbaran, ContextoDetalleAlba
         CAMBIANDO_PROVEEDOR: {
             cambio_proveedor_listo: [cambiarProveedor],
             cambio_proveedor_cancelado: "ABIERTO",
+        },
+
+        FACTURANDO: {
+            facturado_confirmado: [facturarAlbaranProceso],
+            facturado_cancelado: "ABIERTO",
+        },
+
+        FACTURA_CREADA: {
+            resultado_facturado_cerrado: "ABIERTO",
         },
 
         BORRANDO: {

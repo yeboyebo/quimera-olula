@@ -1,10 +1,13 @@
 import { ListaEntidades } from "@olula/lib/ListaEntidades.ts";
+import { FacturaCreada } from "../../factura/diseño.ts";
 import { Albaran, LineaAlbaran } from "../diseño.ts";
 
 export type EstadoDetalleAlbaran =
     | 'INICIAL'
     | 'ABIERTO'
     | 'BORRANDO'
+    | 'FACTURANDO'
+    | 'FACTURA_CREADA'
     | 'CAMBIANDO_PROVEEDOR'
     | 'CAMBIANDO_DIVISA'
     | 'CREANDO_LINEA'
@@ -14,5 +17,6 @@ export type EstadoDetalleAlbaran =
 export type ContextoDetalleAlbaran = {
     estado: EstadoDetalleAlbaran;
     albaran: Albaran;
+    facturaCreada: FacturaCreada | null;
     lineas: ListaEntidades<LineaAlbaran>;
 };
