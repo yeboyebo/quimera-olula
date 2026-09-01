@@ -10,7 +10,7 @@ import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
 import type { ModeloNuevaLinea } from "../../venta/diseño.ts";
-import { postLinea } from "../infraestructura.ts";
+import { postLinea, queryNuevaLinea } from "../infraestructura.ts";
 import "./CrearLinea.css";
 import {
     camposConCambiosServidor,
@@ -28,7 +28,7 @@ export const CrearLinea = ({
     const onModeloListo = useCallback(
         async (nuevaLinea: ModeloNuevaLinea, campo?: string) => {
             if (campo && !(camposConCambiosServidor as readonly string[]).includes(campo)) return;
-            return await postLinea(albaranId, nuevaLinea, { dryRun: true });
+            return await queryNuevaLinea(albaranId, nuevaLinea);
         },
         [albaranId]
     );

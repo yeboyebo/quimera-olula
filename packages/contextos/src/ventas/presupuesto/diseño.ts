@@ -50,8 +50,9 @@ export type PatchLinea = (id: string, linea: LineaPresupuesto) => Promise<void>;
 
 export type CambiarCantidadLinea = (id: string, linea: LineaPresupuesto, cantidad: number) => Promise<void>;
 
-export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T, opts?: { dryRun?: boolean }) => Promise<T>;
+export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
 
+export type QueryNuevaLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 

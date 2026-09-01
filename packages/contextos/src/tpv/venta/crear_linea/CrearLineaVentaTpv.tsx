@@ -11,7 +11,7 @@ import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useState } from "react";
 import { VentaTpv } from "../diseño.ts";
-import { postLinea } from "../infraestructura.ts";
+import { postLinea, queryNuevaLinea } from "../infraestructura.ts";
 import "./CrearLineaVentaTpv.css";
 import { camposConCambiosServidor, metaNuevaLinea, nuevaLineaInicial } from "./crear_linea.ts";
 
@@ -25,7 +25,7 @@ export const CrearLineaVentaTpv = ({
     const onModeloListo = useCallback(
         async (nuevaLinea: ModeloNuevaLinea, campo?: string) => {
             if (campo && !(camposConCambiosServidor as readonly string[]).includes(campo)) return;
-            return await postLinea(venta.id, nuevaLinea, { dryRun: true });
+            return await queryNuevaLinea(venta.id, nuevaLinea);
         },
         [venta.id]
     );

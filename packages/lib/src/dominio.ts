@@ -456,6 +456,8 @@ const getUiProps = <M extends Modelo>(
 
         const tipo = (conversionTipo[tipoCampo as keyof typeof conversionTipo] || tipoCampo) as TipoInput;
         const valorUI = convertirCampoHaciaUI(meta)(campo, valor);
+        const divisa = campo in campos ? campos[campo]?.divisa : undefined;
+        const decimales = campo in campos ? campos[campo]?.decimales : undefined;
 
         return {
             nombre: campo,
@@ -472,6 +474,8 @@ const getUiProps = <M extends Modelo>(
             onChange: setCampo(modelo, meta, onModeloCambiado, campo, secundario),
             evaluarCambio: evaluarCambio(campo, modelo, modeloInicial, meta, onModeloListo),
             descripcion: secundario ? modelo[secundario] as string : undefined,
+            divisa,
+            decimales,
         }
     }
 
@@ -684,6 +688,17 @@ export const formatearMoneda = (cantidad: number | string, divisa: string): stri
         currency: divisaValida,
         useGrouping: "always",
     }).format(numero);
+};
+
+export const formatearNumero = (cantidad: number | string, decimales?: number): string => {
+    const numero = Number(cantidad);
+    if (isNaN(numero)) return "";
+    const opciones: Intl.NumberFormatOptions = { useGrouping: true };
+    if (decimales !== undefined) {
+        opciones.minimumFractionDigits = decimales;
+        opciones.maximumFractionDigits = decimales;
+    }
+    return new Intl.NumberFormat("es-ES", opciones).format(numero);
 };
 
 export const resolverDivisa = <T,>(

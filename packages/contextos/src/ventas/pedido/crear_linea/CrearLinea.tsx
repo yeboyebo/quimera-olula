@@ -11,7 +11,7 @@ import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useContext, useState } from "react";
 import type { ModeloNuevaLinea } from "../../venta/diseño.ts";
-import { postLinea } from "../infraestructura.ts";
+import { postLinea, queryNuevaLinea } from "../infraestructura.ts";
 import "./CrearLinea.css";
 import {
     camposConCambiosServidor,
@@ -41,7 +41,7 @@ export const CrearLineaBase = ({ idPedido, publicar }: CrearLineaProps) => {
                 return;
             }
             console.log("onModeloListo", nuevaLinea);
-            return await postLinea(idPedido, nuevaLinea, { dryRun: true });
+            return await queryNuevaLinea(idPedido, nuevaLinea);
         },
         [idPedido]
     );

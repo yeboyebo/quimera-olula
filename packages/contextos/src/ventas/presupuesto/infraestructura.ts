@@ -5,8 +5,8 @@ import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { articuloDeLinea, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
-import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto } from "./diseño.ts";
+import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
+import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto, QueryNuevaLinea } from "./diseño.ts";
 
 type PresupuestoAPI = {
     id: string;
@@ -130,17 +130,22 @@ export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
     );
 
 
-export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
+export const postLinea: PostLinea = async (id, linea) => {
     const lineaApi = peticionNuevaLineaApi(linea);
     const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
         lineas: [lineaApi],
-        dry_run: dryRun,
     }, "Error al crear línea de presupuesto");
     const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
     const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
-    if (!dryRun) {
-        return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
-    }
+    return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+}
+
+export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
+    const lineaApi = peticionNuevaLineaApi(linea);
+    const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
+        `${baseUrl}/${id}/nueva_linea`, lineaApi,
+        "Error al obtener la nueva línea de presupuesto")
+    const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
     return lineaActualizada;
 }
 

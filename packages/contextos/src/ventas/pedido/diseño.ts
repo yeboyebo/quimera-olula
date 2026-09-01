@@ -59,7 +59,9 @@ export type GetCambiosLineaPedido = (
 
 export type PostPedido = (pedido: NuevoPedido | NuevoPedidoClienteNoRegistrado) => Promise<string>;
 
-export type PostLinea = <T extends NuevaLineaPedido>(id: string, linea: T, opts?: { dryRun?: boolean }) => Promise<T>;
+export type PostLinea = <T extends NuevaLineaPedido>(id: string, linea: T) => Promise<T>;
+
+export type QueryNuevaLinea = <T extends NuevaLineaPedido>(id: string, linea: T) => Promise<T>;
 
 // export type PostLineaDryRun = (id: string, linea: NuevaLineaPedido) => Promise<NuevaLineaPedido>;
 

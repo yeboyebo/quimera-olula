@@ -1,11 +1,11 @@
 import ApiUrls from "#/tpv/comun/urls.ts";
 import Ventas_Urls from "#/ventas/comun/urls.ts";
-import { articuloDeLinea, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "#/ventas/venta/infraestructura.ts";
+import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "#/ventas/venta/infraestructura.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { ClausulaFiltro, Direccion, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchEmitirVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchEmitirVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, QueryNuevaLinea, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().VENTA;
 const baseUrlFactura = new Ventas_Urls().FACTURA;
@@ -226,17 +226,22 @@ export const postPago: PostPago = async (id, pago) => {
         });
 };
 
-export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) => {
+export const postLinea: PostLinea = async (id, linea) => {
     const lineaApi = peticionNuevaLineaApi(linea);
     const respuesta = await RestAPI.post(`${baseUrlFactura}/${id}/linea`, {
         lineas: [lineaApi],
-        dry_run: dryRun,
     }, "Error al crear línea de venta");
     const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
     const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
-    if (!dryRun) {
-        return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
-    }
+    return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+};
+
+export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
+    const lineaApi = peticionNuevaLineaApi(linea);
+    const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
+        `${baseUrlFactura}/${id}/nueva_linea`, lineaApi,
+        "Error al obtener la nueva línea de venta")
+    const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
     return lineaActualizada;
 };
 

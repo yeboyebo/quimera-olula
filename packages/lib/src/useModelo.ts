@@ -134,4 +134,6 @@ export type UiProps = {
     onChange: (valor: ValorControl) => void;
     evaluarCambio: () => void;
     descripcion?: string;
+    divisa?: string;
+    decimales?: number;
 }

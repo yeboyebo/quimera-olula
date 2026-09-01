@@ -5,8 +5,8 @@ import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { articuloDeLinea, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
-import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido } from "./diseño.ts";
+import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
+import { DeleteLinea, GetLineasPedido, GetPedido, GetPedidos, GetReportPedido, LineaPedido, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClientePedido, PatchLinea, Pedido, PostLinea, PostPedido, QueryNuevaLinea } from "./diseño.ts";
 
 export interface LineaPedidoApi {
     id: string;
@@ -205,9 +205,16 @@ export const postLinea: PostLinea = async (id, linea, { dryRun = false } = {}) =
     }, "Error al crear línea de pedido")
     const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
     const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
-    if (!dryRun) {
-        return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
-    }
+    return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+}
+
+export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
+    const lineaApi = peticionNuevaLineaApi(linea);
+    // Cambiar POST a QUERY cuando fastapi lo soporte
+    const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
+        `${baseUrl}/${id}/nueva_linea`, lineaApi,
+        "Error al obtener la nueva línea de pedido")
+    const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
     return lineaActualizada;
 }
 // export const postLineaDry: PostLineaDryRun = async (id, linea, druRun = false) => {

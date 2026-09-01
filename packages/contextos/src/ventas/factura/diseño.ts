@@ -51,7 +51,9 @@ export type GetReportFactura = (id: string) => Promise<Blob>;
 
 export type PostFactura = (factura: NuevaFactura) => Promise<string>;
 
-export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T, opts?: { dryRun?: boolean }) => Promise<T>;
+export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
+
+export type QueryNuevaLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
 
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
 

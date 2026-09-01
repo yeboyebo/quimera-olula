@@ -40,7 +40,9 @@ export type GetLineasAlbaran = (id: string) => Promise<LineaAlbaran[]>;
 
 export type PostAlbaran = (albaran: NuevoAlbaran | NuevoAlbaranClienteNoRegistrado) => Promise<string>;
 
-export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T, opts?: { dryRun?: boolean }) => Promise<T>;
+export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
+
+export type QueryNuevaLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
 
 export type PatchClienteAlbaran = (id: string, cambio: CambioClienteAlbaran) => Promise<void>;
 
