@@ -3,37 +3,53 @@
         grid-column: span 12;
     }
 
-    div[id="espacio"] {
-        grid-column: span 6;
-    }
-
-    quimera-autocompletar[nombre="referencia"] {
-        grid-column: span 12;
-    }
-
     quimera-input[nombre="cantidad"] {
-        grid-column: span 6;
+        grid-column: 1 / span 6;
     }
 
     quimera-input[nombre="pvp_unitario"] {
         grid-column: span 6;
     }
 
-    quimera-checkbox[nombre="iva_incluido"] {
-        grid-column: span 6;
+    .mostrar-mas-fila {
+        grid-column: 1 / span 12;
+        display: flex;
+        justify-content: flex-start;
     }
 
-    quimera-select[nombre="grupo_iva_producto_id"] {
-        grid-column: span 6;
+    .seccion-separador {
+        grid-column: 1 / -1;
+        font-size: var(--tamaño-letra-s);
+        font-weight: 600;
+        color: var(--color-texto-secundario, #666);
+        margin-top: var(--espaciado-xs);
+        padding-bottom: var(--espaciado-xxs);
+        border-bottom: 1px solid var(--color-borde-fuerte);
+    }
+
+    .mostrar-mas-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-primario);
+        font-size: var(--tamaño-letra-s);
+        padding: 0;
+        font-family: inherit;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     quimera-input[nombre="dto_porcentual"] {
-        grid-column: span 6;
+        grid-column: 1 / span 6;
     }
 
     quimera-input[nombre="dto_lineal"] {
         grid-column: span 6;
     }
 
-
+    quimera-checkbox[nombre="iva_incluido"] {
+        grid-column: span 6;
+    }
 }

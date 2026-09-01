@@ -143,6 +143,12 @@ const actualizarLineaActiva: ProcesarPedido = async (contexto) => {
     return { ...contexto, lineaActiva };
 }
 
+const activarLineaPorId = (id: string) => async (contexto: ContextoPedido<Pedido>) => {
+    const lineas = contexto.pedido.lineas as LineaPedido[];
+    const lineaActiva = lineas.find(l => l.id === id) ?? null;
+    return { ...contexto, lineaActiva };
+}
+
 const activarLineaPorIndice = (indice: number) => async (contexto: ContextoPedido<Pedido>) => {
     const lineas = contexto.pedido.lineas as LineaPedido[];
     const lineaActiva = lineas.length > 0
@@ -245,10 +251,12 @@ export const cambiarDescuento: ProcesarPedido = async (contexto, payload) => {
     ]);
 }
 
-export const crearLinea: ProcesarPedido = async (contexto) => {
+export const crearLinea: ProcesarPedido = async (contexto, payload) => {
+    const { id } = payload as { id: string };
     return pipePedido(contexto, [
         refrescarPedido,
         refrescarLineas,
+        activarLineaPorId(id),
         'ABIERTO',
     ]);
 }

@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { formatearMoneda, formatearNumero } from "@olula/lib/dominio.ts";
 import { useEsMovil } from "../maestro/useEsMovil.ts";
 
 export type FormFieldProps = {
@@ -18,6 +19,8 @@ export type FormFieldProps = {
   condensado?: boolean;
   autoSeleccion?: boolean;
   autoFocus?: boolean;
+  divisa?: string;
+  decimales?: number;
   ref?: React.RefObject<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
   >;
@@ -62,6 +65,10 @@ const TIPOS_NUMERICOS = new Set<string>([
   "numero", "entero", "decimal", "moneda", "rango", "intervalo_numeros",
 ]);
 
+const TIPOS_FORMATEABLES = new Set<string>([
+  "numero", "entero", "decimal", "moneda",
+]);
+
 export type FormInputProps = FormFieldProps & {
   lista?: string;
   autocompletar?: "off" | "on";
@@ -89,6 +96,8 @@ export const FormInput = ({
   autoSeleccion,
   autoFocus,
   maxLength,
+  divisa,
+  decimales,
   ref,
   onChange,
   onBlur,
@@ -101,6 +110,8 @@ export const FormInput = ({
     evaluarCambioRef.current = evaluarCambio;
   });
   const esMovil = useEsMovil();
+  const [enfocado, setEnfocado] = useState(false);
+
   const obtenerValorPorDefecto = () => {
     if (valor !== undefined && valor !== "" && valor != null) return valor;
 
@@ -116,7 +127,21 @@ export const FormInput = ({
 
   const valorFinal = onChange ? obtenerValorPorDefecto() : undefined;
 
+  const esFormateable = TIPOS_FORMATEABLES.has(tipo);
+
+  const valorFormateado = useMemo(() => {
+    if (!esFormateable) return null;
+    const v = valorFinal ?? valor;
+    if (v === "" || v === undefined || v === null) return null;
+    if (tipo === "moneda") return formatearMoneda(v, divisa ?? "EUR");
+    if (tipo === "entero") return formatearNumero(v, 0);
+    return formatearNumero(v, decimales);
+  }, [esFormateable, valorFinal, valor, tipo, divisa, decimales]);
+
+  const mostrarFormateado = !enfocado && valorFormateado !== null;
+
   const manejarFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (esFormateable) setEnfocado(true);
     if (autoSeleccion || (esMovil && TIPOS_NUMERICOS.has(tipo))) {
       e.target.select();
     }
@@ -128,8 +153,12 @@ export const FormInput = ({
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (esFormateable) setEnfocado(false);
     onBlur?.(e.target.value, e);
-    evaluarCambio?.();
+    // if (evaluarCambio && e.target.value !== valor) {
+    if (evaluarCambio) {
+      evaluarCambio();
+    }
   };
 
   const manejarInput = (e: React.FormEvent<HTMLInputElement>) => {
@@ -201,6 +230,22 @@ export const FormInput = ({
           >
             ×
           </button>
+        )}
+      </div>
+    );
+  }
+
+  if (esFormateable) {
+    return (
+      <div className="numero-wrapper">
+        <input
+          {...inputProps}
+          className={mostrarFormateado ? "numero-oculto" : undefined}
+          value={valorFinal as string}
+          defaultValue={onChange ? undefined : valor as string}
+        />
+        {mostrarFormateado && (
+          <span className="numero-formateado">{valorFormateado}</span>
         )}
       </div>
     );

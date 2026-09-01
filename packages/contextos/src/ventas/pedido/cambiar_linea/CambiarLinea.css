@@ -32,6 +32,16 @@
         justify-content: flex-start;
     }
 
+    .seccion-separador {
+        grid-column: 1 / -1;
+        font-size: var(--tamaño-letra-s);
+        font-weight: 600;
+        color: var(--color-texto-secundario, #666);
+        margin-top: var(--espaciado-xs);
+        padding-bottom: var(--espaciado-xxs);
+        border-bottom: 1px solid var(--color-borde-fuerte);
+    }
+
     .mostrar-mas-btn {
         background: none;
         border: none;
@@ -59,6 +69,10 @@
     }
 
     quimera-input[nombre="dto_lineal"] {
+        grid-column: span 6;
+    }
+
+    quimera-checkbox[nombre="iva_incluido"] {
         grid-column: span 6;
     }
 

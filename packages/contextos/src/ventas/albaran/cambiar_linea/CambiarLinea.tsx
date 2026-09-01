@@ -1,8 +1,9 @@
 import { ArticuloLinea } from "#/ventas/comun/componentes/articulo_linea/ArticuloLinea.tsx";
+import { GrupoIvaProducto } from "#/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
-import { GrupoIvaProducto } from "@olula/ctx/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
@@ -50,9 +51,9 @@ export const CambiarLinea = ({
       <div className="EditarLinea">
         <quimera-formulario>
           <ArticuloLinea
-            tipoArticulo={modelo.tipoArticulo}
-            referencia={modelo.referencia}
-            descripcionArticulo={modelo.descripcionArticulo}
+            tipo={modelo.tipoArticulo}
+            idArticulo={modelo.referencia}
+            articulo={modelo.descripcionArticulo}
             descripcion={modelo.descripcion}
             nombre="referencia_cambiar_linea_albaran"
             onChange={(cambios) => set({ ...modelo, ...cambios })}
@@ -75,10 +76,14 @@ export const CambiarLinea = ({
 
           {mostrarMas && (
             <>
+              <div className="seccion-separador">Descuento</div>
               <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
               <QInput label="Dto. lineal" {...uiProps("dto_lineal")} />
+
+              <div className="seccion-separador">Impuestos</div>
               <GrupoIvaProducto {...uiProps("grupo_iva_producto_id")} soloLectura={!libre} />
               <QInput label="% IVA" {...uiProps("tipo_iva")} soloLectura />
+              <QCheckbox label="IVA incluido" {...uiProps("iva_incluido")} soloLectura={!libre} />
               <QInput label="% I.R.P.F." {...uiProps("tipo_irpf")} />
               <QInput label="% Comisión agente" {...uiProps("por_comision")} />
               <QInput label="Importe comisión" {...uiProps("importe_comision")} />

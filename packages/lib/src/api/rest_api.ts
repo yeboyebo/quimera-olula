@@ -135,6 +135,7 @@ export const RestAPI: API = {
   getLista: getLista,
   getQuery: getQuery,
   getItem: getItem,
+  query: <T, R>(url: string, body: T, msgError?: string) => comando<T, R>("POST", url, msgError, body),
   post: <T>(url: string, body: T, msgError?: string) => comando<T, { id: string }>("POST", url, msgError, body),
   put: <T>(url: string, body: T, msgError?: string) => comando<T, void>("PUT", url, msgError, body),
   patch: <T>(url: string, body: Partial<T>, msgError?: string) => comando<T, void>("PATCH", url, msgError, body),

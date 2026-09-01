@@ -72,6 +72,12 @@ export const activarLinea: ProcesarFactura = async (contexto, payload) => {
     };
 };
 
+const activarLineaPorId = (id: string) => async (contexto: ContextoFactura) => {
+    const lineas = contexto.factura.lineas as LineaFactura[];
+    const lineaActiva = lineas.find(l => l.id === id) ?? null;
+    return { ...contexto, lineaActiva };
+};
+
 const activarLineaPorIndice = (indice: number) => async (contexto: ContextoFactura) => {
     const lineas = contexto.factura.lineas as LineaFactura[];
     const lineaActiva = lineas.length > 0
@@ -187,10 +193,12 @@ export const cambiarDescuento: ProcesarFactura = async (contexto, payload) => {
     ]);
 };
 
-export const crearLinea: ProcesarFactura = async (contexto) => {
+export const crearLinea: ProcesarFactura = async (contexto, payload) => {
+    const { id } = payload as { id: string };
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,
+        activarLineaPorId(id),
         "ABIERTO",
     ]);
 };

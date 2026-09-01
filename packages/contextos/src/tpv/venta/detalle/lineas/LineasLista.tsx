@@ -77,7 +77,9 @@ const getMetaTablaLineas = () => {
     {
       id: "linea",
       cabecera: "Lineas",
-      render: (linea: Linea) => `${linea.referencia}: ${linea.descripcion}`,
+      render: (linea: Linea) => linea.referencia
+        ? `${linea.referencia}: ${linea.descripcion}`
+        : linea.descripcion,
     },
     { id: "pvp_unitario", cabecera: "Precio", tipo: "moneda" },
     { id: "cantidad", cabecera: "Cantidad", tipo: "numero" },

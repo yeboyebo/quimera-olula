@@ -1,15 +1,16 @@
+import { LineaVenta } from "#/ventas/venta/diseño.ts";
 import {
-    payloadCambioCliente,
     DIVISA_EMPRESA,
     enDivisaExtranjera,
     formatearTasaConversion,
     grupoIvaNegocioEnDocumento,
     metaLineaVenta,
     mostrarImporte,
+    nuevaLineaInicial,
+    payloadCambioCliente,
     puedeCambiarDivisa,
 } from "#/ventas/venta/dominio.ts";
-import { altaLineaApi } from "#/ventas/venta/infraestructura.ts";
-import { LineaVenta } from "#/ventas/venta/diseño.ts";
+import { peticionNuevaLineaApi } from "#/ventas/venta/infraestructura.ts";
 import { modeloEsEditable, modeloEsValido } from "@olula/lib/dominio.ts";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -138,30 +139,30 @@ describe("validez de la línea sin artículo de catálogo", () => {
     });
 });
 
-describe("altaLineaApi serializa el alta de línea igual para los cuatro documentos", () => {
+describe("peticionNuevaLineaApi serializa el alta de línea igual para los cuatro documentos", () => {
     test("la línea de catálogo va como articulo.articulo_id, con la cantidad fuera", () => {
-        expect(altaLineaApi({ articulo: { articuloId: "ART-001" }, cantidad: 3 })).toEqual({
+        expect(peticionNuevaLineaApi({ ...nuevaLineaInicial, idArticulo: "ART-001", pvpUnitario: null, cantidad: 3 })).toEqual(expect.objectContaining({
             articulo: { articulo_id: "ART-001" },
             cantidad: 3,
-        });
+        }));
     });
 
     test("la línea libre va como articulo.descripcion y pvp_unitario", () => {
         expect(
-            altaLineaApi({ articulo: { descripcion: "Portes", pvpUnitario: 15 }, cantidad: 1 })
-        ).toEqual({
+            peticionNuevaLineaApi({ ...nuevaLineaInicial, idArticulo: null, descripcion: "Portes", pvpUnitario: 15, cantidad: 1 })
+        ).toEqual(expect.objectContaining({
             articulo: { descripcion: "Portes", pvp_unitario: 15 },
             cantidad: 1,
-        });
+        }));
     });
 
     test("un pvp de 0 se manda tal cual", () => {
         expect(
-            altaLineaApi({ articulo: { descripcion: "Muestra", pvpUnitario: 0 }, cantidad: 2 })
-        ).toEqual({
+            peticionNuevaLineaApi({ ...nuevaLineaInicial, idArticulo: null, descripcion: "Muestra", pvpUnitario: 0, cantidad: 2 })
+        ).toEqual(expect.objectContaining({
             articulo: { descripcion: "Muestra", pvp_unitario: 0 },
             cantidad: 2,
-        });
+        }));
     });
 });
 
