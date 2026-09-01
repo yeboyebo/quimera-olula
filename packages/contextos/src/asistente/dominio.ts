@@ -1,7 +1,7 @@
 import { puede } from "@olula/lib/dominio.ts";
 import { ElementoMenu, ElementoMenuPadre } from "@olula/lib/menu.ts";
 import {
-    AccionNavegacion, Capacidad, EventoStreamIa, MensajeAsistente, RespuestaIa,
+    AccionDescarga, AccionNavegacion, Capacidad, EventoStreamIa, MensajeAsistente, RespuestaIa,
     HiloIa, MensajeHiloIa, MensajesHiloIa, AdjuntoHiloIa, AdjuntoIa, AdjuntoMensaje,
 } from "#/asistente/diseño.ts";
 
@@ -51,6 +51,13 @@ export const adjuntoHiloDesdeApi = (raw: Record<string, unknown>): AdjuntoHiloIa
     tipoMime: String(raw.tipo_mime ?? ""),
 });
 
+export const descargaDesdeApi = (raw: unknown): AccionDescarga | null => {
+    if (!raw || typeof raw !== "object") return null;
+    const d = raw as Record<string, unknown>;
+    if (!d.url) return null;
+    return { url: String(d.url), nombreFichero: String(d.nombre_fichero ?? "") };
+};
+
 export const normalizarRespuestaIa = (raw: Record<string, unknown>): RespuestaIa => ({
     respuesta: String(raw.respuesta ?? ""),
     threadId: String(raw.thread_id ?? ""),
@@ -58,9 +65,11 @@ export const normalizarRespuestaIa = (raw: Record<string, unknown>): RespuestaIa
     capacidadesHash: (raw.capacidades_hash as string | null | undefined) ?? null,
     necesitaCapacidades: Boolean(raw.necesita_capacidades),
     accionNavegacion: (raw.accion_navegacion as RespuestaIa["accionNavegacion"]) ?? null,
+    descarga: descargaDesdeApi(raw.descarga),
     adjuntos: Array.isArray(raw.adjuntos)
         ? (raw.adjuntos as Record<string, unknown>[]).map(adjuntoHiloDesdeApi)
         : [],
+    encolado: Boolean(raw.encolado),
 });
 
 export const mensajeVacio = (id: string, rol: MensajeAsistente["rol"]): MensajeAsistente => ({
@@ -112,6 +121,11 @@ export const eventoStreamDesdeApi = (raw: Record<string, unknown>): EventoStream
             return { tipo: "a2ui", a2uiMessage: raw.a2ui_message };
         case "accion_navegacion":
             return { tipo: "accion_navegacion", accionNavegacion: raw.accion_navegacion as AccionNavegacion };
+        case "descarga":
+            return {
+                tipo: "descarga",
+                descarga: descargaDesdeApi(raw.descarga) ?? { url: "", nombreFichero: "" },
+            };
         case "fin":
             return {
                 tipo: "fin",
@@ -120,6 +134,12 @@ export const eventoStreamDesdeApi = (raw: Record<string, unknown>): EventoStream
                 adjuntos: Array.isArray(raw.adjuntos)
                     ? (raw.adjuntos as Record<string, unknown>[]).map(adjuntoHiloDesdeApi)
                     : [],
+            };
+        case "encolado":
+            return {
+                tipo: "encolado",
+                threadId: String(raw.thread_id ?? ""),
+                contenido: String(raw.contenido ?? ""),
             };
         case "error":
         default:

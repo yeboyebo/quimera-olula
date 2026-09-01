@@ -64,6 +64,11 @@ export const DetalleIaMemoria = ({
     // al padre), porque estas acciones transicionan/actualizan el estado local.
     const accionesIaMemoria = [
         {
+            texto: "Guardar",
+            onClick: () => autoGuardar(formModelo.modelo),
+            deshabilitado: !puede("comun.ia_memoria") || !formModelo.modificado || !formModelo.valido,
+        },
+        {
             texto: iaMemoria.activo ? "Desactivar" : "Activar",
             onClick: () => emitir("activo_alternado_solicitado"),
             deshabilitado: !puede("comun.ia_memoria"),
