@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link, useInRouterContext } from "react-router";
 import "./../atomos/_forminput.css";
 import { Etiqueta, FormFieldProps } from "../atomos/_forminput.tsx";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -32,6 +33,31 @@ export type QAutocompletarProps = Omit<
     opcion: Opcion | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
+};
+
+const EnlaceFicha = ({
+  href,
+  className,
+  etiqueta,
+  tabIndex,
+}: {
+  href: string;
+  className: string;
+  etiqueta: string;
+  tabIndex?: number;
+}) => {
+  const enRouter = useInRouterContext();
+  const contenido = <QIcono nombre="arriba_derecha" tamaño="sm" />;
+
+  return enRouter ? (
+    <Link to={href} className={className} aria-label={etiqueta} tabIndex={tabIndex}>
+      {contenido}
+    </Link>
+  ) : (
+    <a href={href} className={className} aria-label={etiqueta} tabIndex={tabIndex}>
+      {contenido}
+    </a>
+  );
 };
 
 export const QAutocompletar = ({
@@ -201,15 +227,11 @@ export const QAutocompletar = ({
           <span className="valor-solo-lectura">
             {valorDescrito || "—"}
             {enlaceHref && (
-              <a
-                className="enlace-solo-lectura"
+              <EnlaceFicha
                 href={enlaceHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Abrir ${props.label ?? "ficha"}`}
-              >
-                <QIcono nombre="arriba_derecha" tamaño="sm" />
-              </a>
+                className="enlace-solo-lectura"
+                etiqueta={`Abrir ${props.label ?? "ficha"}`}
+              />
             )}
           </span>
         </label>
@@ -255,16 +277,12 @@ export const QAutocompletar = ({
           </button>
         )}
         {enlaceHref && (
-          <a
-            className="autocompletar-enlace"
+          <EnlaceFicha
             href={enlaceHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Abrir ${props.label ?? "ficha"}`}
+            className="autocompletar-enlace"
+            etiqueta={`Abrir ${props.label ?? "ficha"}`}
             tabIndex={-1}
-          >
-            <QIcono nombre="arriba_derecha" tamaño="sm" />
-          </a>
+          />
         )}
       </div>
     </quimera-autocompletar>

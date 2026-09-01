@@ -193,7 +193,7 @@ export const MaestroOportunidades = () => {
                   (estado) => String(estado.id) === nuevoEstado
                 );
 
-                emitir("estado_oportunidad_cambiado", {
+                return emitir("estado_oportunidad_cambiado", {
                   idOportunidad,
                   nuevoEstado,
                   descripcionEstado: estadoDestino?.descripcion,

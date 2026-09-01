@@ -51,3 +51,11 @@ quimera-autocompletar quimera-input[tipo='autocompletar'] label input[list]:disa
     background-image: none;
     padding-left: var(--espaciado-s);
 }
+
+quimera-autocompletar .autocompletar-wrapper:has(.autocompletar-enlace) quimera-input[tipo='autocompletar'] label input[list] {
+    padding-right: calc(var(--espaciado-xxs) * 2 + 16px);
+}
+
+quimera-autocompletar .autocompletar-wrapper:has(.autocompletar-enlace):has(.autocompletar-limpiar) quimera-input[tipo='autocompletar'] label input[list] {
+    padding-right: calc(var(--espaciado-xxs) * 2 + 16px + 1.5em);
+}

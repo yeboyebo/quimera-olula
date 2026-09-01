@@ -9,7 +9,8 @@ interface OportunidadVentaProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  enlace?: string;
+  onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
 export const OportunidadVenta = ({
@@ -18,6 +19,7 @@ export const OportunidadVenta = ({
   nombre = "oportunidad_id",
   label = "Oportunidad",
   deshabilitado = false,
+  enlace = "/crm/oportunidadventa?id={id}",
   onChange,
 }: OportunidadVentaProps) => {
   const obtenerOpciones = async (input: string) => {
@@ -47,7 +49,8 @@ export const OportunidadVenta = ({
       autoSeleccion
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
-      deshabilitado={deshabilitado}
+      enlace={enlace}
+      soloLectura={deshabilitado}
     />
   );
 };
