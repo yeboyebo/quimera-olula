@@ -1,7 +1,7 @@
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
 
 export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
@@ -28,8 +28,6 @@ export interface LineaPresupuesto extends LineaVenta {
 };
 
 export type NuevaLinea = NuevaLineaVenta
-
-export type NuevaLineaLibre = NuevaLineaLibreVenta
 
 export type Cliente = {
   cliente_id: string;

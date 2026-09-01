@@ -2,7 +2,7 @@ import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
 
 export interface Albaran extends Venta {
     cliente: ClienteVenta;
@@ -27,8 +27,6 @@ export type NuevoAlbaranClienteNoRegistrado = NuevaVentaClienteNoRegistrado;
 export type CambioClienteAlbaran = CambioClienteVenta;
 
 export type NuevaLineaAlbaran = NuevaLineaVenta;
-
-export type NuevaLineaLibreAlbaran = NuevaLineaLibreVenta;
 
 export type GetAlbaranes = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Albaran>;
 
