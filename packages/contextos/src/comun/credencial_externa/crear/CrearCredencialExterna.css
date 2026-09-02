@@ -1,0 +1,9 @@
+.CrearCredencialExterna quimera-formulario {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+}
+
+.CrearCredencialExterna .botones {
+    margin-top: 16px;
+}
