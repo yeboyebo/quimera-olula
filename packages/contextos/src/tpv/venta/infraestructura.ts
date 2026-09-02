@@ -228,12 +228,12 @@ export const postPago: PostPago = async (id, pago) => {
 
 export const postLinea: PostLinea = async (id, linea) => {
     const lineaApi = peticionNuevaLineaApi(linea);
-    const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
-        lineas: [lineaApi],
-    }, "Error al crear línea de venta");
-    const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
-    const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
-    return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+    const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`,
+        lineaApi, "Error al crear línea de venta");
+    return { id: respuesta.id } as unknown as typeof linea;
+    // const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+    // const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+    // return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
 };
 
 export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
