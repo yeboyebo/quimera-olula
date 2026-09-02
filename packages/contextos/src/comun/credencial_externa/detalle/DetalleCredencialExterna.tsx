@@ -2,13 +2,15 @@ import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
+import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { puede } from "@olula/lib/dominio.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
-import { useCallback, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { BorrarCredencialExterna } from "../borrar/BorrarCredencialExterna.js";
 import { CredencialExterna } from "../diseño.js";
 import { metaCredencialExterna } from "../dominio.js";
+import { reconectarTelegram } from "../infraestructura.js";
 import { RotarCredencialExterna } from "../rotar/RotarCredencialExterna.js";
 import { contextoDetalleCredencialExternaInicial, guardarCredencialExterna } from "./detalle.js";
 import "./DetalleCredencialExterna.css";
@@ -37,6 +39,8 @@ export const DetalleCredencialExterna = ({
         publicar
     );
 
+    const { intentar } = useContext(ContextoError);
+
     const autoGuardar = useCallback(
         async (credencial: CredencialExterna) => {
             await guardarCredencialExterna(ctx, credencial);
@@ -57,6 +61,10 @@ export const DetalleCredencialExterna = ({
 
     const titulo = (m: CredencialExterna) => m.nombre;
 
+    const esConectorTelegram = credencial.proveedor === "Telegram" && credencial.categoria === "conector";
+
+    const reconectar = () => intentar(() => reconectarTelegram(credencial.id));
+
     const acciones = [
         {
             texto: "Rotar credencial",
@@ -68,6 +76,16 @@ export const DetalleCredencialExterna = ({
             onClick: () => emitir("activo_alternado_solicitado"),
             deshabilitado: !puede("comun.credencial_externa"),
         },
+        // "Reconectar" repite la misma petición de alta a Telegram (setWebhook) que ya
+        // se lanza sola al crear/rotar la credencial — hace falta un botón manual
+        // porque esa llamada puede fallar de formas que no dependen de la credencial en
+        // sí (Telegram caído, OLULA_URL cambiada...) y sin esto no habría forma de
+        // reintentarla sin rotar el secreto solo para forzar el efecto.
+        ...(esConectorTelegram ? [{
+            texto: "Reconectar",
+            onClick: reconectar,
+            deshabilitado: !puede("comun.credencial_externa"),
+        }] : []),
         {
             texto: "Borrar",
             onClick: () => emitir("borrado_solicitado"),
