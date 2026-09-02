@@ -228,7 +228,7 @@ export const postPago: PostPago = async (id, pago) => {
 
 export const postLinea: PostLinea = async (id, linea) => {
     const lineaApi = peticionNuevaLineaApi(linea);
-    const respuesta = await RestAPI.post(`${baseUrlFactura}/${id}/linea`, {
+    const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
         lineas: [lineaApi],
     }, "Error al crear línea de venta");
     const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
@@ -239,7 +239,7 @@ export const postLinea: PostLinea = async (id, linea) => {
 export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
     const lineaApi = peticionNuevaLineaApi(linea);
     const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
-        `${baseUrlFactura}/${id}/nueva_linea`, lineaApi,
+        `${baseUrl}/${id}/nueva_linea`, lineaApi,
         "Error al obtener la nueva línea de venta")
     const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
     return lineaActualizada;
