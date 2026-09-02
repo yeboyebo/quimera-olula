@@ -1,4 +1,5 @@
 import { ArqueoTpv } from "#/tpv/arqueo/diseño.ts";
+import { EuroDenominacion } from "#/tpv/comun/componentes/EuroDenominacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/index.js";
@@ -6,13 +7,12 @@ import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { moneda, redondear, totalEfectivo, totalMovimientos } from "../dominio.ts";
-import "./RecuentoArqueoTpv.css";
-import { EuroDenominacion } from "#/tpv/comun/componentes/EuroDenominacion.tsx";
 import { metaRecuentoArqueoTpv } from "./diseño.ts";
 import {
   getRecuentoInicial,
   guardarRecuento,
 } from "./recuento.ts";
+import "./RecuentoArqueoTpv.css";
 
 export const RecuentoArqueoTpv = ({
   arqueo,
@@ -159,17 +159,17 @@ export const RecuentoArqueoTpv = ({
           <h4>Teórico</h4>
           
 
-          <QInput label="Efectivo inicial" nombre="efectivoInicial" valor={moneda(arqueo.efectivoInicial)} soloLectura tipo='numero'/>
-          <QInput label="Pagos efectivo" nombre="pagosEfectivo" valor={moneda(arqueo.pagosEfectivo)} soloLectura tipo='numero'/>
-          <QInput label="Movimientos efectivo" nombre="movimientosEfectivo" valor={moneda(totalMovimientos(arqueo.movimientos))} soloLectura tipo='numero'/>
-          <QInput label="Efectivo" nombre="totalEfectivo" valor={moneda(totalEfectivo(arqueo))} soloLectura tipo='numero'/>
-          <QInput label="Tarjeta" nombre="totalTarjeta" valor={moneda(arqueo.pagosTarjeta)} soloLectura tipo='numero'/>
-          <QInput label="Vale" nombre="totalVale" valor={moneda(arqueo.pagosVale)} soloLectura tipo='numero'/>
+          <QInput label="Efectivo inicial" nombre="efectivoInicial" valor={arqueo.efectivoInicial.toString()} soloLectura tipo='moneda'/>
+          <QInput label="Pagos efectivo" nombre="pagosEfectivo" valor={arqueo.pagosEfectivo.toString()} soloLectura tipo='moneda'/>
+          <QInput label="Movimientos efectivo" nombre="movimientosEfectivo" valor={totalMovimientos(arqueo.movimientos).toString()} soloLectura tipo='moneda'/>
+          <QInput label="Efectivo" nombre="totalEfectivo" valor={totalEfectivo(arqueo).toString()} soloLectura tipo='moneda'/>
+          <QInput label="Tarjeta" nombre="totalTarjeta" valor={arqueo.pagosTarjeta.toString()} soloLectura tipo='moneda'/>
+          <QInput label="Vale" nombre="totalVale" valor={arqueo.pagosVale.toString()} soloLectura tipo='moneda'/>
 
           <h4>Diferencia</h4>
-          <QInput label="Efectivo" nombre="difEfectivo" valor={moneda(modelo.recuentoEfectivo - totalEfectivo(arqueo))} soloLectura tipo='numero'/>
-          <QInput label="Tarjeta" nombre="difTarjeta" valor={moneda(modelo.recuentoTarjeta - arqueo.pagosTarjeta)} soloLectura tipo='numero'/>
-          <QInput label="Vale" nombre="difVale" valor={moneda(modelo.recuentoVales - arqueo.pagosVale)} soloLectura tipo='numero'/>
+          <QInput label="Efectivo" nombre="difEfectivo" valor={(modelo.recuentoEfectivo - totalEfectivo(arqueo)).toString()} soloLectura tipo='moneda'/>
+          <QInput label="Tarjeta" nombre="difTarjeta" valor={(modelo.recuentoTarjeta - arqueo.pagosTarjeta).toString()} soloLectura tipo='moneda'/>
+          <QInput label="Vale" nombre="difVale" valor={(modelo.recuentoVales - arqueo.pagosVale).toString()} soloLectura tipo='moneda'/>
         </quimera-formulario>
 
         <div className="botones maestro-botones ">
