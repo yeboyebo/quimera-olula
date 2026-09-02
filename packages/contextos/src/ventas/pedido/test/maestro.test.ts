@@ -64,7 +64,7 @@ describe("agruparPorCliente", () => {
 
     const ids = (grupos: { ids: string[] }[]) => grupos.map((grupo) => grupo.ids);
 
-    test("agrupa los pedidos del mismo cliente y forma de pago", () => {
+    test("agrupa los pedidos del mismo cliente", () => {
         expect(ids(agruparPorCliente(["1", "2"], lista))).toEqual([["1", "2"]]);
     });
 
@@ -72,8 +72,8 @@ describe("agruparPorCliente", () => {
         expect(ids(agruparPorCliente(["1", "3"], lista))).toEqual([["1"], ["3"]]);
     });
 
-    test("separa los pedidos con formas de pago distintas", () => {
-        expect(ids(agruparPorCliente(["1", "4"], lista))).toEqual([["1"], ["4"]]);
+    test("no separa por forma de pago", () => {
+        expect(ids(agruparPorCliente(["1", "4"], lista))).toEqual([["1", "4"]]);
     });
 
     test("ignora los ids que no están en la lista", () => {
@@ -86,6 +86,20 @@ describe("agruparPorCliente", () => {
 
     test("cada grupo lleva la etiqueta del cliente", () => {
         expect(agruparPorCliente(["1"], lista)[0].etiqueta).toBe("C1");
+    });
+
+    test("separa por nombre cuando el listado no trae cliente_id", () => {
+        const sinId = (id: string, nombre: string): Pedido => ({
+            ...pedido(id, "PENDIENTE"),
+            cliente: {
+                ...pedidoVacio().cliente,
+                cliente_id: "",
+                nombre_cliente: nombre,
+            },
+        });
+        const sinIds = [sinId("1", "Paco Perez"), sinId("2", "Cliente1223")];
+
+        expect(ids(agruparPorCliente(["1", "2"], sinIds))).toEqual([["1"], ["2"]]);
     });
 });
 

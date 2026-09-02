@@ -57,7 +57,7 @@ export const agruparPorProveedor = (ids: string[], pedidos: Pedido[]): GrupoAlba
     const grupos = new Map<string, GrupoAlbaranar>();
 
     pedidosDe(ids, pedidos).forEach((pedido) => {
-        const clave = pedido.proveedorId ?? pedido.nombreProveedor;
+        const clave = pedido.proveedorId || pedido.nombreProveedor || "";
         const etiqueta = pedido.nombreProveedor || pedido.proveedorId || "Sin proveedor";
         const grupo = grupos.get(clave) ?? { etiqueta, ids: [] };
         grupos.set(clave, { ...grupo, ids: [...grupo.ids, pedido.id] });

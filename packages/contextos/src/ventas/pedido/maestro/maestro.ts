@@ -52,13 +52,20 @@ export type GrupoAlbaranar = {
 const etiquetaCliente = (pedido: Pedido): string =>
     pedido.cliente?.nombre_cliente || pedido.cliente?.cliente_id || "Sin cliente";
 
+const claveCliente = (pedido: Pedido): string =>
+    [
+        pedido.cliente?.cliente_id ?? "",
+        pedido.cliente?.nombre_cliente ?? "",
+        pedido.cliente?.id_fiscal ?? "",
+    ].join("|");
+
 export const agruparPorCliente = (ids: string[], pedidos: Pedido[]): GrupoAlbaranar[] => {
     const grupos = new Map<string, GrupoAlbaranar>();
 
     ids.forEach(id => {
         const pedido = pedidos.find(p => p.id === id);
         if (!pedido) return;
-        const clave = `${pedido.cliente.cliente_id}|${pedido.forma_pago_id}`;
+        const clave = claveCliente(pedido);
         const grupo = grupos.get(clave) ?? { etiqueta: etiquetaCliente(pedido), ids: [] };
         grupos.set(clave, { ...grupo, ids: [...grupo.ids, id] });
     });
