@@ -2,6 +2,8 @@ import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
   calcularPaginacionSimplificada,
   formatearFechaDate,
+  formatearFechaHora,
+  formatearFechaHoraString,
   formatearFechaString,
   formatearHoraString,
   formatearMoneda,
@@ -79,6 +81,10 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
       datos = formatearFechaDate(datos as Date);
     } else if (tipo === "hora" && typeof datos === "string") {
       datos = formatearHoraString(datos);
+    } else if (tipo === "fechahora" && typeof datos === "string") {
+      datos = formatearFechaHoraString(datos);
+    } else if (tipo === "fechahora" && typeof datos === "object") {
+      datos = formatearFechaHora(datos as Date);
     } else if (tipo === "numero" && typeof datos === "number") {
       datos = datos.toLocaleString("es-ES");
     } else if (tipo === "booleano" && typeof datos === "boolean") {

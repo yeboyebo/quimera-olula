@@ -31,6 +31,15 @@ export interface AccionNavegacion {
     descripcion?: string | null;
 }
 
+/** Presente cuando `guardar_documento` ha generado un fichero en este turno — el
+ * cliente muestra un botón de descarga real en vez de depender de que el LLM
+ * reproduzca la URL correctamente en su respuesta de texto (ya ha fallado: URL
+ * relativa, enlace mal formado). `url` es pública (sin cabecera Authorization). */
+export interface AccionDescarga {
+    url: string;
+    nombreFichero: string;
+}
+
 /** Audio/documento (Excel, PDF) que se manda junto con un mensaje. */
 export interface AdjuntoIa {
     nombre: string;
@@ -63,8 +72,14 @@ export interface RespuestaIa {
     capacidadesHash: string | null;
     necesitaCapacidades: boolean;
     accionNavegacion: AccionNavegacion | null;
+    descarga: AccionDescarga | null;
     /** Metadatos de los adjuntos de este turno, ya persistidos en el servidor. */
     adjuntos: AdjuntoHiloIa[];
+    /** True SOLO cuando el turno tardaba demasiado y se ha encolado para terminar en
+     * segundo plano — `respuesta` es un aviso, no la respuesta definitiva. El cliente
+     * debe sondear GET .../hilos/{threadId}/mensajes periódicamente hasta ver una
+     * respuesta nueva (ver useSondeoTurnoEncolado en AsistenteRuntimeProvider.tsx). */
+    encolado: boolean;
 }
 
 export interface A2uiClientAction {
@@ -83,8 +98,12 @@ export type EventoStreamIa =
     | { tipo: "estado"; contenido: string }
     | { tipo: "a2ui"; a2uiMessage: unknown }
     | { tipo: "accion_navegacion"; accionNavegacion: AccionNavegacion }
+    | { tipo: "descarga"; descarga: AccionDescarga }
     | { tipo: "fin"; threadId: string; necesitaCapacidades?: boolean; adjuntos: AdjuntoHiloIa[] }
-    | { tipo: "error"; contenido: string };
+    | { tipo: "error"; contenido: string }
+    /** Igual que "error" pero recuperable: el turno se ha encolado en el servidor
+     * para terminar en segundo plano — ver RespuestaIa.encolado. */
+    | { tipo: "encolado"; threadId: string; contenido: string };
 
 /** Adjunto tal como vive en el estado del mensaje en el navegador — `datosBase64` se
  * rellena en cuanto se graba/adjunta (reproducción inmediata, sin esperar red) durante

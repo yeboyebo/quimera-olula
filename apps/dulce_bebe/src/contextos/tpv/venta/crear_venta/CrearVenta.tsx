@@ -1,4 +1,3 @@
-import { AgenteTpv } from "#/tpv/comun/componentes/AgenteTpv.tsx";
 import { postVenta } from "#/tpv/venta/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -7,6 +6,7 @@ import { MetaModelo } from "@olula/lib/dominio.js";
 import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback } from "react";
+import { AgenteTpvDLC } from "../../comun/AgenteTpvDLC";
 
 interface NuevaVentaDulceBebe {
     [clave: string]: unknown;
@@ -55,7 +55,7 @@ export const CrearVentaDulceBebe = ({
             onCerrar={cancelar}
         >
             <quimera-formulario>
-                <AgenteTpv
+                <AgenteTpvDLC
                     nombre="agente_tpv"
                     label="Agente"
                     valor={agenteId}
