@@ -115,3 +115,11 @@ export const deleteCredencialExterna: DeleteCredencialExterna = async (id) => {
         "Error al eliminar la credencial",
     );
 };
+
+export const reconectarTelegram = async (id: string): Promise<void> => {
+    await RestAPI.post(
+        `${baseUrl}/${id}/reconectar-telegram`,
+        {},
+        "Error al reconectar con Telegram",
+    );
+};
