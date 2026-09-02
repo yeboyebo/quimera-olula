@@ -1,10 +1,7 @@
 import { ModeloNuevaLinea } from "../../venta/diseño.ts";
-import { altaLineaDesdeModelo, metaNuevaLinea, nuevaLineaVacia } from "../../venta/dominio.ts";
-import { postLinea } from "../infraestructura.ts";
+import { metaNuevaLinea, nuevaLineaInicial } from "../../venta/dominio.ts";
 
+export { metaNuevaLinea, nuevaLineaInicial };
 export type { ModeloNuevaLinea };
-export { nuevaLineaVacia, metaNuevaLinea };
 
-export const postModelo = async (presupuestoId: string, linea: ModeloNuevaLinea): Promise<string> => {
-    return await postLinea(presupuestoId, altaLineaDesdeModelo(linea));
-};
+export const camposConCambiosServidor = ['idArticulo', 'cantidad', 'pvpUnitario', 'dtoPorcentual', 'dtoLineal', 'tipoIrpf', 'idGrupoIvaProducto'] as const satisfies readonly (keyof ModeloNuevaLinea)[];
