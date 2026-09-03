@@ -21,9 +21,9 @@ export type QAutocompletarProps<T extends OpcionBase = OpcionBase> = Omit<
   tiempoEspera?: number;
   longitudMinima?: number;
   descripcion?: string;
+  obtenerOpciones: (texto: string, id?: string) => Promise<T[]>;
   soloLectura?: boolean;
   enlace?: string;
-  obtenerOpciones: (texto: string, id?: string) => Promise<T[]>;
   onChange?: (
     opcion: T | null,
     evento: React.ChangeEvent<HTMLElement>
