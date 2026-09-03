@@ -18,6 +18,20 @@ quimera-autocompletar {
                 color: var(--color-texto-primario);
             }
         }
+
+        .autocompletar-enlace {
+            position: absolute;
+            right: var(--espaciado-xxs);
+            bottom: var(--espaciado-xxs);
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-texto-secundario);
+            line-height: 1;
+
+            &:hover {
+                color: var(--color-texto-primario);
+            }
+        }
     }
 }
 
@@ -36,4 +50,12 @@ quimera-autocompletar:focus-within quimera-input[tipo='autocompletar'] label inp
 quimera-autocompletar quimera-input[tipo='autocompletar'] label input[list]:disabled {
     background-image: none;
     padding-left: var(--espaciado-s);
+}
+
+quimera-autocompletar .autocompletar-wrapper:has(.autocompletar-enlace) quimera-input[tipo='autocompletar'] label input[list] {
+    padding-right: calc(var(--espaciado-xxs) * 2 + 16px);
+}
+
+quimera-autocompletar .autocompletar-wrapper:has(.autocompletar-enlace):has(.autocompletar-limpiar) quimera-input[tipo='autocompletar'] label input[list] {
+    padding-right: calc(var(--espaciado-xxs) * 2 + 16px + 1.5em);
 }

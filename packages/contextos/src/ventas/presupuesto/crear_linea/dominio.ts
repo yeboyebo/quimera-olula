@@ -1,14 +1,7 @@
-import { MetaModelo } from "@olula/lib/dominio.js";
-import { NuevaLinea } from "../diseño.ts";
+import { ModeloNuevaLinea } from "../../venta/diseño.ts";
+import { metaNuevaLinea, nuevaLineaInicial } from "../../venta/dominio.ts";
 
-export const nuevaLineaVacia: NuevaLinea = {
-    referencia: "",
-    cantidad: 1,
-};
+export { metaNuevaLinea, nuevaLineaInicial };
+export type { ModeloNuevaLinea };
 
-export const metaNuevaLinea: MetaModelo<NuevaLinea> = {
-    campos: {
-        referencia: { requerido: true },
-        cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
-    }
-};
+export const camposConCambiosServidor = ['idArticulo', 'cantidad', 'pvpUnitario', 'dtoPorcentual', 'dtoLineal', 'tipoIrpf', 'idGrupoIvaProducto'] as const satisfies readonly (keyof ModeloNuevaLinea)[];

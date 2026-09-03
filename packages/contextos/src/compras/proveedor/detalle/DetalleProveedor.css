@@ -1,0 +1,6 @@
+.DetalleProveedor {
+    /* Los campos se posicionan en TabGeneral.css */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}

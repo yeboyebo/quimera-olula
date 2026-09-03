@@ -1,5 +1,6 @@
 import { opcionesEstadoIncidencia } from "#/crm/comun/componentes/EstadoIncidencia.tsx";
 import { PrioridadIncidencia } from "#/crm/comun/componentes/PrioridadIncidencia.tsx";
+import { TipoIncidencia } from "#/crm/comun/componentes/TipoIncidencia.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
@@ -83,6 +84,17 @@ export const MaestroIncidencias = () => {
                   filtro: (v) => filtroTextos("prioridad", v),
                   render: (valor, onChange) => (
                     <PrioridadIncidencia
+                      valor={(valor as string) ?? ""}
+                      onChange={(opcion) => onChange(opcion?.valor ?? "")}
+                    />
+                  ),
+                },
+                tipo_incidencia: {
+                  id: "tipo_incidencia",
+                  label: "Tipo",
+                  filtro: (v) => filtroTextos("tipo_incidencia", v),
+                  render: (valor, onChange) => (
+                    <TipoIncidencia
                       valor={(valor as string) ?? ""}
                       onChange={(opcion) => onChange(opcion?.valor ?? "")}
                     />

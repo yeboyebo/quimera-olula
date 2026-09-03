@@ -1,17 +1,15 @@
-import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
+import { QSelect, QSelectProps } from "@olula/componentes/atomos/qselect.tsx";
 import { obtenerOpcionesSelector } from "@olula/lib/infraestructura.ts";
 import { useEffect, useState } from "react";
 
-interface FormaPagoProps {
-  valor: string;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
-}
+type GrupoIvaProductoProps = Omit<QSelectProps, "opciones" | "label">;
 
 export const GrupoIvaProducto = ({
   valor,
   onChange,
+  // nombre,
   ...props
-}: FormaPagoProps) => {
+}: GrupoIvaProductoProps) => {
   const [opciones, setOpciones] = useState<
     { valor: string; descripcion: string }[]
   >([]);
@@ -33,7 +31,7 @@ export const GrupoIvaProducto = ({
     <QSelect
       {...props}
       label="Grupo IVA"
-      nombre="grupo_iva_producto_id"
+      // nombre="grupo_iva_producto_id"
       valor={valor}
       onChange={onChange}
       opciones={opciones}

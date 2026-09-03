@@ -11,7 +11,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { Entidad } from "@olula/lib/diseño.ts";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import "./qkanban.css";
 import { MetaTabla } from "./qtabla.tsx";
@@ -32,7 +32,7 @@ export type QKanbanProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
   seleccionadaId?: string;
   onSeleccion?: (entidad: T) => void;
-  onCambioEstado: (id: string, nuevoEstado: string) => void;
+  onCambioEstado: (id: string, nuevoEstado: string) => void | Promise<void>;
 };
 
 type QKanbanTarjetaProps<T extends Entidad> = {
@@ -141,6 +141,9 @@ export const QKanban = <T extends Entidad>({
   onCambioEstado,
 }: QKanbanProps<T>) => {
   const [idActivaArrastre, setIdActivaArrastre] = useState<string | null>(null);
+  const [estadoOptimista, setEstadoOptimista] = useState<Record<string, string>>(
+    {}
+  );
   const sensores = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
@@ -156,11 +159,16 @@ export const QKanban = <T extends Entidad>({
         )
       : undefined);
 
+  useEffect(() => {
+    setEstadoOptimista({});
+  }, [entidades]);
+
+  const estadoDe = (entidad: T) =>
+    estadoOptimista[entidad.id] ?? String(entidad[campoEstado]);
+
   const columnasAgrupadas = columnas.map((columna) => ({
     ...columna,
-    entidades: entidades.filter(
-      (entidad) => String(entidad[campoEstado]) === columna.id
-    ),
+    entidades: entidades.filter((entidad) => estadoDe(entidad) === columna.id),
   }));
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
@@ -178,9 +186,21 @@ export const QKanban = <T extends Entidad>({
     );
     if (!entidadArrastrada) return;
 
-    if (String(entidadArrastrada[campoEstado]) === nuevaColumna.id) return;
+    const idEntidad = String(active.id);
+    const estadoPrevio = estadoDe(entidadArrastrada);
+    if (estadoPrevio === nuevaColumna.id) return;
 
-    onCambioEstado(String(active.id), nuevaColumna.id);
+    setEstadoOptimista((previo) => ({
+      ...previo,
+      [idEntidad]: nuevaColumna.id,
+    }));
+
+    Promise.resolve(onCambioEstado(idEntidad, nuevaColumna.id)).catch(() =>
+      setEstadoOptimista((previo) => ({
+        ...previo,
+        [idEntidad]: estadoPrevio,
+      }))
+    );
   };
 
   const onDragStart = ({ active }: DragStartEvent) => {
@@ -229,7 +249,7 @@ export const QKanban = <T extends Entidad>({
           ))}
         </div>
       </div>
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {entidadActiva && tarjetaRender ? (
           <div className="qkanban-tarjeta-arrastrable">
             <quimera-tarjeta>{tarjetaRender(entidadActiva)}</quimera-tarjeta>

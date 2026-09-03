@@ -1,7 +1,7 @@
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QuimeraAcciones } from "@olula/componentes/index.js";
+import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
@@ -60,6 +60,7 @@ export const DetalleModulo = ({
     // Recargar cuando el ID cambia (o se deselecciona con undefined)
     useEffect(() => {
         emitir("modulo_id_cambiado", id, true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     if (!ctx.modulo.id) return null;
@@ -88,7 +89,11 @@ export const DetalleModulo = ({
             cerrarDetalle={() => emitir("modulo_deseleccionado", null, true)}
         >
             <div className="DetalleModulo">
-                <QuimeraAcciones acciones={accionesModulo} />
+                {/* Estándar: las acciones del detalle van siempre en QuimeraAcciones
+                    con `vertical` (menú "Acciones"), aunque solo haya una. */}
+                <div className="maestro-botones">
+                    <QuimeraAcciones acciones={accionesModulo} vertical />
+                </div>
                 <Tabs children={[
                     <Tab label="General"
                         key="tab-general"

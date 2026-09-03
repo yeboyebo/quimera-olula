@@ -17,16 +17,16 @@ import {
   postLineaNrj,
 } from "./crear_linea.ts";
 
-export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
+export const CrearLineaNrj = ({ idPedido, publicar }: CrearLineaProps) => {
   const { modelo, uiProps, valido } = useModelo(
     metaCrearLinea,
     FormCrearLineaDefecto
   );
 
   const crear = useCallback(async () => {
-    await postLineaNrj(pedidoId, modelo);
-    publicar("alta_linea_lista");
-  }, [modelo, publicar, pedidoId]);
+    const id = await postLineaNrj(idPedido, modelo);
+    publicar("linea_creada", { id });
+  }, [modelo, publicar, idPedido]);
 
   const cancelar = useCallback(() => {
     publicar("crear_linea_cancelado");
@@ -37,10 +37,13 @@ export const CrearLineaNrj = ({ pedidoId, publicar }: CrearLineaProps) => {
   const cantidadEnvasesNominal = modelo.cantidadPalets * modelo.envasesPorPalet;
 
   return (
-    <QModal abierto={true} nombre="mostrar" onCerrar={cancelar}>
+    <QModal
+      abierto={true}
+      nombre="crearLinea"
+      titulo="Crear línea NRJ"
+      onCerrar={cancelar}
+    >
       <div className="CrearLinea">
-        <h2>Crear línea NRJ</h2>
-
         <quimera-formulario>
           <TipoPalet
             label="Tipo Palet"

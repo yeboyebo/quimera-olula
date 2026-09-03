@@ -1,3 +1,5 @@
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.ts";
 import { CambioClienteFactura, Factura, LineaFactura } from "../diseño.ts";
@@ -6,10 +8,14 @@ import {
     deleteLinea,
     getFactura,
     getLineas,
+    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
+    patchCambiarDivisa,
     patchCantidadLinea,
-    patchFactura
+    patchEmitirFactura,
+    patchFactura,
+    patchLinea
 } from "../infraestructura.ts";
 import { ContextoFactura, EstadoFactura } from "./diseño.ts";
 
@@ -64,6 +70,12 @@ export const activarLinea: ProcesarFactura = async (contexto, payload) => {
         ...contexto,
         lineaActiva,
     };
+};
+
+const activarLineaPorId = (id: string) => async (contexto: ContextoFactura) => {
+    const lineas = contexto.factura.lineas as LineaFactura[];
+    const lineaActiva = lineas.find(l => l.id === id) ?? null;
+    return { ...contexto, lineaActiva };
 };
 
 const activarLineaPorIndice = (indice: number) => async (contexto: ContextoFactura) => {
@@ -123,8 +135,19 @@ export const cambiarFactura: ProcesarFactura = async (contexto, payload) => {
     ]);
 };
 
+/** La respuesta solo confirma, así que el nuevo estado llega al recargar. */
+export const emitirFactura: ProcesarFactura = async (contexto) => {
+    await patchEmitirFactura(contexto.factura.id);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
+        refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
 export const borrarFactura: ProcesarFactura = async (contexto) => {
-    return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", contexto.factura)]);
+    return pipeFactura(contexto, [getContextoVacio, publicar("factura_borrada", contexto.factura.id)]);
 };
 
 export const cambiarCliente: ProcesarFactura = async (contexto, payload) => {
@@ -134,6 +157,27 @@ export const cambiarCliente: ProcesarFactura = async (contexto, payload) => {
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
+export const cambiarDivisa: ProcesarFactura = async (contexto, payload) => {
+    const cambio = payload as CambioDivisa;
+    await patchCambiarDivisa(contexto.factura.id, cambio);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
+        refrescarLineas,
+        "ABIERTO",
+    ]);
+};
+
+export const cambiarAgente: ProcesarFactura = async (contexto, payload) => {
+    const cambio = payload as CambioAgente;
+    await patchCambiarAgente(contexto.factura.id, cambio);
+
+    return pipeFactura(contexto, [
+        refrescarFactura,
         "ABIERTO",
     ]);
 };
@@ -149,15 +193,21 @@ export const cambiarDescuento: ProcesarFactura = async (contexto, payload) => {
     ]);
 };
 
-export const crearLinea: ProcesarFactura = async (contexto) => {
+export const crearLinea: ProcesarFactura = async (contexto, payload) => {
+    const { id } = payload as { id: string };
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,
+        activarLineaPorId(id),
         "ABIERTO",
     ]);
 };
 
-export const cambiarLinea: ProcesarFactura = async (contexto) => {
+export const cambiarLinea: ProcesarFactura = async (contexto, payload) => {
+    const linea = payload as LineaFactura;
+
+    await patchLinea(contexto.factura.id, linea);
+
     return pipeFactura(contexto, [
         refrescarFactura,
         refrescarLineas,

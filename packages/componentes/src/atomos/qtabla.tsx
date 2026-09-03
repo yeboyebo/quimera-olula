@@ -2,9 +2,12 @@ import { Entidad, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import {
   calcularPaginacionSimplificada,
   formatearFechaDate,
+  formatearFechaHora,
+  formatearFechaHoraString,
   formatearFechaString,
   formatearHoraString,
   formatearMoneda,
+  resolverDivisa,
 } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
 import { QBoton } from "./qboton.tsx";
@@ -24,7 +27,7 @@ type MetaColumna<T extends Entidad> = {
     | "fechahora"
     | "booleano"
     | undefined;
-  divisa?: string;
+  divisa?: string | ((entidad: T) => string);
   ancho?: string;
   render?: (entidad: T) => string | ReactNode;
 };
@@ -67,7 +70,10 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
     // Formateo automático según tipo
     if (tipo === "moneda") {
       if (typeof datos === "number" || typeof datos === "string") {
-        datos = formatearMoneda(datos, divisa ?? "EUR");
+        datos = formatearMoneda(
+          datos,
+          resolverDivisa(divisa, entidad as T) ?? "EUR"
+        );
       }
     } else if (tipo === "fecha" && typeof datos === "string") {
       datos = formatearFechaString(datos);
@@ -75,6 +81,10 @@ const fila = <T extends Entidad>(entidad: Entidad, metaTabla: MetaTabla<T>) => {
       datos = formatearFechaDate(datos as Date);
     } else if (tipo === "hora" && typeof datos === "string") {
       datos = formatearHoraString(datos);
+    } else if (tipo === "fechahora" && typeof datos === "string") {
+      datos = formatearFechaHoraString(datos);
+    } else if (tipo === "fechahora" && typeof datos === "object") {
+      datos = formatearFechaHora(datos as Date);
     } else if (tipo === "numero" && typeof datos === "number") {
       datos = datos.toLocaleString("es-ES");
     } else if (tipo === "booleano" && typeof datos === "boolean") {

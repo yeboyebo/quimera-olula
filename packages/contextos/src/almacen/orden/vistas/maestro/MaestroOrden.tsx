@@ -1,6 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
-import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -9,7 +8,6 @@ import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect } from "react";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
 import { CrearOrden } from "../crear/CrearOrden.tsx";
@@ -71,8 +69,6 @@ const metaTablaOrden: MetaTabla<ItemOrdenAlmacen> = [
 ];
 
 export const MaestroOrden = () => {
-    const { layout, cambiarLayout } = useLayout("TABLA");
-
     const { id, criteria } = getUrlParams();
 
     const { ctx, emitir } = useMaquina(getMaquina, {
@@ -91,33 +87,26 @@ export const MaestroOrden = () => {
         <div className="OrdenAlmacen">
             <MaestroDetalle<ItemOrdenAlmacen>
                 seleccionada={ctx.ordenes.activo}
-                layout={layout}
                 modoDisposicion="maestro-50"
                 Maestro={
                     <>
                         <h2>Órdenes</h2>
-                        <div className="maestro-botones">
-                            <QBoton onClick={() => emitir("crear_modulo_solicitado")}>Nueva orden</QBoton>
-                            <QBoton onClick={() => emitir("crear_entrada_desde_pedido_solicitado")}>Entrada desde pedido</QBoton>
-                            <span
-                                className="cambio-modo-icono"
-                                onClick={cambiarLayout}
-                            >
-                                <QIcono
-                                    nombre={layout === "TABLA" ? "lista" : "tabla"}
-                                    tamaño="md"
-                                />
-                            </span>
-                        </div>
                         <Listado<ItemOrdenAlmacen>
                             metaTabla={metaTablaOrden}
                             metaFiltro={metaFiltroOrden}
                             criteria={ctx.ordenes.criteria}
-                            modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+                            modoInicial="tabla"
                             tarjeta={TarjetaOrdenAlmacen}
                             entidades={ctx.ordenes.lista}
                             totalEntidades={ctx.ordenes.total}
                             seleccionada={ctx.ordenes.activo}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("crear_modulo_solicitado")}>
+                                        Nueva orden
+                                    </QBoton>
+                                </div>
+                            )}
                             onSeleccion={(payload) =>
                                 emitir("orden_seleccionada", payload)
                             }
