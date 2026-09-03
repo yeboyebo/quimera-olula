@@ -31,6 +31,7 @@ declare namespace React {
             'box-icon': BoxIcon;
             'quimera-tarjetas': NodoComun;
             'quimera-tarjeta': NodoComun;
+            'quimera-tarjeta-resumen': NodoComun;
             'maestro-detalle': NodoComun;
             'etiqueta-filtro': NodoComun;
             'etiquetas-filtro': NodoComun;
@@ -43,6 +44,7 @@ declare namespace React {
             'quimera-historias': NodoComun;
             'menu-lateral': NodoComun;
             'menu-usuario': NodoComun;
+            'panel-asistente': NodoComun;
             'quimera-editor-enriquecido': NodoComun;
         }
     }

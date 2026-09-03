@@ -1,10 +1,11 @@
 import ApiUrls from "#/tpv/comun/urls.ts";
 import Ventas_Urls from "#/ventas/comun/urls.ts";
+import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "#/ventas/venta/infraestructura.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { ClausulaFiltro, Direccion, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { agenteActivo, puntoVentaLocal } from "../comun/infraestructura.ts";
-import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchEmitirVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
+import { DeleteLinea, DeletePago, DeleteVentaTpv, GetLineasFactura, GetPagosVentaTpv, GetReportVale, GetReportVenta, GetVentasTpv, GetVentaTpv, GetVentaTpvADevolver, LineaFactura, LineaParaTiqueRegalo, PagoVentaTpv, PatchArticuloLinea, PatchCantidadLinea, PatchClienteFactura, PatchDevolverVenta, PatchEmitirVenta, PatchFechaVenta, PatchLinea, PatchVenta, PostEmitirVale, PostLinea, PostLineaPorBarcode, PostPago, PostVentaTpv, QueryNuevaLinea, VentaTpv, VentaTpvADevolver } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().VENTA;
 const baseUrlFactura = new Ventas_Urls().FACTURA;
@@ -39,6 +40,7 @@ type VentaTpvAPI = {
     neto: number;
     total_iva: number;
     total_irpf: number;
+    total_recargo: number;
     total_divisa_empresa: number;
     forma_pago_id: string;
     nombre_forma_pago: string;
@@ -225,16 +227,22 @@ export const postPago: PostPago = async (id, pago) => {
 };
 
 export const postLinea: PostLinea = async (id, linea) => {
-    const body = {
-        articulo_id: linea.referencia,
-        cantidad: linea.cantidad
-    }
-    return await RestAPI.post(`${baseUrl}/${id}/linea`,
-        body,
-        "Error al crear linea de venta").then((respuesta) => {
-            const miRespuesta = respuesta as unknown as { id: string };
-            return miRespuesta.id;
-        });
+    const lineaApi = peticionNuevaLineaApi(linea);
+    const respuesta = await RestAPI.post(`${baseUrlFactura}/${id}/linea`, {
+        lineas: [lineaApi],
+    }, "Error al crear línea de venta");
+    const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+    const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+    return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+};
+
+export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
+    const lineaApi = peticionNuevaLineaApi(linea);
+    const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
+        `${baseUrlFactura}/${id}/nueva_linea`, lineaApi,
+        "Error al obtener la nueva línea de venta")
+    const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
+    return lineaActualizada;
 };
 
 export const postLineaPorBarcode: PostLineaPorBarcode = async (id, linea) => {
@@ -264,9 +272,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
 export const patchLinea: PatchLinea = async (id, linea) => {
     const payload = {
         cambios: {
-            articulo: {
-                articulo_id: linea.referencia
-            },
+            articulo: articuloDeLinea(linea),
             cantidad: linea.cantidad,
             pvp_unitario: linea.pvp_unitario,
             iva_incluido: linea.iva_incluido,
@@ -275,7 +281,7 @@ export const patchLinea: PatchLinea = async (id, linea) => {
             grupo_iva_producto_id: linea.grupo_iva_producto_id,
         },
     };
-    await RestAPI.patch(`${baseUrl}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de factura");
+    await RestAPI.patch(`${baseUrlFactura}/${id}/linea/${linea.id}`, payload, "Error al actualizar línea de factura");
 };
 
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {

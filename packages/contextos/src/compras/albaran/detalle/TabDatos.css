@@ -1,0 +1,21 @@
+.Albaran .TabDatos {
+    quimera-input[nombre="codigo"],
+    quimera-input[nombre="facturaId"] {
+        grid-column: span 6;
+    }
+
+    quimera-select[nombre="almacenId"],
+    quimera-select[nombre="divisaId"],
+    quimera-input[nombre="tasaConversion"],
+    quimera-select[nombre="formaPagoId"],
+    quimera-select[nombre="grupoIvaNegocioId"] {
+        grid-column: span 4;
+    }
+
+    @media (max-width: 768px) {
+        quimera-input,
+        quimera-select {
+            grid-column: span 1 !important;
+        }
+    }
+}

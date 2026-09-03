@@ -1,0 +1,16 @@
+.modo-proveedor {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.CrearFactura {
+    quimera-autocompletar[nombre="proveedorFactura"],
+    quimera-input[nombre="nombre"] {
+        grid-column: span 12;
+    }
+
+    quimera-input[nombre="idFiscal"],
+    quimera-input[nombre="numeroProveedor"] {
+        grid-column: span 6;
+    }
+}

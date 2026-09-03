@@ -1,0 +1,37 @@
+/*
+ * Grid de 12 columnas de <quimera-formulario>. Toda fila suma 12:
+ *   Fila 1: serie (3) + divisa (3) + forma de pago (3) + grupo IVA (3)
+ *   Fila 2: contacto (6) + subcuenta (3) + id subcuenta (3)
+ */
+.Proveedor .TabComercial {
+    quimera-input[nombre="proveedor/serieId"] {
+        grid-column: 1 / span 3;
+    }
+
+    quimera-select[nombre="proveedor/divisaId"],
+    quimera-select[nombre="proveedor/formaPagoId"],
+    quimera-select[nombre="proveedor/grupoIvaNegocioId"] {
+        grid-column: span 3;
+    }
+
+    quimera-autocompletar[nombre="proveedor/contactoId"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="subcuentaCodigo"],
+    quimera-input[nombre="subcuentaId"] {
+        grid-column: span 3;
+    }
+
+    @media (max-width: 768px) {
+        quimera-input[nombre="proveedor/serieId"],
+        quimera-select[nombre="proveedor/divisaId"],
+        quimera-select[nombre="proveedor/formaPagoId"],
+        quimera-select[nombre="proveedor/grupoIvaNegocioId"],
+        quimera-autocompletar[nombre="proveedor/contactoId"],
+        quimera-input[nombre="subcuentaCodigo"],
+        quimera-input[nombre="subcuentaId"] {
+            grid-column: span 1 !important;
+        }
+    }
+}

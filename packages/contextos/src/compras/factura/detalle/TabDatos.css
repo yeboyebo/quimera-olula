@@ -1,0 +1,30 @@
+.Factura .TabDatos {
+    quimera-input[nombre="codigo"],
+    quimera-input[nombre="automatica"] {
+        grid-column: span 6;
+    }
+
+    quimera-select[nombre="almacenId"],
+    quimera-select[nombre="divisaId"],
+    quimera-input[nombre="tasaConversion"],
+    quimera-select[nombre="formaPagoId"],
+    quimera-select[nombre="grupoIvaNegocioId"],
+    quimera-input[nombre="codigoRectificativa"],
+    quimera-input[nombre="asientoId"] {
+        grid-column: span 4;
+    }
+
+    quimera-checkbox[nombre="deAbono"],
+    quimera-checkbox[nombre="servicios"],
+    quimera-checkbox[nombre="noGenerarAsiento"] {
+        grid-column: span 4;
+    }
+
+    @media (max-width: 768px) {
+        quimera-input,
+        quimera-select,
+        quimera-checkbox {
+            grid-column: span 1 !important;
+        }
+    }
+}

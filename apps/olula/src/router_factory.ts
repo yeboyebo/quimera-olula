@@ -1,8 +1,13 @@
 import { RouterFactoryAlmacenOlula } from '#/almacen/router_factory.ts';
 import { RouterFactoryAuthOlula } from '#/auth/router_factory.ts';
+import { RouterFactoryComprasOlula } from '#/compras/router_factory.ts';
 import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
 import { RouterFactoryCrmOlula } from '#/crm/router_factory.ts';
+import { RouterFactoryEmpresaOlula } from '#/empresa/router_factory.ts';
+import { RouterFactoryPrediccionesOlula } from '#/predicciones/router_factory.ts';
+import { RouterFactoryProyectosOlula } from '#/proyectos/router_factory.ts';
 import { RouterFactoryRrhh } from '#/rrhh/router_factory.ts';
+import { RouterFactoryTesoreriaOlula } from '#/tesoreria/router_factory.ts';
 import { RouterFactoryTpvOlula } from '#/tpv/router_factory.ts';
 import { RouterFactoryVentasOlula } from '#/ventas/router_factory.ts';
 import { Historias, Home } from '@olula/componentes/index.ts';
@@ -15,11 +20,16 @@ export class RouterFactoryOlula {
     Inicio = { router: { "": Home } };
     Auth = RouterFactoryAuthOlula;
     Ventas = RouterFactoryVentasOlula;
+    Compras = RouterFactoryComprasOlula;
     Almacen = RouterFactoryAlmacenOlula;
     Crm = RouterFactoryCrmOlula;
+    Empresa = RouterFactoryEmpresaOlula;
     Tpv = RouterFactoryTpvOlula;
+    Predicciones = RouterFactoryPrediccionesOlula;
     Comun = RouterFactoryComunOlula;
     Rrhh = RouterFactoryRrhh;
+    Proyectos = RouterFactoryProyectosOlula;
+    Tesoreria = RouterFactoryTesoreriaOlula;
     Otros = {
         router: {
             "docs/componentes": Historias

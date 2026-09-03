@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { FormFieldProps } from "../atomos/_forminput.tsx";
+import { Link, useInRouterContext } from "react-router";
+import { Etiqueta, FormFieldProps } from "../atomos/_forminput.tsx";
+import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
+import "./../atomos/_forminput.css";
 import "./qautocompletar.css";
 
 type OpcionBase = {
   valor: string;
   descripcion: string;
   descripcionOpcion?: string;
+  [dato: string]: unknown;
 };
 
 export type QAutocompletarProps<T extends OpcionBase = OpcionBase> = Omit<
@@ -17,7 +21,8 @@ export type QAutocompletarProps<T extends OpcionBase = OpcionBase> = Omit<
   tiempoEspera?: number;
   longitudMinima?: number;
   descripcion?: string;
-  soloTexto?: boolean;
+  soloLectura?: boolean;
+  enlace?: string;
   obtenerOpciones: (texto: string, id?: string) => Promise<T[]>;
   onChange?: (
     opcion: T | null,
@@ -29,6 +34,31 @@ export type QAutocompletarProps<T extends OpcionBase = OpcionBase> = Omit<
   ) => void;
 };
 
+const EnlaceFicha = ({
+  href,
+  className,
+  etiqueta,
+  tabIndex,
+}: {
+  href: string;
+  className: string;
+  etiqueta: string;
+  tabIndex?: number;
+}) => {
+  const enRouter = useInRouterContext();
+  const contenido = <QIcono nombre="arriba_derecha" tamaño="sm" />;
+
+  return enRouter ? (
+    <Link to={href} className={className} aria-label={etiqueta} tabIndex={tabIndex}>
+      {contenido}
+    </Link>
+  ) : (
+    <a href={href} className={className} aria-label={etiqueta} tabIndex={tabIndex}>
+      {contenido}
+    </a>
+  );
+};
+
 export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
   nombre,
   valor,
@@ -38,7 +68,8 @@ export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
   onBlur,
   onChange,
   descripcion = "",
-  soloTexto = false,
+  soloLectura = false,
+  enlace,
   opcional,
   deshabilitado,
   ...props
@@ -181,6 +212,32 @@ export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
     }
   };
 
+  const enlaceHref = enlace && valor
+    ? enlace.includes("{id}")
+      ? enlace.replace("{id}", encodeURIComponent(valor))
+      : `${enlace.replace(/\/$/, "")}/${valor}`
+    : null;
+
+  if (soloLectura) {
+    return (
+      <quimera-autocompletar {...attrs} solo-lectura="">
+        <label>
+          <Etiqueta label={props.label} />
+          <span className="valor-solo-lectura">
+            {valorDescrito || "—"}
+            {enlaceHref && (
+              <EnlaceFicha
+                href={enlaceHref}
+                className="enlace-solo-lectura"
+                etiqueta={`Abrir ${props.label ?? "ficha"}`}
+              />
+            )}
+          </span>
+        </label>
+      </quimera-autocompletar>
+    );
+  }
+
   return (
     <quimera-autocompletar {...attrs}>
       <datalist id={listaId.current}>{renderOpciones}</datalist>
@@ -206,9 +263,8 @@ export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
           onChange={manejarChange}
           placeholder={props.placeholder}
           valor={valorDescrito}
-          soloTexto={soloTexto}
         />
-        {opcional && valor && !deshabilitado && !soloTexto && (
+        {opcional && valor && !deshabilitado && (
           <button
             type="button"
             className="autocompletar-limpiar"
@@ -218,6 +274,14 @@ export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
           >
             ×
           </button>
+        )}
+        {enlaceHref && (
+          <EnlaceFicha
+            href={enlaceHref}
+            className="autocompletar-enlace"
+            etiqueta={`Abrir ${props.label ?? "ficha"}`}
+            tabIndex={-1}
+          />
         )}
       </div>
     </quimera-autocompletar>
