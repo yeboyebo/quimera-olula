@@ -67,6 +67,7 @@ const metaTablaLineasOrden = (orden: OrdenAlmacen, publicar: EmitirEvento): Meta
     cols: [
         { id: "sku", cabecera: "SKU" },
         { id: "articulo", cabecera: "Descripción", tipo: "texto" },
+        { id: "loteId", cabecera: "Lote" },
         ...(orden.abierta
             ? [{ id: "cantidadReal" as const, cabecera: "Cantidad real" }]
             : [{

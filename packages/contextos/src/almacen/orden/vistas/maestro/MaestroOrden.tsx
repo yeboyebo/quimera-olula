@@ -11,7 +11,6 @@ import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect } from "react";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
 import { CrearOrden } from "../crear/CrearOrden.tsx";
-import { CrearEntradaDesdePedido } from "../crear_entrada_desde_pedido/CrearEntradaDesdePedido.tsx";
 import { DetalleOrden } from "../detalle/DetalleOrden.tsx";
 import { ContextoMaestroOrden, getMaquina } from "./maquina.ts";
 
@@ -125,9 +124,6 @@ export const MaestroOrden = () => {
             />
             {ctx.estado === "CREANDO" && (
                 <CrearOrden publicar={emitir} />
-            )}
-            {ctx.estado === "CREANDO_ENTRADA_DESDE_PEDIDO_COMPRA" && (
-                <CrearEntradaDesdePedido publicar={emitir} />
             )}
         </div>
     );

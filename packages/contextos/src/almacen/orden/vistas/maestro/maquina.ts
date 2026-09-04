@@ -3,7 +3,7 @@ import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { ItemOrdenAlmacen } from "../../diseño.ts";
 import * as maestro from "./maestro.js";
 
-export type EstadoMaestroOrden = 'INICIAL' | 'CREANDO' | 'CREANDO_ENTRADA_DESDE_PEDIDO_COMPRA';
+export type EstadoMaestroOrden = 'INICIAL' | 'CREANDO';
 
 export type ContextoMaestroOrden = {
     estado: EstadoMaestroOrden;
@@ -21,17 +21,11 @@ export const getMaquina: () => Maquina<EstadoMaestroOrden, ContextoMaestroOrden>
             criteria_cambiado: [maestro.Ordenes.filtrar, maestro.recargarOrdenes],
             siguiente_pagina: [maestro.Ordenes.filtrar, maestro.ampliarOrdenes],
             crear_modulo_solicitado: "CREANDO",
-            crear_entrada_desde_pedido_solicitado: "CREANDO_ENTRADA_DESDE_PEDIDO_COMPRA",
         },
 
         CREANDO: {
             alta_de_modulo_cancelada: "INICIAL",
             modulo_creado: maestro.incluirOrdenCreadaPorId,
-        },
-
-        CREANDO_ENTRADA_DESDE_PEDIDO_COMPRA: {
-            entrada_desde_pedido_cancelada: "INICIAL",
-            entrada_desde_pedido_creada: maestro.incluirOrdenCreadaPorId,
         },
     };
 };
