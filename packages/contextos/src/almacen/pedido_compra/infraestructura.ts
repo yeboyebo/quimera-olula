@@ -119,10 +119,10 @@ export const getInfoLineasPedidoCompra: GetInfoLineasPedidoCompra = async (pedid
     const formData = new FormData();
     formData.append("foto", foto);
 
-    const respuesta = await RestAPI.query<FormData, { datos: LineaNuevaEntradaDesdePedidoApi[] }>(
-        `${baseUrl}/${pedidoCompraId}/leer_albaran`,
+    const respuesta = await RestAPI.query<FormData, { lineas: LineaNuevaEntradaDesdePedidoApi[] }>(
+        `${baseUrl}/${pedidoCompraId}/analizar_recepcion`,
         formData,
         "Error al leer albarán"
     );
-    return respuesta.datos.map(lineaNuevaEntradaDesdeApi);
+    return respuesta.lineas.map(lineaNuevaEntradaDesdeApi);
 };
