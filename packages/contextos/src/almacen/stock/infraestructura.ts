@@ -1,8 +1,8 @@
+import { baseUrlStockUbicacion, StockUbicacionItemApi } from "#/almacen/ubicacion/infraestructura.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
-import { baseUrlStockUbicacion, StockUbicacionItemApi } from "#/almacen/ubicacion/infraestructura.ts";
-import { GetStock, GetStocks, Stock, StockAPI, StockItem, StockUbicacion } from "./diseño.ts";
+import { GetStock, GetStocks, StockAPI, StockItem, StockUbicacion } from "./diseño.ts";
 
 const baseUrlStock = `/almacen/stock`;
 

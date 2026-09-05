@@ -14,8 +14,8 @@ const formatearFechaHoraLectura = (fechaHora: Date | string): string => {
     return isNaN(d.getTime()) ? String(fechaHora) : d.toLocaleString();
 };
 
-const ExpansionLecturas = (orden: OrdenAlmacen, publicar: EmitirEvento) =>
-    ({ entidad }: { entidad: LineaOrdenAlmacen }) => {
+const ExpansionLecturas = (orden: OrdenAlmacen, publicar: EmitirEvento) => {
+    const Componente = ({ entidad }: { entidad: LineaOrdenAlmacen }) => {
         const { intentar } = useContext(ContextoError);
         const lecturas: LecturaLineaOrden[] = entidad.lecturas ?? [];
         if (!lecturas.length) return <p>Sin lecturas</p>;
@@ -62,6 +62,8 @@ const ExpansionLecturas = (orden: OrdenAlmacen, publicar: EmitirEvento) =>
             </table>
         );
     };
+    return Componente;
+};
 
 const metaTablaLineasOrden = (orden: OrdenAlmacen, publicar: EmitirEvento): MetaTabla<LineaOrdenAlmacen> => ({
     cols: [

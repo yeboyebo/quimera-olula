@@ -130,10 +130,10 @@ export interface ItemOrdenAlmacen extends Entidad {
     idResponsable: string | null;
 }
 
-export interface NuevaEntradaDesdePedido {
+export type NuevaEntradaDesdePedido = {
     pedidoCompraId: string;
     ubicacionId: string;
-}
+};
 
 export type CambiosOrdenAlmacen = Partial<OrdenAlmacen>;
 export type CambiosLineaOrdenAlmacen = Partial<LineaOrdenAlmacen>;
