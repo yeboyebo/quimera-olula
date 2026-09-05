@@ -5,6 +5,7 @@ import { LineaOrdenAlmacen, OrdenAlmacen } from "../../diseño.ts";
 import {
     cargarContexto,
     Lineas,
+    onCajaCreada,
     onLineaBorrada,
     onLineaCambiada,
     onLineaCreada,
@@ -20,7 +21,9 @@ export type EstadoOrdenAlmacen =
     | 'BORRANDO_LINEA'
     | 'LEYENDO_LINEA'
     | 'LEYENDO_CAJA'
-    | 'LEYENDO_UBICACION';
+    | 'LEYENDO_UBICACION'
+    | 'LEYENDO_GUION_LINEA'
+    | 'CREANDO_CAJA';
 
 export type ContextoOrdenAlmacen = {
     estado: EstadoOrdenAlmacen;
@@ -46,6 +49,9 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
             lectura_solicitada: "LEYENDO_LINEA",
             lectura_caja_solicitada: "LEYENDO_CAJA",
             lectura_ubicacion_solicitada: "LEYENDO_UBICACION",
+            lectura_guion_solicitada: "LEYENDO_GUION_LINEA",
+            lectura_guion_linea_solicitada: [Lineas.activar, "LEYENDO_GUION_LINEA"],
+            creacion_de_caja_solicitada: "CREANDO_CAJA",
         },
 
         BORRANDO: {
@@ -84,6 +90,16 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
         LEYENDO_UBICACION: {
             lectura_registrada: [refrescarOrden, "ABIERTA"],
             lectura_ubicacion_cancelada: "ABIERTA",
+        },
+
+        LEYENDO_GUION_LINEA: {
+            lectura_registrada: [refrescarOrden, "ABIERTA"],
+            lectura_guion_cancelada: "ABIERTA",
+        },
+
+        CREANDO_CAJA: {
+            caja_creada: [onCajaCreada, "ABIERTA"],
+            alta_de_caja_cancelada: "ABIERTA",
         },
     };
 };
