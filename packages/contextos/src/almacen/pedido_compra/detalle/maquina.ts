@@ -39,14 +39,26 @@ export const getMaquina: () => Maquina<EstadoDetallePedidoCompra, ContextoDetall
         },
 
         LEYENDO_ALBARAN: {
-            // La entrada se creó correctamente desde el albarán
+            // La foto se analizó correctamente: guarda las líneas detectadas y pasa a comparativa
+            foto_analizada: async (ctx, payload) => ({
+                ...ctx,
+                estado: "COMPARANDO_ALBARAN" as const,
+                lineasDetectadas: payload as import("../diseño.ts").LineaNuevaEntradaDesdePedido[],
+            }),
+
+            // El usuario canceló la lectura de albarán
+            leer_albaran_cancelado: "ABIERTO",
+        },
+
+        COMPARANDO_ALBARAN: {
+            // La entrada se creó correctamente desde la comparativa
             entrada_creada: async (ctx, payload) => ({
                 ...ctx,
                 estado: "ENTRADA_CREADA" as const,
                 idOrdenCreada: payload as string,
             }),
 
-            // El usuario canceló la lectura de albarán
+            // El usuario canceló desde la comparativa
             leer_albaran_cancelado: "ABIERTO",
         },
 

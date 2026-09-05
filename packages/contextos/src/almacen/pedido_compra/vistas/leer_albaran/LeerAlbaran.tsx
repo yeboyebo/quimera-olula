@@ -1,15 +1,9 @@
-import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
-import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useRef, useState } from "react";
-import { getInfoLineasPedidoCompra, postEntradaDesdePedido } from "../../infraestructura.ts";
-import {
-    formEntradaVacia,
-    metaFormEntrada,
-} from "../crear_entrada_desde_pedido/crear_entrada_desde_pedido.ts";
+import { getInfoLineasPedidoCompra } from "../../infraestructura.ts";
 
 export const LeerAlbaran = ({
     publicar,
@@ -18,11 +12,6 @@ export const LeerAlbaran = ({
     publicar: EmitirEvento;
     pedidoCompraId: string;
 }) => {
-    const { modelo, uiProps, valido } = useModelo(
-        metaFormEntrada,
-        formEntradaVacia
-    );
-
     const inputRef = useRef<HTMLInputElement>(null);
     const [fichero, setFichero] = useState<File | null>(null);
 
@@ -33,18 +22,12 @@ export const LeerAlbaran = ({
         []
     );
 
-    const crear_ = useCallback(
+    const analizar_ = useCallback(
         async () => {
             const lineas = await getInfoLineasPedidoCompra(pedidoCompraId, fichero!);
-
-            const id = await postEntradaDesdePedido({
-                pedidoCompraId,
-                ubicacionId: modelo.ubicacionId,
-                lineas,
-            });
-            publicar("entrada_creada", id);
+            publicar("foto_analizada", lineas);
         },
-        [fichero, modelo.ubicacionId, pedidoCompraId, publicar]
+        [fichero, pedidoCompraId, publicar]
     );
 
     const cancelar_ = useCallback(
@@ -52,7 +35,7 @@ export const LeerAlbaran = ({
         [publicar]
     );
 
-    const [crear, cancelar] = useForm(crear_, cancelar_);
+    const [analizar, cancelar, analizando] = useForm(analizar_, cancelar_);
 
     return (
         <QModal
@@ -71,12 +54,11 @@ export const LeerAlbaran = ({
                         onChange={onFicheroSeleccionado}
                     />
                 </div>
-                <Ubicacion label="Ubicación de entrada" {...uiProps("ubicacionId")} />
             </quimera-formulario>
 
             <div className="botones maestro-botones">
-                <QBoton onClick={crear} deshabilitado={!valido || !fichero}>
-                    Crear entrada
+                <QBoton onClick={analizar} deshabilitado={!fichero || analizando}>
+                    {analizando ? "Analizando..." : "Analizar"}
                 </QBoton>
             </div>
         </QModal>

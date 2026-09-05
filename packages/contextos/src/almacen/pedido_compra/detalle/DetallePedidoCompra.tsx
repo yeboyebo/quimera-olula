@@ -11,6 +11,7 @@ import { getMaquina } from "./maquina.ts";
 import { TabLineas } from "./TabLineas.tsx";
 import { CrearEntradaDesdePedido } from "../vistas/crear_entrada_desde_pedido/CrearEntradaDesdePedido.tsx";
 import { EntradaCreada } from "../vistas/entrada_creada/EntradaCreada.tsx";
+import { ComparativaAlbaran } from "../vistas/leer_albaran/ComparativaAlbaran.tsx";
 import { LeerAlbaran } from "../vistas/leer_albaran/LeerAlbaran.tsx";
 
 /**
@@ -88,6 +89,14 @@ export const DetallePedidoCompra = ({
                 <LeerAlbaran
                     publicar={emitir}
                     pedidoCompraId={ctx.pedido.id}
+                />
+            )}
+            {ctx.estado === "COMPARANDO_ALBARAN" && (
+                <ComparativaAlbaran
+                    publicar={emitir}
+                    pedidoCompraId={ctx.pedido.id}
+                    lineasPedido={ctx.pedido.lineas}
+                    lineasDetectadas={ctx.lineasDetectadas}
                 />
             )}
             {ctx.estado === "ENTRADA_CREADA" && (

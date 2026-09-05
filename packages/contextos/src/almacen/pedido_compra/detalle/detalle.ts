@@ -12,6 +12,7 @@ export const contextoDetallePedidoCompraInicial: ContextoDetallePedidoCompra = {
     estado: "INICIAL",
     pedido: pedidoCompraVacio,
     idOrdenCreada: "",
+    lineasDetectadas: [],
 };
 
 /**
