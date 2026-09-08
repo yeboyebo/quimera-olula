@@ -11,6 +11,7 @@ import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { desbloquearTTS, useSintesisVoz } from "@olula/lib/voz/useSintesisVoz.ts";
+import { plugin } from "@olula/lib/dominio.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
@@ -60,6 +61,7 @@ export const DetalleOrden = ({
     const orden = useModelo(metaOrden, ctx.orden, autoGuardar);
     const { modelo } = orden;
 
+    const sgaActivo = plugin("sga") === "activo";
     const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipo);
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipo);
 
@@ -92,31 +94,31 @@ export const DetalleOrden = ({
                     <Almacen {...orden.uiProps("almacenId")} soloLectura />
                     <QInput label="Fecha" {...orden.uiProps("fecha")} soloLectura />
                     <QInput label="Abierta" {...orden.uiProps("abierta")} soloLectura />
-                    {mostrarOrigen && (
+                    {sgaActivo && mostrarOrigen && (
                         <Caja
                             {...orden.uiProps("idCajaOrigen")}
                             label="Caja origen"
                             nombre="idCajaOrigen"
                         />
                     )}
-                    {mostrarOrigen && (
+                    {sgaActivo && mostrarOrigen && (
                         <Ubicacion
                             {...orden.uiProps("idUbicacionOrigen")}
                             label="Ubicación origen"
                             nombre="idUbicacionOrigen"
                         />
                     )}
-                    {mostrarDestino && (
+                    {sgaActivo && mostrarDestino && (
                         <Caja
                             {...orden.uiProps("idCajaDestino")}
                             label="Caja destino"
                             nombre="idCajaDestino"
                         />
                     )}
-                    {mostrarDestino && (
+                    {sgaActivo && mostrarDestino && (
                         <QBoton texto='Nueva caja' onClick={() => emitir("creacion_de_caja_solicitada")} />
                     )}
-                    {mostrarDestino && (
+                    {sgaActivo && mostrarDestino && (
                         <Ubicacion
                             {...orden.uiProps("idUbicacionDestino", "ubicacionDestino")}
                             label="Ubicación destino"
@@ -127,24 +129,26 @@ export const DetalleOrden = ({
             </div>
             <div className="maestro-botones">
                 <QBoton onClick={() => emitir("lectura_solicitada")}>Lectura</QBoton>
-                {["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
+                {sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
                     <QBoton onClick={() => emitir("lectura_caja_solicitada")}>Lectura caja</QBoton>
                 )}
-                {["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
+                {sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
                     <QBoton onClick={() => emitir("lectura_ubicacion_solicitada")}>Lectura bandeja</QBoton>
                 )}
-                <QBoton onClick={() => {
-                    const nuevoValor = !modoVoz;
-                    if (nuevoValor) desbloquearTTS();
-                    setModoVoz(nuevoValor);
-                }}>
-                    {modoVoz ? "Voz ON" : "Voz OFF"}
-                </QBoton>
-                {modoVoz && !tts.vocesDisponibles && (
+                {sgaActivo && (
+                    <QBoton onClick={() => {
+                        const nuevoValor = !modoVoz;
+                        if (nuevoValor) desbloquearTTS();
+                        setModoVoz(nuevoValor);
+                    }}>
+                        {modoVoz ? "Voz ON" : "Voz OFF"}
+                    </QBoton>
+                )}
+                {sgaActivo && modoVoz && !tts.vocesDisponibles && (
                     <p className="q-texto-error">No hay voces TTS instaladas. Instala espeak-ng en el sistema.</p>
                 )}
             </div>
-            <LecturasCajaOrden orden={ctx.orden} />
+            {sgaActivo && <LecturasCajaOrden orden={ctx.orden} />}
             <h3>LÍNEAS</h3>
             <LineasOrden
                 orden={ctx.orden}
