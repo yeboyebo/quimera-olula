@@ -6,17 +6,18 @@ import { Tabla } from "#/asistente/vistas/catalogo/Tabla.tsx";
 import { TarjetaDatos } from "#/asistente/vistas/catalogo/TarjetaDatos.tsx";
 import { TarjetaConfirmacion } from "#/asistente/vistas/catalogo/TarjetaConfirmacion.tsx";
 import { TarjetaResultado } from "#/asistente/vistas/catalogo/TarjetaResultado.tsx";
+import { TarjetaMetrica } from "#/asistente/vistas/catalogo/TarjetaMetrica.tsx";
 import { ListaSeleccion } from "#/asistente/vistas/catalogo/ListaSeleccion.tsx";
 
 // Mismo catalogId que el básico — el backend no tiene que cambiar el createSurface,
 // solo empezar a usar los nombres de componente nuevos (Tabla/TarjetaDatos/Boton/
-// TarjetaConfirmacion/Formulario/TarjetaResultado/ListaSeleccion) dentro de
-// updateComponents.
+// TarjetaConfirmacion/Formulario/TarjetaResultado/TarjetaMetrica/ListaSeleccion) dentro
+// de updateComponents.
 export const catalogoAsistente = new Catalog<ReactComponentImplementation>(
     basicCatalog.id,
     [
         ...basicCatalog.components.values(), Tabla, TarjetaDatos, Boton, TarjetaConfirmacion, Formulario,
-        TarjetaResultado, ListaSeleccion,
+        TarjetaResultado, TarjetaMetrica, ListaSeleccion,
     ],
     [...basicCatalog.functions.values()]
 );

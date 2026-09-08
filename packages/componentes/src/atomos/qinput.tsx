@@ -4,11 +4,26 @@ import {
   FormInput,
   FormInputProps,
   Validacion,
+  useEditando,
 } from "./_forminput.tsx";
+import { formatearMoneda, formatearNumero } from "@olula/lib/dominio.ts";
 
 export type QInputProps = FormInputProps & {
   modificado?: boolean;
-  soloTexto?: boolean;
+  soloLectura?: boolean;
+};
+
+const formatearValorNumerico = (
+  valor: string,
+  tipo?: string,
+  divisa?: string,
+  decimales?: number
+): string => {
+  if (!valor) return "—";
+  if (tipo === "moneda") return formatearMoneda(valor, divisa ?? "EUR");
+  if (tipo === "entero") return formatearNumero(valor, 0);
+  if (tipo === "decimal" || tipo === "numero") return formatearNumero(valor, decimales);
+  return valor;
 };
 
 export const QInput = ({
@@ -23,19 +38,28 @@ export const QInput = ({
   condensado,
   tipo,
   modificado,
-  soloTexto,
+  soloLectura,
   valor,
+  divisa,
+  decimales,
   ...props
 }: QInputProps) => {
-  if (soloTexto) {
+  const { editandoHandlers } = useEditando();
+
+  if (soloLectura) {
+    const esNumerico = tipo === "numero" || tipo === "entero" || tipo === "decimal" || tipo === "moneda";
+    const valorMostrado = esNumerico
+      ? formatearValorNumerico(valor || "", tipo, divisa, decimales)
+      : (valor || "—");
+
     return (
-      <quimera-input solo-texto="" nombre={nombre} tipo={tipo} condensado={condensado}>
+      <quimera-input solo-lectura="" nombre={nombre} tipo={tipo} condensado={condensado}>
         <label>
           <Etiqueta label={label} />
           {tipo === "checkbox" ? (
             <input type="checkbox" checked={valor === "true"} disabled readOnly />
           ) : (
-            <span className="valor-solo-texto">{valor || "—"}</span>
+            <span className="valor-solo-lectura">{valorMostrado}</span>
           )}
         </label>
       </quimera-input>
@@ -60,11 +84,13 @@ export const QInput = ({
     opcional,
     tipo,
     valor,
+    divisa,
+    decimales,
     ...props,
   };
 
   return (
-    <quimera-input {...attrs}>
+    <quimera-input {...attrs} {...editandoHandlers}>
       <label>
         <Etiqueta label={label} />
         <FormInput {...inputAttrs} />

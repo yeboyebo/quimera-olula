@@ -1,0 +1,14 @@
+.SelectorCredenciales {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.SelectorCredenciales-etiqueta {
+    font-weight: 600;
+}
+
+.SelectorCredenciales-vacio {
+    color: var(--color-texto-secundario, #666);
+    font-style: italic;
+}

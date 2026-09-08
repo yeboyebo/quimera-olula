@@ -48,10 +48,10 @@ export const DetalleArticulo = ({
                     children={[
                         <Tab key="general" label="General">
                             <quimera-formulario>
-                                <QInput label="Referencia" nombre="id" valor={ctx.articulo.id} soloTexto />
-                                <QInput label="Descripción" nombre="descripcion" valor={ctx.articulo.descripcion} soloTexto />
-                                <QInput label="Precio" nombre="precio" valor={String(ctx.articulo.precio)} soloTexto />
-                                <QInput label="Grupo IVA" nombre="grupo_iva_producto_id" valor={ctx.articulo.grupo_iva_producto_id} soloTexto />
+                                <QInput label="Referencia" nombre="id" valor={ctx.articulo.id} soloLectura />
+                                <QInput label="Descripción" nombre="descripcion" valor={ctx.articulo.descripcion} soloLectura />
+                                <QInput label="Precio" nombre="precio" valor={String(ctx.articulo.precio)} soloLectura />
+                                <QInput label="Grupo IVA" nombre="grupo_iva_producto_id" valor={ctx.articulo.grupo_iva_producto_id} soloLectura />
                             </quimera-formulario>
                         </Tab>,
                     ]}

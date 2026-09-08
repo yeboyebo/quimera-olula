@@ -1,6 +1,7 @@
 import { describe, test, expect, vi } from "vitest";
 import { ElementoMenu } from "@olula/lib/menu.ts";
 import {
+    accionNavegacionConNombreCorto,
     construirCapacidades,
     construirUrlNavegacion,
     hiloDesdeApi,
@@ -55,6 +56,7 @@ describe("[asistente-dom-01] construirCapacidades filtra por descripcionIA y per
         const capacidades = construirCapacidades(menu);
         expect(capacidades[0]).toEqual({
             ruta: "/ventas/pedido",
+            nombre: "Pedidos",
             descripcion: "Gestiona pedidos de venta",
             parametros: { cliente_id: "id del cliente" },
             regla: "ventas.pedido.leer",
@@ -81,7 +83,21 @@ describe("[asistente-dom-03] normalizarRespuestaIa normaliza la respuesta cruda 
             capacidadesHash: null,
             necesitaCapacidades: false,
             accionNavegacion: null,
+            descarga: null,
             adjuntos: [],
+            encolado: false,
+        });
+    });
+
+    test("mapea descarga cuando guardar_documento generó un fichero", () => {
+        const respuesta = normalizarRespuestaIa({
+            respuesta: "Aquí tienes el informe.",
+            thread_id: "t-1",
+            descarga: { url: "https://x/public/documental/documento/descargar/abc", nombre_fichero: "informe.pdf" },
+        });
+        expect(respuesta.descarga).toEqual({
+            url: "https://x/public/documental/documento/descargar/abc",
+            nombreFichero: "informe.pdf",
         });
     });
 
@@ -133,6 +149,39 @@ describe("[asistente-dom-04] construirUrlNavegacion añade los parámetros como 
         // parámetro "id" con valor literal "{id}?id=13".
         expect(construirUrlNavegacion({ ruta: "/ventas/pedido?id={id}", parametros: { id: "13" } }))
             .toBe("/ventas/pedido?id=13");
+    });
+});
+
+// ---------------------------------------------------------------------------
+// [asistente-dom-05] accionNavegacionConNombreCorto usa el nombre de la capacidad local
+// ---------------------------------------------------------------------------
+
+describe("[asistente-dom-05] accionNavegacionConNombreCorto usa el nombre de la capacidad local", () => {
+    const capacidades = [
+        {
+            ruta: "/ventas/pedido",
+            nombre: "Pedidos",
+            descripcion: "Gestiona pedidos de venta: crear un pedido nuevo para un cliente con líneas de artículos.",
+        },
+    ];
+
+    test("sobreescribe la descripción larga que devuelve el backend con el nombre corto local", () => {
+        const accion = { ruta: "/ventas/pedido", parametros: {}, descripcion: "Gestiona pedidos de venta: ..." };
+        expect(accionNavegacionConNombreCorto(accion, capacidades)).toEqual({
+            ruta: "/ventas/pedido",
+            parametros: {},
+            descripcion: "Pedidos",
+        });
+    });
+
+    test("ignora el querystring que el LLM pueda haber inventado en la ruta al buscar la capacidad", () => {
+        const accion = { ruta: "/ventas/pedido?id={id}", descripcion: "lo que sea" };
+        expect(accionNavegacionConNombreCorto(accion, capacidades).descripcion).toBe("Pedidos");
+    });
+
+    test("conserva la descripción del backend si la ruta no coincide con ninguna capacidad local", () => {
+        const accion = { ruta: "/otra/ruta", descripcion: "Descripción del backend" };
+        expect(accionNavegacionConNombreCorto(accion, capacidades)).toEqual(accion);
     });
 });
 
@@ -265,5 +314,23 @@ describe("[asistente-dom-10] eventoStreamDesdeApi mapea los eventos SSE (snake_c
     test("mapea un evento error con el mensaje por defecto si falta contenido", () => {
         expect(eventoStreamDesdeApi({ tipo: "error" }))
             .toEqual({ tipo: "error", contenido: "Error desconocido del asistente" });
+    });
+
+    test("mapea un evento encolado (turno largo en segundo plano)", () => {
+        const evento = eventoStreamDesdeApi({
+            tipo: "encolado", thread_id: "t-3", contenido: "Esto va a tardar...",
+        });
+        expect(evento).toEqual({ tipo: "encolado", threadId: "t-3", contenido: "Esto va a tardar..." });
+    });
+
+    test("mapea un evento descarga (guardar_documento)", () => {
+        const evento = eventoStreamDesdeApi({
+            tipo: "descarga",
+            descarga: { url: "https://x/public/documental/documento/descargar/abc", nombre_fichero: "informe.pdf" },
+        });
+        expect(evento).toEqual({
+            tipo: "descarga",
+            descarga: { url: "https://x/public/documental/documento/descargar/abc", nombreFichero: "informe.pdf" },
+        });
     });
 });

@@ -19,33 +19,8 @@
             min-width: 0;
         }
 
-        .TabCliente-direccion-resumen {
+        quimera-input[nombre="direccion_cliente"] {
             grid-column: 1 / -1;
-            display: grid;
-            gap: 0.35rem;
-        }
-
-        .TabCliente-direccion-resumen-label {
-            font-size: 0.75rem;
-            color: var(--color-texto-secundario, #667085);
-            font-weight: 500;
-        }
-
-        .TabCliente-direccion-resumen-contenido {
-            min-height: 2.5rem;
-            border: 1px solid var(--gris-2, #d0d5dd);
-            border-radius: var(--redondeo-borde-xs, 8px);
-            padding: 0.45rem 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-        }
-
-        .TabCliente-direccion-resumen-contenido span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
     }
@@ -70,9 +45,8 @@
                 grid-column: 2 / span 1 !important;
             }
 
-            .TabCliente-direccion-resumen {
+            quimera-input[nombre="direccion_cliente"] {
                 grid-column: 1 / -1;
-                grid-row: 2;
             }
 
             .TabCliente-accion {

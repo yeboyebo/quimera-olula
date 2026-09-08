@@ -7,16 +7,21 @@ import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import { CambiarAgente } from "../../comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "../../comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "../../comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
-import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import "../../comun/estilos/campos.css";
 import "../../comun/estilos/detalle_documento.css";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
-import { albaranVacio, editable, metaAlbaran, tituloAlbaran } from "../dominio.ts";
+import {
+  albaranVacio,
+  editable,
+  metaAlbaran,
+  tituloAlbaran,
+} from "../dominio.ts";
 import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
 import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
 import { getReportAlbaran } from "../infraestructura.ts";
@@ -52,7 +57,7 @@ export const DetalleAlbaran = ({
 
   const autoGuardar = useCallback(
     async (modelo: Albaran) => {
-      emitir("edicion_de_albaran_lista", modelo);
+      await emitir("edicion_de_albaran_lista", modelo);
     },
     [emitir]
   );
@@ -84,13 +89,6 @@ export const DetalleAlbaran = ({
 
   const acciones = [
     {
-      icono: "eliminar",
-      texto: "Borrar",
-      advertencia: true,
-      onClick: () => emitir("borrar_solicitado"),
-      deshabilitado: !esEditable,
-    },
-    {
       texto: "Facturar",
       onClick: () => emitir("facturar_solicitado"),
       deshabilitado: !esEditable,
@@ -98,6 +96,13 @@ export const DetalleAlbaran = ({
     {
       texto: "Imprimir",
       onClick: imprimir,
+    },
+    {
+      icono: "eliminar",
+      texto: "Borrar",
+      advertencia: true,
+      onClick: () => emitir("borrar_solicitado"),
+      deshabilitado: !esEditable,
     },
   ];
 
@@ -110,7 +115,11 @@ export const DetalleAlbaran = ({
       cerrarDetalle={() => emitir("albaran_deseleccionado", null)}
     >
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={albaran.modificado} />
+        <IndicadorGuardado
+          modificado={albaran.modificado}
+          error={albaran.errorGuardado}
+          guardados={albaran.guardados}
+        />
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 

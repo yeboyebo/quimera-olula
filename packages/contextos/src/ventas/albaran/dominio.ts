@@ -3,10 +3,8 @@ import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import {
     clienteVentaVacio,
     metaLineaVenta,
-    metaNuevaLineaVenta,
     metaNuevaVenta,
     metaVenta,
-    nuevaLineaVentaVacia,
     nuevaVentaVacia,
     tituloDocumentoVenta,
     ventaVacia
@@ -15,7 +13,6 @@ import {
     Albaran,
     CambioClienteAlbaran,
     LineaAlbaran,
-    NuevaLineaAlbaran,
     NuevoAlbaran,
 } from "./diseño.ts";
 
@@ -84,8 +81,6 @@ export const tituloAlbaran = (albaran: Albaran): string => {
 
 export const nuevoAlbaranVacio: NuevoAlbaran = nuevaVentaVacia;
 
-export const nuevaLineaAlbaranVacia: NuevaLineaAlbaran = nuevaLineaVentaVacia;
-
 export const metaNuevoAlbaran: MetaModelo<NuevoAlbaran> = metaNuevaVenta;
 
 export const metaAlbaran: MetaModelo<Albaran> = {
@@ -109,8 +104,6 @@ export const metaAlbaran: MetaModelo<Albaran> = {
 export const editable = modeloEsEditable<Albaran>(metaAlbaran);
 
 export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
-
-export const metaNuevaLineaAlbaran: MetaModelo<NuevaLineaAlbaran> = metaNuevaLineaVenta;
 
 const albaranVacioObjeto: Albaran = albaranVacio();
 

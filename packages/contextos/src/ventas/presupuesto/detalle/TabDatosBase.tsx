@@ -1,13 +1,13 @@
 import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
+import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Agente } from "../../comun/componentes/agente.tsx";
-import { Divisa } from "../../comun/componentes/divisa.tsx";
-import { FormaPago } from "../../comun/componentes/formapago.tsx";
-import { GrupoIvaNegocio } from "../../comun/componentes/grupo_iva_negocio.tsx";
+import { Divisa } from "#/comun/componentes/divisa.tsx";
+import { FormaPago } from "#/comun/componentes/formapago.tsx";
+import { GrupoIvaNegocio } from "#/comun/componentes/grupo_iva_negocio.tsx";
 import {
   grupoIvaNegocioEnDocumento,
   puedeCambiarDivisa,
@@ -15,6 +15,7 @@ import {
 import { Presupuesto } from "../diseño.ts";
 import { EstadoPresupuesto } from "./diseño.ts";
 import "./TabDatos.css";
+import { aprobado } from "../dominio.ts";
 
 export interface TabDatosProps {
   presupuesto: HookModelo<Presupuesto>;
@@ -28,7 +29,7 @@ export const TabDatosBase = ({
   publicar = () => {},
 }: TabDatosProps) => {
   const { uiProps, modelo } = presupuesto;
-  const mostrarBotonesCambio = estado === "ABIERTO" && !modelo.aprobado;
+  const mostrarBotonesCambio = estado === "ABIERTO" && !aprobado(modelo);
 
   return (
     <div className="TabDatos">

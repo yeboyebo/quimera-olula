@@ -21,14 +21,21 @@ import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { catalogoAsistente } from "#/asistente/vistas/catalogo/catalogo.ts";
 import { consultarIa, consultarIaStream, enviarAccionA2ui, obtenerMensajesHilo } from "#/asistente/infraestructura.ts";
-import { adjuntosParaEnviar, construirCapacidades, mensajeVacio } from "#/asistente/dominio.ts";
+import {
+    accionNavegacionConNombreCorto, adjuntosParaEnviar, construirCapacidades, mensajeVacio,
+} from "#/asistente/dominio.ts";
 import { getMockRespuestaIa } from "#/asistente/vistas/mocks/a2ui_mocks.ts";
 import type {
-    A2uiClientAction, AccionNavegacion, AdjuntoHiloIa, AdjuntoIa, AdjuntoMensaje, ConsultaIa, MensajeAsistente,
+    A2uiClientAction, AccionDescarga, AccionNavegacion, AdjuntoHiloIa, AdjuntoIa, AdjuntoMensaje, ConsultaIa, MensajeAsistente,
     RespuestaIa,
 } from "#/asistente/diseño.ts";
 
 const ASISTENTE_MOCK_ENABLED = import.meta.env.VITE_ASISTENTE_MOCK === "true";
+
+// Sondeo de un turno encolado (ver RespuestaIa.encolado) — el backend acota su propio
+// reintento a 1h (_TIMEOUT_TURNO_LARGO_SEGUNDOS), así que LIMITE_SONDEO_MS deja margen.
+const INTERVALO_SONDEO_MS = 20_000;
+const LIMITE_SONDEO_MS = 65 * 60 * 1000;
 
 interface AsistenteContextValue {
     isRunning: boolean;
@@ -50,6 +57,9 @@ interface AsistenteContextValue {
      * mensaje — la app YA NO navega sola al recibirla: se muestra como un botón dentro
      * del propio mensaje (ver Chat.tsx) y solo se navega cuando el usuario lo pulsa. */
     accionNavegacionPorMensaje: Record<string, AccionNavegacion>;
+    /** Documento generado por `guardar_documento` en este turno, por id de mensaje —
+     * ver Chat.tsx para el botón de descarga. */
+    descargaPorMensaje: Record<string, AccionDescarga>;
 }
 
 const AsistenteContext = createContext<AsistenteContextValue | null>(null);
@@ -88,6 +98,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
     const [a2uiSurfaces, setA2uiSurfaces] = useState<SurfaceModel<ReactComponentImplementation>[]>([]);
     const [messageSurfaceMap, setMessageSurfaceMap] = useState<Record<string, string[]>>({});
     const [accionNavegacionPorMensaje, setAccionNavegacionPorMensaje] = useState<Record<string, AccionNavegacion>>({});
+    const [descargaPorMensaje, setDescargaPorMensaje] = useState<Record<string, AccionDescarga>>({});
     const [threadIdActivo, setThreadIdActivo] = useState<string | null>(null);
 
     // Última conversación abierta — solo una conveniencia para restaurarla al reabrir
@@ -104,6 +115,9 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
     const currentMessageIdRef = useRef<string | null>(null);
     const abortRef = useRef<AbortController | null>(null);
     const actionHandlerRef = useRef<(accion: A2uiClientAction) => void>(() => {});
+    // Sondeo de un turno encolado en el servidor (ver RespuestaIa.encolado) — solo uno
+    // activo a la vez: si llega un segundo turno encolado, sustituye al anterior.
+    const sondeoRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const establecerThreadId = useCallback(
         (threadId: string | null) => {
@@ -217,11 +231,14 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 procesarMensajesA2ui(respuesta.a2uiMessages, assistantId);
             }
             if (respuesta.accionNavegacion) {
-                const accion = respuesta.accionNavegacion;
+                const accion = accionNavegacionConNombreCorto(respuesta.accionNavegacion, capacidades);
                 setAccionNavegacionPorMensaje(prev => ({ ...prev, [assistantId]: accion }));
             }
+            if (respuesta.descarga) {
+                setDescargaPorMensaje(prev => ({ ...prev, [assistantId]: respuesta.descarga! }));
+            }
         },
-        [establecerThreadId, procesarMensajesA2ui]
+        [establecerThreadId, procesarMensajesA2ui, capacidades]
     );
 
     // El servidor devuelve el id con el que ha persistido cada adjunto — se guarda en
@@ -236,6 +253,62 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 : m
         )));
     }, []);
+
+    const detenerSondeo = useCallback(() => {
+        if (sondeoRef.current) {
+            clearInterval(sondeoRef.current);
+            sondeoRef.current = null;
+        }
+    }, []);
+
+    // Un turno encolado (ver RespuestaIa.encolado) termina en segundo plano en el
+    // servidor, sin ninguna conexión abierta con este cliente — la única forma de
+    // saber cuándo está lista la respuesta es preguntar. Se sondea GET
+    // .../hilos/{threadId}/mensajes cada INTERVALO_SONDEO_MS hasta ver más mensajes
+    // de los que había al encolar.
+    const iniciarSondeo = useCallback(
+        async (threadId: string, assistantId: string) => {
+            detenerSondeo();
+
+            let totalMensajesPrevios: number;
+            try {
+                totalMensajesPrevios = (await obtenerMensajesHilo(threadId)).mensajes.length;
+            } catch {
+                return;
+            }
+
+            const inicio = Date.now();
+            sondeoRef.current = setInterval(async () => {
+                if (Date.now() - inicio > LIMITE_SONDEO_MS || threadIdRef.current !== threadId) {
+                    detenerSondeo();
+                    return;
+                }
+                try {
+                    const hilo = await obtenerMensajesHilo(threadId);
+                    if (hilo.mensajes.length <= totalMensajesPrevios) return;
+
+                    detenerSondeo();
+                    const ultimo = hilo.mensajes[hilo.mensajes.length - 1];
+                    setMensajes(prev => prev.map(m => (
+                        m.id === assistantId
+                            ? {
+                                id: assistantId,
+                                rol: "assistant" as const,
+                                texto: ultimo.texto,
+                                adjuntos: ultimo.adjuntos.length ? ultimo.adjuntos : undefined,
+                            }
+                            : m
+                    )));
+                    if (ultimo.a2uiMessages.length) procesarMensajesA2ui(ultimo.a2uiMessages, assistantId);
+                } catch {
+                    // Red intermitente — se reintenta en el siguiente tick, sin cancelar el sondeo.
+                }
+            }, INTERVALO_SONDEO_MS);
+        },
+        [detenerSondeo, procesarMensajesA2ui]
+    );
+
+    useEffect(() => () => detenerSondeo(), [detenerSondeo]);
 
     const procesarTexto = useCallback(
         async (texto: string, adjuntos?: AdjuntoMensaje[]) => {
@@ -278,8 +351,10 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                             } else if (evento.tipo === "a2ui") {
                                 procesarMensajesA2ui([evento.a2uiMessage], assistantId);
                             } else if (evento.tipo === "accion_navegacion") {
-                                const accion = evento.accionNavegacion;
+                                const accion = accionNavegacionConNombreCorto(evento.accionNavegacion, capacidades);
                                 setAccionNavegacionPorMensaje(prev => ({ ...prev, [assistantId]: accion }));
+                            } else if (evento.tipo === "descarga") {
+                                setDescargaPorMensaje(prev => ({ ...prev, [assistantId]: evento.descarga }));
                             } else if (evento.tipo === "fin") {
                                 establecerThreadId(evento.threadId);
                                 if (evento.necesitaCapacidades) {
@@ -291,6 +366,11 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                                 setMensajes(prev =>
                                     prev.map(m => (m.id === assistantId ? { ...m, texto: `Error: ${evento.contenido}` } : m))
                                 );
+                            } else if (evento.tipo === "encolado") {
+                                setMensajes(prev =>
+                                    prev.map(m => (m.id === assistantId ? { ...m, texto: evento.contenido } : m))
+                                );
+                                void iniciarSondeo(evento.threadId, assistantId);
                             }
                         }
                         return necesitaCapacidades;
@@ -311,6 +391,9 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                     }
                     aplicarRespuesta(respuesta, assistantId);
                     aplicarIdsAdjuntos(userMessageId, respuesta.adjuntos);
+                    if (respuesta.encolado) {
+                        void iniciarSondeo(respuesta.threadId, assistantId);
+                    }
                 }
             } catch (err) {
                 if ((err as Error).name === "AbortError") return;
@@ -324,7 +407,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
         },
         [
             streamingEnabled, construirConsulta, consultar, aplicarRespuesta, aplicarIdsAdjuntos,
-            procesarMensajesA2ui, establecerThreadId,
+            procesarMensajesA2ui, establecerThreadId, capacidades, iniciarSondeo,
         ]
     );
 
@@ -470,6 +553,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 enviarAccion,
                 adjuntosPorMensaje,
                 accionNavegacionPorMensaje,
+                descargaPorMensaje,
                 threadIdActivo,
                 cambiarAHilo,
                 nuevaConversacion,

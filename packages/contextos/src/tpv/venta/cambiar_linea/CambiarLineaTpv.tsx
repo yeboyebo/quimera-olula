@@ -24,6 +24,7 @@ export const CambiarLineaTpv = ({
   const { modelo, uiProps, valido } = useModelo(metaLineaFactura, linea);
 
   const [cambiando, setCambiando] = useState(false);
+  const [mostrarMas, setMostrarMas] = useState(false);
 
   const cambiar = useCallback(
     async () => {
@@ -57,11 +58,26 @@ export const CambiarLineaTpv = ({
 
           <QInput label="Precio" {...uiProps("pvp_unitario")} />
 
-          <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
+          <div className="mostrar-mas-fila">
+            <button
+              type="button"
+              className="mostrar-mas-btn"
+              onClick={() => setMostrarMas((v) => !v)}
+            >
+              {mostrarMas ? "▲ Menos opciones" : "▼ Más opciones"}
+            </button>
+          </div>
 
-          <QInput label="Dto. Lineal" {...uiProps("dto_lineal")} />
+          {mostrarMas && (
+            <>
+              <div className="seccion-separador">Descuento</div>
+              <QInput label="% Descuento" {...uiProps("dto_porcentual")} />
+              <QInput label="Dto. Lineal" {...uiProps("dto_lineal")} />
 
-          <QCheckbox label="IVA incluido" {...uiProps("iva_incluido")} />
+              <div className="seccion-separador">Impuestos</div>
+              <QCheckbox label="IVA incluido" {...uiProps("iva_incluido")} />
+            </>
+          )}
         </quimera-formulario>
 
         <div className="botones maestro-botones ">

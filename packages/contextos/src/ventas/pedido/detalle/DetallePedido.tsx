@@ -1,7 +1,7 @@
+import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
 import { CambiarAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
-import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
 import "#/ventas/comun/estilos/campos.css";
 import "#/ventas/comun/estilos/detalle_documento.css";
 import { tituloDocumentoVenta } from "#/ventas/venta/dominio.ts";
@@ -64,7 +64,7 @@ export const DetallePedidoBase = ({
 
   const autoGuardar = useCallback(
     async (modelo: Pedido) => {
-      emitir("edicion_de_pedido_lista", modelo);
+      await emitir("edicion_de_pedido_lista", modelo);
     },
     [emitir]
   );
@@ -102,15 +102,15 @@ export const DetallePedidoBase = ({
       deshabilitado: !esEditable,
     },
     {
+      texto: "Imprimir",
+      onClick: imprimir,
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
       onClick: () => emitir("borrar_solicitado"),
       deshabilitado: !esEditable,
-    },
-    {
-      texto: "Imprimir",
-      onClick: imprimir,
     },
   ];
 
@@ -123,7 +123,11 @@ export const DetallePedidoBase = ({
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
     >
       <div className="fila-acciones-documento">
-        <IndicadorGuardado modificado={pedido.modificado} />
+        <IndicadorGuardado
+          modificado={pedido.modificado}
+          error={pedido.errorGuardado}
+          guardados={pedido.guardados}
+        />
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 

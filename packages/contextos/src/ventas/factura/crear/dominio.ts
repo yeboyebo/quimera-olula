@@ -29,12 +29,12 @@ export const metaModeloAltaFacturaNoRegistrada: MetaModelo<ModeloAltaFacturaNoRe
 
 export const altaFacturaRegistradaVacia: ModeloAltaFacturaRegistrada = {
     ...clienteRegistradoVacio,
-    idEmpresa: "1",
+    idEmpresa: "",
 } as ModeloAltaFacturaRegistrada;
 
 export const altaFacturaNoRegistradaVacia: ModeloAltaFacturaNoRegistrada = {
     ...clienteVentaNoRegistradoVacio,
-    idEmpresa: "1",
+    idEmpresa: "",
 }
 
 export const crearFacturaRegistrada = async (alta: ModeloAltaFacturaRegistrada) => {

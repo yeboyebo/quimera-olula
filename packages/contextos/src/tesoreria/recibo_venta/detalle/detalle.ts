@@ -1,8 +1,9 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import { ReciboVenta } from "../diseño.js";
-import { getReciboVenta } from "../infraestructura.js";
+import { getReciboVenta, patchPagarReciboVenta } from "../infraestructura.js";
 import { ContextoDetalleReciboVenta, EstadoDetalleReciboVenta } from "./diseño.js";
+import { PagoRecibo } from "./pagar/diseño.js";
 
 type ProcesarDetalle = ProcesarContexto<EstadoDetalleReciboVenta, ContextoDetalleReciboVenta>;
 
@@ -16,6 +17,7 @@ export const metaReciboVenta: MetaModelo<ReciboVenta> = {
         fechaEmision: { tipo: "fecha" },
         fechaVencimiento: { tipo: "fecha" },
         clienteId: { tipo: "texto" },
+        nombreCliente: { tipo: "texto" },
         idFiscal: { tipo: "texto" },
         facturaId: { tipo: "texto" },
     },
@@ -31,6 +33,7 @@ export const reciboVentaInicial = (): ReciboVenta => ({
     estado: '',
     importe: 0,
     clienteId: '',
+    nombreCliente: '',
     idFiscal: '',
 });
 
@@ -54,4 +57,19 @@ export const cargarContexto: ProcesarDetalle = async (contexto, payload) => {
         return cargarReciboVenta(idRecibo)(contexto);
     }
     return { ...contexto, estado: 'INICIAL', recibo: reciboVentaInicial() };
+};
+
+/** Publica el recibo cobrado para que el maestro refresque su fila. */
+export const pagarRecibo: ProcesarDetalle = async (contexto, payload) => {
+    const pago = payload as PagoRecibo;
+    await patchPagarReciboVenta(contexto.recibo.id, {
+        cuentaPagoId: pago.cuenta_pago_id,
+        fecha: pago.fecha.toISOString().slice(0, 10),
+    });
+    const recibo = await getReciboVenta(contexto.recibo.id);
+
+    return [
+        { ...contexto, estado: 'ABIERTO', recibo },
+        [["recibo_cambiado", recibo]],
+    ];
 };

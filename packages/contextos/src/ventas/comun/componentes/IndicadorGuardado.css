@@ -16,3 +16,9 @@
     background-color: var(--color-exito-claro);
     color: var(--color-texto-primario);
 }
+
+.indicador-guardado.error {
+    background-color: var(--color-error-claro);
+    color: var(--color-texto-primario);
+    cursor: help;
+}

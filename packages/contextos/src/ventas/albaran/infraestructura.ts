@@ -1,9 +1,11 @@
+import { empresaActual } from "#/valores/empresaActual.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
-import { direccionVacia } from "../venta/dominio.ts";
+import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
+import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -20,12 +22,16 @@ import {
   PatchFacturarAlbaran,
   PatchLinea,
   PostAlbaran,
-  PostLinea
+  PostLinea,
+  QueryNuevaLinea
 } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().ALBARAN;
 
-type LineaAlbaranAPI = LineaAlbaran;
+interface LineaAlbaranApi extends Omit<LineaAlbaran, 'descripcionArticulo'> {
+  descripcion_articulo: string | null;
+}
+
 interface AlbaranAPI {
   id: string;
   codigo: string;
@@ -74,7 +80,10 @@ export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   lineas: [],
 });
 
-export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => l;
+export const lineaAlbaranDesdeApi = (l: LineaAlbaranApi): LineaAlbaran => ({
+  ...l,
+  descripcionArticulo: l.descripcion_articulo,
+} as unknown as LineaAlbaran);
 
 export const getAlbaran: GetAlbaran = async (id) => {
   return RestAPI.get<{ datos: AlbaranAPI }>(`${baseUrl}/${id}`).then((respuesta) => {
@@ -99,33 +108,37 @@ export const getAlbaranes: GetAlbaranes = async (
 
 export const postAlbaran: PostAlbaran = async (albaran) => {
   const payload = {
-    cliente: {
-      cliente_id: albaran.cliente_id,
-      direccion_id: albaran.direccion_id,
-    },
-    empresa_id: albaran.empresa_id,
+    cliente: payloadCambioCliente(albaran),
+    empresa_id: empresaActual(),
   };
   return await RestAPI.post(baseUrl, payload, "Error al guardar albarán").then((respuesta) => respuesta.id);
 };
 
 export const getLineas: GetLineasAlbaran = async (id) =>
-  await RestAPI.get<{ datos: LineaAlbaranAPI[] }>(
+  await RestAPI.get<{ datos: LineaAlbaranApi[] }>(
     `${baseUrl}/${id}/linea`).then((respuesta) => {
-      const lineas = respuesta.datos.map((d) => lineaAlbaranFromAPI(d));
+      const lineas = respuesta.datos.map((d) => lineaAlbaranDesdeApi(d));
       return lineas
     });
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [{
-      articulo_id: linea.referencia,
-      cantidad: linea.cantidad
-    }]
-  }, "Error al guardar").then((respuesta) => {
-    const miRespuesta = respuesta as unknown as { ids: string[] };
-    return miRespuesta.ids[0];
-  });
+  const lineaApi = peticionNuevaLineaApi(linea);
+  const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
+    lineas: [lineaApi],
+  }, "Error al crear línea de albarán");
+  const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+  const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+  return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+}
+
+export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
+  const lineaApi = peticionNuevaLineaApi(linea);
+  const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
+      `${baseUrl}/${id}/nueva_linea`, lineaApi,
+      "Error al obtener la nueva línea de albarán")
+  const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
+  return lineaActualizada;
 }
 
 export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, referencia) => {
@@ -142,9 +155,7 @@ export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, refere
 export const patchLinea: PatchLinea = async (id, linea) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
+      articulo: articuloDeLinea(linea),
       cantidad: linea.cantidad,
       pvp_unitario: linea.pvp_unitario,
       dto_porcentual: linea.dto_porcentual,
@@ -160,9 +171,6 @@ export const patchLinea: PatchLinea = async (id, linea) => {
 export const patchCantidadLinea: PatchCantidadLinea = async (id, linea, cantidad) => {
   const payload = {
     cambios: {
-      articulo: {
-        articulo_id: linea.referencia
-      },
       cantidad: cantidad,
     },
   }
@@ -207,12 +215,7 @@ export const patchAlbaran = async (id: string, albaran: Albaran) => {
 
 export const patchCambiarCliente: PatchClienteAlbaran = async (id, cambio) => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      cliente: {
-        cliente_id: cambio.cliente_id,
-        direccion_id: cambio.direccion_id,
-      },
-    },
+    cambios: { cliente: payloadCambioCliente(cambio) }
   }, "Error al cambiar cliente del albarán");
 };
 

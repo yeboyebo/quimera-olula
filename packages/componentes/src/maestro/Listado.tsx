@@ -41,7 +41,7 @@ type ListadoProps<T extends Entidad> = {
   tarjetaKanban?: (entidad: T) => React.ReactNode;
   columnasKanban?: QKanbanColumna[];
   campoEstadoKanban?: keyof T;
-  onCambioEstadoKanban?: (id: string, nuevoEstado: string) => void;
+  onCambioEstadoKanban?: (id: string, nuevoEstado: string) => void | Promise<void>;
   renderAcciones?: () => React.ReactNode;
   criteriaInicial?: Criteria;
   criteria?: Criteria;

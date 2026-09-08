@@ -1,4 +1,4 @@
-import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
+import { Divisa } from "#/comun/componentes/divisa.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";

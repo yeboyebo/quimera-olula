@@ -153,14 +153,14 @@ export const MaestroConDetallePedido = () => {
         titulo="Nuevo Pedido"
         onCerrar={() => emitir("creacion_pedido_cancelada")}
       >
-        <CrearPedido publicar={emitir} />
+        {ctx.estado === "CREANDO_PEDIDO" && <CrearPedido publicar={emitir} />}
       </QModal>
 
       {ctx.estado === "ALBARANANDO_PEDIDOS" && (
         <AlbaranarPedidos
           publicar={emitir}
           pedidos={ctx.seleccionados.length}
-          grupos={agruparPorCliente(ctx.seleccionados, ctx.pedidos.lista).length}
+          grupos={agruparPorCliente(ctx.seleccionados, ctx.pedidos.lista)}
         />
       )}
 

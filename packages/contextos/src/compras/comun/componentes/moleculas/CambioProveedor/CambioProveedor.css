@@ -1,0 +1,17 @@
+.modo-proveedor {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.CambioProveedor {
+    min-width: 24rem;
+
+    quimera-autocompletar[nombre="proveedorIdCambio"],
+    quimera-input[nombre="nombreProveedor"] {
+        grid-column: span 12;
+    }
+
+    quimera-input[nombre="idFiscal"] {
+        grid-column: span 6;
+    }
+}

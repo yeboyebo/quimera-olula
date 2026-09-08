@@ -1,11 +1,11 @@
-import { LineaPedidoAPI, postLinea } from "#/ventas/pedido/infraestructura.ts";
+import { LineaPedidoApi, postLinea } from "#/ventas/pedido/infraestructura.ts";
 import { LineaPedidoNrj } from "./diseño.ts";
 
 interface PaletLineaPedidoApiNrj {
     id: string
     cantidad_envases: number
 }
-export interface LineaPedidoApiNrj extends LineaPedidoAPI {
+export interface LineaPedidoApiNrj extends LineaPedidoApi {
     variedad_id: string
     marca_id: string
     calibre_id: string
@@ -46,6 +46,7 @@ const lineaPedidoDesdeApi = (l: LineaPedidoApiNrj): LineaPedidoNrj => {
         categoriaFormateada: l.categoria + "ª",
         cantidadPalet: l.num_palets,
         iva_incluido: l.iva_incluido,
+        descripcionArticulo: l.descripcion_articulo,
 
         observaciones: l.observaciones,
         cantidadEnvasesAsignados: l.cantidad_envases_asignados,

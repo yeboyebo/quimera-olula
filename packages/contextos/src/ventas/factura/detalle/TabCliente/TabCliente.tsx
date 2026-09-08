@@ -1,31 +1,30 @@
+import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
-import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
+import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { useState } from "react";
 import { Factura } from "../../diseño.ts";
-import { editable } from "../diseño.ts";
+import { editable, EstadoFactura } from "../diseño.ts";
 import "./TabCliente.css";
 
 interface TabClienteProps {
   factura: HookModelo<Factura>;
+  estado: EstadoFactura;
   publicar?: (evento: string, payload?: unknown) => void;
 }
 
 export const TabCliente = ({
   factura,
+  estado,
   publicar = async () => {},
 }: TabClienteProps) => {
   const { modelo } = factura;
   const clienteEditable = editable(modelo);
-  const [cambiandoCliente, setCambiandoCliente] = useState(false);
 
   const onGuardarCambioCliente = async (cambios: CambioCliente) => {
     publicar("cambio_cliente_listo", cambios);
-    setCambiandoCliente(false);
   };
 
   return (
@@ -48,7 +47,7 @@ export const TabCliente = ({
           <div className="TabCliente-accion">
             <BotonCambiar
               titulo="Cambiar cliente y dirección"
-              onClick={() => setCambiandoCliente(true)}
+              onClick={() => publicar("cambio_cliente_solicitado")}
             />
           </div>
         )}
@@ -61,12 +60,11 @@ export const TabCliente = ({
         />
       </quimera-formulario>
 
-      {clienteEditable && cambiandoCliente && (
+      {clienteEditable && estado === "CAMBIANDO_CLIENTE" && (
         <CambioClienteVenta
           venta={factura}
-          inicializarDesdeVenta={true}
           onGuardar={onGuardarCambioCliente}
-          onCancelar={() => setCambiandoCliente(false)}
+          onCancelar={() => publicar("cambio_cliente_cancelado")}
         />
       )}
     </div>

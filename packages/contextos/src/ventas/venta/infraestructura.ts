@@ -1,0 +1,176 @@
+import { LineaVenta, NuevaLineaVenta } from "./diseño.ts";
+import { getTipoArticulo } from "./dominio.ts";
+
+export interface ArticuloLineaRegistradoApi {
+    articulo_id: string;
+    pvp_unitario?: number;
+}
+export interface ArticuloLineaGenericoApi extends ArticuloLineaRegistradoApi {
+    descripcion: string;
+}
+export interface ArticuloLineaLibreApi {
+    descripcion: string;
+    pvp_unitario: number;
+    grupo_iva_producto_id?: string;
+    iva_incluido?: boolean;
+}
+export type ArticuloLineaApi =
+    | ArticuloLineaRegistradoApi
+    | ArticuloLineaGenericoApi
+    | ArticuloLineaLibreApi;
+
+export type NuevaLineaVentaApiReq = {
+    articulo: ArticuloLineaApi;
+    cantidad: number;
+    dto_porcentual?: number;
+    dto_lineal?: number;
+    tipo_irpf?: number;
+    comision?: number;
+};
+
+export const articuloDeLinea = (
+    linea: LineaVenta
+) => {
+    switch (getTipoArticulo(linea)) {
+        case "generico":
+            return { articulo_id: linea.referencia!, descripcion: linea.descripcion };
+        case "registrado":
+            return { articulo_id: linea.referencia! };
+        case "libre":
+            return { descripcion: linea.descripcion };
+    }
+}
+
+// const articuloNuevaLineaApi = (articulo: ArticuloLinea): ArticuloLineaApi => {
+//     if (!('articuloId' in articulo)) return articuloLibreNuevaLineaApi(articulo);
+//     if ('descripcion' in articulo) return articuloGenericoNuevaLineaApi(articulo);
+//     return articuloRegistradoNuevaLineaApi(articulo);
+// };
+
+const articuloNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaApi => {
+    if (!linea.idArticulo) return articuloLibreNuevaLineaApi(linea);
+    // Usar tipoArticulo si está disponible (ModeloNuevaLinea) para no depender de que
+    // descripcion esté vacía: el servidor la rellena en el dry-run y las llamadas
+    // siguientes la leerían incorrectamente como "genérico".
+    const tipoArticulo = (linea as { tipoArticulo?: string }).tipoArticulo;
+    if (tipoArticulo === 'registrado') return articuloRegistradoNuevaLineaApi(linea);
+    if (linea.descripcion) return articuloGenericoNuevaLineaApi(linea);
+    return articuloRegistradoNuevaLineaApi(linea);
+};
+
+// const articuloRegistradoNuevaLineaApi = (a: ArticuloLineaRegistrado): ArticuloLineaRegistradoApi => ({
+//     articulo_id: a.articuloId,
+//     ...(a.pvpUnitario !== undefined ? { pvp_unitario: a.pvpUnitario } : {}),
+// });
+
+// const articuloGenericoNuevaLineaApi = (a: ArticuloLineaGenerico): ArticuloLineaGenericoApi => ({
+//     articulo_id: a.articuloId,
+//     descripcion: a.descripcion,
+//     ...(a.pvpUnitario !== undefined ? { pvp_unitario: a.pvpUnitario } : {}),
+// });
+
+// const articuloLibreNuevaLineaApi = (a: ArticuloLineaLibre): ArticuloLineaLibreApi => ({
+//     descripcion: a.descripcion,
+//     pvp_unitario: a.pvpUnitario,
+// });
+
+const articuloRegistradoNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaRegistradoApi => ({
+    articulo_id: linea.idArticulo!,
+    ...(linea.pvpUnitario !== null ? { pvp_unitario: linea.pvpUnitario } : {}),
+});
+
+const articuloGenericoNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaGenericoApi => ({
+    articulo_id: linea.idArticulo!,
+    descripcion: linea.descripcion!,
+    ...(linea.pvpUnitario !== null ? { pvp_unitario: linea.pvpUnitario } : {}),
+});
+
+const articuloLibreNuevaLineaApi = (linea: NuevaLineaVenta): ArticuloLineaLibreApi => ({
+    descripcion: linea.descripcion!,
+    pvp_unitario: linea.pvpUnitario!,
+    ...(linea.idGrupoIvaProducto ? { grupo_iva_producto_id: linea.idGrupoIvaProducto } : {}),
+    ...(linea.ivaIncluido ? { iva_incluido: linea.ivaIncluido } : {}),
+});
+
+
+/**
+ * Convierte un alta de línea de dominio (camelCase) al cuerpo que espera el
+ * servidor (snake_case). Común a los cuatro documentos de venta.
+ */
+export const peticionNuevaLineaApi = (linea: NuevaLineaVenta): NuevaLineaVentaApiReq => ({
+    articulo: articuloNuevaLineaApi(linea),
+    cantidad: linea.cantidad,
+    ...(linea.dtoPorcentual ? { dto_porcentual: linea.dtoPorcentual } : {}),
+    ...(linea.dtoLineal ? { dto_lineal: linea.dtoLineal } : {}),
+    ...(linea.tipoIrpf ? { tipo_irpf: linea.tipoIrpf } : {}),
+});
+
+// export const altaLineaDesdeApi = (lineaApi: NuevaLineaVentaApi): NuevaLineaVenta => ({
+//     idArticulo: 'articulo_id' in lineaApi.articulo ? lineaApi.articulo.articulo_id : null,
+//     descripcion: 'descripcion' in lineaApi.articulo ? lineaApi.articulo.descripcion : null,
+//     pvpUnitario: lineaApi.articulo.pvp_unitario || null,
+//     cantidad: lineaApi.cantidad,
+//     pvpTotal: lineaApi.pvp_total,
+// })
+
+// ==========================
+// Hacer interfaces de alta planos ?
+
+// interface NuevaLineaVenta {
+//     idArticulo: string | null;
+//     descripcion: string | null;
+//     descripcionArticulo: string | null;
+//     pvpUnitario: number | null;
+//     cantidad: number;
+//     pvpTotal: number | null;
+// }
+
+// interface AltaLineaApiReq {
+//     articulo_id?: string;
+//     descripcion?: string;
+//     cantidad: number;
+//     pvp_unitario?: number;
+// }
+
+export interface NuevaLineaVentaApiRes {
+    id?: string;
+    articulo_id: string | null;
+    descripcion: string;
+    cantidad: number;
+    pvp_unitario: number;
+    pvp_total: number;
+    dto_porcentual: number;
+    dto_lineal: number;
+    grupo_iva_producto_id: string;
+    tipo_iva: number;
+    tipo_recargo: number;
+    tipo_irpf: number;
+    iva_incluido: boolean;
+}
+
+// export function altaLineaVentaAApi(linea: NuevaLineaVenta): AltaLineaApiReq {
+//     return {
+//         ...(linea.idArticulo ? { articulo_id: linea.idArticulo } : {}),
+//         ...(linea.descripcion ? { descripcion: linea.descripcion } : {}),
+//         cantidad: linea.cantidad,
+//         ...(linea.pvpUnitario ? { pvp_unitario: linea.pvpUnitario } : {}),
+//     };
+// }
+
+export function respuestaNuevaLineaApi<T extends NuevaLineaVenta>(lineaAnterior: T, lineaApi: NuevaLineaVentaApiRes): T {
+    return {
+        ...lineaAnterior,
+        idArticulo: lineaApi.articulo_id,
+        descripcion: lineaApi.descripcion,
+        pvpUnitario: lineaApi.pvp_unitario,
+        cantidad: lineaApi.cantidad,
+        pvpTotal: lineaApi.pvp_total,
+        dtoPorcentual: lineaApi.dto_porcentual,
+        dtoLineal: lineaApi.dto_lineal,
+        idGrupoIvaProducto: lineaApi.grupo_iva_producto_id,
+        tipoIva: lineaApi.tipo_iva,
+        tipoRecargo: lineaApi.tipo_recargo,
+        tipoIrpf: lineaApi.tipo_irpf,
+        ivaIncluido: lineaApi.iva_incluido,
+    } as T;
+}

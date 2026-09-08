@@ -1,6 +1,6 @@
 import { MetaTabla } from "@olula/componentes/index.js";
-import { cambioClienteVentaVacio, clienteVentaVacio, nuevaVentaVacia, ventaVacia } from "../venta/dominio.ts";
-import { CambioClientePedido, NuevoPedido, Pedido } from "./diseño.ts";
+import { cambioClienteVentaVacio, clienteVentaVacio, ventaVacia } from "../venta/dominio.ts";
+import { CambioClientePedido, Pedido } from "./diseño.ts";
 
 export const metaTablaPedido: MetaTabla<Pedido> = [
     {
@@ -30,8 +30,6 @@ export const pedidoVacio = (): Pedido => ({
     nombre_almacen: '',
     lineas: [],
 });
-
-export const nuevoPedidoVacio: NuevoPedido = nuevaVentaVacia;
 
 export const cambioClientePedidoVacio: CambioClientePedido = cambioClienteVentaVacio;
 

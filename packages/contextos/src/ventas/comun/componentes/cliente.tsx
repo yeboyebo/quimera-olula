@@ -57,7 +57,7 @@ export const Cliente = ({
       obtenerOpciones={obtenerOpciones}
       enlace={clienteRegistrado ? enlace : undefined}
       descripcion={descripcion}
-      deshabilitado={deshabilitado}
+      soloLectura={deshabilitado}
       {...props}
     />
   );

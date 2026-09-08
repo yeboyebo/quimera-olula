@@ -76,13 +76,13 @@ export const DetalleCuentaBancaria = ({
                     <QCheckbox label="Obsoleta" {...uiProps("obsoleta")} />
 
                     {/* Calculados por el servidor a partir del IBAN */}
-                    <QInput label="Código de cuenta" {...uiProps("codigoCuenta")} soloTexto />
-                    <QInput label="País" {...uiProps("paisId")} soloTexto />
-                    <QInput label="Dígito control" {...uiProps("digitoControl")} soloTexto />
-                    <QInput label="Número de cuenta" {...uiProps("cuenta")} soloTexto />
-                    <QInput label="BIC / SWIFT" {...uiProps("bic")} soloTexto />
-                    <QInput label="Entidad" {...uiProps("entidad")} soloTexto />
-                    <QInput label="Agencia" {...uiProps("agencia")} soloTexto />
+                    <QInput label="Código de cuenta" {...uiProps("codigoCuenta")} soloLectura />
+                    <QInput label="País" {...uiProps("paisId")} soloLectura />
+                    <QInput label="Dígito control" {...uiProps("digitoControl")} soloLectura />
+                    <QInput label="Número de cuenta" {...uiProps("cuenta")} soloLectura />
+                    <QInput label="BIC / SWIFT" {...uiProps("bic")} soloLectura />
+                    <QInput label="Entidad" {...uiProps("entidad")} soloLectura />
+                    <QInput label="Agencia" {...uiProps("agencia")} soloLectura />
                 </quimera-formulario>
             </div>
 

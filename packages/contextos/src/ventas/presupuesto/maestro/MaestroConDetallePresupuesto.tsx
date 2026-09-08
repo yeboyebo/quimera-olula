@@ -26,6 +26,7 @@ import {
 } from "./diseño.ts";
 import "./MaestroConDetallePresupuesto.css";
 import { getMaquina } from "./maquina.ts";
+import { aprobado } from "../dominio.ts";
 
 const SIN_APROBAR = "true";
 const APROBADO = "false";
@@ -73,7 +74,7 @@ export const MaestroConDetallePresupuesto = () => {
       id: "estado",
       cabecera: "",
       render: (presupuesto: Presupuesto) => (
-        <EstadoPresupuesto aprobado={presupuesto.aprobado} />
+        <EstadoPresupuesto aprobado={aprobado(presupuesto)} />
       ),
     },
     ...metaTablaBase,
@@ -106,7 +107,7 @@ export const MaestroConDetallePresupuesto = () => {
                   divisa={presupuesto.divisa_id}
                   tasaConversion={presupuesto.tasa_conversion}
                   totalDivisaEmpresa={presupuesto.total_divisa_empresa}
-                  estado={presupuesto.aprobado ? "cerrado" : "pendiente"}
+                  estado={aprobado(presupuesto) ? "cerrado" : "pendiente"}
                 />
               )}
               criteria={ctx.presupuestos.criteria}

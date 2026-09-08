@@ -13,7 +13,8 @@
         }
     }
 
-    quimera-autocompletar[nombre="referencia"] {
+    quimera-autocompletar[nombre="referencia"],
+    quimera-input[nombre="descripcion"] {
         grid-column: 1 / span 12;
     }
 
@@ -29,6 +30,16 @@
         grid-column: 1 / span 12;
         display: flex;
         justify-content: flex-start;
+    }
+
+    .seccion-separador {
+        grid-column: 1 / -1;
+        font-size: var(--tamaño-letra-s);
+        font-weight: 600;
+        color: var(--color-texto-secundario, #666);
+        margin-top: var(--espaciado-xs);
+        padding-bottom: var(--espaciado-xxs);
+        border-bottom: 1px solid var(--color-borde-fuerte);
     }
 
     .mostrar-mas-btn {
@@ -49,7 +60,7 @@
         grid-column: 1 / span 6;
     }
 
-    quimera-input[nombre="tipo_recargo"] {
+    quimera-input[nombre="tipo_iva"] {
         grid-column: span 6;
     }
 
@@ -58,6 +69,10 @@
     }
 
     quimera-input[nombre="dto_lineal"] {
+        grid-column: span 6;
+    }
+
+    quimera-checkbox[nombre="iva_incluido"] {
         grid-column: span 6;
     }
 
@@ -95,7 +110,7 @@
                 grid-column: 1 / span 1 !important;
             }
 
-            quimera-input[nombre="tipo_recargo"] {
+            quimera-input[nombre="tipo_iva"] {
                 grid-column: 2 / span 1 !important;
             }
 
