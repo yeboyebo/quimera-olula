@@ -54,7 +54,7 @@ export const getMaquina: () => Maquina<EstadoCrmContactos, ContextoCrmContactos>
         },
 
         confirmar_eliminar_asociacion: {
-            eliminacion_solicitada: desvincularContacto,
+            eliminacion_solicitada: [desvincularContacto, "lista"],
 
             eliminacion_cancelada: cancelarConfirmacion,
         },

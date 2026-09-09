@@ -81,6 +81,12 @@ export const activarLinea: ProcesarAlbaran = async (contexto, payload) => {
     }
 }
 
+const activarLineaPorId = (id: string) => async (contexto: ContextoAlbaran) => {
+    const lineas = contexto.albaran.lineas as LineaAlbaran[];
+    const lineaActiva = lineas.find(l => l.id === id) ?? null;
+    return { ...contexto, lineaActiva };
+}
+
 const activarLineaPorIndice = (indice: number) => async (contexto: ContextoAlbaran) => {
     const lineas = contexto.albaran.lineas as LineaAlbaran[];
     const lineaActiva = lineas.length > 0
@@ -202,11 +208,12 @@ export const cambiarDescuento: ProcesarAlbaran = async (contexto, payload) => {
     ]);
 }
 
-export const crearLinea: ProcesarAlbaran = async (contexto) => {
-
+export const crearLinea: ProcesarAlbaran = async (contexto, payload) => {
+    const { id } = payload as { id: string };
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
+        activarLineaPorId(id),
         'ABIERTO',
     ]);
 }

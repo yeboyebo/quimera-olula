@@ -1,6 +1,6 @@
 import { Almacen } from "#/almacen/comun/componentes/Almacen.tsx";
-import { Divisa } from "#/ventas/comun/componentes/divisa.tsx";
-import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
+import { Divisa } from "#/comun/componentes/divisa.tsx";
+import { FormaPago } from "#/comun/componentes/formapago.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { FormModelo } from "@olula/lib/dominio.js";
 import "./TabValoresDefecto.css";

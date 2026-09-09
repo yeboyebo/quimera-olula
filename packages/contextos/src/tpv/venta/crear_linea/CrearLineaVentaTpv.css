@@ -1,13 +1,73 @@
 .Factura .CrearLineaVentaTpv {
     quimera-formulario {
         max-width: 500px;
+        grid-template-columns: repeat(12, 1fr);
     }
 
-    quimera-autocompletar[nombre="referencia_nueva_linea_pedido"] {
-        grid-column: span 9;
+    quimera-autocompletar[nombre="idArticulo_nueva_linea_tpv"] {
+        grid-column: 1 / span 9;
     }
 
     quimera-input[nombre="cantidad"] {
         grid-column: span 3;
+    }
+
+    quimera-input[nombre="pvpUnitario"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="pvpTotal"] {
+        grid-column: span 5;
+    }
+
+    .mostrar-mas-fila {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .seccion-separador {
+        grid-column: 1 / -1;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-texto-secundario, #666);
+        padding-block: 0.25rem;
+        border-bottom: 1px solid var(--color-borde, #ddd);
+        margin-block-start: 0.5rem;
+    }
+
+    .mostrar-mas-btn {
+        background: none;
+        border: none;
+        color: var(--color-primario, #007bff);
+        cursor: pointer;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    quimera-input[nombre="dtoPorcentual"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="dtoLineal"] {
+        grid-column: span 6;
+    }
+
+    quimera-select[nombre="grupo_iva_negocio_id"] {
+        grid-column: 1 / span 6;
+    }
+
+    quimera-input[nombre="tipoIva"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="tipoRecargo"] {
+        grid-column: span 3;
+    }
+
+    quimera-checkbox[nombre="ivaIncluido"] {
+        grid-column: span 6;
     }
 }

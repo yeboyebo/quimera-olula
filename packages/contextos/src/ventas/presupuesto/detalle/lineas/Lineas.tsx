@@ -4,6 +4,7 @@ import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { LineaPresupuesto, Presupuesto } from "../../diseño.ts";
 import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
+import { aprobado } from "../../dominio.ts";
 
 export const Lineas = ({
   presupuesto,
@@ -50,10 +51,10 @@ export const Lineas = ({
         onCambioCantidad={handleCambioCantidad}
         divisa={presupuesto.divisa_id}
         presupuestoEditable={
-          estadoPresupuesto === "ABIERTO" && !presupuesto.aprobado
+          estadoPresupuesto === "ABIERTO" && !aprobado(presupuesto)
         }
         acciones={
-          estadoPresupuesto === "ABIERTO" && !presupuesto.aprobado
+          estadoPresupuesto === "ABIERTO" && !aprobado(presupuesto)
             ? acciones
             : undefined
         }

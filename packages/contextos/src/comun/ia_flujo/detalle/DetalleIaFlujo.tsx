@@ -64,6 +64,11 @@ export const DetalleIaFlujo = ({
     // al padre), porque estas acciones transicionan/actualizan el estado local.
     const accionesIaFlujo = [
         {
+            texto: "Guardar",
+            onClick: () => autoGuardar(formModelo.modelo),
+            deshabilitado: !puede("comun.ia_flujo") || !formModelo.modificado || !formModelo.valido,
+        },
+        {
             texto: iaFlujo.activo ? "Desactivar" : "Activar",
             onClick: () => emitir("activo_alternado_solicitado"),
             deshabilitado: !puede("comun.ia_flujo"),

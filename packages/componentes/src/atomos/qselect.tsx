@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from "react";
+import { flushSync } from "react-dom";
 import "./_forminput.css";
 import { Etiqueta, FormFieldProps, Validacion, useEditando } from "./_forminput.tsx";
 import { QIcono } from "./qicono.tsx";
@@ -42,6 +44,10 @@ export const QSelect = ({
   evaluarCambio,
 }: QSelectProps) => {
   const { editandoHandlers } = useEditando();
+  const evaluarCambioRef = useRef(evaluarCambio);
+  useLayoutEffect(() => {
+    evaluarCambioRef.current = evaluarCambio;
+  });
 
   if (soloLectura) {
     const descripcion = opciones
@@ -106,8 +112,10 @@ export const QSelect = ({
       onChange?.(null, e);
       return;
     }
-    onChange?.(opcion, e);
-    evaluarCambio?.();
+    flushSync(() => {
+      onChange?.(opcion, e);
+    });
+    evaluarCambioRef.current?.();
   };
 
   const manejarBlur = (e: React.FocusEvent<HTMLSelectElement>) => {

@@ -2,7 +2,7 @@ import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, Venta } from "../venta/diseño.ts";
 
 /**
  * Estado de expedición que devuelve el servidor. "Pte. Firma" no aparece: se
@@ -64,7 +64,9 @@ export type GetReportFactura = (id: string) => Promise<Blob>;
 
 export type PostFactura = (factura: NuevaFactura) => Promise<string>;
 
-export type PostLinea = (id: string, linea: AltaLineaVenta) => Promise<string>;
+export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
+
+export type QueryNuevaLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
 
 export type PatchClienteFactura = (id: string, cambio: CambioClienteFactura) => Promise<void>;
 

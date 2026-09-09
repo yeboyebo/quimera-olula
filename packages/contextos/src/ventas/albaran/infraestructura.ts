@@ -5,7 +5,7 @@ import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import { esVerdadero, normalizarHora } from "../comun/dominio.ts";
 import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
-import { altaLineaApi, articuloDeLinea } from "../venta/infraestructura.ts";
+import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import {
   Albaran,
   DeleteLinea,
@@ -22,12 +22,13 @@ import {
   PatchFacturarAlbaran,
   PatchLinea,
   PostAlbaran,
-  PostLinea
+  PostLinea,
+  QueryNuevaLinea
 } from "./diseño.ts";
 
 const baseUrl = new ApiUrls().ALBARAN;
 
-interface LineaAlbaranAPI extends Omit<LineaAlbaran, 'descripcionArticulo'> {
+interface LineaAlbaranApi extends Omit<LineaAlbaran, 'descripcionArticulo'> {
   descripcion_articulo: string | null;
 }
 
@@ -79,7 +80,7 @@ export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   lineas: [],
 });
 
-export const lineaAlbaranFromAPI = (l: LineaAlbaranAPI): LineaAlbaran => ({
+export const lineaAlbaranDesdeApi = (l: LineaAlbaranApi): LineaAlbaran => ({
   ...l,
   descripcionArticulo: l.descripcion_articulo,
 } as unknown as LineaAlbaran);
@@ -114,20 +115,30 @@ export const postAlbaran: PostAlbaran = async (albaran) => {
 };
 
 export const getLineas: GetLineasAlbaran = async (id) =>
-  await RestAPI.get<{ datos: LineaAlbaranAPI[] }>(
+  await RestAPI.get<{ datos: LineaAlbaranApi[] }>(
     `${baseUrl}/${id}/linea`).then((respuesta) => {
-      const lineas = respuesta.datos.map((d) => lineaAlbaranFromAPI(d));
+      const lineas = respuesta.datos.map((d) => lineaAlbaranDesdeApi(d));
       return lineas
     });
 
 
 export const postLinea: PostLinea = async (id, linea) => {
-  return await RestAPI.post(`${baseUrl}/${id}/linea`, {
-    lineas: [altaLineaApi(linea)]
-  }, "Error al guardar").then((respuesta) => {
-    const miRespuesta = respuesta as unknown as { ids: string[] };
-    return miRespuesta.ids[0];
-  });
+  const lineaApi = peticionNuevaLineaApi(linea);
+  const respuesta = await RestAPI.post(`${baseUrl}/${id}/linea`, {
+    lineas: [lineaApi],
+  }, "Error al crear línea de albarán");
+  const miRespuesta = respuesta as unknown as NuevaLineaVentaApiRes[];
+  const lineaActualizada = respuestaNuevaLineaApi(linea, miRespuesta[0]);
+  return { ...lineaActualizada, id: miRespuesta[0].id } as unknown as typeof linea;
+}
+
+export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
+  const lineaApi = peticionNuevaLineaApi(linea);
+  const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
+      `${baseUrl}/${id}/nueva_linea`, lineaApi,
+      "Error al obtener la nueva línea de albarán")
+  const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
+  return lineaActualizada;
 }
 
 export const patchArticuloLinea: PatchArticuloLinea = async (id, lineaId, referencia) => {

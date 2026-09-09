@@ -1,0 +1,37 @@
+.TabHistorial .lista-ejecuciones {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.TabHistorial .ejecucion {
+    border-left: 3px solid var(--color-borde, #ccc);
+    padding: 6px 10px;
+}
+
+.TabHistorial .ejecucion-cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.9em;
+}
+
+.TabHistorial .ejecucion.estado-ok {
+    border-left-color: var(--color-exito, #2e7d32);
+}
+
+.TabHistorial .ejecucion.estado-bloqueada {
+    border-left-color: var(--color-aviso, #ed6c02);
+}
+
+.TabHistorial .ejecucion.estado-error {
+    border-left-color: var(--color-error, #d32f2f);
+}
+
+.TabHistorial .ejecucion-resumen {
+    margin: 4px 0 0;
+    color: var(--color-texto-secundario, #555);
+}

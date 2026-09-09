@@ -1,12 +1,15 @@
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
-import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaLibreVenta, NuevaLineaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
+import { CambioClienteVenta, ClienteVenta, LineaVenta, NuevaLineaVenta, NuevaVentaClienteNoRegistrado, Venta } from "../venta/diseño.ts";
+
+/** Cuánto del presupuesto se ha llevado ya a pedidos. */
+export type EstadoAprobado = "PENDIENTE" | "PARCIAL" | "TOTAL";
 
 export interface Presupuesto extends Venta {
   cliente: ClienteVenta;
   fecha_salida: Date;
-  aprobado: boolean;
+  estado_aprobado: EstadoAprobado;
   por_comision: number;
   almacen_id: string;
   lineas: LineaPresupuesto[];
@@ -24,12 +27,13 @@ export type NuevoPresupuestoClienteNoRegistrado = NuevaVentaClienteNoRegistrado;
 export type CambioClientePresupuesto = CambioClienteVenta;
 
 export interface LineaPresupuesto extends LineaVenta {
+  /** Cantidad ya llevada a pedidos; el pendiente es cantidad - aprobada. */
+  aprobada: number;
+  cerrada: boolean;
   otro_campo?: string;
 };
 
 export type NuevaLinea = NuevaLineaVenta
-
-export type NuevaLineaLibre = NuevaLineaLibreVenta
 
 export type Cliente = {
   cliente_id: string;
@@ -50,7 +54,9 @@ export type PatchLinea = (id: string, linea: LineaPresupuesto) => Promise<void>;
 
 export type CambiarCantidadLinea = (id: string, linea: LineaPresupuesto, cantidad: number) => Promise<void>;
 
-export type PostLinea = (id: string, linea: AltaLineaVenta) => Promise<string>;
+export type PostLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
+
+export type QueryNuevaLinea = <T extends NuevaLineaVenta>(id: string, linea: T) => Promise<T>;
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 

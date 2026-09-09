@@ -1,40 +1,68 @@
 import { useEffect, useRef, useState } from "react";
-import "./../atomos/_forminput.css";
+import { Link, useInRouterContext } from "react-router";
 import { Etiqueta, FormFieldProps } from "../atomos/_forminput.tsx";
 import { QIcono } from "../atomos/qicono.tsx";
 import { QInput } from "../atomos/qinput.tsx";
 import { getIdUnico } from "../helpers.ts";
+import "./../atomos/_forminput.css";
 import "./qautocompletar.css";
 
-export type Opcion = {
+type OpcionBase = {
   valor: string;
   descripcion: string;
   descripcionOpcion?: string;
   [dato: string]: unknown;
 };
 
-export type QAutocompletarProps = Omit<
+export type QAutocompletarProps<T extends OpcionBase = OpcionBase> = Omit<
   FormFieldProps,
   "onChange" | "onBlur"
 > & {
   tiempoEspera?: number;
   longitudMinima?: number;
   descripcion?: string;
+  obtenerOpciones: (texto: string, id?: string) => Promise<T[]>;
   soloLectura?: boolean;
-  /** Ruta de la ficha. Con `{id}` se sustituye por el valor; sin él se añade como `/valor`. */
   enlace?: string;
-  obtenerOpciones: (texto: string, id?: string) => Promise<Opcion[]>;
   onChange?: (
-    opcion: Opcion | null,
+    opcion: T | null,
     evento: React.ChangeEvent<HTMLElement>
   ) => void;
   onBlur?: (
-    opcion: Opcion | null,
+    opcion: T | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
+  /** Se reenvía tal cual a QInput/_forminput — es lo que dispara el
+   * guardado en blur cuando se usa "{...uiProps(...)}" (ver PaisSelector). */
+  evaluarCambio?: () => void;
 };
 
-export const QAutocompletar = ({
+const EnlaceFicha = ({
+  href,
+  className,
+  etiqueta,
+  tabIndex,
+}: {
+  href: string;
+  className: string;
+  etiqueta: string;
+  tabIndex?: number;
+}) => {
+  const enRouter = useInRouterContext();
+  const contenido = <QIcono nombre="arriba_derecha" tamaño="sm" />;
+
+  return enRouter ? (
+    <Link to={href} className={className} aria-label={etiqueta} tabIndex={tabIndex}>
+      {contenido}
+    </Link>
+  ) : (
+    <a href={href} className={className} aria-label={etiqueta} tabIndex={tabIndex}>
+      {contenido}
+    </a>
+  );
+};
+
+export const QAutocompletar = <T extends OpcionBase = OpcionBase>({
   nombre,
   valor,
   tiempoEspera = 150,
@@ -48,11 +76,11 @@ export const QAutocompletar = ({
   opcional,
   deshabilitado,
   ...props
-}: QAutocompletarProps) => {
+}: QAutocompletarProps<T>) => {
   const attrs = {
     nombre,
   };
-  const [opciones, setOpciones] = useState<Opcion[]>([]);
+  const [opciones, setOpciones] = useState<T[]>([]);
   const [valorDescrito, setValorDescrito] = useState<string>("");
 
   const valorReal = useRef<HTMLInputElement>(null);
@@ -201,15 +229,11 @@ export const QAutocompletar = ({
           <span className="valor-solo-lectura">
             {valorDescrito || "—"}
             {enlaceHref && (
-              <a
-                className="enlace-solo-lectura"
+              <EnlaceFicha
                 href={enlaceHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Abrir ${props.label ?? "ficha"}`}
-              >
-                <QIcono nombre="arriba_derecha" tamaño="sm" />
-              </a>
+                className="enlace-solo-lectura"
+                etiqueta={`Abrir ${props.label ?? "ficha"}`}
+              />
             )}
           </span>
         </label>
@@ -255,16 +279,12 @@ export const QAutocompletar = ({
           </button>
         )}
         {enlaceHref && (
-          <a
-            className="autocompletar-enlace"
+          <EnlaceFicha
             href={enlaceHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Abrir ${props.label ?? "ficha"}`}
+            className="autocompletar-enlace"
+            etiqueta={`Abrir ${props.label ?? "ficha"}`}
             tabIndex={-1}
-          >
-            <QIcono nombre="arriba_derecha" tamaño="sm" />
-          </a>
+          />
         )}
       </div>
     </quimera-autocompletar>

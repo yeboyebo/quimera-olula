@@ -31,6 +31,7 @@ export type API = {
     conversor: (t: API) => T,
     msgError?: string
   ) => Promise<T>;
+  query: <T, R>(url: string, body: T, msgError?: string) => Promise<R>;
   post: <T>(url: string, body: T, msgError?: string) => Promise<{ id: string }>;
   put: <T>(url: string, body: T, msgError?: string) => Promise<void>;
   patch: <T>(url: string, body: Partial<T>, msgError?: string) => Promise<void>;

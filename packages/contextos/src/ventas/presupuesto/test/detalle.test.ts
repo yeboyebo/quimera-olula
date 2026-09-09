@@ -6,7 +6,7 @@ import {
 import { modeloEsEditable } from "@olula/lib/dominio.ts";
 import { describe, expect, test } from "vitest";
 
-const aprobado = () => ({ ...presupuestoVacio(), aprobado: true });
+const aprobado = () => ({ ...presupuestoVacio(), estado_aprobado: "TOTAL" as const });
 
 describe("un presupuesto se edita hasta que se aprueba", () => {
     test("recién creado se edita", () => {

@@ -1,4 +1,7 @@
+import { Cliente } from "#/crm/comun/componentes/cliente_con_nombre.tsx";
+import { ContactoSelector } from "#/crm/comun/componentes/contacto.tsx";
 import { EstadoOportunidad } from "#/crm/comun/componentes/estado_oportunidad_venta.tsx";
+import { LeadSelector } from "#/crm/comun/componentes/lead.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { OportunidadVenta } from "../../diseño.ts";
@@ -20,34 +23,30 @@ export const TabDatos = ({
         <QInput label="Descripción" {...uiProps("descripcion")} />
 
         {tieneCliente && (
-          <QInput
-            label="Cliente"
-            nombre="cliente"
-            soloLectura
-            valor={modelo.nombre_cliente ?? modelo.cliente_id ?? ""}
+          <Cliente
+            valor={modelo.cliente_id ?? ""}
+            descripcion={modelo.nombre_cliente ?? ""}
+            deshabilitado
           />
         )}
 
         {tieneTarjeta && (
-          <QInput
+          <LeadSelector
             label="Lead"
-            nombre="lead"
-            soloLectura
-            valor={
-              modelo.nombre_cliente ??
-              modelo.nombre_tarjeta ??
-              modelo.tarjeta_id ??
-              ""
-            }
+            valor={modelo.tarjeta_id ?? ""}
+            descripcion={modelo.nombre_cliente ?? modelo.nombre_tarjeta ?? ""}
+            onChange={() => null}
+            deshabilitado
           />
         )}
 
         {tieneContacto && (
-          <QInput
+          <ContactoSelector
             label="Contacto"
-            nombre="contacto"
-            soloLectura
-            valor={modelo.nombre_contacto ?? modelo.contacto_id ?? ""}
+            valor={modelo.contacto_id ?? ""}
+            descripcion={modelo.nombre_contacto ?? ""}
+            onChange={() => null}
+            deshabilitado
           />
         )}
 

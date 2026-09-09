@@ -1,0 +1,65 @@
+/*
+ * Dirección en grid de 12 columnas. Toda fila suma 12:
+ *   Fila 1: tipoVia (3) + nombreVia (7) + numero (2)
+ *   Fila 2: otros (9) + codPostal (3)
+ *   Fila 3: ciudad (6) + provincia (6)
+ *   Fila 4: paisId (6) + apartado (6)
+ *   Fila 5: telefono (6)
+ */
+.campos-direccion-proveedor {
+    quimera-formulario {
+        max-width: 640px;
+    }
+
+    quimera-input[nombre="tipoVia"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="nombreVia"] {
+        grid-column: span 7;
+    }
+
+    quimera-input[nombre="numero"] {
+        grid-column: span 2;
+    }
+
+    quimera-input[nombre="otros"] {
+        grid-column: span 9;
+    }
+
+    quimera-input[nombre="codPostal"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="ciudad"],
+    quimera-input[nombre="provincia"] {
+        grid-column: span 6;
+    }
+
+    quimera-autocompletar[nombre="paisId"],
+    quimera-input[nombre="apartado"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="telefono"] {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 768px) {
+    .campos-direccion-proveedor {
+        quimera-formulario {
+            max-width: none;
+        }
+
+        quimera-input[nombre="tipoVia"],
+        quimera-input[nombre="numero"],
+        quimera-input[nombre="codPostal"],
+        quimera-input[nombre="ciudad"],
+        quimera-input[nombre="provincia"],
+        quimera-input[nombre="apartado"],
+        quimera-input[nombre="telefono"] {
+            grid-column: span 1 !important;
+        }
+    }
+}

@@ -6,10 +6,24 @@ import {
   Validacion,
   useEditando,
 } from "./_forminput.tsx";
+import { formatearMoneda, formatearNumero } from "@olula/lib/dominio.ts";
 
 export type QInputProps = FormInputProps & {
   modificado?: boolean;
   soloLectura?: boolean;
+};
+
+const formatearValorNumerico = (
+  valor: string,
+  tipo?: string,
+  divisa?: string,
+  decimales?: number
+): string => {
+  if (!valor) return "—";
+  if (tipo === "moneda") return formatearMoneda(valor, divisa ?? "EUR");
+  if (tipo === "entero") return formatearNumero(valor, 0);
+  if (tipo === "decimal" || tipo === "numero") return formatearNumero(valor, decimales);
+  return valor;
 };
 
 export const QInput = ({
@@ -26,11 +40,18 @@ export const QInput = ({
   modificado,
   soloLectura,
   valor,
+  divisa,
+  decimales,
   ...props
 }: QInputProps) => {
   const { editandoHandlers } = useEditando();
 
   if (soloLectura) {
+    const esNumerico = tipo === "numero" || tipo === "entero" || tipo === "decimal" || tipo === "moneda";
+    const valorMostrado = esNumerico
+      ? formatearValorNumerico(valor || "", tipo, divisa, decimales)
+      : (valor || "—");
+
     return (
       <quimera-input solo-lectura="" nombre={nombre} tipo={tipo} condensado={condensado}>
         <label>
@@ -38,7 +59,7 @@ export const QInput = ({
           {tipo === "checkbox" ? (
             <input type="checkbox" checked={valor === "true"} disabled readOnly />
           ) : (
-            <span className="valor-solo-lectura">{valor || "—"}</span>
+            <span className="valor-solo-lectura">{valorMostrado}</span>
           )}
         </label>
       </quimera-input>
@@ -63,6 +84,8 @@ export const QInput = ({
     opcional,
     tipo,
     valor,
+    divisa,
+    decimales,
     ...props,
   };
 

@@ -94,7 +94,7 @@ export const borrarContacto: ProcesarCrmContactos = async (contexto) => {
 
 export const vincularContacto: ProcesarCrmContactos = async (contexto, payload) => {
     const idContactoCrm = payload as string;
-    await vincularContactoCliente(contexto.clienteId, idContactoCrm);
+    await vincularContactoCliente(idContactoCrm, contexto.clienteId);
 
     return pipeCrmContactos(contexto, [
         cargarCrmContactos,
@@ -105,7 +105,7 @@ export const desvincularContacto: ProcesarCrmContactos = async (contexto) => {
     const idContacto = contexto.contactoActivo?.id;
     if (!idContacto) return contexto;
 
-    await desvincularContactoCliente(contexto.clienteId, idContacto);
+    await desvincularContactoCliente(idContacto, contexto.clienteId);
 
     return pipeCrmContactos(contexto, [
         cargarCrmContactos,

@@ -8,6 +8,7 @@ interface ContactoSelectorProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  enlace?: string;
   onChange: (opcion: { valor: string; descripcion: string } | null) => void;
 }
 
@@ -17,6 +18,7 @@ export const ContactoSelector = ({
   nombre = "contacto_id",
   label = "Seleccionar contacto",
   deshabilitado = false,
+  enlace = "/crm/contacto?id={id}",
   onChange,
 }: ContactoSelectorProps) => {
   const obtenerOpciones = async (valor: string) => {
@@ -49,7 +51,8 @@ export const ContactoSelector = ({
       autoSeleccion
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
-      deshabilitado={deshabilitado}
+      enlace={enlace}
+      soloLectura={deshabilitado}
     />
   );
 };

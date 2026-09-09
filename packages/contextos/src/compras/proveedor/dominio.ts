@@ -1,42 +1,81 @@
-import { EstadoModelo, initEstadoModelo, MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
-import { NuevoProveedor, Proveedor } from "./diseño.ts";
+import { MetaModelo } from "@olula/lib/dominio.ts";
+import { ERR_IBAN_NO_VALIDO, ERR_IBAN_REQUERIDO, ibanValido } from "@olula/lib/iban.ts";
+import {
+    CuentaBancoProveedor,
+    DireccionProveedor,
+    NuevaCuentaBancoProveedor,
+    NuevaDireccionProveedor,
+} from "./diseño.ts";
 
-
-
-
-
-export const proveedorVacio = (): Proveedor => ({
-    id: '',
-    nombre: '',
-})
-
-export const nuevoProveedorVacio: NuevoProveedor = {
-    nombre: '',
-}
-
-export const validadoresProveedor = {
-    nombre: (valor: string) => stringNoVacio(valor),
+const camposDireccion = {
+    nombreVia: { requerido: true },
+    tipoVia: {},
+    numero: {},
+    otros: {},
+    codPostal: {},
+    ciudad: { requerido: true },
+    provincia: {},
+    paisId: {},
+    apartado: {},
+    telefono: { tipo: "telefono" as const },
 };
 
+export const metaDireccionProveedor: MetaModelo<DireccionProveedor> = {
+    campos: camposDireccion,
+};
 
-export const initEstadoProveedor = (proveedor: Proveedor): EstadoModelo<Proveedor> => {
-    return initEstadoModelo(proveedor);
-}
+export const metaNuevaDireccionProveedor: MetaModelo<NuevaDireccionProveedor> = {
+    campos: camposDireccion,
+};
 
+export const nuevaDireccionProveedorVacia = (): NuevaDireccionProveedor => ({
+    nombreVia: "",
+    tipoVia: null,
+    numero: null,
+    otros: null,
+    codPostal: null,
+    ciudad: "",
+    provinciaId: null,
+    provincia: null,
+    paisId: null,
+    pais: null,
+    apartado: null,
+    telefono: null,
+});
 
-export const metaProveedor: MetaModelo<Proveedor> = {
+const validacionIban = (modelo: { iban: string }): string | boolean => {
+    if (!modelo.iban) return ERR_IBAN_REQUERIDO;
+    return ibanValido(modelo.iban) || ERR_IBAN_NO_VALIDO;
+};
+
+export const metaCuentaBancoProveedor: MetaModelo<CuentaBancoProveedor> = {
     campos: {
-        nombre: { requerido: true },
-    }
+        descripcion: { requerido: true },
+        iban: { requerido: true, validacion: (m) => validacionIban(m) },
+        bic: {},
+        codigoCuenta: { bloqueado: true },
+        paisId: { bloqueado: true },
+        entidad: { bloqueado: true },
+        agencia: { bloqueado: true },
+        digitoControl: { bloqueado: true },
+        cuenta: { bloqueado: true },
+    },
 };
 
-
-export const metaNuevoProveedor: MetaModelo<NuevoProveedor> = {
+export const metaNuevaCuentaBancoProveedor: MetaModelo<NuevaCuentaBancoProveedor> = {
     campos: {
-        nombre: { requerido: true },
-    }
+        descripcion: { requerido: true },
+        iban: { requerido: true, validacion: (m) => validacionIban(m) },
+        bic: {},
+    },
 };
 
-export const initEstadoProveedorVacio = () => initEstadoProveedor(proveedorVacio())
+export const nuevaCuentaBancoProveedorVacia = (): NuevaCuentaBancoProveedor => ({
+    descripcion: "",
+    iban: "",
+    bic: null,
+});
 
-
+export const direccionProveedorCompleta = (d: DireccionProveedor): string =>
+    [d.tipoVia, d.nombreVia, d.numero].filter(Boolean).join(" ") +
+    (d.ciudad ? `, ${d.ciudad}` : "");

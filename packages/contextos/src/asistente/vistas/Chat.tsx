@@ -12,6 +12,7 @@ import {
     IconBolt,
     IconBoltOff,
     IconCamera,
+    IconDownload,
     IconFileTypePdf,
     IconFileTypeXls,
     IconHistory, IconMicrophone, IconPaperclip,
@@ -607,6 +608,7 @@ function AssistantMessage() {
             <AssistantMessageBurbujaFila />
             <AssistantMessageA2ui />
             <AssistantMessageAccionNavegacion />
+            <AssistantMessageDescarga />
         </MessagePrimitive.Root>
     );
 }
@@ -671,7 +673,27 @@ function AssistantMessageAccionNavegacion() {
     return (
         <div className="asistente-chat__navegacion">
             <QBoton variante="borde" onClick={navegar}>
-                {accion.descripcion ?? "Ir a la pantalla solicitada"}
+                {accion.descripcion ? `Ir a ${accion.descripcion}` : "Ir a la pantalla solicitada"}
+            </QBoton>
+        </div>
+    );
+}
+
+function AssistantMessageDescarga() {
+    const messageId = useMessage(m => m.id);
+    const { descargaPorMensaje } = useAsistenteContext();
+    const descarga = descargaPorMensaje[messageId];
+
+    if (!descarga) return null;
+
+    return (
+        <div className="asistente-chat__navegacion">
+            <QBoton
+                variante="borde"
+                onClick={() => window.open(descarga.url, "_blank", "noopener,noreferrer")}
+            >
+                <IconDownload size={16} />
+                Descargar
             </QBoton>
         </div>
     );
