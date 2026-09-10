@@ -1,3 +1,4 @@
+import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
@@ -23,6 +24,7 @@ import { getMaquina } from "./maquina.ts";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
+import { TabRecibos } from "./TabRecibos.tsx";
 import { TotalesFactura } from "./TotalesFactura.tsx";
 
 export const DetalleFactura = ({
@@ -104,12 +106,17 @@ export const DetalleFactura = ({
                         <Tab
                             key="tab-datos"
                             label="Datos"
-                            children={<TabDatos form={formModelo} />}
+                            children={<TabDatos form={formModelo} publicar={emitir} />}
                         />,
                         <Tab
                             key="tab-observaciones"
                             label="Observaciones"
                             children={<TabObservaciones form={formModelo} />}
+                        />,
+                        <Tab
+                            key="tab-recibos"
+                            label="Recibos"
+                            children={<TabRecibos facturaId={factura.id} />}
                         />,
                     ]}
                 />
@@ -121,6 +128,14 @@ export const DetalleFactura = ({
                     publicar={emitir}
                 />
             </div>
+
+            {estado === "CAMBIANDO_DIVISA" && (
+                <CambiarDivisa
+                    publicar={emitir}
+                    divisaId={factura.divisaId}
+                    tasaConversion={factura.tasaConversion}
+                />
+            )}
 
             {estado === "CAMBIANDO_PROVEEDOR" && (
                 <CambioProveedor
