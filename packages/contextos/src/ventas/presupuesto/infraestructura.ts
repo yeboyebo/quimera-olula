@@ -124,10 +124,13 @@ export const patchCambiarCliente = async (id: string, cambio: CambioClientePresu
     }, "Error al cambiar cliente del presupuesto");
 }
 
-export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
-    await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
+export const getLineas = async (id: string, orden?: Orden): Promise<LineaPresupuesto[]> => {
+    const q = criteriaQuery(undefined, orden);
+
+    return await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea${q}`).then((respuesta) =>
         respuesta.datos.map(lineaPresupuestoDesdeApi)
     );
+};
 
 
 export const postLinea: PostLinea = async (id, linea) => {
