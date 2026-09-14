@@ -1,0 +1,9 @@
+.VentaTpv .PagarPuntosVentaTpv {
+    div[id="pendiente"], div[id="saldo-disponible"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="importe"] {
+        grid-column: span 6;
+    }
+}

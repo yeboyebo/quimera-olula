@@ -280,6 +280,25 @@ export const buscarTarjetasPuntos = async (
   ).then((respuesta) => respuesta.datos);
 }
 
+export interface TopePuntos {
+  importeMaximo: number | null;
+  saldoDisponible: number | null;
+}
+
+// Máximo pagable con puntos + saldo disponible para la venta, calculado en
+// el backend (tope de empleado/dtoespecial, saldo real) — igual que
+// Eneboo, este dato decide si el importe se autorellena y se bloquea
+// (tarjetas con tope) o se deja editable (tarjeta normal, importeMaximo
+// null). No se replica el cálculo del % en el cliente a propósito.
+export const getTopePuntos = async (ventaId: string): Promise<TopePuntos> => {
+  const { importe_maximo, saldo_disponible } = await RestAPI.get<{
+    importe_maximo: number | null;
+    saldo_disponible: number | null;
+  }>(`/ventas/tope_puntos/${ventaId}`, undefined, cabecerasTienda());
+
+  return { importeMaximo: importe_maximo, saldoDisponible: saldo_disponible };
+}
+
 export interface PuntoVentaOpcion {
   codtpv_puntoventa: string;
   descripcion: string;

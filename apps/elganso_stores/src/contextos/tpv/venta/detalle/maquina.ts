@@ -51,6 +51,8 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
 
             pago_tarjeta_solicitado: "PAGANDO_CON_TARJETA",
 
+            pago_puntos_solicitado: "PAGANDO_CON_PUNTOS",
+
             borrar_pago_solicitado: "BORRANDO_PAGO",
 
             pago_seleccionado: [Pagos.activar],
@@ -141,6 +143,13 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
         PAGANDO_CON_TARJETA: {
 
             pago_con_tarjeta_hecho: [pagoHecho],
+
+            pago_cancelado: "ABIERTO",
+        },
+
+        PAGANDO_CON_PUNTOS: {
+
+            pago_con_puntos_hecho: [pagoHecho],
 
             pago_cancelado: "ABIERTO",
         },

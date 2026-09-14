@@ -18,6 +18,7 @@ import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { VENTA_PDA } from "../crear/CrearVentaTpv.tsx";
 import { PagoVentaTpv, VentaTpv } from "../diseño.ts";
 import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
+import { PagarPuntosVentaTpv } from "../pagar_con_puntos/PagarPuntosVentaTpv.tsx";
 import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
 import { buscarTarjetasPuntos, TarjetaPuntos } from "../infraestructura.ts";
 import { editable, ventaTpvVacia, metaVentaTpv } from "./detalle.ts";
@@ -161,6 +162,7 @@ export const DetalleVentaTpv = ({
         publicar={emitir}
         editable={esEditable}
         datosFacturaActivo={datosFacturaActivo}
+        pagos={ctx.pagos.lista}
       />
 
       <TotalesVentaTpv modeloVenta={venta} publicar={emitir} />
@@ -240,6 +242,10 @@ export const DetalleVentaTpv = ({
 
       {estado === "PAGANDO_CON_TARJETA" && (
         <PagarTarjetaVentaTpv publicar={emitir} venta={ctx.venta} />
+      )}
+
+      {estado === "PAGANDO_CON_PUNTOS" && (
+        <PagarPuntosVentaTpv publicar={emitir} venta={ctx.venta} />
       )}
 
       {estado === "BORRANDO_PAGO" && ctx.pagos.activo && (

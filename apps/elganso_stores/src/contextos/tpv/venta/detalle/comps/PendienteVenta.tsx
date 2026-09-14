@@ -22,6 +22,13 @@ export const PendienteVenta = ({ venta, publicar }: PendienteVentaProps) => {
         <QBoton onClick={() => publicar("pago_tarjeta_solicitado")}>
           P. Tarjeta
         </QBoton>
+
+        <QBoton
+          onClick={() => publicar("pago_puntos_solicitado")}
+          deshabilitado={!venta.tarjetaPuntosId}
+        >
+          P. Puntos
+        </QBoton>
       </div>
 
       <div className="PendienteVenta-item">
