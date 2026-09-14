@@ -1,4 +1,4 @@
-import { AlbaranCreado } from "#/ventas/albaranarPedido/diseño.ts";
+import { AlbaranCreado } from "#/ventas/albaranar_pedido/diseño.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";

@@ -85,4 +85,13 @@
     quimera-input[nombre="tipoIrpf"] {
         grid-column: 1 / span 6;
     }
+
+    .aviso-por-lotes {
+        grid-column: span 3;
+        font-size: var(--tamaño-letra-s);
+        font-weight: 600;
+        color: var(--color-primario);
+        margin: 0;
+        align-self: center;
+    }
 }

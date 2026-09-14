@@ -28,7 +28,11 @@ export const CrearLinea = ({
     const onModeloListo = useCallback(
         async (nuevaLinea: ModeloNuevaLinea, campo?: string) => {
             if (campo && !(camposConCambiosServidor as readonly string[]).includes(campo)) return;
-            return await queryNuevaLinea(albaranId, nuevaLinea);
+            const resultado = await queryNuevaLinea(albaranId, nuevaLinea);
+            if (resultado.porLotes) {
+                return { ...resultado, cantidad: 0 };
+            }
+            return resultado;
         },
         [albaranId]
     );
@@ -51,8 +55,12 @@ export const CrearLinea = ({
     );
 
     const crear_ = useCallback(async () => {
-        const lineaConId = await postLinea(albaranId, lineaArticulo.modelo);
-        publicar("linea_creada", lineaConId);
+        const porLotes = lineaArticulo.modelo.porLotes;
+        const modelo = porLotes
+            ? { ...lineaArticulo.modelo, cantidad: 0 }
+            : lineaArticulo.modelo;
+        const lineaConId = await postLinea(albaranId, modelo);
+        publicar(porLotes ? "linea_por_lotes_creada" : "linea_creada", lineaConId);
     }, [lineaArticulo, albaranId, publicar]);
 
     const cancelar_ = useCallback(
@@ -66,6 +74,7 @@ export const CrearLinea = ({
     const [mostrarMas, setMostrarMas] = useState(false);
     const libre = linea.tipoArticulo === "libre";
     const ivaIncluidoActivo = plugin("iva_incluido") === "activo";
+    const porLotes = !!linea.porLotes;
 
     return (
         <QModal
@@ -84,7 +93,11 @@ export const CrearLinea = ({
                         nombre="idArticulo_nueva_linea_albaran"
                         onChange={onArticuloCambiado}
                     />
-                    <QInput label="Cantidad" {...lineaArticulo.uiProps("cantidad")} />
+                    {porLotes ? (
+                        <p className="aviso-por-lotes">Artículo por lotes</p>
+                    ) : (
+                        <QInput label="Cantidad" {...lineaArticulo.uiProps("cantidad")} />
+                    )}
                     <QInput label="PVP unitario" {...lineaArticulo.uiProps("pvpUnitario")} />
                     <QInput label="Total" {...lineaArticulo.uiProps("pvpTotal")} />
 
@@ -117,7 +130,7 @@ export const CrearLinea = ({
                 </quimera-formulario>
                 <div className="botones">
                     <QBoton onClick={crear} deshabilitado={!valido}>
-                        Crear
+                        {porLotes ? "Añadir cantidades" : "Crear"}
                     </QBoton>
                 </div>
             </div>

@@ -16,7 +16,7 @@
     margin: 0;
     color: var(--color-texto-primario);
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
 }
 
 .ArchivosSeleccionados-lista {
