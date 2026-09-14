@@ -1,3 +1,4 @@
+import { filtroFamilia } from "#/almacen/comun/filtros.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
@@ -18,17 +19,17 @@ import { TarjetaArticulo } from "./TarjetaArticulo.tsx";
 const metaTablaArticulo: MetaTabla<Articulo> = [
   { id: "id", cabecera: "Referencia" },
   { id: "descripcion", cabecera: "Descripción" },
-  { id: "codbarras", cabecera: "Cód. barras" },
-  { id: "precio", cabecera: "Precio", tipo: "moneda" },
   {
-    id: "grupo_iva_producto_id",
-    cabecera: "Grupo IVA",
-    render: (a) => a.grupoIvaProductoId,
+    id: "descripcion_familia",
+    cabecera: "Familia",
+    render: (a) => a.descripcionFamilia,
   },
+  { id: "barcode", cabecera: "Cód. barras", render: (a) => a.codbarras },
+  { id: "precio", cabecera: "Precio", tipo: "moneda" },
 ];
 
 export const MaestroConDetalleArticulo = () => {
-  const criteriaBase = useMemo(criteriaSinStock, []);
+  const criteriaBase = useMemo(criteriaArticulosVenta, []);
 
   const { id, criteria } = getUrlParams();
   const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
@@ -85,9 +86,12 @@ export const MaestroConDetalleArticulo = () => {
   );
 };
 
-const criteriaSinStock = (): Criteria => ({
+const criteriaArticulosVenta = (): Criteria => ({
   ...criteriaDefecto,
-  filtro: [["no_stock", "=", "false"]] as ClausulaFiltro[],
+  filtro: [
+    ["se_vende", "=", "true"],
+    ["sin_stock", "=", "false"],
+  ] as ClausulaFiltro[],
   paginacion: { ...criteriaDefecto.paginacion },
 });
 
@@ -102,14 +106,32 @@ const metaFiltro: MetaFiltro = {
     label: "Descripción",
     filtro: (v) => (v ? ["descripcion", "~", v as string] : null),
   },
-  no_stock: {
-    id: "no_stock",
-    label: "Sin stock",
+  familia_id: filtroFamilia,
+  barcode: {
+    id: "barcode",
+    label: "Cód. barras",
+    filtro: (v) => (v ? ["barcode", "~", v as string] : null),
+  },
+  se_vende: {
+    id: "se_vende",
+    label: "Solo vendibles",
     tipo: "checkbox",
-    filtro: (v) => (v === "true" ? ["no_stock", "=", "false"] : null),
+    filtro: (v) => (v === "true" ? ["se_vende", "=", "true"] : null),
     fromFiltro: (filtro) =>
       filtro.some(
-        ([campo, , valor]) => campo === "no_stock" && valor === "false"
+        ([campo, , valor]) => campo === "se_vende" && valor === "true"
+      )
+        ? "true"
+        : "",
+  },
+  sin_stock: {
+    id: "sin_stock",
+    label: "Sin stock",
+    tipo: "checkbox",
+    filtro: (v) => (v === "true" ? ["sin_stock", "=", "false"] : null),
+    fromFiltro: (filtro) =>
+      filtro.some(
+        ([campo, , valor]) => campo === "sin_stock" && valor === "false"
       )
         ? "true"
         : "",

@@ -15,6 +15,8 @@ export const articuloVacio = (): Articulo => ({
     observaciones: "",
     codbarras: "",
     tipoCodBarras: "",
+    familiaId: "",
+    descripcionFamilia: "",
     noStock: false,
     seCompra: false,
     seVende: false,
@@ -25,6 +27,7 @@ const camposEditables = [
     "observaciones",
     "codbarras",
     "tipoCodBarras",
+    "familiaId",
     "noStock",
 ] as const;
 
@@ -44,6 +47,7 @@ export const metaArticulo: MetaModelo<Articulo> = {
         observaciones: { requerido: false, tipo: "texto" },
         codbarras: { requerido: false },
         tipoCodBarras: { requerido: false },
+        familiaId: { requerido: false },
         noStock: { tipo: "checkbox" },
     },
     editable: () => puede("almacen.articulo"),

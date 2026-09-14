@@ -9,7 +9,6 @@ export interface ArticuloProveedor extends Entidad {
     coste: number;
     divisaId: string;
     dto: number;
-    descripcionProveedor: string;
     refProveedor: string;
     plazo: number | null;
     uniEmbalaje: number | null;
@@ -24,7 +23,6 @@ export interface NuevoArticuloProveedor extends Modelo {
     coste: number;
     divisaId: string;
     dto: number;
-    descripcionProveedor: string;
     refProveedor: string;
     plazo: number | null;
     uniEmbalaje: number | null;
@@ -37,7 +35,6 @@ export type CambiosArticuloProveedor = Partial<
         | "coste"
         | "divisaId"
         | "dto"
-        | "descripcionProveedor"
         | "refProveedor"
         | "plazo"
         | "uniEmbalaje"

@@ -14,8 +14,10 @@ interface ArticuloApi {
     id: string;
     descripcion: string;
     observaciones: string | null;
+    familia_id: string | null;
+    descripcion_familia: string | null;
     grupo_iva_producto_id: string | null;
-    no_stock: boolean;
+    sin_stock: boolean;
     se_compra: boolean;
 }
 
@@ -25,8 +27,10 @@ export const articuloDesdeApi = (api: ArticuloApi): Articulo => ({
     id: api.id,
     descripcion: api.descripcion,
     observaciones: api.observaciones ?? "",
+    familiaId: api.familia_id ?? "",
+    descripcionFamilia: api.descripcion_familia ?? "",
     grupoIvaProductoId: api.grupo_iva_producto_id ?? "",
-    noStock: api.no_stock,
+    noStock: api.sin_stock,
     seCompra: api.se_compra,
 });
 
@@ -37,6 +41,7 @@ const cambiosArticuloAApi = (cambios: CambiosArticulo): Record<string, unknown> 
 
     if (cambios.descripcion !== undefined) api.descripcion = cambios.descripcion;
     if (cambios.observaciones !== undefined) api.observaciones = oNulo(cambios.observaciones);
+    if (cambios.familiaId !== undefined) api.familia_id = oNulo(cambios.familiaId);
     if (cambios.grupoIvaProductoId !== undefined) api.grupo_iva_producto_id = oNulo(cambios.grupoIvaProductoId);
 
     return api;

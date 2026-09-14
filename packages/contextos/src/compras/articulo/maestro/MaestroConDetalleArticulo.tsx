@@ -1,3 +1,4 @@
+import { filtroFamilia } from "#/almacen/comun/filtros.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
@@ -19,15 +20,18 @@ const metaTablaArticulo: MetaTabla<Articulo> = [
   { id: "id", cabecera: "Referencia" },
   { id: "descripcion", cabecera: "Descripción" },
   {
-    id: "grupo_iva_producto_id",
-    cabecera: "Impuesto",
-    render: (a) => a.grupoIvaProductoId,
+    id: "descripcion_familia",
+    cabecera: "Familia",
+    render: (a) => a.descripcionFamilia,
   },
 ];
 
-const criteriaSinStock = (): Criteria => ({
+const criteriaArticulosCompra = (): Criteria => ({
   ...criteriaDefecto,
-  filtro: [["no_stock", "=", "false"]] as ClausulaFiltro[],
+  filtro: [
+    ["se_compra", "=", "true"],
+    ["sin_stock", "=", "false"],
+  ] as ClausulaFiltro[],
   paginacion: { ...criteriaDefecto.paginacion },
 });
 
@@ -42,14 +46,27 @@ const metaFiltroArticulo: MetaFiltro = {
     label: "Descripción",
     filtro: (v) => (v ? ["descripcion", "~", v as string] : null),
   },
-  no_stock: {
-    id: "no_stock",
-    label: "Sin stock",
+  familia_id: filtroFamilia,
+  se_compra: {
+    id: "se_compra",
+    label: "Solo comprables",
     tipo: "checkbox",
-    filtro: (v) => (v === "true" ? ["no_stock", "=", "false"] : null),
+    filtro: (v) => (v === "true" ? ["se_compra", "=", "true"] : null),
     fromFiltro: (filtro) =>
       filtro.some(
-        ([campo, , valor]) => campo === "no_stock" && valor === "false"
+        ([campo, , valor]) => campo === "se_compra" && valor === "true"
+      )
+        ? "true"
+        : "",
+  },
+  sin_stock: {
+    id: "sin_stock",
+    label: "Sin stock",
+    tipo: "checkbox",
+    filtro: (v) => (v === "true" ? ["sin_stock", "=", "false"] : null),
+    fromFiltro: (filtro) =>
+      filtro.some(
+        ([campo, , valor]) => campo === "sin_stock" && valor === "false"
       )
         ? "true"
         : "",
@@ -57,7 +74,7 @@ const metaFiltroArticulo: MetaFiltro = {
 };
 
 export const MaestroConDetalleArticulo = () => {
-  const criteriaBase = useMemo(criteriaSinStock, []);
+  const criteriaBase = useMemo(criteriaArticulosCompra, []);
 
   const { id, criteria } = getUrlParams();
   const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;

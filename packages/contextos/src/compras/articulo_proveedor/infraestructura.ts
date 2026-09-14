@@ -18,11 +18,10 @@ interface ArticuloProveedorApi {
     articulo_id: string;
     articulo: string;
     proveedor_id: string;
-    proveedor: string;
+    nombre_proveedor: string;
     coste: number;
     divisa_id: string;
     dto: number;
-    descripcion_proveedor: string | null;
     ref_proveedor: string | null;
     plazo: number | null;
     uni_embalaje: number | null;
@@ -40,11 +39,10 @@ export const articuloProveedorDesdeApi = (
     articuloId: api.articulo_id,
     articulo: api.articulo,
     proveedorId: api.proveedor_id,
-    proveedor: api.proveedor,
+    proveedor: api.nombre_proveedor,
     coste: api.coste,
     divisaId: api.divisa_id,
     dto: api.dto,
-    descripcionProveedor: api.descripcion_proveedor ?? "",
     refProveedor: api.ref_proveedor ?? "",
     plazo: api.plazo,
     uniEmbalaje: api.uni_embalaje,
@@ -58,7 +56,6 @@ const nuevoAApi = (nuevo: NuevoArticuloProveedor): Record<string, unknown> => ({
     articulo_id: nuevo.articuloId,
     proveedor_id: nuevo.proveedorId,
     coste: nuevo.coste,
-    ...(nuevo.proveedor ? { descripcion_proveedor: nuevo.proveedor } : {}),
     ...(nuevo.divisaId ? { divisa_id: nuevo.divisaId } : {}),
     dto: nuevo.dto,
     ref_proveedor: oNulo(nuevo.refProveedor),
@@ -72,7 +69,6 @@ const cambiosAApi = (
 ): Record<string, unknown> => {
     const api: Record<string, unknown> = {};
 
-    if (cambios.descripcionProveedor !== undefined) api.descripcion_proveedor = cambios.descripcionProveedor;
     if (cambios.coste !== undefined) api.coste = cambios.coste;
     if (cambios.divisaId !== undefined) api.divisa_id = cambios.divisaId;
     if (cambios.dto !== undefined) api.dto = cambios.dto;

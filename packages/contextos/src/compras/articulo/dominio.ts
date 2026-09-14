@@ -5,6 +5,8 @@ export const articuloVacio = (): Articulo => ({
     id: "",
     descripcion: "",
     observaciones: "",
+    familiaId: "",
+    descripcionFamilia: "",
     grupoIvaProductoId: "",
     noStock: false,
     seCompra: false,

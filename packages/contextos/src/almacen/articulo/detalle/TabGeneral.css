@@ -11,6 +11,10 @@
         grid-column: span 9;
     }
 
+    quimera-select[nombre="familiaId"] {
+        grid-column: span 4;
+    }
+
     quimera-input[nombre="codbarras"] {
         grid-column: span 4;
     }

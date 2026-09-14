@@ -18,13 +18,15 @@ const baseUrl = `/ventas/articulo`;
 interface ArticuloApi {
     id: string;
     descripcion: string;
-    codbarras: string | null;
-    tipo_codbarras: string | null;
+    barcode: string | null;
+    tipo_barcode: string | null;
     observaciones: string | null;
+    familia_id: string | null;
+    descripcion_familia: string | null;
     precio: number;
     grupo_iva_producto_id: string;
     pvp_variable: boolean;
-    no_stock: boolean;
+    sin_stock: boolean;
 }
 
 interface TagArticuloApi {
@@ -32,19 +34,21 @@ interface TagArticuloApi {
     descripcion: string;
     precio: number;
     grupo_iva_producto_id: string;
-    codbarras: string | null;
+    barcode: string | null;
 }
 
 const articuloDesdeApi = (a: ArticuloApi): Articulo => ({
     id: a.id,
     descripcion: a.descripcion,
-    codbarras: a.codbarras ?? "",
-    tipoCodBarras: tipoCodBarrasDesdeApi(a.tipo_codbarras),
+    codbarras: a.barcode ?? "",
+    tipoCodBarras: tipoCodBarrasDesdeApi(a.tipo_barcode),
     observaciones: a.observaciones ?? "",
+    familiaId: a.familia_id ?? "",
+    descripcionFamilia: a.descripcion_familia ?? "",
     precio: a.precio,
     grupoIvaProductoId: a.grupo_iva_producto_id,
     pvpVariable: a.pvp_variable,
-    noStock: a.no_stock,
+    noStock: a.sin_stock,
 });
 
 const tagArticuloDesdeApi = (t: TagArticuloApi): TagArticulo => ({
@@ -52,7 +56,7 @@ const tagArticuloDesdeApi = (t: TagArticuloApi): TagArticulo => ({
     descripcion: t.descripcion,
     precio: t.precio,
     grupoIvaProductoId: t.grupo_iva_producto_id,
-    codbarras: t.codbarras ?? "",
+    codbarras: t.barcode ?? "",
 });
 
 const oNulo = (valor: string): string | null => valor === "" ? null : valor;
@@ -61,9 +65,10 @@ const cambiosArticuloAApi = (cambios: CambiosArticulo): Record<string, unknown> 
     const api: Record<string, unknown> = {};
 
     if (cambios.descripcion !== undefined) api.descripcion = cambios.descripcion;
-    if (cambios.codbarras !== undefined) api.codbarras = oNulo(cambios.codbarras);
-    if (cambios.tipoCodBarras !== undefined) api.tipo_codbarras = oNulo(cambios.tipoCodBarras);
+    if (cambios.codbarras !== undefined) api.barcode = oNulo(cambios.codbarras);
+    if (cambios.tipoCodBarras !== undefined) api.tipo_barcode = oNulo(cambios.tipoCodBarras);
     if (cambios.observaciones !== undefined) api.observaciones = oNulo(cambios.observaciones);
+    if (cambios.familiaId !== undefined) api.familia_id = oNulo(cambios.familiaId);
     if (cambios.precio !== undefined) api.precio = cambios.precio;
     if (cambios.grupoIvaProductoId !== undefined) api.grupo_iva_producto_id = oNulo(cambios.grupoIvaProductoId);
 

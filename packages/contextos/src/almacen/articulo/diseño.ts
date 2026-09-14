@@ -12,6 +12,8 @@ export interface Articulo extends Entidad {
     observaciones: string;
     codbarras: string;
     tipoCodBarras: TipoCodBarras | "";
+    familiaId: string;
+    descripcionFamilia: string;
     noStock: boolean;
     seCompra: boolean;
     seVende: boolean;
@@ -21,9 +23,11 @@ export interface ArticuloAPI extends Entidad {
     id: string;
     descripcion: string;
     observaciones: string | null;
-    codbarras: string | null;
-    tipo_codbarras: string | null;
-    no_stock: boolean;
+    barcode: string | null;
+    tipo_barcode: string | null;
+    familia_id: string | null;
+    descripcion_familia: string | null;
+    sin_stock: boolean;
     se_compra: boolean;
     se_vende: boolean;
 };
@@ -35,6 +39,7 @@ export type CambiosArticulo = Partial<
         | "observaciones"
         | "codbarras"
         | "tipoCodBarras"
+        | "familiaId"
         | "noStock"
         | "seCompra"
         | "seVende"

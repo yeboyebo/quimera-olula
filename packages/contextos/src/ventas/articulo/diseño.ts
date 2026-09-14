@@ -7,6 +7,8 @@ export interface Articulo extends Entidad {
     codbarras: string;
     tipoCodBarras: TipoCodBarras | "";
     observaciones: string;
+    familiaId: string;
+    descripcionFamilia: string;
     precio: number;
     grupoIvaProductoId: string;
     pvpVariable: boolean;
@@ -28,6 +30,7 @@ export type CambiosArticulo = Partial<
         | "codbarras"
         | "tipoCodBarras"
         | "observaciones"
+        | "familiaId"
         | "precio"
         | "grupoIvaProductoId"
     >

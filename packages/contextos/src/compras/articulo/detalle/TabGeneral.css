@@ -6,4 +6,8 @@
     quimera-input[nombre="descripcion"] {
         grid-column: span 9;
     }
+
+    quimera-select[nombre="familiaId"] {
+        grid-column: span 4;
+    }
 }

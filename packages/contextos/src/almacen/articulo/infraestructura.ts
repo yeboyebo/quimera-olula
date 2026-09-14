@@ -30,9 +30,11 @@ export const ArticuloFromApi = (ArticuloApi: ArticuloAPI): Articulo => ({
     id: ArticuloApi.id,
     descripcion: ArticuloApi.descripcion,
     observaciones: ArticuloApi.observaciones ?? "",
-    codbarras: ArticuloApi.codbarras ?? "",
-    tipoCodBarras: tipoCodBarrasDesdeApi(ArticuloApi.tipo_codbarras),
-    noStock: ArticuloApi.no_stock,
+    codbarras: ArticuloApi.barcode ?? "",
+    tipoCodBarras: tipoCodBarrasDesdeApi(ArticuloApi.tipo_barcode),
+    familiaId: ArticuloApi.familia_id ?? "",
+    descripcionFamilia: ArticuloApi.descripcion_familia ?? "",
+    noStock: ArticuloApi.sin_stock,
     seCompra: ArticuloApi.se_compra,
     seVende: ArticuloApi.se_vende,
 });
@@ -44,9 +46,10 @@ const cambiosArticuloAApi = (cambios: CambiosArticulo): Record<string, unknown> 
 
     if (cambios.descripcion !== undefined) api.descripcion = cambios.descripcion;
     if (cambios.observaciones !== undefined) api.observaciones = oNulo(cambios.observaciones);
-    if (cambios.codbarras !== undefined) api.codbarras = oNulo(cambios.codbarras);
-    if (cambios.tipoCodBarras !== undefined) api.tipo_codbarras = oNulo(cambios.tipoCodBarras);
-    if (cambios.noStock !== undefined) api.no_stock = cambios.noStock;
+    if (cambios.codbarras !== undefined) api.barcode = oNulo(cambios.codbarras);
+    if (cambios.tipoCodBarras !== undefined) api.tipo_barcode = oNulo(cambios.tipoCodBarras);
+    if (cambios.familiaId !== undefined) api.familia_id = oNulo(cambios.familiaId);
+    if (cambios.noStock !== undefined) api.sin_stock = cambios.noStock;
     if (cambios.seCompra !== undefined) api.se_compra = cambios.seCompra;
     if (cambios.seVende !== undefined) api.se_vende = cambios.seVende;
 

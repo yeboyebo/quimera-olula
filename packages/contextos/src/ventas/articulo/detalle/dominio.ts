@@ -15,6 +15,7 @@ const camposEditables = [
     "codbarras",
     "tipoCodBarras",
     "observaciones",
+    "familiaId",
     "precio",
     "grupoIvaProductoId",
 ] as const;
@@ -35,6 +36,7 @@ export const metaArticulo: MetaModelo<Articulo> = {
         codbarras: { requerido: false },
         tipoCodBarras: { requerido: false },
         observaciones: { requerido: false, tipo: "texto" },
+        familiaId: { requerido: false },
         precio: { requerido: true, tipo: "moneda", decimales: 2 },
         grupoIvaProductoId: { requerido: false },
     },

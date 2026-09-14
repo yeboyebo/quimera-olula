@@ -1,3 +1,4 @@
+import { Familia } from "#/almacen/comun/componentes/Familia.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { FormModelo } from "@olula/lib/dominio.ts";
@@ -17,6 +18,7 @@ export const TabGeneral = ({
       <quimera-formulario>
         <QInput label="Referencia" nombre="id" valor={articuloId} soloLectura />
         <QInput label="Descripción" {...uiProps("descripcion")} />
+        <Familia {...uiProps("familiaId")} />
         <QTextArea label="Observaciones" {...uiProps("observaciones")} />
       </quimera-formulario>
     </div>

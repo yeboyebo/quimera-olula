@@ -1,3 +1,4 @@
+import { Familia } from "#/almacen/comun/componentes/Familia.tsx";
 import { TipoCodBarras } from "#/comun/componentes/tipoCodBarras.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -27,6 +28,7 @@ export const TabGeneral = ({
           soloLectura
         />
         <QInput label="Descripción" {...uiProps("descripcion")} />
+        <Familia {...uiProps("familiaId")} />
         <QInput label="Código de barras" {...uiProps("codbarras")} />
         <TipoCodBarras {...uiProps("tipoCodBarras")} />
         <QCheckbox label="No controla stock" {...uiProps("noStock")} />

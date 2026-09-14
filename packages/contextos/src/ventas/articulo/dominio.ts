@@ -7,6 +7,8 @@ export const articuloVacio = (): Articulo => ({
     codbarras: "",
     tipoCodBarras: "",
     observaciones: "",
+    familiaId: "",
+    descripcionFamilia: "",
     precio: 0,
     grupoIvaProductoId: "",
     pvpVariable: false,

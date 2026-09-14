@@ -4,6 +4,8 @@ export interface Articulo extends Entidad {
     id: string;
     descripcion: string;
     observaciones: string;
+    familiaId: string;
+    descripcionFamilia: string;
     grupoIvaProductoId: string;
     noStock: boolean;
     seCompra: boolean;
@@ -25,7 +27,7 @@ export interface PrecioProveedorArticulo extends Entidad {
 }
 
 export type CambiosArticulo = Partial<
-    Pick<Articulo, "descripcion" | "observaciones" | "grupoIvaProductoId">
+    Pick<Articulo, "descripcion" | "observaciones" | "familiaId" | "grupoIvaProductoId">
 >;
 
 export type PostArticulo = (articulo: Partial<Articulo>) => Promise<string>;
