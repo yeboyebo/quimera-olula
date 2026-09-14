@@ -4,15 +4,22 @@ import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useCallback, useState } from "react";
 import { CamposSecreto } from "../componentes/CamposSecreto.js";
-import { secretoCompleto } from "../dominio.js";
+import { secretoConCambios } from "../dominio.js";
 import { CredencialExterna, SecretoCredencialExterna } from "../diseño.js";
 import { rotarSecretoCredencialExterna } from "../infraestructura.js";
 import "./RotarCredencialExterna.css";
 
 /**
- * Modal de rotación del secreto de una credencial ya existente. No reutiliza
- * el auto-guardado de la tab General porque el secreto nunca llega desde la
- * API (ver diseño.ts) — es un flujo de escritura explícito y aislado.
+ * Modal de edición de los campos del secreto de una credencial ya existente
+ * (API key/contraseña, pero también campos no sensibles que viajan junto a
+ * ella, como el "modelo" de un LLM o el host/puerto de un conector). No
+ * reutiliza el auto-guardado de la tab General porque el secreto nunca llega
+ * desde la API (ver diseño.ts) — es un flujo de escritura explícito y aislado.
+ *
+ * El formulario empieza en blanco (no hay forma de mostrar el valor ya
+ * guardado) y solo hace falta rellenar los campos que se quieran cambiar: el
+ * backend fusiona lo enviado con el secreto persistido, así que un campo
+ * vacío conserva su valor actual — ver `secretoConCambios` en dominio.ts.
  */
 export const RotarCredencialExterna = ({
     publicar,
@@ -42,13 +49,15 @@ export const RotarCredencialExterna = ({
         <QModal
             abierto={true}
             nombre="rotarCredencialExterna"
-            titulo={`Rotar credencial "${credencial.nombre}"`}
+            titulo={`Editar credencial "${credencial.nombre}"`}
             onCerrar={cancelar}
         >
             <div className="RotarCredencialExterna">
                 <p>
-                    Introduce el nuevo valor del secreto. El valor anterior se
-                    sobrescribirá y no podrá recuperarse.
+                    Rellena solo los campos que quieras cambiar (por ejemplo,
+                    solo el modelo o solo la contraseña) — los que dejes en
+                    blanco conservan su valor actual. El valor anterior de un
+                    campo modificado se sobrescribirá y no podrá recuperarse.
                 </p>
                 <quimera-formulario>
                     <CamposSecreto
@@ -62,9 +71,9 @@ export const RotarCredencialExterna = ({
                 <div className="botones maestro-botones">
                     <QBoton
                         onClick={rotar}
-                        deshabilitado={!secretoCompleto(credencial.proveedor, credencial.tipoAuth, secreto)}
+                        deshabilitado={!secretoConCambios(secreto)}
                     >
-                        Rotar credencial
+                        Guardar cambios
                     </QBoton>
                 </div>
             </div>

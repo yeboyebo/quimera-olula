@@ -6,6 +6,7 @@ import {
     opcionesProveedorPorCategoria,
     proveedoresPorCategoria,
     secretoCompleto,
+    secretoConCambios,
 } from "../dominio.js";
 
 describe("buscarProveedorConocido", () => {
@@ -109,5 +110,25 @@ describe("secretoCompleto", () => {
         expect(secretoCompleto(OTRO_PROVEEDOR, "bearer", { token: "x" })).toBe(true);
         expect(secretoCompleto(OTRO_PROVEEDOR, "basic", { usuario: "a" })).toBe(false);
         expect(secretoCompleto(OTRO_PROVEEDOR, "oauth2", { client_id: "a", client_secret: "b" })).toBe(true);
+    });
+});
+
+describe("secretoConCambios", () => {
+    it("es falso con el formulario vacío", () => {
+        expect(secretoConCambios({})).toBe(false);
+    });
+
+    it("es falso si todos los campos rellenados están en blanco", () => {
+        expect(secretoConCambios({ api_key: "", modelo: "" })).toBe(false);
+    });
+
+    it("es verdadero si al menos un campo trae valor, sin exigir el resto", () => {
+        // Solo el "modelo" — no hace falta volver a teclear la api_key: el
+        // backend conserva la ya guardada (ver caso_de_uso.py del servidor).
+        expect(secretoConCambios({ api_key: "", modelo: "gpt-4.1" })).toBe(true);
+    });
+
+    it("es verdadero con el secreto completo, igual que para el alta", () => {
+        expect(secretoConCambios({ api_key: "x", modelo: "gpt-4.1" })).toBe(true);
     });
 });
