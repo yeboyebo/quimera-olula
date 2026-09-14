@@ -165,5 +165,5 @@ export interface ModeloNuevaLinea extends NuevaLineaVenta, Modelo {
     tipoArticulo: TipoArticuloLinea;
     descripcionArticulo: string | null;
     /** Indica si el artículo se gestiona por lotes. Lo devuelve el servidor en la respuesta de nueva_linea. */
-    porLotes?: boolean;
+    porLotes: boolean;
 };

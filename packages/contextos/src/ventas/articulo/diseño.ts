@@ -5,6 +5,7 @@ export interface Articulo extends Entidad {
     descripcion: string;
     precio: number;
     grupo_iva_producto_id: string;
+
 }
 
 export interface TagArticulo extends Entidad {
@@ -12,4 +13,5 @@ export interface TagArticulo extends Entidad {
     descripcion: string;
     precio: number;
     grupo_iva_producto_id: string;
+    porLotes: boolean;
 }

@@ -48,7 +48,9 @@ export const CrearLinea = ({
                 ...(tipo !== undefined ? { tipoArticulo: tipo } : {}),
                 ...(articulo !== undefined ? { descripcionArticulo: articulo } : {}),
                 ...(idArticulo !== undefined ? { idArticulo, pvpUnitario: null } : {}),
+                ...(restCambios.porLotes ? { cantidad: 0 } : {}),
             };
+            console.log("cambiosModelo", cambiosModelo);
             lineaArticulo.set({ ...linea, ...cambiosModelo });
         },
         [linea, lineaArticulo]
@@ -75,6 +77,7 @@ export const CrearLinea = ({
     const libre = linea.tipoArticulo === "libre";
     const ivaIncluidoActivo = plugin("iva_incluido") === "activo";
     const porLotes = !!linea.porLotes;
+    console.log("LINEA", linea, porLotes);
 
     return (
         <QModal
@@ -90,6 +93,7 @@ export const CrearLinea = ({
                         idArticulo={linea.idArticulo}
                         articulo={linea.descripcionArticulo}
                         descripcion={linea.descripcion ?? ""}
+                        porLotes={porLotes}
                         nombre="idArticulo_nueva_linea_albaran"
                         onChange={onArticuloCambiado}
                     />

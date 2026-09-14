@@ -220,6 +220,7 @@ export const crearLinea: ProcesarAlbaran = async (contexto, payload) => {
 }
 
 export const crearLineaPorLotes: ProcesarAlbaran = async (contexto, payload) => {
+    console.log('crearLineaPorLotes', payload);
     const { id } = payload as { id: string };
     return pipeAlbaran(contexto, [
         refrescarAlbaran,

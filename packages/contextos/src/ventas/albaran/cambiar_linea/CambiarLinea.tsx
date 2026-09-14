@@ -49,7 +49,7 @@ export const CambiarLinea = ({
 }) => {
   const modeloInicial = useMemo(() => getModeloInicial(linea), [linea.id]);
 
-  const { modelo, uiProps, valido, set } = useModelo<ModeloCambiarLinea>(metaLinea, modeloInicial);
+  const { modelo, uiProps, valido, set, modificado } = useModelo<ModeloCambiarLinea>(metaLinea, modeloInicial);
   const [mostrarMas, setMostrarMas] = useState(false);
 
   const [mostrandoFormularioLote, setMostrandoFormularioLote] = useState(false);
@@ -103,9 +103,84 @@ export const CambiarLinea = ({
             bloqueado={true}
           />
 
-          <QInput label="Cantidad" {...uiProps("cantidad")} soloLectura={porLotes} />
+          <QInput
+            label="Cantidad"
+            {...uiProps("cantidad")}
+            soloLectura={porLotes}
+            {...(porLotes ? { valor: String(linea.cantidad) } : {})}
+          />
 
           <QInput label="Precio" {...uiProps("pvp_unitario")} />
+
+          {porLotes && (
+            <div className="lotes-seccion">
+              <div className="lotes-cabecera">
+                <span className="lotes-titulo">Lotes</span>
+                {!mostrandoFormularioLote && (
+                  <QBoton
+                    tamaño="pequeño"
+                    onClick={() => setMostrandoFormularioLote(true)}
+                  >
+                    + Añadir lote
+                  </QBoton>
+                )}
+              </div>
+
+              {mostrandoFormularioLote && (
+                <div className="lotes-formulario">
+                  <QInput
+                    label="Lote"
+                    nombre="nuevo_lote_id"
+                    valor={nuevoLoteId}
+                    onChange={setNuevoLoteId}
+                  />
+                  <QInput
+                    label="Cantidad"
+                    nombre="nueva_cantidad_lote"
+                    valor={nuevaCantidad}
+                    onChange={setNuevaCantidad}
+                  />
+                  <div className="lotes-formulario-botones">
+                    <QBoton tamaño="pequeño" onClick={crearLote} deshabilitado={!nuevoLoteId || !nuevaCantidad}>
+                      Crear
+                    </QBoton>
+                    <QBoton tamaño="pequeño" variante="borde" onClick={() => {
+                      setMostrandoFormularioLote(false);
+                      setNuevoLoteId("");
+                      setNuevaCantidad("");
+                    }}>
+                      Cancelar
+                    </QBoton>
+                  </div>
+                </div>
+              )}
+
+              {movimientos.length > 0 && (
+                <table className="lotes-tabla">
+                  <thead>
+                    <tr>
+                      <th>Lote</th>
+                      <th className="lotes-num">Cantidad</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {movimientos.map((m) => (
+                      <FilaMovimiento
+                        key={m.id}
+                        movimiento={m}
+                        publicar={publicar}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {movimientos.length === 0 && !mostrandoFormularioLote && (
+                <p className="lotes-vacio">Sin movimientos de lote.</p>
+              )}
+            </div>
+          )}
 
           <div className="mostrar-mas-fila">
             <button
@@ -134,78 +209,10 @@ export const CambiarLinea = ({
           )}
         </quimera-formulario>
 
-        {porLotes && (
-          <div className="lotes-seccion">
-            <div className="lotes-cabecera">
-              <span className="lotes-titulo">Lotes</span>
-              {!mostrandoFormularioLote && (
-                <QBoton
-                  tamaño="pequeño"
-                  onClick={() => setMostrandoFormularioLote(true)}
-                >
-                  + Añadir lote
-                </QBoton>
-              )}
-            </div>
-
-            {mostrandoFormularioLote && (
-              <div className="lotes-formulario">
-                <QInput
-                  label="Lote"
-                  nombre="nuevo_lote_id"
-                  valor={nuevoLoteId}
-                  onChange={setNuevoLoteId}
-                />
-                <QInput
-                  label="Cantidad"
-                  nombre="nueva_cantidad_lote"
-                  valor={nuevaCantidad}
-                  onChange={setNuevaCantidad}
-                />
-                <div className="lotes-formulario-botones">
-                  <QBoton tamaño="pequeño" onClick={crearLote} deshabilitado={!nuevoLoteId || !nuevaCantidad}>
-                    Crear
-                  </QBoton>
-                  <QBoton tamaño="pequeño" variante="borde" onClick={() => {
-                    setMostrandoFormularioLote(false);
-                    setNuevoLoteId("");
-                    setNuevaCantidad("");
-                  }}>
-                    Cancelar
-                  </QBoton>
-                </div>
-              </div>
-            )}
-
-            {movimientos.length > 0 && (
-              <table className="lotes-tabla">
-                <thead>
-                  <tr>
-                    <th>Lote</th>
-                    <th className="lotes-num">Cantidad</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {movimientos.map((m) => (
-                    <FilaMovimiento
-                      key={m.id}
-                      movimiento={m}
-                      publicar={publicar}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            )}
-
-            {movimientos.length === 0 && !mostrandoFormularioLote && (
-              <p className="lotes-vacio">Sin movimientos de lote.</p>
-            )}
-          </div>
-        )}
+        
 
         <div className="botones maestro-botones ">
-          <QBoton onClick={cambiar} deshabilitado={!valido}>
+          <QBoton onClick={cambiar} deshabilitado={!(valido && modificado)}>
             Guardar
           </QBoton>
         </div>

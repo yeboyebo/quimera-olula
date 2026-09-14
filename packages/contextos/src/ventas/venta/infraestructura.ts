@@ -173,6 +173,6 @@ export function respuestaNuevaLineaApi<T extends NuevaLineaVenta>(lineaAnterior:
         tipoRecargo: lineaApi.tipo_recargo,
         tipoIrpf: lineaApi.tipo_irpf,
         ivaIncluido: lineaApi.iva_incluido,
-        porLotes: lineaApi.por_lotes ?? false,
+        // porLotes: lineaApi.por_lotes ?? false,
     } as T;
 }

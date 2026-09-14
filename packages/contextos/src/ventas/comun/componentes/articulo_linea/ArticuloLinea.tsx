@@ -9,6 +9,7 @@ export type CamposArticuloLinea = {
     idArticulo: string | null;
     articulo: string | null;
     descripcion: string;
+    porLotes: boolean;
 };
 
 interface ArticuloLineaProps extends CamposArticuloLinea {
@@ -76,6 +77,7 @@ export const ArticuloLinea = ({
                             onChange({
                                 idArticulo: opcion?.valor ?? null,
                                 articulo: opcion?.descripcion ?? null,
+                                porLotes: opcion?.datos?.porLotes ?? false,
                             })
                         }
                         ref={refArticulo}

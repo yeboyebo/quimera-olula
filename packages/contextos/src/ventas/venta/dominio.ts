@@ -272,6 +272,7 @@ export const nuevaLineaInicial: ModeloNuevaLinea = {
     tipoIva: 0,
     tipoRecargo: 0,
     tipoIrpf: 0,
+    porLotes: false,
 };
 
 export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
@@ -287,8 +288,19 @@ export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
         tipoRecargo: { tipo: "decimal", requerido: false, decimales: 2, bloqueado: true },
         idGrupoIvaProducto: { requerido: false },
         ivaIncluido: { tipo: "checkbox", requerido: false },
+        porLotes: { tipo: "checkbox" },
     },
     validacion: (linea) => !!(linea.idArticulo || linea.descripcion),
+    // onChange: (modelo, campo, valor) => {
+    //     console.log("onChange", campo, valor);
+    //     if (campo === "porLotes" && (valor === true)) {
+    //         return {
+    //             ...modelo,
+    //             cantidad: 0
+    //         };
+    //     }
+    //     return modelo;
+    // },
 };
 
 /**
