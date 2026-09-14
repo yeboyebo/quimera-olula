@@ -5,11 +5,11 @@ import { useEffect, useRef } from "react";
 import "./ArticuloLinea.css";
 
 export type CamposArticuloLinea = {
-    tipo: TipoArticuloLinea;
+    tipoArticulo: TipoArticuloLinea;
     idArticulo: string | null;
-    articulo: string | null;
+    descripcionArticulo: string | null;
     descripcion: string;
-    porLotes: boolean;
+    porLotes?: boolean;
 };
 
 interface ArticuloLineaProps extends CamposArticuloLinea {
@@ -20,9 +20,9 @@ interface ArticuloLineaProps extends CamposArticuloLinea {
 }
 
 export const ArticuloLinea = ({
-    tipo,
+    tipoArticulo,
     idArticulo,
-    articulo,
+    descripcionArticulo,
     descripcion,
     nombre = "idArticulo",
     onChange,
@@ -38,45 +38,45 @@ export const ArticuloLinea = ({
             montado.current = true;
             return;
         }
-        if (tipo === "generico") {
+        if (tipoArticulo === "generico") {
             refDescripcionRegistrado.current?.focus();
             refDescripcionRegistrado.current?.select();
-        } else if (tipo === "libre") {
+        } else if (tipoArticulo === "libre") {
             refDescripcionLibre.current?.focus();
             refDescripcionLibre.current?.select();
-        } else if (tipo === "registrado") {
+        } else if (tipoArticulo === "registrado") {
             refArticulo.current?.focus();
         }
-    }, [tipo]);
+    }, [tipoArticulo]);
 
     const toggleDescripcion = () => {
-        const nuevoTipo = tipo === "registrado" ? "generico" : "registrado";
+        const nuevoTipo = tipoArticulo === "registrado" ? "generico" : "registrado";
         onChange({
-            tipo: nuevoTipo,
-            descripcion: articulo!
+            tipoArticulo: nuevoTipo,
+            descripcion: descripcionArticulo!
         });
     };
 
     const abrir = () => {
-        onChange({ tipo: "libre", idArticulo: null, articulo: null, descripcion: "" });
+        onChange({ tipoArticulo: "libre", idArticulo: null, descripcionArticulo: null, descripcion: "" });
     };
 
     const cerrar = () => {
-        onChange({ tipo: "registrado", idArticulo: null, articulo: null, descripcion: "" });
+        onChange({ tipoArticulo: "registrado", idArticulo: null, descripcionArticulo: null, descripcion: "" });
     };
 
-    if (tipo !== "libre") {
+    if (tipoArticulo !== "libre") {
         return (
             <>
                 <div className="ArticuloLinea-campo">
                     <Articulo
                         valor={idArticulo ?? ""}
-                        descripcion={articulo ?? ""}
+                        descripcion={descripcionArticulo ?? ""}
                         nombre={nombre}
                         onChange={(opcion) =>
                             onChange({
                                 idArticulo: opcion?.valor ?? null,
-                                articulo: opcion?.descripcion ?? null,
+                                descripcionArticulo: opcion?.descripcion ?? null,
                                 porLotes: opcion?.datos?.porLotes ?? false,
                             })
                         }
@@ -106,7 +106,7 @@ export const ArticuloLinea = ({
                         </button>
                     }
                 </div>
-                {tipo === "generico" && (
+                {tipoArticulo === "generico" && (
                     <QInput
                         nombre="descripcion"
                         label="Descripción personalizada"

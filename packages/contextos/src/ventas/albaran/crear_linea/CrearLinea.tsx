@@ -42,16 +42,9 @@ export const CrearLinea = ({
 
     const onArticuloCambiado = useCallback(
         async (cambios: Partial<CamposArticuloLinea>) => {
-            const { idArticulo, tipo, articulo, ...restCambios } = cambios;
-            const cambiosModelo: Partial<ModeloNuevaLinea> = {
-                ...restCambios,
-                ...(tipo !== undefined ? { tipoArticulo: tipo } : {}),
-                ...(articulo !== undefined ? { descripcionArticulo: articulo } : {}),
-                ...(idArticulo !== undefined ? { idArticulo, pvpUnitario: null } : {}),
-                ...(restCambios.porLotes ? { cantidad: 0 } : {}),
-            };
-            console.log("cambiosModelo", cambiosModelo);
-            lineaArticulo.set({ ...linea, ...cambiosModelo });
+            const extra = cambios.idArticulo !== undefined ? { pvpUnitario: null } : {};
+            const extra2 = cambios.porLotes ? { cantidad: 0 } : {};
+            lineaArticulo.set({ ...linea, ...cambios, ...extra, ...extra2 });
         },
         [linea, lineaArticulo]
     );
@@ -89,9 +82,9 @@ export const CrearLinea = ({
             <div className="CrearLinea">
                 <quimera-formulario>
                     <ArticuloLinea
-                        tipo={linea.tipoArticulo}
+                        tipoArticulo={linea.tipoArticulo}
                         idArticulo={linea.idArticulo}
-                        articulo={linea.descripcionArticulo}
+                        descripcionArticulo={linea.descripcionArticulo}
                         descripcion={linea.descripcion ?? ""}
                         porLotes={porLotes}
                         nombre="idArticulo_nueva_linea_albaran"
