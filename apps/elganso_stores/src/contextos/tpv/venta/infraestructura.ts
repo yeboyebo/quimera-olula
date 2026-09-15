@@ -2,6 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import Tpv_Urls from "#/tpv/comun/urls.ts";
+import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import {
   CambiosDatosCliente,
   DeleteLinea,
@@ -280,6 +281,18 @@ export const buscarTarjetasPuntos = async (
   ).then((respuesta) => respuesta.datos);
 }
 
+// Wrapper propio en vez de reutilizar #/tpv/vale/infraestructura.ts: ese
+// getVale genérico no manda tenant_id, así que buscaba el vale en central
+// en vez de en la BD de la tienda — el vale (ticket de devolución) vive en
+// tpv_comandas de cada tienda, igual que la propia venta. Sin esto, el
+// cajero veía un saldo obsoleto (el de la copia de central) al buscar el
+// vale, aunque el pago en sí ya se validaba bien contra la tienda.
+export const getVale = async (id: string): Promise<ValeTpv> => {
+  return RestAPI.get<{ datos: ValeTpv }>(
+    `/tpv/vale/${id}`, undefined, cabecerasTienda()
+  ).then((respuesta) => respuesta.datos);
+}
+
 export interface TopePuntos {
   importeMaximo: number | null;
   saldoDisponible: number | null;
@@ -381,6 +394,7 @@ export const postPago: PostPago = async (id, pago) => {
     fecha: new Date().toISOString().slice(0, 10),
     forma_pago: pago.formaPago,
     tipo_tarjeta_id: pago.idTipoTarjeta,
+    vale_id: pago.idVale,
   };
   return await RestAPI.post(`${baseUrl}/${id}/pago`, body, "Error al crear pago de venta", cabecerasTienda())
     .then((respuesta) => (respuesta as unknown as { id: string }).id);

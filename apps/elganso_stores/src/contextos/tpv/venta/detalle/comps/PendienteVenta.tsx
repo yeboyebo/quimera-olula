@@ -29,6 +29,10 @@ export const PendienteVenta = ({ venta, publicar }: PendienteVentaProps) => {
         >
           P. Puntos
         </QBoton>
+
+        <QBoton onClick={() => publicar("pago_vale_solicitado")}>
+          P. Vale
+        </QBoton>
       </div>
 
       <div className="PendienteVenta-item">
