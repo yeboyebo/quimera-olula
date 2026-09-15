@@ -7,7 +7,10 @@ import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useMemo } from "react";
 import { Tarifa } from "../diseño.js";
-import { metaNuevoArticuloTarifa, nuevoArticuloTarifaVacio } from "../dominio.js";
+import {
+  metaNuevoArticuloTarifa,
+  nuevoArticuloTarifaVacio,
+} from "../dominio.js";
 import { postArticuloTarifa } from "../infraestructura.js";
 import "./CrearArticuloTarifa.css";
 
@@ -22,61 +25,59 @@ import "./CrearArticuloTarifa.css";
  * su identidad, así que crearlo en línea entra en bucle al escribir.
  */
 export const CrearArticuloTarifa = ({
-    tarifa,
-    publicar,
+  tarifa,
+  publicar,
 }: {
-    tarifa: Tarifa;
-    publicar: EmitirEvento;
+  tarifa: Tarifa;
+  publicar: EmitirEvento;
 }) => {
-    const inicial = useMemo(nuevoArticuloTarifaVacio, []);
+  const inicial = useMemo(nuevoArticuloTarifaVacio, []);
 
-    const { modelo, uiProps, valido } = useModelo(
-        metaNuevoArticuloTarifa,
-        inicial
-    );
+  const { modelo, uiProps, valido } = useModelo(
+    metaNuevoArticuloTarifa,
+    inicial
+  );
 
-    const crear_ = useCallback(
-        async () => {
-            const id = await postArticuloTarifa(tarifa.id, modelo);
-            publicar("articulo_creado", id);
-        },
-        [modelo, publicar, tarifa.id]
-    );
+  const crear_ = useCallback(async () => {
+    const id = await postArticuloTarifa(tarifa.id, modelo);
+    publicar("articulo_creado", id);
+  }, [modelo, publicar, tarifa.id]);
 
-    const cancelar_ = useCallback(
-        () => publicar("alta_de_articulo_cancelada"),
-        [publicar]
-    );
+  const cancelar_ = useCallback(
+    () => publicar("alta_de_articulo_cancelada"),
+    [publicar]
+  );
 
-    const [crear, cancelar] = useForm(crear_, cancelar_);
+  const [crear, cancelar] = useForm(crear_, cancelar_);
 
-    return (
-        <QModal
-            abierto={true}
-            nombre="crear_articulo_tarifa"
-            titulo={`Añadir artículo a ${tarifa.nombre}`}
-            onCerrar={cancelar}
-        >
-            <div className="CrearArticuloTarifa">
-                <quimera-formulario>
-                    {/* El segundo argumento de uiProps guarda la descripción que
+  return (
+    <QModal
+      abierto={true}
+      nombre="crear_articulo_tarifa"
+      titulo={`Añadir artículo a ${tarifa.nombre}`}
+      onCerrar={cancelar}
+    >
+      <div className="CrearArticuloTarifa">
+        <quimera-formulario>
+          {/* El segundo argumento de uiProps guarda la descripción que
                         devuelve el autocompletar en el campo descripcionArticulo. */}
-                    <Articulo
-                        {...uiProps("articuloId", "descripcionArticulo")}
-                        autoFocus
-                    />
-                    <QInput
-                        label="Precio"
-                        {...uiProps("precio")}
-                        divisa={tarifa.divisaId || "EUR"}
-                    />
-                </quimera-formulario>
-                <div className="botones maestro-botones">
-                    <QBoton onClick={crear} deshabilitado={!valido}>
-                        Añadir
-                    </QBoton>
-                </div>
-            </div>
-        </QModal>
-    );
+          <Articulo
+            {...uiProps("articuloId", "descripcionArticulo")}
+            autoFocus
+          />
+          <QInput
+            label="Precio"
+            {...uiProps("precio")}
+            divisa={tarifa.divisaId || "EUR"}
+            tipo="moneda"
+          />
+        </quimera-formulario>
+        <div className="botones maestro-botones">
+          <QBoton onClick={crear} deshabilitado={!valido}>
+            Añadir
+          </QBoton>
+        </div>
+      </div>
+    </QModal>
+  );
 };

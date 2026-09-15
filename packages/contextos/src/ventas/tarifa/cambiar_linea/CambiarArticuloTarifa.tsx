@@ -49,7 +49,12 @@ export const CambiarArticuloTarifa = ({
     >
       <div className="CambiarArticuloTarifa">
         <quimera-formulario>
-          <QInput label="Precio" {...uiProps("precio")} ref={focus} />
+          <QInput
+            label="Precio"
+            {...uiProps("precio")}
+            ref={focus}
+            tipo="moneda"
+          />
         </quimera-formulario>
         <div className="botones maestro-botones">
           <QBoton onClick={cambiar} deshabilitado={!valido}>
