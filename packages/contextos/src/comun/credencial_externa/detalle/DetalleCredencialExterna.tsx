@@ -67,7 +67,7 @@ export const DetalleCredencialExterna = ({
 
     const acciones = [
         {
-            texto: "Rotar credencial",
+            texto: "Editar credencial",
             onClick: () => emitir("rotacion_solicitada"),
             deshabilitado: !puede("comun.credencial_externa"),
         },
