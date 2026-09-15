@@ -9,7 +9,7 @@ import { QInput } from "../../atomos/qinput.tsx";
 import { QMonthYear } from "../../atomos/qmonthyear.tsx";
 import { Opcion, QMultiCheckbox } from "../../atomos/qmulticheckbox.tsx";
 import { QNumberInterval } from "../../atomos/qnumberinterval.tsx";
-import { MetaTabla } from "../../atomos/qtabla.tsx";
+import { MetaTabla, obtenerCols } from "../../atomos/qtablacontrolada.tsx";
 import "./MaestroFiltrosActivoControlado.css";
 
 export const filtroTextos = (id: string, valor: unknown) => {
@@ -139,7 +139,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
 ): MetaFiltro => {
   const campos: Record<string, MetaCampoFiltro> = {};
 
-  for (const columna of metaTabla) {
+  for (const columna of obtenerCols(metaTabla)) {
     if (columna.id === "id") continue;
 
     switch (columna.tipo) {

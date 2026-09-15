@@ -264,6 +264,7 @@ export const cambiarLinea: ProcesarAlbaran = async (contexto) => {
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
+        reactivarLineaActiva,
         'ABIERTO',
     ]);
 }

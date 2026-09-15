@@ -148,6 +148,7 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         iva_incluido: { tipo: "checkbox", requerido: true },
         pvp_unitario: { tipo: "moneda", requerido: true },
+        pvp_total: { tipo: "moneda", bloqueado: true },
         dto_porcentual: metaDtoPorcentual,
         dto_lineal: metaDtoLineal,
         tipo_irpf: metaPorcentajeLinea,

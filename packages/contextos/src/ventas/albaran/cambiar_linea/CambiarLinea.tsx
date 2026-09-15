@@ -47,7 +47,7 @@ export const CambiarLinea = ({
   albaranId: string;
   publicar: ProcesarEvento;
 }) => {
-  const modeloInicial = useMemo(() => getModeloInicial(linea), [linea.id]);
+  const modeloInicial = useMemo(() => getModeloInicial(linea), [linea.id, linea.movimientos]);
 
   const { modelo, uiProps, valido, set, modificado } = useModelo<ModeloCambiarLinea>(metaLinea, modeloInicial);
   const [mostrarMas, setMostrarMas] = useState(false);
@@ -103,14 +103,9 @@ export const CambiarLinea = ({
             bloqueado={true}
           />
 
-          <QInput
-            label="Cantidad"
-            {...uiProps("cantidad")}
-            soloLectura={porLotes}
-            {...(porLotes ? { valor: String(linea.cantidad) } : {})}
-          />
-
+          <QInput label="Cantidad" {...uiProps("cantidad")} soloLectura={porLotes} />
           <QInput label="Precio" {...uiProps("pvp_unitario")} />
+          <QInput label="Total" {...uiProps("pvp_total")} />
 
           {porLotes && (
             <div className="lotes-seccion">
