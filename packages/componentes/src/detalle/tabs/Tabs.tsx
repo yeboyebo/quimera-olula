@@ -4,19 +4,21 @@ import estilos from "./tabs.module.css";
 interface TabProps {
   label: string;
   children: React.ReactNode;
+  deshabilitado?: boolean;
 }
 
 interface TabsProps {
   children: React.ReactElement<TabProps>[];
   className?: string;
+  tabInicial?: number;
 }
 
 const Tab: React.FC<TabProps> = ({ children }) => {
   return <div>{children}</div>;
 };
 
-const Tabs: React.FC<TabsProps> = ({ children, className }) => {
-  const [activeTab, setActiveTab] = React.useState(0);
+const Tabs: React.FC<TabsProps> = ({ children, className, tabInicial = 0 }) => {
+  const [activeTab, setActiveTab] = React.useState(tabInicial);
   const [showArrows, setShowArrows] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +67,7 @@ const Tabs: React.FC<TabsProps> = ({ children, className }) => {
             <button
               key={index}
               onClick={() => setActiveTab(index)}
+              disabled={tab.props.deshabilitado}
               className={activeTab === index ? active : "inactive"}
             >
               {tab.props.label}

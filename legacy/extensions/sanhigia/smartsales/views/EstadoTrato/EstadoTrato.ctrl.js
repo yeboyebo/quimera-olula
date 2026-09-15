@@ -1,4 +1,5 @@
 import { getSchemas, util } from "quimera";
+import { ACL } from "quimera/lib";
 
 export const state = parent => ({
   ...parent,
@@ -486,14 +487,14 @@ export const bunch = parent => ({
     },
   ],
   compruebaAccionCambioEstadoTrato: [
-    // {
-    //   condition: (_, { trato }) =>
-    //     trato.idTipotrato === util.getUser().tratolicenciafarma && ACL.can("crm.trato.farma"),
-    //   type: "grape",
-    //   name: "onEstadoTratoTipoFarmaChanged",
-    // },
     {
-      // condition: (_, { trato }) => trato.idTipotrato !== util.getUser().tratolicenciafarma,
+      condition: (_, { trato }) =>
+        trato.idTipotrato === util.getUser().tratolicenciafarma && ACL.can("crm.trato.farma"),
+      type: "grape",
+      name: "onEstadoTratoTipoFarmaChanged",
+    },
+    {
+      condition: (_, { trato }) => trato.idTipotrato !== util.getUser().tratolicenciafarma,
       type: "grape",
       name: "onEstadoTratoComunChanged",
     },

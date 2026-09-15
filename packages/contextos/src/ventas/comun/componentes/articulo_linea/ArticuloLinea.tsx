@@ -83,7 +83,7 @@ export const ArticuloLinea = ({
                         ref={refArticulo}
                         soloLectura={bloqueado}
                     />
-                    {idArticulo && (
+                    {idArticulo && !bloqueado && (
                         <button
                             type="button"
                             onClick={toggleDescripcion}

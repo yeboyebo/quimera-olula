@@ -91,6 +91,11 @@ export interface ModeloLineaFactura extends LineaFactura {
     tipoArticulo: TipoArticuloLinea;
 }
 
+export type FacturaCreada = {
+    id: string;
+    codigo: string;
+};
+
 export type CambiosFactura = Partial<Factura>;
 
 export type CambiosLineaFactura = Partial<ModeloLineaFactura>;
@@ -100,7 +105,7 @@ export type GetFacturas = (criteria: Criteria) => RespuestaLista<Factura>;
 export type PostFactura = (
     nuevaFactura: NuevaFactura | NuevaFacturaProveedorNoRegistrado
 ) => Promise<string>;
-export type FacturarAlbaranes = (albaranIds: string[]) => Promise<{ id: string; codigo: string }>;
+export type FacturarAlbaranes = (albaranIds: string[]) => Promise<FacturaCreada>;
 export type PatchFactura = (id: string, cambios: CambiosFactura) => Promise<void>;
 export type PatchRectificativa = (id: string, rectificativaId: string | null) => Promise<void>;
 export type DeleteFactura = (id: string) => Promise<void>;
@@ -118,3 +123,14 @@ export type PatchLineaFactura = (
     cambios: CambiosLineaFactura
 ) => Promise<void>;
 export type BorrarLineasFactura = (id: string, lineas: string[]) => Promise<void>;
+
+export interface ReciboFactura extends Entidad {
+    id: string;
+    codigo: string;
+    fecha_emision: string;
+    fecha_vencimiento: string;
+    estado: string;
+    importe: number;
+}
+
+export type GetRecibosFactura = (facturaId: string) => Promise<ReciboFactura[]>;

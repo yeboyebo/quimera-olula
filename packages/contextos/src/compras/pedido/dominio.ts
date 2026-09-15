@@ -1,5 +1,5 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
-import { articuloDeLineaValido, costeDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
+import { articuloDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
 import {
     LineaPedido,
     ModeloLineaPedido,
@@ -49,8 +49,14 @@ export const metaNuevaLineaPedido: MetaModelo<NuevaLineaPedido> = {
         descripcion: { tipo: "texto" },
         cantidad: { requerido: true, tipo: "decimal", decimales: 2 },
         pvpUnitario: { tipo: "moneda", decimales: 2 },
+        dtoPorcentual: { tipo: "decimal", decimales: 2, positivo: true, maximo: 100 },
+        dtoLineal: { tipo: "moneda", decimales: 2, positivo: true },
+        tipoIrpf: { tipo: "decimal", decimales: 2, positivo: true, maximo: 100 },
+        pvpTotal: { tipo: "moneda", bloqueado: true },
+        tipoIva: { tipo: "decimal", decimales: 2, bloqueado: true },
+        tipoRecargo: { tipo: "decimal", decimales: 2, bloqueado: true },
     },
-    validacion: (linea) => articuloDeLineaValido(linea) && costeDeLineaValido(linea),
+    validacion: articuloDeLineaValido,
 };
 
 export const nuevaLineaPedidoVacia = (): NuevaLineaPedido => ({
@@ -60,4 +66,22 @@ export const nuevaLineaPedidoVacia = (): NuevaLineaPedido => ({
     descripcionArticulo: null,
     cantidad: 1,
     pvpUnitario: null,
+    dtoPorcentual: 0,
+    dtoLineal: 0,
+    pvpTotal: 0,
+    grupoIvaProductoId: null,
+    ivaIncluido: false,
+    tipoIva: 0,
+    tipoRecargo: 0,
+    tipoIrpf: 0,
 });
+
+export const camposConCambiosServidor = [
+    'referencia',
+    'cantidad',
+    'pvpUnitario',
+    'dtoPorcentual',
+    'dtoLineal',
+    'tipoIrpf',
+    'grupoIvaProductoId',
+] as const satisfies readonly (keyof NuevaLineaPedido)[];

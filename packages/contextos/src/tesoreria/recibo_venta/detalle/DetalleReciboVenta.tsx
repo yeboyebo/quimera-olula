@@ -1,3 +1,4 @@
+import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -13,6 +14,7 @@ import {
 } from "./detalle.js";
 import "./DetalleReciboVenta.css";
 import { getMaquina } from "./maquina.js";
+import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
 import { PagarReciboVenta } from "./pagar/PagarReciboVenta.tsx";
 
 export const DetalleReciboVenta = ({
@@ -64,10 +66,12 @@ export const DetalleReciboVenta = ({
           <QInput label="Importe" {...uiProps("importe")} />
           <QInput label="Fecha de emisión" {...uiProps("fechaEmision")} />
           <QInput label="Fecha de vencimiento" {...uiProps("fechaVencimiento")} />
-          <QInput label="Cliente" {...uiProps("clienteId")} />
+          <Cliente {...uiProps("clienteId", "nombreCliente")} deshabilitado />
           <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
           <QInput label="Factura" {...uiProps("facturaId")} />
         </quimera-formulario>
+
+        <PagosReciboVenta pagos={ctx.recibo.pagos} />
 
         {ctx.estado === "PAGANDO" && <PagarReciboVenta publicar={emitir} />}
       </div>

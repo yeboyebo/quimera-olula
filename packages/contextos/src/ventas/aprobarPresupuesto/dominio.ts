@@ -1,4 +1,8 @@
+import { Orden } from "@olula/lib/diseño.ts";
 import { LineaAprobarPresupuesto, LineaPedidoPatch } from "./diseño.ts";
+
+/** Orden con el que el servidor devuelve las líneas de esta pantalla. */
+export const ordenLineas: Orden = ["referencia", "ASC", "id", "ASC"];
 
 export const pendienteDeLinea = (linea: LineaAprobarPresupuesto): number => {
     if (linea.cerrada) return 0;
