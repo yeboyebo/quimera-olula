@@ -1,0 +1,64 @@
+/* -----------------------------------------------------------------------
+ * Wrapper centrado — contiene los botones de cabecera + la tabla.
+ * Se aplica en AlbaranarPedido.tsx con className="albaranar2-bloque".
+ * ----------------------------------------------------------------------- */
+.albaranar2-bloque {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.albaranar2-bloque .maestro-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* -----------------------------------------------------------------------
+ * Tabla de líneas
+ * ----------------------------------------------------------------------- */
+.LineasAlbaranar table {
+    border-collapse: collapse;
+}
+
+.LineasAlbaranar > table thead th {
+    padding: 0.4rem 1.5rem;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 2px solid #ddd;
+}
+
+.LineasAlbaranar > table th.num,
+.LineasAlbaranar > table td.num {
+    text-align: right;
+}
+
+.LineasAlbaranar > table > tbody > tr > td {
+    padding: 0.4rem 1.5rem;
+    vertical-align: middle;
+}
+
+/* -----------------------------------------------------------------------
+ * Celda que contiene la sub-tabla de lotes: indentada
+ * ----------------------------------------------------------------------- */
+.LineasAlbaranar .lotes-celda {
+    padding-left: 4rem;
+    padding-top: 0;
+    padding-bottom: 0.25rem;
+}
+
+.LineasAlbaranar .lotes-celda table {
+    border-collapse: collapse;
+}
+
+.LineasAlbaranar .lotes-celda table th,
+.LineasAlbaranar .lotes-celda table td {
+    padding: 0.2rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.LineasAlbaranar .lotes-celda table th.num,
+.LineasAlbaranar .lotes-celda table td.num {
+    text-align: right;
+}

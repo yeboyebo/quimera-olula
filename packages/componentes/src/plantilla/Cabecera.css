@@ -22,7 +22,7 @@
 
     & a>span {
         color: var(--mg-6);
-        font-weight: 600;
+        font-weight: var(--grosor-letra-5);
     }
 }
 

@@ -6,10 +6,21 @@ import { Articulo, TagArticulo } from "./diseño.ts";
 const baseUrl = `/ventas/articulo`;
 
 type ArticuloApi = Articulo;
-type TagArticuloApi = TagArticulo;
+// type TagArticuloApi = TagArticulo;
+
+interface TagArticuloApi {
+    id: string;
+    descripcion: string;
+    precio: number;
+    grupo_iva_producto_id: string;
+    por_lotes: boolean;
+}
 
 const articuloDesdeApi = (a: ArticuloApi): Articulo => a;
-const tagArticuloDesdeApi = (t: TagArticuloApi): TagArticulo => t;
+const tagArticuloDesdeApi = (t: TagArticuloApi): TagArticulo => ({
+    ...t,
+    porLotes: t.por_lotes
+});
 
 export const getArticulos = async (filtro: Filtro, orden: Orden): Promise<Articulo[]> => {
     const q = criteriaQuery(filtro, orden);

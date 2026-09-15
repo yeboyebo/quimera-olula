@@ -28,7 +28,7 @@
 }
 
 .indicador-voz__etiqueta {
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
 }
 
 .indicador-voz__interino {

@@ -24,11 +24,12 @@ const lineaApi = {
     tipo_iva: 21,
     por_comision: 3.5,
     importe_comision: 24.85,
+    por_lotes: false,
 };
 
 const casos: [string, LineaVenta][] = [
     ["presupuesto", lineaPresupuestoDesdeApi(lineaApi as Parameters<typeof lineaPresupuestoDesdeApi>[0])],
-    ["pedido", ventasPedidoInfra.linea_desde_api(lineaApi as Parameters<typeof ventasPedidoInfra.linea_desde_api>[0])],
+    ["pedido", ventasPedidoInfra.linea_desde_api(lineaApi as unknown as Parameters<typeof ventasPedidoInfra.linea_desde_api>[0])],
     ["albarán", lineaAlbaranDesdeApi(lineaApi as Parameters<typeof lineaAlbaranDesdeApi>[0])],
     ["factura", lineaFacturaDesdeApi(lineaApi as Parameters<typeof lineaFacturaDesdeApi>[0])],
 ];

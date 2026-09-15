@@ -56,7 +56,7 @@ etiquetas-filtro {
             top: 10px;
             left: 0px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: var(--grosor-letra-6);
         }
 
         quimera-icono {

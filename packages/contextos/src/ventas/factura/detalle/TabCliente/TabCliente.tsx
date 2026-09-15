@@ -34,13 +34,13 @@ export const TabCliente = ({
           nombre="cliente_id"
           valor={modelo.cliente.cliente_id ?? ""}
           descripcion={modelo.cliente.nombre_cliente}
-          deshabilitado={true}
+          soloLectura={true}
         />
         <QInput
           nombre="id_fiscal"
           label="ID Fiscal"
           valor={modelo.cliente.id_fiscal}
-          deshabilitado={true}
+          soloLectura={true}
         />
 
         {clienteEditable && (
@@ -53,7 +53,7 @@ export const TabCliente = ({
         )}
 
         <QInput
-          deshabilitado={true}
+          soloLectura={true}
           label="Dirección"
           nombre="direccion_cliente"
           valor={formatearDireccionVenta(modelo.cliente.direccion)}

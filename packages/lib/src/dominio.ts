@@ -78,6 +78,16 @@ export type MetaCampo<T extends Modelo> = {
     decimales?: number
     maximo?: number
     minimo?: number
+    /** MetaModelo del sub-objeto. Activa validación y comparación recursivas. */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    meta?: MetaModelo<any>;
+    /** MetaModelo de cada ítem de la lista. Activa validación y comparación de arrays. */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    itemMeta?: MetaModelo<any>;
+    /** Número mínimo de ítems requeridos (solo con itemMeta). */
+    minItems?: number;
+    /** Número máximo de ítems permitidos (solo con itemMeta). */
+    maxItems?: number;
 }
 // export type TipoValorCampo = string | boolean | number | null;
 
@@ -490,7 +500,7 @@ const evaluarCambio = <M extends Modelo>(
         if (!onModeloListo) {
             return;
         }
-        if (modeloModificado(modeloInicial, modelo) && modeloEsValido(meta)(modelo)) {
+        if (modeloModificado(modeloInicial, modelo, meta) && modeloEsValido(meta)(modelo)) {
             await onModeloListo(modelo, campo);
         }
     }
@@ -590,6 +600,28 @@ export const validacionCampoModelo = <T extends Modelo>(meta: MetaModelo<T>) => 
         }
     }
 
+    // Sub-objeto: validación recursiva con su propio MetaModelo
+    if (campos[campo]?.meta && typeof valor === "object" && valor !== null && !Array.isArray(valor)) {
+        const subValido = modeloEsValido(campos[campo].meta!)(valor as Modelo);
+        if (!subValido) return "Sub-objeto inválido";
+    }
+
+    // Lista: validación de cardinalidad e ítems
+    if (campos[campo]?.itemMeta && Array.isArray(valor)) {
+        const min = campos[campo].minItems ?? 0;
+        if (valor.length < min) {
+            return `Se requieren al menos ${min} elemento${min !== 1 ? "s" : ""}`;
+        }
+        const max = campos[campo].maxItems;
+        if (max !== undefined && valor.length > max) {
+            return `Se permiten como máximo ${max} elemento${max !== 1 ? "s" : ""}`;
+        }
+        const itemInvalido = valor.some(
+            (item) => !modeloEsValido(campos[campo].itemMeta!)(item as Modelo)
+        );
+        if (itemInvalido) return "Algún elemento de la lista es inválido";
+    }
+
     const validacion = campos[campo]?.validacion
     return validacion
         ? validacion(modelo)
@@ -611,7 +643,7 @@ export const modeloEsValido = <T extends Modelo>(meta: MetaModelo<T>) => (modelo
 }
 
 export const modeloModificadoYValido = <T extends Modelo>(meta: MetaModelo<T>) => (estado: EstadoModelo<T>) => {
-    return modeloModificado(estado.valor_inicial, estado.valor) && modeloEsValido(meta)(estado.valor);
+    return modeloModificado(estado.valor_inicial, estado.valor, meta) && modeloEsValido(meta)(estado.valor);
 }
 
 export const getFormProps = <M extends Modelo>(
@@ -631,7 +663,7 @@ export const getFormProps = <M extends Modelo>(
             onModeloListo,
             errorGuardado
         ),
-        modificado: modeloModificado(modeloInicial, modelo),
+        modificado: modeloModificado(modeloInicial, modelo, meta),
         valido: modeloEsValido(meta)(modelo),
         editable: modeloEsEditable(meta)(modelo),
     } as const;
@@ -645,10 +677,31 @@ export type FormModelo = {
     editable: boolean,
 }
 
-export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T) => {
-    return (
-        Object.keys(valor).some((k) => valor[k] !== valor_inicial[k])
-    )
+export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T, meta?: MetaModelo<T>): boolean => {
+    return Object.keys(valor).some((k) => {
+        const v = valor[k];
+        const vi = valor_inicial[k];
+        const mc = meta?.campos?.[k];
+
+        // Sub-objeto: comparación profunda si tiene MetaModelo asociado
+        if (mc?.meta && typeof v === "object" && v !== null && !Array.isArray(v)
+                     && typeof vi === "object" && vi !== null) {
+            return modeloModificado(vi as Modelo, v as Modelo, mc.meta as MetaModelo<Modelo>);
+        }
+        // Lista: comparación profunda ítem a ítem si tiene itemMeta
+        if (mc?.itemMeta && Array.isArray(v) && Array.isArray(vi)) {
+            if (v.length !== vi.length) return true;
+            return v.some((item, i) =>
+                modeloModificado(
+                    (vi as unknown[])[i] as Modelo,
+                    item as Modelo,
+                    mc.itemMeta as MetaModelo<Modelo>
+                )
+            );
+        }
+        // Primitivo: comparación por valor (comportamiento original)
+        return v !== vi;
+    });
 }
 
 // const aNumeroMoneda = (cantidad: number | string): number | null => {
