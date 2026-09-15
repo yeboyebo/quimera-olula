@@ -33,7 +33,7 @@ export const PagarValeVentaTpv = ({
 
   const { modelo, uiProps, valido, set, init } = useModelo(metaNuevoPagoVale, pagoInicial);
 
-  const { intentar } = useContext(ContextoError);
+  const { intentar, setError } = useContext(ContextoError);
 
   const [vale, setVale] = useState<ValeTpv | null>(null);
   const [codigoVale, setCodigoVale] = useState("");
@@ -42,6 +42,18 @@ export const PagarValeVentaTpv = ({
     if (!codigo) return;
 
     const vale = await intentar(() => getVale(codigo));
+
+    // Un vale sin saldo no se rellena en el formulario (habría que darle
+    // a "Limpiar" para poder buscar otro) — se avisa directamente y se
+    // deja el input listo para buscar otro código.
+    if (vale.saldo_pendiente <= 0) {
+      setError({
+        nombre: "Vale",
+        descripcion: `El vale ${vale.id} ya está agotado, no tiene saldo disponible.`,
+      });
+      return;
+    }
+
     setVale(vale);
 
     const importe = Math.min(vale.saldo_pendiente, pendiente);
