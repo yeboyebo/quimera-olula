@@ -1,4 +1,4 @@
-import { Criteria, Entidad, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Criteria, Entidad, Filtro, Orden, RespuestaLista } from "@olula/lib/diseño.ts";
 
 export interface Articulo extends Entidad {
     id: string;
@@ -29,6 +29,14 @@ export interface PrecioProveedorArticulo extends Entidad {
 export type CambiosArticulo = Partial<
     Pick<Articulo, "descripcion" | "observaciones" | "familiaId" | "grupoIvaProductoId">
 >;
+
+export interface TagArticulo extends Entidad {
+    id: string;
+    descripcion: string;
+    grupoIvaProductoId: string;
+}
+
+export type GetTagsArticulo = (filtro: Filtro, orden: Orden) => Promise<TagArticulo[]>;
 
 export type PostArticulo = (articulo: Partial<Articulo>) => Promise<string>;
 

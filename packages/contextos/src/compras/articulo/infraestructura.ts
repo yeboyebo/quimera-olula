@@ -1,12 +1,15 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
+import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import ApiUrls from "../comun/urls.ts";
 import {
     Articulo,
     CambiosArticulo,
     GetArticulo,
     GetArticulos,
+    GetTagsArticulo,
     PatchArticulo,
     PostArticulo,
+    TagArticulo,
 } from "./diseño.ts";
 import { filtroArticulosCompra } from "./dominio.ts";
 
@@ -21,7 +24,19 @@ interface ArticuloApi {
     se_compra: boolean;
 }
 
+interface TagArticuloApi {
+    id: string;
+    descripcion: string;
+    grupo_iva_producto_id: string | null;
+}
+
 const baseUrl = new ApiUrls().ARTICULO;
+
+const tagArticuloDesdeApi = (t: TagArticuloApi): TagArticulo => ({
+    id: t.id,
+    descripcion: t.descripcion,
+    grupoIvaProductoId: t.grupo_iva_producto_id ?? "",
+});
 
 export const articuloDesdeApi = (api: ArticuloApi): Articulo => ({
     id: api.id,
@@ -74,5 +89,13 @@ export const patchArticulo: PatchArticulo = async (id, cambios) => {
         `${baseUrl}/${id}`,
         cambiosArticuloAApi(cambios),
         "Error al guardar el artículo"
+    );
+};
+
+export const getTagsArticulo: GetTagsArticulo = async (filtro, orden) => {
+    const q = criteriaQuery(filtro, orden);
+
+    return RestAPI.get<{ datos: TagArticuloApi[] }>(`${baseUrl}/tags${q}`).then(
+        (respuesta) => respuesta.datos.map(tagArticuloDesdeApi)
     );
 };

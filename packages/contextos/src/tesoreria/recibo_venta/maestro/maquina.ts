@@ -10,11 +10,21 @@ export const getMaquina: () => Maquina<EstadoMaestroReciboVenta, ContextoMaestro
 
             recibo_cambiado: [maestro.Recibos.cambiar],
 
+            recibo_desagrupado: [maestro.Recibos.desactivar, maestro.recargarRecibosActual],
+
             recarga_de_recibos_solicitada: maestro.recargarRecibos,
 
             criteria_cambiado: [maestro.Recibos.filtrar, maestro.recargarRecibos],
 
             siguiente_pagina: [maestro.Recibos.filtrar, maestro.ampliarRecibos],
+
+            seleccionados_cambiados: maestro.seleccionadosCambiados,
+            agrupado_solicitado: "AGRUPANDO",
+        },
+
+        AGRUPANDO: {
+            agrupado_confirmado: maestro.agruparSeleccionados,
+            agrupado_cancelado: "INICIAL",
         },
     };
 };
