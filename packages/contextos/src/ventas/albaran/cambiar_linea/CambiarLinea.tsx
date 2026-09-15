@@ -1,3 +1,4 @@
+import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
 import { ArticuloLinea } from "#/ventas/comun/componentes/articulo_linea/ArticuloLinea.tsx";
 import { GrupoIvaProducto } from "#/ventas/comun/componentes/grupo_iva_producto.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
@@ -123,11 +124,11 @@ export const CambiarLinea = ({
 
               {mostrandoFormularioLote && (
                 <div className="lotes-formulario">
-                  <QInput
+                  <Lote
                     label="Lote"
                     nombre="nuevo_lote_id"
                     valor={nuevoLoteId}
-                    onChange={setNuevoLoteId}
+                    onChange={(opcion) => setNuevoLoteId(opcion?.valor ?? "")}
                   />
                   <QInput
                     label="Cantidad"
