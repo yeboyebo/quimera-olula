@@ -1,17 +1,52 @@
-import { Entidad } from "@olula/lib/diseño.ts";
+import { TipoCodBarras } from "#/valores/codbarras.ts";
+import { Entidad, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 
 export interface Articulo extends Entidad {
     id: string;
     descripcion: string;
+    codbarras: string;
+    tipoCodBarras: TipoCodBarras | "";
+    observaciones: string;
+    familiaId: string;
+    descripcionFamilia: string;
     precio: number;
-    grupo_iva_producto_id: string;
-
+    grupoIvaProductoId: string;
+    pvpVariable: boolean;
+    noStock: boolean;
 }
 
 export interface TagArticulo extends Entidad {
     id: string;
     descripcion: string;
     precio: number;
-    grupo_iva_producto_id: string;
+    grupoIvaProductoId: string;
+    codbarras: string;
     porLotes: boolean;
 }
+
+export type CambiosArticulo = Partial<
+    Pick<
+        Articulo,
+        | "descripcion"
+        | "codbarras"
+        | "tipoCodBarras"
+        | "observaciones"
+        | "familiaId"
+        | "precio"
+        | "grupoIvaProductoId"
+    >
+>;
+
+export type PostArticulo = (articulo: Partial<Articulo>) => Promise<string>;
+
+export type GetArticulo = (id: string) => Promise<Articulo>;
+
+export type GetArticulos = (
+    filtro: Filtro,
+    orden: Orden,
+    paginacion?: Paginacion
+) => Promise<Articulo[]>;
+
+export type GetTagsArticulo = (filtro: Filtro, orden: Orden) => Promise<TagArticulo[]>;
+
+export type PatchArticulo = (id: string, cambios: CambiosArticulo) => Promise<void>;

@@ -7,11 +7,12 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { ReciboVenta } from "../diseño.js";
-import { reciboPagable } from "../dominio.js";
+import { reciboDesagrupable, reciboPagable } from "../dominio.js";
 import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
 } from "./detalle.js";
+import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import "./DetalleReciboVenta.css";
 import { getMaquina } from "./maquina.js";
 import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
@@ -47,6 +48,12 @@ export const DetalleReciboVenta = ({
       onClick: () => emitir("pagar_solicitado"),
       deshabilitado: !reciboPagable(ctx.recibo),
     },
+    {
+      texto: "Deshacer agrupación",
+      onClick: () => emitir("desagrupado_solicitado"),
+      deshabilitado: !reciboDesagrupable(ctx.recibo),
+      advertencia: true,
+    },
   ];
 
   return (
@@ -74,6 +81,10 @@ export const DetalleReciboVenta = ({
         <PagosReciboVenta pagos={ctx.recibo.pagos} />
 
         {ctx.estado === "PAGANDO" && <PagarReciboVenta publicar={emitir} />}
+
+        {ctx.estado === "DESAGRUPANDO" && (
+          <DeshacerAgrupacion recibo={ctx.recibo} publicar={emitir} />
+        )}
       </div>
     </Detalle>
   );
