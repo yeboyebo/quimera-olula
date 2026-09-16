@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { ContextoError, QError } from "./contexto.ts";
 import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { getFormProps, MetaModelo, modeloEsValido, modeloModificado } from "./dominio.ts";
+import { getFormProps, MetaModelo, modeloEsValido, modeloModificado, FormModelo } from "./dominio.ts";
 
 const aQError = (error: unknown): QError => {
     const apiError = error as QError;
@@ -88,11 +88,35 @@ export function useModelo<T extends Modelo>(
         modeloUltimoDisparo.current = modeloInicialProp;
     }, [modeloInicialProp]);
 
+    const subModelo = useCallback(<SubT extends Modelo>(campo: string): FormModelo & { modelo: SubT; set: (sub: SubT) => void } => {
+        const subMeta = (meta.campos?.[campo]?.meta ?? {}) as MetaModelo<SubT>;
+        const subValor = (modelo[campo] ?? {}) as SubT;
+        const subInicial = (modeloInicial[campo] ?? {}) as SubT;
+
+        const subCambiarModelo = (nuevoSub: SubT) => {
+            cambiarModelo({ ...modelo, [campo]: nuevoSub } as T);
+        };
+
+        const subOnModeloListo = onModeloListo
+            ? async (nuevoSub: SubT, _subcampo: string): Promise<void | SubT> => {
+                const padreActualizado = { ...modelo, [campo]: nuevoSub } as T;
+                await onModeloListoConError(padreActualizado, campo);
+            }
+            : undefined;
+
+        return {
+            modelo: subValor,
+            set: (nuevoSub: SubT) => setExterno({ ...modelo, [campo]: nuevoSub } as T, campo),
+            ...getFormProps(subValor, subInicial, subMeta, subCambiarModelo, subOnModeloListo, errorGuardado),
+        };
+    }, [meta, modelo, modeloInicial, cambiarModelo, setExterno, onModeloListoConError, onModeloListo, errorGuardado]);
+
     return {
         modelo,
         modeloInicial: modeloInicial || modeloInicialProp,
         init,
         set: setExterno,
+        subModelo,
         errorGuardado,
         guardados,
         ...getFormProps(modelo, modeloInicial, meta, cambiarModelo, onModeloListoConError, errorGuardado),
@@ -105,6 +129,8 @@ export type HookModelo<T extends Modelo> = {
     uiProps: (campo: string, secundario?: string) => UiProps,
     init: (entidad?: T) => void,
     set: (entidad: T, campo?: string) => void,
+    /** Devuelve props de formulario para un campo sub-objeto declarado con `meta` en MetaModelo. */
+    subModelo: <SubT extends Modelo>(campo: string) => import("./dominio.ts").FormModelo & { modelo: SubT; set: (sub: SubT) => void },
     modificado: boolean,
     valido: boolean,
     editable: boolean,

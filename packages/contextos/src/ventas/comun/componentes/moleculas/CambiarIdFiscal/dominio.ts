@@ -23,12 +23,12 @@ export const camposIdFiscal = <T extends Modelo & CambioIdFiscal>(
     tipo_id_fiscal: {
         requerido: true,
         bloqueado,
-        validacion: validacionTipoIdFiscal,
+        validacion: bloqueado ? undefined : validacionTipoIdFiscal,
     },
     id_fiscal: {
         requerido: true,
         bloqueado,
-        validacion: validacionIdFiscal,
+        validacion: bloqueado ? undefined : validacionIdFiscal,
     },
 });
 

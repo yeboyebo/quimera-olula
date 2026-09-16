@@ -3,7 +3,8 @@ import { ReciboVenta } from "../diseño.js";
 export type EstadoDetalleReciboVenta =
     | 'INICIAL'
     | 'ABIERTO'
-    | 'PAGANDO';
+    | 'PAGANDO'
+    | 'DESAGRUPANDO';
 
 export type ContextoDetalleReciboVenta = {
     estado: EstadoDetalleReciboVenta;

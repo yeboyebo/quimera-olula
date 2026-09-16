@@ -1,22 +1,92 @@
+import { filtroFamilia } from "#/almacen/comun/filtros.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
+import { MetaTabla } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
+import { ClausulaFiltro, Criteria } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { CrearArticulo } from "../crear/CrearArticulo.tsx";
 import { DetalleArticulo } from "../detalle/DetalleArticulo.tsx";
 import { Articulo } from "../diseño.ts";
-import { ContextoMaestroArticulo, metaTablaArticulo } from "./diseño.ts";
+import { UsoArticulo } from "../UsoArticulo.tsx";
+import { ContextoMaestroArticulo } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
+const metaTablaArticulo: MetaTabla<Articulo> = [
+  { id: "id", cabecera: "Referencia" },
+  { id: "descripcion", cabecera: "Descripción" },
+  {
+    id: "descripcion_familia",
+    cabecera: "Familia",
+    render: (a) => a.descripcionFamilia,
+  },
+  { id: "uso", cabecera: "Uso", render: UsoArticulo },
+];
+
+const filtroBooleano =
+  (campo: string) =>
+  (valor: unknown): ClausulaFiltro | null =>
+    valor === undefined || valor === null || valor === ""
+      ? null
+      : [campo, "=", String(valor)];
+
+const metaFiltroArticulo: MetaFiltro = {
+  id: {
+    id: "id",
+    label: "Referencia",
+    filtro: (v) => (v ? ["id", "~", v as string] : null),
+  },
+  descripcion: {
+    id: "descripcion",
+    label: "Descripción",
+    filtro: (v) => (v ? ["descripcion", "~", v as string] : null),
+  },
+  familia_id: filtroFamilia,
+  barcode: {
+    id: "barcode",
+    label: "Cód. barras",
+    filtro: (v) => (v ? ["barcode", "~", v as string] : null),
+  },
+  se_vende: {
+    id: "se_vende",
+    label: "Se vende",
+    tipo: "checkbox",
+    filtro: filtroBooleano("se_vende"),
+  },
+  se_compra: {
+    id: "se_compra",
+    label: "Se compra",
+    tipo: "checkbox",
+    filtro: filtroBooleano("se_compra"),
+  },
+  sin_stock: {
+    id: "sin_stock",
+    label: "No controla stock",
+    tipo: "checkbox",
+    filtro: filtroBooleano("sin_stock"),
+  },
+};
+
+const criteriaConStock = (): Criteria => ({
+  ...criteriaDefecto,
+  filtro: [["sin_stock", "=", "false"]] as ClausulaFiltro[],
+  paginacion: { ...criteriaDefecto.paginacion },
+});
+
 export const MaestroConDetalleArticulo = () => {
+  const criteriaBase = useMemo(criteriaConStock, []);
+
   const { id, criteria } = getUrlParams();
+  const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
     estado: "INICIAL",
-    articulos: listaActivaEntidadesInicial<Articulo>(id, criteria),
+    articulos: listaActivaEntidadesInicial<Articulo>(id, criteriaInicial),
   } as ContextoMaestroArticulo);
 
   useUrlParams(ctx.articulos.activo, ctx.articulos.criteria);
@@ -35,6 +105,7 @@ export const MaestroConDetalleArticulo = () => {
             <h2>Artículos</h2>
             <Listado<Articulo>
               metaTabla={metaTablaArticulo}
+              metaFiltro={metaFiltroArticulo}
               modo="tabla"
               criteria={ctx.articulos.criteria}
               entidades={ctx.articulos.lista}

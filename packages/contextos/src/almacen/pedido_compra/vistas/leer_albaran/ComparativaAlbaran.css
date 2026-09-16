@@ -18,7 +18,7 @@
 }
 
 .comparativa-tabla th {
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
     background: var(--color-fondo-cabecera, #f5f5f5);
 }
 

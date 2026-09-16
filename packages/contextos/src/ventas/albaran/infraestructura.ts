@@ -14,6 +14,7 @@ import {
   GetLineasAlbaran,
   GetReportAlbaran,
   LineaAlbaran,
+  MovimientoLote,
   PatchArticuloLinea,
   PatchCambiarAgente,
   PatchCambiarDivisa,
@@ -28,8 +29,16 @@ import {
 
 const baseUrl = new ApiUrls().ALBARAN;
 
-interface LineaAlbaranApi extends Omit<LineaAlbaran, 'descripcionArticulo'> {
+interface MovimientoLoteApi {
+  id: string;
+  lote_id: string;
+  cantidad: number;
+}
+
+interface LineaAlbaranApi extends Omit<LineaAlbaran, 'descripcionArticulo' | 'porLotes' | 'movimientos'> {
   descripcion_articulo: string | null;
+  por_lotes: boolean;
+  movimientos?: MovimientoLoteApi[];
 }
 
 interface AlbaranAPI {
@@ -80,9 +89,17 @@ export const albaranDesdeAPI = (p: AlbaranAPI): Albaran => ({
   lineas: [],
 });
 
+const movimientoDesdeApi = (m: MovimientoLoteApi): MovimientoLote => ({
+  id: m.id,
+  loteId: m.lote_id,
+  cantidad: m.cantidad,
+});
+
 export const lineaAlbaranDesdeApi = (l: LineaAlbaranApi): LineaAlbaran => ({
   ...l,
   descripcionArticulo: l.descripcion_articulo,
+  porLotes: l.por_lotes ?? false,
+  movimientos: (l.movimientos ?? []).map(movimientoDesdeApi),
 } as unknown as LineaAlbaran);
 
 export const getAlbaran: GetAlbaran = async (id) => {
@@ -135,8 +152,8 @@ export const postLinea: PostLinea = async (id, linea) => {
 export const queryNuevaLinea: QueryNuevaLinea = async (id, linea) => {
   const lineaApi = peticionNuevaLineaApi(linea);
   const respuesta = await RestAPI.query<NuevaLineaVentaApiReq, NuevaLineaVentaApiRes>(
-      `${baseUrl}/${id}/nueva_linea`, lineaApi,
-      "Error al obtener la nueva línea de albarán")
+    `${baseUrl}/${id}/nueva_linea`, lineaApi,
+    "Error al obtener la nueva línea de albarán")
   const lineaActualizada = respuestaNuevaLineaApi(linea, respuesta);
   return lineaActualizada;
 }

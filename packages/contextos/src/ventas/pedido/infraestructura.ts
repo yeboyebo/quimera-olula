@@ -25,6 +25,8 @@ export interface LineaPedidoApi {
     tipo_iva: number;
     por_comision: number;
     importe_comision: number;
+    por_lotes: boolean;
+    servida: number;
 };
 
 interface PedidoApi {
@@ -76,7 +78,9 @@ const lineaPedidoDesdeApi: LineaPedidoDesdeApi = (l) => {
 
 const lineaPedidoDesdeApiBase: LineaPedidoDesdeApi = (l) => ({
     ...l,
-    descripcionArticulo: l.descripcion_articulo
+    descripcionArticulo: l.descripcion_articulo,
+    porLotes: l.por_lotes,
+    servida: l.servida,
 } as LineaPedido);
 
 export const ventasPedidoInfra: VentasPedidoInfra = {
@@ -287,3 +291,16 @@ export { payloadPatchPedido } from "./infraestructura_base.ts";
 export const borrarPedido = async (id: string) => {
     await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar pedido");
 }
+
+export const postAlbaranarPedidos = async (pedidoIds: string[]): Promise<{ id: string; codigo: string }> => {
+    const respuesta = (await RestAPI.post(
+        `${new ApiUrls().ALBARAN}/desde-pedidos`,
+        { pedido_ids: pedidoIds },
+        "Error al albaranar los pedidos"
+    )) as unknown as
+        | { datos: { albaran_id: string; codigo?: string } }
+        | { albaran_id: string; codigo?: string };
+    const datos = "datos" in respuesta ? respuesta.datos : respuesta;
+    const id = String(datos.albaran_id ?? "");
+    return { id, codigo: String(datos.codigo ?? id) };
+};

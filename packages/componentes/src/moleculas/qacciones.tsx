@@ -84,14 +84,17 @@ export const QuimeraAcciones = ({
       <quimera-acciones
         className={`${vertical === true ? "vertical" : ""} ${activo ? "abierto" : ""}`.trim()}
       >
-        {accionesGenerales.length > 0 &&
+        {/* Con una sola acción no hay nada que desplegar: se muestra el botón
+            directamente, también en modo vertical, y el usuario se ahorra el
+            clic en "Acciones". El recuento va sobre la lista ya filtrada
+            porque los consumidores pasan entradas condicionales
+            (`condicion && {...}`) que pueden colapsar a una sola. */}
+        {accionesGenerales.length === 1 &&
+          renderItemAccion(accionesGenerales[0])}
+        {accionesGenerales.length > 1 &&
           vertical === true &&
           renderAcciones(accionesGenerales)}
-        {accionesGenerales.length === 1 &&
-          vertical !== true &&
-          renderItemAccion(accionesGenerales[0])}
-        {accionesGenerales.length > 0 &&
-          accionesGenerales.length > 1 &&
+        {accionesGenerales.length > 1 &&
           vertical !== true &&
           renderItemsAcciones(accionesGenerales, true)}
       </quimera-acciones>

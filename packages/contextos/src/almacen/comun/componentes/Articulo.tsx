@@ -1,3 +1,4 @@
+import { TagArticulo } from "#/ventas/articulo/diseño.ts";
 import {
   getArticulo,
   getTagsArticulo,
@@ -16,7 +17,7 @@ interface ArticuloProps {
   opcional?: boolean;
   ref?: React.RefObject<HTMLInputElement | null>;
   soloLectura?: boolean;
-  onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+  onChange: (opcion: { valor: string; descripcion: string; datos: TagArticulo } | null) => void;
 }
 
 export const Articulo = ({

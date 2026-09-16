@@ -1,6 +1,7 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
-import { ejecutarListaProcesos, MetaModelo, publicar, stringNoVacio } from "@olula/lib/dominio.js";
-import { Articulo } from "../diseño.ts";
+import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.js";
+import { MetaModelo, puede, stringNoVacio } from "@olula/lib/dominio.ts";
+import { Articulo, CambiosArticulo } from "../diseño.ts";
 import { getArticulo, patchArticulo } from "../infraestructura.ts";
 import { ContextoArticulo, EstadoArticulo } from "./diseño.ts";
 
@@ -11,7 +12,31 @@ const pipeArticulo = ejecutarListaProcesos<EstadoArticulo, ContextoArticulo>;
 export const articuloVacio = (): Articulo => ({
     id: "",
     descripcion: "",
+    observaciones: "",
+    codbarras: "",
+    tipoCodBarras: "",
+    familiaId: "",
+    descripcionFamilia: "",
+    noStock: false,
+    seCompra: false,
+    seVende: false,
 });
+
+const camposEditables = [
+    "descripcion",
+    "observaciones",
+    "codbarras",
+    "tipoCodBarras",
+    "familiaId",
+    "noStock",
+] as const;
+
+export const cambiosArticulo = (anterior: Articulo, nuevo: Articulo): CambiosArticulo =>
+    Object.fromEntries(
+        camposEditables
+            .filter((campo) => anterior[campo] !== nuevo[campo])
+            .map((campo) => [campo, nuevo[campo]])
+    );
 
 export const metaArticulo: MetaModelo<Articulo> = {
     campos: {
@@ -19,50 +44,62 @@ export const metaArticulo: MetaModelo<Articulo> = {
             requerido: true,
             validacion: (m: Articulo) => stringNoVacio(m.descripcion),
         },
+        observaciones: { requerido: false, tipo: "texto" },
+        codbarras: { requerido: false },
+        tipoCodBarras: { requerido: false },
+        familiaId: { requerido: false },
+        noStock: { tipo: "checkbox" },
     },
+    editable: () => puede("almacen.articulo"),
+};
+
+export const contextoArticuloInicial: ContextoArticulo = {
+    estado: "INICIAL",
+    articulo: articuloVacio(),
 };
 
 export const getContextoVacio: ProcesarArticulo = async (ctx) => ({
     ...ctx,
     estado: "INICIAL",
     articulo: articuloVacio(),
-    articuloInicial: articuloVacio(),
-});
-
-const cargarArticulo = (id: string): ProcesarArticulo =>
-    async (ctx) => {
-        const articulo = await getArticulo(id);
-        return { ...ctx, articulo, articuloInicial: articulo };
-    };
-
-const abiertoContexto: ProcesarArticulo = async (ctx) => ({
-    ...ctx,
-    estado: "ABIERTO",
 });
 
 export const cargarContexto: ProcesarArticulo = async (ctx, payload) => {
     const id = payload as string;
-    if (id) {
-        return pipeArticulo(ctx, [cargarArticulo(id), abiertoContexto]);
-    }
-    return getContextoVacio(ctx);
+    if (!id) return getContextoVacio(ctx);
+
+    const articulo = await getArticulo(id);
+
+    return { ...ctx, estado: "ABIERTO", articulo };
 };
 
-export const guardarArticulo: ProcesarArticulo = async (ctx, payload) => {
-    const articulo = payload as Articulo;
-    await patchArticulo(ctx.articulo.id, articulo);
-    const actualizado = await getArticulo(ctx.articulo.id);
+export const guardarArticulo = async (
+    ctx: ContextoArticulo,
+    articulo: Articulo
+): Promise<void> => {
+    const cambios = cambiosArticulo(ctx.articulo, articulo);
+    if (!Object.keys(cambios).length) return;
 
-    return pipeArticulo(
-        { ...ctx, articulo: actualizado, articuloInicial: actualizado },
-        [publicar("articulo_cambiado", actualizado), "ABIERTO"]
-    );
+    await patchArticulo(ctx.articulo.id, cambios);
 };
 
-export const cancelarCambioArticulo: ProcesarArticulo = async (ctx) => ({
-    ...ctx,
-    articulo: ctx.articuloInicial,
-});
+export const refrescarArticulo: ProcesarArticulo = async (ctx) => {
+    const articulo = await getArticulo(ctx.articulo.id);
+
+    return [{ ...ctx, articulo }, [["articulo_cambiado", articulo]]];
+};
+
+export const alternarVenta: ProcesarArticulo = async (ctx) => {
+    await patchArticulo(ctx.articulo.id, { seVende: !ctx.articulo.seVende });
+
+    return refrescarArticulo(ctx);
+};
+
+export const alternarCompra: ProcesarArticulo = async (ctx) => {
+    await patchArticulo(ctx.articulo.id, { seCompra: !ctx.articulo.seCompra });
+
+    return refrescarArticulo(ctx);
+};
 
 export const borrarArticulo: ProcesarArticulo = async (ctx, payload) => {
     const { articuloId } = (payload as { articuloId: string }) ?? {
