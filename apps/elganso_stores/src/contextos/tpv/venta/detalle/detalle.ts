@@ -12,6 +12,7 @@ import {
 import {
     getLineas,
     getPagos,
+    getTiendaActual,
     getVenta,
     patchCambiarCliente,
     patchCambiarDescuento,
@@ -62,6 +63,17 @@ const pipeVentaTpv = ejecutarListaProcesos<EstadoVentaTpv, ContextoVentaTpv<Vent
 
 const cargarVenta: (_: string) => ProcesarVentaTpv = (idVenta) =>
     async (contexto) => {
+        // Al entrar directo por URL (recarga con ?id=... en vez de venir del
+        // listado), este es el primer fetch de la página: sin esperar a que
+        // se resuelva la tienda del agente, la llamada sale sin tenant_id y
+        // el backend busca la venta en la BD equivocada (central en vez de
+        // la de la tienda), dando un 500 en vez de un 404 real. El listado
+        // (MaestroConDetalleVentaTpv) ya espera esto mismo antes de su
+        // propia carga, pero el detalle puede montarse en paralelo con la
+        // venta activa ya puesta desde la URL — así que se espera aquí
+        // también. getTiendaActual() cachea el resultado, así que esperar
+        // de más (cuando ya viene del listado) no cuesta una llamada extra.
+        await getTiendaActual();
         const venta = await getVenta(idVenta);
         return {
             ...contexto,
@@ -209,6 +221,17 @@ export const crearLinea: ProcesarVentaTpv = async (contexto) => {
         refrescarVenta,
         refrescarLineas,
         'ABIERTO',
+    ]);
+}
+
+// Igual que crearLinea, pero para cuando las bolsas se añaden justo antes
+// de pagar (ver AÑADIENDO_BOLSAS_PARA_PAGAR en maquina.ts) — al terminar
+// pasa directo a PAGANDO en vez de volver a ABIERTO.
+export const crearLineaYPagar: ProcesarVentaTpv = async (contexto) => {
+    return pipeVentaTpv(contexto, [
+        refrescarVenta,
+        refrescarLineas,
+        'PAGANDO',
     ]);
 }
 
