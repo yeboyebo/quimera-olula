@@ -12,6 +12,7 @@ import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
 } from "./detalle.js";
+import { RecibosAgrupados } from "./agrupados/RecibosAgrupados.tsx";
 import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import "./DetalleReciboVenta.css";
 import { getMaquina } from "./maquina.js";
@@ -77,6 +78,10 @@ export const DetalleReciboVenta = ({
           <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
           <QInput label="Factura" {...uiProps("facturaId")} />
         </quimera-formulario>
+
+        {ctx.recibo.recibosAgrupados.length > 0 && (
+          <RecibosAgrupados recibos={ctx.recibo.recibosAgrupados} />
+        )}
 
         <PagosReciboVenta pagos={ctx.recibo.pagos} />
 

@@ -22,7 +22,7 @@ import { LineasPedido } from "./lineas/LineasPedido.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
-import { TotalesPedido } from "./TotalesPedido.tsx";
+import { TotalesDocumento } from "#/compras/comun/componentes/TotalesDocumento.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 export const DetallePedido = ({
@@ -103,7 +103,7 @@ export const DetallePedido = ({
                         />,
                     ]}
                 />
-                <TotalesPedido form={formModelo} />
+                <TotalesDocumento form={formModelo} />
                 <LineasPedido
                     pedido={pedido}
                     lineas={lineas}

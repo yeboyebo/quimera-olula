@@ -893,6 +893,23 @@ export const puede = (regla: string): boolean => {
     return true;
 };
 
+export const configuracion = (ruta: string): boolean => {
+    const [contexto, clave] = ruta.split(".");
+    if (!contexto || !clave) return false;
+
+    const raw = localStorage.getItem("whoami");
+    if (!raw) return false;
+
+    try {
+        const whoAmI = JSON.parse(raw) as {
+            config?: Record<string, Record<string, boolean>>;
+        };
+        return whoAmI.config?.[contexto]?.[clave] === true;
+    } catch {
+        return false;
+    }
+};
+
 export const plugin = (nombre: string): string => {
     if (!nombre) return "";
 

@@ -4,7 +4,7 @@ import {
     ProcesarListaActivaEntidades,
 } from "@olula/lib/ListaActivaEntidades.ts";
 import { Articulo } from "../diseño.ts";
-import { getArticulos } from "../infraestructura.ts";
+import { getArticulo, getArticulos } from "../infraestructura.ts";
 import { ContextoMaestroArticulo, EstadoMaestroArticulo } from "./diseño.ts";
 
 type ProcesarMaestro = ProcesarContexto<EstadoMaestroArticulo, ContextoMaestroArticulo>;
@@ -24,4 +24,19 @@ export const ampliarArticulos: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
     const resultado = await getArticulos(criteria);
     return Articulos.ampliar(contexto, resultado);
+};
+
+export const incluirArticuloCreadoPorId: ProcesarMaestro = async (contexto, payload) => {
+    const id = payload as string;
+    const articulo = await getArticulo(id);
+    return {
+        ...contexto,
+        estado: "INICIAL",
+        articulos: {
+            ...contexto.articulos,
+            lista: [articulo, ...contexto.articulos.lista],
+            total: contexto.articulos.total + 1,
+            activo: articulo.id,
+        },
+    };
 };
