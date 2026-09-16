@@ -22,3 +22,15 @@ export const metaNuevaIaMemoria: MetaModelo<NuevaIaMemoria> = {
         },
     },
 };
+
+/**
+ * Lee un fichero como base64 (sin el prefijo "data:<mime>;base64,") para
+ * mandarlo al backend en el alta/reemplazo de una memoria por fichero.
+ */
+export const leerComoBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+    });

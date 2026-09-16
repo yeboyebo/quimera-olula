@@ -12,9 +12,14 @@ describe("[ia-memoria-infra-01] iaMemoriaDesdeApi convierte correctamente de sna
         titulo: "Horario de atención",
         contenido: "El horario de atención es de 9 a 18h de lunes a viernes.",
         activo: true,
+        origen: "texto",
+        empresa_id: "empresa-1",
         creado_por: "admin@olula.com",
         creado_en: "2026-01-10T10:00:00Z",
         actualizado_en: "2026-02-15T12:30:00Z",
+        indexado: true,
+        indexado_en: "2026-02-15T12:31:00Z",
+        modelo_desactualizado: false,
     };
 
     test("mapea id correctamente", () => {
@@ -55,6 +60,36 @@ describe("[ia-memoria-infra-01] iaMemoriaDesdeApi convierte correctamente de sna
         const iaMemoriaInactiva: IaMemoriaApi = { ...iaMemoriaApi, activo: false };
         expect(iaMemoriaDesdeApi(iaMemoriaInactiva).activo).toBe(false);
     });
+
+    test("mapea origen 'texto' correctamente", () => {
+        expect(iaMemoriaDesdeApi(iaMemoriaApi).origen).toBe("texto");
+    });
+
+    test("mapea origen 'fichero', nombre_fichero y documento_id correctamente", () => {
+        const iaMemoriaFichero: IaMemoriaApi = {
+            ...iaMemoriaApi,
+            origen: "fichero",
+            nombre_fichero: "politica-devoluciones.pdf",
+            documento_id: "doc-1",
+        };
+        const iaMemoria = iaMemoriaDesdeApi(iaMemoriaFichero);
+        expect(iaMemoria.origen).toBe("fichero");
+        expect(iaMemoria.nombreFichero).toBe("politica-devoluciones.pdf");
+        expect(iaMemoria.documentoId).toBe("doc-1");
+    });
+
+    test("mapea indexado, indexado_en y modelo_desactualizado correctamente", () => {
+        const iaMemoria = iaMemoriaDesdeApi(iaMemoriaApi);
+        expect(iaMemoria.indexado).toBe(true);
+        expect(iaMemoria.indexadoEn).toBeInstanceOf(Date);
+        expect(iaMemoria.indexadoEn?.toISOString()).toBe("2026-02-15T12:31:00.000Z");
+        expect(iaMemoria.modeloDesactualizado).toBe(false);
+    });
+
+    test("indexado_en queda undefined cuando la memoria no está indexada", () => {
+        const iaMemoriaSinIndexar: IaMemoriaApi = { ...iaMemoriaApi, indexado: false, indexado_en: undefined };
+        expect(iaMemoriaDesdeApi(iaMemoriaSinIndexar).indexadoEn).toBeUndefined();
+    });
 });
 
 // ---------------------------------------------------------------------------
@@ -62,7 +97,7 @@ describe("[ia-memoria-infra-01] iaMemoriaDesdeApi convierte correctamente de sna
 // ---------------------------------------------------------------------------
 
 describe("[ia-memoria-infra-02] nuevaIaMemoriaAApi convierte correctamente de camelCase dominio a snake_case API", () => {
-    test("mapea titulo y contenido sin transformar el nombre", () => {
+    test("mapea titulo y contenido sin transformar el nombre, e inyecta empresa_id", () => {
         const payload = nuevaIaMemoriaAApi({
             titulo: "Política de devoluciones",
             contenido: "Las devoluciones se aceptan hasta 30 días después de la compra.",
@@ -71,6 +106,7 @@ describe("[ia-memoria-infra-02] nuevaIaMemoriaAApi convierte correctamente de ca
         expect(payload).toEqual({
             titulo: "Política de devoluciones",
             contenido: "Las devoluciones se aceptan hasta 30 días después de la compra.",
+            empresa_id: expect.any(String),
         });
     });
 });
