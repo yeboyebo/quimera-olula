@@ -14,6 +14,7 @@ import {
     cambiarLinea,
     cargarContexto,
     crearLinea,
+    crearLineaYPagar,
     getContextoVacio,
     Pagos,
     pagoHecho,
@@ -45,15 +46,10 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
 
             borrar_solicitado: "BORRANDO_VENTA",
 
-            bolsas_solicitadas: "AÑADIENDO_BOLSAS",
-
-            pago_efectivo_solicitado: "PAGANDO_EN_EFECTIVO",
-
-            pago_tarjeta_solicitado: "PAGANDO_CON_TARJETA",
-
-            pago_puntos_solicitado: "PAGANDO_CON_PUNTOS",
-
-            pago_vale_solicitado: "PAGANDO_CON_VALE",
+            // Igual que en Eneboo: al pulsar Pago se ofrece primero
+            // añadir bolsas, y solo al cerrar ese popup (con o sin
+            // bolsas) se abre el de pago.
+            pago_solicitado: "AÑADIENDO_BOLSAS_PARA_PAGAR",
 
             borrar_pago_solicitado: "BORRANDO_PAGO",
 
@@ -114,11 +110,11 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
             crear_linea_cancelado: "ABIERTO",
         },
 
-        AÑADIENDO_BOLSAS: {
+        AÑADIENDO_BOLSAS_PARA_PAGAR: {
 
-            alta_linea_lista: [crearLinea],
+            alta_linea_lista: [crearLineaYPagar],
 
-            bolsas_cancelado: "ABIERTO",
+            bolsas_cancelado: "PAGANDO",
         },
 
         CAMBIANDO_LINEA: {
@@ -135,30 +131,9 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
             borrar_linea_cancelado: "ABIERTO",
         },
 
-        PAGANDO_EN_EFECTIVO: {
+        PAGANDO: {
 
-            pago_en_efectivo_hecho: [pagoHecho],
-
-            pago_cancelado: "ABIERTO",
-        },
-
-        PAGANDO_CON_TARJETA: {
-
-            pago_con_tarjeta_hecho: [pagoHecho],
-
-            pago_cancelado: "ABIERTO",
-        },
-
-        PAGANDO_CON_PUNTOS: {
-
-            pago_con_puntos_hecho: [pagoHecho],
-
-            pago_cancelado: "ABIERTO",
-        },
-
-        PAGANDO_CON_VALE: {
-
-            pago_con_vale_hecho: [pagoHecho],
+            pago_hecho: [pagoHecho],
 
             pago_cancelado: "ABIERTO",
         },

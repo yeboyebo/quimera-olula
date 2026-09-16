@@ -224,6 +224,17 @@ export const crearLinea: ProcesarVentaTpv = async (contexto) => {
     ]);
 }
 
+// Igual que crearLinea, pero para cuando las bolsas se añaden justo antes
+// de pagar (ver AÑADIENDO_BOLSAS_PARA_PAGAR en maquina.ts) — al terminar
+// pasa directo a PAGANDO en vez de volver a ABIERTO.
+export const crearLineaYPagar: ProcesarVentaTpv = async (contexto) => {
+    return pipeVentaTpv(contexto, [
+        refrescarVenta,
+        refrescarLineas,
+        'PAGANDO',
+    ]);
+}
+
 export const cambiarLinea: ProcesarVentaTpv = async (contexto) => {
     return pipeVentaTpv(contexto, [
         refrescarVenta,

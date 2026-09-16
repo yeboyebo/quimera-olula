@@ -97,7 +97,10 @@ export const AnadirBolsas = ({ ventaId, lineas, publicar }: AnadirBolsasProps) =
               tipo="numero"
               valor={cantidades[tipo.referencia] ?? "0"}
               onChange={(valor) =>
-                setCantidades((prev) => ({ ...prev, [tipo.referencia]: String(valor ?? "") }))
+                setCantidades((prev) => ({
+                  ...prev,
+                  [tipo.referencia]: String(Math.max(0, Number(valor) || 0)),
+                }))
               }
             />
           ))}

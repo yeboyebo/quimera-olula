@@ -17,10 +17,7 @@ import { BorrarPagoVentaTpv } from "../borrar_pago/BorrarPagoVentaTpv.tsx";
 import { BorrarVentaTpv } from "../borrar/BorrarVentaTpv.tsx";
 import { VENTA_PDA } from "../crear/CrearVentaTpv.tsx";
 import { PagoVentaTpv, VentaTpv } from "../diseño.ts";
-import { PagarTarjetaVentaTpv } from "../pagar_con_tarjeta/PagarTarjetaVentaTpv.tsx";
-import { PagarPuntosVentaTpv } from "../pagar_con_puntos/PagarPuntosVentaTpv.tsx";
-import { PagarValeVentaTpv } from "../pagar_con_vale/PagarValeVentaTpv.tsx";
-import { PagarEfectivoVentaTpv } from "../pagar_en_efectivo/PagarEfectivoVentaTpv.tsx";
+import { PagarVentaTpv } from "../pagar/PagarVentaTpv.tsx";
 import { buscarTarjetasPuntos, TarjetaPuntos } from "../infraestructura.ts";
 import { editable, ventaTpvVacia, metaVentaTpv } from "./detalle.ts";
 import "./DetalleVentaTpv.css";
@@ -237,20 +234,8 @@ export const DetalleVentaTpv = ({
         <BorrarVentaTpv venta={ctx.venta} publicar={emitir} />
       )}
 
-      {estado === "PAGANDO_EN_EFECTIVO" && (
-        <PagarEfectivoVentaTpv publicar={emitir} venta={ctx.venta} />
-      )}
-
-      {estado === "PAGANDO_CON_TARJETA" && (
-        <PagarTarjetaVentaTpv publicar={emitir} venta={ctx.venta} />
-      )}
-
-      {estado === "PAGANDO_CON_PUNTOS" && (
-        <PagarPuntosVentaTpv publicar={emitir} venta={ctx.venta} />
-      )}
-
-      {estado === "PAGANDO_CON_VALE" && (
-        <PagarValeVentaTpv publicar={emitir} venta={ctx.venta} />
+      {estado === "PAGANDO" && (
+        <PagarVentaTpv publicar={emitir} venta={ctx.venta} />
       )}
 
       {estado === "BORRANDO_PAGO" && ctx.pagos.activo && (

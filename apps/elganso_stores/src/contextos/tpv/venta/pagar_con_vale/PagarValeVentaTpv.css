@@ -1,9 +1,0 @@
-.VentaTpv .PagarValeVentaTpv {
-    quimera-input[nombre="importe"], quimera-input[nombre="vale_id"] {
-        grid-column: span 6;
-    }
-
-    div[id="pendiente"], div[id="vale-codigo"], div[id="saldo-disponible"] {
-        grid-column: span 6;
-    }
-}
