@@ -35,14 +35,8 @@ export const CrearLineaVentaTpv = ({
 
     const onArticuloCambiado = useCallback(
         (cambios: Partial<CamposArticuloLinea>) => {
-            const { idArticulo, tipo, articulo, ...restCambios } = cambios;
-            const cambiosModelo: Partial<ModeloNuevaLinea> = {
-                ...restCambios,
-                ...(tipo !== undefined ? { tipoArticulo: tipo } : {}),
-                ...(articulo !== undefined ? { descripcionArticulo: articulo } : {}),
-                ...(idArticulo !== undefined ? { idArticulo, pvpUnitario: null } : {}),
-            };
-            lineaArticulo.set({ ...linea, ...cambiosModelo });
+            const extra = cambios.idArticulo !== undefined ? { pvpUnitario: null } : {};
+            lineaArticulo.set({ ...linea, ...cambios, ...extra });
         },
         [linea, lineaArticulo]
     );
@@ -74,9 +68,9 @@ export const CrearLineaVentaTpv = ({
             <div className="CrearLineaVentaTpv">
                 <quimera-formulario>
                     <ArticuloLinea
-                        tipo={linea.tipoArticulo}
+                        tipoArticulo={linea.tipoArticulo}
                         idArticulo={linea.idArticulo}
-                        articulo={linea.descripcionArticulo}
+                        descripcionArticulo={linea.descripcionArticulo}
                         descripcion={linea.descripcion ?? ""}
                         nombre="idArticulo_nueva_linea_tpv"
                         onChange={onArticuloCambiado}

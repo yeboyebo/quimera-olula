@@ -14,7 +14,7 @@ import { Entidad } from "@olula/lib/diseño.ts";
 import { type ReactNode, useEffect, useState } from "react";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import "./qkanban.css";
-import { MetaTabla } from "./qtabla.tsx";
+import { MetaTabla } from "./qtablacontrolada.tsx";
 
 export type QKanbanColumna = {
   id: string;

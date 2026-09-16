@@ -16,8 +16,16 @@ export interface Albaran extends Venta {
     lineas: LineaAlbaran[];
 }
 
+export interface MovimientoLote {
+    id: string;
+    loteId: string;
+    cantidad: number;
+}
+
 export interface LineaAlbaran extends LineaVenta {
     otro_campo?: string;
+    porLotes: boolean;
+    movimientos: MovimientoLote[];
 }
 
 export type NuevoAlbaran = NuevaVenta
@@ -55,6 +63,8 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<void>;
 
 export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
+
+
 
 export type FacturaCreada = {
     id: string;

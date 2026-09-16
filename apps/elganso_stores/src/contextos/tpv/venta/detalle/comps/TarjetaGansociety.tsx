@@ -2,10 +2,11 @@ import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { BotonEliminar } from "#/ventas/comun/componentes/BotonEliminar.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
+import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearNumero } from "@olula/lib/dominio.ts";
-import { useEffect, useState } from "react";
-import { CambiosDatosCliente, VentaTpv } from "../../diseño.ts";
+import { useContext, useEffect, useState } from "react";
+import { CambiosDatosCliente, PagoVentaTpv, VentaTpv } from "../../diseño.ts";
 import { buscarTarjetasPuntos, TarjetaPuntos } from "../../infraestructura.ts";
 import { BuscarTarjetaPuntos } from "../TabCliente/BuscarTarjetaPuntos.tsx";
 import "./TarjetaGansociety.css";
@@ -71,6 +72,7 @@ interface TarjetaGansocietyProps {
   publicar: EmitirEvento;
   editable: boolean;
   datosFacturaActivo: boolean;
+  pagos: PagoVentaTpv[];
 }
 
 // Búsqueda/asignación de la tarjeta Gansociety: en Eneboo es un botón de la
@@ -81,7 +83,9 @@ export const TarjetaGansociety = ({
   publicar,
   editable,
   datosFacturaActivo,
+  pagos,
 }: TarjetaGansocietyProps) => {
+  const { setError } = useContext(ContextoError);
   const [buscandoTarjeta, setBuscandoTarjeta] = useState(false);
   const [tarjetaAConfirmar, setTarjetaAConfirmar] = useState<TarjetaPuntos | null>(null);
   const [tarjetaVinculada, setTarjetaVinculada] = useState<TarjetaPuntos | null>(null);
@@ -116,10 +120,24 @@ export const TarjetaGansociety = ({
     setTarjetaAConfirmar(null);
   };
 
+  // Si ya hay un pago con puntos en la venta, no se deja quitar la
+  // tarjeta: el pago quedaría sin explicación (de qué tarjeta salieron
+  // esos puntos). Hay que borrar el pago primero.
+  const tienePagoPuntos = pagos.some((pago) => pago.formaPago === "PUNTOS");
+
   // Igual que en Eneboo (tbnLimpiaTarjeta_clicked): solo desvincula el
   // código de tarjeta, sin tocar el resto de datos del cliente ya
   // informados (nombre, CIF/NIF, dirección, email).
   const quitarTarjeta = async () => {
+    if (tienePagoPuntos) {
+      setError({
+        nombre: "Gansociety",
+        descripcion:
+          "No se puede quitar la tarjeta: hay un pago con puntos en la venta. Bórralo primero.",
+      });
+      return;
+    }
+
     await publicar("datos_cliente_listo", {
       email: venta.email ?? "",
       tarjeta_puntos_id: "",

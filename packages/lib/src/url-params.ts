@@ -84,19 +84,19 @@ const setFiltro = (criteria: Criteria, params: URLSearchParams) => {
 
 export const ordenDefecto = ["id", "DESC"];
 
-const getOrden = (params: URLSearchParams) => {
+const getOrden = (params: URLSearchParams, ordenDefectoPropio: string[] = ordenDefecto) => {
     const orden = params.get("orden");
-    if (!orden) return ordenDefecto;
+    if (!orden) return ordenDefectoPropio;
 
     return orden.split(",").flatMap(campo =>
         campo.startsWith("-") ? [campo.slice(1), "DESC"] : [campo, "ASC"]
     );
 };
 
-const setOrden = (criteria: Criteria, params: URLSearchParams) => {
+const setOrden = (criteria: Criteria, params: URLSearchParams, ordenDefectoPropio: string[] = ordenDefecto) => {
     const { orden } = criteria;
 
-    if (orden.toString() === ordenDefecto.toString()) return;
+    if (orden.toString() === ordenDefectoPropio.toString()) return;
 
     const partes: string[] = [];
     for (let i = 0; i < orden.length; i += 2) {
@@ -124,17 +124,17 @@ const setPaginacion = (criteria: Criteria, params: URLSearchParams) => {
     if (pagina && pagina !== paginacionDefecto.pagina) params.set("p", pagina.toString());
 }
 
-export const getCriteriaUrlParams = () => {
+export const getCriteriaUrlParams = (ordenDefectoPropio?: string[]) => {
     const params = new URLSearchParams(window.location.search);
 
     return {
         filtro: getFiltro(params),
-        orden: getOrden(params),
+        orden: getOrden(params, ordenDefectoPropio),
         paginacion: getPaginacion(params),
     }
 }
 
-export const setCriteriaUrlParams = (criteria: Criteria) => {
+export const setCriteriaUrlParams = (criteria: Criteria, ordenDefectoPropio?: string[]) => {
     const previo = new URLSearchParams(window.location.search);
     const id = previo.get("id");
     const modo = previo.get("modo");
@@ -144,25 +144,29 @@ export const setCriteriaUrlParams = (criteria: Criteria) => {
     if (modo) params.set("modo", modo);
 
     setFiltro(criteria, params);
-    setOrden(criteria, params);
+    setOrden(criteria, params, ordenDefectoPropio);
     setPaginacion(criteria, params);
 
     history.replaceState({}, "", formarUrl(params));
 }
 
-export const getUrlParams = () => {
+export const getUrlParams = (ordenDefectoPropio?: string[]) => {
     const id = getIdUrlParams();
-    const criteria = getCriteriaUrlParams();
+    const criteria = getCriteriaUrlParams(ordenDefectoPropio);
 
     return { id, criteria };
 }
 
-export const useUrlParams = (id: string | undefined, criteria: Criteria) => {
+// `ordenDefectoPropio`: para maestros con un orden por defecto propio
+// (distinto del genérico `ordenDefecto`, ej. fecha/hora en vez de id) — así
+// la URL se queda limpia (sin `orden=...`) cuando el criteria coincide con
+// ESE default, en vez de compararlo siempre contra el genérico.
+export const useUrlParams = (id: string | undefined, criteria: Criteria, ordenDefectoPropio?: string[]) => {
     useEffect(() => {
         setIdUrlParams(id);
     }, [id]);
 
     useEffect(() => {
-        setCriteriaUrlParams(criteria);
+        setCriteriaUrlParams(criteria, ordenDefectoPropio);
     }, [criteria])
 }

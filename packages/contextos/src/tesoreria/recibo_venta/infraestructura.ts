@@ -1,7 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
-import { GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
+import { AgruparRecibosVenta, DesagruparReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
 
 export interface MovimientoReciboApi {
     id: string;
@@ -12,7 +12,7 @@ export interface MovimientoReciboApi {
 
 export interface ReciboVentaApi {
     id: string;
-    factura_id: string;
+    factura_id: string | null;
     codigo: string;
     fecha_emision: string | null;
     fecha_vencimiento: string | null;
@@ -35,7 +35,7 @@ const movimientoReciboDesdeApi = (api: MovimientoReciboApi): MovimientoRecibo =>
 
 export const reciboVentaDesdeApi = (api: ReciboVentaApi): ReciboVenta => ({
     id: api.id,
-    facturaId: api.factura_id,
+    facturaId: api.factura_id ?? "",
     codigo: api.codigo,
     fechaEmision: fechaDesdeApi(api.fecha_emision),
     fechaVencimiento: fechaDesdeApi(api.fecha_vencimiento),
@@ -73,4 +73,24 @@ export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => 
         },
         "Error al pagar el recibo de venta"
     );
+};
+
+export const agruparRecibosVenta: AgruparRecibosVenta = async (id, reciboIds) => {
+    const respuesta = (await RestAPI.patch(
+        `${baseUrl}/${id}/agrupar`,
+        { recibo_ids: reciboIds },
+        "Error al agrupar los recibos"
+    )) as unknown as { grupo_id: string };
+
+    return respuesta.grupo_id;
+};
+
+export const desagruparReciboVenta: DesagruparReciboVenta = async (id) => {
+    const respuesta = (await RestAPI.patch(
+        `${baseUrl}/${id}/desagrupar`,
+        {},
+        "Error al deshacer la agrupación"
+    )) as unknown as { grupo_id: string };
+
+    return respuesta.grupo_id;
 };

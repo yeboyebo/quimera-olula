@@ -27,7 +27,7 @@
 .QArbolDocumentos-raiz {
     color: var(--color-texto-primario);
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
 }
 
 .QArbolDocumentos-botones {

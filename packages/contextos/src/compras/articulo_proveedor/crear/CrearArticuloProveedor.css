@@ -1,0 +1,19 @@
+.CrearArticuloProveedor {
+    quimera-formulario {
+        max-width: 500px;
+    }
+
+    quimera-autocompletar[nombre="proveedorId"] {
+        grid-column: span 12;
+    }
+
+    quimera-select[nombre="divisaId"],
+    quimera-input[nombre="coste"],
+    quimera-input[nombre="dto"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="refProveedor"] {
+        grid-column: span 12;
+    }
+}

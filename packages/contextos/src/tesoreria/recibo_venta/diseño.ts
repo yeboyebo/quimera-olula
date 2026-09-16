@@ -31,3 +31,7 @@ export type PagoReciboVenta = {
 };
 
 export type PatchPagarReciboVenta = (id: string, pago: PagoReciboVenta) => Promise<void>;
+
+export type AgruparRecibosVenta = (id: string, reciboIds: string[]) => Promise<string>;
+
+export type DesagruparReciboVenta = (id: string) => Promise<string>;

@@ -8,6 +8,7 @@ interface ClienteProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  soloLectura?: boolean;
   opcional?: boolean;
   enlace?: string;
   ref?: React.RefObject<HTMLInputElement | null>;

@@ -62,9 +62,9 @@ export const CambiarLineaBase = ({
         <div className="EditarLinea">
             <quimera-formulario>
             <ArticuloLinea
-                tipo={modelo.tipoArticulo}
+                tipoArticulo={modelo.tipoArticulo}
                 idArticulo={modelo.referencia}
-                articulo={modelo.descripcionArticulo}
+                descripcionArticulo={modelo.descripcionArticulo}
                 descripcion={modelo.descripcion}
                 nombre="referencia_cambiar_linea_pedido"
                 onChange={(cambios) => set({ ...modelo, ...cambios })}

@@ -9,7 +9,7 @@ import { QInput } from "../../atomos/qinput.tsx";
 import { QMonthYear } from "../../atomos/qmonthyear.tsx";
 import { Opcion, QMultiCheckbox } from "../../atomos/qmulticheckbox.tsx";
 import { QNumberInterval } from "../../atomos/qnumberinterval.tsx";
-import { MetaTabla } from "../../atomos/qtabla.tsx";
+import { MetaTabla, obtenerCols } from "../../atomos/qtablacontrolada.tsx";
 import "./MaestroFiltrosActivoControlado.css";
 
 export const filtroTextos = (id: string, valor: unknown) => {
@@ -139,7 +139,7 @@ export const getMetaFiltroDefecto = <T extends Entidad>(
 ): MetaFiltro => {
   const campos: Record<string, MetaCampoFiltro> = {};
 
-  for (const columna of metaTabla) {
+  for (const columna of obtenerCols(metaTabla)) {
     if (columna.id === "id") continue;
 
     switch (columna.tipo) {
@@ -371,11 +371,13 @@ export const MaestroFiltrosActivoControlado = ({
 
   const onBuscar = (): void => {
     onFiltroChanged(buildFiltros(modelo));
+    setMostar(false);
   };
 
   const onLimpiar = () => {
     init(filtroToValores(filtroInicial, metaFiltro));
     onFiltroChanged(filtroInicial);
+    setMostar(false);
   };
 
   const limpiarUno = (id: string) => {
@@ -391,14 +393,29 @@ export const MaestroFiltrosActivoControlado = ({
 
   if (!Object.keys(metaFiltro).length) return;
 
-  if (!mostrar)
+  if (!mostrar) {
+    const filtrosActivos = filtro.length - filtroInicial.length;
+
     return (
       <div className="MaestroFiltrosControlado">
         <QBoton tamaño="pequeño" onClick={() => setMostar(true)}>
-          Filtros ({filtro.length - filtroInicial.length})
+          Filtros ({filtrosActivos})
         </QBoton>
+        {filtrosActivos > 0 && (
+          <div className="limpiar-filtros">
+            <span
+              className="limpiar-filtros-icono"
+              onClick={onLimpiar}
+              title="Quitar filtros"
+              aria-label="Quitar filtros"
+            >
+              <QIcono nombre="cerrar" tamaño="md" />
+            </span>
+          </div>
+        )}
       </div>
     );
+  }
 
   return (
     <div className="MaestroFiltrosControlado" data-abierto="true">

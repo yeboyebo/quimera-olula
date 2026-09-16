@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.ts";
 import { publicar } from "@olula/lib/dominio.ts";
-import { cargarContexto, pagarRecibo } from "./detalle.js";
+import { cargarContexto, desagruparRecibo, pagarRecibo } from "./detalle.js";
 import { ContextoDetalleReciboVenta, EstadoDetalleReciboVenta } from "./diseño.js";
 
 export const getMaquina: () => Maquina<EstadoDetalleReciboVenta, ContextoDetalleReciboVenta> = () => {
@@ -21,12 +21,20 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboVenta, ContextoDetalle
             ],
 
             pagar_solicitado: 'PAGANDO',
+
+            desagrupado_solicitado: 'DESAGRUPANDO',
         },
 
         PAGANDO: {
             pago_confirmado: [pagarRecibo],
 
             pago_cancelado: 'ABIERTO',
+        },
+
+        DESAGRUPANDO: {
+            desagrupado_confirmado: [desagruparRecibo],
+
+            desagrupado_cancelado: 'ABIERTO',
         },
     };
 };

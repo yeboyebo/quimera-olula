@@ -1,7 +1,7 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import { ReciboVenta } from "../diseño.js";
-import { getReciboVenta, patchPagarReciboVenta } from "../infraestructura.js";
+import { desagruparReciboVenta, getReciboVenta, patchPagarReciboVenta } from "../infraestructura.js";
 import { ContextoDetalleReciboVenta, EstadoDetalleReciboVenta } from "./diseño.js";
 import { PagoRecibo } from "./pagar/diseño.js";
 
@@ -72,5 +72,16 @@ export const pagarRecibo: ProcesarDetalle = async (contexto, payload) => {
     return [
         { ...contexto, estado: 'ABIERTO', recibo },
         [["recibo_cambiado", recibo]],
+    ];
+};
+
+/** El recibo de grupo deja de existir, así que se vacía el detalle y se avisa al maestro. */
+export const desagruparRecibo: ProcesarDetalle = async (contexto) => {
+    const idGrupo = contexto.recibo.id;
+    await desagruparReciboVenta(idGrupo);
+
+    return [
+        { ...contexto, estado: 'INICIAL', recibo: reciboVentaInicial() },
+        [["recibo_desagrupado", idGrupo]],
     ];
 };

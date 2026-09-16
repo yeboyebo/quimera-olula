@@ -82,25 +82,31 @@ export const LineasLista = ({
     );
   };
 
+  const baseLineas = metaTablaLineaVenta<Linea>({ divisa });
+  const metaTablaData = {
+    cols: baseLineas.cols.filter((id) => baseLineas.metaCols[id]?.prioridad !== "baja"),
+    metaCols: cantidadEditable && onCambioCantidad
+      ? {
+          ...baseLineas.metaCols,
+          cantidad: {
+            ...baseLineas.metaCols["cantidad"],
+            render: (linea: Linea) => (
+              <EditarCantidadLinea
+                linea={linea}
+                onCantidadEditada={onCambioCantidad}
+              />
+            ),
+          },
+        }
+      : baseLineas.metaCols,
+    expansion: ({ entidad }: { entidad: Linea }) => (
+      <DetalleLineaExpandido linea={entidad} divisa={divisa} />
+    ),
+  };
+
   return (
     <ListadoSemiControlado
-      metaTabla={{
-        cols: metaTablaLineaVenta<Linea>({
-          divisa,
-          renderCantidad:
-            cantidadEditable && onCambioCantidad
-              ? (linea) => (
-                  <EditarCantidadLinea
-                    linea={linea}
-                    onCantidadEditada={onCambioCantidad}
-                  />
-                )
-              : undefined,
-        }).filter((columna) => columna.prioridad !== "baja"),
-        expansion: ({ entidad }) => (
-          <DetalleLineaExpandido linea={entidad} divisa={divisa} />
-        ),
-      }}
+      metaTabla={metaTablaData}
       tarjeta={(linea) => (
         <TarjetaLinea
           linea={linea}

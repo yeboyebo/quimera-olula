@@ -67,8 +67,11 @@ const getMetaTablaPagos = () => {
     {
       id: "formaPago",
       cabecera: "Forma de pago",
-      render: (pago: PagoVentaTpv) =>
-        pago.idTipoTarjeta ? `${pago.formaPago} ${pago.idTipoTarjeta}` : pago.formaPago,
+      render: (pago: PagoVentaTpv) => {
+        if (pago.idTipoTarjeta) return `${pago.formaPago} ${pago.idTipoTarjeta}`;
+        if (pago.formaPago === "VALE" && pago.vale) return `${pago.formaPago} (${pago.vale})`;
+        return pago.formaPago;
+      },
     },
     { id: "importe", cabecera: "Importe", tipo: "moneda" },
     { id: "idArqueo", cabecera: "Arqueo" },

@@ -1,14 +1,17 @@
+import { tipoCodBarrasDesdeApi } from "#/valores/codbarras.ts";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
     Articulo, ArticuloAlmacen, ArticuloAPI,
+    CambiosArticulo,
     DeleteArticulo,
     GetArticulo,
     GetArticulos,
     LeerCodBarras,
     PatchArticulo,
-    PostArticulo
+    PostArticulo,
+    SkuLote
 } from "./diseño.ts";
 
 const baseUrlArticulo = "/almacen/articulo";
@@ -23,14 +26,35 @@ export const obtenerArticulosAlmacen = async (filtro: Filtro, orden: Orden): Pro
     return RestAPI.get<{ datos: ArticuloAlmacenApi[] }>(baseUrlArticulo + q).then((respuesta) => respuesta.datos.map(articuloAlmacenDesdeApi));
 }
 
-
 export const ArticuloFromApi = (ArticuloApi: ArticuloAPI): Articulo => ({
-    ...ArticuloApi,
+    id: ArticuloApi.id,
+    descripcion: ArticuloApi.descripcion,
+    observaciones: ArticuloApi.observaciones ?? "",
+    codbarras: ArticuloApi.barcode ?? "",
+    tipoCodBarras: tipoCodBarrasDesdeApi(ArticuloApi.tipo_barcode),
+    familiaId: ArticuloApi.familia_id ?? "",
+    descripcionFamilia: ArticuloApi.descripcion_familia ?? "",
+    noStock: ArticuloApi.sin_stock,
+    seCompra: ArticuloApi.se_compra,
+    seVende: ArticuloApi.se_vende,
 });
 
-export const ArticuloToApi = (Articulo: Articulo): ArticuloAPI => ({
-    ...Articulo,
-});
+const oNulo = (valor: string): string | null => (valor === "" ? null : valor);
+
+const cambiosArticuloAApi = (cambios: CambiosArticulo): Record<string, unknown> => {
+    const api: Record<string, unknown> = {};
+
+    if (cambios.descripcion !== undefined) api.descripcion = cambios.descripcion;
+    if (cambios.observaciones !== undefined) api.observaciones = oNulo(cambios.observaciones);
+    if (cambios.codbarras !== undefined) api.barcode = oNulo(cambios.codbarras);
+    if (cambios.tipoCodBarras !== undefined) api.tipo_barcode = oNulo(cambios.tipoCodBarras);
+    if (cambios.familiaId !== undefined) api.familia_id = oNulo(cambios.familiaId);
+    if (cambios.noStock !== undefined) api.sin_stock = cambios.noStock;
+    if (cambios.seCompra !== undefined) api.se_compra = cambios.seCompra;
+    if (cambios.seVende !== undefined) api.se_vende = cambios.seVende;
+
+    return api;
+};
 
 export const getArticulo: GetArticulo = async (id) =>
     await RestAPI.get<{ datos: ArticuloAPI }>(`${baseUrlArticulo}/${id}`).then((respuesta) =>
@@ -48,24 +72,36 @@ export const getArticulos: GetArticulos = async (
 };
 
 export const postArticulo: PostArticulo = async (Articulo) => {
-    return await RestAPI.post(baseUrlArticulo, Articulo, "Error al guardar Articulo").then(
-        (respuesta) => respuesta.id
-    );
+    return await RestAPI.post(
+        baseUrlArticulo,
+        { descripcion: Articulo.descripcion ?? "" },
+        "Error al guardar Articulo"
+    ).then((respuesta) => respuesta.id);
 };
 
-export const patchArticulo: PatchArticulo = async (id, Articulo) => {
-    const apiArticulo = ArticuloToApi(Articulo as Articulo);
-    const ArticuloSinNulls = Object.fromEntries(
-        Object.entries(apiArticulo).map(([k, v]) => [k, v === null ? "" : v])
+export const patchArticulo: PatchArticulo = async (id, cambios) => {
+    await RestAPI.patch(
+        `${baseUrlArticulo}/${id}`,
+        cambiosArticuloAApi(cambios),
+        "Error al guardar el artículo"
     );
-    await RestAPI.patch(`${baseUrlArticulo}/${id}`, ArticuloSinNulls, "Error al guardar Articulo");
 };
 
 export const deleteArticulo: DeleteArticulo = async (id) => {
     await RestAPI.delete(`${baseUrlArticulo}/${id}`, "Error al borrar Articulo");
 };
 
+interface SkuLoteApi {
+    id: string;
+    descripcion: string;
+    lote_id: string | null;
+}
+
 export const leerCodBarras: LeerCodBarras = async (codigo) =>
-    await RestAPI.get<{ datos: ArticuloAPI }>(`${baseUrlArticulo}/sku_lote/${codigo}`).then((respuesta) =>
-        ArticuloFromApi(respuesta.datos)
+    await RestAPI.get<{ datos: SkuLoteApi }>(`${baseUrlArticulo}/sku_lote/${codigo}`).then(
+        (respuesta): SkuLote => ({
+            id: respuesta.datos.id,
+            descripcion: respuesta.datos.descripcion,
+            loteId: respuesta.datos.lote_id,
+        })
     );
