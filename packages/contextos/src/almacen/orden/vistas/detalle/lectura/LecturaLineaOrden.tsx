@@ -13,6 +13,7 @@ import { PreguntaVoz, useFlujoVoz } from "@olula/lib/voz/useFlujoVoz.ts";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { Articulo } from "../../../../comun/componentes/Articulo.tsx";
 import { Ubicacion } from "../../../../comun/componentes/Ubicacion.tsx";
+import { plugin } from "@olula/lib/dominio.js";
 import { getSkuLote, registrarLecturaOrden } from "../../../infraestructura.ts";
 import { getLecturaOrdenVacia, getMetaLecturaOrden } from "./lectura_orden.ts";
 import "./LecturaLineaOrden.css";
@@ -84,6 +85,7 @@ export const LecturaOrden = ({
         lecturaInicial
     );
 
+    const sgaActivo = plugin("sga") === "activo";
     const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(tipo);
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(tipo);
 
@@ -140,7 +142,7 @@ export const LecturaOrden = ({
                 parcial.cantidad = cantidad as number;
 
                 // 3. Ubicación origen (si aplica)
-                if (mostrarOrigen) {
+                if (sgaActivo && mostrarOrigen) {
                     const ubiOrigen = await flujoVoz.preguntar(preguntaUbicacion("ubicación de origen"));
                     if (cancelado) return;
                     parcial.idUbicacionOrigen = ubiOrigen.id;
@@ -151,7 +153,7 @@ export const LecturaOrden = ({
                 }
 
                 // 4. Ubicación destino (si aplica)
-                if (mostrarDestino) {
+                if (sgaActivo && mostrarDestino) {
                     const ubiDestino = await flujoVoz.preguntar(preguntaUbicacion("ubicación de destino"));
                     if (cancelado) return;
                     parcial.idUbicacionDestino = ubiDestino.id;
@@ -205,7 +207,7 @@ export const LecturaOrden = ({
                         sku={modelo.sku}
                         {...uiProps("idLote", "idLote")}
                     />
-                    {mostrarOrigen && (
+                    {sgaActivo && mostrarOrigen && (
                         <>
                             <Ubicacion
                                 label={"U. Origen"}
@@ -217,7 +219,7 @@ export const LecturaOrden = ({
                             />
                         </>
                     )}
-                    {mostrarDestino && (
+                    {sgaActivo && mostrarDestino && (
                         <>
                             <Ubicacion
                                 label={"U. Destino"}

@@ -65,7 +65,7 @@
 
     .qeditor-contenido .ProseMirror strong,
     .qeditor-contenido .ProseMirror b {
-        font-weight: 700;
+        font-weight: var(--grosor-letra-6);
     }
 
     .qeditor-contenido .ProseMirror em,
@@ -148,7 +148,7 @@
 
     .qtexto-json-contenido .ProseMirror strong,
     .qtexto-json-contenido .ProseMirror b {
-        font-weight: 700;
+        font-weight: var(--grosor-letra-6);
     }
 
     .qtexto-json-contenido .ProseMirror em,

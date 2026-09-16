@@ -1,3 +1,4 @@
+import { postBorrarMovimientoLote, postCrearMovimientoLote } from "#/almacen/albaran_venta/infraestructura.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
@@ -17,7 +18,7 @@ import {
     patchCambiarDescuento,
     patchCambiarDivisa,
     patchCantidadLinea,
-    patchFacturarAlbaran
+    patchFacturarAlbaran,
 } from "../infraestructura.ts";
 import { ContextoAlbaran, EstadoAlbaran } from "./diseño.ts";
 
@@ -218,11 +219,52 @@ export const crearLinea: ProcesarAlbaran = async (contexto, payload) => {
     ]);
 }
 
+export const crearLineaPorLotes: ProcesarAlbaran = async (contexto, payload) => {
+    console.log('crearLineaPorLotes', payload);
+    const { id } = payload as { id: string };
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
+        refrescarLineas,
+        activarLineaPorId(id),
+        'CAMBIANDO_LINEA',
+    ]);
+}
+
+export const reactivarLineaActiva: ProcesarAlbaran = async (contexto) => {
+    if (!contexto.lineaActiva) return contexto;
+    const lineas = contexto.albaran.lineas as LineaAlbaran[];
+    const lineaActiva = lineas.find(l => l.id === contexto.lineaActiva?.id) ?? contexto.lineaActiva;
+    return { ...contexto, lineaActiva };
+}
+
+export const crearMovimientoLote: ProcesarAlbaran = async (contexto, payload) => {
+    const { lote_id, cantidad } = payload as { lote_id: string; cantidad: number };
+    await postCrearMovimientoLote(contexto.albaran.id, contexto.lineaActiva!.id, { lote_id, cantidad });
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
+        refrescarLineas,
+        reactivarLineaActiva,
+        'CAMBIANDO_LINEA',
+    ]);
+}
+
+export const borrarMovimientoLote: ProcesarAlbaran = async (contexto, payload) => {
+    const { movimiento_id } = payload as { movimiento_id: string };
+    await postBorrarMovimientoLote(contexto.albaran.id, contexto.lineaActiva!.id, { movimiento_id });
+    return pipeAlbaran(contexto, [
+        refrescarAlbaran,
+        refrescarLineas,
+        reactivarLineaActiva,
+        'CAMBIANDO_LINEA',
+    ]);
+}
+
 export const cambiarLinea: ProcesarAlbaran = async (contexto) => {
 
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
         refrescarLineas,
+        reactivarLineaActiva,
         'ABIERTO',
     ]);
 }

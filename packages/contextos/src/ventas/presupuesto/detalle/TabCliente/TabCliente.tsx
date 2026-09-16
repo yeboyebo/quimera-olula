@@ -36,7 +36,7 @@ export const TabCliente = ({
           nombre="cliente_id"
           valor={modelo.cliente.cliente_id ?? ""}
           descripcion={modelo.cliente.nombre_cliente}
-          deshabilitado={true}
+          soloLectura={true}
         />
         <QInput
           nombre="id_fiscal"
