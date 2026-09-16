@@ -21,6 +21,7 @@ export interface TagArticulo extends Entidad {
     precio: number;
     grupoIvaProductoId: string;
     codbarras: string;
+    porLotes: boolean;
 }
 
 export type CambiosArticulo = Partial<

@@ -61,7 +61,7 @@ quimera-tabla {
 
     thead tr {
         background: var(--color-head-tabla);
-        font-weight: var(--grosor-letra-6);
+        font-weight: var(--grosor-letra-5);
     }
 
     tbody[data-cargando="true"] td {
@@ -101,7 +101,7 @@ quimera-tabla {
         &[data-modo="columna"] {
             padding: var(--espaciado-xs) var(--espaciado-m);
             font-size: var(--tamaño-letra-s);
-            font-weight: var(--grosor-letra-6);
+            font-weight: var(--grosor-letra-5);
             line-height: var(--tamaño-letra-l);
             vertical-align: middle;
             color: var(--color-texto-secundario);

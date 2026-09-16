@@ -51,7 +51,7 @@
         align-items: center;
         gap: var(--espaciado-xs);
         min-width: 0;
-        font-weight: 600;
+        font-weight: var(--grosor-letra-5);
     }
 
     .qkanban-columna-cabecera-textos {
@@ -73,7 +73,7 @@
     }
 
     .qkanban-resumen-total {
-        font-weight: var(--grosor-letra-6);
+        font-weight: var(--grosor-letra-5);
         color: var(--color-texto-primario);
     }
 

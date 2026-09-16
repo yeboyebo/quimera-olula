@@ -12,7 +12,7 @@
 
         th {
             text-align: left;
-            font-weight: var(--grosor-letra-6);
+            font-weight: var(--grosor-letra-5);
             font-size: var(--tamaño-letra-s);
             color: var(--color-texto-secundario);
             padding: var(--espaciado-s) var(--espaciado-m);

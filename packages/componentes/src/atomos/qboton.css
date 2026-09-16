@@ -70,7 +70,7 @@ quimera-boton {
         justify-content: center;
         cursor: pointer;
 
-        font-weight: var(--grosor-letra-6);
+        font-weight: var(--grosor-letra-5);
         font-size: var(--tamaño-letra-s);
         line-height: 1;
         font-family: var(--font-system-ui);

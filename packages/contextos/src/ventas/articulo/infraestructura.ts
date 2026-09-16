@@ -35,6 +35,7 @@ interface TagArticuloApi {
     precio: number;
     grupo_iva_producto_id: string;
     barcode: string | null;
+    por_lotes: boolean;
 }
 
 const articuloDesdeApi = (a: ArticuloApi): Articulo => ({
@@ -57,6 +58,7 @@ const tagArticuloDesdeApi = (t: TagArticuloApi): TagArticulo => ({
     precio: t.precio,
     grupoIvaProductoId: t.grupo_iva_producto_id,
     codbarras: t.barcode ?? "",
+    porLotes: t.por_lotes,
 });
 
 const oNulo = (valor: string): string | null => valor === "" ? null : valor;

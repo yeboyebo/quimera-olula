@@ -28,7 +28,11 @@ export const CrearLinea = ({
     const onModeloListo = useCallback(
         async (nuevaLinea: ModeloNuevaLinea, campo?: string) => {
             if (campo && !(camposConCambiosServidor as readonly string[]).includes(campo)) return;
-            return await queryNuevaLinea(albaranId, nuevaLinea);
+            const resultado = await queryNuevaLinea(albaranId, nuevaLinea);
+            if (resultado.porLotes) {
+                return { ...resultado, cantidad: 0 };
+            }
+            return resultado;
         },
         [albaranId]
     );
@@ -38,21 +42,20 @@ export const CrearLinea = ({
 
     const onArticuloCambiado = useCallback(
         async (cambios: Partial<CamposArticuloLinea>) => {
-            const { idArticulo, tipo, articulo, ...restCambios } = cambios;
-            const cambiosModelo: Partial<ModeloNuevaLinea> = {
-                ...restCambios,
-                ...(tipo !== undefined ? { tipoArticulo: tipo } : {}),
-                ...(articulo !== undefined ? { descripcionArticulo: articulo } : {}),
-                ...(idArticulo !== undefined ? { idArticulo, pvpUnitario: null } : {}),
-            };
-            lineaArticulo.set({ ...linea, ...cambiosModelo });
+            const extra = cambios.idArticulo !== undefined ? { pvpUnitario: null } : {};
+            const extra2 = cambios.porLotes ? { cantidad: 0 } : {};
+            lineaArticulo.set({ ...linea, ...cambios, ...extra, ...extra2 });
         },
         [linea, lineaArticulo]
     );
 
     const crear_ = useCallback(async () => {
-        const lineaConId = await postLinea(albaranId, lineaArticulo.modelo);
-        publicar("linea_creada", lineaConId);
+        const porLotes = lineaArticulo.modelo.porLotes;
+        const modelo = porLotes
+            ? { ...lineaArticulo.modelo, cantidad: 0 }
+            : lineaArticulo.modelo;
+        const lineaConId = await postLinea(albaranId, modelo);
+        publicar(porLotes ? "linea_por_lotes_creada" : "linea_creada", lineaConId);
     }, [lineaArticulo, albaranId, publicar]);
 
     const cancelar_ = useCallback(
@@ -66,6 +69,8 @@ export const CrearLinea = ({
     const [mostrarMas, setMostrarMas] = useState(false);
     const libre = linea.tipoArticulo === "libre";
     const ivaIncluidoActivo = plugin("iva_incluido") === "activo";
+    const porLotes = !!linea.porLotes;
+    console.log("LINEA", linea, porLotes);
 
     return (
         <QModal
@@ -77,14 +82,19 @@ export const CrearLinea = ({
             <div className="CrearLinea">
                 <quimera-formulario>
                     <ArticuloLinea
-                        tipo={linea.tipoArticulo}
+                        tipoArticulo={linea.tipoArticulo}
                         idArticulo={linea.idArticulo}
-                        articulo={linea.descripcionArticulo}
+                        descripcionArticulo={linea.descripcionArticulo}
                         descripcion={linea.descripcion ?? ""}
+                        porLotes={porLotes}
                         nombre="idArticulo_nueva_linea_albaran"
                         onChange={onArticuloCambiado}
                     />
-                    <QInput label="Cantidad" {...lineaArticulo.uiProps("cantidad")} />
+                    {porLotes ? (
+                        <p className="aviso-por-lotes">Artículo por lotes</p>
+                    ) : (
+                        <QInput label="Cantidad" {...lineaArticulo.uiProps("cantidad")} />
+                    )}
                     <QInput label="PVP unitario" {...lineaArticulo.uiProps("pvpUnitario")} />
                     <QInput label="Total" {...lineaArticulo.uiProps("pvpTotal")} />
 
@@ -117,7 +127,7 @@ export const CrearLinea = ({
                 </quimera-formulario>
                 <div className="botones">
                     <QBoton onClick={crear} deshabilitado={!valido}>
-                        Crear
+                        {porLotes ? "Añadir cantidades" : "Crear"}
                     </QBoton>
                 </div>
             </div>

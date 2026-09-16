@@ -1,6 +1,6 @@
-import { pedidoEsEditable } from "#/ventas/albaranarPedido/detalle/dominio.ts";
 import { EstadoDocumento } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
-import { postAlbaranarPedidos } from "#/ventas/albaranarPedido/infraestructura.ts";
+import { pedidoEsEditable } from "#/ventas/pedido/dominio.ts";
+import { postAlbaranarPedidos } from "#/ventas/pedido/infraestructura.ts";
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.js";
 import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { Pedido } from "../diseño.ts";

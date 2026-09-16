@@ -46,7 +46,7 @@
 }
 
 .NodoArbolItem-carpeta .NodoArbolItem-nombre {
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
 }
 
 .NodoArbolItem-fecha {
