@@ -10,6 +10,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { AnadirDocumento } from "./AnadirDocumento.tsx";
 import { CrearCarpeta } from "./CrearCarpeta.tsx";
 import { ConfiguracionArbolDocumentos } from "./diseño.ts";
+import { EliminarDocumento } from "./EliminarDocumento.tsx";
 import { getMaquinaArbolDocumentos } from "./maquina.ts";
 import { NodoArbolItem } from "./NodoArbolItem.tsx";
 import { useSeleccionArchivosMovil } from "./useSeleccionArchivosMovil.ts";
@@ -42,6 +43,7 @@ export const QArbolDocumentos = ({
     nodos: [],
     configuracion,
     carpetaPadreId: null,
+    documentoAEliminar: null,
   });
   const { intentar } = useContext(ContextoError);
   const [expandidos, setExpandidos] = useState<Set<string>>(new Set());
@@ -99,6 +101,13 @@ export const QArbolDocumentos = ({
       }
     },
     [intentar, onDescargar, handleError]
+  );
+
+  const handleEliminar = useCallback(
+    (documento: DocumentoArbol) => {
+      emitir("eliminacion_documento_solicitada", documento);
+    },
+    [emitir]
   );
 
   const handleCrearCarpeta = useCallback(
@@ -179,6 +188,7 @@ export const QArbolDocumentos = ({
               expandidos={expandidos}
               onToggle={handleToggle}
               onDescargar={handleDescargar}
+              onEliminar={handleEliminar}
               onCrearCarpeta={handleCrearCarpeta}
               onAnadirDocumento={handleAnadirDocumento}
             />
@@ -198,6 +208,12 @@ export const QArbolDocumentos = ({
           vinculoId={ctx.carpetaPadreId ?? objetoId}
           archivosIniciales={archivosPendientes}
           tamanioMaximoBytes={tamanioMaximoBytes}
+          publicar={emitir}
+        />
+      )}
+      {ctx.estado === "eliminando_documento" && ctx.documentoAEliminar && (
+        <EliminarDocumento
+          documento={ctx.documentoAEliminar}
           publicar={emitir}
         />
       )}
