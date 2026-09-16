@@ -1,6 +1,7 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.ts";
 import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { ReciboVenta } from "../diseño.js";
+import { puedenAgruparse } from "../dominio.js";
 import { agruparRecibosVenta, getRecibosVenta } from "../infraestructura.js";
 import { ContextoMaestroReciboVenta, EstadoMaestroReciboVenta } from "./diseño.js";
 
@@ -39,7 +40,7 @@ export const recibosAAgrupar = (ids: string[], recibos: ReciboVenta[]): ReciboVe
 export const agruparSeleccionados: ProcesarMaestro = async (contexto) => {
     const aAgrupar = recibosAAgrupar(contexto.seleccionados, contexto.recibos.lista);
 
-    if (!aAgrupar.length) return { ...contexto, estado: 'INICIAL' };
+    if (!puedenAgruparse(aAgrupar)) return { ...contexto, estado: 'INICIAL' };
 
     const ids = aAgrupar.map((recibo) => recibo.id);
     const grupoId = await agruparRecibosVenta(ids[0], ids);

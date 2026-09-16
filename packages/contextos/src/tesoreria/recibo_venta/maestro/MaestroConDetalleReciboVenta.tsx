@@ -1,4 +1,5 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
@@ -8,7 +9,7 @@ import { ClausulaFiltro, Criteria } from "@olula/lib/diseño.ts";
 import { criteriaDefecto, formatearMoneda } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DetalleReciboVenta } from "../detalle/DetalleReciboVenta.js";
 import { ReciboVenta } from "../diseño.js";
 import {
@@ -16,6 +17,7 @@ import {
     estadosDesdeFiltro,
     filtroEstadoReciboVenta,
     opcionesEstadoReciboVenta,
+    puedenAgruparse,
 } from "../dominio.js";
 import { AgruparRecibosVenta } from "./AgruparRecibosVenta.js";
 import { recibosAAgrupar } from "./maestro.js";
@@ -87,7 +89,11 @@ export const MaestroConDetalleReciboVenta = () => {
 
     const { estado, recibos, seleccionados } = ctx;
 
+    const [multiseleccion, setMultiseleccion] = useState(false);
+
     const aAgrupar = recibosAAgrupar(seleccionados, recibos.lista);
+    const agrupables = puedenAgruparse(aAgrupar);
+    const clientesDistintos = aAgrupar.length > 0 && !agrupables;
 
     useUrlParams(recibos.activo, recibos.criteria);
 
@@ -113,15 +119,25 @@ export const MaestroConDetalleReciboVenta = () => {
                             seleccionada={recibos.activo}
                             seleccionadas={seleccionados}
                             onMultiSeleccion={(ids) => emitir("seleccionados_cambiados", ids)}
-                            renderAcciones={() => (
-                                <div className="maestro-botones">
-                                    {aAgrupar.length > 0 && (
-                                        <QBoton onClick={() => emitir("agrupado_solicitado")}>
+                            modoMultiseleccion={multiseleccion}
+                            onModoMultiseleccionChanged={setMultiseleccion}
+                            renderAcciones={() =>
+                                multiseleccion && (
+                                    <div className="maestro-botones">
+                                        {clientesDistintos && (
+                                            <QEtiqueta variante="advertencia">
+                                                Solo se agrupan recibos de un mismo cliente
+                                            </QEtiqueta>
+                                        )}
+                                        <QBoton
+                                            onClick={() => emitir("agrupado_solicitado")}
+                                            deshabilitado={!agrupables}
+                                        >
                                             {`Agrupar (${aAgrupar.length})`}
                                         </QBoton>
-                                    )}
-                                </div>
-                            )}
+                                    </div>
+                                )
+                            }
                             onSeleccion={(payload) => emitir("recibo_seleccionado", payload)}
                             onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
                             onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}

@@ -10,6 +10,11 @@ const ESTADOS_PAGABLES = ["emitido", "devuelto"];
 export const reciboPagable = (recibo: ReciboVenta): boolean =>
     ESTADOS_PAGABLES.includes(recibo.estado.trim().toLowerCase());
 
+/** Solo se agrupan recibos de un mismo cliente: el grupo hereda su cliente y divisa. */
+export const puedenAgruparse = (recibos: ReciboVenta[]): boolean =>
+    recibos.length > 0 &&
+    recibos.every((recibo) => recibo.clienteId === recibos[0].clienteId);
+
 /** Prefijo con el que el servidor codifica los recibos de grupo: "GRC" + nº a 9 dígitos. */
 const PREFIJO_GRUPO = "GRC";
 
