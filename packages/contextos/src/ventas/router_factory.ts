@@ -6,16 +6,18 @@ import { MaestroConDetalleCliente } from "./cliente/maestro/MaestroConDetalleCli
 import { MaestroConDetalleFactura } from "./factura/maestro/MaestroConDetalleFactura.tsx";
 import { MaestroConDetallePedido } from "./pedido/maestro/MaestroConDetallePedido.tsx";
 import { MaestroConDetallePresupuesto } from "./presupuesto/maestro/MaestroConDetallePresupuesto.tsx";
+import { MaestroConDetalleTarifa } from "./tarifa/maestro/MaestroConDetalleTarifa.tsx";
 
 export class RouterFactoryVentasOlula {
-    static router = {
-        "ventas/cliente": MaestroConDetalleCliente,
-        "ventas/presupuesto": MaestroConDetallePresupuesto,
-        "ventas/pedido": MaestroConDetallePedido,
-        "ventas/albaran": MaestroConDetalleAlbaran,
-        "ventas/factura": MaestroConDetalleFactura,
-        "ventas/articulo": MaestroConDetalleArticulo,
-        "ventas/albaranar-pedido/:id": AlbaranarPedido,
-        "ventas/aprobar-presupuesto/:id": DetalleAprobarPresupuesto,
-    }
+        static router = {
+                "ventas/cliente": MaestroConDetalleCliente,
+                "ventas/presupuesto": MaestroConDetallePresupuesto,
+                "ventas/pedido": MaestroConDetallePedido,
+                "ventas/albaran": MaestroConDetalleAlbaran,
+                "ventas/factura": MaestroConDetalleFactura,
+                "ventas/articulo": MaestroConDetalleArticulo,
+                "ventas/albaranar-pedido/:id": AlbaranarPedido,
+                "ventas/aprobar-presupuesto/:id": DetalleAprobarPresupuesto,
+                "ventas/tarifa": MaestroConDetalleTarifa,
+        }
 }

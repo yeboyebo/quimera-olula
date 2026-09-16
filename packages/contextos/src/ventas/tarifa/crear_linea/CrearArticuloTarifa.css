@@ -1,0 +1,15 @@
+/* Ancho fijo por el mismo motivo que en CrearTarifa: el dialog de QModal es
+   shrink-to-fit y aquí el título lleva el nombre de la tarifa, de longitud
+   variable. */
+/* .CrearArticuloTarifa quimera-formulario {
+    width: 500px;
+    max-width: 100%;
+}
+
+.CrearArticuloTarifa quimera-autocompletar[nombre="articuloId"] {
+    grid-column: span 8;
+}
+
+.CrearArticuloTarifa quimera-input[nombre="precio"] {
+    grid-column: span 4;
+} */
