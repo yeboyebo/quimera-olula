@@ -73,3 +73,17 @@ export type PatchCredencialExterna = (id: string, cambios: CambiosCredencialExte
 export type RotarSecretoCredencialExterna = (id: string, secreto: SecretoCredencialExterna) => Promise<void>;
 
 export type DeleteCredencialExterna = (id: string) => Promise<void>;
+
+/**
+ * Un archivo encontrado al buscar en el conector de un proveedor (Google
+ * Drive...) — ver buscarArchivosDrive en infraestructura.ts, usado por el
+ * buscador del alta "Importar de un conector" de ia_memoria.
+ */
+export interface ItemArchivoConector {
+    id: string;
+    nombre: string;
+    tipo: string;
+    modificadoEn: string;
+}
+
+export type BuscarArchivosDrive = (id: string, texto?: string) => Promise<ItemArchivoConector[]>;

@@ -22,6 +22,9 @@ export const getMaquina: () => Maquina<EstadoDetalleIaMemoria, ContextoDetalleIa
             // Cambio guardado en API (por auto-guardado de useModelo)
             ia_memoria_guardada: [refrescarIaMemoria],
 
+            // Fichero reemplazado (ver TabFichero.tsx) — re-extraído en el backend
+            fichero_reemplazado: [refrescarIaMemoria],
+
             // Activar modal de borrado
             borrado_solicitado: "BORRANDO",
 
