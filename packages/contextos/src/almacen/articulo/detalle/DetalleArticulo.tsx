@@ -10,6 +10,9 @@ import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { BorrarArticulo } from "../borrar/BorrarArticulo.tsx";
+import { BorrarCajaProveedor } from "../borrar_caja_proveedor/BorrarCajaProveedor.tsx";
+import { CambiarCajaProveedor } from "../cambiar_caja_proveedor/CambiarCajaProveedor.tsx";
+import { CrearCajaProveedor } from "../crear_caja_proveedor/CrearCajaProveedor.tsx";
 import { Articulo } from "../diseño.ts";
 import "./DetalleArticulo.css";
 import {
@@ -53,7 +56,7 @@ export const DetalleArticulo = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articuloId]);
 
-  const { estado, articulo } = ctx;
+  const { estado, articulo, cajaProveedorActiva } = ctx;
 
   if (!articulo.id) return null;
 
@@ -91,7 +94,7 @@ export const DetalleArticulo = ({
             <Tab
               key="tab-general"
               label="General"
-              children={<TabGeneral form={form} articulo={articulo} />}
+              children={<TabGeneral form={form} articulo={articulo} publicar={emitir}/>}
             />,
             puede("ventas.articulo") && articulo.seVende && (
               <Tab
@@ -114,6 +117,29 @@ export const DetalleArticulo = ({
             articuloId={articulo.id}
             publicar={emitir}
             onCancelar={() => emitir("borrado_cancelado")}
+          />
+        )}
+        {cajaProveedorActiva && estado === "CREANDO_CAJA_PROVEEDOR" && (
+          <CrearCajaProveedor
+            articuloId={articulo.id}
+            proveedorId={cajaProveedorActiva.proveedorId}
+            publicar={emitir}
+          />
+        )}
+        {cajaProveedorActiva?.caja && estado === "CAMBIANDO_CAJA_PROVEEDOR" && (
+          <CambiarCajaProveedor
+            articuloId={articulo.id}
+            proveedorId={cajaProveedorActiva.proveedorId}
+            caja={cajaProveedorActiva.caja}
+            publicar={emitir}
+          />
+        )}
+        {cajaProveedorActiva?.caja && estado === "BORRANDO_CAJA_PROVEEDOR" && (
+          <BorrarCajaProveedor
+            articuloId={articulo.id}
+            proveedorId={cajaProveedorActiva.proveedorId}
+            caja={cajaProveedorActiva.caja}
+            publicar={emitir}
           />
         )}
       </div>

@@ -1,0 +1,66 @@
+import { TipoCaja } from "#/almacen/comun/componentes/TipoCaja.tsx";
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QInput } from "@olula/componentes/atomos/qinput.tsx";
+import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
+import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { MetaModelo } from "@olula/lib/dominio.ts";
+import { useForm } from "@olula/lib/useForm.js";
+import { useModelo } from "@olula/lib/useModelo.ts";
+import { useCallback, useMemo } from "react";
+import { NuevaCajaProveedor } from "../diseño.ts";
+import { postCajaProveedor } from "../infraestructura.ts";
+
+const metaNuevaCaja: MetaModelo<NuevaCajaProveedor> = {
+    campos: {
+        idTipoCaja: { requerido: true },
+        cantidad: { requerido: true, tipo: "numero" },
+    },
+};
+
+const nuevaCajaVacia = (): NuevaCajaProveedor => ({
+    idTipoCaja: "",
+    cantidad: 0,
+});
+
+export const CrearCajaProveedor = ({
+    articuloId,
+    proveedorId,
+    publicar,
+}: {
+    articuloId: string;
+    proveedorId: string;
+    publicar: EmitirEvento;
+}) => {
+    const cajaInicial = useMemo(() => nuevaCajaVacia(), []);
+    const { modelo, uiProps, valido } = useModelo(metaNuevaCaja, cajaInicial);
+
+    const crear_ = useCallback(async () => {
+        await postCajaProveedor(articuloId, proveedorId, modelo);
+        publicar("caja_proveedor_creada");
+    }, [articuloId, proveedorId, modelo, publicar]);
+
+    const cancelar_ = useCallback(() => {
+        publicar("alta_de_caja_proveedor_cancelada");
+    }, [publicar]);
+
+    const [crear, cancelar] = useForm(crear_, cancelar_);
+
+    return (
+        <QModal
+            abierto={true}
+            nombre="crearCajaProveedor"
+            titulo="Nueva caja"
+            onCerrar={cancelar}
+        >
+            <quimera-formulario>
+                <TipoCaja label="Tipo de caja" {...uiProps("idTipoCaja")} />
+                <QInput label="Cantidad" {...uiProps("cantidad")} />
+            </quimera-formulario>
+            <div className="botones maestro-botones">
+                <QBoton onClick={crear} deshabilitado={!valido}>
+                    Guardar
+                </QBoton>
+            </div>
+        </QModal>
+    );
+};
