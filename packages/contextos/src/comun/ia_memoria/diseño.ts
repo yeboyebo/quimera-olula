@@ -1,10 +1,12 @@
 import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
 
 /**
- * Origen del contenido de una memoria: texto escrito a mano, o extraído de
- * un fichero subido/importado (ver NuevaIaMemoriaDesdeFichero).
+ * Origen del contenido de una memoria: texto escrito a mano, extraído de un
+ * fichero subido/importado (ver NuevaIaMemoriaDesdeFichero), o vinculado a un
+ * documento externo (Google Drive...) que se mantiene sincronizado por un job
+ * periódico en el backend (ver NuevaIaMemoriaDesdeConector).
  */
-export type OrigenIaMemoria = "texto" | "fichero";
+export type OrigenIaMemoria = "texto" | "fichero" | "externo";
 
 /**
  * Interfaz principal de IaMemoria.
@@ -21,6 +23,10 @@ export interface IaMemoria extends Entidad {
     nombreFichero?: string;
     /** Solo cuando origen === "fichero": id del documento persistido (comandos/documental/documento) para descarga/reemplazo. */
     documentoId?: string;
+    /** Solo cuando origen === "externo": proveedor del documento vinculado (p. ej. "Google Drive"). */
+    proveedorExterno?: string;
+    /** Solo cuando origen === "externo": fecha de la última versión del documento externo sincronizada. */
+    externoModificadoEn?: Date;
     creadoPor: string;
     creadoEn: Date;
     actualizadoEn: Date;
@@ -54,6 +60,18 @@ export interface NuevaIaMemoriaDesdeFichero {
 }
 
 /**
+ * Tipo para crear una memoria vinculada a un documento de un conector externo
+ * (Google Drive...) — el backend importa el contenido en el momento del alta
+ * y lo mantiene sincronizado después mediante el job periódico.
+ */
+export interface NuevaIaMemoriaDesdeConector {
+    titulo?: string;
+    credencialId: string;
+    proveedor: string;
+    recursoId: string;
+}
+
+/**
  * Tipo para cambiar una memoria existente.
  */
 export type CambiosIaMemoria = Partial<IaMemoria>;
@@ -68,6 +86,8 @@ export type GetIaMemorias = (criteria: Criteria) => RespuestaLista<IaMemoria>;
 export type PostIaMemoria = (nuevaIaMemoria: NuevaIaMemoria) => Promise<string>;
 
 export type PostIaMemoriaDesdeFichero = (nuevaIaMemoria: NuevaIaMemoriaDesdeFichero) => Promise<string>;
+
+export type PostIaMemoriaDesdeConector = (nuevaIaMemoria: NuevaIaMemoriaDesdeConector) => Promise<string>;
 
 export type PatchIaMemoriaDesdeFichero = (id: string, fichero: NuevaIaMemoriaDesdeFichero) => Promise<void>;
 

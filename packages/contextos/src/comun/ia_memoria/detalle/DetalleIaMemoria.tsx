@@ -93,8 +93,8 @@ export const DetalleIaMemoria = ({
             <div className="DetalleIaMemoria">
                 <QuimeraAcciones acciones={accionesIaMemoria} />
                 <Tabs children={[
-                    iaMemoria.origen === 'fichero'
-                        ? <Tab label="Fichero"
+                    iaMemoria.origen === 'fichero' || iaMemoria.origen === 'externo'
+                        ? <Tab label={iaMemoria.origen === 'externo' ? "Origen" : "Fichero"}
                             key="tab-fichero"
                             children={
                                 <TabFichero

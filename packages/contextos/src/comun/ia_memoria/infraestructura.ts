@@ -3,8 +3,8 @@ import { empresaActual } from "#/valores/empresaActual.ts";
 import ComunUrls from "../urls.ts";
 import {
     CambiosIaMemoria, DeleteIaMemoria, EstadoRagIaMemoria, GetEstadoRagIaMemoria, GetIaMemoria, GetIaMemorias,
-    IaMemoria, NuevaIaMemoria, NuevaIaMemoriaDesdeFichero, OrigenIaMemoria, PatchIaMemoria, PatchIaMemoriaDesdeFichero,
-    PostIaMemoria, PostIaMemoriaDesdeFichero,
+    IaMemoria, NuevaIaMemoria, NuevaIaMemoriaDesdeConector, NuevaIaMemoriaDesdeFichero, OrigenIaMemoria,
+    PatchIaMemoria, PatchIaMemoriaDesdeFichero, PostIaMemoria, PostIaMemoriaDesdeConector, PostIaMemoriaDesdeFichero,
 } from "./diseño.ts";
 
 /**
@@ -18,6 +18,8 @@ export interface IaMemoriaApi {
     origen: OrigenIaMemoria;
     nombre_fichero?: string;
     documento_id?: string;
+    proveedor_externo?: string | null;
+    externo_modificado_en?: string | null;
     empresa_id: string;
     creado_por: string;
     creado_en: string;
@@ -45,6 +47,14 @@ interface NuevaIaMemoriaDesdeFicheroApi {
     empresa_id: string;
 }
 
+interface NuevaIaMemoriaDesdeConectorApi {
+    titulo?: string;
+    credencial_id: string;
+    proveedor: string;
+    recurso_id: string;
+    empresa_id: string;
+}
+
 type CambiosIaMemoriaApi = Partial<{
     titulo: string;
     contenido: string;
@@ -65,6 +75,8 @@ export const iaMemoriaDesdeApi = (api: IaMemoriaApi): IaMemoria => ({
     origen: api.origen,
     nombreFichero: api.nombre_fichero,
     documentoId: api.documento_id,
+    proveedorExterno: api.proveedor_externo ?? undefined,
+    externoModificadoEn: api.externo_modificado_en ? new Date(Date.parse(api.externo_modificado_en)) : undefined,
     creadoPor: api.creado_por,
     creadoEn: new Date(Date.parse(api.creado_en)),
     actualizadoEn: new Date(Date.parse(api.actualizado_en)),
@@ -93,6 +105,14 @@ const nuevaIaMemoriaDesdeFicheroAApi = (m: NuevaIaMemoriaDesdeFichero): NuevaIaM
     nombre_fichero: m.nombreFichero,
     tipo_mime: m.tipoMime,
     contenido_base64: m.contenidoBase64,
+    empresa_id: empresaActual(),
+});
+
+const nuevaIaMemoriaDesdeConectorAApi = (m: NuevaIaMemoriaDesdeConector): NuevaIaMemoriaDesdeConectorApi => ({
+    titulo: m.titulo,
+    credencial_id: m.credencialId,
+    proveedor: m.proveedor,
+    recurso_id: m.recursoId,
     empresa_id: empresaActual(),
 });
 
@@ -146,6 +166,20 @@ export const postIaMemoriaDesdeFichero: PostIaMemoriaDesdeFichero = async (nueva
         `${baseUrl}/importar`,
         nuevaIaMemoriaDesdeFicheroAApi(nuevaIaMemoria),
         "Error al importar el fichero para la memoria del asistente",
+    );
+    return respuesta.id;
+};
+
+/**
+ * Crear nueva memoria vinculada a un documento de un conector externo (Google
+ * Drive...) — el backend importa el contenido en el alta y la mantiene
+ * sincronizada después mediante el job periódico (ver origen "externo").
+ */
+export const postIaMemoriaDesdeConector: PostIaMemoriaDesdeConector = async (nuevaIaMemoria) => {
+    const respuesta = await RestAPI.post<NuevaIaMemoriaDesdeConectorApi>(
+        `${baseUrl}/importar-conector`,
+        nuevaIaMemoriaDesdeConectorAApi(nuevaIaMemoria),
+        "Error al importar el documento para la memoria del asistente",
     );
     return respuesta.id;
 };

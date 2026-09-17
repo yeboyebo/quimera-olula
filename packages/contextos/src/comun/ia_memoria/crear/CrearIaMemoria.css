@@ -15,4 +15,42 @@
         gap: 0.75rem;
         margin-top: 0.5rem;
     }
+
+    .CrearIaMemoria-conector-vacio {
+        color: var(--color-texto-secundario);
+    }
+
+    .CrearIaMemoria-conector-resultados {
+        list-style: none;
+        margin: var(--espaciado-s) 0 0;
+        padding: 0;
+        max-height: 12rem;
+        overflow-y: auto;
+        border: 1px solid var(--color-borde-sutil);
+        border-radius: var(--redondeo-borde-m);
+    }
+
+    .CrearIaMemoria-conector-estado {
+        padding: var(--espaciado-s) var(--espaciado-m);
+        color: var(--color-texto-secundario);
+    }
+
+    .CrearIaMemoria-conector-error {
+        padding: var(--espaciado-s) var(--espaciado-m);
+        color: var(--color-error);
+    }
+
+    .CrearIaMemoria-conector-resultado {
+        padding: var(--espaciado-s) var(--espaciado-m);
+        cursor: pointer;
+
+        &:hover {
+            background: var(--color-superficie-elevada);
+        }
+
+        &.seleccionado {
+            background: var(--color-superficie-elevada);
+            font-weight: 600;
+        }
+    }
 }

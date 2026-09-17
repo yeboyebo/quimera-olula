@@ -2,6 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
 import { ArrastraSuelta } from "@olula/componentes/gestor_documentos/ArrastraSuelta.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
+import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { useCallback, useState } from "react";
 import { leerComoBase64 } from "../crear/crear.js";
 import { IaMemoria } from "../diseño.js";
@@ -14,15 +15,21 @@ interface TabFicheroProps {
 }
 
 /**
- * Tab de una memoria con origen "fichero": el texto extraído se muestra de
- * solo lectura (editarlo a mano lo desincronizaría del fichero fuente sin
- * indicarlo en ningún sitio) — para corregirlo hay que reemplazar el fichero,
- * que re-extrae el texto y dispara un nuevo reindexado en el backend.
+ * Tab de una memoria con origen "fichero" o "externo": el texto extraído se
+ * muestra de solo lectura (editarlo a mano lo desincronizaría de la fuente
+ * sin indicarlo en ningún sitio).
+ *   - "fichero": para corregirlo hay que reemplazar el fichero subido, que
+ *     re-extrae el texto y dispara un nuevo reindexado en el backend.
+ *   - "externo": el contenido lo mantiene sincronizado el job periódico del
+ *     conector (ver comandos/comun/ia_memoria/aplicacion/sincronizar_externo)
+ *     — no hay ni descarga ni reemplazo manual, solo se informa del origen.
  */
 export const TabFichero = ({ iaMemoria, onReemplazado }: TabFicheroProps) => {
     const [reemplazando, setReemplazando] = useState(false);
     const [cargando, setCargando] = useState(false);
     const [descargando, setDescargando] = useState(false);
+
+    const esExterno = iaMemoria.origen === "externo";
 
     const descargarOriginal = useCallback(
         async () => {
@@ -62,26 +69,42 @@ export const TabFichero = ({ iaMemoria, onReemplazado }: TabFicheroProps) => {
     return (
         <div className="TabFichero">
             <dl>
-                <dt>Fichero</dt>
-                <dd>{iaMemoria.nombreFichero || "-"}</dd>
+                {esExterno ? (
+                    <>
+                        <dt>Sincronizado desde</dt>
+                        <dd>
+                            {iaMemoria.proveedorExterno || "-"}
+                            {iaMemoria.externoModificadoEn
+                                ? ` — última sincronización: ${formatearFechaDate(iaMemoria.externoModificadoEn)}`
+                                : ""}
+                        </dd>
+                    </>
+                ) : (
+                    <>
+                        <dt>Fichero</dt>
+                        <dd>{iaMemoria.nombreFichero || "-"}</dd>
+                    </>
+                )}
             </dl>
 
-            <div className="TabFichero-acciones">
-                <QBoton
-                    variante="borde"
-                    onClick={descargarOriginal}
-                    deshabilitado={descargando}
-                >
-                    Descargar original
-                </QBoton>
-                <QBoton
-                    variante="borde"
-                    onClick={() => setReemplazando(true)}
-                    deshabilitado={cargando || reemplazando}
-                >
-                    Reemplazar fichero
-                </QBoton>
-            </div>
+            {!esExterno && (
+                <div className="TabFichero-acciones">
+                    <QBoton
+                        variante="borde"
+                        onClick={descargarOriginal}
+                        deshabilitado={descargando}
+                    >
+                        Descargar original
+                    </QBoton>
+                    <QBoton
+                        variante="borde"
+                        onClick={() => setReemplazando(true)}
+                        deshabilitado={cargando || reemplazando}
+                    >
+                        Reemplazar fichero
+                    </QBoton>
+                </div>
+            )}
 
             {reemplazando && (
                 <div className="TabFichero-reemplazo">

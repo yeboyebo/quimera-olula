@@ -78,6 +78,26 @@ describe("[ia-memoria-infra-01] iaMemoriaDesdeApi convierte correctamente de sna
         expect(iaMemoria.documentoId).toBe("doc-1");
     });
 
+    test("mapea origen 'externo', proveedor_externo y externo_modificado_en correctamente", () => {
+        const iaMemoriaExterna: IaMemoriaApi = {
+            ...iaMemoriaApi,
+            origen: "externo",
+            proveedor_externo: "Google Drive",
+            externo_modificado_en: "2026-03-01T08:00:00Z",
+        };
+        const iaMemoria = iaMemoriaDesdeApi(iaMemoriaExterna);
+        expect(iaMemoria.origen).toBe("externo");
+        expect(iaMemoria.proveedorExterno).toBe("Google Drive");
+        expect(iaMemoria.externoModificadoEn).toBeInstanceOf(Date);
+        expect(iaMemoria.externoModificadoEn?.toISOString()).toBe("2026-03-01T08:00:00.000Z");
+    });
+
+    test("proveedorExterno y externoModificadoEn quedan undefined para una memoria de texto", () => {
+        const iaMemoria = iaMemoriaDesdeApi(iaMemoriaApi);
+        expect(iaMemoria.proveedorExterno).toBeUndefined();
+        expect(iaMemoria.externoModificadoEn).toBeUndefined();
+    });
+
     test("mapea indexado, indexado_en y modelo_desactualizado correctamente", () => {
         const iaMemoria = iaMemoriaDesdeApi(iaMemoriaApi);
         expect(iaMemoria.indexado).toBe(true);
