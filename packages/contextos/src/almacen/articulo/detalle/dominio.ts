@@ -1,9 +1,9 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, publicar } from "@olula/lib/dominio.js";
 import { MetaModelo, puede, stringNoVacio } from "@olula/lib/dominio.ts";
-import { Articulo, CambiosArticulo } from "../diseño.ts";
-import { getArticulo, patchArticulo } from "../infraestructura.ts";
-import { ContextoArticulo, EstadoArticulo } from "./diseño.ts";
+import { Articulo, CajaProveedorArticulo, CambiosArticulo } from "../diseño.ts";
+import { getArticulo, patchArticulo, patchCajaProveedorDefecto } from "../infraestructura.ts";
+import { CajaProveedorActiva, ContextoArticulo, EstadoArticulo } from "./diseño.ts";
 
 type ProcesarArticulo = ProcesarContexto<EstadoArticulo, ContextoArticulo>;
 
@@ -20,6 +20,7 @@ export const articuloVacio = (): Articulo => ({
     noStock: false,
     seCompra: false,
     seVende: false,
+    proveedores: [],
 });
 
 const camposEditables = [
@@ -56,6 +57,7 @@ export const metaArticulo: MetaModelo<Articulo> = {
 export const contextoArticuloInicial: ContextoArticulo = {
     estado: "INICIAL",
     articulo: articuloVacio(),
+    cajaProveedorActiva: null,
 };
 
 export const getContextoVacio: ProcesarArticulo = async (ctx) => ({
@@ -110,4 +112,20 @@ export const borrarArticulo: ProcesarArticulo = async (ctx, payload) => {
         getContextoVacio,
         publicar("articulo_borrado", articuloId),
     ]);
+};
+
+export const activarProveedorParaCaja: ProcesarArticulo = async (ctx, payload) => {
+    const proveedorId = payload as string;
+    return { ...ctx, cajaProveedorActiva: { proveedorId, caja: null } };
+};
+
+export const activarCajaProveedor: ProcesarArticulo = async (ctx, payload) => {
+    const { proveedorId, caja } = payload as { proveedorId: string; caja: CajaProveedorArticulo };
+    return { ...ctx, cajaProveedorActiva: { proveedorId, caja } satisfies CajaProveedorActiva };
+};
+
+export const marcarCajaProveedorDefecto: ProcesarArticulo = async (ctx, payload) => {
+    const { proveedorId, cajaId } = payload as { proveedorId: string; cajaId: string };
+    await patchCajaProveedorDefecto(ctx.articulo.id, proveedorId, cajaId);
+    return refrescarArticulo(ctx);
 };

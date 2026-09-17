@@ -1,12 +1,12 @@
 import { TipoCodBarras } from "#/valores/codbarras.ts";
-import { Entidad, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 
 export interface ArticuloAlmacen extends Entidad {
     id: string;
     descripcion: string;
 };
 
-export interface Articulo extends Entidad {
+export interface ArticuloItem extends Entidad {
     id: string;
     descripcion: string;
     observaciones: string;
@@ -19,17 +19,36 @@ export interface Articulo extends Entidad {
     seVende: boolean;
 };
 
-export interface ArticuloAPI extends Entidad {
-    id: string;
-    descripcion: string;
-    observaciones: string | null;
-    barcode: string | null;
-    tipo_barcode: string | null;
-    familia_id: string | null;
-    descripcion_familia: string | null;
-    sin_stock: boolean;
-    se_compra: boolean;
-    se_vende: boolean;
+export interface CajaProveedorArticulo extends Entidad {
+    id: string
+    idTipoCaja: string
+    tipoCaja: string
+    cantidad: number
+    esDefecto: boolean
+}
+
+export interface ProveedorArticulo extends Entidad {
+    id: string
+    idProveedor: string
+    proveedor: string
+    embalajes: CajaProveedorArticulo[]
+}
+
+export interface NuevaCajaProveedor extends Modelo {
+    idTipoCaja: string;
+    cantidad: number;
+}
+
+export type CambiosCajaProveedor = Partial<NuevaCajaProveedor>;
+
+export type PostCajaProveedor = (articuloId: string, proveedorId: string, nueva: NuevaCajaProveedor) => Promise<void>;
+export type DeleteCajaProveedor = (articuloId: string, proveedorId: string, cajaId: string) => Promise<void>;
+export type PatchCajaProveedor = (articuloId: string, proveedorId: string, cajaId: string, cambios: CambiosCajaProveedor) => Promise<void>;
+export type PatchCajaProveedorDefecto = (articuloId: string, proveedorId: string, cajaId: string) => Promise<void>;
+
+
+export interface Articulo extends ArticuloItem {
+    proveedores: ProveedorArticulo[]
 };
 
 export type CambiosArticulo = Partial<
@@ -57,7 +76,7 @@ export type GetArticulos = (
     filtro: Filtro,
     orden: Orden,
     paginacion?: Paginacion
-) => RespuestaLista<Articulo>;
+) => RespuestaLista<ArticuloItem>;
 export type LeerCodBarras = (codigo: string) => Promise<SkuLote>;
 
 export type PostArticulo = (Articulo: Partial<Articulo>) => Promise<string>;
