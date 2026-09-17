@@ -38,15 +38,20 @@ const campoFiltroEstado: MetaFiltro = {
   },
 };
 
+// Por fecha/hora, más nuevos arriba — el orden por id por defecto no
+// refleja bien la cronología real de los pedidos (ids de fuentes
+// distintas, p.ej. sincronizados vs generados en tienda). Se pasa a
+// getUrlParams/useUrlParams para que la URL se quede limpia (sin
+// "orden=...") cuando coincide con este default propio, en vez de
+// compararlo contra el genérico ["id","DESC"].
+const ORDEN_DEFECTO_VENTA_TPV = ["fecha", "DESC", "hora", "DESC"];
+
 export const MaestroConDetalleVentaTpv = () => {
   const esMovil = useEsMovil();
-  const { id, criteria } = getUrlParams();
-  // Por fecha/hora, más nuevos arriba — el orden por id por defecto no
-  // refleja bien la cronología real de los pedidos (ids de fuentes
-  // distintas, p.ej. sincronizados vs generados en tienda).
+  const { id, criteria } = getUrlParams(ORDEN_DEFECTO_VENTA_TPV);
   const criteriaInicial =
     criteria.filtro.length === 0
-      ? { ...criteriaDefecto, filtro: [], orden: ["fecha", "DESC", "hora", "DESC"] }
+      ? { ...criteriaDefecto, filtro: [], orden: ORDEN_DEFECTO_VENTA_TPV }
       : criteria;
 
   const { ctx, emitir } = useMaquina(getMaquina, {
@@ -55,7 +60,7 @@ export const MaestroConDetalleVentaTpv = () => {
     seleccionados: [],
   });
 
-  useUrlParams(ctx.ventas.activo, ctx.ventas.criteria);
+  useUrlParams(ctx.ventas.activo, ctx.ventas.criteria, ORDEN_DEFECTO_VENTA_TPV);
 
   useEffect(() => {
     (async () => {
