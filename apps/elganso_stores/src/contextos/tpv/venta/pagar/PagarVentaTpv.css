@@ -31,19 +31,19 @@
     /* De 2 en 2 en escritorio — en móvil qform.css ya fuerza cada campo
        a ocupar toda la línea (media query con !important), así que no
        hace falta repetirlo aquí. */
-    quimera-input[nombre="tarjeta"],
-    .campo-efectivo,
+    quimera-input[nombre="efectivo"],
+    .campo-tarjeta,
     .campo-vale,
     .campo-puntos {
         grid-column: span 6;
     }
 
-    /* Efectivo, Vale y Puntos llevan su propio texto/botón justo debajo,
+    /* Tarjeta, Vale y Puntos llevan su propio texto/botón justo debajo,
        en vez de como elementos sueltos en el grid — así el "Saldo
        disponible" siempre queda pegado a su input aunque el resto de
        campos vayan de 2 en 2 (si no, el grid los separa en columnas
        distintas). */
-    .campo-efectivo,
+    .campo-tarjeta,
     .campo-vale,
     .campo-puntos {
         display: flex;
@@ -52,7 +52,7 @@
         gap: var(--espaciado-xs);
     }
 
-    .campo-efectivo quimera-input,
+    .campo-tarjeta quimera-input,
     .campo-puntos quimera-input {
         width: 100%;
     }
