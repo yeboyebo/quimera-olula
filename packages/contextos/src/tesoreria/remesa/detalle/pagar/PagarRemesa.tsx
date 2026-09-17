@@ -24,7 +24,7 @@ export const PagarRemesa = ({ publicar }: { publicar: EmitirEvento }) => {
     <QModal
       abierto={true}
       nombre="pagar_remesa"
-      titulo="Pagar remesa"
+      titulo="Pagar remesa de cobro"
       onCerrar={cancelar}
     >
       <div className="PagarRemesa">

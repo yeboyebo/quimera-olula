@@ -109,7 +109,7 @@ export const MaestroConDetalleReciboVenta = () => {
       <MaestroDetalle<ReciboVenta>
         Maestro={
           <>
-            <h2>Recibos de venta</h2>
+            <h2>Recibos de cobro</h2>
             <Listado<ReciboVenta>
               metaTabla={metaTablaReciboVenta}
               metaFiltro={metaFiltroReciboVenta}

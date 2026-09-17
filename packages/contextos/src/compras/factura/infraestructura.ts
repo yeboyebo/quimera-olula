@@ -396,7 +396,7 @@ interface ReciboFacturaApi {
 
 export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
     return RestAPI.get<{ datos: ReciboFacturaApi[] }>(
-        `/tesoreria/recibo_compra/por_factura/${facturaId}`
+        `/tesoreria/recibo_pago/por_factura/${facturaId}`
     ).then((respuesta) => respuesta.datos.map((r): ReciboFactura => ({
         id: r.id,
         codigo: r.codigo,

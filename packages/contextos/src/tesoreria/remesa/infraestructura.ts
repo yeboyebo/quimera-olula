@@ -80,7 +80,7 @@ export const getRemesa: GetRemesa = async (id) => {
     return await RestAPI.getItem<Remesa, RemesaApi>(
         `${baseUrl}/${id}`,
         remesaDesdeApi,
-        "Error al obtener la remesa"
+        "Error al obtener la remesa de cobro"
     );
 };
 
@@ -89,7 +89,7 @@ export const getRemesas: GetRemesas = async (criteria) => {
         baseUrl,
         criteria,
         remesaDesdeApi,
-        "Error al obtener las remesas"
+        "Error al obtener las remesas de cobro"
     );
 };
 
@@ -97,7 +97,7 @@ export const postRemesa: PostRemesa = async (nueva) => {
     const respuesta = await RestAPI.post(
         baseUrl,
         { cuenta_id: nueva.cuentaId, recibo_ids: nueva.reciboIds },
-        "Error al crear la remesa"
+        "Error al crear la remesa de cobro"
     );
 
     return String(respuesta.id);
@@ -107,13 +107,13 @@ export const pagarRemesa: PagarRemesa = async (id, fecha) => {
     await RestAPI.post(
         `${baseUrl}/${id}/pagar`,
         { fecha },
-        "Error al pagar la remesa"
+        "Error al pagar la remesa de cobro"
     );
 };
 
 export const deshacerPagoRemesa: DeshacerPagoRemesa = async (id) => {
     await RestAPI.delete(
         `${baseUrl}/${id}/pago`,
-        "Error al deshacer el pago de la remesa"
+        "Error al deshacer el pago de la remesa de cobro"
     );
 };

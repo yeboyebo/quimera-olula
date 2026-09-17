@@ -38,7 +38,7 @@ export const DetalleRemesa = ({
 
     if (!ctx.remesa.id) return null;
 
-    const titulo = (r: Remesa) => `Remesa ${r.id}`;
+    const titulo = (r: Remesa) => `Remesa de cobro ${r.id}`;
 
     return (
         <Detalle

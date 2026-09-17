@@ -55,7 +55,7 @@ export const getReciboVenta: GetReciboVenta = async (id) => {
     return await RestAPI.getItem<ReciboVenta, ReciboVentaApi>(
         `${baseUrl}/${id}`,
         reciboVentaDesdeApi,
-        "Error al obtener el recibo de venta"
+        "Error al obtener el recibo de cobro"
     );
 };
 
@@ -64,7 +64,7 @@ export const getRecibosVenta: GetRecibosVenta = async (criteria) => {
         baseUrl,
         criteria,
         reciboVentaDesdeApi,
-        "Error al obtener los recibos de venta"
+        "Error al obtener los recibos de cobro"
     );
 };
 
@@ -75,7 +75,7 @@ export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => 
             cuenta_pago_id: pago.cuentaPagoId,
             fecha: pago.fecha,
         },
-        "Error al pagar el recibo de venta"
+        "Error al pagar el recibo de cobro"
     );
 };
 

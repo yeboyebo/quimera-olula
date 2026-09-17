@@ -37,11 +37,11 @@ export const RemesarRecibos = ({
     <QModal
       abierto={true}
       nombre="remesar_recibos"
-      titulo="Remesar recibos"
+      titulo="Crear remesa de cobro"
       onCerrar={cancelar}
     >
       <div className="RemesarRecibos">
-        <p>{`Se creará una remesa con ${cuantos} por ${formatearMoneda(
+        <p>{`Se creará una remesa de cobro con ${cuantos} por ${formatearMoneda(
           total,
           "EUR"
         )}.`}</p>

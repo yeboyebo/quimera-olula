@@ -24,9 +24,9 @@ export const DeshacerPagoRemesa = ({
   const [deshacer, cancelar] = useForm(deshacer_, cancelar_);
 
   const mensaje = [
-    `Se eliminará el pago de la remesa ${remesa.id}.`,
+    `Se eliminará el pago de la remesa de cobro ${remesa.id}.`,
     "",
-    "Según la configuración, los recibos de la remesa pueden volver a su estado anterior.",
+    "Según la configuración, sus recibos pueden volver a su estado anterior.",
   ].join("\n");
 
   return (
