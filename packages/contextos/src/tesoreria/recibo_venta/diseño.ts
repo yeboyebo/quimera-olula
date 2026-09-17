@@ -10,6 +10,7 @@ export interface MovimientoRecibo extends Entidad {
 export interface ReciboVenta extends Entidad {
     id: string;
     facturaId: string;
+    grupoId: string;
     codigo: string;
     fechaEmision: Date | null;
     fechaVencimiento: Date | null;
@@ -19,6 +20,7 @@ export interface ReciboVenta extends Entidad {
     nombreCliente: string;
     idFiscal: string;
     pagos: MovimientoRecibo[];
+    recibosAgrupados: ReciboVenta[];
 }
 
 export type GetReciboVenta = (id: string) => Promise<ReciboVenta>;

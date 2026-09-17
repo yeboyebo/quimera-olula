@@ -20,11 +20,17 @@ export const getMaquina: () => Maquina<EstadoMaestroReciboVenta, ContextoMaestro
 
             seleccionados_cambiados: maestro.seleccionadosCambiados,
             agrupado_solicitado: "AGRUPANDO",
+            remesado_solicitado: "REMESANDO",
         },
 
         AGRUPANDO: {
             agrupado_confirmado: maestro.agruparSeleccionados,
             agrupado_cancelado: "INICIAL",
+        },
+
+        REMESANDO: {
+            remesado_confirmado: maestro.remesarSeleccionados,
+            remesado_cancelado: "INICIAL",
         },
     };
 };

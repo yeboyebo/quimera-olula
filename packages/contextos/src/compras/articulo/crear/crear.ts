@@ -1,9 +1,9 @@
 import { MetaModelo, stringNoVacio } from "@olula/lib/dominio.ts";
 import { Articulo } from "../diseño.ts";
 
-export const nuevoArticuloVacio: Partial<Articulo> = {
+export const nuevoArticuloInicial = (): Partial<Articulo> => ({
     descripcion: "",
-};
+});
 
 export const metaNuevoArticulo: MetaModelo<Partial<Articulo>> = {
     campos: {
