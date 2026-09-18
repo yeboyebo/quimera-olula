@@ -17,7 +17,7 @@ export interface NodoArbolItemProps {
   expandidos: Set<string>;
   onToggle: (id: string) => void;
   onDescargar: (documento: DocumentoArbol) => void;
-  onEliminar: (documento: DocumentoArbol) => void;
+  onEliminar: (nodo: NodoArbol) => void;
   onCrearCarpeta: (carpetaPadreId: string) => void;
   onAnadirDocumento: (
     carpetaPadreId: string | null,
@@ -94,6 +94,22 @@ export const NodoArbolItem = ({
             }}
           >
             <QIcono nombre="documento_nuevo" tamaño="md" />
+          </QBoton>
+          {/*
+            Eliminar la carpeta se lleva todo lo que cuelga de ella. El
+            stopPropagation evita que el clic llegue a la fila y además
+            pliegue/despliegue la carpeta al abrirse el modal.
+          */}
+          <QBoton
+            tamaño="pequeño"
+            variante="texto"
+            props={{ "aria-label": `Eliminar carpeta ${nodo.nombre}` }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEliminar(nodo);
+            }}
+          >
+            <QIcono nombre="eliminar" tamaño="md" />
           </QBoton>
         </div>
         {/*

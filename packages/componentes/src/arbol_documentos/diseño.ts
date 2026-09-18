@@ -1,4 +1,4 @@
-import { DocumentoArbol, NodoArbol } from "@olula/lib/api/documentos.ts";
+import { NodoArbol } from "@olula/lib/api/documentos.ts";
 import { Contexto } from "@olula/lib/diseño.ts";
 
 export type ConfiguracionArbolDocumentos = {
@@ -17,5 +17,6 @@ export type ContextoArbolDocumentos = Contexto<EstadoArbolDocumentos> & {
     nodos: NodoArbol[];
     configuracion: ConfiguracionArbolDocumentos;
     carpetaPadreId: string | null;
-    documentoAEliminar: DocumentoArbol | null;
+    // Carpeta o documento: borrar una carpeta se lleva lo que contiene.
+    nodoAEliminar: NodoArbol | null;
 };

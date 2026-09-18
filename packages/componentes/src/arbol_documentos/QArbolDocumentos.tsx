@@ -4,7 +4,11 @@ import {
   QBoton,
   QIcono,
 } from "@olula/componentes/index.js";
-import { DocumentoArbol, DocumentosAPI } from "@olula/lib/api/documentos.ts";
+import {
+  DocumentoArbol,
+  DocumentosAPI,
+  NodoArbol,
+} from "@olula/lib/api/documentos.ts";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { AnadirDocumento } from "./AnadirDocumento.tsx";
@@ -43,7 +47,7 @@ export const QArbolDocumentos = ({
     nodos: [],
     configuracion,
     carpetaPadreId: null,
-    documentoAEliminar: null,
+    nodoAEliminar: null,
   });
   const { intentar } = useContext(ContextoError);
   const [expandidos, setExpandidos] = useState<Set<string>>(new Set());
@@ -103,9 +107,11 @@ export const QArbolDocumentos = ({
     [intentar, onDescargar, handleError]
   );
 
+  // Sirve para documentos y para carpetas: borrar una carpeta se lleva su
+  // contenido, y de eso avisa el modal de confirmación.
   const handleEliminar = useCallback(
-    (documento: DocumentoArbol) => {
-      emitir("eliminacion_documento_solicitada", documento);
+    (nodo: NodoArbol) => {
+      emitir("eliminacion_documento_solicitada", nodo);
     },
     [emitir]
   );
@@ -211,11 +217,8 @@ export const QArbolDocumentos = ({
           publicar={emitir}
         />
       )}
-      {ctx.estado === "eliminando_documento" && ctx.documentoAEliminar && (
-        <EliminarDocumento
-          documento={ctx.documentoAEliminar}
-          publicar={emitir}
-        />
+      {ctx.estado === "eliminando_documento" && ctx.nodoAEliminar && (
+        <EliminarDocumento nodo={ctx.nodoAEliminar} publicar={emitir} />
       )}
     </div>
   );

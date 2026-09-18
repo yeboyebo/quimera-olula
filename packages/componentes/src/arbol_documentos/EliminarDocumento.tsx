@@ -1,10 +1,18 @@
 import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
-import { DocumentoArbol, DocumentosAPI } from "@olula/lib/api/documentos.ts";
+import {
+  DocumentosAPI,
+  esCarpetaArbol,
+  NodoArbol,
+} from "@olula/lib/api/documentos.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useCallback } from "react";
 
 /**
- * Modal de confirmación de borrado de un documento del árbol documental.
+ * Modal de confirmación de borrado de un nodo del árbol documental.
+ *
+ * Sirve para documentos y para carpetas. Borrar una carpeta se lleva todo lo
+ * que contiene, así que el mensaje lo advierte: es una acción irreversible y
+ * desde el árbol no se ve cuánto cuelga de una carpeta cerrada.
  *
  * Patrón:
  *   - El padre lo renderiza condicionalmente cuando estado === "eliminando_documento".
@@ -14,18 +22,34 @@ import { useCallback } from "react";
  *   - No recibe prop `activo`; la visibilidad la controla el padre.
  */
 export interface EliminarDocumentoProps {
-  documento: DocumentoArbol;
+  nodo: NodoArbol;
   publicar: EmitirEvento;
 }
 
+const mensajeDe = (nodo: NodoArbol): string => {
+  if (!esCarpetaArbol(nodo)) {
+    return `¿Está seguro de que desea eliminar el documento ${nodo.nombre}?`;
+  }
+
+  const vacia = nodo.contenido.length === 0;
+
+  return vacia
+    ? `¿Está seguro de que desea eliminar la carpeta ${nodo.nombre}?`
+    : `¿Está seguro de que desea eliminar la carpeta ${nodo.nombre} ` +
+        `y todo su contenido? Se eliminarán también las subcarpetas y los ` +
+        `documentos que contenga.`;
+};
+
 export const EliminarDocumento = ({
-  documento,
+  nodo,
   publicar,
 }: EliminarDocumentoProps) => {
+  const esCarpeta = esCarpetaArbol(nodo);
+
   const eliminar = useCallback(async () => {
-    await DocumentosAPI.eliminar(documento.id);
+    await DocumentosAPI.eliminar(nodo.id);
     publicar("documento_eliminado");
-  }, [documento, publicar]);
+  }, [nodo, publicar]);
 
   const cancelar = useCallback(
     () => publicar("eliminacion_documento_cancelada"),
@@ -36,8 +60,8 @@ export const EliminarDocumento = ({
     <QModalConfirmacion
       nombre="eliminarDocumento"
       abierto={true}
-      titulo="Eliminar documento"
-      mensaje={`¿Está seguro de que desea eliminar el documento ${documento.nombre}?`}
+      titulo={esCarpeta ? "Eliminar carpeta" : "Eliminar documento"}
+      mensaje={mensajeDe(nodo)}
       onCerrar={cancelar}
       onAceptar={eliminar}
       labelAceptar="Eliminar"

@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.js";
 import { ContextoArbolDocumentos, EstadoArbolDocumentos } from "./diseño.ts";
-import { cargarArbol, seleccionarCarpetaPadre, seleccionarDocumentoAEliminar } from "./dominio.ts";
+import { cargarArbol, seleccionarCarpetaPadre, seleccionarNodoAEliminar } from "./dominio.ts";
 
 export const getMaquinaArbolDocumentos: () => Maquina<EstadoArbolDocumentos, ContextoArbolDocumentos> = () => {
     return {
@@ -12,7 +12,7 @@ export const getMaquinaArbolDocumentos: () => Maquina<EstadoArbolDocumentos, Con
             recargar_solicitado: [cargarArbol, "cargado"],
             creacion_carpeta_solicitada: [seleccionarCarpetaPadre, "creando_carpeta"],
             adicion_documento_solicitada: [seleccionarCarpetaPadre, "anadiendo_documento"],
-            eliminacion_documento_solicitada: [seleccionarDocumentoAEliminar, "eliminando_documento"],
+            eliminacion_documento_solicitada: [seleccionarNodoAEliminar, "eliminando_documento"],
         },
         creando_carpeta: {
             cargar_arbol: [cargarArbol, "cargado"],
@@ -27,7 +27,7 @@ export const getMaquinaArbolDocumentos: () => Maquina<EstadoArbolDocumentos, Con
         eliminando_documento: {
             cargar_arbol: [cargarArbol, "cargado"],
             documento_eliminado: [cargarArbol, "cargado"],
-            eliminacion_documento_cancelada: [seleccionarDocumentoAEliminar, "cargado"],
+            eliminacion_documento_cancelada: [seleccionarNodoAEliminar, "cargado"],
         },
     };
 };
