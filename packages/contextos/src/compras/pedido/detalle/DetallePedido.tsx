@@ -8,9 +8,10 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
-import { pedidoPendiente } from "../dominio.ts";
+import { pedidoAlbaranable, pedidoPendiente } from "../dominio.ts";
 import { getReportPedido } from "../infraestructura.ts";
 import {
     contextoDetallePedidoInicial,
@@ -51,6 +52,8 @@ export const DetallePedido = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
+    const navigate = useNavigate();
+
     if (!pedido.id) return null;
 
     const titulo = (p: Pedido) =>
@@ -61,7 +64,14 @@ export const DetallePedido = ({
         imprimir_blob(blob);
     };
 
+    const handleAlbaranar = () => navigate(`/compras/albaranar-pedido/${pedido.id}`);
+
     const accionesPedido = [
+        {
+            texto: "Albarán parcial",
+            onClick: handleAlbaranar,
+            deshabilitado: !pedidoAlbaranable(pedido),
+        },
         { texto: "Imprimir", onClick: imprimir },
         {
             icono: "eliminar",
