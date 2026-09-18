@@ -37,9 +37,8 @@ export const DetalleLicenciaFarma = ({
   const licencia = useModelo(metaLicenciaFarma, licenciaFarmaVacia);
   const { modelo, init, modificado, valido } = licencia;
   const [estado, setEstado] = useState<
-    "confirmarBorrado" | "revisandoDatos" | "edicion"
+    "confirmarBorrado" | "edicion"
   >("edicion");
-  // const [cargando, setCargando] = useState(false);
 
   const onGuardarClicked = async () => {
     await intentar(() => patchLicenciaFarma(modelo.id, modelo));
@@ -54,28 +53,7 @@ export const DetalleLicenciaFarma = ({
     setEstado("edicion");
   };
 
-  // const onDatosRevisadosClicked = async () => {
-  //   setCargando(true);
-  //   try {
-  //     await intentar(async () => {
-  //       const fechaRevision = await marcarDatosRevisados(modelo.id);
-  //       init({
-  //         ...modelo,
-  //         fechaRevisionDatos: fechaRevision,
-  //       });
-  //     });
-  //   } finally {
-  //     setCargando(false);
-  //     setEstado("edicion");
-  //   }
-  // };
-
   // console.log("mimensaje_licencia", puede("crm.trato.farma"));
-
-  // const puedeRevisarDatos =
-  //   modelo.estado === "En revisión" &&
-  //   !!modelo.clienteId &&
-  //   !modelo.fechaRevisionDatos;
 
   return (
     <Detalle
@@ -89,14 +67,6 @@ export const DetalleLicenciaFarma = ({
       {!!licenciaId && (
         <div className="DetalleLicenciaFarma">
           <div className="maestro-botones">
-            {/* {puedeRevisarDatos && (
-              <QBoton
-                onClick={onDatosRevisadosClicked}
-                deshabilitado={!puedeRevisarDatos || cargando}
-              >
-                {cargando ? "Procesando..." : "Datos revisados"}
-              </QBoton>
-            )} */}
             {/* <QBoton onClick={() => setEstado("confirmarBorrado")}>
               Borrar
             </QBoton> */}
