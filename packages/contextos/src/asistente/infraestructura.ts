@@ -2,6 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { tokenAcceso } from "@olula/lib/api/token_acceso.ts";
 import { eventoStreamDesdeApi, hiloDesdeApi, mensajesHiloDesdeApi, normalizarRespuestaIa } from "#/asistente/dominio.ts";
 import { A2uiClientAction, ConsultaIa, EventoStreamIa, HiloIa, MensajesHiloIa, RespuestaIa } from "#/asistente/diseño.ts";
+import { empresaActual } from "#/valores/empresaActual.ts";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const URL_IA = "/comun/ia";
@@ -12,6 +13,7 @@ const URL_IA_HILOS = "/comun/ia/hilos";
 export const consultaAApi = (consulta: ConsultaIa) => ({
     pregunta: consulta.pregunta,
     thread_id: consulta.threadId,
+    empresa_id: empresaActual(),
     ...(consulta.capacidades ? { capacidades: consulta.capacidades } : {}),
     ...(consulta.capacidadesHash ? { capacidades_hash: consulta.capacidadesHash } : {}),
     ...(consulta.contextoApp
@@ -109,7 +111,7 @@ export const enviarAccionA2ui = async (
 ): Promise<RespuestaIa> => {
     const raw = (await RestAPI.post(
         URL_IA_ACCION,
-        { version: "v0.9", action: accion, thread_id: threadId },
+        { version: "v0.9", action: accion, thread_id: threadId, empresa_id: empresaActual() },
         "Error al enviar la acción"
     )) as unknown as Record<string, unknown>;
     return normalizarRespuestaIa(raw);

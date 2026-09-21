@@ -3,6 +3,7 @@ import { MaestroConDetalleArticulo } from "./articulo/maestro/MaestroConDetalleA
 import { MaestroConDetalleFactura } from "./factura/maestro/MaestroConDetalleFactura.tsx";
 import { MaestroConDetallePedido } from "./pedido/maestro/MaestroConDetallePedido.tsx";
 import { MaestroConDetalleProveedor } from "./proveedor/maestro/MaestroConDetalleProveedor.tsx";
+import { AlbaranarPedido } from "./albaranar_pedido/vistas/detalle/AlbaranarPedido.tsx";
 
 export class RouterFactoryComprasOlula {
     static router = {
@@ -11,5 +12,6 @@ export class RouterFactoryComprasOlula {
         "compras/factura": MaestroConDetalleFactura,
         "compras/proveedor": MaestroConDetalleProveedor,
         "compras/articulo": MaestroConDetalleArticulo,
+        "compras/albaranar-pedido/:id": AlbaranarPedido,
     };
 }

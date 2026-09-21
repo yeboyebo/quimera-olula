@@ -3,20 +3,25 @@ import { TipoCodBarras } from "#/comun/componentes/tipoCodBarras.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QTextArea } from "@olula/componentes/atomos/qtextarea.tsx";
-import { FormModelo } from "@olula/lib/dominio.ts";
+import { FormModelo, plugin } from "@olula/lib/dominio.ts";
 import { Articulo } from "../diseño.ts";
 // import { UsoArticulo } from "../UsoArticulo.tsx";
+import { EmitirEvento } from "@olula/lib/diseño.js";
+import { ProveedoresArticulo } from "./proveedores/ProveedoresArticulo.tsx";
 import "./TabGeneral.css";
 
 export const TabGeneral = ({
   form,
   articulo,
+  publicar,
 }: {
   form: FormModelo;
   articulo: Articulo;
+  publicar: EmitirEvento;
 }) => {
   const { uiProps } = form;
-
+  const sgaActivo = plugin("sga") === "activo";
+  
   return (
     <div className="TabGeneral">
       {/* <div className="uso">{UsoArticulo(articulo)}</div> */}
@@ -33,6 +38,13 @@ export const TabGeneral = ({
         <TipoCodBarras {...uiProps("tipoCodBarras")} />
         <QCheckbox label="No controla stock" {...uiProps("noStock")} />
         <QTextArea label="Observaciones" {...uiProps("observaciones")} />
+        {
+        sgaActivo && (
+        <ProveedoresArticulo
+          articulo={articulo}
+          publicar={publicar}
+        />
+        )}
       </quimera-formulario>
     </div>
   );

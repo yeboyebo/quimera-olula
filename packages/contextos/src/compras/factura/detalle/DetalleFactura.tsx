@@ -25,7 +25,7 @@ import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
 import { TabRecibos } from "./TabRecibos.tsx";
-import { TotalesFactura } from "./TotalesFactura.tsx";
+import { TotalesDocumento } from "#/compras/comun/componentes/TotalesDocumento.tsx";
 
 export const DetalleFactura = ({
     id,
@@ -120,7 +120,7 @@ export const DetalleFactura = ({
                         />,
                     ]}
                 />
-                <TotalesFactura form={formModelo} />
+                <TotalesDocumento form={formModelo} />
                 <LineasFactura
                     factura={factura}
                     lineas={lineas}

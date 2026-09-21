@@ -52,6 +52,7 @@ export const Login = () => {
             tipo={app.Auth.formato_login as TipoFormato}
             valor={id}
             onChange={(v) => setId(v)}
+            autocompletar='on'
           />
           <QInput
             label="Contraseña"

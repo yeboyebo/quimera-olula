@@ -1,64 +1,52 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
+import { QModal } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { useFocus } from "@olula/lib/useFocus.ts";
+import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useContext } from "react";
-import { getArticulo, postArticulo } from "../infraestructura.ts";
-import { metaNuevoArticulo, nuevoArticuloVacio } from "./dominio.ts";
+import { useCallback, useMemo } from "react";
+import { postArticulo } from "../infraestructura.ts";
+import { metaNuevoArticulo, nuevoArticuloInicial } from "./crear.ts";
 
-interface CrearArticuloProps {
-  publicar?: EmitirEvento;
-  onCancelar?: () => void;
-  activo?: boolean;
-}
+export const CrearArticulo = ({ publicar }: { publicar: EmitirEvento }) => {
+  const inicial = useMemo(nuevoArticuloInicial, []);
 
-export const CrearArticulo = ({
-  publicar = async () => {},
-  onCancelar = () => {},
-  activo = false,
-}: CrearArticuloProps) => {
-  const nuevoArticulo = useModelo(metaNuevoArticulo, nuevoArticuloVacio);
-  const { intentar } = useContext(ContextoError);
+  const { modelo: articulo, uiProps, valido } = useModelo(
+    metaNuevoArticulo,
+    inicial
+  );
 
-  const guardar = async () => {
-    const id = await intentar(() => postArticulo(nuevoArticulo.modelo));
-    nuevoArticulo.init(nuevoArticuloVacio);
-    const articuloCreado = await getArticulo(id);
-    publicar("articulo_creado", articuloCreado);
-    onCancelar();
-  };
+  const crear_ = useCallback(async () => {
+    const id = await postArticulo(articulo);
+    publicar("articulo_creado", id);
+  }, [articulo, publicar]);
 
-  if (!activo) return null;
+  const cancelar_ = useCallback(
+    () => publicar("alta_de_articulo_cancelada"),
+    [publicar]
+  );
+
+  const [crear, cancelar] = useForm(crear_, cancelar_);
+  const focus = useFocus();
 
   return (
     <QModal
-      abierto={activo}
-      nombre="crear_articulo"
-      titulo="Nuevo Artículo"
-      onCerrar={onCancelar}
+      abierto={true}
+      nombre="crearArticulo"
+      titulo="Crear artículo"
+      onCerrar={cancelar}
     >
-      <>
+      <div className="CrearArticulo">
         <quimera-formulario>
-          <QInput
-            label="Descripción"
-            autoSeleccion={true}
-            {...nuevoArticulo.uiProps("descripcion")}
-          />
+          <QInput label="Descripción" {...uiProps("descripcion")} ref={focus} />
         </quimera-formulario>
-        <div className="botones">
-          <QBoton
-            onClick={guardar}
-            deshabilitado={nuevoArticulo.valido === false}
-          >
-            Guardar
-          </QBoton>
-          <QBoton variante="texto" onClick={onCancelar}>
-            Cancelar
+        <div className="botones maestro-botones">
+          <QBoton onClick={crear} deshabilitado={!valido}>
+            Crear
           </QBoton>
         </div>
-      </>
+      </div>
     </QModal>
   );
 };

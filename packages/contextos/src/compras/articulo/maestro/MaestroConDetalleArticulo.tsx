@@ -110,7 +110,7 @@ export const MaestroConDetalleArticulo = () => {
               seleccionada={articulos.activo}
               renderAcciones={() => (
                 <div className="maestro-botones">
-                  <QBoton onClick={() => emitir("creacion_solicitada")}>
+                  <QBoton onClick={() => emitir("crear_articulo_solicitado")}>
                     Nuevo Artículo
                   </QBoton>
                 </div>
@@ -131,11 +131,7 @@ export const MaestroConDetalleArticulo = () => {
         seleccionada={articulos.activo}
         modoDisposicion="maestro-50"
       />
-      <CrearArticulo
-        publicar={emitir}
-        onCancelar={() => emitir("creacion_cancelada")}
-        activo={ctx.estado === "CREANDO_ARTICULO"}
-      />
+      {ctx.estado === "CREANDO" && <CrearArticulo publicar={emitir} />}
     </div>
   );
 };

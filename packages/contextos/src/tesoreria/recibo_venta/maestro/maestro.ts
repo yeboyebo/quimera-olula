@@ -1,5 +1,6 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.ts";
 import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { postRemesa } from "../../remesa/infraestructura.js";
 import { ReciboVenta } from "../diseño.js";
 import { puedenAgruparse } from "../dominio.js";
 import { agruparRecibosVenta, getRecibosVenta } from "../infraestructura.js";
@@ -34,11 +35,11 @@ export const seleccionadosCambiados: ProcesarMaestro = async (contexto, payload)
     seleccionados: payload as string[],
 });
 
-export const recibosAAgrupar = (ids: string[], recibos: ReciboVenta[]): ReciboVenta[] =>
+export const recibosSeleccionados = (ids: string[], recibos: ReciboVenta[]): ReciboVenta[] =>
     recibos.filter((recibo) => ids.includes(recibo.id));
 
 export const agruparSeleccionados: ProcesarMaestro = async (contexto) => {
-    const aAgrupar = recibosAAgrupar(contexto.seleccionados, contexto.recibos.lista);
+    const aAgrupar = recibosSeleccionados(contexto.seleccionados, contexto.recibos.lista);
 
     if (!puedenAgruparse(aAgrupar)) return { ...contexto, estado: 'INICIAL' };
 
@@ -52,4 +53,23 @@ export const agruparSeleccionados: ProcesarMaestro = async (contexto) => {
     )) as ContextoMaestroReciboVenta;
 
     return Recibos.activar(recargado, grupoId);
+};
+
+export const remesarSeleccionados: ProcesarMaestro = async (contexto, payload) => {
+    const cuentaId = payload as string;
+    const aRemesar = recibosSeleccionados(contexto.seleccionados, contexto.recibos.lista);
+
+    if (!cuentaId || !aRemesar.length) return { ...contexto, estado: 'INICIAL' };
+
+    const remesaId = await postRemesa({
+        cuentaId,
+        reciboIds: aRemesar.map((recibo) => recibo.id),
+    });
+
+    return {
+        ...contexto,
+        estado: 'INICIAL',
+        seleccionados: [],
+        remesaCreada: remesaId,
+    };
 };

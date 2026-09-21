@@ -81,6 +81,7 @@ export interface LineaPedidoApi {
     tipo_irpf: number;
     cantidad_recibida: number;
     cerrada: boolean;
+    por_lotes: boolean;
 }
 
 interface NuevaLineaPedidoApi {
@@ -202,6 +203,7 @@ export const lineaPedidoDesdeApi = (api: LineaPedidoApi): LineaPedido => ({
     tipoIrpf: api.tipo_irpf,
     cantidadRecibida: api.cantidad_recibida,
     cerrada: api.cerrada,
+    porLotes: api.por_lotes,
 });
 
 const esProveedorNoRegistrado = (

@@ -35,7 +35,7 @@ export const getReciboCompra: GetReciboCompra = async (id) => {
     return await RestAPI.getItem<ReciboCompra, ReciboCompraApi>(
         `${baseUrl}/${id}`,
         reciboCompraDesdeApi,
-        "Error al obtener el recibo de compra"
+        "Error al obtener el recibo de pago"
     );
 };
 
@@ -44,6 +44,6 @@ export const getRecibosCompra: GetRecibosCompra = async (criteria) => {
         baseUrl,
         criteria,
         reciboCompraDesdeApi,
-        "Error al obtener los recibos de compra"
+        "Error al obtener los recibos de pago"
     );
 };
