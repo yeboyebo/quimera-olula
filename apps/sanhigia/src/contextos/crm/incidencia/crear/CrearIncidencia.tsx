@@ -1,5 +1,5 @@
 import { Articulo } from "#/almacen/comun/componentes/Articulo.tsx";
-import { FacturaCliente } from "#/ventas/comun/componentes/facturaCliente.tsx";
+import { Factura, OpcionFactura } from "#/ventas/comun/componentes/factura.tsx";
 // import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
@@ -62,12 +62,12 @@ export const CrearIncidencia = ({ publicar }: { publicar: EmitirEvento }) => {
   );
 
   const handleFacturaChange = useCallback(
-    (opcion: { valor: string; descripcion: string } | null) => {
+    (opcion: OpcionFactura | null) => {
       if (opcion) {
         set({
           ...modelo,
           facturaId: opcion.valor,
-          codigoFactura: opcion.descripcion,
+          codigoFactura: opcion.codigo,
         });
       } else {
         set({ ...modelo, facturaId: "", codigoFactura: "" });
@@ -156,7 +156,7 @@ export const CrearIncidencia = ({ publicar }: { publicar: EmitirEvento }) => {
             categoriaIncidencia={modelo.categoriaIncidencia || ""}
             onChange={handleSubCategoriaChange}
           />
-          <FacturaCliente
+          <Factura
             clienteId={modelo.clienteId}
             valor={modelo.facturaId || ""}
             onChange={handleFacturaChange}

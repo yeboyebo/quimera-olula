@@ -1,6 +1,6 @@
 import { Articulo } from "#/almacen/comun/componentes/Articulo.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { FacturaCliente } from "#/ventas/comun/componentes/facturaCliente.tsx";
+import { Factura, OpcionFactura } from "#/ventas/comun/componentes/factura.tsx";
 import {
   QBoton,
   QCheckbox,
@@ -66,12 +66,12 @@ export const TabGeneral = ({
   );
 
   const handleFacturaChange = useCallback(
-    (opcion: { valor: string; descripcion: string } | null) => {
+    (opcion: OpcionFactura | null) => {
       if (opcion) {
         set({
           ...modelo,
           facturaId: opcion.valor,
-          codigoFactura: opcion.descripcion,
+          codigoFactura: opcion.codigo,
         });
       } else {
         set({ ...modelo, facturaId: "", codigoFactura: "" });
@@ -155,7 +155,7 @@ export const TabGeneral = ({
         />
         <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
           <div style={{ flex: 1 }}>
-            <FacturaCliente
+            <Factura
               clienteId={modelo.clienteId}
               descripcion={modelo.codigoFactura || ""}
               valor={modelo.facturaId || ""}
