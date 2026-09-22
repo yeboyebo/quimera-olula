@@ -1,4 +1,4 @@
-import { DocumentosAPI } from "@olula/lib/api/documentos.ts";
+import { DocumentosAPI, NodoArbol } from "@olula/lib/api/documentos.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ConfiguracionArbolDocumentos, ContextoArbolDocumentos, EstadoArbolDocumentos } from "./diseño.ts";
 
@@ -12,6 +12,7 @@ export const cargarArbol: ProcesarArbolDocumentos = async (contexto, payload) =>
         ...contexto,
         configuracion,
         nodos,
+        nodoAEliminar: null,
     };
 };
 
@@ -19,5 +20,12 @@ export const seleccionarCarpetaPadre: ProcesarArbolDocumentos = async (contexto,
     return {
         ...contexto,
         carpetaPadreId: (payload as string | null) ?? null,
+    };
+};
+
+export const seleccionarNodoAEliminar: ProcesarArbolDocumentos = async (contexto, payload) => {
+    return {
+        ...contexto,
+        nodoAEliminar: (payload as NodoArbol | undefined) ?? null,
     };
 };
