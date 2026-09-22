@@ -9,9 +9,12 @@ export const iaMemoriaVacia: IaMemoria = {
     titulo: "",
     contenido: "",
     activo: true,
+    origen: "texto",
     creadoPor: "",
     creadoEn: new Date(0),
     actualizadoEn: new Date(0),
+    indexado: false,
+    modeloDesactualizado: false,
 };
 
 /**

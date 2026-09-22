@@ -3,14 +3,20 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Filtro, Orden } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
 import {
-    Articulo, ArticuloAlmacen, ArticuloAPI,
+    Articulo, ArticuloAlmacen, ArticuloItem,
     CambiosArticulo,
+    CambiosCajaProveedor,
     DeleteArticulo,
+    DeleteCajaProveedor,
     GetArticulo,
     GetArticulos,
     LeerCodBarras,
+    NuevaCajaProveedor,
     PatchArticulo,
+    PatchCajaProveedor,
+    PatchCajaProveedorDefecto,
     PostArticulo,
+    PostCajaProveedor,
     SkuLote
 } from "./diseño.ts";
 
@@ -26,17 +32,65 @@ export const obtenerArticulosAlmacen = async (filtro: Filtro, orden: Orden): Pro
     return RestAPI.get<{ datos: ArticuloAlmacenApi[] }>(baseUrlArticulo + q).then((respuesta) => respuesta.datos.map(articuloAlmacenDesdeApi));
 }
 
-export const ArticuloFromApi = (ArticuloApi: ArticuloAPI): Articulo => ({
-    id: ArticuloApi.id,
-    descripcion: ArticuloApi.descripcion,
-    observaciones: ArticuloApi.observaciones ?? "",
-    codbarras: ArticuloApi.barcode ?? "",
-    tipoCodBarras: tipoCodBarrasDesdeApi(ArticuloApi.tipo_barcode),
-    familiaId: ArticuloApi.familia_id ?? "",
-    descripcionFamilia: ArticuloApi.descripcion_familia ?? "",
-    noStock: ArticuloApi.sin_stock,
-    seCompra: ArticuloApi.se_compra,
-    seVende: ArticuloApi.se_vende,
+interface CajaProveedorArticuloApi {
+    id: string
+    tipo_caja_id: string
+    tipo_caja: string
+    cantidad: number
+}
+
+interface ProveedorArticuloApi {
+    id: string
+    proveedor_id: string
+    proveedor: string
+    embalajes: CajaProveedorArticuloApi[]
+    embalaje_por_defecto_id: string | null
+}
+
+interface ArticuloItemApi {
+    id: string;
+    descripcion: string;
+    observaciones: string | null;
+    barcode: string | null;
+    tipo_barcode: string | null;
+    familia_id: string | null;
+    descripcion_familia: string | null;
+    sin_stock: boolean;
+    se_compra: boolean;
+    se_vende: boolean;
+}
+
+interface ArticuloApi extends ArticuloItemApi {
+    proveedores: ProveedorArticuloApi[]
+}
+
+const articuloItemDesdeApi = (api: ArticuloItemApi): ArticuloItem => ({
+    id: api.id,
+    descripcion: api.descripcion,
+    observaciones: api.observaciones ?? "",
+    codbarras: api.barcode ?? "",
+    tipoCodBarras: tipoCodBarrasDesdeApi(api.tipo_barcode),
+    familiaId: api.familia_id ?? "",
+    descripcionFamilia: api.descripcion_familia ?? "",
+    noStock: api.sin_stock,
+    seCompra: api.se_compra,
+    seVende: api.se_vende,
+});
+
+const articuloDesdeApi = (api: ArticuloApi): Articulo => ({
+    ...articuloItemDesdeApi(api),
+    proveedores: api.proveedores.map((p) => ({
+        id: p.id,
+        idProveedor: p.proveedor_id,
+        proveedor: p.proveedor,
+        embalajes: p.embalajes.map((e) => ({
+            id: e.id,
+            idTipoCaja: e.tipo_caja_id,
+            tipoCaja: e.tipo_caja,
+            cantidad: e.cantidad,
+            esDefecto: e.id === p.embalaje_por_defecto_id,
+        })),
+    })),
 });
 
 const oNulo = (valor: string): string | null => (valor === "" ? null : valor);
@@ -57,8 +111,8 @@ const cambiosArticuloAApi = (cambios: CambiosArticulo): Record<string, unknown> 
 };
 
 export const getArticulo: GetArticulo = async (id) =>
-    await RestAPI.get<{ datos: ArticuloAPI }>(`${baseUrlArticulo}/${id}`).then((respuesta) =>
-        ArticuloFromApi(respuesta.datos)
+    await RestAPI.get<{ datos: ArticuloApi }>(`${baseUrlArticulo}/${id}`).then((respuesta) =>
+        articuloDesdeApi(respuesta.datos)
     );
 
 export const getArticulos: GetArticulos = async (
@@ -67,8 +121,8 @@ export const getArticulos: GetArticulos = async (
     paginacion?
 ) => {
     const q = criteriaQuery(filtro, orden, paginacion);
-    const respuesta = await RestAPI.get<{ datos: ArticuloAPI[]; total: number }>(baseUrlArticulo + q);
-    return { datos: respuesta.datos.map(ArticuloFromApi), total: respuesta.total };
+    const respuesta = await RestAPI.get<{ datos: ArticuloItemApi[]; total: number }>(baseUrlArticulo + q);
+    return { datos: respuesta.datos.map(articuloItemDesdeApi), total: respuesta.total };
 };
 
 export const postArticulo: PostArticulo = async (Articulo) => {
@@ -89,6 +143,43 @@ export const patchArticulo: PatchArticulo = async (id, cambios) => {
 
 export const deleteArticulo: DeleteArticulo = async (id) => {
     await RestAPI.delete(`${baseUrlArticulo}/${id}`, "Error al borrar Articulo");
+};
+
+const baseUrlCajaProveedor = (articuloId: string, proveedorId: string) =>
+    `${baseUrlArticulo}/${articuloId}/proveedor/${proveedorId}`;
+
+export const postCajaProveedor: PostCajaProveedor = async (articuloId, proveedorId, nueva: NuevaCajaProveedor) => {
+    await RestAPI.post(
+        `${baseUrlCajaProveedor(articuloId, proveedorId)}/crear_caja`,
+        { tipo_caja_id: nueva.idTipoCaja, cantidad: nueva.cantidad },
+        "Error al crear la caja"
+    );
+};
+
+export const deleteCajaProveedor: DeleteCajaProveedor = async (articuloId, proveedorId, cajaId) => {
+    await RestAPI.delete(
+        `${baseUrlCajaProveedor(articuloId, proveedorId)}/borrar_caja/${cajaId}`,
+        "Error al borrar la caja",
+    );
+};
+
+export const patchCajaProveedor: PatchCajaProveedor = async (articuloId, proveedorId, cajaId, cambios: CambiosCajaProveedor) => {
+    const body: Record<string, unknown> = {};
+    if (cambios.idTipoCaja !== undefined) body.tipo_caja_id = cambios.idTipoCaja;
+    if (cambios.cantidad !== undefined) body.cantidad = cambios.cantidad;
+    await RestAPI.patch(
+        `${baseUrlCajaProveedor(articuloId, proveedorId)}/cambiar_caja/${cajaId}`,
+        body,
+        "Error al cambiar la caja"
+    );
+};
+
+export const patchCajaProveedorDefecto: PatchCajaProveedorDefecto = async (articuloId, proveedorId, cajaId) => {
+    await RestAPI.patch(
+        `${baseUrlCajaProveedor(articuloId, proveedorId)}/cambiar_caja_defecto/`,
+        { caja_id: cajaId },
+        "Error al marcar la caja como defecto"
+    );
 };
 
 interface SkuLoteApi {

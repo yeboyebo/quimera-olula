@@ -1,0 +1,15 @@
+.TabFichero {
+    quimera-textarea[nombre] {
+        grid-column: span 12;
+    }
+
+    .TabFichero-acciones {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0.5rem 0 1rem;
+    }
+
+    .TabFichero-reemplazo {
+        margin-bottom: 1rem;
+    }
+}

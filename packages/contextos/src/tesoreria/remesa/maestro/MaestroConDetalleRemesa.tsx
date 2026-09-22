@@ -51,7 +51,7 @@ export const MaestroConDetalleRemesa = () => {
             <MaestroDetalle<Remesa>
                 Maestro={
                     <>
-                        <h2>Remesas</h2>
+                        <h2>Remesas de cobro</h2>
                         <Listado<Remesa>
                             metaTabla={metaTablaRemesa}
                             criteria={remesas.criteria}

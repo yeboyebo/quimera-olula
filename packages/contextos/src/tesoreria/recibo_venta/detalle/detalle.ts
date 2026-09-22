@@ -27,6 +27,7 @@ export const metaReciboVenta: MetaModelo<ReciboVenta> = {
 export const reciboVentaInicial = (): ReciboVenta => ({
     id: '',
     facturaId: '',
+    grupoId: '',
     codigo: '',
     fechaEmision: null,
     fechaVencimiento: null,
@@ -36,6 +37,7 @@ export const reciboVentaInicial = (): ReciboVenta => ({
     nombreCliente: '',
     idFiscal: '',
     pagos: [],
+    recibosAgrupados: [],
 });
 
 export const contextoDetalleReciboVentaInicial: ContextoDetalleReciboVenta = {
@@ -75,7 +77,6 @@ export const pagarRecibo: ProcesarDetalle = async (contexto, payload) => {
     ];
 };
 
-/** El recibo de grupo deja de existir, así que se vacía el detalle y se avisa al maestro. */
 export const desagruparRecibo: ProcesarDetalle = async (contexto) => {
     const idGrupo = contexto.recibo.id;
     await desagruparReciboVenta(idGrupo);

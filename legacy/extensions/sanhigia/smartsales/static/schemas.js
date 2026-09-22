@@ -1114,6 +1114,8 @@ export default parent => ({
     fechaCaducidad: Field.Date("fechacaducidad", "Fecha de caducidad").required(),
     fechaInicioProceso: Field.Date("fechainicio", "Fecha de inicio de trámite"),
     fechaFinProceso: Field.Date("fechafin", "Fecha aprobación o rechazo").required(),
+    estado: Field.Text("estado", "Estado de la licencia"),
+    codAgente: Field.Text("codagente", "Cod. Agente"),
   }),
   googlecalendar: Schema("googlecalendar", "id").fields({
     authorization_response: Field.Text("authorization_response", "authorization_response"),

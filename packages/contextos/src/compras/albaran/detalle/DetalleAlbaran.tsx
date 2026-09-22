@@ -25,7 +25,7 @@ import { getMaquina } from "./maquina.ts";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
-import { TotalesAlbaran } from "./TotalesAlbaran.tsx";
+import { TotalesDocumento } from "#/compras/comun/componentes/TotalesDocumento.tsx";
 
 export const DetalleAlbaran = ({
     id,
@@ -110,7 +110,7 @@ export const DetalleAlbaran = ({
                         />,
                     ]}
                 />
-                <TotalesAlbaran form={formModelo} />
+                <TotalesDocumento form={formModelo} />
                 <LineasAlbaran
                     albaran={albaran}
                     lineas={lineas}

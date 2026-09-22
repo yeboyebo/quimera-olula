@@ -4,12 +4,17 @@ import {
   QBoton,
   QIcono,
 } from "@olula/componentes/index.js";
-import { DocumentoArbol, DocumentosAPI } from "@olula/lib/api/documentos.ts";
+import {
+  DocumentoArbol,
+  DocumentosAPI,
+  NodoArbol,
+} from "@olula/lib/api/documentos.ts";
 import { ContextoError } from "@olula/lib/contexto.js";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { AnadirDocumento } from "./AnadirDocumento.tsx";
 import { CrearCarpeta } from "./CrearCarpeta.tsx";
 import { ConfiguracionArbolDocumentos } from "./diseño.ts";
+import { EliminarDocumento } from "./EliminarDocumento.tsx";
 import { getMaquinaArbolDocumentos } from "./maquina.ts";
 import { NodoArbolItem } from "./NodoArbolItem.tsx";
 import { useSeleccionArchivosMovil } from "./useSeleccionArchivosMovil.ts";
@@ -42,6 +47,7 @@ export const QArbolDocumentos = ({
     nodos: [],
     configuracion,
     carpetaPadreId: null,
+    nodoAEliminar: null,
   });
   const { intentar } = useContext(ContextoError);
   const [expandidos, setExpandidos] = useState<Set<string>>(new Set());
@@ -99,6 +105,15 @@ export const QArbolDocumentos = ({
       }
     },
     [intentar, onDescargar, handleError]
+  );
+
+  // Sirve para documentos y para carpetas: borrar una carpeta se lleva su
+  // contenido, y de eso avisa el modal de confirmación.
+  const handleEliminar = useCallback(
+    (nodo: NodoArbol) => {
+      emitir("eliminacion_documento_solicitada", nodo);
+    },
+    [emitir]
   );
 
   const handleCrearCarpeta = useCallback(
@@ -179,6 +194,7 @@ export const QArbolDocumentos = ({
               expandidos={expandidos}
               onToggle={handleToggle}
               onDescargar={handleDescargar}
+              onEliminar={handleEliminar}
               onCrearCarpeta={handleCrearCarpeta}
               onAnadirDocumento={handleAnadirDocumento}
             />
@@ -200,6 +216,9 @@ export const QArbolDocumentos = ({
           tamanioMaximoBytes={tamanioMaximoBytes}
           publicar={emitir}
         />
+      )}
+      {ctx.estado === "eliminando_documento" && ctx.nodoAEliminar && (
+        <EliminarDocumento nodo={ctx.nodoAEliminar} publicar={emitir} />
       )}
     </div>
   );
