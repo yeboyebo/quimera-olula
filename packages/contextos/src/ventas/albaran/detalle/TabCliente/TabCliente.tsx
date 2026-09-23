@@ -1,8 +1,8 @@
+import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
-import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
+import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { HookModelo } from "@olula/lib/useModelo.ts";
@@ -36,13 +36,13 @@ export const TabCliente = ({
           nombre="cliente_id"
           valor={modelo.cliente.cliente_id ?? ""}
           descripcion={modelo.cliente.nombre_cliente}
-          deshabilitado={true}
-        />
+          soloLectura={true}
+        />  
         <QInput
           nombre="id_fiscal"
           label="ID Fiscal"
           valor={modelo.cliente.id_fiscal}
-          deshabilitado={true}
+          soloLectura={true}
         />
 
         {clienteEditable && (
@@ -55,10 +55,10 @@ export const TabCliente = ({
         )}
 
         <QInput
-          deshabilitado={true}
           label="Dirección"
           nombre="direccion_cliente"
           valor={formatearDireccionVenta(modelo.cliente.direccion)}
+          soloLectura={true}
         />
       </quimera-formulario>
 

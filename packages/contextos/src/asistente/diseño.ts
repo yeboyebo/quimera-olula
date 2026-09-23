@@ -54,6 +54,9 @@ export interface ConsultaIa {
     capacidadesHash?: string;
     contextoApp?: { rutaActual?: string; app?: string };
     adjuntos?: AdjuntoIa[];
+    /** Documentado aquí por claridad; se inyecta directamente en consultaAApi
+     * (vía empresaActual()) en vez de exigir que cada caller lo pase. */
+    empresaId?: string;
 }
 
 /** Metadatos (sin bytes) de un adjunto ya persistido — llega en RespuestaIa/MensajeHiloIa;

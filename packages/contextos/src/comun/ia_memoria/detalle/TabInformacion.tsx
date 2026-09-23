@@ -1,3 +1,4 @@
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { formatearFechaDate } from "@olula/lib/dominio.js";
 import { IaMemoria } from "../diseño.js";
 
@@ -20,6 +21,20 @@ export const TabInformacion = ({ iaMemoria }: TabInformacionProps) => {
                 <dd>{formatearFechaDate(iaMemoria.creadoEn)}</dd>
                 <dt>Actualizado en</dt>
                 <dd>{formatearFechaDate(iaMemoria.actualizadoEn)}</dd>
+                <dt>Indexado (RAG)</dt>
+                <dd>
+                    {iaMemoria.indexado
+                        ? `Sí (${iaMemoria.indexadoEn ? formatearFechaDate(iaMemoria.indexadoEn) : "-"})`
+                        : "No"}
+                    {iaMemoria.modeloDesactualizado && (
+                        <>
+                            {" "}
+                            <QEtiqueta variante="advertencia">
+                                Modelo de embeddings desactualizado — conviene reindexar
+                            </QEtiqueta>
+                        </>
+                    )}
+                </dd>
             </dl>
         </div>
     );

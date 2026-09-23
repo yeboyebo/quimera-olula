@@ -81,6 +81,8 @@ export const cambioClienteVentaVacio: CambioClienteVenta = {
 
 export const puedeCambiarDivisa = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
 
+export const puedeCambiarAlmacen = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
+
 export const DIVISA_EMPRESA = "EUR";
 
 export const enDivisaExtranjera = (venta: { divisa_id: string }): boolean => {
@@ -148,6 +150,7 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         iva_incluido: { tipo: "checkbox", requerido: true },
         pvp_unitario: { tipo: "moneda", requerido: true },
+        pvp_total: { tipo: "moneda", bloqueado: true },
         dto_porcentual: metaDtoPorcentual,
         dto_lineal: metaDtoLineal,
         tipo_irpf: metaPorcentajeLinea,
@@ -167,7 +170,6 @@ export const metaNuevaVenta: MetaModelo<NuevaVenta> = {
     campos: {
         cliente_id: { requerido: true },
         direccion_id: { requerido: true },
-        empresa_id: { requerido: true },
     }
 };
 
@@ -179,7 +181,6 @@ export const metaNuevaVentaClienteNoRegistrado: MetaModelo<NuevaVentaClienteNoRe
     campos: {
         nombre_cliente: { requerido: true, tipo: "texto" },
         nombre_via: { requerido: true, tipo: "texto" },
-        empresa_id: { requerido: true },
     }
 };
 
@@ -272,6 +273,7 @@ export const nuevaLineaInicial: ModeloNuevaLinea = {
     tipoIva: 0,
     tipoRecargo: 0,
     tipoIrpf: 0,
+    porLotes: false,
 };
 
 export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
@@ -287,8 +289,19 @@ export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
         tipoRecargo: { tipo: "decimal", requerido: false, decimales: 2, bloqueado: true },
         idGrupoIvaProducto: { requerido: false },
         ivaIncluido: { tipo: "checkbox", requerido: false },
+        porLotes: { tipo: "checkbox" },
     },
     validacion: (linea) => !!(linea.idArticulo || linea.descripcion),
+    // onChange: (modelo, campo, valor) => {
+    //     console.log("onChange", campo, valor);
+    //     if (campo === "porLotes" && (valor === true)) {
+    //         return {
+    //             ...modelo,
+    //             cantidad: 0
+    //         };
+    //     }
+    //     return modelo;
+    // },
 };
 
 /**

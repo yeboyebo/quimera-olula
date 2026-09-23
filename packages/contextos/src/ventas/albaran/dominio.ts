@@ -6,6 +6,7 @@ import {
     metaNuevaVenta,
     metaVenta,
     nuevaVentaVacia,
+    puedeCambiarAlmacen,
     tituloDocumentoVenta,
     ventaVacia
 } from "../venta/dominio.ts";
@@ -96,14 +97,15 @@ export const metaAlbaran: MetaModelo<Albaran> = {
         agente_id: { bloqueado: true },
         por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
-    editable: (albaran: Albaran, _?: string) => {
-        return !albaran.facturado;
+    editable: (albaran: Albaran, campo?: string) => {
+        if (albaran.facturado) return false;
+        return campo === 'almacen_id' ? puedeCambiarAlmacen(albaran) : true;
     },
 };
 
 export const editable = modeloEsEditable<Albaran>(metaAlbaran);
 
-export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
+export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta as unknown as MetaModelo<LineaAlbaran>;
 
 const albaranVacioObjeto: Albaran = albaranVacio();
 

@@ -1,4 +1,5 @@
 import { getSchemas, util } from "quimera";
+import { ACL } from "quimera/lib";
 
 export const state = parent => ({
   ...parent,
@@ -81,6 +82,7 @@ export const bunch = parent => ({
       name: "toggleCreandoLicencia",
     },
     {
+      _log: ({ trato, tratoBuffer }) => ["Creando licencia", trato, tratoBuffer],
       type: "post",
       schema: getSchemas().licencias,
       data: (_, { trato, tratoBuffer }) => ({
@@ -90,6 +92,8 @@ export const bunch = parent => ({
         fechaFinProceso: tratoBuffer.fechaLicenciaFin, // Fecha aprobación o rechazo
         fechaInicioProceso: trato.fecha,
         tipo: "Tratamiento de regeneración ósea",
+        estado: "Presentada",
+        codAgente: trato.codAgente,
       }),
       success: "onCrearLicenciaSuccess",
       error: "onCrearLicenciaError",
@@ -486,14 +490,14 @@ export const bunch = parent => ({
     },
   ],
   compruebaAccionCambioEstadoTrato: [
-    // {
-    //   condition: (_, { trato }) =>
-    //     trato.idTipotrato === util.getUser().tratolicenciafarma && ACL.can("crm.trato.farma"),
-    //   type: "grape",
-    //   name: "onEstadoTratoTipoFarmaChanged",
-    // },
     {
-      // condition: (_, { trato }) => trato.idTipotrato !== util.getUser().tratolicenciafarma,
+      condition: (_, { trato }) =>
+        trato.idTipotrato === util.getUser().tratolicenciafarma && ACL.can("crm.trato.farma"),
+      type: "grape",
+      name: "onEstadoTratoTipoFarmaChanged",
+    },
+    {
+      condition: (_, { trato }) => trato.idTipotrato !== util.getUser().tratolicenciafarma,
       type: "grape",
       name: "onEstadoTratoComunChanged",
     },

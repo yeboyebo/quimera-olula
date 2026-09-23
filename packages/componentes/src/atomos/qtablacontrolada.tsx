@@ -20,7 +20,7 @@ type TipoColumna =
   | "hora"
   | "fechahora"
   | "booleano";
-type MetaColumna<T extends Entidad> = {
+export type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
   prioridad?: "alta" | "media" | "baja";
@@ -31,13 +31,27 @@ type MetaColumna<T extends Entidad> = {
   render?: (entidad: T) => string | ReactNode;
 };
 
+export type MetaTabla2<T extends Entidad> = {
+  cols: string[];
+  metaCols: Record<string, MetaColumna<T>>;
+  expansion?: ComponentType<{ entidad: T }>;
+};
+
 export type MetaTabla<T extends Entidad> =
   | MetaColumna<T>[]
-  | { cols: MetaColumna<T>[]; expansion?: ComponentType<{ entidad: T }> };
+  | { cols: MetaColumna<T>[]; expansion?: ComponentType<{ entidad: T }> }
+  | MetaTabla2<T>;
+
+const esMetaTabla2 = <T extends Entidad>(m: MetaTabla<T>): m is MetaTabla2<T> =>
+  !Array.isArray(m) && "metaCols" in m;
 
 export const obtenerCols = <T extends Entidad>(
   m: MetaTabla<T>
-): MetaColumna<T>[] => (Array.isArray(m) ? m : m.cols);
+): MetaColumna<T>[] => {
+  if (Array.isArray(m)) return m;
+  if (esMetaTabla2(m)) return m.cols.map((id) => m.metaCols[id]).filter(Boolean);
+  return m.cols;
+};
 
 const cabecera = <T extends Entidad>(
   cols: MetaColumna<T>[],
@@ -283,9 +297,8 @@ export const QTablaControlada = <T extends Entidad>({
 }: QTablaProps<T>) => {
   const modoMulti = seleccionadasIds !== undefined;
 
-  const { cols, expansion } = Array.isArray(metaTabla)
-    ? { cols: metaTabla, expansion: undefined }
-    : metaTabla;
+  const cols = obtenerCols(metaTabla);
+  const expansion = Array.isArray(metaTabla) ? undefined : metaTabla.expansion;
 
   const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
 

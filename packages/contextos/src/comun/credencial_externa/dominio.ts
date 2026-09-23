@@ -128,14 +128,27 @@ export const PROVEEDORES_CONOCIDOS: ProveedorConocido[] = [
         // miembro de un grupo en el que esté metido.
     },
     {
-        valor: "Gmail",
+        // Solo client_id/client_secret: a diferencia del antiguo stub de "Gmail",
+        // el refresh_token ya NO se pega a mano — lo obtiene el flujo OAuth2 real al
+        // pulsar "Conectar con Google" en el detalle (ver DetalleCredencialExterna.tsx),
+        // que lo persiste junto al access_token sin que el usuario los vea nunca.
+        valor: "Google Drive",
         categoria: "conector",
         tipoAuth: "oauth2",
-        icono: "gmail",
+        icono: "google",
         campos: [
             { clave: "client_id", etiqueta: "Client ID" },
             { clave: "client_secret", etiqueta: "Client secret", contraseña: true },
-            { clave: "refresh_token", etiqueta: "Refresh token", contraseña: true },
+        ],
+    },
+    {
+        valor: "Google Calendar",
+        categoria: "conector",
+        tipoAuth: "oauth2",
+        icono: "google",
+        campos: [
+            { clave: "client_id", etiqueta: "Client ID" },
+            { clave: "client_secret", etiqueta: "Client secret", contraseña: true },
         ],
     },
     {
@@ -176,7 +189,8 @@ export const iconoProveedor = (proveedor: string): string =>
 /**
  * Comprueba que el secreto trae todos los campos que exige el proveedor (si
  * es uno conocido, ver PROVEEDORES_CONOCIDOS) o si no `tipoAuth` — usado para
- * habilitar los botones de crear/rotar (ver CamposSecreto.tsx).
+ * habilitar el botón de alta (ver crear/CrearCredencialExterna.tsx), donde no
+ * hay ningún secreto ya guardado con el que completar lo que falte.
  */
 export const secretoCompleto = (
     proveedor: string,
@@ -190,6 +204,18 @@ export const secretoCompleto = (
 
     return campos.every((campo) => stringNoVacio(secreto[campo] ?? ""));
 };
+
+/**
+ * Comprueba que el formulario de edición (ver rotar/RotarCredencialExterna.tsx)
+ * trae AL MENOS un campo relleno — a diferencia de `secretoCompleto` (alta),
+ * aquí no hace falta rellenarlos todos: el backend fusiona lo que se manda
+ * con el secreto ya persistido (ver comandos/comun/credencial_externa/
+ * aplicacion/cambiar/caso_de_uso.py en el servidor), así que un campo en
+ * blanco significa "no lo toques", no "bórralo". Sin esta comprobación se
+ * podría mandar un PATCH vacío que no cambia nada.
+ */
+export const secretoConCambios = (secreto: SecretoCredencialExterna): boolean =>
+    Object.values(secreto).some((valor) => stringNoVacio(valor));
 
 export const credencialExternaVacia: CredencialExterna = {
     id: "",

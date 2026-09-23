@@ -28,6 +28,31 @@
     }
 }
 
+/* Solo cerrado: fila con el botón "Filtros (N)" y el icono de limpiar
+   centrados verticalmente. No se toca la regla base de arriba (afectaría
+   también al panel abierto, que ya se organiza como grid). */
+.MaestroFiltrosControlado:not([data-abierto]) {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+}
+
+/* Mismo estilo que el icono de cambiar modo listado (Listado.css:
+   .cambio-modo/.cambio-modo-icono), copiado aquí en vez de reutilizar esas
+   clases directamente para no acoplar este componente al de Listado. */
+.limpiar-filtros {
+    display: inline-flex;
+    align-self: center;
+}
+
+.limpiar-filtros-icono {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    line-height: 0.1;
+    fill: var(--color-primario);
+}
+
 /* Panel abierto: ocupa el ancho que le deja la cabecera y reparte los campos
    en columnas. El techo real lo sigue marcando el cap de .Maestro según
    modoDisposicion (30% / 50% / 100%). */

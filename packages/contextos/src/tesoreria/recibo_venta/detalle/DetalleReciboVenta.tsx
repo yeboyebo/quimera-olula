@@ -7,13 +7,16 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { ReciboVenta } from "../diseño.js";
-import { reciboPagable } from "../dominio.js";
+import { reciboDesagrupable, reciboPagable } from "../dominio.js";
 import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
 } from "./detalle.js";
+import { RecibosAgrupados } from "./agrupados/RecibosAgrupados.tsx";
+import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import "./DetalleReciboVenta.css";
 import { getMaquina } from "./maquina.js";
+import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
 import { PagarReciboVenta } from "./pagar/PagarReciboVenta.tsx";
 
 export const DetalleReciboVenta = ({
@@ -46,6 +49,12 @@ export const DetalleReciboVenta = ({
       onClick: () => emitir("pagar_solicitado"),
       deshabilitado: !reciboPagable(ctx.recibo),
     },
+    {
+      texto: "Deshacer agrupación",
+      onClick: () => emitir("desagrupado_solicitado"),
+      deshabilitado: !reciboDesagrupable(ctx.recibo),
+      advertencia: true,
+    },
   ];
 
   return (
@@ -70,7 +79,17 @@ export const DetalleReciboVenta = ({
           <QInput label="Factura" {...uiProps("facturaId")} />
         </quimera-formulario>
 
+        {ctx.recibo.recibosAgrupados.length > 0 && (
+          <RecibosAgrupados recibos={ctx.recibo.recibosAgrupados} />
+        )}
+
+        <PagosReciboVenta pagos={ctx.recibo.pagos} />
+
         {ctx.estado === "PAGANDO" && <PagarReciboVenta publicar={emitir} />}
+
+        {ctx.estado === "DESAGRUPANDO" && (
+          <DeshacerAgrupacion recibo={ctx.recibo} publicar={emitir} />
+        )}
       </div>
     </Detalle>
   );

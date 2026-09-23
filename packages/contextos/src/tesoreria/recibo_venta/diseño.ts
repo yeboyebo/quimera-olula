@@ -1,8 +1,16 @@
 import { Criteria, Entidad, RespuestaLista } from "@olula/lib/diseño.ts";
 
+export interface MovimientoRecibo extends Entidad {
+    id: string;
+    fecha: Date | null;
+    tipo: string;
+    estado: boolean;
+}
+
 export interface ReciboVenta extends Entidad {
     id: string;
     facturaId: string;
+    grupoId: string;
     codigo: string;
     fechaEmision: Date | null;
     fechaVencimiento: Date | null;
@@ -11,6 +19,8 @@ export interface ReciboVenta extends Entidad {
     clienteId: string;
     nombreCliente: string;
     idFiscal: string;
+    pagos: MovimientoRecibo[];
+    recibosAgrupados: ReciboVenta[];
 }
 
 export type GetReciboVenta = (id: string) => Promise<ReciboVenta>;
@@ -23,3 +33,7 @@ export type PagoReciboVenta = {
 };
 
 export type PatchPagarReciboVenta = (id: string, pago: PagoReciboVenta) => Promise<void>;
+
+export type AgruparRecibosVenta = (id: string, reciboIds: string[]) => Promise<string>;
+
+export type DesagruparReciboVenta = (id: string) => Promise<string>;

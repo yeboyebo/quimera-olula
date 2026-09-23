@@ -1,0 +1,77 @@
+.VentaTpv .PagarVentaTpv {
+    .resumen-pago {
+        margin-bottom: var(--espaciado-l);
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--color-borde-sutil);
+        border-radius: 8px;
+        background-color: var(--color-superficie-elevada);
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .resumen-pago-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+    }
+
+    .resumen-pago-item label {
+        font-size: var(--tamaño-letra-s);
+        color: var(--color-texto-secundario);
+    }
+
+    .resumen-pago-item span {
+        font-weight: bold;
+        font-size: var(--tamaño-letra-l);
+    }
+
+    /* De 2 en 2 en escritorio — en móvil qform.css ya fuerza cada campo
+       a ocupar toda la línea (media query con !important), así que no
+       hace falta repetirlo aquí. */
+    quimera-input[nombre="tarjeta"],
+    .campo-efectivo,
+    .campo-vale,
+    .campo-puntos {
+        grid-column: span 6;
+    }
+
+    /* Efectivo, Vale y Puntos llevan su propio texto/botón justo debajo,
+       en vez de como elementos sueltos en el grid — así el "Saldo
+       disponible" siempre queda pegado a su input aunque el resto de
+       campos vayan de 2 en 2 (si no, el grid los separa en columnas
+       distintas). */
+    .campo-efectivo,
+    .campo-vale,
+    .campo-puntos {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--espaciado-xs);
+    }
+
+    .campo-efectivo quimera-input,
+    .campo-puntos quimera-input {
+        width: 100%;
+    }
+
+    /* Los campos de importe (tipo moneda) se alinean a la derecha por
+       defecto en toda la app — aquí queremos que se lean alineados a la
+       izquierda, ocupando todo el ancho de su columna (50% en
+       escritorio, ver "grid-column: span 6" arriba). */
+    quimera-formulario quimera-input[tipo="moneda"],
+    quimera-formulario quimera-input[nombre="vale_id"] {
+        label,
+        input,
+        .valor-solo-lectura {
+            text-align: left;
+        }
+
+        .numero-formateado {
+            justify-content: flex-start;
+            text-align: left;
+        }
+    }
+}

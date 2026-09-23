@@ -4,7 +4,7 @@ import { presupuestoVacio } from "../../presupuesto/detalle/detalle.ts";
 import { getLineas, getPresupuesto } from "../../presupuesto/infraestructura.ts";
 import { LineaPresupuesto } from "../../presupuesto/diseño.ts";
 import { LineaAprobarPresupuesto } from "../diseño.ts";
-import { pendienteDeLinea } from "../dominio.ts";
+import { ordenLineas, pendienteDeLinea } from "../dominio.ts";
 import { patchAprobarPresupuestoParcial } from "../infraestructura.ts";
 import { ContextoAprobarPresupuesto, EstadoAprobarPresupuesto } from "./diseño.ts";
 
@@ -23,7 +23,7 @@ const paraAprobar = (lineas: LineaPresupuesto[]): LineaAprobarPresupuesto[] =>
 export const cargarDatos: ProcesarAprobarPresupuesto = async (contexto, presupuestoId) => {
     const presupuestoIdStr = presupuestoId as string;
     const presupuesto = await getPresupuesto(presupuestoIdStr);
-    const lineasData = await getLineas(presupuestoIdStr);
+    const lineasData = await getLineas(presupuestoIdStr, ordenLineas);
 
     return {
         ...contexto,
@@ -134,7 +134,7 @@ export const aprobarPresupuesto: ProcesarAprobarPresupuesto = async (contexto) =
     const pedidoCreado = await patchAprobarPresupuestoParcial(contexto.presupuesto.id, contexto.lineas.lista);
 
     const presupuestoActualizado = await getPresupuesto(contexto.presupuesto.id);
-    const lineasActualizadas = await getLineas(contexto.presupuesto.id);
+    const lineasActualizadas = await getLineas(contexto.presupuesto.id, ordenLineas);
 
     return {
         ...contexto,

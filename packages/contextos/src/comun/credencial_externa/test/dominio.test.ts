@@ -6,12 +6,14 @@ import {
     opcionesProveedorPorCategoria,
     proveedoresPorCategoria,
     secretoCompleto,
+    secretoConCambios,
 } from "../dominio.js";
 
 describe("buscarProveedorConocido", () => {
     it("encuentra un proveedor conocido por su valor exacto", () => {
         expect(buscarProveedorConocido("Telegram")?.tipoAuth).toBe("api_key");
-        expect(buscarProveedorConocido("Gmail")?.tipoAuth).toBe("oauth2");
+        expect(buscarProveedorConocido("Google Drive")?.tipoAuth).toBe("oauth2");
+        expect(buscarProveedorConocido("Google Calendar")?.tipoAuth).toBe("oauth2");
         expect(buscarProveedorConocido("Correo (IMAP/SMTP)")?.tipoAuth).toBe("basic");
         expect(buscarProveedorConocido("Gemini")?.tipoAuth).toBe("api_key");
     });
@@ -30,9 +32,9 @@ describe("categorías de proveedor", () => {
         ]);
     });
 
-    it("Telegram/Gmail/Correo son 'conector'", () => {
+    it("Telegram/Google Drive/Google Calendar/Correo son 'conector'", () => {
         const conectores = proveedoresPorCategoria("conector").map((p) => p.valor);
-        expect(conectores).toEqual(["Telegram", "Gmail", "Correo (IMAP/SMTP)"]);
+        expect(conectores).toEqual(["Telegram", "Google Drive", "Google Calendar", "Correo (IMAP/SMTP)"]);
     });
 
     it("'Otro' solo aparece como opción para conectores, nunca para LLM", () => {
@@ -83,11 +85,10 @@ describe("secretoCompleto", () => {
         ).toBe(true);
     });
 
-    it("Gmail exige client_id, client_secret y refresh_token", () => {
-        expect(secretoCompleto("Gmail", "oauth2", { client_id: "a", client_secret: "b" })).toBe(false);
-        expect(
-            secretoCompleto("Gmail", "oauth2", { client_id: "a", client_secret: "b", refresh_token: "c" })
-        ).toBe(true);
+    it("Google Drive/Calendar exigen client_id y client_secret (el token lo obtiene el flujo OAuth)", () => {
+        expect(secretoCompleto("Google Drive", "oauth2", { client_id: "a" })).toBe(false);
+        expect(secretoCompleto("Google Drive", "oauth2", { client_id: "a", client_secret: "b" })).toBe(true);
+        expect(secretoCompleto("Google Calendar", "oauth2", { client_id: "a", client_secret: "b" })).toBe(true);
     });
 
     it("Correo (IMAP/SMTP) exige credenciales y ambos servidores", () => {
@@ -109,5 +110,25 @@ describe("secretoCompleto", () => {
         expect(secretoCompleto(OTRO_PROVEEDOR, "bearer", { token: "x" })).toBe(true);
         expect(secretoCompleto(OTRO_PROVEEDOR, "basic", { usuario: "a" })).toBe(false);
         expect(secretoCompleto(OTRO_PROVEEDOR, "oauth2", { client_id: "a", client_secret: "b" })).toBe(true);
+    });
+});
+
+describe("secretoConCambios", () => {
+    it("es falso con el formulario vacío", () => {
+        expect(secretoConCambios({})).toBe(false);
+    });
+
+    it("es falso si todos los campos rellenados están en blanco", () => {
+        expect(secretoConCambios({ api_key: "", modelo: "" })).toBe(false);
+    });
+
+    it("es verdadero si al menos un campo trae valor, sin exigir el resto", () => {
+        // Solo el "modelo" — no hace falta volver a teclear la api_key: el
+        // backend conserva la ya guardada (ver caso_de_uso.py del servidor).
+        expect(secretoConCambios({ api_key: "", modelo: "gpt-4.1" })).toBe(true);
+    });
+
+    it("es verdadero con el secreto completo, igual que para el alta", () => {
+        expect(secretoConCambios({ api_key: "x", modelo: "gpt-4.1" })).toBe(true);
     });
 });

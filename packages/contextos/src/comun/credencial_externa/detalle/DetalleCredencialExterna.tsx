@@ -10,7 +10,7 @@ import { useCallback, useContext, useEffect } from "react";
 import { BorrarCredencialExterna } from "../borrar/BorrarCredencialExterna.js";
 import { CredencialExterna } from "../diseño.js";
 import { metaCredencialExterna } from "../dominio.js";
-import { reconectarTelegram } from "../infraestructura.js";
+import { iniciarOauthGoogle, reconectarTelegram } from "../infraestructura.js";
 import { RotarCredencialExterna } from "../rotar/RotarCredencialExterna.js";
 import { contextoDetalleCredencialExternaInicial, guardarCredencialExterna } from "./detalle.js";
 import "./DetalleCredencialExterna.css";
@@ -62,12 +62,24 @@ export const DetalleCredencialExterna = ({
     const titulo = (m: CredencialExterna) => m.nombre;
 
     const esConectorTelegram = credencial.proveedor === "Telegram" && credencial.categoria === "conector";
+    const esConectorGoogle = (
+        (credencial.proveedor === "Google Drive" || credencial.proveedor === "Google Calendar")
+        && credencial.categoria === "conector"
+    );
 
     const reconectar = () => intentar(() => reconectarTelegram(credencial.id));
 
+    // Redirección de página completa a la pantalla de consentimiento de Google — no
+    // hay precedente de popup/postMessage en este módulo, y el navegador vuelve solo
+    // a esta misma pantalla (?conectado=1) tras el callback público del backend.
+    const conectarGoogle = async () => {
+        const url = await intentar(() => iniciarOauthGoogle(credencial.id));
+        if (url) window.location.href = url;
+    };
+
     const acciones = [
         {
-            texto: "Rotar credencial",
+            texto: "Editar credencial",
             onClick: () => emitir("rotacion_solicitada"),
             deshabilitado: !puede("comun.credencial_externa"),
         },
@@ -84,6 +96,15 @@ export const DetalleCredencialExterna = ({
         ...(esConectorTelegram ? [{
             texto: "Reconectar",
             onClick: reconectar,
+            deshabilitado: !puede("comun.credencial_externa"),
+        }] : []),
+        // "Conectar con Google": inicia el flujo OAuth2 real (ver comandos/comun/
+        // credencial_externa/google_oauth.py) — sin tokens todavía tras el alta
+        // normal (solo client_id/client_secret), hace falta este paso para que la
+        // credencial quede activa y usable por las tools de Drive/Calendar.
+        ...(esConectorGoogle ? [{
+            texto: "Conectar con Google",
+            onClick: conectarGoogle,
             deshabilitado: !puede("comun.credencial_externa"),
         }] : []),
         {

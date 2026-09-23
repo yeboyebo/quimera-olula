@@ -6,10 +6,17 @@ export type ConfiguracionArbolDocumentos = {
     objetoId: string;
 };
 
-export type EstadoArbolDocumentos = "cargando" | "cargado" | "creando_carpeta" | "anadiendo_documento";
+export type EstadoArbolDocumentos =
+    | "cargando"
+    | "cargado"
+    | "creando_carpeta"
+    | "anadiendo_documento"
+    | "eliminando_documento";
 
 export type ContextoArbolDocumentos = Contexto<EstadoArbolDocumentos> & {
     nodos: NodoArbol[];
     configuracion: ConfiguracionArbolDocumentos;
     carpetaPadreId: string | null;
+    // Carpeta o documento: borrar una carpeta se lleva lo que contiene.
+    nodoAEliminar: NodoArbol | null;
 };

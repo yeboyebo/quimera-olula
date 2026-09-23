@@ -12,6 +12,7 @@ describe("[asistente-infra-01] consultaAApi mapea ConsultaIa al body snake_case 
         expect(consultaAApi(consulta)).toEqual({
             pregunta: "Crea un pedido",
             thread_id: null,
+            empresa_id: "",
         });
     });
 
@@ -24,6 +25,7 @@ describe("[asistente-infra-01] consultaAApi mapea ConsultaIa al body snake_case 
         expect(consultaAApi(consulta)).toEqual({
             pregunta: "Crea un pedido",
             thread_id: null,
+            empresa_id: "",
             capacidades: [{ ruta: "/ventas/pedido", nombre: "Pedidos", descripcion: "Gestiona pedidos" }],
         });
     });
@@ -48,6 +50,7 @@ describe("[asistente-infra-01] consultaAApi mapea ConsultaIa al body snake_case 
         expect(consultaAApi(consulta)).toEqual({
             pregunta: "Crea un pedido",
             thread_id: null,
+            empresa_id: "",
             contexto_app: { ruta_actual: "/ventas/cliente/123", app: "olula" },
         });
     });

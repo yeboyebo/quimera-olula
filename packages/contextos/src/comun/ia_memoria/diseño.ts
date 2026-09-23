@@ -1,6 +1,14 @@
 import { Criteria, Entidad, Modelo, RespuestaLista } from "@olula/lib/diseño.ts";
 
 /**
+ * Origen del contenido de una memoria: texto escrito a mano, extraído de un
+ * fichero subido/importado (ver NuevaIaMemoriaDesdeFichero), o vinculado a un
+ * documento externo (Google Drive...) que se mantiene sincronizado por un job
+ * periódico en el backend (ver NuevaIaMemoriaDesdeConector).
+ */
+export type OrigenIaMemoria = "texto" | "fichero" | "externo";
+
+/**
  * Interfaz principal de IaMemoria.
  * Representa un fragmento de contexto de negocio que el asistente de IA
  * del backend usa como memoria persistente.
@@ -10,17 +18,57 @@ export interface IaMemoria extends Entidad {
     titulo: string;
     contenido: string;
     activo: boolean;
+    origen: OrigenIaMemoria;
+    /** Solo cuando origen === "fichero": nombre del fichero original subido/importado. */
+    nombreFichero?: string;
+    /** Solo cuando origen === "fichero": id del documento persistido (comandos/documental/documento) para descarga/reemplazo. */
+    documentoId?: string;
+    /** Solo cuando origen === "externo": proveedor del documento vinculado (p. ej. "Google Drive"). */
+    proveedorExterno?: string;
+    /** Solo cuando origen === "externo": fecha de la última versión del documento externo sincronizada. */
+    externoModificadoEn?: Date;
     creadoPor: string;
     creadoEn: Date;
     actualizadoEn: Date;
+    /** Tiene al menos un chunk generado en ia_memoria_chunk (RAG). */
+    indexado: boolean;
+    /** Fecha del chunk más reciente, o undefined si `indexado` es false. */
+    indexadoEn?: Date;
+    /** Algún chunk se generó con un modelo de embeddings distinto al activo ahora
+     * (p. ej. tras cambiar de modelo) — conviene reindexar (reemplazar fichero, o
+     * guardar de nuevo si es texto) para que vuelva a ser buscable con garantías. */
+    modeloDesactualizado: boolean;
 }
 
 /**
- * Tipo para crear una nueva memoria (sin campos calculados en el servidor).
+ * Tipo para crear una nueva memoria de texto manual (sin campos calculados en el servidor).
  */
 export interface NuevaIaMemoria extends Modelo {
     titulo: string;
     contenido: string;
+}
+
+/**
+ * Tipo para crear (o reemplazar el fichero de) una memoria a partir de un fichero subido/importado.
+ * El backend extrae el texto del fichero y lo persiste en `contenido`.
+ */
+export interface NuevaIaMemoriaDesdeFichero {
+    titulo?: string;
+    nombreFichero: string;
+    tipoMime: string;
+    contenidoBase64: string;
+}
+
+/**
+ * Tipo para crear una memoria vinculada a un documento de un conector externo
+ * (Google Drive...) — el backend importa el contenido en el momento del alta
+ * y lo mantiene sincronizado después mediante el job periódico.
+ */
+export interface NuevaIaMemoriaDesdeConector {
+    titulo?: string;
+    credencialId: string;
+    proveedor: string;
+    recursoId: string;
 }
 
 /**
@@ -37,6 +85,19 @@ export type GetIaMemorias = (criteria: Criteria) => RespuestaLista<IaMemoria>;
 
 export type PostIaMemoria = (nuevaIaMemoria: NuevaIaMemoria) => Promise<string>;
 
+export type PostIaMemoriaDesdeFichero = (nuevaIaMemoria: NuevaIaMemoriaDesdeFichero) => Promise<string>;
+
+export type PostIaMemoriaDesdeConector = (nuevaIaMemoria: NuevaIaMemoriaDesdeConector) => Promise<string>;
+
+export type PatchIaMemoriaDesdeFichero = (id: string, fichero: NuevaIaMemoriaDesdeFichero) => Promise<void>;
+
 export type PatchIaMemoria = (id: string, cambios: CambiosIaMemoria) => Promise<void>;
 
 export type DeleteIaMemoria = (id: string) => Promise<void>;
+
+/** Estado del RAG semántico en este servidor — ver estado-rag en infraestructura.ts. */
+export interface EstadoRagIaMemoria {
+    disponible: boolean;
+}
+
+export type GetEstadoRagIaMemoria = () => Promise<EstadoRagIaMemoria>;
