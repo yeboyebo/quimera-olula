@@ -312,6 +312,26 @@ export const getTopePuntos = async (ventaId: string): Promise<TopePuntos> => {
   return { importeMaximo: importe_maximo, saldoDisponible: saldo_disponible };
 }
 
+export interface TarjetaMonedero {
+  encontrada: boolean;
+  saldoPendiente: number | null;
+}
+
+// Tarjeta regalo monedero: saldo real en central (eg_tarjetamonedero),
+// buscada por su "código de uso" (8 caracteres, distinto del código de
+// activación/barcode con el que se vende la tarjeta — vender/activar una
+// tarjeta nueva no está soportado desde la PDA, solo pagar con una ya
+// existente). Va contra central, no contra la tienda, pero se manda
+// cabecerasTienda() por consistencia con el resto de llamadas.
+export const getTarjetaMonedero = async (coduso: string): Promise<TarjetaMonedero> => {
+  const { encontrada, saldo_pendiente } = await RestAPI.get<{
+    encontrada: boolean;
+    saldo_pendiente: number | null;
+  }>(`/ventas/tarjeta_monedero/${coduso}`, undefined, cabecerasTienda());
+
+  return { encontrada, saldoPendiente: saldo_pendiente ?? null };
+}
+
 export interface PuntoVentaOpcion {
   codtpv_puntoventa: string;
   descripcion: string;
@@ -368,6 +388,7 @@ interface PagoVentaTpvAPI {
   arqueo_abierto: boolean;
   tipo_tarjeta_id: string | null;
   tipo_tarjeta_nombre?: string | null;
+  coduso?: string | null;
 }
 
 const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
@@ -380,6 +401,7 @@ const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
   idTipoTarjeta: p.tipo_tarjeta_id,
   vale: p.vale,
   saldoVale: p.saldo_vale,
+  coduso: p.coduso,
 });
 
 export const getPagos: GetPagosVentaTpv = async (id) =>
@@ -395,6 +417,7 @@ export const postPago: PostPago = async (id, pago) => {
     forma_pago: pago.formaPago,
     tipo_tarjeta_id: pago.idTipoTarjeta,
     vale_id: pago.idVale,
+    coduso: pago.coduso,
   };
   return await RestAPI.post(`${baseUrl}/${id}/pago`, body, "Error al crear pago de venta", cabecerasTienda())
     .then((respuesta) => (respuesta as unknown as { id: string }).id);
