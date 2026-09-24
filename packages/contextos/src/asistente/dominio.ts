@@ -102,6 +102,8 @@ export const mensajeHiloDesdeApi = (raw: Record<string, unknown>): MensajeHiloIa
     adjuntos: Array.isArray(raw.adjuntos)
         ? (raw.adjuntos as Record<string, unknown>[]).map(adjuntoHiloDesdeApi)
         : [],
+    descarga: descargaDesdeApi(raw.descarga),
+    accionNavegacion: (raw.accion_navegacion as AccionNavegacion | null | undefined) ?? null,
 });
 
 export const mensajesHiloDesdeApi = (raw: Record<string, unknown>): MensajesHiloIa => ({

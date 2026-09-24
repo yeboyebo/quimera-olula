@@ -115,9 +115,9 @@ test("[asistente-chat-adjunto-04] una foto reconstruida se carga bajo demanda", 
         mensajes: [
             {
                 id: "m1-u", rol: "user", texto: "", a2uiMessages: [],
-                adjuntos: [{ id: "adj-foto-1", nombre: "foto.jpg", tipoMime: "image/jpeg" }],
+                adjuntos: [{ id: "adj-foto-1", nombre: "foto.jpg", tipoMime: "image/jpeg" }], descarga: null, accionNavegacion: null,
             },
-            { id: "m1-a", rol: "assistant", texto: "Ya lo veo.", a2uiMessages: [], adjuntos: [] },
+            { id: "m1-a", rol: "assistant", texto: "Ya lo veo.", a2uiMessages: [], adjuntos: [], descarga: null, accionNavegacion: null, },
         ],
     });
     vi.mocked(obtenerAdjuntoHilo).mockResolvedValueOnce(new Blob(["contenido-foto"], { type: "image/jpeg" }));
@@ -142,9 +142,9 @@ test("[asistente-chat-adjunto-02] un adjunto de audio reconstruido se reproduce 
         mensajes: [
             {
                 id: "m1-u", rol: "user", texto: "", a2uiMessages: [],
-                adjuntos: [{ id: "adj-audio-1", nombre: "nota-de-voz.mp3", tipoMime: "audio/mp3" }],
+                adjuntos: [{ id: "adj-audio-1", nombre: "nota-de-voz.mp3", tipoMime: "audio/mp3" }], descarga: null, accionNavegacion: null,
             },
-            { id: "m1-a", rol: "assistant", texto: "Te he entendido.", a2uiMessages: [], adjuntos: [] },
+            { id: "m1-a", rol: "assistant", texto: "Te he entendido.", a2uiMessages: [], adjuntos: [], descarga: null, accionNavegacion: null, },
         ],
     });
 
