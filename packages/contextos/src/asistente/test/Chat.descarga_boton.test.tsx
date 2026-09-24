@@ -57,3 +57,34 @@ test("[asistente-chat-descarga-01] guardar_documento muestra un botón de descar
 
     abrirVentana.mockRestore();
 });
+
+test("[asistente-chat-descarga-02] al reabrir un hilo (p. ej. tras recargar) se conservan los botones de descarga y navegación", async () => {
+    const { obtenerMensajesHilo } = await import("#/asistente/infraestructura.ts");
+    localStorage.setItem("quimera-preferencias", JSON.stringify({ "asistente.threadIdActivo": "hilo-viejo" }));
+    vi.mocked(obtenerMensajesHilo).mockResolvedValueOnce({
+        threadId: "hilo-viejo",
+        mensajes: [
+            { id: "m1-u", rol: "user", texto: "pásamelo a excel", a2uiMessages: [], adjuntos: [], descarga: null, accionNavegacion: null },
+            {
+                id: "m1-a", rol: "assistant", texto: "He generado el fichero.", a2uiMessages: [], adjuntos: [],
+                descarga: { url: "https://api.test/public/documental/documento/descargar/xyz", nombreFichero: "ventas.xlsx" },
+                accionNavegacion: null,
+            },
+            { id: "m2-u", rol: "user", texto: "llévame a facturas", a2uiMessages: [], adjuntos: [], descarga: null, accionNavegacion: null },
+            {
+                id: "m2-a", rol: "assistant", texto: "Aquí puedes verlas.", a2uiMessages: [], adjuntos: [],
+                descarga: null, accionNavegacion: { ruta: "/ventas/factura", descripcion: "Facturas" },
+            },
+        ],
+    });
+
+    render(
+        <AsistenteRuntimeProvider>
+            <Chat />
+        </AsistenteRuntimeProvider>
+    );
+
+    await screen.findByText("He generado el fichero.");
+    expect(await screen.findByRole("button", { name: "Descargar" })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /Ir a Facturas/ })).toBeTruthy();
+});
