@@ -34,7 +34,7 @@ export const getMaquina: () => Maquina<EstadoMaestroPedido, ContextoMaestroPedid
 
         CREANDO_PEDIDO: {
 
-            pedido_creado: [Pedidos.incluir, 'INICIAL'],
+            pedido_creado: [Pedidos.incluir, Pedidos.activar, 'INICIAL'],
 
             creacion_pedido_cancelada: "INICIAL",
         },

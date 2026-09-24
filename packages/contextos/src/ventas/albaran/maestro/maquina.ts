@@ -30,7 +30,7 @@ export const getMaquina: () => Maquina<EstadoMaestroAlbaran, ContextoMaestroAlba
 
         CREANDO_ALBARAN: {
 
-            albaran_creado: [Albaranes.incluir, 'INICIAL'],
+            albaran_creado: [Albaranes.incluir, Albaranes.activar, 'INICIAL'],
 
             creacion_cancelada: "INICIAL",
         },

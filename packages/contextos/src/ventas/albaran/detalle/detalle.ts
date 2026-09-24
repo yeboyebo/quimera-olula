@@ -194,6 +194,8 @@ export const cambiarAgente: ProcesarAlbaran = async (contexto, payload) => {
 
     return pipeAlbaran(contexto, [
         refrescarAlbaran,
+        refrescarLineas,
+        reactivarLineaActiva,
         'ABIERTO',
     ]);
 }
