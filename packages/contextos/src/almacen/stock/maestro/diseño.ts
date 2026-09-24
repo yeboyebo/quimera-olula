@@ -10,7 +10,11 @@ export type ContextoMaestroStock = {
 };
 
 export const metaTablaStock: MetaTabla<StockItem> = [
-    { id: "articulo", cabecera: "Artículo" },
+    {
+        id: "articulo",
+        cabecera: "Artículo",
+        render: (s) => [s.articulo, s.articuloId].filter(Boolean).join(" - "),
+    },
     { id: "almacen", cabecera: "Almacén" },
     { id: "cantidadFisica", cabecera: "Cantidad física", tipo: "numero" },
     { id: "cantidadDisponible", cabecera: "Disponible", tipo: "numero" },
