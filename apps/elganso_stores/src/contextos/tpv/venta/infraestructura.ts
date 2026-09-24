@@ -1,6 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { preferencias } from "@olula/lib/preferencias.ts";
 import Tpv_Urls from "#/tpv/comun/urls.ts";
 import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import {
@@ -361,20 +362,22 @@ export const getPrecheckPedido = async (puntoVentaId?: string): Promise<Precheck
   return await RestAPI.get<PrecheckPedido>(`/ventas/precheck_pedido${q}`, undefined, cabecerasTienda());
 }
 
-// En memoria (no localStorage), mismo motivo que tiendaActualCache: el
-// punto de venta activo se resuelve una vez por carga de página vía
-// precheck_pedido, no se persiste entre sesiones.
+// En localStorage (vía preferencias): el agente suele trabajar siempre
+// desde el mismo punto de venta, así que recordarlo entre sesiones evita
+// tener que elegirlo cada vez que se crea un pedido nuevo — antes se
+// guardaba solo en memoria y se perdía al recargar/cerrar la pestaña.
 interface PuntoVentaActual {
   id: string;
   nombre: string;
 }
 
-let puntoVentaActualCache: PuntoVentaActual | undefined;
+const CLAVE_PUNTO_VENTA_ACTUAL = "tpv.punto_venta_actual";
 
-export const getPuntoVentaActual = (): PuntoVentaActual | undefined => puntoVentaActualCache;
+export const getPuntoVentaActual = (): PuntoVentaActual | undefined =>
+  preferencias.get<PuntoVentaActual | undefined>(CLAVE_PUNTO_VENTA_ACTUAL, undefined);
 
 export const setPuntoVentaActual = (puntoVenta: PuntoVentaActual): void => {
-  puntoVentaActualCache = puntoVenta;
+  preferencias.set(CLAVE_PUNTO_VENTA_ACTUAL, puntoVenta);
 };
 
 interface PagoVentaTpvAPI {
