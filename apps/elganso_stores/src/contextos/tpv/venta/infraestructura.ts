@@ -1,6 +1,7 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { preferencias } from "@olula/lib/preferencias.ts";
 import Tpv_Urls from "#/tpv/comun/urls.ts";
 import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import {
@@ -312,6 +313,26 @@ export const getTopePuntos = async (ventaId: string): Promise<TopePuntos> => {
   return { importeMaximo: importe_maximo, saldoDisponible: saldo_disponible };
 }
 
+export interface TarjetaMonedero {
+  encontrada: boolean;
+  saldoPendiente: number | null;
+}
+
+// Tarjeta regalo monedero: saldo real en central (eg_tarjetamonedero),
+// buscada por su "código de uso" (8 caracteres, distinto del código de
+// activación/barcode con el que se vende la tarjeta — vender/activar una
+// tarjeta nueva no está soportado desde la PDA, solo pagar con una ya
+// existente). Va contra central, no contra la tienda, pero se manda
+// cabecerasTienda() por consistencia con el resto de llamadas.
+export const getTarjetaMonedero = async (coduso: string): Promise<TarjetaMonedero> => {
+  const { encontrada, saldo_pendiente } = await RestAPI.get<{
+    encontrada: boolean;
+    saldo_pendiente: number | null;
+  }>(`/ventas/tarjeta_monedero/${coduso}`, undefined, cabecerasTienda());
+
+  return { encontrada, saldoPendiente: saldo_pendiente ?? null };
+}
+
 export interface PuntoVentaOpcion {
   codtpv_puntoventa: string;
   descripcion: string;
@@ -341,20 +362,22 @@ export const getPrecheckPedido = async (puntoVentaId?: string): Promise<Precheck
   return await RestAPI.get<PrecheckPedido>(`/ventas/precheck_pedido${q}`, undefined, cabecerasTienda());
 }
 
-// En memoria (no localStorage), mismo motivo que tiendaActualCache: el
-// punto de venta activo se resuelve una vez por carga de página vía
-// precheck_pedido, no se persiste entre sesiones.
+// En localStorage (vía preferencias): el agente suele trabajar siempre
+// desde el mismo punto de venta, así que recordarlo entre sesiones evita
+// tener que elegirlo cada vez que se crea un pedido nuevo — antes se
+// guardaba solo en memoria y se perdía al recargar/cerrar la pestaña.
 interface PuntoVentaActual {
   id: string;
   nombre: string;
 }
 
-let puntoVentaActualCache: PuntoVentaActual | undefined;
+const CLAVE_PUNTO_VENTA_ACTUAL = "tpv.punto_venta_actual";
 
-export const getPuntoVentaActual = (): PuntoVentaActual | undefined => puntoVentaActualCache;
+export const getPuntoVentaActual = (): PuntoVentaActual | undefined =>
+  preferencias.get<PuntoVentaActual | undefined>(CLAVE_PUNTO_VENTA_ACTUAL, undefined);
 
 export const setPuntoVentaActual = (puntoVenta: PuntoVentaActual): void => {
-  puntoVentaActualCache = puntoVenta;
+  preferencias.set(CLAVE_PUNTO_VENTA_ACTUAL, puntoVenta);
 };
 
 interface PagoVentaTpvAPI {
@@ -368,6 +391,7 @@ interface PagoVentaTpvAPI {
   arqueo_abierto: boolean;
   tipo_tarjeta_id: string | null;
   tipo_tarjeta_nombre?: string | null;
+  coduso?: string | null;
 }
 
 const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
@@ -380,6 +404,7 @@ const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
   idTipoTarjeta: p.tipo_tarjeta_id,
   vale: p.vale,
   saldoVale: p.saldo_vale,
+  coduso: p.coduso,
 });
 
 export const getPagos: GetPagosVentaTpv = async (id) =>
@@ -395,6 +420,7 @@ export const postPago: PostPago = async (id, pago) => {
     forma_pago: pago.formaPago,
     tipo_tarjeta_id: pago.idTipoTarjeta,
     vale_id: pago.idVale,
+    coduso: pago.coduso,
   };
   return await RestAPI.post(`${baseUrl}/${id}/pago`, body, "Error al crear pago de venta", cabecerasTienda())
     .then((respuesta) => (respuesta as unknown as { id: string }).id);
