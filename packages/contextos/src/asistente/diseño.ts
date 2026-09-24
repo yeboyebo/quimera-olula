@@ -140,6 +140,10 @@ export interface MensajeHiloIa {
     texto: string;
     a2uiMessages: unknown[];
     adjuntos: AdjuntoHiloIa[];
+    /** Botones que en vivo llegan aparte del texto: también al reabrir el hilo, para
+     * que no desaparezcan al recargar la página. */
+    descarga: AccionDescarga | null;
+    accionNavegacion: AccionNavegacion | null;
 }
 
 export interface MensajesHiloIa {

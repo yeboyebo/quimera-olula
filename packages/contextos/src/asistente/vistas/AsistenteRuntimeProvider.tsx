@@ -300,6 +300,9 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                             : m
                     )));
                     if (ultimo.a2uiMessages.length) procesarMensajesA2ui(ultimo.a2uiMessages, assistantId);
+                    if (ultimo.descarga) {
+                        setDescargaPorMensaje(prev => ({ ...prev, [assistantId]: ultimo.descarga! }));
+                    }
                 } catch {
                     // Red intermitente — se reintenta en el siguiente tick, sin cancelar el sondeo.
                 }
@@ -342,9 +345,11 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                                 setMensajes(prev => prev.map(m => (m.id === assistantId ? { ...m, texto: acumulado } : m)));
                             } else if (evento.tipo === "estado") {
                                 // Aviso de progreso transitorio (p.ej. "Buscando el
-                                // cliente…") — se muestra sustituyendo el texto, sin
-                                // tocar `acumulado`, así que el primer "delta" real
-                                // lo reemplaza igual que si nunca hubiera estado.
+                                // cliente…") — sustituye el texto y DESCARTA lo acumulado:
+                                // el backend emite el texto en vivo y, si esa generación
+                                // acaba llamando a una tool, manda "estado" para retirar
+                                // lo ya mostrado. El primer "delta" real empieza de cero.
+                                acumulado = "";
                                 setMensajes(prev =>
                                     prev.map(m => (m.id === assistantId ? { ...m, texto: evento.contenido } : m))
                                 );
@@ -496,6 +501,16 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                     id: m.id, rol: m.rol, texto: m.texto,
                     adjuntos: m.adjuntos.length ? m.adjuntos : undefined,
                 })));
+                // Botones de descarga y de navegación del historial — en vivo llegan aparte
+                // del texto, así que sin esto desaparecían al recargar o reabrir el hilo.
+                setDescargaPorMensaje(Object.fromEntries(
+                    hilo.mensajes.filter(m => m.descarga).map(m => [m.id, m.descarga as AccionDescarga])
+                ));
+                setAccionNavegacionPorMensaje(Object.fromEntries(
+                    hilo.mensajes.filter(m => m.accionNavegacion).map(m => [
+                        m.id, accionNavegacionConNombreCorto(m.accionNavegacion as AccionNavegacion, capacidades),
+                    ])
+                ));
                 for (const m of hilo.mensajes) {
                     if (m.a2uiMessages.length) procesarMensajesA2ui(m.a2uiMessages, m.id);
                 }
@@ -503,7 +518,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 setIsRunning(false);
             }
         },
-        [limpiarSurfaces, establecerThreadId, procesarMensajesA2ui]
+        [limpiarSurfaces, establecerThreadId, procesarMensajesA2ui, capacidades]
     );
 
     const nuevaConversacion = useCallback(() => {
@@ -512,6 +527,8 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
         capacidadesHashRef.current = null;
         establecerThreadId(null);
         setMensajes([]);
+        setDescargaPorMensaje({});
+        setAccionNavegacionPorMensaje({});
         setIsRunning(false);
     }, [limpiarSurfaces, establecerThreadId]);
 
