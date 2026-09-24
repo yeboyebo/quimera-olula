@@ -7,10 +7,16 @@ import { QModal } from "@olula/componentes/index.js";
 import { ContextoError } from "@olula/lib/contexto.ts";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { formatearMoneda, formatearNumero, redondeaMoneda } from "@olula/lib/dominio.js";
-import { useFocus } from "@olula/lib/useFocus.js";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { VentaTpv } from "../diseño.ts";
-import { getTopePuntos, getVale, postPago, TopePuntos } from "../infraestructura.ts";
+import {
+  getTarjetaMonedero,
+  getTopePuntos,
+  getVale,
+  postPago,
+  TarjetaMonedero,
+  TopePuntos,
+} from "../infraestructura.ts";
 import "./PagarVentaTpv.css";
 
 // Pantalla única de cobro, calcada del formulario "cantidad de pago" de
@@ -36,20 +42,22 @@ export const PagarVentaTpv = ({
   const [yaCobrado, setYaCobrado] = useState(0);
   const pendienteRestante = redondeaMoneda(pendiente - yaCobrado, venta.divisa_id);
 
-  const [importeEfectivo, setImporteEfectivo] = useState(pendiente);
-  const [importeTarjeta, setImporteTarjeta] = useState(0);
+  const [importeEfectivo, setImporteEfectivo] = useState(0);
+  const [importeTarjeta, setImporteTarjeta] = useState(pendiente);
   const [importePuntos, setImportePuntos] = useState(0);
   const [importeVale, setImporteVale] = useState(0);
+  const [importeTarjetaRegalo, setImporteTarjetaRegalo] = useState(0);
 
-  // Efectivo empieza con el pendiente completo (se asume que se paga todo
-  // en efectivo salvo que se diga lo contrario). En cuanto se usa otra
-  // forma de pago, efectivo baja solo lo justo para que la suma nunca se
-  // pase del pendiente — si no, sobraba "cambio" de más sin sentido, solo
-  // por no haber tocado el campo de efectivo. Se deja de tocar en cuanto
-  // el usuario edita el campo a mano (o pulsa "Limpiar efectivo"): a
-  // partir de ahí se respeta su importe tal cual, incluso si da cambio de
-  // verdad (billete grande entregado).
-  const [efectivoTocado, setEfectivoTocado] = useState(false);
+  // Igual que en el ERP: Tarjeta empieza con el pendiente completo (se
+  // asume que se paga todo con tarjeta salvo que se diga lo contrario), no
+  // Efectivo. En cuanto se usa otra forma de pago, Tarjeta baja solo lo
+  // justo para que la suma nunca se pase del pendiente — si no, sobraba
+  // "cambio" de más sin sentido, solo por no haber tocado el campo. Se
+  // deja de tocar en cuanto el usuario edita el campo a mano (o pulsa
+  // "Limpiar tarjeta"): a partir de ahí se respeta su importe tal cual.
+  // Efectivo, en cambio, nunca se autoajusta — es el único que puede
+  // superar el pendiente y dar cambio real (billete grande entregado).
+  const [tarjetaTocada, setTarjetaTocada] = useState(false);
 
   const [hasTiposTarjeta, setHasTiposTarjeta] = useState(false);
   const [idTipoTarjeta, setIdTipoTarjeta] = useState<string | null>(null);
@@ -97,7 +105,6 @@ export const PagarVentaTpv = ({
 
   const [vale, setVale] = useState<ValeTpv | null>(null);
   const [codigoVale, setCodigoVale] = useState("");
-  const focusVale = useFocus();
 
   const buscarVale = async (codigo: string) => {
     if (!codigo) return;
@@ -122,14 +129,60 @@ export const PagarVentaTpv = ({
     setImporteVale(0);
   };
 
+  const [tarjetaRegalo, setTarjetaRegalo] = useState<TarjetaMonedero | null>(null);
+  const [codigoTarjetaRegalo, setCodigoTarjetaRegalo] = useState("");
+
+  const buscarTarjetaRegalo = async (coduso: string) => {
+    if (!coduso) return;
+
+    const encontrada = await intentar(() => getTarjetaMonedero(coduso));
+
+    if (!encontrada.encontrada || encontrada.saldoPendiente == null) {
+      setError({
+        nombre: "Tarjeta regalo",
+        descripcion: `No se ha encontrado ninguna tarjeta regalo con el código ${coduso}.`,
+      });
+      return;
+    }
+
+    if (encontrada.saldoPendiente <= 0) {
+      setError({
+        nombre: "Tarjeta regalo",
+        descripcion: `La tarjeta regalo ${coduso} ya está agotada, no tiene saldo disponible.`,
+      });
+      return;
+    }
+
+    setTarjetaRegalo(encontrada);
+    setCodigoTarjetaRegalo(coduso);
+    setImporteTarjetaRegalo(
+      redondeaMoneda(Math.min(encontrada.saldoPendiente, pendienteRestante), venta.divisa_id)
+    );
+  };
+
+  const limpiarTarjetaRegalo = () => {
+    setTarjetaRegalo(null);
+    setCodigoTarjetaRegalo("");
+    setImporteTarjetaRegalo(0);
+  };
+
   // Solo efectivo puede superar el pendiente (da cambio) — el resto de
   // formas de pago, entre todas, no pueden superarlo.
-  const exacto = redondeaMoneda(importeTarjeta + importePuntos + importeVale, venta.divisa_id);
+  const exacto = redondeaMoneda(
+    importeTarjeta + importePuntos + importeVale + importeTarjetaRegalo, venta.divisa_id
+  );
+
+  // Lo que cubren las demás formas de pago sin contar Tarjeta — sirve para
+  // autoajustar Tarjeta sin depender de su propio valor (si no, sería
+  // circular).
+  const sinTarjeta = redondeaMoneda(
+    importeEfectivo + importePuntos + importeVale + importeTarjetaRegalo, venta.divisa_id
+  );
 
   useEffect(() => {
-    if (efectivoTocado) return;
-    setImporteEfectivo(redondeaMoneda(Math.max(0, pendienteRestante - exacto), venta.divisa_id));
-  }, [efectivoTocado, exacto, pendienteRestante, venta.divisa_id]);
+    if (tarjetaTocada) return;
+    setImporteTarjeta(redondeaMoneda(Math.max(0, pendienteRestante - sinTarjeta), venta.divisa_id));
+  }, [tarjetaTocada, sinTarjeta, pendienteRestante, venta.divisa_id]);
 
   const total = redondeaMoneda(importeEfectivo + exacto, venta.divisa_id);
   const cambio = redondeaMoneda(total - pendienteRestante > 0 ? total - pendienteRestante : 0, venta.divisa_id);
@@ -156,8 +209,14 @@ export const PagarVentaTpv = ({
     if (importeVale > 0 && vale && importeVale > vale.saldo_pendiente) {
       return "El importe del vale no puede superar su saldo disponible";
     }
+    if (
+      importeTarjetaRegalo > 0 && tarjetaRegalo?.saldoPendiente != null &&
+      importeTarjetaRegalo > tarjetaRegalo.saldoPendiente
+    ) {
+      return "El importe de la tarjeta regalo no puede superar su saldo disponible";
+    }
     return null;
-  }, [exacto, total, pendienteRestante, importePuntos, tope, importeVale, vale]);
+  }, [exacto, total, pendienteRestante, importePuntos, tope, importeVale, vale, importeTarjetaRegalo, tarjetaRegalo]);
 
   const valido = total > 0;
 
@@ -195,9 +254,19 @@ export const PagarVentaTpv = ({
         setYaCobrado((v) => redondeaMoneda(v + importeVale, venta.divisa_id));
         setImporteVale(0);
       }
+      if (importeTarjetaRegalo > 0) {
+        await postPago(venta.id, {
+          importe: importeTarjetaRegalo, formaPago: "TARJETA_REGALO", coduso: codigoTarjetaRegalo,
+        });
+        setYaCobrado((v) => redondeaMoneda(v + importeTarjetaRegalo, venta.divisa_id));
+        setImporteTarjetaRegalo(0);
+      }
     }, () => setPagando(false));
     publicar("pago_hecho");
-  }, [importeEfectivo, importeTarjeta, importePuntos, importeVale, idTipoTarjeta, vale, venta.id, venta.divisa_id, intentar, publicar, error, setError]);
+  }, [
+    importeEfectivo, importeTarjeta, importePuntos, importeVale, importeTarjetaRegalo,
+    idTipoTarjeta, vale, codigoTarjetaRegalo, venta.id, venta.divisa_id, intentar, publicar, error, setError,
+  ]);
 
   const cancelar = useCallback(() => {
     if (!pagando) publicar("pago_cancelado");
@@ -229,49 +298,47 @@ export const PagarVentaTpv = ({
         </div>
 
         <quimera-formulario>
-          <div className="campo-efectivo">
+          <QInput
+            label="Efectivo"
+            nombre="efectivo"
+            tipo="moneda"
+            divisa={venta.divisa_id}
+            valor={String(importeEfectivo)}
+            onChange={(v) => setImporteEfectivo(Math.max(0, Number(v) || 0))}
+          />
+
+          <div className="campo-tarjeta">
             <QInput
-              label="Efectivo"
-              nombre="efectivo"
+              label="Tarjeta"
+              nombre="tarjeta"
               tipo="moneda"
               divisa={venta.divisa_id}
-              valor={String(importeEfectivo)}
+              valor={String(importeTarjeta)}
               onChange={(v) => {
-                setEfectivoTocado(true);
-                setImporteEfectivo(Math.max(0, Number(v) || 0));
+                setTarjetaTocada(true);
+                setImporteTarjeta(
+                  redondeaMoneda(Math.max(0, Math.min(Number(v) || 0, pendienteRestante)), venta.divisa_id)
+                );
               }}
             />
+            {hasTiposTarjeta && importeTarjeta > 0 && (
+              <TipoTarjetaTpv
+                valor={idTipoTarjeta ?? ""}
+                onChange={(opcion) => setIdTipoTarjeta(opcion?.valor ?? null)}
+              />
+            )}
 
             <div className="botones maestro-botones ">
               <QBoton
                 onClick={() => {
-                  setEfectivoTocado(true);
-                  setImporteEfectivo(0);
+                  setTarjetaTocada(true);
+                  setImporteTarjeta(0);
                 }}
               >
-                Limpiar efectivo
+                Limpiar tarjeta
               </QBoton>
             </div>
           </div>
-
-          <QInput
-            label="Tarjeta"
-            nombre="tarjeta"
-            tipo="moneda"
-            divisa={venta.divisa_id}
-            valor={String(importeTarjeta)}
-            onChange={(v) =>
-              setImporteTarjeta(
-                redondeaMoneda(Math.max(0, Math.min(Number(v) || 0, pendienteRestante)), venta.divisa_id)
-              )
-            }
-          />
-          {hasTiposTarjeta && importeTarjeta > 0 && (
-            <TipoTarjetaTpv
-              valor={idTipoTarjeta ?? ""}
-              onChange={(opcion) => setIdTipoTarjeta(opcion?.valor ?? null)}
-            />
-          )}
 
           <div className="campo-vale">
             {vale && (
@@ -284,7 +351,6 @@ export const PagarVentaTpv = ({
                 nombre="vale_id"
                 valor={codigoVale}
                 onChange={(valor) => setCodigoVale(String(valor ?? ""))}
-                ref={focusVale}
                 onEnterKeyUp={(codigo) => buscarVale(codigo)}
               />
             )}
@@ -313,6 +379,49 @@ export const PagarVentaTpv = ({
               </QBoton>
             )}
             {vale && <QBoton onClick={limpiarVale}>Quitar vale</QBoton>}
+          </div>
+
+          <div className="campo-tarjeta-regalo">
+            {tarjetaRegalo && (
+              <div id="tarjeta-regalo-codigo">
+                {`Tarjeta regalo: ${codigoTarjetaRegalo} (saldo ${formatearMoneda(tarjetaRegalo.saldoPendiente ?? 0, venta.divisa_id)})`}
+              </div>
+            )}
+
+            {!tarjetaRegalo && (
+              <QInput
+                label="Tarjeta regalo"
+                nombre="tarjeta_regalo_coduso"
+                valor={codigoTarjetaRegalo}
+                onChange={(valor) => setCodigoTarjetaRegalo(String(valor ?? ""))}
+                onEnterKeyUp={(codigo) => buscarTarjetaRegalo(codigo)}
+              />
+            )}
+
+            {tarjetaRegalo && (
+              <QInput
+                label="Importe tarjeta regalo"
+                nombre="tarjeta_regalo_importe"
+                tipo="moneda"
+                divisa={venta.divisa_id}
+                valor={String(importeTarjetaRegalo)}
+                onChange={(v) =>
+                  setImporteTarjetaRegalo(
+                    redondeaMoneda(
+                      Math.max(0, Math.min(Number(v) || 0, pendienteRestante, tarjetaRegalo.saldoPendiente ?? 0)),
+                      venta.divisa_id
+                    )
+                  )
+                }
+              />
+            )}
+
+            {!tarjetaRegalo && (
+              <QBoton onClick={() => buscarTarjetaRegalo(codigoTarjetaRegalo)} deshabilitado={!codigoTarjetaRegalo}>
+                Buscar tarjeta regalo
+              </QBoton>
+            )}
+            {tarjetaRegalo && <QBoton onClick={limpiarTarjetaRegalo}>Quitar tarjeta regalo</QBoton>}
           </div>
 
           <div className="campo-puntos">
