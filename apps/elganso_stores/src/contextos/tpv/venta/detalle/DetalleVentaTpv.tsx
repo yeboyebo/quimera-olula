@@ -194,7 +194,7 @@ export const DetalleVentaTpv = ({
       </Tab>
 
       <Tab label="Pagos" deshabilitado={ctx.pagos.lista.length === 0}>
-        <Pagos pagos={ctx.pagos.lista} pagoActivo={ctx.pagos.activo} publicar={emitir} />
+        <Pagos pagos={ctx.pagos.lista} pagoActivo={ctx.pagos.activo} ventaAbierta={ctx.venta.abierta} publicar={emitir} />
       </Tab>
     </Tabs>
   );

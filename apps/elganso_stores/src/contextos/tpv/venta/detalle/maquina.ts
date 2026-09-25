@@ -83,6 +83,12 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
 
             venta_cargada: [abiertaOCerrada],
 
+            // Solo ver el detalle del pago (mismo que ABIERTO) — una vez
+            // pagada la venta no se puede borrar ni editar ningún pago,
+            // por eso SERVIDO no tiene borrar_pago_solicitado ni el resto
+            // de eventos de edición.
+            pago_seleccionado: [Pagos.activar],
+
             venta_deseleccionada: [
                 getContextoVacio,
                 publicar('venta_deseleccionada', null)
