@@ -1,5 +1,5 @@
 import { QAvatar, QTarjetaGenerica } from "@olula/componentes/index.js";
-import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.ts";
+import { formatearFechaDate, formatearHoraString, formatearMoneda } from "@olula/lib/dominio.ts";
 import { ReactNode } from "react";
 import { DIVISA_EMPRESA, enDivisaExtranjera } from "../../venta/dominio.ts";
 import "./TarjetaDocumentoVenta.css";
@@ -10,6 +10,7 @@ export const TarjetaDocumentoVenta = ({
   codigo,
   nombreCliente,
   fecha,
+  hora,
   total,
   estado,
   divisa = "EUR",
@@ -20,6 +21,7 @@ export const TarjetaDocumentoVenta = ({
   codigo: string;
   nombreCliente: string;
   fecha: Date;
+  hora?: string;
   total: number;
   estado: EstadoDocumento;
   divisa?: string;
@@ -47,7 +49,11 @@ export const TarjetaDocumentoVenta = ({
           {etiqueta}
         </span>
       }
-      abajoIzquierda={fecha ? formatearFechaDate(new Date(fecha)) : ""}
+      abajoIzquierda={
+        fecha
+          ? `${formatearFechaDate(new Date(fecha))}${hora ? ` ${formatearHoraString(hora)}` : ""}`
+          : ""
+      }
       abajoDerecha={
         <span className="tarjeta-doc-importes">
           <span className="tarjeta-doc-total">
