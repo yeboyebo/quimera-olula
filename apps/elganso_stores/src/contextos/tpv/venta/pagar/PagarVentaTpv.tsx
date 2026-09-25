@@ -13,6 +13,7 @@ import {
   getTarjetaMonedero,
   getTopePuntos,
   getVale,
+  patchGenerarCodigoReal,
   postPago,
   TarjetaMonedero,
   TopePuntos,
@@ -61,6 +62,14 @@ export const PagarVentaTpv = ({
 
   const [hasTiposTarjeta, setHasTiposTarjeta] = useState(false);
   const [idTipoTarjeta, setIdTipoTarjeta] = useState<string | null>(null);
+
+  // Genera el código secuencial real de la venta (sustituye el
+  // provisional "#<id>") en cuanto se entra a pagar, antes de crear
+  // ningún pago — los pagos ya tienen que llevar ese código. Idempotente
+  // en el backend, así que no pasa nada si el componente se remonta.
+  useEffect(() => {
+    patchGenerarCodigoReal(venta.id);
+  }, [venta.id]);
 
   useEffect(() => {
     getTpvConfig().then((config) => {

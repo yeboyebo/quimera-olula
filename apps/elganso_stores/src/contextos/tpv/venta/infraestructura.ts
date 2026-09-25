@@ -429,3 +429,14 @@ export const postPago: PostPago = async (id, pago) => {
 export const deletePago: DeletePago = async (id, idPago): Promise<void> => {
   await RestAPI.delete(`${baseUrl}/${id}/pago/${idPago}`, "Error al borrar pago de venta", cabecerasTienda());
 }
+
+// Genera y guarda el código secuencial real de la venta (sustituye el
+// provisional "#<id>"), llamado al entrar en la pantalla de pago, antes
+// de crear ningún pago — los pagos ya tienen que llevar ese código.
+// Idempotente en el backend: si la venta ya tiene código real, no hace
+// nada.
+export const patchGenerarCodigoReal = async (id: string): Promise<void> => {
+  await RestAPI.patch(
+    `${baseUrl}/${id}/generar_codigo_real`, {}, "Error al generar el código de la venta", cabecerasTienda()
+  );
+}

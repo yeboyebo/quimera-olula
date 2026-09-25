@@ -44,6 +44,7 @@ type MaestroProps<T extends Entidad> = {
   modosDisponibles?: Modo[];
   onModoChanged?: (modo: Modo) => void;
   onCriteriaChanged: (criteria: Criteria) => void;
+  mensajeSinDatos?: string;
 };
 
 export const ListadoSemiControlado = <T extends Entidad>({
@@ -63,6 +64,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
   modosDisponibles,
   onModoChanged,
   onCriteriaChanged,
+  mensajeSinDatos,
 }: MaestroProps<T>) => {
   const [criteria, setCriteria] = useState<Criteria>(criteriaInicial);
   const [modoEstado, setModoEstado] = useState<Modo>(modo ?? modoInicial ?? "tabla");
@@ -163,7 +165,7 @@ export const ListadoSemiControlado = <T extends Entidad>({
   };
 
   const renderEntidades = () => {
-    if (!entidadesFiltradas.length && !cargando) return <SinDatos />;
+    if (!entidadesFiltradas.length && !cargando) return <SinDatos mensaje={mensajeSinDatos} />;
 
     const datos = entidadesFiltradas.length
       ? entidadesFiltradas
