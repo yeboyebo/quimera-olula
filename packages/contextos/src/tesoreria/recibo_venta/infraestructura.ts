@@ -1,13 +1,15 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
-import { AgruparRecibosVenta, DesagruparReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
+import { AgruparRecibosVenta, DesagruparReciboVenta, PatchDevolverReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
 
 export interface MovimientoReciboApi {
     id: string;
     fecha: string | null;
     tipo: string;
     estado: boolean;
+    cuenta_pago_id?: string | null;
+    nombre_cuenta_pago?: string | null;
 }
 
 export interface ReciboVentaApi {
@@ -33,6 +35,8 @@ const movimientoReciboDesdeApi = (api: MovimientoReciboApi): MovimientoRecibo =>
     fecha: fechaDesdeApi(api.fecha),
     tipo: api.tipo,
     estado: api.estado,
+    cuentaPagoId: api.cuenta_pago_id ?? "",
+    nombreCuentaPago: api.nombre_cuenta_pago ?? "",
 });
 
 export const reciboVentaDesdeApi = (api: ReciboVentaApi): ReciboVenta => ({
@@ -76,6 +80,17 @@ export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => 
             fecha: pago.fecha,
         },
         "Error al pagar el recibo de cobro"
+    );
+};
+
+export const patchDevolverReciboVenta: PatchDevolverReciboVenta = async (id, devolucion) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/devolver`,
+        {
+            cuenta_pago_id: devolucion.cuentaPagoId,
+            fecha: devolucion.fecha,
+        },
+        "Error al devolver el recibo de cobro"
     );
 };
 
