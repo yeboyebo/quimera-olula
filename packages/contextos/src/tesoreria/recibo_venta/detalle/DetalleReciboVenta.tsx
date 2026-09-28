@@ -1,3 +1,4 @@
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -8,6 +9,7 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { ReciboVenta } from "../diseño.js";
 import { reciboDesagrupable, reciboPagable } from "../dominio.js";
+import { getTrazaReciboVenta } from "../infraestructura.ts";
 import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
@@ -55,6 +57,10 @@ export const DetalleReciboVenta = ({
       deshabilitado: !reciboDesagrupable(ctx.recibo),
       advertencia: true,
     },
+    {
+      texto: "Documentos relacionados",
+      onClick: () => emitir("traza_solicitada"),
+    },
   ];
 
   return (
@@ -89,6 +95,14 @@ export const DetalleReciboVenta = ({
 
         {ctx.estado === "DESAGRUPANDO" && (
           <DeshacerAgrupacion recibo={ctx.recibo} publicar={emitir} />
+        )}
+
+        {ctx.estado === "VIENDO_TRAZA" && (
+          <ModalTraza
+            id={ctx.recibo.id}
+            getTraza={getTrazaReciboVenta}
+            onCerrar={() => emitir("traza_cerrada")}
+          />
         )}
       </div>
     </Detalle>

@@ -2,6 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
 import { AgruparRecibosVenta, DesagruparReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 export interface MovimientoReciboApi {
     id: string;
@@ -98,3 +99,5 @@ export const desagruparReciboVenta: DesagruparReciboVenta = async (id) => {
 
     return respuesta.grupo_id;
 };
+
+export const getTrazaReciboVenta = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);
