@@ -177,6 +177,97 @@ describe("layoutPorColumnas", () => {
         ]);
     });
 
+    // Filas de un grafo, por código, para comparar colocaciones enteras.
+    const filas = (respuesta: unknown) =>
+        Object.fromEntries(
+            layoutPorColumnas(grafoDesdeTraza(respuesta))
+                .flatMap((columna) => columna.nodos)
+                .map((nodo) => [nodo.datos.codigo, nodo.fila])
+        );
+
+    test("cada rama ocupa su franja y cada documento se centra en su bloque", () => {
+        // Factura 497144 de vbarba: 5 albaranes de 3 pedidos de 2 presupuestos.
+        // Por código, los albaranes de un pedido no quedan juntos (3627 y 3628
+        // son del 1946, que va por detrás del 1945).
+        const pedido = (id: string, codigo: string, presupuesto: DatosDocumentoTraza) => ({
+            pedido: doc("pedido_venta", id, codigo),
+            presupuestos: [{ presupuesto }],
+        });
+        const pr15 = doc("presupuesto_venta", "15", "PR-015");
+        const pr16 = doc("presupuesto_venta", "16", "PR-016");
+        const albaran = (id: string, codigo: string, pedidos: unknown[]) => ({
+            albaran: doc("albaran_venta", id, codigo),
+            pedidos,
+        });
+
+        expect(filas({
+            factura: doc("factura_venta", "1", "F-1384"),
+            albaranes: [
+                albaran("27", "A-3627", [pedido("46", "P-1946", pr15)]),
+                albaran("28", "A-3628", [pedido("46", "P-1946", pr15)]),
+                albaran("29", "A-3629", [pedido("45", "P-1945", pr15)]),
+                albaran("30", "A-3630", [pedido("45", "P-1945", pr15)]),
+                albaran("31", "A-3631", [pedido("47", "P-1947", pr16)]),
+            ],
+            recibos: [{ recibo: doc("recibo_cobro", "9", "R-1384-01"), pagos: [] }],
+        })).toEqual({
+            "PR-015": 1.5, "PR-016": 4,
+            "P-1945": 0.5, "P-1946": 2.5, "P-1947": 4,
+            "A-3629": 0, "A-3630": 1, "A-3627": 2, "A-3628": 3, "A-3631": 4,
+            "F-1384": 2,
+            "R-1384-01": 2,
+        });
+    });
+
+    test("un documento compartido por dos ramas queda entre ellas", () => {
+        const pedido = (id: string) => ({ pedido: doc("pedido_venta", id, `P-${id}`), presupuestos: [] });
+
+        const colocacion = filas({
+            factura: doc("factura_venta", "10", "F-10"),
+            albaranes: [
+                { albaran: doc("albaran_venta", "1", "A-1"), pedidos: [pedido("1"), pedido("2")] },
+                { albaran: doc("albaran_venta", "2", "A-2"), pedidos: [pedido("3")] },
+            ],
+        });
+
+        expect([colocacion["P-1"], colocacion["P-2"], colocacion["P-3"]]).toEqual([0, 1, 2]);
+        expect(colocacion["A-1"]).toBe(0.5);
+        expect(colocacion["A-2"]).toBe(2);
+    });
+
+    test("la columna con más documentos marca la altura aunque esté después de la raíz", () => {
+        const colocacion = filas({
+            albaran: doc("albaran_venta", "1", "A-1"),
+            pedidos: [],
+            facturas: [{
+                factura: doc("factura_venta", "10", "F-10"),
+                recibos: ["1", "2", "3"].map((id) => ({ recibo: doc("recibo_cobro", id, `R-${id}`), pagos: [] })),
+            }],
+        });
+
+        expect([colocacion["R-1"], colocacion["R-2"], colocacion["R-3"]]).toEqual([0, 1, 2]);
+        expect(colocacion["F-10"]).toBe(1);
+        expect(colocacion["A-1"]).toBe(1);
+    });
+
+    test("un documento sin relacionados hacia el ancla va detrás de sus hermanos", () => {
+        // El pedido P-2 aún no tiene albaranes.
+        const colocacion = filas({
+            presupuesto: doc("presupuesto_venta", "40", "PR-40"),
+            pedidos: [
+                {
+                    pedido: doc("pedido_venta", "1", "P-1"),
+                    albaranes: ["1", "2"].map((id) => ({ albaran: doc("albaran_venta", id, `A-${id}`), facturas: [] })),
+                },
+                { pedido: doc("pedido_venta", "2", "P-2"), albaranes: [] },
+            ],
+        });
+
+        expect(colocacion["P-1"]).toBe(0.5);
+        expect(colocacion["P-2"]).toBe(1.5);
+        expect(colocacion["PR-40"]).toBe(1);
+    });
+
     test("compras usa las mismas columnas que ventas", () => {
         const columnas = layoutPorColumnas(
             grafoDesdeTraza({

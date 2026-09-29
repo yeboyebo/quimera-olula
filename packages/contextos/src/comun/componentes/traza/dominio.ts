@@ -100,38 +100,93 @@ export const grafoDesdeTraza = (respuesta: unknown): GrafoTraza => {
 const media = (valores: number[]): number =>
     valores.reduce((suma, valor) => suma + valor, 0) / valores.length;
 
+/** Pasadas de ida y vuelta para ordenar las columnas; con dos se estabiliza. */
+const PASADAS_ORDEN = 2;
+
+const porCodigo = (a: NodoTraza, b: NodoTraza): number =>
+    a.datos.codigo.localeCompare(b.datos.codigo, "es");
+
 /**
  * Columnas con documentos, en orden de la cadena, con la fila de cada nodo.
  *
- * Se colocan de izquierda a derecha: cada documento busca la altura media de
- * sus padres (los de columnas anteriores) para quedar a su lado, y si no cabe
- * baja hasta el primer hueco libre. Los que no tienen padres van detrás, por
- * código, igual que los de la primera columna.
+ * 1. Orden dentro de cada columna: se parte del código y se reordena por el
+ *    baricentro (la posición media de sus relacionados en la columna vecina),
+ *    de izquierda a derecha y de vuelta. Así los hijos de un mismo documento
+ *    quedan juntos y cada rama ocupa su franja, sin cruzarse con las demás.
+ * 2. Altura: la columna con más documentos (el ancla) va en filas enteras; en
+ *    empate, la más alejada del documento de partida, porque la traza se abre
+ *    hacia fuera. Desde ella, cada columna se centra en sus relacionados de la
+ *    columna vecina hacia el ancla, así que un documento queda en medio de su
+ *    bloque (la fila puede ser fraccionaria). Si dos documentos quedan a menos
+ *    de una fila, el de abajo se desplaza, y el que no tiene relacionados hacia
+ *    el ancla va detrás de su hermano anterior.
  */
 export const layoutPorColumnas = (grafo: GrafoTraza): ColumnaTraza[] => {
+    const vecinos = new Map<string, Set<string>>();
+    grafo.aristas.forEach(({ desde, hasta }) => {
+        vecinos.set(desde, (vecinos.get(desde) ?? new Set()).add(hasta));
+        vecinos.set(hasta, (vecinos.get(hasta) ?? new Set()).add(desde));
+    });
+
+    const columnas = COLUMNAS.map((columna) => ({
+        id: columna.id,
+        titulo: columna.titulo,
+        nodos: grafo.nodos.filter((nodo) => columna.tipos.includes(nodo.datos.tipo)).sort(porCodigo),
+    })).filter((columna) => columna.nodos.length > 0);
+
+    const posicionesEn = (clave: string, posiciones: Map<string, number>): number[] =>
+        [...(vecinos.get(clave) ?? [])].filter((vecino) => posiciones.has(vecino)).map((vecino) => posiciones.get(vecino)!);
+
+    // Los que no tienen relacionados en la columna de referencia se quedan en su
+    // hueco; el resto se reordena entre sus huecos por baricentro.
+    const reordenar = (indice: number, referencia: number) => {
+        const posiciones = new Map(columnas[referencia].nodos.map((nodo, posicion) => [nodo.clave, posicion]));
+        const nodos = columnas[indice].nodos;
+        const conRelacionados = nodos
+            .map((nodo, posicion) => ({ nodo, posicion, relacionados: posicionesEn(nodo.clave, posiciones) }))
+            .filter(({ relacionados }) => relacionados.length > 0);
+        const ordenados = [...conRelacionados]
+            .sort((a, b) => media(a.relacionados) - media(b.relacionados) || a.posicion - b.posicion);
+
+        const resultado = [...nodos];
+        conRelacionados.forEach(({ posicion }, orden) => { resultado[posicion] = ordenados[orden].nodo; });
+        columnas[indice].nodos = resultado;
+    };
+
+    for (let pasada = 0; pasada < PASADAS_ORDEN; pasada++) {
+        for (let indice = 1; indice < columnas.length; indice++) reordenar(indice, indice - 1);
+        for (let indice = columnas.length - 2; indice >= 0; indice--) reordenar(indice, indice + 1);
+    }
+
+    const columnaRaiz = columnas.findIndex((columna) => columna.nodos.some((nodo) => nodo.clave === grafo.raiz));
+    const ancla = columnas.reduce((mejor, columna, indice) => {
+        const actual = columnas[mejor];
+        const masNodos = columna.nodos.length - actual.nodos.length;
+        const masLejos = Math.abs(indice - columnaRaiz) - Math.abs(mejor - columnaRaiz);
+        return masNodos > 0 || (masNodos === 0 && masLejos > 0) ? indice : mejor;
+    }, 0);
+
     const filas = new Map<string, number>();
+    columnas[ancla].nodos.forEach((nodo, fila) => filas.set(nodo.clave, fila));
 
-    return COLUMNAS.map((columna) => {
-        const deseadas = grafo.nodos
-            .filter((nodo) => columna.tipos.includes(nodo.datos.tipo))
-            .map((nodo) => {
-                const padres = grafo.aristas
-                    .filter((arista) => arista.hasta === nodo.clave && filas.has(arista.desde))
-                    .map((arista) => filas.get(arista.desde)!);
-                return { nodo, deseada: padres.length > 0 ? media(padres) : Infinity };
-            })
-            .sort((a, b) => a.deseada - b.deseada || a.nodo.datos.codigo.localeCompare(b.nodo.datos.codigo, "es"));
-
-        let siguienteLibre = 0;
-        const nodos = deseadas.map(({ nodo, deseada }) => {
-            const fila = Math.max(deseada === Infinity ? 0 : deseada, siguienteLibre);
-            siguienteLibre = fila + 1;
-            filas.set(nodo.clave, fila);
-            return { ...nodo, fila };
+    const colocar = (indice: number, referencia: number) => {
+        const posiciones = new Map(columnas[referencia].nodos.map((nodo) => [nodo.clave, filas.get(nodo.clave)!]));
+        let anterior = -1;
+        columnas[indice].nodos.forEach((nodo) => {
+            const relacionados = posicionesEn(nodo.clave, posiciones);
+            const deseada = relacionados.length > 0 ? media(relacionados) : anterior + 1;
+            anterior = Math.max(deseada, anterior + 1);
+            filas.set(nodo.clave, anterior);
         });
+    };
 
-        return { id: columna.id, titulo: columna.titulo, nodos };
-    }).filter((columna) => columna.nodos.length > 0);
+    for (let indice = ancla + 1; indice < columnas.length; indice++) colocar(indice, indice - 1);
+    for (let indice = ancla - 1; indice >= 0; indice--) colocar(indice, indice + 1);
+
+    return columnas.map((columna) => ({
+        ...columna,
+        nodos: columna.nodos.map((nodo) => ({ ...nodo, fila: filas.get(nodo.clave)! })),
+    }));
 };
 
 export const nombreTipo = (tipo: TipoDocumentoTraza): string => NOMBRES_TIPO[tipo];
