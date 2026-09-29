@@ -2,7 +2,7 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { GetTraza, GrafoTraza as Grafo, TipoDocumentoTraza, UrlPorId } from "./diseño.ts";
+import { GetTraza, GrafoTraza as Grafo, UrlsTraza } from "./diseño.ts";
 import { grafoDesdeTraza, urlDocumento } from "./dominio.ts";
 import { GrafoTraza } from "./GrafoTraza.tsx";
 import { PanelDocumentoTraza } from "./PanelDocumentoTraza.tsx";
@@ -24,7 +24,7 @@ export const ModalTraza = ({
 }) => {
   const navigate = useNavigate();
   const { app } = useContext(FactoryCtx);
-  const urls = (app.Comun?.traza_urls ?? {}) as Partial<Record<TipoDocumentoTraza, UrlPorId>>;
+  const urls = (app.Comun?.traza_urls ?? {}) as UrlsTraza;
 
   const [grafo, setGrafo] = useState<Grafo | null>(null);
   const [seleccionado, setSeleccionado] = useState<string | null>(null);

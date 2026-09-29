@@ -263,4 +263,8 @@ describe("urlDocumento", () => {
         expect(urlDocumento("factura_venta", "10", { factura_venta: (id) => `/otra/${id}` }))
             .toBe("/otra/10");
     });
+
+    test("la app puede dejar un tipo sin pantalla", () => {
+        expect(urlDocumento("recibo_cobro", "50", { recibo_cobro: null })).toBeNull();
+    });
 });

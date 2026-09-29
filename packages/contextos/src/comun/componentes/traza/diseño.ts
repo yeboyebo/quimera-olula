@@ -58,4 +58,7 @@ export type DatoResumen = {
 
 export type UrlPorId = (id: string) => string;
 
+/** URLs que cambia la app, por tipo. `null`: el tipo no tiene pantalla en esa app. */
+export type UrlsTraza = Partial<Record<TipoDocumentoTraza, UrlPorId | null>>;
+
 export type GetTraza = (id: string) => Promise<unknown>;

@@ -8,6 +8,7 @@ import {
     NodoTraza,
     TipoDocumentoTraza,
     UrlPorId,
+    UrlsTraza,
 } from "./diseño.ts";
 
 /** Columnas del grafo, en el orden en que se generan los documentos. */
@@ -181,13 +182,13 @@ export const resumenDocumento = (datos: DatosDocumentoTraza): DatoResumen[] => {
 
 /**
  * Dónde se abre un documento, o null si no tiene pantalla propia (los pagos).
- * La app puede cambiar la url de cualquier tipo.
+ * La app puede cambiar la url de cualquier tipo, o dejarlo sin pantalla con null.
  */
 export const urlDocumento = (
     tipo: TipoDocumentoTraza,
     id: string,
-    urls: Partial<Record<TipoDocumentoTraza, UrlPorId>> = {}
+    urls: UrlsTraza = {}
 ): string | null => {
-    const url = urls[tipo] ?? URLS_POR_DEFECTO[tipo];
+    const url = tipo in urls ? urls[tipo] : URLS_POR_DEFECTO[tipo];
     return url ? url(id) : null;
 };

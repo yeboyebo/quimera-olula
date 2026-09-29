@@ -2007,6 +2007,9 @@ importers:
 
   legacy/extensions/vbarba/facturacion:
     dependencies:
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../../../packages/contextos
       '@quimera-extension/base-albaranes':
         specifier: workspace:*
         version: link:../../base/albaranes
