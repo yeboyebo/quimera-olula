@@ -5,6 +5,8 @@ export interface MovimientoRecibo extends Entidad {
     fecha: Date | null;
     tipo: string;
     estado: boolean;
+    cuentaPagoId: string;
+    nombreCuentaPago: string;
 }
 
 export interface ReciboVenta extends Entidad {
@@ -37,3 +39,10 @@ export type PatchPagarReciboVenta = (id: string, pago: PagoReciboVenta) => Promi
 export type AgruparRecibosVenta = (id: string, reciboIds: string[]) => Promise<string>;
 
 export type DesagruparReciboVenta = (id: string) => Promise<string>;
+
+export type DevolucionReciboVenta = {
+    cuentaPagoId: string;
+    fecha: string;
+};
+
+export type PatchDevolverReciboVenta = (id: string, devolucion: DevolucionReciboVenta) => Promise<void>;

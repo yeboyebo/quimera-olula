@@ -8,18 +8,23 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { ReciboVenta } from "../diseño.js";
-import { reciboDesagrupable, reciboPagable } from "../dominio.js";
+import {
+  reciboDesagrupable,
+  reciboDevolvible,
+  reciboPagable,
+} from "../dominio.js";
 import { getTrazaReciboVenta } from "../infraestructura.ts";
+import { RecibosAgrupados } from "./agrupados/RecibosAgrupados.tsx";
+import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
 } from "./detalle.js";
-import { RecibosAgrupados } from "./agrupados/RecibosAgrupados.tsx";
-import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import "./DetalleReciboVenta.css";
+import { DevolverReciboVenta } from "./devolver/DevolverReciboVenta.tsx";
 import { getMaquina } from "./maquina.js";
-import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
 import { PagarReciboVenta } from "./pagar/PagarReciboVenta.tsx";
+import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
 
 export const DetalleReciboVenta = ({
   id,
@@ -46,11 +51,16 @@ export const DetalleReciboVenta = ({
   const titulo = (r: ReciboVenta) => r.codigo || `Recibo ${r.id}`;
 
   const acciones = [
-    {
-      texto: "Pagar",
-      onClick: () => emitir("pagar_solicitado"),
-      deshabilitado: !reciboPagable(ctx.recibo),
-    },
+    reciboDevolvible(ctx.recibo)
+      ? {
+          texto: "Devolver",
+          onClick: () => emitir("devolucion_solicitada"),
+        }
+      : {
+          texto: "Pagar",
+          onClick: () => emitir("pagar_solicitado"),
+          deshabilitado: !reciboPagable(ctx.recibo),
+        },
     {
       texto: "Deshacer agrupación",
       onClick: () => emitir("desagrupado_solicitado"),
@@ -79,7 +89,10 @@ export const DetalleReciboVenta = ({
           <QInput label="Estado" {...uiProps("estado")} />
           <QInput label="Importe" {...uiProps("importe")} />
           <QInput label="Fecha de emisión" {...uiProps("fechaEmision")} />
-          <QInput label="Fecha de vencimiento" {...uiProps("fechaVencimiento")} />
+          <QInput
+            label="Fecha de vencimiento"
+            {...uiProps("fechaVencimiento")}
+          />
           <Cliente {...uiProps("clienteId", "nombreCliente")} deshabilitado />
           <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
           <QInput label="Factura" {...uiProps("facturaId")} />
@@ -92,6 +105,10 @@ export const DetalleReciboVenta = ({
         <PagosReciboVenta pagos={ctx.recibo.pagos} />
 
         {ctx.estado === "PAGANDO" && <PagarReciboVenta publicar={emitir} />}
+
+        {ctx.estado === "DEVOLVIENDO" && (
+          <DevolverReciboVenta recibo={ctx.recibo} publicar={emitir} />
+        )}
 
         {ctx.estado === "DESAGRUPANDO" && (
           <DeshacerAgrupacion recibo={ctx.recibo} publicar={emitir} />

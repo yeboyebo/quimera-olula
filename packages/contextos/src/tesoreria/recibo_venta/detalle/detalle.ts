@@ -1,8 +1,9 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import { ReciboVenta } from "../diseño.js";
-import { desagruparReciboVenta, getReciboVenta, patchPagarReciboVenta } from "../infraestructura.js";
+import { desagruparReciboVenta, getReciboVenta, patchDevolverReciboVenta, patchPagarReciboVenta } from "../infraestructura.js";
 import { ContextoDetalleReciboVenta, EstadoDetalleReciboVenta } from "./diseño.js";
+import { DevolucionRecibo } from "./devolver/diseño.js";
 import { PagoRecibo } from "./pagar/diseño.js";
 
 type ProcesarDetalle = ProcesarContexto<EstadoDetalleReciboVenta, ContextoDetalleReciboVenta>;
@@ -68,6 +69,21 @@ export const pagarRecibo: ProcesarDetalle = async (contexto, payload) => {
     await patchPagarReciboVenta(contexto.recibo.id, {
         cuentaPagoId: pago.cuenta_pago_id,
         fecha: pago.fecha.toISOString().slice(0, 10),
+    });
+    const recibo = await getReciboVenta(contexto.recibo.id);
+
+    return [
+        { ...contexto, estado: 'ABIERTO', recibo },
+        [["recibo_cambiado", recibo]],
+    ];
+};
+
+/** La cuenta es la del último pago; el modal la muestra sin dejar cambiarla. */
+export const devolverRecibo: ProcesarDetalle = async (contexto, payload) => {
+    const devolucion = payload as DevolucionRecibo;
+    await patchDevolverReciboVenta(contexto.recibo.id, {
+        cuentaPagoId: devolucion.cuenta_pago_id,
+        fecha: devolucion.fecha.toISOString().slice(0, 10),
     });
     const recibo = await getReciboVenta(contexto.recibo.id);
 
