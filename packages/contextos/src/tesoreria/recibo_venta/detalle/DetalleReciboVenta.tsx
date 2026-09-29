@@ -67,10 +67,11 @@ export const DetalleReciboVenta = ({
       deshabilitado: !reciboDesagrupable(ctx.recibo),
       advertencia: true,
     },
-    {
-      texto: "Documentos relacionados",
-      onClick: () => emitir("traza_solicitada"),
-    },
+    // Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide.
+    // {
+    //   texto: "Documentos relacionados",
+    //   onClick: () => emitir("traza_solicitada"),
+    // },
   ];
 
   return (

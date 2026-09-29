@@ -2,7 +2,8 @@ import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-import { QuimeraAcciones } from "@olula/componentes/index.js";
+// Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide.
+// import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
@@ -37,12 +38,13 @@ export const DetalleReciboCompra = ({
 
   if (!ctx.recibo.id) return null;
 
-  const acciones = [
-    {
-      texto: "Documentos relacionados",
-      onClick: () => emitir("traza_solicitada"),
-    },
-  ];
+  // Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide.
+  // const acciones = [
+  //   {
+  //     texto: "Documentos relacionados",
+  //     onClick: () => emitir("traza_solicitada"),
+  //   },
+  // ];
 
   const titulo = (r: ReciboCompra) => r.codigo || `Recibo ${r.id}`;
 
@@ -55,7 +57,8 @@ export const DetalleReciboCompra = ({
       cerrarDetalle={() => emitir("recibo_deseleccionado", null, true)}
     >
       <div className="DetalleReciboCompra">
-        <QuimeraAcciones acciones={acciones} vertical />
+        {/* Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide. */}
+        {/* <QuimeraAcciones acciones={acciones} vertical /> */}
 
         <quimera-formulario>
           <QInput label="Código" {...uiProps("codigo")} />
