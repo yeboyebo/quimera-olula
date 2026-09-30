@@ -1,15 +1,19 @@
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
+import { bancaActiva } from "../../comun/banca.js";
 import { ReciboCompra } from "../diseño.js";
+import { reciboCompraPagable } from "../dominio.js";
 import {
   contextoDetalleReciboCompraInicial,
   metaReciboCompra,
 } from "./detalle.js";
 import "./DetalleReciboCompra.css";
+import { OrdenarPagoReciboCompra } from "./ordenar_pago/OrdenarPagoReciboCompra.tsx";
 import { getMaquina } from "./maquina.js";
 
 export const DetalleReciboCompra = ({
@@ -35,6 +39,15 @@ export const DetalleReciboCompra = ({
   if (!ctx.recibo.id) return null;
 
   const titulo = (r: ReciboCompra) => r.codigo || `Recibo ${r.id}`;
+  const bancaHabilitada = bancaActiva();
+
+  const acciones = [
+    bancaHabilitada && {
+      texto: "Pagar al proveedor",
+      onClick: () => emitir("ordenar_pago_solicitado"),
+      deshabilitado: !reciboCompraPagable(ctx.recibo),
+    },
+  ];
 
   return (
     <Detalle
@@ -45,6 +58,8 @@ export const DetalleReciboCompra = ({
       cerrarDetalle={() => emitir("recibo_deseleccionado", null, true)}
     >
       <div className="DetalleReciboCompra">
+        {bancaHabilitada && <QuimeraAcciones acciones={acciones} vertical />}
+
         <quimera-formulario>
           <QInput label="Código" {...uiProps("codigo")} />
           <QInput label="Estado" {...uiProps("estado")} />
@@ -55,6 +70,10 @@ export const DetalleReciboCompra = ({
           <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
           <QInput label="Factura" {...uiProps("facturaId")} />
         </quimera-formulario>
+
+        {ctx.estado === "ORDENANDO_PAGO" && (
+          <OrdenarPagoReciboCompra recibo={ctx.recibo} publicar={emitir} />
+        )}
       </div>
     </Detalle>
   );

@@ -4,6 +4,7 @@ export type EstadoDetalleReciboVenta =
     | 'INICIAL'
     | 'ABIERTO'
     | 'PAGANDO'
+    | 'ENLACE_COBRO'
     | 'DESAGRUPANDO';
 
 export type ContextoDetalleReciboVenta = {

@@ -1,0 +1,19 @@
+.ConexionBancaria {
+    .tarjeta-conexion-bancaria {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .tarjeta-conexion-bancaria-institucion {
+        font-weight: 600;
+    }
+
+    .tarjeta-conexion-bancaria-estado.estado-requiere_reautenticacion {
+        color: var(--color-advertencia-oscuro);
+    }
+
+    .tarjeta-conexion-bancaria-estado.estado-activa {
+        color: var(--color-exito-oscuro);
+    }
+}

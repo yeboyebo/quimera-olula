@@ -47,3 +47,25 @@ export const getRecibosCompra: GetRecibosCompra = async (criteria) => {
         "Error al obtener los recibos de pago"
     );
 };
+
+export type OrdenPagoReciboCompraApi = {
+    /** Solo si `requiere_autorizacion`: página del banco donde autorizar el pago. */
+    url: string | null;
+    pago_id: string;
+    referencia: string;
+    requiere_autorizacion: boolean;
+    ordenante: { nombre: string; iban: string };
+    beneficiario: { nombre: string; iban: string };
+};
+
+/** La empresa paga el recibo al proveedor desde su cuenta `cuentaBancoId`. */
+export const postOrdenarPagoReciboCompra = async (
+    id: string,
+    cuentaBancoId: string,
+): Promise<OrdenPagoReciboCompraApi> => {
+    return await RestAPI.query(
+        `${baseUrl}/${id}/ordenar_pago`,
+        { cuenta_banco_id: cuentaBancoId },
+        "Error al ordenar el pago al proveedor"
+    );
+};

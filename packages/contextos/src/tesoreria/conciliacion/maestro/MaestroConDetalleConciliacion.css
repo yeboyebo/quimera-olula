@@ -1,0 +1,37 @@
+.Conciliacion {
+    .importe-ingreso {
+        color: var(--color-exito-oscuro);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .importe-cargo {
+        color: var(--color-error-oscuro);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .celda-estado-movimiento-bancario {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .celda-recibo-movimiento-bancario {
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-s);
+
+        span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .tarjeta-movimiento-bancario {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 100%;
+    }
+}
