@@ -3,6 +3,7 @@ import React from "react";
 export type QError = {
   nombre: string;
   descripcion?: string;
+  estado?: number;
 };
 
 export type Intentar = <Out>(f: () => Out, onError?: (error: unknown) => void) => Promise<Out>;

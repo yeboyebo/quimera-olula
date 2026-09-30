@@ -33,6 +33,7 @@ const llamada = async <T>({ method, url, headers = {}, body, msgError }: {
     const error = {
       nombre: msgError || `Error ${response.status}`,
       descripcion: errorText,
+      estado: response.status,
     };
     return Promise.reject(error);
   }

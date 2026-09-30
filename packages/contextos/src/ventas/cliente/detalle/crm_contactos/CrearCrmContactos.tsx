@@ -24,6 +24,7 @@ export const CrearCrmContactos = ({ emitir }: CrearCrmContactosProps) => {
       <quimera-formulario>
         <QInput label="Nombre" {...uiProps("nombre")} ref={focus} />
         <QInput label="Email" {...uiProps("email")} />
+        <QInput label="Teléfono" {...uiProps("telefono1")} />
       </quimera-formulario>
       <div className="botones">
         <QBoton onClick={guardar} deshabilitado={!valido}>

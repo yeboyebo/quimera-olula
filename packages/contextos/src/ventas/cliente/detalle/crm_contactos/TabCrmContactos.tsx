@@ -109,6 +109,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
           descripcion=""
           nombre="cliente/contacto_id"
           label="Seleccionar contacto"
+          excluir={ctx.contactos.map((contacto) => contacto.id)}
           onChange={(contacto) => setContactoSeleccionado(contacto)}
         />
         <div className="botones">
