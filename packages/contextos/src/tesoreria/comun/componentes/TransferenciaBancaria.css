@@ -1,0 +1,22 @@
+.TransferenciaBancaria {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--espaciado-xs) var(--espaciado-m);
+    margin-block: var(--espaciado-m);
+
+    dt {
+        color: var(--color-texto-secundario);
+    }
+
+    dd {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .iban {
+        font-family: monospace;
+        font-size: var(--tamaño-letra-s);
+        color: var(--color-texto-secundario);
+    }
+}

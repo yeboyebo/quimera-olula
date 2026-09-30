@@ -1,0 +1,21 @@
+.TabGeneral {
+    quimera-input[nombre="institucionNombre"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="estado"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="ultimaSincronizacion"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="creadoEn"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="ultimoError"] {
+        grid-column: span 12;
+    }
+}

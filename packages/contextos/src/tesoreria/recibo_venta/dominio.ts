@@ -1,5 +1,5 @@
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
-import { ReciboVenta } from "./diseño.ts";
+import { MovimientoRecibo, ReciboVenta } from "./diseño.ts";
 
 /**
  * Estados en los que el recibo admite cobro. El servidor manda el estado como
@@ -9,6 +9,31 @@ const ESTADOS_PAGABLES = ["emitido", "devuelto"];
 
 export const reciboPagable = (recibo: ReciboVenta): boolean =>
     ESTADOS_PAGABLES.includes(recibo.estado.trim().toLowerCase());
+
+/** Solo un recibo cobrado admite devolución. */
+export const reciboDevolvible = (recibo: ReciboVenta): boolean =>
+    recibo.estado.trim().toLowerCase() === "pagado";
+
+const esDevolucion = (movimiento: MovimientoRecibo): boolean =>
+    movimiento.tipo.trim().toLowerCase().startsWith("devol");
+
+/**
+ * Cuenta del último pago del recibo. La devolución tiene que salir por la
+ * misma cuenta por la que se cobró. No se filtra por `estado`: el servidor
+ * lo rellena con `pagosdevolcli.editable`, que solo marca el último movimiento.
+ */
+export const cuentaUltimoPago = (
+    recibo: ReciboVenta
+): { id: string; nombre: string } | null => {
+    const pagos = recibo.pagos
+        .filter((movimiento) => !esDevolucion(movimiento))
+        .sort((a, b) => (a.fecha?.getTime() ?? 0) - (b.fecha?.getTime() ?? 0));
+    const ultimo = pagos[pagos.length - 1];
+
+    return ultimo?.cuentaPagoId
+        ? { id: ultimo.cuentaPagoId, nombre: ultimo.nombreCuentaPago }
+        : null;
+};
 
 export const puedenAgruparse = (recibos: ReciboVenta[]): boolean =>
     recibos.length > 0 &&

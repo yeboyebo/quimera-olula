@@ -31,6 +31,7 @@ import {
     PostLineasFactura,
     ReciboFactura,
 } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -417,3 +418,5 @@ export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
         importe: r.importe,
     })));
 };
+
+export const getTrazaFactura = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

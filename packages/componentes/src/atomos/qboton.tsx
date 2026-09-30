@@ -1,4 +1,5 @@
 import { MouseEventHandler, PropsWithChildren } from "react";
+import { Link } from "react-router";
 import "./qboton.css";
 
 type QBotonProps = {
@@ -11,6 +12,8 @@ type QBotonProps = {
   ancho?: boolean;
   deshabilitado?: boolean;
   texto?: string;
+  /** Ruta de la app: el botón se pinta como un enlace (se puede abrir en otra pestaña). */
+  enlace?: string;
   onClick?: MouseEventHandler;
   onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>;
@@ -28,12 +31,23 @@ export const QBoton = ({
   ancho,
   deshabilitado,
   texto,
+  enlace,
   props,
   onClick,
   onMouseEnter,
   onMouseLeave,
 }: PropsWithChildren<QBotonProps>) => {
   const attrs = { tamaño, variante, destructivo, advertencia, exito, ancho, deshabilitado };
+
+  if (enlace) {
+    return (
+      <quimera-boton {...attrs}>
+        <Link to={enlace} onClick={onClick} aria-disabled={deshabilitado || undefined}>
+          {texto || children}
+        </Link>
+      </quimera-boton>
+    );
+  }
 
   return (
     <quimera-boton {...attrs}>
