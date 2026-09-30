@@ -6,6 +6,7 @@ import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import { DeleteLinea, EstadoExpedicion, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchEmitirFactura, PatchLinea, PostFactura, PostLinea, QueryNuevaLinea, ReciboFactura } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -43,7 +44,8 @@ interface FacturaAPI {
     servicios: boolean;
     rectificativa_id: string | null;
     grupo_iva_negocio_id: string;
-    por_comision: number;
+    por_comision?: number;
+    por_comision_agente?: number | null;
     observaciones: string;
     editable?: boolean;
     estado_expedicion: EstadoExpedicion;
@@ -53,6 +55,7 @@ export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
     fecha: new Date(Date.parse(p.fecha)),
     dtoPorcentual: p.por_descuento,
     netoSinDto: p.neto_sin_dto,
+    por_comision: p.por_comision ?? p.por_comision_agente ?? 0,
     estadoExpedicion: p.estado_expedicion,
     cliente: {
         cliente_id: p.cliente_id ?? null,
@@ -277,3 +280,5 @@ export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
         importe: r.importe,
     })));
 };
+
+export const getTrazaFactura = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

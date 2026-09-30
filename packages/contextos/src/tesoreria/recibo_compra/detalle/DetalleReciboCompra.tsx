@@ -1,3 +1,4 @@
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -8,6 +9,7 @@ import { useEffect } from "react";
 import { bancaActiva } from "../../comun/banca.js";
 import { ReciboCompra } from "../diseño.js";
 import { reciboCompraPagable } from "../dominio.js";
+import { getTrazaReciboCompra } from "../infraestructura.ts";
 import {
   contextoDetalleReciboCompraInicial,
   metaReciboCompra,
@@ -42,6 +44,11 @@ export const DetalleReciboCompra = ({
   const bancaHabilitada = bancaActiva();
 
   const acciones = [
+    // "Documentos relacionados" no existe en el ERP; posibilidad de habilitarla si se pide:
+    // {
+    //   texto: "Documentos relacionados",
+    //   onClick: () => emitir("traza_solicitada"),
+    // },
     bancaHabilitada && {
       texto: "Pagar al proveedor",
       onClick: () => emitir("ordenar_pago_solicitado"),
@@ -73,6 +80,14 @@ export const DetalleReciboCompra = ({
 
         {ctx.estado === "ORDENANDO_PAGO" && (
           <OrdenarPagoReciboCompra recibo={ctx.recibo} publicar={emitir} />
+        )}
+
+        {ctx.estado === "VIENDO_TRAZA" && (
+          <ModalTraza
+            id={ctx.recibo.id}
+            getTraza={getTrazaReciboCompra}
+            onCerrar={() => emitir("traza_cerrada")}
+          />
         )}
       </div>
     </Detalle>

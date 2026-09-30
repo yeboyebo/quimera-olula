@@ -70,6 +70,7 @@ const getMetaTablaPagos = () => {
       render: (pago: PagoVentaTpv) => {
         if (pago.idTipoTarjeta) return `${pago.formaPago} ${pago.idTipoTarjeta}`;
         if (pago.formaPago === "VALE" && pago.vale) return `${pago.formaPago} (${pago.vale})`;
+        if (pago.formaPago === "TARJETA_REGALO" && pago.coduso) return `${pago.formaPago} (${pago.coduso})`;
         return pago.formaPago;
       },
     },

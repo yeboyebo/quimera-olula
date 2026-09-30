@@ -30,7 +30,7 @@ export const getMaquina: () => Maquina<EstadoMaestroFactura, ContextoMaestroFact
 
         CREANDO_FACTURA: {
 
-            factura_creada: [Facturas.incluir, 'INICIAL'],
+            factura_creada: [Facturas.incluir, Facturas.activar, 'INICIAL'],
 
             creacion_factura_cancelada: "INICIAL",
         },

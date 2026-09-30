@@ -95,6 +95,7 @@ export const MaestroConDetalleVentaTpv = () => {
                   codigo={venta.codigo}
                   nombreCliente={venta.cliente?.nombre ?? ""}
                   fecha={venta.fecha}
+                  hora={venta.hora}
                   total={venta.total}
                   divisa={venta.divisa_id}
                   tasaConversion={venta.tasa_conversion}
@@ -135,6 +136,7 @@ export const MaestroConDetalleVentaTpv = () => {
         abierto={ctx.estado === "CREANDO_VENTA"}
         titulo="Nuevo Pedido"
         onCerrar={() => emitir("creacion_venta_cancelada")}
+        pantallaCompletaMovil={false}
       >
         {ctx.estado === "CREANDO_VENTA" && <CrearVentaTpv publicar={emitir} />}
       </QModal>

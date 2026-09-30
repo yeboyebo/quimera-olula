@@ -42,6 +42,11 @@
     gap: 0.75rem;
     font-size: 0.875rem;
     color: var(--color-texto-secundario);
+
+    /* Nombre + tipo de tarjeta (E/D/F), primer span — el saldo va aparte. */
+    > span:first-child {
+        font-weight: bold;
+    }
 }
 
 .TarjetaGansociety-acciones {
@@ -58,6 +63,15 @@
 
 @media (max-width: 768px) {
     .TarjetaGansociety {
+        justify-content: center;
+    }
+
+    .TarjetaGansociety-info {
+        align-items: center;
+        text-align: center;
+    }
+
+    .TarjetaGansociety-titular {
         justify-content: center;
     }
 }

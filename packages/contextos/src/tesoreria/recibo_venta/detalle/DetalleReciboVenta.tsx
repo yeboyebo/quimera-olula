@@ -1,3 +1,4 @@
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -8,18 +9,24 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { bancaActiva } from "../../comun/banca.js";
 import { ReciboVenta } from "../diseño.js";
-import { reciboDesagrupable, reciboPagable } from "../dominio.js";
+import {
+  reciboDesagrupable,
+  reciboDevolvible,
+  reciboPagable,
+} from "../dominio.js";
+import { getTrazaReciboVenta } from "../infraestructura.ts";
+import { RecibosAgrupados } from "./agrupados/RecibosAgrupados.tsx";
+import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import {
   contextoDetalleReciboVentaInicial,
   metaReciboVenta,
 } from "./detalle.js";
-import { RecibosAgrupados } from "./agrupados/RecibosAgrupados.tsx";
-import { DeshacerAgrupacion } from "./desagrupar/DeshacerAgrupacion.tsx";
 import "./DetalleReciboVenta.css";
+import { DevolverReciboVenta } from "./devolver/DevolverReciboVenta.tsx";
 import { GenerarEnlaceCobroReciboVenta } from "./enlace_cobro/GenerarEnlaceCobroReciboVenta.tsx";
 import { getMaquina } from "./maquina.js";
-import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
 import { PagarReciboVenta } from "./pagar/PagarReciboVenta.tsx";
+import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
 
 export const DetalleReciboVenta = ({
   id,
@@ -47,11 +54,16 @@ export const DetalleReciboVenta = ({
   const bancaHabilitada = bancaActiva();
 
   const acciones = [
-    {
-      texto: "Pagar",
-      onClick: () => emitir("pagar_solicitado"),
-      deshabilitado: !reciboPagable(ctx.recibo),
-    },
+    reciboDevolvible(ctx.recibo)
+      ? {
+          texto: "Devolver",
+          onClick: () => emitir("devolucion_solicitada"),
+        }
+      : {
+          texto: "Pagar",
+          onClick: () => emitir("pagar_solicitado"),
+          deshabilitado: !reciboPagable(ctx.recibo),
+        },
     bancaHabilitada && {
       texto: "Enviar enlace de cobro",
       onClick: () => emitir("enlace_cobro_solicitado"),
@@ -63,6 +75,11 @@ export const DetalleReciboVenta = ({
       deshabilitado: !reciboDesagrupable(ctx.recibo),
       advertencia: true,
     },
+    // Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide.
+    // {
+    //   texto: "Documentos relacionados",
+    //   onClick: () => emitir("traza_solicitada"),
+    // },
   ];
 
   return (
@@ -81,7 +98,10 @@ export const DetalleReciboVenta = ({
           <QInput label="Estado" {...uiProps("estado")} />
           <QInput label="Importe" {...uiProps("importe")} />
           <QInput label="Fecha de emisión" {...uiProps("fechaEmision")} />
-          <QInput label="Fecha de vencimiento" {...uiProps("fechaVencimiento")} />
+          <QInput
+            label="Fecha de vencimiento"
+            {...uiProps("fechaVencimiento")}
+          />
           <Cliente {...uiProps("clienteId", "nombreCliente")} deshabilitado />
           <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
           <QInput label="Factura" {...uiProps("facturaId")} />
@@ -99,8 +119,20 @@ export const DetalleReciboVenta = ({
           <GenerarEnlaceCobroReciboVenta recibo={ctx.recibo} publicar={emitir} />
         )}
 
+        {ctx.estado === "DEVOLVIENDO" && (
+          <DevolverReciboVenta recibo={ctx.recibo} publicar={emitir} />
+        )}
+
         {ctx.estado === "DESAGRUPANDO" && (
           <DeshacerAgrupacion recibo={ctx.recibo} publicar={emitir} />
+        )}
+
+        {ctx.estado === "VIENDO_TRAZA" && (
+          <ModalTraza
+            id={ctx.recibo.id}
+            getTraza={getTrazaReciboVenta}
+            onCerrar={() => emitir("traza_cerrada")}
+          />
         )}
       </div>
     </Detalle>

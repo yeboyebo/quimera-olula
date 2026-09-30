@@ -14,6 +14,9 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboCompra, ContextoDetall
         },
 
         ABIERTO: {
+
+            traza_solicitada: "VIENDO_TRAZA",
+
             recibo_id_cambiado: [cargarContexto],
 
             recibo_deseleccionado: [
@@ -25,6 +28,11 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboCompra, ContextoDetall
 
         ORDENANDO_PAGO: {
             ordenar_pago_cerrado: 'ABIERTO',
+        },
+
+        VIENDO_TRAZA: {
+
+            traza_cerrada: "ABIERTO",
         },
     };
 };

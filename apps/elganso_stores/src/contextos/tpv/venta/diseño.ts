@@ -66,14 +66,16 @@ export interface PagoVentaTpv {
     idTipoTarjeta: string | null;
     vale?: string | null;
     saldoVale?: number | null;
+    coduso?: string | null;
     [key: string]: unknown;
 }
 
 export type NuevoPagoVentaTpv = {
     importe: number;
-    formaPago: 'EFECTIVO' | 'TARJETA' | 'PUNTOS' | 'VALE';
+    formaPago: 'EFECTIVO' | 'TARJETA' | 'PUNTOS' | 'VALE' | 'TARJETA_REGALO';
     idTipoTarjeta?: string | null;
     idVale?: string;
+    coduso?: string;
 };
 
 export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<VentaTpv>;

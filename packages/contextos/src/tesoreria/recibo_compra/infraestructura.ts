@@ -2,6 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
 import { GetReciboCompra, GetRecibosCompra, ReciboCompra } from "./diseño.js";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 export interface ReciboCompraApi {
     id: string;
@@ -47,6 +48,8 @@ export const getRecibosCompra: GetRecibosCompra = async (criteria) => {
         "Error al obtener los recibos de pago"
     );
 };
+
+export const getTrazaReciboCompra = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);
 
 export type OrdenPagoReciboCompraApi = {
     /** Solo si `requiere_autorizacion`: página del banco donde autorizar el pago. */
