@@ -16,4 +16,5 @@ export const menuVentas = {
     "Ventas/Facturas": { url: "/ventas/factura", regla: "ventas.factura.leer" },
     "Ventas/Artículos": { url: "/ventas/articulo", regla: "ventas.articulo" },
     "Ventas/Tarifas": { url: "/ventas/tarifa", regla: "ventas.tarifa.leer" },
+    "Ventas/Agentes": { url: "/ventas/agente", regla: "ventas.agente" },
 };
