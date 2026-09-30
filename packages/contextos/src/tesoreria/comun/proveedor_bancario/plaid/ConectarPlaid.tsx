@@ -21,7 +21,7 @@ export const ConectarPlaid = ({
 }: ConectarProveedorBancarioProps) => {
     const linkToken = typeof datos.link_token === "string" ? datos.link_token : null;
 
-    const onSuccess: PlaidLinkOnSuccess = (publicToken) => {
+    const onSuccess: PlaidLinkOnSuccess = (publicToken: string | null) => {
         if (!publicToken) {
             onCancelado();
             return;
