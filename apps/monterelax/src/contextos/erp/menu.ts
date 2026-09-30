@@ -1,0 +1,23 @@
+
+export const menuErp = {
+    "Gerencia": { icono: "grafico_barras" },
+    "Gerencia/Dashboard Gerencia": { url: "/dashboardGerencia/gerencia" },
+    "Producción": { icono: "grafico_barras" },
+    "Producción/Producción": { url: "/dashboardGerencia/produccion" },
+    "Representantes": { icono: "usuarios" },
+    "Representantes/Ventas": { url: "/dashboardRepresentantes" },
+    "Representantes/Cobros": { url: "/dashboardCobros" },
+    "Representantes/Seguimiento de Pedidos": { url: "/pedidosCliente" },
+    "Representantes/Tarifas": { url: "/documentos" },
+    "Representantes/Productos disponibles": { url: "/dashboardStocks" },
+    "Fábrica": { icono: "paquete" },
+    "Fábrica/Órdenes de Carga": { url: "/ordenesDeCarga" },
+    "Cosido": { icono: "llave_inglesa" },
+    "Cosido/Cola de Cosido": { url: "/colacosido" },
+    "Cosido/Recepción de Cosido": { url: "/recepcioncosido" },
+    "Cosido/Dashboard Cosido": { url: "/dashboardCosido" },
+    "Cosido/Cola de Cosido interna": { url: "/colaCosidoInterno" },
+    "Montado": { icono: "llave_inglesa" },
+    "Montado/Cola de Montado": { url: "/colaMontado" },
+    "Montado/Cola de Montado interna": { url: "/colaMontadoInterno" },
+};

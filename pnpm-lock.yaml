@@ -115,6 +115,28 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
 
+  apps/arboricultura:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+      quimera:
+        specifier: workspace:@quimera/core@*
+        version: link:../../legacy/libs/core
+    devDependencies:
+      baseline-browser-mapping:
+        specifier: ^2.9.19
+        version: 2.10.33
+
   apps/barnaplant:
     dependencies:
       '@olula/componentes':
@@ -132,6 +154,10 @@ importers:
       quimera:
         specifier: workspace:@quimera/core@*
         version: link:../../legacy/libs/core
+    devDependencies:
+      baseline-browser-mapping:
+        specifier: ^2.9.19
+        version: 2.10.33
 
   apps/cabrera:
     dependencies:
@@ -172,6 +198,10 @@ importers:
       quimera:
         specifier: workspace:@quimera/core@*
         version: link:../../legacy/libs/core
+    devDependencies:
+      baseline-browser-mapping:
+        specifier: ^2.9.19
+        version: 2.10.33
 
   apps/crema_cafe:
     dependencies:
@@ -251,6 +281,28 @@ importers:
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
+
+  apps/monterelax:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@olula/olula':
+        specifier: workspace:*
+        version: link:../olula
+      quimera:
+        specifier: workspace:@quimera/core@*
+        version: link:../../legacy/libs/core
+    devDependencies:
+      baseline-browser-mapping:
+        specifier: ^2.9.19
+        version: 2.10.33
 
   apps/monterelax_area_clientes:
     dependencies:
@@ -825,9 +877,6 @@ importers:
       '@quimera-extension/login':
         specifier: workspace:*
         version: link:../../extensions/login
-      '@quimera-extension/monterelax-area_clientes':
-        specifier: workspace:*
-        version: link:../../extensions/monterelax/area_clientes
       '@quimera-extension/monterelax-erp':
         specifier: workspace:*
         version: link:../../extensions/monterelax/erp
@@ -4895,6 +4944,11 @@ packages:
   base64-arraybuffer@1.0.2:
     resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
     engines: {node: '>= 0.6.0'}
+
+  baseline-browser-mapping@2.10.33:
+    resolution: {integrity: sha512-bA6+tcSLpz2tIEdDXZPpPTIuxBcC4+w6SieaYyfigIa4h8GlFxbA17v22Vx3JUtuZQj9SgOsnbK+aTBzyDyEuw==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
 
   baseline-browser-mapping@2.11.0:
     resolution: {integrity: sha512-oCu2wfipvX3AePSgmOuKkIywOu+8n9psz7hXYmk56ghpu3+7KzNIBopaOs4c9BrtdnTtW30unG9GTfHo7EwERQ==}
@@ -10515,6 +10569,8 @@ snapshots:
   balanced-match@4.0.4: {}
 
   base64-arraybuffer@1.0.2: {}
+
+  baseline-browser-mapping@2.10.33: {}
 
   baseline-browser-mapping@2.11.0: {}
 
