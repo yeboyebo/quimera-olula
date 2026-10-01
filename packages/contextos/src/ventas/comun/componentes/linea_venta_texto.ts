@@ -30,6 +30,14 @@ export const desgloseLineaVenta = (linea: LineaVentaTarjeta, divisa = "EUR"): st
     return `${cantidad} x ${formatearMoneda(linea.pvp_unitario, divisa)}${dtoTexto}`;
 };
 
+/**
+ * Línea vista como artículo seleccionable:
+ * "REF - Descripción · 3 x 1,50 € (5% Dto) = 4,28 €".
+ * El total sale de pvp_total, que ya lleva los descuentos aplicados.
+ */
+export const articuloDeLineaVenta = (linea: LineaVentaTarjeta, divisa = "EUR"): string =>
+    `${tituloLineaVenta(linea)} · ${desgloseLineaVenta(linea, divisa)} = ${formatearMoneda(linea.pvp_total, divisa)}`;
+
 export const fiscalidadLineaVenta = (linea: LineaVentaTarjeta, divisa = "EUR"): string => {
     const partes: string[] = [];
 

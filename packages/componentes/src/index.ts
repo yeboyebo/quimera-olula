@@ -1,6 +1,7 @@
 export * from "./atomos/qavatar.tsx";
 export * from "./atomos/qaviso.tsx";
 export * from "./atomos/qboton.tsx";
+export * from "./atomos/qcargando.tsx";
 export * from "./atomos/qcheckbox.tsx";
 export * from "./atomos/qdate.tsx";
 export * from "./atomos/qetiqueta.tsx";

@@ -2,6 +2,7 @@ import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
 import { GetReciboCompra, GetRecibosCompra, ReciboCompra } from "./diseño.js";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 export interface ReciboCompraApi {
     id: string;
@@ -45,5 +46,29 @@ export const getRecibosCompra: GetRecibosCompra = async (criteria) => {
         criteria,
         reciboCompraDesdeApi,
         "Error al obtener los recibos de pago"
+    );
+};
+
+export const getTrazaReciboCompra = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);
+
+export type OrdenPagoReciboCompraApi = {
+    /** Solo si `requiere_autorizacion`: página del banco donde autorizar el pago. */
+    url: string | null;
+    pago_id: string;
+    referencia: string;
+    requiere_autorizacion: boolean;
+    ordenante: { nombre: string; iban: string };
+    beneficiario: { nombre: string; iban: string };
+};
+
+/** La empresa paga el recibo al proveedor desde su cuenta `cuentaBancoId`. */
+export const postOrdenarPagoReciboCompra = async (
+    id: string,
+    cuentaBancoId: string,
+): Promise<OrdenPagoReciboCompraApi> => {
+    return await RestAPI.query(
+        `${baseUrl}/${id}/ordenar_pago`,
+        { cuenta_banco_id: cuentaBancoId },
+        "Error al ordenar el pago al proveedor"
     );
 };

@@ -175,9 +175,12 @@ export const cambiarDivisa: ProcesarFactura = async (contexto, payload) => {
 export const cambiarAgente: ProcesarFactura = async (contexto, payload) => {
     const cambio = payload as CambioAgente;
     await patchCambiarAgente(contexto.factura.id, cambio);
+    const lineaId = contexto.lineaActiva?.id ?? "";
 
     return pipeFactura(contexto, [
         refrescarFactura,
+        refrescarLineas,
+        activarLineaPorId(lineaId),
         "ABIERTO",
     ]);
 };

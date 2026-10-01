@@ -218,9 +218,12 @@ export const cambiarDivisa: ProcesarPresupuesto = async (contexto, payload) => {
 export const cambiarAgente: ProcesarPresupuesto = async (contexto, payload) => {
     const cambio = payload as CambioAgente;
     await patchCambiarAgente(contexto.presupuesto.id, cambio);
+    const lineaId = contexto.lineaActiva?.id ?? "";
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
+        refrescarLineas,
+        activarLineaPorId(lineaId),
         'ABIERTO',
     ]);
 }
@@ -259,10 +262,12 @@ export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
 }
 
 export const cambiarLinea: ProcesarPresupuesto = async (contexto) => {
+    const lineaId = contexto.lineaActiva?.id ?? "";
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
         refrescarLineas,
+        activarLineaPorId(lineaId),
         'ABIERTO',
     ]);
 }

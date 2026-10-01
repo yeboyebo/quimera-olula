@@ -6,9 +6,10 @@ export const menuVentas = {
         url: "/ventas/pedido",
         regla: "ventas.pedido.leer",
         descripcionIA: "Gestiona pedidos de venta: crear un pedido nuevo para un cliente con líneas de artículos, consultar o modificar pedidos existentes.",
+        // Cada parámetro llega a la URL y el maestro lo aplica como filtro de
+        // pedidoscli: solo valen campos de la cabecera (ver dict_criteria del backend).
         parametrosIA: {
-            cliente_id: "id del cliente para el que se crea o consulta el pedido",
-            articulo_id: "id del artículo a añadir como línea del pedido",
+            id: "id del pedido para consultar el pedido",
         },
     },
     "Ventas/Albaranes": { url: "/ventas/albaran", regla: "ventas.albaran.leer" },

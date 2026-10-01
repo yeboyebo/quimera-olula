@@ -208,10 +208,14 @@ describe("[asistente-dom-06] mensajesHiloDesdeApi mapea los mensajes reconstruid
         expect(resultado).toEqual({
             threadId: "t-1",
             mensajes: [
-                { id: "t-1-0-u", rol: "user", texto: "Busca el cliente Acme", a2uiMessages: [], adjuntos: [] },
+                {
+                    id: "t-1-0-u", rol: "user", texto: "Busca el cliente Acme", a2uiMessages: [], adjuntos: [],
+                    descarga: null, accionNavegacion: null,
+                },
                 {
                     id: "t-1-0-a", rol: "assistant", texto: "Aquí lo tienes",
                     a2uiMessages: [{ createSurface: {} }], adjuntos: [],
+                    descarga: null, accionNavegacion: null,
                 },
             ],
         });
@@ -219,6 +223,21 @@ describe("[asistente-dom-06] mensajesHiloDesdeApi mapea los mensajes reconstruid
 
     test("devuelve una lista vacía si no hay mensajes", () => {
         expect(mensajesHiloDesdeApi({ thread_id: "t-2" })).toEqual({ threadId: "t-2", mensajes: [] });
+    });
+
+    test("mapea la descarga y la navegación de un mensaje reconstruido", () => {
+        const resultado = mensajesHiloDesdeApi({
+            thread_id: "t-4",
+            mensajes: [{
+                id: "t-4-0-a", rol: "assistant", texto: "Listo", a2ui_messages: [],
+                descarga: { url: "https://x/descargar/abc", nombre_fichero: "ventas.xlsx" },
+                accion_navegacion: { ruta: "/ventas/factura", descripcion: "Facturas" },
+            }],
+        });
+        expect(resultado.mensajes[0].descarga).toEqual(
+            { url: "https://x/descargar/abc", nombreFichero: "ventas.xlsx" });
+        expect(resultado.mensajes[0].accionNavegacion).toEqual(
+            { ruta: "/ventas/factura", descripcion: "Facturas" });
     });
 
     test("mapea los adjuntos de un mensaje reconstruido", () => {

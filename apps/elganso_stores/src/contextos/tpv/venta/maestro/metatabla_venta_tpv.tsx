@@ -1,5 +1,6 @@
 import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { MetaTabla } from "@olula/componentes/index.js";
+import { formatearFechaDate, formatearHoraString } from "@olula/lib/dominio.js";
 import { VentaTpv } from "../diseño.ts";
 import { colorDeEstado, iconosEstado } from "./configEstado.tsx";
 
@@ -34,6 +35,8 @@ const metaTablaVentaTpv: MetaTabla<VentaTpv> = [
     cabecera: "Fecha",
     tipo: "fecha",
     prioridad: "alta",
+    render: (v) =>
+      `${formatearFechaDate(v.fecha)} ${formatearHoraString(v.hora ?? "")}`.trim(),
   },
   {
     id: "total",

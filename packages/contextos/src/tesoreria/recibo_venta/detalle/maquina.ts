@@ -1,6 +1,6 @@
 import { Maquina } from "@olula/lib/diseño.ts";
 import { publicar } from "@olula/lib/dominio.ts";
-import { cargarContexto, desagruparRecibo, pagarRecibo } from "./detalle.js";
+import { cargarContexto, desagruparRecibo, devolverRecibo, pagarRecibo } from "./detalle.js";
 import { ContextoDetalleReciboVenta, EstadoDetalleReciboVenta } from "./diseño.js";
 
 export const getMaquina: () => Maquina<EstadoDetalleReciboVenta, ContextoDetalleReciboVenta> = () => {
@@ -14,6 +14,9 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboVenta, ContextoDetalle
         },
 
         ABIERTO: {
+
+            traza_solicitada: "VIENDO_TRAZA",
+
             recibo_id_cambiado: [cargarContexto],
 
             recibo_deseleccionado: [
@@ -21,6 +24,10 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboVenta, ContextoDetalle
             ],
 
             pagar_solicitado: 'PAGANDO',
+
+            enlace_cobro_solicitado: 'ENLACE_COBRO',
+
+            devolucion_solicitada: 'DEVOLVIENDO',
 
             desagrupado_solicitado: 'DESAGRUPANDO',
         },
@@ -31,10 +38,25 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboVenta, ContextoDetalle
             pago_cancelado: 'ABIERTO',
         },
 
+        ENLACE_COBRO: {
+            enlace_cobro_cerrado: 'ABIERTO',
+        },
+
+        DEVOLVIENDO: {
+            devolucion_confirmada: [devolverRecibo],
+
+            devolucion_cancelada: 'ABIERTO',
+        },
+
         DESAGRUPANDO: {
             desagrupado_confirmado: [desagruparRecibo],
 
             desagrupado_cancelado: 'ABIERTO',
+        },
+
+        VIENDO_TRAZA: {
+
+            traza_cerrada: "ABIERTO",
         },
     };
 };

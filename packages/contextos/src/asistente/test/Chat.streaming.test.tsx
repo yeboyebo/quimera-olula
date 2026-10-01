@@ -158,6 +158,42 @@ test("[asistente-chat-stream-04] un evento estado se muestra y se sustituye por 
   await screen.findByRole("button", { name: "Enviar" });
 });
 
+test("[asistente-chat-stream-06] un estado tras texto en vivo descarta ese texto", async () => {
+  // El backend emite el texto según llega; si esa generación acaba llamando a una
+  // tool, manda "estado" y lo mostrado hasta ese momento debe desaparecer.
+  vi.mocked(consultarIaStream).mockReturnValue(
+    streamDeConPausas([
+      { tipo: "delta", contenido: "Voy a consultar el stock" },
+      { tipo: "estado", contenido: "Consultando información…" },
+      { tipo: "delta", contenido: "Hay 1.571 unidades." },
+      {
+        tipo: "fin",
+        threadId: "hilo-1",
+        necesitaCapacidades: false,
+        adjuntos: [],
+      },
+    ])
+  );
+
+  render(
+    <AsistenteRuntimeProvider>
+      <Chat />
+    </AsistenteRuntimeProvider>
+  );
+
+  await userEvent.click(screen.getByRole("button", { name: "Estándar" }));
+  await userEvent.type(
+    await screen.findByPlaceholderText("Escribe un mensaje…"),
+    "stock de 70463"
+  );
+  await userEvent.click(screen.getByRole("button", { name: "Enviar" }));
+
+  await screen.findByText("Hay 1.571 unidades.");
+  expect(screen.queryByText(/Voy a consultar el stock/)).toBeNull();
+
+  await screen.findByRole("button", { name: "Enviar" });
+});
+
 function Probe() {
   const { enviarMensaje, adjuntosPorMensaje, setStreamingEnabled } =
     useAsistenteContext();

@@ -120,6 +120,7 @@ export const LineasLista = ({
       seleccionada={lineas.find((linea) => linea.id === seleccionada) ?? null}
       onSeleccion={setSeleccionada}
       criteriaInicial={criteriaLineasDefecto}
+      mensajeSinDatos="No hay líneas"
       modoInicial={esMovil ? "tarjetas" : "tabla"}
       onCriteriaChanged={(_: Criteria) => null}
       renderAcciones={() =>

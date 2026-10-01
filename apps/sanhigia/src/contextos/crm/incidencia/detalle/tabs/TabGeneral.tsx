@@ -1,6 +1,9 @@
-import { Articulo } from "#/almacen/comun/componentes/Articulo.tsx";
+import {
+  ArticuloFactura,
+  OpcionArticuloFactura,
+} from "#/ventas/comun/componentes/articuloFactura.tsx";
 import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { FacturaCliente } from "#/ventas/comun/componentes/facturaCliente.tsx";
+import { Factura, OpcionFactura } from "#/ventas/comun/componentes/factura.tsx";
 import {
   QBoton,
   QCheckbox,
@@ -40,6 +43,7 @@ export const TabGeneral = ({
           nombreCliente: opcion.descripcion,
           facturaId: "",
           codigoFactura: "",
+          articuloId: "",
         });
       } else {
         set({
@@ -48,6 +52,7 @@ export const TabGeneral = ({
           nombreCliente: "",
           facturaId: "",
           codigoFactura: "",
+          articuloId: "",
         });
       }
     },
@@ -55,9 +60,9 @@ export const TabGeneral = ({
   );
 
   const handleArticuloChange = useCallback(
-    (opcion: { valor: string; descripcion: string } | null) => {
+    (opcion: OpcionArticuloFactura | null) => {
       if (opcion) {
-        set({ ...modelo, articuloId: opcion.valor });
+        set({ ...modelo, articuloId: opcion.referencia });
       } else {
         set({ ...modelo, articuloId: "" });
       }
@@ -66,15 +71,17 @@ export const TabGeneral = ({
   );
 
   const handleFacturaChange = useCallback(
-    (opcion: { valor: string; descripcion: string } | null) => {
+    (opcion: OpcionFactura | null) => {
+      // Al cambiar de factura el artículo elegido ya no pertenece a ella.
       if (opcion) {
         set({
           ...modelo,
           facturaId: opcion.valor,
-          codigoFactura: opcion.descripcion,
+          codigoFactura: opcion.codigo,
+          articuloId: "",
         });
       } else {
-        set({ ...modelo, facturaId: "", codigoFactura: "" });
+        set({ ...modelo, facturaId: "", codigoFactura: "", articuloId: "" });
       }
     },
     [modelo, set]
@@ -155,7 +162,7 @@ export const TabGeneral = ({
         />
         <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
           <div style={{ flex: 1 }}>
-            <FacturaCliente
+            <Factura
               clienteId={modelo.clienteId}
               descripcion={modelo.codigoFactura || ""}
               valor={modelo.facturaId || ""}
@@ -196,7 +203,9 @@ export const TabGeneral = ({
         {modelo.tipoIncidencia === "Proveedor" && (
           <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
             <div style={{ flex: 1 }}>
-              <Articulo
+              <ArticuloFactura
+                key={modelo.facturaId || "sin-factura"}
+                facturaId={modelo.facturaId || ""}
                 valor={modelo.articuloId || ""}
                 onChange={handleArticuloChange}
                 label="Artículo"

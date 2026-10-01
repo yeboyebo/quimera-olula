@@ -2,6 +2,13 @@
     width: 100%;
 }
 
+.QListaDocumentos-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
 .QListaDocumentos-sin-datos {
     padding: 20px;
     text-align: center;

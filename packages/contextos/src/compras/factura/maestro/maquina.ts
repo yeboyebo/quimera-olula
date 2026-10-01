@@ -18,12 +18,19 @@ export const getMaquina: () => Maquina<EstadoMaestroFactura, ContextoMaestroFact
             siguiente_pagina: [maestro.Facturas.filtrar, maestro.ampliarFacturas],
 
             crear_factura_solicitada: "CREANDO",
+            cargar_fichero_solicitado: "CARGANDO_FICHERO",
         },
 
         CREANDO: {
             alta_de_factura_cancelada: "INICIAL",
 
             factura_creada: maestro.incluirFacturaCreadaPorId,
+        },
+
+        CARGANDO_FICHERO: {
+            carga_fichero_cancelada: "INICIAL",
+
+            factura_importada: maestro.incluirFacturaCreadaPorId,
         },
     };
 };

@@ -17,6 +17,7 @@ export interface NodoArbolItemProps {
   expandidos: Set<string>;
   onToggle: (id: string) => void;
   onDescargar: (documento: DocumentoArbol) => void;
+  onEliminar: (nodo: NodoArbol) => void;
   onCrearCarpeta: (carpetaPadreId: string) => void;
   onAnadirDocumento: (
     carpetaPadreId: string | null,
@@ -30,6 +31,7 @@ export const NodoArbolItem = ({
   expandidos,
   onToggle,
   onDescargar,
+  onEliminar,
   onCrearCarpeta,
   onAnadirDocumento,
 }: NodoArbolItemProps) => {
@@ -83,13 +85,31 @@ export const NodoArbolItem = ({
           <QBoton
             tamaño="pequeño"
             variante="texto"
-            props={{ "aria-label": `Añadir documento dentro de ${nodo.nombre}` }}
+            props={{
+              "aria-label": `Añadir documento dentro de ${nodo.nombre}`,
+            }}
             onClick={(e) => {
               e.stopPropagation();
               handleClick();
             }}
           >
             <QIcono nombre="documento_nuevo" tamaño="md" />
+          </QBoton>
+          {/*
+            Eliminar la carpeta se lleva todo lo que cuelga de ella. El
+            stopPropagation evita que el clic llegue a la fila y además
+            pliegue/despliegue la carpeta al abrirse el modal.
+          */}
+          <QBoton
+            tamaño="pequeño"
+            variante="texto"
+            props={{ "aria-label": `Eliminar carpeta ${nodo.nombre}` }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEliminar(nodo);
+            }}
+          >
+            <QIcono nombre="eliminar" tamaño="md" />
           </QBoton>
         </div>
         {/*
@@ -114,6 +134,7 @@ export const NodoArbolItem = ({
               expandidos={expandidos}
               onToggle={onToggle}
               onDescargar={onDescargar}
+              onEliminar={onEliminar}
               onCrearCarpeta={onCrearCarpeta}
               onAnadirDocumento={onAnadirDocumento}
             />
@@ -145,6 +166,14 @@ export const NodoArbolItem = ({
           onClick={() => onDescargar(nodo)}
         >
           <QIcono nombre="descargar" tamaño="md" />
+        </QBoton>
+        <QBoton
+          tamaño="pequeño"
+          variante="texto"
+          props={{ "aria-label": `Eliminar ${nodo.nombre}` }}
+          onClick={() => onEliminar(nodo)}
+        >
+          <QIcono nombre="eliminar" tamaño="md" />
         </QBoton>
       </div>
     </div>

@@ -77,15 +77,3 @@ export const patchLicenciaFarma = async (id: string, cambios: Partial<LicenciaFa
 
 export const deleteLicenciaFarma = async (id: string): Promise<void> =>
     await RestAPI.delete(`${baseUrlLicenciaFarma}/${id}`);
-
-type RespuestaMarcarDatosRevisados = { datos: { fecha_revision_datos: string } };
-
-export const marcarDatosRevisados = async (id: string): Promise<string> => {
-    const response = await RestAPI.patch(
-        `${baseUrlLicenciaFarma}/${id}/datos_revisados`,
-        {},
-        "Error al revisar datos"
-    );
-
-    return ((response as unknown) as RespuestaMarcarDatosRevisados).datos.fecha_revision_datos;
-};

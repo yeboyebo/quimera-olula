@@ -23,7 +23,7 @@ quimera-boton {
         display: flex;
         width: 100%;
 
-        button {
+        :is(button, a) {
             flex: 1;
             width: 100%;
         }
@@ -32,40 +32,41 @@ quimera-boton {
     &[deshabilitado] {
         --color-primario: var(--color-deshabilitado);
 
-        button {
+        :is(button, a) {
             cursor: inherit;
             pointer-events: none;
         }
     }
 
-    &[variante="texto"] button {
+    &[variante="texto"] :is(button, a) {
         background-color: transparent;
         color: var(--color-primario);
     }
 
-    &[variante="borde"] button {
+    &[variante="borde"] :is(button, a) {
         color: var(--color-primario);
         background-color: transparent;
         border: var(--tamaño-borde-m) solid var(--color-primario);
     }
 
-    &[tamaño="pequeño"] button {
+    &[tamaño="pequeño"] :is(button, a) {
         padding: var(--espaciado-xs) var(--espaciado-s);
         font-size: var(--tamaño-letra-xs);
     }
 
-    &[tamaño="grande"] button {
+    &[tamaño="grande"] :is(button, a) {
         padding: var(--espaciado-l);
         font-size: var(--tamaño-letra-l);
     }
 
-    &[tamaño="xl"] button {
+    &[tamaño="xl"] :is(button, a) {
         padding: var(--espaciado-l);
         font-size: var(--tamaño-letra-xl);
     }
 
-    button {
+    :is(button, a) {
         display: inline-flex;
+        text-decoration: none;
         align-items: center;
         justify-content: center;
         cursor: pointer;
