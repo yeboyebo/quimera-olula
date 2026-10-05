@@ -76,6 +76,7 @@ export const DetalleOrden = ({
     const { modelo } = orden;
 
     const sgaActivo = plugin("sga") === "activo";
+    const ocultarTemporalDemos = false;
     const mostrarOrigen = ["SALIDA", "TRASPASO"].includes(modelo.tipo);
     const mostrarDestino = ["ENTRADA", "TRASPASO"].includes(modelo.tipo);
 
@@ -83,7 +84,7 @@ export const DetalleOrden = ({
         if (ordenId) {
             emitir("orden_id_cambiada", ordenId, true);
         }
-    }, [ordenId]);
+    }, [ordenId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!ctx.orden.id) return null;
 
@@ -151,14 +152,14 @@ export const DetalleOrden = ({
                 </quimera-formulario>
             </div>
             <div className="maestro-botones">
-                {false && (
+                {ocultarTemporalDemos && (
                 <QBoton onClick={() => emitir("lectura_solicitada")}>Lectura</
                 QBoton>
                 )}
-                {false && sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
+                {ocultarTemporalDemos && sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
                     <QBoton onClick={() => emitir("lectura_caja_solicitada")}>Lectura caja</QBoton>
                 )}
-                {false && sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
+                {ocultarTemporalDemos && sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
                     <QBoton onClick={() => emitir("lectura_ubicacion_solicitada")}>Lectura bandeja</QBoton>
                 )}
                 {sgaActivo && modelo.tipo === "ENTRADA" && (

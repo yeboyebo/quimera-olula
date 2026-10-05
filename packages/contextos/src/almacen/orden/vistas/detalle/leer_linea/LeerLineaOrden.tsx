@@ -32,29 +32,27 @@ const instrucciones: Record<PasoGuion, string> = {
     "caja-destino-completa": "Dime la caja de destino",
 };
 
-const guion: Record<string, PasoGuion[]> = {
-    // Entrada
-    // "68": ["cantidad", "caja-destino"], // R1 en cajas
-    "68": ["caja-destino-capacidad"], // R1 en cajas
-
-    // "69": ["sku-lote", "cantidad"], // L1 lotes
-    "69": ["cantidad"], // L1 lotes
-    // Cuarentena
-    "70": ["ubi-destino"], // L1 lotes
-    // Colocar en masivo / Put away
-    "71": ["caja-origen-completa", "ubi-destino"], // R1 en cajas > MS-1
-    // Reposición de picking
-    "77": ["caja-origen-completa"], // R1 en cajas desde MS-1 > TR
-    "78": ["caja-origen-completa", "ubi-destino"], // R1 en cajas desde TR > MS-1
-    // Picking
-    "73": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a BD1
-    "74": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a BD2
-    // Packing
-    // "75": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a nueva caja desde BD1 (se hace con lectura de bandeja, no con lectura de línea)
-    // "76": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a nueva caja desde BD2 (se hace con lectura de bandeja, no con lectura de línea)
-    // Paletizar
-    // "79": ["caja-origen-completa", "caja-destino"], // 2 ud de R1. Llevamos su caja dentro del palet
-};
+// Guion por tipo de operación (referencia para futura activación en getPaso):
+// const guion: Record<string, PasoGuion[]> = {
+//     // Entrada
+//     "68": ["caja-destino-capacidad"], // R1 en cajas
+//     "69": ["cantidad"], // L1 lotes
+//     // Cuarentena
+//     "70": ["ubi-destino"], // L1 lotes
+//     // Colocar en masivo / Put away
+//     "71": ["caja-origen-completa", "ubi-destino"], // R1 en cajas > MS-1
+//     // Reposición de picking
+//     "77": ["caja-origen-completa"], // R1 en cajas desde MS-1 > TR
+//     "78": ["caja-origen-completa", "ubi-destino"], // R1 en cajas desde TR > MS-1
+//     // Picking
+//     "73": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a BD1
+//     "74": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a BD2
+//     // Packing: se hace con lectura de bandeja, no con lectura de línea
+//     // "75": ["caja-origen", "cantidad", "ubi-destino"],
+//     // "76": ["caja-origen", "cantidad", "ubi-destino"],
+//     // Paletizar
+//     // "79": ["caja-origen-completa", "caja-destino"],
+// };
 
 const getPaso = (linea: LineaOrdenAlmacen): PasoGuion[] => {
     // Ver si en función de los datos que la línea tenga (lote, caja, etc) se puede inferir el paso
