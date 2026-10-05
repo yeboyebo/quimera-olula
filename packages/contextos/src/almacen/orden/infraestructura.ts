@@ -24,6 +24,8 @@ import {
     PostLineasOrden,
     PostOrden,
     TerminarOrden,
+    PostColocacion,
+    GetReportEtiquetasOrden,
 } from "./diseño.ts";
 
 
@@ -415,4 +417,12 @@ export const postEntradaDesdePedido: PostEntradaDesdePedido = async (nueva: Nuev
 
 export const terminarOrden: TerminarOrden = async (id) => {
     await RestAPI.patch(`${baseUrl}/${id}/terminar`, {}, "Error al terminar la orden");
+};
+
+export const getReportEtiquetasOrden: GetReportEtiquetasOrden = async (id) =>
+    RestAPI.blob(`/almacen/caja/report-por-orden-origen/${id}`, "Error al obtener el report de etiquetas");
+
+export const postColocacion: PostColocacion = async (id) => {
+    const respuesta = await RestAPI.post(`${baseUrl}/${id}/colocacion`, {}, "Error al crear la orden de colocación");
+    return respuesta.id as string;
 };
