@@ -201,6 +201,11 @@ export const RecibirAlbaran = ({
 
     const todasCantidadesValidas = lineasEditables.every((l) => l.cantidad > 0);
 
+    const porLotesPorLineaId = new Map(lineasPedido.map((l) => [l.id, l.porLotes]));
+    const todosLotesValidos = lineasEditables.every(
+        (l) => !porLotesPorLineaId.get(l.linea_pedido_id) || l.lote_id !== ""
+    );
+
     // ── Estado paso 2 ────────────────────────────────────────────────────────
 
     const [lineasCajas, setLineasCajas] = useState<LineaCajaEntrada[]>([]);
@@ -356,7 +361,7 @@ export const RecibirAlbaran = ({
                         <QBoton onClick={cancelar} variante='borde'>
                             Cancelar
                         </QBoton>
-                        <QBoton onClick={irAPaso2} deshabilitado={!todasCantidadesValidas}>
+                        <QBoton onClick={irAPaso2} deshabilitado={!todasCantidadesValidas || !todosLotesValidos}>
                             Siguiente
                         </QBoton>
                     </>
