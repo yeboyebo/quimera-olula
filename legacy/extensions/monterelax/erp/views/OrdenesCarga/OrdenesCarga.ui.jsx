@@ -1,8 +1,11 @@
 // import { Grid, Button, Column, Field, Table, Dialog, DialogContent, IconButton, Icon, Typography } from '@quimera/comps'
 import { Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, IconButton, Typography } from "@quimera/comps";
 import { Avatar, LinearProgress, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText } from "@quimera/thirdparty";
+import { imprimir_blob } from "@olula/lib/impresion.ts";
 import Quimera, { navigate, useAppValue, useStateValue, util } from "quimera";
 import { useEffect } from "react";
+
+import { getReportOrdenCarga } from "./report_olula";
 
 function OrdenesCarga({ useStyles }) {
   const [
@@ -35,6 +38,15 @@ function OrdenesCarga({ useStyles }) {
 
     return () => appDispatch({ type: "setNombrePaginaActual", payload: { nombre: "" } });
   }, [appDispatch]);
+
+  const imprimirReportOrden = async idOrden => {
+    try {
+      const blob = await getReportOrdenCarga(idOrden);
+      await imprimir_blob(blob);
+    } catch (error) {
+      dispatch({ type: "onErrorReportOlula", payload: error });
+    }
+  };
 
   return (
     <Quimera.Template id="OrdenesCarga">
@@ -80,6 +92,17 @@ function OrdenesCarga({ useStyles }) {
               ></ListItemText>
               {
                 <ListItemSecondaryAction>
+                  <IconButton
+                    edge="end"
+                    aria-label="informe de la orden de carga"
+                    title="Informe de la orden de carga"
+                    onClick={event => {
+                      event.stopPropagation();
+                      imprimirReportOrden(ordencarga.idorden);
+                    }}
+                  >
+                    <Icon>picture_as_pdf</Icon>
+                  </IconButton>
                   {ordencarga.estado === "ALBARANADA" && (
                     <IconButton
                       visible={ordencarga.estado === "ALBARANADA"}
