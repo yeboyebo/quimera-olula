@@ -1,0 +1,6 @@
+.ResumenSincronizacionMovimientoBancario {
+    .errores-sincronizacion {
+        margin-block-start: var(--espaciado-s);
+        padding-inline-start: 1.2em;
+    }
+}

@@ -31,6 +31,7 @@ import {
     PostLineasFactura,
     ReciboFactura,
 } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -394,6 +395,17 @@ interface ReciboFacturaApi {
     id_fiscal: string;
 }
 
+export const importarFicheroFactura = async (fichero: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("fichero", fichero);
+    const respuesta = await RestAPI.post<FormData>(
+        `${baseUrl}/importar-fichero`,
+        formData,
+        "Error al importar el fichero de factura"
+    );
+    return respuesta.id;
+};
+
 export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
     return RestAPI.get<{ datos: ReciboFacturaApi[] }>(
         `/tesoreria/recibo_pago/por_factura/${facturaId}`
@@ -406,3 +418,5 @@ export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
         importe: r.importe,
     })));
 };
+
+export const getTrazaFactura = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

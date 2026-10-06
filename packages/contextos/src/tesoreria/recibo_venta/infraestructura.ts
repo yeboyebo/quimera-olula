@@ -1,7 +1,8 @@
+import { getTraza } from "#/comun/componentes/traza/infraestructura.js";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
-import { AgruparRecibosVenta, DesagruparReciboVenta, PatchDevolverReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
+import { AgruparRecibosVenta, DesagruparReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchDevolverReciboVenta, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
 
 export interface MovimientoReciboApi {
     id: string;
@@ -72,6 +73,26 @@ export const getRecibosVenta: GetRecibosVenta = async (criteria) => {
     );
 };
 
+export type EnlaceCobroReciboVentaApi = {
+    url: string;
+    pago_id: string;
+    referencia: string;
+    pagador: { nombre: string };
+    beneficiario: { nombre: string; iban: string };
+};
+
+/** Enlace para que el cliente del recibo pague a la empresa en `cuentaBancoId`. */
+export const postEnlaceCobroReciboVenta = async (
+    id: string,
+    cuentaBancoId: string,
+): Promise<EnlaceCobroReciboVentaApi> => {
+    return await RestAPI.query(
+        `${baseUrl}/${id}/enlace_cobro`,
+        { cuenta_banco_id: cuentaBancoId },
+        "Error al generar el enlace de cobro"
+    );
+};
+
 export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/pagar`,
@@ -113,3 +134,5 @@ export const desagruparReciboVenta: DesagruparReciboVenta = async (id) => {
 
     return respuesta.grupo_id;
 };
+
+export const getTrazaReciboVenta = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);
