@@ -194,6 +194,19 @@ export const bunch = parent => ({
       }),
     },
   ],
+  onErrorReportOlula: [
+    {
+      type: "setStateKeys",
+      plug: payload => ({
+        keys: {
+          errorAlbaranes: true,
+          dialogTitle: "Error",
+          dialogMsg:
+            payload?.descripcion || "No se ha podido obtener el informe de la orden de carga",
+        },
+      }),
+    },
+  ],
   onTerminarImpresionClicked: [
     {
       type: "setStateKey",

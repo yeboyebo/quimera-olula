@@ -21,7 +21,7 @@ export interface Capacidad {
     nombre: string;
     descripcion: string;
     parametros?: Record<string, string>;
-    regla?: string;
+    regla?: string | string[];
 }
 
 export interface AccionNavegacion {

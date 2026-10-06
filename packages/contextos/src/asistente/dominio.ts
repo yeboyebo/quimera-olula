@@ -35,7 +35,7 @@ export const construirCapacidades = (menu: ElementoMenu[]): Capacidad[] => {
 
     return hojas
         .filter(hoja => Boolean(hoja.descripcionIA))
-        .filter(hoja => !hoja.regla || puede(hoja.regla))
+        .filter(hoja => !hoja.regla || [hoja.regla].flat().some(puede))
         .map(hoja => ({
             ruta: hoja.url,
             nombre: hoja.nombre,
