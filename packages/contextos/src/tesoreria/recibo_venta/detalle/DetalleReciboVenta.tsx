@@ -7,6 +7,7 @@ import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
+import { bancaActiva } from "../../comun/banca.js";
 import { ReciboVenta } from "../diseño.js";
 import {
   reciboDesagrupable,
@@ -22,6 +23,7 @@ import {
 } from "./detalle.js";
 import "./DetalleReciboVenta.css";
 import { DevolverReciboVenta } from "./devolver/DevolverReciboVenta.tsx";
+import { GenerarEnlaceCobroReciboVenta } from "./enlace_cobro/GenerarEnlaceCobroReciboVenta.tsx";
 import { getMaquina } from "./maquina.js";
 import { PagarReciboVenta } from "./pagar/PagarReciboVenta.tsx";
 import { PagosReciboVenta } from "./pagos/PagosReciboVenta.tsx";
@@ -49,6 +51,7 @@ export const DetalleReciboVenta = ({
   if (!ctx.recibo.id) return null;
 
   const titulo = (r: ReciboVenta) => r.codigo || `Recibo ${r.id}`;
+  const bancaHabilitada = bancaActiva();
 
   const acciones = [
     reciboDevolvible(ctx.recibo)
@@ -61,6 +64,11 @@ export const DetalleReciboVenta = ({
           onClick: () => emitir("pagar_solicitado"),
           deshabilitado: !reciboPagable(ctx.recibo),
         },
+    bancaHabilitada && {
+      texto: "Enviar enlace de cobro",
+      onClick: () => emitir("enlace_cobro_solicitado"),
+      deshabilitado: !reciboPagable(ctx.recibo),
+    },
     {
       texto: "Deshacer agrupación",
       onClick: () => emitir("desagrupado_solicitado"),
@@ -106,6 +114,10 @@ export const DetalleReciboVenta = ({
         <PagosReciboVenta pagos={ctx.recibo.pagos} />
 
         {ctx.estado === "PAGANDO" && <PagarReciboVenta publicar={emitir} />}
+
+        {ctx.estado === "ENLACE_COBRO" && (
+          <GenerarEnlaceCobroReciboVenta recibo={ctx.recibo} publicar={emitir} />
+        )}
 
         {ctx.estado === "DEVOLVIENDO" && (
           <DevolverReciboVenta recibo={ctx.recibo} publicar={emitir} />

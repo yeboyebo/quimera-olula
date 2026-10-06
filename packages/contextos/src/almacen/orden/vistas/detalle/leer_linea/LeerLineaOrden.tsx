@@ -1,7 +1,7 @@
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
 import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
 import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
-import { buscarCajaPorTexto, buscarUbicacionPorTexto } from "#/almacen/comun/voz_resolvers.ts";
+import { buscarCajaCompletaPorTexto, buscarCajaPorTexto, buscarUbicacionPorTexto } from "#/almacen/comun/voz_resolvers.ts";
 
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
 import { getSkuLote, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
@@ -18,7 +18,7 @@ import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 
 import { LecturaSkuLote } from "../lectura/LecturaSkuLote.tsx";
 import "./LeerLineaOrden.css";
 
-type PasoGuion = "sku-lote" | "cantidad" | "caja-destino" | "caja-destino-capacidad" | "ubi-destino" | "ubi-origen" | "caja-origen" | "caja-origen-completa";
+type PasoGuion = "sku-lote" | "cantidad" | "caja-destino" | "caja-destino-capacidad" | "ubi-destino" | "ubi-origen" | "caja-origen" | "caja-origen-completa" | "caja-destino-completa";
 
 const instrucciones: Record<PasoGuion, string> = {
     "sku-lote": "Lee el código de barras",
@@ -29,31 +29,39 @@ const instrucciones: Record<PasoGuion, string> = {
     "ubi-origen": "Dime la ubicación de origen",
     "caja-origen": "Dime la caja de origen",
     "caja-origen-completa": "Dime la caja de origen",
+    "caja-destino-completa": "Dime la caja de destino",
 };
 
-const guion: Record<string, PasoGuion[]> = {
-    // Entrada
-    // "68": ["cantidad", "caja-destino"], // R1 en cajas
-    "68": ["caja-destino-capacidad"], // R1 en cajas
+// Guion por tipo de operación (referencia para futura activación en getPaso):
+// const guion: Record<string, PasoGuion[]> = {
+//     // Entrada
+//     "68": ["caja-destino-capacidad"], // R1 en cajas
+//     "69": ["cantidad"], // L1 lotes
+//     // Cuarentena
+//     "70": ["ubi-destino"], // L1 lotes
+//     // Colocar en masivo / Put away
+//     "71": ["caja-origen-completa", "ubi-destino"], // R1 en cajas > MS-1
+//     // Reposición de picking
+//     "77": ["caja-origen-completa"], // R1 en cajas desde MS-1 > TR
+//     "78": ["caja-origen-completa", "ubi-destino"], // R1 en cajas desde TR > MS-1
+//     // Picking
+//     "73": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a BD1
+//     "74": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a BD2
+//     // Packing: se hace con lectura de bandeja, no con lectura de línea
+//     // "75": ["caja-origen", "cantidad", "ubi-destino"],
+//     // "76": ["caja-origen", "cantidad", "ubi-destino"],
+//     // Paletizar
+//     // "79": ["caja-origen-completa", "caja-destino"],
+// };
 
-    // "69": ["sku-lote", "cantidad"], // L1 lotes
-    "69": ["cantidad"], // L1 lotes
-    // Cuarentena
-    "70": ["ubi-destino"], // L1 lotes
-    // Colocar en masivo / Put away
-    "71": ["caja-origen-completa", "ubi-destino"], // R1 en cajas > MS-1
-    // Reposición de picking
-    "77": ["caja-origen-completa"], // R1 en cajas desde MS-1 > TR
-    "78": ["caja-origen-completa", "ubi-destino"], // R1 en cajas desde TR > MS-1
-    // Picking
-    "73": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a BD1
-    "74": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a BD2
-    // Packing
-    // "75": ["caja-origen", "cantidad", "ubi-destino"], // 1 ud de R1 a nueva caja desde BD1 (se hace con lectura de bandeja, no con lectura de línea)
-    // "76": ["caja-origen", "cantidad", "ubi-destino"], // 2 ud de R1 a nueva caja desde BD2 (se hace con lectura de bandeja, no con lectura de línea)
-    // Paletizar
-    // "79": ["caja-origen-completa", "caja-destino"], // 2 ud de R1. Llevamos su caja dentro del palet
-};
+const getPaso = (linea: LineaOrdenAlmacen): PasoGuion[] => {
+    // Ver si en función de los datos que la línea tenga (lote, caja, etc) se puede inferir el paso
+    if (linea.sku === "ejemplo")
+        return ["caja-destino-capacidad"]
+    return ["caja-destino-capacidad"]
+    // const guionLinea = guion[linea.sku];
+    // return guionLinea ?? ["sku-lote", "cantidad", "caja-destino", "caja-destino-capacidad", "ubi-destino", "ubi-origen", "caja-origen", "caja-origen-completa"];
+}
 
 const PasoWrapper = ({ instruccion, children }: { instruccion: string; children: ReactNode }) => (
     <div className="paso-guion">
@@ -144,7 +152,7 @@ const calcularFilasResumen = (
 
     // Caja Destino
     if (mostrarDestino) {
-        const cajaDestinoEnGuion = enGuion(["caja-destino", "caja-destino-capacidad"]);
+        const cajaDestinoEnGuion = enGuion(["caja-destino", "caja-destino-capacidad", "caja-destino-completa"]);
         const efectivo = valores.cajaDestino
             ?? (!cajaDestinoEnGuion ? linea.cajaDestino : null);
         filas.push({ campo: "Caja Destino", previsto: linea.cajaDestino, efectivo, pendiente: !efectivo });
@@ -215,7 +223,22 @@ type ValoresAcumulados = {
     ubicacionOrigen?: string;
 };
 
-const getPreguntaVozParaPaso = (paso: PasoGuion): PreguntaVoz | null => {
+const validarCajaContraLinea = (
+    caja: { sku?: string | null; idLote?: string | null },
+    linea: LineaOrdenAlmacen,
+): string | null => {
+    if (linea.sku) {
+        if (!caja.sku) return `La caja no tiene SKU asignado. Se esperaba: ${linea.sku}`;
+        if (caja.sku !== linea.sku) return `La caja pertenece al SKU ${caja.sku}. Se esperaba: ${linea.sku}`;
+    }
+    if (linea.loteId) {
+        if (!caja.idLote) return `La caja no tiene lote asignado. Se esperaba: ${linea.loteId}`;
+        if (caja.idLote !== linea.loteId) return `La caja pertenece al lote ${caja.idLote}. Se esperaba: ${linea.loteId}`;
+    }
+    return null;
+};
+
+const getPreguntaVozParaPaso = (paso: PasoGuion, linea: LineaOrdenAlmacen): PreguntaVoz | null => {
     switch (paso) {
         case "cantidad":
             return {
@@ -238,8 +261,10 @@ const getPreguntaVozParaPaso = (paso: PasoGuion): PreguntaVoz | null => {
                 instruccion: instrucciones[paso],
                 tipo: "texto",
                 resolver: async (texto) => {
-                    const caja = await buscarCajaPorTexto(texto);
-                    return caja ? { id: caja.id, lpn: caja.lpn, capacidad: caja.capacidad } : null;
+                    const caja = await buscarCajaCompletaPorTexto(texto);
+                    if (!caja) return null;
+                    if (validarCajaContraLinea(caja, linea)) return null;
+                    return { id: caja.id, lpn: caja.lpn, sku: caja.sku, idLote: caja.idLote, capacidad: caja.capacidad };
                 },
                 confirmacion: (v) => `Caja ${v.lpn}, ${v.capacidad ?? "sin"} capacidad, ¿correcto?`,
             };
@@ -262,6 +287,18 @@ const getPreguntaVozParaPaso = (paso: PasoGuion): PreguntaVoz | null => {
                     return caja ? { id: caja.id, lpn: caja.lpn, cantidad: caja.cantidad } : null;
                 },
                 confirmacion: (v) => `Caja ${v.lpn}, ${v.cantidad ?? 0} unidades, ¿correcto?`,
+            };
+        case "caja-destino-completa":
+            return {
+                instruccion: instrucciones[paso],
+                tipo: "texto",
+                resolver: async (texto) => {
+                    const caja = await buscarCajaCompletaPorTexto(texto);
+                    if (!caja) return null;
+                    if (validarCajaContraLinea(caja, linea)) return null;
+                    return { id: caja.id, lpn: caja.lpn, sku: caja.sku, idLote: caja.idLote };
+                },
+                confirmacion: (v) => `Caja ${v.lpn}${v.sku ? `, sku ${v.sku}` : ""}, ¿correcto?`,
             };
         case "ubi-destino":
         case "ubi-origen":
@@ -305,11 +342,12 @@ export const LeerLineaOrden = ({
     const { intentar } = useContext(ContextoError);
     const [pasoActual, setPasoActual] = useState<number>(0);
     const [valores, setValores] = useState<ValoresAcumulados>({});
+    const [errorCaja, setErrorCaja] = useState<string | null>(null);
     const contenedorRef = useRef<HTMLDivElement>(null);
     const flujoVoz = useFlujoVoz();
     const vozActivaRef = useRef(false);
 
-    const pasoGuion = guion[linea.id] ?? [];
+    const pasoGuion = getPaso(linea)
 
 
     // Auto-salta el paso sku-lote si la línea ya tiene los datos necesarios.
@@ -339,7 +377,7 @@ export const LeerLineaOrden = ({
         if (pasoActual >= pasoGuion.length) return;
 
         const paso = pasoGuion[pasoActual];
-        const pregunta = getPreguntaVozParaPaso(paso);
+        const pregunta = getPreguntaVozParaPaso(paso, linea);
         if (!pregunta) return;
 
         // Evitar doble ejecución
@@ -375,8 +413,14 @@ export const LeerLineaOrden = ({
                 return { idCajaDestino: caja.id, cajaDestino: caja.lpn };
             }
             case "caja-destino-capacidad": {
-                const caja = valor as { id: string; lpn: string; capacidad: number | null };
-                return { idCajaDestino: caja.id, cajaDestino: caja.lpn, cantidad: caja.capacidad ?? undefined };
+                const caja = valor as { id: string; lpn: string; sku: string | null; idLote: string | null; capacidad: number | null };
+                return {
+                    idCajaDestino: caja.id,
+                    cajaDestino: caja.lpn,
+                    sku: caja.sku ?? undefined,
+                    loteId: caja.idLote,
+                    cantidad: caja.capacidad ?? undefined,
+                };
             }
             case "caja-origen": {
                 const caja = valor as { id: string; lpn: string };
@@ -385,6 +429,15 @@ export const LeerLineaOrden = ({
             case "caja-origen-completa": {
                 const caja = valor as { id: string; lpn: string; cantidad: number | null };
                 return { idCajaOrigen: caja.id, cajaOrigen: caja.lpn, cantidad: caja.cantidad ?? undefined };
+            }
+            case "caja-destino-completa": {
+                const caja = valor as { id: string; lpn: string; sku: string | null; idLote: string | null };
+                return {
+                    idCajaDestino: caja.id,
+                    cajaDestino: caja.lpn,
+                    sku: caja.sku ?? undefined,
+                    loteId: caja.idLote,
+                };
             }
             case "ubi-destino": {
                 const ubi = valor as { id: string; codigo: string };
@@ -662,15 +715,23 @@ export const LeerLineaOrden = ({
                             label="Caja destino"
                             nombre="idCajaDestino"
                             valor={valores.idCajaDestino ?? ""}
-                            onChange={(opcion) =>
+                            onChange={(opcion) => {
+                                setErrorCaja(null);
+                                if (opcion) {
+                                    const error = validarCajaContraLinea(opcion, linea);
+                                    if (error) { setErrorCaja(error); return; }
+                                }
                                 setValores((v) => ({
                                     ...v,
                                     idCajaDestino: opcion?.valor ?? "",
                                     cajaDestino: opcion?.descripcion ?? "",
+                                    sku: opcion?.sku ?? v.sku,
+                                    loteId: opcion?.idLote !== undefined ? opcion.idLote : v.loteId,
                                     cantidad: opcion?.capacidad ?? undefined,
-                                }))
-                            }
+                                }));
+                            }}
                         />
+                        {errorCaja && <p className="q-texto-error">{errorCaja}</p>}
                     </PasoWrapper>
                 )}
 
@@ -706,6 +767,31 @@ export const LeerLineaOrden = ({
                                 }))
                             }
                         />
+                    </PasoWrapper>
+                )}
+
+                {paso === "caja-destino-completa" && (
+                    <PasoWrapper instruccion={instrucciones[paso]}>
+                        <Caja
+                            label="Caja destino"
+                            nombre="idCajaDestino"
+                            valor={valores.idCajaDestino ?? ""}
+                            onChange={(opcion) => {
+                                setErrorCaja(null);
+                                if (opcion) {
+                                    const error = validarCajaContraLinea(opcion, linea);
+                                    if (error) { setErrorCaja(error); return; }
+                                }
+                                setValores((v) => ({
+                                    ...v,
+                                    idCajaDestino: opcion?.valor ?? "",
+                                    cajaDestino: opcion?.descripcion ?? "",
+                                    sku: opcion?.sku ?? v.sku,
+                                    loteId: opcion?.idLote !== undefined ? opcion.idLote : v.loteId,
+                                }));
+                            }}
+                        />
+                        {errorCaja && <p className="q-texto-error">{errorCaja}</p>}
                     </PasoWrapper>
                 )}
 

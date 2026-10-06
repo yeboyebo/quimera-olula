@@ -25,7 +25,10 @@ export type EstadoOrdenAlmacen =
     | 'LEYENDO_CAJA'
     | 'LEYENDO_UBICACION'
     | 'LEYENDO_GUION_LINEA'
-    | 'CREANDO_CAJA';
+    | 'CREANDO_CAJA'
+    | 'LEYENDO_CAJAS_ENTRADA'
+    | 'LEYENDO_CAJAS_COLOCACION'
+    | 'COLOCANDO';
 
 export type ContextoOrdenAlmacen = {
     estado: EstadoOrdenAlmacen;
@@ -55,6 +58,9 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
             lectura_guion_solicitada: "LEYENDO_GUION_LINEA",
             lectura_guion_linea_solicitada: [Lineas.activar, "LEYENDO_GUION_LINEA"],
             creacion_de_caja_solicitada: "CREANDO_CAJA",
+            lectura_cajas_entrada_solicitada: "LEYENDO_CAJAS_ENTRADA",
+            lectura_cajas_colocacion_solicitada: "LEYENDO_CAJAS_COLOCACION",
+            colocacion_solicitada: "COLOCANDO",
         },
 
         BORRANDO: {
@@ -108,6 +114,21 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
         CREANDO_CAJA: {
             caja_creada: [onCajaCreada, "ABIERTA"],
             alta_de_caja_cancelada: "ABIERTA",
+        },
+
+        LEYENDO_CAJAS_ENTRADA: {
+            lectura_registrada: [refrescarOrden],
+            lectura_cajas_entrada_cancelada: [refrescarOrden, "ABIERTA"],
+        },
+
+        LEYENDO_CAJAS_COLOCACION: {
+            lectura_registrada: [refrescarOrden],
+            lectura_cajas_colocacion_cancelada: [refrescarOrden, "ABIERTA"],
+        },
+
+        COLOCANDO: {
+            colocacion_creada: [refrescarOrden, "ABIERTA"],
+            colocacion_cancelada: "ABIERTA",
         },
     };
 };

@@ -2,18 +2,20 @@ import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
-// Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide.
-// import { QuimeraAcciones } from "@olula/componentes/index.js";
+import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
+import { bancaActiva } from "../../comun/banca.js";
 import { ReciboCompra } from "../diseño.js";
+import { reciboCompraPagable } from "../dominio.js";
 import { getTrazaReciboCompra } from "../infraestructura.ts";
 import {
   contextoDetalleReciboCompraInicial,
   metaReciboCompra,
 } from "./detalle.js";
 import "./DetalleReciboCompra.css";
+import { OrdenarPagoReciboCompra } from "./ordenar_pago/OrdenarPagoReciboCompra.tsx";
 import { getMaquina } from "./maquina.js";
 
 export const DetalleReciboCompra = ({
@@ -38,15 +40,21 @@ export const DetalleReciboCompra = ({
 
   if (!ctx.recibo.id) return null;
 
-  // Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide.
-  // const acciones = [
-  //   {
-  //     texto: "Documentos relacionados",
-  //     onClick: () => emitir("traza_solicitada"),
-  //   },
-  // ];
-
   const titulo = (r: ReciboCompra) => r.codigo || `Recibo ${r.id}`;
+  const bancaHabilitada = bancaActiva();
+
+  const acciones = [
+    // "Documentos relacionados" no existe en el ERP; posibilidad de habilitarla si se pide:
+    // {
+    //   texto: "Documentos relacionados",
+    //   onClick: () => emitir("traza_solicitada"),
+    // },
+    bancaHabilitada && {
+      texto: "Pagar al proveedor",
+      onClick: () => emitir("ordenar_pago_solicitado"),
+      deshabilitado: !reciboCompraPagable(ctx.recibo),
+    },
+  ];
 
   return (
     <Detalle
@@ -57,8 +65,7 @@ export const DetalleReciboCompra = ({
       cerrarDetalle={() => emitir("recibo_deseleccionado", null, true)}
     >
       <div className="DetalleReciboCompra">
-        {/* Esta funcionalidad no existe en el ERP; posibilidad de habilitarla si se pide. */}
-        {/* <QuimeraAcciones acciones={acciones} vertical /> */}
+        {bancaHabilitada && <QuimeraAcciones acciones={acciones} vertical />}
 
         <quimera-formulario>
           <QInput label="Código" {...uiProps("codigo")} />
@@ -70,6 +77,10 @@ export const DetalleReciboCompra = ({
           <QInput label="ID Fiscal" {...uiProps("idFiscal")} />
           <QInput label="Factura" {...uiProps("facturaId")} />
         </quimera-formulario>
+
+        {ctx.estado === "ORDENANDO_PAGO" && (
+          <OrdenarPagoReciboCompra recibo={ctx.recibo} publicar={emitir} />
+        )}
 
         {ctx.estado === "VIENDO_TRAZA" && (
           <ModalTraza

@@ -73,6 +73,26 @@ export const getRecibosVenta: GetRecibosVenta = async (criteria) => {
     );
 };
 
+export type EnlaceCobroReciboVentaApi = {
+    url: string;
+    pago_id: string;
+    referencia: string;
+    pagador: { nombre: string };
+    beneficiario: { nombre: string; iban: string };
+};
+
+/** Enlace para que el cliente del recibo pague a la empresa en `cuentaBancoId`. */
+export const postEnlaceCobroReciboVenta = async (
+    id: string,
+    cuentaBancoId: string,
+): Promise<EnlaceCobroReciboVentaApi> => {
+    return await RestAPI.query(
+        `${baseUrl}/${id}/enlace_cobro`,
+        { cuenta_banco_id: cuentaBancoId },
+        "Error al generar el enlace de cobro"
+    );
+};
+
 export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/pagar`,

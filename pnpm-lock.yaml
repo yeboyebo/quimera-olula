@@ -277,7 +277,7 @@ importers:
     devDependencies:
       '@aldabil/react-scheduler':
         specifier: 3.0.4
-        version: 3.0.4(bf1724196a603b0543b9fd903d1f9aa5)
+        version: 3.0.4(enlf4ijhpnpv2txndqdtxq6bsi)
       baseline-browser-mapping:
         specifier: ^2.9.19
         version: 2.11.0
@@ -1707,7 +1707,7 @@ importers:
     dependencies:
       '@aldabil/react-scheduler':
         specifier: 3.1.2
-        version: 3.1.2(bf1724196a603b0543b9fd903d1f9aa5)
+        version: 3.1.2(enlf4ijhpnpv2txndqdtxq6bsi)
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@19.2.17)(react@19.2.8)
@@ -2434,6 +2434,9 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.44.0
         version: 3.48.0(react@19.2.8)
+      react-plaid-link:
+        specifier: ^5.0.0
+        version: 5.0.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       recharts:
         specifier: ^3.8.0
         version: 3.8.0(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(redux@5.0.1)
@@ -6763,6 +6766,12 @@ packages:
       react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  react-plaid-link@5.0.0:
+    resolution: {integrity: sha512-DZ/6C7hf+xhEIG9ElCqjk1lty/z+y+wQuV/A29EUx4fxiPLPe7CXN811C3MrCzI7grV45LD7NRS0Do0ma8KIBg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+      react-dom: ^16.8.0 || ^17 || ^18 || ^19
+
   react-plotly.js@2.5.1:
     resolution: {integrity: sha512-Oya14whSHvPsYXdI0nHOGs1pZhMzV2edV7HAW1xFHD58Y73m/LbG2Encvyz1tztL0vfjph0JNhiwO8cGBJnlhg==}
     peerDependencies:
@@ -7871,7 +7880,7 @@ snapshots:
 
   '@adobe/css-tools@4.4.4': {}
 
-  '@aldabil/react-scheduler@3.0.4(bf1724196a603b0543b9fd903d1f9aa5)':
+  '@aldabil/react-scheduler@3.0.4(enlf4ijhpnpv2txndqdtxq6bsi)':
     dependencies:
       '@mui/icons-material': 7.3.11(@mui/material@7.3.11(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react@19.2.17)(react@19.2.8)
       '@mui/material': 7.3.11(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -7880,7 +7889,7 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@aldabil/react-scheduler@3.1.2(bf1724196a603b0543b9fd903d1f9aa5)':
+  '@aldabil/react-scheduler@3.1.2(enlf4ijhpnpv2txndqdtxq6bsi)':
     dependencies:
       '@mui/icons-material': 7.3.11(@mui/material@7.3.11(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react@19.2.17)(react@19.2.8)
       '@mui/material': 7.3.11(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react@19.2.8))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -12654,6 +12663,12 @@ snapshots:
 
   react-number-format@5.4.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+
+  react-plaid-link@5.0.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      prop-types: 15.8.1
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
