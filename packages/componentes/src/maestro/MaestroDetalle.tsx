@@ -1,5 +1,6 @@
 import { Entidad } from "@olula/lib/diseño.ts";
 import { QModal } from "../moleculas/qmodal.tsx";
+import { useControlPantalla } from "@olula/lib/controles_pantalla.ts";
 import { MaestroDetalleProps as MaestroDetalleBaseProps } from "./diseño.tsx";
 import "./MaestroDetalle.css";
 
@@ -24,6 +25,17 @@ export function MaestroDetalle<T extends Entidad>(
   } = props;
 
   const haySeleccion = !!seleccionada;
+
+  // "Cierra el detalle" por voz / desde el asistente (ver controles_pantalla.ts). En
+  // disposición modal ya lo cubre el propio QModal.
+  useControlPantalla("detalle", () => ({
+    describir: () => ({ tipo: "detalle", id: "" }),
+    ejecutar: (accion) => {
+      if (accion !== "cerrar" || !onCerrarDetalle) return { ok: false, mensaje: "No puedo cerrar este detalle." };
+      onCerrarDetalle();
+      return { ok: true, mensaje: "Detalle cerrado." };
+    },
+  }), haySeleccion && !!onCerrarDetalle && modoDisposicion !== "modal");
   const tipoLayout =
     modoDisposicion ??
     (layout === "TABLA" ? "pantalla-completa" : "maestro-dinamico");
