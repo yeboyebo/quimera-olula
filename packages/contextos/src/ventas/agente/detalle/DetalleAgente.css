@@ -1,2 +1,3 @@
-.DetalleAgente {
+.detalle-agente .detalle-cabecera h2::first-letter {
+    text-transform: uppercase;
 }

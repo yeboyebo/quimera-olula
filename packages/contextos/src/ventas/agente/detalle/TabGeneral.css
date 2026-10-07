@@ -1,9 +1,5 @@
 .TabGeneral {
 
-    quimera-input[nombre="nombre"] {
-        grid-column: span 12;
-    }
-
     quimera-input[nombre="nombre_pila"] {
         grid-column: span 4;
     }

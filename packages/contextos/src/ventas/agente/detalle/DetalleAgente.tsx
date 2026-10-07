@@ -51,6 +51,7 @@ export const DetalleAgente = ({
     return (
         <Detalle
             id={id}
+            className="detalle-agente"
             obtenerTitulo={titulo}
             setEntidad={() => {}}
             entidad={ctx.agente}
@@ -62,8 +63,8 @@ export const DetalleAgente = ({
                         key="tab-general"
                         children={<TabGeneral form={formModelo} />}
                     />,
-                    <Tab label="Contacto"
-                        key="tab-contacto"
+                    <Tab label="Datos"
+                        key="tab-datos"
                         children={<TabContacto form={formModelo} />}
                     />,
                 ]} />

@@ -10,8 +10,8 @@ import { useEffect, useMemo } from "react";
 import { CrearAgente } from "../crear/CrearAgente.js";
 import { DetalleAgente } from "../detalle/DetalleAgente.js";
 import { Agente } from "../diseño.js";
-import "./MaestroConDetalleAgente.css";
 import { getMaquina } from "./maquina.js";
+import { TarjetaAgente } from "./TarjetaAgente.tsx";
 
 const metaTablaAgente: MetaTabla<Agente> = [
     { id: 'id', cabecera: 'ID' },
@@ -53,7 +53,7 @@ export const MaestroConDetalleAgente = () => {
                         <Listado<Agente>
                             metaTabla={metaTablaAgente}
                             criteria={agentes.criteria}
-                            modoInicial="tabla"
+                            modoInicial="tarjetas"
                             tarjeta={TarjetaAgente}
                             entidades={agentes.lista}
                             totalEntidades={agentes.total}
@@ -81,15 +81,6 @@ export const MaestroConDetalleAgente = () => {
                     publicar={emitir}
                 />
             )}
-        </div>
-    );
-};
-
-const TarjetaAgente = (agente: Agente) => {
-    return (
-        <div className="tarjeta-agente" key={agente.id}>
-            <div className="tarjeta-agente-nombre">{agente.nombre}</div>
-            <div className="tarjeta-agente-comision">{agente.por_comision} %</div>
         </div>
     );
 };

@@ -44,7 +44,7 @@ function OrdenesCarga({ useStyles }) {
   const descargarAlbaranesYTerminar = async idOrden => {
     try {
       const blob = await getReportAlbaranesOrdenCarga(idOrden);
-      await descargarDocumento(blob, `albaranes-orden-carga-${idOrden}.pdf`);
+      await descargarDocumento(blob, `${idOrden}.pdf`);
       await terminarOrdenCarga(idOrden);
       dispatch({ type: "cargarOrdenesCarga" });
     } catch (error) {

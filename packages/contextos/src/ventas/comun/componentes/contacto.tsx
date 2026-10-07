@@ -38,7 +38,9 @@ export const ContactoSelector = ({
       .filter((contacto) => !excluir.includes(contacto.id))
       .map((contacto) => ({
         valor: contacto.id,
-        descripcion: contacto.nombre + " - " + contacto.email,
+        descripcion: [contacto.nombre, contacto.email, contacto.telefono1]
+          .filter(Boolean)
+          .join(" - "),
       }));
   };
 

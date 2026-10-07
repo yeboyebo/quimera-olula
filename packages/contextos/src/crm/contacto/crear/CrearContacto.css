@@ -6,4 +6,8 @@
     quimera-input[nombre="email"] {
         grid-column: span 6;
     }
+
+    quimera-input[nombre="telefono1"] {
+        grid-column: 1 / span 6;
+    }
 }

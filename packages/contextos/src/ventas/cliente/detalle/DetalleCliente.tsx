@@ -14,6 +14,7 @@ import { Cliente } from "../diseño.ts";
 import { TabCrmContactos } from "./crm_contactos/TabCrmContactos.tsx";
 import { TabCuentasBanco } from "./cuentas_banco/TabCuentasBanco.tsx";
 import "./DetalleCliente.css";
+import { TabDocumentos } from "./documentos/TabDocumentos.tsx";
 import { TabDirecciones } from "./direcciones/TabDirecciones.tsx";
 import { clienteVacio, metaCliente } from "./dominio.ts";
 import { getMaquina } from "./maquina.ts";
@@ -144,6 +145,11 @@ export const DetalleCliente = ({
                       <TabCrmContactos clienteId={ctx.cliente.id} />
                     </div>
                   }
+                />,
+                <Tab
+                  key="tab-6"
+                  label="Documentos"
+                  children={<TabDocumentos clienteId={ctx.cliente.id} />}
                 />,
               ]}
             />
