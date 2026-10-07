@@ -1,7 +1,7 @@
 export interface ElementoMenuBase {
     nombre: string;
     icono?: string;
-    regla?: string;
+    regla?: string | string[];
     color?: string;
     variant?: string;
     posicion?: number;

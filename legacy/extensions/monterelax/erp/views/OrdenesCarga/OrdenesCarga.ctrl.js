@@ -194,6 +194,19 @@ export const bunch = parent => ({
       }),
     },
   ],
+  onErrorReportOlula: [
+    {
+      type: "setStateKeys",
+      plug: payload => ({
+        keys: {
+          errorAlbaranes: true,
+          dialogTitle: "Error",
+          dialogMsg:
+            payload?.descripcion || payload?.nombre || "No se ha podido completar la operación",
+        },
+      }),
+    },
+  ],
   onTerminarImpresionClicked: [
     {
       type: "setStateKey",

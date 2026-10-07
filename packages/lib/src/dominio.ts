@@ -843,6 +843,9 @@ export const calcularPaginacionSimplificada = (
     return { paginasMostradas, totalPaginas };
 };
 
+export const puedeAlguna = (regla: string | string[]): boolean =>
+    Array.isArray(regla) ? regla.some(puede) : puede(regla);
+
 export const puede = (regla: string): boolean => {
     if (regla === "Dashboard:visit" || regla === 'Home:visit') return true;
 
