@@ -4,6 +4,7 @@ import { useFocus } from "@olula/lib/useFocus.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { CrmContacto } from "../../diseño.ts";
 import { metaCrmContacto } from "./dominio.ts";
+import "./CrmContactos.css";
 
 interface EdicionCrmContactosProps {
   contacto: CrmContacto;

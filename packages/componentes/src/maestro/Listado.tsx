@@ -35,6 +35,7 @@ export type FormatoDescarga = { valor: string; etiqueta: string };
 type ListadoProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
   metaFiltro?: MetaFiltro;
+  mostrarFiltros?: boolean;
   cargando?: boolean;
   tarjeta?: (entidad: T) => React.ReactNode;
   tarjetaKanban?: (entidad: T) => React.ReactNode;
@@ -66,6 +67,7 @@ type ListadoProps<T extends Entidad> = {
 export const Listado = <T extends Entidad>({
   metaTabla,
   metaFiltro,
+  mostrarFiltros = true,
   cargando = false,
   criteriaInicial = criteriaDefecto,
   criteria = criteriaDefecto,
@@ -316,20 +318,22 @@ export const Listado = <T extends Entidad>({
     <div className="Listado">
       <div className="listado-cabecera">
         <div className="listado-cabecera-izquierda">
-          <MaestroFiltrosActivoControlado
-            metaFiltro={
-              metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
-            }
-            filtro={criteria.filtro as ClausulaFiltro[]}
-            filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
-            onFiltroChanged={(filtro) => {
-              onCriteriaChanged({
-                ...criteria,
-                filtro,
-                paginacion: { ...criteria.paginacion, pagina: 1 },
-              });
-            }}
-          />
+          {mostrarFiltros && (
+            <MaestroFiltrosActivoControlado
+              metaFiltro={
+                metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
+              }
+              filtro={criteria.filtro as ClausulaFiltro[]}
+              filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
+              onFiltroChanged={(filtro) => {
+                onCriteriaChanged({
+                  ...criteria,
+                  filtro,
+                  paginacion: { ...criteria.paginacion, pagina: 1 },
+                });
+              }}
+            />
+          )}
           {urlDescarga && formatosDescarga && formatosDescarga.length > 0 && (
             <div className="listado-descarga">
               {formatosDescarga.length > 1 && (

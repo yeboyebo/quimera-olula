@@ -1,4 +1,5 @@
-.CrearContacto {
+.alta-crm-contactos,
+.edicion-crm-contactos {
     quimera-input[nombre="nombre"] {
         grid-column: 1 / span 12;
     }

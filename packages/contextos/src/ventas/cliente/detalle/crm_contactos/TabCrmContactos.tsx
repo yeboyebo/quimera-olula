@@ -84,7 +84,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         onCerrar={() => emitir("alta_cancelada")}
         titulo="Nuevo Contacto CRM"
       >
-        <CrearCrmContactos emitir={emitir} />
+        {estado === "alta" && <CrearCrmContactos emitir={emitir} />}
       </QModal>
 
       <QModal
@@ -93,7 +93,7 @@ export const TabCrmContactos = ({ clienteId }: { clienteId: string }) => {
         onCerrar={() => emitir("edicion_cancelada")}
         titulo="Editar Contacto CRM"
       >
-        {ctx.contactoActivo && (
+        {estado === "edicion" && ctx.contactoActivo && (
           <EdicionCrmContactos contacto={ctx.contactoActivo} emitir={emitir} />
         )}
       </QModal>
