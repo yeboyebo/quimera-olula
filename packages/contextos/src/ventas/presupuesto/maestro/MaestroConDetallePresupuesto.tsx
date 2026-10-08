@@ -1,4 +1,3 @@
-import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
@@ -26,6 +25,7 @@ import {
 } from "./diseño.ts";
 import "./MaestroConDetallePresupuesto.css";
 import { getMaquina } from "./maquina.ts";
+import { TarjetaMaestroPresupuesto } from "./TarjetaMaestroPresupuesto.tsx";
 import { aprobado } from "../dominio.ts";
 
 const SIN_APROBAR = "true";
@@ -98,18 +98,7 @@ export const MaestroConDetallePresupuesto = () => {
             <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
               metaFiltro={metaFiltroPresupuesto}
-              tarjeta={(presupuesto) => (
-                <TarjetaDocumentoVenta
-                  codigo={presupuesto.codigo}
-                  nombreCliente={presupuesto.cliente.nombre_cliente}
-                  fecha={presupuesto.fecha}
-                  total={presupuesto.total}
-                  divisa={presupuesto.divisa_id}
-                  tasaConversion={presupuesto.tasa_conversion}
-                  totalDivisaEmpresa={presupuesto.total_divisa_empresa}
-                  estado={aprobado(presupuesto) ? "cerrado" : "pendiente"}
-                />
-              )}
+              tarjeta={TarjetaMaestroPresupuesto}
               criteria={ctx.presupuestos.criteria}
               entidades={ctx.presupuestos.lista}
               totalEntidades={ctx.presupuestos.total}

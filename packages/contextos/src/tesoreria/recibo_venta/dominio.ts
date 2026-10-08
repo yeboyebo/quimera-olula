@@ -88,3 +88,16 @@ export const estadosDesdeFiltro = (filtro: ClausulaFiltro[]): string[] => {
 
     return clausula ? comoLista(clausula[2]) : [];
 };
+
+export type VarianteEstado = "neutro" | "error" | "exito" | "advertencia" | "gris";
+
+const VARIANTES_ESTADO_RECIBO_VENTA: Record<string, VarianteEstado> = {
+    emitido: "neutro",
+    devuelto: "error",
+    pagado: "exito",
+    remesado: "advertencia",
+    agrupado: "gris",
+};
+
+export const varianteEstadoReciboVenta = (estado: string): VarianteEstado =>
+    VARIANTES_ESTADO_RECIBO_VENTA[estado.trim().toLowerCase()] ?? "neutro";
