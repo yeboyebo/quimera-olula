@@ -219,11 +219,8 @@ function OrdenesCarga({ useStyles }) {
                 </ListItem>
               ))}
             </List>
-            <DialogContentText id="form-dialog-question">
-              Se procedera a imprimir los albaranes
-            </DialogContentText>
             <DialogActions>
-              <Button id="confirmarImpresion" text="OK" />
+              <Button id="cerrarAlbaranesGenerados" text="OK" />
             </DialogActions>
           </DialogContent>
         </Dialog>

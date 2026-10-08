@@ -132,6 +132,16 @@ export const bunch = parent => ({
       },
     },
   ],
+  onCerrarAlbaranesGeneradosClicked: [
+    {
+      type: "setStateKeys",
+      plug: () => ({ keys: { albaranesGenerados: false, albaranes: [] } }),
+    },
+    {
+      type: "grape",
+      name: "cargarOrdenesCarga",
+    },
+  ],
   onErrorAlbaranes: [
     {
       type: "setStateKeys",
