@@ -16,3 +16,11 @@ export const solicitarTogglePanelLateral = (panel: string) => {
 export const notificarPanelLateralAbierto = (panel: string) => {
     window.dispatchEvent(new CustomEvent<string>(PANEL_LATERAL_ABIERTO_EVENT, { detail: panel }));
 };
+
+/** Pide al panel del asistente que se abra mostrando un hilo concreto (p. ej. el hilo
+ * de voz, cuando una respuesta dada por voz trae tablas o tarjetas que solo se ven ahí). */
+export const ASISTENTE_ABRIR_HILO_EVENT = "quimera:asistente-abrir-hilo";
+
+export const solicitarAbrirHiloAsistente = (threadId: string) => {
+    window.dispatchEvent(new CustomEvent<string>(ASISTENTE_ABRIR_HILO_EVENT, { detail: threadId }));
+};

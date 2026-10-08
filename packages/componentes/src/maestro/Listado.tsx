@@ -1,4 +1,5 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
+import { useControlPantalla } from "@olula/lib/controles_pantalla.ts";
 import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
@@ -16,6 +17,7 @@ import {
   MaestroFiltrosActivoControlado,
   MetaFiltro,
 } from "./maestroFiltros/MaestroFiltrosActivoControlado.tsx";
+import { describirListado, ejecutarAccionListado } from "./voz_listado.ts";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -41,7 +43,10 @@ type ListadoProps<T extends Entidad> = {
   tarjetaKanban?: (entidad: T) => React.ReactNode;
   columnasKanban?: QKanbanColumna[];
   campoEstadoKanban?: keyof T;
-  onCambioEstadoKanban?: (id: string, nuevoEstado: string) => void | Promise<void>;
+  onCambioEstadoKanban?: (
+    id: string,
+    nuevoEstado: string
+  ) => void | Promise<void>;
   renderAcciones?: () => React.ReactNode;
   criteriaInicial?: Criteria;
   criteria?: Criteria;
@@ -95,7 +100,9 @@ export const Listado = <T extends Entidad>({
   urlDescarga,
   formatosDescarga,
 }: ListadoProps<T>) => {
-  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? modoInicial ?? "tabla");
+  const [modoEstado, setModoEstado] = useState<Modo>(
+    modo ?? modoInicial ?? "tabla"
+  );
   const modoInterno = modo ?? modoEstado;
 
   const [multiseleccionEstado, setMultiseleccionEstado] = useState(false);
@@ -192,6 +199,44 @@ export const Listado = <T extends Entidad>({
     modosDisponiblesCalculados.length > 1 &&
     Boolean(modoEfectivo);
   const acciones = renderAcciones?.();
+
+  // Manejable por voz / desde el asistente (ver controles_pantalla.ts): mismas
+  // acciones que la UI, por los mismos callbacks.
+  const metaFiltroEfectivo =
+    metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>);
+  useControlPantalla("listado", () => ({
+    describir: () => ({
+      id: "",
+      ...describirListado({
+        metaTabla,
+        metaFiltro: metaFiltroEfectivo,
+        criteria,
+        entidades,
+        totalEntidades,
+        seleccionada,
+        modo: modoEfectivo,
+        modos: modosDisponiblesCalculados,
+      }),
+    }),
+    ejecutar: (accion, parametros) =>
+      ejecutarAccionListado(
+        {
+          metaTabla,
+          metaFiltro: metaFiltroEfectivo,
+          criteria,
+          filtroInicial: criteriaInicial.filtro as ClausulaFiltro[],
+          entidades,
+          totalEntidades,
+          seleccionada,
+          modos: modosDisponiblesCalculados,
+          onCriteriaChanged,
+          onSeleccion,
+          cambiarModo: (m) => cambiarModo(m as Modo),
+        },
+        accion,
+        parametros
+      ),
+  }));
 
   const renderTabla = (datos: T[]) => {
     if (!metaTabla) return null;
@@ -320,9 +365,7 @@ export const Listado = <T extends Entidad>({
         <div className="listado-cabecera-izquierda">
           {mostrarFiltros && (
             <MaestroFiltrosActivoControlado
-              metaFiltro={
-                metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
-              }
+              metaFiltro={metaFiltroEfectivo}
               filtro={criteria.filtro as ClausulaFiltro[]}
               filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
               onFiltroChanged={(filtro) => {
@@ -334,6 +377,7 @@ export const Listado = <T extends Entidad>({
               }}
             />
           )}
+
           {urlDescarga && formatosDescarga && formatosDescarga.length > 0 && (
             <div className="listado-descarga">
               {formatosDescarga.length > 1 && (
