@@ -2,7 +2,9 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;
+    /* Evita que el listado quede a altura 0 cuando hay bloques altos encima
+       (tarjetas, resúmenes…): el .Maestro hace scroll y el listado sigue visible. */
+    min-height: min(50vh, 22rem);
 
     .listado-cabecera {
         flex-shrink: 0;

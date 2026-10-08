@@ -15,6 +15,7 @@ import { ConexionBancaria } from "../diseño.js";
 import { nombreInstitucion } from "../dominio.js";
 import "./MaestroConDetalleConexionBancaria.css";
 import { getMaquina } from "./maquina.js";
+import { TarjetasSaldosConexionBancaria } from "./TarjetasSaldosConexionBancaria.js";
 
 const metaTablaConexionBancaria: MetaTabla<ConexionBancaria> = [
     {
@@ -85,6 +86,7 @@ export const MaestroConDetalleConexionBancaria = () => {
                 Maestro={
                     <>
                         <h2>Conexiones bancarias</h2>
+                        <TarjetasSaldosConexionBancaria refrescarClave={conexiones.total} />
                         <Listado<ConexionBancaria>
                             metaTabla={metaTablaConexionBancaria}
                             criteria={conexiones.criteria}
