@@ -1,0 +1,48 @@
+.TabGeneral {
+
+    /* Los QAviso van antes de <quimera-formulario> (no son celdas del grid). */
+    .q-aviso {
+        margin-block-end: var(--espaciado-s);
+    }
+
+    div[id="cuenta"] {
+        grid-column: span 12;
+        font-weight: 600;
+    }
+
+    /* Fila: Institución (6) + Fecha (3) + Fecha valor (3) = 12 */
+    quimera-input[nombre="institucionNombre"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="fecha"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="fechaValor"] {
+        grid-column: span 3;
+    }
+
+    /* Concepto: ancho completo */
+    quimera-input[nombre="concepto"] {
+        grid-column: span 12;
+    }
+
+    /* Fila: Contraparte (6) + Referencia (6) = 12 */
+    quimera-input[nombre="contraparte"] {
+        grid-column: span 6;
+    }
+
+    quimera-input[nombre="referencia"] {
+        grid-column: span 6;
+    }
+
+    /* Fila: Importe (4) + ID en el banco (8) = 12 */
+    quimera-input[nombre="importe"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="idExterno"] {
+        grid-column: span 8;
+    }
+}

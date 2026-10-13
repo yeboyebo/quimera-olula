@@ -1,0 +1,5 @@
+.GenerarEnlaceCobroReciboVenta {
+    quimera-input[nombre="url"] {
+        grid-column: span 12;
+    }
+}

@@ -1,0 +1,39 @@
+.CandidatosConciliacion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-m);
+
+    div[id="buscador-candidatos"] {
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-s);
+
+        quimera-input {
+            flex: 1;
+        }
+    }
+
+    .recibo-candidato {
+        display: flex;
+        flex-direction: column;
+
+        small {
+            color: var(--color-texto-secundario);
+        }
+    }
+
+    .acciones-candidato {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--espaciado-xs);
+    }
+
+    .sin-candidatos {
+        margin: 0;
+    }
+
+    .botones {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

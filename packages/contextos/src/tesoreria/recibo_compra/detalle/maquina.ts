@@ -22,6 +22,12 @@ export const getMaquina: () => Maquina<EstadoDetalleReciboCompra, ContextoDetall
             recibo_deseleccionado: [
                 publicar('recibo_deseleccionado', null),
             ],
+
+            ordenar_pago_solicitado: 'ORDENANDO_PAGO',
+        },
+
+        ORDENANDO_PAGO: {
+            ordenar_pago_cerrado: 'ABIERTO',
         },
 
         VIENDO_TRAZA: {

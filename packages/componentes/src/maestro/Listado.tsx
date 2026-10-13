@@ -1,4 +1,5 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
+import { useControlPantalla } from "@olula/lib/controles_pantalla.ts";
 import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
@@ -11,6 +12,7 @@ import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
+import { describirListado, ejecutarAccionListado } from "./voz_listado.ts";
 import {
   getMetaFiltroDefecto,
   MaestroFiltrosActivoControlado,
@@ -191,6 +193,25 @@ export const Listado = <T extends Entidad>({
     Boolean(modoEfectivo);
   const acciones = renderAcciones?.();
 
+  // Manejable por voz / desde el asistente (ver controles_pantalla.ts): mismas
+  // acciones que la UI, por los mismos callbacks.
+  const metaFiltroEfectivo = metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>);
+  useControlPantalla("listado", () => ({
+    describir: () => ({
+      id: "",
+      ...describirListado({
+        metaTabla, metaFiltro: metaFiltroEfectivo, criteria, entidades, totalEntidades, seleccionada,
+        modo: modoEfectivo, modos: modosDisponiblesCalculados,
+      }),
+    }),
+    ejecutar: (accion, parametros) => ejecutarAccionListado({
+      metaTabla, metaFiltro: metaFiltroEfectivo, criteria,
+      filtroInicial: criteriaInicial.filtro as ClausulaFiltro[],
+      entidades, totalEntidades, seleccionada, modos: modosDisponiblesCalculados,
+      onCriteriaChanged, onSeleccion, cambiarModo: m => cambiarModo(m as Modo),
+    }, accion, parametros),
+  }));
+
   const renderTabla = (datos: T[]) => {
     if (!metaTabla) return null;
 
@@ -317,9 +338,7 @@ export const Listado = <T extends Entidad>({
       <div className="listado-cabecera">
         <div className="listado-cabecera-izquierda">
           <MaestroFiltrosActivoControlado
-            metaFiltro={
-              metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>)
-            }
+            metaFiltro={metaFiltroEfectivo}
             filtro={criteria.filtro as ClausulaFiltro[]}
             filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
             onFiltroChanged={(filtro) => {

@@ -2,14 +2,17 @@ import { useCallback, useEffect, useState } from "react";
 import { IconMessageChatbot, IconX } from "@tabler/icons-react";
 import { FactoryObj } from "@olula/lib/factory_ctx.tsx";
 import {
+    ASISTENTE_ABRIR_HILO_EVENT,
     PANEL_LATERAL_ABIERTO_EVENT,
     PANEL_LATERAL_TOGGLE_EVENT,
     notificarPanelLateralAbierto,
 } from "@olula/lib/panel_lateral_events.ts";
+import { preferencias } from "@olula/lib/preferencias.ts";
 import { construirUrlNavegacion } from "#/asistente/dominio.ts";
 import type { AccionNavegacion } from "#/asistente/diseño.ts";
 import { AsistenteRuntimeProvider } from "#/asistente/vistas/AsistenteRuntimeProvider.tsx";
 import { Chat } from "#/asistente/vistas/Chat.tsx";
+import { AsistenteVozBase } from "#/asistente/vistas/modo_voz/AsistenteVoz.tsx";
 import { useSesionActiva } from "#/asistente/useSesionActiva.ts";
 import "./PanelAsistente.css";
 
@@ -44,9 +47,30 @@ const usePreparar = (navigate: ((url: string) => void) | undefined) => {
     return onAccionNavegacion;
 };
 
+/**
+ * Abre el panel en un hilo concreto cuando alguien lo pide por evento (el modo voz,
+ * para mostrar su hilo). AsistenteRuntimeProvider restaura al montarse el hilo
+ * guardado en "asistente.threadIdActivo": se guarda ahí el pedido y se cambia la
+ * `clave` del provider para forzar ese remontaje aunque el panel ya estuviera abierto.
+ */
+const useAbrirHiloSolicitado = (abrir: () => void) => {
+    const [clave, setClave] = useState(0);
+    useEffect(() => {
+        const alSolicitarHilo = (e: Event) => {
+            preferencias.set("asistente.threadIdActivo", (e as CustomEvent<string>).detail);
+            setClave(c => c + 1);
+            abrir();
+        };
+        window.addEventListener(ASISTENTE_ABRIR_HILO_EVENT, alSolicitarHilo);
+        return () => window.removeEventListener(ASISTENTE_ABRIR_HILO_EVENT, alSolicitarHilo);
+    }, [abrir]);
+    return clave;
+};
+
 const PanelAsistenteFlotante = ({ navigate }: PanelAsistenteModoProps) => {
     const [abierto, setAbierto] = useState(false);
     const onAccionNavegacion = usePreparar(navigate);
+    const claveHilo = useAbrirHiloSolicitado(useCallback(() => setAbierto(true), []));
 
     return (
         <div className="asistente-panel">
@@ -61,7 +85,7 @@ const PanelAsistenteFlotante = ({ navigate }: PanelAsistenteModoProps) => {
 
             {abierto && (
                 <div className="asistente-panel__drawer">
-                    <AsistenteRuntimeProvider onAccionNavegacion={onAccionNavegacion}>
+                    <AsistenteRuntimeProvider key={claveHilo} onAccionNavegacion={onAccionNavegacion}>
                         <Chat onCerrar={() => setAbierto(false)} />
                     </AsistenteRuntimeProvider>
                 </div>
@@ -73,6 +97,7 @@ const PanelAsistenteFlotante = ({ navigate }: PanelAsistenteModoProps) => {
 const PanelAsistenteLateral = ({ navigate }: PanelAsistenteModoProps) => {
     const [abierto, setAbierto] = useState(false);
     const onAccionNavegacion = usePreparar(navigate);
+    const claveHilo = useAbrirHiloSolicitado(useCallback(() => setAbierto(true), []));
 
     useEffect(() => {
         const alSolicitarToggle = (e: Event) => {
@@ -96,7 +121,7 @@ const PanelAsistenteLateral = ({ navigate }: PanelAsistenteModoProps) => {
     return (
         <panel-asistente className={abierto ? "activo" : ""}>
             {abierto && (
-                <AsistenteRuntimeProvider onAccionNavegacion={onAccionNavegacion}>
+                <AsistenteRuntimeProvider key={claveHilo} onAccionNavegacion={onAccionNavegacion}>
                     <Chat onCerrar={() => setAbierto(false)} />
                 </AsistenteRuntimeProvider>
             )}
@@ -108,9 +133,16 @@ export const PanelAsistenteBase = ({ navigate, modo = "flotante" }: PanelAsisten
     const sesionActiva = useSesionActiva();
     if (!sesionActiva) return null;
 
-    return modo === "lateral"
-        ? <PanelAsistenteLateral navigate={navigate} />
-        : <PanelAsistenteFlotante navigate={navigate} />;
+    const AsistenteVoz_ = (FactoryObj.app.Asistente?.asistente_AsistenteVoz as typeof AsistenteVozBase) ?? AsistenteVozBase;
+
+    return (
+        <>
+            {modo === "lateral"
+                ? <PanelAsistenteLateral navigate={navigate} />
+                : <PanelAsistenteFlotante navigate={navigate} />}
+            <AsistenteVoz_ navigate={navigate} />
+        </>
+    );
 };
 
 export const PanelAsistente = (props: PanelAsistenteProps) => {
