@@ -27,10 +27,12 @@ import {
     PatchFactura,
     PatchLineaFactura,
     PatchRectificativa,
+    PatchRegistrarFactura,
     PostFactura,
     PostLineasFactura,
     ReciboFactura,
 } from "./diseño.ts";
+import { estadoExpedicionDesdeApi } from "./dominio.ts";
 import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
@@ -70,6 +72,9 @@ export interface FacturaApi {
     no_generar_asiento: boolean;
     asiento_id: string | null;
     observaciones: string | null;
+    // Sin tipar como EstadoExpedicion a propósito: lo que llega es texto y lo
+    // valida `estadoExpedicionDesdeApi`, no el compilador.
+    estado_expedicion: string;
 }
 
 export interface LineaFacturaApi {
@@ -176,6 +181,7 @@ export const facturaDesdeApi = (api: FacturaApi): Factura => ({
     noGenerarAsiento: api.no_generar_asiento,
     asientoId: api.asiento_id,
     observaciones: api.observaciones,
+    estadoExpedicion: estadoExpedicionDesdeApi(api.estado_expedicion),
 });
 
 export const lineaFacturaDesdeApi = (api: LineaFacturaApi): LineaFactura => ({
@@ -324,6 +330,14 @@ export const patchRectificativa: PatchRectificativa = async (id, rectificativaId
         `${baseUrl}/${id}/rectificativa`,
         { rectificativa_id: rectificativaId },
         "Error al marcar la factura rectificativa"
+    );
+};
+
+export const patchRegistrarFactura: PatchRegistrarFactura = async (id) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/registrar`,
+        {},
+        "Error al registrar la factura"
     );
 };
 

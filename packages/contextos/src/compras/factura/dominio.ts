@@ -1,6 +1,7 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { articuloDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
 import {
+    EstadoExpedicion,
     Factura,
     LineaFactura,
     ModeloLineaFactura,
@@ -8,6 +9,40 @@ import {
 } from "./diseño.ts";
 
 export const facturaEditable = (factura: Factura): boolean => factura.editable;
+
+const ESTADOS_EXPEDICION: Record<string, EstadoExpedicion> = {
+    BORRADOR: "BORRADOR",
+    REGISTRADA: "REGISTRADA",
+};
+
+/**
+ * Normaliza lo que manda el servidor antes de compararlo. Sin esto, un
+ * "Borrador" en vez de "BORRADOR" no casaría con ninguna rama y la factura se
+ * trataría como no registrable.
+ */
+export const estadoExpedicionDesdeApi = (
+    valor: string | null | undefined
+): EstadoExpedicion => {
+    const clave = (valor ?? "").trim().toUpperCase().replace(/[\s.-]+/g, "_");
+    return ESTADOS_EXPEDICION[clave] ?? "";
+};
+
+export const descripcionEstadoExpedicion: Record<EstadoExpedicion, string> = {
+    "": "Sin cargar",
+    BORRADOR: "Borrador",
+    REGISTRADA: "Registrada",
+};
+
+/** Solo se registra el borrador: registrar es irreversible. */
+export const facturaRegistrable = (factura: Factura): boolean =>
+    factura.estadoExpedicion === "BORRADOR";
+
+/**
+ * Reabrir solo tiene sentido en la factura que bloqueó la contabilidad: es el
+ * asiento lo que pone `editable` a false, no el usuario.
+ */
+export const facturaReabrible = (factura: Factura): boolean =>
+    factura.asientoId !== null;
 
 export const descripcionOrigenFactura = (factura: Factura): string =>
     factura.automatica ? "Desde albaranes" : "Manual";
