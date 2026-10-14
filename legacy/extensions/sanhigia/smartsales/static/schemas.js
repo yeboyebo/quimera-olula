@@ -438,8 +438,6 @@ export default parent => ({
         .load(t => t?.hora?.substring(0, 5))
         .default(util.now())
         .required(),
-      // fechaFin: Field.Date("fechafin", "Fecha finalización"),
-      // horaFin: Field.Time("horafin", "Hora finalización").load(t => t?.horafin?.substring(0, 5)),
       fechaFin: Field.Date("fechafin", "Fecha finalización").required(),
       horaFin: Field.Time("horafin", "Hora finalización")
         .load(t => t?.horafin?.substring(0, 5))

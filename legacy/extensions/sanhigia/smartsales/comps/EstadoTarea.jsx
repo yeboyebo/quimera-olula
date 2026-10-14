@@ -80,7 +80,7 @@ function EstadoTarea({ field, value, onChanged, ...props }) {
     navigator.geolocation.getCurrentPosition(coords => successCords(coords, newValue), errorCords);
   };
 
-  console.log("mimensaje_EstadoTarea", loadingCoords, fieldValue);
+  // console.log("mimensaje_EstadoTarea", loadingCoords, fieldValue);
 
   return (
     <ButtonGroup aria-label="outlined primary button group" {...props}>
