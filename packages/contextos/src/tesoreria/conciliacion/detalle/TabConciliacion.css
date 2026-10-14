@@ -1,0 +1,75 @@
+.TabConciliacion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-m);
+
+    .q-aviso {
+        margin: 0;
+    }
+
+    .recibo-conciliado,
+    .recibo-sugerido,
+    .movimiento-ignorado {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espaciado-m);
+    }
+
+    div[id="recibo-asociado"] {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--espaciado-m);
+        padding: var(--espaciado-s) var(--espaciado-m);
+        border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+        border-radius: var(--redondeo-borde-xs);
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            gap: var(--espaciado-xs);
+        }
+
+        .etiqueta-recibo {
+            font-size: var(--tamaño-letra-xs);
+            color: var(--color-texto-secundario);
+        }
+
+        .valor-recibo {
+            font-weight: var(--grosor-letra-5);
+        }
+
+        .justificacion-recibo {
+            font-size: var(--tamaño-letra-xs);
+            color: var(--color-texto-secundario);
+        }
+
+        .acciones-recibo {
+            display: flex;
+            flex-direction: row;
+            gap: var(--espaciado-xs);
+        }
+    }
+
+    /* Fila: Origen (3) + Conciliado por (4) + Conciliado el (5) = 12 */
+    quimera-input[nombre="origenConciliacion"] {
+        grid-column: span 3;
+    }
+
+    quimera-input[nombre="conciliadoPor"] {
+        grid-column: span 4;
+    }
+
+    quimera-input[nombre="conciliadoEn"] {
+        grid-column: span 5;
+    }
+
+    quimera-input[nombre="justificacion"] {
+        grid-column: span 12;
+    }
+
+    .botones {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

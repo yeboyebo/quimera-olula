@@ -1,0 +1,15 @@
+/* El dialog de QModal es shrink-to-fit: sin un ancho fijo aquí, el modal se
+   ensancha al elegir una divisa de descripción larga. Se fija el ancho del
+   formulario y el dialog queda estable. */
+.CrearTarifa quimera-formulario {
+    width: 500px;
+    max-width: 100%;
+}
+
+.CrearTarifa quimera-input[nombre="nombre"] {
+    grid-column: span 8;
+}
+
+.CrearTarifa quimera-select[nombre="tarifa/divisa_id"] {
+    grid-column: span 4;
+}

@@ -1,4 +1,4 @@
-import { Articulo } from "#/almacen/comun/componentes/Articulo.tsx";
+import { Articulo } from "#/compras/comun/componentes/articulo.tsx";
 import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useEffect, useRef } from "react";

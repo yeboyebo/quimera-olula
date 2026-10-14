@@ -51,8 +51,8 @@ quimera-autocompletar {
             background-color: transparent;
             box-sizing: border-box;
             transition: background-color var(--transicion-rapida),
-                        border-color var(--transicion-rapida),
-                        border-width var(--transicion-rapida);
+                border-color var(--transicion-rapida),
+                border-width var(--transicion-rapida);
 
             &::placeholder {
                 color: var(--color-texto-deshabilitado);
@@ -102,6 +102,7 @@ quimera-autocompletar {
        Estado ENFOCADO — recuadro completo, fondo sutil
        ============================================================ */
     &:focus-within:not([solo-lectura]):not([deshabilitado]) {
+
         label input:not([type="checkbox"]):not([type="radio"]),
         label select,
         label textarea {
@@ -115,6 +116,7 @@ quimera-autocompletar {
        Estado EN EDICIÓN — recuadro resaltado (borde grueso)
        ============================================================ */
     &[data-editando]:focus-within:not([solo-lectura]):not([deshabilitado]) {
+
         label input:not([type="checkbox"]):not([type="radio"]),
         label select,
         label textarea {
@@ -148,6 +150,7 @@ quimera-autocompletar {
 
     /* Sobreescribir color de foco cuando hay indicadores de estado */
     &[modificado]:focus-within:not([solo-lectura]):not([deshabilitado]) {
+
         label input:not([type="checkbox"]):not([type="radio"]),
         label select,
         label textarea {
@@ -156,6 +159,7 @@ quimera-autocompletar {
     }
 
     &[erroneo]:focus-within:not([solo-lectura]):not([deshabilitado]) {
+
         label input:not([type="checkbox"]):not([type="radio"]),
         label select,
         label textarea {
@@ -318,6 +322,8 @@ quimera-input {
             input.numero-oculto {
                 color: transparent !important;
                 caret-color: transparent !important;
+                appearance: textfield;
+                -moz-appearance: textfield;
 
                 &::-webkit-inner-spin-button,
                 &::-webkit-outer-spin-button {

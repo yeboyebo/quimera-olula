@@ -22,7 +22,7 @@ const lineaVacia = (): LineaVenta => ({
 });
 
 const etiqueta = (linea: LineaVenta) => {
-    const columna = metaTablaLineaVenta<LineaVenta>().find((c) => c.id === "linea");
+    const columna = metaTablaLineaVenta<LineaVenta>().metaCols["linea"];
     return columna?.render?.(linea);
 };
 

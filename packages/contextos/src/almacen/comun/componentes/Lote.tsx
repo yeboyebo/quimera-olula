@@ -50,7 +50,7 @@ export const Lote = ({
 
     return (
         <QAutocompletar
-            label={`${label} SKU ${sku}`}
+            label={sku ? `${label} SKU ${sku}` : label}
             nombre={nombre}
             onChange={onChange}
             valor={valor}

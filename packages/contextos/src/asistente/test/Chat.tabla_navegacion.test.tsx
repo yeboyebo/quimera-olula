@@ -83,10 +83,15 @@ test("[asistente-chat-02] click sigue funcionando tras restaurar un hilo persist
     vi.mocked(obtenerMensajesHilo).mockResolvedValueOnce({
         threadId: "hilo-viejo",
         mensajes: [
-            { id: "m1-u", rol: "user", texto: "Dame las facturas antiguas", a2uiMessages: [], adjuntos: [] },
+            {
+                id: "m1-u", rol: "user", texto: "Dame las facturas antiguas", a2uiMessages: [], adjuntos: [],
+                descarga: null, accionNavegacion: null,
+            },
             {
                 id: "m1-a",
                 rol: "assistant",
+                descarga: null,
+                accionNavegacion: null,
                 texto: "Aquí tienes las facturas antiguas.",
                 adjuntos: [],
                 a2uiMessages: [

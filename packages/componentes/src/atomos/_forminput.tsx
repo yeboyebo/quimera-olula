@@ -197,7 +197,7 @@ export const FormInput = ({
     required: !opcional,
     maxLength: maxLength,
     list: lista,
-    autoComplete: autocompletar,
+    autoComplete: autocompletar ?? (tipo === "autocompletar" ? "on" : "off"),
     onChange: manejarChange,
     onBlur: manejarBlur,
     onFocus: manejarFocus,

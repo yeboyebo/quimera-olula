@@ -6,6 +6,7 @@ import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.ts";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.ts";
 import { useEffect, useMemo } from "react";
+import { CargarFichero } from "../vistas/cargar_fichero/CargarFichero.tsx";
 import { CrearFactura } from "../crear/CrearFactura.tsx";
 import { DetalleFactura } from "../detalle/DetalleFactura.tsx";
 import { Factura } from "../diseño.ts";
@@ -57,6 +58,9 @@ export const MaestroConDetalleFactura = () => {
                                     <QBoton onClick={() => emitir("crear_factura_solicitada")}>
                                         Nueva Factura
                                     </QBoton>
+                                    <QBoton onClick={() => emitir("cargar_fichero_solicitado")} variante="borde">
+                                        Cargar fichero
+                                    </QBoton>
                                 </div>
                             )}
                             onSeleccion={(payload) => emitir("factura_seleccionada", payload)}
@@ -70,6 +74,7 @@ export const MaestroConDetalleFactura = () => {
             />
 
             {estado === "CREANDO" && <CrearFactura publicar={emitir} />}
+            {estado === "CARGANDO_FICHERO" && <CargarFichero publicar={emitir} />}
         </div>
     );
 };

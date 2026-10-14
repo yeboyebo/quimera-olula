@@ -33,20 +33,23 @@ export const LineasLista = ({
     publicar("linea_seleccionada", linea);
   };
 
+  const metaTablaBase = metaTablaLineaVentaResumida<Linea>({ divisa });
+  const metaTabla = cantidadEditable && onCambioCantidad ? {
+    ...metaTablaBase,
+    metaCols: {
+      ...metaTablaBase.metaCols,
+      cantidad: {
+        ...metaTablaBase.metaCols.cantidad,
+        render: (linea: Linea) => (
+          <EditarCantidadLinea linea={linea} onCantidadEditada={onCambioCantidad} />
+        ),
+      },
+    },
+  } : metaTablaBase;
+
   return (
     <ListadoSemiControlado
-      metaTabla={metaTablaLineaVentaResumida<Linea>({
-        divisa,
-        renderCantidad:
-          cantidadEditable && onCambioCantidad
-            ? (linea) => (
-                <EditarCantidadLinea
-                  linea={linea}
-                  onCantidadEditada={onCambioCantidad}
-                />
-              )
-            : undefined,
-      })}
+      metaTabla={metaTabla}
       tarjeta={(linea) => (
         <TarjetaLinea
           linea={linea}

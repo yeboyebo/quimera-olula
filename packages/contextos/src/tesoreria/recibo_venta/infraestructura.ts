@@ -1,18 +1,22 @@
+import { getTraza } from "#/comun/componentes/traza/infraestructura.js";
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
-import { GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
+import { AgruparRecibosVenta, DesagruparReciboVenta, GetReciboVenta, GetRecibosVenta, MovimientoRecibo, PatchDevolverReciboVenta, PatchPagarReciboVenta, ReciboVenta } from "./diseño.js";
 
 export interface MovimientoReciboApi {
     id: string;
     fecha: string | null;
     tipo: string;
     estado: boolean;
+    cuenta_pago_id?: string | null;
+    nombre_cuenta_pago?: string | null;
 }
 
 export interface ReciboVentaApi {
     id: string;
-    factura_id: string;
+    factura_id: string | null;
+    grupo_id: string | null;
     codigo: string;
     fecha_emision: string | null;
     fecha_vencimiento: string | null;
@@ -22,6 +26,7 @@ export interface ReciboVentaApi {
     nombre_cliente: string;
     id_fiscal: string;
     pagos?: MovimientoReciboApi[];
+    recibos_agrupados?: ReciboVentaApi[];
 }
 
 const baseUrl = new ApiUrls().RECIBO_VENTA;
@@ -31,11 +36,14 @@ const movimientoReciboDesdeApi = (api: MovimientoReciboApi): MovimientoRecibo =>
     fecha: fechaDesdeApi(api.fecha),
     tipo: api.tipo,
     estado: api.estado,
+    cuentaPagoId: api.cuenta_pago_id ?? "",
+    nombreCuentaPago: api.nombre_cuenta_pago ?? "",
 });
 
 export const reciboVentaDesdeApi = (api: ReciboVentaApi): ReciboVenta => ({
     id: api.id,
-    facturaId: api.factura_id,
+    facturaId: api.factura_id ?? "",
+    grupoId: api.grupo_id ?? "",
     codigo: api.codigo,
     fechaEmision: fechaDesdeApi(api.fecha_emision),
     fechaVencimiento: fechaDesdeApi(api.fecha_vencimiento),
@@ -45,13 +53,14 @@ export const reciboVentaDesdeApi = (api: ReciboVentaApi): ReciboVenta => ({
     nombreCliente: api.nombre_cliente,
     idFiscal: api.id_fiscal,
     pagos: (api.pagos ?? []).map(movimientoReciboDesdeApi),
+    recibosAgrupados: (api.recibos_agrupados ?? []).map(reciboVentaDesdeApi),
 });
 
 export const getReciboVenta: GetReciboVenta = async (id) => {
     return await RestAPI.getItem<ReciboVenta, ReciboVentaApi>(
         `${baseUrl}/${id}`,
         reciboVentaDesdeApi,
-        "Error al obtener el recibo de venta"
+        "Error al obtener el recibo de cobro"
     );
 };
 
@@ -60,7 +69,27 @@ export const getRecibosVenta: GetRecibosVenta = async (criteria) => {
         baseUrl,
         criteria,
         reciboVentaDesdeApi,
-        "Error al obtener los recibos de venta"
+        "Error al obtener los recibos de cobro"
+    );
+};
+
+export type EnlaceCobroReciboVentaApi = {
+    url: string;
+    pago_id: string;
+    referencia: string;
+    pagador: { nombre: string };
+    beneficiario: { nombre: string; iban: string };
+};
+
+/** Enlace para que el cliente del recibo pague a la empresa en `cuentaBancoId`. */
+export const postEnlaceCobroReciboVenta = async (
+    id: string,
+    cuentaBancoId: string,
+): Promise<EnlaceCobroReciboVentaApi> => {
+    return await RestAPI.query(
+        `${baseUrl}/${id}/enlace_cobro`,
+        { cuenta_banco_id: cuentaBancoId },
+        "Error al generar el enlace de cobro"
     );
 };
 
@@ -71,6 +100,39 @@ export const patchPagarReciboVenta: PatchPagarReciboVenta = async (id, pago) => 
             cuenta_pago_id: pago.cuentaPagoId,
             fecha: pago.fecha,
         },
-        "Error al pagar el recibo de venta"
+        "Error al pagar el recibo de cobro"
     );
 };
+
+export const patchDevolverReciboVenta: PatchDevolverReciboVenta = async (id, devolucion) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/devolver`,
+        {
+            cuenta_pago_id: devolucion.cuentaPagoId,
+            fecha: devolucion.fecha,
+        },
+        "Error al devolver el recibo de cobro"
+    );
+};
+
+export const agruparRecibosVenta: AgruparRecibosVenta = async (id, reciboIds) => {
+    const respuesta = (await RestAPI.patch(
+        `${baseUrl}/${id}/agrupar`,
+        { recibo_ids: reciboIds },
+        "Error al agrupar los recibos"
+    )) as unknown as { grupo_id: string };
+
+    return respuesta.grupo_id;
+};
+
+export const desagruparReciboVenta: DesagruparReciboVenta = async (id) => {
+    const respuesta = (await RestAPI.patch(
+        `${baseUrl}/${id}/desagrupar`,
+        {},
+        "Error al deshacer la agrupación"
+    )) as unknown as { grupo_id: string };
+
+    return respuesta.grupo_id;
+};
+
+export const getTrazaReciboVenta = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

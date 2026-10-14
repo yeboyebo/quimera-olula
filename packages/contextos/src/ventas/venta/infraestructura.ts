@@ -146,6 +146,7 @@ export interface NuevaLineaVentaApiRes {
     tipo_recargo: number;
     tipo_irpf: number;
     iva_incluido: boolean;
+    por_lotes?: boolean;
 }
 
 // export function altaLineaVentaAApi(linea: NuevaLineaVenta): AltaLineaApiReq {
@@ -172,5 +173,6 @@ export function respuestaNuevaLineaApi<T extends NuevaLineaVenta>(lineaAnterior:
         tipoRecargo: lineaApi.tipo_recargo,
         tipoIrpf: lineaApi.tipo_irpf,
         ivaIncluido: lineaApi.iva_incluido,
+        // porLotes: lineaApi.por_lotes ?? false,
     } as T;
 }

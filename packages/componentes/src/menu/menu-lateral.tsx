@@ -1,4 +1,4 @@
-import { puede } from "@olula/lib/dominio.ts";
+import { puedeAlguna } from "@olula/lib/dominio.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { ElementoMenu, ElementoMenuPadre } from "@olula/lib/menu.ts";
 import { usePreferencia } from "@olula/lib/usePreferencia.ts";
@@ -40,7 +40,7 @@ export const MenuLateral = () => {
     const cumpleFiltro = elemento.nombre.toLowerCase().includes(filtro);
 
     // Si tiene regla y no tiene permiso, no mostrar
-    if ("regla" in elemento && elemento.regla && !puede(elemento.regla)) {
+    if ("regla" in elemento && elemento.regla && !puedeAlguna(elemento.regla)) {
       return null;
     }
 

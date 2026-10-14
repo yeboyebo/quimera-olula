@@ -2,7 +2,8 @@ import { ReciboCompra } from "../diseño.js";
 
 export type EstadoDetalleReciboCompra =
     | 'INICIAL'
-    | 'ABIERTO';
+    | 'ABIERTO' | 'VIENDO_TRAZA'
+    | 'ORDENANDO_PAGO';
 
 export type ContextoDetalleReciboCompra = {
     estado: EstadoDetalleReciboCompra;

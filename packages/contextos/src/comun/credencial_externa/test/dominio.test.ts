@@ -12,7 +12,8 @@ import {
 describe("buscarProveedorConocido", () => {
     it("encuentra un proveedor conocido por su valor exacto", () => {
         expect(buscarProveedorConocido("Telegram")?.tipoAuth).toBe("api_key");
-        expect(buscarProveedorConocido("Gmail")?.tipoAuth).toBe("oauth2");
+        expect(buscarProveedorConocido("Google Drive")?.tipoAuth).toBe("oauth2");
+        expect(buscarProveedorConocido("Google Calendar")?.tipoAuth).toBe("oauth2");
         expect(buscarProveedorConocido("Correo (IMAP/SMTP)")?.tipoAuth).toBe("basic");
         expect(buscarProveedorConocido("Gemini")?.tipoAuth).toBe("api_key");
     });
@@ -31,9 +32,9 @@ describe("categorías de proveedor", () => {
         ]);
     });
 
-    it("Telegram/Gmail/Correo son 'conector'", () => {
+    it("Telegram/Google Drive/Google Calendar/Correo son 'conector'", () => {
         const conectores = proveedoresPorCategoria("conector").map((p) => p.valor);
-        expect(conectores).toEqual(["Telegram", "Gmail", "Correo (IMAP/SMTP)"]);
+        expect(conectores).toEqual(["Telegram", "Google Drive", "Google Calendar", "Correo (IMAP/SMTP)"]);
     });
 
     it("'Otro' solo aparece como opción para conectores, nunca para LLM", () => {
@@ -84,11 +85,10 @@ describe("secretoCompleto", () => {
         ).toBe(true);
     });
 
-    it("Gmail exige client_id, client_secret y refresh_token", () => {
-        expect(secretoCompleto("Gmail", "oauth2", { client_id: "a", client_secret: "b" })).toBe(false);
-        expect(
-            secretoCompleto("Gmail", "oauth2", { client_id: "a", client_secret: "b", refresh_token: "c" })
-        ).toBe(true);
+    it("Google Drive/Calendar exigen client_id y client_secret (el token lo obtiene el flujo OAuth)", () => {
+        expect(secretoCompleto("Google Drive", "oauth2", { client_id: "a" })).toBe(false);
+        expect(secretoCompleto("Google Drive", "oauth2", { client_id: "a", client_secret: "b" })).toBe(true);
+        expect(secretoCompleto("Google Calendar", "oauth2", { client_id: "a", client_secret: "b" })).toBe(true);
     });
 
     it("Correo (IMAP/SMTP) exige credenciales y ambos servidores", () => {

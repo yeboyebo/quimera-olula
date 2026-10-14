@@ -30,6 +30,7 @@ import {
     PostPedido,
     Recibido,
 } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().PEDIDO;
 
@@ -81,6 +82,7 @@ export interface LineaPedidoApi {
     tipo_irpf: number;
     cantidad_recibida: number;
     cerrada: boolean;
+    por_lotes: boolean;
 }
 
 interface NuevaLineaPedidoApi {
@@ -202,6 +204,7 @@ export const lineaPedidoDesdeApi = (api: LineaPedidoApi): LineaPedido => ({
     tipoIrpf: api.tipo_irpf,
     cantidadRecibida: api.cantidad_recibida,
     cerrada: api.cerrada,
+    porLotes: api.por_lotes,
 });
 
 const esProveedorNoRegistrado = (
@@ -419,3 +422,5 @@ export const borrarLineasPedido: BorrarLineasPedido = async (id, lineas) => {
         "Error al borrar las líneas del pedido"
     );
 };
+
+export const getTrazaPedido = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

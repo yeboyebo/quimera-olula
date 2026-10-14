@@ -1,0 +1,10 @@
+/* Ancho fijo: el título del modal lleva la descripción del artículo, de
+   longitud variable, y el dialog de QModal es shrink-to-fit. */
+/* .CambiarArticuloTarifa quimera-formulario {
+    width: 400px;
+    max-width: 100%;
+}
+
+.CambiarArticuloTarifa quimera-input[nombre="precio"] {
+    grid-column: span 6;
+} */

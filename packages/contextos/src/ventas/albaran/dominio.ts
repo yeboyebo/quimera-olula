@@ -105,7 +105,7 @@ export const metaAlbaran: MetaModelo<Albaran> = {
 
 export const editable = modeloEsEditable<Albaran>(metaAlbaran);
 
-export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
+export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta as unknown as MetaModelo<LineaAlbaran>;
 
 const albaranVacioObjeto: Albaran = albaranVacio();
 

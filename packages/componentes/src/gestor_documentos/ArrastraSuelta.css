@@ -42,7 +42,7 @@
 
 .ArrastraSuelta-titulo {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
     color: var(--color-texto-primario);
     margin: 0;
 }

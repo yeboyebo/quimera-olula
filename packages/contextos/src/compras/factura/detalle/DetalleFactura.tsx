@@ -1,3 +1,4 @@
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -12,7 +13,7 @@ import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { CambiarRectificativa } from "../cambiar_rectificativa/CambiarRectificativa.tsx";
 import { Factura } from "../diseño.ts";
 import { facturaEditable } from "../dominio.ts";
-import { getReportFactura } from "../infraestructura.ts";
+import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
 import {
     contextoDetalleFacturaInicial,
     guardarFactura,
@@ -25,7 +26,7 @@ import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
 import { TabRecibos } from "./TabRecibos.tsx";
-import { TotalesFactura } from "./TotalesFactura.tsx";
+import { TotalesDocumento } from "#/compras/comun/componentes/TotalesDocumento.tsx";
 
 export const DetalleFactura = ({
     id,
@@ -67,6 +68,7 @@ export const DetalleFactura = ({
 
     const accionesFactura = [
         { texto: "Imprimir", onClick: imprimir },
+        { texto: "Documentos relacionados", onClick: () => emitir("traza_solicitada") },
         editable
             ? { texto: "Cerrar factura", onClick: () => emitir("cierre_solicitado") }
             : { texto: "Reabrir factura", onClick: () => emitir("reapertura_solicitada") },
@@ -120,7 +122,7 @@ export const DetalleFactura = ({
                         />,
                     ]}
                 />
-                <TotalesFactura form={formModelo} />
+                <TotalesDocumento form={formModelo} />
                 <LineasFactura
                     factura={factura}
                     lineas={lineas}
@@ -151,6 +153,14 @@ export const DetalleFactura = ({
 
             {estado === "CAMBIANDO_RECTIFICATIVA" && (
                 <CambiarRectificativa factura={factura} publicar={emitir} />
+            )}
+
+            {estado === "VIENDO_TRAZA" && (
+              <ModalTraza
+                id={ctx.factura.id}
+                getTraza={getTrazaFactura}
+                onCerrar={() => emitir("traza_cerrada")}
+              />
             )}
         </Detalle>
     );

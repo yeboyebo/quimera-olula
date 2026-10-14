@@ -21,7 +21,7 @@ class ApiUrls {
     static readonly ALMACEN_PRESUPUESTO = `/almacen/presupuesto`;
 
     // Tesorería
-    static readonly TESORERIA_RECIBO_VENTA = `/tesoreria/recibo_venta`;
+    static readonly TESORERIA_RECIBO_VENTA = `/tesoreria/recibo_cobro`;
 }
 
 export default ApiUrls;

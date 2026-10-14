@@ -51,6 +51,7 @@ export interface LineaPedido extends Entidad {
     tipoIrpf: number;
     cantidadRecibida: number;
     cerrada: boolean;
+    porLotes: boolean;
 }
 
 export interface NuevoPedido extends Modelo {

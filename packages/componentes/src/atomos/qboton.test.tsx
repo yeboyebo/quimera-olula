@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { describe, expect, test } from "vitest";
 import { QBoton } from "./qboton.tsx";
 
@@ -28,5 +29,16 @@ describe("qboton", () => {
     expect(screen.getByText(/Hola/i)).toBeDefined();
     fireEvent.click(button);
     expect(screen.getByText(/Adios/i)).toBeDefined();
+  });
+
+  test("con enlace se pinta como un enlace a la ruta", () => {
+    render(
+      <MemoryRouter>
+        <QBoton enlace="/tesoreria/recibo_venta?id=7">Ver recibo</QBoton>
+      </MemoryRouter>
+    );
+
+    const enlace = screen.getByRole("link", { name: "Ver recibo" });
+    expect(enlace.getAttribute("href")).toBe("/tesoreria/recibo_venta?id=7");
   });
 });

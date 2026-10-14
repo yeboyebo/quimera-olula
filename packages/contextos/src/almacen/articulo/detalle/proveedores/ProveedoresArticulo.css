@@ -1,0 +1,151 @@
+/*
+ * ProveedoresArticulo.css — tabla de embalajes por proveedor para un artículo.
+ *
+ * Estructura del componente:
+ *   .ProveedoresArticulo
+ *     .ProveedoresArticulo__cabecera            (h4 + botón toggle)
+ *     -- estado inactivo --
+ *     .ProveedoresArticulo__resumen
+ *       .ProveedoresArticulo__resumen-fila      (una línea por proveedor)
+ *     -- estado activo --
+ *     .ProveedoresArticulo__proveedor           (una sección por proveedor)
+ *       .ProveedoresArticulo__proveedor-cabecera
+ *       table
+ *         thead > tr > th (Tipo de caja | Cantidad | —)
+ *         tbody > tr (FilaCaja)
+ */
+
+.ProveedoresArticulo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-m);
+    padding-top: var(--espaciado-l);
+    border-top: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+}
+
+/* ── Cabecera del componente ───────────────────────────────────────────────── */
+
+.ProveedoresArticulo__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espaciado-m);
+
+    h4 {
+        margin: 0;
+        font-size: var(--tamaño-letra-m);
+        font-weight: var(--grosor-letra-6);
+        color: var(--color-texto-secundario);
+    }
+}
+
+/* ── Vista resumen (inactiva) ──────────────────────────────────────────────── */
+
+.ProveedoresArticulo__resumen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-xs);
+}
+
+.ProveedoresArticulo__resumen-fila {
+    font-size: var(--tamaño-letra-m);
+    color: var(--color-texto-primario);
+
+    strong {
+        color: var(--color-primario);
+    }
+}
+
+/* ── Sección por proveedor ─────────────────────────────────────────────────── */
+
+.ProveedoresArticulo__proveedor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-s);
+}
+
+.ProveedoresArticulo__proveedor-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espaciado-m);
+
+    strong {
+        font-size: var(--tamaño-letra-m);
+        font-weight: var(--grosor-letra-6);
+        color: var(--color-primario);
+    }
+}
+
+/* ── Tabla de embalajes ────────────────────────────────────────────────────── */
+
+.ProveedoresArticulo__proveedor table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: var(--tamaño-letra-s);
+}
+
+.ProveedoresArticulo__proveedor thead tr {
+    background-color: var(--color-head-tabla);
+}
+
+.ProveedoresArticulo__proveedor th {
+    padding: var(--espaciado-xs) var(--espaciado-m);
+    font-size: var(--tamaño-letra-s);
+    font-weight: var(--grosor-letra-5);
+    color: var(--color-texto-secundario);
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: var(--tamaño-borde-s) solid var(--color-borde-fuerte);
+}
+
+.ProveedoresArticulo__proveedor td {
+    padding: var(--espaciado-s) var(--espaciado-m);
+    vertical-align: middle;
+    border-bottom: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+    color: var(--color-texto-primario);
+}
+
+/* Filas alternas y hover ─────────────────────────────────────────────────── */
+
+.ProveedoresArticulo__proveedor tbody tr:nth-child(even) {
+    background-color: var(--color-superficie-elevada);
+}
+
+.ProveedoresArticulo__proveedor tbody tr:hover {
+    background-color: var(--color-primario-hover);
+    transition: background-color var(--transicion-rapida);
+}
+
+/* ── Columna de cantidad ───────────────────────────────────────────────────── */
+
+.ProveedoresArticulo__proveedor th:nth-child(2),
+.ProveedoresArticulo__proveedor td:nth-child(2) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ── Columna de acciones ───────────────────────────────────────────────────── */
+
+.ProveedoresArticulo__proveedor th:nth-child(3),
+.ProveedoresArticulo__proveedor td:nth-child(3) {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.ProveedoresArticulo__acciones {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-xs);
+}
+
+/* ── Estado vacío ─────────────────────────────────────────────────────────── */
+
+.ProveedoresArticulo__proveedor > p {
+    font-size: var(--tamaño-letra-s);
+    color: var(--color-texto-secundario);
+    padding: var(--espaciado-s) 0;
+}

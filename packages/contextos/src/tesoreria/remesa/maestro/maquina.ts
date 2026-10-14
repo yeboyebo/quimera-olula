@@ -8,6 +8,8 @@ export const getMaquina: () => Maquina<EstadoMaestroRemesa, ContextoMaestroRemes
             remesa_seleccionada: [maestro.Remesas.activar],
             remesa_deseleccionada: [maestro.Remesas.desactivar],
 
+            remesa_cambiada: [maestro.Remesas.cambiar],
+
             recarga_de_remesas_solicitada: maestro.recargarRemesas,
 
             criteria_cambiado: [maestro.Remesas.filtrar, maestro.recargarRemesas],

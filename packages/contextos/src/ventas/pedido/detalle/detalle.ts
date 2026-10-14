@@ -1,6 +1,6 @@
-import { cambioClienteVentaVacio, clienteVentaVacio, metaVenta, puedeCambiarAlmacen, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
+import { cambioClienteVentaVacio, clienteVentaVacio, metaVenta, puedeCambiarAlmacen, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaCampo, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
 import {
@@ -238,6 +238,8 @@ export const cambiarAgente: ProcesarPedido = async (contexto, payload) => {
 
     return pipePedido(contexto, [
         refrescarPedido,
+        refrescarLineas,
+        actualizarLineaActiva,
         'ABIERTO',
     ]);
 }

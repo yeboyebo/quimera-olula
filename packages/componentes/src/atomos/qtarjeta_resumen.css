@@ -22,7 +22,7 @@ quimera-tarjeta-resumen {
 
     .valor {
         font-size: 1.75rem;
-        font-weight: var(--grosor-letra-7);
+        font-weight: var(--grosor-letra-6);
     }
 
     .comparacion {

@@ -5,11 +5,14 @@ export interface MovimientoRecibo extends Entidad {
     fecha: Date | null;
     tipo: string;
     estado: boolean;
+    cuentaPagoId: string;
+    nombreCuentaPago: string;
 }
 
 export interface ReciboVenta extends Entidad {
     id: string;
     facturaId: string;
+    grupoId: string;
     codigo: string;
     fechaEmision: Date | null;
     fechaVencimiento: Date | null;
@@ -19,6 +22,7 @@ export interface ReciboVenta extends Entidad {
     nombreCliente: string;
     idFiscal: string;
     pagos: MovimientoRecibo[];
+    recibosAgrupados: ReciboVenta[];
 }
 
 export type GetReciboVenta = (id: string) => Promise<ReciboVenta>;
@@ -31,3 +35,14 @@ export type PagoReciboVenta = {
 };
 
 export type PatchPagarReciboVenta = (id: string, pago: PagoReciboVenta) => Promise<void>;
+
+export type AgruparRecibosVenta = (id: string, reciboIds: string[]) => Promise<string>;
+
+export type DesagruparReciboVenta = (id: string) => Promise<string>;
+
+export type DevolucionReciboVenta = {
+    cuentaPagoId: string;
+    fecha: string;
+};
+
+export type PatchDevolverReciboVenta = (id: string, devolucion: DevolucionReciboVenta) => Promise<void>;

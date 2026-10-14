@@ -45,6 +45,7 @@ export const CuentaBancaria = ({
       obtenerOpciones={obtenerOpciones}
       descripcion={descripcion}
       deshabilitado={deshabilitado}
+      longitudMinima={0}
       {...props}
     />
   );

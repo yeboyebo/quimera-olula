@@ -42,12 +42,14 @@ export const BuscarTarjetaPuntos = ({
           nombre="buscar_tarjeta_email"
           valor={email}
           onChange={(valor) => setEmail(String(valor ?? ""))}
+          onEnterKeyUp={() => buscar()}
         />
         <QInput
           label="Teléfono"
           nombre="buscar_tarjeta_telefono"
           valor={telefono}
           onChange={(valor) => setTelefono(String(valor ?? ""))}
+          onEnterKeyUp={() => buscar()}
         />
       </quimera-formulario>
 

@@ -47,11 +47,12 @@ export const CrearVentaTpv = ({
 
   // Mismas tres comprobaciones que hacía (a medias) el "Nuevo Pedido" del
   // legacy antes de dejar crear un pedido: jornada abierta (RRHH/central,
-  // su propia llamada sin tenant_id), punto de venta resuelto (en
-  // memoria, no localStorage — ver getPuntoVentaActual) y arqueo abierto
-  // (estos dos de la tienda) — el arqueo, a diferencia del legacy, se
-  // abre solo si falta en vez de dejar al usuario sin salida (eso se
-  // comprueba al pulsar "Guardar", ver más abajo).
+  // su propia llamada sin tenant_id), punto de venta resuelto (persistido
+  // en localStorage, ver getPuntoVentaActual — así no se pregunta cada
+  // vez si el agente ya lo eligió alguna vez) y arqueo abierto (estos dos
+  // de la tienda) — el arqueo, a diferencia del legacy, se abre solo si
+  // falta en vez de dejar al usuario sin salida (eso se comprueba al
+  // pulsar "Guardar", ver más abajo).
   useEffect(() => {
     (async () => {
       const jornadaAbierta = await getJornadaAbierta();

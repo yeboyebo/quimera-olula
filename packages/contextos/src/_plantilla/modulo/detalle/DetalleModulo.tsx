@@ -90,7 +90,8 @@ export const DetalleModulo = ({
         >
             <div className="DetalleModulo">
                 {/* Estándar: las acciones del detalle van siempre en QuimeraAcciones
-                    con `vertical` (menú "Acciones"), aunque solo haya una. */}
+                    con `vertical`. Con una sola acción efectiva, QuimeraAcciones
+                    pinta el botón directo en vez del menú "Acciones". */}
                 <div className="maestro-botones">
                     <QuimeraAcciones acciones={accionesModulo} vertical />
                 </div>

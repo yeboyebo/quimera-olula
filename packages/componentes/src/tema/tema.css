@@ -147,3 +147,7 @@ b,
 strong {
     font-weight: var(--grosor-letra-4);
 }
+
+th {
+    font-weight: var(--grosor-letra-5);
+}

@@ -25,18 +25,21 @@ export const LineasOrden = ({
     return (
         <>
             <div className="botones maestro-botones">
-                <QBoton onClick={() => publicar("alta_linea_solicitada")}>
+                <QBoton
+                    onClick={() => publicar("alta_linea_solicitada")}
+                    deshabilitado={!orden.abierta}
+                >
                     Nueva línea
                 </QBoton>
                 <QBoton
                     onClick={() => publicar("cambio_linea_solicitado")}
-                    deshabilitado={!lineas.activo}
+                    deshabilitado={!lineas.activo || !orden.abierta}
                 >
                     Editar
                 </QBoton>
                 <QBoton
                     onClick={() => publicar("baja_linea_solicitada")}
-                    deshabilitado={!lineas.activo}
+                    deshabilitado={!lineas.activo || !orden.abierta}
                 >
                     Borrar
                 </QBoton>

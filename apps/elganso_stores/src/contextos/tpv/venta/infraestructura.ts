@@ -1,7 +1,9 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { Direccion, Filtro, Orden, Paginacion } from "@olula/lib/diseño.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
+import { preferencias } from "@olula/lib/preferencias.ts";
 import Tpv_Urls from "#/tpv/comun/urls.ts";
+import { ValeTpv } from "#/tpv/vale/diseño.ts";
 import {
   CambiosDatosCliente,
   DeleteLinea,
@@ -280,6 +282,57 @@ export const buscarTarjetasPuntos = async (
   ).then((respuesta) => respuesta.datos);
 }
 
+// Wrapper propio en vez de reutilizar #/tpv/vale/infraestructura.ts: ese
+// getVale genérico no manda tenant_id, así que buscaba el vale en central
+// en vez de en la BD de la tienda — el vale (ticket de devolución) vive en
+// tpv_comandas de cada tienda, igual que la propia venta. Sin esto, el
+// cajero veía un saldo obsoleto (el de la copia de central) al buscar el
+// vale, aunque el pago en sí ya se validaba bien contra la tienda.
+export const getVale = async (id: string): Promise<ValeTpv> => {
+  return RestAPI.get<{ datos: ValeTpv }>(
+    `/tpv/vale/${id}`, undefined, cabecerasTienda()
+  ).then((respuesta) => respuesta.datos);
+}
+
+export interface TopePuntos {
+  importeMaximo: number | null;
+  saldoDisponible: number | null;
+}
+
+// Máximo pagable con puntos + saldo disponible para la venta, calculado en
+// el backend (tope de empleado/dtoespecial, saldo real) — igual que
+// Eneboo, este dato decide si el importe se autorellena y se bloquea
+// (tarjetas con tope) o se deja editable (tarjeta normal, importeMaximo
+// null). No se replica el cálculo del % en el cliente a propósito.
+export const getTopePuntos = async (ventaId: string): Promise<TopePuntos> => {
+  const { importe_maximo, saldo_disponible } = await RestAPI.get<{
+    importe_maximo: number | null;
+    saldo_disponible: number | null;
+  }>(`/ventas/tope_puntos/${ventaId}`, undefined, cabecerasTienda());
+
+  return { importeMaximo: importe_maximo, saldoDisponible: saldo_disponible };
+}
+
+export interface TarjetaMonedero {
+  encontrada: boolean;
+  saldoPendiente: number | null;
+}
+
+// Tarjeta regalo monedero: saldo real en central (eg_tarjetamonedero),
+// buscada por su "código de uso" (8 caracteres, distinto del código de
+// activación/barcode con el que se vende la tarjeta — vender/activar una
+// tarjeta nueva no está soportado desde la PDA, solo pagar con una ya
+// existente). Va contra central, no contra la tienda, pero se manda
+// cabecerasTienda() por consistencia con el resto de llamadas.
+export const getTarjetaMonedero = async (coduso: string): Promise<TarjetaMonedero> => {
+  const { encontrada, saldo_pendiente } = await RestAPI.get<{
+    encontrada: boolean;
+    saldo_pendiente: number | null;
+  }>(`/ventas/tarjeta_monedero/${coduso}`, undefined, cabecerasTienda());
+
+  return { encontrada, saldoPendiente: saldo_pendiente ?? null };
+}
+
 export interface PuntoVentaOpcion {
   codtpv_puntoventa: string;
   descripcion: string;
@@ -309,20 +362,22 @@ export const getPrecheckPedido = async (puntoVentaId?: string): Promise<Precheck
   return await RestAPI.get<PrecheckPedido>(`/ventas/precheck_pedido${q}`, undefined, cabecerasTienda());
 }
 
-// En memoria (no localStorage), mismo motivo que tiendaActualCache: el
-// punto de venta activo se resuelve una vez por carga de página vía
-// precheck_pedido, no se persiste entre sesiones.
+// En localStorage (vía preferencias): el agente suele trabajar siempre
+// desde el mismo punto de venta, así que recordarlo entre sesiones evita
+// tener que elegirlo cada vez que se crea un pedido nuevo — antes se
+// guardaba solo en memoria y se perdía al recargar/cerrar la pestaña.
 interface PuntoVentaActual {
   id: string;
   nombre: string;
 }
 
-let puntoVentaActualCache: PuntoVentaActual | undefined;
+const CLAVE_PUNTO_VENTA_ACTUAL = "tpv.punto_venta_actual";
 
-export const getPuntoVentaActual = (): PuntoVentaActual | undefined => puntoVentaActualCache;
+export const getPuntoVentaActual = (): PuntoVentaActual | undefined =>
+  preferencias.get<PuntoVentaActual | undefined>(CLAVE_PUNTO_VENTA_ACTUAL, undefined);
 
 export const setPuntoVentaActual = (puntoVenta: PuntoVentaActual): void => {
-  puntoVentaActualCache = puntoVenta;
+  preferencias.set(CLAVE_PUNTO_VENTA_ACTUAL, puntoVenta);
 };
 
 interface PagoVentaTpvAPI {
@@ -336,6 +391,7 @@ interface PagoVentaTpvAPI {
   arqueo_abierto: boolean;
   tipo_tarjeta_id: string | null;
   tipo_tarjeta_nombre?: string | null;
+  coduso?: string | null;
 }
 
 const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
@@ -348,6 +404,7 @@ const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
   idTipoTarjeta: p.tipo_tarjeta_id,
   vale: p.vale,
   saldoVale: p.saldo_vale,
+  coduso: p.coduso,
 });
 
 export const getPagos: GetPagosVentaTpv = async (id) =>
@@ -362,6 +419,8 @@ export const postPago: PostPago = async (id, pago) => {
     fecha: new Date().toISOString().slice(0, 10),
     forma_pago: pago.formaPago,
     tipo_tarjeta_id: pago.idTipoTarjeta,
+    vale_id: pago.idVale,
+    coduso: pago.coduso,
   };
   return await RestAPI.post(`${baseUrl}/${id}/pago`, body, "Error al crear pago de venta", cabecerasTienda())
     .then((respuesta) => (respuesta as unknown as { id: string }).id);
@@ -369,4 +428,15 @@ export const postPago: PostPago = async (id, pago) => {
 
 export const deletePago: DeletePago = async (id, idPago): Promise<void> => {
   await RestAPI.delete(`${baseUrl}/${id}/pago/${idPago}`, "Error al borrar pago de venta", cabecerasTienda());
+}
+
+// Genera y guarda el código secuencial real de la venta (sustituye el
+// provisional "#<id>"), llamado al entrar en la pantalla de pago, antes
+// de crear ningún pago — los pagos ya tienen que llevar ese código.
+// Idempotente en el backend: si la venta ya tiene código real, no hace
+// nada.
+export const patchGenerarCodigoReal = async (id: string): Promise<void> => {
+  await RestAPI.patch(
+    `${baseUrl}/${id}/generar_codigo_real`, {}, "Error al generar el código de la venta", cabecerasTienda()
+  );
 }
