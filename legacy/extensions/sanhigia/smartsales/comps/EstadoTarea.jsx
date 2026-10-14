@@ -2,7 +2,7 @@ import { Button } from "@quimera/comps";
 import { makeStyles } from "@quimera/styles";
 import { ButtonGroup, CircularProgress } from "@quimera/thirdparty";
 import { useStateValue, util } from "quimera";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const useStyles = makeStyles(theme => ({
   button: {
