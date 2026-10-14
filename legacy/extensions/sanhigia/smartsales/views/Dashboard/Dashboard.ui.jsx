@@ -69,7 +69,7 @@ function Dashboard({ useStyles }) {
     });
   }, [dispatch]);
 
-  console.log('mimensaje_agentes: previsiones.codAgente: ', previsiones.codAgente, ", agente: ", agente, "condicion: ", previsiones.codAgente === 'TODOS' || previsiones.codAgente === agente);
+  // console.log('mimensaje_agentes: previsiones.codAgente: ', previsiones.codAgente, ", agente: ", agente, "condicion: ", previsiones.codAgente === 'TODOS' || previsiones.codAgente === agente);
   const verSoloProgress =
     previsiones.codAgente === 'TODOS' ||
     (previsiones.codAgente === agente && !usuario?.superuser)
