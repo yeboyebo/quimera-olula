@@ -33,7 +33,9 @@ const getList = ({ tareas, tratos, filter, showTratos, showTareas }) => {
     .filter(filter)
     .filter(reg => !reg.idTarea || showTareas)
     .filter(reg => reg.idTarea || showTratos)
-    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+    .sort((a, b) =>
+      `${a.fecha} ${a.hora ?? ""}`.localeCompare(`${b.fecha} ${b.hora ?? ""}`),
+    )
     .map(reg => item(reg));
 };
 
