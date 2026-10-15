@@ -1,13 +1,13 @@
-import { plugin } from "../dominio.ts";
+import { plugin } from "../dominio.js";
 import {
     AUTH_STORAGE_CHANGED_EVENT,
     AUTH_STORAGE_KEYS,
-} from "./auth_storage_events.ts";
+} from "./auth_storage_events.js";
 import {
     ServerSentEventsClient,
     SseHandler,
-} from "./server_sent_events_client.ts";
-import { tokenAcceso } from "./token_acceso.ts";
+} from "./server_sent_events_client.js";
+import { tokenAcceso } from "./token_acceso.js";
 
 type SessionSseEvents = Record<string, unknown>;
 

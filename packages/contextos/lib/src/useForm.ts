@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from "react";
-import { ContextoError } from "./contexto.ts";
+import { ContextoError } from "./contexto.js";
 
 type FuncionesForm = [
     aceptar: () => void,

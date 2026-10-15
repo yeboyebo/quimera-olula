@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { preferencias } from "./preferencias.ts";
+import { preferencias } from "./preferencias.js";
 
 export const usePreferencia = <T>(clave: string, porDefecto: T): [T, (v: T) => void] => {
     const [valor, setValor] = useState<T>(() => preferencias.get(clave, porDefecto));

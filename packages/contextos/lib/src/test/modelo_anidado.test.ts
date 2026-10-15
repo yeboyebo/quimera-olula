@@ -1,5 +1,5 @@
-import { MetaModelo, modeloEsValido, modeloModificado, validacionCampoModelo } from "../dominio.ts";
-import { Modelo } from "../diseño.ts";
+import { Modelo } from "../diseño.js";
+import { MetaModelo, modeloEsValido, modeloModificado, validacionCampoModelo } from "../dominio.js";
 
 // ── Tipos de prueba ────────────────────────────────────────────────────────────
 

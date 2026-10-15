@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { parsearNumeroVoz } from "./parsearNumeroVoz.ts";
-import { useSintesisVoz } from "./useSintesisVoz.ts";
+import { parsearNumeroVoz } from "./parsearNumeroVoz.js";
+import { useSintesisVoz } from "./useSintesisVoz.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getWindowSpeechRecognition = (): (new () => any) | null => {

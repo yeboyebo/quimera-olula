@@ -1,6 +1,6 @@
-import { Filtro, Orden, Paginacion } from "../diseño.ts";
-import { criteriaQuery } from "../infraestructura.ts";
-import { RestAPI } from "./rest_api.ts";
+import { Filtro, Orden, Paginacion } from "../diseño.js";
+import { criteriaQuery } from "../infraestructura.js";
+import { RestAPI } from "./rest_api.js";
 
 const DOCUMENTAL_BASE_URL = "/documental/documento";
 

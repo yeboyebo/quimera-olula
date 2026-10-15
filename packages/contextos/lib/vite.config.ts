@@ -2,7 +2,7 @@
 /// <reference types="vite/client" />
 
 import { mergeConfig } from "vite";
-import config from "../../vite.config.ts";
+import config from "../../../vite.config.ts";
 
 export default mergeConfig(config, {
     test: {

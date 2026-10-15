@@ -1,4 +1,4 @@
-import { Entidad } from "../diseño.ts";
+import { Entidad } from "../diseño.js";
 
 export interface Permiso extends Entidad {
     id: string;

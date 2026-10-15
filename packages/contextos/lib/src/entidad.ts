@@ -1,4 +1,4 @@
-import { Entidad, ListaSeleccionable } from "./diseño.ts";
+import { Entidad, ListaSeleccionable } from "./diseño.js";
 
 type OpcionesIncluirEnLista = {
     activar?: boolean;

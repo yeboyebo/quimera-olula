@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Entidad } from "./diseño.ts";
+import { Entidad } from "./diseño.js";
 
 type HookLista<E extends Entidad> = {
     lista: E[],

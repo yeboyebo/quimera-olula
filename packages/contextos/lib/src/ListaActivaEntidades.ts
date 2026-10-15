@@ -1,6 +1,6 @@
 import { Contexto, Criteria, Entidad, ProcesarContexto } from "@olula/lib/diseño.js";
 import { pipe } from "@olula/lib/funcional.js";
-import { criteriaDefecto } from "./dominio.ts";
+import { criteriaDefecto } from "./dominio.js";
 
 export type ListaActivaEntidades<T extends Entidad> = {
     lista: T[];

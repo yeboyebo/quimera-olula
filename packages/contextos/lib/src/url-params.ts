@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ClausulaFiltro, Criteria, Paginacion } from "./diseño.ts";
+import { ClausulaFiltro, Criteria, Paginacion } from "./diseño.js";
 
 const formarUrl = (params: URLSearchParams) => {
     const str = params.toString();

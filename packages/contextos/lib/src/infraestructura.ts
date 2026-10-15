@@ -1,5 +1,5 @@
-import { RestAPI } from "./api/rest_api.ts";
-import { ClausulaFiltro, Criteria, Filtro, OpcionCampo, Orden, Paginacion } from "./diseño.ts";
+import { RestAPI } from "./api/rest_api.js";
+import { ClausulaFiltro, Criteria, Filtro, OpcionCampo, Orden, Paginacion } from "./diseño.js";
 
 export const criteriaAQueryString = (criteria: Criteria): string => {
     return criteriaQuery(criteria.filtro, criteria.orden, criteria.paginacion);

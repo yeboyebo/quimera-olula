@@ -1,8 +1,8 @@
-import { Permiso, permisosGrupo } from "./api/permisos.ts";
-import { QError } from "./contexto.ts";
-import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { filtroDefecto, ordenDefecto, paginacionDefecto } from "./url-params.ts";
-import { UiProps, ValorControl } from "./useModelo.ts";
+import { Permiso, permisosGrupo } from "./api/permisos.js";
+import { QError } from "./contexto.js";
+import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.js";
+import { filtroDefecto, ordenDefecto, paginacionDefecto } from "./url-params.js";
+import { UiProps, ValorControl } from "./useModelo.js";
 
 export const actualizarEntidadEnLista = <T extends Entidad>(entidades: T[], entidad: T): T[] => {
     return entidades.map(e => {
@@ -685,7 +685,7 @@ export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T, m
 
         // Sub-objeto: comparación profunda si tiene MetaModelo asociado
         if (mc?.meta && typeof v === "object" && v !== null && !Array.isArray(v)
-                     && typeof vi === "object" && vi !== null) {
+            && typeof vi === "object" && vi !== null) {
             return modeloModificado(vi as Modelo, v as Modelo, mc.meta as MetaModelo<Modelo>);
         }
         // Lista: comparación profunda ítem a ítem si tiene itemMeta

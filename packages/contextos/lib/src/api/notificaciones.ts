@@ -1,5 +1,5 @@
-import { criteriaQuery } from "../infraestructura.ts";
-import { RestAPI } from "./rest_api.ts";
+import { criteriaQuery } from "../infraestructura.js";
+import { RestAPI } from "./rest_api.js";
 
 const COMUNICACIONES_URL = "/comun/comunicacion";
 const ESTADO_COMUNICACION_NO_LEIDA = "No leida";

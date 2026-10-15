@@ -1,4 +1,4 @@
-import type { Filtro } from "../diseño.ts";
+import type { Filtro } from "../diseño.js";
 
 type LegacyMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 

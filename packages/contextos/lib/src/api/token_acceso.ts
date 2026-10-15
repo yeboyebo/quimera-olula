@@ -1,4 +1,4 @@
-import { notifyAuthStorageChanged } from "./auth_storage_events.ts";
+import { notifyAuthStorageChanged } from "./auth_storage_events.js";
 
 const MINUTOS_REFRESCO = 15;
 const MINUTOS = 60 * 1000;

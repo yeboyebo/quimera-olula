@@ -1,7 +1,7 @@
-import { Criteria } from "../diseño.ts";
-import { criteriaAQueryString } from "../infraestructura.ts";
-import type { API, RespuestaGetItem, RespuestaGetLista, RespuestaGetQuery } from "./diseño.ts";
-import { tokenAcceso } from "./token_acceso.ts";
+import { Criteria } from "../diseño.js";
+import { criteriaAQueryString } from "../infraestructura.js";
+import type { API, RespuestaGetItem, RespuestaGetLista, RespuestaGetQuery } from "./diseño.js";
+import { tokenAcceso } from "./token_acceso.js";
 
 const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 

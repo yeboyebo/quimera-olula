@@ -1,4 +1,4 @@
-import { ibanValido, normalizarIban } from "../iban.ts";
+import { ibanValido, normalizarIban } from "../iban.js";
 
 describe("normalizarIban", () => {
     test("quita espacios y guiones y pasa a mayúsculas", () => {

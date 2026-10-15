@@ -1,10 +1,10 @@
-import { describe, test, expect } from "vitest";
+import { describe, expect, test } from "vitest";
 import {
-    PANEL_LATERAL_TOGGLE_EVENT,
-    PANEL_LATERAL_ABIERTO_EVENT,
-    solicitarTogglePanelLateral,
     notificarPanelLateralAbierto,
-} from "../panel_lateral_events.ts";
+    PANEL_LATERAL_ABIERTO_EVENT,
+    PANEL_LATERAL_TOGGLE_EVENT,
+    solicitarTogglePanelLateral,
+} from "../panel_lateral_events.js";
 
 // ---------------------------------------------------------------------------
 // [lib-panel-lateral-01] los helpers disparan el CustomEvent esperado en window

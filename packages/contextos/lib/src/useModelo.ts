@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
-import { ContextoError, QError } from "./contexto.ts";
-import { Modelo, TipoInput, ValorCampoUI } from "./diseño.ts";
-import { getFormProps, MetaModelo, modeloEsValido, modeloModificado, FormModelo } from "./dominio.ts";
+import { ContextoError, QError } from "./contexto.js";
+import { Modelo, TipoInput, ValorCampoUI } from "./diseño.js";
+import { FormModelo, getFormProps, MetaModelo, modeloEsValido, modeloModificado } from "./dominio.js";
 
 const aQError = (error: unknown): QError => {
     const apiError = error as QError;
@@ -130,7 +130,7 @@ export type HookModelo<T extends Modelo> = {
     init: (entidad?: T) => void,
     set: (entidad: T, campo?: string) => void,
     /** Devuelve props de formulario para un campo sub-objeto declarado con `meta` en MetaModelo. */
-    subModelo: <SubT extends Modelo>(campo: string) => import("./dominio.ts").FormModelo & { modelo: SubT; set: (sub: SubT) => void },
+    subModelo: <SubT extends Modelo>(campo: string) => import("./dominio.js").FormModelo & { modelo: SubT; set: (sub: SubT) => void },
     modificado: boolean,
     valido: boolean,
     editable: boolean,

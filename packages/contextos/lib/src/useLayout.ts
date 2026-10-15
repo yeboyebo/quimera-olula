@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useEsMovil } from "./useEsMovil.ts";
+import { useEsMovil } from "./useEsMovil.js";
 
 export type Layout = "TARJETA" | "TABLA";
 

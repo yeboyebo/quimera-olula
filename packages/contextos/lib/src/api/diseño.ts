@@ -1,4 +1,4 @@
-import { Criteria } from "../diseño.ts";
+import { Criteria } from "../diseño.js";
 
 export type RespuestaGetItem<T> = {
   datos: T
