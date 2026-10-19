@@ -366,26 +366,27 @@ export const getSkuLote = async (codigo: string) => {
     };
 };
 
-export const registrarLecturaOrden = async (
+export const registrarLecturasOrden = async (
     id: string,
-    lectura: NuevaLecturaOrden
+    lecturas: NuevaLecturaOrden[]
 ): Promise<void> => {
-
     await RestAPI.post(
-        `${baseUrl}/${id}/lectura`,
+        `${baseUrl}/${id}/lecturas`,
         {
-            sku: lectura.sku,
-            lote_id: lectura.idLote,
-            linea_id: lectura.idLinea,
-            cantidad: lectura.cantidad,
-            ubicacion_origen_id: lectura.idUbicacionOrigen,
-            caja_origen_id: lectura.idCajaOrigen,
-            caja_completa: lectura.cajaCompleta,
-            ubicacion_destino_id: lectura.idUbicacionDestino,
-            caja_destino_id: lectura.idCajaDestino,
-            fase: lectura.fase ?? null,
+            lecturas: lecturas.map(lectura => ({
+                sku: lectura.sku,
+                lote_id: lectura.idLote,
+                linea_id: lectura.idLinea,
+                cantidad: lectura.cantidad,
+                ubicacion_origen_id: lectura.idUbicacionOrigen,
+                caja_origen_id: lectura.idCajaOrigen,
+                caja_completa: lectura.cajaCompleta,
+                ubicacion_destino_id: lectura.idUbicacionDestino,
+                caja_destino_id: lectura.idCajaDestino,
+                fase: lectura.fase ?? null,
+            })),
         },
-        "Error al registrar lectura de la orden"
+        "Error al registrar lecturas de la orden"
     );
 };
 

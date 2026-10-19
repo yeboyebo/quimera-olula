@@ -1,6 +1,6 @@
 import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
-import { getSkuLote, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
+import { getSkuLote, registrarLecturasOrden } from "#/almacen/orden/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -77,7 +77,7 @@ export const LeerLoteCantidadOrden = ({
         if (isNaN(cantidadNum) || cantidadNum <= 0) return;
 
         await intentar(() =>
-            registrarLecturaOrden(orden.id, {
+            registrarLecturasOrden(orden.id, [{
                 sku: linea.sku,
                 articulo: linea.articulo,
                 idLote: loteId,
@@ -89,7 +89,7 @@ export const LeerLoteCantidadOrden = ({
                 idCajaDestino: linea.idCajaDestino,
                 idUbicacionDestino: linea.idUbicacionDestino,
                 fase: 'DROP',
-            })
+            }])
         );
         publicar("lectura_registrada");
         // Reiniciar para siguiente lectura

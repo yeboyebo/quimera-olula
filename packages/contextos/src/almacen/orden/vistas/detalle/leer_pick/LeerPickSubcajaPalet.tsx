@@ -1,7 +1,7 @@
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
 import { Lote } from "#/almacen/comun/componentes/Lote.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
-import { registrarLecturaOrden, getSkuLote } from "#/almacen/orden/infraestructura.ts";
+import { registrarLecturasOrden, getSkuLote } from "#/almacen/orden/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -85,7 +85,7 @@ export const LeerPickSubcajaPalet = ({
             if (!loteId || !linea) return;
 
             await intentar(async () => {
-                await registrarLecturaOrden(orden.id, {
+                await registrarLecturasOrden(orden.id, [{
                     sku: linea.sku,
                     articulo: linea.articulo,
                     idLote: loteId,
@@ -97,7 +97,7 @@ export const LeerPickSubcajaPalet = ({
                     idUbicacionOrigen: null,
                     idUbicacionDestino: null,
                     fase: 'PICK',
-                });
+                }]);
             });
 
             setCajasConfirmadas((prev) => [...prev, opcion.lpn ?? opcion.id]);

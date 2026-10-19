@@ -1,7 +1,7 @@
 import { pitidoError } from "#/almacen/comun/audio.ts";
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
-import { registrarLecturaCajaOrden, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
+import { registrarLecturaCajaOrden, registrarLecturasOrden } from "#/almacen/orden/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -81,21 +81,18 @@ export const LeerCajasEntrada = ({
             let registrado = false;
             console.log("Opcion caja:", opcion);
             await intentar(async () => {
-                for (const linea of lineasEncontradas) {
-                    const cantidad = opcion.capacidad || linea.cantidadPrevista;
-                    await registrarLecturaOrden(orden.id, {
-                        sku: opcion.sku ?? linea.sku,
-                        articulo: linea.articulo,
-                        idLote: opcion.idLote ? opcion.idLote : linea.loteId,
-                        idLinea: linea.id,
-                        cajaCompleta: true,
-                        cantidad,
-                        idCajaOrigen: null,
-                        idUbicacionOrigen: null,
-                        idCajaDestino: opcion.id,
-                        idUbicacionDestino: linea.idUbicacionDestino,
-                    });
-                }
+                await registrarLecturasOrden(orden.id, lineasEncontradas.map((linea) => ({
+                    sku: opcion.sku ?? linea.sku,
+                    articulo: linea.articulo,
+                    idLote: opcion.idLote ? opcion.idLote : linea.loteId,
+                    idLinea: linea.id,
+                    cajaCompleta: true,
+                    cantidad: opcion.capacidad || linea.cantidadPrevista,
+                    idCajaOrigen: null,
+                    idUbicacionOrigen: null,
+                    idCajaDestino: opcion.id,
+                    idUbicacionDestino: linea.idUbicacionDestino,
+                })));
                 registrado = true;
                 const primera = lineasEncontradas[0];
                 setResultado({

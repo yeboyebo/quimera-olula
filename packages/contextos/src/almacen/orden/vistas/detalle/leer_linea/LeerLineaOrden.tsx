@@ -4,7 +4,7 @@ import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { buscarCajaCompletaPorTexto, buscarCajaPorTexto, buscarUbicacionPorTexto } from "#/almacen/comun/voz_resolvers.ts";
 
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
-import { getSkuLote, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
+import { getSkuLote, registrarLecturasOrden } from "#/almacen/orden/infraestructura.ts";
 import { IndicadorVoz } from "@olula/componentes/atomos/indicador_voz.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
@@ -508,7 +508,7 @@ export const LeerLineaOrden = ({
     const registrarConValores = useCallback(async (vals: ValoresAcumulados) => {
         if (pasoGuion.includes("lote-subcaja-palet")) {
             const loteId = (vals.loteId ?? linea.loteId) as string;
-            await intentar(() => registrarLecturaOrden(orden.id, {
+            await intentar(() => registrarLecturasOrden(orden.id, [{
                 sku: linea.sku,
                 articulo: linea.articulo,
                 idLote: loteId,
@@ -520,7 +520,7 @@ export const LeerLineaOrden = ({
                 idUbicacionOrigen: null,
                 idUbicacionDestino: null,
                 fase: 'PICK',
-            }));
+            }]));
             publicar("lectura_registrada");
             return;
         }
@@ -539,7 +539,7 @@ export const LeerLineaOrden = ({
             : linea.idCajaOrigen;
 
         await intentar(() =>
-            registrarLecturaOrden(orden.id, {
+            registrarLecturasOrden(orden.id, [{
                 sku,
                 articulo,
                 idLote,
@@ -554,7 +554,7 @@ export const LeerLineaOrden = ({
                 idUbicacionOrigen: vals.idUbicacionOrigen !== undefined
                     ? vals.idUbicacionOrigen
                     : linea.idUbicacionOrigen,
-            })
+            }])
         );
         publicar("lectura_registrada");
     }, [linea, orden.id, intentar, publicar, pasoGuion]);
@@ -631,7 +631,7 @@ export const LeerLineaOrden = ({
 
         if (pasoGuion.includes("lote-subcaja-palet")) {
             const loteId = (valores.loteId ?? linea.loteId) as string;
-            await intentar(() => registrarLecturaOrden(orden.id, {
+            await intentar(() => registrarLecturasOrden(orden.id, [{
                 sku: linea.sku,
                 articulo: linea.articulo,
                 idLote: loteId,
@@ -643,7 +643,7 @@ export const LeerLineaOrden = ({
                 idUbicacionOrigen: null,
                 idUbicacionDestino: null,
                 fase: 'PICK',
-            }));
+            }]));
             publicar("lectura_registrada");
             return;
         }
@@ -661,7 +661,7 @@ export const LeerLineaOrden = ({
             : linea.idCajaOrigen;
 
         await intentar(() =>
-            registrarLecturaOrden(orden.id, {
+            registrarLecturasOrden(orden.id, [{
                 sku,
                 articulo,
                 idLote,
@@ -676,7 +676,7 @@ export const LeerLineaOrden = ({
                 idUbicacionOrigen: valores.idUbicacionOrigen !== undefined
                     ? valores.idUbicacionOrigen
                     : linea.idUbicacionOrigen,
-            })
+            }])
         );
         publicar("lectura_registrada");
     }, [esUltimoPaso, valores, linea, orden.id, intentar, publicar, cantidadARegistrar, pasoGuion]);

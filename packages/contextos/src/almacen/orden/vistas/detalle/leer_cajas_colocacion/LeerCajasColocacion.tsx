@@ -5,7 +5,7 @@ import {
 } from "#/almacen/comun/componentes/CajaUbicacion.tsx";
 import { CajaCompletaResuelta } from "#/almacen/comun/voz_resolvers.ts";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
-import { registrarLecturaCajaOrden, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
+import { registrarLecturaCajaOrden, registrarLecturasOrden } from "#/almacen/orden/infraestructura.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
@@ -111,32 +111,33 @@ export const LeerCajasColocacion = ({
 
             let registrado = false;
             await intentar(async () => {
-                for (const entrada of cajasLeidas) {
-                    if (entrada.tipo === "palet") {
-                        await registrarLecturaCajaOrden(orden.id, {
-                            cajaId: entrada.caja.id,
+                const todasLasLecturas = cajasLeidas
+                    .filter((e): e is Extract<CajaMemoizada, { tipo: "caja" }> => e.tipo === "caja")
+                    .flatMap(({ caja, lineas }) =>
+                        lineas.map((linea) => ({
+                            sku: caja.sku ?? linea.sku,
+                            articulo: linea.articulo,
+                            idLote: linea.loteId ? linea.loteId : caja.idLote,
+                            idLinea: linea.id,
                             cajaCompleta: true,
-                            idUbicacionDestino: ubicacion.id,
+                            cantidad: caja.capacidad ?? linea.cantidadPrevista,
+                            idCajaOrigen: caja.id,
+                            idUbicacionOrigen: null,
                             idCajaDestino: null,
-                        });
-                    } else {
-                        const { caja, lineas } = entrada;
-                        for (const linea of lineas) {
-                            await registrarLecturaOrden(orden.id, {
-                                sku: caja.sku ?? linea.sku,
-                                articulo: linea.articulo,
-                                idLote: linea.loteId ? linea.loteId : caja.idLote,
-                                idLinea: linea.id,
-                                cajaCompleta: true,
-                                cantidad: caja.capacidad ?? linea.cantidadPrevista,
-                                idCajaOrigen: caja.id,
-                                idUbicacionOrigen: null,
-                                idCajaDestino: null,
-                                idUbicacionDestino: ubicacion.id,
-                                fase: 'DROP',
-                            });
-                        }
-                    }
+                            idUbicacionDestino: ubicacion.id,
+                            fase: 'DROP' as const,
+                        }))
+                    );
+                if (todasLasLecturas.length > 0) {
+                    await registrarLecturasOrden(orden.id, todasLasLecturas);
+                }
+                for (const entrada of cajasLeidas.filter((e) => e.tipo === "palet")) {
+                    await registrarLecturaCajaOrden(orden.id, {
+                        cajaId: entrada.caja.id,
+                        cajaCompleta: true,
+                        idUbicacionDestino: ubicacion.id,
+                        idCajaDestino: null,
+                    });
                 }
                 registrado = true;
             });
