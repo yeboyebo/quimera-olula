@@ -17,6 +17,8 @@ export interface OrdenAlmacen extends Entidad {
     idUbicacionDestino: string | null;
     ubicacionDestino: string | null;
     idCajaDestino: string | null;
+    pasosPick: string | null;
+    pasosDrop: string | null;
     lineas: LineaOrdenAlmacen[];
     lecturasCaja: LecturaCajaOrden[];
 }
@@ -38,7 +40,9 @@ export interface LineaOrdenAlmacen extends Entidad {
     idCajaDestino: string | null;
     cajaDestino: string | null;
     idLineaPick: string | null;
-    pasos: string | null;
+    pasosPick: string | null;
+    pasosDrop: string | null;
+    cantidadPick?: number;
     lecturas: LecturaLineaOrden[];
 }
 
@@ -76,6 +80,8 @@ export interface NuevaOrdenAlmacen extends Modelo {
     tipoOrden: string;
     almacenId: string;
     abierta: boolean;
+    pasosPick?: string | null;
+    pasosDrop?: string | null;
 }
 
 export interface NuevaLineaOrdenAlmacen extends Modelo {
@@ -87,6 +93,8 @@ export interface NuevaLineaOrdenAlmacen extends Modelo {
     idCajaOrigen: string | null;
     idUbicacionDestino: string | null;
     idCajaDestino: string | null;
+    pasosPick?: string | null;
+    pasosDrop?: string | null;
 }
 
 export interface NuevaLecturaOrden extends Modelo {
@@ -100,6 +108,7 @@ export interface NuevaLecturaOrden extends Modelo {
     idUbicacionDestino: string | null;
     idCajaOrigen: string | null;
     idUbicacionOrigen: string | null;
+    fase?: 'PICK' | 'DROP' | null;
 }
 
 export interface NuevaLecturaCajaOrden extends Modelo {

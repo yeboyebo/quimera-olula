@@ -1,4 +1,5 @@
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
+import { Sku } from "#/almacen/comun/componentes/Sku.tsx";
 import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -58,6 +59,8 @@ export const CrearLineaOrden = ({
                     idCajaOrigen: modelo.idCajaOrigen,
                     idUbicacionDestino: modelo.idUbicacionDestino,
                     idCajaDestino: modelo.idCajaDestino,
+                    pasosPick: modelo.pasosPick,
+                    pasosDrop: modelo.pasosDrop,
                 },
             ]);
         }
@@ -86,7 +89,7 @@ export const CrearLineaOrden = ({
                         <option value="">Estándar</option>
                         <option value="SUBCAJA_PALET">Subcaja de palé</option>
                     </select>
-                    <QInput label="SKU" {...uiProps("sku")} />
+                    <Sku {...uiProps("sku")} />
                     <QInput label="Cantidad prevista" {...uiProps("cantidadPrevista")} />
                     {!esSubcajaPalet && mostrarOrigen && (
                         <Ubicacion
@@ -115,6 +118,35 @@ export const CrearLineaOrden = ({
                             label="Caja destino"
                             nombre="idCajaDestino"
                         />
+                    )}
+                    {!esSubcajaPalet && mostrarOrigen && (
+                        <>
+                            <label>Pasos pick</label>
+                            <select
+                                value={modelo.pasosPick ?? ""}
+                                onChange={(e) => uiProps("pasosPick").onChange(e.target.value || null)}
+                            >
+                                <option value="">Sin pasos</option>
+                                <option value="LOTE-CAJAS">Lote → Caja etiqueta</option>
+                                <option value="CAJA-CAJAS">Caja origen → Caja etiqueta</option>
+                            </select>
+                        </>
+                    )}
+                    {!esSubcajaPalet && mostrarDestino && (
+                        <>
+                            <label>Pasos drop</label>
+                            <select
+                                value={modelo.pasosDrop ?? ""}
+                                onChange={(e) => uiProps("pasosDrop").onChange(e.target.value || null)}
+                            >
+                                <option value="">Sin pasos</option>
+                                <option value="CAJAS-UBICACION">Caja → Ubicación</option>
+                                <option value="SKU-CANTIDAD">SKU → Cantidad</option>
+                                <option value="LOTE-CANTIDAD">Lote → Cantidad</option>
+                                <option value="CAJAS">Leer cajas</option>
+                                <option value="PALET">Leer palés</option>
+                            </select>
+                        </>
                     )}
                 </quimera-formulario>
                 <div className="botones maestro-botones">

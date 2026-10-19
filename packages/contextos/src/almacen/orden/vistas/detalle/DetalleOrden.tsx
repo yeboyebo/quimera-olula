@@ -19,7 +19,7 @@ import { useParams } from "react-router";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "../../diseño.ts";
 import { metaOrden, ordenVacia } from "../../dominio.ts";
-import { getReportEtiquetasOrden } from "../../infraestructura.ts";
+import { crearCajasOrden, getReportEtiquetasOrden } from "../../infraestructura.ts";
 import { BorrarOrden } from "../borrar/BorrarOrden.tsx";
 import { ColocacionOrden } from "../colocar/ColocacionOrden.tsx";
 import { TerminarOrden } from "../terminar/TerminarOrden.tsx";
@@ -28,9 +28,9 @@ import "./DetalleOrden.css";
 import { LecturaOrden } from "./lectura/LecturaLineaOrden.tsx";
 import { LecturasCajaOrden } from "./lecturas_caja/LecturasCajaOrden.tsx";
 import { LecturaCajaOrden } from "./leer_caja/LecturaCajaOrden.tsx";
-import { LeerCajasColocacion } from "./leer_cajas_colocacion/LeerCajasColocacion.tsx";
-import { iniciarAudioLectura, LeerCajasEntrada } from "./leer_cajas_entrada/LeerCajasEntrada.tsx";
-import { LeerPaletEntrada } from "./leer_palet_entrada/LeerPaletEntrada.tsx";
+import { iniciarAudioLectura } from "./leer_cajas_entrada/LeerCajasEntrada.tsx";
+import { LeerDropOrden } from "./leer_drop_orden/LeerDropOrden.tsx";
+import { LeerPickOrden } from "./leer_pick_orden/LeerPickOrden.tsx";
 import { LecturaUbicacionOrden } from "./leer_ubicacion/LecturaUbicacionOrden.tsx";
 import { LineasOrden } from "./lineas/LineasOrden.tsx";
 import { ContextoOrdenAlmacen, getMaquina } from "./maquina.ts";
@@ -66,6 +66,13 @@ export const DetalleOrden = ({
         });
     }, [ctx.orden.id, intentar]);
 
+    const generarCajas = useCallback(async () => {
+        await intentar(async () => {
+            await crearCajasOrden(ctx.orden.id);
+            await emitir("orden_id_cambiada", ctx.orden.id, true);
+        });
+    }, [ctx.orden.id, emitir, intentar]);
+
     const autoGuardar = useCallback(
         async (orden: OrdenAlmacen) => {
             await guardarOrden(ctx, orden);
@@ -90,9 +97,9 @@ export const DetalleOrden = ({
     }, [ordenId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const accionPrincipal: { label: string; instruccion: string; onClick: () => void } | null = (() => {
-        if (!sgaActivo || modelo.tipo !== "ENTRADA" || ctx.estado !== "ABIERTA") return null;
+        if (!sgaActivo || modelo.pasosDrop !== "CAJAS-UBICACION" || ctx.estado !== "ABIERTA") return null;
 
-        if (modelo.estado === "TERMINADA") {
+        if (modelo.estado === "TERMINADA" && modelo.tipo === "ENTRADA") {
             return {
                 label: "Colocar",
                 instruccion: "Recepción terminada, usa el botón Colocar para crear la orden de colocación",
@@ -102,9 +109,9 @@ export const DetalleOrden = ({
 
         if (modelo.estado !== "PENDIENTE" || etiquetasImpresas) {
             return {
-                label: "Leer Cajas",
-                instruccion: "Usa el botón leer cajas para leer los QR de las etiquetas pegadas a las cajas",
-                onClick: () => { iniciarAudioLectura(); emitir("lectura_cajas_entrada_solicitada"); },
+                label: "Leer",
+                instruccion: "Usa el botón leer para registrar la colocación de las cajas",
+                onClick: () => { iniciarAudioLectura(); emitir("lectura_drop_solicitada"); },
             };
         }
 
@@ -140,6 +147,9 @@ export const DetalleOrden = ({
                     </QBoton>
                 )}
                 <QBoton variante="borde" onClick={imprimirEtiquetas}>Imprimir etiquetas</QBoton>
+                {sgaActivo && (
+                    <QBoton variante="borde" onClick={generarCajas}>Crear cajas</QBoton>
+                )}
             </div>
             {accionPrincipal && (
                 <div className="accion-principal">
@@ -200,14 +210,11 @@ export const DetalleOrden = ({
                 {ocultarTemporalDemos && sgaActivo && ["TRASPASO", "SALIDA"].includes(modelo.tipo) && (
                     <QBoton variante="borde" onClick={() => emitir("lectura_ubicacion_solicitada")}>Lectura bandeja</QBoton>
                 )}
-                {sgaActivo && modelo.tipo === "ENTRADA" && (
-                    <QBoton variante="borde" onClick={() => { iniciarAudioLectura(); emitir("lectura_cajas_entrada_solicitada"); }}>Leer cajas</QBoton>
+                {sgaActivo && modelo.pasosPick && (
+                    <QBoton variante="borde" onClick={() => emitir("lectura_pick_solicitada")}>Leer pick</QBoton>
                 )}
-                {sgaActivo && modelo.tipo === "ENTRADA" && (
-                    <QBoton variante="borde" onClick={() => emitir("lectura_palet_entrada_solicitada")}>Leer palé</QBoton>
-                )}
-                {sgaActivo && modelo.tipo === "TRASPASO" && (
-                    <QBoton variante="borde" onClick={() => { iniciarAudioLectura(); emitir("lectura_cajas_colocacion_solicitada"); }}>Leer colocación</QBoton>
+                {sgaActivo && (modelo.pasosDrop || modelo.tipo === "ENTRADA") && (
+                    <QBoton variante="borde" onClick={() => { iniciarAudioLectura(); emitir("lectura_drop_solicitada"); }}>Leer drop</QBoton>
                 )}
                 {sgaActivo && (
                     <QBoton variante="borde" onClick={() => {
@@ -256,14 +263,11 @@ export const DetalleOrden = ({
             {ctx.estado === "CREANDO_CAJA" && (
                 <CrearCaja publicar={emitir} idUbicacion={modelo.idUbicacionDestino} />
             )}
-            {ctx.estado === "LEYENDO_CAJAS_ENTRADA" && (
-                <LeerCajasEntrada publicar={emitir} orden={ctx.orden} />
+            {ctx.estado === "LEYENDO_PICK" && (
+                <LeerPickOrden publicar={emitir} orden={ctx.orden} />
             )}
-            {ctx.estado === "LEYENDO_PALET_ENTRADA" && (
-                <LeerPaletEntrada publicar={emitir} orden={ctx.orden} />
-            )}
-            {ctx.estado === "LEYENDO_CAJAS_COLOCACION" && (
-                <LeerCajasColocacion publicar={emitir} orden={ctx.orden} />
+            {ctx.estado === "LEYENDO_DROP" && (
+                <LeerDropOrden publicar={emitir} orden={ctx.orden} />
             )}
             {ctx.estado === "COLOCANDO" && (
                 <ColocacionOrden publicar={emitir} orden={ctx.orden} />

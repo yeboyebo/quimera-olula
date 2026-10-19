@@ -1,5 +1,6 @@
 import { TipoCajaProv } from "#/almacen/comun/componentes/TipoCajaProv.tsx";
 import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
+import { Lote, TagLoteOpcion } from "#/almacen/comun/componentes/Lote.tsx";
 import { PALET_ID } from "#/almacen/comun/dominio.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -30,7 +31,7 @@ import {
 import "./RecibirAlbaran.css";
 
 // ---------------------------------------------------------------------------
-// Paso 1 — fila de detección (cantidad + lote)
+// Paso 1 — fila de detección (cantidad + lote + caducidad)
 // ---------------------------------------------------------------------------
 
 const FilaDeteccion = ({
@@ -56,6 +57,20 @@ const FilaDeteccion = ({
         async (actualizada) => onCambio(actualizada)
     );
 
+    const handleLoteChange = useCallback((opcion: TagLoteOpcion | null) => {
+        const registrado = opcion !== null && 'sku' in opcion && opcion.sku !== undefined;
+        onCambio({
+            ...detectada,
+            lote_id: opcion?.valor ?? "",
+            caducidad: registrado ? (opcion as TagLoteOpcion).caducidad ?? null : null,
+            lote_registrado: registrado,
+        });
+    }, [detectada, onCambio]);
+
+    const handleCaducidadChange = useCallback((val: string) => {
+        onCambio({ ...detectada, caducidad: val || null });
+    }, [detectada, onCambio]);
+
     const pendiente = linea.cantidad - linea.cantidadRecibida;
     const claseDiferencia =
         diferencia < 0 ? "recibir-faltan" : diferencia > 0 ? "recibir-sobran" : "";
@@ -69,7 +84,28 @@ const FilaDeteccion = ({
                 <QInput label="" {...uiProps("cantidad")} />
             </td>
             <td className="recibir-cantidad recibir-input">
-                {linea.porLotes && <QInput label="" {...uiProps("lote_id")} />}
+                {linea.porLotes && (
+                    <Lote
+                        label=""
+                        valor={detectada.lote_id}
+                        sku={linea.sku}
+                        permitirNuevo={true}
+                        onChange={handleLoteChange}
+                    />
+                )}
+            </td>
+            <td className="recibir-cantidad recibir-input">
+                {linea.porLotes && detectada.lote_id && (
+                    detectada.lote_registrado
+                        ? <span className="solo-lectura">{detectada.caducidad ?? "—"}</span>
+                        : <QInput
+                            label=""
+                            tipo="fecha"
+                            nombre="caducidad"
+                            valor={detectada.caducidad ?? ""}
+                            onChange={handleCaducidadChange}
+                          />
+                )}
             </td>
             <td className={`recibir-cantidad ${esPrimera ? claseDiferencia : ""}`}>
                 {esPrimera ? (diferencia > 0 ? `+${diferencia}` : diferencia) : ""}
@@ -450,6 +486,7 @@ export const RecibirAlbaran = ({
                                 <th>Por recibir</th>
                                 <th>Detectado</th>
                                 <th>Lote</th>
+                                <th>Caducidad</th>
                                 <th>Diferencia</th>
                                 <th></th>
                             </tr>

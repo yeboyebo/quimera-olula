@@ -4,7 +4,7 @@ import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { buscarCajaCompletaPorTexto, buscarCajaPorTexto, buscarUbicacionPorTexto } from "#/almacen/comun/voz_resolvers.ts";
 
 import { LineaOrdenAlmacen, OrdenAlmacen } from "#/almacen/orden/diseño.ts";
-import { confirmarSubcajaPalet, getSkuLote, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
+import { getSkuLote, registrarLecturaOrden } from "#/almacen/orden/infraestructura.ts";
 import { IndicadorVoz } from "@olula/componentes/atomos/indicador_voz.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
@@ -56,12 +56,29 @@ const instrucciones: Record<PasoGuion, string> = {
 //     // "79": ["caja-origen-completa", "caja-destino"],
 // };
 
-const getPaso = (linea: LineaOrdenAlmacen): PasoGuion[] => {
-    switch (linea.pasos) {
-        case "SUBCAJA_PALET": return ["lote-subcaja-palet", "caja-destino-subcaja-palet"];
+const getPasos = (linea: LineaOrdenAlmacen, orden: OrdenAlmacen, faseForzada?: 'PICK' | 'DROP'): PasoGuion[] => {
+    const pick = linea.pasosPick ?? orden.pasosPick;
+    const drop = linea.pasosDrop ?? orden.pasosDrop;
+
+    const pickCompleto = !pick || (linea.cantidadPick ?? 0) >= linea.cantidadPrevista;
+    const usarPick = faseForzada === 'PICK' || (!faseForzada && !pickCompleto);
+
+    if (usarPick && pick) {
+        switch (pick) {
+            case "LOTE-CAJAS": return ["lote-subcaja-palet", "caja-destino-subcaja-palet"];
+            case "CAJA-CAJAS": return ["caja-origen-completa", "caja-destino-subcaja-palet"];
+            default: return [];
+        }
+    }
+
+    switch (drop) {
+        case "CAJAS-UBICACION": return linea.idCajaOrigen
+            ? ["ubi-destino"]
+            : ["caja-origen", "ubi-destino"];
+        case "SKU_LOTE-CANTIDAD": return ["sku-lote", "cantidad"];
         default: return ["caja-destino-capacidad"];
     }
-}
+};
 
 const PasoWrapper = ({ instruccion, children }: { instruccion: string; children: ReactNode }) => (
     <div className="paso-guion">
@@ -349,11 +366,13 @@ export const LeerLineaOrden = ({
     linea,
     publicar,
     modoVoz = false,
+    fase,
 }: {
     orden: OrdenAlmacen;
     linea: LineaOrdenAlmacen;
     publicar: EmitirEvento;
     modoVoz?: boolean;
+    fase?: 'PICK' | 'DROP';
 }) => {
     const { intentar } = useContext(ContextoError);
     const [pasoActual, setPasoActual] = useState<number>(0);
@@ -363,10 +382,10 @@ export const LeerLineaOrden = ({
     const flujoVoz = useFlujoVoz();
     const vozActivaRef = useRef(false);
 
-    const pasoGuion = getPaso(linea)
+    const pasoGuion = getPasos(linea, orden, fase)
 
 
-    // Auto-salta el paso sku-lote si la línea ya tiene los datos necesarios.
+    // Auto-salta pasos cuando la línea ya tiene los datos necesarios.
     // Para el resto de pasos, enfoca el primer input visible tras el render.
     useEffect(() => {
         const paso = pasoGuion[pasoActual];
@@ -378,6 +397,16 @@ export const LeerLineaOrden = ({
                 setPasoActual((p) => p + 1);
                 return;
             }
+        }
+        if (paso === "lote-subcaja-palet" && linea.loteId) {
+            setValores((v) => ({ ...v, loteId: linea.loteId }));
+            setPasoActual((p) => p + 1);
+            return;
+        }
+        if (paso === "caja-origen" && linea.idCajaOrigen) {
+            setValores((v) => ({ ...v, idCajaOrigen: linea.idCajaOrigen!, cajaOrigen: linea.cajaOrigen ?? "" }));
+            setPasoActual((p) => p + 1);
+            return;
         }
         if (!modoVoz) {
             const raf = requestAnimationFrame(() => {
@@ -479,7 +508,19 @@ export const LeerLineaOrden = ({
     const registrarConValores = useCallback(async (vals: ValoresAcumulados) => {
         if (pasoGuion.includes("lote-subcaja-palet")) {
             const loteId = (vals.loteId ?? linea.loteId) as string;
-            await intentar(() => confirmarSubcajaPalet(orden.id, linea.id, loteId, vals.idCajaDestino!));
+            await intentar(() => registrarLecturaOrden(orden.id, {
+                sku: linea.sku,
+                articulo: linea.articulo,
+                idLote: loteId,
+                idLinea: linea.id,
+                cantidad: 0,
+                cajaCompleta: false,
+                idCajaOrigen: linea.idCajaOrigen,
+                idCajaDestino: vals.idCajaDestino!,
+                idUbicacionOrigen: null,
+                idUbicacionDestino: null,
+                fase: 'PICK',
+            }));
             publicar("lectura_registrada");
             return;
         }
@@ -590,7 +631,19 @@ export const LeerLineaOrden = ({
 
         if (pasoGuion.includes("lote-subcaja-palet")) {
             const loteId = (valores.loteId ?? linea.loteId) as string;
-            await intentar(() => confirmarSubcajaPalet(orden.id, linea.id, loteId, valores.idCajaDestino!));
+            await intentar(() => registrarLecturaOrden(orden.id, {
+                sku: linea.sku,
+                articulo: linea.articulo,
+                idLote: loteId,
+                idLinea: linea.id,
+                cantidad: 0,
+                cajaCompleta: false,
+                idCajaOrigen: linea.idCajaOrigen,
+                idCajaDestino: valores.idCajaDestino!,
+                idUbicacionOrigen: null,
+                idUbicacionDestino: null,
+                fase: 'PICK',
+            }));
             publicar("lectura_registrada");
             return;
         }

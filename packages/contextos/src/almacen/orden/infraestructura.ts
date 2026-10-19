@@ -58,6 +58,8 @@ interface OrdenAlmacenApi {
     ubicacion_destino_id: string | null;
     ubicacion_destino: string | null;
     caja_destino_id: string | null;
+    pasos_pick: string | null;
+    pasos_drop: string | null;
     lineas: LineaOrdenAlmacenApi[];
     lecturas_caja: LecturaCajaOrdenApi[];
 }
@@ -96,7 +98,9 @@ export interface LineaOrdenAlmacenApi {
     caja_destino_id: string | null;
     caja_destino: string | null;
     linea_pick_id: string | null;
-    pasos: string | null;
+    pasos_pick: string | null;
+    pasos_drop: string | null;
+    cantidad_pick?: number;
     lecturas: LecturaLineaOrdenApi[];
 }
 
@@ -108,6 +112,8 @@ interface NuevaLineaOrdenAlmacenApi {
     caja_origen_id: string | null;
     ubicacion_destino_id: string | null;
     caja_destino_id: string | null;
+    pasos_pick?: string | null;
+    pasos_drop?: string | null;
 }
 
 export interface ItemOrdenApi {
@@ -155,6 +161,8 @@ export const ordenDesdeApi = (api: OrdenAlmacenApi): OrdenAlmacen => ({
     idUbicacionDestino: api.ubicacion_destino_id,
     ubicacionDestino: api.ubicacion_destino,
     idCajaDestino: api.caja_destino_id,
+    pasosPick: api.pasos_pick,
+    pasosDrop: api.pasos_drop,
     lineas: api.lineas.map(lineaOrdenDesdeApi),
     lecturasCaja: (api.lecturas_caja ?? []).map(lecturaCajaOrdenDesdeApi),
 });
@@ -193,7 +201,9 @@ export const lineaOrdenDesdeApi = (api: LineaOrdenAlmacenApi): LineaOrdenAlmacen
     idCajaDestino: api.caja_destino_id,
     cajaDestino: api.caja_destino,
     idLineaPick: api.linea_pick_id,
-    pasos: api.pasos,
+    pasosPick: api.pasos_pick,
+    pasosDrop: api.pasos_drop,
+    cantidadPick: api.cantidad_pick,
     lecturas: api.lecturas.map(lecturaLineaOrdenDesdeApi),
 });
 
@@ -239,6 +249,8 @@ const nuevaLineaOrdenAApi = (linea: NuevaLineaOrdenAlmacen): NuevaLineaOrdenAlma
     caja_origen_id: linea.idCajaOrigen,
     ubicacion_destino_id: linea.idUbicacionDestino,
     caja_destino_id: linea.idCajaDestino,
+    pasos_pick: linea.pasosPick,
+    pasos_drop: linea.pasosDrop,
 });
 
 export const itemOrdenDesdeApi = (api: ItemOrdenApi): ItemOrdenAlmacen => ({
@@ -260,6 +272,8 @@ const nuevaOrdenAApi = (orden: NuevaOrdenAlmacen) => ({
     tipo_orden: orden.tipoOrden,
     almacen_id: orden.almacenId,
     abierta: orden.abierta,
+    pasos_pick: orden.pasosPick ?? null,
+    pasos_drop: orden.pasosDrop ?? null,
 });
 
 const cambiosOrdenAApi = (cambios: CambiosOrdenAlmacen) => {
@@ -281,6 +295,8 @@ const cambiosLineaOrdenAApi = (cambios: CambiosLineaOrdenAlmacen) => {
     if (cambios.idCajaOrigen !== undefined) payload.caja_origen_id = cambios.idCajaOrigen;
     if (cambios.idUbicacionDestino !== undefined) payload.ubicacion_destino_id = cambios.idUbicacionDestino;
     if (cambios.idCajaDestino !== undefined) payload.caja_destino_id = cambios.idCajaDestino;
+    if (cambios.pasosPick !== undefined) payload.pasos_pick = cambios.pasosPick;
+    if (cambios.pasosDrop !== undefined) payload.pasos_drop = cambios.pasosDrop;
     return payload;
 };
 
@@ -367,6 +383,7 @@ export const registrarLecturaOrden = async (
             caja_completa: lectura.cajaCompleta,
             ubicacion_destino_id: lectura.idUbicacionDestino,
             caja_destino_id: lectura.idCajaDestino,
+            fase: lectura.fase ?? null,
         },
         "Error al registrar lectura de la orden"
     );
@@ -445,15 +462,7 @@ export const crearLineaSubcajaPalet = async (
     );
 };
 
-export const confirmarSubcajaPalet = async (
-    ordenId: string,
-    lineaId: string,
-    loteId: string,
-    idCajaDestino: string,
-): Promise<void> => {
-    await RestAPI.post(
-        `${baseUrl}/${ordenId}/linea/${lineaId}/confirmar_subcaja`,
-        { lote_id: loteId, caja_destino_id: idCajaDestino },
-        "Error al confirmar subcaja de palé"
-    );
+
+export const crearCajasOrden = async (ordenId: string): Promise<void> => {
+    await RestAPI.post(`${baseUrl}/${ordenId}/cajas`, {}, "Error al crear cajas de la orden");
 };
