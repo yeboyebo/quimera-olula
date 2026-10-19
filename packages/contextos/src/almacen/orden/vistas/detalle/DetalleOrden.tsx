@@ -14,7 +14,7 @@ import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { desbloquearTTS, useSintesisVoz } from "@olula/lib/voz/useSintesisVoz.ts";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { TipoOrden } from "../../../comun/componentes/TipoOrden.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "../../diseño.ts";
@@ -23,6 +23,7 @@ import { crearCajasOrden, getReportEtiquetasOrden } from "../../infraestructura.
 import { BorrarOrden } from "../borrar/BorrarOrden.tsx";
 import { ColocacionOrden } from "../colocar/ColocacionOrden.tsx";
 import { TerminarOrden } from "../terminar/TerminarOrden.tsx";
+import { calcularAccionPrincipal } from "./accion_principal.ts";
 import { guardarOrden } from "./detalle.ts";
 import "./DetalleOrden.css";
 import { LecturaOrden } from "./lectura/LecturaLineaOrden.tsx";
@@ -57,8 +58,6 @@ export const DetalleOrden = ({
     const { intentar } = useContext(ContextoError);
     const [modoVoz, setModoVoz] = usePreferencia("sga.modo-voz", false);
     const tts = useSintesisVoz();
-    const [etiquetasImpresas, setEtiquetasImpresas] = useState(false);
-
     const imprimirEtiquetas = useCallback(async () => {
         await intentar(async () => {
             const blob = await getReportEtiquetasOrden(ctx.orden.id);
@@ -93,34 +92,15 @@ export const DetalleOrden = ({
         if (ordenId) {
             emitir("orden_id_cambiada", ordenId, true);
         }
-        setEtiquetasImpresas(false);
     }, [ordenId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const accionPrincipal: { label: string; instruccion: string; onClick: () => void } | null = (() => {
-        if (!sgaActivo || modelo.pasosDrop !== "CAJAS-UBICACION" || ctx.estado !== "ABIERTA") return null;
-
-        if (modelo.estado === "TERMINADA" && modelo.tipo === "ENTRADA") {
-            return {
-                label: "Colocar",
-                instruccion: "Recepción terminada, usa el botón Colocar para crear la orden de colocación",
-                onClick: () => emitir("colocacion_solicitada"),
-            };
-        }
-
-        if (modelo.estado !== "PENDIENTE" || etiquetasImpresas) {
-            return {
-                label: "Leer",
-                instruccion: "Usa el botón leer para registrar la colocación de las cajas",
-                onClick: () => { iniciarAudioLectura(); emitir("lectura_drop_solicitada"); },
-            };
-        }
-
-        return {
-            label: "Imprimir etiquetas",
-            instruccion: "Imprime las etiquetas a pegar en las cajas y palets recibidos",
-            onClick: async () => { await imprimirEtiquetas(); setEtiquetasImpresas(true); },
-        };
-    })();
+    const accionPrincipal = sgaActivo && ctx.estado === "ABIERTA"
+        ? calcularAccionPrincipal(modelo, {
+              emitirPickSolicitado: () => emitir("lectura_pick_solicitada"),
+              emitirDropSolicitado: () => { iniciarAudioLectura(); emitir("lectura_drop_solicitada"); },
+              emitirColocacionSolicitada: () => emitir("colocacion_solicitada"),
+          })
+        : null;
 
     if (!ctx.orden.id) return null;
 
