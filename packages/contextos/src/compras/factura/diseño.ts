@@ -93,6 +93,14 @@ export interface NuevaLineaFactura extends Modelo {
     descripcionArticulo: string | null;
     cantidad: number;
     pvpUnitario: number | null;
+    dtoPorcentual: number;
+    dtoLineal: number;
+    pvpTotal: number;
+    grupoIvaProductoId: string | null;
+    ivaIncluido: boolean;
+    tipoIva: number;
+    tipoRecargo: number;
+    tipoIrpf: number;
 }
 
 export interface ModeloLineaFactura extends LineaFactura {
@@ -130,6 +138,14 @@ export type PostLineasFactura = (
     id: string,
     lineas: NuevaLineaFactura[]
 ) => Promise<string[]>;
+/**
+ * Dry-run del alta de línea: el servidor calcula el coste del proveedor y los
+ * impuestos sin grabar nada, para poder enseñarlos en el modal.
+ */
+export type QueryNuevaLineaFactura = (
+    id: string,
+    linea: NuevaLineaFactura
+) => Promise<NuevaLineaFactura>;
 export type PatchLineaFactura = (
     id: string,
     lineaId: string,
