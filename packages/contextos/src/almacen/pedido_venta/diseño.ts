@@ -10,3 +10,5 @@ export interface ItemPedidoVenta extends Entidad {
 export type GetPedidosVenta = (filtro: Filtro, orden: Orden, paginacion?: Paginacion) => RespuestaLista<ItemPedidoVenta>;
 
 export type GenerarSalidaDesdePedidos = (pedidoIds: number[], ubicacionDestinoId: number) => Promise<void>;
+
+export type GenerarSalidaVentaDesdePedidos = (pedidoIds: number[], zonas: number[]) => Promise<void>;

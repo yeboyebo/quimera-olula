@@ -1,6 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { criteriaQuery } from "@olula/lib/infraestructura.ts";
-import { GenerarSalidaDesdePedidos, GetPedidosVenta, ItemPedidoVenta } from "./diseño.ts";
+import { GenerarSalidaDesdePedidos, GenerarSalidaVentaDesdePedidos, GetPedidosVenta, ItemPedidoVenta } from "./diseño.ts";
 
 
 interface ItemPedidoVentaApi {
@@ -41,5 +41,22 @@ export const generarSalidaDesdePedidos: GenerarSalidaDesdePedidos = async (pedid
         `/almacen/orden/desde_pedidos_venta`,
         payload,
         "Error al generar salida desde pedidos de venta"
+    );
+};
+
+interface SalidaVentaDesdePedidosApi {
+    pedido_ids: number[];
+    zonas: number[];
+}
+
+export const generarSalidaVentaDesdePedidos: GenerarSalidaVentaDesdePedidos = async (pedidoIds, zonas) => {
+    const payload: SalidaVentaDesdePedidosApi = {
+        pedido_ids: pedidoIds,
+        zonas,
+    };
+    await RestAPI.post(
+        `/almacen/orden/salida_desde_pedidos_venta`,
+        payload,
+        "Error al generar salida de venta desde pedidos"
     );
 };
