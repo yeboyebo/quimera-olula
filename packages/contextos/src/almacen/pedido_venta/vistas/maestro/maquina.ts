@@ -17,11 +17,18 @@ export const getMaquina: () => Maquina<EstadoMaestroPedidoVenta, ContextoMaestro
             seleccionadas_cambiadas: async (ctx, payload) => ({ ...ctx, seleccionadas: payload as string[] }),
 
             generar_salida_solicitada: "GENERANDO_SALIDA",
+
+            comprobar_reservas_solicitado: "COMPROBANDO_RESERVAS",
         },
 
         GENERANDO_SALIDA: {
             salida_cancelada: "INICIAL",
             salida_generada: async (ctx) => ({ ...ctx, estado: "INICIAL" as EstadoMaestroPedidoVenta, seleccionadas: [] }),
+        },
+
+        COMPROBANDO_RESERVAS: {
+            reservas_comprobadas: [maestro.actualizarDisponibilidades],
+            comprobar_reservas_cancelado: "INICIAL",
         },
     };
 };

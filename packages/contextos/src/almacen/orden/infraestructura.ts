@@ -467,3 +467,57 @@ export const crearLineaSubcajaPalet = async (
 export const crearCajasOrden = async (ordenId: string): Promise<void> => {
     await RestAPI.post(`${baseUrl}/${ordenId}/cajas`, {}, "Error al crear cajas de la orden");
 };
+
+
+export interface ItemStockDesgloseCaja {
+    cajaId: string | null;
+    lpn: string | null;
+    loteId: string | null;
+    cantidad: number;
+}
+
+interface ItemStockDesgloseCajaApi {
+    caja_id: string | null;
+    lpn: string | null;
+    lote_id: string | null;
+    cantidad: number;
+}
+
+interface ItemStockUbicacionApi {
+    id: string;
+}
+
+const desgloseDesdeApi = (api: ItemStockDesgloseCajaApi): ItemStockDesgloseCaja => ({
+    cajaId: api.caja_id,
+    lpn: api.lpn,
+    loteId: api.lote_id,
+    cantidad: api.cantidad,
+});
+
+/**
+ * Obtiene el desglose de stock (suelto vs en cajas) para un SKU en una ubicación.
+ * Resuelve primero el stock_ubicacion_id a partir de ubicacion_id y sku (articulo_id).
+ * Retorna null si no hay stock de ese SKU en esa ubicación.
+ */
+export const getStockDesgloseCaja = async (
+    ubicacionId: string,
+    articuloId: string,
+    loteId?: string,
+): Promise<ItemStockDesgloseCaja[] | null> => {
+    const q = criteriaQuery(
+        [['ubicacion_id', '=', ubicacionId], ['articulo_id', '=', articuloId]],
+        undefined,
+        undefined,
+    );
+    const lista = await RestAPI.get<{ datos: ItemStockUbicacionApi[] }>(
+        `/almacen/stock_ubicacion${q}`
+    );
+    if (!lista.datos.length) return null;
+
+    const stockUbicacionId = lista.datos[0].id;
+    const params = loteId ? `?lote_id=${loteId}` : '';
+    const desglose = await RestAPI.get<{ datos: ItemStockDesgloseCajaApi[] }>(
+        `/almacen/stock_ubicacion/${stockUbicacionId}/desglose_caja${params}`
+    );
+    return desglose.datos.map(desgloseDesdeApi);
+};
