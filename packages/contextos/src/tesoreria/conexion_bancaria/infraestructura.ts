@@ -8,11 +8,14 @@ import {
     EstadoConexionBancaria,
     GetConexionBancaria,
     GetConexionesBancarias,
+    GetSaldosConexionBancaria,
     PatchCuentaConexionBancaria,
     PatchReautenticarConexionBancaria,
     PostConexionBancaria,
     PostIniciarConexionBancaria,
     ProveedorConexionBancaria,
+    ResumenSaldosConexionBancaria,
+    SaldoCuentaConexionBancaria,
 } from "./diseño.js";
 
 export interface CuentaConexionBancariaApi {
@@ -138,4 +141,84 @@ export const deleteConexionBancaria: DeleteConexionBancaria = async (id) => {
         `${baseUrl}/${id}`,
         "Error al desconectar el banco"
     );
+};
+
+interface SaldoCuentaConexionBancariaApi {
+    cuenta_id: string;
+    id_externo: string;
+    nombre: string;
+    mascara: string | null;
+    tipo: string | null;
+    subtipo: string | null;
+    iban: string | null;
+    cuenta_banco_id: string | null;
+    descripcion_cuenta_banco: string | null;
+    activa: boolean;
+    saldo_disponible: number | null;
+    saldo_actual: number | null;
+    saldo_limite: number | null;
+    divisa: string | null;
+    conexion_id: string;
+    institucion_nombre: string | null;
+    estado_conexion: EstadoConexionBancaria;
+    consentimiento_caduca_en: string | null;
+    ultima_sincronizacion: string | null;
+    saldo_actualizado_en: string | null;
+    error: string | null;
+}
+
+interface ResumenSaldosConexionBancariaApi {
+    cuentas: SaldoCuentaConexionBancariaApi[];
+    total_disponible: number | null;
+    total_actual: number | null;
+    divisa: string | null;
+    conexiones: number;
+    conexiones_con_error: number;
+    conexiones_requieren_reautenticacion: number;
+    necesita_refresco: boolean;
+}
+
+const saldoCuentaDesdeApi = (api: SaldoCuentaConexionBancariaApi): SaldoCuentaConexionBancaria => ({
+    cuentaId: api.cuenta_id,
+    idExterno: api.id_externo,
+    nombre: api.nombre,
+    mascara: api.mascara,
+    tipo: api.tipo,
+    subtipo: api.subtipo,
+    iban: api.iban,
+    cuentaBancoId: api.cuenta_banco_id,
+    descripcionCuentaBanco: api.descripcion_cuenta_banco,
+    activa: api.activa,
+    saldoDisponible: api.saldo_disponible,
+    saldoActual: api.saldo_actual,
+    saldoLimite: api.saldo_limite,
+    divisa: api.divisa,
+    conexionId: api.conexion_id,
+    institucionNombre: api.institucion_nombre,
+    estadoConexion: api.estado_conexion,
+    consentimientoCaducaEn: fechaDesdeApi(api.consentimiento_caduca_en),
+    ultimaSincronizacion: fechaDesdeApi(api.ultima_sincronizacion),
+    saldoActualizadoEn: fechaDesdeApi(api.saldo_actualizado_en),
+    error: api.error,
+});
+
+/**
+ * Saldos cacheados en BD (rápido). Si están caducados, el backend lanza
+ * refresco en segundo plano; el cliente puede reconsultar con `necesitaRefresco`.
+ */
+export const getSaldosConexionBancaria: GetSaldosConexionBancaria = async () => {
+    const api = await RestAPI.get<ResumenSaldosConexionBancariaApi>(
+        `${baseUrl}/saldos`,
+        "Error al obtener los saldos de las cuentas bancarias"
+    );
+    return {
+        cuentas: (api.cuentas ?? []).map(saldoCuentaDesdeApi),
+        totalDisponible: api.total_disponible,
+        totalActual: api.total_actual,
+        divisa: api.divisa,
+        conexiones: api.conexiones,
+        conexionesConError: api.conexiones_con_error,
+        conexionesRequierenReautenticacion: api.conexiones_requieren_reautenticacion,
+        necesitaRefresco: Boolean(api.necesita_refresco),
+    } satisfies ResumenSaldosConexionBancaria;
 };

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+<<<<<<< HEAD:packages/contextos/lib/src/voz/useFlujoVoz.ts
 import { parsearNumeroVoz } from "./parsearNumeroVoz.js";
 import { useSintesisVoz } from "./useSintesisVoz.js";
+=======
+import { parsearNumeroVoz } from "./parsearNumeroVoz.ts";
+import { useSintesisVoz } from "./useSintesisVoz.ts";
+import { reservarVoz } from "./voz_ocupada.ts";
+>>>>>>> main:packages/lib/src/voz/useFlujoVoz.ts
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getWindowSpeechRecognition = (): (new () => any) | null => {
@@ -149,6 +155,9 @@ export const useFlujoVoz = (): UseFlujoVoz => {
     const [textoReconocido, setTextoReconocido] = useState<string | null>(null);
     const [interino, setInterino] = useState<string | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+    // La voz queda reservada desde la primera pregunta hasta cancelar o desmontar —
+    // entre pregunta y pregunta también, para que el modo voz del asistente no se cuele.
+    const liberarVozRef = useRef<(() => void) | null>(null);
 
     const sttSoportado = getWindowSpeechRecognition() !== null;
     const soportado = sttSoportado && tts.soportado;
@@ -156,6 +165,7 @@ export const useFlujoVoz = (): UseFlujoVoz => {
     const preguntar = useCallback(
         async (pregunta: PreguntaVoz): Promise<ValorVoz> => {
             abortControllerRef.current?.abort();
+            liberarVozRef.current ??= reservarVoz();
             const controller = new AbortController();
             abortControllerRef.current = controller;
             const signal = controller.signal;
@@ -239,6 +249,8 @@ export const useFlujoVoz = (): UseFlujoVoz => {
     const cancelar = useCallback(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = null;
+        liberarVozRef.current?.();
+        liberarVozRef.current = null;
         tts.detener();
         setEstado("inactivo");
         setTextoReconocido(null);
@@ -250,6 +262,8 @@ export const useFlujoVoz = (): UseFlujoVoz => {
         return () => {
             abortControllerRef.current?.abort();
             abortControllerRef.current = null;
+            liberarVozRef.current?.();
+            liberarVozRef.current = null;
             window.speechSynthesis?.cancel();
         };
     }, []);

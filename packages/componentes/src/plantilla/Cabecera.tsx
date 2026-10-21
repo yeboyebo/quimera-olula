@@ -5,6 +5,8 @@ import {
   notificarPanelLateralAbierto,
   solicitarTogglePanelLateral,
 } from "@olula/lib/panel_lateral_events.ts";
+import { modoCapturaVoz, useModoVozActivo } from "@olula/lib/voz/modo_voz.ts";
+import { IconMicrophone, IconMicrophoneOff } from "@tabler/icons-react";
 import { useContext, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -48,6 +50,7 @@ export const CabeceraBase = ({
 }: CabeceraProps) => {
   const { menuAbierto, toggleMenu, cerrarMenu } = useMenuControl();
   const autenticado = estaAutentificado();
+  const [modoVoz, setModoVoz] = useModoVozActivo();
 
   useEffect(() => {
     // El panel lateral del asistente (packages/contextos, fuera de este árbol de
@@ -88,6 +91,19 @@ export const CabeceraBase = ({
             {AccionesCabecera ? <AccionesCabecera /> : null}
           </div>
         </div>
+        {autenticado && mostrarAsistente && modoCapturaVoz() !== null && (
+          <button
+            type="button"
+            id="boton-modo-voz"
+            className={modoVoz ? "activo" : ""}
+            aria-pressed={modoVoz}
+            aria-label={modoVoz ? "Desactivar modo voz" : "Activar modo voz"}
+            title={modoVoz ? "Modo voz activo — di «Oye Olula». Pulsa para desactivarlo" : "Activar modo voz («Oye Olula»)"}
+            onClick={() => setModoVoz(!modoVoz)}
+          >
+            {modoVoz ? <IconMicrophone size={20} /> : <IconMicrophoneOff size={20} />}
+          </button>
+        )}
         {autenticado && mostrarAsistente && (
           <>
             <button

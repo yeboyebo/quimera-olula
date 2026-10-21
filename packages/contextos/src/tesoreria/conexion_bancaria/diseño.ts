@@ -97,3 +97,45 @@ export type PatchCuentaConexionBancaria = (
  * Revoca el acceso en el proveedor y borra la conexión.
  */
 export type DeleteConexionBancaria = (id: string) => Promise<void>;
+
+/**
+ * Saldo e info de una cuenta conectada (vía el proveedor bancario activo).
+ * Independiente del proveedor concreto (Plaid, GoCardless…).
+ */
+export interface SaldoCuentaConexionBancaria {
+    cuentaId: string;
+    idExterno: string;
+    nombre: string;
+    mascara: string | null;
+    tipo: string | null;
+    subtipo: string | null;
+    iban: string | null;
+    cuentaBancoId: string | null;
+    descripcionCuentaBanco: string | null;
+    activa: boolean;
+    saldoDisponible: number | null;
+    saldoActual: number | null;
+    saldoLimite: number | null;
+    divisa: string | null;
+    conexionId: string;
+    institucionNombre: string | null;
+    estadoConexion: EstadoConexionBancaria;
+    consentimientoCaducaEn: Date | null;
+    ultimaSincronizacion: Date | null;
+    saldoActualizadoEn: Date | null;
+    error: string | null;
+}
+
+export interface ResumenSaldosConexionBancaria {
+    cuentas: SaldoCuentaConexionBancaria[];
+    totalDisponible: number | null;
+    totalActual: number | null;
+    divisa: string | null;
+    conexiones: number;
+    conexionesConError: number;
+    conexionesRequierenReautenticacion: number;
+    /** True si el backend ha encolado (o debería) un refresco en segundo plano. */
+    necesitaRefresco: boolean;
+}
+
+export type GetSaldosConexionBancaria = () => Promise<ResumenSaldosConexionBancaria>;

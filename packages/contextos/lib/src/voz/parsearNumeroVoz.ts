@@ -74,6 +74,7 @@ const parsearGrupo = (texto: string): number | null => {
  * - Dígitos directos: "12", "3,5"
  * - Palabras cardinales: "doce", "veintitrés", "ciento cincuenta"
  * - Decimales: "tres coma cinco", "doce punto cinco"
+ * - Importes: "doce con cincuenta", "12 euros con 50", "veinte con cinco céntimos"
  * - Miles: "mil", "dos mil trescientos"
  * - Rango: 0–9999
  *
@@ -82,6 +83,20 @@ const parsearGrupo = (texto: string): number | null => {
 export const parsearNumeroVoz = (texto: string): number | null => {
     const limpio = texto.trim().toLowerCase();
     if (!limpio) return null;
+
+    // Importes: "doce con cincuenta", "12 euros con 50", "doce euros cincuenta",
+    // "veinte con cinco céntimos" — los céntimos son siempre dos cifras (con cinco = ,05).
+    const importe = limpio.match(/^(.+?)\s+(?:(?:euros?|€)\s+(?:con\s+)?|con\s+)(.+?)(?:\s+c[eé]ntimos?)?$/);
+    if (importe) {
+        const euros = parsearNumeroVoz(importe[1]);
+        const cents = parsearNumeroVoz(importe[2]);
+        if (euros !== null && cents !== null && Number.isInteger(cents) && cents >= 0 && cents <= 99) {
+            return euros + cents / 100;
+        }
+    }
+    // "12 euros" a secas.
+    const soloEuros = limpio.match(/^(.+?)\s+(?:euros?|€)$/);
+    if (soloEuros) return parsearNumeroVoz(soloEuros[1]);
 
     // Decimal con separador "coma" o "punto"
     const separador = limpio.match(/^(.+?)\s+(coma|punto)\s+(.+)$/);
