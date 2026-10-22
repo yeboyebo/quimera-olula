@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado, MaestroDetalle } from "@olula/componentes/index.ts";
 import { Criteria } from "@olula/lib/diseño.ts";
-import { criteriaDefecto, plugin } from "@olula/lib/dominio.ts";
+import { criteriaDefecto, plugin, puede } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect, useMemo } from "react";
@@ -32,7 +32,12 @@ export const MaestroConDetalleAsiento = () => {
 
     useUrlParams(ctx.asientos.activo, ctx.asientos.criteria);
 
+    // crearRouter no comprueba permisos, así que la pantalla se monta aunque se
+    // llegue por URL: la guarda tiene que estar aquí.
+    const autorizado = puede("contabilidad.asiento");
+
     useEffect(() => {
+        if (!autorizado) return;
         emitir("recarga_de_asientos_solicitada", ctx.asientos.criteria);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -40,6 +45,10 @@ export const MaestroConDetalleAsiento = () => {
     // Opcional por instalación: el backend publica el plugin en /whoami.
     const renumerable = plugin("renumerar_asientos") === "activo";
     const ejercicioRenumerar = ejercicioIdParaRenumerar(ctx.asientos.criteria);
+
+    if (!autorizado) {
+        return <p>No tienes permiso para ver los asientos contables.</p>;
+    }
 
     return (
         <div className="Asiento">

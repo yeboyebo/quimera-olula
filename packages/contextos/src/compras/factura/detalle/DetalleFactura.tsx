@@ -6,6 +6,7 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { puede } from "@olula/lib/dominio.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
@@ -23,6 +24,7 @@ import {
 import "./DetalleFactura.css";
 import { LineasFactura } from "./lineas/LineasFactura.tsx";
 import { getMaquina } from "./maquina.ts";
+import { TabContabilidad } from "./TabContabilidad.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
@@ -123,6 +125,13 @@ export const DetalleFactura = ({
                             label="Recibos"
                             children={<TabRecibos facturaId={factura.id} />}
                         />,
+                        puede("contabilidad.asiento") && (
+                            <Tab
+                                key="tab-contabilidad"
+                                label="Contabilidad"
+                                children={<TabContabilidad asientoId={factura.asientoId} />}
+                            />
+                        ),
                     ]}
                 />
                 <TotalesDocumento form={formModelo} />

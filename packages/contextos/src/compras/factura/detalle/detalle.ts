@@ -48,7 +48,6 @@ export const metaFactura: MetaModelo<Factura> = {
         nombreProveedor: { bloqueado: true },
         idFiscal: { bloqueado: true },
         codigoRectificativa: { bloqueado: true },
-        asientoId: { bloqueado: true },
         fecha: { requerido: true, tipo: "fecha" },
         hora: { tipo: "hora" },
         numeroProveedor: {},
