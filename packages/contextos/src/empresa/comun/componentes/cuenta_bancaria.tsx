@@ -8,6 +8,8 @@ interface CuentaBancariaProps {
   nombre?: string;
   label?: string;
   deshabilitado?: boolean;
+  soloLectura?: boolean;
+  enlace?: string;
   ref?: React.RefObject<HTMLInputElement | null>;
   onChange?: (opcion: { valor: string; descripcion: string } | null) => void;
 }
@@ -18,6 +20,7 @@ export const CuentaBancaria = ({
   nombre = "cuenta_bancaria_id",
   label = "Cuenta bancaria",
   deshabilitado = false,
+  enlace = "/empresa/cuentas_bancarias?id={id}",
   onChange,
   ...props
 }: CuentaBancariaProps) => {
@@ -43,6 +46,7 @@ export const CuentaBancaria = ({
       onChange={onChange}
       valor={valor}
       obtenerOpciones={obtenerOpciones}
+      enlace={valor ? enlace : undefined}
       descripcion={descripcion}
       deshabilitado={deshabilitado}
       longitudMinima={0}

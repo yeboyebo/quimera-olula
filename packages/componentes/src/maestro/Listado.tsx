@@ -12,12 +12,12 @@ import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
-import { describirListado, ejecutarAccionListado } from "./voz_listado.ts";
 import {
   getMetaFiltroDefecto,
   MaestroFiltrosActivoControlado,
   MetaFiltro,
 } from "./maestroFiltros/MaestroFiltrosActivoControlado.tsx";
+import { describirListado, ejecutarAccionListado } from "./voz_listado.ts";
 
 const datosCargando = <T extends Entidad>() =>
   new Array(10).fill(null).map(
@@ -37,12 +37,16 @@ export type FormatoDescarga = { valor: string; etiqueta: string };
 type ListadoProps<T extends Entidad> = {
   metaTabla?: MetaTabla<T>;
   metaFiltro?: MetaFiltro;
+  mostrarFiltros?: boolean;
   cargando?: boolean;
   tarjeta?: (entidad: T) => React.ReactNode;
   tarjetaKanban?: (entidad: T) => React.ReactNode;
   columnasKanban?: QKanbanColumna[];
   campoEstadoKanban?: keyof T;
-  onCambioEstadoKanban?: (id: string, nuevoEstado: string) => void | Promise<void>;
+  onCambioEstadoKanban?: (
+    id: string,
+    nuevoEstado: string
+  ) => void | Promise<void>;
   renderAcciones?: () => React.ReactNode;
   criteriaInicial?: Criteria;
   criteria?: Criteria;
@@ -68,6 +72,7 @@ type ListadoProps<T extends Entidad> = {
 export const Listado = <T extends Entidad>({
   metaTabla,
   metaFiltro,
+  mostrarFiltros = true,
   cargando = false,
   criteriaInicial = criteriaDefecto,
   criteria = criteriaDefecto,
@@ -95,7 +100,9 @@ export const Listado = <T extends Entidad>({
   urlDescarga,
   formatosDescarga,
 }: ListadoProps<T>) => {
-  const [modoEstado, setModoEstado] = useState<Modo>(modo ?? modoInicial ?? "tabla");
+  const [modoEstado, setModoEstado] = useState<Modo>(
+    modo ?? modoInicial ?? "tabla"
+  );
   const modoInterno = modo ?? modoEstado;
 
   const [multiseleccionEstado, setMultiseleccionEstado] = useState(false);
@@ -195,21 +202,40 @@ export const Listado = <T extends Entidad>({
 
   // Manejable por voz / desde el asistente (ver controles_pantalla.ts): mismas
   // acciones que la UI, por los mismos callbacks.
-  const metaFiltroEfectivo = metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>);
+  const metaFiltroEfectivo =
+    metaFiltro ?? getMetaFiltroDefecto(metaTabla as MetaTabla<T>);
   useControlPantalla("listado", () => ({
     describir: () => ({
       id: "",
       ...describirListado({
-        metaTabla, metaFiltro: metaFiltroEfectivo, criteria, entidades, totalEntidades, seleccionada,
-        modo: modoEfectivo, modos: modosDisponiblesCalculados,
+        metaTabla,
+        metaFiltro: metaFiltroEfectivo,
+        criteria,
+        entidades,
+        totalEntidades,
+        seleccionada,
+        modo: modoEfectivo,
+        modos: modosDisponiblesCalculados,
       }),
     }),
-    ejecutar: (accion, parametros) => ejecutarAccionListado({
-      metaTabla, metaFiltro: metaFiltroEfectivo, criteria,
-      filtroInicial: criteriaInicial.filtro as ClausulaFiltro[],
-      entidades, totalEntidades, seleccionada, modos: modosDisponiblesCalculados,
-      onCriteriaChanged, onSeleccion, cambiarModo: m => cambiarModo(m as Modo),
-    }, accion, parametros),
+    ejecutar: (accion, parametros) =>
+      ejecutarAccionListado(
+        {
+          metaTabla,
+          metaFiltro: metaFiltroEfectivo,
+          criteria,
+          filtroInicial: criteriaInicial.filtro as ClausulaFiltro[],
+          entidades,
+          totalEntidades,
+          seleccionada,
+          modos: modosDisponiblesCalculados,
+          onCriteriaChanged,
+          onSeleccion,
+          cambiarModo: (m) => cambiarModo(m as Modo),
+        },
+        accion,
+        parametros
+      ),
   }));
 
   const renderTabla = (datos: T[]) => {
@@ -337,18 +363,21 @@ export const Listado = <T extends Entidad>({
     <div className="Listado">
       <div className="listado-cabecera">
         <div className="listado-cabecera-izquierda">
-          <MaestroFiltrosActivoControlado
-            metaFiltro={metaFiltroEfectivo}
-            filtro={criteria.filtro as ClausulaFiltro[]}
-            filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
-            onFiltroChanged={(filtro) => {
-              onCriteriaChanged({
-                ...criteria,
-                filtro,
-                paginacion: { ...criteria.paginacion, pagina: 1 },
-              });
-            }}
-          />
+          {mostrarFiltros && (
+            <MaestroFiltrosActivoControlado
+              metaFiltro={metaFiltroEfectivo}
+              filtro={criteria.filtro as ClausulaFiltro[]}
+              filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
+              onFiltroChanged={(filtro) => {
+                onCriteriaChanged({
+                  ...criteria,
+                  filtro,
+                  paginacion: { ...criteria.paginacion, pagina: 1 },
+                });
+              }}
+            />
+          )}
+
           {urlDescarga && formatosDescarga && formatosDescarga.length > 0 && (
             <div className="listado-descarga">
               {formatosDescarga.length > 1 && (
