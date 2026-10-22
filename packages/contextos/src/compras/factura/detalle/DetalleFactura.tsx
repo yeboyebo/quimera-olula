@@ -12,7 +12,7 @@ import { useCallback, useEffect } from "react";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { CambiarRectificativa } from "../cambiar_rectificativa/CambiarRectificativa.tsx";
 import { Factura } from "../diseño.ts";
-import { facturaEditable, facturaReabrible, facturaRegistrable } from "../dominio.ts";
+import { facturaEditable, facturaRegistrable } from "../dominio.ts";
 import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
 import { RegistrarFactura } from "../registrar/RegistrarFactura.tsx";
 import {
@@ -74,11 +74,6 @@ export const DetalleFactura = ({
             texto: "Registrar factura",
             onClick: () => emitir("registro_solicitado"),
             deshabilitado: !facturaRegistrable(factura),
-        },
-        {
-            texto: "Reabrir factura",
-            onClick: () => emitir("reapertura_solicitada"),
-            deshabilitado: !facturaReabrible(factura),
         },
         {
             texto: "Rectificativa",

@@ -37,7 +37,6 @@ const camposEditablesCerrada = [
     "deAbono",
     "servicios",
     "noGenerarAsiento",
-    "editable",
 ];
 
 export const metaFactura: MetaModelo<Factura> = {
@@ -164,11 +163,6 @@ export const guardarFactura = async (
 export const registrarFacturaProceso: ProcesarDetalle = async (contexto) => {
     await patchRegistrarFactura(contexto.factura.id);
     return pipeFactura(contexto, [refrescarFactura, "ABIERTO"]);
-};
-
-export const reabrirFacturaProceso: ProcesarDetalle = async (contexto) => {
-    await patchFactura(contexto.factura.id, { editable: true });
-    return pipeFactura(contexto, [refrescarFactura]);
 };
 
 export const cambiarRectificativa: ProcesarDetalle = async (contexto, payload) => {

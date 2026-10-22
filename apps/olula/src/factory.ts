@@ -1,6 +1,7 @@
 import { FactoryAlmacenOlula } from '#/almacen/factory.ts';
 import { FactoryAuthOlula } from '#/auth/factory.ts';
 import { FactoryComprasOlula } from '#/compras/factory.ts';
+import { FactoryContabilidadOlula } from '#/contabilidad/factory.ts';
 import { FactoryComunOlula } from '#/comun/factory.ts';
 import { FactoryCrmOlula } from '#/crm/factory.ts';
 import { FactoryEmpresaOlula } from '#/empresa/factory.ts';
@@ -28,6 +29,7 @@ export class FactoryOlula {
     Empresa = FactoryEmpresaOlula;
     Ventas = FactoryVentasOlula;
     Compras = FactoryComprasOlula;
+    Contabilidad = FactoryContabilidadOlula;
     TPV = FactoryTpvOlula;
     Predicciones = FactoryPrediccionesOlula;
     Auth = FactoryAuthOlula;
