@@ -1,5 +1,5 @@
 import { ClausulaFiltro, Criteria } from "@olula/lib/diseño.ts";
-import { MetaModelo } from "@olula/lib/dominio.ts";
+import { formatearFechaDate, MetaModelo } from "@olula/lib/dominio.ts";
 import {
     Asiento,
     ItemAsiento,
@@ -79,7 +79,7 @@ export const asientoCuadrado = (
 ): boolean => Math.abs(descuadrePartidas(partidas)) < 0.005;
 
 export const etiquetaAsiento = (a: ItemAsiento | Asiento): string =>
-    `${a.ejercicioId} · nº ${a.numero} · ${a.fecha.toLocaleDateString("es-ES")}`;
+    `${a.ejercicioId} · nº ${a.numero} · ${formatearFechaDate(a.fecha)}`;
 
 export const ejercicioActual = (): string => String(new Date().getFullYear());
 

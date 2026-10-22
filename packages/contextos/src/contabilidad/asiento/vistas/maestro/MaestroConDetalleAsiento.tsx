@@ -54,14 +54,12 @@ export const MaestroConDetalleAsiento = () => {
         <div className="Asiento">
             <MaestroDetalle<ItemAsiento>
                 seleccionada={ctx.asientos.activo}
-                layout="TABLA"
                 Maestro={
                     <>
                         <h2>Diario de asientos</h2>
                         <Listado<ItemAsiento>
                             metaTabla={metaTablaAsiento}
                             criteria={ctx.asientos.criteria}
-                            modo="tabla"
                             entidades={ctx.asientos.lista}
                             totalEntidades={ctx.asientos.total}
                             seleccionada={ctx.asientos.activo}

@@ -1,14 +1,16 @@
-import { Asiento } from "#/contabilidad/asiento/diseño.ts";
-import { getAsiento } from "#/contabilidad/asiento/infraestructura.ts";
-import { PartidasAsientoLista } from "#/contabilidad/asiento/vistas/detalle/PartidasAsientoLista.tsx";
-import { TabGeneralAsiento } from "#/contabilidad/asiento/vistas/detalle/TabGeneralAsiento.tsx";
+import { Asiento } from "../../diseño.ts";
+import { getAsiento } from "../../infraestructura.ts";
+import { CabeceraAsiento } from "./CabeceraAsiento.tsx";
+import { PartidasAsientoLista } from "./PartidasAsientoLista.tsx";
 import { useEffect, useState } from "react";
 
-interface TabContabilidadProps {
+/** El asiento de un documento (factura de compra o de venta), para su pestaña
+ * de Contabilidad. Recibe solo el id: la factura no trae el asiento. */
+interface AsientoDeDocumentoProps {
     asientoId: string | null;
 }
 
-export const TabContabilidad = ({ asientoId }: TabContabilidadProps) => {
+export const AsientoDeDocumento = ({ asientoId }: AsientoDeDocumentoProps) => {
     const [asiento, setAsiento] = useState<Asiento | null>(null);
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState("");
@@ -37,8 +39,8 @@ export const TabContabilidad = ({ asientoId }: TabContabilidadProps) => {
     if (!asiento) return null;
 
     return (
-        <div className="TabContabilidad">
-            <TabGeneralAsiento asiento={asiento} />
+        <div className="AsientoDeDocumento">
+            <CabeceraAsiento asiento={asiento} />
             <PartidasAsientoLista partidas={asiento.partidas} />
         </div>
     );

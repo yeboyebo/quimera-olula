@@ -1,16 +1,14 @@
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
-import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useEffect } from "react";
 import { Asiento } from "../../diseño.ts";
-import { etiquetaAsiento } from "../../dominio.ts";
 import { BorrarAsientoManual } from "../borrar/BorrarAsientoManual.tsx";
 import { CambiarAsientoManual } from "../cambiar/CambiarAsientoManual.tsx";
 import { contextoDetalleAsientoInicial, getMaquina } from "./maquina.ts";
+import { CabeceraAsiento } from "./CabeceraAsiento.tsx";
 import { PartidasAsientoLista } from "./PartidasAsientoLista.tsx";
-import { TabGeneralAsiento } from "./TabGeneralAsiento.tsx";
 
 export const DetalleAsiento = ({
     id,
@@ -28,7 +26,7 @@ export const DetalleAsiento = ({
 
     if (!ctx.asiento.id) return null;
 
-    const titulo = (a: Asiento) => etiquetaAsiento(a);
+    const titulo = (a: Asiento) => a.concepto;
     const manual = ctx.asiento.manual;
 
     return (
@@ -59,15 +57,7 @@ export const DetalleAsiento = ({
                         />
                     </div>
                 )}
-                <Tabs
-                    children={[
-                        <Tab
-                            key="general"
-                            label="General"
-                            children={<TabGeneralAsiento asiento={ctx.asiento} />}
-                        />,
-                    ]}
-                />
+                <CabeceraAsiento asiento={ctx.asiento} />
                 <PartidasAsientoLista partidas={ctx.asiento.partidas} />
             </div>
             {ctx.estado === "CAMBIANDO" && (

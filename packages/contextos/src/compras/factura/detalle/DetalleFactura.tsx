@@ -1,4 +1,5 @@
 import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
+import { AsientoDeDocumento } from "#/contabilidad/asiento/vistas/detalle/AsientoDeDocumento.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -24,7 +25,6 @@ import {
 import "./DetalleFactura.css";
 import { LineasFactura } from "./lineas/LineasFactura.tsx";
 import { getMaquina } from "./maquina.ts";
-import { TabContabilidad } from "./TabContabilidad.tsx";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
@@ -129,7 +129,7 @@ export const DetalleFactura = ({
                             <Tab
                                 key="tab-contabilidad"
                                 label="Contabilidad"
-                                children={<TabContabilidad asientoId={factura.asientoId} />}
+                                children={<AsientoDeDocumento asientoId={factura.asientoId} />}
                             />
                         ),
                     ]}

@@ -1,12 +1,12 @@
-import { Asiento } from "#/contabilidad/asiento/diseño.ts";
+import { Asiento } from "../diseño.ts";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { getAsiento } = vi.hoisted(() => ({ getAsiento: vi.fn() }));
 
-vi.mock("#/contabilidad/asiento/infraestructura.ts", () => ({ getAsiento }));
+vi.mock("../infraestructura.ts", () => ({ getAsiento }));
 
-const { TabContabilidad } = await import("../detalle/TabContabilidad.tsx");
+const { AsientoDeDocumento } = await import("../vistas/detalle/AsientoDeDocumento.tsx");
 
 const asientoDeFactura = (): Asiento => ({
     id: "128",
@@ -47,13 +47,13 @@ const asientoDeFactura = (): Asiento => ({
     ],
 });
 
-describe("TabContabilidad de la factura de compra", () => {
+describe("AsientoDeDocumento — el asiento de una factura", () => {
     beforeEach(() => {
         getAsiento.mockReset();
     });
 
     test("avisa de que no está contabilizada y no llama al API", () => {
-        render(<TabContabilidad asientoId={null} />);
+        render(<AsientoDeDocumento asientoId={null} />);
 
         expect(screen.getByText(/todavía no está contabilizada/)).toBeInTheDocument();
         expect(getAsiento).not.toHaveBeenCalled();
@@ -62,7 +62,7 @@ describe("TabContabilidad de la factura de compra", () => {
     test("carga el asiento de la factura y pinta su cabecera", async () => {
         getAsiento.mockResolvedValue(asientoDeFactura());
 
-        render(<TabContabilidad asientoId="128" />);
+        render(<AsientoDeDocumento asientoId="128" />);
 
         expect(getAsiento).toHaveBeenCalledWith("128");
         await screen.findByText("Factura de compra 2026/17");
@@ -82,20 +82,28 @@ describe("TabContabilidad de la factura de compra", () => {
     test("pinta las partidas del asiento con sus totales", async () => {
         getAsiento.mockResolvedValue(asientoDeFactura());
 
-        render(<TabContabilidad asientoId="128" />);
+        render(<AsientoDeDocumento asientoId="128" />);
 
         expect(await screen.findByText("6000000")).toBeInTheDocument();
         expect(screen.getByText("4720000")).toBeInTheDocument();
         expect(screen.getByText("4000000")).toBeInTheDocument();
+
+        // Los totales son un bloque de pares etiqueta/valor, no un único texto.
+        const total = (etiqueta: string) =>
+            [...document.querySelectorAll(".totales-asiento-item")]
+                .find((item) => item.querySelector("label")?.textContent === `${etiqueta}:`)
+                ?.querySelector("span")?.textContent;
+
         // Asiento cuadrado: 100 + 21 al debe, 121 al haber, sin descuadre.
-        expect(screen.getByText(/Debe: 121\.00 · Haber: 121\.00/)).toBeInTheDocument();
-        expect(screen.queryByText(/Descuadre/)).not.toBeInTheDocument();
+        expect(total("Debe")).toMatch(/121,00/);
+        expect(total("Haber")).toMatch(/121,00/);
+        expect(document.querySelector(".totales-asiento-item--descuadre")).toBeNull();
     });
 
     test("avisa si el asiento no se puede cargar", async () => {
         getAsiento.mockRejectedValue(new Error("404"));
 
-        render(<TabContabilidad asientoId="128" />);
+        render(<AsientoDeDocumento asientoId="128" />);
 
         expect(await screen.findByText(/No se ha podido cargar el asiento/)).toBeInTheDocument();
     });
