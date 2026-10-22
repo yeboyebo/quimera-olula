@@ -12,8 +12,9 @@ import { useCallback, useEffect } from "react";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { CambiarRectificativa } from "../cambiar_rectificativa/CambiarRectificativa.tsx";
 import { Factura } from "../diseño.ts";
-import { facturaEditable } from "../dominio.ts";
+import { facturaEditable, facturaReabrible, facturaRegistrable } from "../dominio.ts";
 import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
+import { RegistrarFactura } from "../registrar/RegistrarFactura.tsx";
 import {
     contextoDetalleFacturaInicial,
     guardarFactura,
@@ -69,9 +70,16 @@ export const DetalleFactura = ({
     const accionesFactura = [
         { texto: "Imprimir", onClick: imprimir },
         { texto: "Documentos relacionados", onClick: () => emitir("traza_solicitada") },
-        editable
-            ? { texto: "Cerrar factura", onClick: () => emitir("cierre_solicitado") }
-            : { texto: "Reabrir factura", onClick: () => emitir("reapertura_solicitada") },
+        {
+            texto: "Registrar factura",
+            onClick: () => emitir("registro_solicitado"),
+            deshabilitado: !facturaRegistrable(factura),
+        },
+        {
+            texto: "Reabrir factura",
+            onClick: () => emitir("reapertura_solicitada"),
+            deshabilitado: !facturaReabrible(factura),
+        },
         {
             texto: "Rectificativa",
             onClick: () => emitir("cambio_rectificativa_solicitado"),
@@ -149,6 +157,10 @@ export const DetalleFactura = ({
 
             {estado === "BORRANDO" && (
                 <BorrarFactura factura={factura} publicar={emitir} />
+            )}
+
+            {estado === "REGISTRANDO" && (
+                <RegistrarFactura factura={factura} publicar={emitir} />
             )}
 
             {estado === "CAMBIANDO_RECTIFICATIVA" && (
