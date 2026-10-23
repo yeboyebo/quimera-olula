@@ -96,7 +96,7 @@ export const generarSalidaVentaDesdePedidos: GenerarSalidaVentaDesdePedidos = as
         pedido_ids: pedidoIds,
         zonas,
     };
-    const respuesta = await RestAPI.post<{ id: string }>(
+    const respuesta = await RestAPI.post(
         `/almacen/orden/salida_desde_pedidos_venta`,
         payload,
         "Error al generar salida de venta desde pedidos"
@@ -105,10 +105,10 @@ export const generarSalidaVentaDesdePedidos: GenerarSalidaVentaDesdePedidos = as
 };
 
 export const comprobarReservas: ComprobarReservas = async (zonas, limite) => {
-    const respuesta = await RestAPI.post<{ pedido_id: number; estado: string }[]>(
+    const respuesta = await RestAPI.query<{ zonas: number[]; limite: number }, { pedido_id: number; estado: DisponibilidadPedido }[]>(
         `${baseUrl}/comprobar_reservas`,
         { zonas, limite },
         'Error al comprobar reservas de pedidos'
     );
-    return respuesta as { pedido_id: number; estado: DisponibilidadPedido }[];
+    return respuesta;
 };

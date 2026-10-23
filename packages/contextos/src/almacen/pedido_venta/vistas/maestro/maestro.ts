@@ -1,7 +1,7 @@
 import { Criteria, ProcesarContexto } from "@olula/lib/diseño.ts";
 import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { DisponibilidadPedido, ItemPedidoVenta } from "../../diseño.ts";
-import { comprobarReservas, getPedidosVenta } from "../../infraestructura.ts";
+import { getPedidosVenta } from "../../infraestructura.ts";
 import { ContextoMaestroPedidoVenta, EstadoMaestroPedidoVenta } from "./diseño.ts";
 
 type ProcesarMaestro = ProcesarContexto<EstadoMaestroPedidoVenta, ContextoMaestroPedidoVenta>;
