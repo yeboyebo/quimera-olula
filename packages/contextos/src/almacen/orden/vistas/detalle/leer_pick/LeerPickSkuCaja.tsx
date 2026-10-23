@@ -41,7 +41,6 @@ export const LeerPickSkuCaja = ({
 
     const limpiarInput = useCallback(() => {
         setValor("");
-        setError(null);
         (inputRef.current as HTMLInputElement | null)?.focus();
     }, []);
 
@@ -64,6 +63,12 @@ export const LeerPickSkuCaja = ({
                     if (!linea) {
                         setError(
                             `No hay línea pendiente para el artículo de la caja (${caja.sku}).`,
+                        );
+                        return;
+                    }
+                    if (linea.porLotes) {
+                        setError(
+                            "Esta línea requiere lote. Usa la lectura por lote.",
                         );
                         return;
                     }
@@ -100,34 +105,45 @@ export const LeerPickSkuCaja = ({
                         return;
                     }
 
+                    if (linea.porLotes) {
+                        setError(
+                            "Este artículo requiere código de lote.",
+                        );
+                        return;
+                    }
+
                     // Verificar que existe stock suelto (sin caja) en la ubicación origen
+                    let cantidadSuelta = 0;
                     if (linea.idUbicacionOrigen) {
                         const desglose = await getStockDesgloseCaja(
                             linea.idUbicacionOrigen,
                             articuloId,
                         );
-                        const haySuelto =
-                            desglose?.some(
-                                (item) => item.cajaId === null && item.cantidad > 0,
-                            ) ?? false;
+                        const itemSuelto = desglose?.find(
+                            (item) => item.cajaId === null && item.cantidad > 0,
+                        );
 
-                        if (!haySuelto) {
+                        if (!itemSuelto) {
                             setError(
                                 "Este artículo solo tiene stock en cajas. Lee la etiqueta de la caja.",
                             );
                             return;
                         }
+                        cantidadSuelta = itemSuelto.cantidad;
                     }
 
                     const cantidadPendiente =
                         linea.cantidadPrevista - (linea.cantidadPick ?? 0);
+                    const cantidad = cantidadSuelta > 0
+                        ? Math.min(cantidadPendiente, cantidadSuelta)
+                        : cantidadPendiente;
                     await registrarLecturasOrden(orden.id, [
                         {
                             sku: linea.sku,
                             articulo: linea.articulo,
                             idLote: null,
                             idLinea: linea.id,
-                            cantidad: cantidadPendiente,
+                            cantidad,
                             cajaCompleta: false,
                             idCajaOrigen: null,
                             idCajaDestino: null,

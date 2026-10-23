@@ -23,7 +23,16 @@ export const getMaquina: () => Maquina<EstadoMaestroPedidoVenta, ContextoMaestro
 
         GENERANDO_SALIDA: {
             salida_cancelada: "INICIAL",
-            salida_generada: async (ctx) => ({ ...ctx, estado: "INICIAL" as EstadoMaestroPedidoVenta, seleccionadas: [] }),
+            salida_generada: async (ctx, payload) => ({
+                ...ctx,
+                estado: "SALIDA_GENERADA" as EstadoMaestroPedidoVenta,
+                idOrdenCreada: payload as string,
+                seleccionadas: [],
+            }),
+        },
+
+        SALIDA_GENERADA: {
+            cerrar_confirmacion: "INICIAL",
         },
 
         COMPROBANDO_RESERVAS: {

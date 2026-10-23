@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-<<<<<<< HEAD:packages/contextos/lib/src/voz/useFlujoVoz.ts
-import { parsearNumeroVoz } from "./parsearNumeroVoz.js";
-import { useSintesisVoz } from "./useSintesisVoz.js";
-=======
 import { parsearNumeroVoz } from "./parsearNumeroVoz.ts";
 import { useSintesisVoz } from "./useSintesisVoz.ts";
 import { reservarVoz } from "./voz_ocupada.ts";
->>>>>>> main:packages/lib/src/voz/useFlujoVoz.ts
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getWindowSpeechRecognition = (): (new () => any) | null => {

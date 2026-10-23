@@ -521,3 +521,20 @@ export const getStockDesgloseCaja = async (
     );
     return desglose.datos.map(desgloseDesdeApi);
 };
+
+/**
+ * Obtiene los lotes distintos de un artículo que hay dentro de una caja concreta.
+ * Útil cuando la caja no tiene lote_id propio (caja multiproducto o multilote).
+ * Retorna array vacío si el artículo no está en esa caja.
+ */
+export const getLotesDeArticuloEnCaja = async (
+    ubicacionId: string,
+    articuloId: string,
+    cajaId: string,
+): Promise<string[]> => {
+    const desglose = await getStockDesgloseCaja(ubicacionId, articuloId);
+    if (!desglose) return [];
+    return desglose
+        .filter((item) => item.cajaId === cajaId && item.loteId !== null && item.cantidad > 0)
+        .map((item) => item.loteId as string);
+};

@@ -20,8 +20,8 @@ export const GenerarSalidaPedidoVenta = ({
     const generar_ = useCallback(async () => {
         const ids = pedidoIds.map((id) => parseInt(id, 10));
         const zonaId = parseInt(modelo.zonaId as string, 10);
-        await generarSalidaVentaDesdePedidos(ids, [zonaId]);
-        publicar("salida_generada");
+        const idOrden = await generarSalidaVentaDesdePedidos(ids, [zonaId]);
+        publicar("salida_generada", idOrden);
     }, [modelo.zonaId, pedidoIds, publicar]);
 
     const cancelar_ = useCallback(() => publicar("salida_cancelada"), [publicar]);

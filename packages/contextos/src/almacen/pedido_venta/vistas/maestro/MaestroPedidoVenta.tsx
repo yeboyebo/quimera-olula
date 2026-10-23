@@ -3,7 +3,9 @@ import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.tsx";
+import { MetaFiltro } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -12,6 +14,7 @@ import { useEffect, useMemo } from "react";
 import { DetallePedidoVenta } from "../../detalle/DetallePedidoVenta.tsx";
 import { DisponibilidadPedido, ItemPedidoVenta } from "../../diseño.ts";
 import { GenerarSalidaPedidoVenta } from "../generar_salida/GenerarSalidaPedidoVenta.tsx";
+import { SalidaGenerada } from "../salida_generada/SalidaGenerada.tsx";
 import { ComprobarReservasPedidoVenta } from "../comprobar_reservas/ComprobarReservasPedidoVenta.tsx";
 import { ContextoMaestroPedidoVenta } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
@@ -39,8 +42,31 @@ const metaTablaPedidoVenta: MetaTabla<ItemPedidoVenta> = [
     },
 ];
 
+const filtroPendientes: ClausulaFiltro[] = [
+    ["servido", "in", ["No", "Parcial"] as unknown as string],
+];
+
+const metaFiltroPedidoVenta: MetaFiltro = {
+    solo_pendientes: {
+        id: "solo_pendientes",
+        label: "Solo pendientes",
+        tipo: "checkbox",
+        filtro: (v) => {
+            const activo = v === true || v === "true" || v === "1";
+            return activo
+                ? ["servido", "in", ["No", "Parcial"] as unknown as string]
+                : null;
+        },
+        fromFiltro: (filtro) =>
+            filtro.some(([campo, op]) => campo === "servido" && op === "in"),
+    },
+};
+
 export const MaestroPedidoVenta = () => {
-    const criteriaBase = useMemo(() => criteriaDefecto, []);
+    const criteriaBase = useMemo(
+        () => ({ ...criteriaDefecto, filtro: filtroPendientes }),
+        []
+    );
 
     const { layout, cambiarLayout } = useLayout("TABLA");
 
@@ -51,6 +77,7 @@ export const MaestroPedidoVenta = () => {
         estado: "INICIAL",
         pedidos: listaActivaEntidadesInicial<ItemPedidoVenta>(id, criteriaInicial),
         seleccionadas: [],
+        idOrdenCreada: "",
     } as ContextoMaestroPedidoVenta);
 
     useUrlParams(ctx.pedidos.activo, ctx.pedidos.criteria);
@@ -81,6 +108,7 @@ export const MaestroPedidoVenta = () => {
                         </div>
                         <Listado<ItemPedidoVenta>
                             metaTabla={metaTablaPedidoVenta}
+                            metaFiltro={metaFiltroPedidoVenta}
                             criteria={ctx.pedidos.criteria}
                             modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
                             tarjeta={TarjetaPedidoVenta}
@@ -113,6 +141,13 @@ export const MaestroPedidoVenta = () => {
                 <GenerarSalidaPedidoVenta
                     publicar={emitir}
                     pedidoIds={ctx.seleccionadas}
+                />
+            )}
+
+            {estado === "SALIDA_GENERADA" && (
+                <SalidaGenerada
+                    publicar={emitir}
+                    idOrden={ctx.idOrdenCreada}
                 />
             )}
 

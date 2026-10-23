@@ -32,7 +32,7 @@ export type GetPedidoVenta = (id: string) => Promise<PedidoVenta>;
 
 export type GenerarSalidaDesdePedidos = (pedidoIds: number[], ubicacionDestinoId: number) => Promise<void>;
 
-export type GenerarSalidaVentaDesdePedidos = (pedidoIds: number[], zonas: number[]) => Promise<void>;
+export type GenerarSalidaVentaDesdePedidos = (pedidoIds: number[], zonas: number[]) => Promise<string>;
 
 export type ComprobarReservas = (
     zonas: number[],

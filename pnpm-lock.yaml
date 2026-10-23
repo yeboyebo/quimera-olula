@@ -125,7 +125,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -225,7 +225,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -307,7 +307,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula

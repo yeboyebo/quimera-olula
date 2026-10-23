@@ -91,6 +91,15 @@ const metaTablaLineasOrden = (orden: OrdenAlmacen, publicar: EmitirEvento): Meta
                             </span>
                         );
                     }
+                    // Para órdenes con pasosPick (SALIDA pick-only), mostrar cantidadPick
+                    const tienePick = !!(linea.pasosPick ?? orden.pasosPick);
+                    if (tienePick) {
+                        const pick = linea.cantidadPick ?? 0;
+                        const variante = pick === 0 ? "error" : pick < prevista ? "advertencia" : "exito";
+                        return (
+                            <QEtiqueta variante={variante}>{pick} / {prevista}</QEtiqueta>
+                        );
+                    }
                     const real = linea.cantidadReal ?? 0;
                     const variante = real === 0 ? "error" : real < prevista ? "advertencia" : "exito";
                     return (

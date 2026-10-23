@@ -96,11 +96,12 @@ export const generarSalidaVentaDesdePedidos: GenerarSalidaVentaDesdePedidos = as
         pedido_ids: pedidoIds,
         zonas,
     };
-    await RestAPI.post(
+    const respuesta = await RestAPI.post<{ id: string }>(
         `/almacen/orden/salida_desde_pedidos_venta`,
         payload,
         "Error al generar salida de venta desde pedidos"
     );
+    return respuesta.id;
 };
 
 export const comprobarReservas: ComprobarReservas = async (zonas, limite) => {

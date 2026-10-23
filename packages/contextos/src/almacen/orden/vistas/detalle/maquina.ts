@@ -11,6 +11,7 @@ import {
     onLineaCreada,
     onOrdenTerminada,
     refrescarOrden,
+    refrescarOrdenConCierre,
 } from "./detalle.ts";
 
 export type EstadoOrdenAlmacen =
@@ -131,7 +132,7 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
         },
 
         LEYENDO_PICK: {
-            lectura_registrada: [refrescarOrden],
+            lectura_registrada: [refrescarOrdenConCierre],
             lectura_pick_cancelada: [refrescarOrden, "ABIERTA"],
         },
 
