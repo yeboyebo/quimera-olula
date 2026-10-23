@@ -113,7 +113,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/arboricultura:
     dependencies:
@@ -125,7 +125,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -147,7 +147,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -169,7 +169,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -191,7 +191,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -213,7 +213,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/dts_oabe:
     dependencies:
@@ -225,7 +225,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -240,7 +240,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/elganso_stores:
     dependencies:
@@ -255,7 +255,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -292,7 +292,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -307,7 +307,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -329,7 +329,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -347,7 +347,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/naranjas_jimenez:
     dependencies:
@@ -359,7 +359,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/olula:
     dependencies:
@@ -371,7 +371,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/olula_area_empleado:
     dependencies:
@@ -383,7 +383,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
 
   apps/sanhigia:
     dependencies:
@@ -395,7 +395,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -420,7 +420,7 @@ importers:
         version: link:../../packages/contextos
       '@olula/lib':
         specifier: workspace:*
-        version: link:../../packages/lib
+        version: link:../../packages/contextos/lib
       '@olula/olula':
         specifier: workspace:*
         version: link:../olula
@@ -2376,7 +2376,7 @@ importers:
         version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@olula/lib':
         specifier: workspace:*
-        version: link:../lib
+        version: link:../contextos/lib
       '@tabler/icons-react':
         specifier: ^3.44.0
         version: 3.48.0(react@19.2.8)
@@ -2427,7 +2427,7 @@ importers:
         version: link:../componentes
       '@olula/lib':
         specifier: workspace:*
-        version: link:../lib
+        version: link:lib
       '@simplewebauthn/browser':
         specifier: ^13.3.0
         version: 13.3.0
@@ -2444,7 +2444,7 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
 
-  packages/lib: {}
+  packages/contextos/lib: {}
 
 packages:
 
