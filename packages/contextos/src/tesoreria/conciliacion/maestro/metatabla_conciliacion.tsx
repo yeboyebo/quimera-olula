@@ -7,7 +7,7 @@ import { MovimientoBancario } from "../diseño.js";
 import {
     cuentaMovimientoBancario,
     esIngresoMovimientoBancario,
-    etiquetaEstadoMovimientoBancario,
+    etiquetaEstadoConCasaciones,
     urlReciboMovimientoBancario,
     varianteEstadoMovimientoBancario,
 } from "../dominio.js";
@@ -38,7 +38,7 @@ export const metaTablaMovimientoBancario: MetaTabla<MovimientoBancario> = [
         render: (movimiento) => (
             <div className="celda-estado-movimiento-bancario">
                 <QEtiqueta variante={varianteEstadoMovimientoBancario(movimiento.estado)}>
-                    {etiquetaEstadoMovimientoBancario(movimiento.estado)}
+                    {etiquetaEstadoConCasaciones(movimiento)}
                 </QEtiqueta>
                 {movimiento.requiereRevision && (
                     <QEtiqueta variante="advertencia">Revisar</QEtiqueta>

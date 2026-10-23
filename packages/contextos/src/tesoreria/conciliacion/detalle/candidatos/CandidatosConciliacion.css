@@ -28,6 +28,7 @@
         gap: var(--espaciado-xs);
     }
 
+    h4,
     .sin-candidatos {
         margin: 0;
     }
@@ -35,5 +36,6 @@
     .botones {
         display: flex;
         justify-content: flex-end;
+        gap: var(--espaciado-xs);
     }
 }

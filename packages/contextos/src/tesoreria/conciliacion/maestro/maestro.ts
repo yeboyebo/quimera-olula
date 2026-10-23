@@ -1,10 +1,11 @@
-import { Criteria, ProcesarContexto } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Criteria, Filtro, ProcesarContexto } from "@olula/lib/diseño.ts";
 import { accionesListaActivaEntidades, ProcesarListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import {
     MovimientoBancario,
     ResumenConciliacionAutomatica,
     ResumenSincronizacionMovimientoBancario,
 } from "../diseño.js";
+import { filtroCuentaBanco } from "../dominio.js";
 import { getMovimientosBancarios } from "../infraestructura.js";
 import { ContextoMaestroConciliacion, EstadoMaestroConciliacion } from "./diseño.js";
 
@@ -15,21 +16,41 @@ const conMovimientos = (fn: ProcesarListaActivaEntidades<MovimientoBancario>) =>
 
 export const Movimientos = accionesListaActivaEntidades(conMovimientos);
 
+/**
+ * Añade una cláusula al filtro. El servidor solo admite cláusulas sueltas
+ * dentro de una lista o de un `and`, así que no se anida el filtro del usuario.
+ */
+const conClausula = (filtro: Filtro, clausula: ClausulaFiltro): Filtro => {
+    if (Array.isArray(filtro)) {
+        const clausulas = filtro.length === 0 || Array.isArray(filtro[0])
+            ? filtro as ClausulaFiltro[]
+            : [filtro as ClausulaFiltro];
+        return [...clausulas, clausula];
+    }
+    return "and" in filtro ? { and: [...filtro.and, clausula] } : { and: [filtro, clausula] };
+};
+
+/** El criteria con el que se consulta: el del usuario más, si la hay, la cuenta fija. */
+const criteriaConsulta = (contexto: ContextoMaestroConciliacion, criteria: Criteria): Criteria =>
+    contexto.cuentaBancoId
+        ? { ...criteria, filtro: conClausula(criteria.filtro, filtroCuentaBanco(contexto.cuentaBancoId)) }
+        : criteria;
+
 export const recargarMovimientos: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getMovimientosBancarios(criteria);
+    const resultado = await getMovimientosBancarios(criteriaConsulta(contexto, criteria));
     return Movimientos.recargar(contexto, resultado);
 };
 
 export const ampliarMovimientos: ProcesarMaestro = async (contexto, payload) => {
     const criteria = payload as Criteria;
-    const resultado = await getMovimientosBancarios(criteria);
+    const resultado = await getMovimientosBancarios(criteriaConsulta(contexto, criteria));
     return Movimientos.ampliar(contexto, resultado);
 };
 
 /** Recarga la lista con el criteria actual (patrón `recargarRecibosActual` de recibo_venta). */
 export const recargarMovimientosActual: ProcesarMaestro = async (contexto) => {
-    const resultado = await getMovimientosBancarios(contexto.movimientos.criteria);
+    const resultado = await getMovimientosBancarios(criteriaConsulta(contexto, contexto.movimientos.criteria));
     return Movimientos.recargar(contexto, resultado);
 };
 

@@ -13,5 +13,6 @@ export class RouterFactoryTesoreriaOlula {
         "tesoreria/recibo_compra": MaestroConDetalleReciboCompra,
         "tesoreria/conexion_bancaria": MaestroConDetalleConexionBancaria,
         "tesoreria/conciliacion": MaestroConDetalleConciliacion,
+        "tesoreria/cuentas/:cuenta_id/movimientos": MaestroConDetalleConciliacion,
     };
 }

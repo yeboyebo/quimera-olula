@@ -3,19 +3,22 @@ import { fechaDesdeApi } from "../comun/infraestructura.js";
 import ApiUrls from "../comun/urls.js";
 import {
     CandidatoConciliacion,
+    Casacion,
     EstadoMovimientoBancario,
     GetCandidatosConciliacion,
+    GetCasacionesMovimientoBancario,
     GetMovimientoBancario,
     GetMovimientosBancarios,
     MovimientoBancario,
     OrigenConciliacionMovimiento,
-    PatchConciliarMovimientoBancario,
+    PatchCasarMovimientoBancario,
     PatchDesconciliarMovimientoBancario,
     PatchIgnorarMovimientoBancario,
     PatchReactivarMovimientoBancario,
     PostSincronizarMovimientoBancario,
     PostConciliarAutomaticamente,
     ResumenSincronizacionMovimientoBancario,
+    TipoCasacion,
     TipoReciboMovimiento,
 } from "./diseño.js";
 
@@ -37,11 +40,13 @@ export interface MovimientoBancarioApi {
     referencia: string | null;
     pendiente: boolean;
     estado: EstadoMovimientoBancario;
-    tipo_recibo: TipoReciboMovimiento | null;
+    num_casaciones: number;
+    probabilidad_maxima: number | null;
+    tipo_casacion: TipoCasacion | null;
     recibo_id: string | null;
     codigo_recibo: string | null;
     nombre_tercero: string | null;
-    puntuacion: number | null;
+    probabilidad: number | null;
     origen_conciliacion: OrigenConciliacionMovimiento | null;
     justificacion: string | null;
     conciliado_por: string | null;
@@ -52,6 +57,7 @@ export interface MovimientoBancarioApi {
 
 export interface CandidatoConciliacionApi {
     tipo_recibo: TipoReciboMovimiento;
+    tipo_casacion: TipoCasacion;
     recibo_id: string;
     codigo: string;
     factura_codigo: string | null;
@@ -63,8 +69,38 @@ export interface CandidatoConciliacionApi {
     dias_diferencia: number;
 }
 
-interface ConciliarMovimientoBancarioApi {
-    recibo_id: number;
+interface ReciboCasacionApi {
+    id: string;
+    codigo: string;
+    tercero: string | null;
+    importe: number;
+    fecha_vencimiento: string;
+    estado: string;
+}
+
+interface CuotaCasacionApi {
+    contrato: string | null;
+    fecha: string;
+    capital: number;
+    intereses: number;
+    total: number;
+}
+
+export interface CasacionApi {
+    id: string;
+    tipo: TipoCasacion;
+    params: Record<string, unknown>;
+    probabilidad: number;
+    origen: OrigenConciliacionMovimiento;
+    justificacion: string | null;
+    recibo: ReciboCasacionApi | null;
+    cuota?: CuotaCasacionApi | null;
+}
+
+interface CasarMovimientoBancarioApi {
+    casacion_id?: string;
+    tipo_casacion?: TipoCasacion;
+    params?: Record<string, unknown>;
 }
 
 interface IgnorarMovimientoBancarioApi {
@@ -84,9 +120,9 @@ interface ResumenSincronizacionMovimientoBancarioApi {
     modificados: number;
     eliminados: number;
     conciliados: number;
-    sugeridos: number;
+    con_candidatos: number;
     conciliados_ia: number;
-    sugeridos_ia: number;
+    con_candidatos_ia: number;
     errores: ErrorSincronizacionMovimientoBancarioApi[];
     errores_conciliacion: string[];
 }
@@ -94,10 +130,10 @@ interface ResumenSincronizacionMovimientoBancarioApi {
 interface ResumenConciliacionAutomaticaApi {
     analizados: number;
     conciliados: number;
-    sugeridos: number;
+    con_candidatos: number;
     consultas_ia: number;
     conciliados_ia: number;
-    sugeridos_ia: number;
+    con_candidatos_ia: number;
     errores: string[];
 }
 
@@ -125,11 +161,13 @@ export const movimientoBancarioDesdeApi = (api: MovimientoBancarioApi): Movimien
     referencia: api.referencia,
     pendiente: api.pendiente,
     estado: api.estado,
-    tipoRecibo: api.tipo_recibo,
+    numCasaciones: api.num_casaciones ?? 0,
+    probabilidadMaxima: api.probabilidad_maxima,
+    tipoCasacion: api.tipo_casacion,
     reciboId: api.recibo_id,
     codigoRecibo: api.codigo_recibo,
     nombreTercero: api.nombre_tercero,
-    puntuacion: api.puntuacion,
+    probabilidad: api.probabilidad,
     origenConciliacion: api.origen_conciliacion,
     justificacion: api.justificacion,
     conciliadoPor: api.conciliado_por,
@@ -141,6 +179,7 @@ export const movimientoBancarioDesdeApi = (api: MovimientoBancarioApi): Movimien
 export const candidatoConciliacionDesdeApi = (api: CandidatoConciliacionApi): CandidatoConciliacion => ({
     id: `${api.tipo_recibo}_${api.recibo_id}`,
     tipoRecibo: api.tipo_recibo,
+    tipoCasacion: api.tipo_casacion,
     reciboId: api.recibo_id,
     codigo: api.codigo,
     facturaCodigo: api.factura_codigo,
@@ -152,6 +191,34 @@ export const candidatoConciliacionDesdeApi = (api: CandidatoConciliacionApi): Ca
     diasDiferencia: api.dias_diferencia,
 });
 
+export const casacionDesdeApi = (api: CasacionApi): Casacion => ({
+    id: api.id,
+    tipo: api.tipo,
+    params: api.params ?? {},
+    probabilidad: api.probabilidad,
+    origen: api.origen,
+    justificacion: api.justificacion,
+    recibo: api.recibo
+        ? {
+            id: api.recibo.id,
+            codigo: api.recibo.codigo,
+            tercero: api.recibo.tercero,
+            importe: api.recibo.importe,
+            fechaVencimiento: new Date(Date.parse(api.recibo.fecha_vencimiento)),
+            estado: api.recibo.estado,
+        }
+        : null,
+    cuota: api.cuota
+        ? {
+            contrato: api.cuota.contrato,
+            fecha: new Date(Date.parse(api.cuota.fecha)),
+            capital: api.cuota.capital,
+            intereses: api.cuota.intereses,
+            total: api.cuota.total,
+        }
+        : null,
+});
+
 const resumenSincronizacionDesdeApi = (
     api: ResumenSincronizacionMovimientoBancarioApi
 ): ResumenSincronizacionMovimientoBancario => ({
@@ -160,9 +227,9 @@ const resumenSincronizacionDesdeApi = (
     modificados: api.modificados,
     eliminados: api.eliminados,
     conciliados: api.conciliados ?? 0,
-    sugeridos: api.sugeridos ?? 0,
+    conCandidatos: api.con_candidatos ?? 0,
     conciliadosIa: api.conciliados_ia ?? 0,
-    sugeridosIa: api.sugeridos_ia ?? 0,
+    conCandidatosIa: api.con_candidatos_ia ?? 0,
     erroresConciliacion: api.errores_conciliacion ?? [],
     errores: (api.errores ?? []).map((error) => ({
         conexionId: error.conexion_id,
@@ -213,17 +280,18 @@ export const postConciliarAutomaticamente: PostConciliarAutomaticamente = async 
     return {
         analizados: api.analizados,
         conciliados: api.conciliados,
-        sugeridos: api.sugeridos,
+        conCandidatos: api.con_candidatos ?? 0,
         consultasIa: api.consultas_ia ?? 0,
         conciliadosIa: api.conciliados_ia ?? 0,
-        sugeridosIa: api.sugeridos_ia ?? 0,
+        conCandidatosIa: api.con_candidatos_ia ?? 0,
         errores: api.errores ?? [],
     };
 };
 
 /**
- * Recibos que puede liquidar el movimiento (fase 3). `texto` filtra por
- * código de recibo/factura, tercero o NIF; se manda tal cual en la query.
+ * Recibos que el usuario puede elegir a mano: por el importe del movimiento o
+ * por más (parcial). `texto` filtra por código de recibo/factura, tercero o
+ * NIF; se manda tal cual en la query.
  */
 export const getCandidatosConciliacion: GetCandidatosConciliacion = async (id, texto) => {
     const query = texto ? `?texto=${encodeURIComponent(texto)}` : "";
@@ -234,16 +302,31 @@ export const getCandidatosConciliacion: GetCandidatosConciliacion = async (id, t
     );
 };
 
-/** Paga el recibo con la fecha del movimiento y lo deja conciliado (origen "manual"). */
-export const patchConciliarMovimientoBancario: PatchConciliarMovimientoBancario = async (id, reciboId) => {
-    await RestAPI.patch<ConciliarMovimientoBancarioApi>(
-        `${baseUrl}/${id}/conciliar`,
-        { recibo_id: Number(reciboId) },
+/** Casaciones candidatas del movimiento, de más a menos probable. */
+export const getCasacionesMovimientoBancario: GetCasacionesMovimientoBancario = async (id) => {
+    return await RestAPI.getLista<Casacion, CasacionApi>(
+        `${baseUrl}/${id}/casaciones`,
+        casacionDesdeApi,
+        "Error al obtener las casaciones del movimiento"
+    );
+};
+
+/**
+ * Resuelve la casación en el servidor (paga el recibo, lo divide, genera el
+ * asiento...) con la fecha del movimiento y lo deja conciliado.
+ */
+export const patchCasarMovimientoBancario: PatchCasarMovimientoBancario = async (id, casacion) => {
+    const cuerpo: CasarMovimientoBancarioApi = "casacionId" in casacion
+        ? { casacion_id: casacion.casacionId, params: casacion.params ?? {} }
+        : { tipo_casacion: casacion.tipo, params: casacion.params };
+    await RestAPI.patch<CasarMovimientoBancarioApi>(
+        `${baseUrl}/${id}/casar`,
+        cuerpo,
         "Error al conciliar el movimiento"
     );
 };
 
-/** Anula el pago del recibo y deja el movimiento pendiente (puede llegar a borrarlo, ver detalle.ts). */
+/** Deshace la casación y deja el movimiento pendiente (puede llegar a borrarlo, ver detalle.ts). */
 export const patchDesconciliarMovimientoBancario: PatchDesconciliarMovimientoBancario = async (id) => {
     await RestAPI.patch(`${baseUrl}/${id}/desconciliar`, {}, "Error al desconciliar el movimiento");
 };

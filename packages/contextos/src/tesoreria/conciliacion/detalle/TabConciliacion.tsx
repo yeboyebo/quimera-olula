@@ -4,41 +4,42 @@ import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { FormModelo } from "@olula/lib/dominio.js";
-import { CandidatoConciliacion, MovimientoBancario } from "../diseño.js";
+import { CandidatoConciliacion, Casacion, MovimientoBancario } from "../diseño.js";
 import {
     bloqueoConciliarMovimientoBancario,
     etiquetaEstadoMovimientoBancario,
     etiquetaOrigenConciliacion,
+    etiquetaTipoCasacion,
     reciboAsociadoMovimientoBancario,
     urlReciboMovimientoBancario,
     varianteEstadoMovimientoBancario,
 } from "../dominio.js";
 import { CandidatosConciliacion } from "./candidatos/CandidatosConciliacion.js";
+import { CasacionesMovimiento } from "./casaciones/CasacionesMovimiento.js";
 import "./TabConciliacion.css";
 
 interface TabConciliacionProps {
     form: FormModelo;
     movimiento: MovimientoBancario;
+    casaciones: Casacion[];
     candidatos: CandidatoConciliacion[];
     candidatosTexto: string;
     publicar: EmitirEvento;
 }
 
 /**
- * Fase 3 del plan de conciliación bancaria: candidatos + Conciliar / Ignorar
- * cuando el movimiento está pendiente/sugerido; recibo asociado + Desconciliar
- * cuando está conciliado; motivo + Reactivar cuando está ignorado. Los
- * modales (conciliar/, desconciliar/, ignorar/, reactivar/) los monta
- * DetalleConciliacion.tsx según `estado`.
+ * Casaciones propuestas + búsqueda de recibos + asiento manual / Ignorar
+ * cuando el movimiento está pendiente o con candidatos; casación aplicada +
+ * Desconciliar cuando está casado; motivo + Reactivar cuando está ignorado.
+ * Los modales (casar/, casar_asiento/, desconciliar/, ignorar/, reactivar/)
+ * los monta DetalleConciliacion.tsx según `estado`.
  */
-export const TabConciliacion = ({ form, movimiento, candidatos, candidatosTexto, publicar }: TabConciliacionProps) => {
+export const TabConciliacion = ({
+    form, movimiento, casaciones, candidatos, candidatosTexto, publicar,
+}: TabConciliacionProps) => {
 
     const { uiProps } = form;
-
-    // El recibo sugerido sigue siendo candidato mientras no se pague: es el que se confirma.
-    const sugerido = candidatos.find(
-        (c) => c.tipoRecibo === movimiento.tipoRecibo && c.reciboId === movimiento.reciboId
-    );
+    const bloqueo = bloqueoConciliarMovimientoBancario(movimiento);
 
     return (
         <div className="TabConciliacion">
@@ -54,41 +55,21 @@ export const TabConciliacion = ({ form, movimiento, candidatos, candidatosTexto,
                 </QEtiqueta>
             </div>
 
-            {movimiento.estado === "sugerido" && (
-                <div className="recibo-sugerido">
-                    <div id="recibo-asociado">
-                        <div>
-                            <span className="etiqueta-recibo">Recibo sugerido</span>
-                            <span className="valor-recibo">{reciboAsociadoMovimientoBancario(movimiento)}</span>
-                            {movimiento.justificacion && (
-                                <span className="justificacion-recibo">{movimiento.justificacion}</span>
-                            )}
-                        </div>
-                        <div className="acciones-recibo">
-                            {urlReciboMovimientoBancario(movimiento) && (
-                                <QBoton tamaño="pequeño" variante="borde"
-                                    enlace={urlReciboMovimientoBancario(movimiento) ?? undefined}>
-                                    Ver recibo
-                                </QBoton>
-                            )}
-                            {sugerido && (
-                                <QBoton tamaño="pequeño"
-                                    deshabilitado={bloqueoConciliarMovimientoBancario(movimiento).bloqueado}
-                                    onClick={() => publicar("conciliacion_solicitada", sugerido)}>
-                                    Confirmar
-                                </QBoton>
-                            )}
-                        </div>
-                    </div>
-                </div>
+            {movimiento.estado === "candidatos" && casaciones.length > 0 && (
+                <CasacionesMovimiento
+                    movimiento={movimiento}
+                    casaciones={casaciones}
+                    bloqueo={bloqueo}
+                    publicar={publicar}
+                />
             )}
 
-            {(movimiento.estado === "pendiente" || movimiento.estado === "sugerido") && (
+            {(movimiento.estado === "pendiente" || movimiento.estado === "candidatos") && (
                 <CandidatosConciliacion
                     movimiento={movimiento}
                     candidatos={candidatos}
                     texto={candidatosTexto}
-                    bloqueo={bloqueoConciliarMovimientoBancario(movimiento)}
+                    bloqueo={bloqueo}
                     publicar={publicar}
                 />
             )}
@@ -98,7 +79,8 @@ export const TabConciliacion = ({ form, movimiento, candidatos, candidatosTexto,
                     <div id="recibo-asociado">
                         <div>
                             <span className="etiqueta-recibo">
-                                {movimiento.tipoRecibo === "pago" ? "Recibo de pago" : "Recibo de cobro"}
+                                {movimiento.tipoCasacion ? etiquetaTipoCasacion(movimiento.tipoCasacion) : "Casación"}
+                                {movimiento.probabilidad !== null && ` · ${movimiento.probabilidad} %`}
                             </span>
                             <span className="valor-recibo">{reciboAsociadoMovimientoBancario(movimiento)}</span>
                         </div>
