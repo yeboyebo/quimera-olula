@@ -1,16 +1,17 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
-import { CandidatoConciliacion, MovimientoBancario } from "../diseño.js";
-import { movimientoBancarioVacio } from "../dominio.js";
+import { CandidatoConciliacion, Casacion, MovimientoBancario } from "../diseño.js";
+import { casacionDesdeCandidato, movimientoBancarioVacio } from "../dominio.js";
 import {
     getCandidatosConciliacion,
+    getCasacionesMovimientoBancario,
     getMovimientoBancario,
-    patchConciliarMovimientoBancario,
+    patchCasarMovimientoBancario,
     patchDesconciliarMovimientoBancario,
     patchIgnorarMovimientoBancario,
     patchReactivarMovimientoBancario,
 } from "../infraestructura.js";
-import { ContextoDetalleConciliacion, EstadoDetalleConciliacion } from "./diseño.js";
+import { CasacionSeleccionada, ContextoDetalleConciliacion, EstadoDetalleConciliacion } from "./diseño.js";
 
 type ProcesarDetalle = ProcesarContexto<EstadoDetalleConciliacion, ContextoDetalleConciliacion>;
 
@@ -19,7 +20,7 @@ const pipeMovimiento = ejecutarListaProcesos<EstadoDetalleConciliacion, Contexto
 /**
  * Cabecera de solo lectura: la sincronización con el proveedor bancario es
  * quien crea y actualiza los movimientos (ver maestro/SincronizarMovimientoBancario.tsx).
- * La conciliación (candidatos, Conciliar/Desconciliar/Ignorar/Reactivar) se
+ * La conciliación (casaciones, Casar/Desconciliar/Ignorar/Reactivar) se
  * gestiona con las acciones de más abajo, no editando este modelo.
  */
 export const metaMovimientoBancario: MetaModelo<MovimientoBancario> = {
@@ -34,10 +35,10 @@ export const metaMovimientoBancario: MetaModelo<MovimientoBancario> = {
         divisa: { tipo: "texto" },
         idExterno: { tipo: "texto" },
         estado: { tipo: "texto" },
-        tipoRecibo: { tipo: "texto" },
+        tipoCasacion: { tipo: "texto" },
         codigoRecibo: { tipo: "texto" },
         nombreTercero: { tipo: "texto" },
-        puntuacion: { tipo: "numero" },
+        probabilidad: { tipo: "numero" },
         origenConciliacion: { tipo: "texto" },
         justificacion: { tipo: "texto" },
         conciliadoPor: { tipo: "texto" },
@@ -49,14 +50,18 @@ export const metaMovimientoBancario: MetaModelo<MovimientoBancario> = {
 export const contextoDetalleConciliacionInicial: ContextoDetalleConciliacion = {
     estado: 'INICIAL',
     movimiento: movimientoBancarioVacio,
+    casaciones: [],
     candidatos: [],
     candidatosTexto: "",
-    candidatoSeleccionado: null,
+    casacionSeleccionada: null,
 };
 
 /** Solo tiene sentido buscar candidatos si el movimiento aún puede conciliarse. */
 const requiereCandidatos = (movimiento: MovimientoBancario): boolean =>
-    movimiento.estado === "pendiente" || movimiento.estado === "sugerido";
+    movimiento.estado === "pendiente" || movimiento.estado === "candidatos";
+
+const cargarCasaciones = async (movimiento: MovimientoBancario): Promise<Casacion[]> =>
+    movimiento.estado === "candidatos" ? await getCasacionesMovimientoBancario(movimiento.id) : [];
 
 /**
  * Carga (o recarga con un nuevo texto de búsqueda) los candidatos del
@@ -71,9 +76,44 @@ export const cargarCandidatos: ProcesarDetalle = async (contexto, payload) => {
     return { ...contexto, candidatos, candidatosTexto: texto };
 };
 
-export const seleccionarCandidato: ProcesarDetalle = async (contexto, payload) => ({
+/** Una de las casaciones candidatas. */
+export const seleccionarCasacion: ProcesarDetalle = async (contexto, payload) => {
+    const casacion = payload as Casacion;
+    const seleccionada: CasacionSeleccionada = {
+        casacionId: casacion.id,
+        tipo: casacion.tipo,
+        params: casacion.params,
+        probabilidad: casacion.probabilidad,
+        justificacion: casacion.justificacion,
+        recibo: casacion.recibo,
+    };
+    return { ...contexto, casacionSeleccionada: seleccionada };
+};
+
+/** Un recibo elegido en la búsqueda: completo si es por el importe del movimiento, parcial si es mayor. */
+export const seleccionarCandidato: ProcesarDetalle = async (contexto, payload) => {
+    const candidato = payload as CandidatoConciliacion;
+    const seleccionada: CasacionSeleccionada = {
+        casacionId: null,
+        ...casacionDesdeCandidato(contexto.movimiento, candidato),
+        probabilidad: null,
+        justificacion: null,
+        recibo: candidato,
+    };
+    return { ...contexto, casacionSeleccionada: seleccionada };
+};
+
+/** Asiento a mano: la subcuenta de contrapartida se pide en el modal. */
+export const seleccionarAsiento: ProcesarDetalle = async (contexto) => ({
     ...contexto,
-    candidatoSeleccionado: payload as CandidatoConciliacion,
+    casacionSeleccionada: {
+        casacionId: null,
+        tipo: "asiento_manual",
+        params: {},
+        probabilidad: null,
+        justificacion: null,
+        recibo: null,
+    },
 });
 
 export const cargarMovimiento: (_: string) => ProcesarDetalle =
@@ -83,9 +123,10 @@ export const cargarMovimiento: (_: string) => ProcesarDetalle =
             async (ctx) => ({
                 ...ctx,
                 movimiento,
+                casaciones: await cargarCasaciones(movimiento),
                 candidatos: [],
                 candidatosTexto: "",
-                candidatoSeleccionado: null,
+                casacionSeleccionada: null,
             }),
             cargarCandidatos,
             'ABIERTO',
@@ -101,32 +142,43 @@ export const cargarContexto: ProcesarDetalle = async (contexto, payload) => {
         ...contexto,
         estado: 'INICIAL',
         movimiento: movimientoBancarioVacio,
+        casaciones: [],
         candidatos: [],
         candidatosTexto: "",
-        candidatoSeleccionado: null,
+        casacionSeleccionada: null,
     };
 };
 
 /**
- * Recarga cabecera + candidatos tras Conciliar/Ignorar/Reactivar y propaga el
- * cambio al maestro (`movimiento_cambiado`) para refrescar la fila de la
- * lista. Fija `estado: 'ABIERTO'`: quien la usa (onConciliado, onIgnorado,
- * onReactivado) parte de un estado de modal (CONCILIANDO...) que debe cerrarse.
+ * Recarga cabecera, casaciones y candidatos tras Casar/Ignorar/Reactivar y
+ * propaga el cambio al maestro (`movimiento_cambiado`) para refrescar la fila
+ * de la lista. Fija `estado: 'ABIERTO'`: quien la usa (onCasado, onIgnorado,
+ * onReactivado) parte de un estado de modal (CASANDO...) que debe cerrarse.
  */
 export const refrescarMovimiento: ProcesarDetalle = async (contexto) => {
     const movimiento = await getMovimientoBancario(contexto.movimiento.id);
     const candidatos = requiereCandidatos(movimiento)
         ? await getCandidatosConciliacion(movimiento.id, contexto.candidatosTexto || undefined)
         : [];
+    const casaciones = await cargarCasaciones(movimiento);
     return [
-        { ...contexto, estado: 'ABIERTO', movimiento, candidatos, candidatoSeleccionado: null },
+        { ...contexto, estado: 'ABIERTO', movimiento, casaciones, candidatos, casacionSeleccionada: null },
         [["movimiento_cambiado", movimiento]],
     ];
 };
 
-export const onConciliado: ProcesarDetalle = async (contexto) => {
-    if (!contexto.candidatoSeleccionado) return contexto;
-    await patchConciliarMovimientoBancario(contexto.movimiento.id, contexto.candidatoSeleccionado.reciboId);
+/** `payload`: datos pedidos al usuario (p. ej. `{ codigo_subcuenta }` de un asiento). */
+export const onCasado: ProcesarDetalle = async (contexto, payload) => {
+    const seleccionada = contexto.casacionSeleccionada;
+    if (!seleccionada) return contexto;
+
+    const datos = (payload as Record<string, unknown> | undefined) ?? {};
+    await patchCasarMovimientoBancario(
+        contexto.movimiento.id,
+        seleccionada.casacionId
+            ? { casacionId: seleccionada.casacionId, params: datos }
+            : { tipo: seleccionada.tipo, params: { ...seleccionada.params, ...datos } }
+    );
     return refrescarMovimiento(contexto);
 };
 
@@ -161,9 +213,10 @@ export const onDesconciliado: ProcesarDetalle = async (contexto) => {
             ...contexto,
             estado: 'INICIAL',
             movimiento: movimientoBancarioVacio,
+            casaciones: [],
             candidatos: [],
             candidatosTexto: "",
-            candidatoSeleccionado: null,
+            casacionSeleccionada: null,
         },
         [["movimiento_borrado", contexto.movimiento.id]],
     ];

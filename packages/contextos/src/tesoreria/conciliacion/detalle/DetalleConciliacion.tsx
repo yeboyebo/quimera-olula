@@ -4,7 +4,8 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
-import { ConciliarMovimientoBancario } from "../conciliar/ConciliarMovimientoBancario.js";
+import { CasarMovimientoBancario } from "../casar/CasarMovimientoBancario.js";
+import { CasarAsientoMovimientoBancario } from "../casar_asiento/CasarAsientoMovimientoBancario.js";
 import { DesconciliarMovimientoBancario } from "../desconciliar/DesconciliarMovimientoBancario.js";
 import { MovimientoBancario } from "../diseño.js";
 import { IgnorarMovimientoBancario } from "../ignorar/IgnorarMovimientoBancario.js";
@@ -17,8 +18,8 @@ import { TabGeneral } from "./TabGeneral.js";
 
 /**
  * Detalle de un movimiento bancario. La cabecera (tab "General") es de solo
- * lectura (la gestiona el proveedor bancario); las acciones de conciliación manual (fase 3:
- * Conciliar/Desconciliar/Ignorar/Reactivar) viven en el tab "Conciliación"
+ * lectura (la gestiona el proveedor bancario); las acciones de conciliación
+ * (Casar/Desconciliar/Ignorar/Reactivar) viven en el tab "Conciliación"
  * (ver TabConciliacion.tsx) y sus modales asociados, montados aquí según
  * `estado`.
  */
@@ -38,7 +39,7 @@ export const DetalleConciliacion = ({
 
     const formModelo = useModelo(metaMovimientoBancario, ctx.movimiento);
 
-    const { estado, movimiento, candidatos, candidatosTexto, candidatoSeleccionado } = ctx;
+    const { estado, movimiento, casaciones, candidatos, candidatosTexto, casacionSeleccionada } = ctx;
 
     useEffect(() => {
         emitir("movimiento_id_cambiado", id, true);
@@ -69,6 +70,7 @@ export const DetalleConciliacion = ({
                             <TabConciliacion
                                 form={formModelo}
                                 movimiento={movimiento}
+                                casaciones={casaciones}
                                 candidatos={candidatos}
                                 candidatosTexto={candidatosTexto}
                                 publicar={emitir}
@@ -78,12 +80,14 @@ export const DetalleConciliacion = ({
                 ]} />
             </div>
 
-            {estado === "CONCILIANDO" && candidatoSeleccionado && (
-                <ConciliarMovimientoBancario
-                    movimiento={movimiento}
-                    candidato={candidatoSeleccionado}
-                    publicar={emitir}
-                />
+            {estado === "CASANDO" && casacionSeleccionada && (
+                casacionSeleccionada.tipo === "asiento_manual"
+                    ? <CasarAsientoMovimientoBancario movimiento={movimiento} publicar={emitir} />
+                    : <CasarMovimientoBancario
+                        movimiento={movimiento}
+                        casacion={casacionSeleccionada}
+                        publicar={emitir}
+                    />
             )}
             {estado === "DESCONCILIANDO" && (
                 <DesconciliarMovimientoBancario movimiento={movimiento} publicar={emitir} />
