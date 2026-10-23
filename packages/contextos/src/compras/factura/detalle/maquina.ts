@@ -5,7 +5,6 @@ import {
     cambiarDivisa,
     cambiarProveedor,
     cargarContexto,
-    cerrarFacturaProceso,
     limpiarContexto,
     Lineas,
     onLineaBorrada,
@@ -13,6 +12,7 @@ import {
     onLineaCreada,
     reabrirFacturaProceso,
     refrescarFactura,
+    registrarFacturaProceso,
 } from "./detalle.ts";
 import { ContextoDetalleFactura, EstadoDetalleFactura } from "./diseño.ts";
 
@@ -45,7 +45,7 @@ export const getMaquina: () => Maquina<EstadoDetalleFactura, ContextoDetalleFact
             cambio_proveedor_solicitado: "CAMBIANDO_PROVEEDOR",
             cambio_divisa_solicitado: "CAMBIANDO_DIVISA",
 
-            cierre_solicitado: [cerrarFacturaProceso],
+            registro_solicitado: "REGISTRANDO",
             reapertura_solicitada: [reabrirFacturaProceso],
 
             cambio_rectificativa_solicitado: "CAMBIANDO_RECTIFICATIVA",
@@ -76,6 +76,11 @@ export const getMaquina: () => Maquina<EstadoDetalleFactura, ContextoDetalleFact
             ],
 
             borrado_cancelado: "ABIERTO",
+        },
+
+        REGISTRANDO: {
+            registro_listo: [registrarFacturaProceso],
+            registro_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_RECTIFICATIVA: {
