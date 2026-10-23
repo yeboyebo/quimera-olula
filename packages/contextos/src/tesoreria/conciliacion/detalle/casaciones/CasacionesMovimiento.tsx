@@ -46,6 +46,11 @@ export const CasacionesMovimiento = ({
                                     {etiquetaTipoCasacion(casacion.tipo)}
                                     {casacion.recibo && ` · ${casacion.recibo.codigo}`}
                                 </span>
+                                {casacion.cuota && (
+                                    <span className="recibo-casacion">
+                                        {`${casacion.cuota.contrato ?? "Préstamo"} · ${formatearFechaDate(casacion.cuota.fecha)} · ${formatearMoneda(casacion.cuota.capital, divisa)} de capital y ${formatearMoneda(casacion.cuota.intereses, divisa)} de intereses`}
+                                    </span>
+                                )}
                                 {casacion.recibo && (
                                     <span className="recibo-casacion">
                                         {`${casacion.recibo.tercero ?? "Sin tercero"} · ${formatearMoneda(casacion.recibo.importe, divisa)} · vence ${formatearFechaDate(casacion.recibo.fechaVencimiento)}`}

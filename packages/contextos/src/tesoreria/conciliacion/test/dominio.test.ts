@@ -88,6 +88,7 @@ describe("enlaces al recibo", () => {
             id: "c1", tipo: "cobrar_recibo_venta", params: { recibo_id: 7 }, probabilidad: 60,
             origen: "determinista", justificacion: null,
             recibo: { id: "7", codigo: "R", tercero: null, importe: 1, fechaVencimiento: new Date(), estado: "Emitido" },
+            cuota: null,
         };
         expect(urlReciboCasacion(casacion)).toBe("/tesoreria/recibo_venta?id=7");
     });

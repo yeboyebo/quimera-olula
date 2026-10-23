@@ -147,6 +147,7 @@ const ETIQUETA_TIPO_CASACION: Record<TipoCasacion, string> = {
     cobro_parcial_venta: "Cobro parcial",
     pago_parcial_compra: "Pago parcial",
     asiento_manual: "Asiento manual",
+    cuota_prestamo: "Cuota de préstamo",
 };
 
 export const etiquetaTipoCasacion = (tipo: TipoCasacion): string => ETIQUETA_TIPO_CASACION[tipo];

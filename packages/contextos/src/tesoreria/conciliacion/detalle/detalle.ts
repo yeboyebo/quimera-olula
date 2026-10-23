@@ -86,6 +86,7 @@ export const seleccionarCasacion: ProcesarDetalle = async (contexto, payload) =>
         probabilidad: casacion.probabilidad,
         justificacion: casacion.justificacion,
         recibo: casacion.recibo,
+        cuota: casacion.cuota,
     };
     return { ...contexto, casacionSeleccionada: seleccionada };
 };
@@ -99,6 +100,7 @@ export const seleccionarCandidato: ProcesarDetalle = async (contexto, payload) =
         probabilidad: null,
         justificacion: null,
         recibo: candidato,
+        cuota: null,
     };
     return { ...contexto, casacionSeleccionada: seleccionada };
 };
@@ -113,6 +115,7 @@ export const seleccionarAsiento: ProcesarDetalle = async (contexto) => ({
         probabilidad: null,
         justificacion: null,
         recibo: null,
+        cuota: null,
     },
 });
 

@@ -20,7 +20,8 @@ export type TipoCasacion =
     | "pagar_recibo_compra"
     | "cobro_parcial_venta"
     | "pago_parcial_compra"
-    | "asiento_manual";
+    | "asiento_manual"
+    | "cuota_prestamo";
 
 /** Recibo que liquidaría una casación de recibo. */
 export interface ReciboCasacion {
@@ -30,6 +31,15 @@ export interface ReciboCasacion {
     importe: number;
     fechaVencimiento: Date;
     estado: string;
+}
+
+/** Cuota de préstamo que contabilizaría una casación `cuota_prestamo`. */
+export interface CuotaCasacion {
+    contrato: string | null;
+    fecha: Date;
+    capital: number;
+    intereses: number;
+    total: number;
 }
 
 /** Casación candidata de un movimiento, propuesta por las reglas o la IA. */
@@ -42,6 +52,7 @@ export interface Casacion extends Entidad {
     origen: OrigenConciliacionMovimiento;
     justificacion: string | null;
     recibo: ReciboCasacion | null;
+    cuota: CuotaCasacion | null;
 }
 
 export type GetCasacionesMovimientoBancario = (id: string) => Promise<Casacion[]>;

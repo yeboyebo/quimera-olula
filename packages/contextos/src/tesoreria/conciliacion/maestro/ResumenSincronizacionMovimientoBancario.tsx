@@ -56,9 +56,14 @@ export const ResumenSincronizacionMovimientoBancario = ({
                                     {error.error}
                                     {error.requiereReautenticacion && (
                                         <>
-                                            {" "}
-                                            — hay que volver a conectar el banco en{" "}
-                                            <em>Conexiones bancarias</em>.
+                                            {" "}— hay que volver a autenticar la conexión.{" "}
+                                            <QBoton
+                                                tamaño="pequeño"
+                                                variante="borde"
+                                                enlace={`/tesoreria/conexion_bancaria?id=${encodeURIComponent(error.conexionId)}`}
+                                            >
+                                                Ir a la conexión
+                                            </QBoton>
                                         </>
                                     )}
                                 </li>

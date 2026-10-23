@@ -78,6 +78,14 @@ interface ReciboCasacionApi {
     estado: string;
 }
 
+interface CuotaCasacionApi {
+    contrato: string | null;
+    fecha: string;
+    capital: number;
+    intereses: number;
+    total: number;
+}
+
 export interface CasacionApi {
     id: string;
     tipo: TipoCasacion;
@@ -86,6 +94,7 @@ export interface CasacionApi {
     origen: OrigenConciliacionMovimiento;
     justificacion: string | null;
     recibo: ReciboCasacionApi | null;
+    cuota?: CuotaCasacionApi | null;
 }
 
 interface CasarMovimientoBancarioApi {
@@ -197,6 +206,15 @@ export const casacionDesdeApi = (api: CasacionApi): Casacion => ({
             importe: api.recibo.importe,
             fechaVencimiento: new Date(Date.parse(api.recibo.fecha_vencimiento)),
             estado: api.recibo.estado,
+        }
+        : null,
+    cuota: api.cuota
+        ? {
+            contrato: api.cuota.contrato,
+            fecha: new Date(Date.parse(api.cuota.fecha)),
+            capital: api.cuota.capital,
+            intereses: api.cuota.intereses,
+            total: api.cuota.total,
         }
         : null,
 });

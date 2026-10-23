@@ -1,4 +1,4 @@
-import { CandidatoConciliacion, Casacion, MovimientoBancario, TipoCasacion } from "../diseño.js";
+import { CandidatoConciliacion, Casacion, CuotaCasacion, MovimientoBancario, TipoCasacion } from "../diseño.js";
 
 /**
  * CASANDO / DESCONCILIANDO / IGNORANDO / REACTIVANDO: modales de las acciones
@@ -28,6 +28,7 @@ export type CasacionSeleccionada = {
         importe: number;
         fechaVencimiento: Date;
     } | null;
+    cuota: CuotaCasacion | null;
 };
 
 export type ContextoDetalleConciliacion = {
