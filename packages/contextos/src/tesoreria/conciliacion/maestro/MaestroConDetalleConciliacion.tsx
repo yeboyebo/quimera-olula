@@ -12,6 +12,7 @@ import { criteriaDefecto, formatearFechaDate, formatearMoneda } from "@olula/lib
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useEffect, useMemo } from "react";
+import { useParams } from "react-router";
 import { DetalleConciliacion } from "../detalle/DetalleConciliacion.js";
 import { MovimientoBancario } from "../diseño.js";
 import {
@@ -70,6 +71,9 @@ const criteriaMovimientosPendientes = (): Criteria => ({
 
 /**
  * Componente principal: listado de movimientos bancarios (conciliación) + detalle.
+ * Se monta en `/tesoreria/conciliacion` (todas las cuentas) y en
+ * `/tesoreria/cuentas/<cuenta_id>/movimientos` (solo esa cuenta bancaria de la
+ * empresa; es el enlace que llega en el aviso tras la lectura diaria).
  *
  * "Sincronizar" no abre un modal propio: dispara el estado SINCRONIZANDO, que
  * monta <SincronizarMovimientoBancario> — un componente sin UI propia que llama
@@ -79,6 +83,7 @@ const criteriaMovimientosPendientes = (): Criteria => ({
 export const MaestroConDetalleConciliacion = () => {
 
     const criteriaBase = useMemo(criteriaMovimientosPendientes, []);
+    const { cuenta_id: cuentaBancoId = null } = useParams();
 
     const { id, criteria } = getUrlParams();
     const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
@@ -86,6 +91,7 @@ export const MaestroConDetalleConciliacion = () => {
     const { ctx, emitir } = useMaquina(getMaquina, {
         estado: "INICIAL",
         movimientos: listaActivaEntidadesInicial<MovimientoBancario>(id, criteriaInicial),
+        cuentaBancoId,
         resumenSincronizacion: null,
         resumenConciliacionAutomatica: null,
     });
@@ -104,7 +110,7 @@ export const MaestroConDetalleConciliacion = () => {
             <MaestroDetalle<MovimientoBancario>
                 Maestro={
                     <>
-                        <h2>Conciliación bancaria</h2>
+                        <h2>{tituloConciliacion(cuentaBancoId, movimientos.lista)}</h2>
                         <Listado<MovimientoBancario>
                             metaTabla={metaTablaMovimientoBancario}
                             metaFiltro={metaFiltroMovimientoBancario}
@@ -167,6 +173,13 @@ export const MaestroConDetalleConciliacion = () => {
             )}
         </div>
     );
+};
+
+const tituloConciliacion = (cuentaBancoId: string | null, movimientos: MovimientoBancario[]): string => {
+    if (!cuentaBancoId) return "Conciliación bancaria";
+
+    const descripcion = movimientos.find((m) => m.descripcionCuentaBanco)?.descripcionCuentaBanco;
+    return `Movimientos de la cuenta ${descripcion ?? cuentaBancoId}`;
 };
 
 /**
