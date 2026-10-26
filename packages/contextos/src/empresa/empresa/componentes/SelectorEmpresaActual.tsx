@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AUTH_STORAGE_CHANGED_EVENT } from "@olula/lib/api/auth_storage_events.ts";
 import { empresaActual, setEmpresaActual } from "../../../valores/empresaActual.ts";
-import { whoAmIStorage } from "../../../auth/login/infraestructura.ts";
+import { whoAmI, whoAmIStorage } from "../../../auth/login/infraestructura.ts";
 import "./SelectorEmpresaActual.css";
 
 type ItemEmpresa = { id: string; nombre: string };
@@ -17,10 +18,22 @@ const empresasDeStorage = (): ItemEmpresa[] => {
 };
 
 export const SelectorEmpresaActual = () => {
-    const empresas = empresasDeStorage();
-    if (empresas.length <= 1) return null;
-
+    const [empresas, setEmpresas] = useState<ItemEmpresa[]>(empresasDeStorage);
     const [actual, setActual] = useState(empresaActual());
+
+    useEffect(() => {
+        const onAuthChanged = () => {
+            setEmpresas(empresasDeStorage());
+            setActual(empresaActual());
+        };
+        window.addEventListener(AUTH_STORAGE_CHANGED_EVENT, onAuthChanged);
+
+        whoAmI().then((datos) => whoAmIStorage.actualizar(datos)).catch(() => {});
+
+        return () => window.removeEventListener(AUTH_STORAGE_CHANGED_EVENT, onAuthChanged);
+    }, []);
+
+    if (empresas.length <= 1) return null;
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const id = e.target.value;

@@ -7,9 +7,10 @@ const EMPRESA_ACTUAL_KEY = "empresa_actual";
 /**
  * Empresa con la que trabaja el usuario.
  *
- * - Si solo tiene una empresa, devuelve siempre esa.
- * - Si tiene varias, devuelve la guardada en localStorage (empresa_actual),
- *   o la primera si todavía no se ha seleccionado ninguna.
+ * - Si solo tiene una empresa, normaliza el valor almacenado a esa y la devuelve.
+ * - Si tiene varias, devuelve la guardada en localStorage solo si está en la lista;
+ *   si no está (sesión de otra app, empresa eliminada, etc.) devuelve "" para que el
+ *   usuario la seleccione desde el selector de cabecera.
  *
  * Se lee de localStorage en cada llamada, no al cargar el módulo: el login hace
  * `navigate("/")` sin recargar, así que cualquier valor capturado al importar se
@@ -23,8 +24,15 @@ export const empresaActual = (): string => {
         const whoAmI = JSON.parse(raw) as WhoAmI;
         const empresas = whoAmI.empresas ?? [];
         if (empresas.length === 0) return "";
-        if (empresas.length === 1) return String(empresas[0].id);
-        return localStorage.getItem(EMPRESA_ACTUAL_KEY) ?? String(empresas[0].id);
+
+        if (empresas.length === 1) {
+            const id = String(empresas[0].id);
+            setEmpresaActual(id);
+            return id;
+        }
+
+        const stored = localStorage.getItem(EMPRESA_ACTUAL_KEY) ?? "";
+        return empresas.some((e) => String(e.id) === stored) ? stored : "";
     } catch {
         return "";
     }
