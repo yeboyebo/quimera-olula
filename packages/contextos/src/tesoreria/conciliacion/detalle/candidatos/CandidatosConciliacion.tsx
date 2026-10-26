@@ -7,8 +7,8 @@ import { useState } from "react";
 import { CandidatoConciliacion, MovimientoBancario } from "../../diseño.js";
 import {
     BloqueoConciliarMovimiento,
-    esCasacionParcial,
-    etiquetaTipoCasacion,
+    esConciliacionParcial,
+    etiquetaTipoConciliacion,
     urlRecibo,
 } from "../../dominio.js";
 import "./CandidatosConciliacion.css";
@@ -16,8 +16,8 @@ import "./CandidatosConciliacion.css";
 const SIN_ORDEN = ["", ""];
 
 /**
- * Búsqueda de recibos para casar a mano (GET `.../candidatos`): por el importe
- * del movimiento (casación completa) o mayores (parcial). No son un
+ * Búsqueda de recibos para conciliar a mano (GET `.../candidatos`): por el importe
+ * del movimiento (conciliación completa) o mayores (parcial). No son un
  * sub-recurso persistido: se recalculan en cada búsqueda, así que no usan
  * ListaEntidades/ListaActivaEntidades, solo el array de detalle.ts.
  */
@@ -51,7 +51,7 @@ export const CandidatosConciliacion = ({
             ),
         },
         { id: "tercero", cabecera: "Tercero", ancho: "22%", render: (c) => c.tercero ?? "—" },
-        { id: "tipoCasacion", cabecera: "Tipo", ancho: "12%", render: (c) => etiquetaTipoCasacion(c.tipoCasacion) },
+        { id: "tipoConciliacion", cabecera: "Tipo", ancho: "12%", render: (c) => etiquetaTipoConciliacion(c.tipoConciliacion) },
         { id: "fechaVencimiento", cabecera: "Vence", tipo: "fecha", ancho: "12%" },
         {
             id: "diasDiferencia",
@@ -74,7 +74,7 @@ export const CandidatosConciliacion = ({
                         onClick={() => publicar("candidato_solicitado", c)}
                         deshabilitado={bloqueo.bloqueado}
                     >
-                        {esCasacionParcial(c.tipoCasacion) ? "Parcial" : "Casar"}
+                        {esConciliacionParcial(c.tipoConciliacion) ? "Parcial" : "Conciliar"}
                     </QBoton>
                 </div>
             ),

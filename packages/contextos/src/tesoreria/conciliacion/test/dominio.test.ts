@@ -1,12 +1,12 @@
-import { paramsAsiento } from "#/tesoreria/conciliacion/casar_asiento/dominio.ts";
-import { CandidatoConciliacion, Casacion, MovimientoBancario } from "#/tesoreria/conciliacion/diseño.ts";
+import { paramsAsiento } from "#/tesoreria/conciliacion/conciliar_asiento/dominio.ts";
+import { CandidatoConciliacion, ItemConciliacion, MovimientoBancario } from "#/tesoreria/conciliacion/diseño.ts";
 import {
-    casacionDesdeCandidato,
-    etiquetaEstadoConCasaciones,
+    conciliacionDesdeCandidato,
+    etiquetaEstadoConConciliaciones,
     filtroCuentaBanco,
     movimientoBancarioVacio,
-    restoCasacionParcial,
-    urlReciboCasacion,
+    restoConciliacionParcial,
+    urlReciboConciliacion,
     urlReciboMovimientoBancario,
     varianteEstadoMovimientoBancario,
     varianteProbabilidad,
@@ -23,7 +23,7 @@ const movimiento = (cambios: Partial<MovimientoBancario> = {}): MovimientoBancar
 const candidato = (cambios: Partial<CandidatoConciliacion> = {}): CandidatoConciliacion => ({
     id: "cobro_7",
     tipoRecibo: "cobro",
-    tipoCasacion: "cobrar_recibo_venta",
+    tipoConciliacion: "cobrar_recibo_venta",
     reciboId: "7",
     codigo: "F2026A00001-01",
     facturaCodigo: "F2026A00001",
@@ -44,53 +44,61 @@ describe("estado del movimiento en la lista", () => {
     });
 
     test("con candidatos indica cuántos hay", () => {
-        expect(etiquetaEstadoConCasaciones(movimiento({ estado: "candidatos", numCasaciones: 1 }))).toBe("1 candidato");
-        expect(etiquetaEstadoConCasaciones(movimiento({ estado: "candidatos", numCasaciones: 3 }))).toBe("3 candidatos");
-        expect(etiquetaEstadoConCasaciones(movimiento({ estado: "conciliado" }))).toBe("Casado");
-        expect(etiquetaEstadoConCasaciones(movimiento({ estado: "pendiente" }))).toBe("Pendiente");
+        expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "candidatos", numConciliaciones: 1 }))).toBe("1 candidato");
+        expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "candidatos", numConciliaciones: 3 }))).toBe("3 candidatos");
+        expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "conciliado" }))).toBe("Casado");
+        expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "pendiente" }))).toBe("Pendiente");
     });
 });
 
-describe("casación a mano desde un recibo buscado", () => {
+describe("conciliación a mano desde un recibo buscado", () => {
     test("un recibo por el importe del movimiento se casa entero", () => {
-        expect(casacionDesdeCandidato(movimiento(), candidato())).toEqual({
-            tipo: "cobrar_recibo_venta",
-            params: { recibo_id: 7 },
-        });
+        const item = conciliacionDesdeCandidato(movimiento(), candidato());
+        expect(item.tipo).toBe("cobrar_recibo_venta");
+        expect(item.params).toEqual({ recibo_id: 7 });
+        expect(item.recibo?.codigo).toBe("F2026A00001-01");
+        expect(item.cuota).toBeNull();
     });
 
     test("un recibo mayor se casa en parte, por el importe del movimiento", () => {
-        const mayor = candidato({ tipoCasacion: "cobro_parcial_venta", importe: 500 });
+        const mayor = candidato({ tipoConciliacion: "cobro_parcial_venta", importe: 500 });
+        const item = conciliacionDesdeCandidato(movimiento(), mayor);
 
-        expect(casacionDesdeCandidato(movimiento(), mayor)).toEqual({
-            tipo: "cobro_parcial_venta",
-            params: { recibo_id: 7, importe: "300.00" },
-        });
-        expect(restoCasacionParcial(movimiento(), 500)).toBe(200);
+        expect(item.tipo).toBe("cobro_parcial_venta");
+        expect(item.params).toEqual({ recibo_id: 7, importe: "300.00" });
+        expect(restoConciliacionParcial(movimiento(), 500)).toBe(200);
     });
 
     test("en un cargo el importe parcial va en positivo", () => {
-        const mayor = candidato({ tipoRecibo: "pago", tipoCasacion: "pago_parcial_compra", importe: 100 });
+        const mayor = candidato({ tipoRecibo: "pago", tipoConciliacion: "pago_parcial_compra", importe: 100 });
 
-        expect(casacionDesdeCandidato(movimiento({ importe: -40.5 }), mayor).params)
+        expect(conciliacionDesdeCandidato(movimiento({ importe: -40.5 }), mayor).params)
             .toEqual({ recibo_id: 7, importe: "40.50" });
-        expect(restoCasacionParcial(movimiento({ importe: -40.5 }), 100)).toBe(59.5);
+        expect(restoConciliacionParcial(movimiento({ importe: -40.5 }), 100)).toBe(59.5);
     });
 });
 
 describe("enlaces al recibo", () => {
-    test("según la clase de recibo de la casación", () => {
-        expect(urlReciboMovimientoBancario(movimiento({ tipoCasacion: "pago_parcial_compra", reciboId: "9" })))
-            .toBe("/tesoreria/recibo_compra?id=9");
-        expect(urlReciboMovimientoBancario(movimiento({ tipoCasacion: "asiento_manual" }))).toBeNull();
+    test("el movimiento ya no lleva URL del recibo (los ítems están en el endpoint de conciliaciones)", () => {
+        expect(urlReciboMovimientoBancario(movimiento())).toBeNull();
+    });
 
-        const casacion: Casacion = {
-            id: "c1", tipo: "cobrar_recibo_venta", params: { recibo_id: 7 }, probabilidad: 60,
-            origen: "determinista", justificacion: null,
+    test("urlReciboConciliacion genera la URL a partir del ítem y su recibo", () => {
+        const itemCobro: ItemConciliacion = {
+            tipo: "cobrar_recibo_venta",
+            params: { recibo_id: 7 },
             recibo: { id: "7", codigo: "R", tercero: null, importe: 1, fechaVencimiento: new Date(), estado: "Emitido" },
             cuota: null,
         };
-        expect(urlReciboCasacion(casacion)).toBe("/tesoreria/recibo_venta?id=7");
+        expect(urlReciboConciliacion(itemCobro)).toBe("/tesoreria/recibo_venta?id=7");
+
+        const itemAsiento: ItemConciliacion = {
+            tipo: "asiento_manual",
+            params: {},
+            recibo: null,
+            cuota: null,
+        };
+        expect(urlReciboConciliacion(itemAsiento)).toBeNull();
     });
 });
 

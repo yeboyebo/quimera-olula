@@ -1,11 +1,11 @@
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import {
     CandidatoConciliacion,
-    Casacion,
     EstadoMovimientoBancario,
+    ItemConciliacion,
     MovimientoBancario,
     OrigenConciliacionMovimiento,
-    TipoCasacion,
+    TipoConciliacion,
     TipoReciboMovimiento,
 } from "./diseño.ts";
 
@@ -27,12 +27,9 @@ export const movimientoBancarioVacio: MovimientoBancario = {
     referencia: null,
     pendiente: false,
     estado: "pendiente",
-    numCasaciones: 0,
+    numConciliaciones: 0,
     probabilidadMaxima: null,
-    tipoCasacion: null,
-    reciboId: null,
-    codigoRecibo: null,
-    nombreTercero: null,
+    numItemsConciliacion: 0,
     probabilidad: null,
     origenConciliacion: null,
     justificacion: null,
@@ -58,13 +55,13 @@ export const ESTADOS_MOVIMIENTO_BANCARIO_DEFECTO: EstadoMovimientoBancario[] = [
 export const ETIQUETA_ESTADO_MOVIMIENTO_BANCARIO: Record<EstadoMovimientoBancario, string> = {
     pendiente: "Pendiente",
     candidatos: "Candidatos",
-    conciliado: "Casado",
+    conciliado: "Conciliado",
     ignorado: "Ignorado",
 };
 
 type VarianteEtiqueta = "exito" | "error" | "advertencia" | "primario" | "gris";
 
-/** Casado en verde, con candidatos en naranja y pendiente en rojo. */
+/** Conciliado en verde, con candidatos en naranja y pendiente en rojo. */
 export const VARIANTE_ESTADO_MOVIMIENTO_BANCARIO: Record<EstadoMovimientoBancario, VarianteEtiqueta> = {
     pendiente: "error",
     candidatos: "advertencia",
@@ -76,9 +73,9 @@ export const etiquetaEstadoMovimientoBancario = (estado: EstadoMovimientoBancari
     ETIQUETA_ESTADO_MOVIMIENTO_BANCARIO[estado];
 
 /** Etiqueta de la lista: con candidatos, cuántos hay. */
-export const etiquetaEstadoConCasaciones = (movimiento: MovimientoBancario): string =>
-    movimiento.estado === "candidatos" && movimiento.numCasaciones > 0
-        ? `${movimiento.numCasaciones} candidato${movimiento.numCasaciones === 1 ? "" : "s"}`
+export const etiquetaEstadoConConciliaciones = (movimiento: MovimientoBancario): string =>
+    movimiento.estado === "candidatos" && movimiento.numConciliaciones > 0
+        ? `${movimiento.numConciliaciones} candidato${movimiento.numConciliaciones === 1 ? "" : "s"}`
         : etiquetaEstadoMovimientoBancario(movimiento.estado);
 
 export const varianteEstadoMovimientoBancario = (estado: EstadoMovimientoBancario): VarianteEtiqueta =>
@@ -117,12 +114,13 @@ export const filtroCuentaBanco = (cuentaBancoId: string): ClausulaFiltro =>
 export const cuentaMovimientoBancario = (movimiento: MovimientoBancario): string =>
     movimiento.nombreCuenta || movimiento.descripcionCuentaBanco || "Cuenta sin identificar";
 
+/**
+ * Resumen del resultado de conciliación para mostrar en la lista.
+ * Como ahora el movimiento puede tener varios ítems, muestra el número.
+ */
 export const reciboAsociadoMovimientoBancario = (movimiento: MovimientoBancario): string => {
-    if (!movimiento.codigoRecibo) return "—";
-
-    return movimiento.nombreTercero
-        ? `${movimiento.codigoRecibo} · ${movimiento.nombreTercero}`
-        : movimiento.codigoRecibo;
+    if (movimiento.numItemsConciliacion === 0) return "—";
+    return movimiento.numItemsConciliacion === 1 ? "1 ítem" : `${movimiento.numItemsConciliacion} ítems`;
 };
 
 const RUTA_RECIBO: Record<TipoReciboMovimiento, string> = {
@@ -130,39 +128,40 @@ const RUTA_RECIBO: Record<TipoReciboMovimiento, string> = {
     pago: "/tesoreria/recibo_compra",
 };
 
-/** Clase de recibo que liquida cada tipo de casación (los de asiento, ninguno). */
-const TIPO_RECIBO_CASACION: Partial<Record<TipoCasacion, TipoReciboMovimiento>> = {
+/** Clase de recibo que liquida cada tipo de conciliación (los de asiento, ninguno). */
+const TIPO_RECIBO_CONCILIACION: Partial<Record<TipoConciliacion, TipoReciboMovimiento>> = {
     cobrar_recibo_venta: "cobro",
     cobro_parcial_venta: "cobro",
     pagar_recibo_compra: "pago",
     pago_parcial_compra: "pago",
 };
 
-export const tipoReciboCasacion = (tipo: TipoCasacion | null): TipoReciboMovimiento | null =>
-    (tipo && TIPO_RECIBO_CASACION[tipo]) ?? null;
+export const tipoReciboConciliacion = (tipo: TipoConciliacion | null): TipoReciboMovimiento | null =>
+    (tipo && TIPO_RECIBO_CONCILIACION[tipo]) ?? null;
 
-const ETIQUETA_TIPO_CASACION: Record<TipoCasacion, string> = {
-    cobrar_recibo_venta: "Cobrar recibo",
-    pagar_recibo_compra: "Pagar recibo",
+const ETIQUETA_TIPO_CONCILIACION: Record<TipoConciliacion, string> = {
+    cobrar_recibo_venta: "Cobro de recibo",
+    pagar_recibo_compra: "Pago de recibo",
     cobro_parcial_venta: "Cobro parcial",
     pago_parcial_compra: "Pago parcial",
     asiento_manual: "Asiento manual",
+    asiento_vinculado: "Asiento vinculado",
     cuota_prestamo: "Cuota de préstamo",
 };
 
-export const etiquetaTipoCasacion = (tipo: TipoCasacion): string => ETIQUETA_TIPO_CASACION[tipo];
+export const etiquetaTipoConciliacion = (tipo: TipoConciliacion): string => ETIQUETA_TIPO_CONCILIACION[tipo];
 
-export const esCasacionParcial = (tipo: TipoCasacion): boolean =>
+export const esConciliacionParcial = (tipo: TipoConciliacion): boolean =>
     tipo === "cobro_parcial_venta" || tipo === "pago_parcial_compra";
 
-/** Tipos de casación que piden datos al usuario antes de casar. */
-export const pideDatosCasacion = (tipo: TipoCasacion): boolean => tipo === "asiento_manual";
+/** Tipos de conciliación que piden datos al usuario antes de conciliar. */
+export const pideDatosConciliacion = (tipo: TipoConciliacion): boolean => tipo === "asiento_manual";
 
 /** Probabilidad a partir de la cual el servidor concilia sin preguntar. */
-export const PROBABILIDAD_CASAR_AUTOMATICAMENTE = 95;
+export const PROBABILIDAD_CONCILIAR_AUTOMATICAMENTE = 95;
 
 export const varianteProbabilidad = (probabilidad: number): VarianteEtiqueta =>
-    probabilidad >= PROBABILIDAD_CASAR_AUTOMATICAMENTE
+    probabilidad >= PROBABILIDAD_CONCILIAR_AUTOMATICAMENTE
         ? "exito"
         : probabilidad >= 60 ? "advertencia" : "gris";
 
@@ -170,30 +169,46 @@ export const varianteProbabilidad = (probabilidad: number): VarianteEtiqueta =>
 export const urlRecibo = (tipoRecibo: TipoReciboMovimiento, reciboId: string): string =>
     `${RUTA_RECIBO[tipoRecibo]}?id=${encodeURIComponent(reciboId)}`;
 
-export const urlReciboMovimientoBancario = (movimiento: MovimientoBancario): string | null => {
-    const tipoRecibo = tipoReciboCasacion(movimiento.tipoCasacion);
-    return tipoRecibo && movimiento.reciboId ? urlRecibo(tipoRecibo, movimiento.reciboId) : null;
+/**
+ * URL del recibo del primer ítem de casación del movimiento conciliado.
+ * Devuelve `null` si no hay ítems o el tipo no tiene recibo asociado.
+ */
+export const urlReciboMovimientoBancario = (_movimiento: MovimientoBancario): string | null =>
+    null;
+
+/** URL del recibo del primer ítem de una conciliación candidata (para el enlace "Ver recibo"). */
+export const urlReciboConciliacion = (item: ItemConciliacion): string | null => {
+    const tipoRecibo = tipoReciboConciliacion(item.tipo);
+    return tipoRecibo && item.recibo ? urlRecibo(tipoRecibo, item.recibo.id) : null;
 };
 
-export const urlReciboCasacion = (casacion: Casacion): string | null => {
-    const tipoRecibo = tipoReciboCasacion(casacion.tipo);
-    return tipoRecibo && casacion.recibo ? urlRecibo(tipoRecibo, casacion.recibo.id) : null;
-};
-
-/** Casación a mano con un recibo elegido en la búsqueda: completa por su importe, parcial si es mayor. */
-export const casacionDesdeCandidato = (
+/** Conciliación a mano con un recibo elegido en la búsqueda: completa por su importe, parcial si es mayor. */
+export const conciliacionDesdeCandidato = (
     movimiento: MovimientoBancario,
     candidato: CandidatoConciliacion
-): { tipo: TipoCasacion; params: Record<string, unknown> } =>
-    esCasacionParcial(candidato.tipoCasacion)
-        ? {
-            tipo: candidato.tipoCasacion,
-            params: { recibo_id: Number(candidato.reciboId), importe: Math.abs(movimiento.importe).toFixed(2) },
-        }
-        : { tipo: candidato.tipoCasacion, params: { recibo_id: Number(candidato.reciboId) } };
+): ItemConciliacion => {
+    const params: Record<string, unknown> = esConciliacionParcial(candidato.tipoConciliacion)
+        ? { recibo_id: Number(candidato.reciboId), importe: Math.abs(movimiento.importe).toFixed(2) }
+        : { recibo_id: Number(candidato.reciboId) };
+    return {
+        tipo: candidato.tipoConciliacion,
+        params,
+        recibo: {
+            id: candidato.reciboId,
+            codigo: candidato.codigo,
+            tercero: candidato.tercero,
+            importe: candidato.importe,
+            fechaVencimiento: candidato.fechaVencimiento,
+            estado: candidato.estado,
+            fechaEmision: null,
+            fechaCobro: null,
+        },
+        cuota: null,
+    };
+};
 
 /** Lo que quedaría pendiente en el recibo nuevo tras un cobro o pago parcial. */
-export const restoCasacionParcial = (movimiento: MovimientoBancario, importeRecibo: number): number =>
+export const restoConciliacionParcial = (movimiento: MovimientoBancario, importeRecibo: number): number =>
     Math.round((importeRecibo - Math.abs(movimiento.importe)) * 100) / 100;
 
 export const esIngresoMovimientoBancario = (movimiento: MovimientoBancario): boolean =>
@@ -205,9 +220,9 @@ export type BloqueoConciliarMovimiento = {
 };
 
 /**
- * Motivos por los que la UI debe impedir casar antes de llamar a la API (el
+ * Motivos por los que la UI debe impedir conciliar antes de llamar a la API (el
  * backend valida lo mismo y devuelve 409, pero conviene avisar antes de
- * intentarlo). Ver PATCH `movimiento_bancario/{id}/casar`.
+ * intentarlo). Ver PATCH `movimiento_bancario/{id}/conciliar`.
  */
 export const bloqueoConciliarMovimientoBancario = (movimiento: MovimientoBancario): BloqueoConciliarMovimiento => {
     if (!movimiento.cuentaBancoId) {

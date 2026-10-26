@@ -3,13 +3,14 @@ import { publicar } from "@olula/lib/dominio.ts";
 import {
     cargarCandidatos,
     cargarContexto,
-    onCasado,
+    onConciliado,
     onDesconciliado,
     onIgnorado,
     onReactivado,
+    onVincularAsiento,
     seleccionarAsiento,
     seleccionarCandidato,
-    seleccionarCasacion,
+    seleccionarConciliacion,
 } from "./detalle.js";
 import { ContextoDetalleConciliacion, EstadoDetalleConciliacion } from "./diseño.js";
 
@@ -32,18 +33,20 @@ export const getMaquina: () => Maquina<EstadoDetalleConciliacion, ContextoDetall
 
             candidatos_buscados: [cargarCandidatos],
 
-            casacion_solicitada: [seleccionarCasacion, "CASANDO"],
-            candidato_solicitado: [seleccionarCandidato, "CASANDO"],
-            asiento_solicitado: [seleccionarAsiento, "CASANDO"],
+            conciliacion_solicitada: [seleccionarConciliacion, "CONCILIANDO"],
+            candidato_solicitado: [seleccionarCandidato, "CONCILIANDO"],
+            asiento_solicitado: [seleccionarAsiento, "CONCILIANDO"],
+            // Vincular un asiento preexistente: sin modal, directo.
+            asiento_vinculado_confirmado: [onVincularAsiento],
             ignorar_solicitado: "IGNORANDO",
             desconciliar_solicitado: "DESCONCILIANDO",
             reactivar_solicitado: "REACTIVANDO",
         },
 
-        CASANDO: {
-            // onCasado deja el contexto en 'ABIERTO' (ver refrescarMovimiento).
-            casacion_confirmada: [onCasado],
-            casacion_cancelada: "ABIERTO",
+        CONCILIANDO: {
+            // onConciliado deja el contexto en 'ABIERTO' (ver refrescarMovimiento).
+            conciliacion_confirmada: [onConciliado],
+            conciliacion_cancelada: "ABIERTO",
         },
 
         DESCONCILIANDO: {

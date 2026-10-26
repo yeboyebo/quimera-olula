@@ -4,8 +4,8 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
-import { CasarMovimientoBancario } from "../casar/CasarMovimientoBancario.js";
-import { CasarAsientoMovimientoBancario } from "../casar_asiento/CasarAsientoMovimientoBancario.js";
+import { ConciliarMovimientoBancario } from "../conciliar/ConciliarMovimientoBancario.js";
+import { ConciliarAsientoMovimientoBancario } from "../conciliar_asiento/ConciliarAsientoMovimientoBancario.js";
 import { DesconciliarMovimientoBancario } from "../desconciliar/DesconciliarMovimientoBancario.js";
 import { MovimientoBancario } from "../diseño.js";
 import { IgnorarMovimientoBancario } from "../ignorar/IgnorarMovimientoBancario.js";
@@ -13,15 +13,25 @@ import { ReactivarMovimientoBancario } from "../reactivar/ReactivarMovimientoBan
 import { contextoDetalleConciliacionInicial, metaMovimientoBancario } from "./detalle.js";
 import "./DetalleConciliacion.css";
 import { getMaquina } from "./maquina.js";
+import { SeccionEstadoConciliacion } from "./SeccionEstadoConciliacion.js";
 import { TabConciliacion } from "./TabConciliacion.js";
 import { TabGeneral } from "./TabGeneral.js";
+import { TabPartidas } from "./TabPartidas.js";
 
 /**
- * Detalle de un movimiento bancario. La cabecera (tab "General") es de solo
- * lectura (la gestiona el proveedor bancario); las acciones de conciliación
- * (Casar/Desconciliar/Ignorar/Reactivar) viven en el tab "Conciliación"
- * (ver TabConciliacion.tsx) y sus modales asociados, montados aquí según
- * `estado`.
+ * Detalle de un movimiento bancario.
+ *
+ * Layout:
+ * - Tab "Conciliación":
+ *   - Siempre visible: SeccionEstadoConciliacion (etiqueta de estado + info
+ *     del elemento ERP conciliado + botones Desconciliar/Reactivar).
+ *   - Solo cuando el movimiento puede conciliarse (pendiente/candidatos):
+ *     sub-pestañas "Recibos" (búsqueda de candidatos) y "Partidas" (asientos
+ *     contables sin movimiento equivalente).
+ * - Tab "General": cabecera de solo lectura del movimiento.
+ *
+ * Los modales (Conciliar/Desconciliar/Ignorar/Reactivar) se montan aquí
+ * fuera del panel según `estado` de la máquina.
  */
 export const DetalleConciliacion = ({
     id,
@@ -39,7 +49,7 @@ export const DetalleConciliacion = ({
 
     const formModelo = useModelo(metaMovimientoBancario, ctx.movimiento);
 
-    const { estado, movimiento, casaciones, candidatos, candidatosTexto, casacionSeleccionada } = ctx;
+    const { estado, movimiento, conciliaciones, conciliacionAplicada, candidatos, candidatosTexto, conciliacionSeleccionada } = ctx;
 
     useEffect(() => {
         emitir("movimiento_id_cambiado", id, true);
@@ -49,6 +59,9 @@ export const DetalleConciliacion = ({
     if (!ctx.movimiento.id) return null;
 
     const titulo = (m: MovimientoBancario) => m.concepto || `Movimiento ${m.id}`;
+
+    const puedeVincularPartida =
+        movimiento.estado === "pendiente" || movimiento.estado === "candidatos";
 
     return (
         <Detalle
@@ -60,32 +73,54 @@ export const DetalleConciliacion = ({
         >
             <div className="DetalleConciliacion">
                 <Tabs children={[
+                    <Tab label="Conciliación"
+                        key="tab-conciliacion"
+                        children={
+                            <div className="DetalleConciliacion-conciliacion">
+                                <SeccionEstadoConciliacion
+                                    form={formModelo}
+                                    movimiento={movimiento}
+                                    conciliacionAplicada={conciliacionAplicada}
+                                    publicar={emitir}
+                                />
+                                {puedeVincularPartida && (
+                                    <Tabs children={[
+                                        <Tab label="Recibos"
+                                            key="tab-recibos"
+                                            children={
+                                                <TabConciliacion
+                                                    movimiento={movimiento}
+                                                    conciliaciones={conciliaciones}
+                                                    candidatos={candidatos}
+                                                    candidatosTexto={candidatosTexto}
+                                                    publicar={emitir}
+                                                />
+                                            }
+                                        />,
+                                        <Tab label="Partidas"
+                                            key="tab-partidas"
+                                            children={
+                                                <TabPartidas movimiento={movimiento} publicar={emitir} />
+                                            }
+                                        />,
+                                    ]} />
+                                )}
+                            </div>
+                        }
+                    />,
                     <Tab label="General"
                         key="tab-general"
                         children={<TabGeneral form={formModelo} movimiento={ctx.movimiento} />}
                     />,
-                    <Tab label="Conciliación"
-                        key="tab-conciliacion"
-                        children={
-                            <TabConciliacion
-                                form={formModelo}
-                                movimiento={movimiento}
-                                casaciones={casaciones}
-                                candidatos={candidatos}
-                                candidatosTexto={candidatosTexto}
-                                publicar={emitir}
-                            />
-                        }
-                    />,
                 ]} />
             </div>
 
-            {estado === "CASANDO" && casacionSeleccionada && (
-                casacionSeleccionada.tipo === "asiento_manual"
-                    ? <CasarAsientoMovimientoBancario movimiento={movimiento} publicar={emitir} />
-                    : <CasarMovimientoBancario
+            {estado === "CONCILIANDO" && conciliacionSeleccionada && (
+                conciliacionSeleccionada.items[0]?.tipo === "asiento_manual"
+                    ? <ConciliarAsientoMovimientoBancario movimiento={movimiento} publicar={emitir} />
+                    : <ConciliarMovimientoBancario
                         movimiento={movimiento}
-                        casacion={casacionSeleccionada}
+                        conciliacion={conciliacionSeleccionada}
                         publicar={emitir}
                     />
             )}

@@ -1,0 +1,153 @@
+import { formatearMoneda } from "@olula/lib/dominio.js";
+import { ReactNode, useEffect, useState } from "react";
+import { Link } from "react-router";
+import { CuadreBancario, CuadreCuenta } from "../diseño.js";
+import { getCuadreBancario } from "../infraestructura.js";
+
+/**
+ * Panel de cuadre bancario-contable: muestra el saldo banco vs. saldo contable
+ * y las alertas de discrepancia por cada cuenta bancaria conectada.
+ *
+ * Se recarga en el montaje y cada vez que `version` cambia (p.ej. tras sync o
+ * conciliación automática). Cada badge es un enlace al maestro con el filtro
+ * correspondiente preseleccionado.
+ */
+export const PanelCuadreBancario = ({ version = 0 }: { version?: number }) => {
+
+    const [cuadre, setCuadre] = useState<CuadreBancario | null>(null);
+
+    useEffect(() => {
+        getCuadreBancario().then(setCuadre).catch(console.error);
+    }, [version]);
+
+    if (!cuadre || cuadre.cuentas.length === 0) return null;
+
+    return (
+        <div className="CuadreBancario">
+            {cuadre.cuentas.map((cuenta) => (
+                <FilaCuadreCuenta key={cuenta.cuentaBancoId || cuenta.nombreCuenta} cuenta={cuenta} />
+            ))}
+        </div>
+    );
+};
+
+/**
+ * Construye la URL al maestro de conciliación de una cuenta bancaria con filtros
+ * de cuadre preseleccionados. Incluye `_label` para que el maestro sepa que son
+ * filtros de cuadre (no del usuario) y los trate por separado.
+ *
+ * Los filtros usan el formato que entiende `getUrlParams`:
+ *   - operador `=` o `in` → `campo=operador__valor`
+ *   - operador `~` (defecto) → `campo=valor`
+ */
+const urlMovimientosCuenta = (cuentaBancoId: string, filtros: Record<string, string>, label: string): string => {
+    const params = new URLSearchParams({ ...filtros, _label: label });
+    return `/tesoreria/cuentas/${cuentaBancoId}/movimientos?${params}`;
+};
+
+/** Badge de alerta: enlace si hay cuenta bancaria enlazada, span estático si no. */
+const Alerta = ({
+    variante,
+    children,
+    href,
+}: {
+    variante: string;
+    children: ReactNode;
+    href?: string;
+}) => {
+    const className = `alerta alerta--${variante}`;
+    if (href) {
+        return <Link className={className} to={href}>{children}</Link>;
+    }
+    return <span className={className}>{children}</span>;
+};
+
+const FilaCuadreCuenta = ({ cuenta }: { cuenta: CuadreCuenta }) => {
+    const { diferencia, cuentaBancoId } = cuenta;
+    const hayAlertas = cuenta.totalAlertas > 0;
+    const hayDiferencia = diferencia !== null && diferencia !== 0;
+
+    // Construye la URL al maestro con filtros; null si la cuenta no tiene codcuenta ERP.
+    const url = cuentaBancoId
+        ? (filtros: Record<string, string>, label: string) => urlMovimientosCuenta(cuentaBancoId, filtros, label)
+        : null;
+
+    return (
+        <div className={`CuadreCuenta ${hayAlertas || hayDiferencia ? "CuadreCuenta--alertas" : ""}`}>
+            <div className="CuadreCuenta-cabecera">
+                <span className="CuadreCuenta-nombre">
+                    {cuenta.institucion ? `${cuenta.institucion} — ` : ""}{cuenta.nombreCuenta}
+                </span>
+                <span className="CuadreCuenta-saldos">
+                    {cuenta.saldoBanco !== null && (
+                        <span>
+                            Banco: <strong>{formatearMoneda(cuenta.saldoBanco, "EUR")}</strong>
+                        </span>
+                    )}
+                    {cuenta.saldoContable !== null && (
+                        <span>
+                            Contable: <strong>{formatearMoneda(cuenta.saldoContable, "EUR")}</strong>
+                        </span>
+                    )}
+                    {diferencia !== null && (
+                        <span className={Math.abs(diferencia) > 0.01 ? "CuadreCuenta-diferencia--error" : ""}>
+                            Diferencia: <strong>{formatearMoneda(diferencia, "EUR")}</strong>
+                        </span>
+                    )}
+                </span>
+            </div>
+
+            {hayAlertas && (
+                <div className="CuadreCuenta-alertas">
+                    {cuenta.bancarioSinConciliar > 0 && (
+                        <Alerta
+                            variante="pendiente"
+                            href={url?.({ estado: "in__pendiente,candidatos" }, "sin conciliar")}
+                        >
+                            {cuenta.bancarioSinConciliar} sin conciliar
+                            {" "}({formatearMoneda(cuenta.importeSinConciliar, "EUR")})
+                        </Alerta>
+                    )}
+                    {cuenta.bancarioIgnorado > 0 && (
+                        <Alerta
+                            variante="ignorado"
+                            href={url?.({ estado: "in__ignorado" }, "ignorados")}
+                        >
+                            {cuenta.bancarioIgnorado} ignorado{cuenta.bancarioIgnorado > 1 ? "s" : ""}
+                            {" "}({formatearMoneda(cuenta.importeIgnorado, "EUR")})
+                        </Alerta>
+                    )}
+                    {cuenta.requiereRevision > 0 && (
+                        <Alerta
+                            variante="revision"
+                            href={url?.({ requiere_revision: "=__true" }, "requieren revisión")}
+                        >
+                            {cuenta.requiereRevision} requiere{cuenta.requiereRevision > 1 ? "n" : ""} revisión
+                        </Alerta>
+                    )}
+                    {cuenta.bancoEliminoConciliado > 0 && (
+                        <Alerta
+                            variante="eliminado"
+                            href={url?.({ eliminado_en_banco: "=__true", estado: "in__conciliado" }, "eliminados por el banco")}
+                        >
+                            {cuenta.bancoEliminoConciliado} eliminado{cuenta.bancoEliminoConciliado > 1 ? "s" : ""} por el banco
+                        </Alerta>
+                    )}
+                    {cuenta.asientoSubcuentaErronea > 0 && (
+                        <Alerta
+                            variante="error"
+                            href={url?.({ estado: "in__conciliado" }, "subcuenta errónea")}
+                        >
+                            {cuenta.asientoSubcuentaErronea} subcuenta errónea
+                        </Alerta>
+                    )}
+                    {cuenta.partidaHuerfana > 0 && (
+                        <Alerta variante="error">
+                            {cuenta.partidaHuerfana} partida{cuenta.partidaHuerfana > 1 ? "s" : ""} contable{cuenta.partidaHuerfana > 1 ? "s" : ""} sin movimiento
+                        </Alerta>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
