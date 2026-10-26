@@ -4,6 +4,7 @@ import { FactoryComprasOlula } from '#/compras/factory.ts';
 import { FactoryComunOlula } from '#/comun/factory.ts';
 import { FactoryCrmOlula } from '#/crm/factory.ts';
 import { FactoryEmpresaOlula } from '#/empresa/factory.ts';
+import { SelectorEmpresaActual } from '#/empresa/empresa/componentes/SelectorEmpresaActual.tsx';
 import { FactoryPrediccionesOlula } from '#/predicciones/factory.ts';
 import { FactoryProyectosOlula } from '#/proyectos/factory.ts';
 import { FactoryRrhhOlula } from '#/rrhh/factory.ts';
@@ -18,6 +19,7 @@ import { AsistenteLateralOlula } from './AsistenteLateral.tsx';
 // (Plantilla.tsx no renderiza nada si Componentes.panel_asistente no está definido).
 class FactoryComponentesOlulaConAsistente extends FactoryComponentesOlula {
     static panel_asistente = AsistenteLateralOlula;
+    static cabecera_acciones = SelectorEmpresaActual;
 }
 
 export class FactoryOlula {
