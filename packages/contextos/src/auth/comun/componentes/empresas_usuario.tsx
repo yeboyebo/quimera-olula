@@ -1,11 +1,12 @@
 import { QMultiCheckbox } from "@olula/componentes/atomos/qmulticheckbox.tsx";
+import { ValorControl } from "@olula/lib/useModelo.ts";
 import { useEffect, useState } from "react";
 import { getEmpresasBasicas } from "../../../empresa/empresa/infraestructura.ts";
 
 interface EmpresasUsuarioProps {
-  valor?: unknown;
+  valor?: ValorControl;
   nombre?: string;
-  onChange?: (v: unknown, e?: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (v: ValorControl, e?: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const EmpresasUsuario = ({
