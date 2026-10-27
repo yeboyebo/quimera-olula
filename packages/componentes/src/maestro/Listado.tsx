@@ -3,6 +3,7 @@ import { useControlPantalla } from "@olula/lib/controles_pantalla.ts";
 import { ClausulaFiltro, Criteria, Entidad } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
 import { criteriaQueryUrl } from "@olula/lib/infraestructura.ts";
+import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { useState } from "react";
 import { QBoton } from "../atomos/qboton.tsx";
 import { QIcono } from "../atomos/qicono.tsx";
@@ -12,6 +13,9 @@ import { QTarjetas } from "../atomos/qtarjetas.tsx";
 import { QTarjetaMetatabla } from "../moleculas/qtarjeta_metatabla.tsx";
 import { SinDatos } from "../SinDatos/SinDatos.tsx";
 import "./Listado.css";
+import { useListadoMovilEnDetalle } from "./contexto_maestro.ts";
+import { SelectorModo } from "./SelectorModo.tsx";
+import { useEsMovil } from "./useEsMovil.ts";
 import {
   getMetaFiltroDefecto,
   MaestroFiltrosActivoControlado,
@@ -69,6 +73,8 @@ type ListadoProps<T extends Entidad> = {
   formatosDescarga?: FormatoDescarga[];
 };
 
+type Densidad = "comoda" | "compacta";
+
 export const Listado = <T extends Entidad>({
   metaTabla,
   metaFiltro,
@@ -86,7 +92,7 @@ export const Listado = <T extends Entidad>({
   totalEntidades,
   seleccionada,
   onSeleccion,
-  modo,
+  modo: modoPantalla,
   modoInicial,
   modosDisponibles,
   mostrarCambioModo,
@@ -100,8 +106,18 @@ export const Listado = <T extends Entidad>({
   urlDescarga,
   formatosDescarga,
 }: ListadoProps<T>) => {
+  const [densidad, setDensidad] = usePreferencia<Densidad>(
+    "maestro.densidad",
+    "comoda"
+  );
+  // En móvil, tarjetas si la pantalla no fija el modo (las tablas no caben).
+  const esMovil = useEsMovil();
+  const tarjetasCompactas = useListadoMovilEnDetalle(esMovil);
+  const modo = tarjetasCompactas ? undefined : modoPantalla;
   const [modoEstado, setModoEstado] = useState<Modo>(
-    modo ?? modoInicial ?? "tabla"
+    tarjetasCompactas
+      ? "tarjetas"
+      : (modo ?? modoInicial ?? (esMovil ? "tarjetas" : "tabla"))
   );
   const modoInterno = modo ?? modoEstado;
 
@@ -183,14 +199,6 @@ export const Listado = <T extends Entidad>({
     onModoChanged?.(nuevoModo);
   };
 
-  const siguienteModo = (): Modo | null => {
-    if (!modoEfectivo || modosDisponiblesCalculados.length === 0) return null;
-
-    const indice = modosDisponiblesCalculados.indexOf(modoEfectivo);
-    return modosDisponiblesCalculados[
-      (indice + 1) % modosDisponiblesCalculados.length
-    ];
-  };
 
   const mostrarCambioModoPorDefecto =
     modosDisponiblesCalculados.length > 1 && Boolean(modoEfectivo) && !modo;
@@ -360,7 +368,8 @@ export const Listado = <T extends Entidad>({
   };
 
   return (
-    <div className="Listado">
+    <div className="Listado" data-densidad={tarjetasCompactas ? "compacta" : densidad}
+    >
       <div className="listado-cabecera">
         <div className="listado-cabecera-izquierda">
           {mostrarFiltros && (
@@ -415,26 +424,27 @@ export const Listado = <T extends Entidad>({
               </span>
             </div>
           )}
-          {mostrarCambioModoFinal && (
+          {mostrarCambioModoFinal && modoEfectivo && (
+            <SelectorModo
+              modos={modosDisponiblesCalculados}
+              modo={modoEfectivo}
+              onCambio={cambiarModo}
+            />
+          )}
+          {modoEfectivo !== "kanban" && !tarjetasCompactas && (
             <div className="cambio-modo">
-              <span
-                className="cambio-modo-icono"
-                onClick={() => {
-                  const nuevoModo = siguienteModo();
-                  if (nuevoModo) cambiarModo(nuevoModo);
-                }}
+              <button
+                type="button"
+                className="cambio-densidad"
+                onClick={() =>
+                  setDensidad(densidad === "comoda" ? "compacta" : "comoda")
+                }
+                aria-pressed={densidad === "compacta"}
+                aria-label="Vista compacta"
+                title="Vista compacta"
               >
-                <QIcono
-                  nombre={
-                    siguienteModo() === "kanban"
-                      ? "kanban"
-                      : siguienteModo() === "tarjetas"
-                        ? "lista"
-                        : "tabla"
-                  }
-                  tamaño="md"
-                />
-              </span>
+                <QIcono nombre="densidad" tamaño="sm" />
+              </button>
             </div>
           )}
         </div>

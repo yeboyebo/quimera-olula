@@ -1,5 +1,5 @@
 import { Direccion } from "@olula/lib/diseño.js";
-import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
+import { formatearFechaDate, formatearMoneda, MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
 import { CambioClienteVenta, ClienteVenta, ConTipoArticulo, LineaVenta, ModeloNuevaLinea, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, TipoArticuloLinea, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
@@ -351,3 +351,15 @@ export const payloadCambioCliente = (cambio: CambioClienteVenta) =>
                 telefono: cambio.telefono || null,
             },
         };
+
+/** Franja de datos clave del detalle de un documento de venta. */
+export const datosClaveDocumentoVenta = (documento: {
+    fecha: Date;
+    nombre_agente?: string;
+    total?: number;
+    divisa_id?: string;
+}) => [
+    { etiqueta: "Fecha", valor: documento.fecha ? formatearFechaDate(new Date(documento.fecha)) : "—" },
+    { etiqueta: "Agente", valor: documento.nombre_agente || "—" },
+    { etiqueta: "Total", valor: formatearMoneda(documento.total ?? 0, documento.divisa_id || "EUR") },
+];

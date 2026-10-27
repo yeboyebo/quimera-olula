@@ -1,3 +1,4 @@
+import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
 import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
@@ -15,12 +16,14 @@ import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
 import { EmitirFactura } from "../emitir/EmitirFactura.tsx";
-import { facturaEmitible } from "../dominio.ts";
-import { EstadoExpedicion } from "../vistas/EstadoExpedicion.tsx";
+import { etiquetaEstadoFactura, facturaEmitible } from "../dominio.ts";
 import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import "../../comun/estilos/campos.css";
 import "../../comun/estilos/detalle_documento.css";
-import { tituloDocumentoVenta } from "../../venta/dominio.ts";
+import {
+  datosClaveDocumentoVenta,
+  tituloDocumentoVenta,
+} from "../../venta/dominio.ts";
 import { facturaVacia } from "../dominio.ts";
 import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
 import "./DetalleFactura.css";
@@ -69,12 +72,14 @@ export const DetalleFactura = ({
 
   const { estado, lineaActiva } = ctx;
 
-  const titulo = (factura: Factura) => (
-    <span className="titulo-documento">
-      <EstadoExpedicion factura={factura} />
-      {tituloDocumentoVenta(factura, "Nueva Factura")}
-    </span>
+  const titulo = (factura: Factura) =>
+    tituloDocumentoVenta(factura, "Nueva Factura");
+
+  const estadoFactura = (factura: Factura) => (
+    <EtiquetaEstado {...etiquetaEstadoFactura(factura)} />
   );
+
+  const datosClave = datosClaveDocumentoVenta;
 
   const imprimir = useCallback(async () => {
     const blob = await getReportFactura(ctx.factura.id);
@@ -112,6 +117,8 @@ export const DetalleFactura = ({
     <Detalle
       id={ctx.factura.id}
       obtenerTitulo={titulo}
+      obtenerEstado={estadoFactura}
+      obtenerDatosClave={datosClave}
       setEntidad={() => {}}
       entidad={ctx.factura}
       cerrarDetalle={() => emitir("factura_deseleccionada", null)}
@@ -126,6 +133,15 @@ export const DetalleFactura = ({
       </div>
 
       <Tabs>
+        <Tab label="Líneas">
+          <Lineas
+            factura={ctx.factura}
+            lineaActiva={lineaActiva}
+            estadoFactura={estado}
+            publicar={emitir}
+          />
+        </Tab>
+
         <Tab label="Cliente">
           <TabCliente factura={factura} estado={estado} publicar={emitir} />
         </Tab>
@@ -165,13 +181,6 @@ export const DetalleFactura = ({
           porComision={ctx.factura.por_comision}
         />
       )}
-
-      <Lineas
-        factura={ctx.factura}
-        lineaActiva={lineaActiva}
-        estadoFactura={estado}
-        publicar={emitir}
-      />
 
       {estado === "EMITIENDO_FACTURA" && (
         <EmitirFactura factura={ctx.factura} publicar={emitir} />

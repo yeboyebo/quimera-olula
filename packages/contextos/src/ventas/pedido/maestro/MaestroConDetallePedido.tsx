@@ -25,7 +25,12 @@ import { Pedido } from "../diseño.ts";
 import { AlbaranarPedidos } from "./AlbaranarPedidos.tsx";
 import "./MaestroConDetallePedido.css";
 import { TarjetaDocumentoVenta } from "#/ventas/comun/componentes/TarjetaDocumentoVenta.tsx";
-import { agruparPorCliente, estadoServidoPedido, todosPuedenAlbaranarse } from "./maestro.ts";
+import {
+  agruparPorCliente,
+  estadoServidoPedido,
+  etiquetaEstadoPedido,
+  todosPuedenAlbaranarse,
+} from "./maestro.ts";
 import { getMaquina } from "./maquina.ts";
 import { getMetaTablaPedido } from "./metatabla_pedido.tsx";
 import { ResultadoAlbaranado } from "./ResultadoAlbaranado.tsx";
@@ -113,6 +118,7 @@ export const MaestroConDetallePedido = () => {
                   tasaConversion={pedido.tasa_conversion}
                   totalDivisaEmpresa={pedido.total_divisa_empresa}
                   estado={estadoServidoPedido(pedido)}
+                  etiquetaEstado={etiquetaEstadoPedido(pedido)}
                 />
               )}
               criteria={ctx.pedidos.criteria}

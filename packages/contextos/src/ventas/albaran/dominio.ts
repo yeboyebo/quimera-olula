@@ -1,3 +1,4 @@
+import { EstadoEtiqueta } from "#/comun/diseño.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import {
@@ -8,7 +9,7 @@ import {
     nuevaVentaVacia,
     puedeCambiarAlmacen,
     tituloDocumentoVenta,
-    ventaVacia
+    ventaVacia,
 } from "../venta/dominio.ts";
 import {
     Albaran,
@@ -21,11 +22,13 @@ import {
 export const metaTablaAlbaran: MetaTabla<Albaran> = [
     {
         id: "codigo",
+        estilo: "secundario",
         cabecera: "Código",
         prioridad: "alta",
     },
     {
         id: "nombre_cliente",
+        estilo: "destacado",
         cabecera: "Cliente",
         prioridad: "alta",
         render: (a) => a.cliente.nombre_cliente,
@@ -38,6 +41,7 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
     },
     {
         id: "total",
+        estilo: "destacado",
         cabecera: "Total",
         tipo: "moneda",
         prioridad: "alta",
@@ -120,3 +124,8 @@ export const cambioCliente = (albaran: Albaran): CambioClienteAlbaran => ({
     cliente_id: albaran.cliente.cliente_id ?? "",
     direccion_id: albaran.cliente.direccion_id ?? "",
 });
+
+export const etiquetaEstadoAlbaran = (albaran: Pick<Albaran, "facturado">): EstadoEtiqueta =>
+    albaran.facturado
+        ? { texto: "Facturado", tono: "completado" }
+        : { texto: "Pendiente", tono: "pendiente" };

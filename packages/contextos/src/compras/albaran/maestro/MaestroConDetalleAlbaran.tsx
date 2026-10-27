@@ -40,7 +40,7 @@ export const MaestroConDetalleAlbaran = () => {
     }, []);
 
     return (
-        <div className="Albaran">
+        <div className="ComprasAlbaran">
             <MaestroDetalle<Albaran>
                 Maestro={
                     <>

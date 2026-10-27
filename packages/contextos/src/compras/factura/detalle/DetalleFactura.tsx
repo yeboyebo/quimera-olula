@@ -1,3 +1,5 @@
+import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
+import { datosClaveDocumentoCompra } from "#/compras/comun/dominio.ts";
 import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
@@ -12,7 +14,7 @@ import { useCallback, useEffect } from "react";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { CambiarRectificativa } from "../cambiar_rectificativa/CambiarRectificativa.tsx";
 import { Factura } from "../diseño.ts";
-import { facturaEditable, facturaReabrible, facturaRegistrable } from "../dominio.ts";
+import { etiquetaEstadoFactura, facturaEditable, facturaReabrible, facturaRegistrable } from "../dominio.ts";
 import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
 import { RegistrarFactura } from "../registrar/RegistrarFactura.tsx";
 import {
@@ -74,6 +76,7 @@ export const DetalleFactura = ({
             texto: "Registrar factura",
             onClick: () => emitir("registro_solicitado"),
             deshabilitado: !facturaRegistrable(factura),
+            principal: true,
         },
         {
             texto: "Reabrir factura",
@@ -98,6 +101,8 @@ export const DetalleFactura = ({
         <Detalle
             id={id}
             obtenerTitulo={titulo}
+            obtenerEstado={(F: Factura) => <EtiquetaEstado {...etiquetaEstadoFactura(F)} />}
+            obtenerDatosClave={datosClaveDocumentoCompra}
             setEntidad={() => {}}
             entidad={factura}
             cerrarDetalle={() => emitir("factura_deseleccionada", null, true)}
@@ -108,6 +113,18 @@ export const DetalleFactura = ({
                 </div>
                 <Tabs
                     children={[
+                        <Tab
+                            key="tab-lineas"
+                            label="Líneas"
+                            children={
+                                <LineasFactura
+                                    factura={factura}
+                                    lineas={lineas}
+                                    estado={estado}
+                                    publicar={emitir}
+                                />
+                            }
+                        />,
                         <Tab
                             key="tab-proveedor"
                             label="Proveedor"
@@ -131,12 +148,6 @@ export const DetalleFactura = ({
                     ]}
                 />
                 <TotalesDocumento form={formModelo} />
-                <LineasFactura
-                    factura={factura}
-                    lineas={lineas}
-                    estado={estado}
-                    publicar={emitir}
-                />
             </div>
 
             {estado === "CAMBIANDO_DIVISA" && (

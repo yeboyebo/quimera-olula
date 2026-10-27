@@ -42,5 +42,3 @@ export const pedidoEsEditable = (pedido: { servido?: string }): boolean => {
     const servido = pedido.servido?.toUpperCase();
     return servido !== 'TOTAL' && servido !== 'SERVIDO';
 };
-
-
