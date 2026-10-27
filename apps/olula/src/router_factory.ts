@@ -1,6 +1,7 @@
 import { RouterFactoryAlmacenOlula } from '#/almacen/router_factory.ts';
 import { RouterFactoryAuthOlula } from '#/auth/router_factory.ts';
 import { RouterFactoryComprasOlula } from '#/compras/router_factory.ts';
+import { RouterFactoryContabilidadOlula } from '#/contabilidad/router_factory.ts';
 import { RouterFactoryComunOlula } from "#/comun/router_factory.ts";
 import { RouterFactoryCrmOlula } from '#/crm/router_factory.ts';
 import { RouterFactoryEmpresaOlula } from '#/empresa/router_factory.ts';
@@ -21,6 +22,7 @@ export class RouterFactoryOlula {
     Auth = RouterFactoryAuthOlula;
     Ventas = RouterFactoryVentasOlula;
     Compras = RouterFactoryComprasOlula;
+    Contabilidad = RouterFactoryContabilidadOlula;
     Almacen = RouterFactoryAlmacenOlula;
     Crm = RouterFactoryCrmOlula;
     Empresa = RouterFactoryEmpresaOlula;
