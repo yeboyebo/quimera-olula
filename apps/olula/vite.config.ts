@@ -12,6 +12,12 @@ export default mergeConfig(config, {
     },
     server: {
         allowedHosts: true,
+        proxy: {
+            '/public': {
+                target: 'http://localhost:5000',
+                changeOrigin: true,
+            },
+        },
     },
     test: {
         setupFiles: ["../../setupTests.ts"]
