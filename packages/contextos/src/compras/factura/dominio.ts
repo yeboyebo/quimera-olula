@@ -1,3 +1,4 @@
+import { EstadoEtiqueta } from "#/comun/diseño.ts";
 import { MetaModelo } from "@olula/lib/dominio.ts";
 import { articuloDeLineaValido, getTipoArticulo } from "../comun/dominio.ts";
 import {
@@ -113,3 +114,8 @@ export const camposConCambiosServidor = [
     'tipoIrpf',
     'grupoIvaProductoId',
 ] as const satisfies readonly (keyof NuevaLineaFactura)[];
+
+export const etiquetaEstadoFactura = (factura: Factura): EstadoEtiqueta => ({
+    texto: descripcionEstadoExpedicion[factura.estadoExpedicion],
+    tono: factura.estadoExpedicion === "REGISTRADA" ? "completado" : "borrador",
+});
