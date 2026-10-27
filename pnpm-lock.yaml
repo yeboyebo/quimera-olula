@@ -297,6 +297,30 @@ importers:
         specifier: workspace:*
         version: link:../olula
 
+  apps/jornadas:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/contextos/lib
+
+  apps/jornadas_admin:
+    dependencies:
+      '@olula/componentes':
+        specifier: workspace:*
+        version: link:../../packages/componentes
+      '@olula/ctx':
+        specifier: workspace:*
+        version: link:../../packages/contextos
+      '@olula/lib':
+        specifier: workspace:*
+        version: link:../../packages/contextos/lib
+
   apps/monterelax:
     dependencies:
       '@olula/componentes':
