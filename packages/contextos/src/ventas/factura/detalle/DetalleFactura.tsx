@@ -1,10 +1,12 @@
 import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
 import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
+import { AsientoDeDocumento } from "#/contabilidad/asiento/vistas/detalle/AsientoDeDocumento.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { puede } from "@olula/lib/dominio.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
@@ -157,6 +159,12 @@ export const DetalleFactura = ({
         <Tab label="Recibos">
           <TabRecibos facturaId={ctx.factura.id} />
         </Tab>
+
+        {puede("contabilidad.asiento") && (
+          <Tab label="Contabilidad">
+            <AsientoDeDocumento asientoId={ctx.factura.asiento_id ?? null} />
+          </Tab>
+        )}
       </Tabs>
 
       <TotalesVenta modeloVenta={factura} publicar={emitir} />

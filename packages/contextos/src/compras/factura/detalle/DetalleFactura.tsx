@@ -1,6 +1,7 @@
 import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
 import { datosClaveDocumentoCompra } from "#/compras/comun/dominio.ts";
 import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
+import { AsientoDeDocumento } from "#/contabilidad/asiento/vistas/detalle/AsientoDeDocumento.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -8,13 +9,14 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { puede } from "@olula/lib/dominio.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { CambiarRectificativa } from "../cambiar_rectificativa/CambiarRectificativa.tsx";
 import { Factura } from "../diseño.ts";
-import { etiquetaEstadoFactura, facturaEditable, facturaReabrible, facturaRegistrable } from "../dominio.ts";
+import { etiquetaEstadoFactura, facturaEditable, facturaRegistrable } from "../dominio.ts";
 import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
 import { RegistrarFactura } from "../registrar/RegistrarFactura.tsx";
 import {
@@ -79,11 +81,6 @@ export const DetalleFactura = ({
             principal: true,
         },
         {
-            texto: "Reabrir factura",
-            onClick: () => emitir("reapertura_solicitada"),
-            deshabilitado: !facturaReabrible(factura),
-        },
-        {
             texto: "Rectificativa",
             onClick: () => emitir("cambio_rectificativa_solicitado"),
             deshabilitado: !editable,
@@ -145,6 +142,13 @@ export const DetalleFactura = ({
                             label="Recibos"
                             children={<TabRecibos facturaId={factura.id} />}
                         />,
+                        puede("contabilidad.asiento") && (
+                            <Tab
+                                key="tab-contabilidad"
+                                label="Contabilidad"
+                                children={<AsientoDeDocumento asientoId={factura.asientoId} />}
+                            />
+                        ),
                     ]}
                 />
                 <TotalesDocumento form={formModelo} />

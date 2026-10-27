@@ -38,13 +38,6 @@ export const descripcionEstadoExpedicion: Record<EstadoExpedicion, string> = {
 export const facturaRegistrable = (factura: Factura): boolean =>
     factura.estadoExpedicion === "BORRADOR";
 
-/**
- * Reabrir solo tiene sentido en la factura que bloqueó la contabilidad: es el
- * asiento lo que pone `editable` a false, no el usuario.
- */
-export const facturaReabrible = (factura: Factura): boolean =>
-    factura.asientoId !== null;
-
 export const descripcionOrigenFactura = (factura: Factura): string =>
     factura.automatica ? "Desde albaranes" : "Manual";
 
