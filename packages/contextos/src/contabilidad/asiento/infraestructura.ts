@@ -89,13 +89,14 @@ export const asientoDesdeApi = (api: AsientoDetalleApi): Asiento => ({
     partidas: api.partidas.map(partidaAsientoDesdeApi),
 });
 
+// `es_iva` no viaja: el servidor lo deduce de la cuenta especial de la
+// subcuenta (IVASOP / IVAREP), como el ERP en co_partidas.qs.
 const partidaManualAApi = (p: PartidaManualInput) => ({
     ...(p.id ? { id: Number(p.id) } : {}),
     subcuenta_id: p.subcuentaId,
     debe: p.debe,
     haber: p.haber,
     ...(p.concepto ? { concepto: p.concepto } : {}),
-    ...(p.esIva ? { es_iva: true } : {}),
     ...(p.baseImponible !== undefined ? { base_imponible: p.baseImponible } : {}),
     ...(p.ivaPct !== undefined ? { iva: p.ivaPct } : {}),
     ...(p.recargo !== undefined ? { recargo: p.recargo } : {}),

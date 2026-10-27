@@ -9,19 +9,51 @@ const { patchAsientoManual } = vi.hoisted(() => ({
 
 vi.mock("../infraestructura.ts", () => ({ patchAsientoManual }));
 
-// El selector real consulta /contabilidad/subcuenta; aquí basta con un botón
-// que asigne una subcuenta válida a la fila.
+// El selector real consulta /contabilidad/subcuenta; aquí basta con sendos
+// botones que asignen a la fila una subcuenta normal o una de IVA.
 vi.mock("#/contabilidad/comun/componentes/SubcuentaSelector.tsx", () => ({
     SubcuentaSelector: ({
         nombre,
         onChange,
     }: {
         nombre: string;
-        onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+        onChange: (
+            opcion: {
+                valor: string;
+                descripcion: string;
+                descripcionOpcion: string;
+                esIva: boolean;
+            } | null
+        ) => void;
     }) => (
-        <button type="button" onClick={() => onChange({ valor: "930", descripcion: "6290000" })}>
-            {`elegir ${nombre}`}
-        </button>
+        <>
+            <button
+                type="button"
+                onClick={() =>
+                    onChange({
+                        valor: "930",
+                        descripcion: "6290000",
+                        descripcionOpcion: "6290000",
+                        esIva: false,
+                    })
+                }
+            >
+                {`elegir ${nombre}`}
+            </button>
+            <button
+                type="button"
+                onClick={() =>
+                    onChange({
+                        valor: "940",
+                        descripcion: "4720000",
+                        descripcionOpcion: "4720000",
+                        esIva: true,
+                    })
+                }
+            >
+                {`elegir iva ${nombre}`}
+            </button>
+        </>
     ),
 }));
 
@@ -70,6 +102,10 @@ const boton = (nombre: string) => screen.getByRole("button", { name: nombre, hid
 // QBoton no marca `disabled` en el <button>: refleja el estado en el
 // elemento <quimera-boton> que lo envuelve.
 const botonGuardar = () => boton("Guardar");
+const etiquetasIva = () =>
+    Array.from(
+        document.querySelectorAll(".EditorPartidasManual-etiquetaIva")
+    ).map((e) => e.textContent);
 const guardarDeshabilitado = () => botonGuardar().closest("quimera-boton");
 
 describe("CambiarAsientoManual", () => {
@@ -112,6 +148,15 @@ describe("CambiarAsientoManual", () => {
 
         expect(screen.queryByText(/Descuadre/)).not.toBeInTheDocument();
         expect(guardarDeshabilitado()).toHaveAttribute("deshabilitado");
+    });
+
+    test("el IVA de la partida lo dice su subcuenta, no un check del usuario", async () => {
+        expect(document.querySelector('input[type="checkbox"]')).toBeNull();
+        expect(etiquetasIva()).toEqual(["NO", "NO"]);
+
+        await userEvent.click(boton("elegir iva subcuenta-0"));
+
+        expect(etiquetasIva()).toEqual(["SI", "NO"]);
     });
 
     test("asignar la subcuenta de la partida nueva la deja lista para enviar", async () => {

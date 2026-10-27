@@ -1,7 +1,17 @@
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Criteria, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { Subcuenta } from "#/contabilidad/subcuenta/diseño.ts";
 import { getSubcuenta, getSubcuentas } from "#/contabilidad/subcuenta/infraestructura.ts";
+
+/** La opción lleva el `esIva` de la subcuenta: quien la elige necesita saber
+ * si es de IVA sin volver a consultarla (ver EditorPartidasManual). */
+export type OpcionSubcuenta = {
+    valor: string;
+    descripcion: string;
+    descripcionOpcion: string;
+    esIva: boolean;
+};
 
 interface SubcuentaSelectorProps {
     ejercicioId: string;
@@ -10,13 +20,14 @@ interface SubcuentaSelectorProps {
     nombre?: string;
     label?: string;
     opcional?: boolean;
-    onChange: (opcion: { valor: string; descripcion: string } | null) => void;
+    onChange: (opcion: OpcionSubcuenta | null) => void;
 }
 
-const opcionDesdeSubcuenta = (sc: { id: string; codigo: string; nombre: string }) => ({
+const opcionDesdeSubcuenta = (sc: Subcuenta): OpcionSubcuenta => ({
     valor: sc.id,
     descripcion: sc.codigo,
     descripcionOpcion: `${sc.codigo} — ${sc.nombre}`,
+    esIva: sc.esIva,
 });
 
 export const SubcuentaSelector = ({
@@ -68,7 +79,7 @@ export const SubcuentaSelector = ({
     };
 
     return (
-        <QAutocompletar
+        <QAutocompletar<OpcionSubcuenta>
             label={label}
             nombre={nombre}
             valor={valor}

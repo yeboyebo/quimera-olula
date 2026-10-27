@@ -17,6 +17,12 @@ const metaTablaPartida: MetaTabla<PartidaAsiento> = [
     { id: "debe", cabecera: "Debe", tipo: "moneda", prioridad: "alta" },
     { id: "haber", cabecera: "Haber", tipo: "moneda", prioridad: "alta" },
     { id: "concepto", cabecera: "Concepto", prioridad: "baja" },
+    {
+        id: "esIva",
+        cabecera: "IVA",
+        prioridad: "media",
+        render: (p) => (p.esIva ? "SI" : "NO"),
+    },
 ];
 
 // Las partidas vienen embebidas en el asiento, así que se ordenan y paginan en

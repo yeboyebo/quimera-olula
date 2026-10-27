@@ -25,6 +25,8 @@ export interface SubcuentaApi {
     impuesto_id?: string | null;
     iva?: number;
     recargo?: number;
+    cuenta_especial_id?: string | null;
+    es_iva?: boolean;
 }
 
 export const subcuentaDesdeApi = (api: SubcuentaApi): Subcuenta => ({
@@ -37,6 +39,8 @@ export const subcuentaDesdeApi = (api: SubcuentaApi): Subcuenta => ({
     impuestoId: api.impuesto_id ?? "",
     iva: api.iva ?? 0,
     recargo: api.recargo ?? 0,
+    cuentaEspecialId: api.cuenta_especial_id ?? "",
+    esIva: api.es_iva ?? false,
 });
 
 export const getSubcuentas: GetSubcuentas = async (criteria) =>

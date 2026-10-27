@@ -10,6 +10,10 @@ export interface Subcuenta extends Entidad {
     impuestoId: string;
     iva: number;
     recargo: number;
+    /** Tipo especial de su cuenta (`co_cuentas.idcuentaesp`): IVASOP, CLIENT… */
+    cuentaEspecialId: string;
+    /** La subcuenta es de IVA: su cuenta es IVASOP o IVAREP. */
+    esIva: boolean;
 }
 
 export type GetSubcuentas = (criteria: Criteria) => RespuestaLista<Subcuenta>;

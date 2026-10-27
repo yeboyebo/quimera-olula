@@ -100,14 +100,18 @@
         display: none;
     }
 
-    .EditorPartidasManual-checkIva {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--espaciado-xxs);
+    /* La partida es de IVA o no según su subcuenta: se muestra, no se marca. */
+    .EditorPartidasManual-etiquetaIva {
+        display: block;
+        text-align: center;
         font-size: var(--tamaño-letra-xs);
+        font-weight: var(--grosor-letra-5);
         color: var(--color-texto-secundario);
         white-space: nowrap;
+    }
+
+    .EditorPartidasManual-etiquetaIva[data-iva="si"] {
+        color: var(--color-texto-primario);
     }
 
     .EditorPartidasManual-acciones {

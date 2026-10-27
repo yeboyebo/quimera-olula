@@ -40,6 +40,8 @@ export interface PartidaManualInput extends Modelo {
     debe: number;
     haber: number;
     concepto: string;
+    /** Derivado de la subcuenta (cuenta especial IVASOP / IVAREP); solo UI, el
+     * API lo vuelve a deducir y no se envía. */
     esIva?: boolean;
     baseImponible?: number;
     ivaPct?: number;

@@ -1,6 +1,9 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { SubcuentaSelector } from "#/contabilidad/comun/componentes/SubcuentaSelector.tsx";
+import {
+    OpcionSubcuenta,
+    SubcuentaSelector,
+} from "#/contabilidad/comun/componentes/SubcuentaSelector.tsx";
 import { PartidaManualInput } from "../../diseño.ts";
 import {
     asientoCuadrado,
@@ -31,9 +34,11 @@ export const EditorPartidasManual = ({
         onChange(copia);
     };
 
+    // Que la partida sea de IVA lo decide la subcuenta, no quien edita: su
+    // cuenta especial (IVASOP / IVAREP), igual que el ERP en co_partidas.qs.
     const actualizarSubcuenta = (
         index: number,
-        opcion: { valor: string; descripcion: string } | null
+        opcion: OpcionSubcuenta | null
     ) => {
         const copia = partidas.map((p, i) =>
             i === index
@@ -41,6 +46,7 @@ export const EditorPartidasManual = ({
                       ...p,
                       subcuentaId: opcion ? Number(opcion.valor) : 0,
                       codigoSubcuenta: opcion?.descripcion ?? "",
+                      esIva: opcion?.esIva ?? false,
                   }
                 : p
         );
@@ -134,20 +140,12 @@ export const EditorPartidasManual = ({
                                 />
                             </td>
                             <td>
-                                <label className="EditorPartidasManual-checkIva">
-                                    <input
-                                        type="checkbox"
-                                        checked={Boolean(p.esIva)}
-                                        onChange={(e) =>
-                                            actualizar(
-                                                i,
-                                                "esIva",
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    IVA
-                                </label>
+                                <span
+                                    className="EditorPartidasManual-etiquetaIva"
+                                    data-iva={p.esIva ? "si" : "no"}
+                                >
+                                    {p.esIva ? "SI" : "NO"}
+                                </span>
                             </td>
                             <td>
                                 <QBoton
