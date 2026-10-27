@@ -1,3 +1,4 @@
+import { widgetsPedido } from "#/ventas/pedido/dominio.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
@@ -108,6 +109,7 @@ export const MaestroConDetallePedido = () => {
             <Listado<Pedido>
               metaTabla={metaTablaPedido}
               metaFiltro={metaFiltroPedido}
+              widgets={widgetsPedido}
               tarjeta={(pedido) => (
                 <TarjetaDocumentoVenta
                   codigo={pedido.codigo}

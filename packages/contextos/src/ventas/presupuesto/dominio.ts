@@ -1,4 +1,5 @@
 import { EstadoEtiqueta } from "#/comun/diseño.ts";
+import { widgetsDocumentoVenta } from "../venta/dominio.ts";
 import { Presupuesto } from "./diseño.ts";
 
 /**
@@ -14,3 +15,10 @@ export const etiquetaEstadoPresupuesto = (presupuesto: Presupuesto): EstadoEtiqu
     aprobado(presupuesto)
         ? { texto: "Aprobado", tono: "completado" }
         : { texto: "Pendiente", tono: "pendiente" };
+
+/** Widgets por defecto del maestro de presupuestos (totales según el filtro activo). */
+export const widgetsPresupuesto = widgetsDocumentoVenta("ventas.presupuesto", {
+    plural: "Presupuestos",
+    total: "Importe ofertado",
+    medio: "Presupuesto medio",
+});

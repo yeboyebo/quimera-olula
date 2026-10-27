@@ -28,6 +28,7 @@ import { Albaran } from "../diseño.ts";
 import {
   etiquetaEstadoAlbaran,
   metaTablaAlbaran as metaTablaBase,
+  widgetsAlbaran,
 } from "../dominio.ts";
 import "./MaestroConDetalleAlbaran.css";
 import { getMaquina } from "./maquina.ts";
@@ -108,6 +109,7 @@ export const MaestroConDetalleAlbaran = () => {
             <Listado<Albaran>
               metaTabla={metaTablaAlbaran}
               metaFiltro={metaFiltroAlbaran}
+              widgets={widgetsAlbaran}
               tarjeta={(albaran) => (
                 <TarjetaDocumentoVenta
                   codigo={albaran.codigo}

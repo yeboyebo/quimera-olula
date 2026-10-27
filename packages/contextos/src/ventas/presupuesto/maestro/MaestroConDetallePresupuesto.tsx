@@ -26,7 +26,7 @@ import {
 import "./MaestroConDetallePresupuesto.css";
 import { getMaquina } from "./maquina.ts";
 import { TarjetaMaestroPresupuesto } from "./TarjetaMaestroPresupuesto.tsx";
-import { etiquetaEstadoPresupuesto } from "../dominio.ts";
+import { etiquetaEstadoPresupuesto, widgetsPresupuesto } from "../dominio.ts";
 
 const SIN_APROBAR = "true";
 const APROBADO = "false";
@@ -98,6 +98,7 @@ export const MaestroConDetallePresupuesto = () => {
             <Listado<Presupuesto>
               metaTabla={metaTablaPresupuesto}
               metaFiltro={metaFiltroPresupuesto}
+              widgets={widgetsPresupuesto}
               tarjeta={TarjetaMaestroPresupuesto}
               criteria={ctx.presupuestos.criteria}
               entidades={ctx.presupuestos.lista}

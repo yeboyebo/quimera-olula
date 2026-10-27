@@ -10,6 +10,7 @@ import {
     puedeCambiarAlmacen,
     tituloDocumentoVenta,
     ventaVacia,
+    widgetsDocumentoVenta,
 } from "../venta/dominio.ts";
 import {
     Albaran,
@@ -129,3 +130,10 @@ export const etiquetaEstadoAlbaran = (albaran: Pick<Albaran, "facturado">): Esta
     albaran.facturado
         ? { texto: "Facturado", tono: "completado" }
         : { texto: "Pendiente", tono: "pendiente" };
+
+/** Widgets por defecto del maestro de albaranes (totales según el filtro activo). */
+export const widgetsAlbaran = widgetsDocumentoVenta("ventas.albaran", {
+    plural: "Albaranes",
+    total: "Importe total",
+    medio: "Albarán medio",
+});

@@ -1,3 +1,4 @@
+import { widgetsDocumentoCompra } from "#/compras/comun/dominio.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
@@ -16,6 +17,12 @@ import "./MaestroConDetallePedido.css";
 import { getMaquina } from "./maquina.ts";
 import { metaTablaPedido } from "./metatabla_pedido.tsx";
 import { TarjetaPedido } from "./TarjetaPedido.tsx";
+
+const widgetsPedidoCompra = widgetsDocumentoCompra("compras.pedido", {
+  plural: "Pedidos de compra",
+  total: "Importe total",
+  medio: "Pedido medio",
+});
 
 const criteriaPedidos = {
   ...criteriaDefecto,
@@ -52,6 +59,7 @@ export const MaestroConDetallePedido = () => {
             <h2>Pedidos de compra</h2>
             <Listado<Pedido>
               metaTabla={metaTablaPedido}
+              widgets={widgetsPedidoCompra}
               criteria={pedidos.criteria}
               tarjeta={TarjetaPedido}
               entidades={pedidos.lista}

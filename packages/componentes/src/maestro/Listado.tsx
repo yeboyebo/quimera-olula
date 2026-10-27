@@ -16,6 +16,14 @@ import "./Listado.css";
 import { useListadoMovilEnDetalle } from "./contexto_maestro.ts";
 import { SelectorModo } from "./SelectorModo.tsx";
 import { useEsMovil } from "./useEsMovil.ts";
+import { ConfigWidgets } from "./widgets/diseño.ts";
+import { getConteo } from "./widgets/infraestructura.ts";
+import { QPanelWidgets } from "./widgets/QPanelWidgets.tsx";
+import { PersonalizarWidgets } from "./widgets/PersonalizarWidgets.tsx";
+import { useTotalesWidgets } from "./widgets/useTotalesWidgets.ts";
+import { useWidgetsUsuario } from "./widgets/useWidgetsUsuario.ts";
+import { useConfigWidgetsAuto } from "./widgets/useConfigWidgetsAuto.ts";
+import { useEnMaestroPrincipal } from "./contexto_maestro.ts";
 import {
   getMetaFiltroDefecto,
   MaestroFiltrosActivoControlado,
@@ -71,6 +79,8 @@ type ListadoProps<T extends Entidad> = {
   onMultiSeleccion?: (seleccionadas: string[]) => void;
   urlDescarga?: string;
   formatosDescarga?: FormatoDescarga[];
+  /** Totales encima del listado, calculados en el servidor con el filtro activo. */
+  widgets?: ConfigWidgets;
 };
 
 type Densidad = "comoda" | "compacta";
@@ -105,7 +115,21 @@ export const Listado = <T extends Entidad>({
   onMultiSeleccion,
   urlDescarga,
   formatosDescarga,
+  widgets,
 }: ListadoProps<T>) => {
+  // Sin widgets propios, el maestro principal los ofrece igualmente si su
+  // pantalla tiene un recurso agregable en el servidor (los crea el usuario).
+  const enMaestroPrincipal = useEnMaestroPrincipal();
+  const configAuto = useConfigWidgetsAuto(!widgets && enMaestroPrincipal);
+  const configBase = widgets ?? configAuto;
+  const widgetsUsuario = useWidgetsUsuario(configBase);
+  const configWidgets = configBase && {
+    ...configBase,
+    widgets: widgetsUsuario.widgets,
+  };
+  const { valores: valoresWidgets, cargando: cargandoWidgets } =
+    useTotalesWidgets(configWidgets, criteria.filtro, totalEntidades);
+  const [personalizandoWidgets, setPersonalizandoWidgets] = useState(false);
   const [densidad, setDensidad] = usePreferencia<Densidad>(
     "maestro.densidad",
     "comoda"
@@ -370,6 +394,30 @@ export const Listado = <T extends Entidad>({
   return (
     <div className="Listado" data-densidad={tarjetasCompactas ? "compacta" : densidad}
     >
+      {configWidgets &&
+        (configWidgets.widgets.length > 0 || widgetsUsuario.personalizable) && (
+          <QPanelWidgets
+            widgets={configWidgets.widgets}
+            campos={configWidgets.campos}
+            valores={valoresWidgets}
+            cargando={cargandoWidgets}
+            onPersonalizar={
+              widgetsUsuario.personalizable
+                ? () => setPersonalizandoWidgets(true)
+                : undefined
+            }
+          />
+        )}
+      {configBase && personalizandoWidgets && (
+        <PersonalizarWidgets
+          config={configBase}
+          widgets={widgetsUsuario.widgets}
+          filtro={criteria.filtro}
+          onGuardar={widgetsUsuario.guardar}
+          onRestaurar={widgetsUsuario.restaurar}
+          onCerrar={() => setPersonalizandoWidgets(false)}
+        />
+      )}
       <div className="listado-cabecera">
         <div className="listado-cabecera-izquierda">
           {mostrarFiltros && (
@@ -377,6 +425,11 @@ export const Listado = <T extends Entidad>({
               metaFiltro={metaFiltroEfectivo}
               filtro={criteria.filtro as ClausulaFiltro[]}
               filtroInicial={criteriaInicial.filtro as ClausulaFiltro[]}
+              contar={
+                configBase
+                  ? (filtro) => getConteo(configBase.recurso, filtro)
+                  : undefined
+              }
               onFiltroChanged={(filtro) => {
                 onCriteriaChanged({
                   ...criteria,

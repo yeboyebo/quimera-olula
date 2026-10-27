@@ -6,6 +6,7 @@ import {
     clienteVentaVacio,
     nuevaVentaVacia,
     ventaVacia,
+    widgetsDocumentoVenta
 } from "../venta/dominio.ts";
 import {
     CambioClienteFactura,
@@ -138,3 +139,10 @@ export const etiquetaEstadoFactura = (factura: Factura): EstadoEtiqueta => {
     if (estadoExpedicion === "BORRADOR" || estadoExpedicion === "") return { texto, tono: "borrador" };
     return { texto, tono: facturaEditable(factura) ? "pendiente" : "completado" };
 };
+
+/** Widgets por defecto del maestro de facturas (totales según el filtro activo). */
+export const widgetsFactura = widgetsDocumentoVenta("ventas.factura", {
+    plural: "Facturas",
+    total: "Total facturado",
+    medio: "Ticket medio",
+});

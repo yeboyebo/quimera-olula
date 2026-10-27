@@ -23,6 +23,7 @@ import {
   etiquetaEstadoFactura,
   facturaEditable,
   metaTablaFactura as metaTablaBase,
+  widgetsFactura,
 } from "../dominio.ts";
 import "./MaestroConDetalleFactura.css";
 import { getMaquina } from "./maquina.ts";
@@ -70,6 +71,7 @@ export const MaestroConDetalleFactura = () => {
             <Listado<Factura>
               metaTabla={metaTablaFactura}
               metaFiltro={metaFiltroFactura}
+              widgets={widgetsFactura}
               tarjeta={(factura) => (
                 <TarjetaDocumentoVenta
                   codigo={factura.codigo}

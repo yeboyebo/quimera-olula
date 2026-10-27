@@ -1,3 +1,4 @@
+import { widgetsDocumentoCompra } from "#/compras/comun/dominio.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
@@ -13,6 +14,12 @@ import "./MaestroConDetalleAlbaran.css";
 import { getMaquina } from "./maquina.ts";
 import { metaTablaAlbaran } from "./metatabla_albaran.tsx";
 import { TarjetaAlbaran } from "./TarjetaAlbaran.tsx";
+
+const widgetsAlbaranCompra = widgetsDocumentoCompra("compras.albaran", {
+    plural: "Albaranes de compra",
+    total: "Importe total",
+    medio: "Albarán medio",
+});
 
 const criteriaAlbaranes = {
     ...criteriaDefecto,
@@ -47,6 +54,7 @@ export const MaestroConDetalleAlbaran = () => {
                         <h2>Albaranes de compra</h2>
                         <Listado<Albaran>
                             metaTabla={metaTablaAlbaran}
+                            widgets={widgetsAlbaranCompra}
                             criteria={albaranes.criteria}
                             tarjeta={TarjetaAlbaran}
                             entidades={albaranes.lista}
