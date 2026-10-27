@@ -3,6 +3,8 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
+import { getMetaFiltroDefecto } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.tsx";
+import { camelASnake } from "@olula/componentes/maestro/maestroFiltros/dominio.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.ts";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.ts";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.ts";
@@ -23,6 +25,9 @@ const widgetsPedidoCompra = widgetsDocumentoCompra("compras.pedido", {
   total: "Importe total",
   medio: "Pedido medio",
 });
+
+// Filtros con el nombre de campo de la API (snake_case): el modelo va en camelCase.
+const metaFiltroPedido = getMetaFiltroDefecto(metaTablaPedido, { campoApi: camelASnake });
 
 const criteriaPedidos = {
   ...criteriaDefecto,
@@ -59,6 +64,7 @@ export const MaestroConDetallePedido = () => {
             <h2>Pedidos de compra</h2>
             <Listado<Pedido>
               metaTabla={metaTablaPedido}
+              metaFiltro={metaFiltroPedido}
               widgets={widgetsPedidoCompra}
               criteria={pedidos.criteria}
               tarjeta={TarjetaPedido}

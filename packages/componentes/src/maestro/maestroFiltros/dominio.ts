@@ -124,3 +124,7 @@ export const ordenarCamposPanel = (meta: MetaFiltro): MetaCampoFiltro[] => {
     ["intervalo_fechas", "mes_año", "fecha"].includes(c.tipo as string);
   return [...campos.filter(esFecha), ...campos.filter((c) => !esFecha(c))];
 };
+
+/** «nombreProveedor» → «nombre_proveedor» (nombres de campo de la API). */
+export const camelASnake = (id: string) =>
+  id.replace(/[A-Z]/g, (letra) => `_${letra.toLowerCase()}`);

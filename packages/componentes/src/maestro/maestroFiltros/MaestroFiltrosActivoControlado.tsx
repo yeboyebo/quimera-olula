@@ -137,48 +137,53 @@ export type MetaCampoFiltro = {
 
 export type MetaFiltro = Record<string, MetaCampoFiltro>;
 
+type OpcionesMetaFiltroDefecto = {
+  /** Nombre del campo en la API cuando difiere del id de la columna (p. ej. los
+   *  módulos con modelo en camelCase y API en snake_case: `camelASnake`). */
+  campoApi?: (id: string) => string;
+};
+
 export const getMetaFiltroDefecto = <T extends Entidad>(
-  metaTabla: MetaTabla<T>
+  metaTabla: MetaTabla<T>,
+  { campoApi = (id) => id }: OpcionesMetaFiltroDefecto = {}
 ): MetaFiltro => {
   const campos: Record<string, MetaCampoFiltro> = {};
 
   for (const columna of obtenerCols(metaTabla)) {
     if (columna.id === "id") continue;
+    const campo = campoApi(columna.id);
+    const base = { id: columna.id, campo, label: columna.cabecera };
 
     switch (columna.tipo) {
       case "booleano":
         campos[columna.id] = {
-          id: columna.id,
-          label: columna.cabecera,
+          ...base,
           tipo: "checkbox",
-          filtro: (valor) => filtroBooleanos(columna.id, valor),
+          filtro: (valor) => filtroBooleanos(campo, valor),
         };
         break;
       case "fecha":
       case "fechahora":
       case "hora":
         campos[columna.id] = {
-          id: columna.id,
-          label: columna.cabecera,
+          ...base,
           tipo: "intervalo_fechas",
-          filtro: (valor) => filtroFechas(columna.id, valor),
+          filtro: (valor) => filtroFechas(campo, valor),
         };
         break;
       case "numero":
       case "moneda":
         campos[columna.id] = {
-          id: columna.id,
-          label: columna.cabecera,
+          ...base,
           tipo: "intervalo_numeros",
-          filtro: (valor) => filtroNumeros(columna.id, valor),
+          filtro: (valor) => filtroNumeros(campo, valor),
         };
         break;
       default:
         campos[columna.id] = {
-          id: columna.id,
-          label: columna.cabecera,
+          ...base,
           tipo: "texto",
-          filtro: (valor) => filtroTextos(columna.id, valor),
+          filtro: (valor) => filtroTextos(campo, valor),
         };
         break;
     }

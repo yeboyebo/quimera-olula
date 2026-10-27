@@ -1,7 +1,7 @@
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import { describe, expect, test } from "vitest";
-import { chipsFiltro, describirValorFiltro, ordenarCamposPanel } from "./dominio.ts";
-import type { MetaFiltro } from "./MaestroFiltrosActivoControlado.tsx";
+import { camelASnake, chipsFiltro, describirValorFiltro, ordenarCamposPanel } from "./dominio.ts";
+import { getMetaFiltroDefecto, type MetaFiltro } from "./MaestroFiltrosActivoControlado.tsx";
 
 const nulo = () => null;
 
@@ -75,4 +75,18 @@ test("ordenarCamposPanel pone las fechas primero", () => {
   expect(ordenarCamposPanel(meta).map((c) => c.id)).toEqual([
     "fecha", "codigo", "total", "estado", "abono",
   ]);
+});
+
+test("getMetaFiltroDefecto con campoApi filtra por el nombre de la API", () => {
+  const meta = getMetaFiltroDefecto(
+    [
+      { id: "nombreProveedor", cabecera: "Proveedor" },
+      { id: "total", cabecera: "Total", tipo: "moneda" },
+    ],
+    { campoApi: camelASnake }
+  );
+  expect(meta.nombreProveedor.campo).toBe("nombre_proveedor");
+  expect(meta.nombreProveedor.filtro("SUMI")).toEqual(["nombre_proveedor", "~", "SUMI"]);
+  expect(meta.total.filtro([100, undefined])).toEqual(["total", ">=", "100_"]);
+  expect(camelASnake("deAbono")).toBe("de_abono");
 });
