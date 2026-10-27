@@ -65,7 +65,7 @@ export const CuentasConexionBancaria = ({
         },
         {
             id: "activa",
-            cabecera: "Activa",
+            cabecera: "Sincronizar",
             render: (c) => (
                 <QCheckbox
                     nombre={`activa_${c.id}`}

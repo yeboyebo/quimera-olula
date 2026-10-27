@@ -214,6 +214,18 @@
     color: #fff;
 }
 
+.TarjetasSaldosConexionBancaria .tarjeta-banco-alerta--accion {
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.TarjetasSaldosConexionBancaria .tarjeta-banco-alerta--accion:hover,
+.TarjetasSaldosConexionBancaria .tarjeta-banco-alerta--accion:focus-visible {
+    background: color-mix(in srgb, white 32%, transparent);
+    outline: none;
+}
+
 .TarjetasSaldosConexionBancaria .tarjeta-banco--reauth {
     box-shadow:
         0 0 0 1px color-mix(in srgb, var(--amarillo-5, #e6b800) 70%, transparent),
