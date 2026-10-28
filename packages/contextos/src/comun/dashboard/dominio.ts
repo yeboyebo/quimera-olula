@@ -19,8 +19,8 @@ import {
 export const MAX_COMPONENTES = 40;
 
 export const CATALOGO: DefinicionTipoComponente[] = [
-  { tipo: "tarjeta", nombre: "Tarjeta", descripcion: "Un valor y su comparación con otro periodo", grupo: "Indicadores", w: 3, h: 2, disponible: true },
-  { tipo: "objetivo", nombre: "Objetivo", descripcion: "Valor frente a una meta", grupo: "Indicadores", w: 3, h: 2, disponible: true },
+  { tipo: "tarjeta", nombre: "Tarjeta", descripcion: "Un valor y su comparación con otro periodo", grupo: "Indicadores", w: 3, h: 1, disponible: true },
+  { tipo: "objetivo", nombre: "Objetivo", descripcion: "Valor frente a una meta", grupo: "Indicadores", w: 3, h: 1, disponible: true },
   { tipo: "temporal", nombre: "Temporal", descripcion: "Evolución por día, mes o año", grupo: "Gráficos", w: 8, h: 4, disponible: true },
   { tipo: "barras", nombre: "Barras", descripcion: "Comparar categorías", grupo: "Gráficos", w: 6, h: 4, disponible: true },
   { tipo: "circular", nombre: "Circular", descripcion: "Reparto entre pocas categorías", grupo: "Gráficos", w: 4, h: 4, disponible: true },
@@ -332,6 +332,34 @@ export const OPERACIONES: { valor: string; descripcion: string; conCampo: boolea
   { valor: "maximo", descripcion: "Máximo de", conCampo: true },
   { valor: "minimo", descripcion: "Mínimo de", conCampo: true },
 ];
+
+const ETIQUETAS_PIE: Record<string, string> = {
+  suma: "Suma",
+  conteo: "Recuento",
+  conteo_distinto: "Distintos",
+  promedio: "Media",
+  minimo: "Mínimo",
+  maximo: "Máximo",
+};
+
+/**
+ * Pie de una tarjeta, como los widgets del maestro: «Suma de total · Este mes».
+ * La métrica siempre; el periodo, si la consulta lo tiene.
+ */
+export const pieTarjeta = (consulta: ConsultaComponente | undefined): string => {
+  const primera = (consulta?.metricas ?? "").split(",")[0]?.trim() ?? "";
+  const [op, campo] = primera.split(":");
+  const etiquetaOp = ETIQUETAS_PIE[op] ?? op;
+  const metrica = !op
+    ? ""
+    : !campo
+      ? etiquetaOp || "Recuento"
+      : `${etiquetaOp} de ${campo === campo.toUpperCase() ? campo : campo.toLowerCase()}`;
+  const [, rango] = leerPeriodo(consulta?.periodo);
+  const periodo = RANGOS_PERIODO.find((r) => r.valor === rango)?.descripcion;
+  if (metrica && periodo) return `${metrica} · ${periodo}`;
+  return metrica || periodo || "";
+};
 
 /**
  * Los que el usuario puede ver: todos los recursos de sus consultas están entre los

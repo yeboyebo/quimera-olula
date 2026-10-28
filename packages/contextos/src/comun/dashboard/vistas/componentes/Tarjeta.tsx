@@ -5,23 +5,9 @@ import {
   aliasMetricas,
   formatearValor,
   formatoPorDefecto,
-  RANGOS_PERIODO,
-  leerPeriodo,
+  pieTarjeta,
   variacion,
 } from "../../dominio.ts";
-
-const textoPeriodo = (componente: ComponenteDashboard) => {
-  const [, rango] = leerPeriodo(componente.consultas[0]?.periodo);
-  return RANGOS_PERIODO.find((r) => r.valor === rango)?.descripcion;
-};
-
-const textoComparacion = (componente: ComponenteDashboard) =>
-  componente.consultas[0]?.comparar === "periodo_anterior"
-    ? "vs periodo anterior"
-    : "vs año anterior";
-
-/** Pie a la derecha: el periodo de la consulta (como en los widgets del maestro). */
-const pieTarjeta = (componente: ComponenteDashboard) => textoPeriodo(componente);
 
 /**
  * Tarjeta de indicador con el mismo diseño que los widgets del maestro:
@@ -47,14 +33,9 @@ export const Tarjeta = ({
       titulo={componente.titulo}
       valor={formatearValor(actual, formato)}
       comparacion={
-        cambio
-          ? {
-              valor: `${cambio.texto} ${textoComparacion(componente)}`,
-              positivo: cambio.positiva,
-            }
-          : null
+        cambio ? { valor: cambio.texto, positivo: cambio.positiva } : null
       }
-      pie={pieTarjeta(componente)}
+      pie={pieTarjeta(consulta)}
       cargando={cargando}
     />
   );

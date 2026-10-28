@@ -205,9 +205,9 @@
     box-sizing: border-box;
     background: var(--color-superficie);
     border-color: var(--color-borde-tabla);
-    padding: var(--espaciado-m) var(--espaciado-l);
-    gap: var(--espaciado-xxs);
-    justify-content: center;
+    padding: var(--espaciado-s) var(--espaciado-m);
+    gap: 0;
+    justify-content: flex-start;
     container-type: inline-size;
 
     .titulo {
@@ -216,25 +216,35 @@
         text-transform: none;
         letter-spacing: normal;
         color: var(--color-texto-secundario);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .valor,
-    .pie {
+    .pie,
+    .comparacion {
         text-align: right;
     }
 
     .comparacion {
         justify-content: flex-end;
+        margin-top: 0;
     }
 
     .valor {
-        font-size: min(var(--tamaño-letra-xl), 9cqi);
+        font-size: min(var(--tamaño-letra-xl), 11cqi);
         font-weight: var(--grosor-letra-7);
         letter-spacing: -0.02em;
         font-variant-numeric: tabular-nums;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        line-height: 1.15;
+    }
+
+    .pie {
+        margin-top: auto;
     }
 }
 

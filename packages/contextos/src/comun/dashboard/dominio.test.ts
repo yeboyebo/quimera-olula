@@ -15,6 +15,7 @@ import {
   etiquetaTramo,
   formatoPorDefecto,
   nuevoComponente,
+  pieTarjeta,
   problemaComponente,
   queryConsulta,
   serieTemporal,
@@ -74,6 +75,14 @@ describe("dashboard: consultas", () => {
     expect(formatoPorDefecto("suma:total")).toBe("moneda");
     expect(formatoPorDefecto("conteo")).toBe("numero");
     expect(formatoPorDefecto("suma:cantidad")).toBe("numero");
+  });
+
+  test("pie de tarjeta: métrica y periodo, como los widgets", () => {
+    expect(pieTarjeta({ recurso: "ventas.factura", metricas: "suma:total", periodo: "fecha:este_mes" }))
+      .toBe("Suma de total · Este mes");
+    expect(pieTarjeta({ recurso: "ventas.pedido", metricas: "conteo" })).toBe("Recuento");
+    expect(pieTarjeta({ recurso: "ventas.factura", metricas: "promedio:total", periodo: "fecha:este_año" }))
+      .toBe("Media de total · Este año");
   });
 
   test("consulta por defecto de cada tipo", () => {
@@ -162,7 +171,7 @@ describe("dashboard: componentes", () => {
   test("nuevo componente: id libre y primer hueco de la rejilla", () => {
     const existentes = [componente({ id: "c1", x: 0, y: 0, w: 8, h: 2 })];
     const nuevo = nuevoComponente("tarjeta", existentes);
-    expect(nuevo).toMatchObject({ id: "c2", x: 8, y: 0, w: 3, h: 2, consultas: [] });
+    expect(nuevo).toMatchObject({ id: "c2", x: 8, y: 0, w: 3, h: 1, consultas: [] });
   });
 
   test("qué le falta a un componente para guardarse", () => {
@@ -328,6 +337,6 @@ describe("dashboard: pregunta a la IA", () => {
     );
     expect(resultado).toMatchObject({ id: "c3", tipo: "tabla", x: 0, y: 4, w: 12, h: 4 });
     expect(resultado.opciones).toEqual({ pregunta: "pedidos pendientes" });
-    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 2 });
+    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 1 });
   });
 });
