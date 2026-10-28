@@ -7,6 +7,11 @@ class CONTABILIDAD_Urls {
     readonly CUENTA_ESPECIAL = `/contabilidad/cuenta_especial`;
     readonly GRUPO_EPIGRAFE = `/contabilidad/grupo_epigrafe`;
     readonly EPIGRAFE = `/contabilidad/epigrafe`;
+    readonly INFORME_MAYOR = `/contabilidad/informe/mayor`;
+    readonly INFORME_DIARIO = `/contabilidad/informe/diario`;
+    readonly INFORME_LIBRO_FACTURAS_EMITIDAS = `/contabilidad/informe/libro_facturas_emitidas`;
+    readonly INFORME_LIBRO_FACTURAS_RECIBIDAS = `/contabilidad/informe/libro_facturas_recibidas`;
+    readonly INFORME_REPORT = (tipo: string) => `/contabilidad/informe/${tipo}/report`;
 }
 
 export default CONTABILIDAD_Urls;
