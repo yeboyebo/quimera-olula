@@ -18,21 +18,27 @@ import {
 
 export const MAX_COMPONENTES = 40;
 
+/**
+ * La rejilla del dashboard usa medias filas (36 px): así una tarjeta puede medir
+ * 1,5 filas visuales (h = 3 → 108 px). Una «fila» de diseño son 2 unidades.
+ */
+export const ALTO_FILA_DASHBOARD = 36;
+
 export const CATALOGO: DefinicionTipoComponente[] = [
-  { tipo: "tarjeta", nombre: "Tarjeta", descripcion: "Un valor y su comparación con otro periodo", grupo: "Indicadores", w: 3, h: 1, disponible: true },
-  { tipo: "objetivo", nombre: "Objetivo", descripcion: "Valor frente a una meta", grupo: "Indicadores", w: 3, h: 1, disponible: true },
-  { tipo: "temporal", nombre: "Temporal", descripcion: "Evolución por día, mes o año", grupo: "Gráficos", w: 8, h: 4, disponible: true },
-  { tipo: "barras", nombre: "Barras", descripcion: "Comparar categorías", grupo: "Gráficos", w: 6, h: 4, disponible: true },
-  { tipo: "circular", nombre: "Circular", descripcion: "Reparto entre pocas categorías", grupo: "Gráficos", w: 4, h: 4, disponible: true },
-  { tipo: "embudo", nombre: "Embudo", descripcion: "Presupuesto → pedido → factura", grupo: "Gráficos", w: 4, h: 4, disponible: true },
-  { tipo: "mapa", nombre: "Mapa", descripcion: "Ventas y clientes por provincia o comunidad", grupo: "Gráficos", w: 6, h: 6, disponible: true },
-  { tipo: "ranking", nombre: "Ranking", descripcion: "Los primeros N: clientes, artículos…", grupo: "Datos", w: 6, h: 4, disponible: true },
-  { tipo: "tabla", nombre: "Tabla filtrada", descripcion: "Filas de un listado con su filtro", grupo: "Datos", w: 12, h: 4, disponible: true },
-  { tipo: "tabla_resumen", nombre: "Tabla resumen", descripcion: "Cruce de dos dimensiones", grupo: "Datos", w: 6, h: 4, disponible: false },
-  { tipo: "avisos", nombre: "Avisos", descripcion: "Umbrales que piden atención", grupo: "Otros", w: 6, h: 3, disponible: false },
-  { tipo: "pregunta_ia", nombre: "Pregunta a la IA", descripcion: "Describe lo que quieres ver", grupo: "Otros", w: 6, h: 4, disponible: true },
-  { tipo: "accesos", nombre: "Accesos rápidos", descripcion: "Enlaces a pantallas", grupo: "Otros", w: 6, h: 2, disponible: false },
-  { tipo: "texto", nombre: "Texto", descripcion: "Una nota libre", grupo: "Otros", w: 4, h: 2, disponible: true },
+  { tipo: "tarjeta", nombre: "Tarjeta", descripcion: "Un valor y su comparación con otro periodo", grupo: "Indicadores", w: 3, h: 3, disponible: true },
+  { tipo: "objetivo", nombre: "Objetivo", descripcion: "Valor frente a una meta", grupo: "Indicadores", w: 3, h: 3, disponible: true },
+  { tipo: "temporal", nombre: "Temporal", descripcion: "Evolución por día, mes o año", grupo: "Gráficos", w: 8, h: 8, disponible: true },
+  { tipo: "barras", nombre: "Barras", descripcion: "Comparar categorías", grupo: "Gráficos", w: 6, h: 8, disponible: true },
+  { tipo: "circular", nombre: "Circular", descripcion: "Reparto entre pocas categorías", grupo: "Gráficos", w: 4, h: 8, disponible: true },
+  { tipo: "embudo", nombre: "Embudo", descripcion: "Presupuesto → pedido → factura", grupo: "Gráficos", w: 4, h: 8, disponible: true },
+  { tipo: "mapa", nombre: "Mapa", descripcion: "Ventas y clientes por provincia o comunidad", grupo: "Gráficos", w: 6, h: 12, disponible: true },
+  { tipo: "ranking", nombre: "Ranking", descripcion: "Los primeros N: clientes, artículos…", grupo: "Datos", w: 6, h: 8, disponible: true },
+  { tipo: "tabla", nombre: "Tabla filtrada", descripcion: "Filas de un listado con su filtro", grupo: "Datos", w: 12, h: 8, disponible: true },
+  { tipo: "tabla_resumen", nombre: "Tabla resumen", descripcion: "Cruce de dos dimensiones", grupo: "Datos", w: 6, h: 8, disponible: false },
+  { tipo: "avisos", nombre: "Avisos", descripcion: "Umbrales que piden atención", grupo: "Otros", w: 6, h: 6, disponible: false },
+  { tipo: "pregunta_ia", nombre: "Pregunta a la IA", descripcion: "Describe lo que quieres ver", grupo: "Otros", w: 6, h: 8, disponible: true },
+  { tipo: "accesos", nombre: "Accesos rápidos", descripcion: "Enlaces a pantallas", grupo: "Otros", w: 6, h: 4, disponible: false },
+  { tipo: "texto", nombre: "Texto", descripcion: "Una nota libre", grupo: "Otros", w: 4, h: 4, disponible: true },
 ];
 
 export const definicionTipo = (tipo: TipoComponente): DefinicionTipoComponente =>

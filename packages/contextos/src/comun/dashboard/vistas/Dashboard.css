@@ -233,18 +233,18 @@
     }
 
     .valor {
-        font-size: min(var(--tamaño-letra-xl), 11cqi);
+        /* Que quepa el importe entero: se achica con el ancho de la tarjeta. */
+        font-size: clamp(1rem, 12cqi, var(--tamaño-letra-xl));
         font-weight: var(--grosor-letra-7);
         letter-spacing: -0.02em;
         font-variant-numeric: tabular-nums;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.15;
+        line-height: 1.2;
     }
 
     .pie {
         margin-top: auto;
+        flex-shrink: 0;
     }
 }
 

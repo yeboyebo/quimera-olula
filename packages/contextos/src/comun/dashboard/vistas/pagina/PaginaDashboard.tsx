@@ -7,7 +7,7 @@ import { QRejilla } from "@olula/componentes/rejilla/QRejilla.tsx";
 import { useCallback, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { ComponenteDashboard, Dashboard } from "../../diseño.ts";
-import { MAX_COMPONENTES } from "../../dominio.ts";
+import { ALTO_FILA_DASHBOARD, MAX_COMPONENTES } from "../../dominio.ts";
 import { crearDashboard } from "../../infraestructura.ts";
 import { CatalogoComponentes } from "../CatalogoComponentes.tsx";
 import { Componente } from "../componentes/Componente.tsx";
@@ -173,6 +173,7 @@ export const PaginaDashboard = ({ clave }: { clave?: string }) => {
             <QRejilla
               elementos={componentes}
               editable={editando}
+              altoFila={ALTO_FILA_DASHBOARD}
               renderizar={renderizar}
               etiqueta={(c) => c.titulo || c.tipo}
               onCambiar={(nuevos) => emitir("disposicion_cambiada", nuevos)}

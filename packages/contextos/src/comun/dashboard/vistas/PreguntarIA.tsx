@@ -4,6 +4,7 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { useState } from "react";
 import { ComponenteDashboard, PropuestaComponente } from "../diseño.ts";
 import {
+  ALTO_FILA_DASHBOARD,
   alternativasTipo,
   cambiarTipo,
   componenteDesdePropuesta,
@@ -139,7 +140,7 @@ export const PreguntarIA = ({
           <span className="configurar-componente-etiqueta">Vista previa con datos reales</span>
           <div
             className="configurar-componente-marco"
-            style={{ height: `${Math.min(resultado?.h ?? 4, 5) * 72}px` }}
+            style={{ height: `${Math.min(resultado?.h ?? 8, 10) * ALTO_FILA_DASHBOARD}px` }}
           >
             {resultado ? (
               <Componente componente={resultado} />

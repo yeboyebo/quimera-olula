@@ -171,7 +171,7 @@ describe("dashboard: componentes", () => {
   test("nuevo componente: id libre y primer hueco de la rejilla", () => {
     const existentes = [componente({ id: "c1", x: 0, y: 0, w: 8, h: 2 })];
     const nuevo = nuevoComponente("tarjeta", existentes);
-    expect(nuevo).toMatchObject({ id: "c2", x: 8, y: 0, w: 3, h: 1, consultas: [] });
+    expect(nuevo).toMatchObject({ id: "c2", x: 8, y: 0, w: 3, h: 3, consultas: [] });
   });
 
   test("qué le falta a un componente para guardarse", () => {
@@ -324,7 +324,7 @@ describe("dashboard: pregunta a la IA", () => {
   });
 
   test("el componente ocupa el sitio del que se creaba, con el tamaño del tipo", () => {
-    const base = componente({ id: "c3", tipo: "pregunta_ia", x: 6, y: 4, w: 6, h: 4, consultas: [] });
+    const base = componente({ id: "c3", tipo: "pregunta_ia", x: 6, y: 8, w: 6, h: 8, consultas: [] });
     const resultado = componenteDesdePropuesta(
       base,
       {
@@ -335,8 +335,8 @@ describe("dashboard: pregunta a la IA", () => {
       },
       "pedidos pendientes"
     );
-    expect(resultado).toMatchObject({ id: "c3", tipo: "tabla", x: 0, y: 4, w: 12, h: 4 });
+    expect(resultado).toMatchObject({ id: "c3", tipo: "tabla", x: 0, y: 8, w: 12, h: 8 });
     expect(resultado.opciones).toEqual({ pregunta: "pedidos pendientes" });
-    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 1 });
+    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 3 });
   });
 });

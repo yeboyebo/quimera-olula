@@ -16,6 +16,7 @@ import {
   consultaPorDefecto,
   consultasEmbudo,
   definicionTipo,
+  ALTO_FILA_DASHBOARD,
   formatoPorDefecto,
   GRANULARIDADES,
   leerAgrupacion,
@@ -166,7 +167,7 @@ export const ConfigurarComponente = ({
           <span className="configurar-componente-etiqueta">Vista previa con datos reales</span>
           <div
             className="configurar-componente-marco"
-            style={{ height: `${Math.min(borrador.h, 5) * 72}px` }}
+            style={{ height: `${Math.min(borrador.h, 10) * ALTO_FILA_DASHBOARD}px` }}
           >
             <Componente componente={borrador} espera={400} />
           </div>
