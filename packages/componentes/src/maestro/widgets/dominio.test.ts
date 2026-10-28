@@ -1,6 +1,10 @@
 import { DefinicionWidget } from "./diseño.ts";
 import {
+  agrupacionWidget,
   agruparPorFiltro,
+  dimensionesAgrupables,
+  esAgrupado,
+  puntosWidget,
   configDesdeRecurso,
   recursoParaRuta,
   aliasWidget,
@@ -157,4 +161,77 @@ describe("widgets del maestro", () => {
       ],
     });
   });
+});
+
+describe("widgets compactos", () => {
+  const base: DefinicionWidget = {
+    id: "w",
+    titulo: "Ventas",
+    operacion: "suma",
+    campo: "total",
+    formato: "moneda",
+  };
+
+  test("solo los temporales, circulares y rankings con dimensión agrupan", () => {
+    expect(esAgrupado(base)).toBe(false);
+    expect(esAgrupado({ ...base, tipo: "objetivo", meta: 10 })).toBe(false);
+    expect(esAgrupado({ ...base, tipo: "temporal", agrupar: "fecha" })).toBe(true);
+    expect(esAgrupado({ ...base, tipo: "ranking" })).toBe(false);
+  });
+
+  test("parámetros de agrupación de cada tipo", () => {
+    const temporal = new URLSearchParams(
+      agrupacionWidget({ ...base, tipo: "temporal", agrupar: "fecha" })
+    );
+    expect(Object.fromEntries(temporal)).toEqual({
+      agrupar: "fecha:mes",
+      orden: "fecha:desc",
+      limite: "12",
+    });
+    const ranking = new URLSearchParams(
+      agrupacionWidget({ ...base, tipo: "ranking", agrupar: "cliente" })
+    );
+    expect(Object.fromEntries(ranking)).toEqual({
+      agrupar: "cliente",
+      orden: "suma_total:desc",
+      limite: "3",
+    });
+  });
+
+  test("puntos: el temporal en orden cronológico; las categorías con su nombre", () => {
+    expect(
+      puntosWidget({ ...base, tipo: "temporal", agrupar: "fecha" }, [
+        { fecha: "2026-10-01", suma_total: 3 },
+        { fecha: "2026-09-01", suma_total: 2 },
+      ])
+    ).toEqual([
+      { clave: "2026-09-01", etiqueta: "sep 26", valor: 2 },
+      { clave: "2026-10-01", etiqueta: "oct 26", valor: 3 },
+    ]);
+    expect(
+      puntosWidget({ ...base, tipo: "ranking", agrupar: "cliente" }, [
+        { cliente: "C1", cliente_nombre: "Cliente Uno", suma_total: 9 },
+        { cliente: null, suma_total: 1 },
+      ]).map((p) => p.etiqueta)
+    ).toEqual(["Cliente Uno", "Sin valor"]);
+  });
+});
+
+test("dimensiones agrupables: sin ids, sin el código del documento, útiles primero", () => {
+  const dimension = (id: string, tipo = "texto") => ({ id, descripcion: id, tipo });
+  expect(
+    dimensionesAgrupables(
+      [
+        dimension("factura"),
+        dimension("factura_id", "numero"),
+        dimension("cliente"),
+        dimension("nombre_cliente"),
+        dimension("serie"),
+        dimension("agente"),
+        dimension("fecha", "fecha"),
+        dimension("de_abono", "booleano"),
+      ],
+      "ventas.factura"
+    ).map((d) => d.id)
+  ).toEqual(["agente", "cliente", "serie", "de_abono"]);
 });

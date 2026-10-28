@@ -1,0 +1,73 @@
+quimera-tarjeta-resumen {
+    .widget-compacto-tendencia {
+        width: 100%;
+        height: 1.75rem;
+    }
+
+    .widget-compacto-progreso {
+        height: 0.5rem;
+        border-radius: 999px;
+        background: var(--color-superficie-sunken);
+        overflow: hidden;
+
+        div {
+            height: 100%;
+        }
+    }
+
+    .widget-compacto-anillo {
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-s);
+
+        svg {
+            flex: none;
+            width: 3rem;
+            height: 3rem;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+            font-size: var(--tamaño-letra-xs);
+
+            li {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            span {
+                color: var(--color-texto-secundario);
+            }
+        }
+    }
+
+    .widget-compacto-ranking {
+        margin: 0;
+        padding-left: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: var(--tamaño-letra-s);
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--espaciado-s);
+        }
+
+        span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        strong {
+            font-variant-numeric: tabular-nums;
+        }
+    }
+}
