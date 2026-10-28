@@ -83,6 +83,16 @@ export type OpcionesComponente = {
   texto?: string;
   /** Embudo: circuito de documentos (ventas, compras). */
   circuito?: string;
+  /** Creado preguntando a la IA: la pregunta (la consulta guardada es lo que cuenta). */
+  pregunta?: string;
+};
+
+/** Lo que propone el servidor (POST /comun/dashboard/proponer). */
+export type PropuestaComponente = {
+  tipo: TipoComponente;
+  titulo: string;
+  consulta: ConsultaComponente;
+  explicacion: string;
 };
 
 export type ComponenteDashboard = ElementoRejilla & {

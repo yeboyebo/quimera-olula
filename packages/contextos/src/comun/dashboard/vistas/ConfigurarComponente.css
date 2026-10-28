@@ -65,3 +65,75 @@
     gap: var(--espaciado-s);
     margin-top: var(--espaciado-l);
 }
+
+/* --- Preguntar a la IA ------------------------------------------------------ */
+
+.configurar-componente {
+    .preguntar-ia-pregunta {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--espaciado-s);
+
+        > :first-child {
+            flex: 1;
+        }
+    }
+
+    .preguntar-ia-ejemplos {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--espaciado-xs);
+        font-size: var(--tamaño-letra-s);
+        color: var(--color-texto-secundario);
+    }
+
+    .preguntar-ia-error {
+        margin: 0;
+        padding: var(--espaciado-s) var(--espaciado-m);
+        border-radius: var(--redondeo-borde-s);
+        background: var(--color-error-claro);
+        color: var(--color-error-texto);
+        font-size: var(--tamaño-letra-s);
+    }
+
+    .preguntar-ia-entendido {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espaciado-xs);
+        padding: var(--espaciado-m);
+        border-radius: var(--redondeo-borde-s);
+        background: var(--color-superficie-sunken);
+
+        p {
+            margin: 0;
+            font-size: var(--tamaño-letra-s);
+        }
+    }
+
+    .preguntar-ia-tipos {
+        margin: 0;
+        padding: 0;
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--espaciado-xs);
+
+        legend {
+            float: left;
+            margin-right: var(--espaciado-s);
+            font-size: var(--tamaño-letra-s);
+            color: var(--color-texto-secundario);
+        }
+    }
+
+    .preguntar-ia-vacio {
+        height: 100%;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        color: var(--color-texto-secundario);
+        font-size: var(--tamaño-letra-s);
+    }
+}

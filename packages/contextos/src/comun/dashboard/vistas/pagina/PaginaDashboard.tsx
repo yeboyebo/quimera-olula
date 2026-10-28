@@ -12,6 +12,7 @@ import { crearDashboard } from "../../infraestructura.ts";
 import { CatalogoComponentes } from "../CatalogoComponentes.tsx";
 import { Componente } from "../componentes/Componente.tsx";
 import { ConfigurarComponente } from "../ConfigurarComponente.tsx";
+import { PreguntarIA } from "../PreguntarIA.tsx";
 import "../Dashboard.css";
 import { getMaquina } from "./maquina.ts";
 import { contextoDashboardInicial } from "./pagina.ts";
@@ -187,7 +188,16 @@ export const PaginaDashboard = ({ clave }: { clave?: string }) => {
         )}
       </div>
 
-      {estado === "CONFIGURANDO" && configurando && (
+      {estado === "CONFIGURANDO" && configurando?.tipo === "pregunta_ia" && (
+        <PreguntarIA
+          componente={configurando}
+          onGuardar={(componente) => emitir("configuracion_aplicada", componente)}
+          onAjustar={(componente) => emitir("configuracion_ajustada", componente)}
+          onCancelar={() => emitir("configuracion_cancelada")}
+        />
+      )}
+
+      {estado === "CONFIGURANDO" && configurando && configurando.tipo !== "pregunta_ia" && (
         <ConfigurarComponente
           componente={configurando}
           onGuardar={(componente) => emitir("configuracion_aplicada", componente)}

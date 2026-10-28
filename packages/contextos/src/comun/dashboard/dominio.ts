@@ -10,6 +10,7 @@ import {
   FormatoValor,
   Granularidad,
   GrupoAgregado,
+  PropuestaComponente,
   RangoPeriodo,
   RespuestaAgregado,
   TipoComponente,
@@ -29,7 +30,7 @@ export const CATALOGO: DefinicionTipoComponente[] = [
   { tipo: "tabla", nombre: "Tabla filtrada", descripcion: "Filas de un listado con su filtro", grupo: "Datos", w: 12, h: 4, disponible: true },
   { tipo: "tabla_resumen", nombre: "Tabla resumen", descripcion: "Cruce de dos dimensiones", grupo: "Datos", w: 6, h: 4, disponible: false },
   { tipo: "avisos", nombre: "Avisos", descripcion: "Umbrales que piden atención", grupo: "Otros", w: 6, h: 3, disponible: false },
-  { tipo: "pregunta_ia", nombre: "Pregunta a la IA", descripcion: "Describe lo que quieres ver", grupo: "Otros", w: 6, h: 4, disponible: false },
+  { tipo: "pregunta_ia", nombre: "Pregunta a la IA", descripcion: "Describe lo que quieres ver", grupo: "Otros", w: 6, h: 4, disponible: true },
   { tipo: "accesos", nombre: "Accesos rápidos", descripcion: "Enlaces a pantallas", grupo: "Otros", w: 6, h: 2, disponible: false },
   { tipo: "texto", nombre: "Texto", descripcion: "Una nota libre", grupo: "Otros", w: 4, h: 2, disponible: true },
 ];
@@ -508,4 +509,48 @@ export const pasosEmbudo = (
     conversion: i > 0 && valores[i - 1] > 0 ? valores[i] / valores[i - 1] : null,
     proporcion: maximo > 0 ? valores[i] / maximo : 0,
   }));
+};
+
+// ---------------------------------------------------------------------------
+// Pregunta a la IA
+// ---------------------------------------------------------------------------
+
+/** Tipos que pueden pintar la misma consulta (para cambiar el que propone la IA). */
+export const alternativasTipo = (consulta: ConsultaComponente): TipoComponente[] => {
+  if (consulta.columnas) return ["tabla"];
+  const [dimension, granularidad] = leerAgrupacion(consulta.agrupar);
+  if (!dimension) return ["tarjeta"];
+  if (granularidad) return ["temporal"];
+  if (esGeografica(dimension)) return ["mapa", "ranking", "barras"];
+  return ["ranking", "barras", "circular"];
+};
+
+/**
+ * El componente que sale de una propuesta, en el sitio del que se estaba creando: su
+ * tamaño es el del tipo propuesto (sin salirse de la rejilla).
+ */
+export const componenteDesdePropuesta = (
+  base: ComponenteDashboard,
+  propuesta: PropuestaComponente,
+  pregunta: string
+): ComponenteDashboard => {
+  const { w, h } = definicionTipo(propuesta.tipo);
+  return {
+    ...base,
+    tipo: propuesta.tipo,
+    titulo: propuesta.titulo,
+    x: Math.min(base.x, 12 - w),
+    w,
+    h,
+    consultas: [propuesta.consulta],
+    opciones: { pregunta },
+  };
+};
+
+export const cambiarTipo = (
+  componente: ComponenteDashboard,
+  tipo: TipoComponente
+): ComponenteDashboard => {
+  const { w, h } = definicionTipo(tipo);
+  return { ...componente, tipo, w, h, x: Math.min(componente.x, 12 - w) };
 };

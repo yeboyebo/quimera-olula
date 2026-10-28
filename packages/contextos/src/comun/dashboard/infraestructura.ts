@@ -3,6 +3,7 @@ import {
   ComponenteDashboard,
   ConsultaComponente,
   Dashboard,
+  PropuestaComponente,
   RecursoAgregable,
   RespuestaAgregado,
   ResumenDashboard,
@@ -103,4 +104,24 @@ export const getRecursos = (): Promise<RecursoAgregable[]> => {
     return [];
   });
   return recursos;
+};
+
+/** El motivo que da el servidor cuando no puede proponer (400, texto o JSON de texto). */
+const motivoError = (error: unknown): string => {
+  const descripcion = (error as { descripcion?: string })?.descripcion;
+  if (!descripcion) return "No se ha podido preguntar a la IA. Inténtalo de nuevo.";
+  try {
+    const texto = JSON.parse(descripcion);
+    return typeof texto === "string" ? texto : descripcion;
+  } catch {
+    return descripcion;
+  }
+};
+
+export const proponerComponente = async (pregunta: string): Promise<PropuestaComponente> => {
+  try {
+    return (await RestAPI.post(`${URL}/proponer`, { pregunta })) as unknown as PropuestaComponente;
+  } catch (error) {
+    throw new Error(motivoError(error));
+  }
 };

@@ -1,6 +1,9 @@
 import { ComponenteDashboard, RespuestaAgregado } from "./diseño.ts";
 import {
   agruparResto,
+  alternativasTipo,
+  cambiarTipo,
+  componenteDesdePropuesta,
   datosMapa,
   consultasEmbudo,
   encuadreMapa,
@@ -298,5 +301,33 @@ describe("dashboard: embudo", () => {
       { etiqueta: "Albaranes", valor: 0, conversion: 0, proporcion: 0 },
       { etiqueta: "Facturas", valor: 50, conversion: null, proporcion: 0.25 },
     ]);
+  });
+});
+
+describe("dashboard: pregunta a la IA", () => {
+  test("tipos que pueden pintar la misma consulta", () => {
+    const base = { recurso: "ventas.factura", metricas: "suma:total" };
+    expect(alternativasTipo(base)).toEqual(["tarjeta"]);
+    expect(alternativasTipo({ ...base, agrupar: "fecha:mes" })).toEqual(["temporal"]);
+    expect(alternativasTipo({ ...base, agrupar: "provincia" })).toEqual(["mapa", "ranking", "barras"]);
+    expect(alternativasTipo({ ...base, agrupar: "cliente" })).toEqual(["ranking", "barras", "circular"]);
+    expect(alternativasTipo({ recurso: "ventas.factura", columnas: "factura" })).toEqual(["tabla"]);
+  });
+
+  test("el componente ocupa el sitio del que se creaba, con el tamaño del tipo", () => {
+    const base = componente({ id: "c3", tipo: "pregunta_ia", x: 6, y: 4, w: 6, h: 4, consultas: [] });
+    const resultado = componenteDesdePropuesta(
+      base,
+      {
+        tipo: "tabla",
+        titulo: "Pendientes",
+        consulta: { recurso: "ventas.pedido", columnas: "pedido,total" },
+        explicacion: "",
+      },
+      "pedidos pendientes"
+    );
+    expect(resultado).toMatchObject({ id: "c3", tipo: "tabla", x: 0, y: 4, w: 12, h: 4 });
+    expect(resultado.opciones).toEqual({ pregunta: "pedidos pendientes" });
+    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 2 });
   });
 });

@@ -102,11 +102,22 @@ export const configurarComponente: ProcesarPagina = async (ctx, payload) => ({
   configurando: ctx.borrador.find((c) => c.id === payload) ?? null,
 });
 
-export const aplicarConfiguracion: ProcesarPagina = async (ctx, payload) => ({
+/** Si el componente cambió de tamaño, los demás se recolocan sin solaparse. */
+export const aplicarConfiguracion: ProcesarPagina = async (ctx, payload) => {
+  const componente = payload as ComponenteDashboard;
+  const lista = sustituirComponente(ctx.borrador, componente);
+  return {
+    ...ctx,
+    estado: "EDITANDO",
+    borrador: compactar(compactar(lista, componente.id)),
+    configurando: null,
+  };
+};
+
+/** De la propuesta de la IA al formulario completo, para retocarla. */
+export const ajustarConfiguracion: ProcesarPagina = async (ctx, payload) => ({
   ...ctx,
-  estado: "EDITANDO",
-  borrador: sustituirComponente(ctx.borrador, payload as ComponenteDashboard),
-  configurando: null,
+  configurando: payload as ComponenteDashboard,
 });
 
 export const cancelarConfiguracion: ProcesarPagina = async (ctx) => ({

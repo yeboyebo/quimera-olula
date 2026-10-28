@@ -1,6 +1,7 @@
 import { Maquina } from "@olula/lib/diseño.ts";
 import { ContextoDashboard, EstadoDashboard } from "../../diseño.ts";
 import {
+  ajustarConfiguracion,
   alternarCompartido,
   añadirComponente,
   aplicarConfiguracion,
@@ -56,6 +57,7 @@ export const getMaquina: () => Maquina<EstadoDashboard, ContextoDashboard> = () 
 
   CONFIGURANDO: {
     configuracion_aplicada: [aplicarConfiguracion],
+    configuracion_ajustada: [ajustarConfiguracion],
     configuracion_cancelada: [cancelarConfiguracion],
   },
 
