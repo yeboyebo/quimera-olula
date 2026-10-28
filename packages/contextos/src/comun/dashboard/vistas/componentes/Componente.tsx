@@ -24,12 +24,34 @@ export const Componente = ({
   const recursos = useRecursos();
   const problema = problemaComponente(componente);
   const [respuesta] = respuestas;
+  const esTarjeta = componente.tipo === "tarjeta" || componente.tipo === "objetivo";
 
   if (componente.tipo === "texto") {
     return (
       <MarcoComponente titulo={componente.titulo}>
         <p className="dashboard-texto">{componente.opciones.texto}</p>
       </MarcoComponente>
+    );
+  }
+
+  /* Tarjeta y objetivo usan la misma cáscara que los widgets del maestro. */
+  if (esTarjeta) {
+    if (problema) {
+      return (
+        <MarcoComponente titulo={componente.titulo} aviso={problema} />
+      );
+    }
+    if (error) {
+      return <MarcoComponente titulo={componente.titulo} error={error} />;
+    }
+    if (cargando && !respuesta) {
+      return <MarcoComponente titulo={componente.titulo} cargando />;
+    }
+    if (!respuesta) return <MarcoComponente titulo={componente.titulo} cargando />;
+    return componente.tipo === "objetivo" ? (
+      <Objetivo componente={componente} respuesta={respuesta} cargando={cargando} />
+    ) : (
+      <Tarjeta componente={componente} respuesta={respuesta} cargando={cargando} />
     );
   }
 
@@ -41,10 +63,6 @@ export const Componente = ({
   const contenido = () => {
     if (!respuesta) return null;
     switch (componente.tipo) {
-      case "tarjeta":
-        return <Tarjeta componente={componente} respuesta={respuesta} />;
-      case "objetivo":
-        return <Objetivo componente={componente} respuesta={respuesta} />;
       case "temporal":
         return <Temporal componente={componente} respuesta={respuesta} />;
       case "barras":

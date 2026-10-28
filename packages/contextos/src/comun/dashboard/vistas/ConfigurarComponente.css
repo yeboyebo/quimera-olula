@@ -56,6 +56,11 @@
 
     .configurar-componente-marco {
         min-height: 10rem;
+
+        > .dashboard-componente,
+        > quimera-tarjeta-resumen {
+            height: 100%;
+        }
     }
 }
 

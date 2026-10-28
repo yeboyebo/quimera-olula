@@ -74,13 +74,15 @@
         display: flex;
         flex-direction: column;
 
-        > .dashboard-componente {
+        > .dashboard-componente,
+        > quimera-tarjeta-resumen {
             flex: 1;
             min-height: 0;
         }
 
         /* Hueco para los botones de edición junto al título. */
-        .dashboard-componente-titulo {
+        .dashboard-componente-titulo,
+        quimera-tarjeta-resumen .titulo {
             padding-inline: 2.75rem 4.75rem;
         }
     }
@@ -196,47 +198,54 @@
     }
 }
 
-.dashboard-tarjeta {
+/* Misma cáscara que los widgets del maestro: título izq.; valor, variación y pie der. */
+.pagina-dashboard quimera-tarjeta-resumen,
+.configurar-componente quimera-tarjeta-resumen {
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    box-sizing: border-box;
+    background: var(--color-superficie);
+    border-color: var(--color-borde-tabla);
+    padding: var(--espaciado-m) var(--espaciado-l);
+    gap: var(--espaciado-xxs);
     justify-content: center;
-    gap: var(--espaciado-xs);
+    container-type: inline-size;
 
-    .dashboard-tarjeta-valor {
-        font-size: 1.75rem;
-        font-weight: var(--grosor-letra-7);
-        font-variant-numeric: tabular-nums;
-    }
-
-    .dashboard-tarjeta-variacion {
-        font-size: var(--tamaño-letra-s);
-        font-weight: var(--grosor-letra-6);
-
-        &[data-positiva="true"] { color: var(--color-exito-oscuro); }
-        &[data-positiva="false"] { color: var(--color-error-texto); }
-
-        span {
-            font-weight: var(--grosor-letra-4);
-            color: var(--color-texto-secundario);
-        }
-    }
-
-    .dashboard-tarjeta-periodo {
+    .titulo {
         font-size: var(--tamaño-letra-xs);
+        font-weight: var(--grosor-letra-5);
+        text-transform: none;
+        letter-spacing: normal;
         color: var(--color-texto-secundario);
+    }
+
+    .valor,
+    .pie {
+        text-align: right;
+    }
+
+    .comparacion {
+        justify-content: flex-end;
+    }
+
+    .valor {
+        font-size: min(var(--tamaño-letra-xl), 9cqi);
+        font-weight: var(--grosor-letra-7);
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
 .dashboard-objetivo-barra {
-    height: 0.6rem;
+    height: 0.5rem;
     border-radius: 999px;
     background: var(--color-superficie-sunken);
     overflow: hidden;
 
     div {
         height: 100%;
-        background: #4f7f8a;
     }
 }
 
