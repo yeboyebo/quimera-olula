@@ -12,6 +12,23 @@ type FilaDashboard = Entidad & Record<string, string | number | boolean | null>;
 
 const SIN_ID = "__sin_id__";
 
+/** `/ventas/pedido` desde el recurso, o a partir de `ventas.pedido` / `ventas.pedido.linea`. */
+const rutaRecurso = (
+  recurso: RecursoAgregable | undefined,
+  recursoId: string
+): string | undefined => {
+  if (recurso?.ruta) return recurso.ruta;
+  const partes = recursoId.split(".").filter(Boolean);
+  if (partes.length < 2) return undefined;
+  return `/${partes[0]}/${partes[1]}`;
+};
+
+const idFila = (fila: Record<string, string | number | boolean | null>, indice: number): string => {
+  const crudo = fila.id;
+  if (crudo != null && crudo !== "") return String(crudo);
+  return `${SIN_ID}${indice}`;
+};
+
 const tipoColumna = (
   id: string,
   recurso: RecursoAgregable | undefined
@@ -31,23 +48,51 @@ const etiquetaColumna = (id: string, recurso: RecursoAgregable | undefined) =>
   recurso?.medidas.find((m) => m.id === id)?.descripcion ??
   id;
 
-const metaDesdeColumnas = (
-  columnas: string[],
-  recurso: RecursoAgregable | undefined
-): MetaTabla<FilaDashboard> =>
-  columnas.map((id) => ({
-    id,
-    cabecera: etiquetaColumna(id, recurso),
-    tipo: tipoColumna(id, recurso),
-  }));
-
 const filasDesdeRespuesta = (respuesta: RespuestaAgregado): FilaDashboard[] =>
   respuesta.grupos.map((fila, i) => ({
     ...fila,
-    id: fila.id != null && fila.id !== "" ? String(fila.id) : `${SIN_ID}${i}`,
+    id: idFila(fila, i),
   }));
 
-/** Filas de un listado con su filtro; usa la QTabla de la app. Clic en la fila abre la ficha. */
+const metaDesdeColumnas = (
+  columnas: string[],
+  recurso: RecursoAgregable | undefined,
+  ruta: string | undefined
+): MetaTabla<FilaDashboard> =>
+  columnas.map((id, indice) => {
+    const tipo = tipoColumna(id, recurso);
+    const base = { id, cabecera: etiquetaColumna(id, recurso), tipo };
+    // Primera columna: enlace real (ctrl/clic medio y URL al pasar el ratón).
+    if (indice !== 0 || !ruta) return base;
+    return {
+      ...base,
+      render: (fila: FilaDashboard) => {
+        if (fila.id.startsWith(SIN_ID)) return valorCelda(fila, id, tipo);
+        return <Link to={`${ruta}/${fila.id}`}>{valorCelda(fila, id, tipo)}</Link>;
+      },
+    };
+  });
+
+/** Misma presentación que QTabla para el texto del enlace. */
+const valorCelda = (
+  fila: FilaDashboard,
+  columna: string,
+  tipo: NonNullable<MetaTabla<FilaDashboard>[number]["tipo"]>
+): string => {
+  const valor = fila[columna];
+  if (valor === null || valor === undefined || valor === "") return "—";
+  if (tipo === "booleano" && typeof valor === "boolean") return valor ? "Sí" : "No";
+  if (tipo === "numero" && typeof valor === "number") return valor.toLocaleString("es-ES");
+  if (tipo === "moneda" && (typeof valor === "number" || typeof valor === "string")) {
+    return Number(valor).toLocaleString("es-ES", { style: "currency", currency: "EUR" });
+  }
+  if (tipo === "fecha" && typeof valor === "string") {
+    return new Date(`${valor}T00:00:00`).toLocaleDateString("es-ES");
+  }
+  return String(valor);
+};
+
+/** Filas de un listado con su filtro; QTabla nativa. Clic (o enlace) abre la ficha. */
 export const Tabla = ({
   componente,
   respuesta,
@@ -58,9 +103,11 @@ export const Tabla = ({
   recurso: RecursoAgregable | undefined;
 }) => {
   const navegar = useNavigate();
+  const recursoId = componente.consultas[0]?.recurso ?? "";
+  const ruta = rutaRecurso(recurso, recursoId);
   const columnas = (componente.consultas[0].columnas ?? "").split(",").filter(Boolean);
   const datos = filasDesdeRespuesta(respuesta);
-  const metaTabla = metaDesdeColumnas(columnas, recurso);
+  const metaTabla = metaDesdeColumnas(columnas, recurso, ruta);
 
   return (
     <div className="dashboard-tabla">
@@ -70,16 +117,17 @@ export const Tabla = ({
         cargando={false}
         orden={["", "ASC"]}
         onSeleccion={
-          recurso?.ruta
+          ruta
             ? (fila) => {
-                if (!fila.id.startsWith(SIN_ID)) navegar(`${recurso.ruta}/${fila.id}`);
+                if (!fila.id.startsWith(SIN_ID)) navegar(`${ruta}/${fila.id}`);
               }
             : undefined
         }
       />
-      {respuesta.truncado && recurso?.ruta && (
-        <Link className="dashboard-tabla-mas" to={recurso.ruta}>
-          Ver las {respuesta.total_grupos} en {recurso.descripcion.split(" (")[0]} →
+      {respuesta.truncado && ruta && (
+        <Link className="dashboard-tabla-mas" to={ruta}>
+          Ver las {respuesta.total_grupos}
+          {recurso ? ` en ${recurso.descripcion.split(" (")[0]}` : ""} →
         </Link>
       )}
     </div>
