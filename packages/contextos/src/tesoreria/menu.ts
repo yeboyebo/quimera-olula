@@ -1,5 +1,6 @@
 export const menuTesoreria = {
     "Tesorería": { icono: "menu_tesoreria", area: "Finanzas" },
+    "Tesorería/Resumen": { url: "/dashboard/tesoreria" },
     "Tesorería/Remesas de cobro": { alias: ["SEPA", "domiciliaciones"], url: "/tesoreria/remesa", regla: "tesoreria.remesa" },
     "Tesorería/Mandatos": { url: "/tesoreria/mandato", regla: "tesoreria.mandato" },
     "Tesorería/Recibos de cobro": { url: "/tesoreria/recibo_venta", regla: "tesoreria.recibo_venta" },
