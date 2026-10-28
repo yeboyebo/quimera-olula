@@ -23,7 +23,7 @@ export const CATALOGO: DefinicionTipoComponente[] = [
   { tipo: "temporal", nombre: "Temporal", descripcion: "Evolución por día, mes o año", grupo: "Gráficos", w: 8, h: 4, disponible: true },
   { tipo: "barras", nombre: "Barras", descripcion: "Comparar categorías", grupo: "Gráficos", w: 6, h: 4, disponible: true },
   { tipo: "circular", nombre: "Circular", descripcion: "Reparto entre pocas categorías", grupo: "Gráficos", w: 4, h: 4, disponible: true },
-  { tipo: "embudo", nombre: "Embudo", descripcion: "Presupuesto → pedido → factura", grupo: "Gráficos", w: 4, h: 4, disponible: false },
+  { tipo: "embudo", nombre: "Embudo", descripcion: "Presupuesto → pedido → factura", grupo: "Gráficos", w: 4, h: 4, disponible: true },
   { tipo: "mapa", nombre: "Mapa", descripcion: "Ventas y clientes por provincia o comunidad", grupo: "Gráficos", w: 6, h: 6, disponible: true },
   { tipo: "ranking", nombre: "Ranking", descripcion: "Los primeros N: clientes, artículos…", grupo: "Datos", w: 6, h: 4, disponible: true },
   { tipo: "tabla", nombre: "Tabla filtrada", descripcion: "Filas de un listado con su filtro", grupo: "Datos", w: 12, h: 4, disponible: true },
@@ -275,6 +275,9 @@ export const problemaComponente = (componente: ComponenteDashboard): string | nu
   if (sinDatos(componente.tipo)) return null;
   const [consulta] = componente.consultas;
   if (!consulta?.recurso) return "Elige de dónde salen los datos";
+  if (componente.tipo === "embudo") {
+    return componente.consultas.length >= 2 ? null : "Elige un circuito con al menos dos pasos";
+  }
   if (componente.tipo === "tabla") {
     return consulta.columnas ? null : "Elige al menos una columna";
   }
@@ -434,4 +437,75 @@ export const encuadreMapa = (puntos: PuntoMapa[]): Encuadre => {
     ],
     fuera: peninsula.length > 0 ? puntos.filter(enCanarias) : [],
   };
+};
+
+// ---------------------------------------------------------------------------
+// Embudo
+// ---------------------------------------------------------------------------
+
+export const CIRCUITOS: Record<string, { nombre: string; pasos: { recurso: string; etiqueta: string }[] }> = {
+  ventas: {
+    nombre: "Ciclo de venta",
+    pasos: [
+      { recurso: "ventas.presupuesto", etiqueta: "Presupuestos" },
+      { recurso: "ventas.pedido", etiqueta: "Pedidos" },
+      { recurso: "ventas.albaran", etiqueta: "Albaranes" },
+      { recurso: "ventas.factura", etiqueta: "Facturas" },
+    ],
+  },
+  compras: {
+    nombre: "Ciclo de compra",
+    pasos: [
+      { recurso: "compras.pedido", etiqueta: "Pedidos" },
+      { recurso: "compras.albaran", etiqueta: "Albaranes" },
+      { recurso: "compras.factura", etiqueta: "Facturas" },
+    ],
+  },
+};
+
+/**
+ * Una consulta por paso del circuito con la misma métrica y periodo. Solo los pasos
+ * que el usuario puede ver (un embudo sin presupuestos empieza en pedidos).
+ */
+export const consultasEmbudo = (
+  circuito: string,
+  metricas: string,
+  rango: RangoPeriodo | undefined,
+  recursosPermitidos: string[]
+): ConsultaComponente[] =>
+  (CIRCUITOS[circuito]?.pasos ?? [])
+    .filter((p) => recursosPermitidos.includes(p.recurso))
+    .map((p) => ({
+      recurso: p.recurso,
+      metricas,
+      ...(rango ? { periodo: `fecha:${rango}` } : {}),
+    }));
+
+export type PasoEmbudo = {
+  etiqueta: string;
+  valor: number;
+  /** Respecto al paso anterior (null en el primero o si el anterior es 0). */
+  conversion: number | null;
+  /** Ancho relativo al mayor, de 0 a 1. */
+  proporcion: number;
+};
+
+export const pasosEmbudo = (
+  respuestas: RespuestaAgregado[],
+  consultas: ConsultaComponente[]
+): PasoEmbudo[] => {
+  const etiquetas = Object.fromEntries(
+    Object.values(CIRCUITOS).flatMap((c) => c.pasos.map((p) => [p.recurso, p.etiqueta]))
+  );
+  const valores = consultas.map((consulta, i) => {
+    const [alias] = aliasMetricas(consulta.metricas);
+    return numero(respuestas[i]?.totales[alias]) ?? 0;
+  });
+  const maximo = Math.max(...valores, 0);
+  return consultas.map((consulta, i) => ({
+    etiqueta: etiquetas[consulta.recurso] ?? consulta.recurso,
+    valor: valores[i],
+    conversion: i > 0 && valores[i - 1] > 0 ? valores[i] / valores[i - 1] : null,
+    proporcion: maximo > 0 ? valores[i] / maximo : 0,
+  }));
 };

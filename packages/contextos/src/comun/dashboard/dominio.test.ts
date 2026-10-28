@@ -2,7 +2,9 @@ import { ComponenteDashboard, RespuestaAgregado } from "./diseño.ts";
 import {
   agruparResto,
   datosMapa,
+  consultasEmbudo,
   encuadreMapa,
+  pasosEmbudo,
   metricasMapa,
   aliasMetricas,
   categorias,
@@ -263,5 +265,38 @@ describe("dashboard: encuadre del mapa", () => {
       fuera: [],
     });
     expect(encuadreMapa([])).toEqual({ limites: null, fuera: [] });
+  });
+});
+
+describe("dashboard: embudo", () => {
+  test("una consulta por paso, solo los que el usuario puede ver", () => {
+    expect(
+      consultasEmbudo("ventas", "conteo", "este_año", ["ventas.pedido", "ventas.factura"])
+    ).toEqual([
+      { recurso: "ventas.pedido", metricas: "conteo", periodo: "fecha:este_año" },
+      { recurso: "ventas.factura", metricas: "conteo", periodo: "fecha:este_año" },
+    ]);
+    expect(consultasEmbudo("inventado", "conteo", undefined, ["ventas.pedido"])).toEqual([]);
+  });
+
+  test("valor, conversión respecto al anterior y proporción", () => {
+    const consultas = consultasEmbudo("compras", "suma:total", undefined, [
+      "compras.pedido",
+      "compras.albaran",
+      "compras.factura",
+    ]);
+    const pasos = pasosEmbudo(
+      [
+        respuesta({ totales: { suma_total: 200 } }),
+        respuesta({ totales: { suma_total: 0 } }),
+        respuesta({ totales: { suma_total: 50 } }),
+      ],
+      consultas
+    );
+    expect(pasos).toEqual([
+      { etiqueta: "Pedidos", valor: 200, conversion: null, proporcion: 1 },
+      { etiqueta: "Albaranes", valor: 0, conversion: 0, proporcion: 0 },
+      { etiqueta: "Facturas", valor: 50, conversion: null, proporcion: 0.25 },
+    ]);
   });
 });

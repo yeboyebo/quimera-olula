@@ -12,7 +12,9 @@ import {
   RecursoAgregable,
 } from "../diseño.ts";
 import {
+  CIRCUITOS,
   consultaPorDefecto,
+  consultasEmbudo,
   definicionTipo,
   formatoPorDefecto,
   GRANULARIDADES,
@@ -72,9 +74,19 @@ export const ConfigurarComponente = ({
   const consulta = borrador.consultas[0];
   const recurso = recursos.find((r) => r.id === consulta?.recurso);
 
-  // Un componente nuevo arranca con el primer recurso que el usuario puede ver.
+  // Un componente nuevo arranca con el primer recurso que el usuario puede ver (el
+  // embudo, con el ciclo de venta).
   useEffect(() => {
     if (sinDatos(borrador.tipo) || consulta || recursos.length === 0) return;
+    if (borrador.tipo === "embudo") {
+      const ids = recursos.map((r) => r.id);
+      setBorrador((b) => ({
+        ...b,
+        consultas: consultasEmbudo("ventas", "conteo", "este_año", ids),
+        opciones: { ...b.opciones, circuito: "ventas" },
+      }));
+      return;
+    }
     const inicial = recursoInicial(recursos);
     setBorrador((b) => ({ ...b, consultas: [consultaNueva(b, inicial)] }));
   }, [recursos, consulta, borrador.tipo]);
@@ -123,7 +135,15 @@ export const ConfigurarComponente = ({
             />
           )}
 
-          {consulta && (
+          {borrador.tipo === "embudo" && consulta && (
+            <FormularioEmbudo
+              componente={borrador}
+              recursosPermitidos={recursos.map((r) => r.id)}
+              onCambiar={cambiar}
+            />
+          )}
+
+          {consulta && borrador.tipo !== "embudo" && (
             <FormularioDatos
               tipo={borrador.tipo}
               consulta={consulta}
@@ -391,6 +411,59 @@ const FormularioDatos = ({
           onChange={(o) => o && onOpciones({ formato: o.valor as FormatoValor })}
         />
       )}
+    </>
+  );
+};
+
+/** El embudo no se monta paso a paso: se elige el circuito, qué medir y el periodo. */
+const FormularioEmbudo = ({
+  componente,
+  recursosPermitidos,
+  onCambiar,
+}: {
+  componente: ComponenteDashboard;
+  recursosPermitidos: string[];
+  onCambiar: (cambios: Partial<ComponenteDashboard>) => void;
+}) => {
+  const circuito = componente.opciones.circuito ?? "ventas";
+  const metricas = componente.consultas[0]?.metricas ?? "conteo";
+  const [, rango] = leerPeriodo(componente.consultas[0]?.periodo);
+
+  const rehacer = (nuevoCircuito: string, nuevasMetricas: string, nuevoRango: typeof rango) =>
+    onCambiar({
+      consultas: consultasEmbudo(nuevoCircuito, nuevasMetricas, nuevoRango, recursosPermitidos),
+      opciones: {
+        ...componente.opciones,
+        circuito: nuevoCircuito,
+        formato: nuevasMetricas === "conteo" ? "numero" : "moneda",
+      },
+    });
+
+  return (
+    <>
+      <QSelect
+        label="Circuito"
+        nombre="circuito_componente"
+        valor={circuito}
+        opciones={Object.entries(CIRCUITOS).map(([id, c]) => opcion(id, c.nombre))}
+        onChange={(o) => o && rehacer(o.valor, metricas, rango)}
+      />
+      <QSelect
+        label="Medir"
+        nombre="metrica_embudo_componente"
+        valor={metricas}
+        opciones={[opcion("conteo", "Número de documentos"), opcion("suma:total", "Importe total")]}
+        onChange={(o) => o && rehacer(circuito, o.valor, rango)}
+      />
+      <QSelect
+        label="Periodo"
+        nombre="periodo_embudo_componente"
+        valor={rango ?? SIN_PERIODO}
+        opciones={[opcion(SIN_PERIODO, "Todas las fechas"), ...RANGOS_PERIODO.map((r) => opcion(r.valor, r.descripcion))]}
+        onChange={(o) =>
+          o && rehacer(circuito, metricas, o.valor === SIN_PERIODO ? undefined : (o.valor as typeof rango))
+        }
+      />
     </>
   );
 };

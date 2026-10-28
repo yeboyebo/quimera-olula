@@ -160,13 +160,19 @@ export const DASHBOARDS_POR_DEFECTO: Record<string, DashboardPorDefecto> = {
         filtros: [{ campo: "facturado", operador: "=", valor: false }],
       }),
       evolucionMensual("compras.factura", "Compras por mes"),
-      componente("por_almacen", "circular", "Compras del año por almacén", [8, 2, 4, 4], {
-        recurso: "compras.factura",
-        metricas: "suma:total",
-        agrupar: "almacen",
-        periodo: "fecha:este_año",
-        limite: 20,
-      }),
+      {
+        ...componente("ciclo_compra", "embudo", "Ciclo de compra del año", [8, 2, 4, 4], {
+          recurso: "compras.pedido",
+          metricas: "suma:total",
+          periodo: "fecha:este_año",
+        }),
+        consultas: ["compras.pedido", "compras.albaran", "compras.factura"].map((recurso) => ({
+          recurso,
+          metricas: "suma:total",
+          periodo: "fecha:este_año",
+        })),
+        opciones: { circuito: "compras", formato: "moneda" },
+      },
       componente("top_proveedores", "ranking", "Principales proveedores del año", [0, 6, 6, 4], {
         recurso: "compras.factura",
         metricas: "suma:total",

@@ -517,3 +517,47 @@
         font-variant-numeric: tabular-nums;
     }
 }
+
+/* --- Embudo ----------------------------------------------------------------- */
+
+.dashboard-embudo {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--espaciado-s);
+    font-size: var(--tamaño-letra-s);
+
+    li {
+        display: grid;
+        grid-template-columns: minmax(5rem, auto) 1fr auto;
+        align-items: center;
+        gap: var(--espaciado-s);
+    }
+
+    .dashboard-embudo-pista {
+        height: 1.25rem;
+        border-radius: var(--redondeo-borde-xs);
+        background: var(--color-superficie-sunken);
+        overflow: hidden;
+    }
+
+    .dashboard-embudo-barra {
+        display: block;
+        height: 100%;
+        border-radius: var(--redondeo-borde-xs);
+    }
+
+    .dashboard-embudo-valor {
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .dashboard-embudo-conversion {
+        color: var(--color-texto-secundario);
+    }
+}

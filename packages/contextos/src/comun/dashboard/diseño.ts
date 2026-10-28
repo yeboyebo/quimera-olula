@@ -81,6 +81,8 @@ export type OpcionesComponente = {
   meta?: number;
   /** Texto: contenido. */
   texto?: string;
+  /** Embudo: circuito de documentos (ventas, compras). */
+  circuito?: string;
 };
 
 export type ComponenteDashboard = ElementoRejilla & {
