@@ -3,6 +3,7 @@ import { problemaComponente, sinDatos } from "../../dominio.ts";
 import { useDatosComponente } from "../../useDatosComponente.ts";
 import { useRecursos } from "../../useRecursos.ts";
 import { Barras, Circular, Temporal } from "./Graficos.tsx";
+import { Mapa } from "./Mapa.tsx";
 import { MarcoComponente } from "./MarcoComponente.tsx";
 import { Tabla } from "./Tabla.tsx";
 import { Objetivo, Tarjeta } from "./Tarjeta.tsx";
@@ -51,6 +52,8 @@ export const Componente = ({
         return <Barras componente={componente} respuesta={respuesta} horizontal />;
       case "circular":
         return <Circular componente={componente} respuesta={respuesta} />;
+      case "mapa":
+        return <Mapa componente={componente} respuesta={respuesta} />;
       case "tabla":
         return (
           <Tabla

@@ -43,6 +43,15 @@ const evolucionMensual = (recurso: string, titulo: string, medida = "total", fec
     limite: 100,
   });
 
+const mapaVentas = (y: number) =>
+  componente("mapa_ventas", "mapa", "Ventas y clientes del año por provincia", [0, y, 12, 6], {
+    recurso: "ventas.factura",
+    metricas: "suma:total,conteo_distinto:cliente",
+    agrupar: "provincia",
+    periodo: "fecha:este_año",
+    limite: 100,
+  });
+
 const recibosPendientes = (recurso: string, titulo: string, x: number) =>
   componente(`${recurso.split(".")[1]}_pendientes`, "tarjeta", titulo, [x, 0, 3, 2], {
     recurso,
@@ -84,6 +93,7 @@ export const DASHBOARDS_POR_DEFECTO: Record<string, DashboardPorDefecto> = {
         orden: "fecha_vencimiento:asc",
         limite: 8,
       }),
+      mapaVentas(10),
     ],
   },
 
@@ -130,6 +140,7 @@ export const DASHBOARDS_POR_DEFECTO: Record<string, DashboardPorDefecto> = {
         orden: "fecha:asc",
         limite: 8,
       }),
+      mapaVentas(10),
     ],
   },
 

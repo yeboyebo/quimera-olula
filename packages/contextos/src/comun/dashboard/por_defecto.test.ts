@@ -29,6 +29,7 @@ describe("dashboards por defecto", () => {
       "evolucion",
       "pedidos_estado",
       "top_clientes",
+      "mapa_ventas",
     ]);
     const texto = { ...inicio.componentes[0], id: "nota", tipo: "texto" as const, consultas: [] };
     expect(componentesVisibles([texto], [])).toEqual([texto]);

@@ -1,6 +1,9 @@
 import { ComponenteDashboard, RespuestaAgregado } from "./diseño.ts";
 import {
   agruparResto,
+  datosMapa,
+  encuadreMapa,
+  metricasMapa,
   aliasMetricas,
   categorias,
   consultaPorDefecto,
@@ -176,5 +179,89 @@ describe("dashboard: componentes", () => {
       sustituirComponente(lista, componente({ id: "b", titulo: "Nuevo" })).map((c) => c.titulo)
     ).toEqual(["Facturado", "Nuevo"]);
     expect(sustituirComponente(lista, componente({ id: "c" }))).toHaveLength(3);
+  });
+});
+
+describe("dashboard: mapa", () => {
+  const consulta = {
+    recurso: "ventas.factura",
+    metricas: metricasMapa("suma:total"),
+    agrupar: "provincia",
+  };
+
+  test("añade los clientes distintos a la métrica elegida", () => {
+    expect(metricasMapa("suma:total")).toBe("suma:total,conteo_distinto:cliente");
+    expect(metricasMapa("conteo,suma:neto")).toBe("conteo,conteo_distinto:cliente");
+  });
+
+  test("sitúa cada provincia por su código INE y aparta lo que no se puede situar", () => {
+    const { puntos, sinSituar } = datosMapa(
+      respuesta({
+        grupos: [
+          { provincia: "08", provincia_nombre: "Barcelona", suma_total: 100, conteo_distinto_cliente: 4 },
+          { provincia: "28", suma_total: 300, conteo_distinto_cliente: 9 },
+          { provincia: null, suma_total: 50, conteo_distinto_cliente: 2 },
+          { provincia: "99", suma_total: 7, conteo_distinto_cliente: 1 },
+        ],
+      }),
+      consulta
+    );
+    expect(puntos.map((p) => [p.nombre, p.valor, p.clientes])).toEqual([
+      ["Madrid", 300, 9],
+      ["Barcelona", 100, 4],
+    ]);
+    expect(puntos[0].centro).toEqual([-3.7038, 40.4168]);
+    expect(sinSituar).toBe(57);
+  });
+
+  test("por comunidad", () => {
+    const { puntos } = datosMapa(
+      respuesta({ grupos: [{ comunidad: "16", suma_total: 5 }] }),
+      { ...consulta, agrupar: "comunidad", metricas: "suma:total" }
+    );
+    expect(puntos).toEqual([
+      { codigo: "16", nombre: "País Vasco", centro: [-2.62, 43.04], valor: 5, clientes: null },
+    ]);
+  });
+
+  test("un mapa necesita agrupar por provincia o comunidad", () => {
+    const mapa = componente({ tipo: "mapa", consultas: [{ ...consulta, agrupar: "cliente" }] });
+    expect(problemaComponente(mapa)).toMatch(/provincia o comunidad/);
+    expect(problemaComponente({ ...mapa, consultas: [consulta] })).toBeNull();
+  });
+});
+
+describe("dashboard: encuadre del mapa", () => {
+  const punto = (nombre: string, centro: [number, number]) => ({
+    codigo: nombre,
+    nombre,
+    centro,
+    valor: 1,
+    clientes: null,
+  });
+
+  test("península y Baleares; Canarias aparte", () => {
+    const madrid = punto("Madrid", [-3.7, 40.4]);
+    const palma = punto("Palma", [2.65, 39.57]);
+    const laspalmas = punto("Las Palmas", [-15.41, 28.12]);
+    expect(encuadreMapa([madrid, palma, laspalmas])).toEqual({
+      limites: [
+        [-3.7, 39.57],
+        [2.65, 40.4],
+      ],
+      fuera: [laspalmas],
+    });
+  });
+
+  test("solo Canarias: se encuadra Canarias", () => {
+    const laspalmas = punto("Las Palmas", [-15.41, 28.12]);
+    expect(encuadreMapa([laspalmas])).toEqual({
+      limites: [
+        [-15.41, 28.12],
+        [-15.41, 28.12],
+      ],
+      fuera: [],
+    });
+    expect(encuadreMapa([])).toEqual({ limites: null, fuera: [] });
   });
 });

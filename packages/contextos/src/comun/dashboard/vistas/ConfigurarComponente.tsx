@@ -18,11 +18,13 @@ import {
   GRANULARIDADES,
   leerAgrupacion,
   leerPeriodo,
+  metricasMapa,
   OPERACIONES,
   problemaComponente,
   RANGOS_PERIODO,
   sinDatos,
 } from "../dominio.ts";
+import { DIMENSIONES_GEOGRAFICAS } from "../geografia.ts";
 import { useRecursos } from "../useRecursos.ts";
 import { Componente } from "./componentes/Componente.tsx";
 import "./ConfigurarComponente.css";
@@ -35,13 +37,24 @@ const opcion = (valor: string, descripcion: string) => ({ valor, descripcion });
 const recursoInicial = (recursos: RecursoAgregable[]) =>
   recursos.find((r) => r.id === "ventas.factura") ?? recursos[0];
 
-const consultaNueva = (componente: ComponenteDashboard, recurso: RecursoAgregable) =>
-  consultaPorDefecto(
+const tieneClientes = (recurso: RecursoAgregable | undefined) =>
+  Boolean(recurso?.dimensiones.some((d) => d.id === "cliente"));
+
+const consultaNueva = (componente: ComponenteDashboard, recurso: RecursoAgregable) => {
+  const consulta = consultaPorDefecto(
     componente.tipo,
     recurso.id,
     recurso.medidas.find((m) => m.id === "total")?.id ?? recurso.medidas[0]?.id,
     recurso.dimensiones.find((d) => d.tipo === "fecha")?.id
   );
+  if (componente.tipo !== "mapa") return consulta;
+  const geografica = recurso.dimensiones.find((d) => d.id in DIMENSIONES_GEOGRAFICAS);
+  return {
+    ...consulta,
+    metricas: metricasMapa(consulta.metricas ?? "conteo", tieneClientes(recurso)),
+    agrupar: geografica?.id,
+  };
+};
 
 /** Formulario de un componente con la vista previa en vivo, con datos reales. */
 export const ConfigurarComponente = ({
@@ -175,7 +188,8 @@ const FormularioDatos = ({
 }) => {
   const fechas = recurso?.dimensiones.filter((d) => d.tipo === "fecha") ?? [];
   const categorias = recurso?.dimensiones.filter((d) => d.tipo !== "fecha") ?? [];
-  const [operacion, campo] = (consulta.metricas ?? "conteo").split(":");
+  // La primera métrica es la que se elige; el mapa añade detrás los clientes distintos.
+  const [operacion, campo] = (consulta.metricas ?? "conteo").split(",")[0].split(":");
   const [dimension, granularidad] = leerAgrupacion(consulta.agrupar);
   const [dimensionPeriodo, rango] = leerPeriodo(consulta.periodo);
   const agrupaPorCategoria = ["barras", "circular", "ranking"].includes(tipo);
@@ -185,7 +199,10 @@ const FormularioDatos = ({
   const cambiarMetrica = (nuevaOperacion: string, nuevoCampo?: string) => {
     const conCampo = OPERACIONES.find((o) => o.valor === nuevaOperacion)?.conCampo;
     const medida = nuevoCampo ?? campo ?? recurso?.medidas[0]?.id;
-    onConsulta({ metricas: conCampo && medida ? `${nuevaOperacion}:${medida}` : nuevaOperacion });
+    const principal = conCampo && medida ? `${nuevaOperacion}:${medida}` : nuevaOperacion;
+    onConsulta({
+      metricas: tipo === "mapa" ? metricasMapa(principal, tieneClientes(recurso)) : principal,
+    });
   };
 
   const alternarColumna = (id: string, marcada: boolean) => {
@@ -259,6 +276,19 @@ const FormularioDatos = ({
             onChange={(o) => o && onConsulta({ agrupar: `${dimension ?? fechas[0]?.id}:${o.valor}` })}
           />
         </div>
+      )}
+
+      {tipo === "mapa" && (
+        <QSelect
+          label="Situar por"
+          nombre="nivel_mapa_componente"
+          valor={dimension ?? ""}
+          placeholder="Este dato no tiene provincia"
+          opciones={categorias
+            .filter((d) => d.id in DIMENSIONES_GEOGRAFICAS)
+            .map((d) => opcion(d.id, d.id === "provincia" ? "Provincia" : "Comunidad autónoma"))}
+          onChange={(o) => o && onConsulta({ agrupar: o.valor })}
+        />
       )}
 
       {agrupaPorCategoria && (

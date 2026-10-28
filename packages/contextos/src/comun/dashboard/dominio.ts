@@ -1,6 +1,7 @@
 import { pareceImporte } from "@olula/componentes/maestro/widgets/dominio.ts";
 import { posicionLibre } from "@olula/componentes/rejilla/dominio.ts";
 import { formatearMoneda } from "@olula/lib/dominio.ts";
+import { DIMENSIONES_GEOGRAFICAS } from "./geografia.ts";
 import {
   ComponenteDashboard,
   ConsultaComponente,
@@ -23,7 +24,7 @@ export const CATALOGO: DefinicionTipoComponente[] = [
   { tipo: "barras", nombre: "Barras", descripcion: "Comparar categorías", grupo: "Gráficos", w: 6, h: 4, disponible: true },
   { tipo: "circular", nombre: "Circular", descripcion: "Reparto entre pocas categorías", grupo: "Gráficos", w: 4, h: 4, disponible: true },
   { tipo: "embudo", nombre: "Embudo", descripcion: "Presupuesto → pedido → factura", grupo: "Gráficos", w: 4, h: 4, disponible: false },
-  { tipo: "mapa", nombre: "Mapa", descripcion: "Por comunidad o provincia", grupo: "Gráficos", w: 6, h: 5, disponible: false },
+  { tipo: "mapa", nombre: "Mapa", descripcion: "Ventas y clientes por provincia o comunidad", grupo: "Gráficos", w: 6, h: 6, disponible: true },
   { tipo: "ranking", nombre: "Ranking", descripcion: "Los primeros N: clientes, artículos…", grupo: "Datos", w: 6, h: 4, disponible: true },
   { tipo: "tabla", nombre: "Tabla filtrada", descripcion: "Filas de un listado con su filtro", grupo: "Datos", w: 12, h: 4, disponible: true },
   { tipo: "tabla_resumen", nombre: "Tabla resumen", descripcion: "Cruce de dos dimensiones", grupo: "Datos", w: 6, h: 4, disponible: false },
@@ -242,6 +243,8 @@ export const consultaPorDefecto = (
       };
     case "tabla":
       return { recurso, columnas: "", limite: 10 };
+    case "mapa":
+      return { recurso, metricas: metricasMapa(metricas), agrupar: "provincia", periodo, limite: 100 };
     default:
       return { recurso, metricas, periodo, limite: tipo === "circular" ? 20 : 10 };
   }
@@ -279,6 +282,9 @@ export const problemaComponente = (componente: ComponenteDashboard): string | nu
   const agrupa = ["temporal", "barras", "circular", "ranking"].includes(componente.tipo);
   if (agrupa && !consulta.agrupar) return "Elige por qué agrupar";
   if (componente.tipo === "objetivo" && !componente.opciones.meta) return "Indica la meta";
+  if (componente.tipo === "mapa" && !esGeografica(leerAgrupacion(consulta.agrupar)[0])) {
+    return "Elige provincia o comunidad";
+  }
   return null;
 };
 
@@ -349,3 +355,83 @@ export const dashboardPorDefecto = (
   componentes: componentesVisibles(definicion.componentes, recursosPermitidos),
   componentesOcultos: 0,
 });
+
+// ---------------------------------------------------------------------------
+// Mapa
+// ---------------------------------------------------------------------------
+
+export const esGeografica = (dimension: string | undefined): boolean =>
+  dimension !== undefined && dimension in DIMENSIONES_GEOGRAFICAS;
+
+/** La métrica elegida más los clientes distintos, si el recurso tiene clientes. */
+export const metricasMapa = (principal: string, conClientes = true): string => {
+  const primera = principal.split(",")[0];
+  return conClientes ? `${primera},conteo_distinto:cliente` : primera;
+};
+
+export type PuntoMapa = {
+  codigo: string;
+  nombre: string;
+  centro: [number, number];
+  valor: number;
+  clientes: number | null;
+};
+
+export type DatosMapa = {
+  puntos: PuntoMapa[];
+  /** Lo que no se puede situar: sin provincia o fuera de España. */
+  sinSituar: number;
+};
+
+/** Grupos por provincia o comunidad (código INE) con su posición en el mapa. */
+export const datosMapa = (
+  respuesta: RespuestaAgregado,
+  consulta: ConsultaComponente
+): DatosMapa => {
+  const [dimension] = leerAgrupacion(consulta.agrupar);
+  const lugares = DIMENSIONES_GEOGRAFICAS[dimension ?? ""] ?? {};
+  const [alias, aliasClientes] = aliasMetricas(consulta.metricas);
+  const puntos: PuntoMapa[] = [];
+  let sinSituar = 0;
+  respuesta.grupos.forEach((grupo) => {
+    const valor = numero(grupo[alias]) ?? 0;
+    const lugar = lugares[String(grupo[dimension ?? ""] ?? "")];
+    if (!lugar) {
+      sinSituar += valor;
+      return;
+    }
+    puntos.push({
+      codigo: String(grupo[dimension ?? ""]),
+      nombre: lugar.nombre,
+      centro: lugar.centro,
+      valor,
+      clientes: aliasClientes ? numero(grupo[aliasClientes]) : null,
+    });
+  });
+  return { puntos: puntos.sort((a, b) => b.valor - a.valor), sinSituar };
+};
+
+/** Canarias queda lejos: el encuadre se ajusta a la península y Baleares. */
+const enCanarias = (p: PuntoMapa) => p.centro[1] < 30;
+
+export type Encuadre = {
+  limites: [[number, number], [number, number]] | null;
+  /** Zonas con datos que quedan fuera del encuadre (Canarias), para nombrarlas aparte. */
+  fuera: PuntoMapa[];
+};
+
+/** Rectángulo que contiene los puntos (sin Canarias si hay otros). */
+export const encuadreMapa = (puntos: PuntoMapa[]): Encuadre => {
+  const peninsula = puntos.filter((p) => !enCanarias(p));
+  const visibles = peninsula.length > 0 ? peninsula : puntos;
+  if (visibles.length === 0) return { limites: null, fuera: [] };
+  const lons = visibles.map((p) => p.centro[0]);
+  const lats = visibles.map((p) => p.centro[1]);
+  return {
+    limites: [
+      [Math.min(...lons), Math.min(...lats)],
+      [Math.max(...lons), Math.max(...lats)],
+    ],
+    fuera: peninsula.length > 0 ? puntos.filter(enCanarias) : [],
+  };
+};
