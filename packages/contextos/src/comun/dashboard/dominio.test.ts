@@ -4,6 +4,7 @@ import {
   alternativasTipo,
   cambiarTipo,
   componenteDesdePropuesta,
+  componentesDesdePropuestaDashboard,
   datosMapa,
   consultasEmbudo,
   encuadreMapa,
@@ -171,7 +172,7 @@ describe("dashboard: componentes", () => {
   test("nuevo componente: id libre y primer hueco de la rejilla", () => {
     const existentes = [componente({ id: "c1", x: 0, y: 0, w: 8, h: 2 })];
     const nuevo = nuevoComponente("tarjeta", existentes);
-    expect(nuevo).toMatchObject({ id: "c2", x: 8, y: 0, w: 3, h: 3, consultas: [] });
+    expect(nuevo).toMatchObject({ id: "c2", x: 8, y: 0, w: 3, h: 2, consultas: [] });
   });
 
   test("qué le falta a un componente para guardarse", () => {
@@ -337,6 +338,44 @@ describe("dashboard: pregunta a la IA", () => {
     );
     expect(resultado).toMatchObject({ id: "c3", tipo: "tabla", x: 0, y: 8, w: 12, h: 8 });
     expect(resultado.opciones).toEqual({ pregunta: "pedidos pendientes" });
-    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 3 });
+    expect(cambiarTipo(resultado, "tarjeta")).toMatchObject({ tipo: "tarjeta", w: 3, h: 2 });
+  });
+});
+
+describe("componentesDesdePropuestaDashboard", () => {
+  const propuesta = (tipo: ComponenteDashboard["tipo"], titulo: string) => ({
+    tipo,
+    titulo,
+    consulta: { recurso: "ventas.factura", metricas: "suma:total" },
+    explicacion: "",
+  });
+
+  test("tarjetas en la primera fila y gráficos debajo, sin solaparse", () => {
+    const componentes = componentesDesdePropuestaDashboard({
+      nombre: "Ventas",
+      componentes: [
+        propuesta("tarjeta", "A"),
+        propuesta("tarjeta", "B"),
+        propuesta("tarjeta", "C"),
+        propuesta("temporal", "Evolución"),
+        propuesta("circular", "Reparto"),
+        propuesta("tabla", "Pendientes"),
+      ],
+    });
+
+    expect(componentes.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }))).toEqual([
+      { id: "c1", x: 0, y: 0, w: 3, h: 2 },
+      { id: "c2", x: 3, y: 0, w: 3, h: 2 },
+      { id: "c3", x: 6, y: 0, w: 3, h: 2 },
+      { id: "c4", x: 0, y: 2, w: 8, h: 8 },
+      { id: "c5", x: 8, y: 2, w: 4, h: 8 },
+      { id: "c6", x: 0, y: 10, w: 12, h: 8 },
+    ]);
+    expect(componentes[3]).toMatchObject({
+      tipo: "temporal",
+      titulo: "Evolución",
+      consultas: [{ recurso: "ventas.factura", metricas: "suma:total" }],
+      opciones: {},
+    });
   });
 });

@@ -56,43 +56,15 @@ const filasDesdeRespuesta = (respuesta: RespuestaAgregado): FilaDashboard[] =>
 
 const metaDesdeColumnas = (
   columnas: string[],
-  recurso: RecursoAgregable | undefined,
-  ruta: string | undefined
+  recurso: RecursoAgregable | undefined
 ): MetaTabla<FilaDashboard> =>
-  columnas.map((id, indice) => {
-    const tipo = tipoColumna(id, recurso);
-    const base = { id, cabecera: etiquetaColumna(id, recurso), tipo };
-    // Primera columna: enlace real (ctrl/clic medio y URL al pasar el ratón).
-    if (indice !== 0 || !ruta) return base;
-    return {
-      ...base,
-      render: (fila: FilaDashboard) => {
-        if (fila.id.startsWith(SIN_ID)) return valorCelda(fila, id, tipo);
-        return <Link to={`${ruta}/${fila.id}`}>{valorCelda(fila, id, tipo)}</Link>;
-      },
-    };
-  });
+  columnas.map((id) => ({
+    id,
+    cabecera: etiquetaColumna(id, recurso),
+    tipo: tipoColumna(id, recurso),
+  }));
 
-/** Misma presentación que QTabla para el texto del enlace. */
-const valorCelda = (
-  fila: FilaDashboard,
-  columna: string,
-  tipo: NonNullable<MetaTabla<FilaDashboard>[number]["tipo"]>
-): string => {
-  const valor = fila[columna];
-  if (valor === null || valor === undefined || valor === "") return "—";
-  if (tipo === "booleano" && typeof valor === "boolean") return valor ? "Sí" : "No";
-  if (tipo === "numero" && typeof valor === "number") return valor.toLocaleString("es-ES");
-  if (tipo === "moneda" && (typeof valor === "number" || typeof valor === "string")) {
-    return Number(valor).toLocaleString("es-ES", { style: "currency", currency: "EUR" });
-  }
-  if (tipo === "fecha" && typeof valor === "string") {
-    return new Date(`${valor}T00:00:00`).toLocaleDateString("es-ES");
-  }
-  return String(valor);
-};
-
-/** Filas de un listado con su filtro; QTabla nativa. Clic (o enlace) abre la ficha. */
+/** Filas de un listado con su filtro; QTabla como en los maestros. Clic en la fila abre la ficha. */
 export const Tabla = ({
   componente,
   respuesta,
@@ -107,7 +79,7 @@ export const Tabla = ({
   const ruta = rutaRecurso(recurso, recursoId);
   const columnas = (componente.consultas[0].columnas ?? "").split(",").filter(Boolean);
   const datos = filasDesdeRespuesta(respuesta);
-  const metaTabla = metaDesdeColumnas(columnas, recurso, ruta);
+  const metaTabla = metaDesdeColumnas(columnas, recurso);
 
   return (
     <div className="dashboard-tabla">
@@ -119,7 +91,10 @@ export const Tabla = ({
         onSeleccion={
           ruta
             ? (fila) => {
-                if (!fila.id.startsWith(SIN_ID)) navegar(`${ruta}/${fila.id}`);
+                // Los maestros abren el detalle con `?id=`, no con un segmento de la ruta.
+                if (!fila.id.startsWith(SIN_ID)) {
+                  navegar(`${ruta}?id=${encodeURIComponent(fila.id)}`);
+                }
               }
             : undefined
         }

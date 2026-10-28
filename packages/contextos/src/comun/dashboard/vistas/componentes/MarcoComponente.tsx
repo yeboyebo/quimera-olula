@@ -1,8 +1,12 @@
 import { ReactNode } from "react";
 
-/** Marco común: título, estados de carga/error/sin datos y el contenido. */
+/**
+ * Marco común: título (con el periodo de los datos, para saber de qué fechas son),
+ * estados de carga/error/sin datos y el contenido.
+ */
 export const MarcoComponente = ({
   titulo,
+  periodo,
   cargando,
   error,
   vacio,
@@ -11,6 +15,7 @@ export const MarcoComponente = ({
   children,
 }: {
   titulo: string;
+  periodo?: string;
   cargando?: boolean;
   error?: string | null;
   vacio?: boolean;
@@ -20,7 +25,12 @@ export const MarcoComponente = ({
   children?: ReactNode;
 }) => (
   <section className="dashboard-componente" aria-busy={cargando || undefined}>
-    {titulo && <h2 className="dashboard-componente-titulo">{titulo}</h2>}
+    {titulo && (
+      <h2 className="dashboard-componente-titulo">
+        {titulo}
+        {periodo && <span className="dashboard-componente-periodo"> · {periodo}</span>}
+      </h2>
+    )}
     <div className="dashboard-componente-cuerpo">
       {aviso ? (
         <p className="dashboard-componente-estado">{aviso}</p>

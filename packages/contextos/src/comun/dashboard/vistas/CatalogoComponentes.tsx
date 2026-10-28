@@ -3,12 +3,17 @@ import { CATALOGO } from "../dominio.ts";
 
 const GRUPOS = ["Indicadores", "Gráficos", "Datos", "Otros"] as const;
 
-/** Panel «Añadir componente» del modo edición. Lo que aún no está, se anuncia. */
+/**
+ * Panel «Añadir componente» del modo edición. Lo que aún no está, se anuncia; la
+ * pregunta a la IA solo aparece si hay un modelo activo.
+ */
 export const CatalogoComponentes = ({
   lleno,
+  conIA,
   onElegir,
 }: {
   lleno: boolean;
+  conIA: boolean;
   onElegir: (tipo: TipoComponente) => void;
 }) => (
   <aside className="catalogo-componentes" aria-labelledby="catalogo-componentes-titulo">
@@ -20,7 +25,9 @@ export const CatalogoComponentes = ({
       <section key={grupo}>
         <h3>{grupo}</h3>
         <ul>
-          {CATALOGO.filter((d) => d.grupo === grupo).map((d) => (
+          {CATALOGO.filter(
+            (d) => d.grupo === grupo && (conIA || d.tipo !== "pregunta_ia")
+          ).map((d) => (
             <li key={d.tipo}>
               <button
                 type="button"

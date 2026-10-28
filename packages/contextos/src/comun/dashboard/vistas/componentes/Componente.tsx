@@ -1,5 +1,5 @@
 import { ComponenteDashboard } from "../../diseño.ts";
-import { problemaComponente, sinDatos } from "../../dominio.ts";
+import { etiquetaPeriodo, problemaComponente, sinDatos } from "../../dominio.ts";
 import { useDatosComponente } from "../../useDatosComponente.ts";
 import { useRecursos } from "../../useRecursos.ts";
 import { Barras, Circular, Temporal } from "./Graficos.tsx";
@@ -93,6 +93,7 @@ export const Componente = ({
   return (
     <MarcoComponente
       titulo={componente.titulo}
+      periodo={etiquetaPeriodo(componente.consultas[0])}
       cargando={cargando}
       error={error}
       vacio={vacio}

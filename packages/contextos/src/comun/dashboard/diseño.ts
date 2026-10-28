@@ -95,6 +95,12 @@ export type PropuestaComponente = {
   explicacion: string;
 };
 
+/** Dashboard entero propuesto por la IA: los componentes ya validados por el servidor. */
+export type PropuestaDashboard = {
+  nombre: string;
+  componentes: PropuestaComponente[];
+};
+
 export type ComponenteDashboard = ElementoRejilla & {
   tipo: TipoComponente;
   titulo: string;

@@ -87,6 +87,19 @@
         }
     }
 
+    /* En las tarjetas (88 px) taparían el importe: aparecen al pasar el ratón o con el foco. */
+    .pagina-dashboard-editable:has(> quimera-tarjeta-resumen) {
+        .pagina-dashboard-acciones-componente {
+            opacity: 0;
+            transition: opacity var(--transicion-normal);
+        }
+
+        &:hover .pagina-dashboard-acciones-componente,
+        &:focus-within .pagina-dashboard-acciones-componente {
+            opacity: 1;
+        }
+    }
+
     /* Arriba a la derecha, en la línea del título: no tapa ejes ni la esquina de tamaño. */
     .pagina-dashboard-acciones-componente {
         position: absolute;
@@ -137,6 +150,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    .dashboard-componente-periodo {
+        font-size: var(--tamaño-letra-s);
+        font-weight: var(--grosor-letra-4);
+        color: var(--color-texto-secundario);
     }
 
     .dashboard-componente-cuerpo {
@@ -329,6 +348,12 @@
     .dashboard-tabla-mas {
         flex-shrink: 0;
         font-size: var(--tamaño-letra-s);
+        color: var(--color-primario);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 

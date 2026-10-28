@@ -3,20 +3,30 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ResumenDashboard } from "../diseño.ts";
 import { crearDashboard, getDashboards } from "../infraestructura.ts";
+import { useIaDisponible } from "../useIaDisponible.ts";
 import "./Dashboard.css";
+import { NuevoDashboard } from "./NuevoDashboard.tsx";
 
 /** Mis dashboards y los que ha compartido el resto de la empresa. */
 export const PaginaDashboards = () => {
   const [dashboards, setDashboards] = useState<ResumenDashboard[] | null>(null);
+  const [eligiendo, setEligiendo] = useState(false);
   const navegar = useNavigate();
+  const conIA = useIaDisponible();
 
   useEffect(() => {
     getDashboards().then(setDashboards).catch(() => setDashboards([]));
   }, []);
 
+  const abrir = (id: string) => navegar(`/comun/dashboard/${id}?editar`);
+
+  // Con un modelo de IA activo se puede pedir que lo proponga; si no, en blanco.
   const nuevo = async () => {
-    const id = await crearDashboard({ nombre: "Nuevo dashboard", componentes: [] });
-    navegar(`/comun/dashboard/${id}?editar`);
+    if (conIA) {
+      setEligiendo(true);
+      return;
+    }
+    abrir(await crearDashboard({ nombre: "Nuevo dashboard", componentes: [] }));
   };
 
   // Las versiones personales de los dashboards de módulo se abren desde su módulo.
@@ -47,6 +57,10 @@ export const PaginaDashboards = () => {
             vacio="Nadie ha compartido ninguno todavía."
           />
         </div>
+      )}
+
+      {eligiendo && (
+        <NuevoDashboard onCreado={abrir} onCancelar={() => setEligiendo(false)} />
       )}
     </div>
   );

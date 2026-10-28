@@ -142,3 +142,18 @@
         font-size: var(--tamaño-letra-s);
     }
 }
+
+/* --- Nuevo dashboard con IA ------------------------------------------------- */
+
+.configurar-componente.nuevo-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-m);
+
+    .nuevo-dashboard-intro,
+    .nuevo-dashboard-progreso {
+        margin: 0;
+        font-size: var(--tamaño-letra-s);
+        color: var(--color-texto-secundario);
+    }
+}

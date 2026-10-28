@@ -9,6 +9,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import { ComponenteDashboard, Dashboard } from "../../diseño.ts";
 import { ALTO_FILA_DASHBOARD, MAX_COMPONENTES } from "../../dominio.ts";
 import { crearDashboard } from "../../infraestructura.ts";
+import { useIaDisponible } from "../../useIaDisponible.ts";
 import { CatalogoComponentes } from "../CatalogoComponentes.tsx";
 import { Componente } from "../componentes/Componente.tsx";
 import { ConfigurarComponente } from "../ConfigurarComponente.tsx";
@@ -25,6 +26,7 @@ export const PaginaDashboard = ({ clave }: { clave?: string }) => {
   const { id } = useParams();
   const [parametros] = useSearchParams();
   const navegar = useNavigate();
+  const conIA = useIaDisponible();
 
   const publicar = useCallback(
     async (evento: string) => {
@@ -184,6 +186,7 @@ export const PaginaDashboard = ({ clave }: { clave?: string }) => {
         {editando && (
           <CatalogoComponentes
             lleno={borrador.length >= MAX_COMPONENTES}
+            conIA={conIA}
             onElegir={(tipo) => emitir("componente_añadido", tipo)}
           />
         )}

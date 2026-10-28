@@ -4,6 +4,7 @@ import {
   ConsultaComponente,
   Dashboard,
   PropuestaComponente,
+  PropuestaDashboard,
   RecursoAgregable,
   RespuestaAgregado,
   ResumenDashboard,
@@ -124,4 +125,28 @@ export const proponerComponente = async (pregunta: string): Promise<PropuestaCom
   } catch (error) {
     throw new Error(motivoError(error));
   }
+};
+
+export const proponerDashboard = async (peticion: string): Promise<PropuestaDashboard> => {
+  try {
+    return (await RestAPI.post(`${URL}/proponer-dashboard`, {
+      peticion,
+    })) as unknown as PropuestaDashboard;
+  } catch (error) {
+    throw new Error(motivoError(error));
+  }
+};
+
+// Si hay un modelo de IA activo. Una petición por sesión: si falla, sin IA (y se
+// reintenta la próxima vez).
+let iaDisponible: Promise<boolean> | null = null;
+
+export const getIaDisponible = (): Promise<boolean> => {
+  iaDisponible ??= RestAPI.get<{ disponible: boolean }>("/comun/ia-disponible")
+    .then((r) => r.disponible === true)
+    .catch(() => {
+      iaDisponible = null;
+      return false;
+    });
+  return iaDisponible;
 };

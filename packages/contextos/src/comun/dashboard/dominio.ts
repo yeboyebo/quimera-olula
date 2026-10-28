@@ -11,6 +11,7 @@ import {
   Granularidad,
   GrupoAgregado,
   PropuestaComponente,
+  PropuestaDashboard,
   RangoPeriodo,
   RespuestaAgregado,
   TipoComponente,
@@ -19,14 +20,14 @@ import {
 export const MAX_COMPONENTES = 40;
 
 /**
- * La rejilla del dashboard usa medias filas (36 px): así una tarjeta puede medir
- * 1,5 filas visuales (h = 3 → 108 px). Una «fila» de diseño son 2 unidades.
+ * La rejilla del dashboard usa medias filas (36 px): así una tarjeta mide
+ * lo mismo que los widgets del maestro (h = 2 → 88 px). Una «fila» de diseño son 2 unidades.
  */
 export const ALTO_FILA_DASHBOARD = 36;
 
 export const CATALOGO: DefinicionTipoComponente[] = [
-  { tipo: "tarjeta", nombre: "Tarjeta", descripcion: "Un valor y su comparación con otro periodo", grupo: "Indicadores", w: 3, h: 3, disponible: true },
-  { tipo: "objetivo", nombre: "Objetivo", descripcion: "Valor frente a una meta", grupo: "Indicadores", w: 3, h: 3, disponible: true },
+  { tipo: "tarjeta", nombre: "Tarjeta", descripcion: "Un valor y su comparación con otro periodo", grupo: "Indicadores", w: 3, h: 2, disponible: true },
+  { tipo: "objetivo", nombre: "Objetivo", descripcion: "Valor frente a una meta", grupo: "Indicadores", w: 3, h: 2, disponible: true },
   { tipo: "temporal", nombre: "Temporal", descripcion: "Evolución por día, mes o año", grupo: "Gráficos", w: 8, h: 8, disponible: true },
   { tipo: "barras", nombre: "Barras", descripcion: "Comparar categorías", grupo: "Gráficos", w: 6, h: 8, disponible: true },
   { tipo: "circular", nombre: "Circular", descripcion: "Reparto entre pocas categorías", grupo: "Gráficos", w: 4, h: 8, disponible: true },
@@ -348,6 +349,12 @@ const ETIQUETAS_PIE: Record<string, string> = {
   maximo: "Máximo",
 };
 
+/** «Este año», «Últimos 12 meses»…: el periodo de la consulta, o vacío si no tiene. */
+export const etiquetaPeriodo = (consulta: ConsultaComponente | undefined): string => {
+  const [, rango] = leerPeriodo(consulta?.periodo);
+  return RANGOS_PERIODO.find((r) => r.valor === rango)?.descripcion ?? "";
+};
+
 /**
  * Pie de una tarjeta, como los widgets del maestro: «Suma de total · Este mes».
  * La métrica siempre; el periodo, si la consulta lo tiene.
@@ -361,8 +368,7 @@ export const pieTarjeta = (consulta: ConsultaComponente | undefined): string => 
     : !campo
       ? etiquetaOp || "Recuento"
       : `${etiquetaOp} de ${campo === campo.toUpperCase() ? campo : campo.toLowerCase()}`;
-  const [, rango] = leerPeriodo(consulta?.periodo);
-  const periodo = RANGOS_PERIODO.find((r) => r.valor === rango)?.descripcion;
+  const periodo = etiquetaPeriodo(consulta);
   if (metrica && periodo) return `${metrica} · ${periodo}`;
   return metrica || periodo || "";
 };
@@ -588,3 +594,30 @@ export const cambiarTipo = (
   const { w, h } = definicionTipo(tipo);
   return { ...componente, tipo, w, h, x: Math.min(componente.x, 12 - w) };
 };
+
+/**
+ * Componentes de un dashboard propuesto por la IA, colocados en orden de lectura en el
+ * primer hueco libre: las tarjetas llenan la primera fila y los gráficos van debajo.
+ */
+export const componentesDesdePropuestaDashboard = (
+  propuesta: PropuestaDashboard
+): ComponenteDashboard[] =>
+  propuesta.componentes.slice(0, MAX_COMPONENTES).reduce<ComponenteDashboard[]>(
+    (colocados, { tipo, titulo, consulta }, i) => {
+      const { w, h } = definicionTipo(tipo);
+      return [
+        ...colocados,
+        {
+          id: `c${i + 1}`,
+          tipo,
+          titulo,
+          ...posicionLibre(colocados, w, h),
+          w,
+          h,
+          consultas: [consulta],
+          opciones: {},
+        },
+      ];
+    },
+    []
+  );
