@@ -126,7 +126,8 @@ export const recursoParaRuta = (
   return homonimo ?? candidatos.find((r) => !r.id.endsWith(".linea"));
 };
 
-const pareceImporte = (id: string) =>
+/** Heurística por el nombre de la medida: ¿es un importe (se formatea como moneda)? */
+export const pareceImporte = (id: string) =>
   /total|neto|importe|saldo|precio|pvp|coste|cobrad|pagad|pendiente/i.test(id);
 
 const enMayuscula = (texto: string) =>

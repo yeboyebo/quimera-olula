@@ -1,0 +1,67 @@
+.configurar-componente {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espaciado-l);
+    width: min(64rem, 100%);
+
+    .configurar-componente-formulario {
+        flex: 1 1 20rem;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--espaciado-m);
+    }
+
+    .configurar-componente-fila {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+        gap: var(--espaciado-m);
+    }
+
+    .configurar-componente-columnas {
+        margin: 0;
+        padding: var(--espaciado-s) var(--espaciado-m);
+        border: 1px solid var(--color-borde-sutil);
+        border-radius: var(--redondeo-borde-s);
+        max-height: 16rem;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: var(--espaciado-xxs);
+
+        legend {
+            padding: 0 var(--espaciado-xs);
+            font-size: var(--tamaño-letra-s);
+            color: var(--color-texto-secundario);
+        }
+    }
+
+    .configurar-componente-vista-previa {
+        flex: 1 1 24rem;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--espaciado-s);
+        padding: var(--espaciado-m);
+        border-radius: var(--redondeo-borde-m);
+        background: var(--color-superficie-sunken);
+    }
+
+    .configurar-componente-etiqueta {
+        font-size: var(--tamaño-letra-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-texto-secundario);
+    }
+
+    .configurar-componente-marco {
+        min-height: 10rem;
+    }
+}
+
+.configurar-componente-pie {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--espaciado-s);
+    margin-top: var(--espaciado-l);
+}
