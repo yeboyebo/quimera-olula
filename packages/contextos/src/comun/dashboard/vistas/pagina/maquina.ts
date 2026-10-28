@@ -1,5 +1,4 @@
 import { Maquina } from "@olula/lib/diseño.ts";
-import { publicar } from "@olula/lib/dominio.ts";
 import { ContextoDashboard, EstadoDashboard } from "../../diseño.ts";
 import {
   alternarCompartido,
@@ -11,6 +10,7 @@ import {
   cancelarConfiguracion,
   cancelarEdicion,
   cargarDashboard,
+  cargarDashboardModulo,
   configurarComponente,
   empezarEdicion,
   guardarEdicion,
@@ -20,19 +20,23 @@ import {
 /**
  * Página de un dashboard. Se ve (VIENDO) y su propietario lo edita (EDITANDO):
  * los cambios de disposición y de componentes van a un borrador que solo se guarda
- * al pulsar Guardar. CONFIGURANDO abre el formulario de un componente.
+ * al pulsar Guardar. CONFIGURANDO abre el formulario de un componente. Se abre por
+ * id (`id_cambiado`) o, los de módulo y la Inicio, por clave (`clave_cambiada`).
  */
 export const getMaquina: () => Maquina<EstadoDashboard, ContextoDashboard> = () => ({
   CARGANDO: {
     id_cambiado: [cargarDashboard],
+    clave_cambiada: [cargarDashboardModulo],
   },
 
   NO_ENCONTRADO: {
     id_cambiado: [cargarDashboard],
+    clave_cambiada: [cargarDashboardModulo],
   },
 
   VIENDO: {
     id_cambiado: [cargarDashboard],
+    clave_cambiada: [cargarDashboardModulo],
     edicion_iniciada: [empezarEdicion],
     compartido_alternado: [alternarCompartido],
     borrado_solicitado: "BORRANDO",
@@ -40,6 +44,7 @@ export const getMaquina: () => Maquina<EstadoDashboard, ContextoDashboard> = () 
 
   EDITANDO: {
     id_cambiado: [cargarDashboard],
+    clave_cambiada: [cargarDashboardModulo],
     nombre_cambiado: [cambiarNombre],
     disposicion_cambiada: [cambiarDisposicion],
     componente_añadido: [añadirComponente],
@@ -55,7 +60,7 @@ export const getMaquina: () => Maquina<EstadoDashboard, ContextoDashboard> = () 
   },
 
   BORRANDO: {
-    borrado_confirmado: [borrar, publicar("dashboard_borrado", null)],
+    borrado_confirmado: [borrar],
     borrado_cancelado: "VIENDO",
   },
 });

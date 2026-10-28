@@ -4,6 +4,7 @@ import { formatearMoneda } from "@olula/lib/dominio.ts";
 import {
   ComponenteDashboard,
   ConsultaComponente,
+  Dashboard,
   DefinicionTipoComponente,
   FormatoValor,
   Granularidad,
@@ -321,3 +322,30 @@ export const OPERACIONES: { valor: string; descripcion: string; conCampo: boolea
   { valor: "maximo", descripcion: "Máximo de", conCampo: true },
   { valor: "minimo", descripcion: "Mínimo de", conCampo: true },
 ];
+
+/**
+ * Los que el usuario puede ver: todos los recursos de sus consultas están entre los
+ * que le permite el servidor (lo mismo que hace el servidor con los guardados).
+ */
+export const componentesVisibles = (
+  componentes: ComponenteDashboard[],
+  recursosPermitidos: string[]
+): ComponenteDashboard[] =>
+  componentes.filter((c) => c.consultas.every((q) => recursosPermitidos.includes(q.recurso)));
+
+/** Dashboard de módulo aún sin versión del usuario: el de código, sin id. */
+export const dashboardPorDefecto = (
+  clave: string,
+  definicion: { nombre: string; componentes: ComponenteDashboard[] },
+  recursosPermitidos: string[]
+): Dashboard => ({
+  id: "",
+  nombre: definicion.nombre,
+  clave,
+  compartido: false,
+  propietario: "",
+  esPropio: true,
+  actualizadoEn: "",
+  componentes: componentesVisibles(definicion.componentes, recursosPermitidos),
+  componentesOcultos: 0,
+});

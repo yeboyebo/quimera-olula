@@ -6,7 +6,7 @@ import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmac
 import { QRejilla } from "@olula/componentes/rejilla/QRejilla.tsx";
 import { useCallback, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
-import { ComponenteDashboard } from "../../diseño.ts";
+import { ComponenteDashboard, Dashboard } from "../../diseño.ts";
 import { MAX_COMPONENTES } from "../../dominio.ts";
 import { crearDashboard } from "../../infraestructura.ts";
 import { CatalogoComponentes } from "../CatalogoComponentes.tsx";
@@ -16,8 +16,11 @@ import "../Dashboard.css";
 import { getMaquina } from "./maquina.ts";
 import { contextoDashboardInicial } from "./pagina.ts";
 
-/** Página de un dashboard: verlo, editarlo (su propietario), compartirlo, exportarlo. */
-export const PaginaDashboard = () => {
+/**
+ * Página de un dashboard: verlo, editarlo (su propietario), compartirlo, exportarlo.
+ * Con `clave`, uno de módulo o la Inicio: la versión del usuario o el de por defecto.
+ */
+export const PaginaDashboard = ({ clave }: { clave?: string }) => {
   const { id } = useParams();
   const [parametros] = useSearchParams();
   const navegar = useNavigate();
@@ -33,15 +36,19 @@ export const PaginaDashboard = () => {
   const { estado, dashboard, borrador, configurando } = ctx;
 
   useEffect(() => {
-    if (id) emitir("id_cambiado", { id, editar: parametros.has("editar") }, true);
+    const editar = parametros.has("editar");
+    if (clave) emitir("clave_cambiada", { clave, editar }, true);
+    else if (id) emitir("id_cambiado", { id, editar }, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, clave]);
 
   if (estado === "NO_ENCONTRADO") {
     return (
       <div className="pagina-dashboard">
         <p className="pagina-dashboard-vacio">
-          Este dashboard no existe o no tienes acceso.{" "}
+          {clave
+            ? "No hay un dashboard para esta sección."
+            : "Este dashboard no existe o no tienes acceso."}{" "}
           <QBoton variante="texto" enlace="/comun/dashboard">
             Ver mis dashboards
           </QBoton>
@@ -105,13 +112,7 @@ export const PaginaDashboard = () => {
           ) : (
             <h1>{dashboard.nombre}</h1>
           )}
-          <span className="pagina-dashboard-subtitulo">
-            {dashboard.esPropio
-              ? dashboard.compartido
-                ? "Compartido con toda la empresa"
-                : "Solo lo ves tú"
-              : `Compartido por ${dashboard.propietario}`}
-          </span>
+          <span className="pagina-dashboard-subtitulo">{subtitulo(dashboard)}</span>
         </div>
 
         <div className="pagina-dashboard-botones">
@@ -135,13 +136,15 @@ export const PaginaDashboard = () => {
                   {dashboard.compartido ? "Dejar de compartir" : "Compartir con la empresa"}
                 </QBoton>
               )}
+              {dashboard.esPropio && dashboard.id !== "" && (
+                <QBoton variante="borde" destructivo onClick={() => emitir("borrado_solicitado")}>
+                  {dashboard.clave ? "Restaurar por defecto" : "Borrar"}
+                </QBoton>
+              )}
               {dashboard.esPropio && (
-                <>
-                  <QBoton variante="borde" destructivo onClick={() => emitir("borrado_solicitado")}>
-                    {dashboard.clave ? "Restaurar por defecto" : "Borrar"}
-                  </QBoton>
-                  <QBoton onClick={() => emitir("edicion_iniciada")}>Editar</QBoton>
-                </>
+                <QBoton onClick={() => emitir("edicion_iniciada")}>
+                  {dashboard.id ? "Editar" : "Personalizar"}
+                </QBoton>
               )}
             </>
           )}
@@ -207,3 +210,22 @@ export const PaginaDashboard = () => {
     </div>
   );
 };
+
+const subtitulo = (dashboard: Dashboard) => {
+  if (dashboard.clave) {
+    return dashboard.id
+      ? "Tu versión personalizada"
+      : "Por defecto · personalízalo y se guardará tu versión";
+  }
+  if (!dashboard.esPropio) return `Compartido por ${dashboard.propietario}`;
+  return dashboard.compartido ? "Compartido con toda la empresa" : "Solo lo ves tú";
+};
+
+/** Dashboard de un módulo (`/dashboard/:clave`). */
+export const PaginaDashboardModulo = () => {
+  const { clave } = useParams();
+  return <PaginaDashboard clave={clave} />;
+};
+
+/** La Inicio de la app: el dashboard global. */
+export const PaginaInicio = () => <PaginaDashboard clave="inicio" />;
