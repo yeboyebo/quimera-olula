@@ -7,7 +7,9 @@ import {
     BloqueoConciliarMovimiento,
     etiquetaOrigenConciliacion,
     etiquetaTipoConciliacion,
+    reciboIdsConciliacionRemesa,
     urlReciboConciliacion,
+    urlRemesaConciliacion,
     varianteProbabilidad,
 } from "../../dominio.js";
 import "./ConciliacionesMovimiento.css";
@@ -15,12 +17,24 @@ import "./ConciliacionesMovimiento.css";
 /** Descripción de un ítem individual dentro de una casación. */
 const DescripcionItem = ({ item, divisa }: { item: ItemConciliacion; divisa: string }) => {
     const url = urlReciboConciliacion(item);
+    const urlRemesa = urlRemesaConciliacion(item);
+    const recibosRemesa = reciboIdsConciliacionRemesa(item);
     return (
         <span className="item-conciliacion">
             <span className="tipo-conciliacion">
                 {etiquetaTipoConciliacion(item.tipo)}
                 {item.recibo && ` · ${item.recibo.codigo}`}
+                {item.remesa && ` · remesa ${item.remesa.id}`}
             </span>
+            {item.remesa && (
+                <span className="recibo-conciliacion">
+                    {`Cargo ${formatearFechaDate(item.remesa.fechaCargo)} · `
+                        + (recibosRemesa
+                            ? `${recibosRemesa.length} de ${item.remesa.numRecibos} recibos`
+                            : `recibos pendientes de ${item.remesa.numRecibos}`)
+                        + ` · total ${formatearMoneda(item.remesa.total, divisa)}`}
+                </span>
+            )}
             {item.cuota && (
                 <span className="recibo-conciliacion">
                     {`${item.cuota.contrato ?? "Préstamo"} · ${formatearFechaDate(item.cuota.fecha)} · ${formatearMoneda(item.cuota.capital, divisa)} de capital y ${formatearMoneda(item.cuota.intereses, divisa)} de intereses`}
@@ -34,6 +48,11 @@ const DescripcionItem = ({ item, divisa }: { item: ItemConciliacion; divisa: str
             {url && (
                 <QBoton tamaño="pequeño" variante="borde" enlace={url}>
                     Ver recibo
+                </QBoton>
+            )}
+            {urlRemesa && (
+                <QBoton tamaño="pequeño" variante="borde" enlace={urlRemesa}>
+                    Ver remesa
                 </QBoton>
             )}
         </span>

@@ -1,12 +1,18 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
-import { CandidatoConciliacion, Conciliacion, MovimientoBancario } from "../diseño.js";
-import { conciliacionDesdeCandidato, movimientoBancarioVacio } from "../dominio.js";
+import { CandidatoConciliacion, Conciliacion, MovimientoBancario, RemesaCandidata } from "../diseño.js";
+import {
+    conciliacionDesdeCandidato,
+    conciliacionDesdeRemesa,
+    esIngresoMovimientoBancario,
+    movimientoBancarioVacio,
+} from "../dominio.js";
 import {
     getCandidatosConciliacion,
     getConciliacionAplicadaMovimientoBancario,
     getConciliacionesMovimientoBancario,
     getMovimientoBancario,
+    getRemesasConciliacion,
     patchConciliarMovimientoBancario,
     patchDesconciliarMovimientoBancario,
     patchIgnorarMovimientoBancario,
@@ -53,12 +59,20 @@ export const contextoDetalleConciliacionInicial: ContextoDetalleConciliacion = {
     conciliacionAplicada: null,
     candidatos: [],
     candidatosTexto: "",
+    remesas: [],
     conciliacionSeleccionada: null,
+    remesaSeleccionada: null,
 };
 
 /** Solo tiene sentido buscar candidatos si el movimiento aún puede conciliarse. */
 const requiereCandidatos = (movimiento: MovimientoBancario): boolean =>
     movimiento.estado === "pendiente" || movimiento.estado === "candidatos";
+
+/** Una remesa de cobro solo la puede pagar un ingreso. */
+const cargarRemesas = async (movimiento: MovimientoBancario): Promise<RemesaCandidata[]> =>
+    requiereCandidatos(movimiento) && esIngresoMovimientoBancario(movimiento)
+        ? await getRemesasConciliacion(movimiento.id)
+        : [];
 
 const cargarConciliaciones = async (movimiento: MovimientoBancario): Promise<Conciliacion[]> =>
     movimiento.estado === "candidatos"
@@ -107,12 +121,18 @@ export const seleccionarCandidato: ProcesarDetalle = async (contexto, payload) =
     return { ...contexto, conciliacionSeleccionada: seleccionada };
 };
 
+/** Una remesa de la lista: los recibos que paga se confirman en el modal. */
+export const seleccionarRemesa: ProcesarDetalle = async (contexto, payload) => ({
+    ...contexto,
+    remesaSeleccionada: payload as RemesaCandidata,
+});
+
 /** Asiento a mano: la subcuenta de contrapartida se pide en el modal. */
 export const seleccionarAsiento: ProcesarDetalle = async (contexto) => ({
     ...contexto,
     conciliacionSeleccionada: {
         conciliacionId: null,
-        items: [{ tipo: "asiento_manual" as const, params: {}, recibo: null, cuota: null }],
+        items: [{ tipo: "asiento_manual" as const, params: {}, recibo: null, cuota: null, remesa: null }],
         probabilidad: null,
         justificacion: null,
     },
@@ -129,7 +149,9 @@ export const cargarMovimiento: (_: string) => ProcesarDetalle =
                 conciliacionAplicada: await cargarConciliacionAplicada(movimiento),
                 candidatos: [],
                 candidatosTexto: "",
+                remesas: await cargarRemesas(movimiento),
                 conciliacionSeleccionada: null,
+                remesaSeleccionada: null,
             }),
             cargarCandidatos,
             'ABIERTO',
@@ -149,7 +171,9 @@ export const cargarContexto: ProcesarDetalle = async (contexto, payload) => {
         conciliacionAplicada: null,
         candidatos: [],
         candidatosTexto: "",
+        remesas: [],
         conciliacionSeleccionada: null,
+        remesaSeleccionada: null,
     };
 };
 
@@ -166,8 +190,12 @@ export const refrescarMovimiento: ProcesarDetalle = async (contexto) => {
         : [];
     const conciliaciones = await cargarConciliaciones(movimiento);
     const conciliacionAplicada = await cargarConciliacionAplicada(movimiento);
+    const remesas = await cargarRemesas(movimiento);
     return [
-        { ...contexto, estado: 'ABIERTO', movimiento, conciliaciones, conciliacionAplicada, candidatos, conciliacionSeleccionada: null },
+        {
+            ...contexto, estado: 'ABIERTO', movimiento, conciliaciones, conciliacionAplicada, candidatos, remesas,
+            conciliacionSeleccionada: null, remesaSeleccionada: null,
+        },
         [["movimiento_cambiado", movimiento]],
     ];
 };
@@ -200,6 +228,18 @@ export const onConciliado: ProcesarDetalle = async (contexto, payload) => {
     return refrescarMovimiento(contexto);
 };
 
+/** `payload`: ids de los recibos de la remesa elegidos en el modal. */
+export const onConciliadoRemesa: ProcesarDetalle = async (contexto, payload) => {
+    const remesa = contexto.remesaSeleccionada;
+    if (!remesa) return contexto;
+
+    await patchConciliarMovimientoBancario(
+        contexto.movimiento.id,
+        { items: [conciliacionDesdeRemesa(remesa, payload as string[])] }
+    );
+    return refrescarMovimiento(contexto);
+};
+
 export const onIgnorado: ProcesarDetalle = async (contexto, payload) => {
     const motivo = (payload as string | undefined) || undefined;
     await patchIgnorarMovimientoBancario(contexto.movimiento.id, motivo);
@@ -220,7 +260,7 @@ export const onVincularAsiento: ProcesarDetalle = async (contexto, payload) => {
     const { idasiento, importe } = payload as { idasiento: number; importe: number };
     await patchConciliarMovimientoBancario(
         contexto.movimiento.id,
-        { items: [{ tipo: "asiento_vinculado" as const, params: { idasiento, importe }, recibo: null, cuota: null }] }
+        { items: [{ tipo: "asiento_vinculado" as const, params: { idasiento, importe }, recibo: null, cuota: null, remesa: null }] }
     );
     return refrescarMovimiento(contexto);
 };
@@ -249,7 +289,9 @@ export const onDesconciliado: ProcesarDetalle = async (contexto) => {
             conciliacionAplicada: null,
             candidatos: [],
             candidatosTexto: "",
+            remesas: [],
             conciliacionSeleccionada: null,
+            remesaSeleccionada: null,
         },
         [["movimiento_borrado", contexto.movimiento.id]],
     ];

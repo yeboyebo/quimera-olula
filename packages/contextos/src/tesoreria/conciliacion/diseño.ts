@@ -22,7 +22,9 @@ export type TipoConciliacion =
     | "pago_parcial_compra"
     | "asiento_manual"
     | "asiento_vinculado"
-    | "cuota_prestamo";
+    | "cuota_prestamo"
+    | "cobrar_remesa"
+    | "cobro_parcial_remesa";
 
 /** Recibo que liquidaría una casación de recibo. */
 export interface ReciboConciliacion {
@@ -45,6 +47,16 @@ export interface CuotaConciliacion {
     total: number;
 }
 
+/** Remesa de cobro que pagaría una casación de remesa. */
+export interface RemesaConciliacion {
+    id: string;
+    fechaCargo: Date;
+    total: number;
+    estado: string;
+    /** Todos los recibos de la remesa; los que paga la casación van en `params.recibo_ids` si es parcial. */
+    numRecibos: number;
+}
+
 /**
  * Un movimiento ERP individual dentro de una casación: tipo, params y los
  * datos de presentación del objeto ERP asociado (recibo o cuota).
@@ -56,6 +68,8 @@ export interface ItemConciliacion {
     recibo: ReciboConciliacion | null;
     /** Cuota de préstamo (solo si tipo === 'cuota_prestamo'). */
     cuota: CuotaConciliacion | null;
+    /** Remesa de cobro (solo en `cobrar_remesa` y `cobro_parcial_remesa`). */
+    remesa: RemesaConciliacion | null;
 }
 
 /** Conciliación candidata de un movimiento, propuesta por las reglas o la IA. */
@@ -186,6 +200,37 @@ export interface CandidatoConciliacion extends Entidad {
 }
 
 export type GetCandidatosConciliacion = (id: string, texto?: string) => Promise<CandidatoConciliacion[]>;
+
+/** Recibo de una remesa aún sin pagar en ningún pago de la remesa. */
+export interface ReciboRemesaCandidata {
+    reciboId: string;
+    codigo: string;
+    tercero: string | null;
+    importe: number;
+}
+
+/**
+ * Remesa de cobro emitida en la cuenta del movimiento (solo ingresos) cuyos
+ * recibos pendientes suman al menos su importe. `id` es el de la remesa.
+ */
+export interface RemesaCandidata extends Entidad {
+    id: string;
+    /** `cobrar_remesa` si lo pendiente es el importe del movimiento, `cobro_parcial_remesa` si es más. */
+    tipoConciliacion: TipoConciliacion;
+    fecha: Date;
+    fechaCargo: Date;
+    total: number;
+    importePendiente: number;
+    /** Días entre el cargo de la remesa y la fecha del movimiento. */
+    diasDiferencia: number;
+    recibos: ReciboRemesaCandidata[];
+    /** Recibos que suman el importe del movimiento: todos si cuadra entera; vacío si no hay combinación. */
+    reciboIdsPropuestos: string[];
+    /** Hay otras combinaciones de recibos por el mismo importe. */
+    propuestaAmbigua: boolean;
+}
+
+export type GetRemesasConciliacion = (id: string) => Promise<RemesaCandidata[]>;
 
 export type PatchDesconciliarMovimientoBancario = (id: string) => Promise<void>;
 

@@ -5,6 +5,7 @@ import {
     ItemConciliacion,
     MovimientoBancario,
     OrigenConciliacionMovimiento,
+    RemesaCandidata,
     TipoConciliacion,
     TipoReciboMovimiento,
 } from "./diseño.ts";
@@ -37,6 +38,8 @@ export const movimientoBancarioVacio: MovimientoBancario = {
     conciliadoEn: null,
     eliminadoEnBanco: false,
     requiereRevision: false,
+    subcuentaBancoId: null,
+    saldo: null,
 };
 
 export const ESTADOS_MOVIMIENTO_BANCARIO: EstadoMovimientoBancario[] = [
@@ -147,12 +150,17 @@ const ETIQUETA_TIPO_CONCILIACION: Record<TipoConciliacion, string> = {
     asiento_manual: "Asiento manual",
     asiento_vinculado: "Asiento vinculado",
     cuota_prestamo: "Cuota de préstamo",
+    cobrar_remesa: "Cobro de remesa",
+    cobro_parcial_remesa: "Cobro parcial de remesa",
 };
 
 export const etiquetaTipoConciliacion = (tipo: TipoConciliacion): string => ETIQUETA_TIPO_CONCILIACION[tipo];
 
 export const esConciliacionParcial = (tipo: TipoConciliacion): boolean =>
     tipo === "cobro_parcial_venta" || tipo === "pago_parcial_compra";
+
+export const esConciliacionRemesa = (tipo: TipoConciliacion): boolean =>
+    tipo === "cobrar_remesa" || tipo === "cobro_parcial_remesa";
 
 /** Tipos de conciliación que piden datos al usuario antes de conciliar. */
 export const pideDatosConciliacion = (tipo: TipoConciliacion): boolean => tipo === "asiento_manual";
@@ -168,6 +176,18 @@ export const varianteProbabilidad = (probabilidad: number): VarianteEtiqueta =>
 /** Enlace a la ficha del recibo (de venta si es un cobro, de compra si es un pago). */
 export const urlRecibo = (tipoRecibo: TipoReciboMovimiento, reciboId: string): string =>
     `${RUTA_RECIBO[tipoRecibo]}?id=${encodeURIComponent(reciboId)}`;
+
+/** Enlace a la ficha de la remesa de cobro. */
+export const urlRemesa = (remesaId: string): string =>
+    `/tesoreria/remesa?id=${encodeURIComponent(remesaId)}`;
+
+/** URL de la remesa de un ítem de remesa (para el enlace "Ver remesa"). */
+export const urlRemesaConciliacion = (item: ItemConciliacion): string | null =>
+    item.remesa ? urlRemesa(item.remesa.id) : null;
+
+/** Recibos de la remesa que paga un ítem: los de `params.recibo_ids` si es parcial, todos si no (`null`). */
+export const reciboIdsConciliacionRemesa = (item: ItemConciliacion): string[] | null =>
+    Array.isArray(item.params.recibo_ids) ? item.params.recibo_ids.map(String) : null;
 
 /**
  * URL del recibo del primer ítem de casación del movimiento conciliado.
@@ -204,6 +224,46 @@ export const conciliacionDesdeCandidato = (
             fechaCobro: null,
         },
         cuota: null,
+        remesa: null,
+    };
+};
+
+const redondear = (importe: number): number => Math.round(importe * 100) / 100;
+
+/** Suma de los recibos elegidos de una remesa. */
+export const importeRecibosRemesa = (remesa: RemesaCandidata, reciboIds: string[]): number =>
+    redondear(remesa.recibos
+        .filter((recibo) => reciboIds.includes(recibo.reciboId))
+        .reduce((total, recibo) => total + recibo.importe, 0));
+
+/** Los recibos elegidos suman exactamente el importe del movimiento (el servidor exige lo mismo). */
+export const cuadraRemesa = (
+    movimiento: MovimientoBancario,
+    remesa: RemesaCandidata,
+    reciboIds: string[]
+): boolean =>
+    reciboIds.length > 0 && importeRecibosRemesa(remesa, reciboIds) === redondear(Math.abs(movimiento.importe));
+
+/**
+ * Conciliación a mano con una remesa: si se pagan todos sus recibos pendientes
+ * es un cobro de remesa; si solo algunos, un cobro parcial con esos recibos.
+ */
+export const conciliacionDesdeRemesa = (remesa: RemesaCandidata, reciboIds: string[]): ItemConciliacion => {
+    const todos = remesa.recibos.every((recibo) => reciboIds.includes(recibo.reciboId));
+    return {
+        tipo: todos ? "cobrar_remesa" : "cobro_parcial_remesa",
+        params: todos
+            ? { remesa_id: Number(remesa.id) }
+            : { remesa_id: Number(remesa.id), recibo_ids: reciboIds.map(Number) },
+        recibo: null,
+        cuota: null,
+        remesa: {
+            id: remesa.id,
+            fechaCargo: remesa.fechaCargo,
+            total: remesa.total,
+            estado: "Emitida",
+            numRecibos: remesa.recibos.length,
+        },
     };
 };
 

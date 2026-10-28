@@ -6,13 +6,16 @@ import { useModelo } from "@olula/lib/useModelo.js";
 import { useEffect } from "react";
 import { ConciliarMovimientoBancario } from "../conciliar/ConciliarMovimientoBancario.js";
 import { ConciliarAsientoMovimientoBancario } from "../conciliar_asiento/ConciliarAsientoMovimientoBancario.js";
+import { ConciliarRemesaMovimientoBancario } from "../conciliar_remesa/ConciliarRemesaMovimientoBancario.js";
 import { DesconciliarMovimientoBancario } from "../desconciliar/DesconciliarMovimientoBancario.js";
 import { MovimientoBancario } from "../diseño.js";
+import { bloqueoConciliarMovimientoBancario, esIngresoMovimientoBancario } from "../dominio.js";
 import { IgnorarMovimientoBancario } from "../ignorar/IgnorarMovimientoBancario.js";
 import { ReactivarMovimientoBancario } from "../reactivar/ReactivarMovimientoBancario.js";
 import { contextoDetalleConciliacionInicial, metaMovimientoBancario } from "./detalle.js";
 import "./DetalleConciliacion.css";
 import { getMaquina } from "./maquina.js";
+import { RemesasConciliacion } from "./remesas/RemesasConciliacion.js";
 import { SeccionEstadoConciliacion } from "./SeccionEstadoConciliacion.js";
 import { TabConciliacion } from "./TabConciliacion.js";
 import { TabGeneral } from "./TabGeneral.js";
@@ -26,8 +29,9 @@ import { TabPartidas } from "./TabPartidas.js";
  *   - Siempre visible: SeccionEstadoConciliacion (etiqueta de estado + info
  *     del elemento ERP conciliado + botones Desconciliar/Reactivar).
  *   - Solo cuando el movimiento puede conciliarse (pendiente/candidatos):
- *     sub-pestañas "Recibos" (búsqueda de candidatos) y "Partidas" (asientos
- *     contables sin movimiento equivalente).
+ *     sub-pestañas "Recibos" (búsqueda de candidatos), "Remesas" (solo ingresos:
+ *     remesas de cobro por conciliar) y "Partidas" (asientos contables sin
+ *     movimiento equivalente).
  * - Tab "General": cabecera de solo lectura del movimiento.
  *
  * Los modales (Conciliar/Desconciliar/Ignorar/Reactivar) se montan aquí
@@ -49,7 +53,10 @@ export const DetalleConciliacion = ({
 
     const formModelo = useModelo(metaMovimientoBancario, ctx.movimiento);
 
-    const { estado, movimiento, conciliaciones, conciliacionAplicada, candidatos, candidatosTexto, conciliacionSeleccionada } = ctx;
+    const {
+        estado, movimiento, conciliaciones, conciliacionAplicada, candidatos, candidatosTexto, remesas,
+        conciliacionSeleccionada, remesaSeleccionada,
+    } = ctx;
 
     useEffect(() => {
         emitir("movimiento_id_cambiado", id, true);
@@ -62,6 +69,22 @@ export const DetalleConciliacion = ({
 
     const puedeVincularPartida =
         movimiento.estado === "pendiente" || movimiento.estado === "candidatos";
+
+    const tabRemesas = esIngresoMovimientoBancario(movimiento)
+        ? [
+            <Tab label="Remesas"
+                key="tab-remesas"
+                children={
+                    <RemesasConciliacion
+                        movimiento={movimiento}
+                        remesas={remesas}
+                        bloqueo={bloqueoConciliarMovimientoBancario(movimiento)}
+                        publicar={emitir}
+                    />
+                }
+            />,
+        ]
+        : [];
 
     return (
         <Detalle
@@ -97,6 +120,7 @@ export const DetalleConciliacion = ({
                                                 />
                                             }
                                         />,
+                                        ...tabRemesas,
                                         <Tab label="Partidas"
                                             key="tab-partidas"
                                             children={
@@ -123,6 +147,13 @@ export const DetalleConciliacion = ({
                         conciliacion={conciliacionSeleccionada}
                         publicar={emitir}
                     />
+            )}
+            {estado === "CONCILIANDO_REMESA" && remesaSeleccionada && (
+                <ConciliarRemesaMovimientoBancario
+                    movimiento={movimiento}
+                    remesa={remesaSeleccionada}
+                    publicar={emitir}
+                />
             )}
             {estado === "DESCONCILIANDO" && (
                 <DesconciliarMovimientoBancario movimiento={movimiento} publicar={emitir} />

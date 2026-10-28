@@ -12,6 +12,7 @@ import {
     GetCuadreBancario,
     GetPartidasHuerfanas,
     GetMovimientoBancario,
+    GetRemesasConciliacion,
     GetMovimientosBancarios,
     ItemConciliacion,
     MovimientoBancario,
@@ -23,6 +24,7 @@ import {
     PatchReactivarMovimientoBancario,
     PostSincronizarMovimientoBancario,
     PostConciliarAutomaticamente,
+    RemesaCandidata,
     ResumenSincronizacionMovimientoBancario,
     TipoConciliacion,
     TipoReciboMovimiento,
@@ -93,11 +95,33 @@ interface CuotaConciliacionApi {
     total: number;
 }
 
+interface RemesaConciliacionApi {
+    id: string;
+    fecha_cargo: string;
+    total: number;
+    estado: string;
+    num_recibos: number;
+}
+
 interface ItemConciliacionApi {
     tipo: TipoConciliacion;
     params: Record<string, unknown>;
     recibo: ReciboConciliacionApi | null;
     cuota?: CuotaConciliacionApi | null;
+    remesa?: RemesaConciliacionApi | null;
+}
+
+export interface RemesaCandidataApi {
+    remesa_id: string;
+    tipo_conciliacion: TipoConciliacion;
+    fecha: string;
+    fecha_cargo: string;
+    total: number;
+    importe_pendiente: number;
+    dias_diferencia: number;
+    recibos: Array<{ recibo_id: string; codigo: string; tercero: string | null; importe: number }>;
+    recibo_ids_propuestos: string[];
+    propuesta_ambigua: boolean;
 }
 
 export interface ConciliacionApi {
@@ -201,6 +225,24 @@ export const candidatoConciliacionDesdeApi = (api: CandidatoConciliacionApi): Ca
     diasDiferencia: api.dias_diferencia,
 });
 
+export const remesaCandidataDesdeApi = (api: RemesaCandidataApi): RemesaCandidata => ({
+    id: api.remesa_id,
+    tipoConciliacion: api.tipo_conciliacion,
+    fecha: new Date(Date.parse(api.fecha)),
+    fechaCargo: new Date(Date.parse(api.fecha_cargo)),
+    total: api.total,
+    importePendiente: api.importe_pendiente,
+    diasDiferencia: api.dias_diferencia,
+    recibos: api.recibos.map((recibo) => ({
+        reciboId: recibo.recibo_id,
+        codigo: recibo.codigo,
+        tercero: recibo.tercero,
+        importe: recibo.importe,
+    })),
+    reciboIdsPropuestos: api.recibo_ids_propuestos,
+    propuestaAmbigua: api.propuesta_ambigua,
+});
+
 const itemConciliacionDesdeApi = (api: ItemConciliacionApi): ItemConciliacion => ({
     tipo: api.tipo,
     params: api.params ?? {},
@@ -223,6 +265,15 @@ const itemConciliacionDesdeApi = (api: ItemConciliacionApi): ItemConciliacion =>
             capital: api.cuota.capital,
             intereses: api.cuota.intereses,
             total: api.cuota.total,
+        }
+        : null,
+    remesa: api.remesa
+        ? {
+            id: api.remesa.id,
+            fechaCargo: new Date(Date.parse(api.remesa.fecha_cargo)),
+            total: api.remesa.total,
+            estado: api.remesa.estado,
+            numRecibos: api.remesa.num_recibos,
         }
         : null,
 });
@@ -315,6 +366,15 @@ export const getCandidatosConciliacion: GetCandidatosConciliacion = async (id, t
         `${baseUrl}/${id}/candidatos${query}`,
         candidatoConciliacionDesdeApi,
         "Error al obtener los candidatos de conciliación"
+    );
+};
+
+/** Remesas de cobro que puede pagar el movimiento, con los recibos propuestos para un pago parcial. */
+export const getRemesasConciliacion: GetRemesasConciliacion = async (id) => {
+    return await RestAPI.getLista<RemesaCandidata, RemesaCandidataApi>(
+        `${baseUrl}/${id}/remesas`,
+        remesaCandidataDesdeApi,
+        "Error al obtener las remesas del movimiento"
     );
 };
 

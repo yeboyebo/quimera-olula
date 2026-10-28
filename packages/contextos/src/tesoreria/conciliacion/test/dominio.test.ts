@@ -1,7 +1,14 @@
 import { paramsAsiento } from "#/tesoreria/conciliacion/conciliar_asiento/dominio.ts";
-import { CandidatoConciliacion, ItemConciliacion, MovimientoBancario } from "#/tesoreria/conciliacion/diseño.ts";
+import {
+    CandidatoConciliacion, ItemConciliacion, MovimientoBancario, RemesaCandidata,
+} from "#/tesoreria/conciliacion/diseño.ts";
 import {
     conciliacionDesdeCandidato,
+    conciliacionDesdeRemesa,
+    cuadraRemesa,
+    importeRecibosRemesa,
+    reciboIdsConciliacionRemesa,
+    urlRemesaConciliacion,
     etiquetaEstadoConConciliaciones,
     filtroCuentaBanco,
     movimientoBancarioVacio,
@@ -46,7 +53,7 @@ describe("estado del movimiento en la lista", () => {
     test("con candidatos indica cuántos hay", () => {
         expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "candidatos", numConciliaciones: 1 }))).toBe("1 candidato");
         expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "candidatos", numConciliaciones: 3 }))).toBe("3 candidatos");
-        expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "conciliado" }))).toBe("Casado");
+        expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "conciliado" }))).toBe("Conciliado");
         expect(etiquetaEstadoConConciliaciones(movimiento({ estado: "pendiente" }))).toBe("Pendiente");
     });
 });
@@ -87,8 +94,12 @@ describe("enlaces al recibo", () => {
         const itemCobro: ItemConciliacion = {
             tipo: "cobrar_recibo_venta",
             params: { recibo_id: 7 },
-            recibo: { id: "7", codigo: "R", tercero: null, importe: 1, fechaVencimiento: new Date(), estado: "Emitido" },
+            recibo: {
+                id: "7", codigo: "R", tercero: null, importe: 1, fechaVencimiento: new Date(), estado: "Emitido",
+                fechaEmision: null, fechaCobro: null,
+            },
             cuota: null,
+            remesa: null,
         };
         expect(urlReciboConciliacion(itemCobro)).toBe("/tesoreria/recibo_venta?id=7");
 
@@ -97,6 +108,7 @@ describe("enlaces al recibo", () => {
             params: {},
             recibo: null,
             cuota: null,
+            remesa: null,
         };
         expect(urlReciboConciliacion(itemAsiento)).toBeNull();
     });
@@ -116,5 +128,49 @@ describe("probabilidad y filtros", () => {
     test("los datos del asiento van a la API en snake_case y sin espacios", () => {
         expect(paramsAsiento({ codigoSubcuenta: " 6260000000 ", concepto: "Comisión " }))
             .toEqual({ codigo_subcuenta: "6260000000", concepto: "Comisión" });
+    });
+});
+
+const remesa = (cambios: Partial<RemesaCandidata> = {}): RemesaCandidata => ({
+    id: "12",
+    tipoConciliacion: "cobro_parcial_remesa",
+    fecha: new Date("2026-09-01"),
+    fechaCargo: new Date("2026-09-05"),
+    total: 180.1,
+    importePendiente: 180.1,
+    diasDiferencia: 2,
+    recibos: [
+        { reciboId: "1", codigo: "R1", tercero: "A", importe: 100.1 },
+        { reciboId: "2", codigo: "R2", tercero: "B", importe: 50 },
+        { reciboId: "3", codigo: "R3", tercero: "C", importe: 30 },
+    ],
+    reciboIdsPropuestos: ["1", "3"],
+    propuestaAmbigua: false,
+    ...cambios,
+});
+
+describe("conciliación con una remesa", () => {
+    test("los recibos elegidos cuadran si suman el importe del movimiento, sin errores de redondeo", () => {
+        expect(importeRecibosRemesa(remesa(), ["1", "3"])).toBe(130.1);
+        expect(cuadraRemesa(movimiento({ importe: 130.1 }), remesa(), ["1", "3"])).toBe(true);
+        expect(cuadraRemesa(movimiento({ importe: 130.1 }), remesa(), ["1"])).toBe(false);
+        expect(cuadraRemesa(movimiento({ importe: 0 }), remesa(), [])).toBe(false);
+    });
+
+    test("con parte de los recibos es un cobro parcial con sus ids", () => {
+        const item = conciliacionDesdeRemesa(remesa(), ["1", "3"]);
+
+        expect(item.tipo).toBe("cobro_parcial_remesa");
+        expect(item.params).toEqual({ remesa_id: 12, recibo_ids: [1, 3] });
+        expect(reciboIdsConciliacionRemesa(item)).toEqual(["1", "3"]);
+        expect(urlRemesaConciliacion(item)).toBe("/tesoreria/remesa?id=12");
+    });
+
+    test("con todos los recibos pendientes es un cobro de remesa", () => {
+        const item = conciliacionDesdeRemesa(remesa(), ["3", "2", "1"]);
+
+        expect(item.tipo).toBe("cobrar_remesa");
+        expect(item.params).toEqual({ remesa_id: 12 });
+        expect(reciboIdsConciliacionRemesa(item)).toBeNull();
     });
 });

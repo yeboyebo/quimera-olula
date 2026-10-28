@@ -5,7 +5,12 @@ import { useForm } from "@olula/lib/useForm.ts";
 import { useCallback } from "react";
 import { ConciliacionSeleccionada } from "../detalle/diseño.js";
 import { ItemConciliacion, MovimientoBancario } from "../diseño.js";
-import { esConciliacionParcial, etiquetaTipoConciliacion, restoConciliacionParcial } from "../dominio.js";
+import {
+    esConciliacionParcial,
+    etiquetaTipoConciliacion,
+    reciboIdsConciliacionRemesa,
+    restoConciliacionParcial,
+} from "../dominio.js";
 
 /** Línea descriptiva de un ítem de conciliación para el cuerpo del modal. */
 const lineaItem = (item: ItemConciliacion, movimiento: MovimientoBancario): string => {
@@ -16,6 +21,12 @@ const lineaItem = (item: ItemConciliacion, movimiento: MovimientoBancario): stri
         return parcial
             ? `${etiquetaTipoConciliacion(item.tipo)}: ${recibo.codigo} · ${formatearMoneda(Math.abs(movimiento.importe), divisa)} de ${formatearMoneda(recibo.importe, divisa)} · resto ${formatearMoneda(restoConciliacionParcial(movimiento, recibo.importe), divisa)}`
             : `${etiquetaTipoConciliacion(item.tipo)}: ${recibo.codigo} · ${recibo.tercero ?? "Sin tercero"} · vence ${formatearFechaDate(recibo.fechaVencimiento)} · ${formatearMoneda(recibo.importe, divisa)}`;
+    }
+    if (item.remesa) {
+        const recibos = reciboIdsConciliacionRemesa(item);
+        return `${etiquetaTipoConciliacion(item.tipo)}: remesa ${item.remesa.id} · cargo ${formatearFechaDate(item.remesa.fechaCargo)} · `
+            + (recibos ? `${recibos.length} de ${item.remesa.numRecibos} recibos` : "todos los recibos pendientes")
+            + ` · ${formatearMoneda(Math.abs(movimiento.importe), divisa)}`;
     }
     if (item.cuota) {
         const cuota = item.cuota;
@@ -56,6 +67,8 @@ export const ConciliarMovimientoBancario = ({
         "",
         item0?.cuota
             ? "Se generará el asiento de la cuota: el capital contra la deuda y los intereses contra el gasto, y el banco por el total."
+            : item0?.remesa
+            ? "Los recibos de la remesa quedarán pagados con la fecha del movimiento; la remesa solo pasa a pagada cuando lo están todos."
             : item0?.recibo && esConciliacionParcial(item0.tipo)
             ? `Se pagarán ${formatearMoneda(Math.abs(movimiento.importe), divisa)} del recibo con la fecha del movimiento y el resto quedará en un recibo nuevo.`
             : "El recibo quedará pagado con la fecha del movimiento y el movimiento, conciliado.",

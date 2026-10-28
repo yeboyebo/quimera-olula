@@ -1,13 +1,15 @@
-import { CandidatoConciliacion, Conciliacion, ItemConciliacion, MovimientoBancario } from "../diseño.js";
+import { CandidatoConciliacion, Conciliacion, ItemConciliacion, MovimientoBancario, RemesaCandidata } from "../diseño.js";
 
 /**
- * CONCILIANDO / DESCONCILIANDO / IGNORANDO / REACTIVANDO: modales de las acciones
- * (ver conciliar/, conciliar_asiento/, desconciliar/, ignorar/, reactivar/ a nivel de módulo).
+ * CONCILIANDO / CONCILIANDO_REMESA / DESCONCILIANDO / IGNORANDO / REACTIVANDO: modales de
+ * las acciones (ver conciliar/, conciliar_asiento/, conciliar_remesa/, desconciliar/,
+ * ignorar/, reactivar/ a nivel de módulo).
  */
 export type EstadoDetalleConciliacion =
     | 'INICIAL'
     | 'ABIERTO'
     | 'CONCILIANDO'
+    | 'CONCILIANDO_REMESA'
     | 'DESCONCILIANDO'
     | 'IGNORANDO'
     | 'REACTIVANDO';
@@ -34,5 +36,9 @@ export type ContextoDetalleConciliacion = {
     /** Recibos para conciliar a mano; solo tiene sentido si el movimiento no está resuelto. */
     candidatos: CandidatoConciliacion[];
     candidatosTexto: string;
+    /** Remesas de cobro que puede pagar el movimiento; solo si es un ingreso no resuelto. */
+    remesas: RemesaCandidata[];
     conciliacionSeleccionada: ConciliacionSeleccionada | null;
+    /** Remesa elegida, pendiente de que el usuario confirme sus recibos en el modal. */
+    remesaSeleccionada: RemesaCandidata | null;
 };

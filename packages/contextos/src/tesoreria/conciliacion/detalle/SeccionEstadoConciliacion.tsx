@@ -10,6 +10,8 @@ import {
     etiquetaOrigenConciliacion,
     etiquetaTipoConciliacion,
     reciboAsociadoMovimientoBancario,
+    reciboIdsConciliacionRemesa,
+    urlRemesaConciliacion,
     urlReciboMovimientoBancario,
     varianteEstadoMovimientoBancario,
 } from "../dominio.js";
@@ -35,6 +37,33 @@ const ItemReciboConciliado = ({ item, divisa }: { item: ItemConciliacion; divisa
                 <QInput nombre="ir-fecha-cobro" label="Fecha de cobro" soloLectura
                     valor={recibo.fechaCobro ? formatearFechaDate(recibo.fechaCobro) : "—"} />
             </quimera-formulario>
+        </div>
+    );
+};
+
+const ItemRemesaConciliada = ({ item, divisa }: { item: ItemConciliacion; divisa: string }) => {
+    const { remesa } = item;
+    if (!remesa) return null;
+    const recibos = reciboIdsConciliacionRemesa(item);
+    const url = urlRemesaConciliacion(item);
+    return (
+        <div className="item-recibo-conciliado">
+            <p className="tipo-item-recibo">{etiquetaTipoConciliacion(item.tipo)}</p>
+            <quimera-formulario>
+                <QInput nombre="ir-remesa" label="Remesa" soloLectura valor={remesa.id} />
+                <QInput nombre="ir-fecha-cargo" label="Fecha de cargo" soloLectura
+                    valor={formatearFechaDate(remesa.fechaCargo)} />
+                <QInput nombre="ir-total-remesa" label="Total remesa" soloLectura
+                    valor={formatearMoneda(remesa.total, divisa)} />
+                <QInput nombre="ir-recibos-remesa" label="Recibos pagados" soloLectura
+                    valor={recibos ? `${recibos.length} de ${remesa.numRecibos}` : "Todos los pendientes"} />
+                <QInput nombre="ir-estado-remesa" label="Estado remesa" soloLectura valor={remesa.estado} />
+            </quimera-formulario>
+            {url && (
+                <QBoton tamaño="pequeño" variante="borde" enlace={url}>
+                    Ver remesa
+                </QBoton>
+            )}
         </div>
     );
 };
@@ -117,7 +146,8 @@ export const SeccionEstadoConciliacion = ({
                         )}
                     </div>
                     {conciliacionAplicada && conciliacionAplicada.items.some(
-                        i => i.recibo !== null || i.tipo === "asiento_manual" || i.tipo === "asiento_vinculado"
+                        i => i.recibo !== null || i.remesa !== null
+                            || i.tipo === "asiento_manual" || i.tipo === "asiento_vinculado"
                     ) && (
                         <div className="items-recibo-conciliados">
                             {conciliacionAplicada.items.map((item, idx) =>
@@ -135,6 +165,12 @@ export const SeccionEstadoConciliacion = ({
                                                 valor={String(item.params.idasiento ?? "—")} />
                                         </quimera-formulario>
                                     </div>
+                                ) : item.remesa ? (
+                                    <ItemRemesaConciliada
+                                        key={idx}
+                                        item={item}
+                                        divisa={movimiento.divisa ?? "EUR"}
+                                    />
                                 ) : (
                                     <ItemReciboConciliado
                                         key={idx}
