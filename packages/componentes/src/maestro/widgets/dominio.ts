@@ -140,7 +140,41 @@ export const agrupacionWidget = (widget: DefinicionWidget): string => {
 
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
-/** Grupos del servidor → puntos: el temporal en orden cronológico y etiquetado por mes. */
+const MESES_TEMPORAL = 12;
+
+const etiquetaMes = (año: number, mes: number) => `${MESES[mes - 1]} ${String(año).slice(2)}`;
+
+/**
+ * Meses seguidos, sin saltarse los vacíos (a 0): hasta 12 que acaban en el último mes con
+ * datos del filtro. El servidor da los 12 más recientes CON datos, así que dentro de esa
+ * ventana no falta ninguno; si hay menos, la ventana empieza en el primero que haya.
+ */
+const mesesSeguidos = (puntos: PuntoWidget[]): PuntoWidget[] => {
+  const mesDe = (clave: string) => {
+    const [año, mes] = clave.split("-").map(Number);
+    return año * 12 + (mes - 1);
+  };
+  const validos = puntos.filter((p) => !Number.isNaN(mesDe(p.clave)));
+  if (validos.length === 0) return puntos;
+  const porMes = new Map(validos.map((p) => [mesDe(p.clave), p]));
+  const ultimo = mesDe(validos[validos.length - 1].clave);
+  const primero = Math.max(mesDe(validos[0].clave), ultimo - (MESES_TEMPORAL - 1));
+  const serie: PuntoWidget[] = [];
+  for (let n = primero; n <= ultimo; n++) {
+    const año = Math.floor(n / 12);
+    const mes = (n % 12) + 1;
+    serie.push(
+      porMes.get(n) ?? {
+        clave: `${año}-${String(mes).padStart(2, "0")}-01`,
+        etiqueta: etiquetaMes(año, mes),
+        valor: 0,
+      }
+    );
+  }
+  return serie;
+};
+
+/** Grupos del servidor → puntos: el temporal en meses seguidos, en orden cronológico. */
 export const puntosWidget = (
   widget: DefinicionWidget,
   grupos: Record<string, unknown>[]
@@ -153,13 +187,13 @@ export const puntosWidget = (
     const [año, mes] = clave.split("-").map(Number);
     const etiqueta =
       widget.tipo === "temporal" && año && mes
-        ? `${MESES[mes - 1]} ${String(año).slice(2)}`
+        ? etiquetaMes(año, mes)
         : nombre
           ? String(nombre)
           : clave || "Sin valor";
     return { clave, etiqueta, valor: Number(grupo[alias] ?? 0) };
   });
-  return widget.tipo === "temporal" ? puntos.reverse() : puntos;
+  return widget.tipo === "temporal" ? mesesSeguidos(puntos.reverse()) : puntos;
 };
 
 export const MAX_WIDGETS = 8;

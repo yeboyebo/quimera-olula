@@ -208,6 +208,19 @@ describe("widgets compactos", () => {
       { clave: "2026-09-01", etiqueta: "sep 26", valor: 2 },
       { clave: "2026-10-01", etiqueta: "oct 26", valor: 3 },
     ]);
+    // Meses seguidos: los vacíos a 0 y como mucho 12, acabando en el último con datos.
+    const temporal = puntosWidget({ ...base, tipo: "temporal", agrupar: "fecha" }, [
+      { fecha: "2026-09-01", suma_total: 5 },
+      { fecha: "2026-06-01", suma_total: 4 },
+      { fecha: "2026-02-01", suma_total: 3 },
+      { fecha: "2025-08-01", suma_total: 1 },
+    ]);
+    expect(temporal.map((p) => p.etiqueta)).toEqual([
+      "oct 25", "nov 25", "dic 25", "ene 26", "feb 26", "mar 26",
+      "abr 26", "may 26", "jun 26", "jul 26", "ago 26", "sep 26",
+    ]);
+    expect(temporal.map((p) => p.valor)).toEqual([0, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 5]);
+    expect(temporal[0].clave).toBe("2025-10-01");
     expect(
       puntosWidget({ ...base, tipo: "ranking", agrupar: "cliente" }, [
         { cliente: "C1", cliente_nombre: "Cliente Uno", suma_total: 9 },

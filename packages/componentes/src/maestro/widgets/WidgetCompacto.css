@@ -1,7 +1,31 @@
 quimera-tarjeta-resumen {
+    /* Temporal: el periodo abajo a la izquierda y el pie a la derecha. */
+    &[data-tipo="temporal"] .pie {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--espaciado-s);
+    }
+
+    .widget-compacto-periodo {
+        white-space: nowrap;
+    }
+
+    .widget-compacto-fila {
+        display: flex;
+        flex-direction: row-reverse;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--espaciado-xxs) var(--espaciado-m);
+
+        .valor {
+            flex: none;
+        }
+    }
+
     .widget-compacto-tendencia {
-        width: 100%;
-        height: 1.75rem;
+        flex: 1;
+        min-width: 3rem;
+        height: 1.5rem;
     }
 
     .widget-compacto-progreso {

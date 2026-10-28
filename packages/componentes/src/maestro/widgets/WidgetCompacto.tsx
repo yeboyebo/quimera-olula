@@ -36,6 +36,14 @@ const Tendencia = ({ puntos }: { puntos: PuntoWidget[] }) => {
   );
 };
 
+/** Meses que abarca la evolución, para saber a qué periodo del filtro corresponde. */
+const periodo = (puntos: PuntoWidget[]) =>
+  puntos.length === 0
+    ? ""
+    : puntos.length === 1
+      ? puntos[0].etiqueta
+      : `${puntos[0].etiqueta} – ${puntos[puntos.length - 1].etiqueta}`;
+
 /** Anillo con las mayores y el resto del total como «Otros». */
 const Anillo = ({ puntos, total }: { puntos: PuntoWidget[]; total: number }) => {
   const suma = puntos.reduce((s, p) => s + p.valor, 0);
@@ -99,13 +107,18 @@ export const WidgetCompacto = ({ widget, valor, puntos, pie, cargando }: WidgetC
           ))}
           {puntos.length === 0 && <li>—</li>}
         </ol>
+      ) : tipo === "temporal" ? (
+        // La línea a la izquierda del valor (misma altura que una tarjeta); debajo si no cabe.
+        <div className="widget-compacto-fila">
+          <span className="valor">{formatear(widget, valor)}</span>
+          <Tendencia puntos={puntos} />
+        </div>
       ) : (
         <span className="valor">
           {tipo === "objetivo" ? `${porcentaje} %` : formatear(widget, valor)}
         </span>
       )}
 
-      {tipo === "temporal" && <Tendencia puntos={puntos} />}
       {tipo === "circular" && <Anillo puntos={puntos} total={valor ?? 0} />}
       {tipo === "objetivo" && (
         <div
@@ -121,6 +134,9 @@ export const WidgetCompacto = ({ widget, valor, puntos, pie, cargando }: WidgetC
       )}
 
       <span className="pie">
+        {tipo === "temporal" && periodo(puntos) && (
+          <span className="widget-compacto-periodo">{periodo(puntos)}</span>
+        )}
         {tipo === "objetivo"
           ? `${formatear(widget, valor)} de ${formatear(widget, widget.meta)}`
           : pie}
