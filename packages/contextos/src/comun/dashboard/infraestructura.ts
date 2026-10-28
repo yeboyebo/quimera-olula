@@ -11,6 +11,13 @@ import { queryConsulta } from "./dominio.ts";
 
 const URL = "/comun/dashboard";
 
+// Ids de recurso agregable: `ventas.factura`, `ventas.factura.linea`... El servidor
+// solo guarda consultas sobre recursos de su registro; esto evita además que un valor
+// raro llegue a formar otra ruta de la API.
+const RE_RECURSO = /^[a-z_]+(\.[a-z_]+)*$/;
+
+const urlDashboard = (id: string) => `${URL}/${encodeURIComponent(id)}`;
+
 type ResumenDashboardApi = {
   id: string;
   nombre: string;
@@ -49,7 +56,7 @@ export const getDashboards = async (): Promise<ResumenDashboard[]> => {
 };
 
 export const getDashboard = async (id: string): Promise<Dashboard> => {
-  const respuesta = await RestAPI.get<{ datos: DashboardApi }>(`${URL}/${id}`);
+  const respuesta = await RestAPI.get<{ datos: DashboardApi }>(urlDashboard(id));
   return dashboardDesdeApi(respuesta.datos);
 };
 
@@ -70,17 +77,21 @@ export type CambiosDashboard = Partial<
 >;
 
 export const cambiarDashboard = (id: string, cambios: CambiosDashboard) =>
-  RestAPI.patch(`${URL}/${id}`, cambios, "Error al guardar el dashboard");
+  RestAPI.patch(urlDashboard(id), cambios, "Error al guardar el dashboard");
 
 export const borrarDashboard = (id: string) =>
-  RestAPI.delete(`${URL}/${id}`, "Error al borrar el dashboard");
+  RestAPI.delete(urlDashboard(id), "Error al borrar el dashboard");
 
-export const getAgregado = (
+export const getAgregado = async (
   consulta: ConsultaComponente
-): Promise<RespuestaAgregado> =>
-  RestAPI.get<RespuestaAgregado>(
-    `/comun/agregado/${consulta.recurso}${queryConsulta(consulta)}`
+): Promise<RespuestaAgregado> => {
+  if (!RE_RECURSO.test(consulta.recurso)) {
+    throw new Error(`Recurso no válido: ${consulta.recurso}`);
+  }
+  return RestAPI.get<RespuestaAgregado>(
+    `/comun/agregado/${encodeURIComponent(consulta.recurso)}${queryConsulta(consulta)}`
   );
+};
 
 // El registro no cambia mientras la app está abierta y ya viene filtrado por los
 // permisos del usuario: una petición por sesión.
