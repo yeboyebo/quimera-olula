@@ -1,26 +1,53 @@
+import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { pareceImporte } from "@olula/componentes/maestro/widgets/dominio.ts";
-import { Link } from "react-router";
+import { Entidad } from "@olula/lib/diseño.ts";
+import { Link, useNavigate } from "react-router";
 import {
   ComponenteDashboard,
-  GrupoAgregado,
   RecursoAgregable,
   RespuestaAgregado,
 } from "../../diseño.ts";
-import { formatearValor } from "../../dominio.ts";
 
-const RE_FECHA = /^\d{4}-\d{2}-\d{2}$/;
+type FilaDashboard = Entidad & Record<string, string | number | boolean | null>;
 
-const celda = (valor: GrupoAgregado[string], columna: string, esMedida: boolean) => {
-  if (valor === null || valor === undefined || valor === "") return "—";
-  if (typeof valor === "boolean") return valor ? "Sí" : "No";
-  if (typeof valor === "number") {
-    return formatearValor(valor, esMedida && pareceImporte(columna) ? "moneda" : "numero");
+const SIN_ID = "__sin_id__";
+
+const tipoColumna = (
+  id: string,
+  recurso: RecursoAgregable | undefined
+): NonNullable<MetaTabla<FilaDashboard>[number]["tipo"]> => {
+  if (recurso?.medidas.some((m) => m.id === id)) {
+    return pareceImporte(id) ? "moneda" : "numero";
   }
-  if (RE_FECHA.test(valor)) return new Date(`${valor}T00:00:00`).toLocaleDateString("es-ES");
-  return valor;
+  const dim = recurso?.dimensiones.find((d) => d.id === id);
+  if (dim?.tipo === "fecha") return "fecha";
+  if (dim?.tipo === "numero") return "numero";
+  if (dim?.tipo === "booleano") return "booleano";
+  return "texto";
 };
 
-/** Filas de un listado con su filtro; cada fila abre su ficha. */
+const etiquetaColumna = (id: string, recurso: RecursoAgregable | undefined) =>
+  recurso?.dimensiones.find((d) => d.id === id)?.descripcion ??
+  recurso?.medidas.find((m) => m.id === id)?.descripcion ??
+  id;
+
+const metaDesdeColumnas = (
+  columnas: string[],
+  recurso: RecursoAgregable | undefined
+): MetaTabla<FilaDashboard> =>
+  columnas.map((id) => ({
+    id,
+    cabecera: etiquetaColumna(id, recurso),
+    tipo: tipoColumna(id, recurso),
+  }));
+
+const filasDesdeRespuesta = (respuesta: RespuestaAgregado): FilaDashboard[] =>
+  respuesta.grupos.map((fila, i) => ({
+    ...fila,
+    id: fila.id != null && fila.id !== "" ? String(fila.id) : `${SIN_ID}${i}`,
+  }));
+
+/** Filas de un listado con su filtro; usa la QTabla de la app. Clic en la fila abre la ficha. */
 export const Tabla = ({
   componente,
   respuesta,
@@ -30,41 +57,26 @@ export const Tabla = ({
   respuesta: RespuestaAgregado;
   recurso: RecursoAgregable | undefined;
 }) => {
+  const navegar = useNavigate();
   const columnas = (componente.consultas[0].columnas ?? "").split(",").filter(Boolean);
-  const descripcion = (id: string) =>
-    recurso?.dimensiones.find((d) => d.id === id)?.descripcion ??
-    recurso?.medidas.find((m) => m.id === id)?.descripcion ??
-    id;
-  const esMedida = (id: string) => Boolean(recurso?.medidas.some((m) => m.id === id));
+  const datos = filasDesdeRespuesta(respuesta);
+  const metaTabla = metaDesdeColumnas(columnas, recurso);
 
   return (
     <div className="dashboard-tabla">
-      <table>
-        <thead>
-          <tr>
-            {columnas.map((c) => (
-              <th key={c} data-numero={esMedida(c) || undefined}>
-                {descripcion(c)}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {respuesta.grupos.map((fila, i) => (
-            <tr key={String(fila.id ?? i)}>
-              {columnas.map((c, j) => (
-                <td key={c} data-numero={esMedida(c) || undefined}>
-                  {j === 0 && recurso?.ruta && fila.id != null ? (
-                    <Link to={`${recurso.ruta}/${fila.id}`}>{celda(fila[c], c, esMedida(c))}</Link>
-                  ) : (
-                    celda(fila[c], c, esMedida(c))
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <QTabla
+        metaTabla={metaTabla}
+        datos={datos}
+        cargando={false}
+        orden={["", "ASC"]}
+        onSeleccion={
+          recurso?.ruta
+            ? (fila) => {
+                if (!fila.id.startsWith(SIN_ID)) navegar(`${recurso.ruta}/${fila.id}`);
+              }
+            : undefined
+        }
+      />
       {respuesta.truncado && recurso?.ruta && (
         <Link className="dashboard-tabla-mas" to={recurso.ruta}>
           Ver las {respuesta.total_grupos} en {recurso.descripcion.split(" (")[0]} →
