@@ -1,4 +1,4 @@
-import { formatearMoneda } from "@olula/lib/dominio.js";
+import { formatearFechaHora, formatearMoneda } from "@olula/lib/dominio.js";
 import { ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { CuadreBancario, CuadreCuenta } from "../diseño.js";
@@ -6,27 +6,36 @@ import { getCuadreBancario } from "../infraestructura.js";
 
 /**
  * Panel de cuadre bancario-contable: muestra el saldo banco vs. saldo contable
- * y las alertas de discrepancia por cada cuenta bancaria conectada.
+ * y las alertas de discrepancia de la cuenta bancaria indicada. Sin cuenta
+ * (listado de todas las cuentas) no se muestra.
  *
  * Se recarga en el montaje y cada vez que `version` cambia (p.ej. tras sync o
  * conciliación automática). Cada badge es un enlace al maestro con el filtro
  * correspondiente preseleccionado.
  */
-export const PanelCuadreBancario = ({ version = 0 }: { version?: number }) => {
+export const PanelCuadreBancario = ({
+    cuentaBancoId,
+    version = 0,
+}: {
+    cuentaBancoId: string | null;
+    version?: number;
+}) => {
 
     const [cuadre, setCuadre] = useState<CuadreBancario | null>(null);
 
     useEffect(() => {
+        if (!cuentaBancoId) return;
         getCuadreBancario().then(setCuadre).catch(console.error);
-    }, [version]);
+    }, [cuentaBancoId, version]);
 
-    if (!cuadre || cuadre.cuentas.length === 0) return null;
+    const cuenta = cuentaBancoId
+        ? cuadre?.cuentas.find((c) => c.cuentaBancoId === cuentaBancoId)
+        : undefined;
+    if (!cuenta) return null;
 
     return (
         <div className="CuadreBancario">
-            {cuadre.cuentas.map((cuenta) => (
-                <FilaCuadreCuenta key={cuenta.cuentaBancoId || cuenta.nombreCuenta} cuenta={cuenta} />
-            ))}
+            <FilaCuadreCuenta cuenta={cuenta} />
         </div>
     );
 };
@@ -77,6 +86,14 @@ const FilaCuadreCuenta = ({ cuenta }: { cuenta: CuadreCuenta }) => {
             <div className="CuadreCuenta-cabecera">
                 <span className="CuadreCuenta-nombre">
                     {cuenta.institucion ? `${cuenta.institucion} — ` : ""}{cuenta.nombreCuenta}
+                </span>
+                <span className="CuadreCuenta-sincronizacion">
+                    Última sincronización:{" "}
+                    <strong>
+                        {cuenta.ultimaSincronizacion
+                            ? formatearFechaHora(cuenta.ultimaSincronizacion)
+                            : "nunca"}
+                    </strong>
                 </span>
                 <span className="CuadreCuenta-saldos">
                     {cuenta.saldoBanco !== null && (
@@ -133,12 +150,12 @@ const FilaCuadreCuenta = ({ cuenta }: { cuenta: CuadreCuenta }) => {
                             {cuenta.bancoEliminoConciliado} eliminado{cuenta.bancoEliminoConciliado > 1 ? "s" : ""} por el banco
                         </Alerta>
                     )}
-                    {cuenta.asientoSubcuentaErronea > 0 && (
+                    {cuenta.asientoDescuadrado > 0 && (
                         <Alerta
                             variante="error"
-                            href={url?.({ estado: "in__conciliado" }, "subcuenta errónea")}
+                            href={url?.({ asiento_descuadrado: "=__true" }, "asientos descuadrados")}
                         >
-                            {cuenta.asientoSubcuentaErronea} subcuenta errónea
+                            {cuenta.asientoDescuadrado} asiento{cuenta.asientoDescuadrado > 1 ? "s" : ""} descuadrado{cuenta.asientoDescuadrado > 1 ? "s" : ""}
                         </Alerta>
                     )}
                     {cuenta.partidaHuerfana > 0 && (

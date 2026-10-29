@@ -6,8 +6,14 @@ import { formatearMoneda } from "@olula/lib/dominio.ts";
 import { useForm } from "@olula/lib/useForm.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useMemo } from "react";
+import { Subcuenta } from "../../comun/componentes/Subcuenta.tsx";
 import { MovimientoBancario } from "../diseño.js";
-import { datosAsientoVacios, metaDatosAsientoMovimiento, paramsAsiento } from "./dominio.js";
+import {
+    datosAsientoVacios,
+    ejercicioDelMovimiento,
+    metaDatosAsientoMovimiento,
+    paramsAsiento,
+} from "./dominio.js";
 
 /**
  * Conciliación de tipo asiento manual: pide la subcuenta de contrapartida y el
@@ -40,7 +46,11 @@ export const ConciliarAsientoMovimientoBancario = ({
                 {entra ? "al debe y la contrapartida al haber." : "al haber y la contrapartida al debe."}
             </p>
             <quimera-formulario>
-                <QInput label="Subcuenta de contrapartida" {...uiProps("codigoSubcuenta")} />
+                <Subcuenta
+                    label="Subcuenta de contrapartida"
+                    ejercicioId={ejercicioDelMovimiento(movimiento)}
+                    {...uiProps("codigoSubcuenta")}
+                />
                 <QInput label="Concepto" {...uiProps("concepto")} />
             </quimera-formulario>
             <div className="botones maestro-botones">

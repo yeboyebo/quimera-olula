@@ -1,6 +1,8 @@
 import { ClausulaFiltro } from "@olula/lib/diseño.ts";
+import { plugin } from "@olula/lib/dominio.ts";
 import {
     CandidatoConciliacion,
+    Conciliacion,
     EstadoMovimientoBancario,
     ItemConciliacion,
     MovimientoBancario,
@@ -152,6 +154,7 @@ const ETIQUETA_TIPO_CONCILIACION: Record<TipoConciliacion, string> = {
     cuota_prestamo: "Cuota de préstamo",
     cobrar_remesa: "Cobro de remesa",
     cobro_parcial_remesa: "Cobro parcial de remesa",
+    pagar_remesa: "Pago de remesa",
 };
 
 export const etiquetaTipoConciliacion = (tipo: TipoConciliacion): string => ETIQUETA_TIPO_CONCILIACION[tipo];
@@ -160,10 +163,31 @@ export const esConciliacionParcial = (tipo: TipoConciliacion): boolean =>
     tipo === "cobro_parcial_venta" || tipo === "pago_parcial_compra";
 
 export const esConciliacionRemesa = (tipo: TipoConciliacion): boolean =>
-    tipo === "cobrar_remesa" || tipo === "cobro_parcial_remesa";
+    tipo === "cobrar_remesa" || tipo === "cobro_parcial_remesa" || tipo === "pagar_remesa";
+
+/** Paga una remesa de pago (recibos de proveedor o nóminas), que se paga siempre entera. */
+export const esConciliacionRemesaPago = (tipo: TipoConciliacion): boolean => tipo === "pagar_remesa";
+
+/** Una remesa de pago es de nóminas o de recibos; las de cobro, siempre de recibos. */
+export const esRemesaDeNominas = (remesa: { tipoRemesa: string | null }): boolean =>
+    remesa.tipoRemesa === "Nóminas";
+
+/** Las remesas de pago solo se ofrecen con su plugin activo. */
+export const remesasPagoActivas = (): boolean => plugin("remesa_pago") === "activo";
 
 /** Tipos de conciliación que piden datos al usuario antes de conciliar. */
 export const pideDatosConciliacion = (tipo: TipoConciliacion): boolean => tipo === "asiento_manual";
+
+/** Subcuenta de contrapartida de un asiento manual (la que pidió al usuario), o null. */
+export const subcuentaContrapartida = (item: ItemConciliacion): string | null =>
+    (item.params.codigo_subcuenta as string | undefined) ?? null;
+
+/** El asiento manual usa como contrapartida la propia subcuenta del banco: el
+ * asiento queda banco contra banco y no refleja el movimiento. */
+export const contrapartidaEsSubcuentaBanco = (
+    item: ItemConciliacion,
+    subcuentaBancoId: string | null,
+): boolean => subcuentaBancoId !== null && subcuentaContrapartida(item) === subcuentaBancoId;
 
 /** Probabilidad a partir de la cual el servidor concilia sin preguntar. */
 export const PROBABILIDAD_CONCILIAR_AUTOMATICAMENTE = 95;
@@ -177,24 +201,26 @@ export const varianteProbabilidad = (probabilidad: number): VarianteEtiqueta =>
 export const urlRecibo = (tipoRecibo: TipoReciboMovimiento, reciboId: string): string =>
     `${RUTA_RECIBO[tipoRecibo]}?id=${encodeURIComponent(reciboId)}`;
 
-/** Enlace a la ficha de la remesa de cobro. */
-export const urlRemesa = (remesaId: string): string =>
-    `/tesoreria/remesa?id=${encodeURIComponent(remesaId)}`;
+/** Enlace a la ficha de la remesa: de cobro o, con `tipo` "pagar_remesa", de pago. */
+export const urlRemesa = (remesaId: string, tipo?: TipoConciliacion): string =>
+    `${tipo && esConciliacionRemesaPago(tipo) ? "/tesoreria/remesa_pago" : "/tesoreria/remesa"}`
+    + `?id=${encodeURIComponent(remesaId)}`;
+
+/** Enlace a la ficha del asiento contable. */
+export const urlAsiento = (asientoId: string): string =>
+    `/contabilidad/asiento?id=${encodeURIComponent(asientoId)}`;
+
+/** URL del asiento de un ítem (vinculado, o generado al conciliar), para el enlace "Ver asiento". */
+export const urlAsientoConciliacion = (item: ItemConciliacion): string | null =>
+    item.asientoId ? urlAsiento(item.asientoId) : null;
 
 /** URL de la remesa de un ítem de remesa (para el enlace "Ver remesa"). */
 export const urlRemesaConciliacion = (item: ItemConciliacion): string | null =>
-    item.remesa ? urlRemesa(item.remesa.id) : null;
+    item.remesa ? urlRemesa(item.remesa.id, item.tipo) : null;
 
 /** Recibos de la remesa que paga un ítem: los de `params.recibo_ids` si es parcial, todos si no (`null`). */
 export const reciboIdsConciliacionRemesa = (item: ItemConciliacion): string[] | null =>
     Array.isArray(item.params.recibo_ids) ? item.params.recibo_ids.map(String) : null;
-
-/**
- * URL del recibo del primer ítem de casación del movimiento conciliado.
- * Devuelve `null` si no hay ítems o el tipo no tiene recibo asociado.
- */
-export const urlReciboMovimientoBancario = (_movimiento: MovimientoBancario): string | null =>
-    null;
 
 /** URL del recibo del primer ítem de una conciliación candidata (para el enlace "Ver recibo"). */
 export const urlReciboConciliacion = (item: ItemConciliacion): string | null => {
@@ -225,6 +251,7 @@ export const conciliacionDesdeCandidato = (
         },
         cuota: null,
         remesa: null,
+        asientoId: null,
     };
 };
 
@@ -247,12 +274,14 @@ export const cuadraRemesa = (
 /**
  * Conciliación a mano con una remesa: si se pagan todos sus recibos pendientes
  * es un cobro de remesa; si solo algunos, un cobro parcial con esos recibos.
+ * Una remesa de pago se paga siempre entera.
  */
 export const conciliacionDesdeRemesa = (remesa: RemesaCandidata, reciboIds: string[]): ItemConciliacion => {
     const todos = remesa.recibos.every((recibo) => reciboIds.includes(recibo.reciboId));
+    const dePago = esConciliacionRemesaPago(remesa.tipoConciliacion);
     return {
-        tipo: todos ? "cobrar_remesa" : "cobro_parcial_remesa",
-        params: todos
+        tipo: dePago ? "pagar_remesa" : todos ? "cobrar_remesa" : "cobro_parcial_remesa",
+        params: dePago || todos
             ? { remesa_id: Number(remesa.id) }
             : { remesa_id: Number(remesa.id), recibo_ids: reciboIds.map(Number) },
         recibo: null,
@@ -263,7 +292,9 @@ export const conciliacionDesdeRemesa = (remesa: RemesaCandidata, reciboIds: stri
             total: remesa.total,
             estado: "Emitida",
             numRecibos: remesa.recibos.length,
+            tipoRemesa: remesa.tipoRemesa,
         },
+        asientoId: null,
     };
 };
 
@@ -273,6 +304,13 @@ export const restoConciliacionParcial = (movimiento: MovimientoBancario, importe
 
 export const esIngresoMovimientoBancario = (movimiento: MovimientoBancario): boolean =>
     movimiento.importe >= 0;
+
+/** El movimiento puede pagar remesas: de cobro si es un ingreso; de pago si es un cargo y
+ * las remesas de pago están activas. */
+export const conRemesas = (
+    movimiento: MovimientoBancario,
+    pagoActivas: () => boolean = remesasPagoActivas,
+): boolean => esIngresoMovimientoBancario(movimiento) || pagoActivas();
 
 export type BloqueoConciliarMovimiento = {
     bloqueado: boolean;
@@ -314,3 +352,69 @@ const ETIQUETA_ORIGEN: Record<OrigenConciliacionMovimiento, string> = {
 
 export const etiquetaOrigenConciliacion = (origen: OrigenConciliacionMovimiento | null): string =>
     origen ? ETIQUETA_ORIGEN[origen] : "—";
+
+const textoRecibo = (item: ItemConciliacion): string =>
+    item.recibo ? `recibo ${item.recibo.codigo}` : "recibo";
+
+const textoRemesa = (item: ItemConciliacion): string =>
+    item.remesa ? `remesa ${item.remesa.id}` : "remesa";
+
+/**
+ * Qué deshace el servidor al desconciliar cada ítem (ver `deshacer` de cada
+ * resolutor en `movimiento_bancario/aplicacion/conciliaciones.py`).
+ */
+export const consecuenciaDesconciliarItem = (item: ItemConciliacion): string => {
+    switch (item.tipo) {
+        case "cobrar_recibo_venta":
+            return `Se anulará el cobro del ${textoRecibo(item)} y volverá a quedar pendiente de cobro.`;
+        case "pagar_recibo_compra":
+            return `Se anulará el pago del ${textoRecibo(item)} y volverá a quedar pendiente de pago.`;
+        case "cobro_parcial_venta":
+            return `Se anulará el cobro parcial del ${textoRecibo(item)} y se volverá a unir con el recibo `
+                + "que se generó por el resto: quedará un único recibo pendiente por el importe original.";
+        case "pago_parcial_compra":
+            return `Se anulará el pago parcial del ${textoRecibo(item)} y se volverá a unir con el recibo `
+                + "que se generó por el resto: quedará un único recibo pendiente por el importe original.";
+        case "cobrar_remesa":
+            return `Se deshará el cobro de la ${textoRemesa(item)}: sus recibos volverán a quedar pendientes de cobro. `
+                + "Solo es posible si es el último cobro registrado en la remesa.";
+        case "cobro_parcial_remesa": {
+            const recibos = reciboIdsConciliacionRemesa(item);
+            const cuantos = recibos ? `los ${recibos.length} recibos cobrados` : "los recibos cobrados";
+            return `Se deshará el cobro parcial de la ${textoRemesa(item)}: ${cuantos} volverán a quedar pendientes. `
+                + "Solo es posible si es el último cobro registrado en la remesa.";
+        }
+        case "pagar_remesa": {
+            const que = item.remesa && esRemesaDeNominas(item.remesa) ? "sus nóminas" : "sus recibos";
+            return `Se deshará el pago de la ${textoRemesa(item)} de pago y se borrará su asiento: `
+                + `${que} seguirán en la remesa, pendientes de pago.`;
+        }
+        case "asiento_manual":
+            return "Se borrará el asiento contable que se generó al conciliar.";
+        case "asiento_vinculado":
+            return "Se desvinculará el asiento contable, que no se borra: su partida volverá a quedar "
+                + "sin movimiento bancario.";
+        case "cuota_prestamo": {
+            const contrato = item.cuota?.contrato ? ` ${item.cuota.contrato}` : "";
+            return `Se borrará el asiento de la cuota del préstamo${contrato} y la cuota volverá a quedar `
+                + "pendiente de contabilizar.";
+        }
+    }
+};
+
+/** Mensaje del diálogo de desconciliar, con las consecuencias de cada ítem de la conciliación aplicada. */
+export const mensajeDesconciliarMovimientoBancario = (conciliacion: Conciliacion | null): string => {
+    const items = conciliacion?.items ?? [];
+    const consecuencias = items.length === 0
+        ? ["Se deshará todo lo que se generó al conciliar el movimiento (pagos, asientos...)."]
+        : items.length === 1
+            ? [consecuenciaDesconciliarItem(items[0])]
+            : items.map((item) => `• ${consecuenciaDesconciliarItem(item)}`);
+
+    return [
+        ...consecuencias,
+        "",
+        "El movimiento volverá a quedar pendiente de conciliar. Si el banco ya no lo devuelve, "
+        + "desaparecerá de la lista tras desconciliarlo.",
+    ].join("\n");
+};

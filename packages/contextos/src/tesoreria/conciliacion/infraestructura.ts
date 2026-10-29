@@ -101,6 +101,7 @@ interface RemesaConciliacionApi {
     total: number;
     estado: string;
     num_recibos: number;
+    tipo_remesa?: string | null;
 }
 
 interface ItemConciliacionApi {
@@ -109,11 +110,13 @@ interface ItemConciliacionApi {
     recibo: ReciboConciliacionApi | null;
     cuota?: CuotaConciliacionApi | null;
     remesa?: RemesaConciliacionApi | null;
+    asiento_id?: number | null;
 }
 
 export interface RemesaCandidataApi {
     remesa_id: string;
     tipo_conciliacion: TipoConciliacion;
+    tipo_remesa?: string | null;
     fecha: string;
     fecha_cargo: string;
     total: number;
@@ -228,6 +231,7 @@ export const candidatoConciliacionDesdeApi = (api: CandidatoConciliacionApi): Ca
 export const remesaCandidataDesdeApi = (api: RemesaCandidataApi): RemesaCandidata => ({
     id: api.remesa_id,
     tipoConciliacion: api.tipo_conciliacion,
+    tipoRemesa: api.tipo_remesa ?? null,
     fecha: new Date(Date.parse(api.fecha)),
     fechaCargo: new Date(Date.parse(api.fecha_cargo)),
     total: api.total,
@@ -274,8 +278,10 @@ const itemConciliacionDesdeApi = (api: ItemConciliacionApi): ItemConciliacion =>
             total: api.remesa.total,
             estado: api.remesa.estado,
             numRecibos: api.remesa.num_recibos,
+            tipoRemesa: api.remesa.tipo_remesa ?? null,
         }
         : null,
+    asientoId: api.asiento_id ? String(api.asiento_id) : null,
 });
 
 export const conciliacionDesdeApi = (api: ConciliacionApi): Conciliacion => ({
@@ -438,6 +444,7 @@ interface CuadreCuentaApi {
     cuenta_banco_id: string;
     nombre_cuenta: string;
     institucion: string | null;
+    ultima_sincronizacion: string | null;
     saldo_banco: number | null;
     saldo_contable: number | null;
     diferencia: number | null;
@@ -447,7 +454,7 @@ interface CuadreCuentaApi {
     importe_ignorado: number;
     requiere_revision: number;
     banco_elimino_conciliado: number;
-    asiento_subcuenta_erronea: number;
+    asiento_descuadrado: number;
     partida_huerfana: number;
     total_alertas: number;
 }
@@ -460,6 +467,7 @@ const cuadreCuentaDesdeApi = (api: CuadreCuentaApi): CuadreCuenta => ({
     cuentaBancoId: api.cuenta_banco_id,
     nombreCuenta: api.nombre_cuenta,
     institucion: api.institucion,
+    ultimaSincronizacion: fechaDesdeApi(api.ultima_sincronizacion),
     saldoBanco: api.saldo_banco,
     saldoContable: api.saldo_contable,
     diferencia: api.diferencia,
@@ -469,7 +477,7 @@ const cuadreCuentaDesdeApi = (api: CuadreCuentaApi): CuadreCuenta => ({
     importeIgnorado: api.importe_ignorado,
     requiereRevision: api.requiere_revision,
     bancoEliminoConciliado: api.banco_elimino_conciliado,
-    asientoSubcuentaErronea: api.asiento_subcuenta_erronea,
+    asientoDescuadrado: api.asiento_descuadrado,
     partidaHuerfana: api.partida_huerfana,
     totalAlertas: api.total_alertas,
 });

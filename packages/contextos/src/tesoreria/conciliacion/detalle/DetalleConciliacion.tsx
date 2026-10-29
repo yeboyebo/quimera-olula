@@ -3,13 +3,14 @@ import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
+import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
 import { useEffect } from "react";
 import { ConciliarMovimientoBancario } from "../conciliar/ConciliarMovimientoBancario.js";
 import { ConciliarAsientoMovimientoBancario } from "../conciliar_asiento/ConciliarAsientoMovimientoBancario.js";
 import { ConciliarRemesaMovimientoBancario } from "../conciliar_remesa/ConciliarRemesaMovimientoBancario.js";
 import { DesconciliarMovimientoBancario } from "../desconciliar/DesconciliarMovimientoBancario.js";
 import { MovimientoBancario } from "../diseño.js";
-import { bloqueoConciliarMovimientoBancario, esIngresoMovimientoBancario } from "../dominio.js";
+import { bloqueoConciliarMovimientoBancario, conRemesas, esIngresoMovimientoBancario } from "../dominio.js";
 import { IgnorarMovimientoBancario } from "../ignorar/IgnorarMovimientoBancario.js";
 import { ReactivarMovimientoBancario } from "../reactivar/ReactivarMovimientoBancario.js";
 import { contextoDetalleConciliacionInicial, metaMovimientoBancario } from "./detalle.js";
@@ -25,13 +26,14 @@ import { TabPartidas } from "./TabPartidas.js";
  * Detalle de un movimiento bancario.
  *
  * Layout:
+ * - Cabecera (siempre visible, sobre las pestañas): fecha e importe del movimiento.
  * - Tab "Conciliación":
  *   - Siempre visible: SeccionEstadoConciliacion (etiqueta de estado + info
  *     del elemento ERP conciliado + botones Desconciliar/Reactivar).
  *   - Solo cuando el movimiento puede conciliarse (pendiente/candidatos):
- *     sub-pestañas "Recibos" (búsqueda de candidatos), "Remesas" (solo ingresos:
- *     remesas de cobro por conciliar) y "Partidas" (asientos contables sin
- *     movimiento equivalente).
+ *     sub-pestañas "Recibos" (búsqueda de candidatos), "Remesas" (remesas de
+ *     cobro por conciliar en un ingreso; de pago en un cargo, si su plugin está
+ *     activo) y "Partidas" (asientos contables sin movimiento equivalente).
  * - Tab "General": cabecera de solo lectura del movimiento.
  *
  * Los modales (Conciliar/Desconciliar/Ignorar/Reactivar) se montan aquí
@@ -70,7 +72,7 @@ export const DetalleConciliacion = ({
     const puedeVincularPartida =
         movimiento.estado === "pendiente" || movimiento.estado === "candidatos";
 
-    const tabRemesas = esIngresoMovimientoBancario(movimiento)
+    const tabRemesas = conRemesas(movimiento)
         ? [
             <Tab label="Remesas"
                 key="tab-remesas"
@@ -95,6 +97,12 @@ export const DetalleConciliacion = ({
             cerrarDetalle={() => emitir("movimiento_deseleccionado", null, true)}
         >
             <div className="DetalleConciliacion">
+                <div className="DetalleConciliacion-cabecera">
+                    <span>{formatearFechaDate(movimiento.fecha)}</span>
+                    <strong className={esIngresoMovimientoBancario(movimiento) ? "importe-ingreso" : "importe-cargo"}>
+                        {formatearMoneda(movimiento.importe, movimiento.divisa ?? "EUR")}
+                    </strong>
+                </div>
                 <Tabs children={[
                     <Tab label="Conciliación"
                         key="tab-conciliacion"
@@ -156,7 +164,7 @@ export const DetalleConciliacion = ({
                 />
             )}
             {estado === "DESCONCILIANDO" && (
-                <DesconciliarMovimientoBancario movimiento={movimiento} publicar={emitir} />
+                <DesconciliarMovimientoBancario conciliacion={conciliacionAplicada} publicar={emitir} />
             )}
             {estado === "IGNORANDO" && (
                 <IgnorarMovimientoBancario movimiento={movimiento} publicar={emitir} />

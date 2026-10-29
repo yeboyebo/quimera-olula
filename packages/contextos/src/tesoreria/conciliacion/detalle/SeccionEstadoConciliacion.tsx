@@ -4,15 +4,22 @@ import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate, formatearMoneda, FormModelo } from "@olula/lib/dominio.js";
+import { Subcuenta } from "../../comun/componentes/Subcuenta.tsx";
+import { ejercicioDelMovimiento } from "../conciliar_asiento/dominio.js";
 import { Conciliacion, ItemConciliacion, MovimientoBancario, TipoConciliacion } from "../diseño.js";
 import {
+    contrapartidaEsSubcuentaBanco,
     etiquetaEstadoMovimientoBancario,
     etiquetaOrigenConciliacion,
     etiquetaTipoConciliacion,
     reciboAsociadoMovimientoBancario,
+    esConciliacionRemesaPago,
+    esRemesaDeNominas,
     reciboIdsConciliacionRemesa,
+    subcuentaContrapartida,
+    urlAsientoConciliacion,
+    urlReciboConciliacion,
     urlRemesaConciliacion,
-    urlReciboMovimientoBancario,
     varianteEstadoMovimientoBancario,
 } from "../dominio.js";
 import "./TabConciliacion.css";
@@ -21,6 +28,16 @@ const TIPOS_COBRO: TipoConciliacion[] = ["cobrar_recibo_venta", "cobro_parcial_v
 
 const etiquetaTercero = (tipo: TipoConciliacion): string =>
     TIPOS_COBRO.includes(tipo) ? "Cliente" : "Proveedor";
+
+const etiquetaFechaPago = (tipo: TipoConciliacion): string =>
+    TIPOS_COBRO.includes(tipo) ? "Fecha de cobro" : "Fecha de pago";
+
+const EnlaceItem = ({ url, children }: { url: string | null; children: string }) =>
+    url ? (
+        <QBoton tamaño="pequeño" variante="borde" enlace={url}>
+            {children}
+        </QBoton>
+    ) : null;
 
 const ItemReciboConciliado = ({ item, divisa }: { item: ItemConciliacion; divisa: string }) => {
     const { recibo } = item;
@@ -34,9 +51,10 @@ const ItemReciboConciliado = ({ item, divisa }: { item: ItemConciliacion; divisa
                 <QInput nombre="ir-importe" label="Importe" soloLectura valor={formatearMoneda(recibo.importe, divisa)} />
                 <QInput nombre="ir-fecha-emision" label="Fecha emisión" soloLectura
                     valor={recibo.fechaEmision ? formatearFechaDate(recibo.fechaEmision) : "—"} />
-                <QInput nombre="ir-fecha-cobro" label="Fecha de cobro" soloLectura
+                <QInput nombre="ir-fecha-cobro" label={etiquetaFechaPago(item.tipo)} soloLectura
                     valor={recibo.fechaCobro ? formatearFechaDate(recibo.fechaCobro) : "—"} />
             </quimera-formulario>
+            <EnlaceItem url={urlReciboConciliacion(item)}>Ver recibo</EnlaceItem>
         </div>
     );
 };
@@ -45,51 +63,80 @@ const ItemRemesaConciliada = ({ item, divisa }: { item: ItemConciliacion; divisa
     const { remesa } = item;
     if (!remesa) return null;
     const recibos = reciboIdsConciliacionRemesa(item);
-    const url = urlRemesaConciliacion(item);
+    const dePago = esConciliacionRemesaPago(item.tipo);
+    const lineas = esRemesaDeNominas(remesa) ? "Nóminas pagadas" : "Recibos pagados";
     return (
         <div className="item-recibo-conciliado">
             <p className="tipo-item-recibo">{etiquetaTipoConciliacion(item.tipo)}</p>
             <quimera-formulario>
                 <QInput nombre="ir-remesa" label="Remesa" soloLectura valor={remesa.id} />
-                <QInput nombre="ir-fecha-cargo" label="Fecha de cargo" soloLectura
+                <QInput nombre="ir-fecha-cargo" label={dePago ? "Fecha de pago" : "Fecha de cargo"} soloLectura
                     valor={formatearFechaDate(remesa.fechaCargo)} />
                 <QInput nombre="ir-total-remesa" label="Total remesa" soloLectura
                     valor={formatearMoneda(remesa.total, divisa)} />
-                <QInput nombre="ir-recibos-remesa" label="Recibos pagados" soloLectura
-                    valor={recibos ? `${recibos.length} de ${remesa.numRecibos}` : "Todos los pendientes"} />
+                <QInput nombre="ir-recibos-remesa" label={lineas} soloLectura
+                    valor={recibos ? `${recibos.length} de ${remesa.numRecibos}`
+                        : dePago ? `${remesa.numRecibos}` : "Todos los pendientes"} />
                 <QInput nombre="ir-estado-remesa" label="Estado remesa" soloLectura valor={remesa.estado} />
             </quimera-formulario>
-            {url && (
-                <QBoton tamaño="pequeño" variante="borde" enlace={url}>
-                    Ver remesa
-                </QBoton>
-            )}
+            <EnlaceItem url={urlRemesaConciliacion(item)}>Ver remesa</EnlaceItem>
         </div>
     );
 };
 
 const ItemAsientoManualConciliado = ({
     item,
-    subcuentaBancoId,
+    movimiento,
 }: {
     item: ItemConciliacion;
-    subcuentaBancoId: string | null;
+    movimiento: MovimientoBancario;
 }) => {
-    const subcuentaUsada = (item.params.codigo_subcuenta as string | undefined) ?? null;
-    const subcuentaErronea =
-        subcuentaBancoId !== null && subcuentaUsada !== null && subcuentaUsada !== subcuentaBancoId;
+    const contrapartida = subcuentaContrapartida(item);
     return (
         <div className="item-recibo-conciliado">
             <p className="tipo-item-recibo">{etiquetaTipoConciliacion(item.tipo)}</p>
             <quimera-formulario>
-                <QInput nombre="am-subcuenta" label="Subcuenta contable" soloLectura valor={subcuentaUsada ?? "—"} />
+                {contrapartida ? (
+                    <Subcuenta nombre="am-subcuenta" label="Subcuenta de contrapartida" soloLectura
+                        ejercicioId={ejercicioDelMovimiento(movimiento)} valor={contrapartida} />
+                ) : (
+                    <QInput nombre="am-subcuenta" label="Subcuenta de contrapartida" soloLectura valor="—" />
+                )}
             </quimera-formulario>
-            {subcuentaErronea && (
+            {contrapartidaEsSubcuentaBanco(item, movimiento.subcuentaBancoId) && (
                 <QAviso variante="error">
-                    Subcuenta errónea: se usó <strong>{subcuentaUsada}</strong> en lugar de{" "}
-                    <strong>{subcuentaBancoId}</strong>. Desconcilia y reconcilia con la subcuenta correcta.
+                    Subcuenta errónea: la contrapartida <strong>{contrapartida}</strong> es la propia
+                    subcuenta del banco. Desconcilia y reconcilia con la subcuenta correcta.
                 </QAviso>
             )}
+            <EnlaceItem url={urlAsientoConciliacion(item)}>Ver asiento</EnlaceItem>
+        </div>
+    );
+};
+
+const ItemAsientoVinculadoConciliado = ({ item }: { item: ItemConciliacion }) => (
+    <div className="item-recibo-conciliado">
+        <p className="tipo-item-recibo">{etiquetaTipoConciliacion(item.tipo)}</p>
+        <quimera-formulario>
+            <QInput nombre="av-idasiento" label="Asiento contable" soloLectura
+                valor={String(item.params.idasiento ?? "—")} />
+        </quimera-formulario>
+        <EnlaceItem url={urlAsientoConciliacion(item)}>Ver asiento</EnlaceItem>
+    </div>
+);
+
+const ItemCuotaConciliada = ({ item, divisa }: { item: ItemConciliacion; divisa: string }) => {
+    const { cuota } = item;
+    if (!cuota) return null;
+    return (
+        <div className="item-recibo-conciliado">
+            <p className="tipo-item-recibo">{etiquetaTipoConciliacion(item.tipo)}</p>
+            <quimera-formulario>
+                <QInput nombre="cp-contrato" label="Contrato" soloLectura valor={cuota.contrato ?? "—"} />
+                <QInput nombre="cp-fecha" label="Fecha cuota" soloLectura valor={formatearFechaDate(cuota.fecha)} />
+                <QInput nombre="cp-total" label="Total cuota" soloLectura valor={formatearMoneda(cuota.total, divisa)} />
+            </quimera-formulario>
+            <EnlaceItem url={urlAsientoConciliacion(item)}>Ver asiento</EnlaceItem>
         </div>
     );
 };
@@ -138,15 +185,9 @@ export const SeccionEstadoConciliacion = ({
                             </span>
                             <span className="valor-recibo">{reciboAsociadoMovimientoBancario(movimiento)}</span>
                         </div>
-                        {urlReciboMovimientoBancario(movimiento) && (
-                            <QBoton tamaño="pequeño" variante="borde"
-                                enlace={urlReciboMovimientoBancario(movimiento) ?? undefined}>
-                                Ver recibo
-                            </QBoton>
-                        )}
                     </div>
                     {conciliacionAplicada && conciliacionAplicada.items.some(
-                        i => i.recibo !== null || i.remesa !== null
+                        i => i.recibo !== null || i.remesa !== null || i.cuota !== null
                             || i.tipo === "asiento_manual" || i.tipo === "asiento_vinculado"
                     ) && (
                         <div className="items-recibo-conciliados">
@@ -155,16 +196,16 @@ export const SeccionEstadoConciliacion = ({
                                     <ItemAsientoManualConciliado
                                         key={idx}
                                         item={item}
-                                        subcuentaBancoId={movimiento.subcuentaBancoId}
+                                        movimiento={movimiento}
                                     />
                                 ) : item.tipo === "asiento_vinculado" ? (
-                                    <div key={idx} className="item-recibo-conciliado">
-                                        <p className="tipo-item-recibo">{etiquetaTipoConciliacion(item.tipo)}</p>
-                                        <quimera-formulario>
-                                            <QInput nombre="av-idasiento" label="Asiento contable" soloLectura
-                                                valor={String(item.params.idasiento ?? "—")} />
-                                        </quimera-formulario>
-                                    </div>
+                                    <ItemAsientoVinculadoConciliado key={idx} item={item} />
+                                ) : item.cuota ? (
+                                    <ItemCuotaConciliada
+                                        key={idx}
+                                        item={item}
+                                        divisa={movimiento.divisa ?? "EUR"}
+                                    />
                                 ) : item.remesa ? (
                                     <ItemRemesaConciliada
                                         key={idx}

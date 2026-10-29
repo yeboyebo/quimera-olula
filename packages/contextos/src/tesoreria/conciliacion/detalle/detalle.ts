@@ -4,7 +4,7 @@ import { CandidatoConciliacion, Conciliacion, MovimientoBancario, RemesaCandidat
 import {
     conciliacionDesdeCandidato,
     conciliacionDesdeRemesa,
-    esIngresoMovimientoBancario,
+    conRemesas,
     movimientoBancarioVacio,
 } from "../dominio.js";
 import {
@@ -68,9 +68,9 @@ export const contextoDetalleConciliacionInicial: ContextoDetalleConciliacion = {
 const requiereCandidatos = (movimiento: MovimientoBancario): boolean =>
     movimiento.estado === "pendiente" || movimiento.estado === "candidatos";
 
-/** Una remesa de cobro solo la puede pagar un ingreso. */
+/** Un ingreso puede pagar una remesa de cobro y un cargo, una de pago (si su plugin está activo). */
 const cargarRemesas = async (movimiento: MovimientoBancario): Promise<RemesaCandidata[]> =>
-    requiereCandidatos(movimiento) && esIngresoMovimientoBancario(movimiento)
+    requiereCandidatos(movimiento) && conRemesas(movimiento)
         ? await getRemesasConciliacion(movimiento.id)
         : [];
 
@@ -132,7 +132,7 @@ export const seleccionarAsiento: ProcesarDetalle = async (contexto) => ({
     ...contexto,
     conciliacionSeleccionada: {
         conciliacionId: null,
-        items: [{ tipo: "asiento_manual" as const, params: {}, recibo: null, cuota: null, remesa: null }],
+        items: [{ tipo: "asiento_manual" as const, params: {}, recibo: null, cuota: null, remesa: null, asientoId: null }],
         probabilidad: null,
         justificacion: null,
     },
@@ -260,7 +260,7 @@ export const onVincularAsiento: ProcesarDetalle = async (contexto, payload) => {
     const { idasiento, importe } = payload as { idasiento: number; importe: number };
     await patchConciliarMovimientoBancario(
         contexto.movimiento.id,
-        { items: [{ tipo: "asiento_vinculado" as const, params: { idasiento, importe }, recibo: null, cuota: null, remesa: null }] }
+        { items: [{ tipo: "asiento_vinculado" as const, params: { idasiento, importe }, recibo: null, cuota: null, remesa: null, asientoId: null }] }
     );
     return refrescarMovimiento(contexto);
 };

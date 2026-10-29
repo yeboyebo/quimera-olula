@@ -34,6 +34,14 @@
         flex: 1;
     }
 
+    .CuadreCuenta-sincronizacion {
+        color: var(--color-texto-secundario);
+
+        strong {
+            color: var(--color-texto);
+        }
+    }
+
     .CuadreCuenta-saldos {
         display: flex;
         gap: var(--espaciado-s);
@@ -126,6 +134,25 @@
         flex-direction: column;
         gap: 4px;
         width: 100%;
+    }
+
+    .tarjeta-movimiento-bancario-linea {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--espaciado-s);
+    }
+
+    .tarjeta-movimiento-bancario-concepto {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .tarjeta-movimiento-bancario-importe,
+    .tarjeta-movimiento-bancario-fecha {
+        flex-shrink: 0;
     }
 
     .FiltroCuadreActivo {

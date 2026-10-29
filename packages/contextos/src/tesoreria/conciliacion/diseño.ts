@@ -24,7 +24,8 @@ export type TipoConciliacion =
     | "asiento_vinculado"
     | "cuota_prestamo"
     | "cobrar_remesa"
-    | "cobro_parcial_remesa";
+    | "cobro_parcial_remesa"
+    | "pagar_remesa";
 
 /** Recibo que liquidaría una casación de recibo. */
 export interface ReciboConciliacion {
@@ -47,14 +48,17 @@ export interface CuotaConciliacion {
     total: number;
 }
 
-/** Remesa de cobro que pagaría una casación de remesa. */
+/** Remesa de cobro o de pago que pagaría una casación de remesa. */
 export interface RemesaConciliacion {
     id: string;
+    /** En una remesa de pago, su fecha de pago prevista. */
     fechaCargo: Date;
     total: number;
     estado: string;
-    /** Todos los recibos de la remesa; los que paga la casación van en `params.recibo_ids` si es parcial. */
+    /** Todos los recibos (o nóminas) de la remesa; los que paga la casación van en `params.recibo_ids` si es parcial. */
     numRecibos: number;
+    /** "Recibos" o "Nóminas" en una remesa de pago; null en una de cobro. */
+    tipoRemesa: string | null;
 }
 
 /**
@@ -68,8 +72,10 @@ export interface ItemConciliacion {
     recibo: ReciboConciliacion | null;
     /** Cuota de préstamo (solo si tipo === 'cuota_prestamo'). */
     cuota: CuotaConciliacion | null;
-    /** Remesa de cobro (solo en `cobrar_remesa` y `cobro_parcial_remesa`). */
+    /** Remesa (solo en `cobrar_remesa`, `cobro_parcial_remesa` y `pagar_remesa`). */
     remesa: RemesaConciliacion | null;
+    /** Asiento vinculado o, en la conciliación aplicada, el generado al conciliar. */
+    asientoId: string | null;
 }
 
 /** Conciliación candidata de un movimiento, propuesta por las reglas o la IA. */
@@ -210,13 +216,18 @@ export interface ReciboRemesaCandidata {
 }
 
 /**
- * Remesa de cobro emitida en la cuenta del movimiento (solo ingresos) cuyos
- * recibos pendientes suman al menos su importe. `id` es el de la remesa.
+ * Remesa de cobro emitida en la cuenta de un ingreso cuyos recibos pendientes
+ * suman al menos su importe, o remesa de pago emitida en la cuenta de un cargo
+ * por su importe exacto (en `recibos`, sus recibos o nóminas; en `fechaCargo`,
+ * su fecha de pago prevista). `id` es el de la remesa.
  */
 export interface RemesaCandidata extends Entidad {
     id: string;
-    /** `cobrar_remesa` si lo pendiente es el importe del movimiento, `cobro_parcial_remesa` si es más. */
+    /** `cobrar_remesa` si lo pendiente es el importe del movimiento, `cobro_parcial_remesa` si es más;
+     * `pagar_remesa` en una remesa de pago, que se paga siempre entera. */
     tipoConciliacion: TipoConciliacion;
+    /** "Recibos" o "Nóminas" en una remesa de pago; null en una de cobro. */
+    tipoRemesa: string | null;
     fecha: Date;
     fechaCargo: Date;
     total: number;
@@ -243,6 +254,8 @@ export interface CuadreCuenta {
     cuentaBancoId: string;
     nombreCuenta: string;
     institucion: string | null;
+    /** Última sincronización con el banco de la conexión a la que pertenece la cuenta. */
+    ultimaSincronizacion: Date | null;
     /** Saldo reportado por el banco (wealthreader). */
     saldoBanco: number | null;
     /** Saldo acumulado en co_partidas para la subcuenta contable. */
@@ -255,7 +268,8 @@ export interface CuadreCuenta {
     importeIgnorado: number;
     requiereRevision: number;
     bancoEliminoConciliado: number;
-    asientoSubcuentaErronea: number;
+    /** Conciliados con un asiento (manual o cuota de préstamo) que no mueve la subcuenta bancaria por su importe. */
+    asientoDescuadrado: number;
     /** Partidas contables en la subcuenta bancaria sin movimiento bancario conciliado equivalente (heurística: misma fecha e importe). */
     partidaHuerfana: number;
     totalAlertas: number;

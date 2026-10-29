@@ -5,6 +5,8 @@ import { formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.ts";
 import { Conciliacion, ItemConciliacion, MovimientoBancario } from "../../diseño.js";
 import {
     BloqueoConciliarMovimiento,
+    esConciliacionRemesaPago,
+    esRemesaDeNominas,
     etiquetaOrigenConciliacion,
     etiquetaTipoConciliacion,
     reciboIdsConciliacionRemesa,
@@ -28,7 +30,11 @@ const DescripcionItem = ({ item, divisa }: { item: ItemConciliacion; divisa: str
             </span>
             {item.remesa && (
                 <span className="recibo-conciliacion">
-                    {`Cargo ${formatearFechaDate(item.remesa.fechaCargo)} · `
+                    {esConciliacionRemesaPago(item.tipo)
+                        ? `Pago ${formatearFechaDate(item.remesa.fechaCargo)} · `
+                        + `${item.remesa.numRecibos} ${esRemesaDeNominas(item.remesa) ? "nóminas" : "recibos"}`
+                        + ` · total ${formatearMoneda(item.remesa.total, divisa)}`
+                        : `Cargo ${formatearFechaDate(item.remesa.fechaCargo)} · `
                         + (recibosRemesa
                             ? `${recibosRemesa.length} de ${item.remesa.numRecibos} recibos`
                             : `recibos pendientes de ${item.remesa.numRecibos}`)

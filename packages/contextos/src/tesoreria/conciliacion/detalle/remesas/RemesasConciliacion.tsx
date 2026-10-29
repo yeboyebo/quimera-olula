@@ -4,14 +4,21 @@ import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { formatearFechaDate } from "@olula/lib/dominio.ts";
 import { MovimientoBancario, RemesaCandidata } from "../../diseño.js";
-import { BloqueoConciliarMovimiento, etiquetaTipoConciliacion, urlRemesa } from "../../dominio.js";
+import {
+    BloqueoConciliarMovimiento,
+    esIngresoMovimientoBancario,
+    esRemesaDeNominas,
+    etiquetaTipoConciliacion,
+    urlRemesa,
+} from "../../dominio.js";
 import "./RemesasConciliacion.css";
 
 const SIN_ORDEN = ["", ""];
 
 /**
- * Remesas de cobro que puede pagar un ingreso (GET `.../remesas`): emitidas en
- * la cuenta del movimiento y con recibos pendientes por al menos su importe.
+ * Remesas que puede pagar el movimiento (GET `.../remesas`): de cobro si es un
+ * ingreso, emitidas en su cuenta y con recibos pendientes por al menos su
+ * importe; de pago si es un cargo, emitidas en su cuenta y por su importe exacto.
  * Como los candidatos, se recalculan al cargar el movimiento y no se paginan.
  * "Conciliar" abre el modal donde se confirman los recibos que se pagan.
  */
@@ -27,6 +34,7 @@ export const RemesasConciliacion = ({
     publicar: EmitirEvento;
 }) => {
     const divisa = movimiento.divisa ?? "EUR";
+    const ingreso = esIngresoMovimientoBancario(movimiento);
 
     const metaTablaRemesas: MetaTabla<RemesaCandidata> = [
         {
@@ -40,7 +48,7 @@ export const RemesasConciliacion = ({
                 </div>
             ),
         },
-        { id: "fechaCargo", cabecera: "Cargo", tipo: "fecha", ancho: "12%" },
+        { id: "fechaCargo", cabecera: ingreso ? "Cargo" : "F. pago", tipo: "fecha", ancho: "12%" },
         {
             id: "diasDiferencia",
             cabecera: "Días",
@@ -49,11 +57,11 @@ export const RemesasConciliacion = ({
         },
         {
             id: "recibos",
-            cabecera: "Recibos pendientes",
+            cabecera: ingreso ? "Recibos pendientes" : "Recibos / nóminas",
             ancho: "14%",
-            render: (r) => `${r.recibos.length}`,
+            render: (r) => `${r.recibos.length}${esRemesaDeNominas(r) ? " nóminas" : ""}`,
         },
-        { id: "importePendiente", cabecera: "Pendiente", tipo: "moneda", divisa, ancho: "12%" },
+        { id: "importePendiente", cabecera: ingreso ? "Pendiente" : "Total", tipo: "moneda", divisa, ancho: "12%" },
         {
             id: "tipoConciliacion",
             cabecera: "Tipo",
@@ -78,7 +86,7 @@ export const RemesasConciliacion = ({
             ancho: "22%",
             render: (r) => (
                 <div className="acciones-remesa">
-                    <QBoton tamaño="pequeño" variante="borde" enlace={urlRemesa(r.id)}>
+                    <QBoton tamaño="pequeño" variante="borde" enlace={urlRemesa(r.id, r.tipoConciliacion)}>
                         Ver
                     </QBoton>
                     <QBoton
@@ -100,7 +108,9 @@ export const RemesasConciliacion = ({
             <h4>Remesas por conciliar</h4>
             {remesas.length === 0 ? (
                 <p className="sin-remesas">
-                    No hay remesas emitidas en esta cuenta con recibos pendientes por este importe o mayor.
+                    {ingreso
+                        ? "No hay remesas emitidas en esta cuenta con recibos pendientes por este importe o mayor."
+                        : "No hay remesas de pago emitidas en esta cuenta por este importe."}
                 </p>
             ) : (
                 <QTabla<RemesaCandidata>

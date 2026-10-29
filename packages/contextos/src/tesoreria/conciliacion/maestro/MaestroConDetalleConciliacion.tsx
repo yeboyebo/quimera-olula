@@ -8,7 +8,7 @@ import {
     MetaCampoFiltro,
     MetaFiltro,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import { ClausulaFiltro, Criteria } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Criteria, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaDefecto, formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
@@ -153,6 +153,9 @@ export const MaestroConDetalleConciliacion = () => {
 
     useUrlParams(movimientos.activo, movimientos.criteria);
 
+    // Cuenta fijada por URL o, en el listado general, la elegida en el filtro.
+    const cuentaFiltrada = cuentaBancoId ?? cuentaBancoDeFiltro(movimientos.criteria.filtro);
+
     const location = useLocation();
     /**
      * Se usa para saltar el primer disparo del efecto (el montaje ya está
@@ -209,7 +212,7 @@ export const MaestroConDetalleConciliacion = () => {
                 Maestro={
                     <>
                         <h2>{tituloConciliacion(cuentaBancoId, movimientos.lista)}</h2>
-                        <PanelCuadreBancario version={versionCuadre} />
+                        <PanelCuadreBancario cuentaBancoId={cuentaFiltrada} version={versionCuadre} />
                         {etiquetaCuadre && (
                             <div className="FiltroCuadreActivo">
                                 <span>Mostrando: <strong>{etiquetaCuadre}</strong></span>
@@ -285,6 +288,14 @@ export const MaestroConDetalleConciliacion = () => {
     );
 };
 
+const cuentaBancoDeFiltro = (filtro: Filtro): string | null => {
+    if (!Array.isArray(filtro)) return null;
+    const clausula = (filtro as unknown[])
+        .filter((c): c is ClausulaFiltro => Array.isArray(c))
+        .find((c) => c[0] === "cuenta_banco_id" && c[1] === "=");
+    return clausula?.[2] ?? null;
+};
+
 const tituloConciliacion = (cuentaBancoId: string | null, movimientos: MovimientoBancario[]): string => {
     if (!cuentaBancoId) return "Conciliación bancaria";
 
@@ -298,13 +309,17 @@ const tituloConciliacion = (cuentaBancoId: string | null, movimientos: Movimient
  */
 const TarjetaMovimientoBancario = (movimiento: MovimientoBancario) => (
     <div className="tarjeta-movimiento-bancario" key={movimiento.id}>
-        <div className="tarjeta-movimiento-bancario-fecha">{formatearFechaDate(movimiento.fecha)}</div>
-        <div className="tarjeta-movimiento-bancario-concepto">{movimiento.concepto}</div>
-        <span className={esIngresoMovimientoBancario(movimiento) ? "importe-ingreso" : "importe-cargo"}>
-            {formatearMoneda(movimiento.importe, movimiento.divisa ?? "EUR")}
-        </span>
-        <QEtiqueta variante={varianteEstadoMovimientoBancario(movimiento.estado)}>
-            {etiquetaEstadoMovimientoBancario(movimiento.estado)}
-        </QEtiqueta>
+        <div className="tarjeta-movimiento-bancario-linea">
+            <span className="tarjeta-movimiento-bancario-concepto">{movimiento.concepto}</span>
+            <span className={`tarjeta-movimiento-bancario-importe ${esIngresoMovimientoBancario(movimiento) ? "importe-ingreso" : "importe-cargo"}`}>
+                {formatearMoneda(movimiento.importe, movimiento.divisa ?? "EUR")}
+            </span>
+        </div>
+        <div className="tarjeta-movimiento-bancario-linea">
+            <QEtiqueta variante={varianteEstadoMovimientoBancario(movimiento.estado)}>
+                {etiquetaEstadoMovimientoBancario(movimiento.estado)}
+            </QEtiqueta>
+            <span className="tarjeta-movimiento-bancario-fecha">{formatearFechaDate(movimiento.fecha)}</span>
+        </div>
     </div>
 );
