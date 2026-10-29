@@ -4,6 +4,10 @@ import { InformeDiario } from "./informe/vistas/diario/InformeDiario.tsx";
 import { InformeLibroFacturasEmitidas } from "./informe/vistas/libro_facturas_iva/InformeLibroFacturasEmitidas.tsx";
 import { InformeLibroFacturasRecibidas } from "./informe/vistas/libro_facturas_iva/InformeLibroFacturasRecibidas.tsx";
 import { InformeMayor } from "./informe/vistas/mayor/InformeMayor.tsx";
+import { MaestroConDetalleLibroDiario } from "./libro_diario/maestro/MaestroConDetalleLibroDiario.tsx";
+import { MaestroConDetalleLibroFacturasEmitidas } from "./libro_facturas_emitidas/maestro/MaestroConDetalleLibroFacturasEmitidas.tsx";
+import { MaestroConDetalleLibroFacturasRecibidas } from "./libro_facturas_recibidas/maestro/MaestroConDetalleLibroFacturasRecibidas.tsx";
+import { MaestroConDetalleLibroMayor } from "./libro_mayor/maestro/MaestroConDetalleLibroMayor.tsx";
 import { PantallaPgc } from "./pgc/Pgc.tsx";
 
 export class RouterFactoryContabilidadOlula {
@@ -11,6 +15,10 @@ export class RouterFactoryContabilidadOlula {
         "contabilidad/asiento": MaestroConDetalleAsiento,
         "contabilidad/pgc": PantallaPgc,
         "contabilidad/cuentas_anuales": MaestroConDetalleCuentasAnuales,
+        "contabilidad/libro_diario": MaestroConDetalleLibroDiario,
+        "contabilidad/libro_mayor": MaestroConDetalleLibroMayor,
+        "contabilidad/libro_facturas_emitidas": MaestroConDetalleLibroFacturasEmitidas,
+        "contabilidad/libro_facturas_recibidas": MaestroConDetalleLibroFacturasRecibidas,
         "contabilidad/informe/mayor": InformeMayor,
         "contabilidad/informe/diario": InformeDiario,
         "contabilidad/informe/libro_facturas_emitidas": InformeLibroFacturasEmitidas,

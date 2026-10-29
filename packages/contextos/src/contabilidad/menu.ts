@@ -3,19 +3,19 @@ export const menuContabilidad = {
     "Contabilidad/Asientos": { url: "/contabilidad/asiento", regla: "contabilidad.asiento" },
     "Contabilidad/PGC": { url: "/contabilidad/pgc", regla: "contabilidad.asiento" },
     "Contabilidad/Libro diario": {
-        url: "/contabilidad/informe/diario",
+        url: "/contabilidad/libro_diario",
         regla: "contabilidad.asiento",
     },
     "Contabilidad/Libro mayor": {
-        url: "/contabilidad/informe/mayor",
+        url: "/contabilidad/libro_mayor",
         regla: "contabilidad.asiento",
     },
     "Contabilidad/Informe Facturas Emitidas": {
-        url: "/contabilidad/informe/libro_facturas_emitidas",
+        url: "/contabilidad/libro_facturas_emitidas",
         regla: "contabilidad.asiento",
     },
     "Contabilidad/Informe Facturas Recibidas": {
-        url: "/contabilidad/informe/libro_facturas_recibidas",
+        url: "/contabilidad/libro_facturas_recibidas",
         regla: "contabilidad.asiento",
     },
     "Contabilidad/Informe Cuentas Anuales": {
