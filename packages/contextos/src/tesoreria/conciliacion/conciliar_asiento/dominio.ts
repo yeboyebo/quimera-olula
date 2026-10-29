@@ -1,4 +1,5 @@
 import { MetaModelo } from "@olula/lib/dominio.js";
+import { MovimientoBancario } from "../diseño.js";
 import { DatosAsientoMovimiento } from "./diseño.js";
 
 export const datosAsientoVacios = (concepto: string): DatosAsientoMovimiento => ({
@@ -18,3 +19,9 @@ export const paramsAsiento = (datos: DatosAsientoMovimiento): Record<string, unk
     codigo_subcuenta: datos.codigoSubcuenta.trim(),
     concepto: datos.concepto.trim(),
 });
+
+/** Ejercicio en el que buscar la subcuenta: el del año de la fecha del movimiento,
+ * que es donde el servidor genera el asiento (los ejercicios se identifican por año,
+ * como en contabilidad/asiento ejercicioActual). */
+export const ejercicioDelMovimiento = (movimiento: MovimientoBancario): string =>
+    String(movimiento.fecha.getFullYear());
