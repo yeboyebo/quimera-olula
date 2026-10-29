@@ -1,4 +1,5 @@
 import { MaestroConDetalleAsiento } from "./asiento/vistas/maestro/MaestroConDetalleAsiento.tsx";
+import { MaestroConDetalleCuentasAnuales } from "./cuentas_anuales/maestro/MaestroConDetalleCuentasAnuales.tsx";
 import { InformeDiario } from "./informe/vistas/diario/InformeDiario.tsx";
 import { InformeLibroFacturasEmitidas } from "./informe/vistas/libro_facturas_iva/InformeLibroFacturasEmitidas.tsx";
 import { InformeLibroFacturasRecibidas } from "./informe/vistas/libro_facturas_iva/InformeLibroFacturasRecibidas.tsx";
@@ -9,6 +10,7 @@ export class RouterFactoryContabilidadOlula {
     static router = {
         "contabilidad/asiento": MaestroConDetalleAsiento,
         "contabilidad/pgc": PantallaPgc,
+        "contabilidad/cuentas_anuales": MaestroConDetalleCuentasAnuales,
         "contabilidad/informe/mayor": InformeMayor,
         "contabilidad/informe/diario": InformeDiario,
         "contabilidad/informe/libro_facturas_emitidas": InformeLibroFacturasEmitidas,

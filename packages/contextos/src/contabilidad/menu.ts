@@ -18,4 +18,8 @@ export const menuContabilidad = {
         url: "/contabilidad/informe/libro_facturas_recibidas",
         regla: "contabilidad.asiento",
     },
+    "Contabilidad/Informe Cuentas Anuales": {
+        url: "/contabilidad/cuentas_anuales",
+        regla: "contabilidad.asiento",
+    },
 };
