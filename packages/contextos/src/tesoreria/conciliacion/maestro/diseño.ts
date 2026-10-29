@@ -1,3 +1,4 @@
+import { ClausulaFiltro } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import {
     MovimientoBancario,
@@ -25,4 +26,21 @@ export type ContextoMaestroConciliacion = {
     resumenSincronizacion: ResumenSincronizacionMovimientoBancario | null;
     /** Resumen a mostrar tras "Conciliar automáticamente" (ver ResumenConciliacionAutomatica.tsx). */
     resumenConciliacionAutomatica: ResumenConciliacionAutomatica | null;
+    /**
+     * Se incrementa cada vez que termina una sincronización o conciliación automática.
+     * Sirve de trigger para recargar el PanelCuadreBancario.
+     */
+    versionCuadre: number;
+    /**
+     * Cláusulas de filtro impuestas por el panel de cuadre bancario (badge clickado).
+     * No son editables por el usuario — se muestran como indicador dismissable y se
+     * aplican siempre a la consulta junto con los filtros del usuario.
+     * Lista vacía = modo libre (sin filtro de cuadre activo).
+     */
+    filtrosCuadre: ClausulaFiltro[];
+    /**
+     * Texto legible del filtro de cuadre activo (e.g. "sin conciliar").
+     * null cuando no hay filtro de cuadre.
+     */
+    etiquetaCuadre: string | null;
 };

@@ -5,14 +5,16 @@ import { Listado } from "@olula/componentes/maestro/Listado.js";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import {
     filtroFechas,
+    MetaCampoFiltro,
     MetaFiltro,
 } from "@olula/componentes/maestro/maestroFiltros/MaestroFiltrosActivoControlado.js";
-import { ClausulaFiltro, Criteria } from "@olula/lib/diseño.ts";
+import { ClausulaFiltro, Criteria, Filtro } from "@olula/lib/diseño.ts";
 import { criteriaDefecto, formatearFechaDate, formatearMoneda } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useEffect, useMemo } from "react";
-import { useParams } from "react-router";
+import { useEffect, useMemo, useRef } from "react";
+import { useLocation, useParams } from "react-router";
+import { CuentaBancariaSelect } from "#/empresa/comun/componentes/cuenta_bancaria_select.tsx";
 import { DetalleConciliacion } from "../detalle/DetalleConciliacion.js";
 import { MovimientoBancario } from "../diseño.js";
 import {
@@ -31,8 +33,22 @@ import { ResumenSincronizacionMovimientoBancario } from "./ResumenSincronizacion
 import { ConciliarAutomaticamenteMovimientos } from "./ConciliarAutomaticamenteMovimientos.js";
 import { ResumenConciliacionAutomatica } from "./ResumenConciliacionAutomatica.js";
 import { SincronizarMovimientoBancario } from "./SincronizarMovimientoBancario.js";
+import { PanelCuadreBancario } from "./PanelCuadreBancario.js";
 
-const metaFiltroMovimientoBancario: MetaFiltro = {
+const metaFiltroCuenta: MetaCampoFiltro = {
+    id: "cuenta_banco_id",
+    label: "Cuenta bancaria",
+    filtro: (v) => (v ? ["cuenta_banco_id", "=", v as string] : null),
+    render: (valor, onChange) => (
+        <CuentaBancariaSelect
+            valor={valor as string | undefined}
+            label="Cuenta bancaria"
+            onChange={(op) => onChange(op?.valor ?? null)}
+        />
+    ),
+};
+
+const metaFiltroBase: MetaFiltro = {
     estado: {
         id: "estado",
         label: "Estado",
@@ -85,8 +101,42 @@ export const MaestroConDetalleConciliacion = () => {
     const criteriaBase = useMemo(criteriaMovimientosPendientes, []);
     const { cuenta_id: cuentaBancoId = null } = useParams();
 
-    const { id, criteria } = getUrlParams();
-    const criteriaInicial = criteria.filtro.length > 0 ? criteria : criteriaBase;
+    // Cuando la cuenta viene fijada por URL no se ofrece el selector en el filtro.
+    const metaFiltro: MetaFiltro = useMemo(
+        () => cuentaBancoId
+            ? metaFiltroBase
+            : { cuenta_banco_id: metaFiltroCuenta, ...metaFiltroBase },
+        [cuentaBancoId],
+    );
+
+    /**
+     * Detecta si el usuario llega desde un badge del panel de cuadre bancario.
+     * Si hay `_label` en la URL, los filtros son del cuadre (no del usuario):
+     *   - `filtrosCuadreInicial` se guarda en el contexto de la máquina y se aplica
+     *     siempre a la consulta, independientemente de los filtros manuales.
+     *   - `criteriaInicial` del Listado empieza limpio (solo criteriaBase).
+     * Si no hay `_label`, comportamiento previo: filtros de URL o criteriaBase.
+     */
+    const { id, filtrosCuadreInicial, criteriaInicial, etiquetaCuadreInicial } = useMemo(() => {
+        const params = new URLSearchParams(window.location.search);
+        const label = params.get("_label");
+        const { id: urlId, criteria } = getUrlParams();
+
+        if (label) {
+            return {
+                id: urlId,
+                filtrosCuadreInicial: criteria.filtro as ClausulaFiltro[],
+                criteriaInicial: { ...criteriaBase, filtro: [] as ClausulaFiltro[] },
+                etiquetaCuadreInicial: label,
+            };
+        }
+        return {
+            id: urlId,
+            filtrosCuadreInicial: [] as ClausulaFiltro[],
+            criteriaInicial: criteria.filtro.length > 0 ? criteria : criteriaBase,
+            etiquetaCuadreInicial: null as string | null,
+        };
+    }, [criteriaBase]);
 
     const { ctx, emitir } = useMaquina(getMaquina, {
         estado: "INICIAL",
@@ -94,11 +144,62 @@ export const MaestroConDetalleConciliacion = () => {
         cuentaBancoId,
         resumenSincronizacion: null,
         resumenConciliacionAutomatica: null,
+        versionCuadre: 0,
+        filtrosCuadre: filtrosCuadreInicial,
+        etiquetaCuadre: etiquetaCuadreInicial,
     });
 
-    const { estado, movimientos, resumenSincronizacion, resumenConciliacionAutomatica } = ctx;
+    const { estado, movimientos, resumenSincronizacion, resumenConciliacionAutomatica, versionCuadre, etiquetaCuadre } = ctx;
 
     useUrlParams(movimientos.activo, movimientos.criteria);
+
+    // Cuenta fijada por URL o, en el listado general, la elegida en el filtro.
+    const cuentaFiltrada = cuentaBancoId ?? cuentaBancoDeFiltro(movimientos.criteria.filtro);
+
+    const location = useLocation();
+    /**
+     * Se usa para saltar el primer disparo del efecto (el montaje ya está
+     * inicializado desde useMemo, no hace falta volver a emitir).
+     */
+    const esPrimerRenderRef = useRef(true);
+
+    /**
+     * Detecta navegaciones de badge dentro de la misma ruta montada
+     * (e.g. el usuario ya está en /cuentas/X/movimientos y clica otro badge).
+     *
+     * Por qué location.key y no location.search:
+     *   useUrlParams llama a window.history.replaceState directamente, sin pasar
+     *   por React Router. React Router no detecta esos cambios, así que
+     *   location.search queda como la URL del badge original aunque la barra de
+     *   direcciones del navegador ya muestre otra cosa. Si dependiéramos de
+     *   location.search nunca veríamos el cambio cuando el usuario vuelve a clicar
+     *   el mismo badge (React Router cree que ya está en esa URL).
+     *
+     *   location.key sí cambia en cada pushState de <Link> (React Router lo gestiona
+     *   internamente aunque la URL "parezca" la misma), y NO cambia con replaceState
+     *   de useUrlParams. Es el dep correcto.
+     *
+     *   Leemos window.location.search (URL real del navegador) para obtener _label,
+     *   no location.search (URL interna stale de React Router).
+     */
+    useEffect(() => {
+        if (esPrimerRenderRef.current) {
+            esPrimerRenderRef.current = false;
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const label = params.get("_label");
+        if (!label) return;
+
+        const { criteria } = getUrlParams();
+        emitir("filtro_cuadre_establecido", {
+            filtrosCuadre: criteria.filtro as ClausulaFiltro[],
+            etiquetaCuadre: label,
+            criteriaBase,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.key]);
 
     useEffect(() => {
         emitir("recarga_de_movimientos_solicitada", movimientos.criteria);
@@ -111,9 +212,21 @@ export const MaestroConDetalleConciliacion = () => {
                 Maestro={
                     <>
                         <h2>{tituloConciliacion(cuentaBancoId, movimientos.lista)}</h2>
+                        <PanelCuadreBancario cuentaBancoId={cuentaFiltrada} version={versionCuadre} />
+                        {etiquetaCuadre && (
+                            <div className="FiltroCuadreActivo">
+                                <span>Mostrando: <strong>{etiquetaCuadre}</strong></span>
+                                <QBoton
+                                    variante="borde"
+                                    onClick={() => emitir("filtro_cuadre_limpiado", criteriaBase)}
+                                >
+                                    Ver todos
+                                </QBoton>
+                            </div>
+                        )}
                         <Listado<MovimientoBancario>
                             metaTabla={metaTablaMovimientoBancario}
-                            metaFiltro={metaFiltroMovimientoBancario}
+                            metaFiltro={etiquetaCuadre ? {} : metaFiltro}
                             criteria={movimientos.criteria}
                             modoInicial="tabla"
                             tarjeta={TarjetaMovimientoBancario}
@@ -175,6 +288,14 @@ export const MaestroConDetalleConciliacion = () => {
     );
 };
 
+const cuentaBancoDeFiltro = (filtro: Filtro): string | null => {
+    if (!Array.isArray(filtro)) return null;
+    const clausula = (filtro as unknown[])
+        .filter((c): c is ClausulaFiltro => Array.isArray(c))
+        .find((c) => c[0] === "cuenta_banco_id" && c[1] === "=");
+    return clausula?.[2] ?? null;
+};
+
 const tituloConciliacion = (cuentaBancoId: string | null, movimientos: MovimientoBancario[]): string => {
     if (!cuentaBancoId) return "Conciliación bancaria";
 
@@ -188,13 +309,17 @@ const tituloConciliacion = (cuentaBancoId: string | null, movimientos: Movimient
  */
 const TarjetaMovimientoBancario = (movimiento: MovimientoBancario) => (
     <div className="tarjeta-movimiento-bancario" key={movimiento.id}>
-        <div className="tarjeta-movimiento-bancario-fecha">{formatearFechaDate(movimiento.fecha)}</div>
-        <div className="tarjeta-movimiento-bancario-concepto">{movimiento.concepto}</div>
-        <span className={esIngresoMovimientoBancario(movimiento) ? "importe-ingreso" : "importe-cargo"}>
-            {formatearMoneda(movimiento.importe, movimiento.divisa ?? "EUR")}
-        </span>
-        <QEtiqueta variante={varianteEstadoMovimientoBancario(movimiento.estado)}>
-            {etiquetaEstadoMovimientoBancario(movimiento.estado)}
-        </QEtiqueta>
+        <div className="tarjeta-movimiento-bancario-linea">
+            <span className="tarjeta-movimiento-bancario-concepto">{movimiento.concepto}</span>
+            <span className={`tarjeta-movimiento-bancario-importe ${esIngresoMovimientoBancario(movimiento) ? "importe-ingreso" : "importe-cargo"}`}>
+                {formatearMoneda(movimiento.importe, movimiento.divisa ?? "EUR")}
+            </span>
+        </div>
+        <div className="tarjeta-movimiento-bancario-linea">
+            <QEtiqueta variante={varianteEstadoMovimientoBancario(movimiento.estado)}>
+                {etiquetaEstadoMovimientoBancario(movimiento.estado)}
+            </QEtiqueta>
+            <span className="tarjeta-movimiento-bancario-fecha">{formatearFechaDate(movimiento.fecha)}</span>
+        </div>
     </div>
 );
