@@ -1,9 +1,11 @@
+import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QCheckbox } from "@olula/componentes/atomos/qcheckbox.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { puede } from "@olula/lib/dominio.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
 import { BorrarCuentaBancaria } from "../borrar/BorrarCuentaBancaria.js";
@@ -69,6 +71,13 @@ export const DetalleCuentaBancaria = ({
         >
             <div className="DetalleCuentaBancaria">
                 <QuimeraAcciones acciones={accionesCuenta} />
+                {puede("tesoreria.conciliacion") && (
+                    <div className="botones">
+                        <QBoton variante="borde" enlace={`/tesoreria/cuentas_bancarias/${cuenta.id}/conciliacion`}>
+                            Conciliación bancaria
+                        </QBoton>
+                    </div>
+                )}
                 <quimera-formulario>
                     <QInput label="Descripción" {...uiProps("descripcion")} />
                     <QInput label="IBAN" {...uiProps("iban")} />
