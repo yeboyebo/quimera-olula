@@ -1,6 +1,6 @@
 import { QAutocompletar } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
-import { getCuentasBancarias } from "../../cuentas_bancarias/infraestructura.ts";
+import { getCuentasBancarias } from "#/tesoreria/cuentas_bancarias/infraestructura.ts";
 
 interface CuentaBancariaProps {
   descripcion?: string;
@@ -20,7 +20,7 @@ export const CuentaBancaria = ({
   nombre = "cuenta_bancaria_id",
   label = "Cuenta bancaria",
   deshabilitado = false,
-  enlace = "/empresa/cuentas_bancarias?id={id}",
+  enlace = "/tesoreria/cuentas_bancarias?id={id}",
   onChange,
   ...props
 }: CuentaBancariaProps) => {

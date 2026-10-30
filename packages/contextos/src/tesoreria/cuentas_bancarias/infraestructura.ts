@@ -1,6 +1,6 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { normalizarIban } from "@olula/lib/iban.ts";
-import Empresa_Urls from "../comun/urls.js";
+import Tesoreria_Urls from "#/tesoreria/comun/urls.ts";
 import {
     CambiosCuentaBancaria,
     CuentaBancaria,
@@ -34,7 +34,7 @@ export interface NuevaCuentaBancariaApi {
 
 type CambiosCuentaBancariaApi = Partial<CuentaBancariaApi>;
 
-const baseUrl = new Empresa_Urls().CUENTAS_BANCARIAS;
+const baseUrl = new Tesoreria_Urls().CUENTAS_BANCARIAS;
 
 export const cuentaBancariaDesdeApi = (api: CuentaBancariaApi): CuentaBancaria => ({
     id: api.id,
