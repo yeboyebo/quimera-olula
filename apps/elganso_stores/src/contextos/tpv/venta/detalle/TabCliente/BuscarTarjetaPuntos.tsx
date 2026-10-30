@@ -42,12 +42,14 @@ export const BuscarTarjetaPuntos = ({
           nombre="buscar_tarjeta_email"
           valor={email}
           onChange={(valor) => setEmail(String(valor ?? ""))}
+          onEnterKeyUp={() => buscar()}
         />
         <QInput
           label="Teléfono"
           nombre="buscar_tarjeta_telefono"
           valor={telefono}
           onChange={(valor) => setTelefono(String(valor ?? ""))}
+          onEnterKeyUp={() => buscar()}
         />
       </quimera-formulario>
 
@@ -69,6 +71,10 @@ export const BuscarTarjetaPuntos = ({
               <button type="button" onClick={() => onSeleccionar(tarjeta)}>
                 <strong>{tarjeta.codtarjetapuntos}</strong> — {tarjeta.nombre}
                 {" "}({tarjeta.email || tarjeta.telefono})
+                {" — "}
+                <span className="BuscarTarjetaPuntos-saldo">
+                  Saldo: {tarjeta.saldopuntos} puntos
+                </span>
               </button>
             </li>
           ))}

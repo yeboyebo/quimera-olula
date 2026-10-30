@@ -1,7 +1,7 @@
 import { ProcesarContexto } from "@olula/lib/diseño.ts";
 import { ejecutarListaProcesos, MetaModelo } from "@olula/lib/dominio.ts";
 import { Remesa } from "../diseño.js";
-import { getRemesa } from "../infraestructura.js";
+import { deshacerPagoRemesa, getRemesa, pagarRemesa } from "../infraestructura.js";
 import { ContextoDetalleRemesa, EstadoDetalleRemesa } from "./diseño.js";
 
 type ProcesarDetalle = ProcesarContexto<EstadoDetalleRemesa, ContextoDetalleRemesa>;
@@ -14,6 +14,7 @@ export const metaRemesa: MetaModelo<Remesa> = {
         fechaCargo: { tipo: "fecha" },
         estado: { tipo: "texto" },
         cuentaId: { tipo: "texto" },
+        descripcionCuenta: { tipo: "texto" },
         divisaId: { tipo: "texto" },
         empresaId: { tipo: "texto" },
         total: { tipo: "moneda" },
@@ -28,8 +29,11 @@ export const remesaInicial = (): Remesa => ({
     total: 0,
     divisaId: '',
     cuentaId: '',
+    descripcionCuenta: '',
     estado: '',
     empresaId: '',
+    recibos: [],
+    pagos: [],
 });
 
 export const contextoDetalleRemesaInicial: ContextoDetalleRemesa = {
@@ -52,4 +56,26 @@ export const cargarContexto: ProcesarDetalle = async (contexto, payload) => {
         return cargarRemesa(idRemesa)(contexto);
     }
     return { ...contexto, estado: 'INICIAL', remesa: remesaInicial() };
+};
+
+export const refrescarRemesa: ProcesarDetalle = async (contexto) => {
+    const remesa = await getRemesa(contexto.remesa.id);
+
+    return [
+        { ...contexto, estado: 'ABIERTO', remesa },
+        [["remesa_cambiada", remesa]],
+    ];
+};
+
+export const pagarRemesaProceso: ProcesarDetalle = async (contexto, payload) => {
+    const fecha = payload as Date;
+    await pagarRemesa(contexto.remesa.id, fecha.toISOString().slice(0, 10));
+
+    return refrescarRemesa(contexto);
+};
+
+export const deshacerPagoProceso: ProcesarDetalle = async (contexto) => {
+    await deshacerPagoRemesa(contexto.remesa.id);
+
+    return refrescarRemesa(contexto);
 };

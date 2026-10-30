@@ -1,4 +1,6 @@
+import { QAviso } from "@olula/componentes/atomos/qaviso.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
+import { QEtiqueta } from "@olula/componentes/atomos/qetiqueta.tsx";
 import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
@@ -8,18 +10,25 @@ import { criteriaDefecto, puede } from "@olula/lib/dominio.js";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
 import { useLayout } from "@olula/lib/useLayout.js";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CrearIaMemoria } from "../crear/CrearIaMemoria.js";
 import { DetalleIaMemoria } from "../detalle/DetalleIaMemoria.js";
 import { IaMemoria } from "../diseño.js";
+import { getEstadoRagIaMemoria } from "../infraestructura.js";
 import "./MaestroConDetalleIaMemoria.css";
 import { getMaquina } from "./maquina.js";
 
 /**
  * Metadatos para renderizar la tabla del listado de memorias.
  */
+const etiquetaOrigen = (iaMemoria: IaMemoria) =>
+    iaMemoria.origen === 'fichero'
+        ? <QEtiqueta variante="primario">Fichero</QEtiqueta>
+        : <QEtiqueta variante="exito">Texto</QEtiqueta>;
+
 const metaTablaIaMemoria: MetaTabla<IaMemoria> = [
     { id: 'titulo', cabecera: 'Título' },
+    { id: 'origen', cabecera: 'Origen', render: etiquetaOrigen },
     { id: 'activo', cabecera: 'Activo', tipo: 'booleano' },
     { id: 'actualizadoEn', cabecera: 'Actualizado', tipo: 'fecha' },
 ];
@@ -50,8 +59,23 @@ export const MaestroConDetalleIaMemoria = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const [ragDisponible, setRagDisponible] = useState(true);
+
+    useEffect(() => {
+        getEstadoRagIaMemoria()
+            .then((estado) => setRagDisponible(estado.disponible))
+            .catch(() => {});
+    }, []);
+
     return (
         <div className="IaMemoria">
+            {!ragDisponible && (
+                <QAviso variante="advertencia">
+                    La búsqueda semántica no está disponible en este servidor (falta la
+                    extensión pgvector) — puedes seguir creando y editando memorias, pero
+                    el asistente no podrá buscarlas por relevancia.
+                </QAviso>
+            )}
             <MaestroDetalle<IaMemoria>
                 Maestro={
                     <>
@@ -113,8 +137,11 @@ const TarjetaIaMemoria = (iaMemoria: IaMemoria) => {
     return (
         <div className="tarjeta-ia-memoria" key={iaMemoria.id}>
             <div className="tarjeta-ia-memoria-titulo">{iaMemoria.titulo}</div>
-            <div className={`tarjeta-ia-memoria-estado ${iaMemoria.activo ? "estado-activo" : "estado-inactivo"}`}>
-                {iaMemoria.activo ? "Activo" : "Inactivo"}
+            <div className="tarjeta-ia-memoria-badges">
+                {etiquetaOrigen(iaMemoria)}
+                <div className={`tarjeta-ia-memoria-estado ${iaMemoria.activo ? "estado-activo" : "estado-inactivo"}`}>
+                    {iaMemoria.activo ? "Activo" : "Inactivo"}
+                </div>
             </div>
         </div>
     );

@@ -18,6 +18,7 @@ import {
     GetFacturas,
     GetLineaFactura,
     GetLineasFactura,
+    GetRecibosFactura,
     GetReportFactura,
     LineaFactura,
     NuevaFactura,
@@ -26,9 +27,14 @@ import {
     PatchFactura,
     PatchLineaFactura,
     PatchRectificativa,
+    PatchRegistrarFactura,
     PostFactura,
     PostLineasFactura,
+    QueryNuevaLineaFactura,
+    ReciboFactura,
 } from "./diseño.ts";
+import { estadoExpedicionDesdeApi } from "./dominio.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -67,6 +73,9 @@ export interface FacturaApi {
     no_generar_asiento: boolean;
     asiento_id: string | null;
     observaciones: string | null;
+    // Sin tipar como EstadoExpedicion a propósito: lo que llega es texto y lo
+    // valida `estadoExpedicionDesdeApi`, no el compilador.
+    estado_expedicion: string;
 }
 
 export interface LineaFacturaApi {
@@ -93,6 +102,30 @@ interface NuevaLineaFacturaApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
     pvp_unitario?: number;
+    dto_porcentual?: number;
+    dto_lineal?: number;
+    grupo_iva_producto_id?: string;
+    tipo_irpf?: number;
+}
+
+interface QueryNuevaLineaFacturaApiReq extends NuevaLineaFacturaApi {
+    iva_incluido?: boolean;
+}
+
+interface QueryNuevaLineaFacturaApiRes {
+    id?: string;
+    articulo_id: string | null;
+    descripcion: string;
+    cantidad: number;
+    pvp_unitario: number;
+    dto_porcentual: number;
+    dto_lineal: number;
+    pvp_total: number;
+    grupo_iva_producto_id: string;
+    tipo_iva: number;
+    tipo_recargo: number;
+    tipo_irpf: number;
+    iva_incluido: boolean;
 }
 
 interface NuevaFacturaApi {
@@ -118,7 +151,6 @@ interface CambiosFacturaApi {
     de_abono?: boolean;
     servicios?: boolean;
     no_generar_asiento?: boolean;
-    editable?: boolean;
 }
 
 interface CambiosLineaFacturaApi {
@@ -173,6 +205,7 @@ export const facturaDesdeApi = (api: FacturaApi): Factura => ({
     noGenerarAsiento: api.no_generar_asiento,
     asientoId: api.asiento_id,
     observaciones: api.observaciones,
+    estadoExpedicion: estadoExpedicionDesdeApi(api.estado_expedicion),
 });
 
 export const lineaFacturaDesdeApi = (api: LineaFacturaApi): LineaFactura => ({
@@ -240,14 +273,49 @@ const cambiosFacturaAApi = (f: CambiosFactura): CambiosFacturaApi => {
     if (f.deAbono !== undefined) cambios.de_abono = f.deAbono;
     if (f.servicios !== undefined) cambios.servicios = f.servicios;
     if (f.noGenerarAsiento !== undefined) cambios.no_generar_asiento = f.noGenerarAsiento;
-    if (f.editable !== undefined) cambios.editable = f.editable;
     return cambios;
 };
 
+/**
+ * Los importes a cero se omiten: el servidor distingue «ausente» (toma la
+ * condición del proveedor) de «presente con 0» (la pisa), así que mandarlos
+ * siempre borraría el descuento de `articulosprov`.
+ */
 const nuevaLineaAApi = (linea: NuevaLineaFactura): NuevaLineaFacturaApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
     ...(linea.pvpUnitario === null ? {} : { pvp_unitario: linea.pvpUnitario }),
+    ...(linea.dtoPorcentual ? { dto_porcentual: linea.dtoPorcentual } : {}),
+    ...(linea.dtoLineal ? { dto_lineal: linea.dtoLineal } : {}),
+    ...(linea.grupoIvaProductoId === null
+        ? {}
+        : { grupo_iva_producto_id: linea.grupoIvaProductoId }),
+    ...(linea.tipoIrpf ? { tipo_irpf: linea.tipoIrpf } : {}),
+});
+
+const queryNuevaLineaAApi = (
+    linea: NuevaLineaFactura
+): QueryNuevaLineaFacturaApiReq => ({
+    ...nuevaLineaAApi(linea),
+    iva_incluido: linea.ivaIncluido,
+});
+
+const queryNuevaLineaDesdeApi = (
+    anterior: NuevaLineaFactura,
+    api: QueryNuevaLineaFacturaApiRes
+): NuevaLineaFactura => ({
+    ...anterior,
+    ...(anterior.tipoArticulo === "generico" ? {} : { descripcion: api.descripcion }),
+    cantidad: api.cantidad,
+    pvpUnitario: api.pvp_unitario,
+    dtoPorcentual: api.dto_porcentual,
+    dtoLineal: api.dto_lineal,
+    pvpTotal: api.pvp_total,
+    grupoIvaProductoId: api.grupo_iva_producto_id,
+    ivaIncluido: api.iva_incluido,
+    tipoIva: api.tipo_iva,
+    tipoRecargo: api.tipo_recargo,
+    tipoIrpf: api.tipo_irpf,
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaFactura): CambiosLineaFacturaApi => {
@@ -324,6 +392,14 @@ export const patchRectificativa: PatchRectificativa = async (id, rectificativaId
     );
 };
 
+export const patchRegistrarFactura: PatchRegistrarFactura = async (id) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/registrar`,
+        {},
+        "Error al registrar la factura"
+    );
+};
+
 export const deleteFactura: DeleteFactura = async (id) => {
     await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar la factura");
 };
@@ -363,6 +439,18 @@ export const postLineaFactura = async (
     return lineaId;
 };
 
+export const queryNuevaLineaFactura: QueryNuevaLineaFactura = async (id, linea) => {
+    const respuesta = await RestAPI.query<
+        QueryNuevaLineaFacturaApiReq,
+        QueryNuevaLineaFacturaApiRes
+    >(
+        `${baseUrl}/${id}/nueva_linea`,
+        queryNuevaLineaAApi(linea),
+        "Error al calcular la nueva línea de la factura"
+    );
+    return queryNuevaLineaDesdeApi(linea, respuesta);
+};
+
 export const patchLineaFactura: PatchLineaFactura = async (id, lineaId, cambios) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/linea/${lineaId}`,
@@ -378,3 +466,42 @@ export const borrarLineasFactura: BorrarLineasFactura = async (id, lineas) => {
         "Error al borrar las líneas de la factura"
     );
 };
+
+interface ReciboFacturaApi {
+    id: string;
+    factura_id: string | null;
+    codigo: string;
+    fecha_emision: string;
+    fecha_vencimiento: string;
+    estado: string;
+    importe: number;
+    proveedor_id: string | null;
+    nombre_proveedor: string;
+    id_fiscal: string;
+}
+
+export const importarFicheroFactura = async (fichero: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("fichero", fichero);
+    const respuesta = await RestAPI.post<FormData>(
+        `${baseUrl}/importar-fichero`,
+        formData,
+        "Error al importar el fichero de factura"
+    );
+    return respuesta.id;
+};
+
+export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
+    return RestAPI.get<{ datos: ReciboFacturaApi[] }>(
+        `/tesoreria/recibo_pago/por_factura/${facturaId}`
+    ).then((respuesta) => respuesta.datos.map((r): ReciboFactura => ({
+        id: r.id,
+        codigo: r.codigo,
+        fecha_emision: r.fecha_emision,
+        fecha_vencimiento: r.fecha_vencimiento,
+        estado: r.estado,
+        importe: r.importe,
+    })));
+};
+
+export const getTrazaFactura = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

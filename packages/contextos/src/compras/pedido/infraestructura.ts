@@ -26,9 +26,11 @@ import {
     PatchPedido,
     Pedido,
     PostLineasPedido,
+    QueryNuevaLineaPedido,
     PostPedido,
     Recibido,
 } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().PEDIDO;
 
@@ -80,12 +82,37 @@ export interface LineaPedidoApi {
     tipo_irpf: number;
     cantidad_recibida: number;
     cerrada: boolean;
+    por_lotes: boolean;
 }
 
 interface NuevaLineaPedidoApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
     pvp_unitario?: number;
+    dto_porcentual?: number;
+    dto_lineal?: number;
+    grupo_iva_producto_id?: string;
+    tipo_irpf?: number;
+}
+
+interface QueryNuevaLineaPedidoApiReq extends NuevaLineaPedidoApi {
+    iva_incluido?: boolean;
+}
+
+interface QueryNuevaLineaPedidoApiRes {
+    id?: string;
+    articulo_id: string | null;
+    descripcion: string;
+    cantidad: number;
+    pvp_unitario: number;
+    dto_porcentual: number;
+    dto_lineal: number;
+    pvp_total: number;
+    grupo_iva_producto_id: string;
+    tipo_iva: number;
+    tipo_recargo: number;
+    tipo_irpf: number;
+    iva_incluido: boolean;
 }
 
 interface NuevoPedidoApi {
@@ -170,6 +197,7 @@ export const lineaPedidoDesdeApi = (api: LineaPedidoApi): LineaPedido => ({
     tipoIrpf: api.tipo_irpf,
     cantidadRecibida: api.cantidad_recibida,
     cerrada: api.cerrada,
+    porLotes: api.por_lotes,
 });
 
 const esProveedorNoRegistrado = (
@@ -217,10 +245,46 @@ const cambiosPedidoAApi = (p: CambiosPedido): CambiosPedidoApi => {
     return cambios;
 };
 
+/**
+ * Los importes a cero se omiten: el servidor distingue «ausente» (toma la
+ * condición del proveedor) de «presente con 0» (la pisa), así que mandarlos
+ * siempre borraría el descuento de `articulosprov`.
+ */
 const nuevaLineaAApi = (linea: NuevaLineaPedido): NuevaLineaPedidoApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
     ...(linea.pvpUnitario === null ? {} : { pvp_unitario: linea.pvpUnitario }),
+    ...(linea.dtoPorcentual ? { dto_porcentual: linea.dtoPorcentual } : {}),
+    ...(linea.dtoLineal ? { dto_lineal: linea.dtoLineal } : {}),
+    ...(linea.grupoIvaProductoId === null
+        ? {}
+        : { grupo_iva_producto_id: linea.grupoIvaProductoId }),
+    ...(linea.tipoIrpf ? { tipo_irpf: linea.tipoIrpf } : {}),
+});
+
+const queryNuevaLineaAApi = (
+    linea: NuevaLineaPedido
+): QueryNuevaLineaPedidoApiReq => ({
+    ...nuevaLineaAApi(linea),
+    iva_incluido: linea.ivaIncluido,
+});
+
+const queryNuevaLineaDesdeApi = (
+    anterior: NuevaLineaPedido,
+    api: QueryNuevaLineaPedidoApiRes
+): NuevaLineaPedido => ({
+    ...anterior,
+    ...(anterior.tipoArticulo === "generico" ? {} : { descripcion: api.descripcion }),
+    cantidad: api.cantidad,
+    pvpUnitario: api.pvp_unitario,
+    dtoPorcentual: api.dto_porcentual,
+    dtoLineal: api.dto_lineal,
+    pvpTotal: api.pvp_total,
+    grupoIvaProductoId: api.grupo_iva_producto_id,
+    ivaIncluido: api.iva_incluido,
+    tipoIva: api.tipo_iva,
+    tipoRecargo: api.tipo_recargo,
+    tipoIrpf: api.tipo_irpf,
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaPedido): CambiosLineaPedidoApi => {
@@ -315,6 +379,18 @@ export const postLineaPedido = async (
     return lineaId;
 };
 
+export const queryNuevaLineaPedido: QueryNuevaLineaPedido = async (id, linea) => {
+    const respuesta = await RestAPI.query<
+        QueryNuevaLineaPedidoApiReq,
+        QueryNuevaLineaPedidoApiRes
+    >(
+        `${baseUrl}/${id}/nueva_linea`,
+        queryNuevaLineaAApi(linea),
+        "Error al calcular la nueva línea del pedido"
+    );
+    return queryNuevaLineaDesdeApi(linea, respuesta);
+};
+
 export const patchLineaPedido: PatchLineaPedido = async (id, lineaId, cambios) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/linea/${lineaId}`,
@@ -338,3 +414,5 @@ export const borrarLineasPedido: BorrarLineasPedido = async (id, lineas) => {
         "Error al borrar las líneas del pedido"
     );
 };
+
+export const getTrazaPedido = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

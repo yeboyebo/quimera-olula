@@ -53,7 +53,8 @@ const lineaPedidoDesdeApi = (l: LineaPedidoApiNrj): LineaPedidoNrj => {
         palets: l.palets.map(p => ({
             id: p.id,
             cantidadEnvases: p.cantidad_envases
-        }))
+        })),
+        porLotes: false,
     }
 };
 

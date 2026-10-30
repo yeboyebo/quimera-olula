@@ -1,7 +1,6 @@
-import { QSelect } from "@olula/componentes/index.js";
-import { QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
+import { QAutocompletar, QAutocompletarProps } from "@olula/componentes/moleculas/qautocompletar.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getTiposCaja } from "../../tipo_caja/infraestructura.ts";
 
 type TipoCajaProps = Omit<QAutocompletarProps, "obtenerOpciones" | "label"> & { label?: string };
@@ -26,13 +25,24 @@ export const TipoCaja = ({
     );
   }, []);
 
+  const obtenerOpciones = useCallback(
+    async (texto: string) => {
+      const textoLower = texto.toLowerCase();
+      return opciones.filter((o) =>
+        o.descripcion.toLowerCase().includes(textoLower)
+      );
+    },
+    [opciones]
+  );
+
   return (
-    <QSelect
+    <QAutocompletar
       label={label}
       nombre={nombre}
       valor={valor}
       onChange={onChange}
-      opciones={opciones}
+      obtenerOpciones={obtenerOpciones}
+      longitudMinima={0}
       {...props}
     />
   );

@@ -1,5 +1,6 @@
+import { ConfigWidgets } from "@olula/componentes/index.js";
 import { Direccion } from "@olula/lib/diseño.js";
-import { MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
+import { formatearFechaDate, formatearMoneda, MetaCampo, MetaModelo, plugin } from "@olula/lib/dominio.ts";
 import { CambioClienteVenta, ClienteVenta, ConTipoArticulo, LineaVenta, ModeloNuevaLinea, NuevaLineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, TipoArticuloLinea, Venta } from "./diseño.ts";
 
 export const direccionVacia = (): Direccion => ({
@@ -46,7 +47,10 @@ export const ventaVacia: Venta = {
     netoSinDto: 0,
 }
 
-/** La empresa la resuelve la infraestructura al enviar, con `empresaActual()`. */
+/**
+ * Modelo vacío: los formularios de alta lo siembran con `conEmpresaActual()`, porque
+ * `empresa_id` es requerido y sin él el botón Guardar nace deshabilitado.
+ */
 export const nuevaVentaVacia: NuevaVenta = {
     cliente_id: "",
     direccion_id: "",
@@ -80,6 +84,8 @@ export const cambioClienteVentaVacio: CambioClienteVenta = {
 // };
 
 export const puedeCambiarDivisa = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
+
+export const puedeCambiarAlmacen = (venta: { lineas?: unknown[] }) => (venta.lineas?.length ?? 0) === 0;
 
 export const DIVISA_EMPRESA = "EUR";
 
@@ -148,6 +154,7 @@ export const metaLineaVenta: MetaModelo<LineaVenta> = {
         cantidad: { tipo: "decimal", requerido: true, decimales: 2 },
         iva_incluido: { tipo: "checkbox", requerido: true },
         pvp_unitario: { tipo: "moneda", requerido: true },
+        pvp_total: { tipo: "moneda", bloqueado: true },
         dto_porcentual: metaDtoPorcentual,
         dto_lineal: metaDtoLineal,
         tipo_irpf: metaPorcentajeLinea,
@@ -272,6 +279,7 @@ export const nuevaLineaInicial: ModeloNuevaLinea = {
     tipoIva: 0,
     tipoRecargo: 0,
     tipoIrpf: 0,
+    porLotes: false,
 };
 
 export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
@@ -287,8 +295,19 @@ export const metaNuevaLinea: MetaModelo<ModeloNuevaLinea> = {
         tipoRecargo: { tipo: "decimal", requerido: false, decimales: 2, bloqueado: true },
         idGrupoIvaProducto: { requerido: false },
         ivaIncluido: { tipo: "checkbox", requerido: false },
+        porLotes: { tipo: "checkbox" },
     },
     validacion: (linea) => !!(linea.idArticulo || linea.descripcion),
+    // onChange: (modelo, campo, valor) => {
+    //     console.log("onChange", campo, valor);
+    //     if (campo === "porLotes" && (valor === true)) {
+    //         return {
+    //             ...modelo,
+    //             cantidad: 0
+    //         };
+    //     }
+    //     return modelo;
+    // },
 };
 
 /**
@@ -338,3 +357,40 @@ export const payloadCambioCliente = (cambio: CambioClienteVenta) =>
                 telefono: cambio.telefono || null,
             },
         };
+
+/** Franja de datos clave del detalle de un documento de venta. */
+export const datosClaveDocumentoVenta = (documento: {
+    fecha: Date;
+    nombre_agente?: string;
+    total?: number;
+    divisa_id?: string;
+}) => [
+    { etiqueta: "Fecha", valor: documento.fecha ? formatearFechaDate(new Date(documento.fecha)) : "—" },
+    { etiqueta: "Agente", valor: documento.nombre_agente || "—" },
+    { etiqueta: "Total", valor: formatearMoneda(documento.total ?? 0, documento.divisa_id || "EUR") },
+];
+
+/** Medidas de un documento de venta que se ofrecen al personalizar widgets. */
+const camposWidgetsVenta: ConfigWidgets["campos"] = [
+    { id: "total", etiqueta: "Total", formato: "moneda" },
+    { id: "neto", etiqueta: "Base imponible", formato: "moneda" },
+    { id: "total_iva", etiqueta: "IVA", formato: "moneda" },
+    { id: "total_irpf", etiqueta: "IRPF", formato: "moneda" },
+    { id: "total_recargo", etiqueta: "Recargo de equivalencia", formato: "moneda" },
+];
+
+/** Widgets por defecto de un maestro de documentos de venta. */
+export const widgetsDocumentoVenta = (
+    recurso: string,
+    textos: { plural: string; total: string; medio: string }
+): ConfigWidgets => ({
+    recurso,
+    titulo: textos.plural,
+    campos: camposWidgetsVenta,
+    widgets: [
+        { id: "documentos", titulo: textos.plural, operacion: "conteo", formato: "numero", pie: "Recuento" },
+        { id: "total", titulo: textos.total, operacion: "suma", campo: "total", formato: "moneda", pie: "Suma del total" },
+        { id: "neto", titulo: "Base imponible", operacion: "suma", campo: "neto", formato: "moneda", pie: "Suma de la base" },
+        { id: "medio", titulo: textos.medio, operacion: "promedio", campo: "total", formato: "moneda", pie: "Media del total" },
+    ],
+});

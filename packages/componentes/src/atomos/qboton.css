@@ -1,29 +1,35 @@
 quimera-boton {
     box-sizing: border-box;
+    /* Color del botón: el primario de texto (AA) salvo en las variantes semánticas */
+    --color-boton: var(--color-primario-texto);
 
     &[destructivo] {
         --color-primario: var(--color-error);
         --color-primario-claro: var(--color-error-claro);
         --color-primario-oscuro: var(--color-error-oscuro);
+        /* El rojo oscuro: con el blanco encima (o como texto) cumple AA */
+        --color-boton: var(--color-error-texto);
     }
 
     &[advertencia] {
         --color-primario: var(--color-advertencia);
         --color-primario-claro: var(--color-advertencia-claro);
         --color-primario-oscuro: var(--color-advertencia-oscuro);
+        --color-boton: var(--color-primario);
     }
 
     &[exito] {
         --color-primario: var(--color-exito);
         --color-primario-claro: var(--color-exito-claro);
         --color-primario-oscuro: var(--color-exito-oscuro);
+        --color-boton: var(--color-primario);
     }
 
     &[ancho] {
         display: flex;
         width: 100%;
 
-        button {
+        :is(button, a) {
             flex: 1;
             width: 100%;
         }
@@ -31,51 +37,53 @@ quimera-boton {
 
     &[deshabilitado] {
         --color-primario: var(--color-deshabilitado);
+        --color-boton: var(--color-deshabilitado);
 
-        button {
+        :is(button, a) {
             cursor: inherit;
             pointer-events: none;
         }
     }
 
-    &[variante="texto"] button {
+    &[variante="texto"] :is(button, a) {
         background-color: transparent;
-        color: var(--color-primario);
+        color: var(--color-boton);
     }
 
-    &[variante="borde"] button {
-        color: var(--color-primario);
+    &[variante="borde"] :is(button, a) {
+        color: var(--color-boton);
         background-color: transparent;
-        border: var(--tamaño-borde-m) solid var(--color-primario);
+        border: var(--tamaño-borde-m) solid var(--color-boton);
     }
 
-    &[tamaño="pequeño"] button {
+    &[tamaño="pequeño"] :is(button, a) {
         padding: var(--espaciado-xs) var(--espaciado-s);
         font-size: var(--tamaño-letra-xs);
     }
 
-    &[tamaño="grande"] button {
+    &[tamaño="grande"] :is(button, a) {
         padding: var(--espaciado-l);
         font-size: var(--tamaño-letra-l);
     }
 
-    &[tamaño="xl"] button {
+    &[tamaño="xl"] :is(button, a) {
         padding: var(--espaciado-l);
         font-size: var(--tamaño-letra-xl);
     }
 
-    button {
+    :is(button, a) {
         display: inline-flex;
+        text-decoration: none;
         align-items: center;
         justify-content: center;
         cursor: pointer;
 
-        font-weight: var(--grosor-letra-6);
+        font-weight: var(--grosor-letra-5);
         font-size: var(--tamaño-letra-s);
         line-height: 1;
         font-family: var(--font-system-ui);
 
-        background-color: var(--color-primario);
+        background-color: var(--color-boton);
         color: var(--blanco);
 
         border: var(--tamaño-borde-m) solid transparent;
@@ -106,4 +114,9 @@ quimera-boton {
             outline-offset: 2px;
         }
     }
+}
+/* Icono de las acciones habituales: solo se ve donde se oculta el texto (cabecera
+   de los listados en móvil, ver Listado.css). */
+quimera-boton .qboton-icono {
+    display: none;
 }

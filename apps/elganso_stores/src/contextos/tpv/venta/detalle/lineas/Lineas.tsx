@@ -36,11 +36,6 @@ export const Lineas = ({
       onClick: () => publicar("baja_linea_solicitada"),
       deshabilitado: !lineaActiva,
     },
-    {
-      icono: "bolsa",
-      texto: "Bolsas",
-      onClick: () => publicar("bolsas_solicitadas"),
-    },
   ];
 
   const handleCambioCantidad = (linea: LineaVentaTpv, cantidad: number) => {
@@ -72,7 +67,7 @@ export const Lineas = ({
         <CrearLinea ventaId={venta.id} publicar={publicar} />
       )}
 
-      {estadoVenta === "AÑADIENDO_BOLSAS" && (
+      {estadoVenta === "AÑADIENDO_BOLSAS_PARA_PAGAR" && (
         <AnadirBolsas ventaId={venta.id} lineas={venta.lineas || []} publicar={publicar} />
       )}
 

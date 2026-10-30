@@ -1,3 +1,6 @@
+import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
+import { datosClaveDocumentoCompra } from "#/compras/comun/dominio.ts";
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import { CambioProveedor } from "#/compras/comun/componentes/moleculas/CambioProveedor/CambioProveedor.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
@@ -8,10 +11,11 @@ import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.ts";
 import { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
-import { pedidoPendiente } from "../dominio.ts";
-import { getReportPedido } from "../infraestructura.ts";
+import { etiquetaEstadoPedido, pedidoAlbaranable, pedidoPendiente } from "../dominio.ts";
+import { getReportPedido, getTrazaPedido } from "../infraestructura.ts";
 import {
     contextoDetallePedidoInicial,
     guardarPedido,
@@ -22,7 +26,7 @@ import { LineasPedido } from "./lineas/LineasPedido.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabDatos } from "./TabDatos.tsx";
 import { TabProveedor } from "./TabProveedor.tsx";
-import { TotalesPedido } from "./TotalesPedido.tsx";
+import { TotalesDocumento } from "#/compras/comun/componentes/TotalesDocumento.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 export const DetallePedido = ({
@@ -51,6 +55,8 @@ export const DetallePedido = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
+    const navigate = useNavigate();
+
     if (!pedido.id) return null;
 
     const titulo = (p: Pedido) =>
@@ -61,8 +67,16 @@ export const DetallePedido = ({
         imprimir_blob(blob);
     };
 
+    const handleAlbaranar = () => navigate(`/compras/albaranar-pedido/${pedido.id}`);
+
     const accionesPedido = [
+        {
+            texto: "Albarán parcial",
+            onClick: handleAlbaranar,
+            deshabilitado: !pedidoAlbaranable(pedido),
+        },
         { texto: "Imprimir", onClick: imprimir },
+        { texto: "Documentos relacionados", onClick: () => emitir("traza_solicitada") },
         {
             icono: "eliminar",
             texto: "Borrar",
@@ -76,6 +90,8 @@ export const DetallePedido = ({
         <Detalle
             id={id}
             obtenerTitulo={titulo}
+            obtenerEstado={(P: Pedido) => <EtiquetaEstado {...etiquetaEstadoPedido(P)} />}
+            obtenerDatosClave={datosClaveDocumentoCompra}
             setEntidad={() => {}}
             entidad={pedido}
             cerrarDetalle={() => emitir("pedido_deseleccionado", null, true)}
@@ -86,6 +102,18 @@ export const DetallePedido = ({
                 </div>
                 <Tabs
                     children={[
+                        <Tab
+                            key="tab-lineas"
+                            label="Líneas"
+                            children={
+                                <LineasPedido
+                                    pedido={pedido}
+                                    lineas={lineas}
+                                    estado={estado}
+                                    publicar={emitir}
+                                />
+                            }
+                        />,
                         <Tab
                             key="tab-proveedor"
                             label="Proveedor"
@@ -103,13 +131,7 @@ export const DetallePedido = ({
                         />,
                     ]}
                 />
-                <TotalesPedido form={formModelo} />
-                <LineasPedido
-                    pedido={pedido}
-                    lineas={lineas}
-                    estado={estado}
-                    publicar={emitir}
-                />
+                <TotalesDocumento form={formModelo} />
             </div>
 
             {estado === "CAMBIANDO_DIVISA" && (
@@ -130,6 +152,14 @@ export const DetallePedido = ({
 
             {estado === "BORRANDO" && (
                 <BorrarPedido pedido={pedido} publicar={emitir} />
+            )}
+
+            {estado === "VIENDO_TRAZA" && (
+              <ModalTraza
+                id={pedido.id}
+                getTraza={getTrazaPedido}
+                onCerrar={() => emitir("traza_cerrada")}
+              />
             )}
         </Detalle>
     );

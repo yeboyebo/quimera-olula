@@ -1,0 +1,21 @@
+.q-aviso {
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-s);
+    padding: var(--espaciado-s) var(--espaciado-m);
+    border-radius: var(--redondeo-borde-xs);
+    font-size: var(--tamaño-letra-s);
+    color: var(--color-texto-primario);
+}
+
+.q-aviso.advertencia {
+    background-color: var(--color-advertencia-claro);
+}
+
+.q-aviso.error {
+    background-color: var(--color-error-claro);
+}
+
+.q-aviso.info {
+    background-color: var(--color-primario-claro);
+}

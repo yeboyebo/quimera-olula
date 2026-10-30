@@ -17,12 +17,13 @@ import {
 import { MessageProcessor } from "@a2ui/web_core/v0_9";
 import type { SurfaceModel } from "@a2ui/web_core/v0_9";
 import type { ReactComponentImplementation } from "@a2ui/react/v0_9";
+import { describirPantalla, ejecutarAccionPantalla } from "@olula/lib/controles_pantalla.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { usePreferencia } from "@olula/lib/usePreferencia.ts";
 import { catalogoAsistente } from "#/asistente/vistas/catalogo/catalogo.ts";
 import { consultarIa, consultarIaStream, enviarAccionA2ui, obtenerMensajesHilo } from "#/asistente/infraestructura.ts";
 import {
-    accionNavegacionConNombreCorto, adjuntosParaEnviar, construirCapacidades, mensajeVacio,
+    accionNavegacionConNombreCorto, adjuntosParaEnviar, construirCapacidades, construirContextoPantalla, mensajeVacio,
 } from "#/asistente/dominio.ts";
 import { getMockRespuestaIa } from "#/asistente/vistas/mocks/a2ui_mocks.ts";
 import type {
@@ -211,6 +212,12 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                     ? { capacidadesHash: hashConocido }
                     : { capacidades }),
                 ...(adjuntos?.length ? { adjuntos } : {}),
+                // Lo que hay en pantalla junto al chat: "este pedido", "filtra por…".
+                contextoApp: {
+                    rutaActual: window.location.pathname,
+                    pantalla: construirContextoPantalla(
+                        window.location.pathname, window.location.search, describirPantalla(), capacidades),
+                },
             };
         },
         [capacidades]
@@ -237,6 +244,8 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
             if (respuesta.descarga) {
                 setDescargaPorMensaje(prev => ({ ...prev, [assistantId]: respuesta.descarga! }));
             }
+            // Acciones sobre la pantalla de al lado (filtrar, abrir, cambiar de pestaña…).
+            (respuesta.accionesPantalla ?? []).forEach(ejecutarAccionPantalla);
         },
         [establecerThreadId, procesarMensajesA2ui, capacidades]
     );
@@ -300,6 +309,9 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                             : m
                     )));
                     if (ultimo.a2uiMessages.length) procesarMensajesA2ui(ultimo.a2uiMessages, assistantId);
+                    if (ultimo.descarga) {
+                        setDescargaPorMensaje(prev => ({ ...prev, [assistantId]: ultimo.descarga! }));
+                    }
                 } catch {
                     // Red intermitente — se reintenta en el siguiente tick, sin cancelar el sondeo.
                 }
@@ -342,9 +354,11 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                                 setMensajes(prev => prev.map(m => (m.id === assistantId ? { ...m, texto: acumulado } : m)));
                             } else if (evento.tipo === "estado") {
                                 // Aviso de progreso transitorio (p.ej. "Buscando el
-                                // cliente…") — se muestra sustituyendo el texto, sin
-                                // tocar `acumulado`, así que el primer "delta" real
-                                // lo reemplaza igual que si nunca hubiera estado.
+                                // cliente…") — sustituye el texto y DESCARTA lo acumulado:
+                                // el backend emite el texto en vivo y, si esa generación
+                                // acaba llamando a una tool, manda "estado" para retirar
+                                // lo ya mostrado. El primer "delta" real empieza de cero.
+                                acumulado = "";
                                 setMensajes(prev =>
                                     prev.map(m => (m.id === assistantId ? { ...m, texto: evento.contenido } : m))
                                 );
@@ -355,6 +369,8 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                                 setAccionNavegacionPorMensaje(prev => ({ ...prev, [assistantId]: accion }));
                             } else if (evento.tipo === "descarga") {
                                 setDescargaPorMensaje(prev => ({ ...prev, [assistantId]: evento.descarga }));
+                            } else if (evento.tipo === "accion_pantalla") {
+                                ejecutarAccionPantalla(evento.accionPantalla);
                             } else if (evento.tipo === "fin") {
                                 establecerThreadId(evento.threadId);
                                 if (evento.necesitaCapacidades) {
@@ -496,6 +512,16 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                     id: m.id, rol: m.rol, texto: m.texto,
                     adjuntos: m.adjuntos.length ? m.adjuntos : undefined,
                 })));
+                // Botones de descarga y de navegación del historial — en vivo llegan aparte
+                // del texto, así que sin esto desaparecían al recargar o reabrir el hilo.
+                setDescargaPorMensaje(Object.fromEntries(
+                    hilo.mensajes.filter(m => m.descarga).map(m => [m.id, m.descarga as AccionDescarga])
+                ));
+                setAccionNavegacionPorMensaje(Object.fromEntries(
+                    hilo.mensajes.filter(m => m.accionNavegacion).map(m => [
+                        m.id, accionNavegacionConNombreCorto(m.accionNavegacion as AccionNavegacion, capacidades),
+                    ])
+                ));
                 for (const m of hilo.mensajes) {
                     if (m.a2uiMessages.length) procesarMensajesA2ui(m.a2uiMessages, m.id);
                 }
@@ -503,7 +529,7 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
                 setIsRunning(false);
             }
         },
-        [limpiarSurfaces, establecerThreadId, procesarMensajesA2ui]
+        [limpiarSurfaces, establecerThreadId, procesarMensajesA2ui, capacidades]
     );
 
     const nuevaConversacion = useCallback(() => {
@@ -512,6 +538,8 @@ export function AsistenteRuntimeProvider({ children, onAccionNavegacion }: Props
         capacidadesHashRef.current = null;
         establecerThreadId(null);
         setMensajes([]);
+        setDescargaPorMensaje({});
+        setAccionNavegacionPorMensaje({});
         setIsRunning(false);
     }, [limpiarSurfaces, establecerThreadId]);
 

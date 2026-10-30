@@ -1,3 +1,4 @@
+import { EstadoEtiqueta } from "#/comun/diseño.ts";
 import { MetaTabla } from "@olula/componentes/index.js";
 import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import {
@@ -6,8 +7,10 @@ import {
     metaNuevaVenta,
     metaVenta,
     nuevaVentaVacia,
+    puedeCambiarAlmacen,
     tituloDocumentoVenta,
-    ventaVacia
+    ventaVacia,
+    widgetsDocumentoVenta,
 } from "../venta/dominio.ts";
 import {
     Albaran,
@@ -20,11 +23,13 @@ import {
 export const metaTablaAlbaran: MetaTabla<Albaran> = [
     {
         id: "codigo",
+        estilo: "secundario",
         cabecera: "Código",
         prioridad: "alta",
     },
     {
         id: "nombre_cliente",
+        estilo: "destacado",
         cabecera: "Cliente",
         prioridad: "alta",
         render: (a) => a.cliente.nombre_cliente,
@@ -37,6 +42,7 @@ export const metaTablaAlbaran: MetaTabla<Albaran> = [
     },
     {
         id: "total",
+        estilo: "destacado",
         cabecera: "Total",
         tipo: "moneda",
         prioridad: "alta",
@@ -96,14 +102,15 @@ export const metaAlbaran: MetaModelo<Albaran> = {
         agente_id: { bloqueado: true },
         por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
-    editable: (albaran: Albaran, _?: string) => {
-        return !albaran.facturado;
+    editable: (albaran: Albaran, campo?: string) => {
+        if (albaran.facturado) return false;
+        return campo === 'almacen_id' ? puedeCambiarAlmacen(albaran) : true;
     },
 };
 
 export const editable = modeloEsEditable<Albaran>(metaAlbaran);
 
-export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta;
+export const metaLineaAlbaran: MetaModelo<LineaAlbaran> = metaLineaVenta as unknown as MetaModelo<LineaAlbaran>;
 
 const albaranVacioObjeto: Albaran = albaranVacio();
 
@@ -117,4 +124,16 @@ export const cambioClienteVacio = (): CambioClienteAlbaran => ({
 export const cambioCliente = (albaran: Albaran): CambioClienteAlbaran => ({
     cliente_id: albaran.cliente.cliente_id ?? "",
     direccion_id: albaran.cliente.direccion_id ?? "",
+});
+
+export const etiquetaEstadoAlbaran = (albaran: Pick<Albaran, "facturado">): EstadoEtiqueta =>
+    albaran.facturado
+        ? { texto: "Facturado", tono: "completado" }
+        : { texto: "Pendiente", tono: "pendiente" };
+
+/** Widgets por defecto del maestro de albaranes (totales según el filtro activo). */
+export const widgetsAlbaran = widgetsDocumentoVenta("ventas.albaran", {
+    plural: "Albaranes",
+    total: "Importe total",
+    medio: "Albarán medio",
 });

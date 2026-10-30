@@ -1,0 +1,86 @@
+.CandidatosConciliacion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaciado-m);
+
+    div[id="buscador-candidatos"] {
+        display: flex;
+        align-items: center;
+        gap: var(--espaciado-s);
+
+        quimera-input {
+            flex: 1;
+        }
+    }
+
+    /* Las columnas se definen en la lista y las tarjetas las heredan (subgrid),
+       así importes y botones quedan alineados en vertical entre tarjetas. */
+    .lista-candidatos {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        row-gap: var(--espaciado-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    /* Recibo (elástico, se recorta) | importe + vencimiento (nunca se corta) | acciones */
+    .tarjeta-candidato {
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+        align-items: center;
+        column-gap: var(--espaciado-s);
+        padding: var(--espaciado-xs) var(--espaciado-s);
+        border: var(--tamaño-borde-s) solid var(--color-borde-sutil);
+        border-radius: var(--redondeo-borde-xs);
+
+        small {
+            color: var(--color-texto-secundario);
+        }
+    }
+
+    .tarjeta-candidato-recibo {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        > * {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .tarjeta-candidato-codigo {
+        font-weight: var(--grosor-letra-5);
+
+        small {
+            margin-left: var(--espaciado-xs);
+            font-weight: normal;
+        }
+    }
+
+    .tarjeta-candidato-cifras {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        white-space: nowrap;
+    }
+
+    .tarjeta-candidato-acciones {
+        display: flex;
+        gap: var(--espaciado-xs);
+    }
+
+    h4,
+    .sin-candidatos {
+        margin: 0;
+    }
+
+    .botones {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--espaciado-xs);
+    }
+}

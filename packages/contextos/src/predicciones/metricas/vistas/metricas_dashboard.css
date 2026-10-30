@@ -60,7 +60,7 @@
     text-align: left;
     padding: 0.75rem 1rem;
     border-bottom: 2px solid var(--color-borde, #e0e0e0);
-    font-weight: 600;
+    font-weight: var(--grosor-letra-5);
     white-space: nowrap;
 }
 

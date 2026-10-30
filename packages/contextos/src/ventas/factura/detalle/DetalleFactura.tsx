@@ -1,8 +1,12 @@
+import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
+import { AsientoDeDocumento } from "#/contabilidad/asiento/vistas/detalle/AsientoDeDocumento.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { puede } from "@olula/lib/dominio.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useEffect } from "react";
@@ -14,14 +18,16 @@ import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarFactura } from "../borrar/BorrarFactura.tsx";
 import { Factura } from "../diseño.ts";
 import { EmitirFactura } from "../emitir/EmitirFactura.tsx";
-import { facturaEmitible } from "../dominio.ts";
-import { EstadoExpedicion } from "../vistas/EstadoExpedicion.tsx";
+import { etiquetaEstadoFactura, facturaEmitible } from "../dominio.ts";
 import { IndicadorGuardado } from "../../comun/componentes/IndicadorGuardado.tsx";
 import "../../comun/estilos/campos.css";
 import "../../comun/estilos/detalle_documento.css";
-import { tituloDocumentoVenta } from "../../venta/dominio.ts";
+import {
+  datosClaveDocumentoVenta,
+  tituloDocumentoVenta,
+} from "../../venta/dominio.ts";
 import { facturaVacia } from "../dominio.ts";
-import { getReportFactura } from "../infraestructura.ts";
+import { getReportFactura, getTrazaFactura } from "../infraestructura.ts";
 import "./DetalleFactura.css";
 import { editable, metaFactura } from "./diseño.ts";
 import { Lineas } from "./Lineas/Lineas.tsx";
@@ -68,12 +74,14 @@ export const DetalleFactura = ({
 
   const { estado, lineaActiva } = ctx;
 
-  const titulo = (factura: Factura) => (
-    <span className="titulo-documento">
-      <EstadoExpedicion factura={factura} />
-      {tituloDocumentoVenta(factura, "Nueva Factura")}
-    </span>
+  const titulo = (factura: Factura) =>
+    tituloDocumentoVenta(factura, "Nueva Factura");
+
+  const estadoFactura = (factura: Factura) => (
+    <EtiquetaEstado {...etiquetaEstadoFactura(factura)} />
   );
+
+  const datosClave = datosClaveDocumentoVenta;
 
   const imprimir = useCallback(async () => {
     const blob = await getReportFactura(ctx.factura.id);
@@ -95,6 +103,10 @@ export const DetalleFactura = ({
       onClick: imprimir,
     },
     {
+      texto: "Documentos relacionados",
+      onClick: () => emitir("traza_solicitada"),
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
@@ -107,6 +119,8 @@ export const DetalleFactura = ({
     <Detalle
       id={ctx.factura.id}
       obtenerTitulo={titulo}
+      obtenerEstado={estadoFactura}
+      obtenerDatosClave={datosClave}
       setEntidad={() => {}}
       entidad={ctx.factura}
       cerrarDetalle={() => emitir("factura_deseleccionada", null)}
@@ -121,6 +135,15 @@ export const DetalleFactura = ({
       </div>
 
       <Tabs>
+        <Tab label="Líneas">
+          <Lineas
+            factura={ctx.factura}
+            lineaActiva={lineaActiva}
+            estadoFactura={estado}
+            publicar={emitir}
+          />
+        </Tab>
+
         <Tab label="Cliente">
           <TabCliente factura={factura} estado={estado} publicar={emitir} />
         </Tab>
@@ -136,6 +159,12 @@ export const DetalleFactura = ({
         <Tab label="Recibos">
           <TabRecibos facturaId={ctx.factura.id} />
         </Tab>
+
+        {puede("contabilidad.asiento") && (
+          <Tab label="Contabilidad">
+            <AsientoDeDocumento asientoId={ctx.factura.asiento_id ?? null} />
+          </Tab>
+        )}
       </Tabs>
 
       <TotalesVenta modeloVenta={factura} publicar={emitir} />
@@ -161,19 +190,20 @@ export const DetalleFactura = ({
         />
       )}
 
-      <Lineas
-        factura={ctx.factura}
-        lineaActiva={lineaActiva}
-        estadoFactura={estado}
-        publicar={emitir}
-      />
-
       {estado === "EMITIENDO_FACTURA" && (
         <EmitirFactura factura={ctx.factura} publicar={emitir} />
       )}
 
       {estado === "BORRANDO_FACTURA" && (
         <BorrarFactura factura={ctx.factura} publicar={emitir} />
+      )}
+
+      {estado === "VIENDO_TRAZA" && (
+        <ModalTraza
+          id={ctx.factura.id}
+          getTraza={getTrazaFactura}
+          onCerrar={() => emitir("traza_cerrada")}
+        />
       )}
     </Detalle>
   );

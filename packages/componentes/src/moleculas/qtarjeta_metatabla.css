@@ -16,7 +16,7 @@
 .qtarjeta-metatabla-titulo-valor {
     color: var(--color-texto-primario);
     font-size: var(--tamaño-letra-m);
-    font-weight: var(--grosor-letra-7);
+    font-weight: var(--grosor-letra-6);
     line-height: var(--tamaño-letra-l);
 }
 
@@ -96,7 +96,7 @@
 .qtarjeta-metatabla-valor {
     color: var(--color-texto-primario);
     font-size: var(--tamaño-letra-m);
-    font-weight: var(--grosor-letra-6);
+    font-weight: var(--grosor-letra-5);
     overflow-wrap: anywhere;
 }
 
@@ -114,5 +114,20 @@
         width: calc((100% - var(--espaciado-xs)) / 2);
         max-width: calc((100% - var(--espaciado-xs)) / 2);
         min-width: calc((100% - var(--espaciado-xs)) / 2);
+    }
+}
+/* Campos prioritarios de la tarjeta: una línea, cortada con puntos suspensivos */
+.qtarjeta-generica-grid .qtarjeta-metatabla-campo {
+    /* La rejilla ya reparte las columnas: sin el 50% de móvil, que aquí sería
+       la mitad de la celda y cortaba el valor de la derecha. */
+    min-width: 0;
+    width: auto;
+    max-width: none;
+
+    .qtarjeta-metatabla-valor {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-wrap: normal;
     }
 }

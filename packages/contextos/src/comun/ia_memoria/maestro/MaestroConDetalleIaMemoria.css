@@ -14,4 +14,10 @@
     .tarjeta-ia-memoria-estado.estado-inactivo {
         opacity: 0.6;
     }
+
+    .tarjeta-ia-memoria-badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 }

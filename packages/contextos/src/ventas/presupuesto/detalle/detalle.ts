@@ -1,7 +1,7 @@
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { LineaVenta } from "#/ventas/venta/diseño.ts";
-import { clienteVentaVacio, ventaVacia } from "#/ventas/venta/dominio.ts";
+import { clienteVentaVacio, puedeCambiarAlmacen, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
 import { CambioClientePresupuesto, LineaPresupuesto, Presupuesto } from "../diseño.ts";
@@ -41,7 +41,8 @@ export const metaPresupuesto: MetaModelo<Presupuesto> = {
         agente_id: { bloqueado: true },
         por_comision: { tipo: "decimal", requerido: false, decimales: 2, positivo: true, maximo: 100, bloqueado: true },
     },
-    editable: (presupuesto: Presupuesto) => !aprobado(presupuesto),
+    editable: (presupuesto: Presupuesto, campo?: string) =>
+        !aprobado(presupuesto) && (campo !== 'almacen_id' || puedeCambiarAlmacen(presupuesto)),
 };
 
 export const editable = modeloEsEditable<Presupuesto>(metaPresupuesto);
@@ -217,9 +218,12 @@ export const cambiarDivisa: ProcesarPresupuesto = async (contexto, payload) => {
 export const cambiarAgente: ProcesarPresupuesto = async (contexto, payload) => {
     const cambio = payload as CambioAgente;
     await patchCambiarAgente(contexto.presupuesto.id, cambio);
+    const lineaId = contexto.lineaActiva?.id ?? "";
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
+        refrescarLineas,
+        activarLineaPorId(lineaId),
         'ABIERTO',
     ]);
 }
@@ -258,10 +262,12 @@ export const crearLinea: ProcesarPresupuesto = async (contexto, payload) => {
 }
 
 export const cambiarLinea: ProcesarPresupuesto = async (contexto) => {
+    const lineaId = contexto.lineaActiva?.id ?? "";
 
     return pipePresupuesto(contexto, [
         refrescarPresupuesto,
         refrescarLineas,
+        activarLineaPorId(lineaId),
         'ABIERTO',
     ]);
 }

@@ -6,6 +6,7 @@ import {
     activarLinea,
     borrarAlbaran,
     borrarLinea,
+    borrarMovimientoLote,
     cambiarAgente,
     cambiarAlbaran,
     cambiarCantidadLinea,
@@ -16,6 +17,8 @@ import {
     cancelarCambioAlbaran,
     cargarContexto,
     crearLinea,
+    crearLineaPorLotes,
+    crearMovimientoLote,
     facturarAlbaran,
     getContextoVacio,
     refrescarAlbaran,
@@ -38,6 +41,8 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
         },
 
         ABIERTO: {
+
+            traza_solicitada: "VIENDO_TRAZA",
 
             linea_creada: [
                 refrescarAlbaran,
@@ -81,6 +86,8 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
         },
 
         FACTURADO: {
+
+            traza_solicitada: "VIENDO_TRAZA",
 
             albaran_cargado: [abiertoOFacturado],
 
@@ -141,6 +148,8 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
 
             linea_creada: crearLinea,
 
+            linea_por_lotes_creada: crearLineaPorLotes,
+
             crear_linea_cancelado: "ABIERTO",
         },
 
@@ -149,6 +158,10 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             linea_actualizada: cambiarLinea,
 
             editar_linea_cancelado: "ABIERTO",
+
+            crear_movimiento_lote_solicitado: crearMovimientoLote,
+
+            borrar_movimiento_lote_solicitado: borrarMovimientoLote,
         },
 
         BORRANDO_LINEA: {
@@ -158,5 +171,9 @@ export const getMaquina: () => Maquina<EstadoAlbaran, ContextoAlbaran> = () => {
             borrar_linea_cancelado: "ABIERTO",
         },
 
+        VIENDO_TRAZA: {
+
+            traza_cerrada: [abiertoOFacturado],
+        },
     }
 }

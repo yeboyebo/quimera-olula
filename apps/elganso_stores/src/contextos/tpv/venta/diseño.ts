@@ -66,13 +66,16 @@ export interface PagoVentaTpv {
     idTipoTarjeta: string | null;
     vale?: string | null;
     saldoVale?: number | null;
+    coduso?: string | null;
     [key: string]: unknown;
 }
 
 export type NuevoPagoVentaTpv = {
     importe: number;
-    formaPago: 'EFECTIVO' | 'TARJETA';
+    formaPago: 'EFECTIVO' | 'TARJETA' | 'PUNTOS' | 'VALE' | 'TARJETA_REGALO';
     idTipoTarjeta?: string | null;
+    idVale?: string;
+    coduso?: string;
 };
 
 export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<VentaTpv>;
@@ -102,8 +105,8 @@ export type EstadoVentaTpv = (
     | 'BORRANDO_VENTA'
     | 'CAMBIANDO_DESCUENTO'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
-    | 'AÑADIENDO_BOLSAS'
-    | 'PAGANDO_EN_EFECTIVO' | 'PAGANDO_CON_TARJETA' | 'BORRANDO_PAGO'
+    | 'AÑADIENDO_BOLSAS_PARA_PAGAR'
+    | 'PAGANDO' | 'BORRANDO_PAGO'
 );
 
 export type EstadoMaestroVentaTpv = (

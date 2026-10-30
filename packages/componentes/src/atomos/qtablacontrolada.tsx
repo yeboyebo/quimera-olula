@@ -20,7 +20,7 @@ type TipoColumna =
   | "hora"
   | "fechahora"
   | "booleano";
-type MetaColumna<T extends Entidad> = {
+export type MetaColumna<T extends Entidad> = {
   id: string;
   cabecera: string;
   prioridad?: "alta" | "media" | "baja";
@@ -28,16 +28,32 @@ type MetaColumna<T extends Entidad> = {
   tipo?: TipoColumna;
   divisa?: string | ((entidad: T) => string);
   ancho?: string; // Ancho específico para esta columna
+  /** Énfasis visual: `destacado` en negrita (cliente, total), `secundario` en gris (código). */
+  estilo?: "destacado" | "secundario";
   render?: (entidad: T) => string | ReactNode;
+};
+
+export type MetaTabla2<T extends Entidad> = {
+  cols: string[];
+  metaCols: Record<string, MetaColumna<T>>;
+  expansion?: ComponentType<{ entidad: T }>;
 };
 
 export type MetaTabla<T extends Entidad> =
   | MetaColumna<T>[]
-  | { cols: MetaColumna<T>[]; expansion?: ComponentType<{ entidad: T }> };
+  | { cols: MetaColumna<T>[]; expansion?: ComponentType<{ entidad: T }> }
+  | MetaTabla2<T>;
+
+const esMetaTabla2 = <T extends Entidad>(m: MetaTabla<T>): m is MetaTabla2<T> =>
+  !Array.isArray(m) && "metaCols" in m;
 
 export const obtenerCols = <T extends Entidad>(
   m: MetaTabla<T>
-): MetaColumna<T>[] => (Array.isArray(m) ? m : m.cols);
+): MetaColumna<T>[] => {
+  if (Array.isArray(m)) return m;
+  if (esMetaTabla2(m)) return m.cols.map((id) => m.metaCols[id]).filter(Boolean);
+  return m.cols;
+};
 
 const cabecera = <T extends Entidad>(
   cols: MetaColumna<T>[],
@@ -121,6 +137,7 @@ const fila = <T extends Entidad>(
     tipo,
     divisa,
     ancho,
+    estilo,
   }: MetaColumna<T>) => {
     const valorCelda =
       cargando && typeof entidad[id] == "string"
@@ -136,6 +153,7 @@ const fila = <T extends Entidad>(
       <td
         key={[entidad.id, id].join("-")}
         className={`${id} ${tipo ?? ""}`}
+        data-estilo={estilo}
         style={ancho ? { width: ancho } : undefined}
       >
         {valorCelda}
@@ -197,8 +215,15 @@ const Paginador = (
     });
   };
 
+  const desde = (pagina - 1) * limite + 1;
+  const hasta = Math.min(pagina * limite, totalEntidades);
+
   return (
     <quimera-tabla-paginacion>
+      <span className="paginacion-rango">
+        {desde.toLocaleString("es-ES")}–{hasta.toLocaleString("es-ES")} de{" "}
+        {totalEntidades.toLocaleString("es-ES")}
+      </span>
       <QBoton
         deshabilitado={pagina === 1 || totalPaginas === 0}
         tamaño="pequeño"
@@ -221,9 +246,9 @@ const Paginador = (
         <QBoton
           key={numPagina}
           tamaño="pequeño"
-          deshabilitado={numPagina === pagina}
-          variante={numPagina === pagina ? "borde" : "texto"}
-          onClick={() => handlePaginacion(numPagina)}
+          variante={numPagina === pagina ? "solido" : "texto"}
+          props={numPagina === pagina ? { "aria-current": "page" } : undefined}
+          onClick={() => numPagina !== pagina && handlePaginacion(numPagina)}
         >
           {numPagina}
         </QBoton>
@@ -283,9 +308,8 @@ export const QTablaControlada = <T extends Entidad>({
 }: QTablaProps<T>) => {
   const modoMulti = seleccionadasIds !== undefined;
 
-  const { cols, expansion } = Array.isArray(metaTabla)
-    ? { cols: metaTabla, expansion: undefined }
-    : metaTabla;
+  const cols = obtenerCols(metaTabla);
+  const expansion = Array.isArray(metaTabla) ? undefined : metaTabla.expansion;
 
   const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
 

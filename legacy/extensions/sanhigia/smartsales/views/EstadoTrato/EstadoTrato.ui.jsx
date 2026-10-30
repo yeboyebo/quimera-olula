@@ -1,5 +1,8 @@
 import "./EstadoTrato.style.scss";
 
+import { SelectorValores } from "@quimera-extension/base-almacen";
+import { DirCliente } from "@quimera-extension/base-ventas";
+import { Evento } from "@quimera-extension/sanhigia-devol_pedidos";
 import {
   Box,
   Button,
@@ -14,10 +17,7 @@ import {
   Icon,
   QSection,
 } from "@quimera/comps";
-import { SelectorValores } from "@quimera-extension/base-almacen";
-import { DirCliente } from "@quimera-extension/base-ventas";
-import { Evento } from "@quimera-extension/sanhigia-devol_pedidos";
-import Quimera, { getSchemas, PropValidation, useStateValue, util } from "quimera";
+import Quimera, { getSchemas, useStateValue, util } from "quimera";
 import { useEffect } from "react";
 
 import {
@@ -175,12 +175,14 @@ function EstadoTrato({ tratoProp, refreshCallback, noMostrarBotonesProp }) {
             El trato se asociará a este usuario como agente. Eliga la causa entre las opciones
             disponibles para este tipo de trato.
           </DialogContentText> */}
-          <Field.Date
-            id="tratoBuffer.fechaLicenciaFin"
-            schema={schemaTrato}
-            fullWidth
-            label="Fecha de finalización proceso"
-          />
+          <Box mt={1} mb={1}>
+            <Field.Date
+              id="tratoBuffer.fechaLicenciaFin"
+              schema={schemaTrato}
+              fullWidth
+              label="Fecha de finalización proceso"
+            />
+          </Box>
           <Field.Date
             id="tratoBuffer.fechaLicenciaCaducidad"
             schema={schemaTrato}

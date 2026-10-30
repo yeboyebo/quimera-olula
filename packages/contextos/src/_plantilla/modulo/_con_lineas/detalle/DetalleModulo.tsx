@@ -59,7 +59,9 @@ export const DetalleModulo = ({
     >
       <div className="DetalleModulo">
         {/* Estándar: las acciones del detalle van siempre en QuimeraAcciones
-                    con `vertical` (menú "Acciones"), aunque solo haya una. */}
+                    con `vertical`. Con una sola acción efectiva, QuimeraAcciones
+                    pinta el botón directo. Con varias, la principal (`principal: true`
+                    o la primera habilitada) va a la vista y el resto en el menú "⋯". */}
         <div className="maestro-botones">
           <QuimeraAcciones
             acciones={[
@@ -75,6 +77,18 @@ export const DetalleModulo = ({
         <Tabs
           children={[
             <Tab
+              key="tab-lineas"
+              label="Líneas"
+              children={
+                <LineasModulo
+                  modLin={ctx.modLin}
+                  lineas={ctx.lineas}
+                  estado={ctx.estado}
+                  publicar={emitir}
+                />
+              }
+            />,
+            <Tab
               key="tab-general"
               label="General"
               children={<TabGeneral form={modelo} publicar={emitir} />}
@@ -85,12 +99,6 @@ export const DetalleModulo = ({
               children={<TabInformacion form={modelo} />}
             />,
           ]}
-        />
-        <LineasModulo
-          modLin={ctx.modLin}
-          lineas={ctx.lineas}
-          estado={ctx.estado}
-          publicar={emitir}
         />
       </div>
 

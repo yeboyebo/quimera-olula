@@ -8,7 +8,7 @@ import {
   resolverDivisa,
 } from "@olula/lib/dominio.ts";
 import { ReactNode, isValidElement, useMemo } from "react";
-import { MetaTabla } from "../atomos/qtabla.tsx";
+import { MetaColumna, MetaTabla, obtenerCols } from "../atomos/qtablacontrolada.tsx";
 import { QTarjetaGenerica } from "./qtarjeta_generica.tsx";
 import "./qtarjeta_metatabla.css";
 
@@ -97,7 +97,7 @@ const esValorVacio = (valor: unknown) =>
 
 const valorColumna = <T extends Entidad>(
   entidad: T,
-  columna: MetaTabla<T>[number],
+  columna: MetaColumna<T>,
   placeholderVacio: string
 ): string | ReactNode => {
   const valorRender = columna.render?.(entidad);
@@ -143,7 +143,7 @@ const valorColumna = <T extends Entidad>(
   return valorFormateado as ReactNode;
 };
 
-const esCampoCorto = <T extends Entidad>(columna: MetaTabla<T>[number]) => {
+const esCampoCorto = <T extends Entidad>(columna: MetaColumna<T>) => {
   if (
     ["booleano", "numero", "moneda", "hora", "fecha"].includes(
       columna.tipo ?? ""
@@ -155,7 +155,7 @@ const esCampoCorto = <T extends Entidad>(columna: MetaTabla<T>[number]) => {
   return /(iva|dto|descuento|%|impuesto)/i.test(columna.id);
 };
 
-const claseCampo = <U extends Entidad>(columna: MetaTabla<U>[number]) => {
+const claseCampo = <U extends Entidad>(columna: MetaColumna<U>) => {
   const clases = ["qtarjeta-metatabla-campo"];
 
   if (esCampoCorto(columna)) {
@@ -198,8 +198,10 @@ export const QTarjetaMetatabla = <T extends Entidad>({
   mostrarTodosInicialmente = false,
   placeholderVacio = "—",
 }: QTarjetaMetatablaProps<T>) => {
+  const cols = obtenerCols(metaTabla);
+
   const renderCampo = (
-    columna: MetaTabla<T>[number],
+    columna: MetaColumna<T>,
     esDetalle: boolean = false
   ) => (
     <CampoTarjetaMetatabla
@@ -214,21 +216,21 @@ export const QTarjetaMetatabla = <T extends Entidad>({
 
   const columnaTitulo = useMemo(
     () =>
-      metaTabla.find((columna) => columna.id === campoTituloId) ??
-      metaTabla.find((columna) => columna.esTitulo),
-    [metaTabla, campoTituloId]
+      cols.find((columna) => columna.id === campoTituloId) ??
+      cols.find((columna) => columna.esTitulo),
+    [cols, campoTituloId]
   );
 
   const columnasDetalle = useMemo(
     () =>
-      metaTabla
+      cols
         .filter((columna) => columna.id !== columnaTitulo?.id)
         .sort(
           (columnaA, columnaB) =>
             pesoPrioridad(columnaA.prioridad) -
             pesoPrioridad(columnaB.prioridad)
         ),
-    [metaTabla, columnaTitulo]
+    [cols, columnaTitulo]
   );
 
   const columnasPrioritarias = columnasDetalle.slice(0, maxCamposPrioritarios);

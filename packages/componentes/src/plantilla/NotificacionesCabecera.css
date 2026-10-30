@@ -22,7 +22,7 @@
     background-color: #d73352;
     color: var(--blanco);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: var(--grosor-letra-6);
     line-height: 18px;
     text-align: center;
     pointer-events: none;

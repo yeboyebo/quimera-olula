@@ -15,6 +15,7 @@ export interface RespuestaWhoAmI {
     plugins: Record<string, string>;
     usuario_id: string;
     empresas: { id: string; nombre: string }[];
+    config?: Record<string, Record<string, boolean>>;
 }
 
 type PeticionLogin = { id: string; password: string; };

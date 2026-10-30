@@ -1,4 +1,4 @@
-import { AlbaranCreado } from "#/ventas/albaranarPedido/diseño.ts";
+import { AlbaranCreado } from "#/ventas/albaranar_pedido/diseño.ts";
 import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { CambioDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
@@ -15,7 +15,8 @@ export interface Pedido extends Venta {
     lineas: LineaPedido[];
 }
 export interface LineaPedido extends LineaVenta {
-    otro_campo?: string;
+    porLotes: boolean;
+    servida: number;
 }
 
 export interface CambiosLineaPedido {
@@ -80,7 +81,7 @@ export type PatchCambiarDivisa = (id: string, cambio: CambioDivisa) => Promise<v
 export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
 
 export type EstadoPedido = (
-    'INICIAL' | 'ABIERTO' | 'SERVIDO'
+    'INICIAL' | 'ABIERTO' | 'VIENDO_TRAZA' | 'SERVIDO'
     | 'BORRANDO_PEDIDO'
     | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'

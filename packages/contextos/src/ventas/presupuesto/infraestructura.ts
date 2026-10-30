@@ -7,6 +7,7 @@ import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import { CambiarArticuloLinea, CambiarCantidadLinea, CambioClientePresupuesto, DeleteLinea, EstadoAprobado, GetPresupuesto, GetPresupuestos, GetReportPresupuesto, LineaPresupuesto, PatchAprobarPresupuesto, PatchCambiarDivisa, PatchLinea, PostLinea, PostPresupuesto, Presupuesto, QueryNuevaLinea } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 type PresupuestoAPI = {
     id: string;
@@ -88,7 +89,7 @@ export const getPresupuestos: GetPresupuestos = async (
 export const postPresupuesto: PostPresupuesto = async (presupuesto): Promise<string> => {
     const payload = {
         cliente: payloadCambioCliente(presupuesto),
-        empresa_id: empresaActual()
+        empresa_id: presupuesto.empresa_id || empresaActual()
     };
 
     return await RestAPI.post(baseUrl, payload, "Error al crear presupuesto").then((respuesta) => respuesta.id);
@@ -124,10 +125,13 @@ export const patchCambiarCliente = async (id: string, cambio: CambioClientePresu
     }, "Error al cambiar cliente del presupuesto");
 }
 
-export const getLineas = async (id: string): Promise<LineaPresupuesto[]> =>
-    await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea`).then((respuesta) =>
+export const getLineas = async (id: string, orden?: Orden): Promise<LineaPresupuesto[]> => {
+    const q = criteriaQuery(undefined, orden);
+
+    return await RestAPI.get<{ datos: LineaPresupuestoApi[] }>(`${baseUrl}/${id}/linea${q}`).then((respuesta) =>
         respuesta.datos.map(lineaPresupuestoDesdeApi)
     );
+};
 
 
 export const postLinea: PostLinea = async (id, linea) => {
@@ -235,3 +239,5 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
         }
     }, "Error al cambiar descuento del presupuesto");
 };
+
+export const getTrazaPresupuesto = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

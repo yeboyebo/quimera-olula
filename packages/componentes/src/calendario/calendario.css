@@ -78,7 +78,7 @@
   background: var(--gris-1);
   padding: var(--espaciado-s);
   text-align: center;
-  font-weight: 600;
+  font-weight: var(--grosor-letra-5);
 }
 
 .calendario-dias {
@@ -111,7 +111,7 @@
 .dia-numero {
   align-self: flex-end;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--grosor-letra-5);
 }
 
 /* Datos */
@@ -151,7 +151,7 @@
   align-items: center;
   height: 2.4rem;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: var(--grosor-letra-5);
   background-color: var(--gris-3);
 }
 
@@ -424,7 +424,7 @@
     transform: translate(-50%, -50%);
     font-size: 14px;
     /* Tamaño pequeño para el número */
-    font-weight: bold;
+    font-weight: var(--grosor-letra-6);
     color: black;
     pointer-events: none;
     /* Para que no interfiera con los clics */
@@ -559,7 +559,7 @@
 
 .calendario-dia.seleccionada .dia-numero {
   color: white;
-  font-weight: bold;
+  font-weight: var(--grosor-letra-6);
 }
 
 .calendario-dia.seleccionada:hover {

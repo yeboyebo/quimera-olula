@@ -18,13 +18,11 @@ export const Agente = ({
   valor,
   nombre = "agente_id",
   label = "Agente",
-  enlace = "/ventas/agente",
+  enlace = "/ventas/agente?id={id}",
   onChange,
   ...props
 }: AgenteProps) => {
   const obtenerOpciones = async (valor: string, id?: string) => {
-    if (!id && valor.length < 3) return [];
-
     const criteria = {
       filtro: id ? [["id", "=", id]] : ["nombre", "~", valor],
       orden: ["id"],
@@ -52,6 +50,7 @@ export const Agente = ({
       obtenerOpciones={obtenerOpciones}
       enlace={enlace}
       descripcion={descripcion}
+      longitudMinima={0}
       {...props}
     />
   );

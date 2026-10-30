@@ -6,6 +6,7 @@ import ApiUrls from "../comun/urls.ts";
 import { direccionVacia, payloadCambioCliente } from "../venta/dominio.ts";
 import { articuloDeLinea, NuevaLineaVentaApiReq, NuevaLineaVentaApiRes, peticionNuevaLineaApi, respuestaNuevaLineaApi } from "../venta/infraestructura.ts";
 import { DeleteLinea, EstadoExpedicion, Factura, GetFactura, GetFacturas, GetLineasFactura, GetRecibosFactura, GetReportFactura, LineaFactura, PatchArticuloLinea, PatchCambiarAgente, PatchCambiarDivisa, PatchCantidadLinea, PatchClienteFactura, PatchEmitirFactura, PatchLinea, PostFactura, PostLinea, QueryNuevaLinea, ReciboFactura } from "./diseño.ts";
+import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -42,8 +43,10 @@ interface FacturaAPI {
     automatica: boolean;
     servicios: boolean;
     rectificativa_id: string | null;
+    asiento_id: string | null;
     grupo_iva_negocio_id: string;
-    por_comision: number;
+    por_comision?: number;
+    por_comision_agente?: number | null;
     observaciones: string;
     editable?: boolean;
     estado_expedicion: EstadoExpedicion;
@@ -53,6 +56,7 @@ export const facturaDesdeAPI = (p: FacturaAPI): Factura => ({
     fecha: new Date(Date.parse(p.fecha)),
     dtoPorcentual: p.por_descuento,
     netoSinDto: p.neto_sin_dto,
+    por_comision: p.por_comision ?? p.por_comision_agente ?? 0,
     estadoExpedicion: p.estado_expedicion,
     cliente: {
         cliente_id: p.cliente_id ?? null,
@@ -115,7 +119,7 @@ export const postFactura: PostFactura = async (factura) => {
 
     const payload = {
         cliente,
-        empresa_id: empresaActual()
+        empresa_id: factura.empresa_id || empresaActual()
     };
     return await RestAPI.post(baseUrl, payload, "Error al crear factura").then((respuesta) => respuesta.id);
 };
@@ -267,7 +271,7 @@ interface ReciboFacturaAPI {
 
 export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
     return RestAPI.get<{ datos: ReciboFacturaAPI[] }>(
-        `/tesoreria/recibo_venta/por_factura/${facturaId}`
+        `/tesoreria/recibo_cobro/por_factura/${facturaId}`
     ).then((respuesta) => respuesta.datos.map((r): ReciboFactura => ({
         id: r.id,
         codigo: r.codigo,
@@ -277,3 +281,5 @@ export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
         importe: r.importe,
     })));
 };
+
+export const getTrazaFactura = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);

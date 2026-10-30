@@ -2,3 +2,19 @@
   margin: 0 0 var(--espaciado-2xl);
   color: var(--color-texto-secundario);
 }
+
+/* El popup "Nuevo Pedido" es solo texto + un select/botones — que se
+   ajuste a su contenido en vez de ocupar toda la pantalla en móvil. El
+   qmodal.css genérico fuerza casi todo el ancho de viewport en tablet
+   (<=1024px) para cualquier modal, así que aquí se sobreescribe solo
+   para este (por su atributo "nombre", sin tocar el componente
+   compartido). pantallaCompletaMovil={false} en el propio QModal ya
+   quita el forzado de pantalla completa en móvil (<=768px). */
+@media (max-width: 1024px) {
+  quimera-modal[nombre="altaVentaTpv"] dialog {
+    width: fit-content;
+    min-width: min(400px, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
+    margin: auto;
+  }
+}

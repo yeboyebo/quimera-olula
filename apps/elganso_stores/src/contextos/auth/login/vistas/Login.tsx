@@ -65,6 +65,7 @@ export const Login = () => {
             tipo={mostrarContraseña ? "texto" : "contraseña"}
             valor={contraseña}
             onChange={(v) => setContraseña(v)}
+            onEnterKeyUp={() => handleLogin()}
           />
           <div>
             <QCheckbox

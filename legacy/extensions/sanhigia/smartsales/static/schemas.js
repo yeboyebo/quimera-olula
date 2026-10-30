@@ -438,15 +438,13 @@ export default parent => ({
         .load(t => t?.hora?.substring(0, 5))
         .default(util.now())
         .required(),
-      // fechaFin: Field.Date("fechafin", "Fecha finalización"),
-      // horaFin: Field.Time("horafin", "Hora finalización").load(t => t?.horafin?.substring(0, 5)),
-      fechaFin: Field.Date("fechafin", "Fecha finalización").default(util.today()).required(),
+      fechaFin: Field.Date("fechafin", "Fecha finalización").required(),
       horaFin: Field.Time("horafin", "Hora finalización")
         .load(t => t?.horafin?.substring(0, 5))
-        .default(util.now())
         .required(),
       latitudFin: Field.Float("latitudfin", "Coordenada latitud finalización"),
       longitudFin: Field.Float("longitudfin", "Coordenada longitud finalización"),
+      direccionFin: Field.Text("direccionfin", "Dirección finalización").load(false),
       tipo: Field.Options("tipo", "Tipo")
         .required()
         .default("Llamada")
@@ -1114,6 +1112,8 @@ export default parent => ({
     fechaCaducidad: Field.Date("fechacaducidad", "Fecha de caducidad").required(),
     fechaInicioProceso: Field.Date("fechainicio", "Fecha de inicio de trámite"),
     fechaFinProceso: Field.Date("fechafin", "Fecha aprobación o rechazo").required(),
+    estado: Field.Text("estado", "Estado de la licencia"),
+    codAgente: Field.Text("codagente", "Cod. Agente"),
   }),
   googlecalendar: Schema("googlecalendar", "id").fields({
     authorization_response: Field.Text("authorization_response", "authorization_response"),

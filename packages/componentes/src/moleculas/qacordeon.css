@@ -62,7 +62,7 @@ quimera-acordeon {
     .qacordeon-texto-principal {
         font-size: var(--tamaño-letra-m);
         line-height: var(--tamaño-letra-l);
-        font-weight: 600;
+        font-weight: var(--grosor-letra-5);
         color: var(--color-texto-primario);
     }
 

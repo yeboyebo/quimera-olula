@@ -1,3 +1,4 @@
+import { useControlPantalla } from "@olula/lib/controles_pantalla.ts";
 import React, { useEffect, useRef, useState } from "react";
 import estilos from "./tabs.module.css";
 
@@ -7,19 +8,47 @@ interface TabProps {
   deshabilitado?: boolean;
 }
 
+type HijoTab = React.ReactElement<TabProps> | false | null | undefined;
+
 interface TabsProps {
-  children: React.ReactElement<TabProps>[];
+  children: HijoTab[];
   className?: string;
+  tabInicial?: number;
 }
 
 const Tab: React.FC<TabProps> = ({ children }) => {
   return <div>{children}</div>;
 };
 
-const Tabs: React.FC<TabsProps> = ({ children, className }) => {
-  const [activeTab, setActiveTab] = React.useState(0);
+const Tabs: React.FC<TabsProps> = ({ children, className, tabInicial = 0 }) => {
+  const [activeTab, setActiveTab] = React.useState(tabInicial);
   const [showArrows, setShowArrows] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  const tabs = React.Children.toArray(children) as React.ReactElement<TabProps>[];
+  const indice = Math.min(activeTab, tabs.length - 1);
+
+  // Cambiar de pestaña por voz / desde el asistente (ver controles_pantalla.ts).
+  useControlPantalla("pestanas", () => ({
+    describir: () => ({
+      tipo: "pestanas",
+      id: "",
+      pestanas: tabs.map((tab) => tab.props.label),
+      activa: indice,
+    }),
+    ejecutar: (accion, parametros) => {
+      if (accion !== "seleccionar") return { ok: false, mensaje: "No sé hacer eso con las pestañas." };
+      const etiqueta = typeof parametros.pestana === "string" ? parametros.pestana.toLowerCase() : null;
+      const destino = etiqueta !== null
+        ? tabs.findIndex((tab) => tab.props.label.toLowerCase() === etiqueta)
+        : Number(parametros.indice);
+      if (!Number.isInteger(destino) || destino < 0 || destino >= tabs.length || tabs[destino].props.deshabilitado) {
+        return { ok: false, mensaje: "No encuentro esa pestaña." };
+      }
+      setActiveTab(destino);
+      return { ok: true, mensaje: `Pestaña ${tabs[destino].props.label}.` };
+    },
+  }));
 
   // Detecta overflow
   useEffect(() => {
@@ -62,12 +91,12 @@ const Tabs: React.FC<TabsProps> = ({ children, className }) => {
           </span>
         )}
         <div className={estilos.tabHeaderSlider} ref={sliderRef}>
-          {children.map((tab, index) => (
+          {tabs.map((tab, index) => (
             <button
               key={index}
               onClick={() => setActiveTab(index)}
               disabled={tab.props.deshabilitado}
-              className={activeTab === index ? active : "inactive"}
+              className={indice === index ? active : "inactive"}
             >
               {tab.props.label}
             </button>
@@ -82,7 +111,7 @@ const Tabs: React.FC<TabsProps> = ({ children, className }) => {
           </span>
         )}
       </div>
-      <div className="tab-content">{children[activeTab]}</div>
+      <div className="tab-content">{tabs[indice]}</div>
     </div>
   );
 };

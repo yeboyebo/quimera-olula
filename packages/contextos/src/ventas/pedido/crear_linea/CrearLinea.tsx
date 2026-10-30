@@ -50,23 +50,12 @@ export const CrearLineaBase = ({ idPedido, publicar }: CrearLineaProps) => {
 
     const linea = lineaArticulo.modelo;
 
-    // Handler para ArticuloLinea (onChange inmediato, no pasa por evaluarCambio).
-    // Mapea CamposArticuloLinea → ModeloNuevaLinea:
-    //   tipo     → tipoArticulo
-    //   articulo → descripcionArticulo
     const onArticuloCambiado = useCallback(
         async (cambios: Partial<CamposArticuloLinea>) => {
-            const { idArticulo, tipo, articulo, ...restCambios } = cambios;
-            const cambiosModelo: Partial<ModeloNuevaLinea> = {
-                ...restCambios,
-                ...(tipo !== undefined ? { tipoArticulo: tipo } : {}),
-                ...(articulo !== undefined ? { descripcionArticulo: articulo } : {}),
-                ...(idArticulo !== undefined ? { idArticulo, pvpUnitario: null } : {}),
-            };
-            const nuevaLinea: ModeloNuevaLinea = { ...linea, ...cambiosModelo };
-            lineaArticulo.set(nuevaLinea);
+            const extra = cambios.idArticulo !== undefined ? { pvpUnitario: null } : {};
+            lineaArticulo.set({ ...linea, ...cambios, ...extra });
         },
-        [linea, lineaArticulo, idPedido]
+        [linea, lineaArticulo]
     );
 
     const crear_ = useCallback(async () => {
@@ -96,9 +85,9 @@ export const CrearLineaBase = ({ idPedido, publicar }: CrearLineaProps) => {
             <div className="CrearLinea">
                 <quimera-formulario>
                     <ArticuloLinea
-                        tipo={linea.tipoArticulo}
+                        tipoArticulo={linea.tipoArticulo}
                         idArticulo={linea.idArticulo}
-                        articulo={linea.descripcionArticulo}
+                        descripcionArticulo={linea.descripcionArticulo}
                         descripcion={linea.descripcion ?? ""}
                         nombre="idArticulo_nueva_linea_pedido"
                         onChange={onArticuloCambiado}

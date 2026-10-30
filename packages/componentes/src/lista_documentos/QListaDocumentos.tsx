@@ -1,5 +1,6 @@
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { MetaTabla, QTabla } from "@olula/componentes/atomos/qtabla.tsx";
+import { QModalConfirmacion } from "@olula/componentes/moleculas/qmodalconfirmacion.tsx";
 import {
   descargarDocumento,
   DocumentoGenerico,
@@ -23,6 +24,11 @@ export const QListaDocumentos = ({
     "fechaSubida",
     "DESC",
   ]);
+  const [documentoAEliminar, setDocumentoAEliminar] =
+    useState<DocumentoGenerico | null>(null);
+  // Contador interno de recargas: se incrementa tras borrar para refrescar la lista
+  // sin depender de que el padre cambie `refreshCounter`.
+  const [recargas, setRecargas] = useState(0);
 
   // Memoizar paginación para evitar cambios innecesarios: se compara por limite/pagina
   // en vez de por la identidad del objeto `paginacion`, que puede cambiar en cada render
@@ -58,7 +64,7 @@ export const QListaDocumentos = ({
     // onError se excluye a propósito: es un callback del padre que no se memoiza,
     // y no debe disparar una recarga en cada render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vinculoId, paginacionMemoizada, vinculoTipo, refreshCounter]);
+  }, [vinculoId, paginacionMemoizada, vinculoTipo, refreshCounter, recargas]);
 
   const handleOrdenar = (columna: string) => {
     if (ordenActual[0] === columna) {
@@ -79,6 +85,21 @@ export const QListaDocumentos = ({
           : new Error("Error descargando documento");
       onError?.(err);
       console.error("Error descargando documento:", err);
+    }
+  };
+
+  const handleEliminar = async () => {
+    if (!documentoAEliminar) return;
+    try {
+      await DocumentosAPI.eliminar(documentoAEliminar.id);
+      setDocumentoAEliminar(null);
+      setRecargas((n) => n + 1);
+    } catch (error) {
+      const err =
+        error instanceof Error ? error : new Error("Error borrando documento");
+      onError?.(err);
+      console.error("Error borrando documento:", err);
+      throw err;
     }
   };
 
@@ -120,17 +141,40 @@ export const QListaDocumentos = ({
       prioridad: "alta",
       ancho: "15%",
       render: (doc) => (
-        <QBoton tamaño="pequeño" onClick={() => handleDescargar(doc)}>
-          Descargar
-        </QBoton>
+        <div className="QListaDocumentos-acciones">
+          <QBoton tamaño="pequeño" onClick={() => handleDescargar(doc)}>
+            Descargar
+          </QBoton>
+          <QBoton
+            tamaño="pequeño"
+            // variante="texto"
+            destructivo
+            onClick={() => setDocumentoAEliminar(doc)}
+          >
+            Eliminar
+          </QBoton>
+        </div>
       ),
     },
   ];
+
+  const modalEliminar = documentoAEliminar && (
+    <QModalConfirmacion
+      nombre="eliminarDocumento"
+      abierto={true}
+      titulo="Eliminar documento"
+      mensaje={`¿Está seguro de que desea eliminar el documento ${documentoAEliminar.nombre}?`}
+      onCerrar={() => setDocumentoAEliminar(null)}
+      onAceptar={handleEliminar}
+      labelAceptar="Eliminar"
+    />
+  );
 
   if (documentos.length === 0 && !cargando) {
     return (
       <div className="QListaDocumentos">
         <p className="QListaDocumentos-sin-datos">No hay documentos adjuntos</p>
+        {modalEliminar}
       </div>
     );
   }
@@ -146,6 +190,7 @@ export const QListaDocumentos = ({
         orden={ordenActual}
         onOrdenar={handleOrdenar}
       />
+      {modalEliminar}
     </div>
   );
 };

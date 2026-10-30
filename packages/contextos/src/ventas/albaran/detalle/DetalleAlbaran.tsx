@@ -1,3 +1,5 @@
+import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -16,16 +18,17 @@ import "../../comun/estilos/detalle_documento.css";
 import { TotalesVenta } from "../../venta/vistas/TotalesVenta.tsx";
 import { BorrarAlbaran } from "../borrar/BorrarAlbaran.tsx";
 import { Albaran } from "../diseño.ts";
+import { datosClaveDocumentoVenta } from "../../venta/dominio.ts";
 import {
   albaranVacio,
   editable,
+  etiquetaEstadoAlbaran,
   metaAlbaran,
   tituloAlbaran,
 } from "../dominio.ts";
 import { FacturaGenerada } from "../facturar/FacturaGenerada.tsx";
 import { FacturarAlbaran } from "../facturar/FacturarAlbaran.tsx";
-import { getReportAlbaran } from "../infraestructura.ts";
-import { EstadoAlbaran } from "../vistas/EstadoAlbaran.tsx";
+import { getReportAlbaran, getTrazaAlbaran } from "../infraestructura.ts";
 import "./DetalleAlbaran.css";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
@@ -71,12 +74,7 @@ export const DetalleAlbaran = ({
 
   const { estado, lineaActiva, facturaCreada } = ctx;
 
-  const titulo = (albaran: Albaran) => (
-    <span className="titulo-documento">
-      <EstadoAlbaran facturado={albaran.facturado} />
-      {tituloAlbaran(albaran)}
-    </span>
-  );
+  const titulo = (albaran: Albaran) => tituloAlbaran(albaran);
 
   if (!ctx.albaran.id) return;
 
@@ -98,6 +96,10 @@ export const DetalleAlbaran = ({
       onClick: imprimir,
     },
     {
+      texto: "Documentos relacionados",
+      onClick: () => emitir("traza_solicitada"),
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
@@ -110,6 +112,10 @@ export const DetalleAlbaran = ({
     <Detalle
       id={ctx.albaran.id}
       obtenerTitulo={titulo}
+      obtenerEstado={(albaran: Albaran) => (
+        <EtiquetaEstado {...etiquetaEstadoAlbaran(albaran)} />
+      )}
+      obtenerDatosClave={datosClaveDocumentoVenta}
       setEntidad={() => {}}
       entidad={ctx.albaran}
       cerrarDetalle={() => emitir("albaran_deseleccionado", null)}
@@ -124,6 +130,15 @@ export const DetalleAlbaran = ({
       </div>
 
       <Tabs>
+        <Tab label="Líneas">
+          <Lineas
+            albaran={ctx.albaran}
+            lineaActiva={lineaActiva}
+            publicar={emitir}
+            estadoAlbaran={estado}
+          />
+        </Tab>
+
         <Tab label="Cliente">
           <TabCliente albaran={albaran} estado={estado} publicar={emitir} />
         </Tab>
@@ -160,13 +175,6 @@ export const DetalleAlbaran = ({
         />
       )}
 
-      <Lineas
-        albaran={ctx.albaran}
-        lineaActiva={lineaActiva}
-        publicar={emitir}
-        estadoAlbaran={estado}
-      />
-
       {estado === "BORRANDO_ALBARAN" && (
         <BorrarAlbaran albaran={ctx.albaran} publicar={emitir} />
       )}
@@ -177,6 +185,14 @@ export const DetalleAlbaran = ({
 
       {estado === "FACTURA_CREADA" && facturaCreada && (
         <FacturaGenerada factura={facturaCreada} publicar={emitir} />
+      )}
+
+      {estado === "VIENDO_TRAZA" && (
+        <ModalTraza
+          id={ctx.albaran.id}
+          getTraza={getTrazaAlbaran}
+          onCerrar={() => emitir("traza_cerrada")}
+        />
       )}
     </Detalle>
   );

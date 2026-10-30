@@ -51,6 +51,7 @@ export interface LineaPedido extends Entidad {
     tipoIrpf: number;
     cantidadRecibida: number;
     cerrada: boolean;
+    porLotes: boolean;
 }
 
 export interface NuevoPedido extends Modelo {
@@ -80,6 +81,14 @@ export interface NuevaLineaPedido extends Modelo {
     descripcionArticulo: string | null;
     cantidad: number;
     pvpUnitario: number | null;
+    dtoPorcentual: number;
+    dtoLineal: number;
+    pvpTotal: number;
+    grupoIvaProductoId: string | null;
+    ivaIncluido: boolean;
+    tipoIva: number;
+    tipoRecargo: number;
+    tipoIrpf: number;
 }
 
 export interface ModeloLineaPedido extends LineaPedido {
@@ -105,6 +114,10 @@ export type PostLineasPedido = (
     id: string,
     lineas: NuevaLineaPedido[]
 ) => Promise<string[]>;
+export type QueryNuevaLineaPedido = (
+    id: string,
+    linea: NuevaLineaPedido
+) => Promise<NuevaLineaPedido>;
 export type PatchLineaPedido = (
     id: string,
     lineaId: string,

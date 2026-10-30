@@ -23,6 +23,10 @@ describe("[ia-memoria-dominio-01] iaMemoriaVacia retorna una memoria con los cam
     test("tiene activo en true por defecto", () => {
         expect(iaMemoriaVacia.activo).toBe(true);
     });
+
+    test("tiene origen 'texto' por defecto", () => {
+        expect(iaMemoriaVacia.origen).toBe("texto");
+    });
 });
 
 // ---------------------------------------------------------------------------

@@ -1,9 +1,10 @@
 import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import ComunUrls from "../urls.ts";
 import {
-    CambiosCredencialExterna, CategoriaCredencialExterna, CredencialExterna, DeleteCredencialExterna,
-    GetCredencialesExterna, GetCredencialExterna, PatchCredencialExterna, PostCredencialExterna,
-    RotarSecretoCredencialExterna, SecretoCredencialExterna, TipoAuthCredencialExterna,
+    BuscarArchivosDrive, CambiosCredencialExterna, CategoriaCredencialExterna, CredencialExterna,
+    DeleteCredencialExterna, GetCredencialesExterna, GetCredencialExterna, ItemArchivoConector,
+    PatchCredencialExterna, PostCredencialExterna, RotarSecretoCredencialExterna, SecretoCredencialExterna,
+    TipoAuthCredencialExterna,
 } from "./diseño.ts";
 
 export interface CredencialExternaApi {
@@ -18,6 +19,13 @@ export interface CredencialExternaApi {
     actualizado_en: string;
     propietario_id: string | null;
     categoria: CategoriaCredencialExterna;
+}
+
+interface ItemArchivoConectorApi {
+    id: string;
+    nombre: string;
+    tipo: string;
+    modificado_en: string;
 }
 
 interface NuevaCredencialExternaApi {
@@ -122,4 +130,37 @@ export const reconectarTelegram = async (id: string): Promise<void> => {
         {},
         "Error al reconectar con Telegram",
     );
+};
+
+/**
+ * Busca archivos en el conector de Google Drive de una credencial — usado por
+ * el buscador del alta "Importar de un conector" de ia_memoria (ver D5 en el
+ * plan). `texto` es opcional: sin él, el backend devuelve los más recientes.
+ */
+export const buscarArchivosDrive: BuscarArchivosDrive = async (id, texto) => {
+    const q = texto ? `?q=${encodeURIComponent(texto)}` : "";
+    const respuesta = await RestAPI.get<{ datos: ItemArchivoConectorApi[] }>(
+        `${baseUrl}/${id}/drive/buscar${q}`,
+        "Error al buscar archivos en Google Drive",
+    );
+    return respuesta.datos.map((a): ItemArchivoConector => ({
+        id: a.id,
+        nombre: a.nombre,
+        tipo: a.tipo,
+        modificadoEn: a.modificado_en,
+    }));
+};
+
+/**
+ * Inicia el flujo OAuth2 de Google (Drive/Calendar) — devuelve la URL de
+ * consentimiento de Google a la que hay que redirigir el navegador entero
+ * (ver DetalleCredencialExterna.tsx: window.location.href = url).
+ */
+export const iniciarOauthGoogle = async (id: string): Promise<string> => {
+    const respuesta = (await RestAPI.post(
+        `${baseUrl}/${id}/oauth/iniciar`,
+        {},
+        "Error al iniciar la conexión con Google",
+    )) as unknown as { url: string };
+    return respuesta.url;
 };

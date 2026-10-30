@@ -1,0 +1,16 @@
+.tarjeta-tarifa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.tarjeta-tarifa-nombre {
+    font-weight: 600;
+}
+
+.tarjeta-tarifa-datos {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.85em;
+    opacity: 0.75;
+}

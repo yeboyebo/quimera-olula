@@ -1,10 +1,16 @@
+import { EtiquetaEstado } from "#/comun/componentes/etiqueta_estado/EtiquetaEstado.tsx";
+import { ModalTraza } from "#/comun/componentes/traza/ModalTraza.tsx";
 import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
 import { CambiarAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import { CambiarDivisa } from "#/ventas/comun/componentes/moleculas/CambiarDivisa/CambiarDivisa.tsx";
 import "#/ventas/comun/estilos/campos.css";
 import "#/ventas/comun/estilos/detalle_documento.css";
-import { tituloDocumentoVenta } from "#/ventas/venta/dominio.ts";
+import {
+  datosClaveDocumentoVenta,
+  tituloDocumentoVenta,
+} from "#/ventas/venta/dominio.ts";
+import { etiquetaEstadoPedido } from "../maestro/maestro.ts";
 import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
@@ -18,7 +24,7 @@ import { useCallback, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
-import { getReportPedido } from "../infraestructura.ts";
+import { getReportPedido, getTrazaPedido } from "../infraestructura.ts";
 import { editable, metaPedido, pedidoVacio } from "./detalle.ts";
 import "./DetallePedido.css";
 import { Lineas } from "./lineas/Lineas.tsx";
@@ -106,6 +112,10 @@ export const DetallePedidoBase = ({
       onClick: imprimir,
     },
     {
+      texto: "Documentos relacionados",
+      onClick: () => emitir("traza_solicitada"),
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
@@ -118,6 +128,10 @@ export const DetallePedidoBase = ({
     <Detalle
       id={ctx.pedido.id}
       obtenerTitulo={titulo}
+      obtenerEstado={(pedido: Pedido) => (
+        <EtiquetaEstado {...etiquetaEstadoPedido(pedido)} />
+      )}
+      obtenerDatosClave={datosClaveDocumentoVenta}
       setEntidad={() => {}}
       entidad={ctx.pedido}
       cerrarDetalle={() => emitir("pedido_deseleccionado", null)}
@@ -132,6 +146,15 @@ export const DetallePedidoBase = ({
       </div>
 
       <Tabs>
+        <Tab label="Líneas">
+          <Lineas
+            pedido={ctx.pedido}
+            lineaActiva={lineaActiva}
+            publicar={emitir}
+            estadoPedido={estado}
+          />
+        </Tab>
+
         <Tab label="Cliente">
           <TabCliente pedido={pedido} estado={estado} publicar={emitir} />
         </Tab>
@@ -168,15 +191,16 @@ export const DetallePedidoBase = ({
         />
       )}
 
-      <Lineas
-        pedido={ctx.pedido}
-        lineaActiva={lineaActiva}
-        publicar={emitir}
-        estadoPedido={estado}
-      />
-
       {estado === "BORRANDO_PEDIDO" && (
         <BorrarPedido pedido={ctx.pedido} publicar={emitir} />
+      )}
+
+      {estado === "VIENDO_TRAZA" && (
+        <ModalTraza
+          id={ctx.pedido.id}
+          getTraza={getTrazaPedido}
+          onCerrar={() => emitir("traza_cerrada")}
+        />
       )}
     </Detalle>
   );

@@ -4,7 +4,7 @@ import { presupuestoVacio } from "../../presupuesto/detalle/detalle.ts";
 import { getLineas, getPresupuesto } from "../../presupuesto/infraestructura.ts";
 import { LineaPresupuesto } from "../../presupuesto/diseño.ts";
 import { LineaAprobarPresupuesto } from "../diseño.ts";
-import { pendienteDeLinea } from "../dominio.ts";
+import { ordenLineas, pendienteDeLinea } from "../dominio.ts";
 import { patchAprobarPresupuestoParcial } from "../infraestructura.ts";
 import { ContextoAprobarPresupuesto, EstadoAprobarPresupuesto } from "./diseño.ts";
 
@@ -23,24 +23,13 @@ const paraAprobar = (lineas: LineaPresupuesto[]): LineaAprobarPresupuesto[] =>
 export const cargarDatos: ProcesarAprobarPresupuesto = async (contexto, presupuestoId) => {
     const presupuestoIdStr = presupuestoId as string;
     const presupuesto = await getPresupuesto(presupuestoIdStr);
-    const lineasData = await getLineas(presupuestoIdStr);
+    const lineasData = await getLineas(presupuestoIdStr, ordenLineas);
 
     return {
         ...contexto,
         presupuesto,
         lineas: cargar(paraAprobar(lineasData))(contexto.lineas),
         estado: "LISTO",
-    };
-};
-
-export const seleccionarLinea: ProcesarAprobarPresupuesto = async (contexto, payload) => {
-    const lineaId = payload as string;
-    return {
-        ...contexto,
-        lineas: {
-            ...contexto.lineas,
-            idActivo: lineaId,
-        },
     };
 };
 
@@ -71,25 +60,7 @@ export const actualizarEstadoCerradoLinea: ProcesarAprobarPresupuesto = async (c
         return {
             ...l,
             cerrada,
-        };
-    });
-
-    return {
-        ...contexto,
-        lineas: {
-            ...contexto.lineas,
-            lista: lineasActualizadas,
-        },
-    };
-};
-
-export const aprobarLinea: ProcesarAprobarPresupuesto = async (contexto, payload) => {
-    const lineaId = payload as string;
-    const lineasActualizadas = contexto.lineas.lista.map((l) => {
-        if (String(l.id) !== String(lineaId)) return l;
-        return {
-            ...l,
-            a_aprobar: pendienteDeLinea(l),
+            a_aprobar: cerrada ? 0 : l.a_aprobar,
         };
     });
 
@@ -120,21 +91,11 @@ export const aprobarTodas: ProcesarAprobarPresupuesto = async (contexto) => {
     };
 };
 
-export const cancelarSeleccion: ProcesarAprobarPresupuesto = async (contexto) => {
-    return {
-        ...contexto,
-        lineas: {
-            ...contexto.lineas,
-            idActivo: null,
-        },
-    };
-};
-
 export const aprobarPresupuesto: ProcesarAprobarPresupuesto = async (contexto) => {
     const pedidoCreado = await patchAprobarPresupuestoParcial(contexto.presupuesto.id, contexto.lineas.lista);
 
     const presupuestoActualizado = await getPresupuesto(contexto.presupuesto.id);
-    const lineasActualizadas = await getLineas(contexto.presupuesto.id);
+    const lineasActualizadas = await getLineas(contexto.presupuesto.id, ordenLineas);
 
     return {
         ...contexto,

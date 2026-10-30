@@ -46,6 +46,7 @@ declare namespace React {
             'menu-usuario': NodoComun;
             'panel-asistente': NodoComun;
             'quimera-editor-enriquecido': NodoComun;
+            'quimera-cargando': NodoComun;
         }
     }
 }

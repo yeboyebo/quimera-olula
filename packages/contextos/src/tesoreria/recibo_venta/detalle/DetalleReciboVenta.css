@@ -35,4 +35,8 @@
     quimera-input[nombre="idFiscal"] {
         grid-column: span 4;
     }
+
+    .PagosReciboVenta {
+        margin-block-start: var(--espaciado-l);
+    }
 }

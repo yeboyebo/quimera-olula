@@ -2,7 +2,6 @@ import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import {
   Detalle,
   QBoton,
-  QDate,
   QInput,
   QModalConfirmacion,
   QSelect,
@@ -38,9 +37,8 @@ export const DetalleLicenciaFarma = ({
   const licencia = useModelo(metaLicenciaFarma, licenciaFarmaVacia);
   const { modelo, init, modificado, valido } = licencia;
   const [estado, setEstado] = useState<
-    "confirmarBorrado" | "revisandoDatos" | "edicion"
+    "confirmarBorrado" | "edicion"
   >("edicion");
-  // const [cargando, setCargando] = useState(false);
 
   const onGuardarClicked = async () => {
     await intentar(() => patchLicenciaFarma(modelo.id, modelo));
@@ -55,28 +53,7 @@ export const DetalleLicenciaFarma = ({
     setEstado("edicion");
   };
 
-  // const onDatosRevisadosClicked = async () => {
-  //   setCargando(true);
-  //   try {
-  //     await intentar(async () => {
-  //       const fechaRevision = await marcarDatosRevisados(modelo.id);
-  //       init({
-  //         ...modelo,
-  //         fechaRevisionDatos: fechaRevision,
-  //       });
-  //     });
-  //   } finally {
-  //     setCargando(false);
-  //     setEstado("edicion");
-  //   }
-  // };
-
   // console.log("mimensaje_licencia", puede("crm.trato.farma"));
-
-  // const puedeRevisarDatos =
-  //   modelo.estado === "En revisión" &&
-  //   !!modelo.clienteId &&
-  //   !modelo.fechaRevisionDatos;
 
   return (
     <Detalle
@@ -90,14 +67,6 @@ export const DetalleLicenciaFarma = ({
       {!!licenciaId && (
         <div className="DetalleLicenciaFarma">
           <div className="maestro-botones">
-            {/* {puedeRevisarDatos && (
-              <QBoton
-                onClick={onDatosRevisadosClicked}
-                deshabilitado={!puedeRevisarDatos || cargando}
-              >
-                {cargando ? "Procesando..." : "Datos revisados"}
-              </QBoton>
-            )} */}
             {/* <QBoton onClick={() => setEstado("confirmarBorrado")}>
               Borrar
             </QBoton> */}
@@ -108,35 +77,41 @@ export const DetalleLicenciaFarma = ({
               {...licencia.uiProps("tipoLicencia")}
               deshabilitado={!puede("crm.trato.farma")}
             />
-            <QDate
+            <QInput
               label="Fecha de caducidad"
               {...licencia.uiProps("fechaCaducidad")}
               deshabilitado={!puede("crm.trato.farma")}
+              tipo="fecha"
             />
-            <QDate
+            <QInput
               label="Fecha de inicio"
               {...licencia.uiProps("fechaInicio")}
               deshabilitado={!puede("crm.trato.farma")}
+              tipo="fecha"
             />
-            <QDate
+            <QInput
               label="Fecha de fin"
               {...licencia.uiProps("fechaFin")}
               deshabilitado={!puede("crm.trato.farma")}
+              tipo="fecha"
             />
-            <QDate
+            <QInput
               label="Fecha de revisión de datos"
               {...licencia.uiProps("fechaRevisionDatos")}
               // deshabilitado={!puede("crm.trato.farma")}
+              tipo="fecha"
             />
-            <QDate
+            <QInput
               label="Fecha de recepción de acuerdos"
               {...licencia.uiProps("fechaRecepcionAcuerdos")}
               deshabilitado={!puede("crm.trato.farma")}
+              tipo="fecha"
             />
-            <QDate
+            <QInput
               label="Fecha de envío de documentación"
               {...licencia.uiProps("fechaEnvioDocumentacion")}
               deshabilitado={!puede("crm.trato.farma")}
+              tipo="fecha"
             />
             <QSelect
               label="Estado"

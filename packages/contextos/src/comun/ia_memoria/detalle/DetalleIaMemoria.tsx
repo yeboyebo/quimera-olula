@@ -12,6 +12,7 @@ import { metaIaMemoria } from "../dominio.js";
 import { contextoDetalleIaMemoriaInicial, guardarIaMemoria } from "./detalle.js";
 import "./DetalleIaMemoria.css";
 import { getMaquina } from "./maquina.js";
+import { TabFichero } from "./TabFichero.js";
 import { TabGeneral } from "./TabGeneral.js";
 import { TabInformacion } from "./TabInformacion.js";
 
@@ -92,10 +93,20 @@ export const DetalleIaMemoria = ({
             <div className="DetalleIaMemoria">
                 <QuimeraAcciones acciones={accionesIaMemoria} />
                 <Tabs children={[
-                    <Tab label="General"
-                        key="tab-general"
-                        children={<TabGeneral form={formModelo} />}
-                    />,
+                    iaMemoria.origen === 'fichero' || iaMemoria.origen === 'externo'
+                        ? <Tab label={iaMemoria.origen === 'externo' ? "Origen" : "Fichero"}
+                            key="tab-fichero"
+                            children={
+                                <TabFichero
+                                    iaMemoria={iaMemoria}
+                                    onReemplazado={() => emitir("fichero_reemplazado")}
+                                />
+                            }
+                        />
+                        : <Tab label="General"
+                            key="tab-general"
+                            children={<TabGeneral form={formModelo} />}
+                        />,
                     <Tab label="Información"
                         key="tab-info"
                         children={<TabInformacion iaMemoria={iaMemoria} />}
