@@ -1,7 +1,7 @@
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
 import { useEffect, useState } from "react";
-import { getCuentasBancarias } from "../../cuentas_bancarias/infraestructura.ts";
+import { getCuentasBancarias } from "#/tesoreria/cuentas_bancarias/infraestructura.ts";
 
 interface CuentaBancariaSelectProps {
   valor?: string;
