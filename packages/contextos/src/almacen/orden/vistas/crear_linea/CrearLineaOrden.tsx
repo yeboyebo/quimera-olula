@@ -1,4 +1,5 @@
 import { Caja } from "#/almacen/comun/componentes/Caja.tsx";
+import { Sku } from "#/almacen/comun/componentes/Sku.tsx";
 import { Ubicacion } from "#/almacen/comun/componentes/Ubicacion.tsx";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
@@ -6,11 +7,18 @@ import { QModal } from "@olula/componentes/moleculas/qmodal.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { OrdenAlmacen } from "../../diseño.ts";
-import { postLineasOrden } from "../../infraestructura.ts";
+import { crearLineaSubcajaPalet, postLineasOrden } from "../../infraestructura.ts";
+import { CampoFlujo, camposPendientes, Flujo, flujoPorDefecto } from "../../pasos/flujos.ts";
+import { SelectorFlujo } from "../selector_flujo/SelectorFlujo.tsx";
 import { nuevaLineaOrdenDesdeOrden } from "./crear_linea.ts";
 import { getMetaNuevaLineaOrden } from "./diseño.ts";
+
+const meta = getMetaNuevaLineaOrden();
+
+const etiqueta = (flujo: Flujo | null, campo: CampoFlujo, texto: string) =>
+    flujo?.campos[campo] === "opcional" ? `${texto} (opcional)` : texto;
 
 export const CrearLineaOrden = ({
     publicar,
@@ -19,35 +27,45 @@ export const CrearLineaOrden = ({
     publicar: EmitirEvento;
     orden: OrdenAlmacen;
 }) => {
-    const meta = getMetaNuevaLineaOrden(orden.tipo);
+    const [flujo, setFlujo] = useState<Flujo | null>(() => flujoPorDefecto(orden));
 
     const lineaInicial = useMemo(
         () => nuevaLineaOrdenDesdeOrden(orden),
-        [orden.idUbicacionOrigen, orden.idCajaOrigen, orden.idUbicacionDestino, orden.idCajaDestino]
+        [orden.idUbicacionOrigen, orden.idCajaOrigen, orden.idUbicacionDestino, orden.idCajaDestino] // eslint-disable-line react-hooks/exhaustive-deps
     );
 
-    const { modelo, uiProps, valido } = useModelo(
-        meta,
-        lineaInicial
-    );
+    const { modelo, uiProps, valido } = useModelo(meta, lineaInicial);
 
-    const mostrarOrigen = orden.tipo === "SALIDA" || orden.tipo === "TRASPASO";
-    const mostrarDestino = orden.tipo === "ENTRADA" || orden.tipo === "TRASPASO";
+    const usa = (campo: CampoFlujo) => !!flujo?.campos[campo];
+    const pendientes = flujo ? camposPendientes(flujo, modelo) : [];
+    const puedeGuardar = valido && !!flujo && pendientes.length === 0;
 
     const crear_ = useCallback(async () => {
-        await postLineasOrden(orden.id, [
-            {
+        if (!flujo) return;
+        if (flujo.palet) {
+            await crearLineaSubcajaPalet(orden.id, {
                 sku: modelo.sku,
-                cantidadPrevista: modelo.cantidadPrevista,
-                loteId: null,
-                idUbicacionOrigen: modelo.idUbicacionOrigen,
-                idCajaOrigen: modelo.idCajaOrigen,
-                idUbicacionDestino: modelo.idUbicacionDestino,
-                idCajaDestino: modelo.idCajaDestino,
-            },
-        ]);
+                cantidad: modelo.cantidadPrevista,
+                idCajaOrigen: modelo.idCajaOrigen!,
+                idUbicacionDestino: modelo.idUbicacionDestino!,
+            });
+        } else {
+            await postLineasOrden(orden.id, [
+                {
+                    sku: modelo.sku,
+                    cantidadPrevista: modelo.cantidadPrevista,
+                    loteId: null,
+                    idUbicacionOrigen: usa("ubicacionOrigen") || usa("cajaOrigen") ? modelo.idUbicacionOrigen : null,
+                    idCajaOrigen: usa("cajaOrigen") ? modelo.idCajaOrigen : null,
+                    idUbicacionDestino: usa("ubicacionDestino") ? modelo.idUbicacionDestino : null,
+                    idCajaDestino: usa("cajaDestino") ? modelo.idCajaDestino : null,
+                    pasosPick: flujo.pasosPick,
+                    pasosDrop: flujo.pasosDrop,
+                },
+            ]);
+        }
         publicar("linea_creada");
-    }, [modelo, publicar, orden.id]);
+    }, [modelo, flujo, publicar, orden.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const cancelar_ = useCallback(() => {
         publicar("alta_de_linea_cancelada");
@@ -64,39 +82,46 @@ export const CrearLineaOrden = ({
         >
             <div className="CrearLineaOrden">
                 <quimera-formulario>
-                    <QInput label="SKU" {...uiProps("sku")} />
+                    <SelectorFlujo tipo={orden.tipo} valor={flujo?.codigo ?? null} onChange={setFlujo} />
+                    <Sku {...uiProps("sku")} />
                     <QInput label="Cantidad prevista" {...uiProps("cantidadPrevista")} />
-                    {mostrarOrigen && (
+                    {usa("paletOrigen") && (
+                        <Caja {...uiProps("idCajaOrigen")} label="Palé origen" nombre="idCajaOrigen" />
+                    )}
+                    {usa("ubicacionOrigen") && (
                         <Ubicacion
                             {...uiProps("idUbicacionOrigen")}
-                            label="Ubicación origen"
+                            label={etiqueta(flujo, "ubicacionOrigen", "Ubicación origen")}
                             nombre="idUbicacionOrigen"
                         />
                     )}
-                    {mostrarOrigen && (
+                    {usa("cajaOrigen") && (
                         <Caja
                             {...uiProps("idCajaOrigen")}
-                            label="Caja origen"
+                            label={etiqueta(flujo, "cajaOrigen", "Caja origen")}
                             nombre="idCajaOrigen"
                         />
                     )}
-                    {mostrarDestino && (
+                    {usa("ubicacionDestino") && (
                         <Ubicacion
                             {...uiProps("idUbicacionDestino")}
-                            label="Ubicación destino"
+                            label={etiqueta(flujo, "ubicacionDestino", "Ubicación destino")}
                             nombre="idUbicacionDestino"
                         />
                     )}
-                    {mostrarDestino && (
+                    {usa("cajaDestino") && (
                         <Caja
                             {...uiProps("idCajaDestino")}
-                            label="Caja destino"
+                            label={etiqueta(flujo, "cajaDestino", "Caja destino")}
                             nombre="idCajaDestino"
                         />
                     )}
                 </quimera-formulario>
+                {pendientes.length > 0 && (
+                    <p className="q-texto-secundario">Falta: {pendientes.join(", ")}</p>
+                )}
                 <div className="botones maestro-botones">
-                    <QBoton onClick={crear} deshabilitado={!valido}>
+                    <QBoton onClick={crear} deshabilitado={!puedeGuardar}>
                         Guardar
                     </QBoton>
                 </div>

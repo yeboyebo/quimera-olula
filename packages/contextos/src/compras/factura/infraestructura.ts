@@ -27,11 +27,24 @@ import {
     PatchFactura,
     PatchLineaFactura,
     PatchRectificativa,
+    PatchRegistrarFactura,
     PostFactura,
     PostLineasFactura,
+    QueryNuevaLineaFactura,
     ReciboFactura,
 } from "./diseño.ts";
+import { estadoExpedicionDesdeApi } from "./dominio.ts";
 import { getTraza } from "#/comun/componentes/traza/infraestructura.ts";
+import {
+    AlbaranCandidato,
+    ExtraccionFactura,
+    FacturaLeida,
+    LineaFacturaLeida,
+    LineaPropuesta,
+    NuevoArticuloConProveedor,
+    PropuestaImportacion,
+    SubcuentaPropuesta,
+} from "./vistas/validar_importacion/diseño.ts";
 
 const baseUrl = new ApiUrls().FACTURA;
 
@@ -70,6 +83,9 @@ export interface FacturaApi {
     no_generar_asiento: boolean;
     asiento_id: string | null;
     observaciones: string | null;
+    // Sin tipar como EstadoExpedicion a propósito: lo que llega es texto y lo
+    // valida `estadoExpedicionDesdeApi`, no el compilador.
+    estado_expedicion: string;
 }
 
 export interface LineaFacturaApi {
@@ -96,6 +112,30 @@ interface NuevaLineaFacturaApi {
     articulo: ArticuloLineaCompraApi;
     cantidad: number;
     pvp_unitario?: number;
+    dto_porcentual?: number;
+    dto_lineal?: number;
+    grupo_iva_producto_id?: string;
+    tipo_irpf?: number;
+}
+
+interface QueryNuevaLineaFacturaApiReq extends NuevaLineaFacturaApi {
+    iva_incluido?: boolean;
+}
+
+interface QueryNuevaLineaFacturaApiRes {
+    id?: string;
+    articulo_id: string | null;
+    descripcion: string;
+    cantidad: number;
+    pvp_unitario: number;
+    dto_porcentual: number;
+    dto_lineal: number;
+    pvp_total: number;
+    grupo_iva_producto_id: string;
+    tipo_iva: number;
+    tipo_recargo: number;
+    tipo_irpf: number;
+    iva_incluido: boolean;
 }
 
 interface NuevaFacturaApi {
@@ -121,7 +161,6 @@ interface CambiosFacturaApi {
     de_abono?: boolean;
     servicios?: boolean;
     no_generar_asiento?: boolean;
-    editable?: boolean;
 }
 
 interface CambiosLineaFacturaApi {
@@ -176,6 +215,7 @@ export const facturaDesdeApi = (api: FacturaApi): Factura => ({
     noGenerarAsiento: api.no_generar_asiento,
     asientoId: api.asiento_id,
     observaciones: api.observaciones,
+    estadoExpedicion: estadoExpedicionDesdeApi(api.estado_expedicion),
 });
 
 export const lineaFacturaDesdeApi = (api: LineaFacturaApi): LineaFactura => ({
@@ -243,14 +283,49 @@ const cambiosFacturaAApi = (f: CambiosFactura): CambiosFacturaApi => {
     if (f.deAbono !== undefined) cambios.de_abono = f.deAbono;
     if (f.servicios !== undefined) cambios.servicios = f.servicios;
     if (f.noGenerarAsiento !== undefined) cambios.no_generar_asiento = f.noGenerarAsiento;
-    if (f.editable !== undefined) cambios.editable = f.editable;
     return cambios;
 };
 
+/**
+ * Los importes a cero se omiten: el servidor distingue «ausente» (toma la
+ * condición del proveedor) de «presente con 0» (la pisa), así que mandarlos
+ * siempre borraría el descuento de `articulosprov`.
+ */
 const nuevaLineaAApi = (linea: NuevaLineaFactura): NuevaLineaFacturaApi => ({
     articulo: articuloLineaApi(linea),
     cantidad: linea.cantidad,
     ...(linea.pvpUnitario === null ? {} : { pvp_unitario: linea.pvpUnitario }),
+    ...(linea.dtoPorcentual ? { dto_porcentual: linea.dtoPorcentual } : {}),
+    ...(linea.dtoLineal ? { dto_lineal: linea.dtoLineal } : {}),
+    ...(linea.grupoIvaProductoId === null
+        ? {}
+        : { grupo_iva_producto_id: linea.grupoIvaProductoId }),
+    ...(linea.tipoIrpf ? { tipo_irpf: linea.tipoIrpf } : {}),
+});
+
+const queryNuevaLineaAApi = (
+    linea: NuevaLineaFactura
+): QueryNuevaLineaFacturaApiReq => ({
+    ...nuevaLineaAApi(linea),
+    iva_incluido: linea.ivaIncluido,
+});
+
+const queryNuevaLineaDesdeApi = (
+    anterior: NuevaLineaFactura,
+    api: QueryNuevaLineaFacturaApiRes
+): NuevaLineaFactura => ({
+    ...anterior,
+    ...(anterior.tipoArticulo === "generico" ? {} : { descripcion: api.descripcion }),
+    cantidad: api.cantidad,
+    pvpUnitario: api.pvp_unitario,
+    dtoPorcentual: api.dto_porcentual,
+    dtoLineal: api.dto_lineal,
+    pvpTotal: api.pvp_total,
+    grupoIvaProductoId: api.grupo_iva_producto_id,
+    ivaIncluido: api.iva_incluido,
+    tipoIva: api.tipo_iva,
+    tipoRecargo: api.tipo_recargo,
+    tipoIrpf: api.tipo_irpf,
 });
 
 const cambiosLineaAApi = (linea: CambiosLineaFactura): CambiosLineaFacturaApi => {
@@ -327,6 +402,14 @@ export const patchRectificativa: PatchRectificativa = async (id, rectificativaId
     );
 };
 
+export const patchRegistrarFactura: PatchRegistrarFactura = async (id) => {
+    await RestAPI.patch(
+        `${baseUrl}/${id}/registrar`,
+        {},
+        "Error al registrar la factura"
+    );
+};
+
 export const deleteFactura: DeleteFactura = async (id) => {
     await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar la factura");
 };
@@ -366,6 +449,18 @@ export const postLineaFactura = async (
     return lineaId;
 };
 
+export const queryNuevaLineaFactura: QueryNuevaLineaFactura = async (id, linea) => {
+    const respuesta = await RestAPI.query<
+        QueryNuevaLineaFacturaApiReq,
+        QueryNuevaLineaFacturaApiRes
+    >(
+        `${baseUrl}/${id}/nueva_linea`,
+        queryNuevaLineaAApi(linea),
+        "Error al calcular la nueva línea de la factura"
+    );
+    return queryNuevaLineaDesdeApi(linea, respuesta);
+};
+
 export const patchLineaFactura: PatchLineaFactura = async (id, lineaId, cambios) => {
     await RestAPI.patch(
         `${baseUrl}/${id}/linea/${lineaId}`,
@@ -395,17 +490,6 @@ interface ReciboFacturaApi {
     id_fiscal: string;
 }
 
-export const importarFicheroFactura = async (fichero: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("fichero", fichero);
-    const respuesta = await RestAPI.post<FormData>(
-        `${baseUrl}/importar-fichero`,
-        formData,
-        "Error al importar el fichero de factura"
-    );
-    return respuesta.id;
-};
-
 export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
     return RestAPI.get<{ datos: ReciboFacturaApi[] }>(
         `/tesoreria/recibo_pago/por_factura/${facturaId}`
@@ -420,3 +504,261 @@ export const getRecibosFactura: GetRecibosFactura = async (facturaId) => {
 };
 
 export const getTrazaFactura = (id: string): Promise<unknown> => getTraza(`${baseUrl}/${id}`);
+
+// ─── Importación de facturas desde fichero ───────────────────────────────────
+
+export interface LineaFacturaLeidaApi {
+    articulo_id: string | null;
+    descripcion: string | null;
+    cantidad: string | null;
+    precio_unitario: string | null;
+    descuento: string | null;
+    ref_proveedor: string | null;
+    ref_articulo: string | null;
+    tipo_iva?: string | null;
+    albaran_linea_id: string | null;
+}
+
+export interface FacturaLeidaApi {
+    proveedor_id: string | null;
+    proveedor_nombre: string | null;
+    numero_proveedor: string | null;
+    fecha: string | null;
+    total: string | null;
+    lineas: LineaFacturaLeidaApi[];
+    albaran_ids?: string[];
+    campos_faltantes: string[];
+    fichero_origen: string | null;
+    aceptar_total_discordante?: boolean;
+}
+
+interface SubcuentaPropuestaApi {
+    codigo: string;
+    descripcion: string;
+    origen: SubcuentaPropuesta["origen"];
+}
+
+interface LineaPropuestaApi {
+    indice: number;
+    articulo_id: string | null;
+    descripcion: string | null;
+    grupo_iva_producto_id: string | null;
+    cantidad: number | null;
+    precio_leido: number | null;
+    dto_leido: number | null;
+    total_leido: number | null;
+    precio_teorico: number | null;
+    dto_teorico: number | null;
+    total_teorico: number | null;
+    subcuenta: SubcuentaPropuestaApi | null;
+    albaran_linea_id: string | null;
+    alertas: LineaPropuesta["alertas"];
+}
+
+interface AlbaranCandidatoApi {
+    id: string;
+    codigo: string;
+    fecha: string;
+    total: number;
+    lineas: {
+        id: string;
+        articulo_id: string | null;
+        descripcion: string;
+        cantidad: number;
+        precio: number | null;
+        linea_factura: number | null;
+    }[];
+    cobertura: number;
+    coincide: boolean;
+    seleccionado: boolean;
+}
+
+interface PropuestaImportacionApi {
+    factura_leida: FacturaLeidaApi;
+    total_leido: number | null;
+    total_calculado: number | null;
+    total_teorico: number | null;
+    lineas: LineaPropuestaApi[];
+    albaranes: AlbaranCandidatoApi[];
+    alertas: PropuestaImportacion["alertas"];
+    modo_datos_contables: PropuestaImportacion["modoDatosContables"];
+    opciones_datos_contables: { id: string; descripcion: string }[];
+    cuenta_especial_compras: SubcuentaPropuestaApi | null;
+}
+
+const lineaFacturaLeidaDesdeApi = (l: LineaFacturaLeidaApi): LineaFacturaLeida => ({
+    articuloId: l.articulo_id ?? null,
+    descripcion: l.descripcion ?? null,
+    cantidad: l.cantidad ?? null,
+    precioUnitario: l.precio_unitario ?? null,
+    descuento: l.descuento ?? null,
+    refProveedor: l.ref_proveedor ?? null,
+    refArticulo: l.ref_articulo ?? null,
+    tipoIva: l.tipo_iva ?? null,
+    albaranLineaId: l.albaran_linea_id ?? null,
+});
+
+export const facturaLeidaDesdeApi = (f: FacturaLeidaApi): FacturaLeida => ({
+    proveedorId: f.proveedor_id ?? null,
+    proveedorNombre: f.proveedor_nombre ?? null,
+    numeroProveedor: f.numero_proveedor ?? null,
+    fecha: f.fecha ?? null,
+    total: f.total ?? null,
+    lineas: (f.lineas ?? []).map(lineaFacturaLeidaDesdeApi),
+    ...(f.albaran_ids !== undefined && f.albaran_ids !== null
+        ? { albaranIds: f.albaran_ids }
+        : {}),
+    camposFaltantes: f.campos_faltantes ?? [],
+    ficheroOrigen: f.fichero_origen ?? null,
+    ...(f.aceptar_total_discordante !== undefined
+        ? { aceptarTotalDiscordante: f.aceptar_total_discordante }
+        : {}),
+});
+
+export const facturaLeidaAApi = (f: FacturaLeida): FacturaLeidaApi => ({
+    proveedor_id: f.proveedorId,
+    proveedor_nombre: f.proveedorNombre,
+    numero_proveedor: f.numeroProveedor,
+    fecha: f.fecha,
+    total: f.total,
+    lineas: f.lineas.map((l) => ({
+        articulo_id: l.articuloId,
+        descripcion: l.descripcion,
+        cantidad: l.cantidad,
+        precio_unitario: l.precioUnitario,
+        descuento: l.descuento,
+        ref_proveedor: l.refProveedor,
+        ref_articulo: l.refArticulo,
+        tipo_iva: l.tipoIva,
+        albaran_linea_id: l.albaranLineaId,
+    })),
+    ...(f.albaranIds !== undefined ? { albaran_ids: f.albaranIds } : {}),
+    campos_faltantes: f.camposFaltantes,
+    fichero_origen: f.ficheroOrigen,
+    ...(f.aceptarTotalDiscordante !== undefined
+        ? { aceptar_total_discordante: f.aceptarTotalDiscordante }
+        : {}),
+});
+
+const subcuentaDesdeApi = (s: SubcuentaPropuestaApi | null): SubcuentaPropuesta | null =>
+    s ? { codigo: s.codigo, descripcion: s.descripcion, origen: s.origen } : null;
+
+const lineaPropuestaDesdeApi = (l: LineaPropuestaApi): LineaPropuesta => ({
+    indice: l.indice,
+    articuloId: l.articulo_id,
+    descripcion: l.descripcion,
+    grupoIvaProductoId: l.grupo_iva_producto_id,
+    cantidad: l.cantidad,
+    precioLeido: l.precio_leido,
+    dtoLeido: l.dto_leido,
+    totalLeido: l.total_leido,
+    precioTeorico: l.precio_teorico,
+    dtoTeorico: l.dto_teorico,
+    totalTeorico: l.total_teorico,
+    subcuenta: subcuentaDesdeApi(l.subcuenta),
+    albaranLineaId: l.albaran_linea_id,
+    alertas: l.alertas ?? [],
+});
+
+const albaranCandidatoDesdeApi = (a: AlbaranCandidatoApi): AlbaranCandidato => ({
+    id: a.id,
+    codigo: a.codigo,
+    fecha: a.fecha,
+    total: a.total,
+    lineas: a.lineas.map((l) => ({
+        id: l.id,
+        articuloId: l.articulo_id,
+        descripcion: l.descripcion,
+        cantidad: l.cantidad,
+        precio: l.precio,
+        lineaFactura: l.linea_factura,
+    })),
+    cobertura: a.cobertura,
+    coincide: a.coincide,
+    seleccionado: a.seleccionado,
+});
+
+export const propuestaImportacionDesdeApi = (p: PropuestaImportacionApi): PropuestaImportacion => ({
+    facturaLeida: facturaLeidaDesdeApi(p.factura_leida),
+    totalLeido: p.total_leido,
+    totalCalculado: p.total_calculado,
+    totalTeorico: p.total_teorico,
+    lineas: (p.lineas ?? []).map(lineaPropuestaDesdeApi),
+    albaranes: (p.albaranes ?? []).map(albaranCandidatoDesdeApi),
+    alertas: p.alertas ?? [],
+    modoDatosContables: p.modo_datos_contables,
+    opcionesDatosContables: p.opciones_datos_contables ?? [],
+    cuentaEspecialCompras: subcuentaDesdeApi(p.cuenta_especial_compras),
+});
+
+export const extraerFicheroFactura = async (fichero: File): Promise<ExtraccionFactura> => {
+    const formData = new FormData();
+    formData.append("fichero", fichero);
+    const respuesta = await RestAPI.query<
+        FormData,
+        { factura_leida: FacturaLeidaApi; propuesta: PropuestaImportacionApi }
+    >(
+        `${baseUrl}/extraer-fichero`,
+        formData,
+        "Error al leer el fichero de factura"
+    );
+    return {
+        facturaLeida: facturaLeidaDesdeApi(respuesta.factura_leida),
+        propuesta: propuestaImportacionDesdeApi(respuesta.propuesta),
+    };
+};
+
+export const proponerImportacion = async (
+    facturaLeida: FacturaLeida
+): Promise<PropuestaImportacion> => {
+    const respuesta = await RestAPI.query<
+        { factura_leida: FacturaLeidaApi },
+        PropuestaImportacionApi
+    >(
+        `${baseUrl}/proponer-importacion`,
+        { factura_leida: facturaLeidaAApi(facturaLeida) },
+        "Error al calcular la propuesta de importación"
+    );
+    return propuestaImportacionDesdeApi(respuesta);
+};
+
+export const importarFacturaLeida = async (facturaLeida: FacturaLeida): Promise<string> => {
+    const respuesta = await RestAPI.post(
+        `${baseUrl}/importar`,
+        { factura_leida: facturaLeidaAApi(facturaLeida) },
+        "Error al importar la factura"
+    );
+    return respuesta.id;
+};
+
+export const importarDeHitl = async (
+    tareaId: string,
+    facturaLeida: FacturaLeida
+): Promise<string> => {
+    const respuesta = await RestAPI.post(
+        `${baseUrl}/importar-de-hitl/${tareaId}`,
+        { factura_leida: facturaLeidaAApi(facturaLeida) },
+        "Error al importar la factura desde HITL"
+    );
+    return respuesta.id;
+};
+
+export const crearArticuloConProveedor = async (
+    articulo: NuevoArticuloConProveedor
+): Promise<string> => {
+    const respuesta = await RestAPI.post(
+        `${new ApiUrls().ARTICULO}/con-proveedor`,
+        {
+            id: articulo.id,
+            descripcion: articulo.descripcion,
+            grupo_iva_producto_id: articulo.grupoIvaProductoId,
+            dato_contable: articulo.datoContable,
+            proveedor_id: articulo.proveedorId,
+            ref_proveedor: articulo.refProveedor,
+            coste: articulo.coste,
+            ...(articulo.divisaId ? { divisa_id: articulo.divisaId } : {}),
+        },
+        "Error al crear el artículo"
+    );
+    return respuesta.id;
+};

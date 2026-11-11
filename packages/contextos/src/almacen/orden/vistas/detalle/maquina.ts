@@ -11,6 +11,7 @@ import {
     onLineaCreada,
     onOrdenTerminada,
     refrescarOrden,
+    refrescarOrdenConCierre,
 } from "./detalle.ts";
 
 export type EstadoOrdenAlmacen =
@@ -25,10 +26,14 @@ export type EstadoOrdenAlmacen =
     | 'LEYENDO_CAJA'
     | 'LEYENDO_UBICACION'
     | 'LEYENDO_GUION_LINEA'
+    | 'LEYENDO_GUION_PICK_LINEA'
+    | 'LEYENDO_GUION_DROP_LINEA'
+    | 'DEVOLVIENDO_SOBRANTE'
     | 'CREANDO_CAJA'
-    | 'LEYENDO_CAJAS_ENTRADA'
-    | 'LEYENDO_CAJAS_COLOCACION'
-    | 'COLOCANDO';
+    | 'LEYENDO_PICK'
+    | 'LEYENDO_DROP'
+    | 'COLOCANDO'
+    | 'ALBARANANDO';
 
 export type ContextoOrdenAlmacen = {
     estado: EstadoOrdenAlmacen;
@@ -57,10 +62,19 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
             lectura_ubicacion_solicitada: "LEYENDO_UBICACION",
             lectura_guion_solicitada: "LEYENDO_GUION_LINEA",
             lectura_guion_linea_solicitada: [Lineas.activar, "LEYENDO_GUION_LINEA"],
+            lectura_guion_pick_linea_solicitada: [Lineas.activar, "LEYENDO_GUION_PICK_LINEA"],
+            lectura_guion_drop_linea_solicitada: [Lineas.activar, "LEYENDO_GUION_DROP_LINEA"],
             creacion_de_caja_solicitada: "CREANDO_CAJA",
-            lectura_cajas_entrada_solicitada: "LEYENDO_CAJAS_ENTRADA",
-            lectura_cajas_colocacion_solicitada: "LEYENDO_CAJAS_COLOCACION",
+            lectura_pick_solicitada: "LEYENDO_PICK",
+            lectura_drop_solicitada: "LEYENDO_DROP",
             colocacion_solicitada: "COLOCANDO",
+            albaranado_solicitado: "ALBARANANDO",
+            devolucion_sobrante_solicitada: [Lineas.activar, "DEVOLVIENDO_SOBRANTE"],
+        },
+
+        DEVOLVIENDO_SOBRANTE: {
+            sobrante_devuelto: [refrescarOrden, "ABIERTA"],
+            devolucion_sobrante_cancelada: "ABIERTA",
         },
 
         BORRANDO: {
@@ -111,24 +125,39 @@ export const getMaquina: () => Maquina<EstadoOrdenAlmacen, ContextoOrdenAlmacen>
             lectura_guion_cancelada: "ABIERTA",
         },
 
+        LEYENDO_GUION_PICK_LINEA: {
+            lectura_registrada: [refrescarOrden, "ABIERTA"],
+            lectura_guion_cancelada: "ABIERTA",
+        },
+
+        LEYENDO_GUION_DROP_LINEA: {
+            lectura_registrada: [refrescarOrden, "ABIERTA"],
+            lectura_guion_cancelada: "ABIERTA",
+        },
+
         CREANDO_CAJA: {
             caja_creada: [onCajaCreada, "ABIERTA"],
             alta_de_caja_cancelada: "ABIERTA",
         },
 
-        LEYENDO_CAJAS_ENTRADA: {
-            lectura_registrada: [refrescarOrden],
-            lectura_cajas_entrada_cancelada: [refrescarOrden, "ABIERTA"],
+        LEYENDO_PICK: {
+            lectura_registrada: [refrescarOrdenConCierre],
+            lectura_pick_cancelada: [refrescarOrden, "ABIERTA"],
         },
 
-        LEYENDO_CAJAS_COLOCACION: {
+        LEYENDO_DROP: {
             lectura_registrada: [refrescarOrden],
-            lectura_cajas_colocacion_cancelada: [refrescarOrden, "ABIERTA"],
+            lectura_drop_cancelada: [refrescarOrden, "ABIERTA"],
         },
 
         COLOCANDO: {
             colocacion_creada: [refrescarOrden, "ABIERTA"],
             colocacion_cancelada: "ABIERTA",
+        },
+
+        ALBARANANDO: {
+            orden_albaranada: [refrescarOrden, "ABIERTA"],
+            albaranado_cancelado: "ABIERTA",
         },
     };
 };

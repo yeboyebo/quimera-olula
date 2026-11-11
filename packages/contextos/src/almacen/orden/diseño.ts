@@ -2,6 +2,9 @@ import { Entidad, Filtro, Modelo, Orden, Paginacion, RespuestaLista } from "@olu
 
 export type TipoOrden = "ENTRADA" | "SALIDA" | "TRASPASO";
 
+/** Cambio en el pedido de venta posterior a generar la salida. */
+export type CambioPedido = "ANADIDA" | "CAMBIADA" | "BORRADA";
+
 export interface OrdenAlmacen extends Entidad {
     id: string;
     fecha: string;
@@ -17,8 +20,12 @@ export interface OrdenAlmacen extends Entidad {
     idUbicacionDestino: string | null;
     ubicacionDestino: string | null;
     idCajaDestino: string | null;
+    pasosPick: string | null;
+    pasosDrop: string | null;
     lineas: LineaOrdenAlmacen[];
     lecturasCaja: LecturaCajaOrden[];
+    /** Albaranes de venta generados al albaranar la orden (solo SALIDA). */
+    albaranes: AlbaranGenerado[];
 }
 
 export interface LineaOrdenAlmacen extends Entidad {
@@ -38,6 +45,16 @@ export interface LineaOrdenAlmacen extends Entidad {
     idCajaDestino: string | null;
     cajaDestino: string | null;
     idLineaPick: string | null;
+    pasosPick: string | null;
+    pasosDrop: string | null;
+    cantidadPick?: number;
+    /** Pedido de venta del que procede la línea (salidas). */
+    pedidoVentaId: string | null;
+    pedidoVenta: string | null;
+    cliente: string | null;
+    cambioPedido: CambioPedido | null;
+    /** Prevista antes del primer cambio del pedido (CAMBIADA / BORRADA). */
+    cantidadPedidoAnterior: number | null;
     lecturas: LecturaLineaOrden[];
 }
 
@@ -75,6 +92,8 @@ export interface NuevaOrdenAlmacen extends Modelo {
     tipoOrden: string;
     almacenId: string;
     abierta: boolean;
+    pasosPick?: string | null;
+    pasosDrop?: string | null;
 }
 
 export interface NuevaLineaOrdenAlmacen extends Modelo {
@@ -86,6 +105,8 @@ export interface NuevaLineaOrdenAlmacen extends Modelo {
     idCajaOrigen: string | null;
     idUbicacionDestino: string | null;
     idCajaDestino: string | null;
+    pasosPick?: string | null;
+    pasosDrop?: string | null;
 }
 
 export interface NuevaLecturaOrden extends Modelo {
@@ -99,6 +120,7 @@ export interface NuevaLecturaOrden extends Modelo {
     idUbicacionDestino: string | null;
     idCajaOrigen: string | null;
     idUbicacionOrigen: string | null;
+    fase?: 'PICK' | 'DROP' | null;
 }
 
 export interface NuevaLecturaCajaOrden extends Modelo {
@@ -148,5 +170,9 @@ export type PatchLineaOrden = (id: string, lineaId: string, cambios: CambiosLine
 export type DeleteLineasOrden = (id: string, lineaIds: string[]) => Promise<void>;
 export type PostEntradaDesdePedido = (nueva: NuevaEntradaDesdePedido) => Promise<string>;
 export type TerminarOrden = (id: string) => Promise<void>;
+export type AlbaranGenerado = { id: string; codigo: string };
+/** Genera los albaranes de una SALIDA PREPARADA y la termina; devuelve los albaranes generados. */
+export type AlbaranarOrden = (id: string) => Promise<AlbaranGenerado[]>;
+export type AdquirirOrden = (id: string) => Promise<void>;
 export type PostColocacion = (id: string) => Promise<string>;
 export type GetReportEtiquetasOrden = (id: string) => Promise<Blob>;

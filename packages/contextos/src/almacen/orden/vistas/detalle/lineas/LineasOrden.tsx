@@ -4,7 +4,8 @@ import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { BorrarLineaOrden } from "../../borrar_linea/BorrarLineaOrden.tsx";
 import { CambiarLineaOrden } from "../../cambiar_linea/CambiarLineaOrden.tsx";
 import { CrearLineaOrden } from "../../crear_linea/CrearLineaOrden.tsx";
-import { LeerLineaOrden } from "../leer_linea/LeerLineaOrden.tsx";
+import { LeerPasosOrden } from "../leer_pasos/LeerPasosOrden.tsx";
+import { DevolverSobrante } from "../../devolver_sobrante/DevolverSobrante.tsx";
 import { LineaOrdenAlmacen, OrdenAlmacen } from "../../../diseño.ts";
 import { EstadoOrdenAlmacen } from "../maquina.ts";
 import { LineasOrdenLista } from "./LineasOrdenLista.tsx";
@@ -67,11 +68,24 @@ export const LineasOrden = ({
                     publicar={publicar}
                 />
             )}
-            {lineas.activo && estado === "LEYENDO_GUION_LINEA" && (
-                <LeerLineaOrden
+            {lineas.activo && estado === "DEVOLVIENDO_SOBRANTE" && (
+                <DevolverSobrante orden={orden} linea={lineas.activo} publicar={publicar} />
+            )}
+            {lineas.activo && estado === "LEYENDO_GUION_PICK_LINEA" && (
+                <LeerPasosOrden
                     orden={orden}
                     linea={lineas.activo}
                     publicar={publicar}
+                    fase="PICK"
+                    modoVoz={modoVoz}
+                />
+            )}
+            {lineas.activo && estado === "LEYENDO_GUION_DROP_LINEA" && (
+                <LeerPasosOrden
+                    orden={orden}
+                    linea={lineas.activo}
+                    publicar={publicar}
+                    fase="DROP"
                     modoVoz={modoVoz}
                 />
             )}

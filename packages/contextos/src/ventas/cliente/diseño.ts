@@ -43,6 +43,7 @@ export type NuevoCliente = {
   empresa_id: string;
   tipo_id_fiscal: string;
   agente_id: string;
+  direccion?: NuevaDireccion;
 };
 
 export interface DirCliente extends Direccion {
@@ -90,11 +91,13 @@ export interface CrmContacto extends Entidad {
   id: string;
   nombre: string;
   email: string;
+  telefono1: string;
 };
 
 export type NuevoCrmContacto = {
   nombre: string;
   email: string;
+  telefono1: string;
 };
 
 

@@ -1,5 +1,4 @@
 import { MetaModelo } from "@olula/lib/dominio.ts";
-import { TipoOrden } from "../../diseño.ts";
 
 export type NuevaLineaOrden = {
     sku: string;
@@ -8,10 +7,9 @@ export type NuevaLineaOrden = {
     idCajaOrigen: string | null;
     idUbicacionDestino: string | null;
     idCajaDestino: string | null;
+    pasosPick: string | null;
+    pasosDrop: string | null;
 };
-
-const requiereOrigen = (tipo: TipoOrden) => tipo === "SALIDA" || tipo === "TRASPASO";
-const requiereDestino = (tipo: TipoOrden) => tipo === "ENTRADA" || tipo === "TRASPASO";
 
 
 const onNuevaLineaCambiada = (linea: NuevaLineaOrden, campo: string, _: unknown, otros?: Record<string, unknown>) => {
@@ -37,7 +35,7 @@ const onNuevaLineaCambiada = (linea: NuevaLineaOrden, campo: string, _: unknown,
 }
 
 
-export const getMetaNuevaLineaOrden = (tipo: TipoOrden): MetaModelo<NuevaLineaOrden> => ({
+export const getMetaNuevaLineaOrden = (): MetaModelo<NuevaLineaOrden> => ({
     campos: {
         sku: {
             validacion: (linea) => {
@@ -54,24 +52,13 @@ export const getMetaNuevaLineaOrden = (tipo: TipoOrden): MetaModelo<NuevaLineaOr
                 return true;
             },
         },
-        idUbicacionOrigen: {
-            validacion: (linea) => {
-                if (requiereOrigen(tipo) && !linea.idUbicacionOrigen) {
-                    return "La ubicación origen es requerida";
-                }
-                return true;
-            },
-        },
+        // Las ubicaciones y cajas obligatorias dependen del flujo elegido (pasos/flujos.ts).
+        idUbicacionOrigen: {},
         idCajaOrigen: {},
-        idUbicacionDestino: {
-            validacion: (linea) => {
-                if (requiereDestino(tipo) && !linea.idUbicacionDestino) {
-                    return "La ubicación destino es requerida";
-                }
-                return true;
-            },
-        },
+        idUbicacionDestino: {},
         idCajaDestino: {},
+        pasosPick: {},
+        pasosDrop: {},
     },
     onChange: onNuevaLineaCambiada
 });
